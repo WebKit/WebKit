@@ -31,13 +31,16 @@
 namespace WebCore {
 namespace Style {
 
-// Resolves the basis, binds it to the `size` keyword, then resolves the calculation. A keyword basis
-// stands for the element's intrinsic size, which only layout knows, so callers check
-// behavesAsKeyword() and degrade to the keyword before reaching here.
-// FIXME: Resolve keyword bases in layout, so calc-size(auto, size * 2) works.
-WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, double percentResolutionLength, ZoomFactor);
+// Resolves the basis, substitutes it for the `size` keyword, then resolves the calculation, clamping
+// to the property's range as Calculation::Value::evaluate() does for a calc().
+//
+// The size a basis keyword stands for is the element's intrinsic size, which only layout knows, so
+// layout passes it in as keywordBasisSize.
+WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, CSS::Range, double percentResolutionLength, ZoomFactor, double keywordBasisSize);
 
-// Clamps the result to the property's range, as Calculation::Value::evaluate() does for a calc().
+// The same for a value that does not behave as a keyword: with a <calc-sum> or `any` basis it is a
+// syntax error for the calculation to mention `size`, so there is nothing to stand in for. Callers
+// that may hold either kind check behavesAsKeyword() and degrade to the keyword instead.
 WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, CSS::Range, double percentResolutionLength, ZoomFactor);
 
 template<typename T> concept IsPercentageOrCalcOrCalcSize = IsPercentageOrCalc<T> || std::same_as<T, UnevaluatedCalcSize>;

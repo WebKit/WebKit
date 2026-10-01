@@ -1,0 +1,19 @@
+
+PASS used width, width: max-content — keyword on its own, for comparison
+PASS shrink-to-fit parent, width: max-content — keyword on its own, for comparison
+PASS used width, width: calc-size(max-content, size) — identity
+PASS shrink-to-fit parent, width: calc-size(max-content, size) — identity
+PASS used width, width: calc-size(max-content, size * 2)
+PASS shrink-to-fit parent, width: calc-size(max-content, size * 2)
+PASS used width, width: calc-size(min-content, size / 2)
+PASS shrink-to-fit parent, width: calc-size(min-content, size / 2)
+PASS used width, width: calc-size(min-content, size + 15px)
+PASS shrink-to-fit parent, width: calc-size(min-content, size + 15px)
+PASS used width, width: calc-size(fit-content, size + 10px)
+PASS shrink-to-fit parent, width: calc-size(fit-content, size + 10px)
+PASS used width, width: calc-size(max-content, 90px) — calculation never mentions size
+PASS shrink-to-fit parent, width: calc-size(max-content, 90px) — calculation never mentions size
+PASS used width, width: calc-size(calc-size(min-content, size * 2), size + 5px) — nested: the outer size is the inner result
+PASS shrink-to-fit parent, width: calc-size(calc-size(min-content, size * 2), size + 5px) — nested: the outer size is the inner result
+PASS the image has the intrinsic width the expectations are built on
+
