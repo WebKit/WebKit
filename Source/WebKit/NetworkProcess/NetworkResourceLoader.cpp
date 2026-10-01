@@ -793,6 +793,7 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     m_parameters.webPageID = parameters.webPageID;
     m_parameters.webFrameID = parameters.webFrameID;
     m_parameters.options.clientIdentifier = parameters.options.clientIdentifier;
+    recordLocalNetworkAccessFrame(newConnection, m_response);
 
     if (parameters.options.resultingClientIdentifier && m_parameters.options.resultingClientIdentifier)
         send(Messages::WebResourceLoader::UpdateResultingClientIdentifier { *parameters.options.resultingClientIdentifier, *m_parameters.options.resultingClientIdentifier });
@@ -949,9 +950,20 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
     return std::nullopt;
 }
 
+void NetworkResourceLoader::recordLocalNetworkAccessFrame(NetworkConnectionToWebProcess& connection, const ResourceResponse& response)
+{
+    if (!isMainResource() || !connection.localNetworkAccessEnabled() || !(response.url().protocolIsInHTTPFamily() || response.url().protocolIsFile()))
+        return;
+    connection.recordLocalNetworkAccessFrame(m_parameters.webFrameID, { response.ipAddressSpace(), SecurityOriginData::fromURL(response.url()) });
+}
+
 void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& request, const URL& currentURL, IPAddressSpace connectionAddressSpace, CompletionHandler<void(std::optional<ResourceError>)>&& completionHandler)
 {
-    if (!WebCore::canDetermineConnectionAddressSpace() || !connectionToWebProcess().localNetworkAccessEnabled() || isMainFrameLoad())
+    if (!WebCore::canDetermineConnectionAddressSpace() || !connectionToWebProcess().localNetworkAccessEnabled())
+        return completionHandler(std::nullopt);
+
+    // A web process can label any load as a main frame load, so only trust the label for a load that started at its own validated first party.
+    if (isMainFrameLoad() && RegistrableDomain { originalRequest().url() } == RegistrableDomain { originalRequest().firstPartyForCookies() })
         return completionHandler(std::nullopt);
 
     CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
@@ -980,6 +992,26 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
             topOrigin = requester->topOrigin->data();
         }
     }
+
+    Ref connection = connectionToWebProcess();
+    std::optional<FrameIdentifier> clientFrameID;
+    std::optional<FrameIdentifier> clientParentFrameID;
+    if (!isMainResource()) {
+        clientFrameID = m_parameters.webFrameID;
+        clientParentFrameID = m_parameters.parentFrameID;
+    } else if (m_parameters.navigationRequester)
+        clientFrameID = m_parameters.navigationRequester->frameID;
+
+    auto record = clientFrameID ? connection->localNetworkAccessFrameRecord(*clientFrameID, clientParentFrameID) : std::nullopt;
+    bool recordMatchesClient = record && record->origin == sourceOrigin;
+    if (!recordMatchesClient)
+        sourceOrigin = SecurityOriginData::createOpaque();
+    auto recordedAddressSpace = recordMatchesClient && record->addressSpace != IPAddressSpace::Unknown ? record->addressSpace : IPAddressSpace::Public;
+    if (isLessPublicThan(clientAddressSpace, recordedAddressSpace))
+        clientAddressSpace = recordedAddressSpace;
+
+    bool topOriginIsAllowed = !topOrigin.isOpaque() && connection->networkProcess().allowsFirstPartyForCookies(connection->webProcessIdentifier(), RegistrableDomain::uncheckedCreateFromHost(topOrigin.host())) == NetworkProcess::AllowCookieAccess::Allow;
+    clientIsSecureContext = clientIsSecureContext && topOriginIsAllowed && shouldTreatAsPotentiallyTrustworthy(sourceOrigin.toURL());
 
     auto clientOrigin = ClientOrigin { topOrigin, sourceOrigin };
     auto requirement = WebCore::checkLocalNetworkAccess(request, currentURL, connectionAddressSpace, clientAddressSpace,
@@ -1400,6 +1432,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
 void NetworkResourceLoader::continueDidReceiveResponseAfterLocalNetworkAccessCheck(PrivateRelayed privateRelayed, ResourceLoadInfo&& resourceLoadInfo, ResponseCompletionHandler&& completionHandler)
 {
+    recordLocalNetworkAccessFrame(protect(connectionToWebProcess()), m_response);
+
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting main resource load due to CSP frame-ancestors or X-Frame-Options");
         auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
@@ -2395,6 +2429,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 void NetworkResourceLoader::continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(std::unique_ptr<NetworkCache::Entry> entry)
 {
     auto response = entry->response();
+    recordLocalNetworkAccessFrame(protect(connectionToWebProcess()), response);
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Stopping load due to CSP Frame-Ancestors or X-Frame-Options");

@@ -1203,6 +1203,8 @@ enum ContentsFormat {
     DOMString createTemporaryFile(DOMString name, DOMString contents);
 
     DOMString documentIPAddressSpace();
+    undefined setDocumentIPAddressSpace(DOMString addressSpace);
+    undefined setLoadSourceOriginOverride(DOMString origin);
 
     undefined queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();

@@ -1014,6 +1014,8 @@ public:
     String createTemporaryFile(const String& name, const String& contents);
 
     String documentIPAddressSpace() const;
+    void setDocumentIPAddressSpace(const String&);
+    void setLoadSourceOriginOverride(const String&);
 
     void queueMicroTask(int);
     bool testPreloaderSettingViewport();

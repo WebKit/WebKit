@@ -636,6 +636,9 @@ public:
     bool shouldPreventEnteringBackForwardCacheForTesting() const { return m_shouldPreventEnteringBackForwardCacheForTesting; }
     void preventEnteringBackForwardCacheForTesting() { m_shouldPreventEnteringBackForwardCacheForTesting = true; }
 
+    SecurityOrigin* loadSourceOriginOverrideForTesting() const { return m_loadSourceOriginOverrideForTesting.get(); }
+    WEBCORE_EXPORT void setLoadSourceOriginOverrideForTesting(RefPtr<SecurityOrigin>&&);
+
     void setXMLEncoding(const String& encoding) { m_xmlEncoding = encoding; } // read-only property, only to be set from XMLDocumentParser
     WEBCORE_EXPORT ExceptionOr<void> setXMLVersion(const String&);
     WEBCORE_EXPORT void NODELETE setXMLStandalone(bool);
@@ -2714,6 +2717,7 @@ private:
     unsigned m_referencingNodeCount { 0 };
     int m_loadEventDelayCount { 0 };
     unsigned m_lastStyleUpdateSizeForTesting { 0 };
+    RefPtr<SecurityOrigin> m_loadSourceOriginOverrideForTesting;
     size_t m_styleInvalidationTraversalCountForTesting { 0 };
 
     // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#throw-on-dynamic-markup-insertion-counter

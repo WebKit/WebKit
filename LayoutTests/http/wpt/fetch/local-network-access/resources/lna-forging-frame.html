@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Stands in for a compromised web process: overwrites the address space and origin its loads report
+// with the values given on the query string, then fetches the target.
+const params = new URL(location.href).searchParams;
+const label = params.get('label');
+const claim = params.get('claim');
+
+if (claim)
+    internals.setDocumentIPAddressSpace(claim);
+if (params.get('origin'))
+    internals.setLoadSourceOriginOverride(params.get('origin'));
+
+fetch(params.get('target'), { mode: 'no-cors' }).then(
+    () => parent.postMessage({ from: label, claimed: internals.documentIPAddressSpace(), result: 'fetched' }, '*'),
+    () => parent.postMessage({ from: label, claimed: internals.documentIPAddressSpace(), result: 'blocked' }, '*'));
+</script>
+</body>
+</html>

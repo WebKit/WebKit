@@ -44,6 +44,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/LoadSchedulingMode.h>
 #include <WebCore/MessagePortChannelProvider.h>
@@ -56,6 +57,7 @@
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/RTCDataChannelIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include <WebCore/WebTransportConnectionInfo.h>
 #include <optional>
@@ -188,6 +190,13 @@ public:
     bool blobFileAccessEnforcementEnabled() const { return m_sharedPreferencesForWebProcess.blobFileAccessEnforcementEnabled; }
     bool compressionDictionaryEnabled() const { return m_sharedPreferencesForWebProcess.compressionDictionaryEnabled; }
     bool localNetworkAccessEnabled() const { return m_sharedPreferencesForWebProcess.localNetworkAccessEnabled; }
+
+    struct LocalNetworkAccessFrameRecord {
+        WebCore::IPAddressSpace addressSpace;
+        WebCore::SecurityOriginData origin;
+    };
+    void recordLocalNetworkAccessFrame(WebCore::FrameIdentifier, LocalNetworkAccessFrameRecord&&);
+    std::optional<LocalNetworkAccessFrameRecord> localNetworkAccessFrameRecord(WebCore::FrameIdentifier, std::optional<WebCore::FrameIdentifier> parentFrameID) const;
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void transferKeptAliveLoad(NetworkResourceLoader&);
@@ -538,6 +547,7 @@ private:
     NetworkResourceLoadMap m_networkResourceLoaders;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
     HashMap<WebCore::PageIdentifier, NetworkActivityTracker::CompletionCode> m_lastRootActivityCompletionCodesForTesting;
+    HashMap<WebCore::FrameIdentifier, LocalNetworkAccessFrameRecord> m_localNetworkAccessFrameRecords;
 
     HashMap<WebCore::ResourceLoaderIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
 
