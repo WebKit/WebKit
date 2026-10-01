@@ -144,6 +144,21 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
         return std::nullopt;
     }
 
+    unsigned boundPort = port;
+    if (!boundPort) {
+        if (GSList* uris = soup_server_get_uris(m_soupServer.get())) {
+            int effectivePort = g_uri_get_port(static_cast<GUri*>(uris->data));
+            if (effectivePort > 0)
+                boundPort = effectivePort;
+            g_slist_free_full(uris, reinterpret_cast<GDestroyNotify>(g_uri_unref));
+        }
+        ASSERT_WITH_MESSAGE(boundPort, "Failed to find actual WebSocket listening port");
+        if (!boundPort) {
+            soup_server_disconnect(m_soupServer.get());
+            return std::nullopt;
+        }
+    }
+
     // Callback for handling incoming WebSocket handshake requests
     soup_server_add_handler(m_soupServer.get(), nullptr, handleIncomingHandshake, this, nullptr);
 
@@ -153,7 +168,7 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
     // "/session" is the default resource to start bidi-only sessions
     m_listener = WebSocketListener::create(
         host.isNull() ? "localhost"_s : host,
-        port,
+        boundPort,
         false,
         { "/session"_s }
     );
