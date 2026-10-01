@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <defs>
+    <marker id="m" markerWidth="20" markerHeight="20" refX="10" refY="10">
+      <image x="0" y="0" width="20" height="20" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAHUlEQVR42mNgYPj/n7p41MBRA0cNHDVw1MARaiAA2b4dDjMNKCkAAAAASUVORK5CYII="/>
+    </marker>
+  </defs>
+  <path d="M20,180 L100,20 L180,180 Z" fill="red" fill-opacity="0.2" stroke="none"/>
+  <path d="M20,180 L100,20 L180,180 Z" fill="none" stroke="none" marker-end="url(#m)"/>
+</svg>
