@@ -8,17 +8,11 @@ PACKAGES+=(
     icu
     libxml2
     qt6-declarative
-    ru
     unifdef
     zlib
 
     # These are dependencies necessary for running tests.
-    # Note: ruby-json and ruby-highline are available in the AUR.
     perl-cgi
-    python2
-    python2-gobject
-    python2-lxml
-    ruby
 
     # These are dependencies necessary for building the jhbuild.
     libpulse
@@ -31,10 +25,8 @@ PACKAGES+=(
     mesa
     mesa-libgl
     opus
-    perl-xml-libxml
     util-linux
     v4l-utils
-    wayland
     xorg-xrandr
 
     # These are dependencies necessary for building Cog.

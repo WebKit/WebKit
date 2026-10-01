@@ -53,6 +53,7 @@ PACKAGES=(
     libgstreamer1.0-dev
     libgstreamer-plugins-bad1.0-dev
     libgstreamer-plugins-base1.0-dev
+    libharfbuzz-dev
     libinput-dev
     libjpeg-dev
     libhyphen-dev
@@ -79,6 +80,8 @@ PACKAGES=(
     ninja-build
     patch
     ruby
+    wayland-protocols
+    xdg-dbus-proxy
     $(aptIfExists gi-docgen)
     $(aptIfExists libaom-dev)
     $(aptIfExists libavif-dev)
@@ -105,8 +108,7 @@ PACKAGES=(
     $(aptIfExists python3-legacy-cgi)
     pulseaudio-utils
     python3-gi
-    ruby-highline
-    ruby-json
+    python3-psutil
     time
 
     # These are dependencies necessary for building the jhbuild.

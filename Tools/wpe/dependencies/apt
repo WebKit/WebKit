@@ -10,18 +10,13 @@ PACKAGES+=(
     libcairo2-dev
     libgbm-dev
     libgnutls28-dev
-    libharfbuzz-dev
     libicu-dev
     libxml2-dev
     pkg-config
     qt6-declarative-private-dev
     unifdef
-    wayland-protocols
     zlib1g-dev
     $(aptIfExists libopenxr-dev)
-
-    # These are dependencies necessary for running tests.
-    python3-psutil
 
     # These are dependencies necessary for building the jhbuild.
     libegl-mesa0

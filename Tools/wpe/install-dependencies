@@ -51,11 +51,11 @@ function installDependenciesWithApt {
 }
 
 function installDependenciesWithDnf {
-    dnf install "$@" ${PACKAGES[@]}
+    dnf install -y "$@" ${PACKAGES[@]}
 }
 
 function installDependenciesWithPacman {
-    pacman -S --needed "$@" ${PACKAGES[@]}
+    pacman -S --needed --noconfirm "$@" ${PACKAGES[@]}
 
     cat <<-EOF
 
