@@ -380,7 +380,7 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
 
 WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const String& sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
-    auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID.utf8().legacyCStringPointer(), nullptr));
+    auto* session = WEBKIT_AUTOMATION_SESSION(gObjectNew(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID.utf8()));
     session->priv->webContext = webContext;
 #if ENABLE(2022_GLIB_API)
     WebKitNetworkSession* networkSession = webkit_web_context_get_network_session_for_automation(webContext);

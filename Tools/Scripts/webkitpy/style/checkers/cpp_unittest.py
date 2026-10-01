@@ -6867,6 +6867,31 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/glib_string_wrappers] [4]",
             'foo.cpp')
 
+        self.assert_multi_line_lint(
+            'auto* object = g_object_new(TYPE, "id", id.utf8().legacyCStringPointer(),\n'
+            '    nullptr);\n',
+            "Use 'gObjectNew()' from <wtf/glib/GLibExtras.h> instead of 'g_object_new()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'g_dbus_connection_emit_signal(connection, nullptr, path.utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Object", "StateChanged", nullptr, nullptr);',
+            "Use 'gDBusConnectionEmitSignal()' from <wtf/glib/GLibExtras.h> instead of 'g_dbus_connection_emit_signal()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'gst_structure_set(headers.get(), key.utf8().legacyCStringPointer(), G_TYPE_STRING, value.utf8().legacyCStringPointer(), nullptr);',
+            "Use 'gstStructureSet()' from \"GStreamerCommon.h\" instead of 'gst_structure_set()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'GUniquePtr<GstStructure> properties(gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role.utf8().legacyCStringPointer(), nullptr));',
+            "Use 'gstStructureNew()' from \"GStreamerCommon.h\" instead of 'gst_structure_new()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
         self.assert_lint(
             'char* copy = g_strdup(convert(string.utf8().legacyCStringPointer()));',
             '',

@@ -23,6 +23,7 @@
 #include "WebHitTestResultData.h"
 #include "WebKitHitTestResultPrivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -237,14 +238,13 @@ WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResultData& hitTe
     if (hitTestResult.isSelected)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
 
-    return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
+    return WEBKIT_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_HIT_TEST_RESULT,
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL.utf8().legacyCStringPointer() : nullptr,
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? hitTestResult.absoluteImageURL.utf8().legacyCStringPointer() : nullptr,
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? hitTestResult.absoluteMediaURL.utf8().legacyCStringPointer() : nullptr,
-        "link-title", !hitTestResult.linkTitle.isEmpty() ? hitTestResult.linkTitle.utf8().legacyCStringPointer() : nullptr,
-        "link-label", !hitTestResult.linkLabel.isEmpty() ? hitTestResult.linkLabel.utf8().legacyCStringPointer() : nullptr,
-        nullptr));
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL.utf8() : UTF8CString { },
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? hitTestResult.absoluteImageURL.utf8() : UTF8CString { },
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? hitTestResult.absoluteMediaURL.utf8() : UTF8CString { },
+        "link-title", !hitTestResult.linkTitle.isEmpty() ? hitTestResult.linkTitle.utf8() : UTF8CString { },
+        "link-label", !hitTestResult.linkLabel.isEmpty() ? hitTestResult.linkLabel.utf8() : UTF8CString { }));
 }
 
 static bool stringIsEqualToCString(const String& string, const UTF8CString& cString)

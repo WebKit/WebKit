@@ -23,6 +23,7 @@
 #include "WebViewTest.h"
 #include <algorithm>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/UTF8CStringView.h>
 
 #if PLATFORM(GTK)
 #include <WebKit/GtkVersioning.h>
@@ -649,7 +650,7 @@ public:
         m_expectedSurroundingText = UTF8CString::unsafeFromUTF8(text);
         g_idle_add([](gpointer userData) -> gboolean {
             auto* test = static_cast<InputMethodTest*>(userData);
-            if (!g_strcmp0(test->m_context->surroundingText, test->m_expectedSurroundingText.legacyCStringPointer())) {
+            if (UTF8CStringView::unsafeFromUTF8(test->m_context->surroundingText) == test->m_expectedSurroundingText) {
                 test->quitMainLoop();
                 return FALSE;
             }

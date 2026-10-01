@@ -259,6 +259,30 @@ TEST(WTF, StringViewIterators)
         StringView(b.span<char16_t>().subspan(3, 3)) }));
 }
 
+TEST(WTF, StringViewCodePointCount)
+{
+    EXPECT_EQ(StringView().codePointCount(), 0u);
+    EXPECT_EQ(emptyStringView().codePointCount(), 0u);
+    EXPECT_EQ(StringView("webkit"_s).codePointCount(), 6u);
+
+    auto codePointCount = [](std::vector<char16_t> input) {
+        StringBuilder builder;
+        build(builder, WTF::move(input));
+        return StringView(builder.toString()).codePointCount();
+    };
+
+    EXPECT_EQ(codePointCount({ 'a', 0x00E9, 0x4E2D }), 3u);
+    EXPECT_EQ(codePointCount({ 0xD800, 0xDD55 }), 1u);
+    EXPECT_EQ(codePointCount({ 'a', 0xD800, 0xDD55, 'b', 0xD83D, 0xDE00 }), 4u);
+    EXPECT_EQ(codePointCount({ 0xD800 }), 1u);
+    EXPECT_EQ(codePointCount({ 0xDD55 }), 1u);
+    EXPECT_EQ(codePointCount({ 0xD800, 'a' }), 2u);
+    EXPECT_EQ(codePointCount({ 'a', 0xDD55, 'b' }), 3u);
+    EXPECT_EQ(codePointCount({ 'a', 0xD800 }), 2u);
+    EXPECT_EQ(codePointCount({ 0xDD55, 0xD800 }), 2u);
+    EXPECT_EQ(codePointCount({ 0xD800, 0xD800, 0xDD55 }), 2u);
+}
+
 static Vector<String> vectorFromSplitResult(const StringView::SplitResult& substrings)
 {
     Vector<String> result;

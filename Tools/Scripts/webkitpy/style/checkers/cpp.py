@@ -3235,8 +3235,10 @@ def check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error):
 
 _GLIB_STRING_WRAPPERS = {
     'g_build_filename': 'gBuildFilename',
+    'g_dbus_connection_emit_signal': 'gDBusConnectionEmitSignal',
     'g_error_new': 'SAFE_G_ERROR_NEW',
     'g_file_new_for_path': 'gFileNewForPath',
+    'g_object_new': 'gObjectNew',
     'g_quark_from_string': 'gQuarkFromString',
     'g_set_error': 'SAFE_G_SET_ERROR',
     'g_signal_emit': 'gSignalEmit',
@@ -3257,6 +3259,11 @@ _GLIB_PRINTF_FORMAT_ARGUMENT_INDEX = {
     'g_strdup_printf': 0,
     'g_task_return_new_error': 3,
     'g_warning': 0,
+}
+
+_GSTREAMER_STRING_WRAPPERS = {
+    'gst_structure_new': 'gstStructureNew',
+    'gst_structure_set': 'gstStructureSet',
 }
 
 
@@ -3338,11 +3345,11 @@ def _check_string_wrappers(clean_lines, line_number, file_state, error, wrappers
             continue
         reported_functions.add(function)
         error(line_number, category, 4,
-              "Use '%s()' from <%s> instead of '%s()', and pass the typed string instead of calling legacyCStringPointer()." % (wrapper, header, function))
+              "Use '%s()' from %s instead of '%s()', and pass the typed string instead of calling legacyCStringPointer()." % (wrapper, header, function))
 
 
 def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
-    """Looks for GLib functions called with legacyCStringPointer(), which should use the wrappers in wtf/glib/GLibExtras.h.
+    """Looks for GLib functions called with legacyCStringPointer(), which should use the wrappers in wtf/glib/GLibExtras.h or GStreamerCommon.h.
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
@@ -3352,7 +3359,8 @@ def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
       error: The function to call with any errors found.
     """
 
-    _check_string_wrappers(clean_lines, line_number, file_state, error, _GLIB_STRING_WRAPPERS, 'wtf/glib/GLibExtras.h', 'runtime/glib_string_wrappers', _GLIB_PRINTF_FORMAT_ARGUMENT_INDEX)
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _GLIB_STRING_WRAPPERS, '<wtf/glib/GLibExtras.h>', 'runtime/glib_string_wrappers', _GLIB_PRINTF_FORMAT_ARGUMENT_INDEX)
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _GSTREAMER_STRING_WRAPPERS, '"GStreamerCommon.h"', 'runtime/glib_string_wrappers', {})
 
 
 def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
@@ -3366,7 +3374,7 @@ def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
       error: The function to call with any errors found.
     """
 
-    _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, 'wtf/posix/POSIXExtras.h', 'runtime/posix_string_wrappers', {})
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, '<wtf/posix/POSIXExtras.h>', 'runtime/posix_string_wrappers', {})
 
 
 # printf-style logging and assertion macros that convert typed string arguments themselves.

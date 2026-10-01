@@ -87,6 +87,7 @@ public:
     char16_t operator[](unsigned index) const;
     char32_t codePointAt(unsigned index) const;
     char32_t codePointBefore(unsigned index) const;
+    unsigned codePointCount() const;
 
     class CodeUnits;
     CodeUnits codeUnits() const;
@@ -636,6 +637,17 @@ inline char32_t StringView::codePointAt(unsigned index) const
     if (index + 1 < length() && U16_IS_LEAD(characters[index]) && U16_IS_TRAIL(characters[index + 1]))
         return U16_GET_SUPPLEMENTARY(characters[index], characters[index + 1]);
     return characters[index];
+}
+
+inline unsigned StringView::codePointCount() const
+{
+    if (m_is8Bit)
+        return length();
+    auto characters = span16();
+    unsigned count = 0;
+    for (size_t i = 0; i < characters.size(); ++count)
+        U16_FWD_1(characters, i, characters.size());
+    return count;
 }
 
 inline char32_t StringView::codePointBefore(unsigned index) const

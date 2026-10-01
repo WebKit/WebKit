@@ -221,7 +221,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
         atspiObject->updateBackingStore();
 
         if (!g_strcmp0(propertyName, "CharacterCount"))
-            return g_variant_new_int32(g_utf8_strlen(atspiObject->text().utf8().legacyCStringPointer(), -1));
+            return g_variant_new_int32(StringView(atspiObject->text()).codePointCount());
         if (!g_strcmp0(propertyName, "CaretOffset")) {
             int start = 0, end = 0;
             return g_variant_new_int32(atspiObject->selectionBounds(start, end) ? end : -1);
@@ -334,7 +334,7 @@ UTF8CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
     if (utf8Text.isNull())
         return { };
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (endOffset == -1)
         endOffset = length;
 
@@ -372,8 +372,9 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
     String maskedText = m_coreObject->isSecureField() ? utf16Text.substring(utf16Offset - insertedText.length(), insertedText.length()) : String();
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
-    auto utf8InsertedText = maskedText.isNull() ? insertedText.utf8() : maskedText.utf8();
-    auto insertedTextLength = g_utf8_strlen(utf8InsertedText.legacyCStringPointer(), -1);
+    auto& reportedText = maskedText.isNull() ? insertedText : maskedText;
+    auto insertedTextLength = StringView(reportedText).codePointCount();
+    auto utf8InsertedText = reportedText.utf8();
     AccessibilityAtspi::singleton().textChanged(*this, "insert", WTF::move(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
 }
 
@@ -388,7 +389,7 @@ void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const Visi
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
     auto utf8DeletedText = deletedText.utf8();
-    auto deletedTextLength = g_utf8_strlen(utf8DeletedText.legacyCStringPointer(), -1);
+    auto deletedTextLength = StringView(deletedText).codePointCount();
     AccessibilityAtspi::singleton().textChanged(*this, "delete", WTF::move(utf8DeletedText), offset, deletedTextLength);
 }
 
@@ -470,7 +471,7 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
     if (utf8Text.isNull())
         return { };
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset > length)
         return { };
 
@@ -491,11 +492,12 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
 
 int AccessibilityObjectAtspi::characterAtOffset(int offset) const
 {
-    auto utf8Text = text().utf8();
+    auto utf16Text = text();
+    auto utf8Text = utf16Text.utf8();
     if (utf8Text.isNull())
         return 0;
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset >= length)
         return 0;
 
@@ -528,7 +530,7 @@ std::optional<unsigned> AccessibilityObjectAtspi::characterIndex(char16_t charac
     if (utf8Text.isNull())
         return std::nullopt;
 
-    auto length = static_cast<unsigned>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = StringView(utf16Text).codePointCount();
     if (offset >= length)
         return std::nullopt;
 
@@ -583,7 +585,7 @@ IntRect AccessibilityObjectAtspi::textExtents(int startOffset, int endOffset, At
     if (utf8Text.isNull())
         return { };
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     startOffset = std::clamp(startOffset, 0, length);
     if (endOffset == -1)
         endOffset = length;
@@ -691,7 +693,7 @@ bool AccessibilityObjectAtspi::selectionBounds(int& startOffset, int& endOffset)
     startOffset = UTF16OffsetToUTF8(mapping, bounds.x());
     endOffset = UTF16OffsetToUTF8(mapping, bounds.y());
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     endOffset = std::clamp(endOffset, 0, length);
     if (endOffset < startOffset) {
         startOffset = endOffset = 0;
@@ -718,7 +720,7 @@ bool AccessibilityObjectAtspi::selectRange(int startOffset, int endOffset)
     if (utf8Text.isNull())
         return false;
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     startOffset = std::clamp(startOffset, 0, length);
     if (endOffset == -1)
         endOffset = length;
@@ -750,7 +752,7 @@ void AccessibilityObjectAtspi::selectionChanged(const VisibleSelection& selectio
     if (bounds.y() < 0)
         return;
 
-    auto length = static_cast<unsigned>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = StringView(utf16Text).codePointCount();
     auto mapping = offsetMapping(utf16Text);
     auto caretOffset = UTF16OffsetToUTF8(mapping, bounds.y());
     if (caretOffset <= length)
@@ -931,7 +933,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     auto mapping = offsetMapping(utf16Text);
     std::optional<unsigned> utf16Offset;
     if (offset) {
-        auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+        auto length = static_cast<int>(StringView(utf16Text).codePointCount());
         if (*offset < 0 || *offset >= length)
             return { };
 
@@ -962,7 +964,7 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
     if (utf8Text.isNull())
         return false;
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (startOffset < 0 || startOffset > length)
         return false;
     if (endOffset < 0 || endOffset > length)
@@ -1023,7 +1025,7 @@ bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, Ats
     if (utf8Text.isNull())
         return false;
 
-    auto length = static_cast<int>(g_utf8_strlen(utf8Text.legacyCStringPointer(), -1));
+    auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (startOffset < 0 || startOffset > length)
         return false;
     if (endOffset < 0 || endOffset > length)

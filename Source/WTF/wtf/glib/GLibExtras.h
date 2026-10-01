@@ -77,6 +77,11 @@ inline GVariant* gVariantNewString(UTF8CStringView string)
     return g_variant_new_string(string.utf8());
 }
 
+inline gboolean gDBusConnectionEmitSignal(GDBusConnection* connection, const char* destinationBusName, UTF8CStringView objectPath, const char* interfaceName, const char* signalName, GVariant* parameters, GError** error)
+{
+    return g_dbus_connection_emit_signal(connection, destinationBusName, objectPath.utf8(), interfaceName, signalName, parameters, error);
+}
+
 template<typename... Arguments>
 GVariant* gVariantNew(const char* format, Arguments&&... arguments)
 {
@@ -96,6 +101,14 @@ void gSignalEmit(gpointer instance, guint signalID, GQuark detail, Arguments&&..
 }
 
 // Supplies the terminating nullptr itself.
+template<typename... Arguments>
+gpointer gObjectNew(GType type, const char* firstPropertyName, Arguments&&... arguments)
+{
+    static_assert(sizeof...(Arguments) % 2, "gObjectNew() takes a value for each property name");
+    return g_object_new(type, firstPropertyName, glibVariadicType(std::forward<Arguments>(arguments))..., nullptr);
+}
+
+// Supplies the terminating nullptr itself.
 template<typename... Elements>
 GMallocString gBuildFilename(Elements&&... elements)
 {
@@ -106,7 +119,9 @@ GMallocString gBuildFilename(Elements&&... elements)
 } // namespace WTF
 
 using WTF::gBuildFilename;
+using WTF::gDBusConnectionEmitSignal;
 using WTF::gFileNewForPath;
+using WTF::gObjectNew;
 using WTF::gQuarkFromString;
 using WTF::gSignalEmit;
 using WTF::gStrdup;

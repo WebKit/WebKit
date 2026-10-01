@@ -1047,15 +1047,15 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     GUniquePtr<GstStructure> httpHeaders(gst_structure_new_empty("http-headers"));
 
-    gst_structure_set(httpHeaders.get(), "uri", G_TYPE_STRING, priv->originalURI.legacyCStringPointer(),
-        "http-status-code", G_TYPE_UINT, response.httpStatusCode(), nullptr);
+    gstStructureSet(httpHeaders.get(), "uri", G_TYPE_STRING, priv->originalURI,
+        "http-status-code", G_TYPE_UINT, response.httpStatusCode());
     if (!members->redirectedURI.isNull())
-        gst_structure_set(httpHeaders.get(), "redirection-uri", G_TYPE_STRING, members->redirectedURI.legacyCStringPointer(), nullptr);
+        gstStructureSet(httpHeaders.get(), "redirection-uri", G_TYPE_STRING, members->redirectedURI);
 
     // Pack request headers in the http-headers structure.
     GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));
     for (const auto& header : m_request.httpHeaderFields())
-        gst_structure_set(headers.get(), header.key.utf8().legacyCStringPointer(), G_TYPE_STRING, header.value.utf8().legacyCStringPointer(), nullptr);
+        gstStructureSet(headers.get(), header.key.utf8(), G_TYPE_STRING, header.value.utf8());
     GST_DEBUG_OBJECT(src.get(), "R%u: Request headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "request-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
 
@@ -1063,9 +1063,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     headers.reset(gst_structure_new_empty("response-headers"));
     for (const auto& header : response.httpHeaderFields()) {
         if (auto convertedValue = parseIntegerAllowingTrailingJunk<uint64_t>(header.value))
-            gst_structure_set(headers.get(), header.key.utf8().legacyCStringPointer(), G_TYPE_UINT64, *convertedValue, nullptr);
+            gstStructureSet(headers.get(), header.key.utf8(), G_TYPE_UINT64, *convertedValue);
         else
-            gst_structure_set(headers.get(), header.key.utf8().legacyCStringPointer(), G_TYPE_STRING, header.value.utf8().legacyCStringPointer(), nullptr);
+            gstStructureSet(headers.get(), header.key.utf8(), G_TYPE_STRING, header.value.utf8());
     }
     GST_DEBUG_OBJECT(src.get(), "R%u: Response headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "response-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);

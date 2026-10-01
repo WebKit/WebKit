@@ -35,6 +35,7 @@
 #include <WebCore/ScriptController.h>
 #include <glib/gi18n-lib.h>
 #include <jsc/JSCContextPrivate.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -160,21 +161,20 @@ WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTes
     String linkLabel = hitTestResult.textContent();
 
 #if ENABLE(2022_GLIB_API)
-    GRefPtr<WebKitHitTestResult> webkitHitTestResult = adoptGRef(WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
+    GRefPtr<WebKitHitTestResult> webkitHitTestResult = adoptGRef(WEBKIT_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_HIT_TEST_RESULT,
 #else
-    auto* result = WEBKIT_WEB_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_WEB_HIT_TEST_RESULT,
+    auto* result = WEBKIT_WEB_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_WEB_HIT_TEST_RESULT,
 #endif
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? absoluteLinkURL.utf8().legacyCStringPointer() : nullptr,
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? absoluteImageURL.utf8().legacyCStringPointer() : nullptr,
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? absoluteMediaURL.utf8().legacyCStringPointer() : nullptr,
-        "link-title", !linkTitle.isEmpty() ? linkTitle.utf8().legacyCStringPointer() : nullptr,
-        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8().legacyCStringPointer() : nullptr,
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? absoluteLinkURL.utf8() : UTF8CString { },
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? absoluteImageURL.utf8() : UTF8CString { },
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? absoluteMediaURL.utf8() : UTF8CString { },
+        "link-title", !linkTitle.isEmpty() ? linkTitle.utf8() : UTF8CString { },
 #if ENABLE(2022_GLIB_API)
-        nullptr)));
+        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8() : UTF8CString { })));
 #else
-        "node", kit(hitTestResult.innerNonSharedNode()),
-        nullptr));
+        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8() : UTF8CString { },
+        "node", kit(hitTestResult.innerNonSharedNode())));
 #endif
 
 #if ENABLE(2022_GLIB_API)
