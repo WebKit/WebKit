@@ -1038,14 +1038,14 @@ Awaitable<DragInitiationResult> WebPage::requestAdditionalItemsForDragSession(st
     // is opaque to the web process, which only sees that the current drag has ended, and that a new one is beginning.
     PlatformMouseEvent event(clientPosition, globalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), 0, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven);
     m_page->dragController().dragEnded();
-    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
-    if (!localMainFrame)
+    RefPtr localRootFrame = this->localRootFrame(rootFrameID);
+    if (!localRootFrame)
         co_return { false };
 
-    localMainFrame->eventHandler().dragSourceEndedAt(event, { }, MayExtendDragSession::Yes);
+    localRootFrame->eventHandler().dragSourceEndedAt(event, { }, MayExtendDragSession::Yes);
 
     auto handledOrTransformer = co_await AwaitableFromCompletionHandler<std::expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
-        localMainFrame->eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition, WTF::move(completionHandler));
+        localRootFrame->eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition, WTF::move(completionHandler));
     } };
     if (handledOrTransformer)
         co_return { *handledOrTransformer };

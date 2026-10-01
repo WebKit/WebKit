@@ -2637,6 +2637,61 @@ TEST(DragAndDropTests, DragOutOfCrossOriginIframeTwice)
     EXPECT_WK_STREQ("dragstart, dragend, dragstart, dragend", [dragEventsForDraggingOutOfIframeTwice("https://webkit.org/inner"_s) UTF8String] ?: "");
 }
 
+static RetainPtr<NSArray> hrefsDroppedAfterAddingLinkFromIframeToDragSession(ASCIILiteral innerFrameSource)
+{
+    HTTPServer server({
+        { "/main"_s, { makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'>"
+            "<iframe style='display: block; width: 400px; height: 300px; border: none;' src='"_s, innerFrameSource, "'></iframe>"
+            "<div contenteditable id='editor' style='height: 200px; border: 1px solid black;'></div>"
+            "</body>"_s) } },
+        { "/inner"_s, { "<body style='margin: 0'>"
+            "<a id='first' href='https://first.example/' style='display: block; width: 300px; height: 140px; background: silver;'>First</a>"
+            "<a id='second' href='https://second.example/' style='display: block; width: 300px; height: 140px; background: gray;'>Second</a>"
+            "<script>window.webkit.messageHandlers.testHandler.postMessage('inner frame loaded')</script>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool innerFrameLoaded = false;
+    [webView performAfterReceivingMessage:@"inner frame loaded" action:^{
+        innerFrameLoaded = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    EXPECT_TRUE(Util::runFor(&innerFrameLoaded, 10_s));
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    // (50, 50) is inside "first"; (50, 200) is inside "second"; (50, 400) is inside the editor.
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400) additionalItemRequestLocations:@{
+        @0.5: [NSValue valueWithCGPoint:CGPointMake(50, 200)]
+    }];
+
+    RetainPtr<NSArray> hrefs = [webView objectByEvaluatingJavaScript:@"Array.from(editor.querySelectorAll('a')).map(a => a.href)"];
+    return hrefs;
+}
+
+TEST(DragAndDropTests, AddLinkFromSameSiteIframeToDragSession)
+{
+    RetainPtr<NSArray> hrefs = hrefsDroppedAfterAddingLinkFromIframeToDragSession("https://example.com/inner"_s);
+    EXPECT_EQ(2UL, [hrefs count]);
+    EXPECT_WK_STREQ("https://first.example/", [hrefs objectAtIndex:0]);
+    EXPECT_WK_STREQ("https://second.example/", [hrefs objectAtIndex:1]);
+}
+
+TEST(DragAndDropTests, AddLinkFromCrossOriginIframeToDragSession)
+{
+    RetainPtr<NSArray> hrefs = hrefsDroppedAfterAddingLinkFromIframeToDragSession("https://webkit.org/inner"_s);
+    EXPECT_EQ(2UL, [hrefs count]);
+    EXPECT_WK_STREQ("https://first.example/", [hrefs objectAtIndex:0]);
+    EXPECT_WK_STREQ("https://second.example/", [hrefs objectAtIndex:1]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
