@@ -302,10 +302,13 @@ add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-Wno-null-conversion>")
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fobjc-weak>")
 
 # Per-target ObjC visibility; global -fvisibility=hidden hides _OBJC_CLASS_$_ symbols.
-add_compile_options(
-    "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=hidden>"
-    "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
-)
+# Under MYA_HEAP, RTTI needs the type_infos of base classes exported across images.
+if (NOT ENABLE_MYA_HEAP)
+    add_compile_options(
+        "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=hidden>"
+        "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
+    )
+endif ()
 
 if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
     webkit_add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)

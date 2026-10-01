@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +26,25 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-
-#include <mach/mach.h>
+#include <JavaScriptCore/CorpsePlatform.h>
 #include <memory>
 #include <span>
 #include <stdint.h>
 #include <string_view>
 #include <wtf/DataLog.h>
+#include <wtf/Function.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
+
+#if ENABLE(MYA)
+#include <JavaScriptCore/CorpseAddress.h>
 
 namespace JSC {
 namespace Corpse {
@@ -45,6 +52,7 @@ class Process;
 class Snapshot;
 }
 }
+#endif
 
 namespace JSCToolsTest {
 
@@ -59,6 +67,21 @@ extern const char* suiteFilter;
 extern bool verbose;
 
 void skipSuite(const char* name, const char* why);
+
+bool linuxSkip(const char* name, const char* why);
+
+void testAddress();
+void testByteParser();
+void testExportsTrie();
+void testProcess();
+void testSymbol();
+void testRegion();
+void testMemory();
+void testSnapshot();
+void testThreads();
+void fuzzExportsTrie(uint64_t seed, unsigned iterations);
+void testTypeinfo();
+void testVM();
 
 // Announces a suite, times it, and reports on the way out. Destroyed on every path out
 // of a suite, including the early returns a suite takes when it cannot set itself up.
@@ -119,6 +142,8 @@ Seconds totalSuiteTime();
         } \
     } while (0)
 
+#if ENABLE(MYA) && OS(DARWIN)
+
 // The number of names in this task's Mach port name space. Used to show that a
 // sequence of operations leaves no port behind.
 unsigned machPortNameCount();
@@ -128,6 +153,10 @@ unsigned machPortNameCount();
 // under that same name rather than a new name, so a right that is taken and never
 // given back shows up here and not in machPortNameCount().
 unsigned machPortSendRightCount(mach_port_t);
+
+#endif // ENABLE(MYA) && OS(DARWIN)
+
+#if ENABLE(MYA)
 
 // Attaches to this process and takes a corpse of it. That is what lets a test
 // check what a corpse reports against what this process already knows about
@@ -160,7 +189,11 @@ public:
 
     // pthread keeps a thread name in a fixed buffer, so a longer name arrives cut
     // to this length.
+#if OS(DARWIN)
     static constexpr size_t maximumNameLength = 63;
+#else
+    static constexpr size_t maximumNameLength = 15;
+#endif
 
     ~ParkedThreads();
 
@@ -179,6 +212,13 @@ private:
     Vector<Thread*> m_threads;
 };
 
-} // namespace JSCToolsTest
+// create() an object, then analyze() it in and out of process.
+void analyzeInAndOutOfProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+// The main function for a copy of this process launched as `--target <offset>`: runs the
+// create function at `offset` into this executable and holds its object.
+int runCorpseTarget(const char* offsetText);
+
+#endif // ENABLE(MYA)
+
+} // namespace JSCToolsTest
