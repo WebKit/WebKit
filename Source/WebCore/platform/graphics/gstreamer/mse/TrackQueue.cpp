@@ -37,6 +37,15 @@
 GST_DEBUG_CATEGORY_STATIC(webkit_mse_track_queue_debug);
 #define GST_CAT_DEFAULT webkit_mse_track_queue_debug
 
+#define TQ_LOG_PREFIX "TrackQueue for '%" PRIu64 "': "
+#if GST_CHECK_VERSION(1, 22, 0)
+#define TQ_DEBUG(...) GST_DEBUG_ID(m_id.data(), __VA_ARGS__)
+#define TQ_TRACE(...) GST_TRACE_ID(m_id.data(), __VA_ARGS__)
+#else
+#define TQ_DEBUG(format, ...) GST_DEBUG(TQ_LOG_PREFIX format, m_trackId, __VA_ARGS__)
+#define TQ_TRACE(format, ...) GST_TRACE(TQ_LOG_PREFIX format, m_trackId, __VA_ARGS__)
+#endif
+
 namespace WebCore {
 
 TrackQueue::TrackQueue(TrackID trackId)
@@ -46,6 +55,10 @@ TrackQueue::TrackQueue(TrackID trackId)
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_mse_track_queue_debug, "webkitmsetrackqueue", 0, "WebKit MSE TrackQueue");
     });
+#if GST_CHECK_VERSION(1, 22, 0)
+    static Atomic<uint64_t> queueId;
+    m_id = makeString("track-queue-"_s, m_trackId, '-', queueId.exchangeAdd(1)).ascii();
+#endif
 }
 
 void TrackQueue::enqueueObject(GRefPtr<GstMiniObject>&& object)
@@ -54,12 +67,13 @@ void TrackQueue::enqueueObject(GRefPtr<GstMiniObject>&& object)
     ASSERT(GST_IS_SAMPLE(object.get()) || GST_IS_EVENT(object.get()));
 
     if (GST_IS_SAMPLE(object.get())) {
-        GST_TRACE("TrackQueue for '%" PRIu64 "': Putting object sample in the queue: %" GST_PTR_FORMAT " Buffer: %" GST_PTR_FORMAT ". notEmptyCallback currently %s.",
-            m_trackId, object.get(), gst_sample_get_buffer(GST_SAMPLE(object.get())),
+        auto sample = GST_SAMPLE_CAST(object.get());
+        TQ_TRACE("Putting sample in the queue: %" GST_PTR_FORMAT " Buffer: %" GST_PTR_FORMAT " Caps: %" GST_PTR_FORMAT ". notEmptyCallback currently %s.",
+            object.get(), gst_sample_get_buffer(sample), gst_sample_get_caps(sample),
             m_notEmptyCallback ? "set, will be called" : "unset");
     } else {
-        GST_DEBUG("TrackQueue for '%" PRIu64 "': Putting object event in the queue: %" GST_PTR_FORMAT ". notEmptyCallback currently %s.",
-            m_trackId, object.get(),
+        TQ_DEBUG("Putting event in the queue: %" GST_PTR_FORMAT ". notEmptyCallback currently %s.",
+            object.get(),
             m_notEmptyCallback ? "set, will be called" : "unset");
     }
     if (!m_notEmptyCallback)
@@ -78,7 +92,7 @@ void TrackQueue::clear()
 {
     ASSERT(isMainThread());
     m_queue.clear();
-    GST_DEBUG("TrackQueue for '%" PRIu64 "': Emptied.", m_trackId);
+    TQ_DEBUG("Emptied.");
     // Notify main thread of low level reached if it proceeds.
     checkLowLevel();
 }
@@ -89,15 +103,14 @@ void TrackQueue::flush()
     // If there was a callback in the streaming thread waiting for a sample to be added, cancel it.
     if (m_notEmptyCallback) {
         m_notEmptyCallback = nullptr;
-        GST_DEBUG("TrackQueue for '%" PRIu64 "': notEmptyCallback unset.", m_trackId);
+        TQ_DEBUG("notEmptyCallback unset.");
     }
 }
 
 void TrackQueue::notifyWhenLowLevel(LowLevelHandler&& lowLevelCallback)
 {
     ASSERT(isMainThread());
-    GST_TRACE("TrackQueue for '%" PRIu64 "': Setting lowLevelCallback%s.", m_trackId,
-        m_lowLevelCallback ? " (previous callback will be discarded)" : "");
+    TQ_TRACE("Setting lowLevelCallback%s.", m_lowLevelCallback ? " (previous callback will be discarded)" : "");
     m_lowLevelCallback = WTF::move(lowLevelCallback);
     checkLowLevel();
 }
@@ -107,11 +120,11 @@ GRefPtr<GstMiniObject> TrackQueue::pop()
     ASSERT(!isEmpty());
     GRefPtr<GstMiniObject> object = m_queue.takeFirst();
     if (GST_IS_SAMPLE(object.get())) {
-        GST_TRACE("TrackQueue for '%" PRIu64 "': Popped object sample from the queue: %" GST_PTR_FORMAT " Buffer: %" GST_PTR_FORMAT,
-            m_trackId, object.get(), gst_sample_get_buffer(GST_SAMPLE(object.get())));
+        auto sample = GST_SAMPLE_CAST(object.get());
+        TQ_TRACE("Popped sample from the queue: %" GST_PTR_FORMAT " Buffer: %" GST_PTR_FORMAT " Caps: %" GST_PTR_FORMAT,
+            object.get(), gst_sample_get_buffer(sample), gst_sample_get_caps(sample));
     } else {
-        GST_DEBUG("TrackQueue for '%" PRIu64 "': Popped object event from the queue: %" GST_PTR_FORMAT,
-            m_trackId, object.get());
+        TQ_DEBUG("Popped event from the queue: %" GST_PTR_FORMAT, object.get());
     }
     checkLowLevel();
     return object;
@@ -122,7 +135,7 @@ void TrackQueue::notifyWhenNotEmpty(NotEmptyHandler&& notEmptyCallback)
     ASSERT(!isMainThread());
     ASSERT(!m_notEmptyCallback);
     m_notEmptyCallback = WTF::move(notEmptyCallback);
-    GST_TRACE("TrackQueue for '%" PRIu64 "': notEmptyCallback set.", m_trackId);
+    TQ_TRACE("notEmptyCallback set.");
 }
 
 void TrackQueue::resetNotEmptyHandler()
@@ -131,7 +144,7 @@ void TrackQueue::resetNotEmptyHandler()
     if (!m_notEmptyCallback)
         return;
     m_notEmptyCallback = nullptr;
-    GST_TRACE("TrackQueue for '%" PRIu64 "': notEmptyCallback reset.", m_trackId);
+    TQ_TRACE("notEmptyCallback reset.");
 }
 
 void TrackQueue::checkLowLevel()
@@ -141,7 +154,7 @@ void TrackQueue::checkLowLevel()
 
     LowLevelHandler lowLevelCallback;
     std::swap(lowLevelCallback, m_lowLevelCallback);
-    GST_TRACE("TrackQueue for '%" PRIu64 "': lowLevelCallback called.", m_trackId);
+    TQ_TRACE("lowLevelCallback called.");
     lowLevelCallback();
 }
 
@@ -167,6 +180,9 @@ GstClockTime TrackQueue::durationEnqueued() const
 }
 
 #undef GST_CAT_DEFAULT
+#undef TQ_DEBUG
+#undef TQ_TRACE
+#undef TQ_LOG_PREFIX
 
 } // namespace WebCore
 

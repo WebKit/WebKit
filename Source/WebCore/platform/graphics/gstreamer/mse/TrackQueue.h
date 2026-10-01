@@ -83,6 +83,10 @@ private:
     Deque<GRefPtr<GstMiniObject>> m_queue;
     LowLevelHandler m_lowLevelCallback;
     NotEmptyHandler m_notEmptyCallback;
+
+#if GST_CHECK_VERSION(1, 22, 0)
+    ASCIICString m_id;
+#endif
 };
 
 }
