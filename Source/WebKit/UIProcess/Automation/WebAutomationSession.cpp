@@ -993,6 +993,16 @@ void WebAutomationSession::didExitFullScreenForPage(const WebPageProxy&)
 
 void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const String& url, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    // Share the load/wait implementation with BiDi so both paths stay in step; classic automation
+    // just discards the navigation id that BiDi reports.
+    navigateBrowsingContextForBidi(handle, url, WTF::move(optionalPageLoadStrategy), WTF::move(optionalPageLoadTimeout), [callback = WTF::move(callback)](CommandResultOf<String, String>&& result) mutable {
+        if (!result)
+            callback(makeUnexpected(result.error()));
+        else
+            callback({ });
+    });
+#else
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
@@ -1001,6 +1011,7 @@ void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Au
 
     page->loadRequest(URL { url });
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+#endif
 }
 
 void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1067,6 +1078,14 @@ void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Pro
 
 void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    reloadBrowsingContextForBidi(handle, WTF::move(optionalPageLoadStrategy), WTF::move(optionalPageLoadTimeout), [callback = WTF::move(callback)](CommandResultOf<String, String>&& result) mutable {
+        if (!result)
+            callback(makeUnexpected(result.error()));
+        else
+            callback({ });
+    });
+#else
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
@@ -1075,6 +1094,7 @@ void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Auto
 
     page->reload({ });
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+#endif
 }
 
 void WebAutomationSession::respondToPendingNavigationCallbacksWithSuccess(Vector<Inspector::CommandCallback<void>>&& callbacks)
@@ -1122,6 +1142,44 @@ static String navigationIDToProtocolString(std::optional<WebCore::NavigationIden
     if (!uuid)
         return nullString();
     return uuid->toString();
+}
+
+void WebAutomationSession::navigateBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const String& url, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallbackOf<String, String>&& callback)
+{
+    auto page = webPageProxyForHandle(handle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
+    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+
+    RefPtr navigation = page->loadRequest(URL { url });
+    String navigationID = navigation ? navigationIDToProtocolString(navigation->navigationID()) : nullString();
+    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, [requestedURL = url, navigationID = WTF::move(navigationID), callback = WTF::move(callback)](CommandResult<void>&& result) mutable {
+        if (!result) {
+            callback(makeUnexpected(result.error()));
+            return;
+        }
+        callback({ { requestedURL, navigationID } });
+    });
+}
+
+void WebAutomationSession::reloadBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallbackOf<String, String>&& callback)
+{
+    auto page = webPageProxyForHandle(handle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
+    auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
+
+    RefPtr navigation = page->reload({ });
+    String navigationID = navigation ? navigationIDToProtocolString(navigation->navigationID()) : nullString();
+    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, [page = Ref { *page }, navigationID = WTF::move(navigationID), callback = WTF::move(callback)](CommandResult<void>&& result) mutable {
+        if (!result) {
+            callback(makeUnexpected(result.error()));
+            return;
+        }
+        callback({ { page->currentURL(), navigationID } });
+    });
 }
 #endif
 
