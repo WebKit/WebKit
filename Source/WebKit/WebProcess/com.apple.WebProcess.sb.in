@@ -1213,6 +1213,10 @@
         SYS_guarded_open_dprotected_np ;; <rdar://problem/65897905>
         SYS_mremap_encrypted))
 
+(define (syscall-unix-allowed-with-telemetry)
+    (syscall-number
+        SYS_fgetattrlist))
+
 (define (syscalls-rarely-used)
     (syscall-number
         SYS_getegid
@@ -1225,7 +1229,6 @@
 #if !PLATFORM(MAC)
         SYS_rmdir
         SYS_abort_with_payload
-        SYS_fgetattrlist
         SYS_fstat64_extended
         SYS_kqueue
         SYS_mkdirat
@@ -1310,6 +1313,9 @@
 #endif
     (syscall-unix-downlevels))
 #endif
+
+(allow syscall-unix (with report) (with telemetry)
+    (syscall-unix-allowed-with-telemetry))
 
 (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
 
