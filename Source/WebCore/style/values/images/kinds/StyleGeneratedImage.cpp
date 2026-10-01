@@ -139,6 +139,11 @@ void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, f
     intrinsicRatio = size;
 }
 
+NaturalDimensions GeneratedImage::naturalDimensions(const RenderElement&, const ImageSizingContext&) const
+{
+    return NaturalDimensions::none();
+}
+
 // MARK: Client support.
 
 void GeneratedImage::addClient(RenderElement& renderer)

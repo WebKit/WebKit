@@ -45,6 +45,7 @@ class BorderShape;
 class GraphicsContext;
 class Image;
 class ImageBuffer;
+class ImageSizingContext;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 class TransformationMatrix;
@@ -220,7 +221,7 @@ public:
     void clearFirstLetterRemainingText();
 
     enum class ScaleByUsedZoom : bool { No, Yes };
-    LayoutSize calculateImageIntrinsicDimensions(Style::Image*, const LayoutSize& scaledPositioningAreaSize, ScaleByUsedZoom) const;
+    LayoutSize calculateImageIntrinsicDimensions(const Style::Image&, const ImageSizingContext&, ScaleByUsedZoom) const;
 
     RenderBlock* containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const;
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const;

@@ -3324,12 +3324,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/animations/StyleSingleAnimationTimeline.h
     style/values/animations/StyleSingleAnimationTrigger.h
 
+    style/values/backgrounds/StyleBackgroundImageSizing.h
     style/values/backgrounds/StyleBackgroundLayer.h
     style/values/backgrounds/StyleBackgroundLayers.h
     style/values/backgrounds/StyleBackgroundSize.h
     style/values/backgrounds/StyleBorderImage.h
     style/values/backgrounds/StyleBorderImageOutset.h
     style/values/backgrounds/StyleBorderImageRepeat.h
+    style/values/backgrounds/StyleBorderImageSizing.h
     style/values/backgrounds/StyleBorderImageSlice.h
     style/values/backgrounds/StyleBorderImageSource.h
     style/values/backgrounds/StyleBorderImageWidth.h
@@ -3459,6 +3461,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/lists/StyleCounterIncrement.h
     style/values/lists/StyleCounterReset.h
     style/values/lists/StyleCounterSet.h
+    style/values/lists/StyleListStyleImageSizing.h
     style/values/lists/StyleListStyleType.h
 
     style/values/masking/StyleClip.h
@@ -3466,9 +3469,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/masking/StyleMaskBorder.h
     style/values/masking/StyleMaskBorderOutset.h
     style/values/masking/StyleMaskBorderRepeat.h
+    style/values/masking/StyleMaskBorderSizing.h
     style/values/masking/StyleMaskBorderSlice.h
     style/values/masking/StyleMaskBorderSource.h
     style/values/masking/StyleMaskBorderWidth.h
+    style/values/masking/StyleMaskImageSizing.h
     style/values/masking/StyleMaskLayer.h
     style/values/masking/StyleMaskLayers.h
     style/values/masking/StyleMaskMode.h
@@ -3573,6 +3578,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/shapes/StyleShapeImageThreshold.h
     style/values/shapes/StyleShapeMargin.h
     style/values/shapes/StyleShapeOutside.h
+    style/values/shapes/StyleShapeOutsideSizing.h
     style/values/shapes/StyleWindRuleComputation.h
     style/values/shapes/StyleXywhFunction.h
 

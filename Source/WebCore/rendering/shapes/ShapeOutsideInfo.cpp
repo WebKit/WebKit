@@ -43,6 +43,7 @@
 #include "RenderView.h"
 #include "StyleImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleShapeOutsideSizing.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -270,7 +271,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             ASSERT(shapeImage.isValid());
 
             Ref styleImage = shapeImage.image.value;
-            auto logicalImageSize = renderer.calculateImageIntrinsicDimensions(styleImage.ptr(), boxSize, RenderImage::ScaleByUsedZoom::Yes);
+            auto logicalImageSize = renderer.calculateImageIntrinsicDimensions(styleImage.get(), Style::ShapeOutsideSizing { boxSize }, RenderImage::ScaleByUsedZoom::Yes);
             styleImage->setContainerSizeForRenderer(renderer, logicalImageSize);
 
             auto logicalMarginRect = shapeImageMarginRect(renderer, boxSize);

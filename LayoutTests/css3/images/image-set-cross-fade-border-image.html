@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<title>image-set() selecting a cross-fade() draws a border-image the same as the cross-fade itself</title>
+<link rel="match" href="image-set-cross-fade-border-image-expected.html">
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    border-width: 20px;
+    border-style: solid;
+}
+</style>
+<body>
+<div style="border-image: image-set(-webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%) 1x) 20 20 20 20 repeat repeat;"></div>
+</body>
+</html>

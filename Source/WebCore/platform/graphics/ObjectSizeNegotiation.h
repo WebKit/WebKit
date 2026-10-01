@@ -38,6 +38,10 @@ namespace WebCore::ObjectSizeNegotiation {
 // https://drafts.csswg.org/css-images-3/#default-object-size
 inline constexpr FloatSize defaultObjectSize { 300, 150 };
 
+// https://drafts.csswg.org/css-images-3/#contain-constraint
+// https://drafts.csswg.org/css-images-3/#cover-constraint
+enum class SizingConstraint : uint8_t { None, Contain, Cover };
+
 // https://drafts.csswg.org/css-images-3/#specified-size
 struct SpecifiedSize {
     std::optional<float> definiteWidth;

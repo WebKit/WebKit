@@ -47,11 +47,17 @@
 #include "RenderObjectDocument.h"
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
+#include "StyleBorderImageSizing.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleMaskBorderSizing.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
 namespace WebCore {
+
+template<typename> struct NinePieceImageSizingKind;
+template<> struct NinePieceImageSizingKind<Style::BorderImage> { using type = Style::BorderImageSizing; };
+template<> struct NinePieceImageSizingKind<Style::MaskBorder> { using type = Style::MaskBorderSizing; };
 
 static bool NODELETE borderStyleFillsBorderArea(BorderStyle style)
 {
@@ -455,7 +461,9 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style:
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage, deviceScaleFactor));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
-    auto source = modelObject->calculateImageIntrinsicDimensions(image.get(), destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);
+    using Sizing = typename NinePieceImageSizingKind<T>::type;
+
+    auto source = modelObject->calculateImageIntrinsicDimensions(*image, Sizing { destination.size() }, RenderBoxModelObject::ScaleByUsedZoom::No);
     image->setContainerSizeForRenderer(m_renderer, source);
 
     NinePieceImagePainter::paint(ninePieceImage, m_paintInfo.context(), m_renderer.ptr(), style, destination, source, deviceScaleFactor, options);

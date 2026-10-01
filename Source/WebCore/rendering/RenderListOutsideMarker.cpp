@@ -53,6 +53,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleContent.h"
+#include "StyleListStyleImageSizing.h"
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
@@ -276,11 +277,10 @@ void RenderListOutsideMarker::updateContent()
         return;
     }
 
-    if (isImage()) {
-        // FIXME: This is a somewhat arbitrary width.
+    if (RefPtr image = listMarkerImage(style())) {
+        // FIXME: The spec says this should be 1em - https://drafts.csswg.org/css-lists-3/#valdef-list-style-image-image
         LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
-        LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
-        setContentContainerImageSize(calculateImageIntrinsicDimensions(listMarkerImage(style()).get(), defaultBulletSize, ScaleByUsedZoom::Yes));
+        setContentContainerImageSize(calculateImageIntrinsicDimensions(*image, Style::ListStyleImageSizing { bulletWidth }, ScaleByUsedZoom::Yes));
         return;
     }
 

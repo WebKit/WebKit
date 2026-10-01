@@ -107,6 +107,13 @@ FloatSize CanvasImage::fixedSize(const RenderElement& renderer) const
     return { };
 }
 
+NaturalDimensions CanvasImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext&) const
+{
+    if (auto* element = this->element(protect(renderer.document())))
+        return NaturalDimensions::fixed(FloatSize { element->size() });
+    return NaturalDimensions::zero();
+}
+
 void CanvasImage::didAddClient(RenderElement& renderer)
 {
     if (RefPtr element = this->element(protect(renderer.document())))

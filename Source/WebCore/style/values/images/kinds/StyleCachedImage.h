@@ -72,6 +72,7 @@ public:
     bool imageHasRelativeHeight() const final;
     bool imageHasNaturalAspectRatio() const final;
     void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
+    NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     void setContainerSizeForRenderer(const RenderElement&, const FloatSize&) final;
     ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const final;
     void addClient(RenderElement&) final;

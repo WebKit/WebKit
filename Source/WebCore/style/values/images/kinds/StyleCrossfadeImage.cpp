@@ -35,7 +35,9 @@
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
 #include "DeprecatedCSSOMValue.h"
+#include "Document.h"
 #include "RenderElement.h"
+#include "RenderObjectDocument.h"
 #include "SVGImage.h"
 #include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
@@ -236,6 +238,13 @@ FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
     float inverseProgress = 1 - progress;
 
     return fromImageSize * inverseProgress + toImageSize * progress;
+}
+
+NaturalDimensions CrossfadeImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext&) const
+{
+    // FIXME: Add support for negotiating each input in the given context as per https://drafts.csswg.org/css-images-4/#cross-fade-sizing.
+
+    return NaturalDimensions::fixed(floorSizeToDevicePixels(LayoutSize(fixedSize(renderer)), protect(renderer.document())->deviceScaleFactor()));
 }
 
 void CrossfadeImage::imageChanged(WebCore::CachedImage*, const IntRect*)

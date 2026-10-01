@@ -44,6 +44,7 @@ class CSSStyleDeclaration;
 class CSSValue;
 class CSSValuePool;
 class Document;
+class ImageSizingContext;
 class RenderElement;
 class RenderObject;
 struct ResourceLoaderOptions;
@@ -87,6 +88,7 @@ public:
     virtual float imageScaleFactor() const { return 1; }
     virtual bool imageHasNaturalDimensions() const { return true; }
     virtual bool imageHasNaturalAspectRatio() const { return true; }
+    virtual NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const = 0;
 
     // Platform Image.
     virtual RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine = false) const = 0;

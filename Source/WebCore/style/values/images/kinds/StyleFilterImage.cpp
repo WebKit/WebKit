@@ -181,6 +181,13 @@ FloatSize FilterImage::fixedSize(const RenderElement& renderer) const
     return { };
 }
 
+NaturalDimensions FilterImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext& context) const
+{
+    if (RefPtr image = m_image)
+        return image->naturalDimensions(renderer, context);
+    return NaturalDimensions::zero();
+}
+
 void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)
 {
     if (!m_inputImageIsReady)

@@ -35,6 +35,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "InlineIteratorInlineBox.h"
+#include "ObjectSizeNegotiation.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -46,7 +47,9 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleBackgroundImageSizing.h"
 #include "StyleBoxShadow.h"
+#include "StyleMaskImageSizing.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextBoxPainter.h"
 
@@ -56,6 +59,10 @@
 #endif
 
 namespace WebCore {
+
+template<typename> struct FillLayerSizingKind;
+template<> struct FillLayerSizingKind<Style::BackgroundLayer> { using type = Style::BackgroundImageSizing; };
+template<> struct FillLayerSizingKind<Style::MaskLayer> { using type = Style::MaskImageSizing; };
 
 BackgroundImageGeometry::BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tileSizeWithoutPixelSnapping, const LayoutSize& tileSize, const LayoutSize& phase, const LayoutSize& spaceSize, bool fixedAttachment)
     : destinationRect(destinationRect)
@@ -828,49 +835,55 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
     RefPtr image = fillLayer.image().tryStyleImage();
     auto devicePixelSize = LayoutUnit { 1.0 / protect(renderer)->document().deviceScaleFactor() };
 
+    using Sizing = typename FillLayerSizingKind<Layer>::type;
+
+    Sizing layerSizing {
+        positioningAreaSize,
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        ObjectSizeNegotiation::SizingConstraint::None
+    };
+
     LayoutSize imageIntrinsicSize;
     if (image) {
-        imageIntrinsicSize = renderer.calculateImageIntrinsicDimensions(image.get(), positioningAreaSize, RenderBoxModelObject::ScaleByUsedZoom::Yes);
+        imageIntrinsicSize = renderer.calculateImageIntrinsicDimensions(*image, layerSizing, RenderBoxModelObject::ScaleByUsedZoom::Yes);
         imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
     } else
         imageIntrinsicSize = positioningAreaSize;
 
     auto handleKeyword = [&](auto keyword) -> LayoutSize {
-        if (image && !image->imageHasNaturalAspectRatio())
-            return positioningAreaSize;
+        auto resolveSize = [&](FloatSize aspectRatio) -> LayoutSize {
+            Sizing sizing {
+                FloatSize { positioningAreaSize },
+                ObjectSizeNegotiation::SpecifiedSize::none(),
+                keyword.value == CSSValueContain ? ObjectSizeNegotiation::SizingConstraint::Contain : ObjectSizeNegotiation::SizingConstraint::Cover
+            };
 
-        // Scale computation needs higher precision than what LayoutUnit can offer.
-        FloatSize localImageIntrinsicSize = imageIntrinsicSize;
-        FloatSize localPositioningAreaSize = positioningAreaSize;
+            auto naturalDimensions = NaturalDimensions {
+                .width = std::nullopt,
+                .height = std::nullopt,
+                .aspectRatio = aspectRatio
+            };
 
-        if (image && localImageIntrinsicSize.isEmpty()) {
-            float intrinsicWidth = 0;
-            float intrinsicHeight = 0;
-            FloatSize intrinsicRatio;
-            image->computeIntrinsicDimensions(&renderer, intrinsicWidth, intrinsicHeight, intrinsicRatio);
-            if (!intrinsicRatio.isEmpty()) {
-                float heightAtFullWidth = localPositioningAreaSize.width() * intrinsicRatio.height() / intrinsicRatio.width();
-                bool fitToWidth = keyword.value == CSSValueContain
-                    ? heightAtFullWidth <= localPositioningAreaSize.height()
-                    : heightAtFullWidth >= localPositioningAreaSize.height();
-                auto concreteSize = fitToWidth
-                    ? FloatSize(localPositioningAreaSize.width(), heightAtFullWidth)
-                    : FloatSize(localPositioningAreaSize.height() * intrinsicRatio.width() / intrinsicRatio.height(), localPositioningAreaSize.height());
-                LayoutSize tileSize(concreteSize);
-                if (tileSize.isEmpty())
-                    return { };
-                return tileSize.expandedTo({ devicePixelSize, devicePixelSize });
-            }
+            auto tileSize = LayoutSize { sizing.resolve(naturalDimensions).size() };
+            if (tileSize.isEmpty())
+                return { };
+
+            return tileSize.expandedTo({ devicePixelSize, devicePixelSize });
+        };
+
+        if (image) {
+            auto naturalDimensionsAspectRatio = image->naturalDimensions(renderer, layerSizing).aspectRatio;
+            if (!naturalDimensionsAspectRatio)
+                return positioningAreaSize;
+
+            if (imageIntrinsicSize.isEmpty())
+                return resolveSize(*naturalDimensionsAspectRatio);
+        } else {
+            if (imageIntrinsicSize.isEmpty())
+                return { };
         }
 
-        float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
-        float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
-        float scaleFactor = keyword.value == CSSValueContain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
-
-        if (localImageIntrinsicSize.isEmpty())
-            return { };
-
-        return LayoutSize(localImageIntrinsicSize.scaled(scaleFactor).expandedTo({ devicePixelSize, devicePixelSize }));
+        return resolveSize(imageIntrinsicSize);
     };
 
     return WTF::switchOn(fillLayer.size(),
@@ -908,7 +921,7 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
 
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
-            bool hasNaturalAspectRatio = image && image->imageHasNaturalAspectRatio();
+            bool hasNaturalAspectRatio = image && image->naturalDimensions(renderer, layerSizing).aspectRatio.has_value();
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
                 if (hasNaturalAspectRatio && imageIntrinsicSize.height())
                     tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());

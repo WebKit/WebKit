@@ -144,6 +144,13 @@ void MultiImage::computeIntrinsicDimensions(const RenderElement* element, float&
     protect(m_selectedImage)->computeIntrinsicDimensions(element, intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
+NaturalDimensions MultiImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext& context) const
+{
+    if (!m_selectedImage)
+        return NaturalDimensions::none();
+    return protect(m_selectedImage)->naturalDimensions(renderer, context);
+}
+
 ImageDrawingExtras MultiImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
 {
     if (!m_selectedImage)

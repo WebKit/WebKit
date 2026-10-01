@@ -301,6 +301,18 @@ void CachedImage::computeIntrinsicDimensions(const RenderElement* renderer, floa
     protect(m_cachedImage)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
+NaturalDimensions CachedImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext&) const
+{
+    if (isRenderSVGResource(&renderer))
+        return NaturalDimensions::none();
+
+    RefPtr cachedImage = m_cachedImage;
+    if (!cachedImage)
+        return NaturalDimensions::none();
+
+    return cachedImage->naturalDimensions(cachedImage->allowsOrientationOverride() ? renderer.imageOrientation() : WebCore::ImageOrientation { WebCore::ImageOrientation::Orientation::FromImage });
+}
+
 void CachedImage::setContainerSizeForRenderer(const RenderElement&, const FloatSize& containerSize)
 {
     // Only read back by imageSize() for an SVG paint server.
