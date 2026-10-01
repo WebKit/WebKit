@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Masking: mask-image with multiple layers on an inline box that spans multiple lines</title>
+<link rel="help" href="https://drafts.fxtf.org/css-masking/#the-mask-image">
+<link rel="match" href="mask-image-inline-split-multiple-layers-ref.html">
+<meta name="flags" content="ahem">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+div {
+    width: 100px;
+}
+.mask-image {
+    font: 100px/1 Ahem;
+    color: green;
+    mask-image: linear-gradient(to right, black 50%, transparent 50%), linear-gradient(transparent, transparent);
+}
+</style>
+<p>There should be a green square below.</p>
+<div><span class="mask-image">A A</span></div>
