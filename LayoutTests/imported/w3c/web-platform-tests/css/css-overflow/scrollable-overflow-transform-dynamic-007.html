@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: Scrollable Overflow Transform Dynamic Composited Element</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#scrollable" />
+<meta name="assert" content="Checks that changes on the transform of an element that may be composited contribute to the scrollable overflow.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  .container {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+  }
+
+  .element {
+    width: 50px;
+    height: 50px;
+    will-change: transform;
+    transform: translateX(200px);
+  }
+
+  .layer-child {
+    width: 10px;
+    height: 10px;
+    transform: translateZ(0);
+  }
+
+  .positioned {
+    position: relative;
+  }
+
+  .positioned .element {
+    position: absolute;
+  }
+
+  .transitioned {
+    transition: transform 50ms;
+  }
+</style>
+
+<div id="container1" class="container">
+  <div id="element1" class="element"></div>
+</div>
+
+<div id="container2" class="container">
+  <div id="element2" class="element" style="will-change: auto"><div class="layer-child"></div></div>
+</div>
+
+<div id="container3" class="container">
+  <div id="element3" class="element"></div>
+</div>
+
+<div id="container4" class="container">
+  <div id="element4" class="element" style="transform: translateX(0)"></div>
+</div>
+
+<div id="container5" class="container positioned">
+  <div id="element5" class="element"></div>
+</div>
+
+<div id="container6" class="container">
+  <div id="element6" class="element transitioned"></div>
+</div>
+
+<script>
+  function renderingUpdate() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+
+  function scrollLeftAfterScrollingTo(container, value) {
+    container.scrollLeft = value;
+    return container.scrollLeft;
+  }
+
+  promise_test(async () => {
+    await renderingUpdate();
+    assert_equals(container1.scrollWidth, 250);
+    element1.style.transform = "translateX(0)";
+    assert_equals(container1.scrollWidth, 100);
+    assert_equals(scrollLeftAfterScrollingTo(container1, 150), 0);
+  }, "Check scrollWidth after transform change on an element with will-change: transform");
+
+  promise_test(async () => {
+    await renderingUpdate();
+    assert_equals(container2.scrollWidth, 250);
+    element2.style.transform = "translateX(0)";
+    assert_equals(container2.scrollWidth, 100);
+    assert_equals(scrollLeftAfterScrollingTo(container2, 150), 0);
+  }, "Check scrollWidth after transform change on an element with a 3D-transformed child");
+
+  promise_test(async () => {
+    await renderingUpdate();
+    assert_equals(container3.scrollWidth, 250);
+    element3.style.transform = "translateX(0)";
+    element3.style.backgroundColor = "green";
+    assert_equals(container3.scrollWidth, 100);
+    assert_equals(scrollLeftAfterScrollingTo(container3, 150), 0);
+  }, "Check scrollWidth after transform and background-color change on an element with will-change: transform");
+
+  promise_test(async () => {
+    await renderingUpdate();
+    assert_equals(container4.scrollWidth, 100);
+    element4.style.transform = "translateX(200px)";
+    assert_equals(container4.scrollWidth, 250);
+    assert_equals(scrollLeftAfterScrollingTo(container4, 200), 150);
+  }, "Check scrollWidth after transform change that grows the overflow of an element with will-change: transform");
+
+  promise_test(async () => {
+    await renderingUpdate();
+    assert_equals(container5.scrollWidth, 250);
+    element5.style.transform = "translateX(0)";
+    assert_equals(container5.scrollWidth, 100);
+    assert_equals(scrollLeftAfterScrollingTo(container5, 150), 0);
+  }, "Check scrollWidth after transform change on an absolutely positioned element with will-change: transform");
+
+  promise_test(async () => {
+    await renderingUpdate();
+    assert_equals(container6.scrollWidth, 250);
+    const transitionEnd = new Promise(resolve => element6.addEventListener("transitionend", resolve, { once: true }));
+    element6.style.transform = "translateX(0)";
+    await transitionEnd;
+    await renderingUpdate();
+    assert_equals(container6.scrollWidth, 100);
+    assert_equals(scrollLeftAfterScrollingTo(container6, 150), 0);
+  }, "Check scrollWidth after a transform transition on an element with will-change: transform");
+</script>
