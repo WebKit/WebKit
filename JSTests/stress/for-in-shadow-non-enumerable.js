@@ -8,7 +8,11 @@ const testCases = [
   {
     name: "Error",
     createObject: () => new Error(),
-    dontEnumKeys: ["line", "column", "sourceURL", "stack"],
+    // When Error.prototype.stack is an accessor, "stack" is not an own property
+    // of fresh Error instances and must be excluded from this list.
+    dontEnumKeys: Object.getOwnPropertyDescriptor(Error.prototype, "stack")
+        ? ["line", "column", "sourceURL"]
+        : ["line", "column", "sourceURL", "stack"],
   },
   {
     name: "Array (empty)",

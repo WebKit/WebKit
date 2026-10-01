@@ -17,7 +17,13 @@ testSetResult(
     false,
 );
 
-for (const key of ["line", "column", "sourceURL", "stack"])
+// "stack" is excluded when Error.prototype.stack is an accessor: the setter
+// throws TypeError on a primitive |this|, which is incompatible with this
+// test's primitive-receiver coverage.
+const errorOwnDataKeys = Object.getOwnPropertyDescriptor(Error.prototype, "stack")
+    ? ["line", "column", "sourceURL"]
+    : ["line", "column", "sourceURL", "stack"];
+for (const key of errorOwnDataKeys)
     testSetResult(() => new Error, key, true);
 
 const mappedArguments = () => (function(a, b) { return arguments; })(1, 2);

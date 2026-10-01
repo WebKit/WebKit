@@ -340,7 +340,11 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
         if (!m_sourceURL.isEmpty())
             putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTF::move(m_sourceURL)), attributes);
 
-        if (!m_stackPropertyAlreadyMaterialized)
+        // When useErrorPrototypeStackAccessor is on, "stack" lives as an accessor on
+        // Error.prototype; reads of e.stack go through that accessor (which calls
+        // stackString() below). Don't install an own data property here, and keep
+        // m_stackString alive so the accessor can return it.
+        if (!m_stackPropertyAlreadyMaterialized && !Options::useErrorPrototypeStackAccessor())
             putDirect(vm, vm.propertyNames->stack, jsString(vm, WTF::move(m_stackString)), attributes);
     }
 
@@ -353,9 +357,17 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm, PropertyName propertyNa
     if (propertyName == vm.propertyNames->line
         || propertyName == vm.propertyNames->column
         || propertyName == vm.propertyNames->sourceURL
-        || propertyName == vm.propertyNames->stack)
+        || (propertyName == vm.propertyNames->stack && !Options::useErrorPrototypeStackAccessor()))
         return materializeErrorInfoIfNeeded(vm);
     return false;
+}
+
+JSString* ErrorInstance::stackString(VM& vm)
+{
+    materializeErrorInfoIfNeeded(vm);
+    if (m_stackString.isNull() || m_stackString.isEmpty())
+        return nullptr;
+    return jsString(vm, m_stackString);
 }
 
 bool ErrorInstance::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

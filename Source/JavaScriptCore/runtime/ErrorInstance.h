@@ -113,6 +113,8 @@ public:
     // still materialized lazily, exactly as they are for a captured stack trace.
     JS_EXPORT_PRIVATE void setErrorInfoForEmbedderError(LineColumn, String&& sourceURL, String&& stackString);
 
+    JSString* stackString(VM&);
+
     void setStackPropertyAlreadyMaterialized()
     {
         if (!m_errorInfoMaterialized)
