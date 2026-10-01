@@ -1,0 +1,7 @@
+Description
+
+This test verifies that the implementations of the WebAuthN API match with its WebIDL definition.
+
+
+FAIL Setup for WebAuthN API IDL tests. promise_test: Unhandled rejection with value: object "NotAllowedError: This request has been cancelled by the user."
+

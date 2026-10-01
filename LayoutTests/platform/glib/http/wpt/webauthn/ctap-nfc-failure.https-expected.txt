@@ -1,0 +1,4 @@
+
+FAIL CTAP NFC with empty apdu response in a mock nfc authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP NFC with wrong data error in a mock nfc authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+

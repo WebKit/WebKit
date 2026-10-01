@@ -623,6 +623,14 @@ window.test_driver_internal.set_permission = async function(permission_params)
     }
 };
 
+// There is no virtual authenticator in WebKitTestRunner. Reject with the
+// WebDriver unknown-command string so web-platform-tests/webauthn/helpers.js
+// falls back to running without one.
+window.test_driver_internal.add_virtual_authenticator = function(config, context = null)
+{
+    return Promise.reject("error: Action add_virtual_authenticator not implemented");
+};
+
 // Digital Credentials virtual wallet actuation; see webkit.org/b/306292.
 window.test_driver_internal.set_virtual_wallet_behavior = async function(action, protocol = null, response = null, context = null)
 {

@@ -47,7 +47,9 @@ public:
     RefPtr<Data> credentialID() const;
     const WTF::String& accessGroup() const LIFETIME_BOUND { return m_response->accessGroup(); }
 
+#if PLATFORM(COCOA)
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
+#endif
 
     WebCore::AuthenticatorAssertionResponse& response() { return m_response.get(); }
 

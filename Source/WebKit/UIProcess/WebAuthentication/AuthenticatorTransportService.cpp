@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#if PLATFORM(COCOA)
 #include "CcidService.h"
 #include "HidService.h"
 #include "LocalService.h"
@@ -36,6 +37,7 @@
 #include "MockLocalService.h"
 #include "MockNfcService.h"
 #include "NfcService.h"
+#endif
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -45,6 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorTransportService);
 
 Ref<AuthenticatorTransportService> AuthenticatorTransportService::create(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer)
 {
+#if PLATFORM(COCOA)
     switch (transport) {
     case WebCore::AuthenticatorTransport::Internal:
         return LocalService::create(observer);
@@ -58,10 +61,16 @@ Ref<AuthenticatorTransportService> AuthenticatorTransportService::create(WebCore
         ASSERT_NOT_REACHED();
         return LocalService::create(observer);
     }
+#else
+    UNUSED_PARAM(transport);
+    UNUSED_PARAM(observer);
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
 }
 
 Ref<AuthenticatorTransportService> AuthenticatorTransportService::createMock(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
 {
+#if PLATFORM(COCOA)
     switch (transport) {
     case WebCore::AuthenticatorTransport::Internal:
         return MockLocalService::create(observer, configuration);
@@ -75,6 +84,12 @@ Ref<AuthenticatorTransportService> AuthenticatorTransportService::createMock(Web
         ASSERT_NOT_REACHED();
         return MockLocalService::create(observer, configuration);
     }
+#else
+    UNUSED_PARAM(transport);
+    UNUSED_PARAM(observer);
+    UNUSED_PARAM(configuration);
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
 }
 
 AuthenticatorTransportService::AuthenticatorTransportService(AuthenticatorTransportServiceObserver& observer)

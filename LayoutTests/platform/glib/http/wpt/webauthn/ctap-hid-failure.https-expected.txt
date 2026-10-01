@@ -1,0 +1,11 @@
+
+FAIL CTAP HID with init sub stage data not sent error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with init sub stage empty report error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with init sub stage wrong channel id error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with init sub stage wrong nonce error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with init sub stage short init response in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with msg sub stage data not sent error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with msg sub stage empty report error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with msg sub stage wrong channel id error in a mock hid authenticator. assert_equals: expected "Operation timed out." but got "This request has been cancelled by the user."
+FAIL CTAP HID with request::msg stage wrong channel id error in a mock hid authenticator. assert_throws_dom: Unknown internal error. Error code: 18 function "function() { throw e }" threw object "NotAllowedError: This request has been cancelled by the user." that is not a DOMException UnknownError: property "name" is equal to "NotAllowedError", expected "UnknownError"
+

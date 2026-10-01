@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 struct UnknownCredentialOptions {
