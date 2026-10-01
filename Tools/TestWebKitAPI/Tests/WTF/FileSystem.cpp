@@ -941,7 +941,7 @@ TEST_F(FileSystemTest, readEntireFile)
     auto buffer = FileSystem::readEntireFile(tempFilePath());
     EXPECT_TRUE(buffer);
     auto contents = String { byteCast<Latin1Character>(buffer.value().span()) }.utf8();
-    EXPECT_STREQ(contents.legacyCStringPointer(), FileSystemTestData);
+    EXPECT_EQ(contents, FileSystemTestData);
 }
 
 TEST_F(FileSystemTest, makeSafeToUseMemoryMapForPath)

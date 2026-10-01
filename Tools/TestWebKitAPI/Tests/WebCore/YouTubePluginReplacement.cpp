@@ -45,7 +45,7 @@ static void test(ASCIILiteral inputURLString, ASCIILiteral expectedURLString)
 {
     URL inputURL { inputURLString };
     String actualURLString = YouTubePluginReplacement::youTubeURLFromAbsoluteURL(inputURL, inputURLString);
-    EXPECT_WK_STREQ(expectedURLString.characters(), actualURLString.utf8().legacyCStringPointer());
+    EXPECT_WK_STREQ(expectedURLString.characters(), actualURLString);
 }
 
 TEST_F(YouTubePluginReplacementTest, YouTubeURLFromAbsoluteURL)

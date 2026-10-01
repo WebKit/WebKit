@@ -189,7 +189,7 @@ static void createDirectories(StringView testName)
     if (testName == "API"_s)
         return;
 
-    EXPECT_WK_STREQ("collision", testName.utf8().legacyCStringPointer());
+    EXPECT_WK_STREQ("collision", testName.toString());
     RetainPtr v1CreatedDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), createdDatabaseHash.createNSString().get()]]];
     [defaultFileManager createDirectoryAtURL:v1CreatedDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
     EXPECT_NULL(error);

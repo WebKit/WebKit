@@ -1317,8 +1317,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementAttributionReportURLsForTesting")) {
         auto testDictionary = dictionaryValue(messageBody);
-        auto sourceURL = adoptWK(WKURLCreateWithUTF8CString(toWTFString(stringValue(testDictionary, "SourceURLString")).utf8().legacyCStringPointer()));
-        auto destinationURL = adoptWK(WKURLCreateWithUTF8CString(toWTFString(stringValue(testDictionary, "AttributeOnURLString")).utf8().legacyCStringPointer()));
+        auto sourceURL = toWKURL(toWTFString(stringValue(testDictionary, "SourceURLString")));
+        auto destinationURL = toWKURL(toWTFString(stringValue(testDictionary, "AttributeOnURLString")));
         TestController::singleton().setPrivateClickMeasurementAttributionReportURLsForTesting(sourceURL.get(), destinationURL.get());
         return nullptr;
     }

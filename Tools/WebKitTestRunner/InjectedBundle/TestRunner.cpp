@@ -1527,13 +1527,13 @@ void TestRunner::simulatePrivateClickMeasurementSessionRestart()
 void TestRunner::setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef urlString)
 {
     postSynchronousPageMessage("SetPrivateClickMeasurementTokenPublicKeyURLForTesting",
-        adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().legacyCStringPointer())));
+        toWKURL(toWTFString(urlString)));
 }
 
 void TestRunner::setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringRef urlString)
 {
     postSynchronousPageMessage("SetPrivateClickMeasurementTokenSignatureURLForTesting",
-        adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().legacyCStringPointer())));
+        toWKURL(toWTFString(urlString)));
 }
 
 void TestRunner::setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURLString, JSStringRef destinationURLString)

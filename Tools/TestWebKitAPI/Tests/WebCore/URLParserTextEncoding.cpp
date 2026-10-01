@@ -72,7 +72,7 @@ bool eq(T&& s1, U&& s2)
 {
     // Compared as UTF-8 bytes, matching the returned condition, so that a null String
     // matches an empty one.
-    EXPECT_STREQ(s1.utf8().legacyCStringPointer(), s2.utf8().legacyCStringPointer());
+    EXPECT_EQ(s1.utf8(), s2.utf8());
     return s1.utf8() == s2.utf8();
 }
 

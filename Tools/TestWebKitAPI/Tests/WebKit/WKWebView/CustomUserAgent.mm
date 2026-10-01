@@ -128,7 +128,7 @@ TEST(CustomUserAgent, PageLevelCustomUserAgentUpdatedInsidePolicyAppliesToRedire
     [navigationDelegate waitForDidFinishNavigation];
 
     EXPECT_TRUE(targetWasRequested);
-    EXPECT_WK_STREQ("User-Agent: Updated", receivedUserAgentOnTarget.utf8().legacyCStringPointer());
+    EXPECT_WK_STREQ("User-Agent: Updated", receivedUserAgentOnTarget);
 }
 
 // Same scenario as above, but using the WKWebpagePreferences SPI variant.
@@ -177,7 +177,7 @@ TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAppliesToRedirectTarget)
     [navigationDelegate waitForDidFinishNavigation];
 
     EXPECT_TRUE(targetWasRequested);
-    EXPECT_WK_STREQ("User-Agent: Updated", receivedUserAgentOnTarget.utf8().legacyCStringPointer());
+    EXPECT_WK_STREQ("User-Agent: Updated", receivedUserAgentOnTarget);
 }
 
 // Regression guard: when no custom UA is in effect, the redirect target must
@@ -272,7 +272,7 @@ TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAsSiteSpecificQuirksAppli
     [navigationDelegate waitForDidFinishNavigation];
 
     EXPECT_TRUE(targetWasRequested);
-    EXPECT_WK_STREQ("User-Agent: QuirkUA", receivedUserAgentOnTarget.utf8().legacyCStringPointer());
+    EXPECT_WK_STREQ("User-Agent: QuirkUA", receivedUserAgentOnTarget);
 }
 
 // SharedWorker is hosted in a separate WebProcess. The page-side custom UA must

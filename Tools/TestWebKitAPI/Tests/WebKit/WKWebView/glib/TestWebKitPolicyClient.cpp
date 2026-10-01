@@ -153,7 +153,7 @@ public:
     // Load a URI (responding to the navigation policy decision with whatever
     // m_policyDecisionResponse/m_websitePolicies are currently set to) and return
     // the User-Agent the server received for the main resource request.
-    UTF8CString loadAndGetServerUserAgent(const char* uri)
+    UTF8CString loadAndGetServerUserAgent(const UTF8CString& uri)
     {
         gLastRequestUserAgent = nullptr;
         loadURI(uri);
@@ -399,7 +399,7 @@ static void testCustomUserAgentPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_true(webkit_website_policies_get_custom_user_agent(test->m_websitePolicies.get()) == customUserAgent);
 
     test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
-    UTF8CString seenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").legacyCStringPointer());
+    UTF8CString seenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent"));
 
     ASSERT_CMP_CSTRING(seenUserAgent, ==, kSiteYUserAgent);
 
@@ -410,14 +410,14 @@ static void testCustomUserAgentPolicy(PolicyClientTest* test, gconstpointer)
     //     must not persist (the UA is bound to the navigation, not to the view).
     test->m_websitePolicies = nullptr;
     test->m_policyDecisionResponse = PolicyClientTest::Use;
-    UTF8CString defaultUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").legacyCStringPointer());
+    UTF8CString defaultUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent"));
     ASSERT_CMP_CSTRING(defaultUserAgent, !=, kSiteYUserAgent);
     g_assert_nonnull(g_strstr_len(defaultUserAgent.legacyCStringPointer(), -1, "AppleWebKit"));
 
     // (3) Navigate once more with a DIFFERENT custom UA: the new value is used.
     test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("custom-user-agent", kSiteZUserAgent, nullptr));
     test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
-    UTF8CString secondSeenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent").legacyCStringPointer());
+    UTF8CString secondSeenUserAgent = test->loadAndGetServerUserAgent(kServer->getURIForPath("/echo-user-agent"));
     ASSERT_CMP_CSTRING(secondSeenUserAgent, ==, kSiteZUserAgent);
 }
 

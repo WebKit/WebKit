@@ -65,12 +65,12 @@ public:
         RemovedItems = 1 << 2
     };
 
-    static void checkItem(WebKitBackForwardListItem* item, const char* title, const char* uri, const char* originalURI)
+    static void checkItem(WebKitBackForwardListItem* item, const char* title, UTF8CStringView uri, UTF8CStringView originalURI)
     {
         g_assert_nonnull(item);
-        g_assert_cmpstr(webkit_back_forward_list_item_get_uri(item), ==, uri);
+        g_assert_cmpstr(webkit_back_forward_list_item_get_uri(item), ==, uri.utf8());
         g_assert_cmpstr(webkit_back_forward_list_item_get_title(item), == , title);
-        g_assert_cmpstr(webkit_back_forward_list_item_get_original_uri(item), ==, originalURI);
+        g_assert_cmpstr(webkit_back_forward_list_item_get_original_uri(item), ==, originalURI.utf8());
     }
 
     static void checkItemIndex(WebKitBackForwardList* list)
@@ -177,7 +177,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, 1);
     WebKitBackForwardListItem* itemPage1 = webkit_back_forward_list_get_current_item(test->m_list);
-    BackForwardListTest::checkItem(itemPage1, "Page1", uriPage1.legacyCStringPointer(), uriPage1.legacyCStringPointer());
+    BackForwardListTest::checkItem(itemPage1, "Page1", uriPage1, uriPage1);
     g_assert_null(webkit_back_forward_list_get_back_item(test->m_list));
     g_assert_null(webkit_back_forward_list_get_forward_item(test->m_list));
     BackForwardListTest::checkItemIndex(test->m_list);
@@ -195,7 +195,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, 2);
     WebKitBackForwardListItem* itemPage2 = webkit_back_forward_list_get_current_item(test->m_list);
-    BackForwardListTest::checkItem(itemPage2, "Page2", uriPage2.legacyCStringPointer(), uriPage2.legacyCStringPointer());
+    BackForwardListTest::checkItem(itemPage2, "Page2", uriPage2, uriPage2);
     g_assert_true(webkit_back_forward_list_get_back_item(test->m_list) == itemPage1);
     g_assert_null(webkit_back_forward_list_get_forward_item(test->m_list));
     BackForwardListTest::checkItemIndex(test->m_list);
@@ -212,7 +212,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, 2);
     g_assert_true(itemPage1 == webkit_back_forward_list_get_current_item(test->m_list));
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(test->m_list), "Page1", uriPage1.legacyCStringPointer(), uriPage1.legacyCStringPointer());
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(test->m_list), "Page1", uriPage1, uriPage1);
     g_assert_null(webkit_back_forward_list_get_back_item(test->m_list));
     g_assert_true(webkit_back_forward_list_get_forward_item(test->m_list) == itemPage2);
     BackForwardListTest::checkItemIndex(test->m_list);
@@ -229,7 +229,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
     g_assert_cmpuint(webkit_back_forward_list_get_length(test->m_list), ==, 2);
     g_assert_true(itemPage2 == webkit_back_forward_list_get_current_item(test->m_list));
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(test->m_list), "Page2", uriPage2.legacyCStringPointer(), uriPage2.legacyCStringPointer());
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(test->m_list), "Page2", uriPage2, uriPage2);
     g_assert_true(webkit_back_forward_list_get_back_item(test->m_list) == itemPage1);
     g_assert_null(webkit_back_forward_list_get_forward_item(test->m_list));
     BackForwardListTest::checkItemIndex(test->m_list);
@@ -311,9 +311,9 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
     webkit_web_view_restore_session_state(view.get(), state);
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 3);
 
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, -1), "Page1", uriPage1.legacyCStringPointer(), uriPage1.legacyCStringPointer());
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(bfList), "Page2", uriPage2.legacyCStringPointer(), uriPage2.legacyCStringPointer());
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, 1), "Page3", uriPage3.legacyCStringPointer(), uriPage3.legacyCStringPointer());
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, -1), "Page1", uriPage1, uriPage1);
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(bfList), "Page2", uriPage2, uriPage2);
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, 1), "Page3", uriPage3, uriPage3);
 
     data = adoptGRef(webkit_web_view_session_state_serialize(state));
     g_assert_nonnull(data);
@@ -328,9 +328,9 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 3);
     webkit_web_view_session_state_unref(state);
 
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, -1), "Page1", uriPage1.legacyCStringPointer(), uriPage1.legacyCStringPointer());
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(bfList), "Page2", uriPage2.legacyCStringPointer(), uriPage2.legacyCStringPointer());
-    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, 1), "Page3", uriPage3.legacyCStringPointer(), uriPage3.legacyCStringPointer());
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, -1), "Page1", uriPage1, uriPage1);
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(bfList), "Page2", uriPage2, uriPage2);
+    BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, 1), "Page3", uriPage3, uriPage3);
 
     static const char* invalidSessionData = "invalid session data";
     data = adoptGRef(g_bytes_new_static(invalidSessionData, strlen(invalidSessionData)));

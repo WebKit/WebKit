@@ -149,7 +149,7 @@ void WorkQueueManager::queueLoad(const String& relativeURL, const String& target
     };
 
     auto baseURL = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(mainPage())));
-    auto url = adoptWK(WKURLCreateWithBaseURL(baseURL.get(), relativeURL.utf8().legacyCStringPointer()));
+    auto url = toWKURL(baseURL.get(), relativeURL);
     enqueue(new LoadItem(WTF::move(url), target, shouldOpenExternalURLs));
 }
 
@@ -159,8 +159,8 @@ void WorkQueueManager::queueLoadHTMLString(const String& content, const String& 
     public:
         LoadHTMLStringItem(const String& content, const String& baseURL, const String& unreachableURL)
             : m_content(toWK(content))
-            , m_baseURL(adoptWK(WKURLCreateWithUTF8CString(baseURL.utf8().legacyCStringPointer())))
-            , m_unreachableURL(adoptWK(WKURLCreateWithUTF8CString(unreachableURL.utf8().legacyCStringPointer())))
+            , m_baseURL(toWKURL(baseURL))
+            , m_unreachableURL(toWKURL(unreachableURL))
         {
         }
 

@@ -2156,7 +2156,7 @@ WKURLRef TestController::createTestURL(std::span<const char> pathOrURL)
 
     // Creating from filesytem path.
     auto urlString = makeString("file://"_s, FileSystem::realPath(String::fromUTF8(pathOrURL))).utf8();
-    auto url = adoptWK(WKURLCreateWithUTF8String(urlString.legacyCStringPointer(), urlString.length()));
+    auto url = toWKURL(urlString);
     auto path = testPath(url.get());
     auto pathString = String::fromUTF8(std::span { path });
     if (!m_usingServerMode && !FileSystem::fileExists(pathString)) {
@@ -2507,8 +2507,7 @@ static WKRetainPtr<WKArrayRef> WKURLArrayFromWKStringArray(const WKTypeRef array
     const auto length = WKArrayGetSize(stringArray);
     for (size_t i = 0; i < length; i++) {
         auto str = WKArrayGetItemAtIndex(stringArray, i);
-        auto cstr = toWTFString(stringValue(str)).utf8();
-        WKArrayAppendItem(urlArray.get(), adoptWK(WKURLCreateWithUTF8CString(cstr.legacyCStringPointer())).get());
+        WKArrayAppendItem(urlArray.get(), toWKURL(toWTFString(stringValue(str))).get());
     }
 
     return urlArray;
@@ -2578,7 +2577,7 @@ static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, const String& fi
         baseURL = fileURL.get();
     }
 #endif
-    return adoptWK(WKURLCreateWithBaseURL(baseURL, filePath.utf8().legacyCStringPointer()));
+    return toWKURL(baseURL, filePath);
 }
 
 void TestController::didReceiveScriptMessage(WKScriptMessageRef message, CompletionHandler<void(WKTypeRef)>&& completionHandler)

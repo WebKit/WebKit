@@ -35,7 +35,7 @@ const char* kDNTHeaderNotPresent = "DNT header not present";
 
 static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 {
-    test->setRedirectURI(kServer->getURIForPath("/normal").legacyCStringPointer());
+    test->setRedirectURI(kServer->getURIForPath("/normal"));
     test->loadURI(kServer->getURIForPath("/redirect"));
     test->waitUntilLoadFinished();
 

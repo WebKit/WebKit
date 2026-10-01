@@ -185,7 +185,7 @@ TEST(WindowsKeyNames, DomKeyReflectsAltGraph)
     EXPECT_EQ(keyNames.domKeyFromParams(VK_MENU, lParamForKey(true)), "AltGraph"_s);
 
     setKeysDown({ VK_LMENU, VK_LCONTROL, VK_MENU, VK_CONTROL });
-    EXPECT_STREQ(keyNames.domKeyFromParams('E', lParamForKey(false)).utf8().legacyCStringPointer(), "\xE2\x82\xAC" /* euro, UTF-8 */);
+    EXPECT_EQ(keyNames.domKeyFromParams('E', lParamForKey(false)).utf8(), UTF8CString { u8"\xE2\x82\xAC"_span }); // euro
 }
 
 } // namespace TestWebKitAPI

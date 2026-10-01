@@ -63,11 +63,9 @@ TEST(WTF, AtomStringExistingHash)
     ASSERT_EQ(string2.existingHash(), 0u);
 }
 
-static inline const char* testAtomStringNumber(double number)
+static inline UTF8CString testAtomStringNumber(double number)
 {
-    static char testBuffer[100] = { };
-    std::strncpy(testBuffer, AtomString::number(number).string().utf8().legacyCStringPointer(), 99);
-    return testBuffer;
+    return AtomString::number(number).string().utf8();
 }
 
 TEST(WTF, AtomStringCreationFromNullASCIILiteral)
@@ -85,42 +83,42 @@ TEST(WTF, AtomStringNumberDouble)
 {
     using Limits = std::numeric_limits<double>;
 
-    EXPECT_STREQ("Infinity", testAtomStringNumber(Limits::infinity()));
-    EXPECT_STREQ("-Infinity", testAtomStringNumber(-Limits::infinity()));
+    EXPECT_EQ("Infinity"_s, testAtomStringNumber(Limits::infinity()));
+    EXPECT_EQ("-Infinity"_s, testAtomStringNumber(-Limits::infinity()));
 
-    EXPECT_STREQ("NaN", testAtomStringNumber(-Limits::quiet_NaN()));
+    EXPECT_EQ("NaN"_s, testAtomStringNumber(-Limits::quiet_NaN()));
 
-    EXPECT_STREQ("0", testAtomStringNumber(0));
-    EXPECT_STREQ("0", testAtomStringNumber(-0));
+    EXPECT_EQ("0"_s, testAtomStringNumber(0));
+    EXPECT_EQ("0"_s, testAtomStringNumber(-0));
 
-    EXPECT_STREQ("2.2250738585072014e-308", testAtomStringNumber(Limits::min()));
-    EXPECT_STREQ("-1.7976931348623157e+308", testAtomStringNumber(Limits::lowest()));
-    EXPECT_STREQ("1.7976931348623157e+308", testAtomStringNumber(Limits::max()));
+    EXPECT_EQ("2.2250738585072014e-308"_s, testAtomStringNumber(Limits::min()));
+    EXPECT_EQ("-1.7976931348623157e+308"_s, testAtomStringNumber(Limits::lowest()));
+    EXPECT_EQ("1.7976931348623157e+308"_s, testAtomStringNumber(Limits::max()));
 
-    EXPECT_STREQ("3.141592653589793", testAtomStringNumber(std::numbers::pi));
-    EXPECT_STREQ("3.1415927410125732", testAtomStringNumber(std::numbers::pi_v<float>));
-    EXPECT_STREQ("1.5707963267948966", testAtomStringNumber(piOverTwoDouble));
-    EXPECT_STREQ("1.5707963705062866", testAtomStringNumber(piOverTwoFloat));
-    EXPECT_STREQ("0.7853981633974483", testAtomStringNumber(piOverFourDouble));
-    EXPECT_STREQ("0.7853981852531433", testAtomStringNumber(piOverFourFloat));
+    EXPECT_EQ("3.141592653589793"_s, testAtomStringNumber(std::numbers::pi));
+    EXPECT_EQ("3.1415927410125732"_s, testAtomStringNumber(std::numbers::pi_v<float>));
+    EXPECT_EQ("1.5707963267948966"_s, testAtomStringNumber(piOverTwoDouble));
+    EXPECT_EQ("1.5707963705062866"_s, testAtomStringNumber(piOverTwoFloat));
+    EXPECT_EQ("0.7853981633974483"_s, testAtomStringNumber(piOverFourDouble));
+    EXPECT_EQ("0.7853981852531433"_s, testAtomStringNumber(piOverFourFloat));
 
-    EXPECT_STREQ("2.718281828459045", testAtomStringNumber(2.71828182845904523536028747135266249775724709369995));
+    EXPECT_EQ("2.718281828459045"_s, testAtomStringNumber(2.71828182845904523536028747135266249775724709369995));
 
-    EXPECT_STREQ("299792458", testAtomStringNumber(299792458));
+    EXPECT_EQ("299792458"_s, testAtomStringNumber(299792458));
 
-    EXPECT_STREQ("1.618033988749895", testAtomStringNumber(1.6180339887498948482));
+    EXPECT_EQ("1.618033988749895"_s, testAtomStringNumber(1.6180339887498948482));
 
-    EXPECT_STREQ("1000", testAtomStringNumber(1e3));
-    EXPECT_STREQ("10000000000", testAtomStringNumber(1e10));
-    EXPECT_STREQ("100000000000000000000", testAtomStringNumber(1e20));
-    EXPECT_STREQ("1e+21", testAtomStringNumber(1e21));
-    EXPECT_STREQ("1e+30", testAtomStringNumber(1e30));
+    EXPECT_EQ("1000"_s, testAtomStringNumber(1e3));
+    EXPECT_EQ("10000000000"_s, testAtomStringNumber(1e10));
+    EXPECT_EQ("100000000000000000000"_s, testAtomStringNumber(1e20));
+    EXPECT_EQ("1e+21"_s, testAtomStringNumber(1e21));
+    EXPECT_EQ("1e+30"_s, testAtomStringNumber(1e30));
 
-    EXPECT_STREQ("1100", testAtomStringNumber(1.1e3));
-    EXPECT_STREQ("11000000000", testAtomStringNumber(1.1e10));
-    EXPECT_STREQ("110000000000000000000", testAtomStringNumber(1.1e20));
-    EXPECT_STREQ("1.1e+21", testAtomStringNumber(1.1e21));
-    EXPECT_STREQ("1.1e+30", testAtomStringNumber(1.1e30));
+    EXPECT_EQ("1100"_s, testAtomStringNumber(1.1e3));
+    EXPECT_EQ("11000000000"_s, testAtomStringNumber(1.1e10));
+    EXPECT_EQ("110000000000000000000"_s, testAtomStringNumber(1.1e20));
+    EXPECT_EQ("1.1e+21"_s, testAtomStringNumber(1.1e21));
+    EXPECT_EQ("1.1e+30"_s, testAtomStringNumber(1.1e30));
 }
 
 } // namespace TestWebKitAPI

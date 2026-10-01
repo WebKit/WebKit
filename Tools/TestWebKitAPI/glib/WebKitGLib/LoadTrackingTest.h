@@ -50,7 +50,7 @@ public:
     void loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI);
     void reset();
 
-    void setRedirectURI(const char* uri) { m_redirectURI = UTF8CString::unsafeFromUTF8(uri); }
+    void setRedirectURI(const UTF8CString& uri) { m_redirectURI = uri; }
 
     enum LoadEvents {
         ProvisionalLoadStarted,

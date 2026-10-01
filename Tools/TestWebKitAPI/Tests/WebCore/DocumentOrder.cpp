@@ -188,9 +188,9 @@ static UTF8CString allPositionTypeFailures(const Position& a, Node& nodeB, unsig
 }
 
 #define TEST_ALL_POSITION_TYPES(nodeA, offsetA, nodeB, offsetB, expectedResult) \
-    EXPECT_STREQ(allPositionTypeFailures(nodeA, offsetA, nodeB, offsetB, std::partial_ordering::expectedResult).legacyCStringPointer(), "")
+    EXPECT_EQ(allPositionTypeFailures(nodeA, offsetA, nodeB, offsetB, std::partial_ordering::expectedResult), ""_s)
 #define TEST_ALL_POSITION_TYPES_B(positionA, nodeB, offsetB, expectedResult) \
-    EXPECT_STREQ(allPositionTypeFailures(positionA, nodeB, offsetB, std::partial_ordering::expectedResult).legacyCStringPointer(), "")
+    EXPECT_EQ(allPositionTypeFailures(positionA, nodeB, offsetB, std::partial_ordering::expectedResult), ""_s)
 
 static Position makePositionBefore(Node& node)
 {

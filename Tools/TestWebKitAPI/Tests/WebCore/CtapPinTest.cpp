@@ -66,12 +66,12 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
     result = validateAndConvertToUTF8("1234"_s);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 4u);
-    EXPECT_STREQ(result->legacyCStringPointer(), "1234");
+    EXPECT_EQ(*result, "1234"_s);
 
     result = validateAndConvertToUTF8("123456781234567812345678123456781234567812345678123456781234567"_s);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 63u);
-    EXPECT_STREQ(result->legacyCStringPointer(), "123456781234567812345678123456781234567812345678123456781234567");
+    EXPECT_EQ(*result, "123456781234567812345678123456781234567812345678123456781234567"_s);
 }
 
 TEST(CtapPinTest, TestSetPinRequest)
