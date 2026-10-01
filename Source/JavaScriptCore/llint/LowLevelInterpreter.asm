@@ -616,6 +616,8 @@ const ArrayStorageShape        = constexpr ArrayStorageShape
 const SlowPutArrayStorageShape = constexpr SlowPutArrayStorageShape
 const CopyOnWrite              = constexpr CopyOnWrite
 const ArrayWithUndecided       = constexpr ArrayWithUndecided
+const ArrayWithInt32           = constexpr ArrayWithInt32
+const ArrayWithContiguous      = constexpr ArrayWithContiguous
 
 # Type constants.
 const StructureType = constexpr StructureType

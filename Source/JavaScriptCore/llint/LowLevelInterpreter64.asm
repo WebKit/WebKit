@@ -3349,9 +3349,9 @@ end)
 
 llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch, metadata, return)
 
-    loadVariable(get, m_next, t0)
-    btqnz t0, notCellMask, .iteratorNextForNonCell
-    bbneq JSCell::m_type[t0], constexpr SentinelType, .iteratorNextGeneric
+    loadVariable(get, m_next, t3)
+    btqnz t3, notCellMask, .iteratorNextForNonCell
+    bbneq JSCell::m_type[t3], constexpr SentinelType, .iteratorNextGeneric
     macro fastNarrow()
         callSlowPath(_iterator_next_try_fast_narrow)
     end
@@ -3372,6 +3372,37 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
     bpneq t0, VM::m_fastArraySentinel[t1], .iteratorNextNotFastArray
+
+    bqb t3, numberTag, .iteratorNextFastArraySlow
+    loadVariable(get, m_iterable, t2)
+    btqnz t2, notCellMask, .iteratorNextFastArraySlow
+    loadb JSCell::m_indexingTypeAndMisc[t2], t0
+    andi IndexingTypeMask, t0
+    bieq t0, ArrayWithInt32, .iteratorNextFastArrayIsContiguous
+    bineq t0, ArrayWithContiguous, .iteratorNextFastArraySlow
+
+.iteratorNextFastArrayIsContiguous:
+    loadp JSObjectWithButterfly::m_butterfly[t2], t0
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .iteratorNextFastArraySlow
+    zxi2q t3, t3
+    loadq [t0, t3, 8], t1
+    btqz t1, .iteratorNextFastArraySlow
+
+    metadata(t5, t0)
+    arrayProfile(OpIteratorNext::Metadata::m_iterableProfile, t2, t5, t0)
+    loadh OpIteratorNext::Metadata::m_iterationMetadata + IterationModeMetadata::seenModes[t5], t0
+    ori constexpr IterationMode::FastArray, t0
+    storeh t0, OpIteratorNext::Metadata::m_iterationMetadata + IterationModeMetadata::seenModes[t5]
+    storeVariable(get, m_value, t1, t0)
+    valueProfile(size, OpIteratorNext, m_valueValueProfile, t1, t0)
+    move ValueFalse, t1
+    storeVariable(get, m_done, t1, t0)
+    addi 1, t3
+    orq numberTag, t3
+    storeVariable(get, m_next, t3, t0)
+    dispatch()
+
+.iteratorNextFastArraySlow:
     macro fastArrayNarrow()
         callSlowPath(_iterator_next_fast_array_narrow)
     end
