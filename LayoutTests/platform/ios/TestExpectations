@@ -10400,8 +10400,6 @@ webkit.org/b/325011 imported/w3c/web-platform-tests/html/user-activation/propaga
 webkit.org/b/325013 [ Debug ] ipc/webgpu-command-encoder-cross-thread-destruction-race.html [ Timeout ]
 webkit.org/b/325013 [ Debug ] ipc/webgpu-instance-cross-thread-destruction-race.html [ Timeout ]
 
-webkit.org/b/325017 [ Debug ] fast/text/out-of-flow-line-break-crash.html [ Crash ]
-
 webkit.org/b/325019 [ Debug ] imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Failure ]
 webkit.org/b/325019 [ Release ] imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Pass Failure ]
 

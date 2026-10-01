@@ -335,6 +335,13 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     if (contentOffset == *damagedContent.offset && damagedContent.type != DamagedContent::Type::Removal)
         return candidatePosition;
 
+    if (!contentOffset) {
+        // There's no previous inline item that belongs to this damaged layout box. This can only happen on the first line (leading content
+        // removal on subsequent lines damages the previous line), where inline items in front of this layout box don't produce display boxes
+        // (e.g. <br style="position: absolute">). Let's start at the first inline item.
+        return InlineItemPosition { };
+    }
+
     // The damage offset is before the first display box we managed to find for this layout box.
     // Let's adjust the candidate position by moving it over to the damaged offset.
     for (auto index = candidatePosition.index; index--;) {

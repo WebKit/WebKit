@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Removing the text that follows an absolutely positioned line break on the first line</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#staticpos-rect">
+<style>
+br {
+  position: absolute;
+}
+</style>
+<div id="container"><br>PASS if no crash or assert.</div>
+<script>
+window.testRunner?.dumpAsText();
+document.body.offsetHeight;
+document.getElementById("container").lastChild.remove();
+document.body.offsetHeight;
+</script>
