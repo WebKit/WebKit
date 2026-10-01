@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: This page has a responsive meta viewport tag. The page content is wider than the viewport. The page will be scaled to fit.
+The viewport zoomed to scale: 5
