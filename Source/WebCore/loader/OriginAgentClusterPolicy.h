@@ -27,6 +27,7 @@
 
 #include <WebCore/OriginKeyed.h>
 #include <WebCore/PlatformExportMacros.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -34,6 +35,6 @@ class ResourceResponse;
 class ScriptExecutionContext;
 
 // https://html.spec.whatwg.org/multipage/origin.html#origin-keyed-agent-clusters
-WEBCORE_EXPORT OriginKeyed obtainOriginAgentClusterPolicy(const ResourceResponse&, const ScriptExecutionContext*);
+WEBCORE_EXPORT OriginKeyed obtainOriginAgentClusterPolicy(const ResourceResponse&, const URL& topLevelCreationURL, const ScriptExecutionContext*);
 
 } // namespace WebCore

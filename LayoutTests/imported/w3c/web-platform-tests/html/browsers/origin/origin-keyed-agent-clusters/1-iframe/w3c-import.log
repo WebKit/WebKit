@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/1-iframe/parent-no-child-bad-subdomain.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/1-iframe/parent-no-child-yes-cross-site.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/1-iframe/parent-no-child-yes-port.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/1-iframe/parent-no-child-yes-same.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/1-iframe/parent-no-child-yes-subdomain-with-redirect.sub.https.html

@@ -737,7 +737,7 @@ void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, Pol
     // any other, and m_policyDocumentLoader is its own. A new window skips it too, since its navigation state
     // belongs to the window being opened rather than to this frame.
     if (policyDecision.policyAction != PolicyAction::Download && policyCheck.kind != PolicyCheckKind::NewWindow) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get())) {
+        if (RefPtr localFrame = m_provisionalFrame ? m_provisionalFrame.get() : coreLocalFrame()) {
             auto& loader = localFrame->loader();
             if (RefPtr policyDocumentLoader = loader.policyDocumentLoader()) {
                 if (policyDecision.navigationID)

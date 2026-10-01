@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/document-domain.sub.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/going-back.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/going-back.sub.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/insecure-http-opener-https-openee.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/insecure-http-parent-https-children.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/insecure-http.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/insecure-http.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/popups-crash.https.html

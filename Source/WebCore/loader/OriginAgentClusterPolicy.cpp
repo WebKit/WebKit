@@ -37,11 +37,12 @@ namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/origin.html#initialise-the-document-object
 // (the Origin-Agent-Cluster portion)
-OriginKeyed obtainOriginAgentClusterPolicy(const ResourceResponse& response, const ScriptExecutionContext* context)
+OriginKeyed obtainOriginAgentClusterPolicy(const ResourceResponse& response, const URL& topLevelCreationURL, const ScriptExecutionContext* context)
 {
     if (context && !context->settingsValues().originAgentClusterEnabled)
         return OriginKeyed::No;
-    if (!SecurityOrigin::create(response.url())->isPotentiallyTrustworthy())
+    // FIXME: Determine once per navigation whether the reserved environment is a secure context.
+    if (!SecurityOrigin::create(response.url())->isPotentiallyTrustworthy() || !SecurityOrigin::create(topLevelCreationURL)->isPotentiallyTrustworthy())
         return OriginKeyed::No;
 
     auto parsingResult = RFC8941::parseItemStructuredFieldValue(response.httpHeaderField(HTTPHeaderName::OriginAgentCluster));
