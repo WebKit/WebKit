@@ -456,6 +456,9 @@ static void selectionPositionInformation(WebPage& page, WebCore::LocalFrame& loc
 
         return InteractionInformationAtPosition::Selectability::Selectable;
     })();
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    info.shouldTreatLongClickAsSecondaryClickQuirk = protect(hitNode->document())->quirks().shouldTreatLongClickAsSecondaryClick(*hitNode);
+#endif
     info.isSelected = result.isSelected();
     info.isOverEditableContent = hitNode->isContentEditable();
 

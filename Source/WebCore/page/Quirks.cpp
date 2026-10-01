@@ -1948,6 +1948,18 @@ bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node
     return false;
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+
+// Outlook on the web: rdar://187832523
+bool Quirks::shouldTreatLongClickAsSecondaryClick(const Node& target) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return behaviorAppliesToNode(QuirkBehaviorID::ShouldTreatLongClickAsSecondaryClickQuirk, &target);
+}
+
+#endif
+
 bool Quirks::shouldReuseLiveRangeForSelectionUpdate() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);

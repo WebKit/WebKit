@@ -180,6 +180,13 @@ https://outlook.live.com/
     NeedsMozillaFileTypeForDataTransferQuirk
     NeedsUserAgentStringOverrideQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldTreatLongClickAsSecondaryClickQuirk
+https://outlook.office.com/
+    ShouldTreatLongClickAsSecondaryClickQuirk
+https://outlook.office365.com/
+    ShouldTreatLongClickAsSecondaryClickQuirk
+https://outlook.cloud.microsoft/
+    ShouldTreatLongClickAsSecondaryClickQuirk
 https://live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://onedrive.live.com/

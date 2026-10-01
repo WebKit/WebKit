@@ -45,6 +45,7 @@ static constexpr std::array expediaGroupDomains {
 static constexpr std::array facebookGroupCallDomains { "facebook.com"_s, "messenger.com"_s };
 static constexpr std::array microsoftTeamsHosts { "teams.live.com"_s, "teams.microsoft.com"_s };
 static constexpr std::array naverHostsWithoutSimulatedMouseEvents { "tv.naver.com"_s, "mail.naver.com"_s, "m.naver.com"_s };
+static constexpr std::array outlookHosts { "outlook.live.com"_s, "outlook.office.com"_s, "outlook.office365.com"_s, "outlook.cloud.microsoft"_s };
 static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
 static constexpr std::array claudeDomains { "claude.ai"_s, "claude.com"_s };
 static constexpr std::array kinjaLoginDomains { "jalopnik.com"_s, "kotaku.com"_s, "theroot.com"_s, "theinventory.com"_s };
@@ -606,6 +607,10 @@ static constexpr Quirk fullTable[] = {
             // outlook.live.com: rdar://151851274
             shouldAllowTouchMoveToChangeSelectionQuirk,
         } },
+
+    // Outlook on the web: rdar://187832523
+    { .match = URLMatch::host(outlookHosts),
+        .behaviors = { shouldTreatLongClickAsSecondaryClickQuirk.when(elementMatchesSelector(onOutlookMailListItem)) } },
 
     // outlook.live.com rdar://48008837
     { .match = URLMatch::host("outlook.live.com"_s),

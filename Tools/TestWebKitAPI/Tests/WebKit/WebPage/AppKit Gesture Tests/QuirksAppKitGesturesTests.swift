@@ -33,16 +33,14 @@ private import TestWebKitAPILibrary
 private import Recap
 
 private let manipulationSurfaceDragInset: CGFloat = 60
-private let manipulationSurfaceFrameID = "surfaceFrame"
-private let manipulationSurfaceQuirkURL = "https://www.google.com/maps/embed/v1/place?q=Cupertino"
 
 extension AppKitGesturesTests {
-    // The manipulation surface quirk matches on the embedded document's own URL, which a test cannot
-    // choose for a frame it loads locally. `internals` is the only way to override it, so unlike the
-    // other gesture suites this one needs the injected bundle that installs `internals`.
+    // Site-specific quirks match on the URL of the page or of an embedded document, which a test cannot
+    // choose for content it loads locally. `internals` is the only way to override it, so unlike the other
+    // gesture suites this one needs the injected bundle that installs `internals`.
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    final class ManipulationSurfaces: AppKitGestureTestSuite {
+    final class Quirks: AppKitGestureTestSuite {
         static let text = "Here's to the crazy ones."
 
         let recap = Recap.shared
@@ -68,13 +66,7 @@ extension AppKitGesturesTests {
     }
 }
 
-extension AppKitGesturesTests.ManipulationSurfaces {
-    struct ManipulationSurface {
-        let bounds: CGRect
-
-        let initialScrollY: Double
-    }
-
+extension AppKitGesturesTests.Quirks {
     @Test(arguments: verticalDragOverManipulationSurfaceArguments)
     func verticalDragOverManipulationSurface(styleValue: String, reachesContent: Bool) async throws {
         let surface = try await loadManipulationSurface(styleValue: styleValue)
@@ -107,13 +99,53 @@ extension AppKitGesturesTests.ManipulationSurfaces {
         try await expectDrag(from: start, to: end, over: surface, reachesContent: true)
     }
 
+    @Test
+    func clickAndHoldOnUnselectableMailListItemFiresContextMenuEventOnlyOnOutlook() async throws {
+        let url = try #require(Bundle.testResources.url(forResource: "unselectable-mail-list-item", withExtension: "html"))
+        try await page.load(url).wait()
+
+        try await page.callJavaScript(arguments: ["url": "https://outlook.live.com/mail/"]) {
+            "internals.setTopDocumentURLForQuirks(url);"
+        }
+
+        let activeQuirks = try await page.callJavaScript(returning: [String].self) {
+            "return internals.activeQuirks();"
+        }
+        try #require(activeQuirks.contains("ShouldTreatLongClickAsSecondaryClickQuirk"))
+
+        await page.waitForNextPresentationUpdate()
+
+        let rowBounds = try await screenBounds(ofElementWithID: "row")
+
+        await recap.play { composer in
+            composer._wk_click(at: rowBounds.center, for: .seconds(1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) {
+            "return window.events;"
+        }
+        #expect(events.contains("contextmenu"))
+        #expect(!events.contains("click"))
+    }
+}
+
+extension AppKitGesturesTests.Quirks {
+    struct ManipulationSurface {
+        let bounds: CGRect
+
+        let initialScrollY: Double
+    }
+
     private func loadManipulationSurface(styleValue: String) async throws -> ManipulationSurface {
         let url = try #require(Bundle.testResources.url(forResource: "manipulation-surface", withExtension: "html"))
         try await page.load(url).wait()
         await page.waitForNextPresentationUpdate()
 
         // Installed before the frame exists, so the frame's document picks the quirk up as it is created.
-        try await page.callJavaScript(arguments: ["url": manipulationSurfaceQuirkURL]) {
+        try await page.callJavaScript(arguments: ["url": "https://www.google.com/maps/embed/v1/place?q=Cupertino"]) {
             "internals.setSubframeURLForQuirks(url);"
         }
 
@@ -122,6 +154,8 @@ extension AppKitGesturesTests.ManipulationSurfaces {
             script: loadManipulationSurfaceScript
         )
         await page.waitForNextPresentationUpdate()
+
+        let manipulationSurfaceFrameID = "surfaceFrame"
 
         let subframeQuirks = try await page.callJavaScript(
             returning: [String].self,
@@ -194,4 +228,4 @@ extension AppKitGesturesTests.ManipulationSurfaces {
     }
 }
 
-#endif
+#endif // HAVE_APPKIT_GESTURES_SUPPORT

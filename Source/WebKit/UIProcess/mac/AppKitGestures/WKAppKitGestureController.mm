@@ -156,6 +156,9 @@ static bool representsSecondaryClickableElement(const WebKit::InteractionInforma
     if (representsSelectableContent(info))
         return true;
 
+    if (info.shouldTreatLongClickAsSecondaryClickQuirk)
+        return true;
+
     if (info.isImage && isDisplayingStandaloneImageDocument)
         return true;
 

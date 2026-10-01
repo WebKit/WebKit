@@ -203,6 +203,12 @@ https://outlook.live.com/
     NeedsUserAgentStringOverrideQuirk
     ShouldAllowTouchMoveToChangeSelectionQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+https://outlook.office.com/
+    (none)
+https://outlook.office365.com/
+    (none)
+https://outlook.cloud.microsoft/
+    (none)
 https://live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://onedrive.live.com/

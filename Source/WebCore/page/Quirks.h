@@ -301,6 +301,10 @@ public:
 
     WEBCORE_EXPORT bool shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node&) const;
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    WEBCORE_EXPORT bool shouldTreatLongClickAsSecondaryClick(const Node&) const;
+#endif
+
     bool shouldReuseLiveRangeForSelectionUpdate() const;
 
     bool NODELETE needsFacebookStoriesCreationFormQuirk(const Element&, const Style::ComputedStyle&) const;

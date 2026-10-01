@@ -103,6 +103,10 @@ const urls = [
     "https://invideo.io/",
     "https://www.linkedin.com/",
     "https://outlook.live.com/",
+    // Outlook on the web is also served from these hosts, which share only some of outlook.live.com's quirks.
+    "https://outlook.office.com/",
+    "https://outlook.office365.com/",
+    "https://outlook.cloud.microsoft/",
     // handleLiveQuirks applies some quirks to every live.com host and others only to these three,
     // including a PLATFORM(MAC) one for onedrive. The bare host is the non-Outlook baseline.
     "https://live.com/",

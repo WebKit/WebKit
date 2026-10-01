@@ -66,6 +66,11 @@ constexpr bool vision = true;
 #else
 constexpr bool vision = false;
 #endif
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+constexpr bool appKitGestures = true;
+#else
+constexpr bool appKitGestures = false;
+#endif
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 constexpr bool contentChangeObserver = true;
 #else
@@ -322,6 +327,7 @@ enum class QuirkBehaviorID {
     NeedsKinjaLoginStorageAccessQuirk,
     NeedsStorageAccessOnLoginButtonClickQuirk,
     NeedsStorageAccessForYouTubeWatchLaterQuirk,
+    ShouldTreatLongClickAsSecondaryClickQuirk,
 
     NumberOfIDs
 };
@@ -633,6 +639,7 @@ inline constexpr QuirkBehavior shouldAllowNativeTapsOnMediaElementsQuirk { .id =
 inline constexpr QuirkBehavior needsKinjaLoginStorageAccessQuirk { .id = WebCore::QuirkBehaviorID::NeedsKinjaLoginStorageAccessQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
 inline constexpr QuirkBehavior needsStorageAccessOnLoginButtonClickQuirk { .id = WebCore::QuirkBehaviorID::NeedsStorageAccessOnLoginButtonClickQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
 inline constexpr QuirkBehavior needsStorageAccessForYouTubeWatchLaterQuirk { .id = WebCore::QuirkBehaviorID::NeedsStorageAccessForYouTubeWatchLaterQuirk, .isAvailable = BuildCondition::always, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
+inline constexpr QuirkBehavior shouldTreatLongClickAsSecondaryClickQuirk { .id = WebCore::QuirkBehaviorID::ShouldTreatLongClickAsSecondaryClickQuirk, .isAvailable = BuildCondition::appKitGestures, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
 
 } // namespace Behaviors
 

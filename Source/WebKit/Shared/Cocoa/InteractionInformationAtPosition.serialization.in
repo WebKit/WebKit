@@ -81,6 +81,7 @@ struct WebKit::InteractionInformationAtPosition {
 #if PLATFORM(IOS_FAMILY)
     bool needsPointerTouchCompatibilityQuirk;
 #endif
+    bool shouldTreatLongClickAsSecondaryClickQuirk;
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     std::optional<WebCore::IntPoint> automationAdjustedInteractionLocation;
     URL url;
