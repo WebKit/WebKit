@@ -55,6 +55,8 @@ public:
 
     std::optional<CanvasElementSnapshot> drawableRendererSnapshot(RenderElement&) const;
 
+    static void requestPaintEventIfNeeded(const RenderObject&);
+
 private:
     void element() const = delete;
 

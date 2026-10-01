@@ -252,6 +252,9 @@ public:
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
 
+    bool isInsideDrawableCanvas() const { return m_isInsideDrawableCanvas; }
+    void initializeDrawableCanvasStateOnInsertion();
+
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool hasHDRImages() const { return m_hasHDRImages; }
     void setHasHDRImages(bool b) { m_hasHDRImages = b; }
@@ -479,7 +482,8 @@ private:
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1 { false };
     unsigned m_scrollAnchoringSuppressionStyleChanged : 1 { false };
     unsigned m_isInPendingSVGTransformAttributeUpdates : 1 { false };
-    // 11 bits free.
+    unsigned m_isInsideDrawableCanvas : 1 { false };
+    // 10 bits free.
 
     Style::ComputedStyle m_style;
 };

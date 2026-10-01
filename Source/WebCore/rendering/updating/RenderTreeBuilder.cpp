@@ -511,6 +511,9 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     newChild->insertedIntoTree();
     invalidateLineLayout(*newChild, IsRemoval::No);
 
+    if (CheckedPtr newElement = dynamicDowncast<RenderElement>(*newChild))
+        newElement->initializeDrawableCanvasStateOnInsertion();
+
     if (m_internalMovesType == IsInternalMove::No) {
         newChild->initializeFragmentedFlowStateOnInsertion();
         if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))

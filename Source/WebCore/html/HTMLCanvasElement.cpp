@@ -239,8 +239,21 @@ void HTMLCanvasElement::requestPaint()
 
 void HTMLCanvasElement::dispatchPaintEvent()
 {
-    // FIXME: Populate changedElements.
-    dispatchEvent(CanvasPaintEvent::create(eventNames().paintEvent, { }, Event::IsTrusted::Yes));
+    Vector<Ref<Element>> changedElements;
+    for (Ref element : std::exchange(m_changedDrawableElements, { })) {
+        if (element->isDescendantOf(*this))
+            changedElements.append(WTF::move(element));
+    }
+
+    CanvasPaintEvent::Init init;
+    init.changedElements = WTF::move(changedElements);
+    dispatchEvent(CanvasPaintEvent::create(eventNames().paintEvent, WTF::move(init), Event::IsTrusted::Yes));
+}
+
+void HTMLCanvasElement::drawableElementDidChange(Element& drawableElement)
+{
+    m_changedDrawableElements.add(drawableElement);
+    protect(document())->requestCanvasPaintEvent(*this);
 }
 
 std::optional<CanvasElementSnapshot> HTMLCanvasElement::drawableElementSnapshot(Element& drawableElement) const

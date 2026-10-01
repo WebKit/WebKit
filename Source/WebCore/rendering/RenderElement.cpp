@@ -72,6 +72,7 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderGrid.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -2494,6 +2495,33 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
     setFragmentedFlowState(RenderObject::computedFragmentedFlowState(*this));
     for (CheckedRef descendant : descendantsOfType<RenderObject>(*this))
         descendant->setFragmentedFlowState(RenderObject::computedFragmentedFlowState(descendant));
+}
+
+static bool computedIsInsideDrawableCanvas(const RenderElement& renderer)
+{
+    CheckedPtr parent = renderer.parent();
+    if (!parent)
+        return false;
+
+    if (parent->isInsideDrawableCanvas())
+        return true;
+
+    CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(parent->parent());
+    return canvasRenderer && canvasRenderer->innerRenderer() == parent.get();
+}
+
+void RenderElement::initializeDrawableCanvasStateOnInsertion()
+{
+    if (!settings().htmlInCanvasEnabled())
+        return;
+
+    bool isInsideDrawableCanvas = computedIsInsideDrawableCanvas(*this);
+    if (isInsideDrawableCanvas == m_isInsideDrawableCanvas)
+        return;
+
+    m_isInsideDrawableCanvas = isInsideDrawableCanvas;
+    for (CheckedRef descendant : descendantsOfType<RenderElement>(*this))
+        descendant->m_isInsideDrawableCanvas = computedIsInsideDrawableCanvas(descendant);
 }
 
 void RenderElement::removeFromRenderFragmentedFlow()
