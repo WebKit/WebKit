@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" x-webkit-projection="eac"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing that <code>SpatialVideoSupport</code> releases the objects owned by its WebGL context on teardown, so that re-enabling does not bind a texture belonging to the destroyed context.");
+
+window.jsTestIsAsync = true;
+
+const media = document.querySelector("video");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const container = shadowRoot.appendChild(document.createElement("div"));
+
+media.addEventListener("loadedmetadata", () => {
+    window.support = new SpatialVideoSupport({
+        media,
+        host: { spatialVideoRenderingEnabled: true },
+        shadowRoot,
+        container,
+    });
+
+    shouldBeTrue("support._active");
+    shouldBeTrue("!!support._gl");
+    shouldBeTrue("!!support._texture");
+
+    debug("");
+    debug("Tearing down the renderer:");
+    support._teardown();
+
+    shouldBeNull("support._gl");
+    shouldBeNull("support._program");
+    shouldBeNull("support._texture");
+    shouldBeNull("support._mesh");
+    shouldBeNull("support._mvpLocation");
+    shouldBeNull("support._featherLocation");
+
+    debug("");
+    debug("Re-enabling the renderer with a fresh context:");
+    support._maybeEnable();
+
+    shouldBeTrue("support._active");
+    shouldBe("support._gl.getError()", "support._gl.NO_ERROR");
+
+    support._teardown();
+    media.remove();
+    shadowRoot.host.remove();
+    finishJSTest();
+}, { once: true });
+
+</script>
+</body>
