@@ -200,6 +200,9 @@ try {
 // END
 await device0.queue.onSubmittedWorkDone();
 log('Pass');
+c.close();
+videoFrame2.close();
+x.close();
 globalThis.testRunner?.dumpAsText();
 globalThis.testRunner?.notifyDone();
 }

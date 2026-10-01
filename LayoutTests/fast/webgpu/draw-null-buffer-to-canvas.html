@@ -26,6 +26,7 @@ onload = async () => {
         }
         );
         let videoFrame12 = new VideoFrame(offscreenCanvas4, {timestamp: 0});
+        videoFrame12.close();
     } catch { }
     if (window.testRunner) { testRunner.notifyDone() }
 };

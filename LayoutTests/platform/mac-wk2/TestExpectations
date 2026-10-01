@@ -2602,12 +2602,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 
 webkit.org/b/325521 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Pass Failure ]
 
-# webkit.org/b/325539 [ macOS ] 4x fast/webgpu/nocrash/* (layout-tests) are flaky text failures.
-fast/webgpu/nocrash/fuzz-281778.html [ Pass Failure ]
-fast/webgpu/nocrash/repro_274977.html [ Pass Failure ]
-fast/webgpu/nocrash/fuzz-283071.html [ Pass Failure ]
-fast/webgpu/nocrash/fuzz-277928.html [ Pass Failure ]
-
 # webkit.org/b/318157 11x imported/w3c/web-platform-tests/IndexedDB/* (layout-tests) are constant text failures.
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.html [ Failure ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Failure ]

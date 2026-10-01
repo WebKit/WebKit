@@ -17,6 +17,7 @@ onload = async () => {
     let video1 = await videoWithData();
     let imageBitmap4 = await createImageBitmap(video1);
     let videoFrame7 = new VideoFrame(imageBitmap4, {timestamp: 0});
+    videoFrame7.close();
     if (window.testRunner) { testRunner.notifyDone() }
 };
 </script>

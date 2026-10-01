@@ -110,6 +110,7 @@ async function run() {
     let renderBundle = renderBundleEncoder.finish();
     renderPassEncoder.executeBundles([renderBundle]);
     await device.queue.onSubmittedWorkDone();
+    videoFrame.close();
     debug('Pass')
     globalThis.testRunner?.notifyDone();
 }

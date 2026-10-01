@@ -952,6 +952,7 @@ gpuCanvasContext0.configure({
 videoFrame0.close();
 videoFrame2.close();
 videoFrame3.close();
+videoFrame1.close();
 }
 async function worker0() {
 let adapter0 = await navigator.gpu.requestAdapter({});
@@ -1622,6 +1623,9 @@ let videoFrame3 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeig
 let commandEncoder22 = device0.createCommandEncoder({});
 let computePassEncoder15 = commandEncoder22.beginComputePass();
 videoFrame0.close();
+videoFrame1.close();
+videoFrame2.close();
+videoFrame3.close();
 }
 async function worker1() {
 let adapter0 = await navigator.gpu.requestAdapter({powerPreference: 'low-power'});
@@ -2464,6 +2468,8 @@ device0.queue.writeTexture({
 {offset: 0, bytesPerRow: 29, rowsPerImage: 99}, {width: 7, height: 22, depthOrArrayLayers: 0});
 } catch {}
 videoFrame0.close();
+videoFrame1.close();
+videoFrame2.close();
 }
 async function worker2() {
 let adapter0 = await navigator.gpu.requestAdapter({});
@@ -3436,6 +3442,7 @@ videoFrame2.close();
 videoFrame3.close();
 videoFrame4.close();
 videoFrame5.close();
+videoFrame0.close();
 }
 
 onload = async () => {

@@ -79,6 +79,7 @@ fn f() -> @location(0) vec4f {
     } else {
       debug('no validation error');
     }
+    videoFrame.close();
     debug('Pass')
     globalThis.testRunner?.notifyDone();
   };

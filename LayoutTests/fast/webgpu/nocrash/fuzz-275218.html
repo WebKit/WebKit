@@ -21,6 +21,7 @@ async function run() {
         ],
     });
     await device.queue.onSubmittedWorkDone();
+    video.close();
     debug('Pass')
     globalThis.testRunner?.notifyDone();
 }

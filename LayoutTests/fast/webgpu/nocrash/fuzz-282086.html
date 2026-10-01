@@ -34,6 +34,7 @@ async function run() {
     let commandBuffer = commandEncoder.finish();
     device.queue.submit([commandBuffer]);
     await device.queue.onSubmittedWorkDone();
+    videoFrame.close();
     debug('Pass')
     globalThis.testRunner?.notifyDone();
 }

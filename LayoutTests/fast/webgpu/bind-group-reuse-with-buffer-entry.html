@@ -25,7 +25,8 @@ onload = async () => {
 
     const buffer = device.createBuffer({ size: 256, usage: GPUBufferUsage.UNIFORM });
     const otherBuffer = device.createBuffer({ size: 256, usage: GPUBufferUsage.UNIFORM });
-    const externalTexture = device.importExternalTexture({ source: new VideoFrame(canvas, { timestamp: 0 }) });
+    const videoFrame = new VideoFrame(canvas, { timestamp: 0 });
+    const externalTexture = device.importExternalTexture({ source: videoFrame });
 
     const bindGroup = bufferResource => device.createBindGroup({ layout, entries: [
         { binding: 0, resource: bufferResource },
@@ -44,6 +45,7 @@ onload = async () => {
 
     const error = await device.popErrorScope();
     log(error ? error.message : 'no validation error');
+    videoFrame.close();
     globalThis.testRunner?.notifyDone();
 };
 </script>
