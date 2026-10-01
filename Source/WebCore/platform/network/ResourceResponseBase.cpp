@@ -84,7 +84,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_isNull(!data)
     , m_usedLegacyTLS(data ? data->usedLegacyTLS : UsedLegacyTLS::No)
     , m_wasPrivateRelayed(data ? data->wasPrivateRelayed : WasPrivateRelayed::No)
-    , m_proxyName(data ? data->proxyName : String { })
+    , m_proxyName(data ? WTF::move(data->proxyName) : String { })
     , m_isRedirected(data ? data->isRedirected : false)
     , m_isRangeRequested(data ? data->isRangeRequested : false)
     , m_tainting(data ? data->tainting : Tainting::Basic)
