@@ -73,6 +73,12 @@
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "ElementVolumetricScene.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalController);
@@ -257,6 +263,11 @@ SpatialPortalController::~SpatialPortalController()
 
 void SpatialPortalController::prepareForRemoval()
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (RefPtr element = m_portalElement.get())
+        ElementVolumetricScene::exitVolumetricScene(*element);
+#endif
+
     m_portalAction = PortalActionKind::None;
     updateGestureHandling();
 
@@ -305,6 +316,10 @@ void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
     scheduleAnchorUpdate();
 
     if (m_hostedModels.isEmpty()) {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        if (RefPtr element = m_portalElement.get())
+            ElementVolumetricScene::exitVolumetricScene(*element);
+#endif
         deleteModelPlayer();
         stopObservingPortalVisibility();
         reconfigurePortalLayer();
@@ -439,7 +454,11 @@ void SpatialPortalController::viewportIntersectionChanged(bool isIntersecting)
         return;
 
     m_isIntersectingViewport = isIntersecting;
+    portalVisibilityChanged();
+}
 
+void SpatialPortalController::portalVisibilityChanged()
+{
     if (RefPtr player = m_modelPlayer)
         player->visibilityStateDidChange();
 
@@ -451,6 +470,11 @@ void SpatialPortalController::viewportIntersectionChanged(bool isIntersecting)
 
 void SpatialPortalController::documentVisibilityChanged()
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (RefPtr element = m_portalElement.get())
+        ElementVolumetricScene::documentVisibilityDidChange(*element);
+#endif
+
     if (RefPtr player = m_modelPlayer)
         player->visibilityStateDidChange();
 }
@@ -460,6 +484,16 @@ void SpatialPortalController::childVisibilityStateChanged(HTMLModelElement& chil
     if (isPortalVisible())
         loadChildModelIfReady(child);
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+RefPtr<ModelPlayer> SpatialPortalController::liveModelPlayer() const
+{
+    RefPtr modelPlayer = m_modelPlayer;
+    if (!modelPlayer || modelPlayer->isPlaceholder())
+        return nullptr;
+    return modelPlayer;
+}
+#endif
 
 ModelPlayer* SpatialPortalController::ensureModelPlayer()
 {
@@ -491,6 +525,11 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     pushEnvironmentMapToPlayer(*m_modelPlayer);
+#endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == ModelPresentationMode::Volumetric)
+        page->chrome().client().reconnectVolumetricSceneForElement(*element);
 #endif
 
     return m_modelPlayer.get();
@@ -872,8 +911,8 @@ void SpatialPortalController::configureGraphicsLayer(GraphicsLayer& graphicsLaye
 #if ENABLE(MODEL_ELEMENT_PORTAL)
         .hasPortal = true, // N/A
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-        .detachedForImmersive = false, // N/A
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        .presentationMode = m_presentationMode,
 #endif
     });
 }
@@ -1171,8 +1210,30 @@ RefPtr<GraphicsLayer> SpatialPortalController::portalGraphicsLayer() const
 bool SpatialPortalController::isPortalVisible() const
 {
     RefPtr element = m_portalElement.get();
-    return element && !element->document().hidden() && m_isIntersectingViewport;
+    if (!element)
+        return false;
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // The portal's inline box is blank while its content is presented elsewhere, so scrolling it away must not
+    // unload what that scene is showing.
+    if (m_presentationMode != ModelPresentationMode::Inline)
+        return true;
+#endif
+    return !element->document().hidden() && m_isIntersectingViewport;
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void SpatialPortalController::setPresentationMode(ModelPresentationMode mode)
+{
+    if (m_presentationMode == mode)
+        return;
+
+    m_presentationMode = mode;
+    reconfigurePortalLayer();
+    portalVisibilityChanged();
+}
+
+#endif
 
 } // namespace WebCore
 

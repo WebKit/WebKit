@@ -67,6 +67,12 @@ messages -> ModelProcessModelPlayerProxy {
     EnsureImmersivePresentation() -> (std::optional<WebCore::LayerHostingContextIdentifier> contextID) Async
     ExitImmersivePresentation() -> () Async
 #endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    [EnabledBy=SpatialPortalEnabled] EnterVolumetricPresentation() -> (std::optional<WebCore::LayerHostingContextIdentifier> contextID) Async
+    [EnabledBy=SpatialPortalEnabled] ExitVolumetricPresentation()
+    [EnabledBy=SpatialPortalEnabled] UpdateVolumetricPresentationSize(WebCore::FloatSize volumeSizeInMeters)
+#endif
 }
 
 #endif

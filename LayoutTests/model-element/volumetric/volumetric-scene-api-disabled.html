@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=false ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>Connected volumetric scene API is gated by its setting</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(() => {
+    const div = document.createElement("div");
+    const model = document.createElement("model");
+
+    assert_false('requestVolumetricScene' in div, 'requestVolumetricScene should be absent from Element');
+    assert_false('exitVolumetricScene' in div, 'exitVolumetricScene should be absent from Element');
+
+    assert_false('requestVolumetricScene' in model, 'requestVolumetricScene should be absent from a model');
+    assert_false('exitVolumetricScene' in model, 'exitVolumetricScene should be absent from a model');
+}, 'The volumetric scene API is not exposed while the setting is off');
+</script>
+</body>

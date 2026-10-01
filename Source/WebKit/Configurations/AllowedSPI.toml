@@ -345,3 +345,13 @@ selectors = [
     { name = "invalidateWithReason:", class = "BERenderingProcess" },
 ]
 requires = ["USE_EXTENSIONKIT"]
+
+[[not-web-essential]]
+request = "rdar://188757685"
+classes = ["_UIVolumetricWindowSceneActivationRequestOptions"]
+selectors = [
+    { name = "_internalConfigurationWithRole:sceneClass:delegateClass:storyboard:", class = "UISceneConfiguration" },
+    { name = "_requestWithConfiguration:", class = "UISceneSessionActivationRequest" },
+    { name = "_setInternal:", class = "_UIVolumetricWindowSceneActivationRequestOptions" },
+]
+requires = ["PLATFORM_VISION", "ENABLE_CONNECTED_VOLUMETRIC_SCENE"]

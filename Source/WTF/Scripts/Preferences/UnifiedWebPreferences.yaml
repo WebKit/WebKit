@@ -4190,6 +4190,13 @@ MockScrollbarsEnabled:
   excludeFrom: [ WebCore ]
   defaultValue: false
 
+MockVolumetricSceneEnabled:
+  type: bool
+  status: embedder
+  condition: ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 ModelDocumentEnabled:
   type: bool
   status: testable
@@ -5832,7 +5839,7 @@ SpatialPortalEnabled:
   type: bool
   status: testable
   category: css
-  condition: ENABLE(SPATIAL_PORTAL)
+  condition: ENABLE(SPATIAL_PORTAL) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
   humanReadableName: "Spatial CSS Portals"
   humanReadableDescription: "Enable the spatial: portal CSS property"
   defaultValue: false

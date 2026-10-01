@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>A hidden page gives up its connected volumetric scenes</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+// Nothing outside WebKit closes these volumes, so hiding the page has to be what gives them up.
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    await requestVolumetricScene(model);
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+
+    testRunner.setPageVisibility("hidden");
+
+    await waitForPresentationMode(t, model, "inline");
+}, 'Hiding the page exits a model that is presented volumetrically');
+
+promise_test(async t => {
+    const [portal] = await createPortalWithReadyModel(t);
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    await requestVolumetricScene(portal);
+    assert_equals(presentationMode(portal), "volumetric", 'The portal is presented volumetrically');
+
+    testRunner.setPageVisibility("hidden");
+
+    await waitForPresentationMode(t, portal, "inline");
+}, 'Hiding the page exits a portal that is presented volumetrically');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    // Visibility propagates to the document asynchronously, so wait rather than assert straight away.
+    testRunner.setPageVisibility("hidden");
+    await t.step_wait(() => document.hidden, 'the page becomes hidden');
+
+    testRunner.setPageVisibility("visible");
+    await t.step_wait(() => !document.hidden, 'the page becomes visible again');
+
+    // Hiding the page unloads the inline model, so it needs its player back before a scene can open.
+    await waitForModelState(model, "Loaded");
+
+    await requestVolumetricScene(model);
+
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+}, 'A page that has been hidden can still open a volumetric scene once visible again');
+</script>
+</body>

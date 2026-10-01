@@ -1401,6 +1401,7 @@ dom/ElementData.cpp
 dom/ElementInternals.cpp
 dom/ElementRareData.cpp
 dom/ElementTextDirection.cpp
+dom/ElementVolumetricScene.cpp
 dom/ErrorEvent.cpp
 dom/Event.cpp
 dom/EventContext.cpp

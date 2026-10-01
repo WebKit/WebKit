@@ -551,6 +551,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/UserContentControllerParameters.serialization.in
     Shared/UserData.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in
+    Shared/VolumetricSceneContentContext.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in
     Shared/WebContextMenuItemData.serialization.in

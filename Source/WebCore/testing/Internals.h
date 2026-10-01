@@ -1743,6 +1743,10 @@ public:
     String NODELETE effectiveEnvironmentMap(Element&);
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    String volumetricScenePresentationMode(Element&);
+#endif
+
     ExceptionOr<void> copyImageAtLocation(int x, int y);
 
     bool hasMediaSessionManager() const;

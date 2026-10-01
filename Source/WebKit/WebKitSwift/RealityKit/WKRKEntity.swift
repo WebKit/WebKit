@@ -117,6 +117,10 @@ extension WKRKEntity {
     @nonobjc
     private var displayedEnvironment: EnvironmentResource?
     @nonobjc
+    private var receivesImageBasedLight = true
+    @nonobjc
+    private var providesEnvironmentLighting = false
+    @nonobjc
     private var environmentMapTransition: EnvironmentMapTransition?
     @nonobjc
     private var environmentMapTransitionSubscription: (any Cancellable)?
@@ -492,6 +496,9 @@ extension WKRKEntity {
         let previous = environmentMapTransition?.nearestEndpoint ?? displayedEnvironment
 
         displayedEnvironment = environment
+        updateEnvironmentProbe()
+
+        guard receivesImageBasedLight else { return }
 
         guard let previous, previous !== environment else {
             endEnvironmentMapTransition()
@@ -588,13 +595,73 @@ extension WKRKEntity {
     }
 
     func removeIBL() {
-        endEnvironmentMapTransition()
         displayedEnvironment = nil
+        updateEnvironmentProbe()
+        detachImageBasedLight()
+    }
+
+    @nonobjc
+    private final func detachImageBasedLight() {
+        endEnvironmentMapTransition()
 
         guard entity.components.has(ImageBasedLightReceiverComponent.self) else { return }
 
         imageBasedLight.components.remove(ImageBasedLightComponent.self)
         entity.components.remove(ImageBasedLightReceiverComponent.self)
+    }
+
+    // While disabled the entity is lit by the scene's environment. applyIBL() only records what to show once enabled.
+    @objc(setIBLReceiverEnabled:)
+    func setIBLReceiverEnabled(_ enabled: Bool) {
+        guard enabled != receivesImageBasedLight else { return }
+
+        receivesImageBasedLight = enabled
+
+        guard enabled else {
+            detachImageBasedLight()
+            return
+        }
+
+        if let displayedEnvironment {
+            setImageBasedLightSource(.single(displayedEnvironment))
+        }
+    }
+
+    @objc(setProvidesEnvironmentLighting:)
+    func setProvidesEnvironmentLighting(_ provides: Bool) {
+        guard provides != providesEnvironmentLighting else { return }
+
+        providesEnvironmentLighting = provides
+        updateEnvironmentProbe()
+    }
+
+    @nonobjc
+    private final func updateEnvironmentProbe() {
+        guard providesEnvironmentLighting, let displayedEnvironment else {
+            entity.components.remove(VirtualEnvironmentProbeComponent.self)
+            return
+        }
+
+        entity.components.set(VirtualEnvironmentProbeComponent(source: .single(.init(environment: displayedEnvironment))))
+    }
+
+    @objc(setGroundingShadowsEnabled:)
+    func setGroundingShadowsEnabled(_ enabled: Bool) {
+        applyGroundingShadows(to: entity, castsShadow: enabled)
+    }
+
+    // Applied to the whole subtree: the shadow is cast by the descendant meshes, not by the root.
+    @nonobjc
+    private final func applyGroundingShadows(to entity: Entity, castsShadow: Bool) {
+        if castsShadow {
+            entity.components.set(GroundingShadowComponent(castsShadow: true))
+        } else {
+            entity.components.remove(GroundingShadowComponent.self)
+        }
+
+        for child in entity.children {
+            applyGroundingShadows(to: child, castsShadow: castsShadow)
+        }
     }
 
     private func animationPlaybackStateDidUpdate() {
