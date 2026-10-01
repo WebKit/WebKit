@@ -328,6 +328,8 @@ list(APPEND TestWebKit_SOURCES
     Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
     Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
 
+    InjectedBundle/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.mm
+
     Tests/TestWebKitAPIAdditionsHook.mm
 
     Tests/Misc/TestRunnerTests.cpp
