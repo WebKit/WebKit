@@ -2009,6 +2009,10 @@ void AXObjectCache::initializeLiveRegionManager()
 
     m_liveRegionManagerInitialized = true;
 
+    // Walking the whole tree, and building any of it that doesn't exist yet, asks whether the same objects are
+    // ignored many times over, so cache the answers.
+    AXAttributeCacheScope enableCache(this);
+
     RefPtr current = rootWebArea();
     while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
         if (current->supportsLiveRegion())

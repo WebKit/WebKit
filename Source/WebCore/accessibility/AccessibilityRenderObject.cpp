@@ -317,10 +317,9 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 #endif // !USE(ATSPI)
 
     // Expose markers that are not direct children of a list item too.
-    if (m_renderer->isRenderListOutsideMarker()) {
-        for (CheckedRef listItemAncestor : ancestorsOfType<RenderListItem>(*m_renderer)) {
-            RefPtr parent = dynamicDowncast<AccessibilityRenderObject>(protect(axObjectCache())->getOrCreate(listItemAncestor));
-            if (parent && parent->markerRenderer() == m_renderer)
+    if (CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(*m_renderer)) {
+        if (CheckedPtr listItem = marker->listItem(); listItem && listItem->markerBox() == marker) {
+            if (RefPtr parent = cache->getOrCreate(*listItem); parent && parent->isListItem())
                 return parent.unsafeGet();
         }
     }
