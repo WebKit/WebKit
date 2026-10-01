@@ -1157,7 +1157,7 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
         if (paintType == PaintAsInlineBlock)
             child.paintAsInlineBlock(paintInfoForChild, childPoint);
         else
-            child.paint(paintInfoForChild, childPoint);
+            child.paintOrRecord(paintInfoForChild, childPoint);
     }
 
     // Check for page-break-after: always, and if it's set, break and bail.

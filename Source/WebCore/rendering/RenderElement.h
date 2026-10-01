@@ -108,6 +108,7 @@ public:
     const Layout::ElementBox* NODELETE layoutBox() const;
 
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
+    inline bool isCanvasDrawable() const; // Defined in RenderElementStyleInlines.h.
     inline bool canContainFixedPositionObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     inline bool canContainAbsolutelyPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     bool canEstablishContainingBlockWithTransform() const;
@@ -168,6 +169,8 @@ public:
     // (grid items, flex items) require this behavior as well, and this function exists as a helper for them.
     // It is expected that the caller will call this function independent of the value of paintInfo.phase.
     void paintAsInlineBlock(PaintInfo&, const LayoutPoint&);
+
+    void paintOrRecord(PaintInfo&, const LayoutPoint&);
 
     // Recursive function that computes the size and position of this object and all its descendants.
     virtual void layout();

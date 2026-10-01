@@ -55,6 +55,7 @@ public:
 
     bool hasDrawableContent() const;
 
+    DisplayList::RecorderImpl* drawableRendererRecorder(RenderElement&, GraphicsContext&) const;
     std::optional<CanvasElementSnapshot> drawableRendererSnapshot(RenderElement&) const;
 
 private:
@@ -72,7 +73,7 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     SingleThreadWeakPtr<RenderBlock> m_innerRenderer;
-    HashMap<SingleThreadWeakRef<RenderElement>, UniqueRef<DisplayList::RecorderImpl>> m_drawableRendererSnapshotRecorderMap;
+    mutable HashMap<SingleThreadWeakRef<RenderElement>, UniqueRef<DisplayList::RecorderImpl>> m_drawableRendererSnapshotRecorderMap;
 };
 
 } // namespace WebCore

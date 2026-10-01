@@ -229,6 +229,8 @@ public:
     inline const AtomString& attributeWithDefaultARIA(const QualifiedName&) const;
     inline String attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
 
+    inline bool isCanvasDrawable() const;
+
     enum class TopLayerElementType : bool { Other, Popover };
     RefPtr<HTMLElement> topmostPopoverAncestor(TopLayerElementType topLayerType);
 
