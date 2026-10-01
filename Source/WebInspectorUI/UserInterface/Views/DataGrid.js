@@ -1144,6 +1144,8 @@ WI.DataGrid = class DataGrid extends WI.View
         let updateOffsetThreshold = rowHeight * 5;
         let overflowPadding = updateOffsetThreshold * 3;
 
+        let heightChanged = isNaN(this._cachedScrollableOffsetHeight);
+
         if (isNaN(this._cachedScrollTop))
             this._cachedScrollTop = this._scrollContainerElement.scrollTop;
 
@@ -1160,7 +1162,7 @@ WI.DataGrid = class DataGrid extends WI.View
             let belowTopThreshold = !currentTopMargin || this._cachedScrollTop > currentTopMargin + updateOffsetThreshold;
             let aboveBottomThreshold = !currentBottomMargin || this._cachedScrollTop + this._cachedScrollableOffsetHeight < currentTableBottom - updateOffsetThreshold;
 
-            if (belowTopThreshold && aboveBottomThreshold && !isNaN(this._previousRevealedRowCount))
+            if (belowTopThreshold && aboveBottomThreshold && !heightChanged && !isNaN(this._previousRevealedRowCount))
                 return;
         }
 
