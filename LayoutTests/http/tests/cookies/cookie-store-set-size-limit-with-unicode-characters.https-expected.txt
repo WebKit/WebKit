@@ -1,0 +1,12 @@
+This test checks that cookieStore.set() measures the 4096-byte name/value size limit using the real encoded byte length of multi-byte Unicode characters, accepting cookies within the limit and rejecting cookies that exceed it. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cookieStore.set() accepted a multi-byte cookie within the real byte size limit
+PASS cookieStore.get() returned the multi-byte value unchanged
+PASS cookieStore.set() rejected a cookie exceeding the real byte size limit
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

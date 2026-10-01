@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description("This test checks that cookieStore 'change' events report Unicode cookie names and values decoded the same way cookieStore.get() does. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork");
+jsTestIsAsync = true;
+
+onload = () => {
+    cookieStore.addEventListener('change', (event) => {
+        let changed = event.changed.find((item) => item.name === 'changeEventCookie');
+        if (changed && changed.value === '日本語🍪value')
+            testPassed("cookieStore 'change' event reported the Unicode cookie value unchanged");
+        else
+            testFailed("cookieStore 'change' event did not report the expected Unicode cookie value");
+
+        cookieStore.delete('changeEventCookie').then(finishJSTest);
+    }, { once: true });
+
+    document.cookie = 'changeEventCookie=日本語🍪value';
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

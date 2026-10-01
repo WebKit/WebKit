@@ -1,0 +1,11 @@
+This test checks that cookies with Unicode names/values are decoded consistently whether they are set via document.cookie and read via cookieStore.get(), or set via cookieStore.set() and read via document.cookie. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cookieStore.get() decoded a cookie set via document.cookie the same way document.cookie did
+PASS document.cookie decoded a cookie set via cookieStore.set() the same way cookieStore.get() did
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

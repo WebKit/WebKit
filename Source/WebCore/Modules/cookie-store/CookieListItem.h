@@ -36,7 +36,7 @@ struct CookieListItem {
 
     static CookieListItem fromCookie(Cookie&& cookie)
     {
-        return { WTF::move(cookie.name), WTF::move(cookie.value) };
+        return { CookieUtil::cookieStringForScript(WTF::move(cookie.name)), CookieUtil::cookieStringForScript(WTF::move(cookie.value)) };
     }
 };
 

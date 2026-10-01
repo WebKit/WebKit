@@ -159,6 +159,26 @@ std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
         cookieString.substring(monthStart, monthEnd - monthStart), cookieString.substring(dayEnd));
 }
 
+// The `cookieStringFor...` functions can reinterpret a cookie string heading from DOM to storage
+// or from storage to DOM. Cocoa is the only platform that needs to do this at the moment.
+// These functions are a no-op on other platforms.
+String cookieStringForScript(const String& storedValue)
+{
+    return cookieStringForScript(String { storedValue });
+}
+
+#if !PLATFORM(COCOA)
+String cookieStringForScript(String&& storedValue)
+{
+    return WTF::move(storedValue);
+}
+
+String cookieStringForStorage(const String& scriptValue)
+{
+    return scriptValue;
+}
+#endif
+
 } // namespace CookieUtil
 
 } // namespace WebCore

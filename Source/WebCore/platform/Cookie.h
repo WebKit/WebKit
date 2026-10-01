@@ -130,6 +130,13 @@ WEBCORE_EXPORT String defaultPathForURL(const URL&);
 
 std::optional<String> cookieStringWithDayFirstExpires(StringView);
 
+// These functions can reinterpret a cookie string heading from DOM to storage
+// or from storage to DOM. Some platforms choose to handle DOM strings differently
+// depending on how the data is written to storage.
+WEBCORE_EXPORT String cookieStringForScript(const String& storedValue);
+WEBCORE_EXPORT String cookieStringForScript(String&& storedValue);
+WEBCORE_EXPORT String cookieStringForStorage(const String& scriptValue);
+
 } // namespace CookieUtil
 
 } // namespace WebCore
