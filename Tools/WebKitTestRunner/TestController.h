@@ -786,6 +786,7 @@ private:
     HashSet<String> m_notificationOriginsToDenyOnPrompt;
 
     HashSet<String> m_geolocationPermissionQueryOrigins;
+    HashMap<String, bool> m_localNetworkAccessPermissions;
 
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;

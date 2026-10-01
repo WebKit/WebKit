@@ -981,19 +981,27 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
         }
     }
 
-    performLocalNetworkAccessCheck(request, currentURL, connectionAddressSpace, clientAddressSpace,
-        clientIsSecureContext, ClientOrigin { topOrigin, sourceOrigin },
-        localNetworkAllowedByPermissionsPolicy, loopbackNetworkAllowedByPermissionsPolicy,
-        [networkSession](const ClientOrigin& origin, IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& permissionHandler) {
-            permissionHandler(networkSession->requestLocalNetworkAccessPermission(origin, addressSpace, true));
-        }, [this, protectedThis = Ref { *this }, url = currentURL, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> error) mutable {
-            // A rejected fetch surfaces as a bare TypeError, so the reason would otherwise be invisible.
-            if (error) {
-                send(Messages::WebPage::AddConsoleMessage { frameID(), MessageSource::Security, MessageLevel::Error,
-                    makeString("Blocked a local network request to '"_s, url.stringCenterEllipsizedToLength(), "' because "_s, error->localizedDescription(), "."_s), coreIdentifier() }, pageID());
-            }
-            completionHandler(WTF::move(error));
-        });
+    auto clientOrigin = ClientOrigin { topOrigin, sourceOrigin };
+    auto requirement = WebCore::checkLocalNetworkAccess(request, currentURL, connectionAddressSpace, clientAddressSpace,
+        clientIsSecureContext, clientOrigin, localNetworkAllowedByPermissionsPolicy, loopbackNetworkAllowedByPermissionsPolicy);
+
+    auto finish = [this, protectedThis = Ref { *this }, url = currentURL, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> error) mutable {
+        // A rejected fetch surfaces as a bare TypeError, so the reason would otherwise be invisible.
+        if (error) {
+            send(Messages::WebPage::AddConsoleMessage { frameID(), MessageSource::Security, MessageLevel::Error,
+                makeString("Blocked a local network request to '"_s, url.stringCenterEllipsizedToLength(), "' because "_s, error->localizedDescription(), "."_s), coreIdentifier() }, pageID());
+        }
+        completionHandler(WTF::move(error));
+    };
+
+    if (!requirement)
+        return finish(WTF::move(requirement.error()));
+    if (*requirement == LocalNetworkAccessRequirement::None)
+        return finish(std::nullopt);
+
+    networkSession->requestLocalNetworkAccessPermission(webPageProxyID(), clientOrigin, connectionAddressSpace, [finish = WTF::move(finish), url = request.url()](WebCore::PermissionState state) mutable {
+        finish(localNetworkAccessPermissionError(url, state));
+    });
 }
 
 void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& completionHandler)

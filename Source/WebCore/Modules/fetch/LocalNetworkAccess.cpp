@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-LocalNetworkAccessPermissionRequestOutcome localNetworkAccessPermissionRequestOutcome(IPAddressSpace connectionAddressSpace, bool hasRecordedDecision, bool canPrompt)
+LocalNetworkAccessPermissionRequestOutcome localNetworkAccessPermissionRequestOutcome(IPAddressSpace connectionAddressSpace, bool hasRecordedDecision)
 {
     if (connectionAddressSpace == IPAddressSpace::Unknown)
         return LocalNetworkAccessPermissionRequestOutcome::RefuseAsUndetermined;
@@ -42,16 +42,18 @@ LocalNetworkAccessPermissionRequestOutcome localNetworkAccessPermissionRequestOu
     if (hasRecordedDecision)
         return LocalNetworkAccessPermissionRequestOutcome::UseRecordedDecision;
 
-    if (!canPrompt)
-        return LocalNetworkAccessPermissionRequestOutcome::RefuseAsUnpromptable;
-
     return LocalNetworkAccessPermissionRequestOutcome::Prompt;
 }
 
-void performLocalNetworkAccessCheck(const ResourceRequest& request, const URL& currentURL, IPAddressSpace connectionAddressSpace, IPAddressSpace clientPolicyContainerAddressSpace, bool clientIsSecureContext, const ClientOrigin& clientOrigin, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy, const LocalNetworkAccessPermissionCheckFunction& permissionCheck, CompletionHandler<void(std::optional<ResourceError>)>&& completionHandler)
+static ResourceError localNetworkAccessRefusal(const URL& url, ASCIILiteral reason)
+{
+    return ResourceError { "WebKitErrorDomain"_s, 0, url, reason, ResourceError::Type::AccessControl };
+}
+
+std::expected<LocalNetworkAccessRequirement, ResourceError> checkLocalNetworkAccess(const ResourceRequest& request, const URL& currentURL, IPAddressSpace connectionAddressSpace, IPAddressSpace clientPolicyContainerAddressSpace, bool clientIsSecureContext, const ClientOrigin& clientOrigin, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy)
 {
     if (shouldTreatAsPotentiallyTrustworthy(currentURL) && SecurityOriginData::fromURL(currentURL) == clientOrigin.clientOrigin)
-        return completionHandler(std::nullopt);
+        return LocalNetworkAccessRequirement::None;
 
     // publicnessRank() ranks Unknown alongside Loopback, so leaving it would make every target
     // not-less-public and skip the check entirely.
@@ -59,37 +61,33 @@ void performLocalNetworkAccessCheck(const ResourceRequest& request, const URL& c
         clientPolicyContainerAddressSpace = IPAddressSpace::Public;
 
     if (connectionAddressSpace != IPAddressSpace::Unknown) {
-        if (request.targetAddressSpace() != IPAddressSpace::Public && request.targetAddressSpace() != connectionAddressSpace) {
-            return completionHandler(ResourceError { "WebKitErrorDomain"_s, 0, request.url(),
-                "Local Network Access: connection's resolved address space does not match the request's declared targetAddressSpace"_s,
-                ResourceError::Type::AccessControl });
-        }
+        if (request.targetAddressSpace() != IPAddressSpace::Public && request.targetAddressSpace() != connectionAddressSpace)
+            return makeUnexpected(localNetworkAccessRefusal(request.url(), "Local Network Access: connection's resolved address space does not match the request's declared targetAddressSpace"_s));
 
         if (!isLessPublicThan(connectionAddressSpace, clientPolicyContainerAddressSpace))
-            return completionHandler(std::nullopt);
+            return LocalNetworkAccessRequirement::None;
     }
 
-    auto refusalWithReason = [url = request.url()](ASCIILiteral reason) {
-        return ResourceError { "WebKitErrorDomain"_s, 0, url, reason, ResourceError::Type::AccessControl };
-    };
-
     if (!clientIsSecureContext)
-        return completionHandler(refusalWithReason("the requesting document is not a secure context, which Local Network Access requires"_s));
+        return makeUnexpected(localNetworkAccessRefusal(request.url(), "the requesting document is not a secure context, which Local Network Access requires"_s));
 
     if (!(connectionAddressSpace == IPAddressSpace::Loopback ? loopbackNetworkAllowedByPermissionsPolicy : localNetworkAllowedByPermissionsPolicy))
-        return completionHandler(refusalWithReason("the requesting frame is not allowed to use the \"local-network\" or \"loopback-network\" feature"_s));
+        return makeUnexpected(localNetworkAccessRefusal(request.url(), "the requesting frame is not allowed to use the \"local-network\" or \"loopback-network\" feature"_s));
 
-    permissionCheck(clientOrigin, connectionAddressSpace, [refusalWithReason, completionHandler = WTF::move(completionHandler)](PermissionState state) mutable {
-        switch (state) {
-        case PermissionState::Granted:
-            return completionHandler(std::nullopt);
-        case PermissionState::Prompt:
-            return completionHandler(refusalWithReason("no permission to reach the local network has been granted, and there is no document to ask in. Issue the request from a page, or let the fetch handler pass it through"_s));
-        case PermissionState::Denied:
-            break;
-        }
-        completionHandler(refusalWithReason("permission to reach the local network was denied"_s));
-    });
+    return LocalNetworkAccessRequirement::Permission;
+}
+
+std::optional<ResourceError> localNetworkAccessPermissionError(const URL& url, PermissionState state)
+{
+    switch (state) {
+    case PermissionState::Granted:
+        return std::nullopt;
+    case PermissionState::Prompt:
+        return localNetworkAccessRefusal(url, "no permission to reach the local network has been granted, and there is no document to ask in. Issue the request from a page, or let the fetch handler pass it through"_s);
+    case PermissionState::Denied:
+        break;
+    }
+    return localNetworkAccessRefusal(url, "permission to reach the local network was denied"_s);
 }
 
 } // namespace WebCore

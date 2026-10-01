@@ -63,6 +63,7 @@
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/LocalNetworkAccess.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
@@ -198,6 +199,8 @@ WebsiteDataStore::~WebsiteDataStore()
 
     ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(m_sessionID.isValid());
+
+    cancelLocalNetworkAccessPrompts(std::nullopt);
 
     platformDestroy();
 
@@ -2138,19 +2141,106 @@ void WebsiteDataStore::setUserAgentStringQuirkForTesting(const String& domain, c
     completionHandler();
 }
 
-void WebsiteDataStore::setLocalNetworkAccessPermissionForTesting(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState state, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
-    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetLocalNetworkAccessPermissionForTesting(m_sessionID, origin, addressSpace, state), WTF::move(completionHandler));
+    auto key = LocalNetworkAccessPermissionKey { WTF::move(origin), addressSpace };
+    auto iterator = m_localNetworkAccessPermissions.find(key);
+    auto hasRecordedDecision = iterator != m_localNetworkAccessPermissions.end();
+
+    switch (WebCore::localNetworkAccessPermissionRequestOutcome(addressSpace, hasRecordedDecision)) {
+    // FIXME: This leaves a connection whose peer address is unavailable unrecoverable for the user. It
+    // should become unreachable once CFNetwork reports the connection's address space directly
+    // (rdar://183944437).
+    case WebCore::LocalNetworkAccessPermissionRequestOutcome::RefuseAsUndetermined:
+        return completionHandler(WebCore::PermissionState::Denied);
+    case WebCore::LocalNetworkAccessPermissionRequestOutcome::UseRecordedDecision:
+        return completionHandler(iterator->value);
+    case WebCore::LocalNetworkAccessPermissionRequestOutcome::Prompt:
+        break;
+    }
+
+    auto addResult = m_pendingLocalNetworkAccessPrompts.add(key, PendingLocalNetworkAccessPrompt { });
+    addResult.iterator->value.waiters.append({ pageID, WTF::move(completionHandler) });
+    if (addResult.isNewEntry)
+        askPageForLocalNetworkAccess(key);
 }
 
-void WebsiteDataStore::removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::askPageForLocalNetworkAccess(const LocalNetworkAccessPermissionKey& key)
 {
-    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::RemoveLocalNetworkAccessPermissions(m_sessionID, topOrigin), WTF::move(completionHandler));
+    auto iterator = m_pendingLocalNetworkAccessPrompts.find(key);
+    if (iterator == m_pendingLocalNetworkAccessPrompts.end())
+        return;
+
+    RefPtr<WebPageProxy> page;
+    for (auto& waiter : iterator->value.waiters) {
+        page = WebProcessProxy::webPage(waiter.pageID);
+        if (page && page->canShowLocalNetworkAccessPrompt(key.first))
+            break;
+        page = nullptr;
+    }
+
+    if (!page)
+        return finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordLocalNetworkAccessDecision::No);
+
+    page->requestLocalNetworkAccessPermission(key.first, key.second, [weakThis = WeakPtr { *this }, key, identifier = iterator->value.identifier](bool granted) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        // Without the identifier check, a reply from a superseded round could record a decision after a revocation cleared it.
+        auto pendingIterator = protectedThis->m_pendingLocalNetworkAccessPrompts.find(key);
+        if (pendingIterator == protectedThis->m_pendingLocalNetworkAccessPrompts.end() || pendingIterator->value.identifier != identifier)
+            return;
+
+        protectedThis->finishLocalNetworkAccessPrompt(key, granted ? WebCore::PermissionState::Granted : WebCore::PermissionState::Denied, RecordLocalNetworkAccessDecision::Yes);
+    });
 }
 
-void WebsiteDataStore::clearLocalNetworkAccessPermissionsForTesting(CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::finishLocalNetworkAccessPrompt(const LocalNetworkAccessPermissionKey& key, WebCore::PermissionState state, RecordLocalNetworkAccessDecision record)
 {
-    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::ClearLocalNetworkAccessPermissionsForTesting(m_sessionID), WTF::move(completionHandler));
+    auto pending = m_pendingLocalNetworkAccessPrompts.take(key);
+    if (record == RecordLocalNetworkAccessDecision::Yes)
+        m_localNetworkAccessPermissions.set(key, state);
+    for (auto& waiter : pending.waiters)
+        waiter.handler(state);
+}
+
+void WebsiteDataStore::queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier> pageID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+{
+    if (auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace }); iterator != m_localNetworkAccessPermissions.end())
+        return completionHandler(iterator->value);
+
+    // The embedder only stores same-origin decisions, as with camera and microphone.
+    RefPtr page = pageID ? WebProcessProxy::webPage(*pageID) : nullptr;
+    if (!page || origin.clientOrigin != origin.topOrigin)
+        return completionHandler(WebCore::PermissionState::Prompt);
+
+    page->queryLocalNetworkAccessPermission(origin.topOrigin, addressSpace, WTF::move(completionHandler));
+}
+
+void WebsiteDataStore::cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin)
+{
+    Vector<LocalNetworkAccessPermissionKey> keys;
+    for (auto& key : m_pendingLocalNetworkAccessPrompts.keys()) {
+        if (!topOrigin || key.first.topOrigin == *topOrigin)
+            keys.append(key);
+    }
+    for (auto& key : keys)
+        finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordLocalNetworkAccessDecision::No);
+}
+
+void WebsiteDataStore::removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin)
+{
+    m_localNetworkAccessPermissions.removeIf([&topOrigin](auto& entry) {
+        return entry.key.first.topOrigin == topOrigin;
+    });
+    cancelLocalNetworkAccessPrompts(topOrigin);
+}
+
+void WebsiteDataStore::clearLocalNetworkAccessPermissionsForTesting()
+{
+    m_localNetworkAccessPermissions.clear();
+    cancelLocalNetworkAccessPrompts(std::nullopt);
 }
 
 void WebsiteDataStore::setPrivateTokenIPCForTesting(bool enabled)

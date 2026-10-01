@@ -61,6 +61,7 @@ class ResourceRequest;
 class SecurityOriginData;
 enum class AutoplayEvent : uint8_t;
 enum class AutoplayEventFlags : uint8_t;
+enum class IPAddressSpace : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 struct FontAttributes;
 struct WindowFeatures;
@@ -159,6 +160,7 @@ public:
     virtual void decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&);
     virtual void decidePolicyForScreenCaptureUnmuting(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, SecurityOrigin&, SecurityOrigin&, CompletionHandler<void(bool isAllowed)>&& completionHandler) { completionHandler(false); }
     virtual void decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin&, CompletionHandler<void(bool allowed)>&& completionHandler) { completionHandler(false); }
+    virtual void decidePolicyForLocalNetworkAccessPermissionRequest(WebKit::WebPageProxy&, SecurityOrigin& requestingOrigin, SecurityOrigin& topOrigin, WebCore::IPAddressSpace, CompletionHandler<void(bool granted)>&& completionHandler) { completionHandler(false); }
     virtual void requestStorageAccessConfirm(WebKit::WebPageProxy&, WebKit::WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void addMessageToConsoleForTesting(WebKit::WebPageProxy&, WTF::String&&) { }
 

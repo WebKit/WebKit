@@ -619,6 +619,22 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
     });
 }
 
+void NetworkProcessProxy::requestLocalNetworkAccessPermission(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+{
+    RefPtr store = websiteDataStoreFromSessionID(sessionID);
+    if (!store)
+        return completionHandler(WebCore::PermissionState::Denied);
+    store->requestLocalNetworkAccessPermission(pageID, WTF::move(origin), addressSpace, WTF::move(completionHandler));
+}
+
+void NetworkProcessProxy::queryLocalNetworkAccessPermission(PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> pageID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+{
+    RefPtr store = websiteDataStoreFromSessionID(sessionID);
+    if (!store)
+        return completionHandler(WebCore::PermissionState::Prompt);
+    store->queryLocalNetworkAccessPermission(pageID, origin, addressSpace, WTF::move(completionHandler));
+}
+
 void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
 {
     if (RefPtr page = WebProcessProxy::webPage(pageID))

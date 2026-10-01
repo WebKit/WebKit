@@ -100,7 +100,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
     if (descriptor.name == WebCore::PermissionName::LocalNetwork || descriptor.name == WebCore::PermissionName::LoopbackNetwork) {
         auto addressSpace = descriptor.name == WebCore::PermissionName::LocalNetwork ? WebCore::IPAddressSpace::Local : WebCore::IPAddressSpace::Loopback;
         Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-        networkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::QueryLocalNetworkAccessPermission(origin, addressSpace), WTF::move(completionHandler));
+        networkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::QueryLocalNetworkAccessPermission(proxyIdentifier, origin, addressSpace), WTF::move(completionHandler));
         return;
     }
 

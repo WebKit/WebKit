@@ -77,6 +77,9 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
 
     DidAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID sessionID, bool wasAllowed, URL resourceURL)
 
+    RequestLocalNetworkAccessPermission(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, struct WebCore::ClientOrigin origin, enum:uint8_t WebCore::IPAddressSpace addressSpace) -> (enum:uint8_t WebCore::PermissionState state)
+    QueryLocalNetworkAccessPermission(PAL::SessionID sessionID, std::optional<WebKit::WebPageProxyIdentifier> pageID, struct WebCore::ClientOrigin origin, enum:uint8_t WebCore::IPAddressSpace addressSpace) -> (enum:uint8_t std::optional<WebCore::PermissionState> state)
+
     ConsiderProcessSwapForNavigationResponse(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::NavigationIdentifier navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, enum:uint8_t WebCore::NavigationResponseProcessSwapReason reason, WebCore::Site responseSite, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime) -> (std::optional<WebCore::ProcessIdentifier> destinationWebProcess)
 
 #if USE(SOUP)

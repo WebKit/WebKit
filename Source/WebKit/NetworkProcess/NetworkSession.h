@@ -171,11 +171,7 @@ public:
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 
-    WebCore::PermissionState requestLocalNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, bool canPrompt);
-    void setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin&&, WebCore::IPAddressSpace, WebCore::PermissionState);
-    WebCore::PermissionState localNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace) const;
-    void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin);
-    void clearLocalNetworkAccessPermissionsForTesting();
+    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
 
     WebCore::IPAddressSpace classifyConnectionAddressSpace(const std::optional<WebCore::IPAddress>&, const URL&) const;
 
@@ -475,10 +471,6 @@ protected:
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
-    // Keyed on the origin pair as well as the space, so a grant does not follow the same origin embedded
-    // in an unrelated site. Nothing writes it yet; the grant and revocation paths land with the
-    // permission store. See https://bugs.webkit.org/show_bug.cgi?id=319907
-    HashMap<std::pair<WebCore::ClientOrigin, WebCore::IPAddressSpace>, WebCore::PermissionState> m_localNetworkAccessPermissions;
 
     void setIPAddressSpaceOverridesForTesting(const String&);
 

@@ -258,54 +258,9 @@ NetworkSession::~NetworkSession()
         loader->abort();
 }
 
-WebCore::PermissionState NetworkSession::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, bool canPrompt)
+void NetworkSession::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
-    auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace });
-    auto hasRecordedDecision = iterator != m_localNetworkAccessPermissions.end();
-
-    switch (WebCore::localNetworkAccessPermissionRequestOutcome(addressSpace, hasRecordedDecision, canPrompt)) {
-    // FIXME: This leaves a connection whose peer address is unavailable unrecoverable for the user. It
-    // should become unreachable once CFNetwork reports the connection's address space directly
-    // (rdar://183944437).
-    case WebCore::LocalNetworkAccessPermissionRequestOutcome::RefuseAsUndetermined:
-        return WebCore::PermissionState::Denied;
-    case WebCore::LocalNetworkAccessPermissionRequestOutcome::UseRecordedDecision:
-        return iterator->value;
-    // Prompt, not Denied: nothing is recorded, so the origin can still be asked about from a page.
-    case WebCore::LocalNetworkAccessPermissionRequestOutcome::RefuseAsUnpromptable:
-        return WebCore::PermissionState::Prompt;
-    case WebCore::LocalNetworkAccessPermissionRequestOutcome::Prompt:
-        break;
-    }
-
-    // FIXME: There is nothing to ask yet, so an origin that could be prompted is refused instead. The
-    // prompt and the grant store land in https://bugs.webkit.org/show_bug.cgi?id=319907
-    return WebCore::PermissionState::Denied;
-}
-
-void NetworkSession::setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState decision)
-{
-    m_localNetworkAccessPermissions.set({ WTF::move(origin), addressSpace }, decision);
-}
-
-WebCore::PermissionState NetworkSession::localNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace) const
-{
-    auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace });
-    if (iterator == m_localNetworkAccessPermissions.end())
-        return WebCore::PermissionState::Prompt;
-    return iterator->value;
-}
-
-void NetworkSession::removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin)
-{
-    m_localNetworkAccessPermissions.removeIf([&topOrigin](auto& entry) {
-        return entry.key.first.topOrigin == topOrigin;
-    });
-}
-
-void NetworkSession::clearLocalNetworkAccessPermissionsForTesting()
-{
-    m_localNetworkAccessPermissions.clear();
+    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermission(m_sessionID, pageID, origin, addressSpace), WTF::move(completionHandler));
 }
 
 static std::optional<WebCore::IPAddressSpace> addressSpaceFromName(StringView name)

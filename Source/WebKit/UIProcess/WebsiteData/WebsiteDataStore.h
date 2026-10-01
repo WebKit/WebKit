@@ -37,9 +37,12 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreConfiguration.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -139,6 +142,9 @@ struct WebsiteDataStoreParameters;
 enum RemoveDataTaskCounterType { };
 using RemoveDataTaskCounter = RefCounter<RemoveDataTaskCounterType>;
 
+struct LocalNetworkAccessPromptIdentifierType;
+using LocalNetworkAccessPromptIdentifier = ObjectIdentifier<LocalNetworkAccessPromptIdentifierType>;
+
 class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore> {
 public:
     static WebsiteDataStore& defaultDataStore();
@@ -222,9 +228,10 @@ public:
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
     void setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&&);
     void setPrivateTokenIPCForTesting(bool enabled);
-    void setLocalNetworkAccessPermissionForTesting(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, WebCore::PermissionState, CompletionHandler<void()>&&);
-    void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin, CompletionHandler<void()>&&);
-    void clearLocalNetworkAccessPermissionsForTesting(CompletionHandler<void()>&&);
+    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, WebCore::ClientOrigin&&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
+    void queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier>, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
+    void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin);
+    void clearLocalNetworkAccessPermissionsForTesting();
 
     void fetchDomainsWithUserInteraction(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&&);
 
@@ -682,6 +689,25 @@ private:
 #endif
 
     UniqueRef<WebsiteDataStoreClient> m_client;
+
+    using LocalNetworkAccessPermissionKey = std::pair<WebCore::ClientOrigin, WebCore::IPAddressSpace>;
+    enum class RecordLocalNetworkAccessDecision : bool { No, Yes };
+    void askPageForLocalNetworkAccess(const LocalNetworkAccessPermissionKey&);
+    void finishLocalNetworkAccessPrompt(const LocalNetworkAccessPermissionKey&, WebCore::PermissionState, RecordLocalNetworkAccessDecision);
+    void cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin);
+
+    // Keyed on the origin pair as well as the space, so a grant does not follow the same origin embedded
+    // in an unrelated site.
+    HashMap<LocalNetworkAccessPermissionKey, WebCore::PermissionState> m_localNetworkAccessPermissions;
+    struct LocalNetworkAccessWaiter {
+        WebPageProxyIdentifier pageID;
+        CompletionHandler<void(WebCore::PermissionState)> handler;
+    };
+    struct PendingLocalNetworkAccessPrompt {
+        LocalNetworkAccessPromptIdentifier identifier { LocalNetworkAccessPromptIdentifier::generate() };
+        Vector<LocalNetworkAccessWaiter> waiters;
+    };
+    HashMap<LocalNetworkAccessPermissionKey, PendingLocalNetworkAccessPrompt> m_pendingLocalNetworkAccessPrompts;
 
     const RefPtr<API::HTTPCookieStore> m_cookieStore;
     RefPtr<NetworkProcessProxy> m_networkProcess;

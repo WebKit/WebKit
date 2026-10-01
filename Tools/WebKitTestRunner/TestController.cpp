@@ -378,6 +378,16 @@ static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOri
     return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin, frame);
 }
 
+static String originString(WKSecurityOriginRef origin)
+{
+    return toWTFString(adoptWK(WKSecurityOriginCopyToString(origin)).get());
+}
+
+static String localNetworkAccessPermissionKey(const String& requestingOrigin, bool isLoopback)
+{
+    return makeString(requestingOrigin, isLoopback ? " loopback"_s : " local"_s);
+}
+
 // A placeholder to tell WebKit the client is WebKitTestRunner.
 static void runWebAuthenticationPanel()
 {
@@ -452,6 +462,17 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
 
         if (m_isGeolocationPermissionSet) {
             if (m_isGeolocationPermissionAllowed)
+                WKQueryPermissionResultCallbackCompleteWithGranted(callback);
+            else
+                WKQueryPermissionResultCallbackCompleteWithDenied(callback);
+            return;
+        }
+    }
+
+    if (toWTFString(string) == "local-network"_s || toWTFString(string) == "loopback-network"_s) {
+        auto iterator = m_localNetworkAccessPermissions.find(localNetworkAccessPermissionKey(originString(securityOrigin), toWTFString(string) == "loopback-network"_s));
+        if (iterator != m_localNetworkAccessPermissions.end()) {
+            if (iterator->value)
                 WKQueryPermissionResultCallbackCompleteWithGranted(callback);
             else
                 WKQueryPermissionResultCallbackCompleteWithDenied(callback);
@@ -1702,6 +1723,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     {
         bool done { false };
+        m_localNetworkAccessPermissions.clear();
         WKWebsiteDataStoreClearLocalNetworkAccessPermissionsForTesting(websiteDataStore(), &done, [] (void* context) {
             *(bool*)context = true;
         });
@@ -2453,7 +2475,7 @@ if (window.testRunner) {
         callback?.(entries);
     };
     testRunner.setLocalNetworkAccessPermission = (granted, isLoopback, requestingOrigin) => // NOLINT
-        post(['SetLocalNetworkAccessPermission', { Value: granted, IsLoopback: isLoopback, TopOrigin: location.href, RequestingOrigin: requestingOrigin ?? location.href }]);
+        post(['SetLocalNetworkAccessPermission', { Value: granted, IsLoopback: isLoopback, RequestingOrigin: requestingOrigin ?? location.href }]);
     testRunner.revokeLocalNetworkAccessPermissions = () => // NOLINT
         post(['RevokeLocalNetworkAccessPermissions', { Origin: location.href }]);
     testRunner.setStorageAccessPermission = async (granted, subFrameURL, callback) => { // NOLINT
@@ -2707,6 +2729,7 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
 
     if (WKStringIsEqualToUTF8CString(command, "RevokeLocalNetworkAccessPermissions")) {
         auto origin = stringValue(dictionaryValue(argument), "Origin");
+        m_localNetworkAccessPermissions.clear();
         return WKWebsiteDataStoreRevokeLocalNetworkAccessPermissionsForTesting(websiteDataStore(), origin, completionHandler.leak(), adoptAndCallCompletionHandler);
     }
 
@@ -2714,9 +2737,9 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         auto argumentDictionary = dictionaryValue(argument);
         auto value = booleanValue(argumentDictionary, "Value");
         auto isLoopback = booleanValue(argumentDictionary, "IsLoopback");
-        auto topOrigin = stringValue(argumentDictionary, "TopOrigin");
         auto requestingOrigin = stringValue(argumentDictionary, "RequestingOrigin");
-        return WKWebsiteDataStoreSetLocalNetworkAccessPermissionForTesting(websiteDataStore(), topOrigin, requestingOrigin, isLoopback, value, completionHandler.leak(), adoptAndCallCompletionHandler);
+        m_localNetworkAccessPermissions.set(localNetworkAccessPermissionKey(originString(adoptWK(WKSecurityOriginCreateFromString(requestingOrigin)).get()), isLoopback), value);
+        return completionHandler(nullptr);
     }
 
     if (WKStringIsEqualToUTF8CString(command, "SetStorageAccessPermission")) {

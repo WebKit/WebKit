@@ -2064,6 +2064,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.decidePolicyForNotificationPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(NotificationPermissionRequest::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
         }
 
+        void decidePolicyForLocalNetworkAccessPermissionRequest(WebPageProxy&, API::SecurityOrigin& requestingOrigin, API::SecurityOrigin&, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(bool)>&& completionHandler) final
+        {
+            queryPermission(addressSpace == WebCore::IPAddressSpace::Loopback ? "loopback-network"_s : "local-network"_s, requestingOrigin, [completionHandler = WTF::move(completionHandler)](std::optional<WebCore::PermissionState> state) mutable {
+                completionHandler(state == WebCore::PermissionState::Granted);
+            });
+        }
+
         void requestStorageAccessConfirm(WebPageProxy& page, WebFrameProxy* frame, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&& completionHandler) final
         {
             if (!m_client.requestStorageAccessConfirm) {

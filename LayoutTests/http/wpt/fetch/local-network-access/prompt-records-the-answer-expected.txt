@@ -1,0 +1,5 @@
+
+
+PASS a local network request asks the UI client without any interaction, and the answer is recorded
+PASS a recorded decision is used rather than asking again
+

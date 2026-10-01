@@ -15314,6 +15314,27 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChal
     m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
 }
 
+bool WebPageProxy::canShowLocalNetworkAccessPrompt(const WebCore::ClientOrigin& origin) const
+{
+    // A page that navigated away would otherwise show the prompt under whatever origin it shows now.
+    return protocolHostAndPortAreEqual(pageLoadState().activeURL(), origin.topOrigin.toURL());
+}
+
+void WebPageProxy::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref requestingOrigin = API::SecurityOrigin::create(origin.clientOrigin.securityOrigin());
+    Ref topOrigin = API::SecurityOrigin::create(origin.topOrigin.securityOrigin());
+    m_uiClient->decidePolicyForLocalNetworkAccessPermissionRequest(*this, requestingOrigin.get(), topOrigin.get(), addressSpace, WTF::move(completionHandler));
+}
+
+void WebPageProxy::queryLocalNetworkAccessPermission(const WebCore::SecurityOriginData& topOrigin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+{
+    Ref origin = API::SecurityOrigin::create(topOrigin);
+    m_uiClient->queryPermission(addressSpace == WebCore::IPAddressSpace::Loopback ? "loopback-network"_s : "local-network"_s, origin, [completionHandler = WTF::move(completionHandler)](std::optional<WebCore::PermissionState> state) mutable {
+        completionHandler(state.value_or(WebCore::PermissionState::Prompt));
+    });
+}
+
 void WebPageProxy::negotiatedLegacyTLS()
 {
     Ref protectedPageLoadState = pageLoadState();
@@ -15443,7 +15464,7 @@ bool WebPageProxy::shouldAlwaysPromptForPermission(PermissionName permissionName
     case PermissionName::Geolocation:
     case PermissionName::Microphone:
 
-    // Answered in the networking process, before reaching queryPermission().
+    // Answered by WebsiteDataStore, before reaching queryPermission().
     case PermissionName::LocalNetwork:
     case PermissionName::LoopbackNetwork:
         break;
