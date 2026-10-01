@@ -1932,7 +1932,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     using enum WebKit::WebEventPhase;
     if (phase == Began)
         _lastCumulativeMagnification = 0;
-    auto currentMagnification = magnification - _lastCumulativeMagnification;
+    auto currentMagnification = (1 + magnification) / (1 + _lastCumulativeMagnification) - 1;
     _lastCumulativeMagnification = magnification;
     return currentMagnification;
 }
