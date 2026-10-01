@@ -45,6 +45,13 @@ static WeakHashSet<SessionHost::BrowserTerminatedObserver>& browserTerminatedObs
 void SessionHost::inspectorDisconnected()
 {
     Ref<SessionHost> protectedThis(*this);
+
+    auto pendingRequestCount = m_commandRequests.size();
+    if (pendingRequestCount)
+        RELEASE_LOG_INFO(SessionHost, "Inspector disconnected; failing %u pending command(s)", pendingRequestCount);
+    else
+        RELEASE_LOG_INFO(SessionHost, "Inspector disconnected; no commands remaining.");
+
     // Browser closed or crashed, finish all pending commands with error.
     RefPtr<JSON::Object> errorResponse = JSON::Object::create();
     errorResponse->setString("message"_s, "Session terminated without a reply"_s);
@@ -74,6 +81,7 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Objec
     if (parameters)
         messageBuilder.append(",\"params\":"_s, parameters->toJSONString());
     messageBuilder.append('}');
+    RELEASE_LOG_INFO(SessionHost, "    SEND inspector #%04ld: Automation.%s (%u bytes)", sequenceID, command.utf8().data(), messageBuilder.length());
     sendMessageToBackend(messageBuilder.toString());
 
     return sequenceID;
@@ -116,6 +124,7 @@ void SessionHost::dispatchMessage(const String& message)
         if (resultObject->size())
             response.responseObject = WTF::move(resultObject);
     }
+    RELEASE_LOG_INFO(SessionHost, "    RECV inspector #%04d: %s", *sequenceID, response.isError ? "error" : "ok");
 
     responseHandler(WTF::move(response));
 }
