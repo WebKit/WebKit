@@ -33,6 +33,10 @@
 
 namespace WebKit {
 
+#if !USE(LIBWPE)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+#endif
+
 Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WPEEvent* event, const String& text, bool isAutorepeat)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat)));

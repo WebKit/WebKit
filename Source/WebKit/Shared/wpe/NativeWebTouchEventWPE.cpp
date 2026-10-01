@@ -33,6 +33,10 @@
 
 namespace WebKit {
 
+#if !USE(LIBWPE)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+#endif
+
 Ref<NativeWebTouchEvent> NativeWebTouchEvent::create(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
     return adoptRef(*new NativeWebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)), event));
