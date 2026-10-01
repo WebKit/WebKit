@@ -106,7 +106,7 @@ public:
     const SuccessorList& successors() const LIFETIME_BOUND { return m_successors; }
     SuccessorList& successors() LIFETIME_BOUND { return m_successors; }
     
-    void clearSuccessors();
+    void clearSuccessors() { m_successors.clear(); }
     JS_EXPORT_PRIVATE void appendSuccessor(FrequentedBlock);
     JS_EXPORT_PRIVATE void setSuccessors(FrequentedBlock);
     JS_EXPORT_PRIVATE void setSuccessors(FrequentedBlock, FrequentedBlock);
@@ -154,19 +154,6 @@ public:
     void dump(PrintStream&) const;
     void deepDump(const Procedure&, PrintStream&) const;
 
-    // These are deprecated method for compatibility with the old ControlValue class. Don't use them
-    // in new code.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159440
-    
-    // Use this for Oops.
-    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin);
-    // Use this for Return.
-    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin, Value*);
-    // Use this for Jump.
-    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin, const FrequentedBlock&);
-    // Use this for Branch.
-    JS_EXPORT_PRIVATE Value* appendNewControlValue(Procedure&, Opcode, Origin, Value*, const FrequentedBlock&, const FrequentedBlock&);
-    
 private:
     friend class BlockInsertionSet;
     friend class InsertionSet;

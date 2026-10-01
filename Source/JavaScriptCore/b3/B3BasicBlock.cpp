@@ -91,11 +91,6 @@ Value* BasicBlock::appendBoolConstant(Procedure& proc, Origin origin, bool value
     return appendIntConstant(proc, origin, Int32, value ? 1 : 0);
 }
 
-void BasicBlock::clearSuccessors()
-{
-    m_successors.clear();
-}
-
 void BasicBlock::appendSuccessor(FrequentedBlock target)
 {
     m_successors.append(target);
@@ -168,34 +163,6 @@ void BasicBlock::deepDump(const Procedure& proc, PrintStream& out) const
             out.print(listDump(successors()));
         out.print("\n");
     }
-}
-
-Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin)
-{
-    RELEASE_ASSERT(opcode == Oops || opcode == Return);
-    clearSuccessors();
-    return appendNew<Value>(proc, opcode, origin);
-}
-
-Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin, Value* value)
-{
-    RELEASE_ASSERT(opcode == Return);
-    clearSuccessors();
-    return appendNew<Value>(proc, opcode, origin, value);
-}
-
-Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin, const FrequentedBlock& target)
-{
-    RELEASE_ASSERT(opcode == Jump);
-    setSuccessors(target);
-    return appendNew<Value>(proc, opcode, origin);
-}
-
-Value* BasicBlock::appendNewControlValue(Procedure& proc, Opcode opcode, Origin origin, Value* predicate, const FrequentedBlock& taken, const FrequentedBlock& notTaken)
-{
-    RELEASE_ASSERT(opcode == Branch);
-    setSuccessors(taken, notTaken);
-    return appendNew<Value>(proc, opcode, origin, predicate);
 }
 
 } } // namespace JSC::B3

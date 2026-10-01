@@ -64,8 +64,8 @@ void testRotR(T valueInt, int32_t shift)
 
     Value* value = arguments[0];
     Value* amount = arguments[1];
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, RotR, Origin(), value, amount));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, RotR, Origin(), value, amount));
 
     CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateRight(valueInt, shift));
 }
@@ -79,8 +79,8 @@ void testRotL(T valueInt, int32_t shift)
     
     Value* value = arguments[0];
     Value* ammount = arguments[1];
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
     
     CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateLeft(valueInt, shift));
 }
@@ -95,8 +95,8 @@ void testRotRWithImmShift(T valueInt, int32_t shift)
     
     Value* value = arguments[0];
     Value* ammount = root->appendIntConstant(proc, Origin(), Int32, shift);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, RotR, Origin(), value, ammount));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, RotR, Origin(), value, ammount));
     
     CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateRight(valueInt, shift));
 }
@@ -110,8 +110,8 @@ void testRotLWithImmShift(T valueInt, int32_t shift)
 
     Value* value = arguments[0];
     Value* ammount = root->appendIntConstant(proc, Origin(), Int32, shift);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
 
     CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateLeft(valueInt, shift));
 }
@@ -138,8 +138,8 @@ void testRotRFromShiftOr(T valueInt, int32_t shift)
     Value* zshrAmount = root->appendIntConstant(proc, Origin(), Int32, normalizedShift);
     Value* shl = root->appendNew<Value>(proc, Shl, Origin(), value, shlAmount);
     Value* zshr = root->appendNew<Value>(proc, ZShr, Origin(), value, zshrAmount);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, BitOr, Origin(), shl, zshr));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, BitOr, Origin(), shl, zshr));
 
     CHECK_EQ(compileAndRun<T>(proc, valueInt), rotateRight(valueInt, static_cast<int32_t>(normalizedShift)));
 }
@@ -161,8 +161,8 @@ void testRotRFromShiftXor(T valueInt, int32_t shift)
     Value* zshrAmount = root->appendIntConstant(proc, Origin(), Int32, normalizedShift);
     Value* shl = root->appendNew<Value>(proc, Shl, Origin(), value, shlAmount);
     Value* zshr = root->appendNew<Value>(proc, ZShr, Origin(), value, zshrAmount);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, BitXor, Origin(), shl, zshr));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, BitXor, Origin(), shl, zshr));
 
     CHECK_EQ(compileAndRun<T>(proc, valueInt), rotateRight(valueInt, static_cast<int32_t>(normalizedShift)));
 }
@@ -185,8 +185,8 @@ void testRotRFromShiftXorReversed(T valueInt, int32_t shift)
     Value* zshrAmount = root->appendIntConstant(proc, Origin(), Int32, normalizedShift);
     Value* zshr = root->appendNew<Value>(proc, ZShr, Origin(), value, zshrAmount);
     Value* shl = root->appendNew<Value>(proc, Shl, Origin(), value, shlAmount);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, BitXor, Origin(), zshr, shl));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, BitXor, Origin(), zshr, shl));
 
     CHECK_EQ(compileAndRun<T>(proc, valueInt), rotateRight(valueInt, static_cast<int32_t>(normalizedShift)));
 }
@@ -217,7 +217,8 @@ void testRotRFromShiftXorChainSHA256Sigma1_32(int32_t valueInt)
     Value* xor2 = root->appendNew<Value>(proc, BitXor, Origin(), xor1, shl26);
     Value* xor3 = root->appendNew<Value>(proc, BitXor, Origin(), xor2, shl21);
     Value* xor4 = root->appendNew<Value>(proc, BitXor, Origin(), xor3, shl7);
-    root->appendNewControlValue(proc, Return, Origin(), xor4);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), xor4);
 
     int32_t expected = rotateRight(valueInt, 6) ^ rotateRight(valueInt, 11) ^ rotateRight(valueInt, 25);
     CHECK_EQ(compileAndRun<int32_t>(proc, valueInt), expected);
@@ -247,7 +248,8 @@ void testRotRFromShiftXorChainSHA512Sigma1_64(int64_t valueInt)
     Value* xor2 = root->appendNew<Value>(proc, BitXor, Origin(), xor1, shl50);
     Value* xor3 = root->appendNew<Value>(proc, BitXor, Origin(), xor2, shl46);
     Value* xor4 = root->appendNew<Value>(proc, BitXor, Origin(), xor3, shl23);
-    root->appendNewControlValue(proc, Return, Origin(), xor4);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), xor4);
 
     int64_t expected = rotateRight(valueInt, 14) ^ rotateRight(valueInt, 18) ^ rotateRight(valueInt, 41);
     CHECK_EQ(compileAndRun<int64_t>(proc, valueInt), expected);
@@ -276,7 +278,8 @@ void testRotRFromShiftXorChainSHA256sigma0_32(int32_t valueInt)
     Value* xor1 = root->appendNew<Value>(proc, BitXor, Origin(), xor0, zshr3);
     Value* xor2 = root->appendNew<Value>(proc, BitXor, Origin(), xor1, shl25);
     Value* xor3 = root->appendNew<Value>(proc, BitXor, Origin(), xor2, shl14);
-    root->appendNewControlValue(proc, Return, Origin(), xor3);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), xor3);
 
     int32_t expected = rotateRight(valueInt, 7) ^ rotateRight(valueInt, 18) ^ (static_cast<uint32_t>(valueInt) >> 3);
     CHECK_EQ(compileAndRun<int32_t>(proc, valueInt), expected);
@@ -309,7 +312,8 @@ void testRotRFromShiftOrChainSHA256Sigma1_32(int32_t valueInt)
     Value* or2 = root->appendNew<Value>(proc, BitOr, Origin(), or1, shl26);
     Value* or3 = root->appendNew<Value>(proc, BitOr, Origin(), or2, shl21);
     Value* or4 = root->appendNew<Value>(proc, BitOr, Origin(), or3, shl7);
-    root->appendNewControlValue(proc, Return, Origin(), or4);
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), or4);
 
     int32_t expected = rotateRight(valueInt, 6) | rotateRight(valueInt, 11) | rotateRight(valueInt, 25);
     CHECK_EQ(compileAndRun<int32_t>(proc, valueInt), expected);
@@ -343,8 +347,8 @@ void testRotRFromShiftXorChainSharedShiftOperand(int32_t valueInt)
     Value* xor3 = root->appendNew<Value>(proc, BitXor, Origin(), xor2, shl21);
     Value* xor4 = root->appendNew<Value>(proc, BitXor, Origin(), xor3, shl7);
     // shl26 is used twice: once inside the XOR chain, once as an Add operand.
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, Add, Origin(), xor4, shl26));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), xor4, shl26));
 
     int32_t sigma1 = rotateRight(valueInt, 6) ^ rotateRight(valueInt, 11) ^ rotateRight(valueInt, 25);
     int32_t expected = static_cast<int32_t>(sigma1 + (static_cast<uint32_t>(valueInt) << 26));
@@ -371,8 +375,8 @@ void testShiftOrDifferentBasesNoRotate(int32_t xValue, int32_t yValue, int32_t s
     Value* zshrAmount = root->appendIntConstant(proc, Origin(), Int32, normalizedShift);
     Value* shl = root->appendNew<Value>(proc, Shl, Origin(), x, shlAmount);
     Value* zshr = root->appendNew<Value>(proc, ZShr, Origin(), y, zshrAmount);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, BitOr, Origin(), shl, zshr));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, BitOr, Origin(), shl, zshr));
 
     int32_t expected = static_cast<int32_t>(
         (static_cast<uint32_t>(xValue) << (width - normalizedShift))
@@ -393,8 +397,8 @@ void testShiftOrMismatchedAmountsNoRotate(int32_t valueInt)
     Value* zshrAmount = root->appendIntConstant(proc, Origin(), Int32, 10);
     Value* shl = root->appendNew<Value>(proc, Shl, Origin(), value, shlAmount);
     Value* zshr = root->appendNew<Value>(proc, ZShr, Origin(), value, zshrAmount);
-    root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, BitOr, Origin(), shl, zshr));
+    root->clearSuccessors();
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, BitOr, Origin(), shl, zshr));
 
     int32_t expected = static_cast<int32_t>(
         (static_cast<uint32_t>(valueInt) << 5) | (static_cast<uint32_t>(valueInt) >> 10));
