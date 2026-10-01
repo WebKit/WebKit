@@ -84,7 +84,7 @@ public:
     {
         if (m_displayBuffer) {
             layer.setContentsFormat(m_contentsFormat);
-            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { }, std::nullopt });
+            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { } });
         } else
             layer.clearContents();
 

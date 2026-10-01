@@ -34,6 +34,8 @@ namespace WebCore {
 struct ImageBufferFormat {
     PixelFormat pixelFormat;
     UseLosslessCompression useLosslessCompression { UseLosslessCompression::No };
+
+    friend bool operator==(const ImageBufferFormat&, const ImageBufferFormat&) = default;
 };
 
 } // namespace WebCore

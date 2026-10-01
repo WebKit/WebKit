@@ -39,6 +39,7 @@
 #include "SharedPreferencesForWebProcess.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageBufferTransferIdentifier.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/PageIdentifier.h>
@@ -352,6 +353,7 @@ private:
     void releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
     void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
+    void releaseTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier);
     void setMediaOverridesForTesting(MediaOverridesForTesting);
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 

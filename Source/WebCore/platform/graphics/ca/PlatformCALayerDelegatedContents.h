@@ -46,7 +46,6 @@ public:
 struct PlatformCALayerDelegatedContents {
     MachSendRight surface;
     RefPtr<PlatformCALayerDelegatedContentsFence> finishedFence;
-    std::optional<RenderingResourceIdentifier> surfaceIdentifier;
 };
 
 struct PlatformCALayerInProcessDelegatedContents {

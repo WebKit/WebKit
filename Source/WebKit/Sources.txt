@@ -911,6 +911,7 @@ WebProcess/UserContent/WebUserContentController.cpp
 
 WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 
+WebProcess/WebCoreSupport/RemotePlaceholderRenderingContextSource.cpp
 WebProcess/WebCoreSupport/RemoteWebLockRegistry.cpp
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp @cost:6

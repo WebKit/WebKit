@@ -87,6 +87,10 @@ struct SerializedScriptValueInternals {
     std::optional<NonSerializedDataToken> nonSerializedDataToken { };
     // Must stay inside the contiguous run of serialized members at the top of this struct.
     Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    // Must stay inside the contiguous run of serialized members at the top of this struct.
+    Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases { };
+#endif
     Vector<FileSystemHandleKeepAlive> fileSystemHandleKeepAlives { };
 #if ENABLE(WEB_CODECS)
     Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
@@ -105,7 +109,6 @@ struct SerializedScriptValueInternals {
 #endif
     std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { nullptr };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases { };
     Vector<Ref<OffscreenCanvas>> inMemoryOffscreenCanvases { };
 #endif
     Vector<Ref<MessagePort>> inMemoryMessagePorts { };

@@ -97,6 +97,14 @@
 #include "WasmDebuggerDebuggable.h"
 #endif
 
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+#include "ImageBufferBackendHandle.h"
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/PlaceholderFrameIdentifier.h>
+#include <WebCore/PlaceholderRenderingContextIdentifier.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -657,6 +665,15 @@ public:
 
 #if ENABLE(IPC_TESTING_API)
     void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    void commitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlaceholderRenderingContextIdentifier&&, WebCore::ImageBufferTransferHandle&&, std::optional<ImageBufferBackendHandle>&& layerContentsHandle, bool originClean, bool opaque, CompletionHandler<void(bool)>&&);
+    void offscreenCanvasPlaceholderCreated(WebCore::PlaceholderRenderingContextIdentifier);
+    void offscreenCanvasPlaceholderDestroyed(WebCore::PlaceholderRenderingContextIdentifier);
+    // Called by WebPageProxy, which is the authority on the page the layer belongs to.
+    void setOffscreenCanvasPlaceholderLayer(WebCore::PlaceholderRenderingContextIdentifier, WebPageProxyIdentifier, std::optional<WebCore::PlatformLayerIdentifier>);
+    static void removeOffscreenCanvasPlaceholdersForProcess(WebCore::ProcessIdentifier);
 #endif
 
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }

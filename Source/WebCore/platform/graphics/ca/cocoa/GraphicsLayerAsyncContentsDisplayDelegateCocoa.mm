@@ -44,7 +44,7 @@ GraphicsLayerAsyncContentsDisplayDelegateCocoa::GraphicsLayerAsyncContentsDispla
     layer.setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
-bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer& image, bool opaque)
+bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer& image, bool opaque, PlaceholderFrameIdentifier)
 {
     RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(image.clone());
     m_image = nativeImage;

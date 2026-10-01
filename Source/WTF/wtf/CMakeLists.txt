@@ -200,6 +200,7 @@ set(WTF_PUBLIC_HEADERS
     MetaAllocator.h
     MetaAllocatorHandle.h
     MmapSpan.h
+    MonotonicObjectIdentifier.h
     MonotonicTime.h
     module.modulemap
     NakedPtr.h

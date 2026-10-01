@@ -38,6 +38,7 @@
 #include "EventNames.h"
 #include "GPU.h"
 #include "GPUCanvasContext.h"
+#include "GraphicsClient.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
@@ -77,17 +78,59 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DetachedOffscreenCanvas);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OffscreenCanvas);
 
 DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
-    : m_placeholderSource(WTF::move(placeholderSource))
+    : m_placeholder(WTF::move(placeholderSource))
     , m_size(size)
     , m_originClean(originClean)
 {
 }
 
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, std::optional<RemotePlaceholderRenderingContextIdentifier> placeholderIdentifier)
+    : m_size(size)
+    , m_originClean(originClean)
+{
+    if (placeholderIdentifier)
+        m_placeholder = *placeholderIdentifier;
+}
+
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(DetachedOffscreenCanvas&&) = default;
+DetachedOffscreenCanvas& DetachedOffscreenCanvas::operator=(DetachedOffscreenCanvas&&) = default;
 DetachedOffscreenCanvas::~DetachedOffscreenCanvas() = default;
 
-RefPtr<PlaceholderRenderingContextSource> DetachedOffscreenCanvas::takePlaceholderSource()
+std::unique_ptr<DetachedOffscreenCanvas> DetachedOffscreenCanvas::clone() const
 {
-    return WTF::move(m_placeholderSource);
+    return WTF::switchOn(m_placeholder,
+        [&](const RefPtr<PlaceholderRenderingContextSource>& source) {
+            return makeUnique<DetachedOffscreenCanvas>(m_size, m_originClean, RefPtr { source });
+        },
+        [&](const RemotePlaceholderRenderingContextIdentifier& identifier) {
+            return makeUnique<DetachedOffscreenCanvas>(m_size, m_originClean, identifier);
+        });
+}
+
+std::optional<RemotePlaceholderRenderingContextIdentifier> DetachedOffscreenCanvas::placeholderIdentifier() const
+{
+    return WTF::switchOn(m_placeholder,
+        [](const RefPtr<PlaceholderRenderingContextSource>& source) -> std::optional<RemotePlaceholderRenderingContextIdentifier> {
+            if (!source)
+                return std::nullopt;
+            return source->remoteIdentifier();
+        },
+        [](const RemotePlaceholderRenderingContextIdentifier& identifier) -> std::optional<RemotePlaceholderRenderingContextIdentifier> {
+            return identifier;
+        });
+}
+
+RefPtr<PlaceholderRenderingContextSource> DetachedOffscreenCanvas::takePlaceholderSource(ScriptExecutionContext& context)
+{
+    if (auto* source = std::get_if<RefPtr<PlaceholderRenderingContextSource>>(&m_placeholder))
+        return WTF::move(*source);
+
+    // Creates a remote source even if this message ended same process, simplification to avoid needing a way to construct
+    // a new local source for this corner case.
+    auto* graphicsClient = context.graphicsClient();
+    if (!graphicsClient)
+        return nullptr;
+    return graphicsClient->createPlaceholderRenderingContextSource(std::get<RemotePlaceholderRenderingContextIdentifier>(m_placeholder));
 }
 
 bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
@@ -112,7 +155,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
 {
-    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderSource()));
+    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderSource(scriptExecutionContext)));
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
     clone->suspendIfNeeded();
@@ -121,7 +164,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, PlaceholderRenderingContext& placeholder)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), &placeholder.source()));
+    Ref offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), LocalPlaceholderRenderingContextSource::create(placeholder)));
     offscreen->suspendIfNeeded();
     return offscreen;
 }

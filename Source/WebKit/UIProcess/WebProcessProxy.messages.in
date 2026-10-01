@@ -129,4 +129,10 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #if ENABLE(IPC_TESTING_API)
     TakeInvalidMessageStringForTesting() -> (String error) Synchronous
 #endif
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    OffscreenCanvasPlaceholderCreated(WebCore::PlaceholderRenderingContextIdentifier identifier)
+    OffscreenCanvasPlaceholderDestroyed(WebCore::PlaceholderRenderingContextIdentifier identifier)
+    CommitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlaceholderRenderingContextIdentifier identifier, struct WebCore::ImageBufferTransferHandle transferHandle, std::optional<WebKit::ImageBufferBackendHandle> layerContentsHandle, bool originClean, bool opaque) -> (bool placeholderMayExist)
+#endif
 }

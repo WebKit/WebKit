@@ -31,6 +31,7 @@
 #include "APIPageHandle.h"
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
+#include "AuxiliaryProcessMessages.h"
 #include "DownloadProxyMap.h"
 #include "DrawingAreaProxy.h"
 #include "GPUProcessConnectionParameters.h"
@@ -137,6 +138,15 @@
 
 #if ENABLE(GPU_PROCESS)
 #include "APIPageConfiguration.h"
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+#include "GPUProcessMessages.h"
+#include "GPUProcessProxy.h"
+#if PLATFORM(COCOA)
+#include "RemoteLayerBackingStore.h"
+#include "RemoteLayerTreeDrawingAreaProxy.h"
+#endif
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -539,6 +549,10 @@ WebProcessProxy::~WebProcessProxy()
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "destructor:");
 
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    removeOffscreenCanvasPlaceholdersForProcess(coreProcessIdentifier());
+#endif
+
     // ~AuxiliaryProcessProxy() replies to pending messages after our members are gone; a reply
     // handler that upgrades its still-live WeakPtr<WebProcessProxy> would then touch freed members
     // (e.g. m_pagesPendingClose). Cancel them now, while our state is intact.
@@ -934,6 +948,10 @@ void WebProcessProxy::shutDown()
     WEBPROCESSPROXY_RELEASE_LOG(Process, "shutDown:");
 
     m_isShuttingDown = true;
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    removeOffscreenCanvasPlaceholdersForProcess(coreProcessIdentifier());
+#endif
 
     didStopRunningProcess();
 
@@ -3794,6 +3812,243 @@ void WebProcessProxy::takeInvalidMessageStringForTesting(CompletionHandler<void(
     if (error.isNull())
         error = emptyString();
     callback(WTF::move(error));
+}
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+struct OffscreenCanvasPlaceholderFrame {
+    WebCore::ImageBufferTransferHandle transferHandle;
+    WebCore::PlaceholderFrameIdentifier frame;
+    bool originClean { false };
+    bool opaque { false };
+};
+
+struct OffscreenCanvasPlaceholder {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(OffscreenCanvasPlaceholder);
+
+    Markable<WebCore::ProcessIdentifier> owner; // Always set.
+    WebCore::PlaceholderFrameIdentifier lastFrame;
+    bool frameInFlightToOwner { false };
+    std::optional<OffscreenCanvasPlaceholderFrame> pendingFrame { };
+    // The layer displaying the placeholder, so that a committed frame can be applied to it directly.
+    Markable<WebCore::PlatformLayerIdentifier> layerID { };
+    Markable<WebPageProxyIdentifier> pageID { };
+};
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OffscreenCanvasPlaceholder);
+
+static void releaseTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&& identifiers)
+{
+    if (identifiers.isEmpty())
+        return;
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::ReleaseTransferredImageBuffers(WTF::move(identifiers)), 0);
+}
+
+// The placeholder's process was never told about a pending frame, so it cannot be claiming it.
+static void releasePendingFrames(const Vector<UniqueRef<OffscreenCanvasPlaceholder>>& placeholders)
+{
+    releaseTransferredImageBuffers(WTF::compactMap(placeholders, [](auto& placeholder) -> std::optional<WebCore::ImageBufferTransferIdentifier> {
+        if (!placeholder->pendingFrame)
+            return std::nullopt;
+        return placeholder->pendingFrame->transferHandle.identifier;
+    }));
+}
+
+// Where to deliver frames committed to each placeholder. Process wide because frames can come from
+// any process the canvas was transferred to.
+static HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<OffscreenCanvasPlaceholder>>& offscreenCanvasPlaceholders()
+{
+    ASSERT(isMainThreadOrCheckDisabled());
+    static NeverDestroyed<HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<OffscreenCanvasPlaceholder>>> placeholders;
+    return placeholders;
+}
+
+static RefPtr<WebProcessProxy> liveProcessForIdentifier(WebCore::ProcessIdentifier identifier)
+{
+    RefPtr process = WebProcessProxy::processForIdentifier(identifier);
+    if (!process || process->state() == AuxiliaryProcessProxy::State::Terminated)
+        return nullptr;
+    return process;
+}
+
+void WebProcessProxy::offscreenCanvasPlaceholderCreated(WebCore::PlaceholderRenderingContextIdentifier identifier)
+{
+    auto result = offscreenCanvasPlaceholders().add(identifier, makeUniqueRef<OffscreenCanvasPlaceholder>(OffscreenCanvasPlaceholder { coreProcessIdentifier(), { } }));
+    // A fresh UUID never collides, so this process is trying to take over another's placeholder.
+    MESSAGE_CHECK(result.isNewEntry);
+}
+
+void WebProcessProxy::offscreenCanvasPlaceholderDestroyed(WebCore::PlaceholderRenderingContextIdentifier identifier)
+{
+    auto& placeholders = offscreenCanvasPlaceholders();
+    auto placeholder = placeholders.find(identifier);
+    if (placeholder == placeholders.end())
+        return;
+    MESSAGE_CHECK(placeholder->value->owner == coreProcessIdentifier());
+    if (auto& pendingFrame = placeholder->value->pendingFrame)
+        releaseTransferredImageBuffers({ pendingFrame->transferHandle.identifier });
+    placeholders.remove(placeholder);
+}
+
+void WebProcessProxy::setOffscreenCanvasPlaceholderLayer(WebCore::PlaceholderRenderingContextIdentifier identifier, WebPageProxyIdentifier pageID, std::optional<WebCore::PlatformLayerIdentifier> layerID)
+{
+    auto& placeholders = offscreenCanvasPlaceholders();
+    auto placeholder = placeholders.find(identifier);
+    if (placeholder == placeholders.end())
+        return;
+    MESSAGE_CHECK(placeholder->value->owner == coreProcessIdentifier());
+    placeholder->value->layerID = layerID;
+    placeholder->value->pageID = layerID ? std::optional { pageID } : std::nullopt;
+}
+
+#if PLATFORM(COCOA)
+// Optional: when there is no layer to target, the rendering update that the placeholder's process
+// schedules delivers the frame instead.
+static void applyFrameToOffscreenCanvasPlaceholderLayer(const OffscreenCanvasPlaceholder& placeholder, ImageBufferBackendHandle&& handle, WebCore::PlaceholderFrameIdentifier frame, bool opaque)
+{
+    if (!placeholder.layerID)
+        return;
+    RefPtr page = WebProcessProxy::webPage(*placeholder.pageID);
+    if (!page)
+        return;
+    RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(page->drawingArea());
+    if (!drawingArea)
+        return;
+    drawingArea->setLayerContentsFromAnotherProcess(*placeholder.layerID, RemoteLayerBackingStoreProperties(WTF::move(handle), frame, opaque));
+}
+#endif
+
+void WebProcessProxy::removeOffscreenCanvasPlaceholdersForProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    Vector<UniqueRef<OffscreenCanvasPlaceholder>> removed;
+    offscreenCanvasPlaceholders().removeIf([&](auto& entry) {
+        if (entry.value->owner != processIdentifier)
+            return false;
+        removed.append(WTF::move(entry.value));
+        return true;
+    });
+    releasePendingFrames(removed);
+}
+
+static void sendOffscreenCanvasPlaceholderFrameToOwner(WebCore::PlaceholderRenderingContextIdentifier, WebProcessProxy& owner, OffscreenCanvasPlaceholderFrame&&);
+
+static void offscreenCanvasPlaceholderFrameHandledByOwner(WebCore::PlaceholderRenderingContextIdentifier identifier, WebCore::ImageBufferTransferIdentifier transferIdentifier, bool handled)
+{
+    // Not handled means the owner exited first.
+    if (!handled)
+        releaseTransferredImageBuffers({ transferIdentifier });
+
+    auto placeholder = offscreenCanvasPlaceholders().find(identifier);
+    if (placeholder == offscreenCanvasPlaceholders().end())
+        return;
+
+    auto next = std::exchange(placeholder->value->pendingFrame, std::nullopt);
+    RefPtr owner = handled ? liveProcessForIdentifier(*placeholder->value->owner) : nullptr;
+    if (!next || !owner) {
+        placeholder->value->frameInFlightToOwner = false;
+        if (next)
+            releaseTransferredImageBuffers({ next->transferHandle.identifier });
+        return;
+    }
+    sendOffscreenCanvasPlaceholderFrameToOwner(identifier, *owner, WTF::move(*next));
+}
+
+static void sendOffscreenCanvasPlaceholderFrameToOwner(WebCore::PlaceholderRenderingContextIdentifier identifier, WebProcessProxy& owner, OffscreenCanvasPlaceholderFrame&& frame)
+{
+    auto transferIdentifier = frame.transferHandle.identifier;
+    owner.sendWithAsyncReply(Messages::WebProcess::CommitOffscreenCanvasPlaceholderFrame(identifier, WTF::move(frame.transferHandle), frame.frame, frame.originClean, frame.opaque), [identifier, transferIdentifier](bool handled) {
+        offscreenCanvasPlaceholderFrameHandledByOwner(identifier, transferIdentifier, handled);
+    });
+}
+
+// A frame as committed by a process the canvas was transferred to.
+struct CommittedOffscreenCanvasPlaceholderFrame {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CommittedOffscreenCanvasPlaceholderFrame);
+
+    WebCore::ImageBufferTransferHandle transferHandle;
+    std::optional<ImageBufferBackendHandle> layerContentsHandle;
+    bool originClean { false };
+    bool opaque { false };
+    CompletionHandler<void(bool placeholderMayExist)> completionHandler;
+};
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CommittedOffscreenCanvasPlaceholderFrame);
+
+static HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<CommittedOffscreenCanvasPlaceholderFrame>>& offscreenCanvasPlaceholderFramesAwaitingOwner()
+{
+    ASSERT(isMainThreadOrCheckDisabled());
+    static NeverDestroyed<HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<CommittedOffscreenCanvasPlaceholderFrame>>> frames;
+    return frames;
+}
+
+static void commitFrameToOffscreenCanvasPlaceholder(WebCore::PlaceholderRenderingContextIdentifier identifier, CommittedOffscreenCanvasPlaceholderFrame&& committedFrame)
+{
+    auto& placeholders = offscreenCanvasPlaceholders();
+    auto placeholder = placeholders.find(identifier);
+    RefPtr destination = placeholder != placeholders.end() ? liveProcessForIdentifier(*placeholder->value->owner) : nullptr;
+    if (!destination) {
+        releaseTransferredImageBuffers({ committedFrame.transferHandle.identifier });
+        return committedFrame.completionHandler(false);
+    }
+    committedFrame.completionHandler(true);
+
+    auto frame = placeholder->value->lastFrame.increment();
+
+    // Set the buffer to the layer immediately rather than waiting for a rendering update round trip.
+#if PLATFORM(COCOA)
+    if (committedFrame.layerContentsHandle)
+        applyFrameToOffscreenCanvasPlaceholderLayer(placeholder->value.get(), WTF::move(*committedFrame.layerContentsHandle), frame, committedFrame.opaque);
+#endif
+
+    // Without a GPU process the buffer went with it; frames resume once one relaunches.
+    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+    if (!gpuProcess)
+        return;
+
+    // Eagerly transfer ownership of the buffer in case the sending process crashes.
+    gpuProcess->send(Messages::GPUProcess::HandOverTransferredImageBuffers({ committedFrame.transferHandle.identifier }, destination->coreProcessIdentifier()), 0);
+
+    OffscreenCanvasPlaceholderFrame placeholderFrame { WTF::move(committedFrame.transferHandle), frame, committedFrame.originClean, committedFrame.opaque };
+    if (placeholder->value->frameInFlightToOwner) {
+        // Queue the newest frame while the in flight one is processed, releasing the pending one if it exists, since it's been superceeded.
+        if (auto superseded = std::exchange(placeholder->value->pendingFrame, WTF::move(placeholderFrame)))
+            releaseTransferredImageBuffers({ superseded->transferHandle.identifier });
+        return;
+    }
+    placeholder->value->frameInFlightToOwner = true;
+    sendOffscreenCanvasPlaceholderFrameToOwner(identifier, *destination, WTF::move(placeholderFrame));
+}
+
+void WebProcessProxy::commitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlaceholderRenderingContextIdentifier&& identifier, WebCore::ImageBufferTransferHandle&& transferHandle, std::optional<ImageBufferBackendHandle>&& layerContentsHandle, bool originClean, bool opaque, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto placeholderIdentifier = identifier.object();
+    CommittedOffscreenCanvasPlaceholderFrame frame { WTF::move(transferHandle), WTF::move(layerContentsHandle), originClean, opaque, WTF::move(completionHandler) };
+    if (offscreenCanvasPlaceholders().contains(placeholderIdentifier))
+        return commitFrameToOffscreenCanvasPlaceholder(placeholderIdentifier, WTF::move(frame));
+
+    RefPtr owner = liveProcessForIdentifier(identifier.processIdentifier());
+    if (!owner) {
+        releaseTransferredImageBuffers({ frame.transferHandle.identifier });
+        return frame.completionHandler(false);
+    }
+
+    // An unknown placeholder is not treated as an attack: it may have been destroyed, or its owner's
+    // registration may not have arrived. Hold on to the most recent buffer while we do a round trip
+    // to the source process to flush out the pending registration case.
+    auto result = offscreenCanvasPlaceholderFramesAwaitingOwner().ensure(placeholderIdentifier, [&] {
+        return makeUniqueRef<CommittedOffscreenCanvasPlaceholderFrame>(WTF::move(frame));
+    });
+    if (result.isNewEntry) {
+        owner->sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [placeholderIdentifier] {
+            if (auto frame = offscreenCanvasPlaceholderFramesAwaitingOwner().take(placeholderIdentifier))
+                commitFrameToOffscreenCanvasPlaceholder(placeholderIdentifier, WTF::move(*frame));
+        });
+    } else {
+        auto superseded = std::exchange(result.iterator->value.get(), WTF::move(frame));
+        releaseTransferredImageBuffers({ superseded.transferHandle.identifier });
+        superseded.completionHandler(true);
+    }
 }
 #endif
 

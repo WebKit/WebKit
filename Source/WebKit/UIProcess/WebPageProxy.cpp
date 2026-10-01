@@ -19907,6 +19907,16 @@ void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameI
     setFocus(true);
 }
 
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+void WebPageProxy::setOffscreenCanvasPlaceholderLayer(IPC::Connection& connection, WebCore::PlaceholderRenderingContextIdentifier identifier, std::optional<WebCore::PlatformLayerIdentifier> layerID)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(!layerID || layerID->processIdentifier() == process->coreProcessIdentifier(), connection);
+
+    process->setOffscreenCanvasPlaceholderLayer(identifier, this->identifier(), layerID);
+}
+#endif
+
 void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::FrameIdentifier source, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSourceOrigin, WebCore::FrameIdentifier target, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedTargetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
 {
     auto targetOrigin = WTF::move(untrustedTargetOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);

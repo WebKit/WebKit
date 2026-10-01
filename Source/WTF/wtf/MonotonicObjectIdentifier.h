@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace WTF {
 
 // MonotonicObjectIdentifier is similar to ObjectIdentifier but it can be monotonically
 // increased in place.
@@ -100,4 +100,6 @@ TextStream& operator<<(TextStream& ts, const MonotonicObjectIdentifier<T>& ident
     return ts;
 }
 
-} // namespace WebKit
+} // namespace WTF
+
+using WTF::MonotonicObjectIdentifier;

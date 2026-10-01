@@ -153,7 +153,7 @@ void RemoteLayerTreeNode::initializeLayer()
 
 void RemoteLayerTreeNode::applyBackingStore(RemoteLayerTreeHost* host, RemoteLayerBackingStoreProperties& properties)
 {
-    if (asyncContentsIdentifier() && properties.contentsRenderingResourceIdentifier() && *asyncContentsIdentifier() >= *properties.contentsRenderingResourceIdentifier())
+    if (asyncContentsIdentifier() && properties.contentsFrameIdentifier() && *asyncContentsIdentifier() >= *properties.contentsFrameIdentifier())
         return;
 
     RetainPtr<UIView> hostingView;
@@ -161,10 +161,8 @@ void RemoteLayerTreeNode::applyBackingStore(RemoteLayerTreeHost* host, RemoteLay
     hostingView = uiView();
 #endif
 
-    properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView.get());
-
-    if (auto identifier = properties.contentsRenderingResourceIdentifier())
-        setAsyncContentsIdentifier(*identifier);
+    bool applied = properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView.get());
+    setAsyncContentsIdentifier(applied ? properties.contentsFrameIdentifier() : std::nullopt);
 }
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)

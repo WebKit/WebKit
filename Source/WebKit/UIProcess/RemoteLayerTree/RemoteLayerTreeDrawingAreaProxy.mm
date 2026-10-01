@@ -555,7 +555,13 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     page->layerTreeCommitComplete();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLayerIdentifier layerID, RemoteLayerBackingStoreProperties&& properties)
+void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(IPC::Connection& connection, WebCore::PlatformLayerIdentifier layerID, RemoteLayerBackingStoreProperties&& properties)
+{
+    MESSAGE_CHECK_BASE(layerID.processIdentifier() == WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
+    m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTF::move(properties));
+}
+
+void RemoteLayerTreeDrawingAreaProxy::setLayerContentsFromAnotherProcess(WebCore::PlatformLayerIdentifier layerID, RemoteLayerBackingStoreProperties&& properties)
 {
     m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTF::move(properties));
 }

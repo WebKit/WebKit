@@ -36,6 +36,11 @@
 #include "TextCheckerState.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebPageProxyIdentifier.h"
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/PlaceholderFrameIdentifier.h>
+#include <WebCore/PlaceholderRenderingContextIdentifier.h>
+#endif
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/BackForwardFrameItemIdentifier.h>
@@ -256,6 +261,12 @@ public:
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
     void contentWorldDestroyed(ContentWorldIdentifier);
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    void commitOffscreenCanvasPlaceholderFrame(WebCore::PlaceholderRenderingContextIdentifier, WebCore::ImageBufferTransferHandle&&, WebCore::PlaceholderFrameIdentifier, bool originClean, bool opaque, CompletionHandler<void(bool)>&&);
+    // For a transferred buffer this process owns but has no use for; it is otherwise kept until this
+    // process exits.
+    void releaseTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier);
+#endif
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool hasMouseDevice() const { return m_hasMouseDevice; }

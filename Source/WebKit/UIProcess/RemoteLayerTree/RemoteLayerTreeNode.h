@@ -143,12 +143,12 @@ public:
         m_cachedContentsBuffers = WTF::move(buffers);
     }
 
-    std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier() const
+    std::optional<WebCore::PlaceholderFrameIdentifier> asyncContentsIdentifier() const
     {
         return m_asyncContentsIdentifier;
     }
 
-    void setAsyncContentsIdentifier(std::optional<WebCore::RenderingResourceIdentifier> identifier)
+    void setAsyncContentsIdentifier(std::optional<WebCore::PlaceholderFrameIdentifier> identifier)
     {
         m_asyncContentsIdentifier = identifier;
     }
@@ -219,7 +219,7 @@ private:
     Vector<WebCore::PlatformLayerIdentifier> m_stationaryScrollContainerIDs;
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;
-    std::optional<WebCore::RenderingResourceIdentifier> m_asyncContentsIdentifier;
+    std::optional<WebCore::PlaceholderFrameIdentifier> m_asyncContentsIdentifier;
 
 #if ENABLE(THREADED_ANIMATIONS)
     RefPtr<RemoteAnimationStack> m_animationStack;

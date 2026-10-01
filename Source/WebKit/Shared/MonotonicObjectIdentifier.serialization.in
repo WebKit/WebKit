@@ -25,23 +25,29 @@ additional_forward_declaration: namespace WebKit { struct EditorStateIdentifierT
 additional_forward_declaration: namespace WebKit { struct RenderingUpdateIDType; }
 additional_forward_declaration: namespace WebKit { struct TransactionIDType; }
 additional_forward_declaration: namespace WebKit { struct FocusedElementInformationIdentifierType; }
+additional_forward_declaration: namespace WebCore { struct PlaceholderFrameIdentifierType; }
 
-header: "MonotonicObjectIdentifier.h"
-[Alias=class MonotonicObjectIdentifier<EditorStateIdentifierType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::EditorStateIdentifier {
-    [Validator='WebKit::MonotonicObjectIdentifier<WebKit::EditorStateIdentifierType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
+header: <wtf/MonotonicObjectIdentifier.h>
+[Alias=class WTF::MonotonicObjectIdentifier<WebKit::EditorStateIdentifierType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::EditorStateIdentifier {
+    [Validator='WTF::MonotonicObjectIdentifier<WebKit::EditorStateIdentifierType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
 };
 
-header: "MonotonicObjectIdentifier.h"
-[Alias=class MonotonicObjectIdentifier<RenderingUpdateIDType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RenderingUpdateID {
-    [Validator='WebKit::MonotonicObjectIdentifier<WebKit::RenderingUpdateIDType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
+header: <wtf/MonotonicObjectIdentifier.h>
+[Alias=class WTF::MonotonicObjectIdentifier<WebKit::RenderingUpdateIDType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RenderingUpdateID {
+    [Validator='WTF::MonotonicObjectIdentifier<WebKit::RenderingUpdateIDType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
 };
 
-header: "MonotonicObjectIdentifier.h"
-[Alias=class MonotonicObjectIdentifier<TransactionIDType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::TransactionIdentifier {
-    [Validator='WebKit::MonotonicObjectIdentifier<WebKit::TransactionIDType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
+header: <wtf/MonotonicObjectIdentifier.h>
+[Alias=class WTF::MonotonicObjectIdentifier<WebKit::TransactionIDType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::TransactionIdentifier {
+    [Validator='WTF::MonotonicObjectIdentifier<WebKit::TransactionIDType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
 };
 
-header: "MonotonicObjectIdentifier.h"
-[Alias=class MonotonicObjectIdentifier<FocusedElementInformationIdentifierType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::FocusedElementInformationIdentifier {
-    [Validator='WebKit::MonotonicObjectIdentifier<WebKit::FocusedElementInformationIdentifierType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
+header: <wtf/MonotonicObjectIdentifier.h>
+[Alias=class WTF::MonotonicObjectIdentifier<WebKit::FocusedElementInformationIdentifierType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::FocusedElementInformationIdentifier {
+    [Validator='WTF::MonotonicObjectIdentifier<WebKit::FocusedElementInformationIdentifierType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
+};
+
+header: <WebCore/PlaceholderFrameIdentifier.h>
+[Alias=class WTF::MonotonicObjectIdentifier<WebCore::PlaceholderFrameIdentifierType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::PlaceholderFrameIdentifier {
+    [Validator='WTF::MonotonicObjectIdentifier<WebCore::PlaceholderFrameIdentifierType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
 };

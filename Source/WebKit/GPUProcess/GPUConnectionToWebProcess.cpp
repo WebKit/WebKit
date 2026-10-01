@@ -990,6 +990,11 @@ void GPUConnectionToWebProcess::releaseAudioHardwareListener(RemoteAudioHardware
     ASSERT_UNUSED(found, found);
 }
 
+void GPUConnectionToWebProcess::releaseTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier identifier)
+{
+    protect(gpuProcess())->releaseTransferredImageBuffer(identifier);
+}
+
 void GPUConnectionToWebProcess::createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
 {
     m_remoteRemoteCommandListener = RemoteRemoteCommandListenerProxy::create(*this, WTF::move(identifier));

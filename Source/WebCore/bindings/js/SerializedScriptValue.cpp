@@ -2781,8 +2781,14 @@ private:
             return JSValue();
         }
 
-        if (!m_offscreenCanvases[index])
+        if (!m_offscreenCanvases[index]) {
+            if (!m_detachedOffscreenCanvases[index]) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
             m_offscreenCanvases[index] = OffscreenCanvas::create(*protect(executionContext(m_lexicalGlobalObject)), WTF::move(m_detachedOffscreenCanvases.at(index)));
+        }
         return getJSValue(protect(*m_offscreenCanvases[index]));
     }
 
@@ -3692,6 +3698,11 @@ SerializedScriptValueInternals SerializedScriptValueInternals::clone() const
         .exposedMessagePortCount = exposedMessagePortCount,
         .nonSerializedDataToken = nonSerializedDataToken,
         .detachedImageBitmaps = detachedImageBitmaps,
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+        .detachedOffscreenCanvases = detachedOffscreenCanvases.map([](const auto& canvas) {
+            return canvas->clone();
+        }),
+#endif
         .fileSystemHandleKeepAlives = fileSystemHandleKeepAlives.map([](const auto& alive) { return alive.copy(); }),
 #if ENABLE(WEB_CODECS)
         .serializedVideoFrames = serializedVideoFrames,
@@ -3714,9 +3725,6 @@ SerializedScriptValueInternals SerializedScriptValueInternals::clone() const
 #endif
         .sharedBufferContentsArray = copyArrayBufferContentsArray(sharedBufferContentsArray),
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-        .detachedOffscreenCanvases = detachedOffscreenCanvases.map([](const auto& canvas) {
-            return makeUnique<DetachedOffscreenCanvas>(canvas->size(), canvas->originClean(), RefPtr { canvas->placeholderSource() });
-        }),
         .inMemoryOffscreenCanvases = inMemoryOffscreenCanvases,
 #endif
         .inMemoryMessagePorts = inMemoryMessagePorts,
@@ -4337,6 +4345,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
         , .exposedMessagePortCount = exposedMessagePortsCount
         , .detachedImageBitmaps = WTF::move(detachedImageBitmaps)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+        , .detachedOffscreenCanvases = WTF::move(detachedCanvases)
+#endif
         , .fileSystemHandleKeepAlives = WTF::move(fileSystemHandleKeepAlives)
 #if ENABLE(WEB_CODECS)
         , .serializedVideoFrames = WTF::move(serializedVideoFrameData)
@@ -4355,7 +4366,6 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
         , .sharedBufferContentsArray = WTF::move(sharedBuffers)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-        , .detachedOffscreenCanvases = WTF::move(detachedCanvases)
         , .inMemoryOffscreenCanvases = WTF::move(inMemoryOffscreenCanvases)
 #endif
         , .inMemoryMessagePorts = WTF::move(inMemoryMessagePorts)
