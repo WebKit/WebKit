@@ -345,6 +345,8 @@ void Value::dump(PrintStream& out) const
             out.print(m_f32);
         else if (m_type == TypeKind::F64)
             out.print(m_f64);
+        else if (m_type == TypeKind::V128)
+            out.print(m_v128);
         out.print(")");
         break;
     case Local:
@@ -5494,7 +5496,7 @@ bool BBQJIT::isScratch(Location loc)
 void BBQJIT::emitStore(Value src, Location dst)
 {
     if (src.isConst())
-        return emitStoreConst(src, dst);
+        return emitMoveConst(src, dst);
 
     LOG_INSTRUCTION("Store", src, RESULT(dst));
     emitStore(src.type(), locationOf(src), dst);
@@ -5539,12 +5541,9 @@ void BBQJIT::emitMove(TypeKind type, Location src, Location dst)
 
 void BBQJIT::emitMove(Value src, Location dst)
 {
-    if (src.isConst()) {
-        if (dst.isMemory())
-            emitStoreConst(src, dst);
-        else
-            emitMoveConst(src, dst);
-    } else {
+    if (src.isConst())
+        emitMoveConst(src, dst);
+    else {
         Location srcLocation = locationOf(src);
         emitMove(src.type(), srcLocation, dst);
     }
