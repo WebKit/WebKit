@@ -272,7 +272,7 @@ public:
     void setSelfAndDescendantsNeedPositionUpdate();
 
 private:
-    enum class LayerPositionUpdates {
+    enum class LayerPositionUpdates : uint8_t {
         NeedsPositionUpdate  = 1 << 0,
         DescendantNeedsPositionUpdate = 1 << 1,
         AllChildrenNeedPositionUpdate = 1 << 2,
@@ -301,7 +301,7 @@ private:
     bool hasVisibleContentForPaintingForSVG() const;
 
     // These flags propagate in paint order (z-order tree).
-    enum class Compositing {
+    enum class Compositing : uint16_t {
         HasDescendantNeedingRequirementsTraversal           = 1 << 0, // Need to do the overlap-testing tree walk because hierarchy or geometry changed.
         HasDescendantNeedingBackingOrHierarchyTraversal     = 1 << 1, // Need to update geometry, configuration and update the GraphicsLayer tree.
 
@@ -1533,17 +1533,17 @@ private:
     // The layer's width/height
     IntSize m_layerSize;
 
+    // If the RenderLayer contains an anchor-positioned box, this is the "default scroll shift"
+    // for scroll compensation purpose. This offset aligns the anchor-positioned box with the anchor
+    // after scroll, and is applied as a transform.
+    std::optional<LayoutSize> m_anchorScrollAdjustment;
+
     std::unique_ptr<ClipRectsCache> m_clipRectsCache;
 
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_boxScrollingScope;
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;
 
     std::unique_ptr<TransformationMatrix> m_transform;
-
-    // If the RenderLayer contains an anchor-positioned box, this is the "default scroll shift"
-    // for scroll compensation purpose. This offset aligns the anchor-positioned box with the anchor
-    // after scroll, and is applied as a transform.
-    std::optional<LayoutSize> m_anchorScrollAdjustment;
 
     // May ultimately be extended to many replicas (with their own paint order).
     RenderPtr<RenderReplica> m_reflection;
