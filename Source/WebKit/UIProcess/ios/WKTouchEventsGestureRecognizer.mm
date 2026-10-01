@@ -32,6 +32,7 @@
 #import "WKContentViewInteraction.h"
 #import "WKWebViewIOS.h"
 #import "WebPreferences.h"
+#import <numbers>
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -418,7 +419,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
 
         _lastTouchEvent.scale = currentDistance / _originalGestureDistance;
 
-        float currentRotation = atan2f(horizontalDistance, verticalDistance) * 180.0 * M_1_PI;
+        float currentRotation = atan2f(horizontalDistance, verticalDistance) * 180.0 * std::numbers::inv_pi;
         if (isnan(_originalGestureAngle))
             _originalGestureAngle = currentRotation;
 

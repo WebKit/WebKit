@@ -30,6 +30,7 @@
 #include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
 #include "XRLayerBacking.h"
+#include <numbers>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -58,7 +59,7 @@ void XRCylinderLayer::setRadius(float radius)
 void XRCylinderLayer::setCentralAngle(float angle)
 {
     // (0, 2 * pi) although specs recommend 1.9 * pi as a practical limit.
-    static constexpr float MaxCentralAngle = 1.9 * static_cast<float>(M_PI);
+    static constexpr float MaxCentralAngle = 1.9 * std::numbers::pi_v<float>;
 
     m_centralAngle = std::clamp(angle, std::numeric_limits<float>::epsilon(), MaxCentralAngle);
     setNeedsRedraw(true);

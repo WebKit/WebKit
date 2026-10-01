@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <numbers>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -436,7 +437,7 @@ static const size_t xrJointCount = static_cast<size_t>(PlatformXR::HandJoint::Co
 
     data.profiles = Vector<String> { "generic-hand"_s };
 
-    simd_quatf rotation = simd_quaternion(M_PI / 2, simd_make_float3(0.0, !isLeftHand ? 1.0 : -1.0, 0.0));
+    simd_quatf rotation = simd_quaternion(std::numbers::pi_v<float> / 2, simd_make_float3(0.0, !isLeftHand ? 1.0 : -1.0, 0.0));
     simd_float4x4 rotationTransform = simd_matrix4x4(rotation);
     const simd_float4x4 originFromWrist = ar_anchor_get_origin_from_anchor_transform(handAnchor);
     PlatformXRPose targetingPose(simd_mul(originFromWrist, rotationTransform));
@@ -478,11 +479,11 @@ static const size_t xrJointCount = static_cast<size_t>(PlatformXR::HandJoint::Co
     // we'll correct the orientation here.
     simd_float4x4 jointPoseTransform;
     if (isLeftHand) {
-        simd_quatf yawQuat = simd_quaternion(M_PI / 2, simd_make_float3(0, -1, 0));
-        simd_quatf pitchQuat = simd_quaternion(M_PI, simd_make_float3(1, 0, 0));
+        simd_quatf yawQuat = simd_quaternion(std::numbers::pi_v<float> / 2, simd_make_float3(0, -1, 0));
+        simd_quatf pitchQuat = simd_quaternion(std::numbers::pi_v<float>, simd_make_float3(1, 0, 0));
         jointPoseTransform = simd_matrix4x4(simd_mul(pitchQuat, yawQuat));
     } else
-        jointPoseTransform = simd_matrix4x4(simd_quaternion(M_PI / 2, simd_make_float3(0, 1, 0)));
+        jointPoseTransform = simd_matrix4x4(simd_quaternion(std::numbers::pi_v<float> / 2, simd_make_float3(0, 1, 0)));
 
     ar_hand_skeleton_t handSkeleton = ar_hand_anchor_get_hand_skeleton(handAnchor);
     for (size_t i = 0; i < xrJointCount; ++i) {
