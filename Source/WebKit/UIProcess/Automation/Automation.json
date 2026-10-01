@@ -736,7 +736,11 @@
                 { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame whose active window is targeted. The main frame is used if this parameter is empty string." }
             ],
             "returns": [
-                { "name": "consume", "type": "boolean", "description": "True if transient activation was present and was consumed; otherwise false." }
+                { "name": "consume", "type": "boolean", "description": "..." }
+            ],
+            "async": true
+        },
+        {
             "name": "getAccessibilityPropertiesForElement",
             "description": "Get computed accessibility properties for a DOM element.",
             "parameters": [

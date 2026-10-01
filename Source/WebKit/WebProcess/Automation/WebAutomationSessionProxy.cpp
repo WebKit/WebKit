@@ -1095,6 +1095,8 @@ void WebAutomationSessionProxy::consumeUserActivation(WebCore::PageIdentifier pa
     }
 
     completionHandler(std::nullopt, window->consumeTransientActivation());
+}
+
 static String determineCheckedOrPressedAXState(AccessibilityButtonState state)
 {
     switch (state) {
