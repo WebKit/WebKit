@@ -22,6 +22,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import re
 import sys
@@ -32,7 +34,7 @@ from webkitscmpy import Contributor, local
 EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
 
 
-def canonicalize(name, email, contributors):
+def canonicalize(name: str, email: str, contributors: Contributor.Mapping) -> tuple[str, str | None]:
     match = EMAIL_RE.match(email)
     if match:
         email = match.group('email')
@@ -46,7 +48,7 @@ def canonicalize(name, email, contributors):
     return name, email
 
 
-def main(contributor_file):
+def main(contributor_file: str) -> int:
     REPOSITORY_PATH = os.environ.get('OLDPWD')
     GIT_COMMIT = os.environ.get('GIT_COMMIT')
 
@@ -86,6 +88,7 @@ def main(contributor_file):
     print(u'GIT_AUTHOR_EMAIL {}'.format(author_email))
     print(u'GIT_COMMITTER_NAME {}'.format(committer))
     print(u'GIT_COMMITTER_EMAIL {}'.format(committer_email))
+    return 0
 
 
 if __name__ == '__main__':

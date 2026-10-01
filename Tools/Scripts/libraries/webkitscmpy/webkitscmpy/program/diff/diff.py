@@ -20,15 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
+from typing import IO, TYPE_CHECKING, Iterable
 
 from email.header import decode_header
 
 from webkitscmpy import Commit
 
+if TYPE_CHECKING:
+    from webkitscmpy import ScmBase
+
 
 class DiffMeta(type):
-    def __str__(cls):
+    # Defined by each concrete diff viewer class.
+    name: str
+
+    def __str__(cls) -> str:
         return cls.name
 
 
@@ -39,11 +48,11 @@ class DiffBase(object, metaclass=DiffMeta):
     URL_RE = re.compile(r'^\S+://\S+$')
     ADD_SUB_RE = re.compile(r'[^|]+\s+\|\s+(\d+)\s+(\+*)(\-*)$')
 
-    def __init__(self, block=None, repository=None):
+    def __init__(self, block: bool | None = None, repository: ScmBase | None = None) -> None:
         self.block = block
         self.repository = repository
 
-    def add_line(self, line):
+    def add_line(self, line: str | None) -> str:
         line = '\n' if line is None else line
         line = line + '\n' if not line or line[0] != '\n' else line
 
@@ -62,8 +71,8 @@ class DiffBase(object, metaclass=DiffMeta):
             return result
         return line
 
-    def add_lines(self, lines):
-        subject_lines = []
+    def add_lines(self, lines: Iterable[str]) -> None:
+        subject_lines: list[str] = []
         for line in lines:
             stripped_line = line.strip()
             if not stripped_line:
@@ -83,5 +92,5 @@ class DiffBase(object, metaclass=DiffMeta):
                 continue
             self.add_line(line)
 
-    def add_file(self, file):
+    def add_file(self, file: IO[str]) -> None:
         self.add_lines(file.readlines())

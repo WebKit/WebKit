@@ -20,12 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import argparse
 import logging
 import os
 import re
 import sys
 import traceback
+from typing import TYPE_CHECKING, Any, Callable, Optional, Sequence, TypeVar, Union
 
 from .apply import Apply
 from .blame import Blame
@@ -65,12 +68,24 @@ from webkitbugspy import log as webkitbugspy_log
 from webkitcorepy import arguments, filtered_call, log as webkitcorepy_log, Terminal
 from webkitscmpy import local, log, remote
 
+if TYPE_CHECKING:
+    from logging import Logger, RootLogger
+    from webkitscmpy import CommitClassifier, Contributor, ScmBase
+
+    # Most of main()'s settings can also be a function of the repository (or of None, before a repository
+    # has been found) which returns the setting.
+    T = TypeVar('T')
+    PerRepository = Union[T, Callable[[Optional[ScmBase]], Optional[T]]]
+
 
 def main(
-    args=None, path=None, loggers=None, contributors=None,
-    identifier_template=None, subversion=None, additional_setup=None, hooks=None,
-    canonical_svn=None, programs=None, classifier=None, fallback_path=None, **kwargs
-):
+    args: Sequence[str] | None = None, path: str | None = None, loggers: list[RootLogger | Logger] | None = None,
+    contributors: PerRepository[Contributor.Mapping] | None = None,
+    identifier_template: PerRepository[IdentifierTrailer | str] | None = None, subversion: PerRepository[str] | None = None,
+    additional_setup: Callable[..., Any] | None = None, hooks: PerRepository[str] | None = None,
+    canonical_svn: PerRepository[bool] | None = None, programs: list[type[Command]] | None = None,
+    classifier: PerRepository[CommitClassifier] | None = None, fallback_path: str | None = None, **kwargs: Any
+) -> int:
     logging.basicConfig(level=logging.WARNING)
 
     loggers = [logging.getLogger(), webkitcorepy_log,  webkitbugspy_log, log] + (loggers or [])
@@ -111,6 +126,8 @@ def main(
 
     provisional_classifier = classifier(None) if callable(classifier) else classifier
     for program in programs:
+        assert program.name is not None  # Only Command itself has no name
+        help: str | None
         if callable(program.help):
             help = filtered_call(program.help, classifier=provisional_classifier)
         else:
@@ -148,6 +165,7 @@ def main(
         if any([option not in getattr(parsed, 'args', []) for option in unknown]):
             parsed = parser.parse_args(args=args)
 
+    repository: ScmBase | None
     if parsed.repository.startswith(('https://', 'http://')):
         repository = remote.Scm.from_url(
             parsed.repository,
@@ -182,7 +200,7 @@ def main(
         additional_setup = filtered_call(additional_setup, repository=repository)
 
     if callable(canonical_svn):
-        canonical_svn = canonical_svn(repository) if repository else repository
+        canonical_svn = canonical_svn(repository) if repository else None
 
     if not getattr(parsed, 'main', None):
         parser.print_help()
@@ -194,7 +212,7 @@ def main(
     # This can be removed once Bugzilla auth no longer uses credentials in URLs.
     with Terminal.disable_keyboard_interrupt_stacktracktrace():
         try:
-            return parsed.main(
+            result: int = parsed.main(
                 args=parsed,
                 repository=repository,
                 identifier_template=identifier_template,
@@ -204,6 +222,7 @@ def main(
                 canonical_svn=canonical_svn,
                 fallback_path=fallback_path,
             )
+            return result
         except Exception:
             sys.stderr.write(re.sub(r'(login|password)=[^&]+', r'\1=<REDACTED>', traceback.format_exc()))
             return -1
