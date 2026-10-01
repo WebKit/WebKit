@@ -297,6 +297,9 @@ public:
 
     unsigned capacity() const { return m_set.capacity(); }
 
+    // Reclaims null references as a side effect, so this must not be called concurrently. Callers
+    // that may race with each other (e.g. GC marker threads) must use
+    // isEmptyIgnoringNullReferencesWithoutCleanup() instead.
     bool isEmptyIgnoringNullReferences() const
     {
         if (m_set.isEmpty())
@@ -307,6 +310,16 @@ public:
             const_cast<WeakListHashSet&>(*this).clear();
         return onlyContainsNullReferences;
     }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    bool isEmptyIgnoringNullReferencesWithoutCleanup() const
+    {
+        if (m_set.isEmpty())
+            return true;
+
+        return begin() == end();
+    }
+#endif
 
     bool hasNullReferences() const
     {
