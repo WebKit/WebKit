@@ -1,0 +1,4 @@
+
+
+PASS navigation.back() in the main frame lands on the nearest joint entry when a subframe navigated after it
+
