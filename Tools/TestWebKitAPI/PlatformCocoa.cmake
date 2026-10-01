@@ -33,16 +33,16 @@ foreach (_fw Testing _Testing_AppKit _Testing_CoreGraphics _Testing_CoreImage
         list(APPEND _testing_staged "${_stamp}")
     endif ()
 endforeach ()
-if (EXISTS "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib")
-    set(_stamp "${_testing_stamp_dir}/staged-lib_TestingInterop-${_testing_platform_id}.stamp")
-    add_custom_command(OUTPUT "${_stamp}"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${_testing_stamp_dir}"
-        COMMAND ditto "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib"
-            "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib"
-        COMMAND ${CMAKE_COMMAND} -E touch "${_stamp}"
+set(_src "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib")
+set(_dst "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib")
+if (EXISTS "${_src}")
+    add_custom_command(OUTPUT "${_dst}"
+        DEPENDS "${_src}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_src}" "${_dst}"
         VERBATIM
     )
-    list(APPEND _testing_staged "${_stamp}")
+    list(APPEND _testing_staged "${_dst}")
 endif ()
 add_custom_target(TestWebKitAPIStageTesting DEPENDS ${_testing_staged})
 
@@ -670,6 +670,8 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPage+JavaScriptExpression.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPageConfiguration+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WKWebView+Extras.swift
+
+    ${TESTWEBKITAPI_DIR}/InjectedBundle/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.mm
 )
 WEBKIT_TEST_SWIFT_HELPER_LIBRARY(TestWebKitAPILibrary TestWebKit)
 # The helpers import the WebKit framework built here for its @_spi declarations.
@@ -677,6 +679,9 @@ WEBKIT_TEST_SWIFT_HELPER_LIBRARY(TestWebKitAPILibrary TestWebKit)
 # without naming it the Swift importer can run before the swiftmodule is staged
 # and fall back to the SDK's copy, which does not have them.
 add_dependencies(TestWebKitAPILibrary WebKit WebKit_StageSwiftModule)
+# WebProcessPlugInWithInternals.mm includes <WebCoreTestSupport/WebCoreTestSupport.h>. An OBJECT
+# library doesn't inherit TestWebKit's link libraries, so it needs its own header dependency.
+target_link_libraries(TestWebKitAPILibrary PRIVATE WebKit::WebCoreTestSupport)
 target_include_directories(TestWebKitAPILibrary PRIVATE
     ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES}
 )
