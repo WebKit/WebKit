@@ -104,6 +104,7 @@ static MTLRenderStages NODELETE metalRenderStage(ShaderStage shaderStage)
 enum class TransferFunctionCV {
     kITU_R_709_2,
     kITU_R_601_4,
+    kSMPTE_240M_1995,
     kITU_R_2020,
 };
 
@@ -149,6 +150,8 @@ static TransferFunctionCV transferFunctionFromString(RetainPtr<CFStringRef> stri
         return TransferFunctionCV::kITU_R_709_2;
     if (CFEqual(cfString, kCVImageBufferYCbCrMatrix_ITU_R_601_4))
         return TransferFunctionCV::kITU_R_601_4;
+    if (CFEqual(cfString, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
+        return TransferFunctionCV::kSMPTE_240M_1995;
     if (CFEqual(cfString, kCVImageBufferYCbCrMatrix_ITU_R_2020))
         return TransferFunctionCV::kITU_R_2020;
 
@@ -195,6 +198,21 @@ static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef 
                 simd::make_float3(+0.00000000f, -0.39176200f, +2.01723214f),
                 simd::make_float3(+1.59602678f, -0.81296769f, +0.00000000f),
                 simd::make_float3(-0.87420221f, +0.53166750f, -1.08563078f));
+        }
+    }
+
+    case TransferFunctionCV::kSMPTE_240M_1995: {
+        switch (range) {
+        case PixelRange::Full:
+            return simd::float4x3(simd::make_float3(+1.00000000f, +1.00000000f, +1.00000000f),
+                simd::make_float3(+0.00000000f, -0.22662197f, +1.82600000f),
+                simd::make_float3(+1.57600000f, -0.47662197f, +0.00000000f),
+                simd::make_float3(-0.79109020f, +0.35300088f, -0.91658039f));
+        case PixelRange::Video:
+            return simd::float4x3(simd::make_float3(+1.16438356f, +1.16438356f, +1.16438356f),
+                simd::make_float3(+0.00000000f, -0.25798483f, +2.07870536f),
+                simd::make_float3(+1.79410714f, -0.54258304f, +0.00000000f),
+                simd::make_float3(-0.97363079f, +0.32879432f, -1.11648793f));
         }
     }
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/videoframe-utilities.js"></script>
+<style>
+body { margin: 0 }
+canvas { image-rendering: pixelated }
+</style>
+<canvas style="display: none" id="resultCanvas"></canvas>
+<script>
+// Tests that VideoFrame constructed from I420, SMPTE240M matrix data has correct RGBA pixel values
+// when drawn to 2D canvas.
+// 1. Create sRGB RGBA test pattern.
+// 2. Convert that to I420 SMPTE240M matrix data with a reference JS implementation.
+// 3. Create VideoFrame of this I420 data and draw it to result canvas.
+// Expect that the drawn image is correct.
+// To verify that the image is correct:
+// V1. Convert the I420 data to sRGB RGBA data with a reference JS implementation.
+// V2. Expect that reference and result match.
+// The frames use BT709 primaries and the sRGB transfer function, so that the YCbCr matrix is the only
+// conversion needed to draw them to the sRGB canvas.
+// Blue and magenta are the colors which the BT709 and SMPTE240M matrices convert most differently,
+// by about 5 in a channel.
+let colors = [[255, 0, 0, 255], [0, 255, 0,  255], [0, 0, 255, 255], [255, 0, 255, 255], [0, 255, 255, 255], [30, 30, 230, 255], [3, 3, 77, 255]];
+let subtests = [];
+for (let fullRange of [true, false]) {
+  for (let color of colors)
+    subtests.push({fullRange, color});
+}
+
+for (let subtest of subtests) {
+  test(() => {
+    runTest(subtest.color, subtest.fullRange);
+  }, `VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: ${subtest.fullRange} color:${subtest.color}`);
+}
+
+function runTest(color, fullRange) {
+    const pattern = createTestImageData(resultCanvas.width, resultCanvas.height, color);
+    const i420Data = sRGBImageDataToI420(pattern, { primaries: "bt709", transfer: "iec61966-2-1", matrix: "smpte240m", fullRange });
+    const videoFrame = createVideoFrame(i420Data);
+    // This is being tested.
+    resultCanvas.getContext('2d').drawImage(videoFrame, 0, 0);
+    videoFrame.close();
+
+    // For clarity, convert the data also with JS-based reference implementation and
+    // compare that against the above native implementation.
+    const referenceColor = I420ToSRGB(i420Data).data.slice(0, 4);
+    const resultColor = resultCanvas.getContext("2d").getImageData(0, 0, 1, 1).data;
+    // The matrices are close to each other, so a wrong matrix is detected only by a tight tolerance.
+    assert_array_approx_equals(resultColor, referenceColor, 1);
+    assert_array_approx_equals(resultColor, color, 5);
+}
+</script>

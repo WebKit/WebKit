@@ -4510,6 +4510,7 @@ webkit.org/b/251216 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 webkit.org/b/254714 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-2.html [ ImageOnlyFailure ]
 
 fast/webgpu [ Skip ]
+http/wpt/webcodecs/webgpu-importExternalTexture-videoFrame-I420.html [ Skip ]
 http/tests/webgpu/cts.https.html [ Skip ]
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]

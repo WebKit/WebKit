@@ -1201,6 +1201,11 @@ webkit.org/b/263112 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/tempora
 
 webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
 
+# I420 VideoFrame planes sample as zero in WebGL on Intel.
+webkit.org/b/325612 [ x86_64 ] http/wpt/webcodecs/webgl-texImage2D-videoFrame-I420.html [ Failure ]
+# The expected file records the incorrect drawImage() conversion, which rounds differently on Intel.
+[ x86_64 ] http/wpt/webcodecs/2d-drawImage-videoFrame-I420-SMPTE240M.html [ Failure ]
+
 webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 
 webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]
@@ -1336,6 +1341,8 @@ http/tests/webgpu/webgpu/api/operation/command_buffer/queries/timestampQuery.htm
 [ x86_64 ] fast/webgpu/nocrash/fuzz-281555.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-282499.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-283196.html [ Skip ]
+[ x86_64 ] fast/webgpu/nocrash/fuzz-283943.html [ Skip ]
+[ x86_64 ] fast/webgpu/nocrash/fuzz-284326.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-293750.html [ Skip ]
 
 [ x86_64 ] fast/webgpu/nocrash/fuzz-145583179.html [ Pass Failure ]
@@ -2513,10 +2520,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/textureDimensions.html [ Skip ] 
 [ Debug ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/clamp.html [ Skip ] 
 [ Debug ] http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/mix.html [ Skip ] 
-
-# webkit.org/b/325209 [ macOS Debug ] ASSERTION FAILED: !renderBuffers.isEmpty()
-[ Debug ] fast/webgpu/nocrash/fuzz-283943.html [ Skip ]
-[ Debug ] fast/webgpu/nocrash/fuzz-284326.html [ Skip ]
 
 # rdar://188334702 (☂️Batch file expectations for failures observed on the new Golden Gate Post-Commit queue)
 [ GoldenGate Debug ] displaylists/layer-dispay-list.html [ Pass Failure ]

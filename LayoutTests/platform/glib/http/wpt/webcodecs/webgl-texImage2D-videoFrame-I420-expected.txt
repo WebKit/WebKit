@@ -1,0 +1,72 @@
+
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:255,0,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:0,255,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:0,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:255,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:0,255,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:30,30,230,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: true color:3,3,77,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:255,0,0,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:0,255,0,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 251
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:0,0,255,255 assert_array_approx_equals: property 2, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:255,0,255,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:0,255,255,255 assert_array_approx_equals: property 1, expected 254 +/- 1, expected 254 but got 251
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:30,30,230,255 assert_array_approx_equals: property 1, expected 30 +/- 1, expected 30 but got 26
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt709 fullRange: false color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 0
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:255,0,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:0,255,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:0,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:255,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:0,255,255,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:30,30,230,255 assert_array_approx_equals: property 1, expected 30 +/- 1, expected 30 but got 28
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: true color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 1
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:255,0,0,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:0,255,0,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 250
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:0,0,255,255 assert_array_approx_equals: property 2, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:255,0,255,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:0,255,255,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 252
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:30,30,230,255 assert_array_approx_equals: property 1, expected 29 +/- 1, expected 29 but got 25
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte170m fullRange: false color:3,3,77,255 assert_array_approx_equals: property 0, expected 4 +/- 1, expected 4 but got 2
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:255,0,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:0,255,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:0,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:255,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:0,255,255,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:30,30,230,255 assert_array_approx_equals: property 0, expected 31 +/- 1, expected 31 but got 16
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: true color:3,3,77,255 assert_array_approx_equals: property 0, expected 3 +/- 1, expected 3 but got 0
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:255,0,0,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:0,255,0,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 250
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:0,0,255,255 assert_array_approx_equals: property 2, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:255,0,255,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:0,255,255,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 252
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:30,30,230,255 assert_array_approx_equals: property 1, expected 29 +/- 1, expected 29 but got 25
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt470bg fullRange: false color:3,3,77,255 assert_array_approx_equals: property 0, expected 4 +/- 1, expected 4 but got 2
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:255,0,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:0,255,0,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:0,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:255,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:0,255,255,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:30,30,230,255 assert_array_approx_equals: property 1, expected 30 +/- 1, expected 30 but got 28
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: true color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 1
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:255,0,0,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:0,255,0,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 252
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:0,0,255,255 assert_array_approx_equals: property 2, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:255,0,255,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 253
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:0,255,255,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 252
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:30,30,230,255 assert_array_approx_equals: property 1, expected 30 +/- 1, expected 30 but got 27
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: smpte240m fullRange: false color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 0
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:255,0,0,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:0,255,0,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 253
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:0,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:255,0,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:0,255,255,255
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:30,30,230,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: true color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 1
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:255,0,0,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:0,255,0,255 assert_array_approx_equals: property 1, expected 254 +/- 1, expected 254 but got 251
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:0,0,255,255 assert_array_approx_equals: property 2, expected 255 +/- 1, expected 255 but got 253
+PASS VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:255,0,255,255
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:0,255,255,255 assert_array_approx_equals: property 1, expected 255 +/- 1, expected 255 but got 251
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:30,30,230,255 assert_array_approx_equals: property 1, expected 30 +/- 1, expected 30 but got 26
+FAIL VideoFrame from I420 data drawn through WebGL texture has correct RGBA pixel values. matrix: bt2020-ncl fullRange: false color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 0
+

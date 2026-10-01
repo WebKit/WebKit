@@ -1,0 +1,16 @@
+
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:255,0,0,255 assert_array_approx_equals: property 0, expected 254 +/- 1, expected 254 but got 233
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:0,255,0,255 assert_array_approx_equals: property 0, expected 1 +/- 1, expected 1 but got 20
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:0,0,255,255 assert_array_approx_equals: property 0, expected 0 +/- 1, expected 0 but got 2
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:255,0,255,255 assert_array_approx_equals: property 0, expected 254 +/- 1, expected 254 but got 235
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:0,255,255,255 assert_array_approx_equals: property 0, expected 0 +/- 1, expected 0 but got 21
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:30,30,230,255 assert_array_approx_equals: property 0, expected 30 +/- 1, expected 30 but got 32
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: true color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 0
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:255,0,0,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 232
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:0,255,0,255 assert_array_approx_equals: property 0, expected 0 +/- 1, expected 0 but got 20
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:0,0,255,255 assert_array_approx_equals: property 0, expected 1 +/- 1, expected 1 but got 3
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:255,0,255,255 assert_array_approx_equals: property 0, expected 255 +/- 1, expected 255 but got 235
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:0,255,255,255 assert_array_approx_equals: property 0, expected 0 +/- 1, expected 0 but got 23
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:30,30,230,255 assert_array_approx_equals: property 0, expected 30 +/- 1, expected 30 but got 32
+FAIL VideoFrame from I420, SMPTE240M matrix data has correct RGBA pixel values. fullRange: false color:3,3,77,255 assert_array_approx_equals: property 1, expected 3 +/- 1, expected 3 but got 0
+

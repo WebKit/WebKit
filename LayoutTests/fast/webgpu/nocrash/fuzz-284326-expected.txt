@@ -1,2 +1,118 @@
+CONSOLE MESSAGE: promises created
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: error
+CONSOLE MESSAGE: GPUPipelineError: Fragment module is invalid
+CONSOLE MESSAGE: GPUPipelineError
+CONSOLE MESSAGE: _
+CONSOLE MESSAGE: GPUPipelineError: Fragment module is invalid - validation
 Pass
 

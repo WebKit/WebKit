@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/videoframe-utilities.js"></script>
+<script>
+// Tests that VideoFrame constructed from I420 data has correct RGBA pixel values when drawn
+// through GPUExternalTexture, for each YCbCr matrix.
+// 1. Create sRGB RGBA test pattern.
+// 2. Convert that to I420 data with a reference JS implementation.
+// 3. Create VideoFrame of this I420 data, import it as GPUExternalTexture and draw it to a texture.
+// Expect that the drawn texels are correct.
+// To verify that the texels are correct:
+// V1. Convert the I420 data to sRGB RGBA data with a reference JS implementation.
+// V2. Expect that reference and result match.
+// The frames use BT709 primaries and the sRGB transfer function, so that the YCbCr matrix is the only
+// conversion needed to reach the "srgb" color space of the GPUExternalTexture.
+const width = 64, height = 2;
+const matrices = ["bt709", "smpte170m", "bt470bg", "smpte240m", "bt2020-ncl"];
+// Blue and magenta are the colors which the BT709 and SMPTE240M matrices convert most differently,
+// by about 5 in a channel.
+const colors = [[255, 0, 0, 255], [0, 255, 0,  255], [0, 0, 255, 255], [255, 0, 255, 255], [0, 255, 255, 255], [30, 30, 230, 255], [3, 3, 77, 255]];
+
+const shader = `
+struct VertexOut {
+    @builtin(position) position: vec4f,
+    @location(0) uv: vec2f,
+}
+
+@vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOut {
+    // One oversized triangle covering the viewport, with uv (0,0) at its top left corner.
+    var positions = array<vec2f, 3>(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+    var uvs = array<vec2f, 3>(vec2f(0, 1), vec2f(2, 1), vec2f(0, -1));
+    return VertexOut(vec4f(positions[index], 0, 1), uvs[index]);
+}
+
+@group(0) @binding(0) var videoSampler: sampler;
+@group(0) @binding(1) var videoTexture: texture_external;
+
+@fragment fn fragmentMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+    return textureSampleBaseClampToEdge(videoTexture, videoSampler, uv);
+}
+`;
+
+let device, pipeline, sampler;
+
+promise_setup(async () => {
+    const adapter = await navigator.gpu.requestAdapter();
+    device = await adapter.requestDevice();
+    const module = device.createShaderModule({ code: shader });
+    pipeline = device.createRenderPipeline({
+        layout: "auto",
+        vertex: { module },
+        fragment: { module, targets: [{ format: "rgba8unorm" }] },
+    });
+    sampler = device.createSampler({ magFilter: "nearest", minFilter: "nearest" });
+});
+
+// Draws videoFrame through a GPUExternalTexture and returns the RGBA values of the top left texel.
+async function drawExternalTexture(videoFrame) {
+    const texture = device.createTexture({
+        size: [width, height],
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+    // copyTextureToBuffer requires bytesPerRow to be a multiple of 256, which 64 rgba8unorm texels are exactly.
+    const bytesPerRow = width * 4;
+    const buffer = device.createBuffer({ size: bytesPerRow * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    // A GPUExternalTexture expires at the end of the task it was imported in, so import, encode
+    // and submit without yielding.
+    const externalTexture = device.importExternalTexture({ source: videoFrame });
+    const bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: sampler },
+            { binding: 1, resource: externalTexture },
+        ],
+    });
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{ view: texture.createView(), clearValue: [0, 0, 0, 0], loadOp: "clear", storeOp: "store" }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.draw(3);
+    pass.end();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [width, height]);
+    device.queue.submit([encoder.finish()]);
+
+    await buffer.mapAsync(GPUMapMode.READ);
+    const texel = Array.from(new Uint8Array(buffer.getMappedRange(), 0, 4));
+    buffer.unmap();
+    buffer.destroy();
+    texture.destroy();
+    return texel;
+}
+
+async function runTest(matrix, fullRange, color) {
+    const pattern = createTestImageData(width, height, color);
+    const i420Data = sRGBImageDataToI420(pattern, { primaries: "bt709", transfer: "iec61966-2-1", matrix, fullRange });
+    const videoFrame = createVideoFrame(i420Data);
+    // This is being tested.
+    const resultColor = await drawExternalTexture(videoFrame);
+    videoFrame.close();
+
+    // For clarity, convert the data also with JS-based reference implementation and
+    // compare that against the above native implementation.
+    const referenceColor = Array.from(I420ToSRGB(i420Data).data.slice(0, 4));
+    // The matrices are close to each other, so a wrong matrix is detected only by a tight tolerance.
+    assert_array_approx_equals(resultColor, referenceColor, 1);
+    assert_array_approx_equals(resultColor, color, 5);
+}
+
+for (let matrix of matrices) {
+    for (let fullRange of [true, false]) {
+        for (let color of colors) {
+            promise_test(() => {
+                return runTest(matrix, fullRange, color);
+            }, `VideoFrame from I420 data drawn through GPUExternalTexture has correct RGBA pixel values. matrix: ${matrix} fullRange: ${fullRange} color:${color}`);
+        }
+    }
+}
+</script>
