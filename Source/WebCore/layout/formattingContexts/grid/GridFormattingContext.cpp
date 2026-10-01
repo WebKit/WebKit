@@ -32,6 +32,7 @@
 #include "GridLayout.h"
 #include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
+#include "GridSizer.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "NotImplemented.h"
@@ -39,6 +40,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleGapGutter.h"
 #include "StylePrimitiveNumeric.h"
+#include "TrackSizingFunctions.h"
 #include "UnplacedGridItem.h"
 #include "UsedTrackSizes.h"
 
@@ -106,6 +108,85 @@ static Style::GridTrackSizes gridAutoTrackSizesWithPercentagesConvertedToAuto(co
     return Style::GridTrackSizes { Style::GridTrackSizeList::map(gridAutoTrackSizes, GridLayoutUtils::trackSizeWithPercentagesConvertedToAuto) };
 }
 
+static TrackSizingFunctions convertGridTrackSizeToTrackSizingFunctions(const Style::GridTrackSize& gridTrackSize, const Style::ZoomFactor& zoom)
+{
+    auto minTrackSizingFunction = [&]() {
+        // If the track was sized with a minmax() function, this is the first argument to that function.
+        if (gridTrackSize.isMinMax())
+            return gridTrackSize.minTrackBreadth();
+
+        // If the track was sized with a <flex> value or fit-content() function, auto.
+        if (gridTrackSize.isFitContent() || gridTrackSize.minTrackBreadth().isFlex())
+            return Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+
+        // Otherwise, the track's sizing function.
+        return gridTrackSize.minTrackBreadth();
+    };
+
+    auto maxTrackSizingFunction = [&]() -> MaxTrackSizingFunction {
+        // If the track was sized with a minmax() function, this is the second argument to that function.
+        if (gridTrackSize.isMinMax())
+            return gridTrackSize.maxTrackBreadth();
+
+        // Otherwise, the track’s sizing function. In all cases, treat auto and fit-content() as max-content,
+        // except where specified otherwise for fit-content().
+        // Note: This special treatment is handled inside of TrackSizingAlgorithm.
+        if (gridTrackSize.isFitContent())
+            return Style::GridTrackSize::FitContent { gridTrackSize.fitContentTrackLength() };
+
+        return gridTrackSize.maxTrackBreadth();
+    };
+
+    return TrackSizingFunctions { minTrackSizingFunction(), maxTrackSizingFunction(), zoom };
+}
+
+// Generates track sizing functions for implicitTracksCount implicit tracks using
+// grid-auto-{columns,rows}, cycling forwards through the provided sizes starting from the first.
+static TrackSizingFunctionsList generateImplicitTrackSizingFunctions(size_t implicitTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
+{
+    TrackSizingFunctionsList trackSizingFunctionsForImplicitGrid;
+    trackSizingFunctionsForImplicitGrid.reserveInitialCapacity(implicitTracksCount);
+
+    // Cycle through grid-auto-{columns,rows} values using modulo.
+    for (size_t i = 0; i < implicitTracksCount; ++i) {
+        size_t autoTrackIndex = i % gridAutoTrackSizes.size();
+        trackSizingFunctionsForImplicitGrid.append(convertGridTrackSizeToTrackSizingFunctions(gridAutoTrackSizes[autoTrackIndex], zoom));
+    }
+
+    return trackSizingFunctionsForImplicitGrid;
+}
+
+static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, size_t leadingImplicitTracksCount, const Vector<Style::GridTrackSize>& gridTemplateTrackSizes, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
+{
+    auto explicitTracksCount = gridTemplateTrackSizes.size();
+    ASSERT_WITH_MESSAGE(totalTracksCount >= leadingImplicitTracksCount + explicitTracksCount, "Total tracks should be at least as many as the leading implicit tracks plus the explicit tracks");
+
+    TrackSizingFunctionsList trackSizingFunctions;
+    trackSizingFunctions.reserveInitialCapacity(totalTracksCount);
+
+    // https://drafts.csswg.org/css-grid-1/#auto-tracks
+    // "The last implicit grid track before the explicit grid receives the last specified size, and so on backwards"
+    // Check for leading tracks before reversing: Style::reversedTrackSizes copies
+    // grid-auto-{columns,rows}, and most grids have nothing before the explicit grid to spend it on.
+    if (leadingImplicitTracksCount) {
+        auto leadingTrackSizingFunctions = generateImplicitTrackSizingFunctions(leadingImplicitTracksCount, Style::reversedTrackSizes(gridAutoTrackSizes), zoom);
+        trackSizingFunctions.appendRange(leadingTrackSizingFunctions.rbegin(), leadingTrackSizingFunctions.rend());
+    }
+
+    // https://drafts.csswg.org/css-grid-1/#algo-terms
+    // Map explicit tracks from grid-template-{columns,rows}
+    for (auto& gridTrackSize : gridTemplateTrackSizes)
+        trackSizingFunctions.append(convertGridTrackSizeToTrackSizingFunctions(gridTrackSize, zoom));
+
+    // https://drafts.csswg.org/css-grid-1/#auto-tracks
+    // "The first track after the last explicitly-sized track receives the first specified size, and so on forwards"
+    auto trailingImplicitTracksCount = totalTracksCount - leadingImplicitTracksCount - explicitTracksCount;
+    trackSizingFunctions.appendVector(generateImplicitTrackSizingFunctions(trailingImplicitTracksCount, gridAutoTrackSizes, zoom));
+
+    ASSERT(trackSizingFunctions.size() == totalTracksCount);
+    return trackSizingFunctions;
+}
+
 GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto logicalGridItems = constructLogicalGridItems(root());
@@ -142,7 +223,18 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
     auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount());
 
-    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(gridItemPlacementResult, leadingImplicitTracks, layoutState);
+    auto placedGridItems = constructPlacedGridItems(gridItemPlacementResult.gridAreas);
+    auto columnTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.columnsCount, leadingImplicitTracks.columnsCount, gridDefinition.explicitGridTrackSizes.columnTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
+    auto rowTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.rowsCount, leadingImplicitTracks.rowsCount, gridDefinition.explicitGridTrackSizes.rowTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
+
+    // 2. FIXME: Find the size of the grid container.
+
+    // 3. Given the resulting grid container size, run the Grid Sizing Algorithm to size the grid.
+    auto usedTrackSizes = GridSizer { *this, layoutState }.sizeGrid(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
+
+    // 4. Lay out the grid items into their respective containing blocks. Each grid area’s
+    // width and height are considered definite for this purpose.
+    auto gridItemRects = GridLayout { *this }.layout(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList, usedTrackSizes, layoutState);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
@@ -268,13 +360,20 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         };
         GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
 
-        // When no grid item's inline contribution depends on its own block size, the column sizes are
-        // final after step 1 of the grid sizing algorithm, so ask GridLayout for that step alone.
-        auto scope = m_intrinsicWidthSizingPath == IntrinsicWidthSizingPath::ColumnsOnly
-            ? GridLayoutScope::ColumnSizingOnly
-            : GridLayoutScope::Full;
+        auto placedGridItems = constructPlacedGridItems(gridItemPlacementResult.gridAreas);
+        auto columnTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.columnsCount, leadingImplicitTracks.columnsCount, gridDefinition.explicitGridTrackSizes.columnTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
+        auto rowTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.rowsCount, leadingImplicitTracks.rowsCount, gridDefinition.explicitGridTrackSizes.rowTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
 
-        return GridLayout { *this }.layout(gridItemPlacementResult, leadingImplicitTracks, layoutState, scope).usedTrackSizes.columnSizes;
+        // When no grid item's inline contribution depends on its own block size, the column sizes are
+        // final after step 1 of the grid sizing algorithm, so run that step alone.
+        if (m_intrinsicWidthSizingPath == IntrinsicWidthSizingPath::ColumnsOnly)
+            return GridSizer { *this, layoutState }.sizeColumnsOnlyFastPath(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
+
+        auto usedTrackSizes = GridSizer { *this, layoutState }.sizeGrid(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
+        // FIXME: Laying out the grid items cannot change the column sizes, so this is only here to
+        // preserve the side effects of laying them out during intrinsic sizing.
+        GridLayout { *this }.layout(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList, usedTrackSizes, layoutState);
+        return WTF::move(usedTrackSizes.columnSizes);
     };
 
     TrackSizes minContentColumnSizes = columnSizesForConstraint(AxisConstraint::minContent());
