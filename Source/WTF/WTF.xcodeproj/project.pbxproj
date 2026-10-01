@@ -137,6 +137,7 @@
 		468378C62EC2D84200A9257A /* BOMSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 468378C52EC2D84200A9257A /* BOMSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468742F12D7F8A0100F4BE74 /* FileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 468742EF2D7F8A0100F4BE74 /* FileHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468742F22D7F8A0100F4BE74 /* FileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468742F02D7F8A0100F4BE74 /* FileHandle.cpp */; };
+		46F1A2C32E9B000000C0FFEE /* POSIXExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F1A2C22E9B000000C0FFEE /* POSIXExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468EAFD42D5B1E37005069CF /* SocketPOSIX.h in Headers */ = {isa = PBXBuildFile; fileRef = 468EAFD32D5B1E37005069CF /* SocketPOSIX.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46A6D0D62D8A166D00FC76C8 /* MappedFileDataPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A6D0D52D8A166D00FC76C8 /* MappedFileDataPOSIX.cpp */; };
 		46A6D0DA2D8A168400FC76C8 /* MappedFileData.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A6D0D72D8A168400FC76C8 /* MappedFileData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1406,6 +1407,7 @@
 		468378C52EC2D84200A9257A /* BOMSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BOMSPI.h; sourceTree = "<group>"; };
 		468742EF2D7F8A0100F4BE74 /* FileHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileHandle.h; sourceTree = "<group>"; };
 		468742F02D7F8A0100F4BE74 /* FileHandle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileHandle.cpp; sourceTree = "<group>"; };
+		46F1A2C22E9B000000C0FFEE /* POSIXExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = POSIXExtras.h; sourceTree = "<group>"; };
 		468EAFD32D5B1E37005069CF /* SocketPOSIX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocketPOSIX.h; sourceTree = "<group>"; };
 		46A6D0D52D8A166D00FC76C8 /* MappedFileDataPOSIX.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MappedFileDataPOSIX.cpp; sourceTree = "<group>"; };
 		46A6D0D72D8A168400FC76C8 /* MappedFileData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MappedFileData.h; sourceTree = "<group>"; };
@@ -2331,6 +2333,7 @@
 				A331D96621F24ABD009F02AA /* FileSystemPOSIX.cpp */,
 				46A6D0D52D8A166D00FC76C8 /* MappedFileDataPOSIX.cpp */,
 				A3EE5C3921FFAC5E00FABD61 /* OSAllocatorPOSIX.cpp */,
+				46F1A2C22E9B000000C0FFEE /* POSIXExtras.h */,
 				468EAFD32D5B1E37005069CF /* SocketPOSIX.h */,
 				A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */,
 			);
@@ -3899,6 +3902,7 @@
 				DD3DC96F27A4BF8E007E5B61 /* PointerPreparations.h in Headers */,
 				FFE39CAC2B1D7472004972B0 /* policy.h in Headers */,
 				FFE39CB22B1D7472004972B0 /* policy_holder.h in Headers */,
+				46F1A2C32E9B000000C0FFEE /* POSIXExtras.h in Headers */,
 				8AB05DFC2C99482E00738BDD /* PreciseSum.h in Headers */,
 				DD3DC93227A4BF8E007E5B61 /* PrintStream.h in Headers */,
 				DD3DC95027A4BF8E007E5B61 /* PriorityQueue.h in Headers */,

@@ -113,6 +113,7 @@
 #include <wtf/URL.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/WallTime.h>
+#include <wtf/posix/POSIXExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -1327,7 +1328,7 @@ static RefPtr<Uint8Array> fillBufferWithContentsOfFile(FILE* file)
 
 static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName)
 {
-    FILE* f = fopen(fileName.utf8().legacyCStringPointer(), "rb");
+    FILE* f = posixFopen(fileName.utf8(), "rb"_s);
     if (!f) {
         SAFE_FPRINTF(stderr, "Could not open file: %s\n", fileName.utf8());
         return nullptr;
@@ -1378,7 +1379,7 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
         SAFE_FPRINTF(stderr, "Trying to open a non-file: %s\n", *fileNameUTF);
         return false;
     }
-    auto* f = fopen(fileNameUTF->legacyCStringPointer(), "rb");
+    auto* f = posixFopen(*fileNameUTF, "rb"_s);
     if (!f) {
         SAFE_FPRINTF(stderr, "Could not open file: %s\n", *fileNameUTF);
         return false;
@@ -1558,7 +1559,7 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
     if ((status.st_mode & S_IFMT) != S_IFREG)
         return false;
 
-    FILE* f = fopen(pathName.legacyCStringPointer(), "r");
+    FILE* f = posixFopen(pathName, "r"_s);
 #endif
     if (!f) {
         SAFE_FPRINTF(stderr, "Could not open file: %s\n", fileName.utf8());

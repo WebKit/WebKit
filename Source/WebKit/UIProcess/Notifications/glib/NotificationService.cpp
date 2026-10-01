@@ -47,6 +47,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/Sandbox.h>
+#include <wtf/posix/POSIXExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
@@ -240,7 +241,7 @@ public:
                 WTF::switchOn(it.value.second,
                     [](const UTF8CString& path) {
                         if (!path.isNull()) {
-                            if (unlink(path.legacyCStringPointer()) == -1)
+                            if (posixUnlink(path) == -1)
                                 SAFE_WTFLOGALWAYS("Failed to remove cached notification icon %s: %s", path, safeStrerror(errno));
                         }
                     },

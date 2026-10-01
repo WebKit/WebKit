@@ -6898,6 +6898,63 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.cpp')
 
+    def test_posix_string_wrappers(self):
+        self.assert_lint(
+            'int fd = open(path.legacyCStringPointer(), O_RDONLY);',
+            "Use 'posixOpen()' from <wtf/posix/POSIXExtras.h> instead of 'open()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/posix_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'int fd = ::open(path.legacyCStringPointer(), O_RDONLY);',
+            "Use 'posixOpen()' from <wtf/posix/POSIXExtras.h> instead of 'open()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/posix_string_wrappers] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            'FILE* file = fopen(fileName.utf8().legacyCStringPointer(), "rb");',
+            "Use 'posixFopen()' from <wtf/posix/POSIXExtras.h> instead of 'fopen()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/posix_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'rename(oldPath.legacyCStringPointer(), newPath.legacyCStringPointer());',
+            "Use 'posixRename()' from <wtf/posix/POSIXExtras.h> instead of 'rename()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/posix_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_multi_line_lint(
+            'int fd = open(path.legacyCStringPointer(),\n'
+            '    O_CREAT | O_RDWR, 0666);\n',
+            "Use 'posixOpen()' from <wtf/posix/POSIXExtras.h> instead of 'open()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/posix_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'bool opened = file.open(path.legacyCStringPointer());',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int fd = Foo::open(path.legacyCStringPointer(), O_RDONLY);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int fd = posixOpen(path, O_RDONLY);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int fd = open(otherCString, O_RDONLY);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int fd = open(path.legacyCStringPointer(), O_RDONLY);',
+            '',
+            'foo.c')
+
     def test_lock_guard(self):
         self.assert_lint(
             'Locker locker(lock);',

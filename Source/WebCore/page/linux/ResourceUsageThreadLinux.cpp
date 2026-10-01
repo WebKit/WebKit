@@ -43,6 +43,7 @@
 #include <unistd.h>
 #include <wtf/Threading.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
+#include <wtf/posix/POSIXExtras.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -135,7 +136,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
 {
     String path = makeString("/proc/self/task/"_s, id, "/stat"_s);
-    int fd = open(path.utf8().legacyCStringPointer(), O_RDONLY);
+    int fd = posixOpen(path.utf8(), O_RDONLY);
     if (fd < 0)
         return false;
 

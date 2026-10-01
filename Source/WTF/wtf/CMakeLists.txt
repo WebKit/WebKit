@@ -467,6 +467,8 @@ set(WTF_PUBLIC_HEADERS
     persistence/PersistentDecoder.h
     persistence/PersistentEncoder.h
 
+    posix/POSIXExtras.h
+
     simde/simde.h
     simde/arm/neon.h
     simde/arm/sve.h

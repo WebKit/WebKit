@@ -37,6 +37,7 @@
 #include <wtf/PageBlock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
+#include <wtf/posix/POSIXExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -172,7 +173,7 @@ FILE* getCgroupFile(ASCIILiteral cgroupControllerName, const UTF8CString& cgroup
     // filesystem mounted at /sys/fs/cgroup.
     auto cgroupPath = makeString("/sys/fs/cgroup/"_s, cgroupControllerName, '/', cgroupControllerPath.span(), '/', cgroupFileName).utf8();
     LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath);
-    FILE* file = fopen(cgroupPath.legacyCStringPointer(), "r");
+    FILE* file = posixFopen(cgroupPath, "r"_s);
     if (file)
         setbuf(file, nullptr);
     return file;

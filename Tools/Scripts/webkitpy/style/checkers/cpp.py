@@ -3246,6 +3246,27 @@ _GLIB_STRING_WRAPPERS = {
 }
 
 
+_POSIX_STRING_WRAPPERS = {
+    'access': 'posixAccess',
+    'chflags': 'posixChflags',
+    'chmod': 'posixChmod',
+    'dlopen': 'posixDlopen',
+    'fopen': 'posixFopen',
+    'lstat': 'posixLstat',
+    'mkdir': 'posixMkdir',
+    'open': 'posixOpen',
+    'opendir': 'posixOpendir',
+    'realpath': 'posixRealpath',
+    'rename': 'posixRename',
+    'shm_open': 'posixShmOpen',
+    'shm_unlink': 'posixShmUnlink',
+    'stat': 'posixStat',
+    'statvfs': 'posixStatvfs',
+    'statx': 'posixStatx',
+    'symlink': 'posixSymlink',
+    'unlink': 'posixUnlink',
+}
+
 def _enclosing_function_call(clean_lines, line_number, position):
     """Returns the name of the function whose argument list contains the given position, or None.
 
@@ -3264,11 +3285,33 @@ def _enclosing_function_call(clean_lines, line_number, position):
                 if depth:
                     depth -= 1
                     continue
-                name = search(r'(?<![\w.>:])(\w+)\s*$', line[:index])
+                # A leading '::' names the global function, but any other qualifier names a different one.
+                name = search(r'(?:^|[^\w.>:])(?:::)?(\w+)\s*$', line[:index])
                 return name.group(1) if name else None
             elif character in ';{}' and not depth:
                 return None
     return None
+
+
+def _check_string_wrappers(clean_lines, line_number, file_state, error, wrappers, header, category):
+    """Looks for functions in wrappers called with legacyCStringPointer(), which should use the wrappers in header."""
+
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    if 'legacyCStringPointer' not in line:
+        return
+
+    reported_functions = set()
+    for pointer_call in re.finditer(r'\blegacyCStringPointer\s*\(', line):
+        function = _enclosing_function_call(clean_lines, line_number, pointer_call.start())
+        wrapper = wrappers.get(function)
+        if not wrapper or function in reported_functions:
+            continue
+        reported_functions.add(function)
+        error(line_number, category, 4,
+              "Use '%s()' from <%s> instead of '%s()', and pass the typed string instead of calling legacyCStringPointer()." % (wrapper, header, function))
 
 
 def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
@@ -3282,22 +3325,21 @@ def check_glib_string_wrappers(clean_lines, line_number, file_state, error):
       error: The function to call with any errors found.
     """
 
-    if file_state.is_c_or_objective_c():
-        return
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _GLIB_STRING_WRAPPERS, 'wtf/glib/GLibExtras.h', 'runtime/glib_string_wrappers')
 
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-    if 'legacyCStringPointer' not in line:
-        return
 
-    reported_functions = set()
-    for pointer_call in re.finditer(r'\blegacyCStringPointer\s*\(', line):
-        function = _enclosing_function_call(clean_lines, line_number, pointer_call.start())
-        wrapper = _GLIB_STRING_WRAPPERS.get(function)
-        if not wrapper or function in reported_functions:
-            continue
-        reported_functions.add(function)
-        error(line_number, 'runtime/glib_string_wrappers', 4,
-              "Use '%s()' from <wtf/glib/GLibExtras.h> instead of '%s()', and pass the typed string instead of calling legacyCStringPointer()." % (wrapper, function))
+def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
+    """Looks for POSIX functions called with legacyCStringPointer(), which should use the wrappers in wtf/posix/POSIXExtras.h.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, 'wtf/posix/POSIXExtras.h', 'runtime/posix_string_wrappers')
 
 
 # printf-style logging and assertion macros that convert typed string arguments themselves.
@@ -4276,6 +4318,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_os_object_ptr(clean_lines, line_number, file_state, error)
     check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error)
     check_glib_string_wrappers(clean_lines, line_number, file_state, error)
+    check_posix_string_wrappers(clean_lines, line_number, file_state, error)
     check_log_string_conversions(clean_lines, line_number, file_state, error)
     check_auto_with_adopt(clean_lines, line_number, file_state, error)
     check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error)
@@ -5586,6 +5629,7 @@ class CppChecker(object):
         'runtime/max_min_macros',
         'runtime/memset',
         'runtime/once_flag',
+        'runtime/posix_string_wrappers',
         'runtime/printf',
         'runtime/printf_format',
         'runtime/references',

@@ -47,6 +47,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/posix/POSIXExtras.h>
 
 #if ENABLE(LIBPAS_JIT_HEAP)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -1319,7 +1320,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
             if (fd == -1) {
                 String path { Options::dumpJITMemoryPath() };
                 path = makeStringByReplacingAll(path, "%pid"_s, String::number(getCurrentProcessID()));
-                fd = open(FileSystem::fileSystemRepresentation(path).legacyCStringPointer(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
+                fd = posixOpen(FileSystem::fileSystemRepresentation(path), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
                 RELEASE_ASSERT(fd != -1);
             }
             auto writeSpan = buffer->mutableSpan().first(offset);

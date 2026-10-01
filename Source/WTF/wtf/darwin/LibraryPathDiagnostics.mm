@@ -40,6 +40,7 @@
 #include <wtf/UUID.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/darwin/DispatchExtras.h>
+#include <wtf/posix/POSIXExtras.h>
 #include <wtf/spi/cf/CFPrivSPI.h>
 #include <wtf/spi/darwin/dyldSPI.h>
 
@@ -173,7 +174,7 @@ static bool NODELETE isAddressInSharedRegion(const void* addr)
 
 void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installName)
 {
-    void *handle = dlopen(installName.utf8().legacyCStringPointer(), RTLD_NOLOAD);
+    void *handle = posixDlopen(installName.utf8(), RTLD_NOLOAD);
     if (!handle)
         return;
 

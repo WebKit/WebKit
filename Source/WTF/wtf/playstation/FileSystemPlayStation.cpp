@@ -33,6 +33,7 @@
 #include <dirent.h>
 #include <sys/statvfs.h>
 #include <wtf/Function.h>
+#include <wtf/posix/POSIXExtras.h>
 #include <wtf/text/MakeString.h>
 
 namespace WTF {
@@ -47,9 +48,8 @@ static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String
     if (fsRep.isEmpty())
         return std::nullopt;
 
-    auto statFunc = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? stat : lstat;
     struct stat fileInfo;
-    if (statFunc(fsRep.legacyCStringPointer(), &fileInfo))
+    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? posixStat(fsRep, &fileInfo) : posixLstat(fsRep, &fileInfo))
         return std::nullopt;
 
     if (S_ISDIR(fileInfo.st_mode))
@@ -69,13 +69,13 @@ bool moveFile(const String& oldPath, const String& newPath)
     if (newFilename.isNull())
         return false;
 
-    return rename(oldFilename.legacyCStringPointer(), newFilename.legacyCStringPointer()) != -1;
+    return posixRename(oldFilename, newFilename) != -1;
 }
 
 std::optional<uint64_t> volumeFreeSpace(const String& path)
 {
     struct statvfs fileSystemStat;
-    if (!statvfs(fileSystemRepresentation(path).legacyCStringPointer(), &fileSystemStat))
+    if (!posixStatvfs(fileSystemRepresentation(path), &fileSystemStat))
         return fileSystemStat.f_bavail * fileSystemStat.f_frsize;
     return std::nullopt;
 }
@@ -83,7 +83,7 @@ std::optional<uint64_t> volumeFreeSpace(const String& path)
 std::optional<uint64_t> volumeCapacity(const String& path)
 {
     struct statvfs fileSystemStat;
-    if (!statvfs(fileSystemRepresentation(path).legacyCStringPointer(), &fileSystemStat))
+    if (!posixStatvfs(fileSystemRepresentation(path), &fileSystemStat))
         return fileSystemStat.f_blocks * fileSystemStat.f_frsize;
     return std::nullopt;
 }
@@ -92,7 +92,7 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
 {
     Vector<String> entries;
     auto cpath = fileSystemRepresentation(path);
-    DIR* dir = opendir(cpath.legacyCStringPointer());
+    DIR* dir = posixOpendir(cpath);
     if (dir) {
         struct dirent* dp;
         while ((dp = readdir(dir))) {
@@ -144,7 +144,7 @@ bool deleteNonEmptyDirectory(const String& path)
 String realPath(const String& filePath)
 {
     auto fsRep = fileSystemRepresentation(filePath);
-    std::unique_ptr<char, decltype(free)*> resolvedPath(realpath(fsRep.legacyCStringPointer(), nullptr), free);
+    std::unique_ptr<char, decltype(free)*> resolvedPath(posixRealpath(fsRep, nullptr), free);
     return resolvedPath ? String::fromUTF8(resolvedPath.get()) : filePath;
 }
 
