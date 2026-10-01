@@ -10971,6 +10971,25 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
     addAllowedFirstPartyForCookies(process, domain, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
 }
 
+static bool canReuseProvisionalProcessForBrowsingContextGroupSwitch(const ProvisionalPageProxy& provisionalPage, const API::Navigation& navigation, const Site& responseSite, const WebsiteDataStore& websiteDataStore)
+{
+    if (provisionalPage.navigationID() != navigation.navigationID())
+        return false;
+
+    Ref process = provisionalPage.process();
+    if (process->hasCommittedAnyProvisionalLoads() || process->isRunningWorkers() || process->crossOriginMode() != CrossOriginMode::Shared)
+        return false;
+
+    if (process->pageCount() || process->provisionalPageCount() != 1 || process->suspendedPageCount() || process->remotePageCount())
+        return false;
+
+    if (!process->site() || *process->site() != responseSite || process->websiteDataStore() != &websiteDataStore)
+        return false;
+
+    auto& [loadedWebArchive, allowedFirstParties] = process->allowedFirstPartiesForCookiesData();
+    return loadedWebArchive == LoadedWebArchive::No && allowedFirstParties.size() == 1 && allowedFirstParties.contains(responseSite.domain());
+}
+
 void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier> destinationWebProcess)>&& completionHandler)
 {
     // FIXME: When site isolation is enabled, this should probably switch the BrowsingContextGroup. <rdar://116203642>
@@ -10991,6 +11010,12 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
         if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup) {
             auto enableWebAssemblyDebugger = protect(m_configuration->preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
             return protect(m_configuration->processPool())->createNewWebProcess(protect(websiteDataStore()).ptr(), lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated, WebKit::jscOptionsForWebProcess(protect(m_configuration->preferences())->store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
+        }
+        if (provisionalPage && canReuseProvisionalProcessForBrowsingContextGroupSwitch(*provisionalPage, *navigation, responseSite, protect(websiteDataStore()))) {
+            Ref process = provisionalPage->process();
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: Continuing navigation in the provisional process since it has not committed any load (PID=%i)", process->processID());
+            process->setIneligbleForWebProcessCache();
+            return process;
         }
         return protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP);
     }();

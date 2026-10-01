@@ -181,7 +181,7 @@ TEST(WKWebView, ServerTrustAfterTwoProcessSwaps)
     navigationDelegate.get().didStartProvisionalNavigation = nil;
 
     EXPECT_NE(firstProvisionalProcessIdentifier, 0);
-    EXPECT_NE(firstProvisionalProcessIdentifier, [webView _webProcessIdentifier]);
+    EXPECT_EQ(firstProvisionalProcessIdentifier, [webView _webProcessIdentifier]);
 
     EXPECT_NOT_NULL([webView serverTrust]);
     verifyCertificateAndPublicKey([webView serverTrust]);

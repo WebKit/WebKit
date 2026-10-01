@@ -8489,6 +8489,47 @@ TEST(ProcessSwap, CommittedURLAfterNavigatingBackToCOOP)
     EXPECT_WK_STREQ([webView _committedURL].absoluteString, server.request("/destination1.html"_s).URL.absoluteString);
 }
 
+TEST(ProcessSwap, CrossSiteNavigationToCOOPReusesProvisionalProcess)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { "foo"_s } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "bar"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    done = false;
+    [webView loadRequest:server.request("/source.html"_s)];
+    Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    __block pid_t provisionalPID = 0;
+    navigationDelegate->didStartProvisionalNavigationHandler = ^{
+        provisionalPID = [webView _provisionalWebProcessIdentifier];
+    };
+
+    [webView loadRequest:server.requestWithLocalhost("/destination.html"_s)];
+    Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(provisionalPID, 0);
+    EXPECT_NE(pid1, pid2);
+    EXPECT_EQ(provisionalPID, pid2);
+}
+
 enum class IsSameOrigin : bool { No, Yes };
 enum class DoServerSideRedirect : bool { No, Yes };
 static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceCOEP, ASCIILiteral destinationCOOP, ASCIILiteral destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwapBrowsingContextGroup)
