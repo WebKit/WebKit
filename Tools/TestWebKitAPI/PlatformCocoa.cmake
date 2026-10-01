@@ -272,17 +272,6 @@ list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesMac.txt"
 )
 
-# Test files that reference ObjC classes from Swift-only helpers or private
-# frameworks unavailable in the CMake build
-set(TestWebKit_UNIFIED_SOURCE_EXCLUDES
-    "DrawingToPDF\\.mm"
-    "PDFSnapshot\\.mm"
-    "SOAuthorizationTests\\.mm"
-    "UnifiedPDFTests\\.mm"
-    "WKWebViewPrintFormatter\\.mm"
-    "WritingTools\\.mm"
-)
-
 # Files compiled outside unified sources (Xcode membershipExceptions).
 list(APPEND TestWebKit_SOURCES
     ${TOOLS_DIR}/TestRunnerShared/mac/SyntheticNSEvent.mm
@@ -457,6 +446,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND TestWebKit_LIBRARIES
+    "-framework AuthKit"
     "-framework AuthenticationServices"
     "-framework HID"
     "-framework LocalAuthentication"
@@ -468,6 +458,11 @@ list(APPEND TestWebKit_LIBRARIES
     WebCoreTestSupport
     WebKitLegacy
     ${CARBON_LIBRARY}
+)
+
+target_link_options(TestWebKit PRIVATE
+    "LINKER:-weak_framework,WritingTools"
+    "LINKER:-weak_framework,WritingToolsUI"
 )
 
 set_source_files_properties(

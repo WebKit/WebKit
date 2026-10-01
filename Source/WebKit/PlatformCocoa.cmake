@@ -524,6 +524,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKPressGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/SpatialShim.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
+    ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView+Testing.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKDefaultPDFHUDView.swift
 
@@ -768,6 +769,11 @@ set(WebKitSwift_SOURCES
     ${_wks_dir}/RealityKit/WKRKEntity.swift
     ${_wks_dir}/StageMode/WKStageMode.swift
     ${_wks_dir}/TextAnimation/WKTextAnimationManagerIOS.swift
+    ${_wks_dir}/WritingTools/IntelligenceTextEffectChunk.swift
+    ${_wks_dir}/WritingTools/IntelligenceTextEffectViewManager.swift
+    ${_wks_dir}/WritingTools/PlatformIntelligenceTextEffectView.swift
+    ${_wks_dir}/WritingTools/WKIntelligenceReplacementTextEffectCoordinator.swift
+    ${_wks_dir}/WritingTools/WKIntelligenceSmartReplyTextEffectCoordinator.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentError.mm
     ${WEBKIT_DIR}/GPUProcess/graphics/Model/ModelBridge.swift
     ${WEBKIT_DIR}/GPUProcess/graphics/Model/ModelParameters.swift
@@ -924,7 +930,11 @@ target_compile_options(WebKitSwift PRIVATE
     ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG}
 )
 
-target_link_libraries(WebKitSwift PRIVATE WebKit)
+find_library(WRITINGTOOLSUI_LIBRARY WritingToolsUI HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
+target_link_libraries(WebKitSwift PRIVATE
+    WebKit
+    $<$<BOOL:${WRITINGTOOLSUI_LIBRARY}>:${WRITINGTOOLSUI_LIBRARY}>
+)
 add_dependencies(WebKitSwift WebKit)
 
 # WebKit.framework's own signature does not cover this file: the
