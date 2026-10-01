@@ -294,11 +294,9 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
 
     if (m_currentColorSpace != colorSpace) {
         m_shouldCallDescriptionCallback = true;
-        m_currentColorSpace = colorSpace.isValid() ? std::make_optional(colorSpace) : std::nullopt;
-        if (m_currentColorSpace) {
-            if (auto webrtColorSpace = toWebRTCColorSpace(*m_currentColorSpace))
-                frame.set_color_space(*webrtColorSpace);
-        }
+        m_currentColorSpace = colorSpace;
+        if (m_currentColorSpace)
+            frame.set_color_space(toWebRTCColorSpace(*m_currentColorSpace));
     }
 
     auto error = m_internalEncoder->Encode(frame, &frameTypes);

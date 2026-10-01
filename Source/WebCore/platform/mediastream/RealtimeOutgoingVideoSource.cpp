@@ -273,10 +273,8 @@ void RealtimeOutgoingVideoSource::sendFrame(webrtc::scoped_refptr<webrtc::VideoF
     MonotonicTime timestamp = MonotonicTime::now();
     webrtc::VideoFrame frame(buffer, m_isApplyingRotation ? webrtc::kVideoRotation_0 : m_currentRotation, static_cast<int64_t>(timestamp.secondsSinceEpoch().microseconds()));
 
-    if (colorSpace.isValid()) {
-        if (auto webrtColorSpace = toWebRTCColorSpace(colorSpace))
-            frame.set_color_space(*webrtColorSpace);
-    }
+    if (colorSpace.isValid())
+        frame.set_color_space(toWebRTCColorSpace(colorSpace));
 
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;

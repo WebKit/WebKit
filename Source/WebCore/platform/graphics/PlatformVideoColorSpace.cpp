@@ -212,22 +212,6 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, PlatformVideoColorSpace colorSp
     return ts;
 }
 
-void overrideVideoColorSpaceAsNeeded(PlatformVideoColorSpace& colorSpace, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride)
-{
-    if (!colorSpaceOverride)
-        return;
-    if (colorSpaceOverride->primaries)
-        colorSpace.primaries = colorSpaceOverride->primaries;
-    if (colorSpaceOverride->transfer)
-        colorSpace.transfer = colorSpaceOverride->transfer;
-    if (colorSpaceOverride->matrix)
-        colorSpace.matrix = colorSpaceOverride->matrix;
-    if (colorSpaceOverride->fullRange)
-        colorSpace.fullRange = colorSpaceOverride->fullRange;
-    if (colorSpaceOverride->chromaLocation)
-        colorSpace.chromaLocation = colorSpaceOverride->chromaLocation;
-}
-
 bool usesITUR2100TF(const PlatformVideoColorSpace& colorSpace)
 {
     return colorSpace.transfer == PlatformVideoTransferCharacteristics::PQ

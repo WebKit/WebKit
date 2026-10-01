@@ -279,12 +279,9 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
         return 0;
 
     auto colorSpace = m_videoInfo ? std::optional { m_videoInfo->colorSpace() } : colorSpaceFromLibWebRTCVideoFrame(frame);
-    if (!m_videoInfo && m_colorSpace) {
-        if (!colorSpace)
-            colorSpace = m_colorSpace;
-        else
-            overrideVideoColorSpaceAsNeeded(*colorSpace, m_colorSpace);
-    }
+    if (!m_videoInfo && m_colorSpace)
+        colorSpace = m_colorSpace;
+
     bool isFullRange = colorSpace && colorSpace->fullRange.value_or(false);
 
     auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, std::optional { colorSpace }, toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, colorSpace, isFullRange](auto& buffer) {
