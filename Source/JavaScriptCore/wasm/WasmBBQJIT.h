@@ -36,6 +36,7 @@
 #include "WasmLimits.h"
 #include "js/JSWebAssemblyInstance.h"
 #include <span>
+#include <wtf/BitVector.h>
 #include <wtf/CheckedArithmetic.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -678,17 +679,6 @@ public:
         template<typename Stack>
         void flushAtBlockBoundary(BBQJIT& generator, unsigned targetArity, Stack& expressionStack, bool endOfWasmBlock)
         {
-            // First, we flush all locals that were allocated outside of their designated slots in this block.
-            for (unsigned i = 0; i < expressionStack.size(); ++i) {
-                if (expressionStack[i].value().isLocal())
-                    m_touchedLocals.add(expressionStack[i].value().asLocal());
-            }
-            for (LocalOrTempIndex touchedLocal : m_touchedLocals) {
-                Value value = Value::fromLocal(generator.m_localTypes[touchedLocal], touchedLocal);
-                if (generator.locationOf(value).isRegister())
-                    generator.flushValue(value);
-            }
-
             // If we are a catch block, we need to flush the exception value, since it's not represented on the expression stack.
             if (isAnyCatch(*this)) {
                 Value value = generator.exception(*this);
@@ -701,6 +691,20 @@ public:
             for (unsigned i = 0; i < expressionStack.size(); ++i) {
                 Value& value = expressionStack[i].value();
                 int resultIndex = static_cast<int>(i) - static_cast<int>(expressionStack.size() - targetArity);
+
+                if (value.isLocal()) {
+                    Value local = value;
+                    value = Value::fromTemp(local.type(), static_cast<LocalOrTempIndex>(enclosedHeight() + implicitSlots() + i));
+                    Location source = generator.locationOf(local);
+                    bool isPinnedInPlace = generator.isPinnedLocalRegister(source);
+                    if (!(endOfWasmBlock && resultIndex >= 0)) {
+                        generator.emitMove(local, generator.locationOf(value));
+                    } else if (source.isRegister() && !isPinnedInPlace) {
+                        generator.unbind(local, source);
+                        generator.bind(value, source);
+                    } else
+                        generator.emitMove(local, generator.allocate(value));
+                }
 
                 // Next, we turn all constants into temporaries, so they can be given persistent slots on the stack.
                 // If this is the end of the enclosing wasm block, we know we won't need them again, so this can be skipped.
@@ -719,6 +723,12 @@ public:
                         generator.consume(value);
                 }
             }
+
+            // Locals go back to their canonical slots so the paths meeting at the successor agree on
+            // where to find them. A pinned local's register is already the same on every path.
+            generator.flushAllLocals();
+            generator.assertPinnedLocalsAreResident();
+            generator.m_localsOnExpressionStack.clearAll();
         }
 
         template<typename Stack, size_t N>
@@ -864,8 +874,6 @@ public:
 
         const MacroAssembler::Label& NODELETE loopLabel() const;
 
-        void touch(LocalOrTempIndex local);
-
     private:
         friend class BBQJIT;
 
@@ -881,7 +889,6 @@ public:
         MacroAssembler::Label m_loopLabel;
         MacroAssembler::Jump m_ifBranch;
         LocalOrTempIndex m_enclosedHeight; // Height of enclosed expression stack, used as the base for all temporary locations.
-        BitVector m_touchedLocals; // Number of locals allocated to registers in this block.
         unsigned m_tryStart { 0 };
         unsigned m_tryEnd { 0 };
         unsigned m_tryCatchDepth { 0 };
@@ -1416,8 +1423,7 @@ public:
     // return the element type
     StorageType getArrayElementType(TypeSignatureIndex typeIndex);
 
-    // This will replace the existing value with a new value. Note that if this is an F32 then the top bits may be garbage but that's ok for our current usage.
-    Value marshallToI64(Value value);
+    Value marshallToInt(Value);
 
     void emitAllocateGCArrayUninitialized(GPRReg result, TypeSignatureIndex typeIndex, ExpressionType size, GPRReg scratchGPR, GPRReg scratchGPR2);
     [[nodiscard]] PartialResult addArrayNew(TypeSignatureIndex typeIndex, ExpressionType size, ExpressionType initValue, ExpressionType& result);
@@ -2147,6 +2153,8 @@ public:
 
     std::unique_ptr<BBQDisassembler> takeDisassembler();
 
+    const RegisterAtOffsetList& NODELETE calleeSaveRegisters() const LIFETIME_BOUND { return m_calleeSaves; }
+
 private:
     static bool NODELETE isScratch(Location);
 
@@ -2209,7 +2217,10 @@ private:
     Location loadIfNecessary(Value);
 
     // This should generally be avoided if possible but sometimes you just *need* a value in a register.
-    Location materializeToGPR(Value, std::optional<ScratchScope<1, 0>>&);
+    // Pass NeedsWritableGPR::Yes to write to the register that comes back: a local's register is
+    // the local's storage, so one of those is copied rather than handed out.
+    enum class NeedsWritableGPR : bool { No, Yes };
+    Location materializeToGPR(Value, std::optional<ScratchScope<1, 0>>&, NeedsWritableGPR = NeedsWritableGPR::No);
 
     void consume(Value);
 
@@ -2219,13 +2230,55 @@ private:
 
     void unbindAllRegisters();
 
+    void flushAllLocals();
+    void unbindAllLocals();
+    Location NODELETE tailCallArgumentSource(Value);
+
+    struct PinnedLocal {
+        LocalOrTempIndex index;
+        Location location;
+    };
+
+    static unsigned maxPinnedLocals() { return FunctionIPIntMetadataGenerator::numTrackedHotLocals; }
+
+    void assignPinnedLocals();
+    void loadPinnedLocals();
+    bool isPinnedLocalRegister(Location location) const
+    {
+        return location.isRegister() && m_pinnedLocalRegisters.contains(location.asReg(), IgnoreVectors);
+    }
+#if ASSERT_ENABLED
+    void assertPinnedLocalsAreResident();
+#else
+    void assertPinnedLocalsAreResident() { }
+#endif
+
+    void evacuateLocal(uint32_t localIndex);
+    void assignToLocal(Value local, Value);
+
     const RegisterBinding& bindingFor(JSC::Reg reg) { return reg.isGPR() ? m_gprAllocator.bindingFor(reg.gpr()) : m_fprAllocator.bindingFor(reg.fpr()); }
     RegisterSet validGPRs() const { return m_gprAllocator.validRegisters(); }
     RegisterSet validFPRs() const { return m_fprAllocator.validRegisters(); }
 
-    // We use this to free up specific registers that might get clobbered by an instruction.
-    void clobber(GPRReg gpr) { m_gprAllocator.clobber(*this, gpr); }
-    void clobber(FPRReg fpr) { m_fprAllocator.clobber(*this, fpr); }
+    bool ownsRegister(Location location) const
+    {
+        if (location.isGPR())
+            return validGPRs().contains(location.asGPR(), IgnoreVectors);
+        if (location.isFPR())
+            return validFPRs().contains(location.asFPR(), Width::Width128);
+        return false;
+    }
+
+    void clobber(GPRReg gpr)
+    {
+        ASSERT(!m_pinnedLocalRegisters.contains(gpr));
+        m_gprAllocator.clobber(*this, gpr);
+    }
+    void clobber(FPRReg fpr)
+    {
+        ASSERT(!m_pinnedLocalRegisters.contains(JSC::Reg(fpr), IgnoreVectors));
+        m_fprAllocator.clobber(*this, fpr);
+    }
     void clobber(JSC::Reg reg) { reg.isGPR() ? clobber(reg.gpr()) : clobber(reg.fpr()); }
 
     Location NODELETE canonicalSlot(Value);
@@ -2269,6 +2322,10 @@ private:
     Vector<Location, 8> m_temps;
     Vector<Location, 8> m_localSlots; // Persistent stack slots for local variables.
     Vector<TypeKind, 8> m_localTypes; // Types of all non-argument locals in this function.
+    BitVector m_localsOnExpressionStack;
+    Vector<PinnedLocal, 4> m_pinnedLocals;
+    RegisterSet m_pinnedLocalRegisters;
+    RegisterAtOffsetList m_calleeSaves;
     GPRAllocator m_gprAllocator; // SimpleRegisterAllocator for GPRs
     FPRAllocator m_fprAllocator; // SimpleRegisterAllocator for FPRs
     SpillHint m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.

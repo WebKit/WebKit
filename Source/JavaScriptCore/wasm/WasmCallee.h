@@ -454,8 +454,6 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE const RegisterAtOffsetList* calleeSaveRegistersImpl();
-
     RefPtr<OMGOSREntryCallee> m_osrEntryCallee;
     TierUpCount m_tierUpCounter;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
@@ -489,6 +487,10 @@ public:
 
     unsigned numLocals() const { return m_numLocals; }
     unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
+
+    using HotLocals = FunctionIPIntMetadataGenerator::HotLocals;
+    const HotLocals& hotLocals() const LIFETIME_BOUND { return m_hotLocals; }
+
     unsigned rethrowSlots() const { return m_numRethrowSlotsToAlloc; }
     unsigned maxFrameSizeInV128() const { return m_maxFrameSizeInV128; }
     unsigned maxCalleeStackSize() const { return m_maxCalleeStackSize; }
@@ -523,6 +525,7 @@ private:
     Vector<uint8_t> m_localInitBytecode;
     RefPtr<const RTT> m_signatureRTT;
     Vector<FunctionSpaceIndex> m_callTargets;
+    HotLocals m_hotLocals;
 
     unsigned m_localSizeToAlloc;
     unsigned m_numRethrowSlotsToAlloc;

@@ -228,7 +228,9 @@ Value BBQJIT::instanceValue()
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
         result = topValue(type.kind());
-        emitLoad(globalValue, loadIfNecessary(result));
+        // allocate(), not loadIfNecessary(): nothing has bound this result yet, so a load would read
+        // its canonical slot, which holds nothing.
+        emitLoad(globalValue, allocate(result));
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
         ASSERT(global.mutability == Wasm::Mutability::Mutable);
@@ -1264,9 +1266,28 @@ Value BBQJIT::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location
     consume(value);
     consume(expected);
 
+    // The CAS compares whole registers, so the expected value is narrowed into resultGPR first.
+    // Narrowing expectedGPR in place is not an option: it can be the register a local lives in.
+    auto moveNarrowedExpected = [&](GPRReg expectedGPR, GPRReg resultGPR) {
+        switch (accessWidth) {
+        case Width8:
+            m_jit.and64(TrustedImm64(0xFF), expectedGPR, resultGPR);
+            break;
+        case Width16:
+            m_jit.and64(TrustedImm64(0xFFFF), expectedGPR, resultGPR);
+            break;
+        case Width32:
+            m_jit.and64(TrustedImm64(0xFFFFFFFF), expectedGPR, resultGPR);
+            break;
+        default:
+            m_jit.move(expectedGPR, resultGPR);
+            break;
+        }
+    };
+
     auto emitStrongCAS = [&](GPRReg expectedGPR, GPRReg valueGPR, GPRReg resultGPR) {
         if (isX86_64() || isARM64_LSE()) {
-            m_jit.move(expectedGPR, resultGPR);
+            moveNarrowedExpected(expectedGPR, resultGPR);
             switch (accessWidth) {
             case Width8:
                 m_jit.atomicStrongCAS8(resultGPR, valueGPR, address);
@@ -1287,7 +1308,7 @@ Value BBQJIT::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location
             return;
         }
 
-        m_jit.move(expectedGPR, resultGPR);
+        moveNarrowedExpected(expectedGPR, resultGPR);
         switch (accessWidth) {
         case Width8:
             m_jit.atomicStrongCAS8(StatusCondition::Success, resultGPR, valueGPR, address, scratchGPR);
@@ -1306,20 +1327,6 @@ Value BBQJIT::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location
             break;
         }
     };
-
-    switch (accessWidth) {
-    case Width8:
-        m_jit.and64(TrustedImm64(0xFF), expectedLocation.asGPR());
-        break;
-    case Width16:
-        m_jit.and64(TrustedImm64(0xFFFF), expectedLocation.asGPR());
-        break;
-    case Width32:
-        m_jit.and64(TrustedImm64(0xFFFFFFFF), expectedLocation.asGPR());
-        break;
-    default:
-        break;
-    }
 
     emitStrongCAS(expectedLocation.asGPR(), valueLocation.asGPR(), resultLocation.asGPR());
     emitSanitizeAtomicResult(op, expected.type(), resultLocation.asGPR());
@@ -1380,7 +1387,7 @@ void BBQJIT::truncInBounds(TruncationKind truncationKind, Location operandLocati
 
     LOG_INSTRUCTION("RefI31", value, RESULT(result));
 
-    m_jit.lshift32(TrustedImm32(1), resultLocation.asGPR());
+    m_jit.lshift32(initialValue.asGPR(), TrustedImm32(1), resultLocation.asGPR());
     m_jit.rshift32(TrustedImm32(1), resultLocation.asGPR());
     m_jit.or64(TrustedImm64(JSValue::NumberTag), resultLocation.asGPR());
     return { };
@@ -1450,16 +1457,17 @@ void BBQJIT::truncInBounds(TruncationKind truncationKind, Location operandLocati
     return { };
 }
 
-// This will replace the existing value with a new value. Note that if this is an F32 then the top bits may be garbage but that's ok for our current usage.
-Value BBQJIT::marshallToI64(Value value)
+// This will replace the existing value with a new value holding the same bits.
+Value BBQJIT::marshallToInt(Value value)
 {
-    ASSERT(!value.isLocal());
     if (value.type() == TypeKind::F32 || value.type() == TypeKind::F64) {
         if (value.isConst())
             return Value::fromI64(value.type() == TypeKind::F32 ? std::bit_cast<uint32_t>(value.asI32()) : std::bit_cast<uint64_t>(value.asF64()));
         // This is a bit silly. We could just move initValue to the right argument GPR if we know it's in an FPR already.
         flushValue(value);
-        return Value::fromTemp(TypeKind::I64, value.asTemp());
+        // An F32's slot is only four bytes wide, so reading it as an I64 would pull in whatever sits
+        // next to it in the frame. Reading it at its own width zero-extends instead.
+        return Value::pinned(value.type() == TypeKind::F32 ? TypeKind::I32 : TypeKind::I64, canonicalSlot(value));
     }
     return value;
 }
@@ -1538,7 +1546,7 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
         JIT_COMMENT(m_jit, "Array allocation done do initialization");
 
         std::optional<ScratchScope<1, 0>> sizeScratch;
-        Location sizeLocation = materializeToGPR(size, sizeScratch);
+        Location sizeLocation = materializeToGPR(size, sizeScratch, NeedsWritableGPR::Yes);
         StorageType elementType = getArrayElementType(typeIndex);
         emitArrayGetPayload(elementType, resultGPR, scratchGPR);
 
@@ -1625,7 +1633,7 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
 
         JIT_COMMENT(m_jit, "Array allocation done do initialization");
         std::optional<ScratchScope<1, 0>> sizeScratch;
-        Location sizeLocation = materializeToGPR(size, sizeScratch);
+        Location sizeLocation = materializeToGPR(size, sizeScratch, NeedsWritableGPR::Yes);
         Value initValue;
         if (elementType.unpacked().isV128()) {
             // FIXME: We should have V128 Constant.
@@ -1681,9 +1689,12 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
         recordJumpToThrowException(ExceptionType::OutOfBoundsArrayGet,
             m_jit.branch32(MacroAssembler::BelowOrEqual, wasmScratchGPR, TrustedImm32(index.asI32())));
     } else {
+        ASSERT(index.type() == TypeKind::I32);
         indexLocation = loadIfNecessary(index);
         recordJumpToThrowException(ExceptionType::OutOfBoundsArrayGet,
             m_jit.branch32(MacroAssembler::AboveOrEqual, indexLocation.asGPR(), MacroAssembler::Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfSize())));
+        // Clobbers the operand's own register, which for a local is the local's storage. Safe only
+        // because it touches nothing but the don't-care upper half of an i32.
         m_jit.zeroExtend32ToWord(indexLocation.asGPR(), indexLocation.asGPR());
     }
 
@@ -1757,11 +1768,15 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
             case TypeKind::F64:
                 m_jit.loadDouble(fieldBaseIndex, resultLocation.asFPR());
                 break;
-            case TypeKind::V128:
-                // For V128, the index computation above doesn't work so we index differently.
-                m_jit.mul32(Imm32(4), indexLocation.asGPR(), indexLocation.asGPR());
-                m_jit.loadVector(MacroAssembler::BaseIndex(wasmScratchGPR, indexLocation.asGPR(), MacroAssembler::Scale::TimesFour), resultLocation.asFPR());
+            case TypeKind::V128: {
+                // 16-byte elements need a bigger stride than BaseIndex can scale to, so fold the
+                // extra factor of four into the index. Scale into a scratch, not in place: the index
+                // operand can name a local, whose register is the local's storage.
+                ScratchScope<1, 0> scratches(*this, indexLocation, resultLocation);
+                m_jit.mul32(Imm32(4), indexLocation.asGPR(), scratches.gpr(0));
+                m_jit.loadVector(MacroAssembler::BaseIndex(wasmScratchGPR, scratches.gpr(0), MacroAssembler::Scale::TimesFour), resultLocation.asFPR());
                 break;
+            }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -1839,8 +1854,19 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
     else
         arrayLocation = loadIfNecessary(arrayref);
 
-    emitArrayGetPayload(elementType, arrayLocation.asGPR(), wasmScratchGPR);
-    emitArrayStoreElementUnchecked(elementType, wasmScratchGPR, index, value);
+    if (value.type() == TypeKind::V128 && !index.isConst()) {
+        // Scaling the index for 16-byte elements needs a register besides the payload, and the index
+        // operand can name a local, whose register is the local's storage. Move the payload out of
+        // wasmScratchGPR so the scaled index can land there.
+        ScratchScope<1, 0> scratches(*this, arrayLocation, locationOf(index), locationOf(value));
+        emitArrayGetPayload(elementType, arrayLocation.asGPR(), scratches.gpr(0));
+        Location indexLocation = loadIfNecessary(index);
+        constexpr bool preserveIndex = true;
+        emitArrayStoreElementUnchecked(elementType, scratches.gpr(0), indexLocation, value, preserveIndex);
+    } else {
+        emitArrayGetPayload(elementType, arrayLocation.asGPR(), wasmScratchGPR);
+        emitArrayStoreElementUnchecked(elementType, wasmScratchGPR, index, value);
+    }
 
     consume(index);
     consume(value);
@@ -1945,7 +1971,7 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
         ASSERT_IMPLIES(fillsVector, !value.isConst());
         // Reinterpreting a float fill value as its bits flushes it, which has to happen on both edges
         // of the branch below, not just the one that calls.
-        Value fillBits = fillsVector ? value : marshallToI64(value);
+        Value fillBits = fillsVector ? value : marshallToInt(value);
 
         // An empty range has nothing left to do once it is in bounds, and collection code fills empty
         // ranges constantly, so branch around the call. Both edges of that branch have to agree on
@@ -3247,6 +3273,9 @@ void BBQJIT::emitCatchPrologue()
     if (m_info.memoryCount())
         loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
     static_assert(noOverlap(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2));
+    // Control arrives from the runtime with registers in an unknown state, so a pinned local has to
+    // be put back in the register the rest of the body expects it in.
+    loadPinnedLocals();
 }
 
 void BBQJIT::emitCatchAllImpl(ControlData& dataCatch)
@@ -5094,7 +5123,7 @@ void BBQJIT::emitLoad(TypeKind type, Location src, Location dst)
     }
 }
 
-Location BBQJIT::materializeToGPR(Value value, std::optional<ScratchScope<1, 0>>& sizeScratch)
+Location BBQJIT::materializeToGPR(Value value, std::optional<ScratchScope<1, 0>>& sizeScratch, NeedsWritableGPR needsWritableGPR)
 {
     if (value.isPinned())
         return value.asPinned();
@@ -5130,7 +5159,14 @@ Location BBQJIT::materializeToGPR(Value value, std::optional<ScratchScope<1, 0>>
         return result;
     }
 
-    return loadIfNecessary(value);
+    Location location = loadIfNecessary(value);
+    if (needsWritableGPR == NeedsWritableGPR::No || !value.isLocal())
+        return location;
+
+    sizeScratch.emplace(*this, location);
+    Location result = Location::fromGPR(sizeScratch->gpr(0));
+    emitMoveRegister(value.type(), location, result);
+    return result;
 }
 
 void BBQJIT::emitMove(StorageType type, Value src, BaseIndex dst)
