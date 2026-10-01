@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference filters are painted in software, so their outsets must neither grow nor shrink the composited bounds of descendants</title>
+<style>
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.blurred { filter: url(#blur); }
+.eroded { filter: url(#erode); }
+.overhanging {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 0;
+    height: 0;
+    border: 100px solid green;
+    will-change: transform;
+}
+.filling {
+    width: 0;
+    height: 0;
+    border: 50px solid green;
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="blur"><feGaussianBlur stdDeviation="20"/></filter>
+    <filter id="erode"><feMorphology radius="-50"/></filter>
+</svg>
+<div class="clip">
+    <div class="blurred">
+        <div class="overhanging"></div>
+    </div>
+</div>
+<div class="clip">
+    <div class="eroded">
+        <div class="filling"></div>
+    </div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

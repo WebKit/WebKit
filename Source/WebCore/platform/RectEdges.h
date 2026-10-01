@@ -113,9 +113,20 @@ public:
         copy.right() = left();
         return copy;
     }
+
     RectEdges<T> yFlippedCopy() const
     {
         RectEdges<T> copy { *this };
+        copy.top() = bottom();
+        copy.bottom() = top();
+        return copy;
+    }
+
+    RectEdges<T> xyFlippedCopy() const
+    {
+        RectEdges<T> copy { *this };
+        copy.left() = right();
+        copy.right() = left();
         copy.top() = bottom();
         copy.bottom() = top();
         return copy;

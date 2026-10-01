@@ -2625,3 +2625,8 @@ editing/selection/select-across-readonly-input-2.html [ Failure ]
 editing/selection/select-across-readonly-input-3.html [ Failure ]
 editing/selection/select-across-readonly-input-4.html [ Failure ]
 editing/selection/select-across-readonly-input-5.html [ Failure ]
+
+# webkit.org/b/324109 The drop-shadow of a filtered ancestor does not sample the backing store of a composited
+# descendant here, so the shadow is missing entirely. Passes on macOS Sequoia Release and iOS 26.
+webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-outsets-sample-composited-child.html [ ImageOnlyFailure ]
+webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-outsets-sample-composited-child-preserve-3d.html [ ImageOnlyFailure ]
