@@ -2526,6 +2526,23 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
               'Semicolon defining empty statement for this loop. Use { } instead.')
 
 
+def is_in_objective_c_dictionary_literal(clean_lines, line_number):
+    """Returns True if the innermost bracket enclosing the start of the line is an Objective-C @{ dictionary literal."""
+    depth = 0
+    for current_line_number in range(line_number - 1, -1, -1):
+        line = clean_lines.elided[current_line_number]
+        for position in range(len(line) - 1, -1, -1):
+            character = line[position]
+            if character in ')]}':
+                depth += 1
+            elif character in '([{':
+                if depth:
+                    depth -= 1
+                    continue
+                return character == '{' and line[position - 1:position] == '@'
+    return False
+
+
 def check_member_initialization_list(clean_lines, line_number, error):
     """ Look for style errors in member initialization list of classes.
 
@@ -2547,7 +2564,8 @@ def check_member_initialization_list(clean_lines, line_number, error):
     # with the colon or comma preceding the member on that line.
     begin_line = line
     # match the start of initialization list
-    if search(r'^(?P<indentation>\s*)((explicit\s+)?[^(\s|\?)]+\([^\?]*\)\s?\:|^(\s|\?)*\:)([^\:]|\Z)[^;]*$', line):
+    if (search(r'^(?P<indentation>\s*)((explicit\s+)?[^(\s|\?)]+\([^\?]*\)\s?\:|^(\s|\?)*\:)([^\:]|\Z)[^;]*$', line)
+            and not is_in_objective_c_dictionary_literal(clean_lines, line_number)):
         if search(r'[^:]\:[^\:\s]+', line) and not search(r'^\s*:\s\S+', line):
             error(line_number, 'whitespace/init', 4,
                 'Missing spaces around :')
@@ -2725,9 +2743,47 @@ def get_initial_spaces_for_line(clean_line):
     return initial_spaces
 
 
+_OBJECTIVE_C_SELECTOR_CONTINUATION = r'(?P<keyword>\s+\w+):(?!:)'
+
+
+def get_objective_c_method_declaration_colon_columns(clean_lines, line_number):
+    """Returns the columns of the selector colons above the line if it continues a multi-line
+    Objective-C method declaration that starts with '- (' or '+ (', or None otherwise."""
+    colon_columns = []
+    current_line_number = line_number
+    while current_line_number > 0 and match(_OBJECTIVE_C_SELECTOR_CONTINUATION, clean_lines.elided[current_line_number]):
+        current_line_number -= 1
+        line = clean_lines.elided[current_line_number]
+        continuation = match(_OBJECTIVE_C_SELECTOR_CONTINUATION, line)
+        if continuation:
+            colon_columns.append(continuation.end('keyword'))
+            continue
+        if not (line.startswith('- (') or line.startswith('+ (')):
+            return None
+        # The first selector colon follows the parenthesized return type.
+        depth = 0
+        for position in range(2, len(line)):
+            if line[position] == '(':
+                depth += 1
+            elif line[position] == ')':
+                depth -= 1
+                if not depth:
+                    colon_column = line.find(':', position)
+                    if colon_column >= 0:
+                        colon_columns.append(colon_column)
+                    break
+        return colon_columns
+    return None
+
+
 def check_indentation_amount(clean_lines, line_number, error):
     line = clean_lines.elided[line_number]
     initial_spaces = get_initial_spaces_for_line(line)
+
+    # Objective-C selector pieces may be aligned on their colons.
+    colon_columns = get_objective_c_method_declaration_colon_columns(clean_lines, line_number)
+    if colon_columns and line.find(':') in colon_columns:
+        return
 
     if initial_spaces % 4:
         error(line_number, 'whitespace/indent', 3,
@@ -3644,11 +3700,12 @@ def check_braces(clean_lines, line_number, file_state, error):
         # character on the previous non-blank line is ';', ':', '{', '}',
         # ')', or ') const' and doesn't begin with 'if|for|while|switch|else'.
         # We also allow '#' for #endif and '=' for array initialization,
-        # and '- (' and '+ (' for Objective-C methods.
+        # and '- (' and '+ (' for Objective-C methods, including selector
+        # pieces continuing a multi-line Objective-C method declaration.
         # Also we don't complain if the last non-whitespace character
         # on the previous non-blank line is '{' because it's likely to
         # indicate the begining of a nested code block.
-        previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
+        previous_line, previous_line_number = get_previous_non_blank_line(clean_lines, line_number)
         # Function qualifiers that allow braces on next line (grouped with const variants)
         qualifiers = []
         for base in ['override', 'final', 'noexcept', 'LIFETIME_BOUND']:
@@ -3660,6 +3717,7 @@ def check_braces(clean_lines, line_number, file_state, error):
             and previous_line.find('#') < 0
             and previous_line.find('- (') != 0
             and previous_line.find('+ (') != 0
+            and get_objective_c_method_declaration_colon_columns(clean_lines, previous_line_number) is None
             and not search(r'{\s*$', previous_line)):
             error(line_number, 'whitespace/braces', 4,
                   'This { should be at the end of the previous line')

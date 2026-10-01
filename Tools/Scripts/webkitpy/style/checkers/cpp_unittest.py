@@ -8092,6 +8092,95 @@ class WebKitStyleTest(CppStyleTestBase):
 
         self.assert_lint('MYMACRO(a ? b() : c);', '')
 
+        self.assert_multi_line_lint(
+            'RetainPtr dict = @{\n'
+            '    // Policy errors\n'
+            '    @(WebKitErrorCannotShowMIMEType): WebKitErrorDescriptionCannotShowMIMEType,\n'
+            '    @(WebKitErrorCannotShowURL): WebKitErrorDescriptionCannotShowURL,\n'
+            '\n'
+            '    @(WebKitErrorGeolocationLocationUnknown): WebKitErrorDescriptionGeolocationLocationUnknown\n'
+            '};\n'
+            '\n'
+            '+ (void)registerErrors\n'
+            '{\n'
+            '}',
+            '', file_name='foo.mm')
+
+        self.assert_multi_line_lint(
+            'NSDictionary *actions = @{\n'
+            '    NSStringFromSelector(@selector(zoomIn:)): @(WebMenuItemPDFZoomIn),\n'
+            '    bridge_cast(kLSQuarantineTypeKey): bridge_cast(kLSQuarantineTypeWebDownload),\n'
+            '    @"nested": @{\n'
+            '        @(WebKitErrorCannotShowURL): @YES,\n'
+            '    },\n'
+            '};',
+            '', file_name='foo.mm')
+
+        self.assert_multi_line_lint(
+            'RetainPtr dict = @{\n'
+            '    @(WebKitErrorCannotShowURL): WebKitErrorDescriptionCannotShowURL,\n'
+            '};\n'
+            '\n'
+            'MyClass::MyClass(Document* doc) :\n'
+            '    MySuperClass(),\n'
+            '    m_doc(0)\n'
+            '{ }',
+            ['Should be indented on a separate line, with the colon or comma first on that line.'
+             '  [whitespace/indent] [4]',
+             'Comma should be at the beginning of the line in a member initialization list.'
+             '  [whitespace/init] [4]'],
+            file_name='foo.mm')
+
+    def test_objective_c_multi_line_method_declaration(self):
+        self.assert_multi_line_lint(
+            '- (id)_initWithPluginErrorCode:(NSInteger)code\n'
+            '                    contentURL:(id)contentURL\n'
+            '                 pluginPageURL:(id)pluginPageURL\n'
+            '                    pluginName:(id)pluginName\n'
+            '                      MIMEType:(id)MIMEType\n'
+            '{\n'
+            '    return nil;\n'
+            '}',
+            '', file_name='foo.mm')
+
+        self.assert_multi_line_lint(
+            '+ (std::optional<int>)valueForKey:(id)key\n'
+            '                      withDefault:(NSInteger)defaultValue\n'
+            '{\n'
+            '    return std::nullopt;\n'
+            '}',
+            '', file_name='foo.mm')
+
+        self.assert_multi_line_lint(
+            '- (void)didUpdateVisibleRect:(CGRect)visibleRect\n'
+            '    unobscuredRect:(CGRect)unobscuredRect\n'
+            '{\n'
+            '}',
+            '', file_name='foo.mm')
+
+        self.assert_multi_line_lint(
+            '@interface Foo : NSObject\n'
+            '- (void)drawInContext:(CGContextRef)context\n'
+            '          pixelFormat:(CGPixelFormat)pixelFormat;\n'
+            '@end',
+            '', file_name='foo.h')
+
+        self.assert_multi_line_lint(
+            '- (id)_initWithPluginErrorCode:(NSInteger)code\n'
+            '                 contentURL:(id)contentURL\n'
+            '{\n'
+            '}',
+            'Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]',
+            file_name='foo.mm')
+
+        self.assert_multi_line_lint(
+            '-(id)_initWithPluginErrorCode:(NSInteger)code\n'
+            '    contentURL:(id)contentURL\n'
+            '{\n'
+            '}',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]',
+            file_name='foo.mm')
+
     def test_arguments_for_wk_api_available(self):
         self.assert_lint('WK_API_AVAILABLE(macosx(10.2.3))', 'macosx() is deprecated; use macos() instead  [build/wk_api_available] [5]')
         self.assert_lint('WK_API_AVAILABLE(macosx(WK_MAC_TBA))', 'macosx() is deprecated; use macos() instead  [build/wk_api_available] [5]')

@@ -120,7 +120,7 @@ static NSMutableDictionary *descriptionsSingleton()
     });
 }
 
-+(id)_webkit_errorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
++ (id)_webkit_errorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     return adoptNS([[self alloc] _initWithWebKitDomain:domain code:code URL:URL]).autorelease();
 }
