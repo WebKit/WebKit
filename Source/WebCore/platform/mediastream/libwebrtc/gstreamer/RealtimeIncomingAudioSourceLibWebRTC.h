@@ -29,6 +29,7 @@
 
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 
+#include "GStreamerCommon.h"
 #include "RealtimeIncomingAudioSource.h"
 
 #include <wtf/MediaTime.h>
@@ -48,6 +49,9 @@ private:
 
     uint64_t m_numberOfFrames { 0 };
     MediaTime m_baseTime { MediaTime::invalidTime() };
+#if GST_CHECK_VERSION(1, 22, 0) && !defined(GST_DISABLE_GST_DEBUG)
+    ASCIICString m_id;
+#endif
 };
 
 } // namespace WebCore
