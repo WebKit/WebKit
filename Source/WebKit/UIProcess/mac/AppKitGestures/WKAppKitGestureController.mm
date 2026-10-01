@@ -279,7 +279,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     BlockPtr<void(NSDraggingSession *)> _textSelectionDragCompletionHandler;
     bool _dragGestureHasSentMouseDown;
 
-    RetainPtr<NSPressGestureRecognizer> _imageAnalysisGestureRecognizer;
+    RetainPtr<WKPressGestureRecognizer> _imageAnalysisGestureRecognizer;
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisTextSelectionDeferringGestureRecognizer;
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisDragAndContextMenuDeferringGestureRecognizer;
 
@@ -445,6 +445,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 {
     _imageAnalysisGestureRecognizer = adoptNS([[WKPressGestureRecognizer alloc] initWithTarget:self action:@selector(imageAnalysisGestureRecognized:)]);
     [self configureForImageAnalysis:_imageAnalysisGestureRecognizer];
+    [_imageAnalysisGestureRecognizer setRefusesToBeFailureRequirement:YES];
     [_imageAnalysisGestureRecognizer setDelegate:self];
     [_imageAnalysisGestureRecognizer setName:@"WKImageAnalysisGesture"];
 }

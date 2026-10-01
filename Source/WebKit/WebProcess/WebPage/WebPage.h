@@ -2388,6 +2388,10 @@ private:
     void touchEvent(const WebTouchEvent&, CompletionHandler<void(std::optional<WebEventType>, bool)>&&);
 #endif
 
+#if ENABLE(TWO_PHASE_CLICKS)
+    void dispatchDeferredSyntheticClickIfNeeded();
+#endif
+
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
     void resetPointerCapture();
@@ -3151,6 +3155,8 @@ private:
     WebCore::FloatPoint m_pendingSyntheticClickLocation;
     OptionSet<WebKit::WebEventModifier> m_pendingSyntheticClickModifiers;
     WebCore::PointerID m_pendingSyntheticClickPointerId { 0 };
+    Function<void()> m_deferredSyntheticClick;
+    uint64_t m_deferredSyntheticClickGeneration { 0 };
 #endif
 
 #if PLATFORM(IOS_FAMILY)

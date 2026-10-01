@@ -32,6 +32,8 @@ extension WKPressGestureRecognizer {
     @nonobjc
     private var lastDeliveredLocationInWindow: CGPoint = .zero
 
+    var refusesToBeFailureRequirement = false
+
     @_implementationOnly
     open override func reset() {
         lastDeliveredLocationInWindow = .zero
@@ -77,6 +79,13 @@ extension WKPressGestureRecognizer {
         // would only serialize them, holding the shorter drag behind the longer secondary click.
 
         false
+    }
+
+    // swift-format-ignore: NoLeadingUnderscores
+    @_implementationOnly
+    @objc(_acceptsBeingFailureRequirementForGestureRecognizer:)
+    open override func _acceptsBeingFailureRequirement(for gestureRecognizer: NSGestureRecognizer) -> Bool {
+        !refusesToBeFailureRequirement && super._acceptsBeingFailureRequirement(for: gestureRecognizer)
     }
 }
 

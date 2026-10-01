@@ -278,11 +278,12 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (NSPoint)_startLocationInView:(NSView *)view;
 @end
 
-NS_HEADER_AUDIT_END(nullability, sendability)
-
 @interface NSGestureRecognizer (IPI)
 @property (setter=_setIsScrollGestureRecognizer:) BOOL _isScrollGestureRecognizer;
+- (BOOL)_acceptsBeingFailureRequirementForGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer;
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)
 
