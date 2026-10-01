@@ -31,9 +31,12 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/mac/TestDraggingInfo.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/PasteboardCustomData.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/FileSystem.h>
@@ -413,6 +416,27 @@ TEST(DragAndDropTests, DraggingItemForDraggingItemUsesDragOriginLocation)
     EXPECT_NEAR(location.y, 50, 4);
     EXPECT_FALSE(NSEqualPoints(location, [simulator delegateDefaultDraggingItemFrame].origin));
     EXPECT_TRUE(NSPointInRect(location, [simulator delegateDefaultDraggingItemFrame]));
+}
+
+TEST(DragAndDropTests, DraggingAttachmentWhenEditingDelegateReplacesAttachments)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
+    [[configuration processPool] _setObject:@YES forBundleParameter:@"EditingDelegateShouldReplaceAttachments"];
+    [configuration _setAttachmentElementEnabled:YES];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 800, 400) configuration:configuration]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0'><attachment title='first.txt'></attachment><attachment title='second.txt'></attachment></body>"];
+
+    NSRect secondAttachmentRect = NSRectFromString([webView stringByEvaluatingJavaScript:@"(() => {"
+        "const rect = document.querySelectorAll('attachment')[1].getBoundingClientRect();"
+        "return `{{${rect.left}, ${rect.top}}, {${rect.width}, ${rect.height}}}`;"
+        "})()"]);
+    NSPoint dragStart = NSMakePoint(NSMidX(secondAttachmentRect), NSMidY(secondAttachmentRect));
+    [simulator runFrom:dragStart to:NSMakePoint(dragStart.x, dragStart.y + 150)];
+
+    EXPECT_TRUE([simulator delegateDidRequestDraggingItems]);
+    EXPECT_FALSE(NSIsEmptyRect([simulator delegateDefaultDraggingItemFrame]));
 }
 
 TEST(DragAndDropTests, SourceOperationMaskDefaultsWithinApplication)

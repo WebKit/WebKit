@@ -108,6 +108,7 @@
 #include "WebContentReader.h"
 #include "markup.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -1236,6 +1237,30 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         auto previousSelection = src.selection().selection();
         selectElement(element);
 
+        auto restoreSelectionChanges = WTF::makeScopeExit([editor = protect(src.editor()), selection = protect(src.selection()), element, &previousSelection] {
+            if (!element->isContentRichlyEditable())
+                selection->setSelection(previousSelection);
+            editor->setIgnoreSelectionChanges(false);
+        });
+
+        // We create the drag image first, because clients can run script that mutates the DOM (and changes the selection).
+        if (!dragImage) {
+            CheckedPtr attachmentRenderer = dynamicDowncast<RenderAttachment>(attachment->renderer());
+            if (attachmentRenderer)
+                attachmentRenderer->setShouldDrawBorder(false);
+            auto [dragImageRef, textIndicator] = createDragImageForSelection(src);
+            dragImage = DragImage { dissolveDragImageToFraction(dragImageRef, DragImageAlpha) };
+            if (attachmentRenderer)
+                attachmentRenderer->setShouldDrawBorder(true);
+            if (textIndicator && textIndicator->contentImage())
+                dragImage.setTextIndicator(textIndicator);
+            dragLoc = dragLocForSelectionDrag(src);
+            m_dragOffset = IntPoint { dragOrigin - dragLoc };
+        }
+
+        if (!dragImage)
+            return false;
+
         PromisedAttachmentInfo promisedAttachment;
         if (hasData == HasNonDefaultPasteboardData::No) {
             Ref editor = src.editor();
@@ -1252,23 +1277,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         
         client().willPerformDragSourceAction(DragSourceAction::Attachment, dragOrigin, dataTransfer);
         
-        if (!dragImage) {
-            CheckedPtr attachmentRenderer = dynamicDowncast<RenderAttachment>(attachment->renderer());
-            if (attachmentRenderer)
-                attachmentRenderer->setShouldDrawBorder(false);
-            auto [dragImageRef, textIndicator] = createDragImageForSelection(src);
-            dragImage = DragImage { dissolveDragImageToFraction(dragImageRef, DragImageAlpha) };
-            if (attachmentRenderer)
-                attachmentRenderer->setShouldDrawBorder(true);
-            if (textIndicator && textIndicator->contentImage())
-                dragImage.setTextIndicator(textIndicator);
-            dragLoc = dragLocForSelectionDrag(src);
-            m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
-        }
         doSystemDrag(WTF::move(dragImage), dragLoc, dragOrigin, src, state, WTF::move(promisedAttachment), rootFrameID);
-        if (!element->isContentRichlyEditable())
-            protect(src.selection())->setSelection(previousSelection);
-        protect(src.editor())->setIgnoreSelectionChanges(false);
         return true;
     }
 #endif
