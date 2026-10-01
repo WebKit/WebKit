@@ -42,6 +42,12 @@ def build_parser() -> argparse.ArgumentParser:
     dump_group = dump_parser.add_mutually_exclusive_group()
     dump_group.add_argument("--marks", action="store_true", help="Dump marks (default)")
     dump_group.add_argument("--counters", action="store_true", help="Dump counters")
+    dump_group.add_argument(
+        "--collapsed-stacktraces",
+        action="store_true",
+        help="Dump collapsed stack traces, in the folded-stack format suitable for "
+        "flamegraph.pl/stackcollapse-perf.pl",
+    )
     dump_parser.add_argument(
         "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
     )
@@ -50,7 +56,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--format",
         choices=["csv", "json"],
         default="csv",
-        help="Format to be printed to STDOUT",
+        help="Format to be printed to STDOUT. For --collapsed-stacktraces, csv means"
+        " the plain folded-stack text format, and json a list of {stack, count}",
     )
 
     summary_parser = _add_subcommand(

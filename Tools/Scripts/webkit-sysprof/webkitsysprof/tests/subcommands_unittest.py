@@ -4,7 +4,17 @@ from pathlib import Path
 
 import unittest
 
-from .helpers import SysprofTestCase, approx, mark, sysprof_data
+import tempfile
+
+from .helpers import (
+    SysprofTestCase,
+    approx,
+    build_minimal_elf,
+    mark,
+    stacktrace,
+    stacktrace_data,
+    sysprof_data,
+)
 
 from webkitsysprof import summary, dump, analyze, histogram
 from webkitsysprof.__main__ import main
@@ -645,6 +655,500 @@ class SubcommandsTest(SysprofTestCase):
 
         header = self.stdout().splitlines()[0]
         self.assertEqual(header, "group;pid;name;message;time;duration;end_time")
+
+    def test_collapsed_stacktraces_resolve_addresses_against_the_process_maps(self):
+        # Leaf (innermost, first in the raw stack) resolves against a known map; the
+        # root (outermost, last in the raw stack), covered by no map and no bundled
+        # symbol, resolves to nothing and is dropped, the same as Sysprof itself
+        # drops a frame it cannot say anything at all about.
+        data = stacktrace_data(
+            [stacktrace(100, 100, [0x1050, 0x9999])],
+            maps={
+                100: [
+                    {
+                        "start": 0x1000,
+                        "end": 0x2000,
+                        "offset": 0,
+                        "filename": "/usr/lib/libfoo.so",
+                    }
+                ]
+            },
+            processes={100: "/usr/bin/wpe-bare-app --headless"},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "wpe-bare-app;In File /usr/lib/libfoo.so+0x50", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_drop_a_frame_covered_by_nothing_at_all(self):
+        # No map, no bundled symbol: Sysprof's own address-layout lookup finds
+        # nothing to even name the file, so the address is dropped rather than
+        # shown as a bare address a reader could not recognize or search for.
+        data = stacktrace_data([stacktrace(1, 1, [0x10])], processes={1: "app"})
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data), [{"stack": "app", "count": 1}]
+        )
+
+    def test_collapsed_stacktraces_drop_the_earlier_of_two_overlapping_maps(self):
+        # Reproduces exactly what sample.syscap's own ld-linux-aarch64.so.1 mapping
+        # does to every address only it covers: it overlaps a second, later-starting
+        # mapping ([vdso] there), and Sysprof's own SysprofAddressLayout drops the
+        # earlier-starting of the two (see find_duplicates() in
+        # sysprof-address-layout.c) rather than keep both, so an address inside the
+        # earlier one but outside the later one resolves to nothing.
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0x1050])],
+            maps={
+                1: [
+                    # Starts first and is the wider of the two: dropped.
+                    {
+                        "start": 0x1000,
+                        "end": 0x2000,
+                        "offset": 0,
+                        "filename": "/lib/loader.so",
+                    },
+                    # Starts second, inside the first one's range: kept.
+                    {"start": 0x1800, "end": 0x1900, "offset": 0, "filename": "[vdso]"},
+                ]
+            },
+            processes={1: "app"},
+        )
+
+        # 0x1050 is covered only by the dropped mapping, so nothing resolves it.
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data), [{"stack": "app", "count": 1}]
+        )
+
+    def test_collapsed_stacktraces_offset_by_the_maps_own_file_offset(self):
+        # A file mapped at a non-zero offset (e.g. a later segment of a shared
+        # library) must have that offset folded back in, or the resolved address
+        # would point elsewhere in the file than where the sample actually was.
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0x2100])],
+            maps={
+                1: [
+                    {
+                        "start": 0x2000,
+                        "end": 0x3000,
+                        "offset": 0x500,
+                        "filename": "/lib/x.so",
+                    }
+                ]
+            },
+            processes={1: "app"},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;In File /lib/x.so+0x600", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_resolve_a_symbol_when_the_mapped_file_exists(self):
+        # Unlike the two tests above, the mapped file here is a real one on disk, so
+        # this exercises the whole path down into webkitsysprof.symbolizer rather
+        # than just the "In File" fallback dump falls back to without it.
+        with tempfile.TemporaryDirectory() as tempdir:
+            library = str(Path(tempdir) / "libfoo.so")
+            Path(library).write_bytes(build_minimal_elf([("my_function", 0x100, 0x50)]))
+
+            data = stacktrace_data(
+                [stacktrace(1, 1, [0x2110])],
+                maps={
+                    1: [
+                        {
+                            "start": 0x2000,
+                            "end": 0x3000,
+                            "offset": 0,
+                            "filename": library,
+                        }
+                    ]
+                },
+                processes={1: "app"},
+            )
+
+            self.assertEqual(
+                dump._collapsed_stacktraces_to_rows(data),
+                [{"stack": "app;my_function+0x10", "count": 1}],
+            )
+
+    def test_collapsed_stacktraces_resolve_via_the_capture_s_own_bundled_symbols(self):
+        # The capture's own "__symbols__" bundle (parsed by webkitsysprof.parser,
+        # see parser_unittest.py) needs no map and no local file at all: sysprof
+        # resolved this at record time, against whatever it saw mapped then.
+        data = stacktrace_data(
+            [stacktrace(100, 100, [0x1020])],
+            processes={100: "app"},
+            symbols={100: [(0x1000, 0x1050, "WebCore::TextureMapperLayer::paint")]},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;WebCore::TextureMapperLayer::paint", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_prefer_bundled_symbols_over_the_map_fallback(self):
+        # An address the bundle covers is resolved from it even where the sample's
+        # maps would otherwise resolve to a real local ELF file, since the bundle is
+        # what sysprof itself trusted at record time.
+        with tempfile.TemporaryDirectory() as tempdir:
+            library = str(Path(tempdir) / "libfoo.so")
+            Path(library).write_bytes(
+                build_minimal_elf([("wrong_function", 0x100, 0x50)])
+            )
+
+            data = stacktrace_data(
+                [stacktrace(1, 1, [0x2110])],
+                maps={
+                    1: [
+                        {
+                            "start": 0x2000,
+                            "end": 0x3000,
+                            "offset": 0,
+                            "filename": library,
+                        }
+                    ]
+                },
+                processes={1: "app"},
+                symbols={1: [(0x2110, 0x2111, "right_function")]},
+            )
+
+            self.assertEqual(
+                dump._collapsed_stacktraces_to_rows(data),
+                [{"stack": "app;right_function", "count": 1}],
+            )
+
+    def test_collapsed_stacktraces_resolve_kernel_context_frames_via_kallsyms(self):
+        # 0xffffffffffffff80 is PERF_CONTEXT_KERNEL: everything after it in the raw
+        # (innermost-first) stack, until it ends or another marker appears, is a
+        # kernel address and is resolved against the capture's bundled
+        # /proc/kallsyms rather than the pid's own userspace maps/symbols, which a
+        # kernel address would never fall inside. The stack never returns to user
+        # space (no trailing marker), so it also gets the "- - Kernel - -" boundary
+        # a stack that made it back out would get from a later marker instead (see
+        # test_collapsed_stacktraces_turn_context_switch_markers_into_pseudo_frames).
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0xFFFFFFFFFFFFFF80, 0xFFFF8000805E7240])],
+            processes={1: "app"},
+            kernel_symbols=[
+                (0xFFFF8000805E7000, "drm_ioctl"),
+                (0xFFFF8000805E7300, "next_fn"),
+            ],
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;- - Kernel - -;drm_ioctl", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_fall_back_for_a_kernel_address_kallsyms_lacks(self):
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0xFFFFFFFFFFFFFF80, 0x10])],
+            processes={1: "app"},
+            kernel_symbols=[(0x1000, "some_other_function")],
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;- - Kernel - -;In Kernel+0x10", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_add_a_kernel_boundary_when_the_unwind_never_returns(
+        self,
+    ):
+        # A stack that enters the kernel and never gets back out (very common: a
+        # kernel unwind frequently cannot walk back into whatever userspace code was
+        # interrupted) reproduces the exact shape Sysprof's own callgraph shows for
+        # this case: AllProcesses -> WPEWebProcess -> "Kernel Context Switch" ->
+        # el0t_64_sync -> ... with nothing in between the process and the boundary,
+        # since there is no userspace frame at all to put there.
+        data = stacktrace_data(
+            [stacktrace(2501, 2501, [0xFFFFFFFFFFFFFF80, 0x10, 0x20])],
+            processes={2501: "WPEWebProcess"},
+            kernel_symbols=[(0x10, "innermost_kernel_fn"), (0x20, "el0t_64_sync")],
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [
+                {
+                    "stack": "WPEWebProcess;- - Kernel - -;el0t_64_sync;innermost_kernel_fn",
+                    "count": 1,
+                }
+            ],
+        )
+
+    def test_collapsed_stacktraces_turn_context_switch_markers_into_pseudo_frames(self):
+        # 0xffffffffffffff80 is PERF_CONTEXT_KERNEL and 0xfffffffffffffe00 is
+        # PERF_CONTEXT_USER, markers sysprof splices into the stack to say what
+        # follows is in the kernel (or back in user space), not real addresses.
+        # Sysprof's own callgraph turns a marker into a "- - <Context> - -"
+        # pseudo-frame naming the context it *leaves* (so the one between the
+        # kernel and user portions here reads "- - Kernel - -", not "- - User - -"),
+        # except for a marker right at the start of the stack, which is dropped
+        # since nothing preceded it to leave. What falls between two markers is
+        # resolved as whatever context they say it is in: 0x30, in kernel context
+        # here, is routed to the (empty, in this test) kallsyms table and falls
+        # back to "In Kernel+0x30" rather than the plain "0x30" a userspace address
+        # with nothing to resolve it against would show.
+        data = stacktrace_data(
+            [
+                stacktrace(
+                    1,
+                    1,
+                    [
+                        0xFFFFFFFFFFFFFF80,  # Dropped: the very first address.
+                        0x30,
+                        0xFFFFFFFFFFFFFE00,  # "- - Kernel - -": leaves kernel context.
+                    ],
+                )
+            ],
+            processes={1: "app"},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;- - Kernel - -;In Kernel+0x30", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_name_a_mid_stack_marker_by_the_context_it_leaves(
+        self,
+    ):
+        # Reproduces the shape sysprof's own GUI shows for this exact capture's own
+        # syscall stacks: "- - Kernel - -" marking the drop into the kernel,
+        # directly under the process, with nothing in between, because the
+        # unwind's one userspace address is covered by no map or bundled symbol at
+        # all and is dropped, the same as Sysprof's own callgraph shows AllProcesses
+        # -> WPEWebProcess -> "Kernel Context Switch" -> el0t_64_sync -> ... with no
+        # frame of its own between the process and the boundary.
+        data = stacktrace_data(
+            [
+                stacktrace(
+                    1,
+                    1,
+                    [
+                        0xFFFFFFFFFFFFFF80,  # Dropped: the very first address.
+                        0x10,  # Innermost kernel frame.
+                        0xFFFFFFFFFFFFFE00,  # "- - Kernel - -": leaves kernel context.
+                        0x20,  # Outermost user frame, resolved by nothing, dropped.
+                    ],
+                )
+            ],
+            processes={1: "app"},
+            kernel_symbols=[(0x10, "some_driver_function")],
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;- - Kernel - -;some_driver_function", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_name_the_process_by_pid_when_it_is_unknown(self):
+        data = stacktrace_data(
+            [stacktrace(42, 42, [0x10])], symbols={42: [(0x10, 0x11, "my_function")]}
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "pid 42;my_function", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_merge_identical_stacks_into_one_counted_row(self):
+        data = stacktrace_data(
+            [
+                stacktrace(1, 1, [0x10]),
+                stacktrace(1, 1, [0x10]),
+                stacktrace(1, 1, [0x20]),
+            ],
+            processes={1: "app"},
+            symbols={1: [(0x10, 0x11, "func_a"), (0x20, 0x21, "func_b")]},
+        )
+
+        # Sorted by stack, like stackcollapse-perf.pl's own output.
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [
+                {"stack": "app;func_a", "count": 2},
+                {"stack": "app;func_b", "count": 1},
+            ],
+        )
+
+    def test_collapsed_stacktraces_collapse_consecutive_identical_frames(self):
+        # sysprof_document_symbolize_traceable() only counts a resolved symbol if it
+        # differs from the one right before it, so several raw addresses landing in
+        # a row inside the same bundled range (recursion, or a few samples of one
+        # tight loop) must read as that one frame, not the same name repeated.
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0x10, 0x18, 0x20])],
+            processes={1: "app"},
+            symbols={1: [(0x10, 0x28, "recursive_fn")]},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;recursive_fn", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_do_not_collapse_different_symbols_with_one_name(
+        self,
+    ):
+        # Two distinct symbols that merely demangle to an identical name (e.g. a
+        # class's two constructor overloads) are not the same frame, so collapsing
+        # must compare by resolved range/identity, never by the display string.
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0x10, 0x20])],
+            processes={1: "app"},
+            symbols={
+                1: [
+                    (0x10, 0x18, "SomeClass::SomeClass"),
+                    (0x20, 0x28, "SomeClass::SomeClass"),
+                ]
+            },
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;SomeClass::SomeClass;SomeClass::SomeClass", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_show_unwindable_for_a_lone_context_switch(self):
+        # sysprof_callgraph_add_traceable()'s "corrupted unwind" case: a traceable
+        # whose only content is a single context-switch marker (so nothing real was
+        # captured at all) is shown as a distinct "Unwindable" frame instead of an
+        # empty stack, so it reads as a broken/empty recording rather than as if the
+        # process simply had no stack of its own.
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0xFFFFFFFFFFFFFE00])],
+            processes={1: "app"},  # PERF_CONTEXT_USER
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;Unwindable", "count": 1}],
+        )
+
+    def test_collapsed_stacktraces_do_not_show_unwindable_for_a_lone_kernel_switch(
+        self,
+    ):
+        # The "Unwindable" substitution is specific to sysprof_callgraph_add_traceable
+        # checking `final_context == SYSPROF_ADDRESS_CONTEXT_USER`; a stack that
+        # starts and stays in the kernel (nothing to unwind back out of) still gets
+        # its ordinary "- - Kernel - -" boundary instead.
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0xFFFFFFFFFFFFFF80])],
+            processes={1: "app"},  # PERF_CONTEXT_KERNEL
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "app;- - Kernel - -", "count": 1}],
+        )
+
+    def test_process_name_keeps_a_kernel_thread_s_own_slash(self):
+        # A kernel thread's "comm" can itself contain a "/" (e.g. numbered instances
+        # of one worker pool), which is not a filesystem path: running it through
+        # basename() would both mangle it and silently merge unrelated threads that
+        # happen to share a trailing number ("migration/0" and "ksoftirqd/0" would
+        # otherwise both become the process name "0").
+        data = stacktrace_data(
+            [stacktrace(16, 16, [0x10]), stacktrace(18, 18, [0x10])],
+            processes={16: "migration/0", 18: "ksoftirqd/0"},
+            symbols={16: [(0x10, 0x11, "fn")], 18: [(0x10, 0x11, "fn")]},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [
+                {"stack": "ksoftirqd/0;fn", "count": 1},
+                {"stack": "migration/0;fn", "count": 1},
+            ],
+        )
+
+    def test_process_name_still_strips_a_real_path_s_directory(self):
+        data = stacktrace_data(
+            [stacktrace(1, 1, [0x10])],
+            processes={1: "/usr/bin/wpe-bare-app --headless"},
+            symbols={1: [(0x10, 0x11, "fn")]},
+        )
+
+        self.assertEqual(
+            dump._collapsed_stacktraces_to_rows(data),
+            [{"stack": "wpe-bare-app;fn", "count": 1}],
+        )
+
+    def test_dump_collapsed_stacktraces_through_the_command_line(self):
+        main(["dump", "--collapsed-stacktraces", SAMPLE_CAPTURE_FILE])
+
+        stdout = self.stdout()
+        lines = stdout.splitlines()
+        stacks = [line.rsplit(" ", 1)[0] for line in lines]
+        counts = [int(line.rsplit(" ", 1)[1]) for line in lines]
+
+        self.assertEqual(len(lines), 720)
+        # Every one of the capture's 1026 SAMPLE frames is accounted for exactly once.
+        self.assertEqual(sum(counts), 1026)
+        # Folded output is sorted, like stackcollapse-perf.pl's own.
+        self.assertEqual(stacks, sorted(stacks))
+        # The capture bundles its own record-time symbolization (see
+        # webkitsysprof.parser's "__symbols__.gz" handling), so real, demangled
+        # WebCore/WebKit function names come back without any local binary at all.
+        self.assertIn("WebCore::TextureMapperLayer::paint", stdout)
+        self.assertIn("In File /usr/lib/libWPEWebKit-2.0.so.1.10.0", stdout)
+        # And the capture's bundled /proc/kallsyms.gz (see parser_unittest.py's
+        # kallsyms tests) resolves kernel-context frames, e.g. an ioctl() into DRM,
+        # to real kernel function names too.
+        self.assertIn("drm_ioctl", stdout)
+        # Matching Sysprof itself exactly (verified against sysprof-cat and
+        # test-symbolize built from the actual sysprof sources): this capture's own
+        # ld-linux-aarch64.so.1 mapping overlaps its neighboring [vdso] mapping, so
+        # Sysprof's own address-layout dedup drops it, and every address only it
+        # covered resolves to nothing and is dropped rather than shown as a bare
+        # address; a raw hex address would mean that dedup was not applied.
+        self.assertNotIn("ld-linux", stdout)
+        self.assertNotIn(";0x", stdout)
+        # A kernel thread's own "comm" keeps its "/" (this capture's kworker
+        # threads would otherwise collide on their trailing number, or lose their
+        # "kworker/" prefix entirely).
+        self.assertIn("kworker/1:2-events", stdout)
+        # A traceable whose only content is a single context-switch marker (no real
+        # frame at all) reads as "Unwindable", matching sysprof-cat's own totals
+        # for this capture exactly (WPENetworkProce 79, WPEWebProcess 89,
+        # wpe-bare-app 69).
+        self.assertIn("WPENetworkProce;Unwindable 79", stdout)
+        self.assertIn("WPEWebProcess;Unwindable 89", stdout)
+        self.assertIn("wpe-bare-app;Unwindable 69", stdout)
+        # Consecutive raw addresses landing in the same bundled range collapse to
+        # one frame instead of repeating it. (Two adjacent frames can still show
+        # the same *text*, e.g. WebCore::GraphicsLayerCoordinated::
+        # ~GraphicsLayerCoordinated() appears twice in a row further down this same
+        # capture — verified against sysprof-cat as two genuinely different C1/C2
+        # destructor symbols that merely demangle identically, so collapsing must
+        # compare resolved identity, not display text; see the dedicated
+        # do-not-collapse-same-name test above.)
+        self.assertNotIn(
+            "WebCore::GraphicsLayerCoordinated::updateBackingStoresIfNeededv;"
+            "WebCore::GraphicsLayerCoordinated::updateBackingStoresIfNeededv",
+            stdout,
+        )
+        # A bundled symbol's "nick" (which library it belongs to) is kept alongside
+        # its name rather than dropped.
+        self.assertIn("(GLib)", stdout)
+
+    def test_dump_collapsed_stacktraces_json_through_the_command_line(self):
+        main(["dump", "--collapsed-stacktraces", "-f", "json", SAMPLE_CAPTURE_FILE])
+
+        rows = json.loads(self.stdout())
+        self.assertEqual(len(rows), 720)
+        self.assertEqual(sum(row["count"] for row in rows), 1026)
+        self.assertEqual(set(rows[0].keys()), {"stack", "count"})
+        self.assertTrue(any("WebCore::" in row["stack"] for row in rows))
+
+    def test_collapsed_stacktraces_is_mutually_exclusive_with_marks_and_counters(self):
+        with self.assertRaises(SystemExit):
+            main(["dump", "--marks", "--collapsed-stacktraces", SAMPLE_CAPTURE_FILE])
+        with self.assertRaises(SystemExit):
+            main(["dump", "--counters", "--collapsed-stacktraces", SAMPLE_CAPTURE_FILE])
 
     def test_a_window_without_refreshes_keeps_the_capture_interval(self):
         # The link stops before the window begins. Its interval is a property of the

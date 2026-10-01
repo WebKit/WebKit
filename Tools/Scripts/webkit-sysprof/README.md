@@ -18,13 +18,13 @@ This installs the `webkit-sysprof` command.
 
 ### `dump`
 
-Dump marks or counters from a capture as CSV or JSON.
+Dump marks, counters, or collapsed stack traces from a capture as CSV or JSON.
 
 ```
-webkit-sysprof dump [--marks|--counters] [-f csv|json] CAPTURE_FILE
+webkit-sysprof dump [--marks|--counters|--collapsed-stacktraces] [-f csv|json] CAPTURE_FILE
 ```
 
-`--marks` is the default when neither flag is given. `-f`/`--format`: `csv` (default) or
+`--marks` is the default when no flag is given. `-f`/`--format`: `csv` (default) or
 `json`. `json` prints the same rows as `csv`, just as a JSON array of objects. `group`
 names the kind of process a mark came from, e.g. `WebKit (Web)`, and `pid` the process
 itself, which two of one kind share a group name for.
@@ -41,6 +41,24 @@ category;name;description;time;offset;value
 $ webkit-sysprof dump -f json capture.syscap
 [{"group": "...", "pid": ..., "name": "...", "message": "...", "time": ..., "duration": ..., "end_time": ...}, ...]
 ```
+
+#### `--collapsed-stacktraces`
+
+Dump the capture's stack samples in the folded-stack format that
+[FlameGraph](https://github.com/brendangregg/FlameGraph)'s `flamegraph.pl` reads
+directly, and that matches what its own `stackcollapse-perf.pl` produces from `perf
+script` output: one line per distinct stack, semicolon-separated from the process down
+to the innermost frame, followed by a space and how many samples had exactly that
+stack. `-f json` gives the same rows as a JSON array of `{"stack": ..., "count": ...}`
+objects instead.
+
+```
+$ webkit-sysprof dump --collapsed-stacktraces capture.syscap
+WPEWebProcess;my_thread_main;WebCore::TextureMapperLayer::paint;memcpy+0x30 3
+```
+
+The output in the above format may be very useful for AI agents to digest the profiling
+data gathered by sysprof.
 
 ### `summary`
 

@@ -4,8 +4,10 @@ from typing import Any, Dict
 from . import direct_parser
 
 
-def parse(file_path: str, marks: bool, counters: bool) -> Dict[str, Any]:
-    parsed_data = direct_parser.parse(file_path, marks, counters)
+def parse(
+    file_path: str, marks: bool, counters: bool, stacktraces: bool = False
+) -> Dict[str, Any]:
+    parsed_data = direct_parser.parse(file_path, marks, counters, stacktraces)
 
     logging.info("Post-processing parsed data...")
     _make_parsed_data_timestamps_relative_to_0(parsed_data)
@@ -22,3 +24,5 @@ def _make_parsed_data_timestamps_relative_to_0(parsed_data: Dict[str, Any]) -> N
         for counter_value in counter["values"]:
             counter_value["time"] -= baseline
             counter_value["offset"] -= baseline
+    for stacktrace in parsed_data["stacktraces"]:
+        stacktrace["time"] -= baseline
