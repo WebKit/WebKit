@@ -154,6 +154,74 @@ Value BBQJIT::instanceValue()
 }
 
 // Tables
+[[nodiscard]] PartialResult BBQJIT::addTableSet(unsigned tableIndex, Value index, Value value)
+{
+    auto& table = m_info.table(tableIndex);
+    ASSERT(index.type() == table.addressType().asWasmTypeKind());
+
+    emitZeroExtendAddressOperand(table.addressType().is64Bit(), index);
+
+    if (table.type() == TableElementType::Funcref) {
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            Value::fromI32(tableIndex),
+            index,
+            value
+        };
+
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationSetWasmTableElement, arguments, shouldThrow);
+        Location shouldThrowLocation = loadIfNecessary(shouldThrow);
+
+        LOG_INSTRUCTION("TableSet", tableIndex, index, value);
+
+        recordJumpToThrowException(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        consume(shouldThrow);
+        return { };
+    }
+
+    Location valueLocation;
+    if (!value.isConst())
+        valueLocation = loadIfNecessary(value);
+
+    {
+        ScratchScope<3, 0> scratches(*this, value.isConst() ? Location::none() : valueLocation);
+        if (value.isConst()) {
+            valueLocation = Location::fromGPR(scratches.gpr(2));
+            emitMoveConst(value, valueLocation);
+        }
+
+        GPRReg tableGPR = scratches.gpr(0);
+        GPRReg scratchGPR = scratches.gpr(1);
+
+        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)), tableGPR);
+        m_jit.load32(Address(tableGPR, Table::offsetOfLength()), scratchGPR);
+
+        GPRReg indexGPR;
+        if (index.isConst()) {
+            uint64_t indexValue = table.addressType().is64Bit() ? static_cast<uint64_t>(index.asI64()) : static_cast<uint32_t>(index.asI32());
+            recordJumpToThrowException(ExceptionType::OutOfBoundsTableAccess, m_jit.branch64(RelationalCondition::BelowOrEqual, scratchGPR, TrustedImm64(indexValue)));
+            m_jit.move(TrustedImm64(indexValue), scratchGPR);
+            indexGPR = scratchGPR;
+        } else {
+            indexGPR = loadIfNecessary(index).asGPR();
+            recordJumpToThrowException(ExceptionType::OutOfBoundsTableAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, indexGPR, scratchGPR));
+        }
+
+        m_jit.loadPtr(Address(tableGPR, Table::offsetOfOwner()), wasmScratchGPR);
+        m_jit.loadPtr(Address(tableGPR, ExternOrAnyRefTable::offsetOfJSValues()), tableGPR);
+        static_assert(sizeof(WriteBarrier<Unknown>) == 8);
+        m_jit.store64(valueLocation.asGPR(), MacroAssembler::BaseIndex(tableGPR, indexGPR, MacroAssembler::TimesEight));
+        emitWriteBarrier(wasmScratchGPR);
+    }
+
+    consume(index);
+    consume(value);
+
+    LOG_INSTRUCTION("TableSet", tableIndex, index, value);
+    return { };
+}
+
 [[nodiscard]] PartialResult BBQJIT::addTableGet(unsigned tableIndex, Value index, Value& result)
 {
     auto& table = m_info.table(tableIndex);
