@@ -752,6 +752,7 @@ namespace JSC {
         RegisterID* emitNewGenerator(RegisterID* dst);
         RegisterID* emitNewAsyncFunctionGenerator(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length, IndexingType recommendedIndexingType); // stops at first elision
+        RegisterID* emitNewArrayByReversingArguments(RegisterID* dst, CallArguments&);
         RegisterID* emitNewArrayBuffer(RegisterID* dst, JSCellButterfly*, IndexingType recommendedIndexingType);
         // FIXME: new_array_with_spread should use an array allocation profile and take a recommendedIndexingType
         RegisterID* emitNewArrayWithSpread(RegisterID* dst, ElementNode*);
