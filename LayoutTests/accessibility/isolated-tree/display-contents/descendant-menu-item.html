@@ -12,10 +12,12 @@
 </div>
 
 <script>
-var output = "This test ensures that the aria-activedescendant of a display:contents menu is considered selected.\n\n";
+var output = "This test ensures that the aria-activedescendant of a display:contents menu is considered selected where an active menu item is (ATSPI).\n\n";
 
 if (window.accessibilityController) {
-    output += expect("accessibilityController.accessibleElementById('item1').isSelected", "true");
+    // ARIA menu items have no selected state, so only ATSPI reports the active one as selected.
+    var activeDescendantIsSelected = accessibilityController.platformName == "atspi";
+    output += expect("accessibilityController.accessibleElementById('item1').isSelected", "activeDescendantIsSelected");
     output += expect("accessibilityController.accessibleElementById('item2').isSelected", "false");
     debug(output);
 }

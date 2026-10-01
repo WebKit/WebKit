@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<div id="menu" role="menu" aria-label="Menu">
+    <div id="menuitem" role="menuitem" tabindex="-1">Item</div>
+    <div id="menuitemcheckbox" role="menuitemcheckbox" aria-checked="true" tabindex="-1">Checkbox item</div>
+    <div id="menuitemradio" role="menuitemradio" aria-checked="true" tabindex="-1">Radio item</div>
+</div>
+
+<div id="active-descendant-menu" role="menu" aria-label="Active descendant menu" tabindex="0" aria-activedescendant="active-item">
+    <div id="active-item" role="menuitem">Active item</div>
+    <div role="menuitem">Other item</div>
+</div>
+
+<div id="menubar" role="menubar" aria-label="Menubar">
+    <div id="menubar-item" role="menuitem" tabindex="0">File</div>
+</div>
+
+<div id="aria-selected-menu" role="menu" aria-label="Menu with aria-selected">
+    <div id="aria-selected-item" role="menuitem" aria-selected="true">Item with aria-selected</div>
+</div>
+</div>
+
+<script>
+var output = "This test verifies that a focused or active ARIA menu item isn't reported as selected, since ARIA menu items have no selected state.\n\n";
+
+async function focusAndWait(id, expectedFocusedId) {
+    document.getElementById(id).focus();
+    await waitFor(() => accessibilityController.focusedElement && accessibilityController.focusedElement.domIdentifier === expectedFocusedId);
+    output += expect("accessibilityController.focusedElement.domIdentifier", `'${expectedFocusedId}'`);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var menu = accessibilityController.accessibleElementById("menu");
+    setTimeout(async function() {
+        for (const id of ["menuitem", "menuitemcheckbox", "menuitemradio"]) {
+            await focusAndWait(id, id);
+            window.item = accessibilityController.accessibleElementById(id);
+            output += expect("item.isSelected", "false");
+            output += expect("menu.selectedChildrenCount", "0");
+        }
+
+        output += "\nThe active descendant of a focused menu isn't selected either.\n";
+        window.activeDescendantMenu = accessibilityController.accessibleElementById("active-descendant-menu");
+        await focusAndWait("active-descendant-menu", "active-item");
+        window.activeItem = accessibilityController.accessibleElementById("active-item");
+        output += expect("activeItem.isSelected", "false");
+        output += expect("activeDescendantMenu.selectedChildrenCount", "0");
+
+        output += "\nNor is a focused menubar item.\n";
+        window.menubar = accessibilityController.accessibleElementById("menubar");
+        await focusAndWait("menubar-item", "menubar-item");
+        window.menubarItem = accessibilityController.accessibleElementById("menubar-item");
+        output += expect("menubarItem.isSelected", "false");
+        output += expect("menubar.selectedChildrenCount", "0");
+
+        output += "\nAn explicit aria-selected is still honored.\n";
+        window.ariaSelectedMenu = accessibilityController.accessibleElementById("aria-selected-menu");
+        window.ariaSelectedItem = accessibilityController.accessibleElementById("aria-selected-item");
+        output += expect("ariaSelectedItem.isSelected", "true");
+        output += expect("ariaSelectedMenu.selectedChildrenCount", "1");
+        output += expect("ariaSelectedMenu.selectedChildAtIndex(0).domIdentifier", "'aria-selected-item'");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

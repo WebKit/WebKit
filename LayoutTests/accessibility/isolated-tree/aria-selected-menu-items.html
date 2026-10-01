@@ -30,7 +30,7 @@
 </div>
 
 <script>
-testOutput = "This tests that focused/active menu items are reported as selected children of the parent container.\n";
+testOutput = "This tests whether focused/active menu items are reported as selected children of the parent container. Only ATSPI reports them, since ARIA menu items have no selected state.\n";
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;

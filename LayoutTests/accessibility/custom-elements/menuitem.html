@@ -3,11 +3,11 @@
 <body>
 <script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
-<custom-menu id="menu-1">
+<custom-menu id="menu-1" tabindex="0">
 <custom-menuitem id="item-1" aria-label="item 1"></custom-menuitem>
 <custom-menuitem id="item-2" aria-label="item 2" aria-disabled="false" aria-expanded="false" aria-haspopup="false"></custom-menuitem>
 </custom-menu>
-<custom-menu id="menu-2" aria-activedescendant="item-3">
+<custom-menu id="menu-2" tabindex="0" aria-activedescendant="item-3">
 <custom-menuitem id="item-3" aria-label="item 3"></custom-menuitem>
 <custom-menuitem id="item-4" aria-label="item 4"></custom-menuitem>
 </custom-menu>
@@ -36,22 +36,35 @@ customElements.define('custom-menuitem', class CustomElement extends HTMLElement
     }
 });
 
+// Focusing a menubar makes its active descendant the focused element.
+async function focusMenuAndWaitForFocusedItem(menuId, itemId) {
+    document.getElementById(menuId).focus();
+    await waitFor(() => accessibilityController.focusedElement && accessibilityController.focusedElement.domIdentifier == itemId);
+}
+
 description("This tests that aria fallback roles work correctly.");
 if (!window.accessibilityController)
     debug('This test requires accessibilityController');
 else {
-    shouldBe('accessibilityController.accessibleElementById("menu-1").selectedChildrenCount', '1');
-    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("menu-1").selectedChildAtIndex(0))', 'item 2');
-    shouldBeTrue('accessibilityController.accessibleElementById("menu-1").selectedChildAtIndex(0).isSelected');
-    shouldBe('accessibilityController.accessibleElementById("menu-2").selectedChildrenCount', '1');
-    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("menu-2").selectedChildAtIndex(0))', 'item 3');
-    shouldBeTrue('accessibilityController.accessibleElementById("menu-2").selectedChildAtIndex(0).isSelected');
-    shouldBe('accessibilityController.accessibleElementById("item-1").isEnabled', 'false');
-    shouldBe('accessibilityController.accessibleElementById("item-1").isExpanded', 'true');
-    shouldBe('accessibilityController.accessibleElementById("item-1").hasPopup', 'true');
-    shouldBe('accessibilityController.accessibleElementById("item-2").isEnabled', 'true');
-    shouldBe('accessibilityController.accessibleElementById("item-2").isExpanded', 'false');
-    shouldBe('accessibilityController.accessibleElementById("item-2").hasPopup', 'false');
+    window.jsTestIsAsync = true;
+    // ARIA menu items have no selected state, so only ATSPI reports the active one as selected.
+    var activeDescendantIsSelected = accessibilityController.platformName == "atspi";
+
+    setTimeout(async function() {
+        await focusMenuAndWaitForFocusedItem("menu-1", "item-2");
+        shouldBeEqualToString('platformValueForW3CName(accessibilityController.focusedElement)', 'item 2');
+        shouldBe('accessibilityController.focusedElement.isSelected', 'activeDescendantIsSelected');
+        await focusMenuAndWaitForFocusedItem("menu-2", "item-3");
+        shouldBeEqualToString('platformValueForW3CName(accessibilityController.focusedElement)', 'item 3');
+        shouldBe('accessibilityController.focusedElement.isSelected', 'activeDescendantIsSelected');
+        shouldBe('accessibilityController.accessibleElementById("item-1").isEnabled', 'false');
+        shouldBe('accessibilityController.accessibleElementById("item-1").isExpanded', 'true');
+        shouldBe('accessibilityController.accessibleElementById("item-1").hasPopup', 'true');
+        shouldBe('accessibilityController.accessibleElementById("item-2").isEnabled', 'true');
+        shouldBe('accessibilityController.accessibleElementById("item-2").isExpanded', 'false');
+        shouldBe('accessibilityController.accessibleElementById("item-2").hasPopup', 'false');
+        finishJSTest();
+    }, 0);
 }
 
 </script>

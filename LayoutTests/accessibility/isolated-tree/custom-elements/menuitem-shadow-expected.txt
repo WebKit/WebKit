@@ -5,9 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS customMenuInternals.ariaActiveDescendantElement is document.getElementById("item-2")
 PASS customMenuInternals.ariaActiveDescendantElement is document.getElementById("item-2")
-PASS accessibilityController.accessibleElementById("menu-1").selectedChildrenCount is 1
-PASS platformValueForW3CName(accessibilityController.accessibleElementById("menu-1").selectedChildAtIndex(0)) is "item 2"
-PASS accessibilityController.accessibleElementById("menu-1").selectedChildAtIndex(0).isSelected is true
+PASS platformValueForW3CName(accessibilityController.focusedElement) is "item 2"
+PASS accessibilityController.focusedElement.isSelected is activeDescendantIsSelected
 PASS successfullyParsed is true
 
 TEST COMPLETE

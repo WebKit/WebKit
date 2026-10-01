@@ -3507,12 +3507,16 @@ bool AccessibilityObject::isSelected() const
         return option->selected();
     }
 
+#if USE(ATSPI)
+    // ATSPI reports the focused or active menu item as selected, and announces it with a selected state change
+    // when it gets focus. ARIA menu items have no selected state otherwise, so other platforms don't do this.
     if (isMenuItem()) {
         if (isFocused())
             return true;
         WeakPtr parent = parentObjectUnignored();
         return parent && parent->activeDescendant() == this;
     }
+#endif // USE(ATSPI)
 
     return false;
 }

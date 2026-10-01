@@ -1,12 +1,8 @@
-This tests that focused/active menu items are reported as selected children of the parent container.
-First menu has 1 selected child(ren)
-	item 2 (AXRole: AXMenuItem) isSelectable: true isSelected: true
-Second menu has 1 selected child(ren)
-	item 5 (AXRole: AXMenuItem) isSelectable: true isSelected: true
-First menubar has 1 selected child(ren)
-	Edit (AXRole: AXMenuItem) isSelectable: true isSelected: true
-Second menubar has 1 selected child(ren)
-	View (AXRole: AXMenuItem) isSelectable: true isSelected: true
+This tests whether focused/active menu items are reported as selected children of the parent container. Only ATSPI reports them, since ARIA menu items have no selected state.
+First menu has 0 selected child(ren)
+Second menu has 0 selected child(ren)
+First menubar has 0 selected child(ren)
+Second menubar has 0 selected child(ren)
 
 PASS successfullyParsed is true
 

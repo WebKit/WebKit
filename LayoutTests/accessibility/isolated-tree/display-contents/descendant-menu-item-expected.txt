@@ -1,6 +1,6 @@
-This test ensures that the aria-activedescendant of a display:contents menu is considered selected.
+This test ensures that the aria-activedescendant of a display:contents menu is considered selected where an active menu item is (ATSPI).
 
-PASS: accessibilityController.accessibleElementById('item1').isSelected === true
+PASS: accessibilityController.accessibleElementById('item1').isSelected === activeDescendantIsSelected
 PASS: accessibilityController.accessibleElementById('item2').isSelected === false
 
 PASS successfullyParsed is true
