@@ -37,6 +37,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+class ConcurrentJSLocker;
+
 // See comment at the top of ExpressionInfo.cpp on how ExpressionInfo works.
 
 class ExpressionInfo {
@@ -176,7 +178,9 @@ public:
 
     ~ExpressionInfo() = default;
 
-    Entry NODELETE entryForInstPC(InstPC);
+    // The caller holds the owning UnlinkedCodeBlock's lock, because compiler threads also look up
+    // entries (useSourceCodeDump) and lookups fill a cache.
+    Entry entryForInstPC(const ConcurrentJSLocker&, InstPC);
 
     bool isEmpty() const { return !m_numberOfEncodedInfo; };
     size_t NODELETE byteSize() const;
@@ -206,6 +210,7 @@ private:
     }
 
     EncodedInfo* NODELETE findChapterEncodedInfoJustBelow(InstPC) const;
+    Entry NODELETE decodeEntryForInstPC(InstPC);
 
     Chapter* chapters() const
     {
@@ -302,6 +307,7 @@ private:
 
     static constexpr unsigned numberOfWordsBetweenChapters = 10000;
 
+    UncheckedKeyHashMap<InstPC, Entry, WTF::IntHash<InstPC>, WTF::UnsignedWithZeroKeyHashTraits<InstPC>> m_cachedEntries;
 
     unsigned m_numberOfChapters;
     unsigned m_numberOfEncodedInfo;

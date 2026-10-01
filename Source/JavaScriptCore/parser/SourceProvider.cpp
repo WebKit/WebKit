@@ -158,16 +158,28 @@ Vector<unsigned> LineStartTable::build(std::span<const CharType> text)
     Vector<unsigned> lineStarts;
     lineStarts.append(0);
 
-    const CharType* const begin = text.data();
-    const CharType* const end = std::to_address(text.end());
+    // A line starts after every terminator except a CR that begins a CRLF pair, whose LF starts it.
+    auto addLineStartAfterTerminator = [&](size_t index) {
+        if (index + 1 < text.size() && isCRLFPair(text[index], text[index + 1]))
+            return;
+        lineStarts.append(static_cast<unsigned>(index + 1));
+    };
+
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    constexpr size_t stride = SIMD::stride<CharType>;
+    constexpr uint64_t laneBits = (uint64_t { 1 } << SIMD::bitsPerLaneInMask<CharType>) - 1;
     size_t index = 0;
-    while (index < text.size()) {
-        const CharType* found = findLineTerminator(text.subspan(index));
-        if (found == end)
-            break;
-        size_t next = lineStartAfterTerminator(text, static_cast<size_t>(found - begin));
-        lineStarts.append(static_cast<unsigned>(next));
-        index = next;
+    for (; index + stride <= text.size(); index += stride) {
+        auto lanes = lineTerminatorLanes<CharType>(SIMD::load(std::bit_cast<const UnsignedType*>(text.subspan(index, stride).data())));
+        for (uint64_t mask = SIMD::laneMask(lanes); mask; ) {
+            unsigned bit = std::countr_zero(mask);
+            addLineStartAfterTerminator(index + bit / SIMD::bitsPerLaneInMask<CharType>);
+            mask &= ~(laneBits << bit);
+        }
+    }
+    for (; index < text.size(); ++index) {
+        if (isLineTerminator(text[index]))
+            addLineStartAfterTerminator(index);
     }
 
     lineStarts.shrinkToFit();

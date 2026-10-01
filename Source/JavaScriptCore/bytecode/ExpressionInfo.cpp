@@ -36,10 +36,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 /*
-    Since ExpressionInfo is only used to get source position info (e.g. line and column)
-    for error messages / stacks and debugging, it need not be fast. However, empirical data
-    shows that there is a lot of it on websites that are especially memory hungry. So, it
-    behooves us to reduce this memory burden.
+    ExpressionInfo maps bytecode to source positions for error messages, stack traces and
+    debugging. Empirical data shows that there is a lot of it on websites that are especially
+    memory hungry, so it is stored compressed, and decoding an entry is slow. That matters for
+    code that builds many stack traces from the same call sites.
 
     ExpressionInfo is a data structure that contains:
        a. EncodedInfo entries.
@@ -48,6 +48,8 @@ namespace JSC {
        b. Chapter marks in the list of EncodedInfo entries.
           This is just an optimization aid to speed up reconstruction of expression info
           from the EncodedInfo.
+
+       c. A cache of decoded entries, keyed by InstPC, filled by entryForInstPC().
 
     Encoding of EncodedInfo words
     =============================
@@ -196,11 +198,12 @@ namespace JSC {
     =======================
     The ExpressionInfo and its backing store is allocated as a contiguous slab. We first compute
     the size of the slab, then allocate it, and lastly use placement new to instantiate the
-    ExpressionInfo.
+    ExpressionInfo. The decoded entry cache's table is allocated separately.
 
     The shape of ExpressionInfo looks like this:
 
-            ExpressionInfo: [ m_numberOfChapters              ]
+            ExpressionInfo: [ m_cachedEntries                 ]
+                            [ m_numberOfChapters              ]
                             [ m_numberOfEncodedInfo           ]
                             [ m_numberOfEncodedInfoExtensions ]
             Chapters Start: [ chapters()[0]                      ]
@@ -865,7 +868,14 @@ auto ExpressionInfo::findChapterEncodedInfoJustBelow(InstPC instPC) const -> Enc
     return &encodedInfo()[startIndex];
 }
 
-auto ExpressionInfo::entryForInstPC(InstPC instPC) -> Entry
+auto ExpressionInfo::entryForInstPC(const ConcurrentJSLocker&, InstPC instPC) -> Entry
+{
+    return m_cachedEntries.ensure(instPC, [&] {
+        return decodeEntryForInstPC(instPC);
+    }).iterator->value;
+}
+
+auto ExpressionInfo::decodeEntryForInstPC(InstPC instPC) -> Entry
 {
     Decoder decoder(*this);
 

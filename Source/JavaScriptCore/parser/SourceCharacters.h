@@ -85,31 +85,28 @@ ALWAYS_INLINE bool isCRLFPair(CharType first, CharType second)
     return first == '\r' && second == '\n';
 }
 
+// Lanes of the result are all ones where the input holds a line terminator, and zero elsewhere.
 template<typename CharType>
-ALWAYS_INLINE size_t lineStartAfterTerminator(std::span<const CharType> text, size_t indexOfTerminator)
+ALWAYS_INLINE auto lineTerminatorLanes(auto input)
 {
-    ASSERT(indexOfTerminator < text.size());
-    ASSERT(isLineTerminator(text[indexOfTerminator]));
-    if (indexOfTerminator + 1 < text.size() && isCRLFPair(text[indexOfTerminator], text[indexOfTerminator + 1]))
-        return indexOfTerminator + 2;
-    return indexOfTerminator + 1;
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    constexpr auto lineFeedMask = SIMD::splat<UnsignedType>('\n');
+    constexpr auto carriageReturnMask = SIMD::splat<UnsignedType>('\r');
+    auto matches = SIMD::bitOr(SIMD::equal(input, lineFeedMask), SIMD::equal(input, carriageReturnMask));
+    if constexpr (!std::is_same_v<CharType, Latin1Character>) {
+        // LS and PS are single UTF-16 code units, so they compare directly in a 16-bit lane.
+        constexpr auto lineSeparatorMask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2028));
+        constexpr auto paragraphSeparatorMask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2029));
+        matches = SIMD::bitOr(matches, SIMD::equal(input, lineSeparatorMask), SIMD::equal(input, paragraphSeparatorMask));
+    }
+    return matches;
 }
 
 template<typename CharType>
 ALWAYS_INLINE const CharType* findLineTerminator(std::span<const CharType> text)
 {
-    using UnsignedType = SameSizeUnsignedInteger<CharType>;
     auto vectorMatch = [](auto input) ALWAYS_INLINE_LAMBDA {
-        constexpr auto lineFeedMask = SIMD::splat<UnsignedType>('\n');
-        constexpr auto carriageReturnMask = SIMD::splat<UnsignedType>('\r');
-        auto matches = SIMD::bitOr(SIMD::equal(input, lineFeedMask), SIMD::equal(input, carriageReturnMask));
-        if constexpr (!std::is_same_v<CharType, Latin1Character>) {
-            // LS and PS are single UTF-16 code units, so they compare directly in a 16-bit lane.
-            constexpr auto lineSeparatorMask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2028));
-            constexpr auto paragraphSeparatorMask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2029));
-            matches = SIMD::bitOr(matches, SIMD::equal(input, lineSeparatorMask), SIMD::equal(input, paragraphSeparatorMask));
-        }
-        return SIMD::findFirstNonZeroIndex(matches);
+        return SIMD::findFirstNonZeroIndex(lineTerminatorLanes<CharType>(input));
     };
     auto scalarMatch = [](CharType character) ALWAYS_INLINE_LAMBDA {
         return isLineTerminator(character);

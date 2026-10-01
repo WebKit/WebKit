@@ -440,6 +440,37 @@ ALWAYS_INLINE bool isNonZero(simde_uint64x2_t accumulated)
 #endif
 }
 
+// Packs a vector whose lanes are all ones or all zeros into a scalar, lowest lane first, with every
+// lane contributing bitsPerLaneInMask<LaneType> equal bits.
+#if CPU(X86_64)
+template<typename LaneType>
+inline constexpr unsigned bitsPerLaneInMask = sizeof(LaneType);
+
+ALWAYS_INLINE uint64_t laneMask(simde_uint8x16_t lanes)
+{
+    return static_cast<uint16_t>(simde_mm_movemask_epi8(simde_uint8x16_to_m128i(lanes)));
+}
+
+ALWAYS_INLINE uint64_t laneMask(simde_uint16x8_t lanes)
+{
+    return static_cast<uint16_t>(simde_mm_movemask_epi8(simde_uint16x8_to_m128i(lanes)));
+}
+#else
+template<typename LaneType>
+inline constexpr unsigned bitsPerLaneInMask = 4 * sizeof(LaneType);
+
+// Narrowing each 16-bit half with a right shift by 4 keeps 4 bits of every byte.
+ALWAYS_INLINE uint64_t laneMask(simde_uint8x16_t lanes)
+{
+    return simde_vget_lane_u64(simde_vreinterpret_u64_u8(simde_vshrn_n_u16(simde_vreinterpretq_u16_u8(lanes), 4)), 0);
+}
+
+ALWAYS_INLINE uint64_t laneMask(simde_uint16x8_t lanes)
+{
+    return simde_vget_lane_u64(simde_vreinterpret_u64_u8(simde_vshrn_n_u16(lanes, 4)), 0);
+}
+#endif
+
 ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint8x16_t value)
 {
 #if CPU(X86_64)

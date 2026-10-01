@@ -151,7 +151,8 @@ size_t UnlinkedCodeBlock::RareData::sizeInBytes(const AbstractLocker&) const
 
 ExpressionInfo::Entry UnlinkedCodeBlock::expressionInfoForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    return m_expressionInfo->entryForInstPC(bytecodeIndex.offset());
+    ConcurrentJSLocker locker(m_lock);
+    return m_expressionInfo->entryForInstPC(locker, bytecodeIndex.offset());
 }
 
 #ifndef NDEBUG
