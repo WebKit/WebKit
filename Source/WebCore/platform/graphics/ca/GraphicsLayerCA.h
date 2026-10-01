@@ -199,7 +199,7 @@ public:
 
     WEBCORE_EXPORT void setDebugBackgroundColor(const Color&) override;
     WEBCORE_EXPORT void setDebugBorder(const Color&, float borderWidth) override;
-    WEBCORE_EXPORT void setShowFrameProcessBorders(bool, unsigned frameDepth = 0, uint64_t frameID = 0) override;
+    WEBCORE_EXPORT void setShowFrameProcessBorders(bool, unsigned frameDepth, FrameIdentifier) override;
 
     WEBCORE_EXPORT void setCustomAppearance(CustomAppearance) override;
 

@@ -445,10 +445,10 @@ public:
     virtual void setShowRepaintCounter(bool show) { m_showRepaintCounter = show; }
     bool isShowingRepaintCounter() const { return m_showRepaintCounter; }
 
-    virtual void setShowFrameProcessBorders(bool show, unsigned frameDepth = 0, uint64_t frameID = 0) { m_showFrameProcessBorders = show; m_frameProcessIndicatorDepth = frameDepth; m_frameID = frameID; }
+    virtual void setShowFrameProcessBorders(bool show, unsigned frameDepth, FrameIdentifier frameID) { m_showFrameProcessBorders = show; m_frameProcessIndicatorDepth = frameDepth; m_frameID = frameID; }
     bool isShowingFrameProcessBorders() const { return m_showFrameProcessBorders; }
     unsigned frameProcessIndicatorDepth() const { return m_frameProcessIndicatorDepth; }
-    uint64_t frameID() const { return m_frameID; }
+    Markable<FrameIdentifier> frameID() const { return m_frameID; }
 
     // FIXME: this is really a paint count.
     int repaintCount() const { return m_repaintCount; }
@@ -684,7 +684,7 @@ protected:
 
     int m_repaintCount { 0 };
     unsigned m_frameProcessIndicatorDepth { 0 };
-    uint64_t m_frameID { 0 };
+    Markable<FrameIdentifier> m_frameID;
     Vector<Ref<GraphicsLayer>> m_children;
     WeakPtr<GraphicsLayer> m_parent;
 

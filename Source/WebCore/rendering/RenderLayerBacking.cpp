@@ -601,7 +601,7 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
         // depth() is 1-based and counts through cross-process ancestor frames, so subtract 1 to keep the
         // mainframe's indicator unstaggered while nested frames offset further with each level of nesting.
         unsigned frameNestingDepth = showFrameProcessBorders ? renderer().frame().tree().depth() - 1 : 0;
-        m_childContainmentLayer->setShowFrameProcessBorders(showFrameProcessBorders, frameNestingDepth, renderer().frame().frameID().toUInt64());
+        m_childContainmentLayer->setShowFrameProcessBorders(showFrameProcessBorders, frameNestingDepth, renderer().frame().frameID());
     }
 
     if (m_backgroundLayer) {

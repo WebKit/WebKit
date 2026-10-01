@@ -4498,7 +4498,7 @@ void GraphicsLayerCA::setShowRepaintCounter(bool showCounter)
     noteLayerPropertyChanged(DebugIndicatorsChanged);
 }
 
-void GraphicsLayerCA::setShowFrameProcessBorders(bool showBorders, unsigned frameDepth, uint64_t frameID)
+void GraphicsLayerCA::setShowFrameProcessBorders(bool showBorders, unsigned frameDepth, FrameIdentifier frameID)
 {
     if (showBorders == m_showFrameProcessBorders && frameDepth == m_frameProcessIndicatorDepth)
         return;

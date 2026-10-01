@@ -52,7 +52,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameProcessIndicators);
 FrameProcessIndicators::FrameProcessIndicators(GraphicsLayerCA& graphicsLayer)
     : m_graphicsLayer(graphicsLayer)
     , m_backgroundColor(borderColor())
-    , m_text(makeString("pid="_s, getCurrentProcessID(), "("_s, Process::identifier(), ") frame="_s, graphicsLayer.frameID()))
+    , m_text(makeString("pid="_s, getCurrentProcessID(), "("_s, Process::identifier(), ") frame=("_s, graphicsLayer.frameID() ? frameIdentifierString(*graphicsLayer.frameID()) : "0"_s, ")"_s))
     , m_borderLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_indicatorLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeWebLayer, this))
 {
