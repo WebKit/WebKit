@@ -821,16 +821,9 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         HitTestRequest::Type::AllowChildFrameContent,
     });
 
-    bool immediateActionHitTestPreventsDefault = false;
-
-    RefPtr element = hitTestResult.targetElement();
-
-    localCurrentFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
-    if (element)
-        immediateActionHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
-
     WebHitTestResultData immediateActionResult(hitTestResult, { });
 
+    // The UI process will hit-test again in the remote frame's process, so this one must not act on the hit test.
     auto subframe = EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get());
     if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
         if (RefPtr remoteFrameView = remoteFrame->view()) {
@@ -838,13 +831,18 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
                 remoteFrame->frameID(),
                 remoteFrameView->convertFromRootView(roundedIntPoint(locationInViewCoordinates))
             };
+            send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, false, UserData()));
+            return;
         }
     }
 
-    RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
-    if (!focusedOrMainFrame)
-        return;
-    auto selectionRange = focusedOrMainFrame->selection().selection().firstRange();
+    bool immediateActionHitTestPreventsDefault = false;
+
+    RefPtr element = hitTestResult.targetElement();
+
+    localCurrentFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+    if (element)
+        immediateActionHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
 
     auto indicatorOptions = [&](const SimpleRange& range) {
         OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorOption::UseUserSelectAllCommonAncestor };

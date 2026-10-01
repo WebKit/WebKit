@@ -17615,10 +17615,11 @@ void WebPageProxy::didPerformImmediateActionHitTest(IPC::Connection& connection,
             performImmediateActionHitTestAtLocation(result.remoteUserInputEventData->targetFrameID, FloatPoint(result.remoteUserInputEventData->transformedPoint));
             return;
         }
-        RefPtr frame = WebFrameProxy::webFrame(result.frameInfo->frameID);
+        RefPtr frame = result.frameInfo ? WebFrameProxy::webFrame(result.frameInfo->frameID) : nullptr;
         RefPtr parentFrame = frame ? frame->parentFrame() : nullptr;
         if (auto parentFrameID = parentFrame ? std::optional(parentFrame->frameID()) : std::nullopt) {
-            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, userData, result = WTF::move(result), contentPreventsDefault] (IPC::Connection* connection, WebCore::DictionaryPopupInfo popupInfo) mutable {
+            auto dictionaryPopupInfo = WTF::move(result.dictionaryPopupInfo);
+            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(frame->frameID(), dictionaryPopupInfo), [protectedThis = Ref { *this }, userData, result = WTF::move(result), contentPreventsDefault] (IPC::Connection* connection, WebCore::DictionaryPopupInfo popupInfo) mutable {
                 result.dictionaryPopupInfo = popupInfo;
                 if (!connection)
                     return;
