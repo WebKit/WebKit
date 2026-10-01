@@ -697,6 +697,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/HTTP3Server.swift
     Tests/WebKit/WKWebView/TextExtractionTests.swift
     Tests/WebKit/WKWebView/TextFragments.swift
+    Tests/WebKit/WKWebView/TextManipulation.swift
     Tests/WebKit/WKWebView/TextPlaceholderTests.swift
     Tests/WebKit/WKWebView/TextSize.swift
     Tests/WebKit/WKWebView/TextWidth.swift
