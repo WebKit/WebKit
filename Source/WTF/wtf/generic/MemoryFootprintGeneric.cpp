@@ -24,17 +24,83 @@
  */
 
 #include "config.h"
-#include <bmalloc/bmalloc.h>
-#include <wtf/AvailableMemory.h>
 #include <wtf/MemoryFootprint.h>
-#include <wtf/Platform.h>
+
+#if OS(LINUX)
+#include <array>
+#include <fcntl.h>
+#include <mutex>
+#include <unistd.h>
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringToIntegerConversion.h>
+#elif OS(FREEBSD)
+#include <array>
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#include <sys/user.h>
+#include <unistd.h>
+#include <wtf/PageBlock.h>
+#endif
 
 namespace WTF {
 
+#if OS(LINUX)
+struct LinuxMemory {
+    static const LinuxMemory& singleton()
+    {
+        static LinuxMemory s_singleton;
+        static std::once_flag s_onceFlag;
+        std::call_once(s_onceFlag,
+            [] {
+                s_singleton.pageSize = sysconf(_SC_PAGE_SIZE);
+                s_singleton.statmFd = open("/proc/self/statm", O_RDONLY | O_CLOEXEC);
+            });
+        return s_singleton;
+    }
+
+    size_t footprint() const
+    {
+        if (statmFd == -1)
+            return 0;
+
+        std::array<char, 256> statmBuffer;
+        ssize_t numBytes = pread(statmFd, statmBuffer.data(), statmBuffer.size(), 0);
+        if (numBytes <= 0)
+            return 0;
+
+        auto parsingBuffer = spanReinterpretCast<const Latin1Character>(unsafeMakeSpan(statmBuffer.data(), numBytes));
+        skipUntil<isASCIIWhitespace>(parsingBuffer);
+        if (parsingBuffer.size() && isASCIIWhitespace(parsingBuffer[0])) {
+            auto result = checkedProduct<size_t>(pageSize, parseInteger<size_t>(parsingBuffer).value_or(0));
+            if (!result.hasOverflowed()) [[likely]]
+                return result.value();
+        }
+        return 0;
+    }
+
+    long pageSize { 0 };
+    int statmFd { -1 };
+};
+#endif
+
 size_t memoryFootprint()
 {
-    auto memoryUse = memoryStatus();
-    return memoryUse.memoryFootprint;
+#if OS(LINUX)
+    return LinuxMemory::singleton().footprint();
+#elif OS(FREEBSD)
+    struct kinfo_proc info;
+    size_t infolen = sizeof(info);
+
+    std::array<int, 4> mib { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid() };
+
+    if (!sysctl(mib.data(), mib.size(), &info, &infolen, nullptr, 0))
+        return static_cast<size_t>(info.ki_rssize) * pageSize();
+    return 0;
+#else
+    return 0;
+#endif
 }
 
 } // namespace WTF
