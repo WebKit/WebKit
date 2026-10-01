@@ -14,8 +14,8 @@ layer at (0,0) size 800x446
           text run at (224,0) width 8: "a"
         RenderMenuList {SELECT} at (231,1) size 56x18 [bgcolor=#FFFFFF]
           RenderBlock {DIV} at (0,0) size 55x18
-            RenderText {#text} at (8,2) size 24x13
-              text run at (8,2) width 24: "f o o"
+            RenderText {#text} at (8,2) size 0x13
+              text run at (8,2) width 0: " "
         RenderText {#text} at (286,0) size 9x18
           text run at (286,0) width 9: "b"
         RenderBR {BR} at (294,0) size 1x18
@@ -110,8 +110,8 @@ layer at (0,0) size 800x446
           text run at (539,224) width 8: "a"
         RenderMenuList {SELECT} at (546,225) size 49x18 [color=#0000003F] [bgcolor=#FFFFFF]
           RenderBlock {DIV} at (0,0) size 48x18
-            RenderText {#text} at (8,2) size 17x13
-              text run at (8,2) width 17: "foo"
+            RenderText {#text} at (8,2) size 0x13
+              text run at (8,2) width 0: " "
         RenderText {#text} at (594,224) size 9x18
           text run at (594,224) width 9: "b"
         RenderBR {BR} at (602,224) size 1x18

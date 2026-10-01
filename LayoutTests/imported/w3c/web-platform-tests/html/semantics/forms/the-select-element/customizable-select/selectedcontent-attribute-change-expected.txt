@@ -1,8 +1,8 @@
 
-FAIL Reducing a select's size to 1 updates selectedcontent. assert_equals: selectedcontent should be updated when reducing the display size to 1. expected "A" but got ""
+PASS Reducing a select's size to 1 updates selectedcontent.
 PASS Removing a select's multiple attribute updates selectedcontent.
-FAIL Removing an option's disabled attribute updates selectedcontent. assert_equals: selectedcontent should be updated when enabling an option. expected "C" but got ""
-FAIL Removing an optgroup's disabled attribute updates selectedcontent. assert_equals: selectedcontent should be empty while the optgroup is disabled. expected "" but got "D"
+PASS Removing an option's disabled attribute updates selectedcontent.
+PASS Removing an optgroup's disabled attribute updates selectedcontent.
 PASS Adding an option's selected attribute updates selectedcontent.
 PASS An attribute change that does not change selectedness does not update selectedcontent.
 PASS Removing a select's multiple attribute updates selectedcontent when selectedness does not change.

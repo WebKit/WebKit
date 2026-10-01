@@ -714,8 +714,11 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
         unsigned size = limitToOnlyHTMLNonNegative(newValue);
 
         // Ensure that we've determined selectedness of the items at least once prior to changing the size.
-        if (oldSize != size)
+        RefPtr<HTMLOptionElement> oldSelectedOption;
+        if (oldSize != size) {
             updateListItemSelectedStates();
+            oldSelectedOption = selectedOptionForSelectedContent();
+        }
 
         bool hadOpenPicker = m_popupIsVisible && usesBaseAppearancePicker();
         bool usedListBoxSlot = usesListBoxSlot(*this);
@@ -725,7 +728,7 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
         updateOptionSlotIfNeeded(usedListBoxSlot);
         if (m_size != oldSize) {
             invalidateStyleAndRenderersForSubtree();
-            setRecalcListItems();
+            resetSelectedness(oldSelectedOption.get());
             updateValidity();
             invalidateButtonText();
         }
@@ -1438,12 +1441,9 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
     m_shouldRecalcListItems = false;
 
     RefPtr<HTMLOptionElement> foundSelected;
-    RefPtr<HTMLOptionElement> firstOption;
     auto handleOptionElement = [&](HTMLOptionElement& option) {
         m_listItems.append(&option);
         if (updateSelectedStates && !m_multiple) {
-            if (!firstOption)
-                firstOption = option;
             if (option.selected()) {
                 if (foundSelected)
                     foundSelected->setSelectedState(false, allowStyleInvalidation);
@@ -1504,9 +1504,6 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
                 m_listItems.append(child.ptr());
         }
     }
-
-    if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())
-        firstOption->setSelectedState(true, allowStyleInvalidation);
 }
 
 int HTMLSelectElement::selectedIndex() const
@@ -1737,8 +1734,12 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
     if (oldMultiple != m_multiple) {
         if (oldSelectedIndex >= 0)
             setSelectedIndex(oldSelectedIndex);
-        else
-            reset();
+        else {
+            setRecalcListItems();
+            invalidateSelectedItems();
+            invalidateButtonText();
+            updateSelectedContentIfEnabled();
+        }
     }
 }
 
@@ -2668,6 +2669,21 @@ void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& select
         selectedOption->cloneIntoSelectedContent(selectedContent);
     else
         selectedContent.removeChildren();
+}
+
+RefPtr<HTMLOptionElement> HTMLSelectElement::selectedOptionForSelectedContent() const
+{
+    if (m_multiple || !m_selectedContentDescendantCount)
+        return nullptr;
+    return firstSelectedOption();
+}
+
+// https://html.spec.whatwg.org/#reset-a-select's-selectedness
+void HTMLSelectElement::resetSelectedness(HTMLOptionElement* oldSelectedOption)
+{
+    setRecalcListItems();
+    if (RefPtr selectedOption = selectedOptionForSelectedContent(); selectedOption != oldSelectedOption)
+        updateSelectedContentIfEnabled(selectedOption.get());
 }
 
 void HTMLSelectElement::queueSelectedContentUpdate()

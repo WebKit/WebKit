@@ -54,6 +54,7 @@ private:
     const AtomString& formControlType() const;
     bool isFocusable() const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void parseDisabledAttribute(const AtomString&);
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 

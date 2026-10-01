@@ -215,21 +215,39 @@ void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
 void HTMLOptGroupElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-    recalcSelectOptions();
 
     if (name == disabledAttr) {
-        bool newDisabled = !newValue.isNull();
-        if (m_isDisabled != newDisabled) {
-            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } });
+        parseDisabledAttribute(newValue);
+        return;
+    }
 
-            Vector<Style::PseudoClassChangeInvalidation> optionInvalidation;
-            for (Ref descendant : descendantsOfType<HTMLOptionElement>(*this))
-                optionInvalidation.append({ descendant, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } } });
+    recalcSelectOptions();
 
-            m_isDisabled = newDisabled;
-        }
-    } else if (name == labelAttr)
+    if (name == labelAttr)
         invalidateShadowTree();
+}
+
+void HTMLOptGroupElement::parseDisabledAttribute(const AtomString& value)
+{
+    bool newDisabled = !value.isNull();
+    if (m_isDisabled == newDisabled)
+        return;
+
+    RefPtr select = ownerSelectElement();
+    RefPtr oldSelectedOption = select ? select->selectedOptionForSelectedContent() : nullptr;
+    {
+        Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } });
+
+        Vector<Style::PseudoClassChangeInvalidation> optionInvalidation;
+        for (Ref descendant : descendantsOfType<HTMLOptionElement>(*this))
+            optionInvalidation.append({ descendant, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } } });
+
+        m_isDisabled = newDisabled;
+    }
+
+    recalcSelectOptions();
+    if (select)
+        select->resetSelectedness(oldSelectedOption.get());
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()

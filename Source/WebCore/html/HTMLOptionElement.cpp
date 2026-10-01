@@ -172,7 +172,7 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
             // instead of selected() which triggers O(n) recalcListItems().
             // Only do this during parsing — for API insertions, the existing
             // childrenChanged → optionToSelectFromChildChangeScope path handles it.
-            if (!select->isFinishedParsingChildren() && !selectedWithoutUpdate() && !m_disabled)
+            if (!select->isFinishedParsingChildren() && !selectedWithoutUpdate() && !isDisabledFormControl())
                 select->selectDefaultOptionIfNeeded(*this);
         }
     }
@@ -442,16 +442,9 @@ int HTMLOptionElement::index() const
 void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::disabledAttr: {
-        bool newDisabled = !newValue.isNull();
-        if (m_disabled != newDisabled) {
-            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled },  { CSSSelector::PseudoClass::Enabled, !newDisabled } });
-            m_disabled = newDisabled;
-            if (CheckedPtr renderer = this->renderer(); renderer && renderer->style().hasUsedAppearance())
-                renderer->repaint();
-        }
+    case AttributeNames::disabledAttr:
+        parseDisabledAttribute(newValue);
         break;
-    }
     case AttributeNames::selectedAttr: {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClass::Default, !newValue.isNull());
@@ -476,6 +469,25 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         break;
     }
+}
+
+void HTMLOptionElement::parseDisabledAttribute(const AtomString& value)
+{
+    bool newDisabled = !value.isNull();
+    if (m_disabled == newDisabled)
+        return;
+
+    RefPtr select = ownerSelectElement();
+    RefPtr oldSelectedOption = select ? select->selectedOptionForSelectedContent() : nullptr;
+    {
+        Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } });
+        m_disabled = newDisabled;
+        if (CheckedPtr renderer = this->renderer(); renderer && renderer->style().hasUsedAppearance())
+            renderer->repaint();
+    }
+
+    if (select)
+        select->resetSelectedness(oldSelectedOption.get());
 }
 
 String HTMLOptionElement::value() const

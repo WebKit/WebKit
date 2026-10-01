@@ -96,6 +96,7 @@ private:
     bool matchesDefaultPseudoClass() const final { return m_isDefault; }
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void parseDisabledAttribute(const AtomString&);
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 

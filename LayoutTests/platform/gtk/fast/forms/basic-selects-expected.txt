@@ -110,8 +110,8 @@ layer at (174,10) size 56x28
       text run at (5,5) width 30: "f o o"
 layer at (239,10) size 56x28
   RenderBlock {DIV} at (1,1) size 56x28
-    RenderText {#text} at (5,5) size 30x18
-      text run at (5,5) width 30: "f o o"
+    RenderText {#text} at (5,5) size 0x18
+      text run at (5,5) width 0: " "
 layer at (145,56) size 49x28
   RenderBlock {DIV} at (1,1) size 49x28
     RenderText {#text} at (5,5) size 22x18
@@ -158,8 +158,8 @@ layer at (490,324) size 48x28
       text run at (5,5) width 22: "foo"
 layer at (547,324) size 48x28
   RenderBlock {DIV} at (1,1) size 48x28
-    RenderText {#text} at (5,5) size 22x18
-      text run at (5,5) width 22: "foo"
+    RenderText {#text} at (5,5) size 0x18
+      text run at (5,5) width 0: " "
 layer at (512,370) size 49x28
   RenderBlock {DIV} at (1,1) size 49x28
     RenderText {#text} at (5,5) size 22x18

@@ -1,8 +1,8 @@
 
 PASS Reducing a select's size to 1 selects the first enabled option.
 PASS Removing a select's multiple attribute selects the first enabled option.
-FAIL Removing an option's disabled attribute selects it. assert_equals: No option should be selected while every option is disabled. expected "" but got "C"
-FAIL Removing an optgroup's disabled attribute selects the option inside it. assert_equals: No option should be selected while the optgroup is disabled. expected "" but got "E"
+PASS Removing an option's disabled attribute selects it.
+PASS Removing an optgroup's disabled attribute selects the option inside it.
 PASS Adding an option's selected attribute deselects the other options.
 PASS Removing an option's selected attribute falls back to the first enabled option.
 PASS Removing the selected attribute from a dirty option does not change selectedness.

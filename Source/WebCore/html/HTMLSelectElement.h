@@ -204,6 +204,8 @@ public:
     void updateSelectedContent(HTMLOptionElement* = nullptr) const;
     void updateSelectedContent(HTMLSelectedContentElement&) const;
     void queueSelectedContentUpdate();
+    RefPtr<HTMLOptionElement> selectedOptionForSelectedContent() const;
+    void resetSelectedness(HTMLOptionElement* oldSelectedOption);
 
     void NODELETE registerSelectedContentElement();
     void NODELETE unregisterSelectedContentElement();
