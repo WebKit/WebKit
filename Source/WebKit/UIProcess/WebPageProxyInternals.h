@@ -54,6 +54,7 @@
 #include "WindowKind.h"
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/CornerRadii.h>
+#include <WebCore/DevicePostureType.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntPointHash.h>
@@ -467,6 +468,8 @@ public:
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
     WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
 #endif
+
+    std::optional<WebCore::DevicePostureType> currentDevicePostureType;
 
     explicit Internals(WebPageProxy&, bool processInheritedFromOpener);
 

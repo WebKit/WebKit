@@ -400,6 +400,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/credentialmanagement/MediationRequirement.h
     Modules/credentialmanagement/OTPCredentialRequestOptions.h
 
+    Modules/device-posture/DevicePosture.h
+    Modules/device-posture/DevicePostureType.h
+    Modules/device-posture/NavigatorDevicePosture.h
+
     Modules/encryptedmedia/CDM.h
     Modules/encryptedmedia/CDMClient.h
     Modules/encryptedmedia/MediaKeySystemClient.h

@@ -400,6 +400,10 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
 #endif
 
+#if HAVE(UI_HINGE_INTERACTION)
+    RetainPtr<UIHingeInteraction> _hingeInteraction;
+#endif
+
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKMouseInteraction> _mouseInteraction;
     WebCore::MouseEventPolicy _mouseEventPolicy;

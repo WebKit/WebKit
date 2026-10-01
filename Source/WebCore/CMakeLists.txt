@@ -32,6 +32,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/contact-picker"
     "${WEBCORE_DIR}/Modules/cookie-store"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
+    "${WEBCORE_DIR}/Modules/device-posture"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
     "${WEBCORE_DIR}/Modules/entriesapi"
@@ -313,6 +314,7 @@ set(WebCore_IDL_INCLUDES
     Modules/compression
     Modules/cookie-store
     Modules/credentialmanagement
+    Modules/device-posture
     Modules/encryptedmedia/legacy
     Modules/entriesapi
     Modules/fetch
@@ -398,6 +400,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/credentialmanagement/FederatedCredentialRequestOptions.idl
     Modules/credentialmanagement/IdentityCredentialRequestOptions.idl
     Modules/credentialmanagement/OTPCredentialRequestOptions.idl
+
+    Modules/device-posture/DevicePosture.idl
+    Modules/device-posture/DevicePostureType.idl
+    Modules/device-posture/Navigator+DevicePosture.idl
 
     Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
     Modules/encryptedmedia/MediaKeyMessageEvent.idl

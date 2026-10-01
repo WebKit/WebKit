@@ -1191,6 +1191,8 @@ public:
     WEBCORE_EXPORT void setInteractionRegionsEnabled(bool);
 #endif
 
+    WEBCORE_EXPORT void devicePostureTypeChanged();
+
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
 #endif

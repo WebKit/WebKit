@@ -218,6 +218,7 @@ enum class DOMPasteAccessResponse : uint8_t;
 enum class DataDetectorType : uint8_t;
 enum class DataOwnerType : uint8_t;
 enum class DeviceOrientationOrMotionPermissionState : uint8_t;
+enum class DevicePostureType : uint8_t;
 enum class DiagnosticLoggingDomain : uint8_t;
 enum class DragControllerAction : uint8_t;
 enum class DragEventHandled : bool;
@@ -2591,6 +2592,8 @@ public:
     void didEnterFullscreen();
     void didExitFullscreen();
 #endif
+
+    void setDevicePostureType(WebCore::DevicePostureType);
 
     void setHasExecutedAppBoundBehaviorBeforeNavigation() { m_hasExecutedAppBoundBehaviorBeforeNavigation = true; }
 

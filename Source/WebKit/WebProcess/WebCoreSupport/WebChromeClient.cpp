@@ -2306,6 +2306,12 @@ IntDegrees WebChromeClient::deviceOrientation() const
 }
 #endif
 
+WebCore::DevicePostureType WebChromeClient::devicePostureType() const
+{
+    RefPtr page = m_page.get();
+    return page ? page->devicePostureType() : WebCore::DevicePostureType::Continuous;
+}
+
 void WebChromeClient::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
     if (RefPtr page = m_page.get())

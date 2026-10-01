@@ -448,6 +448,9 @@ $(PROJECT_DIR)/Modules/credentialmanagement/FederatedCredentialRequestOptions.id
 $(PROJECT_DIR)/Modules/credentialmanagement/IdentityCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/Navigator+Credentials.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/OTPCredentialRequestOptions.idl
+$(PROJECT_DIR)/Modules/device-posture/DevicePosture.idl
+$(PROJECT_DIR)/Modules/device-posture/DevicePostureType.idl
+$(PROJECT_DIR)/Modules/device-posture/Navigator+DevicePosture.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyMessageEvent.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyMessageEventInit.idl

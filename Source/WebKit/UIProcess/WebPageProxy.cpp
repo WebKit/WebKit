@@ -8159,6 +8159,21 @@ void WebPageProxy::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& 
     });
 }
 
+void WebPageProxy::setDevicePostureType(WebCore::DevicePostureType type)
+{
+    if (type == internals().currentDevicePostureType)
+        return;
+
+    internals().currentDevicePostureType = type;
+
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetDevicePostureType(type), pageID);
+    });
+}
+
 void WebPageProxy::preferencesDidChange()
 {
     if (!hasRunningProcess())

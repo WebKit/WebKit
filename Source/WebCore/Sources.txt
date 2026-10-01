@@ -168,6 +168,8 @@ Modules/cookie-store/ExtendableCookieChangeEvent.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp @cost:3
 Modules/credentialmanagement/NavigatorCredentials.cpp @cost:3
+Modules/device-posture/DevicePosture.cpp
+Modules/device-posture/NavigatorDevicePosture.cpp
 Modules/entriesapi/DOMFileSystem.cpp
 Modules/entriesapi/ErrorCallback.cpp
 Modules/entriesapi/FileSystemDirectoryEntry.cpp
@@ -4298,6 +4300,8 @@ JSDetectedText.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp
+JSDevicePosture.cpp
+JSDevicePostureType.cpp
 JSDigitalCredential.cpp
 JSDigitalCredentialGetRequest.cpp
 JSDigitalCredentialRequestOptions.cpp

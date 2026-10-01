@@ -7158,6 +7158,9 @@
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
 		E5C59A9A24D0E1AA003B86E1 /* DateTimeChooserParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E5C5B2092C3795EE00838733 /* PlatformNSAdaptiveImageGlyph.h in Headers */ = {isa = PBXBuildFile; fileRef = E5C5B2082C3795EE00838733 /* PlatformNSAdaptiveImageGlyph.h */; };
+		E5D7ADA52F215DB00043ECBE /* DevicePosture.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D7ADA12F215C760043ECBE /* DevicePosture.h */; };
+		E5D7ADA82F215DF40043ECBE /* NavigatorDevicePosture.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D7ADA62F215DDF0043ECBE /* NavigatorDevicePosture.h */; };
+		E5D7ADB02F23EB220043ECBE /* DevicePostureType.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D7ADAD2F23EB220043ECBE /* DevicePostureType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E5F06AE724D4847B00BBC4F8 /* DateTimeFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AE524D4847B00BBC4F8 /* DateTimeFieldElement.h */; };
 		E5F06AEB24D49BF700BBC4F8 /* DateTimeNumericFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AE924D49BF700BBC4F8 /* DateTimeNumericFieldElement.h */; };
 		E5F06AEF24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E5F06AED24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h */; };
@@ -23395,6 +23398,14 @@
 		E59DD4B721098285003C8B47 /* ListButtonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ListButtonArrow.png; sourceTree = "<group>"; };
 		E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooserParameters.h; sourceTree = "<group>"; };
 		E5C5B2082C3795EE00838733 /* PlatformNSAdaptiveImageGlyph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformNSAdaptiveImageGlyph.h; sourceTree = "<group>"; };
+		E5D7AD9F2F2157F00043ECBE /* Navigator+DevicePosture.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Navigator+DevicePosture.idl"; sourceTree = "<group>"; };
+		E5D7ADA02F2159370043ECBE /* DevicePosture.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DevicePosture.idl; sourceTree = "<group>"; };
+		E5D7ADA12F215C760043ECBE /* DevicePosture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevicePosture.h; sourceTree = "<group>"; };
+		E5D7ADA22F215C760043ECBE /* DevicePosture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DevicePosture.cpp; sourceTree = "<group>"; };
+		E5D7ADA62F215DDF0043ECBE /* NavigatorDevicePosture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorDevicePosture.h; sourceTree = "<group>"; };
+		E5D7ADA72F215DDF0043ECBE /* NavigatorDevicePosture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorDevicePosture.cpp; sourceTree = "<group>"; };
+		E5D7ADAD2F23EB220043ECBE /* DevicePostureType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevicePostureType.h; sourceTree = "<group>"; };
+		E5D7ADAE2F23EB220043ECBE /* DevicePostureType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DevicePostureType.idl; sourceTree = "<group>"; };
 		E5E93BDFA28F5D63963BED0F /* NetworkLoadPolicy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoadPolicy.cpp; sourceTree = "<group>"; };
 		E5F06AE524D4847B00BBC4F8 /* DateTimeFieldElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateTimeFieldElement.h; sourceTree = "<group>"; };
 		E5F06AE624D4847B00BBC4F8 /* DateTimeFieldElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFieldElement.cpp; sourceTree = "<group>"; };
@@ -34324,6 +34335,7 @@
 				E596DD23251902D600C275A7 /* contact-picker */,
 				7B3ED2F42A4CD56E0042B08A /* cookie-store */,
 				57C7A6881E56946D00C67D71 /* credentialmanagement */,
+				E5D7AD9E2F2157780043ECBE /* device-posture */,
 				CDA98DBD16014E0800FEA3B1 /* encryptedmedia */,
 				83FB33651F508A1700986E54 /* entriesapi */,
 				41F54F7C1C50C4F600338488 /* fetch */,
@@ -42105,6 +42117,21 @@
 			path = "contact-picker";
 			sourceTree = "<group>";
 		};
+		E5D7AD9E2F2157780043ECBE /* device-posture */ = {
+			isa = PBXGroup;
+			children = (
+				E5D7ADA22F215C760043ECBE /* DevicePosture.cpp */,
+				E5D7ADA12F215C760043ECBE /* DevicePosture.h */,
+				E5D7ADA02F2159370043ECBE /* DevicePosture.idl */,
+				E5D7ADAD2F23EB220043ECBE /* DevicePostureType.h */,
+				E5D7ADAE2F23EB220043ECBE /* DevicePostureType.idl */,
+				E5D7AD9F2F2157F00043ECBE /* Navigator+DevicePosture.idl */,
+				E5D7ADA72F215DDF0043ECBE /* NavigatorDevicePosture.cpp */,
+				E5D7ADA62F215DDF0043ECBE /* NavigatorDevicePosture.h */,
+			);
+			path = "device-posture";
+			sourceTree = "<group>";
+		};
 		E8744D942D62BCC700E56B11 /* protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -45758,6 +45785,8 @@
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
 				460E3077222F4F03009A0606 /* DeviceOrientationOrMotionPermissionState.h in Headers */,
 				E39628BF2395728F00658ECD /* DeviceOrientationUpdateProvider.h in Headers */,
+				E5D7ADA52F215DB00043ECBE /* DevicePosture.h in Headers */,
+				E5D7ADB02F23EB220043ECBE /* DevicePostureType.h in Headers */,
 				572B401F21757A64000AD43E /* DeviceRequestConverter.h in Headers */,
 				572B403A21772581000AD43E /* DeviceResponseConverter.h in Headers */,
 				267725FD1A5B3AD9003C24DD /* DFA.h in Headers */,
@@ -48223,6 +48252,7 @@
 				F440E77A233D94D70063F9AB /* NavigatorClipboard.h in Headers */,
 				E596DD29251903D200C275A7 /* NavigatorContacts.h in Headers */,
 				372D3E57216578AE00C5E021 /* NavigatorCredentials.h in Headers */,
+				E5D7ADA82F215DF40043ECBE /* NavigatorDevicePosture.h in Headers */,
 				0753E09A2E595C9F00A52914 /* NavigatorEME.h in Headers */,
 				513EB5F22BF2D9B800BC98B1 /* NavigatorGamepad.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,

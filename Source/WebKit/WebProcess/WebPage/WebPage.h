@@ -35,6 +35,7 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/BoxExtents.h>
 #include <WebCore/CornerRadii.h>
+#include <WebCore/DevicePostureType.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
@@ -666,6 +667,9 @@ public:
     bool scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     void centerSelectionInVisibleArea();
+
+    WebCore::DevicePostureType devicePostureType() const { return m_devicePostureType; }
+    void setDevicePostureType(WebCore::DevicePostureType);
 
 #if ENABLE(PDF_HUD)
     void createPDFHUD(PDFPluginBase&, WebCore::FrameIdentifier, const WebCore::IntRect&);
@@ -3195,6 +3199,8 @@ private:
     };
     PendingEditorStateUpdateStatus m_pendingEditorStateUpdateStatus { PendingEditorStateUpdateStatus::NotScheduled };
     bool m_needsEditorStateVisualDataUpdate { false };
+
+    WebCore::DevicePostureType m_devicePostureType { WebCore::DevicePostureType::Continuous };
 
 #if ENABLE(META_VIEWPORT)
     WebCore::ViewportConfiguration m_viewportConfiguration;

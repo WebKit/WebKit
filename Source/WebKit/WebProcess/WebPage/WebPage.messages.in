@@ -256,6 +256,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
 
+    SetDevicePostureType(enum:uint8_t WebCore::DevicePostureType devicePostureType)
+
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
 

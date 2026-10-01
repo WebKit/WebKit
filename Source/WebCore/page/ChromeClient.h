@@ -26,6 +26,7 @@
 #include <WebCore/CornerRadii.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/DevicePostureType.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/ExceptionData.h>
@@ -430,6 +431,8 @@ public:
 #if ENABLE(ORIENTATION_EVENTS)
     virtual IntDegrees deviceOrientation() const = 0;
 #endif
+
+    virtual DevicePostureType devicePostureType() const { return DevicePostureType::Continuous; }
 
     virtual RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
 

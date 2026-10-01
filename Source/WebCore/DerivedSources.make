@@ -315,6 +315,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/credentialmanagement/IdentityCredentialRequestOptions.idl \
     $(WebCore)/Modules/credentialmanagement/Navigator+Credentials.idl \
     $(WebCore)/Modules/credentialmanagement/OTPCredentialRequestOptions.idl \
+    $(WebCore)/Modules/device-posture/DevicePosture.idl \
+    $(WebCore)/Modules/device-posture/DevicePostureType.idl \
+    $(WebCore)/Modules/device-posture/Navigator+DevicePosture.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEventInit.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEvent.idl \

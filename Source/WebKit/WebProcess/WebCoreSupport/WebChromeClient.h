@@ -38,6 +38,7 @@ class HTMLVideoElement;
 class RegistrableDomain;
 enum class BroadcastFocusedElement : bool;
 enum class ContentChange : uint8_t;
+enum class DevicePostureType : uint8_t;
 enum class DidFilterLinkDecoration : bool;
 enum class IsLoggedIn : uint8_t;
 enum class PointerLockRequestResult : uint8_t;
@@ -226,6 +227,8 @@ private:
 #if ENABLE(ORIENTATION_EVENTS)
     WebCore::IntDegrees deviceOrientation() const final;
 #endif
+
+    WebCore::DevicePostureType devicePostureType() const final;
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;
     void transcodeChosenFiles(Vector<String>&&, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&) final;

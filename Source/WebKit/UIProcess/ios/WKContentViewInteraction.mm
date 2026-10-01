@@ -123,6 +123,7 @@
 #import <WebCore/CompositionHighlight.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
+#import <WebCore/DevicePostureType.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FontAttributeChanges.h>
@@ -1405,6 +1406,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpMouseGestureRecognizer];
 #endif
 
+#if HAVE(UI_HINGE_INTERACTION)
+    [self setUpHingeInteraction];
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
@@ -1614,6 +1619,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (_gestureRecognizerConsistencyEnforcer)
         _gestureRecognizerConsistencyEnforcer->reset();
+
+#if HAVE(UI_HINGE_INTERACTION)
+    [self removeInteraction:_hingeInteraction.get()];
+#endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeInteraction:_mouseInteraction.get()];
@@ -12402,6 +12411,29 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
     WebKit::TextChecker::setGrammarCheckingEnabled(enabled);
     protect(_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
+
+#if HAVE(UI_HINGE_INTERACTION)
+
+- (void)setUpHingeInteraction
+{
+    if (_hingeInteraction)
+        [self removeInteraction:_hingeInteraction.get()];
+
+    _hingeInteraction = adoptNS([[UIHingeInteraction alloc] initWithUpdateHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKContentView>(self)](UIHingeInteraction *interaction, UIHingeInteractionUpdate *update) mutable {
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        if (RefPtr page = strongSelf->_page) {
+            bool isFolded = update.hinge.status == UIHingeStatusPartiallyOpen;
+            page->setDevicePostureType(isFolded ? WebCore::DevicePostureType::Folded : WebCore::DevicePostureType::Continuous);
+        }
+    }).get()]);
+
+    [self addInteraction:_hingeInteraction.get()];
+}
+
+#endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 

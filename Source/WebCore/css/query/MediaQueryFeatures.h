@@ -47,6 +47,7 @@ const FeatureSchema& colorIndex();
 const FeatureSchema& deviceAspectRatio();
 const FeatureSchema& deviceHeight();
 const FeatureSchema& devicePixelRatio();
+const FeatureSchema& devicePosture();
 const FeatureSchema& deviceWidth();
 const FeatureSchema& dynamicRange();
 const FeatureSchema& forcedColors();

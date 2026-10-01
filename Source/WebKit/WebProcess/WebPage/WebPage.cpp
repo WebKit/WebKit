@@ -4669,6 +4669,16 @@ void WebPage::centerSelectionInVisibleArea()
     findController().showFindIndicatorInSelection();
 }
 
+void WebPage::setDevicePostureType(WebCore::DevicePostureType type)
+{
+    if (type == m_devicePostureType)
+        return;
+
+    m_devicePostureType = type;
+    if (RefPtr page = m_page)
+        page->devicePostureTypeChanged();
+}
+
 bool WebPage::isControlledByAutomation() const
 {
     return m_page->isControlledByAutomation();

@@ -907,6 +907,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDevicePosture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDevicePosture.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDevicePostureType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDevicePostureType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialGetRequest.cpp
@@ -2096,6 +2100,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Contacts.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Contacts.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Credentials.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Credentials.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+DevicePosture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+DevicePosture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+EME.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+EME.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Gamepad.cpp

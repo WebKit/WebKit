@@ -1908,6 +1908,15 @@ DeviceOrientationPermissionAPIEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+DevicePostureAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  defaultsOverridable: true
+  humanReadableName: "Device Posture API"
+  humanReadableDescription: "Enable the Device Posture API"
+  defaultValue: false
+
 DeviceWidth:
   type: uint32_t
   status: embedder

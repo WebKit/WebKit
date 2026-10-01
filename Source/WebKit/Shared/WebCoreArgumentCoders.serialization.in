@@ -7466,6 +7466,12 @@ struct WebCore::FocusOptions {
 
 enum class WebKit::CommitTiming : bool;
 
+header: <WebCore/DevicePostureType.h>
+enum class WebCore::DevicePostureType : uint8_t {
+    Continuous,
+    Folded,
+};
+
 header: <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
 [CustomHeader] enum class WebCore::ResolvedCaptionDisplaySettingsOptionsXPositionArea : uint8_t {
     Center,
