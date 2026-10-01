@@ -2046,6 +2046,17 @@ public:
 
     void flushRegisters();
 
+    struct RegisterSpill {
+        Value value;
+        Location reg;
+        Location slot;
+    };
+    void collectRegisterSpills(Vector<RegisterSpill, 16>& gprs, Vector<RegisterSpill, 16>& fprs);
+    void collectRegisterSpills(const RegisterBindings&, Vector<RegisterSpill, 16>& gprs, Vector<RegisterSpill, 16>& fprs);
+    void emitStorePairs(Vector<RegisterSpill, 16>&);
+    void emitLoadPairs(Vector<RegisterSpill, 16>&);
+    void bindSpillsToSlots(const Vector<RegisterSpill, 16>&);
+
     template<typename Args>
     void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation&, const RTT& signature);
 
