@@ -40,20 +40,13 @@ IIRDSPKernel::IIRDSPKernel(IIRProcessor& processor)
 {
 }
 
-void IIRDSPKernel::getFrequencyResponse(unsigned length, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
+void IIRDSPKernel::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     ASSERT(frequencyHz.data());
     ASSERT(magResponse.data());
     ASSERT(phaseResponse.data());
 
-    Vector<float> frequency(length);
-    double nyquist = this->nyquist();
-
-    // Convert from frequency in Hz to normalized frequency (0 -> 1), with 1 equal to the Nyquist frequency.
-    for (unsigned k = 0; k < length; ++k)
-        frequency[k] = frequencyHz[k] / nyquist;
-
-    m_iirFilter.getFrequencyResponse(length, frequency.span(), magResponse, phaseResponse);
+    m_iirFilter.getFrequencyResponse(frequencyHz, magResponse, phaseResponse, nyquist());
 }
 
 void IIRDSPKernel::process(std::span<const float> source, std::span<float> destination)

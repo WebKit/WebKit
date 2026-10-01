@@ -66,10 +66,11 @@ public:
     // Resets filter state
     void NODELETE reset();
 
-    // Filter response at a set of n frequencies. The magnitude and
-    // phase response are returned in magResponse and phaseResponse.
-    // The phase response is in radians.
-    void getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse);
+    // Filter response at the frequencies in |frequencyHz|, given in Hz and normalized
+    // against |nyquist|. The magnitude and phase response are returned in magResponse
+    // and phaseResponse, which must be at least as long as |frequencyHz|. The phase
+    // response is in radians.
+    void getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse, double nyquist);
 
     // Compute tail frame based on the filter coefficents at index
     // |coefIndex|. The tail frame is the frame number where the

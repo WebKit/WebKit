@@ -123,7 +123,7 @@ void IIRFilter::process(std::span<const float> source, std::span<float> destinat
     }
 }
 
-void IIRFilter::getFrequencyResponse(unsigned length, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
+void IIRFilter::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse, double nyquist)
 {
     // Evaluate the z-transform of the filter at the given normalized frequencies
     // from 0 to 1. (One corresponds to the Nyquist frequency.)
@@ -139,14 +139,17 @@ void IIRFilter::getFrequencyResponse(unsigned length, std::span<const float> fre
     // the sums in H(z) is equivalent to evaluating a polynomial at the point
     // 1/z.
 
-    for (unsigned k = 0; k < length; ++k) {
-        if (frequency[k] < 0 || frequency[k] > 1) {
+    for (size_t k = 0; k < frequencyHz.size(); ++k) {
+        // Convert from frequency in Hz to normalized frequency (0 -> 1), with 1 equal to the Nyquist frequency.
+        float frequency = static_cast<float>(frequencyHz[k] / nyquist);
+
+        if (frequency < 0 || frequency > 1) {
             // Out-of-bounds frequencies should return NaN.
             magResponse[k] = std::nanf("");
             phaseResponse[k] = std::nanf("");
         } else {
             // zRecip = 1/z = exp(-j*frequency)
-            double omega = -std::numbers::pi * frequency[k];
+            double omega = -std::numbers::pi * frequency;
             auto zRecip = std::complex<double>(cos(omega), sin(omega));
 
             auto numerator = evaluatePolynomial(m_feedforward.span(), zRecip, m_feedforward.size() - 1);

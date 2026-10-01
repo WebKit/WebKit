@@ -210,23 +210,14 @@ void BiquadDSPKernel::process(std::span<const float> source, std::span<float> de
     m_biquad.process(source, destination);
 }
 
-void BiquadDSPKernel::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
+void BiquadDSPKernel::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
-    bool isGood = nFrequencies > 0 && frequencyHz.data() && magResponse.data() && phaseResponse.data();
+    bool isGood = !frequencyHz.empty() && frequencyHz.data() && magResponse.data() && phaseResponse.data();
     ASSERT(isGood);
     if (!isGood)
         return;
 
-    Vector<float> frequency(nFrequencies);
-
-    double nyquist = this->nyquist();
-
-    // Convert from frequency in Hz to normalized frequency (0 -> 1),
-    // with 1 equal to the Nyquist frequency.
-    for (unsigned k = 0; k < nFrequencies; ++k)
-        frequency[k] = frequencyHz[k] / nyquist;
-
-    m_biquad.getFrequencyResponse(nFrequencies, frequency.span(), magResponse, phaseResponse);
+    m_biquad.getFrequencyResponse(frequencyHz, magResponse, phaseResponse, nyquist());
 }
 
 double BiquadDSPKernel::tailTime() const
