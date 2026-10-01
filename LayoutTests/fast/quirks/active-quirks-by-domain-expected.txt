@@ -246,7 +246,6 @@ https://my.playstation.com/
 https://www.premierleague.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDispatchPlayPauseEventsOnResume
-    ShouldIgnorePlaysInlineRequirementQuirk
 https://www.ralphlauren.com/
     (none)
 https://www.reddit.com/

@@ -2584,7 +2584,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] fast/events/ime-composition-events-001.html [ Failure ]
 [ GoldenGate Debug ] fast/mediastream/video-rotation2.html [ Failure ]
 [ GoldenGate Debug ] fast/mediastream/video-srcObject-fit-fill.html [ Failure ]
-[ GoldenGate Debug ] fast/quirks/active-quirks-by-domain.html [ Failure ]
 [ GoldenGate Debug ] http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
 [ GoldenGate Debug ] http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 [ GoldenGate Debug ] http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Failure ]

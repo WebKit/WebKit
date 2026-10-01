@@ -3860,6 +3860,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/MathMLNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/Namespace.h
     ${WebCore_DERIVED_SOURCES_DIR}/NodeName.h
+    ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDefinitions.h
+    ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.h
+    ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.h
     ${WebCore_DERIVED_SOURCES_DIR}/SVGNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/Settings.h
     ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.h

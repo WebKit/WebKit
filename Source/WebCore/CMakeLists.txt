@@ -3057,6 +3057,25 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Settings.cpp)
 list(APPEND WebCoreTestSupport_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.cpp)
 list(APPEND WebCoreTestSupport_IDL_FILES ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.idl)
 
+set(QUIRK_BEHAVIORS_TEMPLATES
+    ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDefinitions.h.erb
+    ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.h.erb
+    ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.cpp.erb
+    ${WEBCORE_DIR}/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.h.erb)
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDefinitions.h
+       ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.h
+       ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.cpp
+       ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.h
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/page/QuirkBehaviors.yaml
+    DEPENDS ${WEBCORE_DIR}/Scripts/GenerateQuirkBehaviors.rb ${QUIRK_BEHAVIORS_TEMPLATES}
+    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateQuirkBehaviors.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${QUIRK_BEHAVIORS_TEMPLATES},;--template;>" ${WEBCORE_DIR}/page/QuirkBehaviors.yaml
+    COMMAND_EXPAND_LISTS
+    VERBATIM)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorDefinitions.h)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirkBehaviorID.h)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/QuirksAccessors.h)
+
 set(WebCore_BINDINGS_PP_INPUT_FILES ${WebCore_IDL_FILES} ${WebCore_SUPPLEMENTAL_IDL_FILES})
 if (ENABLE_WEBCORE_TEST_SUPPORT)
     list(APPEND WebCore_BINDINGS_PP_INPUT_FILES ${WebCoreTestSupport_IDL_FILES})

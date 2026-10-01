@@ -2603,6 +2603,35 @@ $(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREF
 
 # --------
 
+# Quirk behaviors
+
+QUIRK_BEHAVIORS_INPUT_FILES = \
+    $(WebCore)/page/QuirkBehaviors.yaml \
+#
+
+GENERATE_QUIRK_BEHAVIORS = \
+    QuirkBehaviorDefinitions.h \
+    QuirkBehaviorID.h \
+    QuirksAccessors.cpp \
+    QuirksAccessors.h \
+#
+
+GENERATE_QUIRK_BEHAVIORS_TEMPLATES = $(addprefix $(WebCore)/Scripts/QuirkBehaviorsTemplates/, $(addsuffix .erb, $(GENERATE_QUIRK_BEHAVIORS)))
+
+# The generator leaves unchanged outputs untouched, so track the last run with a stamp file
+# rather than the outputs' mtimes; otherwise make would rerun it on every build.
+QUIRK_BEHAVIORS_STAMP = .quirk-behaviors-stamp
+
+all : $(GENERATE_QUIRK_BEHAVIORS)
+
+$(QUIRK_BEHAVIORS_STAMP) : $(GENERATE_QUIRK_BEHAVIORS_TEMPLATES) $(QUIRK_BEHAVIORS_INPUT_FILES) $(WebCore)/Scripts/GenerateQuirkBehaviors.rb
+	$(RUBY) $(WebCore)/Scripts/GenerateQuirkBehaviors.rb $(QUIRK_BEHAVIORS_INPUT_FILES) $(addprefix --template , $(GENERATE_QUIRK_BEHAVIORS_TEMPLATES))
+	touch $(QUIRK_BEHAVIORS_STAMP)
+
+$(GENERATE_QUIRK_BEHAVIORS) : $(QUIRK_BEHAVIORS_STAMP)
+
+# --------
+
 # Common generator things
 
 COMMON_BINDINGS_SCRIPTS = \

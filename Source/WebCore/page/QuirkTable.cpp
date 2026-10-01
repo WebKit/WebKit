@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "QuirkTable.h"
-#include "QuirkBehaviors.h"
+#include "QuirkBehaviorDefinitions.h"
 #include "QuirkSelectors.h"
 
 #include <algorithm>

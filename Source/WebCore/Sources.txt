@@ -3942,6 +3942,7 @@ JSHTMLElementWrapperFactory.cpp
 JSMathMLElementWrapperFactory.cpp
 JSSVGElementWrapperFactory.cpp
 MathMLElementFactory.cpp
+QuirksAccessors.cpp
 SVGElementFactory.cpp @cost:4
 StyleBuilderGenerated.cpp @cost:13
 StyleChangedAnimatablePropertiesGenerated.cpp @cost:6

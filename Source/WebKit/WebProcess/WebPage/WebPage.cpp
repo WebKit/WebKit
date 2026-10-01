@@ -4525,7 +4525,7 @@ std::expected<bool, WebCore::RemoteFrameGeometryTransformer> WebPage::dispatchTo
             if (RefPtr document = localMainFrame->document()) {
                 FloatPoint adjustedPoint;
                 RefPtr responder = localMainFrame->nodeRespondingToClickEvents(FloatPoint(touchEvent.position()), adjustedPoint);
-                if (document->quirks().shouldAllowNativeTapsOnMediaElements(responder.get()))
+                if (responder && document->quirks().shouldAllowNativeTapsOnMediaElements(*responder))
                     handleTouchEventResult = false;
             }
         }

@@ -1,0 +1,797 @@
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# Each key is a QuirkBehaviorID
+
+#   available           BuildCondition expression; the table drops the behavior when false. Default: always.
+#   conditions          QuirkConditionsSupported that .when() may add.
+#   conditionsRequired  Every row must add all of the behavior's conditions.
+#
+# By default, an accessor named after the key (first letter lowercased) is generated. Its
+# argument is derived from conditions: none for [], `const Node&` for [ElementSelector], and
+# `const URL&` for [SecondaryURL]. Any other conditions need a custom implementation.
+#
+#   accessor            Overrides the accessor name.
+#   static              Takes a const URL& and resolves top-URL quirks for it; needs no Document.
+#   export              Adds WEBCORE_EXPORT to the declaration.
+#   implementation      "custom" if the accessor is hand-written in Quirks. Only custom behaviors may set parameters
+#   parameters          QuirkParametersNeeded
+
+# espn.com: rdar://problem/95651814
+AllowLayeredFullscreenVideos:
+  available: "iOS || vision"
+  export: true
+
+# vimeo.com: rdar://107592139
+# Vimeo enters fullscreen when starting playback from the inline play button while already in PIP.
+# This behavior is revealing a bug in the fullscreen handling. See rdar://107592139.
+BlocksEnteringStandardFullscreenFromPictureInPictureQuirk:
+  available: "fullscreenAPI && videoPresentationMode"
+  export: true
+
+# vimeo.com: rdar://problem/70788878
+# Some sites (e.g., vimeo.com) do not set element's styles properly when a video
+# returns to fullscreen from picture-in-picture. This quirk disables the "return to fullscreen
+# from picture-in-picture" feature for those sites. We should remove the quirk once
+# rdar://problem/73167931 has been fixed.
+BlocksReturnToFullscreenFromPictureInPictureQuirk:
+  available: "fullscreenAPI && videoPresentationMode"
+  export: true
+
+# apple.com rdar://154434137
+EnsureCaptionVisibilityInFullscreenAndPictureInPicture:
+  available: iOSFamily
+
+HasBrokenEncryptedMediaAPISupportQuirk:
+  implementation: custom
+
+# hulu.com rdar://126096361
+ImplicitMuteWhenVolumeSetToZero:
+
+InputMethodUsesCorrectKeyEventOrder:
+  implementation: custom
+
+InputMethodMustUseCompositionEvents:
+  available: mac
+  export: true
+
+# teams.microsoft.com https://bugs.webkit.org/show_bug.cgi?id=219505
+IsMicrosoftTeamsRedirectURLQuirk:
+  accessor: isMicrosoftTeamsRedirectURL
+  static: true
+
+# icloud.com rdar://26013388
+# trix-editor.org rdar://28242210
+# onedrive.live.com rdar://26013388
+# added in https://bugs.webkit.org/show_bug.cgi?id=161996
+IsNeverRichlyEditableForTouchBarQuirk:
+  available: mac
+  accessor: isNeverRichlyEditableForTouchBar
+  export: true
+
+# docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
+IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk:
+  available: mac
+  accessor: isTouchBarUpdateSuppressedForHiddenContentEditable
+  export: true
+
+# walmart.com: rdar://123734840
+# live.outlook.com: rdar://152277211
+# icloud.com: rdar://187710972
+MayNeedToIgnoreContentObservation:
+  available: twoPhaseClicks
+  conditions: [ElementSelector]
+  accessor: shouldIgnoreContentObservationForClick
+  export: true
+
+# airindiaexpress.com https://webkit.org/b/317375
+NeedsAirIndiaExpressLayeringQuirk:
+
+# spotify.com rdar://138918575
+NeedsBodyScrollbarWidthNoneDisabledQuirk:
+
+# hulu.com rdar://55041979
+NeedsCanPlayAfterSeekedQuirk:
+
+NeedsChromeCompatibilityUserAgentQuirk:
+  available: cocoa
+  parameters: [ChromeCompatibilityVersion]
+  implementation: custom
+
+# imdb.com: rdar://137991466
+NeedsChromeMediaControlsPseudoElementQuirk:
+  accessor: needsChromeMediaControlsPseudoElement
+
+NeedsCNNCaptionQuirk:
+  available: cocoa
+  export: true
+
+NeedsLimitedMatroskaSupportQuirk:
+  available: "mediaRecorder && cocoaWebMPlayer"
+  accessor: needsLimitedMatroskaSupport
+
+NeedsLogoutCookieCleanupQuirk:
+  parameters: [CookieNames]
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
+NeedsAmazonDesignMenuViewportUnitQuirk:
+  available: iOSFamily
+  implementation: custom
+
+NeedsClaudeSidebarViewportUnitQuirk:
+  available: iOSFamily
+  conditions: [ElementSelector]
+  implementation: custom
+
+NeedsHideSelectionDuringOverflowScrollQuirk:
+  available: iOSFamily
+  export: true
+
+NeedsCustomUserAgentData:
+
+NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
+  available: iOSFamily
+  implementation: custom
+
+NeedsDisableDOMPasteAccessQuirk:
+  implementation: custom
+
+# facebook.com https://webkit.org/b/295071
+# FIXME: https://webkit.org/b/295318
+NeedsFacebookRemoveNotSupportedQuirk:
+
+# facebook.com rdar://141103350
+NeedsFacebookStoriesCreationFormQuirk:
+  available: iOSFamily
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
+# thesaurus.com, dictionary.com https://bugs.webkit.org/show_bug.cgi?id=312692 rdar://174959285
+# google.com https://bugs.webkit.org/show_bug.cgi?id=323851 rdar://181740296
+NeedsAnchorToBeMouseFocusableQuirk:
+  available: cocoa
+  conditions: [ElementSelector]
+  accessor: needsAnchorToBeMouseFocusable
+
+# ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
+# weather.com rdar://139689157
+# madisoncity.k12.al.us https://bugs.webkit.org/show_bug.cgi?id=296989
+NeedsFormControlToBeMouseFocusableQuirk:
+  available: mac
+  accessor: needsFormControlToBeMouseFocusable
+
+# gizmodo.com rdar://102227302
+NeedsFullscreenDisplayNoneQuirk:
+  available: iOSFamily
+
+# cnn.com rdar://119640248
+NeedsFullscreenObjectFitQuirk:
+  available: iOSFamily
+
+# FIXME: Remove after the site is fixed, <rdar://problem/50374200>
+# mail.google.com rdar://49403416
+NeedsGMailOverflowScrollQuirk:
+  available: iOSFamily
+
+# google.com/maps/embed rdar://184166392
+NeedsGoogleMapsEmbedManipulationSurfaceQuirk:
+  available: mac
+
+# maps.google.com rdar://67358928
+NeedsGoogleMapsScrollingQuirk:
+  available: iOSFamily
+
+# translate.google.com rdar://106539018
+NeedsGoogleTranslateScrollingQuirk:
+  available: iOSFamily
+
+# netflix.com rdar://178545839
+NeedsNetflixVolumeSliderQuirk:
+  available: "iOS || vision"
+
+# play.geforcenow.com https://webkit.org/b/303622
+# FIXME: Remove as soon as nvidia adjusts the site for Safari. https://webkit.org/b/303718
+NeedsGeforcenowWarningDisplayNoneQuirk:
+
+# Expedia Group sites (hotels.com, expedia.*, orbitz.com, …) rdar://126631968
+NeedsExpediaGroupAnimationQuirk:
+  conditions: [ElementSelector]
+
+# This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
+# to websites. In some cases, the website breaks in some ways, not expecting a touch interface for the website.
+# Controls not active or too small, form factor, etc. In this case it is better to send the iPad Mini UA.
+# FIXME(325978): find the reference radars and/or bugs.webkit.org issues on why these were added in the first place.
+# FIXME(325980): There is no check currently on needsQuirks(), this needs to be fixed so it makes it easier
+# to deactivate them for testing.
+NeedsIPadMiniUserAgentQuirk:
+  accessor: needsIPadMiniUserAgent
+  static: true
+  export: true
+
+NeedsIPhoneUserAgentQuirk:
+  available: iOSFamily
+  accessor: needsIPhoneUserAgent
+  static: true
+  export: true
+
+NeedsMediaRewriteRangeRequestQuirk:
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  accessor: shouldRewriteMediaRangeRequestForURL
+
+# outlook.live.com: rdar://136624720
+NeedsMozillaFileTypeForDataTransferQuirk:
+  accessor: needsMozillaFileTypeForDataTransfer
+
+NeedsNavigatorUserAgentDataQuirk:
+
+NeedsNowPlayingFullscreenSwapQuirk:
+  export: true
+
+NeedsPartitionedCookiesQuirk:
+  implementation: custom
+
+NeedsPerDocumentAutoplayBehaviorQuirk:
+  available: "!mac"
+  implementation: custom
+
+# espn.com rdar://184169028
+NeedsSuppressedPauseEventOnFullscreenExitQuirk:
+  available: iOS
+
+# vimeo.com rdar://55759025
+NeedsPreloadAutoQuirk:
+  available: iOSFamily
+
+# DOFUS Touch app (rdar://112679186)
+NeedsResettingTransitionCancelsRunningTransitionQuirk:
+  available: iOSFamily
+
+NeedsReuseLiveRangeForSelectionUpdateQuirk:
+  accessor: shouldReuseLiveRangeForSelectionUpdate
+
+NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk:
+  parameters: [Script]
+  conditions: [SecondaryURL]
+  implementation: custom
+
+# youtube.com rdar://135886305
+# NOTE: Also remove `BuilderConverter::convertScrollbarWidth` and related code when removing this quirk.
+NeedsScrollbarWidthThinDisabledQuirk:
+
+# netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
+# This quirk handles several scenarios:
+# - Inserting / Removing Airpods
+# - macOS w/ Touch Bar
+# - iOS PiP
+NeedsSeekingSupportDisabledQuirk:
+  accessor: needsSeekingSupportDisabled
+
+NeedsSupportsProgressMonitoringQuirk:
+  available: mediaSource
+  accessor: needsSupportsProgressMonitoring
+
+NeedsSuppressPostLayoutBoundaryEventsQuirk:
+
+NeedsTikTokCommentsOverflowingContentQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+NeedsTikTokVideoOverflowingContentQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+NeedsUserAgentStringOverrideQuirk:
+  parameters: [UserAgent]
+  implementation: custom
+
+# hulu.com rdar://100199996
+NeedsVideoShouldMaintainAspectRatioQuirk:
+
+NeedsWebKitMediaTextTrackDisplayQuirk:
+
+NeedsYouTubeCaptionQuirk:
+  available: cocoa
+  accessor: needsYouTubeCaptionsQuirk
+  export: true
+
+# theguardian.com rdar://166727225
+NeedsYouTubeEmbedAutoplayQuirk:
+  available: iOSFamily
+
+NeedsYouTubeMouseOutQuirk:
+  available: twoPhaseClicks
+  implementation: custom
+
+# FIXME: Remove after the site is fixed, <rdar://problem/50374311>
+# youtube.com rdar://49582231
+NeedsYouTubeOverflowScrollQuirk:
+  available: iOSFamily
+
+# hbomax.com: rdar://138424489
+NeedsZeroMaxTouchPointsQuirk:
+
+# zomato.com <rdar://problem/128962778>
+NeedsZomatoEmailLoginLabelQuirk:
+  available: mac
+
+# x.com: rdar://73369869
+# X (Twitter) will remove the "src" attribute of a <video> element that has scrolled out of the viewport and
+# load the <video> element with an empty "src" regardless of whether that element is currently in PiP mode.
+# We should remove the quirk once <rdar://problem/73369869> has been fixed.
+RequiresUserGestureToLoadInPictureInPictureQuirk:
+  available: videoPresentationMode
+  accessor: requiresUserGestureToLoadInPictureInPicture
+
+# sports.yahoo.com: rdar://148284059
+RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk:
+  available: "videoPresentationMode && iOS"
+  accessor: requiresUserGestureToPauseInFullscreenAfterOrientationChange
+
+# facebook.com: rdar://67273166
+# forbes.com:
+# reddit.com: rdar://80550715
+# x.com: rdar://73369869
+# Facebook, X (twitter), and Reddit will naively pause a <video> element that has scrolled out of the viewport,
+# regardless of whether that element is currently in PiP mode.
+# We should remove the quirk once <rdar://problem/67273166>, <rdar://problem/73369869>, and <rdar://problem/80645747> have been fixed.
+RequiresUserGestureToPauseInPictureInPictureQuirk:
+  available: videoPresentationMode
+  accessor: requiresUserGestureToPauseInPictureInPicture
+
+# youtube.com: rdar://178769976
+RequiresUserGestureToPlayInFullscreenQuirk:
+  available: fullscreenAPI
+  accessor: requiresUserGestureToPlayInFullscreen
+
+# bbc.co.uk: rdar://126494734
+# bbc.com: rdar://157499149
+ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk:
+  accessor: returnNullPictureInPictureElementDuringFullscreenChange
+
+ShouldAllowMSTeamsProtocolWithoutUserGestureQuirk:
+  implementation: custom
+
+ShouldAllowPopupFromMicrosoftOfficeToOneDrive:
+  available: iOSFamily
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
+# outlook.live.com: rdar://151851274
+ShouldAllowTouchMoveToChangeSelectionQuirk:
+  available: iOSFamily
+  accessor: shouldAllowTouchMoveToChangeSelection
+  export: true
+
+# zoom.com https://bugs.webkit.org/show_bug.cgi?id=223180
+ShouldAutoplayWebAudioForArbitraryUserGestureQuirk:
+  accessor: shouldAutoplayWebAudioForArbitraryUserGesture
+
+# rdar://175565114
+ShouldAvoidProgrammaticScrollClampingQuirk:
+  accessor: shouldAvoidProgrammaticScrollClamping
+
+# live.com rdar://52116170
+# sharepoint.com rdar://52116170
+# maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
+ShouldAvoidResizingWhenInputViewBoundsChangeQuirk:
+  accessor: shouldAvoidResizingWhenInputViewBoundsChange
+  export: true
+
+# zillow.com rdar://53103732
+ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk:
+  accessor: shouldAvoidScrollingWhenFocusedContentIsVisible
+  export: true
+
+ShouldBlockFetchWithNewlineAndLessThan:
+
+# bungalow.com: rdar://61658940
+# sfusd.edu: rdar://116292738
+# Deferring 'mapbox-gl.js' script on bungalow.com causes the script to get in a bad state (rdar://problem/61658940).
+# Deferring the google maps script on sfusd.edu may get the page in a bad state (rdar://116292738).
+ShouldBypassAsyncScriptDeferring:
+
+ShouldBypassBackForwardCacheForNoStoreQuirk:
+  implementation: custom
+
+ShouldBypassBackForwardCacheWhenElementMatchesQuirk:
+  conditions: [DocumentSelector]
+  conditionsRequired: true
+  implementation: custom
+
+ShouldBypassBackForwardCacheWhenRenderedElementMatchesQuirk:
+  conditions: [DocumentSelector]
+  conditionsRequired: true
+  implementation: custom
+
+ShouldBypassBackForwardCacheWhenUnloadListenerAndElementMatchesQuirk:
+  conditions: [DocumentSelector]
+  conditionsRequired: true
+  implementation: custom
+
+ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions:
+
+# facebook.com rdar://174179871 tiktok.com rdar://174179805
+ShouldComputeSimulatedMouseEventMovementDeltaQuirk:
+  available: "touchEvents || touchEventRegions"
+  accessor: shouldComputeSimulatedMouseEventMovementDelta
+
+ShouldDelayReloadWhenRegisteringServiceWorker:
+
+# play.hbomax.com rdar://158430821
+ShouldDisableAdSkippingInPip:
+  available: pipSkipPreroll
+  export: true
+
+# Microsoft office online generates data URLs with incorrect padding on Safari only (rdar://114573089).
+ShouldDisableDataURLPaddingValidation:
+
+ShouldDisableDOMAudioSession:
+  accessor: shouldDisableDOMAudioSessionQuirk
+
+# Vimeo.com has incorrect layout on iOS on certain videos with wider
+# aspect ratios than the device's screen in landscape mode.
+# (Ref: rdar://116531089)
+# Instagram.com stories flow under the notch and status bar
+# (Ref: rdar://121014613)
+# x.com (Twitter) video embeds have controls that are too tiny and
+# show page behind fullscreen.
+# (Ref: rdar://121473410)
+# YouTube.com does not provide AirPlay controls in fullscreen
+# (Ref: rdar://121471373)
+ShouldDisableElementFullscreenQuirk:
+  available: iOSFamily
+
+# espn.com: rdar://problem/73227900
+# vimeo.com: rdar://problem/73227900
+# This quirk disables the "webkitendfullscreen" event when a video enters picture-in-picture
+# from fullscreen for the sites which cannot handle the event properly in that case.
+# We should remove once the quirks have been fixed.
+# <rdar://90393832> vimeo.com
+ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk:
+  available: videoPresentationMode
+
+# Breaks express checkout on victoriassecret.com (rdar://104818312).
+ShouldDisableFetchMetadata:
+
+# x.com: rdar://132850672
+# FIXME (rdar://124579556): Remove once 'x.com' adjusts video handling for visionOS.
+ShouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk:
+  available: vision
+  accessor: shouldDisableFullscreenVideoAspectRatioAdaptiveSizing
+  export: true
+
+# zoom.us rdar://118185086
+ShouldDisableImageCaptureQuirk:
+  available: mediaStream
+
+ShouldAllowMediaStreamTrackSerializationQuirk:
+  available: mediaStream
+
+# Fix for the UNIQLO app (rdar://104519846).
+ShouldDisableLazyIframeLoadingQuirk:
+
+# Moon Player app (rdar://162452658): the app hides its WKWebView while continuing to display
+# the video layer it hosts, so page visibility does not indicate whether the video is on screen.
+# Tearing the layer down when the page becomes hidden leaves the app displaying a black frame.
+ShouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk:
+
+# mailchimp.com rdar://47868965
+ShouldDisablePointerEventsQuirk:
+  available: iOSFamily
+
+# Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
+ShouldDisablePushStateFilePathRestrictions:
+
+ShouldDisableScrollAnchoringQuirk:
+  conditions: [DocumentSelector]
+  implementation: custom
+
+ShouldDisableThreadedAnimationsQuirk:
+  available: threadedAnimations
+
+# safe.menlosecurity.com rdar://135114489
+# FIXME (rdar://138585709): Remove this quirk for safe.menlosecurity.com once investigation into text corruption on the site is completed and the issue is resolved.
+ShouldDisableWritingSuggestionsByDefaultQuirk:
+  accessor: shouldDisableWritingSuggestionsByDefault
+  export: true
+
+ShouldDispatchPlayPauseEventsOnResume:
+  implementation: custom
+
+# netflix.com: rdar://155498882
+# soylent.*: rdar://113314067
+ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick:
+  available: touchEvents
+
+ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk:
+  implementation: custom
+
+ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+ShouldDispatchSimulatedMouseEventsQuirk:
+  available: "touchEvents || touchEventRegions"
+  conditions: [ElementSelector]
+  implementation: custom
+
+ShouldEnableCameraAndMicrophonePermissionStateQuirk:
+  available: mediaStream
+
+ShouldEnableCameraBackgroundPlayback:
+  available: mediaStream
+
+ShouldEnableEnumerateDeviceQuirk:
+  available: mediaStream
+
+ShouldEnableFacebookFlagQuirk:
+  available: mediaStream
+
+ShouldEnableFontLoadingAPIQuirk:
+  implementation: custom
+
+ShouldEnableLegacyGetUserMediaQuirk:
+  available: mediaStream
+
+ShouldEnableRemoteTrackLabelQuirk:
+  available: mediaStream
+
+ShouldEnableRTCEncodedStreamsQuirk:
+  available: webRTC
+  implementation: custom
+
+ShouldEnableSpeakerSelectionPermissionsPolicyQuirk:
+  available: mediaStream
+
+ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen:
+  accessor: shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk
+
+# Marcus: <rdar://101086391>.
+# Pandora: <rdar://100243111>.
+# Soundcloud: <rdar://102913500>.
+ShouldExposeShowModalDialog:
+
+# rdar://133423460
+ShouldFlipScreenDimensionsQuirk:
+  available: flipScreenDimensionsQuirks
+  accessor: shouldFlipScreenDimensions
+
+# disneyplus: rdar://137613110
+ShouldHideCoarsePointerCharacteristicsQuirk:
+  available: iOSFamily
+  accessor: shouldHideCoarsePointerCharacteristics
+
+ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk:
+  available: iOSFamily
+  conditions: [ElementSelector]
+  accessor: shouldHideSoftTopScrollEdgeEffectDuringFocus
+  export: true
+
+# ralphlauren.com rdar://55629493
+ShouldIgnoreAriaForFastPathContentObservationCheckQuirk:
+  available: iOSFamily
+  accessor: shouldIgnoreAriaForFastPathContentObservationCheck
+  export: true
+
+ShouldIgnoreInputModeNone:
+  available: iOSFamily
+
+# premierleague.com: rdar://123721211
+ShouldIgnorePlaysInlineRequirementQuirk:
+  available: iOSFamily
+
+# news.ycombinator.com: rdar://127246368
+ShouldIgnoreTextAutoSizingQuirk:
+  accessor: shouldIgnoreTextAutoSizing
+
+# wikipedia.org https://webkit.org/b/247636
+ShouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk:
+  available: metaViewport
+  accessor: shouldIgnoreViewportArgumentsToAvoidExcessiveZoom
+  export: true
+
+# slack.com rdar://138614711
+ShouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk:
+  available: metaViewport
+  accessor: shouldIgnoreViewportArgumentsToAvoidEnlargedView
+  export: true
+
+# slack.com rdar://171190689
+ShouldUseDynamicViewportUnitsAsDefaultQuirk:
+  available: metaViewport
+  accessor: shouldUseDynamicViewportUnitsAsDefault
+  export: true
+
+# wikipedia.org rdar://54856323
+# FIXME: We should consider replacing this with a heuristic to determine whether
+# or not the edges of the page mostly lack content after shrinking to fit.
+ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk:
+  accessor: shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints
+  export: true
+
+# marcus.com rdar://102959860
+ShouldNavigatorPluginsBeEmpty:
+  available: iOSFamily
+
+ShouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk:
+  available: touchEvents
+  accessor: shouldOmitTouchEventDOMAttributesForDesktopWebsite
+  static: true
+  export: true
+
+ShouldOpenAsAboutBlankQuirk:
+  available: iOSFamily
+  implementation: custom
+
+ShouldPreventTouchEndDispatchQuirk:
+  available: "touchEvents || touchEventRegions"
+  conditions: [ElementSelector]
+  implementation: custom
+
+ShouldPreventTouchMoveDispatchQuirk:
+  available: "touchEvents || touchEventRegions"
+  conditions: [ElementSelector]
+  implementation: custom
+
+ShouldPreventKeyframeEffectAccelerationQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+# rdar://133423460
+ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk:
+  accessor: shouldPreventOrientationMediaQueryFromEvaluatingToLandscape
+
+ShouldReportDocumentAsVisibleIfActivePIPQuirk:
+  available: pictureInPictureAPI
+  accessor: shouldReportVisibleDueToActivePictureInPictureContent
+
+# att.com rdar://55185021
+ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk:
+  accessor: shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation
+  export: true
+
+# discord.com rdar://162719481
+ShouldUseLayoutViewportForClientRectsQuirk:
+  available: iOSFamily
+  accessor: shouldUseLayoutViewportForClientRects
+  export: true
+
+ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting:
+  available: "iOS || vision"
+  implementation: custom
+
+ShouldSilenceMediaQueryListChangeEvents:
+  available: "iOS || vision"
+  implementation: custom
+
+ShouldSilenceResizeObservers:
+  available: "iOS || vision"
+  implementation: custom
+
+# docs.google.com rdar://49864669
+# FIXME https://bugs.webkit.org/show_bug.cgi?id=260698
+ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk:
+  available: iOSFamily
+  accessor: shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas
+  export: true
+
+# webex.com rdar://143715630
+NeedsWebExScrollabilityQuirk:
+  available: "iOSFamily && desktopContentModeQuirks"
+
+# rdar://138806698
+ShouldSupportHoverMediaQueriesQuirk:
+  available: desktopContentModeQuirks
+  accessor: shouldSupportHoverMediaQueries
+
+# cbssports.com <rdar://139478801>.
+ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk:
+  available: iOSFamily
+  conditions: [ElementSelector]
+  accessor: shouldSynthesizeTouchEventsAfterNonSyntheticClick
+  export: true
+
+# Some input only specify image/* as an acceptable type, which is failing sometimes for certains domain names
+# which do not support HEIC.
+ShouldTranscodeHeicImagesQuirk:
+  accessor: shouldTranscodeHeicImagesForURL
+  static: true
+  export: true
+
+# store.steampowered.com: rdar://142573562
+ShouldTreatAddingMouseOutEventListenerAsContentChange:
+  available: contentChangeObserver
+
+ShouldUnloadHeavyFrames:
+  accessor: shouldUnloadHeavyFrame
+
+ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor:
+  implementation: custom
+
+# FIXME: Remove this Quirk if Pinterest decides to trigger this notification from an user gesture (rdar://165745719)
+ShouldAllowNotificationPermissionWithoutUserGesture:
+  export: true
+
+NeedsInstagramResizingReelsQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+# yahoo.com rdar://170502516
+NeedsYahooVolumeSliderQuirk:
+
+NeedsChromeOSNavigatorUserAgentQuirk:
+  available: iOSFamily
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
+# instagram.com: rdar://174936655
+ShouldSendFakeTouchForceChangeEvent:
+  available: iOSFamily
+
+# spotify.com rdar://171119015
+ShouldLimitHLSPlaybackRate:
+
+ShouldDeferIntersectionObserversDuringResize:
+
+# nfl.com:
+ShouldSuppressHLSSubtitles:
+
+ShouldSuppressMediaSessionPauseActionOnInterruption:
+
+# spotify.com: block additive audible playback (e.g. Home-page track previews) while another
+# audible media element is already playing in the document.
+ShouldBlockAudiblePlaybackWhileAudioIsPlaying:
+
+NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk:
+  available: cocoa
+
+ShouldAllowNativeTapsOnMediaElementsQuirk:
+  available: "iOSFamily && iOSTouchEvents"
+  conditions: [ElementSelector]
+  accessor: shouldAllowNativeTapsOnMediaElements
+  export: true
+
+NeedsKinjaLoginStorageAccessQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+NeedsStorageAccessOnLoginButtonClickQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+NeedsStorageAccessForYouTubeWatchLaterQuirk:
+  conditions: [ElementSelector]
+  implementation: custom
+
+# Outlook on the web: rdar://187832523
+ShouldTreatLongClickAsSecondaryClickQuirk:
+  available: appKitGestures
+  conditions: [ElementSelector]
+  accessor: shouldTreatLongClickAsSecondaryClick
+  export: true

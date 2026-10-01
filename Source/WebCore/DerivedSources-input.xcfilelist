@@ -1206,7 +1206,12 @@ $(PROJECT_DIR)/Modules/webxr/XRVisibilityState.idl
 $(PROJECT_DIR)/Modules/webxr/XRWebGLBinding.idl
 $(PROJECT_DIR)/Modules/webxr/XRWebGLLayerInit.idl
 $(PROJECT_DIR)/Modules/webxr/XRWebGLSubImage.idl
+$(PROJECT_DIR)/Scripts/GenerateQuirkBehaviors.rb
 $(PROJECT_DIR)/Scripts/GenerateSettings.rb
+$(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorDefinitions.h.erb
+$(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirkBehaviorID.h.erb
+$(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.cpp.erb
+$(PROJECT_DIR)/Scripts/QuirkBehaviorsTemplates/QuirksAccessors.h.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
@@ -1977,6 +1982,7 @@ $(PROJECT_DIR)/page/PerformanceResourceTiming.idl
 $(PROJECT_DIR)/page/PerformanceServerTiming.idl
 $(PROJECT_DIR)/page/PerformanceTiming.idl
 $(PROJECT_DIR)/page/PostMessageOptions.idl
+$(PROJECT_DIR)/page/QuirkBehaviors.yaml
 $(PROJECT_DIR)/page/ResizeObserver.idl
 $(PROJECT_DIR)/page/ResizeObserverBoxOptions.idl
 $(PROJECT_DIR)/page/ResizeObserverCallback.idl

@@ -69,6 +69,7 @@
 #include "OrganizationStorageAccessPromptQuirk.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "QuirkBehaviorDefinitions.h"
 #include "QuirkTable.h"
 #include "QuirksData.h"
 #include "RegistrableDomain.h"
@@ -164,98 +165,13 @@ static bool urlHasQuirk(const URL& url, const QuirkBehavior& quirk)
     return resolveTopURLQuirks(url).isBehaviorEnabled(quirk.id);
 }
 
-bool Quirks::elementMatchesSelectorCondition(ASCIILiteral selector, const Node* node)
-{
-    if (!node)
-        return false;
-
-    RefPtr element = lineageOfType<Element>(*node).first();
-    if (!element)
-        return false;
-
-    auto* query = SelectorQueryCache::singleton().add(selector, protect(element->document()));
-    if (!query) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    return query->matches(const_cast<Element&>(*element));
-}
-
-bool Quirks::behaviorAppliesToNode(QuirkBehaviorID id, const Node* node) const
-{
-    if (!m_quirksData.isBehaviorEnabled(id))
-        return false;
-
-    for (const auto& behavior : m_quirksData.behaviors()) {
-        if (behavior.id != id)
-            continue;
-
-        if (!behavior.conditions.elementSelector)
-            return true;
-
-        if (elementMatchesSelectorCondition(*behavior.conditions.elementSelector, node))
-            return true;
-    }
-
-    return false;
-}
-
-RefPtr<Element> Quirks::firstElementMatchingSelectorCondition(ASCIILiteral selector, Document& document)
-{
-    auto* query = SelectorQueryCache::singleton().add(selector, document);
-    if (!query) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
-    return query->queryFirst(document);
-}
-
-RefPtr<Element> Quirks::elementMatchingDocumentSelectorCondition(QuirkBehaviorID id) const
-{
-    if (!m_quirksData.isBehaviorEnabled(id))
-        return nullptr;
-
-    RefPtr document = m_document.get();
-    if (!document)
-        return nullptr;
-
-    for (const auto& behavior : m_quirksData.behaviors()) {
-        if (behavior.id != id || !behavior.conditions.documentSelector)
-            continue;
-
-        if (RefPtr element = firstElementMatchingSelectorCondition(*behavior.conditions.documentSelector, *document))
-            return element;
-    }
-
-    return nullptr;
-}
-
-bool Quirks::behaviorAppliesToDocument(QuirkBehaviorID id) const
-{
-    if (!m_quirksData.isBehaviorEnabled(id))
-        return false;
-
-    bool appliesUnconditionally = std::ranges::any_of(m_quirksData.behaviors(), [&](const auto& behavior) {
-        return behavior.id == id && !behavior.conditions.documentSelector;
-    });
-
-    return appliesUnconditionally || elementMatchingDocumentSelectorCondition(id);
-}
-
 Quirks::Quirks(Document& document)
-    : m_document(document)
+    : QuirksAccessors(document)
 {
     determineRelevantQuirks();
 }
 
 Quirks::~Quirks() = default;
-
-inline bool Quirks::needsQuirks() const
-{
-    return m_document && m_document->settings().needsSiteSpecificQuirks();
-}
 
 bool Quirks::shouldIgnoreInvalidSignal() const
 {
@@ -265,25 +181,6 @@ bool Quirks::shouldIgnoreInvalidSignal() const
 bool Quirks::shouldDisableBlobFileAccessEnforcement()
 {
     return shouldDisableBlobFileAccessEnforcementInternal();
-}
-
-// thesaurus.com, dictionary.com https://bugs.webkit.org/show_bug.cgi?id=312692 rdar://174959285
-// google.com https://bugs.webkit.org/show_bug.cgi?id=323851 rdar://181740296
-bool Quirks::needsAnchorToBeMouseFocusable(const Element& anchor) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return behaviorAppliesToNode(QuirkBehaviorID::NeedsAnchorToBeMouseFocusableQuirk, &anchor);
-}
-
-// ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
-// weather.com rdar://139689157
-// madisoncity.k12.al.us https://bugs.webkit.org/show_bug.cgi?id=296989
-bool Quirks::needsFormControlToBeMouseFocusable() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsFormControlToBeMouseFocusableQuirk);
 }
 
 bool Quirks::needsAutoplayPlayPauseEvents() const
@@ -300,18 +197,6 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
     return allowedAutoplayQuirks(document->mainFrameDocument()).contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
-// netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
-// This quirk handles several scenarios:
-// - Inserting / Removing Airpods
-// - macOS w/ Touch Bar
-// - iOS PiP
-bool Quirks::needsSeekingSupportDisabled() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsSeekingSupportDisabledQuirk);
-}
-
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=193301
 bool Quirks::needsPerDocumentAutoplayBehavior() const
 {
@@ -326,14 +211,6 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
 #endif
 }
 
-// zoom.com https://bugs.webkit.org/show_bug.cgi?id=223180
-bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAutoplayWebAudioForArbitraryUserGestureQuirk);
-}
-
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
@@ -344,34 +221,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::HasBrokenEncryptedMediaAPISupportQuirk);
 #endif
-}
-
-// docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
-bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk);
-}
-
-// icloud.com rdar://26013388
-// trix-editor.org rdar://28242210
-// onedrive.live.com rdar://26013388
-// added in https://bugs.webkit.org/show_bug.cgi?id=161996
-bool Quirks::isNeverRichlyEditableForTouchBar() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::IsNeverRichlyEditableForTouchBarQuirk);
-}
-
-// docs.google.com rdar://49864669
-// FIXME https://bugs.webkit.org/show_bug.cgi?id=260698
-bool Quirks::shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk);
 }
 
 // weebly.com rdar://48003980
@@ -397,41 +246,10 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsYouTubeMouseOutQuirk);
 }
 
-bool Quirks::needsYouTubeCaptionsQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsYouTubeCaptionQuirk);
-}
-
-bool Quirks::needsCNNCaptionQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsCNNCaptionQuirk);
-}
-
 // The sites whose in-page captions WebKit mirrors into a text track rdar://174708144
 bool Quirks::needsCaptionMirroringQuirk() const
 {
     return needsYouTubeCaptionsQuirk() || needsCNNCaptionQuirk();
-}
-
-// theguardian.com rdar://166727225
-bool Quirks::needsYouTubeEmbedAutoplayQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsYouTubeEmbedAutoplayQuirk);
-}
-
-// safe.menlosecurity.com rdar://135114489
-// FIXME (rdar://138585709): Remove this quirk for safe.menlosecurity.com once investigation into text corruption on the site is completed and the issue is resolved.
-bool Quirks::shouldDisableWritingSuggestionsByDefault() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableWritingSuggestionsByDefaultQuirk);
 }
 
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
@@ -454,30 +272,6 @@ String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
     if (domain == "live.com"_s && url.host() != "teams.live.com"_s)
         return { };
     return iterator->value;
-}
-
-// apple.com rdar://154434137
-bool Quirks::ensureCaptionVisibilityInFullscreenAndPictureInPicture() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::EnsureCaptionVisibilityInFullscreenAndPictureInPicture);
-}
-
-bool Quirks::shouldDisableElementFullscreenQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // Vimeo.com has incorrect layout on iOS on certain videos with wider
-    // aspect ratios than the device's screen in landscape mode.
-    // (Ref: rdar://116531089)
-    // Instagram.com stories flow under the notch and status bar
-    // (Ref: rdar://121014613)
-    // x.com (Twitter) video embeds have controls that are too tiny and
-    // show page behind fullscreen.
-    // (Ref: rdar://121473410)
-    // YouTube.com does not provide AirPlay controls in fullscreen
-    // (Ref: rdar://121471373)
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk);
 }
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
@@ -527,43 +321,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 
     return behaviorAppliesToNode(QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk, dynamicDowncast<Node>(target));
 }
-
-// facebook.com rdar://174179871 tiktok.com rdar://174179805
-bool Quirks::shouldComputeSimulatedMouseEventMovementDelta() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldComputeSimulatedMouseEventMovementDeltaQuirk);
-}
-
-#if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
-bool Quirks::shouldAllowNativeTapsOnMediaElements(const Node* node) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return behaviorAppliesToNode(QuirkBehaviorID::ShouldAllowNativeTapsOnMediaElementsQuirk, node);
-}
 #endif
-
-#endif
-
-// live.com rdar://52116170
-// sharepoint.com rdar://52116170
-// maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
-bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAvoidResizingWhenInputViewBoundsChangeQuirk);
-}
-
-// mailchimp.com rdar://47868965
-bool Quirks::shouldDisablePointerEventsQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisablePointerEventsQuirk);
-}
 
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199587
 bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
@@ -582,20 +340,6 @@ bool Quirks::inputMethodUsesCorrectKeyEventOrder() const
     return false;
 }
 
-bool Quirks::inputMethodMustUseCompositionEvents() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::InputMethodMustUseCompositionEvents);
-}
-
-bool Quirks::shouldIgnoreInputModeNone() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldIgnoreInputModeNone);
-}
-
 // rdar://176981763
 bool Quirks::shouldAllowMixedContentConnectionToLoopback(const URL& url)
 {
@@ -604,138 +348,6 @@ bool Quirks::shouldAllowMixedContentConnectionToLoopback(const URL& url)
     if (auto address = IPAddress::fromString(url.host().toStringWithoutCopying()))
         return address->isLoopback();
     return false;
-}
-
-// FIXME: Remove after the site is fixed, <rdar://problem/50374200>
-// mail.google.com rdar://49403416
-bool Quirks::needsGMailOverflowScrollQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsGMailOverflowScrollQuirk);
-}
-
-// FIXME: Remove after the site is fixed, <rdar://problem/50374311>
-// youtube.com rdar://49582231
-bool Quirks::needsYouTubeOverflowScrollQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsYouTubeOverflowScrollQuirk);
-}
-
-// webex.com rdar://143715630
-bool Quirks::needsWebExScrollabilityQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsWebExScrollabilityQuirk);
-}
-// facebook.com https://webkit.org/b/295071
-// FIXME: https://webkit.org/b/295318
-bool Quirks::needsFacebookRemoveNotSupportedQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsFacebookRemoveNotSupportedQuirk);
-}
-
-// youtube.com rdar://135886305
-// NOTE: Also remove `BuilderConverter::convertScrollbarWidth` and related code when removing this quirk.
-bool Quirks::needsScrollbarWidthThinDisabledQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsScrollbarWidthThinDisabledQuirk);
-}
-
-// spotify.com rdar://138918575
-bool Quirks::needsBodyScrollbarWidthNoneDisabledQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk);
-}
-
-// airindiaexpress.com https://webkit.org/b/317375
-bool Quirks::needsAirIndiaExpressLayeringQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk);
-}
-
-// gizmodo.com rdar://102227302
-bool Quirks::needsFullscreenDisplayNoneQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsFullscreenDisplayNoneQuirk);
-}
-
-// cnn.com rdar://119640248
-bool Quirks::needsFullscreenObjectFitQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsFullscreenObjectFitQuirk);
-}
-
-// zomato.com <rdar://problem/128962778>
-bool Quirks::needsZomatoEmailLoginLabelQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsZomatoEmailLoginLabelQuirk);
-}
-
-// google.com/maps/embed rdar://184166392
-bool Quirks::needsGoogleMapsEmbedManipulationSurfaceQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsGoogleMapsEmbedManipulationSurfaceQuirk);
-}
-
-// maps.google.com rdar://67358928
-bool Quirks::needsGoogleMapsScrollingQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsGoogleMapsScrollingQuirk);
-}
-
-// translate.google.com rdar://106539018
-bool Quirks::needsGoogleTranslateScrollingQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsGoogleTranslateScrollingQuirk);
-}
-
-// netflix.com rdar://178545839
-bool Quirks::needsNetflixVolumeSliderQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsNetflixVolumeSliderQuirk);
-}
-
-// play.geforcenow.com https://webkit.org/b/303622
-// FIXME: Remove as soon as nvidia adjusts the site for Safari. https://webkit.org/b/303718
-bool Quirks::needsGeforcenowWarningDisplayNoneQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsGeforcenowWarningDisplayNoneQuirk);
-}
-
-// yahoo.com rdar://170502516
-bool Quirks::needsYahooVolumeSliderQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsYahooVolumeSliderQuirk);
 }
 
 // Kugou Music rdar://74602294
@@ -781,13 +393,6 @@ bool Quirks::shouldSilenceWindowResizeEventsDuringApplicationSnapshotting() cons
     return true;
 }
 
-bool Quirks::shouldDeferIntersectionObserversDuringResize() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDeferIntersectionObserversDuringResize);
-}
-
 bool Quirks::shouldSilenceMediaQueryListChangeEvents() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -802,68 +407,6 @@ bool Quirks::shouldSilenceMediaQueryListChangeEvents() const
         return false;
 
     return true;
-}
-
-// zillow.com rdar://53103732
-bool Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk);
-}
-
-// discord.com rdar://162719481
-bool Quirks::shouldUseLayoutViewportForClientRects() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldUseLayoutViewportForClientRectsQuirk);
-}
-
-// Some input only specify image/* as an acceptable type, which is failing sometimes for certains domain names
-// which do not support HEIC.
-bool Quirks::shouldTranscodeHeicImagesForURL(const URL& url)
-{
-    return urlHasQuirk(url, QuirkBehaviors::shouldTranscodeHeicImagesQuirk);
-}
-
-// att.com rdar://55185021
-bool Quirks::shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk);
-}
-
-// ralphlauren.com rdar://55629493
-bool Quirks::shouldIgnoreAriaForFastPathContentObservationCheck() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldIgnoreAriaForFastPathContentObservationCheckQuirk);
-}
-
-// wikipedia.org https://webkit.org/b/247636
-bool Quirks::shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk);
-}
-
-// slack.com rdar://138614711
-bool Quirks::shouldIgnoreViewportArgumentsToAvoidEnlargedView() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk);
-}
-
-// slack.com rdar://171190689
-bool Quirks::shouldUseDynamicViewportUnitsAsDefault() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldUseDynamicViewportUnitsAsDefaultQuirk);
 }
 
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199933
@@ -888,22 +431,6 @@ bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
     UNUSED_PARAM(stringToOpen);
     return false;
 #endif
-}
-
-// vimeo.com rdar://55759025
-bool Quirks::needsPreloadAutoQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsPreloadAutoQuirk);
-}
-
-// espn.com rdar://184169028
-bool Quirks::needsSuppressedPauseEventOnFullscreenExitQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsSuppressedPauseEventOnFullscreenExitQuirk);
 }
 
 // vimeo.com rdar://56996057
@@ -933,17 +460,6 @@ bool Quirks::shouldBypassBackForwardCache() const
     }
 
     return false;
-}
-
-// bungalow.com: rdar://61658940
-// sfusd.edu: rdar://116292738
-bool Quirks::shouldBypassAsyncScriptDeferring() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // Deferring 'mapbox-gl.js' script on bungalow.com causes the script to get in a bad state (rdar://problem/61658940).
-    // Deferring the google maps script on sfusd.edu may get the page in a bad state (rdar://116292738).
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldBypassAsyncScriptDeferring);
 }
 
 // smoothscroll JS library rdar://52712513
@@ -985,13 +501,6 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
     return false;
 }
 
-bool Quirks::shouldEnableFacebookFlagQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableFacebookFlagQuirk);
-}
-
 static Ref<Element> createFacebookFlagElement(Document& document, ASCIILiteral value)
 {
     Ref text = Text::create(document, makeString("{\"require\":[[\"HasteSupportData\",\"handle\",null,[{\"gkxData\":{\""_s, value, "\":{\"result\":true,\"hash\":null}}}]]]}"_s));
@@ -1026,63 +535,6 @@ Ref<NodeList> Quirks::applyFacebookFlagQuirk(Document& document, NodeList& nodeL
     return StaticElementList::create(WTF::move(elements));
 }
 
-bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableLegacyGetUserMediaQuirk);
-}
-
-// zoom.us rdar://118185086
-bool Quirks::shouldDisableImageCaptureQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableImageCaptureQuirk);
-}
-
-bool Quirks::shouldAllowMediaStreamTrackSerializationQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAllowMediaStreamTrackSerializationQuirk);
-}
-
-bool Quirks::shouldEnableCameraAndMicrophonePermissionStateQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableCameraAndMicrophonePermissionStateQuirk);
-}
-
-bool Quirks::shouldEnableRemoteTrackLabelQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableRemoteTrackLabelQuirk);
-}
-
-bool Quirks::shouldEnableCameraBackgroundPlayback() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableCameraBackgroundPlayback);
-}
-
-bool Quirks::shouldEnableSpeakerSelectionPermissionsPolicyQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableSpeakerSelectionPermissionsPolicyQuirk);
-}
-
-bool Quirks::shouldEnableEnumerateDeviceQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableEnumerateDeviceQuirk);
-}
-
 bool Quirks::shouldEnableRTCEncodedStreamsQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -1090,50 +542,11 @@ bool Quirks::shouldEnableRTCEncodedStreamsQuirk() const
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableRTCEncodedStreamsQuirk) && m_document && m_document->settings().rtcEncodedStreamsQuirkEnabled();
 }
 
-// FIXME: Remove this Quirk if Pinterest decides to trigger this notification from an user gesture (rdar://165745719)
-bool Quirks::shouldAllowNotificationPermissionWithoutUserGesture() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAllowNotificationPermissionWithoutUserGesture);
-}
-
-bool Quirks::shouldUnloadHeavyFrame() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldUnloadHeavyFrames);
-}
-
-// hulu.com rdar://55041979
-bool Quirks::needsCanPlayAfterSeekedQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsCanPlayAfterSeekedQuirk);
-}
-
-// wikipedia.org rdar://54856323
-bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // FIXME: We should consider replacing this with a heuristic to determine whether
-    // or not the edges of the page mostly lack content after shrinking to fit.
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk);
-}
-
 bool Quirks::shouldNotAutoUpgradeToHTTPSNavigation(const URL& url)
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     return shouldNotAutoUpgradeToHTTPSNavigationInternal(url);
-}
-
-// teams.microsoft.com https://bugs.webkit.org/show_bug.cgi?id=219505
-bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
-{
-    return urlHasQuirk(url, QuirkBehaviors::isMicrosoftTeamsRedirectURLQuirk);
 }
 
 // playstation.com - rdar://72062985
@@ -1281,91 +694,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }
 
-// facebook.com: rdar://67273166
-// forbes.com:
-// reddit.com: rdar://80550715
-// x.com: rdar://73369869
-bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // Facebook, X (twitter), and Reddit will naively pause a <video> element that has scrolled out of the viewport,
-    // regardless of whether that element is currently in PiP mode.
-    // We should remove the quirk once <rdar://problem/67273166>, <rdar://problem/73369869>, and <rdar://problem/80645747> have been fixed.
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::RequiresUserGestureToPauseInPictureInPictureQuirk);
-}
-
-// sports.yahoo.com: rdar://148284059
-bool Quirks::requiresUserGestureToPauseInFullscreenAfterOrientationChange() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk);
-}
-
-// youtube.com: rdar://178769976
-bool Quirks::requiresUserGestureToPlayInFullscreen() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::RequiresUserGestureToPlayInFullscreenQuirk);
-}
-
-// bbc.co.uk: rdar://126494734
-// bbc.com: rdar://157499149
-bool Quirks::returnNullPictureInPictureElementDuringFullscreenChange() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk);
-}
-
-// x.com: rdar://73369869
-bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // X (Twitter) will remove the "src" attribute of a <video> element that has scrolled out of the viewport and
-    // load the <video> element with an empty "src" regardless of whether that element is currently in PiP mode.
-    // We should remove the quirk once <rdar://problem/73369869> has been fixed.
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::RequiresUserGestureToLoadInPictureInPictureQuirk);
-}
-
-// vimeo.com: rdar://problem/70788878
-bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // Some sites (e.g., vimeo.com) do not set element's styles properly when a video
-    // returns to fullscreen from picture-in-picture. This quirk disables the "return to fullscreen
-    // from picture-in-picture" feature for those sites. We should remove the quirk once
-    // rdar://problem/73167931 has been fixed.
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::BlocksReturnToFullscreenFromPictureInPictureQuirk);
-}
-
-// vimeo.com: rdar://107592139
-bool Quirks::blocksEnteringStandardFullscreenFromPictureInPictureQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // Vimeo enters fullscreen when starting playback from the inline play button while already in PIP.
-    // This behavior is revealing a bug in the fullscreen handling. See rdar://107592139.
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::BlocksEnteringStandardFullscreenFromPictureInPictureQuirk);
-}
-
-// espn.com: rdar://problem/73227900
-// vimeo.com: rdar://problem/73227900
-bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    // This quirk disables the "webkitendfullscreen" event when a video enters picture-in-picture
-    // from fullscreen for the sites which cannot handle the event properly in that case.
-    // We should remove once the quirks have been fixed.
-    // <rdar://90393832> vimeo.com
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk);
-}
-
 // teams.live.com rdar://88678598
 // teams.microsoft.com rdar://90434296
 bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin)
@@ -1373,23 +701,6 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
     if (protocol != "msteams"_s)
         return false;
     return urlHasQuirk(requesterOrigin.toURL(), QuirkBehaviors::shouldAllowMSTeamsProtocolWithoutUserGestureQuirk);
-}
-
-// espn.com: rdar://problem/95651814
-bool Quirks::allowLayeredFullscreenVideos() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::AllowLayeredFullscreenVideos);
-}
-
-// x.com: rdar://132850672
-// FIXME (rdar://124579556): Remove once 'x.com' adjusts video handling for visionOS.
-bool Quirks::shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk);
 }
 
 // play.hbomax.com https://bugs.webkit.org/show_bug.cgi?id=244737
@@ -1403,87 +714,12 @@ bool Quirks::shouldEnableFontLoadingAPIQuirk() const
     return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnableFontLoadingAPIQuirk);
 }
 
-// play.hbomax.com rdar://158430821
-bool Quirks::shouldDisableAdSkippingInPip() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableAdSkippingInPip);
-}
-
-// hulu.com rdar://100199996
-bool Quirks::needsVideoShouldMaintainAspectRatioQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsVideoShouldMaintainAspectRatioQuirk);
-}
-
-// Marcus: <rdar://101086391>.
-// Pandora: <rdar://100243111>.
-// Soundcloud: <rdar://102913500>.
-bool Quirks::shouldExposeShowModalDialog() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldExposeShowModalDialog);
-}
-
-// marcus.com rdar://102959860
-bool Quirks::shouldNavigatorPluginsBeEmpty() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldNavigatorPluginsBeEmpty);
-}
-
-// Fix for the UNIQLO app (rdar://104519846).
-bool Quirks::shouldDisableLazyIframeLoadingQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableLazyIframeLoadingQuirk);
-}
-
-// Moon Player app (rdar://162452658): the app hides its WKWebView while continuing to display
-// the video layer it hosts, so page visibility does not indicate whether the video is on screen.
-// Tearing the layer down when the page becomes hidden leaves the app displaying a black frame.
-bool Quirks::shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk);
-}
-
 // reddit.com with Sink It extension (rdar://176377447) and apple.com/retail (rdar://181007316).
 bool Quirks::shouldDisableScrollAnchoringQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     return behaviorAppliesToDocument(QuirkBehaviorID::ShouldDisableScrollAnchoringQuirk);
-}
-
-// Breaks express checkout on victoriassecret.com (rdar://104818312).
-bool Quirks::shouldDisableFetchMetadata() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableFetchMetadata);
-}
-
-bool Quirks::shouldBlockFetchWithNewlineAndLessThan() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldBlockFetchWithNewlineAndLessThan);
-}
-
-// Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
-bool Quirks::shouldDisablePushStateFilePathRestrictions() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisablePushStateFilePathRestrictions);
 }
 
 // ungap/@custom-elements polyfill (rdar://problem/111008826).
@@ -1542,26 +778,6 @@ String Quirks::advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(c
     return "data:image/png;base64,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A"_s;
 }
 
-// DOFUS Touch app (rdar://112679186)
-bool Quirks::needsResettingTransitionCancelsRunningTransitionQuirk() const
-{
-#if PLATFORM(IOS_FAMILY)
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsResettingTransitionCancelsRunningTransitionQuirk);
-#else
-    return false;
-#endif
-}
-
-// Microsoft office online generates data URLs with incorrect padding on Safari only (rdar://114573089).
-bool Quirks::shouldDisableDataURLPaddingValidation() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableDataURLPaddingValidation);
-}
-
 bool Quirks::needsDisableDOMPasteAccessQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -1579,46 +795,6 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
         auto tableauPrepProperty = JSC::Identifier::fromString(vm, "tableauPrep"_s);
         return globalObject->hasProperty(globalObject, tableauPrepProperty);
     });
-}
-
-// rdar://133423460
-bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk);
-}
-
-// rdar://133423460
-bool Quirks::shouldFlipScreenDimensions() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldFlipScreenDimensionsQuirk);
-}
-
-// rdar://175565114
-bool Quirks::shouldAvoidProgrammaticScrollClamping() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAvoidProgrammaticScrollClampingQuirk);
-}
-
-// This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
-// to websites. In some cases, the website breaks in some ways, not expecting a touch interface for the website.
-// Controls not active or too small, form factor, etc. In this case it is better to send the iPad Mini UA.
-// FIXME: find the reference radars and/or bugs.webkit.org issues on why these were added in the first place.
-// FIXME: There is no check currently on needsQuirks(), this needs to be fixed so it makes it easier
-// to deactivate them for testing.
-bool Quirks::needsIPadMiniUserAgent(const URL& url)
-{
-    return urlHasQuirk(url, QuirkBehaviors::needsIPadMiniUserAgentQuirk);
-}
-
-bool Quirks::needsIPhoneUserAgent(const URL& url)
-{
-    return urlHasQuirk(url, QuirkBehaviors::needsIPhoneUserAgentQuirk);
 }
 
 std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const String& applicationNameForUserAgent, const String& currentUserAgent)
@@ -1661,18 +837,6 @@ bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
     if (request.isTopSite())
         return false;
     return urlHasQuirk(request.url(), QuirkBehaviors::needsPartitionedCookiesQuirk);
-}
-
-// premierleague.com: rdar://123721211
-bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
-{
-#if PLATFORM(IOS_FAMILY)
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldIgnorePlaysInlineRequirementQuirk);
-#else
-    return false;
-#endif
 }
 
 // m365.cloud.microsoft rdar://157794706
@@ -1748,14 +912,6 @@ String Quirks::standardUserAgentWithApplicationNameIncludingCompatOverrides(cons
 
 #endif
 
-// news.ycombinator.com: rdar://127246368
-bool Quirks::shouldIgnoreTextAutoSizing() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldIgnoreTextAutoSizingQuirk);
-}
-
 std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelectors(const URL& requestURL)
 {
 #if ENABLE(VISIBILITY_ADJUSTMENT_QUIRKS)
@@ -1795,77 +951,6 @@ Vector<String, 1> Quirks::scriptsToEvaluateBeforeRunningScriptFromURL(const URL&
     return scripts;
 }
 
-// disneyplus: rdar://137613110
-bool Quirks::shouldHideCoarsePointerCharacteristics() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldHideCoarsePointerCharacteristicsQuirk);
-}
-
-// hulu.com rdar://126096361
-bool Quirks::implicitMuteWhenVolumeSetToZero() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ImplicitMuteWhenVolumeSetToZero);
-}
-
-bool Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL& requestURL)
-{
-    return urlHasQuirk(requestURL, QuirkBehaviors::shouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk);
-}
-
-// netflix.com: rdar://155498882
-// soylent.*: rdar://113314067
-bool Quirks::shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick);
-}
-
-// hbomax.com: rdar://138424489
-bool Quirks::needsZeroMaxTouchPointsQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsZeroMaxTouchPointsQuirk);
-}
-
-// imdb.com: rdar://137991466
-bool Quirks::needsChromeMediaControlsPseudoElement() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsChromeMediaControlsPseudoElementQuirk);
-}
-
-// walmart.com: rdar://123734840
-// live.outlook.com: rdar://152277211
-// icloud.com: rdar://187710972
-bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return behaviorAppliesToNode(QuirkBehaviorID::MayNeedToIgnoreContentObservation, &targetNode);
-}
-
-bool Quirks::shouldHideSoftTopScrollEdgeEffectDuringFocus(const Element& focusedElement) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return behaviorAppliesToNode(QuirkBehaviorID::ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk, &focusedElement);
-}
-
-// cbssports.com <rdar://139478801>.
-bool Quirks::shouldSynthesizeTouchEventsAfterNonSyntheticClick(const Element& target) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return behaviorAppliesToNode(QuirkBehaviorID::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk, &target);
-}
-
 bool Quirks::needsChromeOSNavigatorUserAgentQuirk(const Document& document) const
 {
     constexpr auto id = QuirkBehaviorID::NeedsChromeOSNavigatorUserAgentQuirk;
@@ -1875,61 +960,6 @@ bool Quirks::needsChromeOSNavigatorUserAgentQuirk(const Document& document) cons
         return false;
 
     return m_quirksData.behaviorAppliesToURL(id, document.currentSourceURL());
-}
-
-// instagram.com: rdar://174936655
-bool Quirks::shouldSendFakeTouchForceChangeEvent() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSendFakeTouchForceChangeEvent);
-}
-
-// store.steampowered.com: rdar://142573562
-bool Quirks::shouldTreatAddingMouseOutEventListenerAsContentChange() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldTreatAddingMouseOutEventListenerAsContentChange);
-}
-
-// outlook.live.com: rdar://136624720
-bool Quirks::needsMozillaFileTypeForDataTransfer() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsMozillaFileTypeForDataTransferQuirk);
-}
-
-// spotify.com rdar://171119015
-bool Quirks::shouldLimitHLSPlaybackRate() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldLimitHLSPlaybackRate);
-}
-
-// nfl.com:
-bool Quirks::shouldSuppressHLSSubtitles() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSuppressHLSSubtitles);
-}
-
-// spotify.com: block additive audible playback (e.g. Home-page track previews) while another
-// audible media element is already playing in the document.
-bool Quirks::shouldBlockAudiblePlaybackWhileAudioIsPlaying() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldBlockAudiblePlaybackWhileAudioIsPlaying);
-}
-
-bool Quirks::shouldSuppressMediaSessionPauseActionOnInterruption() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSuppressMediaSessionPauseActionOnInterruption);
 }
 
 // spotify.com rdar://140707449
@@ -1946,25 +976,6 @@ bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node
     }
 
     return false;
-}
-
-#if HAVE(APPKIT_GESTURES_SUPPORT)
-
-// Outlook on the web: rdar://187832523
-bool Quirks::shouldTreatLongClickAsSecondaryClick(const Node& target) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return behaviorAppliesToNode(QuirkBehaviorID::ShouldTreatLongClickAsSecondaryClickQuirk, &target);
-}
-
-#endif
-
-bool Quirks::shouldReuseLiveRangeForSelectionUpdate() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsReuseLiveRangeForSelectionUpdateQuirk);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2045,17 +1056,6 @@ bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const
 #endif
 }
 
-// Expedia Group sites (hotels.com, expedia.*, orbitz.com, …) rdar://126631968
-bool Quirks::needsExpediaGroupAnimationQuirk(Element& element) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk))
-        return false;
-
-    return behaviorAppliesToNode(QuirkBehaviorID::NeedsExpediaGroupAnimationQuirk, &element);
-}
-
 // claude.ai rdar://162616694
 bool Quirks::needsClaudeSidebarViewportUnitQuirk(Element& element, const Style::ComputedStyle& style) const
 {
@@ -2076,19 +1076,6 @@ bool Quirks::needsClaudeSidebarViewportUnitQuirk(Element& element, const Style::
     }
 
     return false;
-}
-
-bool Quirks::needsHideSelectionDuringOverflowScrollQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsHideSelectionDuringOverflowScrollQuirk);
-}
-
-// outlook.live.com: rdar://151851274
-bool Quirks::shouldAllowTouchMoveToChangeSelection() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAllowTouchMoveToChangeSelectionQuirk);
 }
 
 // amazon.design rdar://175953409
@@ -2118,20 +1105,6 @@ bool Quirks::needsAmazonDesignMenuViewportUnitQuirk(const Style::ComputedStyle& 
     auto dynamicViewportHeight = protect(m_document->renderView())->sizeForCSSDynamicViewportUnits().height();
 
     return (resolvedPaddingTop + resolvedHeight) > dynamicViewportHeight;
-}
-
-bool Quirks::needsLimitedMatroskaSupport() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsLimitedMatroskaSupportQuirk);
-}
-
-bool Quirks::needsSupportsProgressMonitoring() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsSupportsProgressMonitoringQuirk);
 }
 
 // rdar://174779259.
@@ -2171,34 +1144,6 @@ void Quirks::clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, in
         for (auto cookieName : behavior.parameters->cookieNames)
             page->cookieJar().deleteCookie(*document, documentURL, cookieName, [] { });
     }
-}
-
-bool Quirks::needsCustomUserAgentData() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsCustomUserAgentData);
-}
-
-bool Quirks::needsNavigatorUserAgentDataQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsNavigatorUserAgentDataQuirk);
-}
-
-bool Quirks::needsNowPlayingFullscreenSwapQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsNowPlayingFullscreenSwapQuirk);
-}
-
-bool Quirks::needsSuppressPostLayoutBoundaryEventsQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsSuppressPostLayoutBoundaryEventsQuirk);
 }
 
 // tiktok.com rdar://149712691
@@ -2262,28 +1207,6 @@ bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const Styl
 #endif // ENABLE(VIDEO)
 }
 
-bool Quirks::needsWebKitMediaTextTrackDisplayQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsWebKitMediaTextTrackDisplayQuirk);
-}
-
-// rdar://138806698
-bool Quirks::shouldSupportHoverMediaQueries() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSupportHoverMediaQueriesQuirk);
-}
-
-bool Quirks::shouldRewriteMediaRangeRequestForURL(const URL& url) const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.behaviorAppliesToURL(QuirkBehaviorID::NeedsMediaRewriteRangeRequestQuirk, url);
-}
-
 // rdar://106770785
 bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effect) const
 {
@@ -2296,53 +1219,6 @@ bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effec
 
     Ref element = target->element;
     return behaviorAppliesToNode(QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk, element.ptr());
-}
-
-bool Quirks::shouldDisableThreadedAnimationsQuirk() const
-{
-    return needsQuirks() && m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableThreadedAnimationsQuirk);
-}
-
-bool Quirks::shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen);
-}
-
-bool Quirks::shouldDelayReloadWhenRegisteringServiceWorker() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDelayReloadWhenRegisteringServiceWorker);
-}
-
-bool Quirks::shouldDisableDOMAudioSessionQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDisableDOMAudioSession);
-}
-
-bool Quirks::shouldComparareUsedValuesForBorderWidthForTriggeringTransitions() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions);
-}
-
-bool Quirks::shouldReportVisibleDueToActivePictureInPictureContent() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldReportDocumentAsVisibleIfActivePIPQuirk);
-}
-
-bool Quirks::needsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk);
 }
 
 URL Quirks::topDocumentURL() const

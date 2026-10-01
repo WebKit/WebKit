@@ -28,6 +28,7 @@
 
 #include <WebCore/DocumentQuirks.h>
 #include <WebCore/NodeInlines.h>
+#include <WebCore/QuirkBehaviorDefinitions.h>
 #include <WebCore/QuirkSelectors.h>
 #include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>

@@ -2906,7 +2906,7 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
         return true;
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
-    if (document().quirks().shouldAllowNativeTapsOnMediaElements(this))
+    if (document().quirks().shouldAllowNativeTapsOnMediaElements(*this))
         return true;
 #endif
 
