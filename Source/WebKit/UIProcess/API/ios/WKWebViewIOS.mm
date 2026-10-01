@@ -3644,8 +3644,9 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
         return YES;
 #endif
 
-    NSNumber *isLocalKeyboard = [keyboardInfo valueForKey:UIKeyboardIsLocalUserInfoKey];
-    return isLocalKeyboard && !isLocalKeyboard.boolValue;
+    // Ignore keyboards owned by another app (isLocal == NO); reserving space for them
+    // displaces this page's fixed; bottom:0 content even though it is not our keyboard.
+    return NO;
 }
 
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification
@@ -3656,7 +3657,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification
 {
-    [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:NO];
+    if ([self _shouldUpdateKeyboardWithInfo:notification.userInfo])
+        [self _keyboardChangedWithInfo:notification.userInfo adjustScrollView:NO];
 }
 
 - (void)_keyboardWillShow:(NSNotification *)notification
