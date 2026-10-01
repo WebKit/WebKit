@@ -3,7 +3,7 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(libwebrtc_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/libwebrtc/DerivedSources")
 file(MAKE_DIRECTORY ${libwebrtc_DERIVED_SOURCES_DIR})
 
-enable_language(ASM)
+WEBKIT_ENABLE_LANGUAGE(ASM)
 
 add_definitions(-DLIBYUV_DISABLE_SME)
 add_definitions(-DLIBYUV_DISABLE_SVE)
@@ -3339,7 +3339,7 @@ if (WTF_CPU_X86_64)
     if (NOT APPLE)
         # Apple ports assemble the .asm sources with the in-tree yasm below,
         # matching the Xcode build. Everything else uses nasm.
-        enable_language(ASM_NASM)
+        WEBKIT_ENABLE_LANGUAGE(ASM_NASM)
         # Override the compile command to only pass nasm-compatible flags.
         set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <DEFINES> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
     endif ()

@@ -31,14 +31,6 @@
 
 #include <wtf/Platform.h>
 
-#if defined(__APPLE__)
-#ifdef __cplusplus
-#define NULL __null
-#else
-#define NULL ((void *)0)
-#endif
-#endif
-
 #include <ctype.h>
 #include <float.h>
 #include <locale.h>

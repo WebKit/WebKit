@@ -5,7 +5,7 @@ include(WebKitVersion)
 # match. Without this CMake compiles .mm as CXX, CMAKE_OBJCXX_FLAGS are
 # ignored, and WEBKIT_ADD_PREFIX_HEADER produces no OBJCXX precompiled
 # header for .mm sources.
-enable_language(OBJC OBJCXX)
+WEBKIT_ENABLE_LANGUAGE(OBJC OBJCXX)
 
 WEBKIT_OPTION_BEGIN()
 

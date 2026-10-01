@@ -16,6 +16,9 @@ endif ()
 
 project(WebKit LANGUAGES C CXX)
 
+# project() enables C and CXX; see WEBKIT_ENABLE_LANGUAGE for why this is reset.
+set(CMAKE_PCH_PROLOGUE "")
+
 # -----------------------------------------------------------------------------
 # Common configuration
 #------------------------------------------------------------------------------

@@ -251,6 +251,15 @@ macro(WEBKIT_ADD_SOURCE_DEPENDENCIES _source _deps)
     unset(_tmp)
 endmacro()
 
+# Wrapper around enable_language(). Enabling a C-family language resets
+# CMAKE_PCH_PROLOGUE to "#pragma clang system_header", which would hide
+# warnings in prefix headers. A macro, because enable_language() must be
+# called at file scope.
+macro(WEBKIT_ENABLE_LANGUAGE)
+    enable_language(${ARGN})
+    set(CMAKE_PCH_PROLOGUE "")
+endmacro()
+
 # Wrapper around target_precompile_headers().
 #
 # Swift sources are unaffected: with CMP0157 NEW (set in the top-level
