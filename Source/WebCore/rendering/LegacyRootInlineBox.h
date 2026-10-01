@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -78,7 +78,7 @@ public:
 
     void NODELETE removeLineBoxFromRenderObject() final;
 
-    FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
+    FontBaseline baselineType() const { return FontBaseline::Alphabetic; }
     
     LayoutUnit logicalTopVisualOverflow() const
     {

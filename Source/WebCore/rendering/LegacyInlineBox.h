@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -269,6 +269,12 @@ private:
             , m_knownToHaveNoOverflow(true)
             , m_determinedIfNextOnLineExists(false)
             , m_nextOnLineExists(false)
+            , m_hasTextChildren(false)
+            , m_hasTextDescendants(false)
+            , m_hasSelfPaintInlineBox(false)
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+            , m_hasBadChildList(false)
+#endif
         {
         }
 
@@ -308,9 +314,18 @@ private:
     public:
         bool nextOnLineExists() const { return m_nextOnLineExists; }
         void setNextOnLineExists(bool nextOnLineExists) const { m_nextOnLineExists = nextOnLineExists; }
+
+        // for LegacyInlineFlowBox
+        ADD_BOOLEAN_BITFIELD(hasTextChildren, HasTextChildren);
+        ADD_BOOLEAN_BITFIELD(hasTextDescendants, HasTextDescendants);
+        ADD_BOOLEAN_BITFIELD(hasSelfPaintInlineBox, HasSelfPaintInlineBox);
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        ADD_BOOLEAN_BITFIELD(hasBadChildList, HasBadChildList);
+#endif
     };
 #undef ADD_BOOLEAN_BITFIELD
 
+protected:
     InlineBoxBitfields m_bitfields;
 
 protected:
