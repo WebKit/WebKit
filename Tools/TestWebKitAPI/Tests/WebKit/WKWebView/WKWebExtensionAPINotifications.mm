@@ -84,6 +84,9 @@ TEST_F(WKWebExtensionAPINotifications, APIsAvailableWhenPermissionGranted)
         @"browser.test.assertFalse(browser.notifications.clear === undefined)",
         @"browser.test.assertFalse(browser.notifications.getAll === undefined)",
         @"browser.test.assertFalse(browser.notifications.getPermissionLevel === undefined)",
+        @"browser.test.assertFalse(browser.notifications.onClicked === undefined)",
+        @"browser.test.assertFalse(browser.notifications.onButtonClicked === undefined)",
+        @"browser.test.assertFalse(browser.notifications.onClosed === undefined)",
         @"browser.test.notifyPass()",
     ];
 
@@ -434,6 +437,147 @@ TEST_F(WKWebExtensionAPINotifications, GetPermissionLevelRejectsWhenBrowserRepor
     ];
 
     Util::loadAndRunExtension(notificationsManifest, @{ @"background.js": Util::constructScript(script) }, notificationsConfig);
+}
+
+TEST_F(WKWebExtensionAPINotifications, ClickedEvent)
+{
+    auto *script = @[
+        @"browser.notifications.onClicked.addListener((identifier) => {",
+        @"  browser.test.assertEq(identifier, 'note')",
+        @"  browser.test.notifyPass()",
+        @"})",
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"browser.test.sendMessage('Created')",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Created"];
+
+    [manager.get().context _didClickNotificationWithIdentifier:@"note"];
+
+    [manager run];
+}
+
+TEST_F(WKWebExtensionAPINotifications, ButtonClickedEvent)
+{
+    auto *script = @[
+        @"browser.notifications.onButtonClicked.addListener((identifier, buttonIndex) => {",
+        @"  browser.test.assertEq(identifier, 'note')",
+        @"  browser.test.assertEq(buttonIndex, 1)",
+        @"  browser.test.notifyPass()",
+        @"})",
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M', buttons: [ { title: 'First' }, { title: 'Second' } ] })",
+        @"browser.test.sendMessage('Created')",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Created"];
+
+    [manager.get().context _didClickButtonAtIndex:1 forNotificationWithIdentifier:@"note"];
+
+    [manager run];
+}
+
+TEST_F(WKWebExtensionAPINotifications, ClosedEventRemovesNotification)
+{
+    auto *script = @[
+        @"browser.notifications.onClosed.addListener(async (identifier, byUser) => {",
+        @"  browser.test.assertEq(identifier, 'note')",
+        @"  browser.test.assertTrue(byUser)",
+        @"  const all = await browser.notifications.getAll()",
+        @"  browser.test.assertFalse('note' in all, 'closed notification should no longer appear in getAll()')",
+        @"  browser.test.notifyPass()",
+        @"})",
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"browser.test.sendMessage('Created')",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Created"];
+
+    [manager.get().context _didCloseNotificationWithIdentifier:@"note" byUser:YES];
+
+    [manager run];
+}
+
+TEST_F(WKWebExtensionAPINotifications, EventsIgnoreUntrackedNotifications)
+{
+    auto *script = @[
+        @"browser.notifications.onClicked.addListener(() => browser.test.notifyFail('onClicked should not fire'))",
+        @"browser.notifications.onButtonClicked.addListener(() => browser.test.notifyFail('onButtonClicked should not fire'))",
+        @"browser.notifications.onClosed.addListener(() => browser.test.notifyFail('onClosed should not fire'))",
+        @"browser.test.onMessage.addListener((message) => {",
+        @"  if (message === 'Finish')",
+        @"    browser.test.notifyPass()",
+        @"})",
+        @"await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M', buttons: [ { title: 'Only' } ] })",
+        @"await browser.notifications.create('cleared', { type: 'basic', title: 'T', message: 'M' })",
+        @"await browser.notifications.clear('cleared')",
+        @"browser.test.sendMessage('Ready')",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+    manager.get().internalDelegate.clearNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Ready"];
+
+    auto *context = manager.get().context;
+    [context _didClickNotificationWithIdentifier:@"does-not-exist"];
+    [context _didClickButtonAtIndex:0 forNotificationWithIdentifier:@"does-not-exist"];
+    [context _didClickButtonAtIndex:1 forNotificationWithIdentifier:@"note"];
+    [context _didCloseNotificationWithIdentifier:@"cleared" byUser:YES];
+    [context _didCloseNotificationWithIdentifier:@"does-not-exist" byUser:NO];
+
+    [manager sendTestMessage:@"Finish"];
+
+    [manager run];
+}
+
+TEST_F(WKWebExtensionAPINotifications, ClickedEventWakesBackgroundContent)
+{
+    auto *script = @[
+        @"browser.notifications.onClicked.addListener((identifier) => {",
+        @"  browser.test.assertEq(identifier, 'note')",
+        @"  browser.test.notifyPass()",
+        @"})",
+        @"const all = await browser.notifications.getAll()",
+        @"if (!('note' in all)) {",
+        @"  await browser.notifications.create('note', { type: 'basic', title: 'T', message: 'M' })",
+        @"  browser.test.sendMessage('Created')",
+        @"}",
+    ];
+
+    auto manager = getManagerFor(script);
+
+    manager.get().internalDelegate.presentNotification = ^(_WKWebExtensionNotification *) { };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Created"];
+
+    [manager.get().context _unloadBackgroundContentForTesting];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !manager.get().context._backgroundWebView;
+    }));
+
+    [manager.get().context _didClickNotificationWithIdentifier:@"note"];
+
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

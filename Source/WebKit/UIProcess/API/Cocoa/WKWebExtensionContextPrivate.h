@@ -89,6 +89,30 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  */
 - (nullable _WKWebExtensionSidebar *)sidebarForTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(sidebar(for:));
 
+/*!
+ @abstract Should be called by the app when the user activates the body of a notification presented for the extension.
+ @param identifier The identifier of the ``_WKWebExtensionNotification`` that was activated.
+ @discussion This fires the `browser.notifications.onClicked` event. It has no effect if the extension has no notification with the identifier.
+ */
+- (void)_didClickNotificationWithIdentifier:(NSString *)identifier;
+
+/*!
+ @abstract Should be called by the app when the user activates an action button on a notification presented for the extension.
+ @param buttonIndex The index of the activated button within the notification's ``_WKWebExtensionNotification.buttons`` array.
+ @param identifier The identifier of the ``_WKWebExtensionNotification`` whose button was activated.
+ @discussion This fires the `browser.notifications.onButtonClicked` event. It has no effect if the extension has no notification with the identifier, or if the index is out of range.
+ */
+- (void)_didClickButtonAtIndex:(NSUInteger)buttonIndex forNotificationWithIdentifier:(NSString *)identifier;
+
+/*!
+ @abstract Should be called by the app when a notification presented for the extension is closed.
+ @param identifier The identifier of the ``_WKWebExtensionNotification`` that was closed.
+ @param byUser Whether the user dismissed the notification, as opposed to it being closed by the system.
+ @discussion This fires the `browser.notifications.onClosed` event and forgets the notification. It has no effect if the extension has no notification with the identifier.
+ The app should not call this in response to ``WKWebExtensionControllerDelegatePrivate`` asking it to clear a notification.
+ */
+- (void)_didCloseNotificationWithIdentifier:(NSString *)identifier byUser:(BOOL)byUser;
+
 /*! @abstract Whether the extension context has access to file:// URLs.
  @discussion When YES, the extension can inject content into and interact with file:// pages. Defaults to NO. */
 @property (nonatomic, setter=_setHasAccessToFileURLs:) BOOL _hasAccessToFileURLs;

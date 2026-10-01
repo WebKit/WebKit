@@ -51,10 +51,12 @@ public:
 
     WebExtensionAPIEvent& onClicked();
     WebExtensionAPIEvent& onButtonClicked();
+    WebExtensionAPIEvent& onClosed();
 
 private:
     const RefPtr<WebExtensionAPIEvent> m_onClicked;
     const RefPtr<WebExtensionAPIEvent> m_onButtonClicked;
+    const RefPtr<WebExtensionAPIEvent> m_onClosed;
 #endif
 };
 

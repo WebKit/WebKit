@@ -41,7 +41,7 @@ static constexpr auto lastSeenBaseURLStateKey = "LastSeenBaseURL"_s;
 static constexpr auto lastSeenDisplayNameStateKey = "LastSeenDisplayName"_s;
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
-static constexpr auto currentBackgroundContentListenerStateVersion = 4;
+static constexpr auto currentBackgroundContentListenerStateVersion = 5;
 
 static gboolean onDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision *decision, WebKitPolicyDecisionType type, WebKit::WebExtensionContext* context)
 {

@@ -200,6 +200,13 @@ private:
     // Menus
     void dispatchMenusClickedEvent(const WebExtensionMenuItemParameters&, bool wasChecked, const WebExtensionMenuItemContextParameters&, const std::optional<WebExtensionTabParameters>&);
 
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+    // Notifications
+    void dispatchNotificationsClickedEvent(const String& identifier);
+    void dispatchNotificationsButtonClickedEvent(const String& identifier, uint64_t buttonIndex);
+    void dispatchNotificationsClosedEvent(const String& identifier, bool byUser);
+#endif
+
     // Permissions
     void updateGrantedPermissions(PermissionsMap&&);
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);

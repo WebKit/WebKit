@@ -71,6 +71,13 @@ messages -> WebExtensionContextProxy {
     // Menus
     DispatchMenusClickedEvent(struct WebKit::WebExtensionMenuItemParameters menuItemParameters, bool wasChecked, struct WebKit::WebExtensionMenuItemContextParameters contextParameters, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
 
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+    // Notifications
+    DispatchNotificationsClickedEvent(String identifier)
+    DispatchNotificationsButtonClickedEvent(String identifier, uint64_t buttonIndex)
+    DispatchNotificationsClosedEvent(String identifier, bool byUser)
+#endif
+
     // Permissions
     UpdateGrantedPermissions(HashMap<String, WallTime> permissions)
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)

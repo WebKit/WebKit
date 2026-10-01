@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
 
 #import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionController.h"
 #import "WebExtensionPermission.h"
 #import "WebExtensionUtilities.h"
@@ -202,6 +203,44 @@ void WebExtensionContext::notificationsGetPermissionLevel(CompletionHandler<void
 
         completionHandler(String { mayPresent ? "granted"_s : "denied"_s });
     }).get()];
+}
+
+void WebExtensionContext::fireNotificationsClickedEventIfNeeded(const String& identifier)
+{
+    if (!m_notifications.contains(identifier))
+        return;
+
+    constexpr auto type = WebExtensionEventListenerType::NotificationsOnClicked;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchNotificationsClickedEvent(identifier));
+    });
+}
+
+void WebExtensionContext::fireNotificationsButtonClickedEventIfNeeded(const String& identifier, size_t buttonIndex)
+{
+    auto entry = m_notifications.find(identifier);
+    if (entry == m_notifications.end())
+        return;
+
+    auto& buttons = entry->value.buttons;
+    if (!buttons || buttonIndex >= buttons->size())
+        return;
+
+    constexpr auto type = WebExtensionEventListenerType::NotificationsOnButtonClicked;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchNotificationsButtonClickedEvent(identifier, buttonIndex));
+    });
+}
+
+void WebExtensionContext::fireNotificationsClosedEventIfNeeded(const String& identifier, UserTriggered userTriggered)
+{
+    if (!m_notifications.remove(identifier))
+        return;
+
+    constexpr auto type = WebExtensionEventListenerType::NotificationsOnClosed;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchNotificationsClosedEvent(identifier, userTriggered == UserTriggered::Yes));
+    });
 }
 
 }

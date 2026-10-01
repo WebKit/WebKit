@@ -36,10 +36,14 @@
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPIKeys.h"
+#import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionContextProxy.h"
 #import "WebExtensionNotificationParameters.h"
 #import "WebExtensionUtilities.h"
+#import "WebFrame.h"
 #import "WebProcess.h"
+#import <WebCore/LocalFrameInlines.h>
 #import <wtf/UUID.h>
 
 namespace WebKit {
@@ -205,6 +209,54 @@ WebExtensionAPIEvent& WebExtensionAPINotifications::onButtonClicked()
 
     return *m_onButtonClicked;
 }
+
+WebExtensionAPIEvent& WebExtensionAPINotifications::onClosed()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClosed
+
+    if (!m_onClosed)
+        lazyInitialize(m_onClosed, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::NotificationsOnClosed));
+
+    return *m_onClosed;
+}
+
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+
+void WebExtensionContextProxy::dispatchNotificationsClickedEvent(const String& identifier)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClicked
+
+    RetainPtr nsIdentifier = identifier.createNSString();
+    enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
+        RefPtr coreFrame = frame.coreLocalFrame();
+        WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, protect(coreFrame ? coreFrame->document() : nullptr));
+        namespaceObject.notifications().onClicked().invokeListenersWithArgument(nsIdentifier.get());
+    });
+}
+
+void WebExtensionContextProxy::dispatchNotificationsButtonClickedEvent(const String& identifier, uint64_t buttonIndex)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onButtonClicked
+
+    RetainPtr nsIdentifier = identifier.createNSString();
+    enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
+        RefPtr coreFrame = frame.coreLocalFrame();
+        WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, protect(coreFrame ? coreFrame->document() : nullptr));
+        namespaceObject.notifications().onButtonClicked().invokeListenersWithArgument(nsIdentifier.get(), @(buttonIndex));
+    });
+}
+
+void WebExtensionContextProxy::dispatchNotificationsClosedEvent(const String& identifier, bool byUser)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClosed
+
+    RetainPtr nsIdentifier = identifier.createNSString();
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.notifications().onClosed().invokeListenersWithArgument(nsIdentifier.get(), @(byUser));
+    });
+}
+
+#endif
 
 } // namespace WebKit
 

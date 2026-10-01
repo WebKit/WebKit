@@ -616,6 +616,12 @@ public:
 
     CocoaMenuItem *singleMenuItemOrExtensionItemWithSubmenu(const WebExtensionMenuItemContextParameters&) const;
 
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+    void fireNotificationsClickedEventIfNeeded(const String& identifier);
+    void fireNotificationsButtonClickedEventIfNeeded(const String& identifier, size_t buttonIndex);
+    void fireNotificationsClosedEventIfNeeded(const String& identifier, UserTriggered);
+#endif
+
 #if PLATFORM(MAC)
     void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
 #endif

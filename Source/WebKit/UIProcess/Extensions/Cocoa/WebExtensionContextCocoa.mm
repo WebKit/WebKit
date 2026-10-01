@@ -127,7 +127,7 @@ static NSString * const sessionStorageAllowedInContentScriptsKey = @"SessionStor
 static NSString * const storageAccessLevelsKey = @"StorageAccessLevels";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
-static constexpr NSInteger currentBackgroundContentListenerStateVersion = 4;
+static constexpr NSInteger currentBackgroundContentListenerStateVersion = 5;
 
 // Update this value when any changes are made to the rule translation logic in _WKWebExtensionDeclarativeNetRequestRule.
 static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 7;

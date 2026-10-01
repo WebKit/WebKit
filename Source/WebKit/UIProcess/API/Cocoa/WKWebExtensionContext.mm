@@ -910,6 +910,41 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> NODELETE toI
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+- (void)_didClickNotificationWithIdentifier:(NSString *)identifier
+{
+    NSParameterAssert([identifier isKindOfClass:NSString.class]);
+
+    protect(*_webExtensionContext)->fireNotificationsClickedEventIfNeeded(identifier);
+}
+
+- (void)_didClickButtonAtIndex:(NSUInteger)buttonIndex forNotificationWithIdentifier:(NSString *)identifier
+{
+    NSParameterAssert([identifier isKindOfClass:NSString.class]);
+
+    protect(*_webExtensionContext)->fireNotificationsButtonClickedEventIfNeeded(identifier, buttonIndex);
+}
+
+- (void)_didCloseNotificationWithIdentifier:(NSString *)identifier byUser:(BOOL)byUser
+{
+    NSParameterAssert([identifier isKindOfClass:NSString.class]);
+
+    protect(*_webExtensionContext)->fireNotificationsClosedEventIfNeeded(identifier, byUser ? WebKit::WebExtensionContext::UserTriggered::Yes : WebKit::WebExtensionContext::UserTriggered::No);
+}
+#else
+- (void)_didClickNotificationWithIdentifier:(NSString *)identifier
+{
+}
+
+- (void)_didClickButtonAtIndex:(NSUInteger)buttonIndex forNotificationWithIdentifier:(NSString *)identifier
+{
+}
+
+- (void)_didCloseNotificationWithIdentifier:(NSString *)identifier byUser:(BOOL)byUser
+{
+}
+#endif
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -1333,6 +1368,18 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> NODELETE toI
 - (_WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
 {
     return nil;
+}
+
+- (void)_didClickNotificationWithIdentifier:(NSString *)identifier
+{
+}
+
+- (void)_didClickButtonAtIndex:(NSUInteger)buttonIndex forNotificationWithIdentifier:(NSString *)identifier
+{
+}
+
+- (void)_didCloseNotificationWithIdentifier:(NSString *)identifier byUser:(BOOL)byUser
+{
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
