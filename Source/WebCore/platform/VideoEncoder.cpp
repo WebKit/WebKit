@@ -30,6 +30,9 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 #include "LibWebRTCVPXVideoEncoder.h"
+#if ENABLE(AV1)
+#include "AV1Utilities.h"
+#endif
 #endif
 
 #if USE(GSTREAMER)
@@ -78,6 +81,11 @@ void VideoEncoder::createLocalEncoder(const String& codecName, const Config& con
     }
 #if ENABLE(AV1)
     if (codecName.startsWith("av01."_s)) {
+        auto parameters = parseAV1CodecParameters(codecName);
+        if (!parameters || parameters->bitDepth != 8 || parameters->monochrome || parameters->chromaSubsampling < static_cast<uint8_t>(AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown)) {
+            callback(makeUnexpected("AV1 encoding only supports 8-bit 4:2:0"_s));
+            return;
+        }
         LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::AV1, config, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(outputCallback));
         return;
     }
