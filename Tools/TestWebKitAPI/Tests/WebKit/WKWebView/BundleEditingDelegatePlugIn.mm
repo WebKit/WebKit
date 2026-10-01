@@ -47,6 +47,7 @@
     BOOL _editingDelegateShouldInsertText;
     BOOL _shouldOverridePerformTwoStepDrop;
     BOOL _shouldWriteEmptyData;
+    BOOL _shouldReplaceAttachments;
 }
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
@@ -64,6 +65,7 @@
 
     _shouldWriteEmptyData = [[plugInController.parameters valueForKey:@"EditingDelegateShouldWriteEmptyData"] boolValue];
     _shouldOverridePerformTwoStepDrop = [[plugInController.parameters valueForKey:@"BundleOverridePerformTwoStepDrop"] boolValue];
+    _shouldReplaceAttachments = [[plugInController.parameters valueForKey:@"EditingDelegateShouldReplaceAttachments"] boolValue];
 
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleEditingDelegateProtocol)];
     _remoteObject = [browserContextController._remoteObjectRegistry remoteObjectProxyWithInterface:interface];
@@ -86,6 +88,19 @@
 
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range
 {
+    if (_shouldReplaceAttachments) {
+        // Take every attachment out of the document and put it back, like clients that serialize markup with
+        // placeholders in place of attachments.
+        [[range.frame jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]] evaluateScript:@"(() => {"
+            "const attachments = [...document.querySelectorAll('attachment')];"
+            "const placeholders = attachments.map(attachment => {"
+            "    const placeholder = document.createElement('span');"
+            "    attachment.replaceWith(placeholder);"
+            "    return placeholder;"
+            "});"
+            "placeholders.forEach((placeholder, index) => placeholder.replaceWith(attachments[index]));"
+            "})()"];
+    }
     return @{ @"org.webkit.data" : [(_shouldWriteEmptyData ? @"" : @"hello") dataUsingEncoding:NSASCIIStringEncoding] };
 }
 
