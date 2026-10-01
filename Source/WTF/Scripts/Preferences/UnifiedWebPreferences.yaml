@@ -2644,6 +2644,15 @@ HTMLEnhancedSelectMultipleAndListBoxEnabled:
   humanReadableDescription: "Enable enhanced HTML select element for the multiple attribute and for list box rendering"
   defaultValue: false
 
+HTMLEnhancedSelectMultipleDropdownBoxEnabled:
+  type: bool
+  status: testable
+  category: dom
+  condition: PLATFORM(MAC)
+  humanReadableName: "Enhanced HTML select element for multiple dropdown box"
+  humanReadableDescription: "Render a select element with the multiple attribute and a size of 1 as a dropdown box"
+  defaultValue: false
+
 HTMLEnhancedSelectParsingEnabled:
   type: bool
   status: stable

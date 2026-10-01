@@ -1,0 +1,116 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true HTMLEnhancedSelectMultipleDropdownBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<select multiple size="1" id="select">
+    <option selected>One</option>
+    <option>Two</option>
+    <option selected>Three</option>
+</select>
+<select multiple id="listBox">
+    <option>Four</option>
+    <option>Five</option>
+</select>
+<script>
+jsTestIsAsync = true;
+
+events = [];
+select.addEventListener("input", () => events.push("input"));
+select.addEventListener("change", () => events.push("change"));
+
+function selectedValues()
+{
+    return Array.from(select.selectedOptions, option => option.value).join();
+}
+
+function buttonText()
+{
+    return internals.shadowRoot(select).querySelector("slot[name=buttonSlot]").firstElementChild.textContent.trim();
+}
+
+async function openPicker()
+{
+    await UIHelper.activateElement(select);
+    if (!internals.isSelectPopupVisible(select))
+        return false;
+    await UIHelper.waitForMenuToShow();
+    return true;
+}
+
+async function checkedRowsInPicker()
+{
+    const rows = [];
+    for (let i = 0; i < select.options.length; ++i)
+        rows.push(await UIHelper.selectFormAccessoryHasCheckedItemAtRow(i));
+    return rows.join();
+}
+
+async function chooseRow(row)
+{
+    const changed = new Promise(resolve => select.addEventListener("change", resolve, { once: true }));
+    await UIHelper.selectFormAccessoryPickerRow(row);
+    await changed;
+    await UIHelper.waitForMenuToHide();
+}
+
+async function dismissPicker()
+{
+    await new Promise(resolve => testRunner.runUIScript("uiController.dismissFormAccessoryView()", resolve));
+    await UIHelper.waitForMenuToHide();
+    await UIHelper.ensurePresentationUpdate();
+}
+
+addEventListener("load", async () => {
+    description("Tests that a select element with the multiple attribute and a size of 1 is a dropdown box whose menu checks every selected option, and that choosing an option toggles it.");
+
+    shouldBeEqualToString("buttonText()", "2 Items");
+
+    debug("\nOpen the picker.");
+    popupVisible = await openPicker();
+    shouldBeTrue("popupVisible");
+    if (!popupVisible) {
+        finishJSTest();
+        return;
+    }
+    checkedRows = await checkedRowsInPicker();
+    shouldBeEqualToString("checkedRows", "true,false,true");
+
+    debug("\nChoose an option that is not selected.");
+    await chooseRow(1);
+    shouldBeEqualToString("selectedValues()", "One,Two,Three");
+    shouldBeEqualToString("events.join()", "input,change");
+    shouldBeFalse("internals.isSelectPopupVisible(select)");
+    shouldBeEqualToString("buttonText()", "3 Items");
+
+    debug("\nChoose an option that is selected.");
+    events = [];
+    await openPicker();
+    checkedRows = await checkedRowsInPicker();
+    shouldBeEqualToString("checkedRows", "true,true,true");
+    await chooseRow(0);
+    shouldBeEqualToString("selectedValues()", "Two,Three");
+    shouldBeEqualToString("events.join()", "input,change");
+    shouldBeEqualToString("buttonText()", "2 Items");
+
+    debug("\nDismiss the picker without choosing an option.");
+    events = [];
+    await openPicker();
+    checkedRows = await checkedRowsInPicker();
+    shouldBeEqualToString("checkedRows", "false,true,true");
+    await dismissPicker();
+    shouldBeEqualToString("selectedValues()", "Two,Three");
+    shouldBeEqualToString("events.join()", "");
+    shouldBeFalse("internals.isSelectPopupVisible(select)");
+
+    debug("\nWithout a size attribute it is still a list box.");
+    await UIHelper.activateElement(listBox);
+    shouldBeFalse("internals.isSelectPopupVisible(listBox)");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

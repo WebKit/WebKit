@@ -70,6 +70,10 @@ private:
 
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 
+    void dismissFormAccessoryView() final;
+    void selectFormAccessoryPickerRow(long) final;
+    bool selectFormAccessoryHasCheckedItemAtRow(long) const final;
+
     void activateAtPoint(long x, long y, JSValueRef callback) override;
 
     void sendEventStream(JSStringRef, JSValueRef) override;

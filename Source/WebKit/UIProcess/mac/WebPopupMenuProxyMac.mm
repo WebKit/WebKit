@@ -64,6 +64,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
         lazyInitialize(m_popup, adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]));
         [m_popup setUsesItemFromMenu:NO];
         [m_popup setAutoenablesItems:NO];
+        [m_popup setAltersStateOfSelectedItem:NO];
     }
 
     int size = items.size();
@@ -98,6 +99,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
             // but typeahead will use the non-attributed string that doesn't contain any leading or trailing whitespace.
             [menuItem setTitle:[retainPtr([string string]) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
             [menuItem setEnabled:items[i].m_isEnabled];
+            [menuItem setState:items[i].m_isSelected ? NSControlStateValueOn : NSControlStateValueOff];
             [menuItem setToolTip:items[i].m_toolTip.createNSString().get()];
         }
     }
