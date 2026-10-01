@@ -1417,7 +1417,7 @@ void Navigation::runNavigatePrecommitHandlers(NavigateEvent& event, NavigationAP
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
-Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
+Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement, std::optional<NavigateEventIdentifier> identifier)
 {
     if (hasEntriesAndEventsDisabled()) {
         ASSERT(m_methodTrackers.isEmpty());
@@ -1509,7 +1509,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     if (apiMethodTracker)
         apiMethodTracker->info().clear();
 
-    Ref event = NavigateEvent::create(WTF::move(world), eventNames().navigateEvent, WTF::move(init), abortController.get());
+    Ref event = NavigateEvent::create(WTF::move(world), eventNames().navigateEvent, WTF::move(init), abortController.get(), identifier);
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
@@ -1589,7 +1589,7 @@ Navigation::DispatchResult Navigation::dispatchTraversalNavigateEvent(HistoryIte
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-push/replace/reload-navigate-event
-bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
+bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement, std::optional<NavigateEventIdentifier> identifier)
 {
     Ref destination = NavigationDestination::create(url, nullptr, isSameDocument);
     if (classicHistoryAPIState)
@@ -1600,7 +1600,7 @@ bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, Navigati
         sourceElement = nullptr;
     }
 
-    return innerDispatchNavigateEvent(navigationType, WTF::move(destination), { }, formState, classicHistoryAPIState, sourceElement) == DispatchResult::Completed;
+    return innerDispatchNavigateEvent(navigationType, WTF::move(destination), { }, formState, classicHistoryAPIState, sourceElement, identifier) == DispatchResult::Completed;
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-download-request-navigate-event

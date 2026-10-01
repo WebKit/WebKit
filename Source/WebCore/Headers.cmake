@@ -1939,6 +1939,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/LocalFrameLoaderClient.h
     loader/MediaResourceLoader.h
     loader/MixedContentChecker.h
+    loader/NavigateEventIdentifier.h
     loader/NavigationAction.h
     loader/NavigationIdentifier.h
     loader/NavigationRequester.h
@@ -1947,7 +1948,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/OriginAgentClusterPolicy.h
     loader/PCMSites.h
     loader/PCMTokens.h
-    loader/PendingNavigateEventIdentifier.h
     loader/PingLoader.h
     loader/PolicyChecker.h
     loader/PolicyContainer.h

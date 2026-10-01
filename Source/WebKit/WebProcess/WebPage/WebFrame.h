@@ -44,7 +44,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/MarkupExclusionRule.h>
-#include <WebCore/PendingNavigateEventIdentifier.h>
+#include <WebCore/NavigateEventIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ShareableBitmap.h>
@@ -164,7 +164,7 @@ public:
     PolicyListenerIdentifier setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, PolicyCheckKind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument = { }, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader = { });
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(PolicyListenerIdentifier, PolicyDecision&&);
-    bool dispatchPendingNavigateEventAfterNavigationPolicy(WebCore::PendingNavigateEventIdentifier);
+    bool dispatchPendingNavigateEventAfterNavigationPolicy(WebCore::NavigateEventIdentifier);
 
     void didFinishLoadInAnotherProcess();
     void removeFromTree();

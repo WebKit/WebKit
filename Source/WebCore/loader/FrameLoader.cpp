@@ -1765,9 +1765,9 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (isSameOrigin && newLoadType != FrameLoadType::Reload && !frameLoadRequest.isInitialFrameSrcLoad()) {
         // FIXME: Ideally, we'd call dispatchNavigateEvent() directly from continueLoadAfterNavigationPolicy()
         // instead of storing a lambda on the NavigationAction.
-        action.setPendingDispatchNavigateEvent([weakThis = WeakPtr { *this }, newLoadType, frameLoadRequest, formState, event = RefPtr { event }] {
+        action.setPendingDispatchNavigateEvent([weakThis = WeakPtr { *this }, newLoadType, frameLoadRequest, formState, event = RefPtr { event }] (NavigateEventIdentifier identifier) {
             RefPtr protectedThis = weakThis.get();
-            return protectedThis && protectedThis->dispatchNavigateEvent(newLoadType, frameLoadRequest, false, formState.get(), event.get());
+            return protectedThis && protectedThis->dispatchNavigateEvent(newLoadType, frameLoadRequest, false, formState.get(), event.get(), nullptr, identifier);
         });
     }
 
@@ -4220,7 +4220,7 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
     m_quickRedirectComing = false;
 }
 
-bool FrameLoader::dispatchPendingNavigateEventAfterNavigationPolicy(PendingNavigateEventIdentifier identifier)
+bool FrameLoader::dispatchPendingNavigateEventAfterNavigationPolicy(NavigateEventIdentifier identifier)
 {
     RefPtr policyDocumentLoader = m_policyDocumentLoader;
     if (!policyDocumentLoader)
@@ -4601,7 +4601,7 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
     return frame;
 }
 
-bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadRequest& request, bool isSameDocument, FormState* formState, Event* event, SerializedScriptValue* classicHistoryAPIState)
+bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadRequest& request, bool isSameDocument, FormState* formState, Event* event, SerializedScriptValue* classicHistoryAPIState, std::optional<NavigateEventIdentifier> identifier)
 {
     RefPtr document = m_frame->document();
     if (!document || !document->settings().navigationAPIEnabled())
@@ -4637,7 +4637,7 @@ bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadR
     if (!sourceElement && event)
         sourceElement = dynamicDowncast<Element>(event->target());
 
-    return protect(window->navigation())->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument, formState, classicHistoryAPIState, sourceElement.get());
+    return protect(window->navigation())->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument, formState, classicHistoryAPIState, sourceElement.get(), identifier);
 }
 
 void FrameLoader::loadSameDocumentItem(HistoryItem& item)

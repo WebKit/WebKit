@@ -2448,7 +2448,7 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
     completionHandler();
 }
 
-void WebPage::dispatchPendingNavigateEventForProcessSwap(WebCore::FrameIdentifier frameID, WebCore::PendingNavigateEventIdentifier pendingNavigateEventID, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::dispatchPendingNavigateEventForProcessSwap(WebCore::FrameIdentifier frameID, WebCore::NavigateEventIdentifier pendingNavigateEventID, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     completionHandler(webFrame && !webFrame->dispatchPendingNavigateEventAfterNavigationPolicy(pendingNavigateEventID));

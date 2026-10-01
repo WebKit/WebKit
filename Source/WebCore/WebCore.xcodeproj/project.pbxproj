@@ -5129,7 +5129,7 @@
 		B9CA3B412CAB1D3E00B2607C /* SpatialImageControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9CA3B3F2CAB1D3E00B2607C /* SpatialImageControls.cpp */; };
 		BA3BAEE52E12A7B300B8D3B7 /* DocumentPrefetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BA3BAEE32E12A7A700B8D3B7 /* DocumentPrefetcher.h */; };
 		BA4E976A2E3A52290033CC0D /* SpeculationRules.h in Headers */ = {isa = PBXBuildFile; fileRef = BA4E97682E3A52200033CC0D /* SpeculationRules.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BA56E3312E7A11C000D10C01 /* PendingNavigateEventIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BA56E3312E7A11C000D10C01 /* NavigateEventIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BA56E3302E7A11C000D10C01 /* NavigateEventIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BA6920702E0E93A80014E98A /* SpeculationRulesMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BA69206E2E0E939C0014E98A /* SpeculationRulesMatcher.h */; };
 		BA96836B2E8FDAA30035D494 /* LoadableSpeculationRules.h in Headers */ = {isa = PBXBuildFile; fileRef = BA9683692E8FDA9A0035D494 /* LoadableSpeculationRules.h */; };
 		BC000BE72C6011020033AA75 /* CSSCalcTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BC000BDB2C5A9D4F0033AA75 /* CSSCalcTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19256,7 +19256,7 @@
 		BA3BAEE42E12A7A700B8D3B7 /* DocumentPrefetcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPrefetcher.cpp; sourceTree = "<group>"; };
 		BA4E97682E3A52200033CC0D /* SpeculationRules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeculationRules.h; sourceTree = "<group>"; };
 		BA4E97692E3A52200033CC0D /* SpeculationRules.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpeculationRules.cpp; sourceTree = "<group>"; };
-		BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingNavigateEventIdentifier.h; sourceTree = "<group>"; };
+		BA56E3302E7A11C000D10C01 /* NavigateEventIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigateEventIdentifier.h; sourceTree = "<group>"; };
 		BA5AA8182DDF59100038722C /* IntegrityPolicyViolationReportBody.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrityPolicyViolationReportBody.h; sourceTree = "<group>"; };
 		BA5AA8192DDF59100038722C /* IntegrityPolicyViolationReportBody.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntegrityPolicyViolationReportBody.cpp; sourceTree = "<group>"; };
 		BA5AA81A2DDF59100038722C /* IntegrityPolicyViolationReportBody.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IntegrityPolicyViolationReportBody.idl; sourceTree = "<group>"; };
@@ -39386,6 +39386,7 @@
 				CEEFCD7819DB31F7003876D7 /* MediaResourceLoader.h */,
 				52F10862162B6D82009AC81E /* MixedContentChecker.cpp */,
 				52F10863162B6D82009AC81E /* MixedContentChecker.h */,
+				BA56E3302E7A11C000D10C01 /* NavigateEventIdentifier.h */,
 				93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */,
 				93CCF0260AF6C52900018E89 /* NavigationAction.h */,
 				9BA827781F06156500F71E75 /* NavigationDisabler.h */,
@@ -39400,7 +39401,6 @@
 				0AC17AC10001000100010001 /* OriginAgentClusterPolicy.h */,
 				5CA126C028DBCE2800B65AD3 /* PCMSites.h */,
 				5CA126B828DBA6EC00B65AD3 /* PCMTokens.h */,
-				BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */,
 				D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */,
 				D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */,
 				97059975107D975200A50A7C /* PolicyChecker.cpp */,
@@ -48268,6 +48268,7 @@
 				83B2D1751B8BCD6A00A02E47 /* NativeNodeFilter.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				9AEBF919AAC54D083C5923A8 /* NaturalDimensions.h in Headers */,
+				BA56E3312E7A11C000D10C01 /* NavigateEventIdentifier.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				EE1A93AA2F2AE00A0054FAE4 /* NavigationActivation.h in Headers */,
 				AE01B20C0D0E0F1011121401 /* NavigationHistoryBehavior.h in Headers */,
@@ -48519,7 +48520,6 @@
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
 				5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */,
 				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,
-				BA56E3312E7A11C000D10C01 /* PendingNavigateEventIdentifier.h in Headers */,
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */,
 				41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */,

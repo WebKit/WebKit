@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-struct PendingNavigateEventIdentifierType;
-using PendingNavigateEventIdentifier = ObjectIdentifier<PendingNavigateEventIdentifierType>;
+struct NavigateEventIdentifierType;
+using NavigateEventIdentifier = ObjectIdentifier<NavigateEventIdentifierType>;
 
 }
