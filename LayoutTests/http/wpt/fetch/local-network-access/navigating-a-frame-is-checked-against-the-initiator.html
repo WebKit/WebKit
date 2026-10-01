@@ -1,0 +1,133 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<meta name="timeout" content="long">
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// Navigating a frame is checked against the document that initiated the navigation, not the frame
+// being navigated, so it reads the initiator's policy container where a subresource load reads the
+// document's own address space. That is a separate code path with separate plumbing, and this covers
+// it: each case navigates a child frame to the same cross-origin loopback target from a differently
+// classified initiator, and distinguishes the reasons rather than only pass or fail.
+//
+// The imported iframe.tentative.https.window.html asserts the first case below SUCCEEDS. It passes
+// there only because that file's futureMessage() installs an unfiltered message listener it never
+// removes, so one of its seventeen rows can settle another's two-second race; running the same row
+// alone reports a timeout. Our behaviour, asserted here, is the spec's: a non-secure context may not
+// make a local network request at all.
+//
+// The same file also expects local to loopback to need no permission, and says it is "not yet
+// restricted". That is Chromium's rollout, not the spec: loopback is less public than local, so the
+// second case below needs the loopback-network permission.
+
+const loopbackTarget = new URL('resources/lna-navigation-target.html', location.href).href
+    .replace(location.origin, 'https://web-platform.test:9443');
+
+const replies = [];
+window.addEventListener('message', (event) => replies.push(event.data));
+
+function settle(label, test, budget = 4000) {
+    return new Promise((resolve) => {
+        let waited = 0;
+        const check = () => {
+            const reply = replies.find((r) => r.from === label && r.result === 'child-loaded');
+            if (reply)
+                return resolve('navigated');
+            if (waited >= budget)
+                return resolve('blocked');
+            waited += 50;
+            test.step_timeout(check, 50);
+        };
+        check();
+    });
+}
+
+function reportedSpace(label, test, budget = 4000) {
+    return new Promise((resolve) => {
+        let waited = 0;
+        const check = () => {
+            const reply = replies.find((r) => r.from === label && r.result.startsWith('space:'));
+            if (reply)
+                return resolve(reply.result.substring('space:'.length));
+            if (waited >= budget)
+                return resolve('no reply');
+            waited += 50;
+            test.step_timeout(check, 50);
+        };
+        check();
+    });
+}
+
+function navigateChildFrom(label, sourceOrigin, test)
+{
+    const relative = `resources/lna-frame-navigator.html?label=${label}&target=${encodeURIComponent(loopbackTarget)}`;
+    // A popup rather than an iframe, so the initiator is a top-level document whose own navigation is
+    // exempt. That isolates the child's navigation as the only thing the check can be refusing.
+    const popup = window.open(new URL(relative, location.href).href.replace(location.origin, sourceOrigin));
+    test.add_cleanup(() => popup && popup.close());
+}
+
+promise_test(async (t) => {
+    navigateChildFrom('http-local', 'http://web-platform.test:8802', t);
+    assert_equals(await reportedSpace('http-local', t), 'local', 'served on the overridden local port');
+    assert_equals(await settle('http-local', t), 'blocked',
+        'a document that is not a secure context may not reach loopback, whatever permission it holds');
+}, 'a non-secure local initiator cannot navigate a frame to loopback');
+
+promise_test(async (t) => {
+    navigateChildFrom('https-local', 'https://web-platform.test:9445', t);
+    assert_equals(await reportedSpace('https-local', t), 'local', 'served on the overridden local port');
+    assert_equals(await settle('https-local', t), 'blocked',
+        'and a secure one still needs the loopback-network permission, which it has not been granted');
+}, 'a secure local initiator needs permission to navigate a frame to loopback');
+
+promise_test(async (t) => {
+    navigateChildFrom('http-public', 'http://web-platform.test:8803', t);
+    assert_equals(await reportedSpace('http-public', t), 'public', 'served on the overridden public port');
+    assert_equals(await settle('http-public', t), 'blocked', 'the secure context requirement applies here too');
+}, 'a non-secure public initiator cannot navigate a frame to loopback');
+
+// The cases above all expect a refusal, so they would also pass if frame navigation to loopback were
+// broken outright. The rest are the controls: navigations the check must let through.
+
+promise_test(async (t) => {
+    navigateChildFrom('loopback', location.origin, t);
+    assert_equals(await reportedSpace('loopback', t), 'loopback', 'served from the test server, which is loopback');
+    assert_equals(await settle('loopback', t), 'navigated', 'loopback reaching loopback is not a local network request');
+}, 'a loopback initiator can navigate a frame to loopback without permission');
+
+// To grant permission from here, the initiator has to be a frame in this page: the testing hook records a
+// grant against this page's top-level origin, and a popup would be its own. The frame is delegated
+// loopback-network, since the feature's default allowlist is 'self'.
+function navigateGrandchildFrom(label, sourceOrigin, test)
+{
+    const relative = `resources/lna-frame-navigator.html?label=${label}&target=${encodeURIComponent(loopbackTarget)}`;
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network';
+    frame.src = new URL(relative, location.href).href.replace(location.origin, sourceOrigin);
+    document.body.appendChild(frame);
+    test.add_cleanup(() => frame.remove());
+}
+
+const PUBLIC_SECURE_ORIGIN = 'https://web-platform.test:9446';
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    navigateGrandchildFrom('https-public', PUBLIC_SECURE_ORIGIN, t);
+    assert_equals(await reportedSpace('https-public', t), 'public', 'served on the overridden public port');
+    assert_equals(await settle('https-public', t), 'blocked', 'a secure public initiator still needs the permission');
+}, 'a secure public initiator needs permission to navigate a frame to loopback');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_SECURE_ORIGIN);
+    navigateGrandchildFrom('https-public-granted', PUBLIC_SECURE_ORIGIN, t);
+    assert_equals(await reportedSpace('https-public-granted', t), 'public', 'served on the overridden public port');
+    assert_equals(await settle('https-public-granted', t), 'navigated', 'the initiator holds the loopback-network grant');
+}, 'a secure public initiator with permission can navigate a frame to loopback');
+
+</script>
+</body>
+</html>

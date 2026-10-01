@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Opens in a popup or an iframe, reports its own address space to the test, then navigates a child
+// frame at a target given on the query string. Used to exercise the navigation path, which reads the
+// initiator's policy container rather than the document the subresource path reads.
+const params = new URL(location.href).searchParams;
+const label = params.get('label');
+const target = params.get('target');
+
+(opener || parent).postMessage({ from: label, result: `space:${internals.documentIPAddressSpace()}` }, '*');
+
+const child = document.createElement('iframe');
+child.src = `${target}${target.includes('?') ? '&' : '?'}label=${encodeURIComponent(label)}`;
+document.body.appendChild(child);
+</script>
+</body>
+</html>

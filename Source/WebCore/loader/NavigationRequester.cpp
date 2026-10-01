@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
+#include "PermissionsPolicy.h"
 #include "ProcessIdentifier.h"
 #include "SecurityOrigin.h"
 #include "Site.h"
@@ -73,7 +74,10 @@ NavigationRequester NavigationRequester::from(Document& document)
             RefPtr parentOrigin = parentFrame ? parentFrame->frameDocumentSecurityOrigin() : nullptr;
             return parentOrigin && parentOrigin->isSameOriginDomain(protect(document.topOrigin()));
         }(),
-        Process::identifier()
+        Process::identifier(),
+        document.isSecureContext(),
+        PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LocalNetwork, document, PermissionsPolicy::ShouldReportViolation::No),
+        PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LoopbackNetwork, document, PermissionsPolicy::ShouldReportViolation::No),
     };
 }
 

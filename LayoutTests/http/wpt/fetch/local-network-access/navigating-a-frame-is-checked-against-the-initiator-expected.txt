@@ -1,0 +1,8 @@
+
+PASS a non-secure local initiator cannot navigate a frame to loopback
+PASS a secure local initiator needs permission to navigate a frame to loopback
+PASS a non-secure public initiator cannot navigate a frame to loopback
+PASS a loopback initiator can navigate a frame to loopback without permission
+PASS a secure public initiator needs permission to navigate a frame to loopback
+PASS a secure public initiator with permission can navigate a frame to loopback
+

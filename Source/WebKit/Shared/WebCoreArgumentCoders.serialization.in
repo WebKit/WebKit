@@ -3564,6 +3564,9 @@ struct WebCore::NavigationRequester {
     bool hasHadUserInteraction;
     bool parentOriginIsSameAsTopOrigin;
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
+    bool isSecureContext;
+    bool localNetworkAllowedByPermissionsPolicy;
+    bool loopbackNetworkAllowedByPermissionsPolicy;
 };
 
 struct WebCore::PolicyContainer {

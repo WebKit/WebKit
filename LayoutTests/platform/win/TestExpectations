@@ -1064,6 +1064,7 @@ http/tests/misc/gamepads-insecure.html [ Failure ]
 http/tests/misc/large-js-program.py [ Skip ] # Timeout
 http/wpt/fetch/response-opaque-clone.html [ Skip ]
 http/wpt/fetch/response-status-text.html [ Failure Slow ]
+webkit.org/b/295047 http/wpt/fetch/local-network-access/navigating-a-frame-is-checked-against-the-initiator.html [ Skip ]
 
 
 http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
