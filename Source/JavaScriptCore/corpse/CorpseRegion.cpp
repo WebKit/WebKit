@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CorpseRegion.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include <mach/mach_vm.h>
 
@@ -72,4 +72,4 @@ std::optional<Region> Region::findContaining(mach_port_t task, Address address)
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

@@ -33,7 +33,7 @@ DECLARE_SYSTEM_HEADER
 
 #include <wtf/spi/cocoa/MachVMSPI.h>
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 WTF_EXTERN_C_BEGIN
 
@@ -42,4 +42,4 @@ kern_return_t mach_vm_remap_new(vm_map_t targetTask, mach_vm_address_t*, mach_vm
 
 WTF_EXTERN_C_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

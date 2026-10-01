@@ -27,7 +27,7 @@
 
 #include <wtf/DataLog.h>
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseAddressTest.h"
 #include "CorpseByteParserTest.h"
@@ -159,4 +159,4 @@ int main(int, char**)
     return 0;
 }
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

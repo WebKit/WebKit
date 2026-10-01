@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CorpseSnapshotTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
@@ -127,4 +127,4 @@ void testSnapshot()
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

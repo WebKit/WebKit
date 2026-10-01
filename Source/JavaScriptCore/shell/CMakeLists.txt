@@ -22,9 +22,7 @@ if (ENABLE_FUZZILLI)
   list(APPEND jsc_SOURCES ../fuzzilli/Fuzzilli.cpp)
 endif ()
 
-# mya analyzes process corpses through Mach task APIs, so it only builds on
-# Apple platforms. Its sources do not compile elsewhere.
-if (APPLE)
+if (ENABLE_MYA)
     set(mya_SOURCES ../mya/mya.cpp)
     set(mya_FRAMEWORKS
         JavaScriptCore
@@ -37,12 +35,15 @@ if (APPLE)
     )
 
     # The corpse support mya uses lives in the tools static library.
-    set(mya_LIBRARIES JavaScriptCoreTools edit)
+    set(mya_LIBRARIES JavaScriptCoreTools)
+    if (APPLE)
+        list(APPEND mya_LIBRARIES edit)
+    endif ()
 endif ()
 
 WEBKIT_EXECUTABLE_DECLARE(jsc)
 
-if (APPLE)
+if (ENABLE_MYA)
     WEBKIT_EXECUTABLE_DECLARE(mya)
 endif ()
 
@@ -104,8 +105,7 @@ if (DEVELOPER_MODE)
     set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     set(testdfg_FRAMEWORKS ${jsc_FRAMEWORKS})
 
-    # The tools library and its tests are only relevant for Apple platforms.
-    if (APPLE)
+    if (ENABLE_MYA)
         set(testLibJSCTools_SOURCES
             ../corpse/tests/CorpseAddressTest.cpp
             ../corpse/tests/CorpseByteParserTest.cpp
@@ -160,7 +160,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE_DECLARE(testdfg)
     WEBKIT_EXECUTABLE_DECLARE(testwasmdebugger)
 
-    if (APPLE)
+    if (ENABLE_MYA)
         WEBKIT_EXECUTABLE_DECLARE(testLibJSCTools)
     endif ()
 
@@ -168,6 +168,34 @@ if (DEVELOPER_MODE)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-array-bounds)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testair -Wno-array-bounds)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-error=stack-exhausted)
+    endif ()
+endif ()
+
+# JSCOnly on macOS needs these too, so they cannot live in PlatformCocoa.cmake.
+if (APPLE)
+    WEBKIT_GENERATE_ENTITLEMENTS(jsc USING ../Scripts/process-entitlements.sh)
+    if (ENABLE_MYA)
+        WEBKIT_GENERATE_ENTITLEMENTS(mya USING ../Scripts/process-entitlements.sh)
+    endif ()
+    if (DEVELOPER_MODE)
+        WEBKIT_GENERATE_ENTITLEMENTS(testapi USING ../Scripts/process-entitlements.sh)
+        WEBKIT_GENERATE_ENTITLEMENTS(testRegExp USING ../Scripts/process-entitlements.sh)
+        WEBKIT_GENERATE_ENTITLEMENTS(testmasm USING ../Scripts/process-entitlements.sh)
+        WEBKIT_GENERATE_ENTITLEMENTS(testb3 USING ../Scripts/process-entitlements.sh)
+        WEBKIT_GENERATE_ENTITLEMENTS(testair USING ../Scripts/process-entitlements.sh)
+        WEBKIT_GENERATE_ENTITLEMENTS(testdfg USING ../Scripts/process-entitlements.sh)
+        if (ENABLE_MYA)
+            WEBKIT_GENERATE_ENTITLEMENTS(testLibJSCTools USING ../Scripts/process-entitlements.sh)
+        endif ()
+    endif ()
+endif ()
+
+# Lets build scripts request the mya executables without knowing whether ENABLE_MYA is on.
+add_custom_target(MyaExecutables)
+if (ENABLE_MYA)
+    add_dependencies(MyaExecutables mya)
+    if (DEVELOPER_MODE)
+        add_dependencies(MyaExecutables testLibJSCTools)
     endif ()
 endif ()
 
@@ -179,7 +207,7 @@ if (SHOULD_INSTALL_JS_SHELL)
     install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
 endif ()
 
-if (APPLE)
+if (ENABLE_MYA)
     WEBKIT_EXECUTABLE(mya)
 
     if (SHOULD_INSTALL_JS_SHELL)
@@ -196,7 +224,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE(testdfg)
     WEBKIT_EXECUTABLE(testwasmdebugger)
 
-    if (APPLE)
+    if (ENABLE_MYA)
         WEBKIT_EXECUTABLE(testLibJSCTools)
     endif ()
 
