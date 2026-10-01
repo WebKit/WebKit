@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<!DOCTYPE html>
+
+<title>When animating text-shadow, -apple-color-filter is applied to the shadow color after blending</title>
+
+<style>
+  :root {
+    -apple-color-filter: invert(1);
+  }
+
+  .target {
+    animation: --anim 9999s steps(2, jump-start);
+  }
+
+  @keyframes --anim {
+    from { text-shadow: #ff0000 1px 0 10px; }
+    to { text-shadow: #ffff00 1px 0 10px; }
+  }
+</style>
+
+<p class="target">The quick brown fox jumps over the lazy dog</p>

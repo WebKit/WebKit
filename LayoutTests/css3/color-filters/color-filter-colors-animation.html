@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<!DOCTYPE html>
+
+<title>When animating color properties, -apple-color-filter is applied to the shadow color after blending</title>
+
+<style>
+  :root {
+    -apple-color-filter: invert(1);
+  }
+
+  .container {
+    display: flex;
+    gap: 10px;
+  }
+
+  .target {
+    width: 100px;
+    height: 100px;
+  }
+
+  #t1 { animation: --anim1 9999s steps(2, jump-start); }
+  @keyframes --anim1 {
+    from { background-color: #ff0000; }
+    to { background-color: #ffff00; }
+  }
+
+  @property --bg-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: white;
+  }
+
+  #t2 {
+    background-color: var(--bg-color);
+    animation: --anim2 9999s steps(2, jump-start);
+  }
+  @keyframes --anim2 {
+    from { --bg-color: #ff0000; }
+    to { --bg-color: #ffff00; }
+  }
+</style>
+
+<div class="container">
+  <div class="target" id="t1"></div>
+  <div class="target" id="t2"></div>
+</div>

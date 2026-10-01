@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<!DOCTYPE html>
+
+<title>When animating box-shadow, -apple-color-filter is applied to the shadow color after blending</title>
+
+<style>
+  :root {
+    -apple-color-filter: invert(1);
+  }
+
+  .target {
+    width: 100px;
+    height: 100px;
+    animation: --anim 9999s steps(2, jump-start);
+    /* Border color is affected by the invert filter, so the actual border will be black */
+    border: 1px white solid;
+  }
+
+  @keyframes --anim {
+    from { box-shadow: 10px 10px #ff0000; }
+    to { box-shadow: 10px 10px #ffff00; }
+  }
+</style>
+
+<div class="target"></div>
