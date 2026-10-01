@@ -2050,7 +2050,10 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     css/FontFaceSource.idl
     css/LinkStyle.idl
 
+    dom/BoxQuadOptions.idl
+    dom/CSSBoxType.idl
     dom/ChildNode.idl
+    dom/ConvertCoordinateOptions.idl
     dom/Document+CSSOMView.idl
     dom/Document+CaretPositionFromPoint.idl
     dom/Document+Fullscreen.idl
@@ -2077,6 +2080,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     dom/Element+Typedom.idl
     dom/Element+VolumetricScene.idl
     dom/ElementContentEditable.idl
+    dom/GeometryUtils.idl
     dom/GlobalEventHandlers+PointerEvents.idl
     dom/GlobalEventHandlers+Selection.idl
     dom/GlobalEventHandlers.idl
