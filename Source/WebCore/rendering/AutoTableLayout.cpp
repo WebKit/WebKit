@@ -749,6 +749,8 @@ void AutoTableLayout::layout()
 
             auto& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
             if (logicalWidth.isFixed()) {
+                if (totalFixed <= 0)
+                    break;
                 float cellLogicalWidth = available * m_layoutStruct[i].effectiveMaxLogicalWidth / totalFixed;
                 available -= cellLogicalWidth;
                 totalFixed -= m_layoutStruct[i].effectiveMaxLogicalWidth;
