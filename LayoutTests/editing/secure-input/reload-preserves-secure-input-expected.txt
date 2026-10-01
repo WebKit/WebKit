@@ -1,0 +1,12 @@
+Verify that reloading a page with an autofocused password input ends with secure input state enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+After reload:
+PASS document.activeElement is input
+PASS testRunner.secureEventInputIsEnabled is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
