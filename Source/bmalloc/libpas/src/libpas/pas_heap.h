@@ -42,7 +42,8 @@ typedef struct pas_heap_ref pas_heap_ref;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_page pas_segregated_page;
 
-struct pas_heap {
+/* Heaps are pointed at by pas_compact_heap_ptr. */
+struct PAS_ALIGNED(PAS_OVERALIGNED_COMPACT_PTR_ALIGN) pas_heap {
     pas_segregated_heap segregated_heap;
     pas_large_heap large_heap;
     const pas_heap_type* type;

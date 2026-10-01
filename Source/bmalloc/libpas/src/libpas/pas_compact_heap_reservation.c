@@ -36,62 +36,82 @@
 #include <memory-extra.h>
 #endif
 
-size_t pas_compact_heap_reservation_size =
-    (size_t)1 << PAS_COMPACT_PTR_BITS << PAS_INTERNAL_MIN_ALIGN_SHIFT;
+_Static_assert(PAS_COMPACT_HEAP_RESERVATION_SIZE
+               <= ((size_t)1 << PAS_COMPACT_PTR_BITS << PAS_OVERALIGNED_COMPACT_PTR_ALIGN_SHIFT),
+               "PAS_DEFINE_OVERALIGNED_COMPACT_PTR must be able to reach the whole compact heap reservation");
+
+size_t pas_compact_heap_reservation_size = PAS_COMPACT_HEAP_RESERVATION_SIZE;
 size_t pas_compact_heap_reservation_guard_size = 16;
 uintptr_t pas_compact_heap_reservation_base = 0;
 size_t pas_compact_heap_reservation_available_size = 0;
 size_t pas_compact_heap_reservation_bump = 0;
+size_t pas_compact_heap_reservation_top_bump = 0;
 
 #if PAS_PLATFORM(PLAYSTATION)
 uintptr_t pas_compact_heap_reservation_committed = 0;
+uintptr_t pas_compact_heap_reservation_top_committed = 0;
 #endif
 
-pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t size, size_t alignment)
+static void initialize_if_necessary(void)
+{
+    pas_aligned_allocation_result page_result;
+
+    if (pas_compact_heap_reservation_base)
+        return;
+
+#if PAS_PLATFORM(PLAYSTATION)
+    pas_zero_memory(&page_result, sizeof(pas_aligned_allocation_result));
+
+    page_result.result = memory_extra_vss_reserve(pas_compact_heap_reservation_size, pas_page_malloc_alignment());
+    PAS_ASSERT(page_result.result);
+#else
+    page_result = pas_page_malloc_try_allocate_without_deallocating_padding(
+        pas_compact_heap_reservation_size, pas_alignment_create_trivial(), false);
+    PAS_ASSERT(!page_result.left_padding_size);
+    PAS_ASSERT(!page_result.right_padding_size);
+    PAS_ASSERT(page_result.result);
+    PAS_ASSERT(page_result.result_size == pas_compact_heap_reservation_size);
+#endif
+
+    pas_compact_heap_reservation_base =
+        (uintptr_t)page_result.result - pas_compact_heap_reservation_guard_size;
+    pas_compact_heap_reservation_available_size =
+        pas_compact_heap_reservation_size - pas_compact_heap_reservation_guard_size;
+    pas_compact_heap_reservation_bump = pas_compact_heap_reservation_guard_size;
+    pas_compact_heap_reservation_top_bump = pas_compact_heap_reservation_available_size;
+
+    // Compact pointers encode offsets from the base, so the base must be at least as aligned
+    // as anything they point at.
+    PAS_ASSERT(pas_is_aligned(pas_compact_heap_reservation_base, PAS_OVERALIGNED_COMPACT_PTR_ALIGN));
+
+#if PAS_PLATFORM(PLAYSTATION)
+    pas_compact_heap_reservation_committed =
+        pas_compact_heap_reservation_base + pas_compact_heap_reservation_guard_size;
+    pas_compact_heap_reservation_top_committed = pas_round_up_to_power_of_2(
+        pas_compact_heap_reservation_base + pas_compact_heap_reservation_available_size,
+        pas_page_malloc_alignment());
+#endif
+}
+
+static pas_aligned_allocation_result try_allocate_bottom(size_t size, size_t alignment)
 {
     pas_aligned_allocation_result result;
-    uintptr_t reservation_end;
+    uintptr_t bottom_end;
     uintptr_t padding_start;
     uintptr_t allocation_start;
     uintptr_t allocation_end;
 
-    // PAS_INTERNAL_MIN_ALIGN is the alignment used to compact pointers, so we
-    // have to align to at least that alignment.
-    PAS_ASSERT(alignment >= PAS_INTERNAL_MIN_ALIGN);
-    
-    pas_heap_lock_assert_held();
-    
-    if (!pas_compact_heap_reservation_base) {
-        pas_aligned_allocation_result page_result;
-
-#if PAS_PLATFORM(PLAYSTATION)
-        pas_zero_memory(&page_result, sizeof(pas_aligned_allocation_result));
-
-        page_result.result = memory_extra_vss_reserve(pas_compact_heap_reservation_size, pas_page_malloc_alignment());
-        PAS_ASSERT(page_result.result);
-#else
-        page_result = pas_page_malloc_try_allocate_without_deallocating_padding(
-            pas_compact_heap_reservation_size, pas_alignment_create_trivial(), false);
-        PAS_ASSERT(!page_result.left_padding_size);
-        PAS_ASSERT(!page_result.right_padding_size);
-        PAS_ASSERT(page_result.result);
-        PAS_ASSERT(page_result.result_size == pas_compact_heap_reservation_size);
-#endif
-
-        pas_compact_heap_reservation_base =
-            (uintptr_t)page_result.result - pas_compact_heap_reservation_guard_size;
-        pas_compact_heap_reservation_available_size =
-            pas_compact_heap_reservation_size - pas_compact_heap_reservation_guard_size;
-        pas_compact_heap_reservation_bump = pas_compact_heap_reservation_guard_size;
-    }
-
-    reservation_end = pas_compact_heap_reservation_base + pas_compact_heap_reservation_available_size;
+    // The bottom front holds everything that PAS_DEFINE_COMPACT_PTR might point at, so it must
+    // stay within that pointer's reach, in addition to not running into the top front.
+    bottom_end = pas_compact_heap_reservation_base + PAS_MIN(
+        pas_compact_heap_reservation_top_bump,
+        (PAS_COMPACT_PTR_MASK + 1) << PAS_INTERNAL_MIN_ALIGN_SHIFT);
     padding_start = pas_compact_heap_reservation_base + pas_compact_heap_reservation_bump;
     allocation_start = pas_round_up_to_power_of_2(padding_start, alignment);
 
-    if (allocation_start > reservation_end
+    if (allocation_start > bottom_end
         || allocation_start < padding_start
-        || reservation_end - allocation_start < size)
+        || bottom_end - allocation_start < size)
         return pas_aligned_allocation_result_create_empty();
 
     allocation_end = allocation_start + size;
@@ -102,11 +122,7 @@ pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t s
     if (pas_compact_heap_reservation_committed < allocation_end && size > 0) {
         uintptr_t need_commit_start;
         uintptr_t need_commit_end;
-        bool success;
         uintptr_t page_size;
-
-        if (!pas_compact_heap_reservation_committed)
-            pas_compact_heap_reservation_committed = pas_compact_heap_reservation_base + pas_compact_heap_reservation_guard_size;
 
         page_size = pas_page_malloc_alignment();
 
@@ -116,12 +132,17 @@ pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t s
         if (need_commit_start < pas_compact_heap_reservation_committed)
             need_commit_start = pas_compact_heap_reservation_committed;
 
-        PAS_ASSERT(need_commit_start < need_commit_end);
+        // The top front may have already committed the page that the two fronts share.
+        if (need_commit_end > pas_compact_heap_reservation_top_committed)
+            need_commit_end = pas_compact_heap_reservation_top_committed;
 
-        success = memory_extra_vss_commit((void*)need_commit_start, need_commit_end - need_commit_start, true, -1);
-        PAS_ASSERT(success);
+        if (need_commit_start < need_commit_end) {
+            bool success;
+            success = memory_extra_vss_commit((void*)need_commit_start, need_commit_end - need_commit_start, true, -1);
+            PAS_ASSERT(success);
+        }
 
-        pas_compact_heap_reservation_committed = need_commit_end;
+        pas_compact_heap_reservation_committed = pas_round_up_to_power_of_2(allocation_end, page_size);
     }
 #endif
 
@@ -134,6 +155,85 @@ pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t s
     result.zero_mode = pas_zero_mode_is_all_zero;
 
     return result;
+}
+
+static pas_aligned_allocation_result try_allocate_top(size_t size, size_t alignment)
+{
+    pas_aligned_allocation_result result;
+    uintptr_t top_start;
+    uintptr_t padding_end;
+    uintptr_t allocation_start;
+    uintptr_t allocation_end;
+
+    top_start = pas_compact_heap_reservation_base + pas_compact_heap_reservation_bump;
+    padding_end = pas_compact_heap_reservation_base + pas_compact_heap_reservation_top_bump;
+
+    PAS_ASSERT(padding_end >= top_start);
+
+    if (padding_end - top_start < size)
+        return pas_aligned_allocation_result_create_empty();
+
+    allocation_start = pas_round_down_to_power_of_2(padding_end - size, alignment);
+
+    if (allocation_start < top_start)
+        return pas_aligned_allocation_result_create_empty();
+
+    allocation_end = allocation_start + size;
+
+    pas_compact_heap_reservation_top_bump = allocation_start - pas_compact_heap_reservation_base;
+
+#if PAS_PLATFORM(PLAYSTATION)
+    if (pas_compact_heap_reservation_top_committed > allocation_start && size > 0) {
+        uintptr_t need_commit_start;
+        uintptr_t need_commit_end;
+        uintptr_t page_size;
+
+        page_size = pas_page_malloc_alignment();
+
+        need_commit_start = pas_round_down_to_power_of_2(allocation_start, page_size);
+        need_commit_end = pas_round_up_to_power_of_2(allocation_end, page_size);
+
+        if (need_commit_end > pas_compact_heap_reservation_top_committed)
+            need_commit_end = pas_compact_heap_reservation_top_committed;
+
+        // The bottom front may have already committed the page that the two fronts share.
+        if (need_commit_start < pas_compact_heap_reservation_committed)
+            need_commit_start = pas_compact_heap_reservation_committed;
+
+        if (need_commit_start < need_commit_end) {
+            bool success;
+            success = memory_extra_vss_commit((void*)need_commit_start, need_commit_end - need_commit_start, true, -1);
+            PAS_ASSERT(success);
+        }
+
+        pas_compact_heap_reservation_top_committed = pas_round_down_to_power_of_2(allocation_start, page_size);
+    }
+#endif
+
+    result.left_padding = (void*)allocation_start;
+    result.left_padding_size = 0;
+    result.result = (void*)allocation_start;
+    result.result_size = allocation_end - allocation_start;
+    result.right_padding = (void*)allocation_end;
+    result.right_padding_size = padding_end - allocation_end;
+    result.zero_mode = pas_zero_mode_is_all_zero;
+
+    return result;
+}
+
+pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t size, size_t alignment)
+{
+    // PAS_INTERNAL_MIN_ALIGN is the smallest alignment used to compact pointers, so we
+    // have to align to at least that alignment.
+    PAS_ASSERT(alignment >= PAS_INTERNAL_MIN_ALIGN);
+    
+    pas_heap_lock_assert_held();
+
+    initialize_if_necessary();
+
+    if (pas_compact_heap_reservation_is_overaligned(alignment))
+        return try_allocate_top(size, alignment);
+    return try_allocate_bottom(size, alignment);
 }
 
 #endif /* LIBPAS_ENABLED */

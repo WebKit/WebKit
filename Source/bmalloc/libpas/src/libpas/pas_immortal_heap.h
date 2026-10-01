@@ -34,6 +34,8 @@ PAS_BEGIN_EXTERN_C;
 
 extern PAS_API uintptr_t pas_immortal_heap_current;
 extern PAS_API uintptr_t pas_immortal_heap_end;
+extern PAS_API uintptr_t pas_immortal_heap_overaligned_current;
+extern PAS_API uintptr_t pas_immortal_heap_overaligned_end;
 extern PAS_API size_t pas_immortal_heap_allocated_external;
 extern PAS_API size_t pas_immortal_heap_allocated_internal;
 extern PAS_API size_t pas_immortal_heap_allocation_granule;

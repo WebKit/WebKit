@@ -34,7 +34,19 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_COMPACT_PTR_INITIALIZER { .payload = { 0 } }
 
-#define PAS_DEFINE_COMPACT_PTR_HELPERS(type, name) \
+/* Compact pointers encode a pointer into the compact heap reservation as its offset from the
+   reservation base, scaled by (1 << align_shift). There are two flavors of the non-atomic ones:
+
+   - PAS_DEFINE_COMPACT_PTR: scaled by PAS_INTERNAL_MIN_ALIGN. It can only reach the bottom
+     (1 << PAS_COMPACT_PTR_BITS) * PAS_INTERNAL_MIN_ALIGN bytes of the reservation, which is
+     where pas_compact_heap_reservation_try_allocate puts allocations that aren't overaligned.
+
+   - PAS_DEFINE_OVERALIGNED_COMPACT_PTR: scaled by PAS_OVERALIGNED_COMPACT_PTR_ALIGN. It can
+     reach the whole reservation, but the pointee must be PAS_OVERALIGNED_COMPACT_PTR_ALIGN-aligned.
+
+   max_index is the largest index that the pointer's storage can hold. */
+
+#define PAS_DEFINE_COMPACT_PTR_HELPERS(type, name, align_shift, max_index) \
     static inline uintptr_t name ## _index_for_ptr(type* value) \
     { \
         uintptr_t ptr; \
@@ -45,9 +57,10 @@ PAS_BEGIN_EXTERN_C;
         ptr = (uintptr_t)value; \
         offset = ptr - pas_compact_heap_reservation_base; \
         PAS_ASSERT(offset < pas_compact_heap_reservation_size); \
-        index = offset / PAS_INTERNAL_MIN_ALIGN; \
-        PAS_ASSERT(index * PAS_INTERNAL_MIN_ALIGN == offset); \
+        index = offset >> (align_shift); \
+        PAS_ASSERT((index << (align_shift)) == offset); \
         PAS_ASSERT(index); \
+        PAS_ASSERT(index <= (max_index)); \
         return index; \
     } \
     \
@@ -55,25 +68,25 @@ PAS_BEGIN_EXTERN_C;
     { \
         if (!index) \
             return NULL; \
-        return (type*)(index * PAS_INTERNAL_MIN_ALIGN + pas_compact_heap_reservation_base); \
+        return (type*)((index << (align_shift)) + pas_compact_heap_reservation_base); \
     } \
     \
     static inline type* name ## _ptr_for_index_non_null(uintptr_t index) \
     { \
         PAS_TESTING_ASSERT(index); \
-        return (type*)(index * PAS_INTERNAL_MIN_ALIGN + pas_compact_heap_reservation_base); \
+        return (type*)((index << (align_shift)) + pas_compact_heap_reservation_base); \
     } \
     \
     static inline type* name ## _ptr_for_remote_index(pas_enumerator* enumerator, uintptr_t index) \
     { \
         if (!index) \
             return NULL; \
-        return (type*)(index * PAS_INTERNAL_MIN_ALIGN + (uintptr_t)enumerator->compact_heap_copy_base); \
+        return (type*)((index << (align_shift)) + (uintptr_t)enumerator->compact_heap_copy_base); \
     } \
     \
     struct pas_dummy
 
-#define PAS_DEFINE_COMPACT_PTR(type, name) \
+#define PAS_DEFINE_COMPACT_PTR_IMPL(type, name, align_shift) \
     struct name; \
     typedef struct name name; \
     \
@@ -81,7 +94,7 @@ PAS_BEGIN_EXTERN_C;
         uint8_t payload[PAS_COMPACT_PTR_SIZE]; \
     }; \
     \
-    PAS_DEFINE_COMPACT_PTR_HELPERS(type, name); \
+    PAS_DEFINE_COMPACT_PTR_HELPERS(type, name, align_shift, PAS_COMPACT_PTR_MASK); \
     \
     static inline void name ## _store(name* ptr, type* value) \
     { \
@@ -127,6 +140,12 @@ PAS_BEGIN_EXTERN_C;
     } \
     \
     struct pas_dummy
+
+#define PAS_DEFINE_COMPACT_PTR(type, name) \
+    PAS_DEFINE_COMPACT_PTR_IMPL(type, name, PAS_INTERNAL_MIN_ALIGN_SHIFT)
+
+#define PAS_DEFINE_OVERALIGNED_COMPACT_PTR(type, name) \
+    PAS_DEFINE_COMPACT_PTR_IMPL(type, name, PAS_OVERALIGNED_COMPACT_PTR_ALIGN_SHIFT)
 
 PAS_END_EXTERN_C;
 

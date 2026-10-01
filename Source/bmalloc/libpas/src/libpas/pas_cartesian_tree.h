@@ -41,7 +41,8 @@ typedef struct pas_cartesian_tree pas_cartesian_tree;
 typedef struct pas_cartesian_tree_config pas_cartesian_tree_config;
 typedef struct pas_cartesian_tree_node pas_cartesian_tree_node;
 
-struct pas_cartesian_tree_node {
+/* Nodes are pointed at by pas_compact_cartesian_tree_node_ptr. */
+struct PAS_ALIGNED(PAS_OVERALIGNED_COMPACT_PTR_ALIGN) pas_cartesian_tree_node {
     pas_compact_cartesian_tree_node_ptr parent;
     pas_compact_cartesian_tree_node_ptr left;
     pas_compact_cartesian_tree_node_ptr right;

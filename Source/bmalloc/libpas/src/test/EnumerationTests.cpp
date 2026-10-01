@@ -32,6 +32,13 @@
 #include "iso_heap.h"
 #include "iso_heap_config.h"
 #include "pas_heap_ref_kind.h"
+#include "pas_enumerator_internal.h"
+#include "pas_heap_lock.h"
+#include "pas_segregated_directory.h"
+#include "pas_segregated_exclusive_view.h"
+#include "pas_segregated_heap.h"
+#include "pas_segregated_size_directory.h"
+#include "pas_segregated_view.h"
 
 #include <map>
 #include <stdlib.h>
@@ -291,27 +298,134 @@ void testEnumerationInvalidCompactHeapBump()
     void* p = bmalloc_try_allocate(16);
     PAS_ASSERT(p);
 
-    size_t saved_bump = pas_compact_heap_reservation_bump;
-    // Set invalid bump size
-    pas_compact_heap_reservation_bump = pas_compact_heap_reservation_size + 1;
+    auto createEnumerator = [&] () {
+        return pas_enumerator_create(
+            root, enumeratorReader, nullptr, enumeratorRecorder, nullptr,
+            pas_enumerator_do_not_record_meta_records,
+            pas_enumerator_do_not_record_payload_records,
+            pas_enumerator_do_not_record_object_records);
+    };
 
-    pas_enumerator* enumerator = pas_enumerator_create(
-        root, enumeratorReader, nullptr, enumeratorRecorder, nullptr,
-        pas_enumerator_do_not_record_meta_records,
-        pas_enumerator_do_not_record_payload_records,
-        pas_enumerator_do_not_record_object_records);
-    CHECK(!enumerator);
+    // Corrupts one of the reservation's variables, checks that enumeration refuses to start, and
+    // then restores it.
+    auto checkCreationFailsWith = [&] (size_t& variable, size_t invalidValue) {
+        size_t savedValue = variable;
+        variable = invalidValue;
+        pas_enumerator* enumerator = createEnumerator();
+        variable = savedValue;
+        CHECK(!enumerator);
+    };
 
-    // Restore and verify normal creation still works.
-    pas_compact_heap_reservation_bump = saved_bump;
+    // The bottom bump is past the end of the reservation.
+    checkCreationFailsWith(pas_compact_heap_reservation_bump, pas_compact_heap_reservation_size + 1);
+    // The bottom bump is below the guard.
+    checkCreationFailsWith(pas_compact_heap_reservation_bump, pas_compact_heap_reservation_guard_size - 1);
+    // The fronts have crossed.
+    checkCreationFailsWith(pas_compact_heap_reservation_top_bump, pas_compact_heap_reservation_bump - 1);
+    // The top bump is past the end of the reservation.
+    checkCreationFailsWith(pas_compact_heap_reservation_top_bump, pas_compact_heap_reservation_available_size + 1);
+    // The available size is bigger than the reservation.
+    checkCreationFailsWith(pas_compact_heap_reservation_available_size, pas_compact_heap_reservation_size + 1);
 
-    enumerator = pas_enumerator_create(
-        root, enumeratorReader, nullptr, enumeratorRecorder, nullptr,
-        pas_enumerator_do_not_record_meta_records,
-        pas_enumerator_do_not_record_payload_records,
-        pas_enumerator_do_not_record_object_records);
+    // Verify normal creation still works.
+    pas_enumerator* enumerator = createEnumerator();
     CHECK(enumerator);
     pas_enumerator_destroy(enumerator);
+}
+
+static const bmalloc_type bothFrontsType = BMALLOC_TYPE_INITIALIZER(64, 8, "EnumerationTests");
+pas_heap_ref bothFrontsHeap = BMALLOC_HEAP_REF_INITIALIZER(&bothFrontsType);
+
+bool recordedRangesCover(pas_enumerator_record_kind kind, const void* ptr)
+{
+    for (const RecordedRange& range : recordedRanges[kind]) {
+        if (ptr >= range.base && ptr < range.end())
+            return true;
+    }
+    return false;
+}
+
+struct FindHeapData {
+    const pas_heap_type* type { nullptr };
+    bool found { false };
+};
+
+bool findHeapCallback(pas_enumerator*, pas_heap* heap, void* arg)
+{
+    FindHeapData* data = static_cast<FindHeapData*>(arg);
+    if (heap->type == data->type)
+        data->found = true;
+    return true;
+}
+
+void testEnumerationCopiesBothCompactHeapFronts()
+{
+    pas_heap_lock_lock();
+    pas_root* root = pas_root_create();
+    pas_heap_lock_unlock();
+
+    // This creates a heap and size directory in the top front and exclusive views in the bottom front.
+    void* object = bmalloc_iso_allocate(&bothFrontsHeap);
+    CHECK(object);
+
+    pas_heap* heap = bothFrontsHeap.heap;
+    CHECK(heap);
+    CHECK_GREATER_EQUAL(reinterpret_cast<uintptr_t>(heap) - pas_compact_heap_reservation_base,
+                        pas_compact_heap_reservation_top_bump);
+
+    pas_segregated_exclusive_view* view = nullptr;
+    pas_heap_lock_lock();
+    pas_segregated_heap_for_each_size_directory(
+        &heap->segregated_heap,
+        [] (pas_segregated_heap*, pas_segregated_size_directory* directory, void* arg) -> bool {
+            for (size_t index = pas_segregated_directory_size(&directory->base); index--;) {
+                pas_segregated_view view = pas_segregated_directory_get(&directory->base, index);
+                if (pas_segregated_view_is_some_exclusive(view)) {
+                    *static_cast<pas_segregated_exclusive_view**>(arg) = pas_segregated_view_get_exclusive(view);
+                    return false;
+                }
+            }
+            return true;
+        },
+        &view);
+    pas_heap_lock_unlock();
+    CHECK(view);
+    CHECK_LESS(reinterpret_cast<uintptr_t>(view) - pas_compact_heap_reservation_base,
+               pas_compact_heap_reservation_bump);
+
+    recordedRanges.clear();
+    pas_enumerator* enumerator = pas_enumerator_create(
+        root, enumeratorReader, nullptr, enumeratorRecorder, nullptr,
+        pas_enumerator_record_meta_records,
+        pas_enumerator_record_payload_records,
+        pas_enumerator_record_object_records);
+    CHECK(enumerator);
+
+    // The enumerator's copy of the reservation must include both fronts.
+    pas_heap* heapCopy = static_cast<pas_heap*>(pas_enumerator_read_compact(enumerator, heap));
+    CHECK(heapCopy);
+    CHECK_EQUAL(heapCopy->type, heap->type);
+    CHECK_EQUAL(heapCopy->heap_ref, heap->heap_ref);
+
+    pas_segregated_exclusive_view* viewCopy = static_cast<pas_segregated_exclusive_view*>(
+        pas_enumerator_read_compact(enumerator, view));
+    CHECK(viewCopy);
+    CHECK_EQUAL(viewCopy->index, view->index);
+    CHECK(!memcmp(&viewCopy->directory, &view->directory, sizeof(view->directory)));
+
+    // Walking the heap list follows pas_compact_heap_ptr, which is overaligned, through the copy.
+    FindHeapData findHeapData;
+    findHeapData.type = heap->type;
+    CHECK(pas_enumerator_for_each_heap(enumerator, findHeapCallback, &findHeapData));
+    CHECK(findHeapData.found);
+
+    // Both fronts' pages are libpas metadata.
+    CHECK(pas_enumerator_enumerate_all(enumerator));
+    CHECK(recordedRangesCover(pas_enumerator_meta_record, heap));
+    CHECK(recordedRangesCover(pas_enumerator_meta_record, view));
+
+    pas_enumerator_destroy(enumerator);
+    bmalloc_deallocate(object);
 }
 
 } // end namespace
@@ -321,4 +435,5 @@ void addEnumerationTests() {
     ADD_TEST(testPGMEnumerationBasic());
     ADD_TEST(testPGMEnumerationAddAndFree());
     ADD_TEST(testEnumerationInvalidCompactHeapBump());
+    ADD_TEST(testEnumerationCopiesBothCompactHeapFronts());
 }

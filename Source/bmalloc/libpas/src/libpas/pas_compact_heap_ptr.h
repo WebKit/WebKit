@@ -31,7 +31,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_DEFINE_COMPACT_PTR(pas_heap, pas_compact_heap_ptr);
+PAS_DEFINE_OVERALIGNED_COMPACT_PTR(pas_heap, pas_compact_heap_ptr);
 
 PAS_END_EXTERN_C;
 

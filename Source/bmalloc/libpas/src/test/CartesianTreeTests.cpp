@@ -352,7 +352,7 @@ void testDriver(const char* controlString)
         case '+': {
             pas_heap_lock_lock();
             TestNode* node = static_cast<TestNode*>(
-                pas_utility_heap_allocate(sizeof(TestNode), "TestNode"));
+                pas_utility_heap_allocate_with_alignment(sizeof(TestNode), alignof(TestNode), "TestNode"));
             if (verbose)
                 cout << "Adding node = " << node << "\n";
             pas_heap_lock_unlock();

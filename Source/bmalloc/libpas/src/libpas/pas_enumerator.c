@@ -78,7 +78,9 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
     uintptr_t compact_heap_base;
     size_t compact_heap_size;
     size_t compact_heap_guard_size;
+    size_t compact_heap_available_size;
     size_t compact_heap_reservation_bump;
+    size_t compact_heap_reservation_top_bump;
     void* compact_heap_copy_base;
 
     const pas_heap_config* configs[pas_heap_config_kind_num_kinds];
@@ -145,24 +147,50 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
 
     if (!pas_enumerator_copy_remote(
             result,
+            &compact_heap_available_size,
+            result->root->compact_heap_reservation_available_size,
+            sizeof(size_t)))
+        goto fail;
+
+    if (!pas_enumerator_copy_remote(
+            result,
             &compact_heap_reservation_bump,
             result->root->compact_heap_reservation_bump,
             sizeof(size_t)))
         goto fail;
 
+    if (!pas_enumerator_copy_remote(
+            result,
+            &compact_heap_reservation_top_bump,
+            result->root->compact_heap_reservation_top_bump,
+            sizeof(size_t)))
+        goto fail;
+
     if (!compact_heap_base)
+        goto fail;
+    if (compact_heap_available_size > compact_heap_size)
         goto fail;
     if (compact_heap_reservation_bump < compact_heap_guard_size)
         goto fail;
-    if (compact_heap_reservation_bump > compact_heap_size)
+    if (compact_heap_reservation_bump > compact_heap_reservation_top_bump)
+        goto fail;
+    if (compact_heap_reservation_top_bump > compact_heap_available_size)
         goto fail;
 
+    /* The reservation is allocated from both ends, so copy the bottom front and the top front. */
     compact_heap_copy_base = pas_enumerator_allocate(result, compact_heap_size);
     if (!pas_enumerator_copy_remote(
             result,
             (void*)((uintptr_t)compact_heap_copy_base + compact_heap_guard_size),
             (void*)(compact_heap_base + compact_heap_guard_size),
             compact_heap_reservation_bump - compact_heap_guard_size))
+        goto fail;
+    if (compact_heap_reservation_top_bump < compact_heap_available_size
+        && !pas_enumerator_copy_remote(
+            result,
+            (void*)((uintptr_t)compact_heap_copy_base + compact_heap_reservation_top_bump),
+            (void*)(compact_heap_base + compact_heap_reservation_top_bump),
+            compact_heap_available_size - compact_heap_reservation_top_bump))
         goto fail;
 
     result->compact_heap_size = compact_heap_size;

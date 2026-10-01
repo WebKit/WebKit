@@ -33,8 +33,8 @@ PAS_BEGIN_EXTERN_C;
 struct pas_segregated_size_directory;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 
-PAS_DEFINE_COMPACT_PTR(pas_segregated_size_directory,
-                       pas_compact_segregated_size_directory_ptr);
+PAS_DEFINE_OVERALIGNED_COMPACT_PTR(pas_segregated_size_directory,
+                                   pas_compact_segregated_size_directory_ptr);
 
 PAS_END_EXTERN_C;
 

@@ -77,8 +77,9 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
     }
 
     if (page_config) {
-        result = pas_immortal_heap_allocate(
+        result = pas_immortal_heap_allocate_with_alignment(
             sizeof(pas_segregated_size_directory),
+            PAS_ALIGNOF(pas_segregated_size_directory),
             "pas_segregated_size_directory",
             pas_object_allocation);
     } else {

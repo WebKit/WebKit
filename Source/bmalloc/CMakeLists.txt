@@ -595,12 +595,10 @@ set(bmalloc_PRIVATE_HEADERS
     libpas/src/libpas/pas_compact_atomic_segregated_heap_page_sharing_pools_ptr.h
     libpas/src/libpas/pas_compact_atomic_unsigned_ptr.h
     libpas/src/libpas/pas_compact_biasing_directory_ptr.h
-    libpas/src/libpas/pas_compact_bitfit_global_directory_ptr.h
     libpas/src/libpas/pas_compact_bitfit_view_ptr.h
     libpas/src/libpas/pas_compact_large_utility_free_heap.h
     libpas/src/libpas/pas_compact_page_granule_use_count_ptr.h
     libpas/src/libpas/pas_compact_segregated_biasing_directory_ptr.h
-    libpas/src/libpas/pas_compact_segregated_heap_ptr.h
     libpas/src/libpas/pas_compact_segregated_view.h
     libpas/src/libpas/pas_compact_unsigned_ptr.h
     libpas/src/libpas/pas_generic_large_free_heap.h

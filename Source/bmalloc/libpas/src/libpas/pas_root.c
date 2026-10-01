@@ -120,6 +120,7 @@ void pas_root_construct(pas_root* root)
     root->num_large_map_variants = PAS_NUM_LARGE_MAP_VARIANTS;
 
     root->probabilistic_guard_malloc_has_been_used = &pas_probabilistic_guard_malloc_has_been_used;
+    root->compact_heap_reservation_top_bump = &pas_compact_heap_reservation_top_bump;
 
     root->pas_pgm_hash_map_instance = &pas_pgm_hash_map;
     root->pas_pgm_hash_map_instance_in_flux_stash = &pas_pgm_hash_map_in_flux_stash;
