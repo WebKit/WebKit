@@ -169,7 +169,7 @@ void RunLoop::dispatch(Function<void()>&& function)
         wakeUp();
 }
 
-Ref<RunLoop::DispatchTimer> RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
+Ref<RunLoop::DispatchTimer> RunLoop::scheduleTimer(Seconds delay, Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
     Ref<DispatchTimer> timer = adoptRef(*new DispatchTimer(*this));
