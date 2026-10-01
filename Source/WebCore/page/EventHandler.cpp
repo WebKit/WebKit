@@ -3690,8 +3690,8 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     if (event.inputSource() == MouseEventInputSource::UserDriven)
         setLastKnownMousePosition(event.position(), event.globalPosition(), LastKnownMousePositionSource::Wheel);
 
-    if (m_frame->isRootFrame()) {
-        RefPtr page = m_frame->page();
+    if (frame->isRootFrame()) {
+        RefPtr page = frame->page();
 #if ENABLE(WHEEL_EVENT_LATCHING)
         protect(page->scrollLatchingController())->receivedWheelEvent(event);
 #endif
