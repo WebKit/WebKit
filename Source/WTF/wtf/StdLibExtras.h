@@ -1390,23 +1390,23 @@ constexpr decltype(auto) apply(NOESCAPE F&& functor, T&& tupleLike)
 //   This leaves result transposed and equal to:
 //
 //      std::tuple {
-//          std::tuple<int, double, int>        { 1,       0.5,     2         },
-//          std::tuple<string, char, string>    { "hello", 'i',     "goodbye" },
-//          std::tuple<double, float, double>   { 1.5,     0.1f,    3.0       },
+//          std::tuple<int&, double&, int&> { 1, 0.5, 2 },
+//          std::tuple<string&, char&, string&> { "hello", 'i', "goodbye" },
+//          std::tuple<double&, float&, double&> { 1.5, 0.1f, 3.0 },
 //      }
 
 namespace detail {
 
-template<std::size_t I, typename... TupleLikes> using zip_tuple_at_index_t = std::tuple<std::tuple_element_t<I, std::decay_t<TupleLikes>>...>;
-
 template<std::size_t I, typename... TupleLikes> auto zip_tuple_at_index(TupleLikes&&... tupleLikes)
 {
-    return zip_tuple_at_index_t<I, TupleLikes...> { get<I>(std::forward<TupleLikes>(tupleLikes))... };
+    return std::tuple<decltype(get<I>(std::forward<TupleLikes>(tupleLikes)))...> {
+        get<I>(std::forward<TupleLikes>(tupleLikes))...
+    };
 }
 
-template<typename... TupleLikes, std::size_t... I> auto tuple_zip_impl(TupleLikes&& ... tupleLikes, std::index_sequence<I...>)
+template<typename... TupleLikes, std::size_t... I> auto tuple_zip_impl(TupleLikes&&... tupleLikes, std::index_sequence<I...>)
 {
-    return std::tuple<zip_tuple_at_index_t<I, TupleLikes...>...> {
+    return std::tuple<decltype(zip_tuple_at_index<I>(std::forward<TupleLikes>(tupleLikes)...))...> {
         zip_tuple_at_index<I>(std::forward<TupleLikes>(tupleLikes)...)...
     };
 }
