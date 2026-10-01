@@ -733,8 +733,12 @@ private:
 #endif
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
-    void updateObjectCounts();
-    void endMarking();
+    void rememberExecutingAndCompilingCodeBlocks(SlotVisitor&);
+    void recordBytesVisited(size_t bytesVisited);
+    void endMarking(size_t bytesVisited);
+    void verifyMarking();
+    void pruneDeadReferences();
+    void prepareForAllocation();
 
     void cancelDeferredWorkIfNeeded();
     void reapWeakHandles();
@@ -753,7 +757,8 @@ private:
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
     double projectedGCRateLimitingValue(MonotonicTime);
     void updateAllocationLimits();
-    void didFinishCollection(Seconds duration);
+    void didFinishCollection();
+    void recordCollectionTime(Seconds duration);
     void gatherExtraHeapData(HeapProfiler&);
     void removeDeadHeapSnapshotNodes(HeapProfiler&);
     void runCollectionEpilogue();

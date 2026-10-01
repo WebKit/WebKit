@@ -760,10 +760,6 @@ void Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor& vi
         func(codeBlock);
 }
 
-// Collector::runEndPhase calls this from another translation unit, which cannot instantiate a
-// definition that lives here.
-template void Heap::iterateExecutingAndCompilingCodeBlocks<SlotVisitor>(SlotVisitor&, NOESCAPE const Function<void(CodeBlock*)>&);
-
 void Heap::gatherStackRoots(ConservativeRoots& roots)
 {
     m_machineThreads->gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks, m_collector->m_conductingMutatorState, m_collector->m_conductorThread);
@@ -790,6 +786,7 @@ void Heap::gatherVMRoots(ConservativeRoots& roots)
 void Heap::beginMarking()
 {
     TimingScope timingScope(*this, "Heap::beginMarking"_s);
+    ASSERT(isInPhase(CollectorPhase::Begin));
     ASSERT(m_collectionScope);
     if (*m_collectionScope == CollectionScope::Full)
         m_mutatorMarkStack->clear();
@@ -865,26 +862,101 @@ void Heap::removeDeadHeapSnapshotNodes(HeapProfiler& heapProfiler)
     }
 }
 
-void Heap::updateObjectCounts()
+void Heap::rememberExecutingAndCompilingCodeBlocks(SlotVisitor& visitor)
+{
+    ASSERT(isInPhase(CollectorPhase::End));
+    iterateExecutingAndCompilingCodeBlocks(visitor,
+        [&] (CodeBlock* codeBlock) {
+            writeBarrier(codeBlock);
+        });
+}
+
+void Heap::recordBytesVisited(size_t bytesVisited)
 {
     if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         m_totalBytesVisitedAfterLastFullCollect = m_totalBytesVisited;
         m_totalBytesVisited = 0;
     }
 
-    m_totalBytesVisitedThisCycle = m_collector->bytesVisited();
+    m_totalBytesVisitedThisCycle = bytesVisited;
     
     m_totalBytesVisited += m_totalBytesVisitedThisCycle;
 }
 
-void Heap::endMarking()
+void Heap::endMarking(size_t bytesVisited)
 {
+    ASSERT(isInPhase(CollectorPhase::End));
+    ASSERT(m_objectSpace.isMarking());
+
+    recordBytesVisited(bytesVisited);
+
     m_objectSpace.endMarking();
     setMutatorShouldBeFenced(Options::forceFencedBarrier());
 
 #if ENABLE(WEBASSEMBLY)
     releaseUnmarkedWasmCallees();
 #endif
+}
+
+void Heap::verifyMarking()
+{
+    ASSERT(isInPhase(CollectorPhase::End));
+    ASSERT(!m_objectSpace.isMarking());
+
+    if (Options::verifyGC()) [[unlikely]]
+        verifyGC();
+
+    if (m_verifier) [[unlikely]] {
+        m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
+        m_verifier->verify(HeapVerifier::Phase::AfterMarking);
+    }
+}
+
+void Heap::pruneDeadReferences()
+{
+    ASSERT(isInPhase(CollectorPhase::End));
+    ASSERT(!m_objectSpace.isMarking());
+
+    // This doesn't necessarily run on this heap's mutator thread. Clear the atom string table so that
+    // destroying an atom string here fails whichever thread it runs on.
+    auto* previous = Thread::currentSingleton().setCurrentAtomStringTable(nullptr);
+    auto scopeExit = makeScopeExit([&] {
+        Thread::currentSingleton().setCurrentAtomStringTable(previous);
+    });
+
+    if (vm().typeProfiler())
+        vm().typeProfiler()->invalidateTypeSetCache(vm());
+
+    cancelDeferredWorkIfNeeded();
+    reapWeakHandles();
+    reconcileWeakGCHashTables();
+    sweepArrayBuffers();
+    snapshotUnswept();
+    reconcileWeakReferencesAtGCEnd();
+    removeDeadCompilerWorklistEntries();
+    deleteUnmarkedCompiledCode();
+
+    m_codeBlocks->iterateCurrentlyExecuting(
+        [&] (CodeBlock* codeBlock) {
+            writeBarrier(codeBlock);
+        });
+    m_codeBlocks->clearCurrentlyExecutingAndRemoveDeadCodeBlocks(vm());
+}
+
+void Heap::prepareForAllocation()
+{
+    ASSERT(isInPhase(CollectorPhase::End));
+    ASSERT(!m_objectSpace.isMarking());
+
+    m_sweeper->startSweeping(*this);
+
+    m_objectSpace.prepareForAllocation();
+    updateAllocationLimits();
+
+    if (m_verifier) [[unlikely]] {
+        m_verifier->trimDeadCells();
+        m_verifier->verify(HeapVerifier::Phase::AfterGC);
+    }
 }
 
 size_t Heap::objectCount()
@@ -1687,6 +1759,7 @@ void Heap::sweepEagerlyInEpilogue()
 
 void Heap::willStartCollection(CollectionScope scope)
 {
+    ASSERT(isInPhase(CollectorPhase::Begin));
     if (m_collectionScope) {
         dataLogLn("Collection scope already set during GC: ", *m_collectionScope);
         RELEASE_ASSERT_NOT_REACHED();
@@ -1879,13 +1952,10 @@ void Heap::updateAllocationLimits()
     dataLogIf(Options::logGC(), "=> ", currentHeapSize / 1024, "kb, ");
 }
 
-void Heap::didFinishCollection(Seconds duration)
+void Heap::didFinishCollection()
 {
+    ASSERT(isInPhase(CollectorPhase::End));
     CollectionScope scope = *m_collectionScope;
-    if (scope == CollectionScope::Full)
-        m_lastFullGCLength = duration;
-    else
-        m_lastEdenGCLength = duration;
 
 #if ENABLE(RESOURCE_USAGE)
     ASSERT(externalMemorySize() <= extraMemorySize());
@@ -1905,6 +1975,32 @@ void Heap::didFinishCollection(Seconds duration)
 
     for (auto* observer : m_observers)
         observer->didGarbageCollect(scope);
+
+    if (HeapInternal::verbose) {
+        dataLogLn(HeapInternal::verbose, "Heap state after GC:");
+        m_objectSpace.dumpBits();
+    }
+}
+
+void Heap::recordCollectionTime(Seconds duration)
+{
+    ASSERT(isInPhase(CollectorPhase::End));
+    ASSERT(!m_collectionScope);
+
+    if (m_lastCollectionScope == CollectionScope::Full)
+        m_lastFullGCLength = duration;
+    else
+        m_lastEdenGCLength = duration;
+
+    MonotonicTime now = MonotonicTime::now();
+    if (m_maxEdenSizeForRateLimiting) {
+        m_gcRateLimitingValue = projectedGCRateLimitingValue(now);
+        m_gcRateLimitingValue += 1.0;
+    }
+    m_lastGCEndTime = now;
+    m_totalGCTime += now - m_currentGCStartTime;
+    if (m_lastCollectionScope == CollectionScope::Full)
+        m_lastFullGCEndTime = m_lastGCEndTime;
 }
 
 GCActivityCallback* Heap::fullActivityCallback()

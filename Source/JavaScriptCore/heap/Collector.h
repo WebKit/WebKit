@@ -136,7 +136,6 @@ private:
 
     void beginMarking(CollectionScope);
     void endMarking();
-    void didFinishCollection();
 
     void stopThePeriphery();
     void resumeThePeriphery();
