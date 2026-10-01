@@ -922,7 +922,7 @@ private:
 #endif
 
     friend class StreamClientConnection;
-} SWIFT_SHARED_REFERENCE(refConnection, derefConnection) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refConnection, derefConnection);
 
 template<typename T>
 Error Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<ThreadQOS> qos)
@@ -1260,6 +1260,7 @@ inline void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<Connection>& co
 
 } // namespace IPC
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refConnection(IPC::Connection* WTF_NONNULL obj)
 {
     obj->ref();
@@ -1269,3 +1270,4 @@ inline void derefConnection(IPC::Connection* WTF_NONNULL obj)
 {
     obj->deref();
 }
+#endif

@@ -153,10 +153,11 @@ private:
     bool m_needUpdateAfterBatch { false };
 
     FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_STORE)
-} SWIFT_SHARED_REFERENCE(refPrefs, derefPrefs) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refPrefs, derefPrefs);
 
 } // namespace WebKit
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refPrefs(WebKit::WebPreferences* WTF_NONNULL obj)
 {
     obj->ref();
@@ -166,6 +167,7 @@ inline void derefPrefs(WebKit::WebPreferences* WTF_NONNULL obj)
 {
     obj->deref();
 }
+#endif
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPreferences)
 static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Preferences; }

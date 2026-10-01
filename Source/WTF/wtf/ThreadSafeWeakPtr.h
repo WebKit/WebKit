@@ -452,7 +452,7 @@ private:
     template<typename> friend class ThreadSafeWeakHashSet;
 
     mutable Atomic<uintptr_t> m_bits { refIncrement + strongOnlyFlag };
-} SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT BASE_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 template<typename T>
 class ThreadSafeWeakPtr {

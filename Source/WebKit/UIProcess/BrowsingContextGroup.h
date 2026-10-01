@@ -113,10 +113,11 @@ private:
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 
     HashMap<WebCore::SecurityOriginData, WebCore::OriginKeyed> m_historicalAgentClusterKeyMap;
-} SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup);
 
 }
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refBrowsingContextGroup(WebKit::BrowsingContextGroup* WTF_NONNULL obj)
 {
     obj->ref();
@@ -126,3 +127,4 @@ inline void derefBrowsingContextGroup(WebKit::BrowsingContextGroup* WTF_NONNULL 
 {
     obj->deref();
 }
+#endif

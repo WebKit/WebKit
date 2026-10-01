@@ -231,7 +231,7 @@ extension WKSeparatedImageView {
 
 // MARK: - Extensions
 
-extension Logger {
+extension os.Logger {
     static let separatedImage = Logger(subsystem: "com.apple.WebKit", category: "SeparatedImage")
 }
 

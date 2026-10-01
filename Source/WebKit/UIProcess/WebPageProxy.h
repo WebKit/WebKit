@@ -4443,12 +4443,13 @@ private:
 
     HashMap<WebCore::FrameIdentifier, RefPtr<PendingPostMessages>> m_pendingPostMessages;
 
-} SWIFT_SHARED_REFERENCE(refWebPageProxy, derefWebPageProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebPageProxy, derefWebPageProxy);
 
 using WeakPtrWebPageProxy = WeakPtr<WebPageProxy>;
 
 } // namespace WebKit
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refWebPageProxy(WebKit::WebPageProxy* WTF_NONNULL obj)
 {
     obj->ref();
@@ -4458,6 +4459,7 @@ inline void derefWebPageProxy(WebKit::WebPageProxy* WTF_NONNULL obj)
 {
     obj->deref();
 }
+#endif
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPageProxy)
     static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Page; }

@@ -1763,3 +1763,8 @@ void Connection::logFailedMessageCheck(const String& reason, const String& funct
 }
 
 } // namespace IPC
+
+#if ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+// Workaround for rdar://188816334
+template void WTF::ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<IPC::Connection, WTF::DestructionThread::MainRunLoop>::operator delete(void*);
+#endif

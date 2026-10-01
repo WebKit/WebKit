@@ -88,12 +88,13 @@ private:
     }
 
     Vector<RefPtr<Object>> m_elements;
-} SWIFT_SHARED_REFERENCE(refArray, derefArray) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refArray, derefArray);
 
 using RefAPIArray = Ref<Array>;
 
 } // namespace API
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refArray(API::Array* WTF_NONNULL obj)
 {
     obj->ref();
@@ -103,5 +104,6 @@ inline void derefArray(API::Array* WTF_NONNULL obj)
 {
     obj->deref();
 }
+#endif
 
 SPECIALIZE_TYPE_TRAITS_API_OBJECT(Array);

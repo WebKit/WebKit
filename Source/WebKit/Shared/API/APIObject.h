@@ -288,7 +288,11 @@ private:
 
     CFTypeRef m_wrapper;
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
-} SWIFT_SHARED_REFERENCE(refObject, derefObject) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+#if ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS) && DELEGATE_REF_COUNTING_TO_COCOA
+} SWIFT_SHARED_REFERENCE(.ref, .deref) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+#else
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refObject, derefObject);
+#endif
 
 template <Object::Type ArgumentType>
 class ObjectImpl : public Object {
@@ -325,6 +329,7 @@ using RefPtrAPIObject = RefPtr<Object>;
 
 } // namespace API
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refObject(API::Object* WTF_NONNULL obj)
 {
     obj->ref();
@@ -334,6 +339,7 @@ inline void derefObject(API::Object* WTF_NONNULL obj)
 {
     obj->deref();
 }
+#endif
 
 #undef DELEGATE_REF_COUNTING_TO_COCOA
 

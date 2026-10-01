@@ -714,10 +714,11 @@ private:
 
     RemoveDataTaskCounter m_removeDataTaskCounter;
     uint64_t m_cookiesVersion { 0 };
-} SWIFT_SHARED_REFERENCE(refDataStore, derefDataStore) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refDataStore, derefDataStore);
 
 }
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refDataStore(WebKit::WebsiteDataStore* WTF_NONNULL obj)
 {
     obj->ref();
@@ -727,6 +728,7 @@ inline void derefDataStore(WebKit::WebsiteDataStore* WTF_NONNULL obj)
 {
     obj->deref();
 }
+#endif
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebsiteDataStore)
 static bool isType(const API::Object& object) { return object.type() == API::Object::Type::WebsiteDataStore; }

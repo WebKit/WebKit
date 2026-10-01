@@ -569,6 +569,7 @@ class XRView;
 } // namespace WebGPU
 
 // Retain and release functions for SWIFT_SHARED_REFERENCE.
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refWebGPUAdapter(WebGPU::Adapter*);
 inline void derefWebGPUAdapter(WebGPU::Adapter*);
 inline void refWebGPUBindGroup(WebGPU::BindGroup*);
@@ -623,6 +624,7 @@ inline void refWebGPUXRSubImage(WebGPU::XRSubImage*);
 inline void derefWebGPUXRSubImage(WebGPU::XRSubImage*);
 inline void refWebGPUXRView(WebGPU::XRView*);
 inline void derefWebGPUXRView(WebGPU::XRView*);
+#endif
 
 namespace WebGPU {
 
@@ -635,7 +637,7 @@ public:
 
 protected:
     Adapter() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUAdapter, derefWebGPUAdapter) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUAdapter, derefWebGPUAdapter);
 
 class BindGroup : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BindGroup> {
 public:
@@ -646,7 +648,7 @@ public:
 
 protected:
     BindGroup() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUBindGroup, derefWebGPUBindGroup) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUBindGroup, derefWebGPUBindGroup);
 
 class BindGroupLayout : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BindGroupLayout> {
 public:
@@ -657,7 +659,7 @@ public:
 
 protected:
     BindGroupLayout() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUBindGroupLayout, derefWebGPUBindGroupLayout) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUBindGroupLayout, derefWebGPUBindGroupLayout);
 
 class Buffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Buffer> {
 public:
@@ -668,7 +670,7 @@ public:
 
 protected:
     Buffer() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUBuffer, derefWebGPUBuffer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUBuffer, derefWebGPUBuffer);
 
 class CommandBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CommandBuffer> {
 public:
@@ -679,7 +681,7 @@ public:
 
 protected:
     CommandBuffer() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUCommandBuffer, derefWebGPUCommandBuffer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUCommandBuffer, derefWebGPUCommandBuffer);
 
 class CommandEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CommandEncoder> {
 public:
@@ -690,7 +692,7 @@ public:
 
 protected:
     CommandEncoder() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUCommandEncoder, derefWebGPUCommandEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUCommandEncoder, derefWebGPUCommandEncoder);
 
 class ComputePassEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ComputePassEncoder> {
 public:
@@ -701,7 +703,7 @@ public:
 
 protected:
     ComputePassEncoder() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUComputePassEncoder, derefWebGPUComputePassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUComputePassEncoder, derefWebGPUComputePassEncoder);
 
 class ComputePipeline : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ComputePipeline> {
 public:
@@ -712,7 +714,7 @@ public:
 
 protected:
     ComputePipeline() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUComputePipeline, derefWebGPUComputePipeline) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUComputePipeline, derefWebGPUComputePipeline);
 
 class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
 public:
@@ -723,7 +725,7 @@ public:
 
 protected:
     Device() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUDevice, derefWebGPUDevice) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUDevice, derefWebGPUDevice);
 
 class ExternalTexture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ExternalTexture> {
 public:
@@ -734,7 +736,7 @@ public:
 
 protected:
     ExternalTexture() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUExternalTexture, derefWebGPUExternalTexture) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUExternalTexture, derefWebGPUExternalTexture);
 
 class Instance : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance> {
 public:
@@ -745,7 +747,7 @@ public:
 
 protected:
     Instance() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUInstance, derefWebGPUInstance) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUInstance, derefWebGPUInstance);
 
 class PipelineLayout : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PipelineLayout> {
 public:
@@ -756,7 +758,7 @@ public:
 
 protected:
     PipelineLayout() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUPipelineLayout, derefWebGPUPipelineLayout) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUPipelineLayout, derefWebGPUPipelineLayout);
 
 class PresentationContext : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PresentationContext> {
 public:
@@ -767,7 +769,7 @@ public:
 
 protected:
     PresentationContext() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUPresentationContext, derefWebGPUPresentationContext) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUPresentationContext, derefWebGPUPresentationContext);
 
 class QuerySet : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<QuerySet> {
 public:
@@ -778,7 +780,7 @@ public:
 
 protected:
     QuerySet() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUQuerySet, derefWebGPUQuerySet) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUQuerySet, derefWebGPUQuerySet);
 
 class Queue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Queue> {
 public:
@@ -789,7 +791,7 @@ public:
 
 protected:
     Queue() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUQueue, derefWebGPUQueue) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUQueue, derefWebGPUQueue);
 
 class RenderBundle : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderBundle> {
 public:
@@ -800,7 +802,7 @@ public:
 
 protected:
     RenderBundle() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPURenderBundle, derefWebGPURenderBundle) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPURenderBundle, derefWebGPURenderBundle);
 
 class RenderBundleEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderBundleEncoder> {
 public:
@@ -811,7 +813,7 @@ public:
 
 protected:
     RenderBundleEncoder() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPURenderBundleEncoder, derefWebGPURenderBundleEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPURenderBundleEncoder, derefWebGPURenderBundleEncoder);
 
 class RenderPassEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderPassEncoder> {
 public:
@@ -822,7 +824,7 @@ public:
 
 protected:
     RenderPassEncoder() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPURenderPassEncoder, derefWebGPURenderPassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPURenderPassEncoder, derefWebGPURenderPassEncoder);
 
 class RenderPipeline : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderPipeline> {
 public:
@@ -833,7 +835,7 @@ public:
 
 protected:
     RenderPipeline() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPURenderPipeline, derefWebGPURenderPipeline) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPURenderPipeline, derefWebGPURenderPipeline);
 
 class Sampler : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Sampler> {
 public:
@@ -844,7 +846,7 @@ public:
 
 protected:
     Sampler() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUSampler, derefWebGPUSampler) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUSampler, derefWebGPUSampler);
 
 class ShaderModule : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ShaderModule> {
 public:
@@ -855,7 +857,7 @@ public:
 
 protected:
     ShaderModule() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUShaderModule, derefWebGPUShaderModule) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUShaderModule, derefWebGPUShaderModule);
 
 class Texture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Texture> {
 public:
@@ -866,7 +868,7 @@ public:
 
 protected:
     Texture() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUTexture, derefWebGPUTexture) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUTexture, derefWebGPUTexture);
 
 class TextureView : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TextureView> {
 public:
@@ -877,7 +879,7 @@ public:
 
 protected:
     TextureView() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUTextureView, derefWebGPUTextureView) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUTextureView, derefWebGPUTextureView);
 
 class XRBinding : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRBinding> {
 public:
@@ -888,7 +890,7 @@ public:
 
 protected:
     XRBinding() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUXRBinding, derefWebGPUXRBinding) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUXRBinding, derefWebGPUXRBinding);
 
 class XRProjectionLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRProjectionLayer> {
 public:
@@ -899,7 +901,7 @@ public:
 
 protected:
     XRProjectionLayer() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUXRProjectionLayer, derefWebGPUXRProjectionLayer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUXRProjectionLayer, derefWebGPUXRProjectionLayer);
 
 class XRSubImage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRSubImage> {
 public:
@@ -910,7 +912,7 @@ public:
 
 protected:
     XRSubImage() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUXRSubImage, derefWebGPUXRSubImage) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUXRSubImage, derefWebGPUXRSubImage);
 
 class XRView : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRView> {
 public:
@@ -921,10 +923,11 @@ public:
 
 protected:
     XRView() = default;
-} SWIFT_SHARED_REFERENCE(refWebGPUXRView, derefWebGPUXRView) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUXRView, derefWebGPUXRView);
 
 } // namespace WebGPU
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refWebGPUAdapter(WebGPU::Adapter* object)
 {
     object->ref();
@@ -1194,5 +1197,6 @@ inline void derefWebGPUXRView(WebGPU::XRView* object)
 {
     object->deref();
 }
+#endif
 
 #endif // __cplusplus

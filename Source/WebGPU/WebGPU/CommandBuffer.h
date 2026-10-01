@@ -98,10 +98,11 @@ private:
     BinarySemaphore m_commandBufferComplete;
     RefPtr<CommandEncoder> m_commandEncoder;
     std::atomic<double> m_gpuExecutionDurationSeconds { 0 };
-} SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer);
 
 } // namespace WebGPU::Metal
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refCommandBuffer(WebGPU::Metal::CommandBuffer* obj)
 {
     obj->ref();
@@ -111,3 +112,4 @@ inline void derefCommandBuffer(WebGPU::Metal::CommandBuffer* obj)
 {
     obj->deref();
 }
+#endif

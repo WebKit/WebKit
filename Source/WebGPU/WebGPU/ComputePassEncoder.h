@@ -119,11 +119,12 @@ private:
     NSString *m_lastErrorString { nil };
     bool m_passEnded { false };
     bool m_encoderStateWasNotOpen { false };
-} SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder);
 
 
 } // namespace WebGPU::Metal
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refComputePassEncoder(WebGPU::Metal::ComputePassEncoder* obj)
 {
     obj->ref();
@@ -133,3 +134,4 @@ inline void derefComputePassEncoder(WebGPU::Metal::ComputePassEncoder* obj)
 {
     obj->deref();
 }
+#endif

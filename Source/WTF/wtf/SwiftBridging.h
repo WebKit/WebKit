@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if __has_include(<swift/bridging>)
 
 #include <swift/bridging>
@@ -426,4 +428,18 @@
 
 #endif // SWIFT_CLANGIMPORTER_SWIFT_INTEROP_SUPPORT_H
 
+#endif
+
+// BASE_CLASS_SWIFT_SHARED_REFERENCE annotates WTF's ref-counted base classes, when the Swift compiler
+// supports derived classes inheriting it. Otherwise each derived class needs DERIVED_CLASS_SWIFT_SHARED_REFERENCE,
+// (which must also repeat SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT because newer Swift doesn't look for it on base
+// classes once a derived class has its own SWIFT_SHARED_REFERENCE). Once we always use sufficiently recent
+// compilers, we can simply delete DERIVED_CLASS_SWIFT_SHARED_REFERENCE and swap all BASE_CLASS_SWIFT_SHARED_REFERENCE
+// to SWIFT_SHARED_REFERENCE.
+#if ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+#define BASE_CLASS_SWIFT_SHARED_REFERENCE(_retain, _release) SWIFT_SHARED_REFERENCE(_retain, _release)
+#define DERIVED_CLASS_SWIFT_SHARED_REFERENCE(_retain, _release)
+#else
+#define BASE_CLASS_SWIFT_SHARED_REFERENCE(_retain, _release)
+#define DERIVED_CLASS_SWIFT_SHARED_REFERENCE(_retain, _release) SWIFT_SHARED_REFERENCE(_retain, _release) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT
 #endif

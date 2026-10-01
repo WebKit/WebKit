@@ -33,7 +33,6 @@
 #include <wtf/BubbleSort.h>
 #include <wtf/MainThread.h>
 #include <wtf/SafeStrerror.h>
-#include <wtf/glib/ActivityObserver.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 #if HAVE(TIMERFD)

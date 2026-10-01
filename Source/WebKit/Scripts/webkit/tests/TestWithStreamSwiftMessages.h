@@ -55,7 +55,7 @@ private:
     TestWithStreamSwiftMessageForwarder(WebKit::TestWithStreamSwiftWeakRef* _Nonnull);
     std::unique_ptr<WebKit::TestWithStreamSwift> getMessageTarget();
     std::unique_ptr<WebKit::TestWithStreamSwiftWeakRef> m_handler;
-} SWIFT_SHARED_REFERENCE(.ref, .deref);
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 }
 

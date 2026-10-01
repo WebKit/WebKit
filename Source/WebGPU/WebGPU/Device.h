@@ -383,10 +383,11 @@ private:
     bool m_supressAllErrors { false };
     const uint32_t m_maxVerticesPerDrawCall { 0 };
     bool m_shaderValidationEnabled { true };
-} SWIFT_SHARED_REFERENCE(refDevice, derefDevice) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refDevice, derefDevice);
 
 } // namespace WebGPU::Metal
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refDevice(WebGPU::Metal::Device* obj)
 {
     obj->ref();
@@ -396,5 +397,6 @@ inline void derefDevice(WebGPU::Metal::Device* obj)
 {
     obj->deref();
 }
+#endif
 
 IGNORE_CLANG_WARNINGS_END

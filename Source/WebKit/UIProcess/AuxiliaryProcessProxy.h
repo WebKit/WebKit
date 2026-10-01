@@ -387,7 +387,7 @@ private:
     const ASCIILiteral m_clientName;
     HashMap<Vector<uint8_t>, std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> m_messagesToSendOnResume;
     unsigned m_messagesToSendOnResumeIndex { 0 };
-} SWIFT_SHARED_REFERENCE(refAuxiliaryProcessProxy, derefAuxiliaryProcessProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refAuxiliaryProcessProxy, derefAuxiliaryProcessProxy);
 
 template<typename T>
 bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
@@ -470,6 +470,7 @@ inline AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
 
 } // namespace WebKit
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refAuxiliaryProcessProxy(WebKit::AuxiliaryProcessProxy* WTF_NONNULL obj)
 {
     obj->ref();
@@ -479,3 +480,4 @@ inline void derefAuxiliaryProcessProxy(WebKit::AuxiliaryProcessProxy* WTF_NONNUL
 {
     obj->deref();
 }
+#endif

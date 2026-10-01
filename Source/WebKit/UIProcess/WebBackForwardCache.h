@@ -77,10 +77,11 @@ private:
     WeakRef<WebProcessPool> m_processPool;
     unsigned m_capacity { 0 };
     WeakListHashSet<WebBackForwardListItem> m_itemsWithCachedPage;
-} SWIFT_SHARED_REFERENCE(refWebBackForwardCache, derefWebBackForwardCache) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebBackForwardCache, derefWebBackForwardCache);
 
 } // namespace WebKit
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refWebBackForwardCache(WebKit::WebBackForwardCache* WTF_NONNULL obj)
 {
     obj->ref();
@@ -90,3 +91,4 @@ inline void derefWebBackForwardCache(WebKit::WebBackForwardCache* WTF_NONNULL ob
 {
     obj->deref();
 }
+#endif

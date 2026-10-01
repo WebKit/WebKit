@@ -163,10 +163,11 @@ private:
     const ThreadSafeWeakPtr<Instance> m_instance;
     id<MTLBuffer> _Nullable m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
-} SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
 } // namespace WebGPU::Metal
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refQueue(WebGPU::Metal::Queue* obj)
 {
     obj->ref();
@@ -176,5 +177,6 @@ inline void derefQueue(WebGPU::Metal::Queue* obj)
 {
     obj->deref();
 }
+#endif
 
 IGNORE_CLANG_WARNINGS_END

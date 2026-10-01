@@ -255,10 +255,11 @@ private:
         Vector<Entry> entries;
     };
     RefPtr<IndirectDeviceLostChecks> m_indirectDeviceLostChecks;
-} SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refRenderPassEncoder, derefRenderPassEncoder);
 
 } // namespace WebGPU::Metal
 
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refRenderPassEncoder(WebGPU::Metal::RenderPassEncoder* obj)
 {
     obj->ref();
@@ -268,3 +269,4 @@ inline void derefRenderPassEncoder(WebGPU::Metal::RenderPassEncoder* obj)
 {
     obj->deref();
 }
+#endif

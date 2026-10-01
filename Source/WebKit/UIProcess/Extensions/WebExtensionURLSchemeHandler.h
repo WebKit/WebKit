@@ -53,7 +53,9 @@ private:
     void platformTaskCompleted(WebURLSchemeTask&) final;
 
     WeakPtr<WebExtensionController> m_webExtensionController;
+#if PLATFORM(COCOA)
     HashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;
+#endif
 }; // class WebExtensionURLSchemeHandler
 
 } // namespace WebKit
