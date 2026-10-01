@@ -30,6 +30,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/WebCoreThread.h>
+#import <WebCore/WebCoreThreadRun.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -57,6 +58,28 @@ TEST(WebKitLegacy, NestedRunLoopUnderRunLoopObserverDoubleUnlock)
     // Spinning the runloop should have resulted in dropping the lock,
     // and *not underflowing* the lock count (which is also reported as "locked").
     EXPECT_FALSE(WebThreadIsLocked());
+}
+
+TEST(WebKitLegacy, WebThreadRunWithoutWebThread)
+{
+    ASSERT_FALSE(WebThreadIsEnabled());
+
+    __block bool ranSynchronously = false;
+    WebThreadRun(^{
+        ranSynchronously = true;
+    });
+    EXPECT_TRUE(ranSynchronously);
+
+    __block bool done = false;
+    __block bool ranOnMainThread = false;
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        WebThreadRun(^{
+            ranOnMainThread = [NSThread isMainThread];
+            done = true;
+        });
+    });
+    Util::run(&done);
+    EXPECT_TRUE(ranOnMainThread);
 }
 
 }
