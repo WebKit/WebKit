@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
+#include "MediaSourceConfiguration.h"
 #include "MediaSourcePrivateClient.h"
 #include "MediaSourceTrackGStreamer.h"
 #include "NotImplemented.h"
@@ -148,7 +149,7 @@ void MediaSourcePrivateGStreamer::handleLogMessage(const WTFLogChannel& channel,
 }
 #endif // !RELEASE_LOG_DISABLED && !defined(GST_DISABLE_GST_DEBUG)
 
-MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>& sourceBufferPrivate)
+MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration& configuration, RefPtr<SourceBufferPrivate>& sourceBufferPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
 
@@ -161,7 +162,7 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
 
     {
         Locker locker { m_lock };
-        m_sourceBuffers.append(SourceBufferPrivateGStreamer::create(*this, contentType));
+        m_sourceBuffers.append(SourceBufferPrivateGStreamer::create(*this, contentType, configuration.textTracksEnabled));
         sourceBufferPrivate = m_sourceBuffers.last();
     }
     sourceBufferPrivate->setMediaSourceDuration(duration());

@@ -134,7 +134,7 @@ private:
     enum class CreateTrackResult { TrackCreated, TrackIgnored, AppendParsingFailed };
     std::pair<CreateTrackResult, AppendPipeline::Track*> tryCreateTrackFromPad(GstPad* demuxerSrcPad);
 
-    bool recycleTrackForPad(GstPad*);
+    void recycleTrackForPad(GstPad*);
     void linkPadWithTrack(GstPad* demuxerSrcPad, Track&);
 
     void consumeAppsinksAvailableSamples();
