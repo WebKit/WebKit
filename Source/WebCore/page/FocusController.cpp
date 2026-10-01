@@ -1258,15 +1258,12 @@ void FocusController::setActive(bool active)
 
 void FocusController::setActiveInternal()
 {
-    RefPtr localMainOrRootFrame = m_page->localMainOrRootFrame();
-    if (!localMainOrRootFrame)
-        return;
-    if (RefPtr view = localMainOrRootFrame->view()) {
-        if (!view->platformWidget()) {
-            view->updateLayoutAndStyleIfNeededRecursive();
-            view->updateControlTints();
-        }
-    }
+    protect(m_page)->forEachRootFrameView([] (LocalFrameView& view) {
+        if (view.platformWidget())
+            return;
+        view.updateLayoutAndStyleIfNeededRecursive();
+        view.updateControlTints();
+    });
 
     if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
         protect(focusedOrMainFrame->selection())->pageActivationChanged();

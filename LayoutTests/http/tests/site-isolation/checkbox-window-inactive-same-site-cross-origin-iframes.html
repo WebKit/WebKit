@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-200">
+<script src="/js-test-resources/ui-helper.js"></script>
+<body style="margin:0">
+<iframe onload="frameLoaded()" src="http://localhost:8000/site-isolation/resources/checkbox-iframe.html" frameborder=0 style="width:100px;height:60px;border:none;display:block;"></iframe>
+<iframe onload="frameLoaded()" src="http://localhost:8000/site-isolation/resources/checkbox-iframe.html" frameborder=0 style="width:100px;height:60px;border:none;display:block;"></iframe>
+<script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+let loadedFrameCount = 0;
+async function frameLoaded()
+{
+    if (!window.testRunner || ++loadedFrameCount < 2)
+        return;
+
+    // Both iframes share one process under Site Isolation, so each is a separate root frame
+    // in that process and both checkboxes need to repaint when the window becomes inactive.
+    await UIHelper.setWindowIsKey(false);
+    await new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 0)));
+    });
+
+    testRunner.notifyDone();
+}
+</script>
+</body>
