@@ -3774,6 +3774,14 @@ MathFontFamily:
   webcoreImplementation: custom
   defaultValue: '""_str'
 
+MathMLAnchorElementEnabled:
+  type: bool
+  defaultValue: false
+  status: testable
+  category: dom
+  humanReadableName: "MathML <a> element"
+  humanReadableDescription: "Enable support for the MathML <a> element and IDL interface."
+
 MathMLDisableHrefOnNonAnchorElement:
   type: bool
   status: testable
