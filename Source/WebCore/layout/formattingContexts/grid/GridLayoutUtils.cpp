@@ -58,8 +58,10 @@ Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTr
             return trackSize;
         },
         [&trackSize](const Style::GridTrackSize::FitContent& fitContent) {
+            // Without a limit, fit-content() is minmax(auto, max-content). Unlike an auto track,
+            // it must not be stretched by Stretch auto Tracks.
             if (fitContent->value.isPercentOrCalculated())
-                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+                return Style::GridTrackSize { Style::GridTrackSize::MinMax { CSS::Keyword::Auto { }, CSS::Keyword::MaxContent { } } };
             return trackSize;
         },
         [&trackSize](const Style::GridTrackBreadth::Flex&) {
