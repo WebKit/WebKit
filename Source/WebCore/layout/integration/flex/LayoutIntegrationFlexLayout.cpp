@@ -72,12 +72,12 @@ FlexLayoutConstraints FlexLayout::flexLayoutConstraints() const
     FlexFormattingUtils utils { flexBox() };
     return {
         .style = flexBox().style(),
+        .minimumLineCount = FlexFormattingUtils::minimumLineCount(flexBox()),
         .isHorizontalFlow = FlexFormattingUtils::isHorizontalFlow(flexBox()),
         .isColumnFlow = FlexFormattingUtils::isColumnFlow(flexBox()),
         .isMultiline = FlexFormattingUtils::isMultiline(flexBox()),
         .isWrapReverse = FlexFormattingUtils::isWrapReverse(flexBox()),
         .isBalance = FlexFormattingUtils::isBalance(flexBox()),
-        .minimumLineCount = FlexFormattingUtils::minimumLineCount(flexBox()),
         .isColumnOrRowReverse = utils.isColumnOrRowReverse(),
         .isLeftToRightFlow = utils.isLeftToRightFlow(),
         .crossAxisDirection = utils.crossAxisDirection(),

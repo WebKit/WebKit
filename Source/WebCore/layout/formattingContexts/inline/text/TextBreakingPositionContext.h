@@ -65,9 +65,8 @@ struct TextBreakingPositionContext {
     LineBreak lineBreak { LineBreak::Normal };
     WordBreak wordBreak { WordBreak::Normal };
     NBSPMode nbspMode { NBSPMode::Normal };
-    AtomString locale;
-
     bool isHashTableDeletedValue { false };
+    AtomString locale;
 
     TextBreakingPositionContext(const Style::ComputedStyle&);
     TextBreakingPositionContext() = default;

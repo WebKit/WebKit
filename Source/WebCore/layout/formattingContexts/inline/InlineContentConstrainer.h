@@ -52,9 +52,9 @@ private:
 
     struct EntryPretty {
         float accumulatedCost { std::numeric_limits<float>::infinity() };
+        InlineLayoutUnit lastLineWidth { 0 };
         size_t previousBreakIndex { 0 };
         size_t lineIndex { 0 };
-        InlineLayoutUnit lastLineWidth { 0 };
         InlineItemPosition lineEnd { };
         std::optional<PreviousLine> previousLine { };
     };

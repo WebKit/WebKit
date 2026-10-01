@@ -68,8 +68,8 @@ public:
 
 private:
     LayoutPhase m_phase { LayoutPhase::PreparingFlexItems };
-    SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
     bool m_isFlexBoxBlockSizeDefinite { false };
+    SingleThreadWeakHashSet<const RenderBox> m_flexItemsWithCompletedLayout;
 };
 
 } // namespace WebCore

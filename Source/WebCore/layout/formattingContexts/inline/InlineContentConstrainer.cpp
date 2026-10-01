@@ -216,9 +216,9 @@ InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLine
         return { lastValidEntry.accumulatedCost,
             // This function is only called when there are no more viable break points for PrettifyRange.
             // Use the last valid entry's accumulated cost as we must use this breakpoint no matter what.
+            lineLayoutResult.contentGeometry.logicalWidth,
             previousBreakIndex,
             lastValidEntry.lineIndex + 1,
-            lineLayoutResult.contentGeometry.logicalWidth,
             lineEnd,
             buildPreviousLine(lastValidEntry.lineIndex + 1, lineLayoutResult)
         };
@@ -232,9 +232,9 @@ InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLine
     return { lastValidEntry.accumulatedCost,
         // This function is only called when there are no more viable break points for PrettifyRange.
         // Use the last valid entry's accumulated cost as we must use this breakpoint no matter what.
+        shortenedLineLayoutResult.contentGeometry.logicalWidth,
         previousBreakIndex,
         lastValidEntry.lineIndex + 1,
-        shortenedLineLayoutResult.contentGeometry.logicalWidth,
         shortenedLineEnd,
         buildPreviousLine(lastValidEntry.lineIndex + 1, shortenedLineLayoutResult)
     };
