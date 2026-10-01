@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The drop shadow of a layer partly scrolled out of the viewport should include the shadow of the part that is scrolled out.</title>
+<style>
+body {
+    margin: 0;
+    height: 2000px;
+}
+.test {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: 100px;
+    height: 130px;
+    background: green;
+    will-change: transform;
+    filter: drop-shadow(0 50px 0 black);
+}
+</style>
+</head>
+<body>
+<div class="test"></div>
+<script>
+window.scrollTo(0, 100);
+</script>
+</body>
+</html>

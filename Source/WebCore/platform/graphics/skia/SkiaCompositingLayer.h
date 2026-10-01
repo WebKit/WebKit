@@ -299,6 +299,7 @@ private:
     float opacity() const;
     float opacityForAnimationsState(const AnimationsState*) const;
     const std::optional<Filter> filter() const;
+    bool hasFilter() const;
     IntOutsets unclippedFilterOutsets() const;
 
     struct DebugBorder {
@@ -360,6 +361,7 @@ private:
     std::optional<Filter> m_filter;
     struct {
         sk_sp<SkImageFilter> filter;
+        FilterOperations filterOperations;
         FloatRoundedRect clipRect;
         std::optional<SkPath> clipPath;
     } m_backdrop;

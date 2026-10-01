@@ -26,7 +26,9 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#include <optional>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkRect.h>
 #include <skia/core/SkRefCnt.h>
 #include <skia/core/SkTileMode.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -40,8 +42,8 @@ class FilterOperations;
 
 namespace SkiaCompositingLayerFilters {
 
-sk_sp<SkImageFilter> create(const FilterOperation&, sk_sp<SkImageFilter> input, SkTileMode blurTileMode = SkTileMode::kDecal);
-sk_sp<SkImageFilter> create(const FilterOperations&, SkTileMode blurTileMode = SkTileMode::kDecal);
+sk_sp<SkImageFilter> create(const FilterOperation&, sk_sp<SkImageFilter> input, SkTileMode blurTileMode = SkTileMode::kDecal, const std::optional<SkRect>& blurTileRect = std::nullopt);
+sk_sp<SkImageFilter> create(const FilterOperations&, SkTileMode blurTileMode = SkTileMode::kDecal, const std::optional<SkRect>& blurTileRect = std::nullopt);
 
 } // namespace SkiaCompositingLayerFilters
 } // namespace WebCore
