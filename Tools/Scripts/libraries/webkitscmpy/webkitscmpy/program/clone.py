@@ -20,14 +20,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import sys
+from typing import Any, Callable, TYPE_CHECKING
 
 from .command import Command
 from .trace import Trace, Relationship
 from webkitbugspy import Tracker, radar
 from webkitcorepy import arguments, Terminal
 from webkitscmpy import log
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitbugspy import Issue
+    from webkitscmpy.local import Git
 
 
 class Clone(Command):
@@ -37,7 +46,7 @@ class Clone(Command):
     COMMITTED_RE = re.compile(r'Committed \d+\.?\d+@\S+( \([a-f0-9A-F]+\))? to (?P<branch>\S*) referencing this bug')
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
@@ -75,18 +84,19 @@ class Clone(Command):
         )
 
     @classmethod
-    def parent(cls, rdar, milestone):
+    def parent(cls, rdar: radar.Tracker, milestone: str) -> Issue | None:
         radar_user = rdar.me()
         if not radar_user:
             sys.stderr.write('Failed to find current radar user\n')
             return None
 
-        candidates = {}
+        candidates: dict[str, Issue] = {}
         for r in rdar.search(dict(
             assignee=radar_user.username,
             milestone=milestone,
             state='Analyze',
         )):
+            assert r.title is not None
             if 'merge-back' in r.title.lower() and cls.UMBRELLA in r.title:
                 candidates[r.title] = r
 
@@ -102,8 +112,8 @@ class Clone(Command):
         ), None)
 
     @classmethod
-    def main(cls, args, repository, merge_back=None, **kwargs):
-        rdar = None
+    def main(cls, args: Namespace, repository: Git | None, merge_back: bool | None = None, **kwargs: Any) -> int:
+        rdar: radar.Tracker | None = None
         if args.merge_back is not None:
             merge_back = args.merge_back
 
@@ -161,11 +171,13 @@ class Clone(Command):
             on_default_branch = False
             on_release_branch = False
 
-            branch = None
+            branch: str | None = None
             for comment in issue.comments:
+                assert comment.content is not None
                 mtch = cls.COMMITTED_RE.match(comment.content)
                 if mtch:
                     branch = mtch.group('branch')
+                    assert repository is not None
                     if branch == repository.default_branch:
                         on_default_branch = True
                         break
@@ -174,7 +186,7 @@ class Clone(Command):
 
             if on_default_branch:
                 merge_back = False
-            elif on_release_branch and (args.prompt or Terminal.choose(
+            elif on_release_branch and repository is not None and (args.prompt or Terminal.choose(
                 prompt='Change is on {} but not {}, would you like to create a merge-back clone?'.format(branch, repository.default_branch),
                 default='Yes',
             ) == 'Yes'):
@@ -183,6 +195,7 @@ class Clone(Command):
         prefix = '[merge-back]' if merge_back else ''
 
         if not args.reason and merge_back:
+            assert repository is not None
             args.reason = "Cloning for merge-back to {}".format(repository.default_branch)
         if not args.reason and args.milestone:
             args.reason = "Cloning for inclusion in '{}'".format(args.milestone)
@@ -218,7 +231,9 @@ class Clone(Command):
             if milestone.isRestricted:
                 for group in milestone.restrictedAccessGroups:
                     name = group.name[4:] if group.name.startswith('DS: ') else group.name
-                    if rdar.me().username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(name):
+                    me = rdar.me()
+                    assert me is not None
+                    if me.username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(name):
                         break
                 else:
                     sys.stderr.write("You do not have read access to '{}', pick another\n".format(milestone.name))
@@ -227,7 +242,9 @@ class Clone(Command):
             if milestone.isProtected:
                 for group in milestone.protectedAccessGroups:
                     name = group.name[4:] if group.name.startswith('DS: ') else group.name
-                    if rdar.me().username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(name):
+                    me = rdar.me()
+                    assert me is not None
+                    if me.username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(name):
                         break
                 else:
                     sys.stderr.write("You do not have write access to '{}', pick another\n".format(milestone.name))
@@ -239,7 +256,7 @@ class Clone(Command):
             sys.stderr.write("Failed to find milestone matching '{}'\n".format(args.milestone))
             return 255
 
-        parent = None
+        parent: Issue | None = None
         if merge_back:
             parent = cls.parent(rdar, milestone.name)
             if not parent:
@@ -250,9 +267,9 @@ class Clone(Command):
 
         milestone_association = raw_issue.milestone_associations(milestone)
 
-        def pick_attr(name, plural, default=None):
+        def pick_attr(name: str, plural: str, default: str | None = None) -> Any:
             mapping = {candidate.name: candidate for candidate in getattr(milestone_association, plural, [])}
-            attr = getattr(raw_issue, name, None)
+            attr: Any = getattr(raw_issue, name, None)
             if default or attr:
                 value = mapping.get(default or attr.name, None)
                 if value:
@@ -310,12 +327,12 @@ class Clone(Command):
                 result += 1
 
         def modify_radar(
-            cloned=cloned, raw_clone=raw_clone,
-            raw_issue=raw_issue,
-            prefix=prefix, milestone=milestone,
-            category=category, event=event, tentpole=tentpole,
-            action=lambda: None,
-        ):
+            cloned: Issue | None = cloned, raw_clone: Any = raw_clone,
+            raw_issue: Any = raw_issue,
+            prefix: str = prefix, milestone: Any = milestone,
+            category: Any = category, event: Any = event, tentpole: Any = tentpole,
+            action: Callable[..., Any] = lambda: None,
+        ) -> int:
             if prefix:
                 raw_clone.title = '{} {}'.format(prefix, raw_issue.title)
                 action()
@@ -345,6 +362,7 @@ class Clone(Command):
                 else:
                     raw_clone.substate = 'Investigate'
                     sys.stderr.write('{} does not have a resolution\n'.format(issue.link))
+                    assert cloned is not None
                     sys.stderr.write('Placing {} in {}\n'.format(cloned.link, raw_clone.substate))
                 action()
             except rdar.radarclient().exceptions.UnsuccessfulResponseException:

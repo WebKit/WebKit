@@ -22,10 +22,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import TYPE_CHECKING, Any
 
 from webkitscmpy import local
 from webkitscmpy.program.command import FilteredCommand
+
+if TYPE_CHECKING:
+    from argparse import Namespace
 
 
 class Blame(FilteredCommand):
@@ -33,8 +39,11 @@ class Blame(FilteredCommand):
     help = "Filter raw output of 'git blame' or 'svn blame' to replace native commit representation with identifiers"
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
-        return cls.pager(args, repository, file=__file__, **kwargs)
+    def main(
+        cls, args: Namespace | list[str], repository: local.Svn | local.Git | None, command: str | None = None,
+        representation: str | None = None, **kwargs: Any,
+    ) -> int:
+        return cls.pager(args, repository, file=__file__, representation=representation, **kwargs)
 
 
 if __name__ == '__main__':

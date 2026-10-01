@@ -20,14 +20,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import os
 import sys
+from typing import Any, TYPE_CHECKING
 
 from .command import Command
 from datetime import datetime
 from webkitcorepy import arguments
 from webkitscmpy import Commit, local
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.scm_base import ScmBase
 
 
 class Info(Command):
@@ -35,7 +43,7 @@ class Info(Command):
     help = 'Print information about the HEAD commit'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--json', '-j',
             help='Convert the commit to a machine-readable JSON object',
@@ -52,7 +60,7 @@ class Info(Command):
         )
 
     @classmethod
-    def print_(cls, args, commits, verbose_default=0):
+    def print_(cls, args: Namespace, commits: list[Commit], verbose_default: int = 0) -> int:
         if args.json:
             print(json.dumps(commits if len(commits) > 1 else commits[0], cls=Commit.Encoder, indent=4))
             return 0
@@ -78,6 +86,7 @@ class Info(Command):
                 print(u'Author: {}'.format(commit.author))
             except (UnicodeEncodeError, UnicodeDecodeError):
                 print('Error: Unable to  print commit author name, please file a bug if seeing this locally.')
+            assert commit.timestamp is not None
             print(datetime.fromtimestamp(commit.timestamp).strftime('Date: %a %b %d %H:%M:%S %Y'))
             if args.verbose > verbose_default or commit.revision:
                 print('Revision: {}'.format(commit.revision or 'N/A'))
@@ -85,14 +94,14 @@ class Info(Command):
                 print('Hash: {}'.format(commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else 'N/A'))
             print(u'Identifier: {}'.format(commit))
 
-            if args.verbose > verbose_default:
+            if args.verbose > verbose_default and commit.message:
                 for line in commit.message.splitlines():
                     print(u'    {}'.format(line))
 
         return 0
 
     @classmethod
-    def main(cls, args, repository, reference='HEAD', **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, reference: str = 'HEAD', **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -108,7 +117,7 @@ class Info(Command):
                 if len(references) > 2:
                     sys.stderr.write('Can only include two references in a range\n')
                     return 1
-                kwargs_to_pass = dict(
+                kwargs_to_pass: dict[str, Any] = dict(
                     begin=dict(argument=references[0]),
                     end=dict(argument=references[1]),
                 )
@@ -144,7 +153,7 @@ class Find(Command):
     aliases = ['list']
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         Info.parser(parser, loggers=loggers)
 
         parser.add_argument(
@@ -161,7 +170,7 @@ class Find(Command):
         )
 
     @classmethod
-    def _needs_fallback(cls, repository):
+    def _needs_fallback(cls, repository: ScmBase | None) -> bool:
         if not repository:
             return True
         if not isinstance(repository, local.Scm):
@@ -172,7 +181,7 @@ class Find(Command):
         return False
 
     @classmethod
-    def main(cls, args, repository, fallback_path=None, **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, fallback_path: str | None = None, **kwargs: Any) -> int:
         if fallback_path and cls._needs_fallback(repository):
             try:
                 repository = local.Scm.from_path(path=fallback_path)

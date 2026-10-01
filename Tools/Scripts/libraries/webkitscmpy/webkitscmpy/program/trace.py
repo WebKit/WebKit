@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import sys
+from typing import Any, TYPE_CHECKING
 
 from .command import Command
 from webkitscmpy import Commit, local, log, remote
 from webkitbugspy import Tracker
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
 
 
 COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+(\.\d+)?@?([0-9a-zA-z\-\/\.]+[0-9a-zA-z\-\/])?'
@@ -85,7 +92,7 @@ class Relationship(object):
     UNDO = [REVERTS, REVERTED_BY]
 
     @classmethod
-    def reversed(cls, type):
+    def reversed(cls, type: str) -> str:
         return {
             cls.REFERENCES: cls.REFERENCED_BY,
             cls.REFERENCED_BY: cls.REFERENCES,
@@ -98,7 +105,7 @@ class Relationship(object):
         }.get(type, type)
 
     @classmethod
-    def parse(cls, commit):
+    def parse(cls, commit: Commit) -> tuple[str | None, list[str]]:
         if not commit.message:
             return None, []
         lines = commit.message.splitlines()
@@ -120,30 +127,32 @@ class Relationship(object):
                 primary = match.group('primary')
                 secondary = match.group('secondary')
                 if secondary:
-                    secondary = UNPACK_SECONDARY_RE.match(secondary).groups()[0]
+                    unpacked = UNPACK_SECONDARY_RE.match(secondary)
+                    assert unpacked is not None
+                    secondary = unpacked.groups()[0]
                 if secondary and Commit.HASH_RE.match(secondary):
                     primary, secondary = secondary, primary
                 return type, [ref.rstrip() for ref in [primary, secondary] if ref]
         return None, []
 
-    def __init__(self, commit, type=None):
+    def __init__(self, commit: Commit, type: str | None = None) -> None:
         self.commit = commit
         self.type = type or self.REFERENCES
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{} {}'.format(self.commit, self.type)
 
 
 class CommitsStory(object):
-    def __init__(self, commits=None):
-        self.commits = []
-        self.by_ref = {}
-        self.by_issue = {}
-        self.relations = {}
+    def __init__(self, commits: list[Commit] | None = None) -> None:
+        self.commits: list[Commit] = []
+        self.by_ref: dict[str, Commit] = {}
+        self.by_issue: dict[str, list[Commit]] = {}
+        self.relations: dict[str, list[Relationship]] = {}
         for commit in commits or []:
             self.add(commit)
 
-    def __contains__(self, commit):
+    def __contains__(self, commit: Commit) -> bool:
         if str(commit) in self.by_ref:
             return True
         if commit.hash and commit.hash[:Commit.HASH_LABEL_SIZE] in self.by_ref:
@@ -152,7 +161,7 @@ class CommitsStory(object):
             return True
         return False
 
-    def add(self, commit):
+    def add(self, commit: Commit) -> bool:
         if commit in self:
             return True
         self.commits.append(commit)
@@ -182,7 +191,7 @@ class Trace(Command):
     help = "Given an identifier, revision, or hash, find related commits"
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
@@ -195,13 +204,13 @@ class Trace(Command):
         )
 
     @classmethod
-    def relationships(cls, commit, repository, commits_story=None):
+    def relationships(cls, commit: Commit, repository: local.Git, commits_story: CommitsStory | None = None) -> list[Relationship]:
         tracked = set([str(commit)])
-        result = []
+        result: list[Relationship] = []
         type, refs = Relationship.parse(commit)
         if type and refs:
             for ref in refs:
-                found = None
+                found: Commit | None = None
                 if commits_story:
                     found = commits_story.by_ref.get(ref, None)
                 if not found:
@@ -243,16 +252,16 @@ class Trace(Command):
 
         type = Relationship.REFERENCES
         for issue in commit.issues:
-            for candidate in commits_story.by_issue.get(issue.link, []):
-                if str(candidate) in tracked:
+            for candidate_commit in commits_story.by_issue.get(issue.link, []):
+                if str(candidate_commit) in tracked:
                     continue
-                tracked.add(str(candidate))
-                result.append(Relationship(candidate, type))
+                tracked.add(str(candidate_commit))
+                result.append(Relationship(candidate_commit, type))
 
         return result
 
     @classmethod
-    def summary(cls, commit):
+    def summary(cls, commit: Commit) -> str:
         return '{identifier} | {hash}{revision}{title}'.format(
             identifier=commit,
             hash=commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else '',
@@ -261,7 +270,7 @@ class Trace(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -293,12 +302,12 @@ class Trace(Command):
             ):
                 story.add(c)
 
-        relationship = cls.relationships(commit, repository, commits_story=story)
-        if not relationship:
+        relationships = cls.relationships(commit, repository, commits_story=story)
+        if not relationships:
             sys.stderr.write('No relationships found\n')
             return 1
 
-        for relationship in relationship:
+        for relationship in relationships:
             print('    {} {}'.format(relationship.type, cls.summary(relationship.commit)))
 
         return 0

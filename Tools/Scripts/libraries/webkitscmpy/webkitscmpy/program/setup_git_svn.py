@@ -20,12 +20,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 from webkitcorepy import run
 from webkitscmpy import remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.local import Git, Svn
 
 
 class SetupGitSvn(Command):
@@ -33,7 +41,7 @@ class SetupGitSvn(Command):
     help = 'Connect a git checkout to the Subversion repository it is (or was) based on'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--all-branches', '-a',
             help='Match all git branches to their subversion counterparts',
@@ -43,7 +51,7 @@ class SetupGitSvn(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, subversion=None, **kwargs):
+    def main(cls, args: Namespace, repository: Git | Svn | None, subversion: str | None = None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -58,8 +66,10 @@ class SetupGitSvn(Command):
             return 1
 
         print('Adding svn-remote to git config')
-        config_path = os.path.join(repository.root_path, '.git', 'config')
-        config_data = []
+        root_path = repository.root_path
+        assert root_path is not None
+        config_path = os.path.join(root_path, '.git', 'config')
+        config_data: list[str] = []
         with open(config_path, 'r') as config:
             is_in_svn_remote = False
             for line in config.readlines():
