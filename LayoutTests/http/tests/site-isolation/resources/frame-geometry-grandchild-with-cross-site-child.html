@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>frame geometry for grandchild holding a great-grandchild on another site</title>
+<style>
+body { margin: 0 }
+iframe { position: absolute; left: 10px; top: 25px; width: 120px; height: 100px; border: 0 }
+</style>
+<script src="frame-geometry-reporter.js"></script>
+<body>
+<iframe src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-frame.html?label=greatGrandchild"></iframe>
+</body>
