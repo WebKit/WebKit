@@ -117,6 +117,10 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.primevideo.com/");
 #endif
 
+    assertUserAgentForURLHasChromeBrowserQuirk("http://luna.amazon.com/");
+    assertUserAgentForURLHasChromeBrowserQuirk("http://luna.amazon.es/");
+    assertUserAgentForURLHasChromeBrowserQuirk("http://luna.amazon.fr/");
+
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.bilibili.com/");
 

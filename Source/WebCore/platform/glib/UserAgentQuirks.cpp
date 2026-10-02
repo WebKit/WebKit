@@ -75,6 +75,10 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
         return true;
 #endif
 
+    // Use Chrome UA for luna.amazon.* otherwise the user gets an error popup when starting a game.
+    if (domain.startsWith("luna."_s) && PublicSuffixStore::singleton().domainWithoutPublicSuffix(baseDomain) == "amazon"_s)
+        return true;
+
     return false;
 }
 
