@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
@@ -3439,6 +3439,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     bool isMouseDownEvent = eventType == eventNames().mousedownEvent;
 
     RefPtr elementUnderMouse = m_elementUnderMouse;
+    bool didRetargetToMouseMoveTargetOverride = false;
     if (eventType == eventNames().mousemoveEvent && m_mouseMoveTargetOverride) {
         // If m_mouseMoveTargetOverride is set, targetNode must have been disconnected during the execution of this method.
         // One situation this may occur is an event listener for a boundary event immediately deleting the target node. In
@@ -3446,10 +3447,12 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
         // FIXME: Is there a more elegant way to handle this case? Should we do the same for other events besides `mousemove`?
 
         elementUnderMouse = m_mouseMoveTargetOverride.get();
+        didRetargetToMouseMoveTargetOverride = true;
     }
 
     if (elementUnderMouse) {
-        auto [eventIsDispatched, eventIsDefaultPrevented] = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No);
+        auto shouldDispatchPointerEvent = didRetargetToMouseMoveTargetOverride ? Element::ShouldDispatchPointerEvent::No : Element::ShouldDispatchPointerEvent::Yes;
+        auto [eventIsDispatched, eventIsDefaultPrevented] = elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount, nullptr, IsSyntheticClick::No, shouldDispatchPointerEvent);
         m_mouseMoveTargetOverride = nullptr;
         m_capturesDragging = CapturesDragging::InabilityReason::Unknown;
         if (eventIsDefaultPrevented == Element::EventIsDefaultPrevented::Yes) {
