@@ -157,6 +157,8 @@ void PortalPresentationManagerProxy::invalidateAllModels()
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
+static constexpr WebCore::FloatSize mockVolumeSizeInMeters { 1.0f, 0.5f };
+
 void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier nodeID, const VolumetricSceneContentContext& contentContext, CompletionHandler<void(bool)>&& completion)
 {
     RefPtr webPageProxy = m_page.get();
@@ -171,7 +173,7 @@ void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier
             .contentContext = contentContext.contentLayerHostingContext,
             .sceneController = nil,
         }));
-        webPageProxy->updateVolumetricSceneSize(nodeID, WebCore::FloatSize { 1.0f, 0.5f });
+        webPageProxy->updateVolumetricSceneSize(nodeID, mockVolumeSizeInMeters);
         return completion(true);
     }
 
@@ -236,8 +238,11 @@ void PortalPresentationManagerProxy::reconnectVolumetricSceneToContentContext(We
 
     presentation->contentContext = contentContext.contentLayerHostingContext;
 
-    if (protect(webPageProxy->preferences())->mockVolumetricSceneEnabled())
+    // The reloaded player doesn't have the volume size yet, so send it, as the real scene does below.
+    if (protect(webPageProxy->preferences())->mockVolumetricSceneEnabled()) {
+        webPageProxy->updateVolumetricSceneSize(nodeID, mockVolumeSizeInMeters);
         return;
+    }
 
     RetainPtr sceneController = presentation->sceneController;
     auto volumeSizeInMeters = [sceneController hostContentWithContext:contentContext.contentLayerHostingContext pid:webPageProxy->legacyMainFrameProcessID()];

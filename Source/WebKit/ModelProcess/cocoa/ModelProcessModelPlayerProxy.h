@@ -234,11 +234,19 @@ private:
     };
     using TrackedModelMap = HashMap<WebCore::NodeIdentifier, UniqueRef<TrackedModel>>;
 
+    struct MergedBounds {
+        simd_float3 extents { simd_make_float3(0, 0, 0) };
+        simd_float3 center { simd_make_float3(0, 0, 0) };
+        float boundingRadius { 0 };
+    };
+
     RESRT modelStandardizedTransformSRT(RESRT originalSRT) const;
     RESRT modelLocalizedTransformSRT(RESRT originalSRT) const;
+    std::optional<MergedBounds> computeMergedBounds() const;
     void computeTransform(bool);
     void applyPresentationTransform();
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    static std::optional<RESRT> computeVolumetricFitSRT(WebCore::FloatSize volumeSizeInMeters, const MergedBounds&, simd_quatf currentModelRotation);
     void applyVolumetricPresentationTransform();
     void setGroundingShadowsEnabled(bool);
 #endif

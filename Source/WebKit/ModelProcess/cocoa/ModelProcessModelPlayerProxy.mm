@@ -530,11 +530,12 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
 
         srt.scale = simd_make_float3(minScale, minScale, minScale);
         srt.rotation = currentModelRotation;
+        simd_float3 rotatedCenter = simd_act(srt.rotation, boundingBoxCenter);
 
         if (isPortal)
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingBoxExtents.z / 2.0f);
+            srt.translation = simd_make_float3(-rotatedCenter.x, -rotatedCenter.y, -rotatedCenter.z - boundingBoxExtents.z / 2.0f);
         else
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingBoxExtents.z / 2.0f);
+            srt.translation = simd_make_float3(-rotatedCenter.x, -rotatedCenter.y, -rotatedCenter.z + boundingBoxExtents.z / 2.0f);
     } else {
         float boundingSphereDiameter = boundingRadius * 2.0f;
         float layerBoundingEdge = simd_reduce_min(boundsOfLayerInMeters);
@@ -545,11 +546,12 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
         srt.scale = simd_make_float3(minScale, minScale, minScale);
         srt.rotation = currentModelRotation;
         boundingBoxCenter = srt.scale * originalBoundingBoxCenter;
+        simd_float3 rotatedCenter = simd_act(srt.rotation, boundingBoxCenter);
 
         if (isPortal)
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingSphereDiameter * minScale / 2.0f);
+            srt.translation = simd_make_float3(-rotatedCenter.x, -rotatedCenter.y, -rotatedCenter.z - boundingSphereDiameter * minScale / 2.0f);
         else
-            srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingSphereDiameter * minScale / 2.0f);
+            srt.translation = simd_make_float3(-rotatedCenter.x, -rotatedCenter.y, -rotatedCenter.z + boundingSphereDiameter * minScale / 2.0f);
     }
 
     return srt;
@@ -662,17 +664,8 @@ simd_float4x4 ModelProcessModelPlayerProxy::contentTransformMatrix() const
 }
 #endif
 
-void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
+std::optional<ModelProcessModelPlayerProxy::MergedBounds> ModelProcessModelPlayerProxy::computeMergedBounds() const
 {
-    if (m_trackedModels.isEmpty() || !m_layer)
-        return;
-
-#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    // The volume fit is not derived from the layer bounds, so layout must not recompute over it.
-    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric)
-        return;
-#endif
-
 #if ENABLE(SPATIAL_PORTAL)
     auto beforeAutoMatrix = static_cast<simd_float4x4>(m_portalTransform.transformBeforeAuto);
     float beforeAutoScale = maximumScale(beforeAutoMatrix);
@@ -683,7 +676,7 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     simd_float3 maxBound = simd_make_float3(0, 0, 0);
     bool hasBounds = false;
 
-    for (UniqueRef<TrackedModel>& tracked : m_trackedModels.values()) {
+    for (const UniqueRef<TrackedModel>& tracked : m_trackedModels.values()) {
         if (!tracked->entity)
             continue;
 
@@ -703,25 +696,16 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     }
 
     if (!hasBounds)
-        return;
+        return std::nullopt;
 
-    simd_float3 boundingBoxExtents = maxBound - minBound;
-    simd_float3 boundingBoxCenter = (maxBound + minBound) / 2;
-
-    simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
-
-#if ENABLE(SPATIAL_PORTAL)
-    if (!m_portalTransform.fitsContent) {
-        m_transformSRT = computeUnfittedSRT(boundingBoxExtents, boundingBoxCenter, currentModelRotation);
-        notifyModelPlayerOfTransformChange();
-        return;
-    }
-#endif
+    MergedBounds bounds;
+    bounds.extents = maxBound - minBound;
+    bounds.center = (maxBound + minBound) / 2;
+    bounds.boundingRadius = 0;
 
     // Each model's bounding sphere has to be reached from the merged centre, not from its own, so
     // an off-centre sibling widens the radius by its distance rather than being swallowed by it.
-    float boundingRadius = 0;
-    for (UniqueRef<TrackedModel>& tracked : m_trackedModels.values()) {
+    for (const UniqueRef<TrackedModel>& tracked : m_trackedModels.values()) {
         if (!tracked->entity)
             continue;
 
@@ -732,10 +716,37 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
 #else
         simd_float3 entityCenter = tracked->originalBoundingBoxCenter;
 #endif
-        boundingRadius = std::max(boundingRadius, simd_length(entityCenter - boundingBoxCenter) + entityRadius);
+        bounds.boundingRadius = std::max(bounds.boundingRadius, simd_length(entityCenter - bounds.center) + entityRadius);
     }
 
-    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, isImmersive());
+    return bounds;
+}
+
+void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
+{
+    if (m_trackedModels.isEmpty() || !m_layer)
+        return;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric)
+        return;
+#endif
+
+    auto bounds = computeMergedBounds();
+    if (!bounds)
+        return;
+
+    simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (!m_portalTransform.fitsContent) {
+        m_transformSRT = computeUnfittedSRT(bounds->extents, bounds->center, currentModelRotation);
+        notifyModelPlayerOfTransformChange();
+        return;
+    }
+#endif
+
+    RESRT newSRT = computeSRT(m_layer.get(), bounds->extents, bounds->center, bounds->boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, isImmersive());
     m_transformSRT = newSRT;
 
     notifyModelPlayerOfTransformChange();
@@ -1028,10 +1039,6 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
         m_modelRKEntity = loadedEntity;
     }
 
-#if HAVE(CORE_RE)
-    [m_stageModeInteractionDriver setContainerTransformInPortal];
-#endif // HAVE(CORE_RE)
-
     auto entityTransformToRestore = std::exchange(m_entityTransformToRestore, std::nullopt);
 #if ENABLE(SPATIAL_PORTAL)
     // FIXME: ModelProcessModelPlayer::m_entityTransform is a single value shared by every child,
@@ -1055,6 +1062,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 
 #if HAVE(CORE_RE)
     applyStageModeOperationToDriver();
+    [m_stageModeInteractionDriver setContainerTransformInPortal];
 #endif // HAVE(CORE_RE)
 
     updateOpacity();
@@ -1778,23 +1786,27 @@ WebCore::StageModeOperation ModelProcessModelPlayerProxy::effectiveStageModeOper
 
 void ModelProcessModelPlayerProxy::updateForCurrentStageMode()
 {
-    if (effectiveStageModeOperation() != WebCore::StageModeOperation::None) {
-        computeTransform(false);
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric) {
 #if HAVE(CORE_RE)
-        [m_containerEntityWrapper recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
-#else
-        [m_modelRKEntity recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale * reportingModelScale(), m_transformSRT.rotation, m_transformSRT.translation })];
+        applyStageModeOperationToDriver();
 #endif
-        updateTransformSRT();
+        applyVolumetricPresentationTransform();
+        return;
+    }
+#endif
+
+    bool isOrbiting = effectiveStageModeOperation() != WebCore::StageModeOperation::None;
+    if (isOrbiting) {
+        computeTransform(false);
+        updateTransform();
     }
 
 #if HAVE(CORE_RE)
     applyStageModeOperationToDriver();
-#endif
 
-#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    if (m_presentationMode == WebCore::ModelPresentationMode::Volumetric)
-        applyVolumetricPresentationTransform();
+    if (isOrbiting && m_stageModeInteractionDriver)
+        [m_stageModeInteractionDriver setContainerTransformInPortal];
 #endif
 }
 
@@ -2093,6 +2105,7 @@ void ModelProcessModelPlayerProxy::setPresentationMode(WebCore::ModelPresentatio
 #endif
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     case WebCore::ModelPresentationMode::Volumetric:
+        [m_layer setFrame:CGRectZero];
         break;
 #endif
     }
@@ -2117,16 +2130,75 @@ void ModelProcessModelPlayerProxy::applyPresentationTransform()
 
     computeTransform(false);
     updateTransform();
+
+#if HAVE(CORE_RE)
+    if (m_stageModeInteractionDriver)
+        [m_stageModeInteractionDriver setContainerTransformInPortal];
+#endif
 }
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
 // MARK: - Connected volumetric scene
 
+static bool isFinite(simd_float3 vector)
+{
+    return std::isfinite(vector.x) && std::isfinite(vector.y) && std::isfinite(vector.z);
+}
+
+// The volume reports no depth, so the content is fitted to a sphere inscribed in the smaller in-plane extent. That
+// clears any depth at least as large as that extent, and keeps the fit rotation-invariant; fitting the bounding box
+// per axis instead would re-scale the content as the user orbits it.
+std::optional<RESRT> ModelProcessModelPlayerProxy::computeVolumetricFitSRT(WebCore::FloatSize volumeSizeInMeters, const MergedBounds& bounds, simd_quatf currentModelRotation)
+{
+    if (!std::isfinite(volumeSizeInMeters.width()) || !std::isfinite(volumeSizeInMeters.height()))
+        return std::nullopt;
+
+    float volumeMinExtent = std::min(volumeSizeInMeters.width(), volumeSizeInMeters.height());
+
+    // A scene has no extent until it lays out, and fitting to that placeholder makes the content jump once the real
+    // extent arrives
+    if (volumeMinExtent <= 0)
+        return std::nullopt;
+
+    if (!std::isfinite(bounds.boundingRadius) || !isFinite(bounds.extents) || !isFinite(bounds.center))
+        return std::nullopt;
+
+    float scale = bounds.boundingRadius > 0 ? volumeMinExtent / (2 * bounds.boundingRadius) : 1;
+
+    // The rotated bounding box rests on the floor rather than the sphere
+    simd_float3x3 rotation = simd_matrix3x3(currentModelRotation);
+    simd_float3 verticalRow = simd_make_float3(rotation.columns[0].y, rotation.columns[1].y, rotation.columns[2].y);
+    float halfHeight = scale * simd_dot(simd_abs(verticalRow), bounds.extents) / 2;
+    simd_float3 center = simd_act(currentModelRotation, bounds.center * scale);
+
+    RESRT srt;
+    srt.scale = simd_make_float3(scale, scale, scale);
+    srt.rotation = currentModelRotation;
+    srt.translation = simd_make_float3(-center.x, halfHeight - volumeSizeInMeters.height() / 2 - center.y, -center.z);
+
+    return srt;
+}
+
 void ModelProcessModelPlayerProxy::applyVolumetricPresentationTransform()
 {
-    // FIXME: Fit the content to m_volumeSizeInMeters and center it in the volume.
+    auto bounds = computeMergedBounds();
+    if (!bounds)
+        return;
+
+    auto fitSRT = computeVolumetricFitSRT(m_volumeSizeInMeters, *bounds, m_transformSRT.rotation);
+
+    if (!fitSRT)
+        return;
+
+    m_transformSRT = *fitSRT;
+    notifyModelPlayerOfTransformChange();
     updateTransform();
+
+#if HAVE(CORE_RE)
+    if (m_stageModeInteractionDriver)
+        [m_stageModeInteractionDriver setContainerTransformInPortal];
+#endif
 }
 
 void ModelProcessModelPlayerProxy::setGroundingShadowsEnabled(bool enabled)

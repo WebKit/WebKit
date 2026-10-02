@@ -85,11 +85,21 @@ extension WKStageModeInteractionDriver {
         self.turntableInteractionContainer.setParent(self.interactionContainer, preservingWorldTransform: true)
     }
 
+    @nonobjc
+    private final func recenterInteractionPivotOnContent() {
+        guard interactionContainer.parent != nil else { return }
+
+        let placement = modelEntity.transformMatrix(relativeTo: nil)
+        interactionContainer.setPosition(modelEntity.interactionPivotPoint, relativeTo: nil)
+        turntableInteractionContainer.position = .zero
+        modelEntity.setTransformMatrix(placement, relativeTo: nil)
+    }
+
     func setContainerTransformInPortal() {
         // Configure entity hierarchy after we have correctly positioned the model
-        interactionContainer.setPosition(modelEntity.interactionPivotPoint, relativeTo: nil)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
         unsafe modelEntity.setParentCore(turntableInteractionContainer.coreEntity, preservingWorldTransform: true)
+        recenterInteractionPivotOnContent()
     }
 
     func removeInteractionContainerFromSceneOrParent() {
@@ -148,15 +158,7 @@ extension WKStageModeInteractionDriver {
         stageModeOperation = operation
 
         if operation != .none {
-            let initialCenter = modelEntity.interactionPivotPoint
-            let initialTransform = modelEntity.transform
-            let transformMatrix = Transform(
-                scale: initialTransform.scale,
-                rotation: initialTransform.rotation,
-                translation: initialTransform.translation
-            )
-            interactionContainer.setPosition(initialCenter, relativeTo: nil)
-            modelEntity.interactionContainerDidRecenter(fromTransform: transformMatrix.matrix)
+            recenterInteractionPivotOnContent()
         }
     }
 

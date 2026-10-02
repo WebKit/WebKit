@@ -75,8 +75,6 @@ NS_SWIFT_UI_ACTOR
 + (void)loadFromData:(NSData *)data withAttributionTaskID:(nullable NSString *)attributionTaskId entityMemoryLimit:(NSInteger)entityMemoryLimit completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKRKEntity * _Nullable entity))completionHandler;
 - (void)setUpAnimationWithAutoPlay:(BOOL)autoPlay;
 - (void)applyIBLData:(NSData *)data attributionHandler:(NS_SWIFT_UI_ACTOR void (^)(REAssetRef coreEnvironmentResourceAsset))attributionHandler withCompletion:(NS_SWIFT_UI_ACTOR void (^)(BOOL success))completion;
-- (void)interactionContainerDidRecenterFromTransform:(simd_float4x4)transform;
-- (void)recenterEntityAtTransform:(WKEntityTransform)transform;
 - (void)applyDefaultIBL;
 - (void)removeIBL;
 - (void)setIBLReceiverEnabled:(BOOL)enabled;

@@ -245,6 +245,16 @@ extension WKRKEntity {
         }
     }
 
+    @nonobjc
+    final func transformMatrix(relativeTo referenceEntity: Entity?) -> simd_float4x4 {
+        entity.transformMatrix(relativeTo: referenceEntity)
+    }
+
+    @nonobjc
+    final func setTransformMatrix(_ transform: simd_float4x4, relativeTo referenceEntity: Entity?) {
+        entity.setTransformMatrix(transform, relativeTo: referenceEntity)
+    }
+
     var opacity: Float {
         get {
             guard let opacityComponent = entity.components[OpacityComponent.self] else {
@@ -684,32 +694,6 @@ extension WKRKEntity {
 
     func removeFromParentEntity() {
         entity.removeFromParent()
-    }
-
-    @objc(interactionContainerDidRecenterFromTransform:)
-    func interactionContainerDidRecenter(fromTransform transform: simd_float4x4) {
-        entity.setTransformMatrix(transform, relativeTo: nil)
-    }
-
-    @objc(recenterEntityAtTransform:)
-    func recenter(at transform: WKEntityTransform) {
-        // Apply the scale and translation of the entity separately from the rotation
-        self.transform = WKEntityTransform(
-            scale: transform.scale,
-            rotation: .init(ix: 0, iy: 0, iz: 0, r: 1),
-            translation: transform.translation
-        )
-
-        // The pivot for the orientation may be different from the center of the model's bounding box
-        // As a result, we offset the translation after the rotation has been applied to recenter it
-        let pivotPoint = interactionPivotPoint
-        self.transform = transform
-        let offset = pivotPoint - interactionPivotPoint
-        self.transform = WKEntityTransform(
-            scale: transform.scale,
-            rotation: transform.rotation,
-            translation: transform.translation + offset
-        )
     }
 }
 
