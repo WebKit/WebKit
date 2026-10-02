@@ -3020,7 +3020,9 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
         return metrics;
 
     auto& font = *fontProxy;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     auto& fontMetrics = font.metricsOfPrimaryFont();
+#endif
 
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
@@ -3028,6 +3030,11 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     metrics->setWidth(fontWidth);
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Bind the primary font's metrics only after width() has run, since it can rebuild the font cache.
+    auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
+#endif
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();
 
