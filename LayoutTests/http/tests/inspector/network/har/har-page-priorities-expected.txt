@@ -1,5 +1,15 @@
 HAR Priorities Test.
 
+To test various priority and initialPriority scenarios this page has multiple resources:
+
+Normal stylesheet
+Print stylesheet
+Priority Boosted stylesheet
+The normal testing JavaScript file
+A asynchronous loaded JavaScript file
+A font
+A call to a beacon
+and the below images
 First image
 
 
