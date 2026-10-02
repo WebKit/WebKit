@@ -238,6 +238,9 @@ public:
     MonotonicTime requestStart() const { return m_requestStart; }
     void resetRequestStart();
 
+    bool didStartProvisionalLoad() const { return m_didStartProvisionalLoad; }
+    void setDidStartProvisionalLoad() { m_didStartProvisionalLoad = true; }
+
     WebCore::ProcessIdentifier processID() const { return m_processID; }
     void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
 
@@ -295,6 +298,7 @@ private:
     bool m_hasStorageForCurrentSite : 1 { false };
     bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
     bool m_hasCrossOriginRedirect : 1 { false };
+    bool m_didStartProvisionalLoad : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     std::optional<WebCore::RegistrableDomain> m_unpartitionedStorageSite;

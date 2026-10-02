@@ -30,6 +30,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/ProcessTerminationTestUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -8835,6 +8836,108 @@ TEST(ProcessSwap, CrossSiteNavigationToCOOPReusesProvisionalProcess)
     EXPECT_NE(provisionalPID, 0);
     EXPECT_NE(pid1, pid2);
     EXPECT_EQ(provisionalPID, pid2);
+}
+
+enum class LateMessageArrival : bool { BeforeCommit, AfterCommit };
+static void runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(bool siteIsolationEnabled, LateMessageArrival lateMessageArrival)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { "<a id='link' href='destination.html'>link</a>"_s } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "bar"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    setFeatureEnabled(webViewConfiguration.get(), @"CrossOriginOpenerPolicyEnabled", true);
+    setFeatureEnabled(webViewConfiguration.get(), @"SiteIsolationEnabled", siteIsolationEnabled);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:server.request("/source.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    // Simulate the old process's DidStartProvisionalLoadForFrame arriving after the COOP process swap.
+    __block bool didDelayDidStartProvisionalLoad = false;
+    [webView _delayNextDidStartProvisionalLoadForTesting:^{
+        didDelayDidStartProvisionalLoad = true;
+    }];
+
+    RetainPtr<NSString> destinationURL = server.request("/destination.html"_s).URL.absoluteString;
+
+    __block unsigned didStartProvisionalNavigationCount = 0;
+    __block bool didCommitNavigation = false;
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        EXPECT_FALSE(didCommitNavigation);
+        EXPECT_WK_STREQ([webView URL].absoluteString, destinationURL.get());
+        ++didStartProvisionalNavigationCount;
+    };
+    navigationDelegate.get().didCommitNavigation = ^(WKWebView *, WKNavigation *) {
+        EXPECT_EQ(didStartProvisionalNavigationCount, 1u);
+        didCommitNavigation = true;
+    };
+
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        EXPECT_TRUE(didDelayDidStartProvisionalLoad);
+        EXPECT_NE([webView _provisionalWebProcessIdentifier], 0);
+        EXPECT_EQ(didStartProvisionalNavigationCount, 1u);
+        if (lateMessageArrival == LateMessageArrival::BeforeCommit)
+            [webView _resumeDelayedDidStartProvisionalLoadForTesting];
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    __block bool navigationEnded = false;
+    __block RetainPtr<NSError> navigationError;
+    [navigationDelegate waitForDidFinishNavigationWithCompletionHandler:^(NSError *error) {
+        navigationError = error;
+        navigationEnded = true;
+    }];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
+    Util::run(&navigationEnded);
+
+    if (lateMessageArrival == LateMessageArrival::AfterCommit) {
+        [webView _resumeDelayedDidStartProvisionalLoadForTesting];
+        EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.innerText"], "bar");
+    }
+
+    EXPECT_NULL(navigationError.get());
+    EXPECT_TRUE(didCommitNavigation);
+    EXPECT_EQ(didStartProvisionalNavigationCount, 1u);
+    EXPECT_FALSE([webView isLoading]);
+    EXPECT_NE([webView _webProcessIdentifier], pid1);
+    EXPECT_WK_STREQ([webView URL].absoluteString, destinationURL.get());
+    EXPECT_WK_STREQ([webView _committedURL].absoluteString, destinationURL.get());
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwap)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(false, LateMessageArrival::BeforeCommit);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwapWithSiteIsolation)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(true, LateMessageArrival::BeforeCommit);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwapCommitted)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(false, LateMessageArrival::AfterCommit);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwapCommittedWithSiteIsolation)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(true, LateMessageArrival::AfterCommit);
 }
 
 enum class IsSameOrigin : bool { No, Yes };
