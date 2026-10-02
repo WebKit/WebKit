@@ -392,8 +392,8 @@ class MacPort(DarwinPort):
 
         return configuration
 
-    def setup_test_run(self, device_type=None):
-        super(MacPort, self).setup_test_run(device_type)
+    def setup_test_run(self, device_type=None, workers_per_device=1):
+        super(MacPort, self).setup_test_run(device_type, workers_per_device=workers_per_device)
         # Warm up only when multiple workers will spawn concurrently (webkit.org/b/242106):
         # with one worker the first real test does the same first-run binary verification.
         # Also skipped under --no-timeout so `lldb --wait-for --attach-name ...` doesn't
