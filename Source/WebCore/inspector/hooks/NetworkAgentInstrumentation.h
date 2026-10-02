@@ -37,6 +37,7 @@ class CachedResource;
 class Document;
 class DocumentLoader;
 class DocumentThreadableLoader;
+class FragmentedSharedBuffer;
 class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
@@ -78,6 +79,12 @@ public:
     virtual void didReceiveThreadableLoaderResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentThreadableLoader&) = 0;
     virtual void willDestroyCachedResource(WebCore::CachedResource&) = 0;
     virtual void mainFrameNavigated(WebCore::DocumentLoader&) = 0;
+
+    virtual bool willIntercept(const WebCore::ResourceRequest&) = 0;
+    virtual bool shouldInterceptRequest(const WebCore::ResourceLoader&) = 0;
+    virtual bool shouldInterceptResponse(const WebCore::ResourceResponse&) = 0;
+    virtual void interceptRequest(WebCore::ResourceLoader&, Function<void(const WebCore::ResourceRequest&)>&&) = 0;
+    virtual void interceptResponse(const WebCore::ResourceResponse&, WebCore::ResourceLoaderIdentifier, CompletionHandler<void(const WebCore::ResourceResponse&, RefPtr<WebCore::FragmentedSharedBuffer>)>&&) = 0;
 
 protected:
     NetworkAgentInstrumentation(WebCore::WebAgentContext& context)
