@@ -199,11 +199,11 @@ static NinePieceScales computeTileScales(const NinePieceRects& destinationRects,
 }
 
 template<typename T>
-static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement* renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
 {
     auto styleImage = ninePieceImage.source().tryStyleImage();
     ASSERT(styleImage);
-    ASSERT(styleImage->isLoaded(renderer));
+    ASSERT(styleImage->isLoaded(&renderer));
 
     auto zoom = style.usedZoomForLength();
 
@@ -226,7 +226,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
         .fill = ninePieceImage.slice().fill.has_value(),
     };
 
-    RefPtr image = styleImage->image(renderer, source, graphicsContext);
+    RefPtr image = styleImage->image(&renderer, source, graphicsContext);
     if (!image)
         return;
 
@@ -236,10 +236,9 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     auto concreteObjectSize = image->drawsSVGImage()
         ? ConcreteObjectSize::fixed(FloatSize(source) / usedZoom, usedZoom)
         : ConcreteObjectSize::fixed(image->size());
-    auto extras = renderer ? styleImage->drawingExtrasForRenderer(*renderer) : Style::ImageDrawingExtras { };
+    auto extras = styleImage->drawingExtrasForRenderer(renderer);
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    if (renderer)
-        options = { options, AXCustomColorModeController::shouldInvertSVGImage(*renderer) ? InvertContent::Yes : InvertContent::No };
+    options = { options, AXCustomColorModeController::shouldInvertSVGImage(renderer) ? InvertContent::Yes : InvertContent::No };
 #endif
 
     styleImage->drawNinePiece(graphicsContext, *image, concreteObjectSize, geometry, options, &extras);
@@ -247,12 +246,12 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
 
 // MARK: - Painter entry point
 
-void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement* renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
 {
     return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, style, destination, source, deviceScaleFactor, options);
 }
 
-void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement* renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
 {
     return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, style, destination, source, deviceScaleFactor, options);
 }
