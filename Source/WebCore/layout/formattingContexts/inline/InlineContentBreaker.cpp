@@ -149,10 +149,10 @@ static inline InlineContentBreaker::PartialRun firstCharacterBreakRespectingLine
     while (inlineTextItem.start() + breakPosition < inlineTextItem.end()) {
         if (canBreakBefore(text[inlineTextItem.start() + breakPosition], textRun.style.lineBreak()))
             break;
-        auto nextPosition = breakPosition;
-        U16_FWD_1(text, nextPosition, inlineTextItem.end() - inlineTextItem.start());
-        breakWidth = TextUtil::width(inlineTextItem, textRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + nextPosition, contentLogicalRight);
-        breakPosition = nextPosition;
+        auto nextPosition = inlineTextItem.start() + breakPosition;
+        U16_FWD_1(text, nextPosition, inlineTextItem.end());
+        breakWidth = TextUtil::width(inlineTextItem, textRun.style.fontCascade(), inlineTextItem.start(), nextPosition, contentLogicalRight);
+        breakPosition = nextPosition - inlineTextItem.start();
     }
     return { breakPosition, breakWidth };
 }

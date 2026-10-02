@@ -1,0 +1,6 @@
+x😀 a,bcd
+a,bcd😀
+
+PASS Text item starting at offset 0
+PASS Text item starting at non-zero offset with a surrogate pair earlier in the text
+
