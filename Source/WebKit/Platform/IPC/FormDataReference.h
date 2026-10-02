@@ -48,6 +48,8 @@ public:
 
     Vector<WebKit::SandboxExtensionHandle> sandboxExtensionHandles() const;
 
+    static bool validate(WebCore::FormData& formData, const String& storageManagerPath);
+
 private:
     RefPtr<WebCore::FormData> m_data;
 };

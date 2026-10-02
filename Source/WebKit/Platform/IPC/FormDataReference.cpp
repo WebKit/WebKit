@@ -38,36 +38,24 @@ FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<We
     if (!m_data)
         return;
 
-    unsigned fileCount = 0;
-    for (auto& element : m_data->elements()) {
+    for (auto& handle : sandboxExtensionHandles)
+        WebKit::SandboxExtension::consumePermanently(handle);
+}
+
+bool FormDataReference::validate(WebCore::FormData& formData, const String& storageManagerPath)
+{
+    for (auto& element : formData.elements()) {
         if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
-            ++fileCount;
-#if PLATFORM(COCOA)
             const String& path = fileData->filename;
-            if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
-                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8());
-                m_data = nullptr;
-                break;
-            }
-#else
-            UNUSED_VARIABLE(fileData);
+            if (!path.isEmpty() && FileSystem::isAncestor(storageManagerPath, path))
+                continue;
+#if PLATFORM(COCOA)
+            if (WebKit::pathIsBlockedForSandboxExtensions(path))
+                return false;
 #endif // !PLATFORM(COCOA)
         }
     }
-
-    if (!m_data)
-        return;
-
-    unsigned consumedExtensions = 0;
-    for (auto& handle : sandboxExtensionHandles) {
-        if (WebKit::SandboxExtension::consumePermanently(handle))
-            consumedExtensions++;
-    }
-
-    if (consumedExtensions != fileCount) {
-        RELEASE_LOG_ERROR(IPC, "FormDataReference: dropping body because a file sandbox extension could not be consumed");
-        m_data = nullptr;
-    }
+    return true;
 }
 
 Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensionHandles() const

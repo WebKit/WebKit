@@ -27,6 +27,7 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
+#include "FormDataReference.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
@@ -615,7 +616,9 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0, existingLoaderToResume ? existingLoaderToResume->toUInt64() : 0);
 
-    if (CheckedPtr session = networkSession()) {
+    CheckedPtr session = networkSession();
+
+    if (session) {
         Ref server = session->ensureSWServer();
         auto topOrigin = loadParameters.topOriginForServiceWorkers(loadParameters.request.url());
         if (!server->isImportCompletedForOrigin(topOrigin)) {
@@ -667,8 +670,29 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
         }
     }
 
-    Ref loader = m_networkResourceLoaders.add(*identifier, NetworkResourceLoader::create(WTF::move(loadParameters), *this)).iterator->value;
+    RefPtr formData = loadParameters.request.httpBody();
 
+    if (formData) {
+        RefPtr topOrigin = loadParameters.topOrigin;
+        RefPtr sourceOrigin = loadParameters.sourceOrigin;
+        WebCore::ClientOrigin clientOrigin { topOrigin->data(), sourceOrigin->data() };
+
+        if (session) {
+            session->storageManager().getOriginDirectory(WTF::move(clientOrigin), WebsiteDataType::IndexedDBDatabases, [weakThis = WeakPtr { *this }, formData, loadParameters = WTF::move(loadParameters)] (const String& indexDBPath) mutable {
+                RefPtr protectedThis = weakThis;
+                if (!protectedThis)
+                    return;
+                if (!IPC::FormDataReference::validate(*formData, indexDBPath))
+                    return;
+                Ref loader = protectedThis->m_networkResourceLoaders.add(*loadParameters.identifier, NetworkResourceLoader::create(WTF::move(loadParameters), *protectedThis)).iterator->value;
+                loader->startWithServiceWorker();
+            });
+            return;
+        } else if (!IPC::FormDataReference::validate(*formData, emptyString()))
+            return;
+    }
+
+    Ref loader = m_networkResourceLoaders.add(*identifier, NetworkResourceLoader::create(WTF::move(loadParameters), *this)).iterator->value;
     loader->startWithServiceWorker();
 }
 
