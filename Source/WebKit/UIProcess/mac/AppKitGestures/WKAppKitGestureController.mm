@@ -29,6 +29,7 @@
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
 #import "AppKitSPI.h"
+#import "GestureTypes.h"
 #import "IdentifierTypes.h"
 #import "ImageAnalysisUtilities.h"
 #import "InteractionInformationAtPosition.h"
@@ -744,6 +745,10 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
     RELEASE_ASSERT(_domDoubleClickGestureRecognizer == gesture);
+
+    // The single-click gesture may have already committed this click as a double click.
+    if (![self takeCompletedDOMDoubleClick])
+        return;
 
     if (protect([webView _impl])->ignoresAllEvents())
         return;
@@ -1626,8 +1631,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
     }
 
+    // If this click completes a double click, the web process delivers it as one when there is a listener for it,
+    // instead of the DOM double-click gesture also sending it.
+    auto completesDoubleClick = [self takeCompletedDOMDoubleClick] ? WebKit::CompletesDoubleClick::Yes : WebKit::CompletesDoubleClick::No;
+
     auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
-    [webView _protectedPage]->commitPotentialClick(std::nullopt, modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID);
+    [webView _protectedPage]->commitPotentialClick(std::nullopt, modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID, completesDoubleClick);
 }
 
 - (void)_handleClickCancelled

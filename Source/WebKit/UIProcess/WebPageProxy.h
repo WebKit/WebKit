@@ -703,6 +703,7 @@ struct RendererBufferFormat;
 #endif
 
 enum class ColorControlSupportsAlpha : bool;
+enum class CompletesDoubleClick : bool;
 enum class ContentAsStringIncludesChildFrames : bool;
 enum class DragControllerAction : uint8_t;
 enum class EnhancedSecurity : uint8_t;
@@ -2071,7 +2072,7 @@ public:
 
 #if ENABLE(TWO_PHASE_CLICKS)
     void potentialTapAtPosition(std::optional<WebCore::FrameIdentifier>, const WebCore::FloatPoint&, bool shouldRequestMagnificationInformation, TapIdentifier requestID, WebEventInputSource);
-    void commitPotentialTap(std::optional<WebCore::FrameIdentifier>, OptionSet<WebEventModifier>, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID);
+    void commitPotentialTap(std::optional<WebCore::FrameIdentifier>, OptionSet<WebEventModifier>, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID, CompletesDoubleClick);
     void cancelPotentialTap();
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
