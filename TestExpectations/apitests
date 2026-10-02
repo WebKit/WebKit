@@ -262,7 +262,7 @@ rdar://142903525 [ ios ] TestWebKitAPI.ShareSheetTests.ShareImgElementWithBase64
 webkit.org/b/317783 [ ios ] TestWebKitAPI.SiteIsolation.FindStringSelectionSameOriginFrameBeforeWrap [ Skip ]
 webkit.org/b/316819 [ mac debug ] TestWebKitAPI.SiteIsolation.MultiProcessBFCacheSameSiteWithCrossSiteIframe [ Pass Crash ]
 webkit.org/b/320768 [ mac debug ] TestWebKitAPI.SiteIsolation.MultiProcessBFCacheSameSiteWithCrossSiteIframeMultipleCycles [ Pass Crash ]
-webkit.org/b/326001 [ mac ] TestWebKitAPI.SiteIsolation.NavigateFrameWithSiblingsBackForward [ Pass Timeout ]
+webkit.org/b/326001 TestWebKitAPI.SiteIsolation.NavigateFrameWithSiblingsBackForward [ Pass Timeout ]
 webkit.org/b/310149 [ mac release ] TestWebKitAPI.SiteIsolation.PostMessageWithMessagePorts [ Skip ]
 webkit.org/b/325842 [ mac release ] TestWebKitAPI.SiteIsolation.ProcessReuse [ Pass Crash ]
 webkit.org/b/325842 [ mac release ] TestWebKitAPI.SiteIsolation.ProcessReuseWithBFCache [ Pass Crash ]
