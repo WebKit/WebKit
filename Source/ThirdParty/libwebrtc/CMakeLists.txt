@@ -15,7 +15,7 @@ add_compile_options(-w)
 # The tree-wide -fvisibility=hidden makes these symbols private-extern, which
 # -exported_symbols_list cannot then export from libwebrtc.dylib.
 if (APPLE)
-    add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=default>")
+    add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-fvisibility=default>")
 endif ()
 
 # Match the Xcode build (Configurations/Base.xcconfig: CLANG_ENABLE_OBJC_ARC = YES).

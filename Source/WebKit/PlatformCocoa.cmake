@@ -719,6 +719,14 @@ target_link_options(WebKit PRIVATE
     "LINKER:-unexported_symbol,_$s*3Cxx*"
 )
 
+# FIXME: Hide WebKit's Objective-C++ symbols too, as Xcode does. TestIPC needs
+# to be refactored to import WebKit's IPC serialization code.
+target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fvisibility=default>")
+
+# Like Xcode, which dead-strips WebKit in every configuration. The precompiled headers' objects
+# otherwise keep references to inline functions that call hidden WebCore and WTF symbols.
+target_link_options(WebKit PRIVATE "$<$<CONFIG:Debug>:LINKER:-dead_strip>")
+
 set(WebKit_OUTPUT_NAME WebKit)
 if (WebKit_INSTALL_NAME_DIR)
     set_target_properties(WebKit PROPERTIES

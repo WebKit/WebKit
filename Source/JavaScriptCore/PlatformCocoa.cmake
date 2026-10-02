@@ -198,9 +198,6 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     target_link_options(JavaScriptCore PRIVATE "LINKER:-weak_framework,BrowserEngineCore")
 
     target_compile_definitions(JavaScriptCore PRIVATE PAS_BMALLOC_HIDDEN=1)
-    target_compile_options(JavaScriptCore PRIVATE
-        "$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fvisibility=hidden>"
-    )
 
     set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
     set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")

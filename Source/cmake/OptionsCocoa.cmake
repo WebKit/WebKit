@@ -306,10 +306,14 @@ add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-Wno-missing-field-initi
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-Wno-null-conversion>")
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fobjc-weak>")
 
-# Per-target ObjC visibility; global -fvisibility=hidden hides _OBJC_CLASS_$_ symbols.
+# Hide symbols by default in Objective-C and Objective-C++. Otherwise, every
+# template instantiation an Objective-C++ file emits is an exported weak
+# definition. Inline functions are hidden as well, which is important for
+# correctness since an inline function from an ARC translation unit cannot be
+# linked into a non-ARC TU.
 add_compile_options(
-    "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=hidden>"
-    "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
+    "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-fvisibility=hidden>"
+    "$<$<COMPILE_LANGUAGE:C,CXX,OBJCXX>:-fvisibility-inlines-hidden>"
 )
 
 if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
