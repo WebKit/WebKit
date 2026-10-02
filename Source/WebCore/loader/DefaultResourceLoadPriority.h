@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct DefaultResourceLoadPriority {
-    static ResourceLoadPriority NODELETE forResourceType(CachedResource::Type);
+    WEBCORE_EXPORT static ResourceLoadPriority NODELETE forResourceType(CachedResource::Type);
 
     static constexpr auto asyncScript = ResourceLoadPriority::Medium;
     static constexpr auto inactiveStyleSheet = ResourceLoadPriority::VeryLow;
