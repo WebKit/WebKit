@@ -378,6 +378,28 @@ enum class ScrollSnapPointSelectionMethod : uint8_t {
     Paging,
 };
 
+// Whether the direction a scroll moves away from the previous position is a meaningful quality of it.
+// https://drafts.csswg.org/css-scroll-snap-1/#relative-scroll
+enum class ScrollRelativity : uint8_t {
+    Unclassified,
+    Relative,
+    Absolute,
+};
+
+// Snapping looks in the scrolled direction for a relative scroll and at the closest position for an
+// absolute one.
+inline ScrollRelativity scrollRelativityFor(ScrollSnapPointSelectionMethod method)
+{
+    return method == ScrollSnapPointSelectionMethod::Closest ? ScrollRelativity::Absolute : ScrollRelativity::Relative;
+}
+
+// A document-granularity scroll lands at an extreme wherever it started from. The other
+// granularities step from the current position.
+inline ScrollRelativity scrollRelativityFor(ScrollGranularity granularity)
+{
+    return granularity == ScrollGranularity::Document ? ScrollRelativity::Absolute : ScrollRelativity::Relative;
+}
+
 using ScrollbarControlState = unsigned;
 using ScrollbarControlPartMask = unsigned;
 
