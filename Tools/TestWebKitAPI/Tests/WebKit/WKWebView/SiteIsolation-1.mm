@@ -1422,6 +1422,47 @@ TEST(SiteIsolation, ImmediateActionOffersLookUpInCrossOriginIframe)
     EXPECT_EQ(actionType, _WKImmediateActionLookupText);
 }
 
+// Geometry in an immediate-action hit test result must be in the main frame's coordinates, like it is without site
+// isolation, so the UI process can anchor link previews and highlights to it.
+TEST(SiteIsolation, ImmediateActionElementBoundingBoxInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='position: absolute; left: 100px; top: 100px; width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><div id='text' style='font-size: 32px;'>Foobar</div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = immediateActionWebViewWithCrossOriginIframe(server);
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    auto [hitTestResult, actionType] = [webView simulateImmediateAction:NSMakePoint(116, 116)];
+    EXPECT_WK_STREQ("Foobar", [hitTestResult lookupText]);
+
+    // The hit is on the text node, so the box is the text's.
+    RetainPtr textRect = [webView objectByEvaluatingJavaScript:@"(() => { const range = document.createRange(); range.selectNodeContents(document.getElementById('text').firstChild); const rect = range.getBoundingClientRect(); return [rect.x, rect.y, rect.width, rect.height]; })()" inFrame:childFrame.get()];
+    CGRect boundingBox = [hitTestResult elementBoundingBox];
+    EXPECT_NEAR(CGRectGetMinX(boundingBox), 100 + [[textRect objectAtIndex:0] doubleValue], 1);
+    EXPECT_NEAR(CGRectGetMinY(boundingBox), 100 + [[textRect objectAtIndex:1] doubleValue], 1);
+    EXPECT_NEAR(CGRectGetWidth(boundingBox), [[textRect objectAtIndex:2] doubleValue], 1);
+    EXPECT_NEAR(CGRectGetHeight(boundingBox), [[textRect objectAtIndex:3] doubleValue], 1);
+}
+
+// The animation can begin before the hit test's reply arrives, in which case the UI process waits for it. When the
+// hit is in a cross-origin iframe, the reply that matters comes from the iframe's process, not the main frame's.
+TEST(SiteIsolation, ImmediateActionAnimationBeginsBeforeCrossOriginIframeAnswers)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframeAtTopLeft } },
+        { "/iframe"_s, { "<body style='margin: 0'><div style='font-size: 32px;'>Foobar</div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = immediateActionWebViewWithCrossOriginIframe(server);
+
+    auto [hitTestResult, actionType] = [webView simulateImmediateActionBeginningAnimationImmediately:NSMakePoint(16, 16)];
+    EXPECT_WK_STREQ("Foobar", [hitTestResult lookupText]);
+    EXPECT_NOT_NULL([webView immediateActionGesture].animationController);
+    EXPECT_EQ(actionType, _WKImmediateActionLookupText);
+}
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(ORIENTATION_EVENTS) && PLATFORM(IOS_FAMILY)

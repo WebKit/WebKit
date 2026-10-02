@@ -197,10 +197,22 @@
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == WebKit::ImmediateActionState::Pending) {
-        Ref connection = mainFrameProcess->connection();
-        bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(_page->webPageIDInMainFrameProcess(), 500_ms) == IPC::Error::NoError;
-        if (!receivedReply)
-            _state = WebKit::ImmediateActionState::TimedOut;
+        // The hit test may be handed to a cross-origin iframe's process, so keep waiting on whichever process
+        // has it until there's a result.
+        auto deadline = MonotonicTime::now() + 500_ms;
+        auto frameID = _page->immediateActionHitTestFrameID();
+        while (_state == WebKit::ImmediateActionState::Pending) {
+            Ref process = protect(_page)->processContainingFrame(frameID);
+            auto timeout = deadline - MonotonicTime::now();
+            if (timeout <= 0_s || !process->hasConnection() || protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(protect(_page)->webPageIDInProcessForFrame(frameID), timeout) != IPC::Error::NoError) {
+                _state = WebKit::ImmediateActionState::TimedOut;
+                break;
+            }
+            auto nextFrameID = _page->immediateActionHitTestFrameID();
+            if (nextFrameID == frameID)
+                break;
+            frameID = nextFrameID;
+        }
     }
 
     if (_state != WebKit::ImmediateActionState::Ready) {

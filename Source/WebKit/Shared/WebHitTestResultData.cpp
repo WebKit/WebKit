@@ -100,7 +100,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     , linkSuggestedFilename(hitTestResult.linkSuggestedFilename())
     , imageSuggestedFilename(imageSuggestedFilenameFromHitTestResult(hitTestResult))
     , isContentEditable(hitTestResult.isContentEditable())
-    , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
+    , elementBoundingBox(elementBoundingBoxInMainFrameViewCoordinates(hitTestResult))
     , isScrollbar(IsScrollbar::No)
     , isSelected(hitTestResult.isSelected())
     , isTextNode(is<Text>(hitTestResult.innerNode()))
@@ -203,7 +203,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
 
 WebHitTestResultData::~WebHitTestResultData() = default;
 
-IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult& hitTestResult)
+IntRect WebHitTestResultData::elementBoundingBoxInMainFrameViewCoordinates(const WebCore::HitTestResult& hitTestResult)
 {
     RefPtr node = hitTestResult.innerNonSharedNode();
     if (!node)
@@ -221,7 +221,7 @@ IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCor
     if (!renderer)
         return IntRect();
 
-    return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
+    return view->contentsToMainFrameView(renderer->absoluteBoundingBoxRect());
 }
 
 std::optional<WebCore::SharedMemory::Handle> WebHitTestResultData::getImageSharedMemoryHandle() const

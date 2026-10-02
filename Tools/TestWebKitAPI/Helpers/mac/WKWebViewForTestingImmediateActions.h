@@ -48,6 +48,9 @@ using ImmediateActionHitTestResult = std::pair<RetainPtr<_WKHitTestResult>, _WKI
 @property (nonatomic, readonly) NSImmediateActionGestureRecognizer *immediateActionGesture;
 
 - (TestWebKitAPI::ImmediateActionHitTestResult)simulateImmediateAction:(NSPoint)location;
+// Begins the animation right after starting the hit test, without waiting for its reply, so the
+// recognizer has to wait for it synchronously.
+- (TestWebKitAPI::ImmediateActionHitTestResult)simulateImmediateActionBeginningAnimationImmediately:(NSPoint)location;
 
 @end
 

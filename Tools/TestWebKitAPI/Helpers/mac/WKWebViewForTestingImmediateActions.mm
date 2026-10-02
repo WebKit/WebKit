@@ -95,6 +95,28 @@ static NSPoint swizzledImmediateActionLocationInView(id, SEL, NSView *)
     return { std::exchange(_hitTestResult, nil), std::exchange(_actionType, _WKImmediateActionNone) };
 }
 
+- (ImmediateActionHitTestResult)simulateImmediateActionBeginningAnimationImmediately:(NSPoint)location
+{
+    auto immediateActionGesture = self.immediateActionGesture;
+    if (!immediateActionGesture.delegate)
+        return { nil, _WKImmediateActionNone };
+
+    _hasReturnedImmediateActionController = false;
+
+    InstanceMethodSwizzler swizzleLocationInView {
+        NSImmediateActionGestureRecognizer.class,
+        @selector(locationInView:),
+        reinterpret_cast<IMP>(swizzledImmediateActionLocationInView),
+    };
+
+    gSwizzledImmediateActionLocation = location;
+    [immediateActionGesture.delegate immediateActionRecognizerWillPrepare:immediateActionGesture];
+    [immediateActionGesture.delegate immediateActionRecognizerWillBeginAnimation:immediateActionGesture];
+
+    _hasReturnedImmediateActionController = false;
+    return { std::exchange(_hitTestResult, nil), std::exchange(_actionType, _WKImmediateActionNone) };
+}
+
 @end
 
 #endif
