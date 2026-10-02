@@ -2021,6 +2021,9 @@ http/wpt/webcodecs/H264-422.html [ Failure ]
 
 http/wpt/webcodecs/encoder-decoder-vp9-I420.html [ Failure ]
 
+# VP9 profile 2 is not enabled in the GStreamer ports.
+http/wpt/webcodecs/vp9-codec-string-bit-depth-and-chroma.html [ Failure ]
+
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
 webkit.org/b/298925 [ x86_64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Pass Timeout ]

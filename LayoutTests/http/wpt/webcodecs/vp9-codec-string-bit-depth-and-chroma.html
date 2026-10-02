@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const configs = [
+    { codec: "vp09.00.10.08", supported: true },
+    { codec: "vp09.00.10.08.01", supported: true },
+    { codec: "vp09.00.10.08.00.01.01.01.00", supported: true },
+    { codec: "vp09.02.10.10", supported: true },
+    { codec: "vp09.02.10.10.01", supported: true },
+    { codec: "vp09.02.10.10.01.09.16.09.01", supported: true },
+    { codec: "vp09.00", supported: false },
+    { codec: "vp09.00.10", supported: false },
+    { codec: "vp09.00.10.09", supported: false },
+    { codec: "vp09.00.10.10", supported: false },
+    { codec: "vp09.00.10.12", supported: false },
+    { codec: "vp09.00.10.08.02", supported: false },
+    { codec: "vp09.00.10.08.03", supported: false },
+    { codec: "vp09.02.10.08", supported: false },
+    { codec: "vp09.02.10.12", supported: false },
+    { codec: "vp09.02.10.10.02", supported: false },
+    { codec: "vp09.02.10.10.03", supported: false },
+    { codec: "vp09.01.10.08.03", supported: false },
+    { codec: "vp09.03.10.10.03", supported: false },
+];
+
+for (const { codec, supported } of configs) {
+    promise_test(async () => {
+        const support = await VideoDecoder.isConfigSupported({ codec });
+        assert_equals(support.supported, supported);
+    }, `VideoDecoder.isConfigSupported ${codec}`);
+
+    promise_test(async () => {
+        const support = await VideoEncoder.isConfigSupported({ codec, width: 320, height: 240 });
+        assert_equals(support.supported, supported);
+    }, `VideoEncoder.isConfigSupported ${codec}`);
+}
+</script>
