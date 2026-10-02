@@ -273,12 +273,14 @@ void SVGAnimationElement::endElementAt(float offset)
 void SVGAnimationElement::updateAnimationMode()
 {
     // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
+    bool allowsEmptyValue = attributeName() == SVGNames::dAttr;
+    bool hasFrom = allowsEmptyValue ? hasAttribute(SVGNames::fromAttr) : !fromValue().isEmpty();
     if (hasAttribute(SVGNames::valuesAttr))
         setAnimationMode(AnimationMode::Values);
-    else if (!toValue().isEmpty())
-        setAnimationMode(fromValue().isEmpty() ? AnimationMode::To : AnimationMode::FromTo);
-    else if (!byValue().isEmpty())
-        setAnimationMode(fromValue().isEmpty() ? AnimationMode::By : AnimationMode::FromBy);
+    else if (allowsEmptyValue ? hasAttribute(SVGNames::toAttr) : !toValue().isEmpty())
+        setAnimationMode(hasFrom ? AnimationMode::FromTo : AnimationMode::To);
+    else if (allowsEmptyValue ? hasAttribute(SVGNames::byAttr) : !byValue().isEmpty())
+        setAnimationMode(hasFrom ? AnimationMode::FromBy : AnimationMode::By);
     else
         setAnimationMode(AnimationMode::None);
 }

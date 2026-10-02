@@ -267,7 +267,22 @@ public:
             return false;
         m_from = WTF::move(*fromStream);
         m_to = WTF::move(*toStream);
+        if (m_isAdditive && m_animationMode != AnimationMode::By && m_animationMode != AnimationMode::To
+            && (m_from.isEmpty() != m_to.isEmpty() || !canBlendSVGPathByteStreams(m_from, m_to)))
+            return false;
         return true;
+    }
+
+    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    {
+        if (!setFromAndToValues(targetElement, from, by))
+            return false;
+
+        if (m_animationMode == AnimationMode::By)
+            return true;
+        if (m_from.isEmpty() || m_to.isEmpty())
+            return false;
+        return addToSVGPathByteStream(m_to, m_from);
     }
 
     bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
@@ -281,34 +296,25 @@ public:
 
     void animate(SVGElement&, float progress, unsigned repeatCount, SVGPathByteStream& animated)
     {
-        SVGPathByteStream underlyingPath;
-        if (m_animationMode == AnimationMode::To)
-            underlyingPath = animated;
-
-        const SVGPathByteStream& from = m_animationMode == AnimationMode::To ? underlyingPath : m_from;
-
-        // Cache the current animated value before the buildAnimatedSVGPathByteStream() clears animatedPath.
-        SVGPathByteStream lastAnimated;
-        if (!from.size() || (m_isAdditive && m_animationMode != AnimationMode::To))
-            lastAnimated = animated;
-
-        buildAnimatedSVGPathByteStream(from, m_to, animated, progress);
+        const SVGPathByteStream& from = m_animationMode == AnimationMode::To ? animated : m_from;
+        SVGPathByteStream result;
+        if ((m_animationMode != AnimationMode::By && from.isEmpty() != m_to.isEmpty())
+            || !buildAnimatedSVGPathByteStream(from, m_to, result, progress))
+            result = progress < 0.5 ? from : m_to;
 
         // Handle additive='sum'.
-        if (!lastAnimated.isEmpty())
-            addToSVGPathByteStream(animated, lastAnimated);
+        if (m_isAdditive && m_animationMode != AnimationMode::To) {
+            if (result.isEmpty() != animated.isEmpty() || !addToSVGPathByteStream(result, animated))
+                return;
+        }
 
         // Handle accumulate='sum'.
-        if (m_isAccumulated && repeatCount)
-            addToSVGPathByteStream(animated, toAtEndOfDuration(), repeatCount);
-    }
-
-private:
-    void addFromAndToValues(SVGElement&) override
-    {
-        if (!m_from.size() || m_from.size() != m_to.size())
-            return;
-        addToSVGPathByteStream(m_to, m_from);
+        if (m_isAccumulated && repeatCount) {
+            auto toAtEnd = toAtEndOfDuration();
+            if (result.isEmpty() != toAtEnd.isEmpty() || !addToSVGPathByteStream(result, toAtEnd, repeatCount))
+                return;
+        }
+        animated = WTF::move(result);
     }
 };
 
