@@ -140,7 +140,6 @@ private:
     RenderPassEncoder(CommandEncoder&, Device&, NSString*);
 
     bool NODELETE validatePopDebugGroup() const;
-    bool executePreDrawCommands(uint32_t vertexCount);
     bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer*, bool needsValidationLayerWorkaround);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
     void runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);

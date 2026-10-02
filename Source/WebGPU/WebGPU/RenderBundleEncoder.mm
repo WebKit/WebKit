@@ -460,7 +460,9 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
-    if (!executePreDrawCommands(vertexCount == 1, false, firstInstance, instanceCount))
+    bool needsValidationLayerWorkaround;
+    computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
+    if (!executePreDrawCommands(needsValidationLayerWorkaround, false, firstInstance, instanceCount))
         return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!m_makeSubmitInvalid && vertexCount && instanceCount)

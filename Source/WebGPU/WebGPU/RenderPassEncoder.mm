@@ -576,11 +576,6 @@ void RenderPassEncoder::setCachedRenderPassState(id<MTLRenderCommandEncoder> com
     }
 }
 
-bool RenderPassEncoder::executePreDrawCommands(uint32_t vertexCount)
-{
-    return executePreDrawCommands(0, 0, false, nullptr, vertexCount == 1);
-}
-
 bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer* indirectBuffer, bool needsValidationLayerWorkaround)
 {
     auto pipeline = m_pipeline;
@@ -707,7 +702,9 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
         return;
     }
 
-    if (!executePreDrawCommands(vertexCount))
+    bool needsValidationLayerWorkaround;
+    computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
+    if (!executePreDrawCommands(0, 0, false, nullptr, needsValidationLayerWorkaround))
         return;
     runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance);
     if (!instanceCount || !vertexCount || instanceCount + firstInstance < firstInstance || vertexCount + firstVertex < firstVertex)

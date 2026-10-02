@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const shaderSource = `
+@vertex
+fn vertex0(@location(0) position : vec2<i32>) -> @builtin(position) vec4<f32>
+{
+    return vec4<f32>(f32(position.x), f32(position.y), 0, 1);
+}
+
+@fragment
+fn fragment0() -> @location(0) vec4<f32>
+{
+    return vec4<f32>(1, 0, 0, 1);
+}
+`;
+
+function log(message)
+{
+    document.body.appendChild(document.createTextNode(message));
+    document.body.appendChild(document.createElement('br'));
+}
+
+async function test()
+{
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    const module = device.createShaderModule({code: shaderSource});
+
+    const pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vertex0',
+            buffers: [{
+                arrayStride: 88,
+                stepMode: 'instance',
+                attributes: [{format: 'sint16x2', offset: 0, shaderLocation: 0}],
+            }],
+        },
+        fragment: {
+            module,
+            entryPoint: 'fragment0',
+            targets: [{format: 'rgba8unorm'}],
+        },
+        primitive: {topology: 'point-list'},
+    });
+
+    // 84 bytes is a valid binding for a single instance: WebGPU only requires
+    // (strideCount - 1) * arrayStride + lastStride == 4 bytes. Metal's validation layer
+    // instead demands a full 88-byte stride, so the draw has to be issued against a
+    // pipeline whose stride has been rewritten to lastStride.
+    const vertexBuffer = device.createBuffer({size: 84, usage: GPUBufferUsage.VERTEX});
+    const texture = device.createTexture({
+        size: [1, 1],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+            view: texture.createView(),
+            loadOp: 'clear',
+            storeOp: 'store',
+            clearValue: [0, 0, 0, 0],
+        }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setVertexBuffer(0, vertexBuffer);
+    // A vertex count other than 1 used to skip the workaround entirely, because the
+    // instance-stepped buffer was never consulted.
+    pass.draw(253, 1, 0, 0);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    log('PASS: did not crash the GPU process');
+}
+
+test().catch(error => {
+    log(`FAIL: ${error}`);
+}).finally(() => {
+    testRunner?.notifyDone();
+});
+</script>
+</body>
+</html>
