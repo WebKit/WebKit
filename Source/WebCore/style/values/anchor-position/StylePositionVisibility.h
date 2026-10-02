@@ -29,9 +29,11 @@
 namespace WebCore {
 namespace Style {
 
-// <'position-visibility'> = always | [ anchors-valid || anchors-visible || no-overflow ]
+// <'position-visibility'> = always | [ anchor-valid || anchor-visible || no-overflow ]
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-visibility
-
+// Plural keywords (anchors-valid, anchors-visible) were renamed to singular, but
+// keeping them for compatibility reason. Anchor positioning code treats the plural
+// and singular keywords as the same.
 enum class PositionVisibilityValue : uint8_t {
     AnchorsValid,
     AnchorValid,

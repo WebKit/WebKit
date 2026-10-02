@@ -107,7 +107,7 @@ constexpr TextEmphasisPosition ComputedStyleProperties::initialTextEmphasisPosit
 
 constexpr PositionVisibility ComputedStyleProperties::initialPositionVisibility()
 {
-    return PositionVisibilityValue::AnchorsVisible;
+    return PositionVisibilityValue::AnchorVisible;
 }
 
 } // namespace Style

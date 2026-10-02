@@ -14248,7 +14248,7 @@
         },
         "position-visibility": {
             "animation-type": "discrete",
-            "initial": "anchors-visible",
+            "initial": "anchor-visible",
             "values": [
                 "always",
                 "anchor-valid",
