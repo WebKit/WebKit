@@ -216,6 +216,14 @@ class GitHubEWS(GitHub):
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
+    MAX_FAILING_TESTS_TO_LIST = 10
+    MAX_QUEUES_PER_FAILING_TEST = 6
+    FAILING_TEST_CATEGORY_LABELS = {
+        'layout': 'Layout tests',
+        'api': 'API tests',
+        'jsc': 'JSC tests',
+        'static-analysis': 'Safer C++',
+    }
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
                           ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
@@ -285,6 +293,8 @@ class GitHubEWS(GitHub):
                 comment_for_row += self.github_status_for_queue(change, queue)
             comment += comment_for_row
 
+        comment += self.failing_tests_section_for_change(change)
+
         if change.obsolete:
             comment = u'EWS run on previous version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
             return (comment, comment)
@@ -296,6 +306,60 @@ class GitHubEWS(GitHub):
             folded_comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
 
         return (regular_comment, folded_comment)
+
+    def failing_tests_section_for_change(self, change: Change) -> str:
+        latest_failing_build_by_queue = {}
+        for build in change.build_set.all():
+            if not build.failing_tests:
+                continue
+            existing = latest_failing_build_by_queue.get(build.builder_display_name)
+            if existing is None or build.number > existing.number:
+                latest_failing_build_by_queue[build.builder_display_name] = build
+
+        tests_by_category = {}
+        truncated_by_category: dict = {}
+        for queue, build in latest_failing_build_by_queue.items():
+            category = build.failing_tests_category or ''
+            queues_by_test = tests_by_category.setdefault(category, {})
+            test_names = [test_name for test_name in build.failing_tests.split('\n') if test_name]
+            for test_name in test_names:
+                queues_by_test.setdefault(test_name, set()).add(queue)
+            if build.failing_tests_count > len(test_names):
+                truncated_by_category[category] = True
+
+        if not tests_by_category:
+            return ''
+
+        known_categories = [category for category in self.FAILING_TEST_CATEGORY_LABELS if category in tests_by_category]
+        other_categories = sorted(category for category in tests_by_category if category and category not in self.FAILING_TEST_CATEGORY_LABELS)
+        ordered_categories = known_categories + other_categories
+        if '' in tests_by_category:
+            ordered_categories.append('')
+
+        sections = []
+        for category in ordered_categories:
+            queues_by_test = tests_by_category[category]
+            label = self.FAILING_TEST_CATEGORY_LABELS.get(category, category) if category else 'Failing tests'
+            sorted_tests = sorted(queues_by_test.items(), key=lambda item: (-len(item[1]), item[0]))
+            shown_tests = sorted_tests[:self.MAX_FAILING_TESTS_TO_LIST]
+
+            count_suffix = '+' if truncated_by_category.get(category) else ''
+            lines = [f'\n\n<details><summary><b>{label}</b> ({len(sorted_tests)}{count_suffix} failing)</summary>\n']
+            for test_name, queues in shown_tests:
+                sorted_queues = sorted(queues)
+                shown_queues = sorted_queues[:self.MAX_QUEUES_PER_FAILING_TEST]
+                queue_list = ', '.join(f'`{self.escape_github_markdown(queue)}`' for queue in shown_queues)
+                if (remaining_queues := len(sorted_queues) - len(shown_queues)) > 0:
+                    queue_list += f' +{remaining_queues} more'
+                lines.append(f'- `{self.escape_github_markdown(test_name)}`: {queue_list}')
+
+            if (remaining_tests := len(sorted_tests) - len(shown_tests)) > 0:
+                lines.append(f'- …and {remaining_tests} more')
+
+            lines.append('\n</details>')
+            sections.append('\n'.join(lines))
+
+        return ''.join(sections)
 
     @classmethod
     def escape_github_markdown(cls, string):
