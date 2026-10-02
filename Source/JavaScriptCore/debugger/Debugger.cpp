@@ -917,7 +917,7 @@ bool Debugger::cancelPauseForSpecialBreakpoint(Breakpoint& breakpoint)
 
 void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 {
-    if (m_isPaused)
+    if (m_isPaused || isPauseBlockedByAnotherDebugger())
         return;
 
     if (!m_vm.topCallFrame)
@@ -1031,6 +1031,9 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
         return;
 
     if (m_suppressAllPauses)
+        return;
+
+    if (isPauseBlockedByAnotherDebugger())
         return;
 
     SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
@@ -1480,7 +1483,7 @@ void Debugger::resetAsyncPauseState()
 
 void Debugger::didReachDebuggerStatement(CallFrame* callFrame)
 {
-    if (m_isPaused)
+    if (m_isPaused || isPauseBlockedByAnotherDebugger())
         return;
 
     if (!m_pauseOnDebuggerStatementsBreakpoint)
