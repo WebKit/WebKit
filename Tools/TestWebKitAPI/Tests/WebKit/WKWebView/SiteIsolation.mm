@@ -5081,6 +5081,38 @@ TEST(SiteIsolation, CountStringMatches)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, HideFindUIClearsTextMatchMarkersInFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>Hello world</p><iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration setWebsiteDataStore:server.httpsProxyConfiguration().websiteDataStore];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto* mainFrameInfo = [webView mainFrame].info;
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto textMatchMarkerCount = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"internals.markerCountForNode(document.querySelector('p').firstChild, 'textmatch')" inFrame:frame] unsignedIntValue];
+    };
+
+    [webView _countStringMatches:@"Hello world" options:_WKFindOptionsShowOverlay maxCount:100];
+    while ([findDelegate matchesCount] != 2)
+        Util::spinRunLoop();
+    EXPECT_EQ(1u, textMatchMarkerCount(mainFrameInfo));
+    EXPECT_EQ(1u, textMatchMarkerCount(childFrame.get()));
+
+    [webView _hideFindUI];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !textMatchMarkerCount(mainFrameInfo) && !textMatchMarkerCount(childFrame.get());
+    }));
+}
+
 TEST(SiteIsolation, FindStringMatchIndexAcrossFrames)
 {
     auto mainframeHTML = "<p>word word</p>"

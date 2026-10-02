@@ -7777,7 +7777,9 @@ void WebPageProxy::indicateFindMatch(int32_t matchIndex)
 
 void WebPageProxy::hideFindUI()
 {
-    send(Messages::WebPage::HideFindUI());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::HideFindUI(), pageID);
+    });
 }
 
 void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
