@@ -47,13 +47,13 @@ function test() {
 
             canvases.forEach((canvas) => {
                 WI.domManager.requestDocument((documentNode) => {
-                    CanvasAgent.requestNodes(canvas.identifier, (error, nodeIds) => {
+                    canvas.target.CanvasAgent.requestNodes(canvas.identifier, (error, nodeIds) => {
                         if (error) {
                             reject(error);
                             return;
                         }
 
-                        nodesMap.set(canvas, nodeIds.map((nodeId) => WI.domManager.nodeForId(nodeId)));
+                        nodesMap.set(canvas, nodeIds.map((nodeId) => WI.Canvas._domNodeForId(canvas.target, nodeId)));
                         if (nodesMap.size === expectedLength)
                             finish();
                     });
@@ -69,7 +69,7 @@ function test() {
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.requestNodes(canvasId, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.requestNodes(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();

@@ -72,7 +72,7 @@ function test() {
             InspectorTest.evaluateInPage(`performSavePreActions()`)
             .then(() => {
                 const frameCount = 1;
-                CanvasAgent.startRecording(canvas.identifier, frameCount).catch(reject);
+                canvas.target.CanvasAgent.startRecording(canvas.identifier, frameCount).catch(reject);
             }, reject);
         },
     });

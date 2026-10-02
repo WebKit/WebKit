@@ -85,7 +85,7 @@ function test() {
         suite.addTestCase({
             name,
             test(resolve, reject) {
-                CanvasAgent.setShaderProgramDisabled(shaderProgram.identifier, disabled, (error) => {
+                shaderProgram.target.CanvasAgent.setShaderProgramDisabled(shaderProgram.identifier, disabled, (error) => {
                     if (error) {
                         reject(error);
                         return;
@@ -97,7 +97,7 @@ function test() {
                             return;
                         }
 
-                        CanvasAgent.requestContent(shaderProgram.canvas.identifier)
+                        shaderProgram.canvas.target.CanvasAgent.requestContent(shaderProgram.canvas.identifier)
                         .then(({content}) => {
                             if (disabled)
                                 InspectorTest.expectEqual(content, originalContent, "Disabling a shader program should prevent it from drawing.");
@@ -141,7 +141,7 @@ function test() {
         test(resolve, reject) {
             const programId = "INVALID_PROGRAM_ID";
             const disabled = false;
-            CanvasAgent.setShaderProgramDisabled(programId, disabled, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.setShaderProgramDisabled(programId, disabled, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
@@ -149,7 +149,7 @@ function test() {
         }
     });
 
-    CanvasAgent.requestContent(shaderProgram.canvas.identifier, (error, content) => {
+    shaderProgram.canvas.target.CanvasAgent.requestContent(shaderProgram.canvas.identifier, (error, content) => {
         originalContent = content;
 
         suite.runTestCasesAndFinish();

@@ -13,7 +13,7 @@ function test() {
             const programId = "INVALID_PROGRAM_ID";
             const shaderType = "INVALID_SHADER_TYPE";
             const source = "INVALID_SOURCE";
-            CanvasAgent.updateShader(programId, shaderType, source, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.updateShader(programId, shaderType, source, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();

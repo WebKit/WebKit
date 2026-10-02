@@ -41,6 +41,7 @@
 #include "Event.h"
 #include "EventTargetInlines.h"
 #include "FrameCSSAgent.h"
+#include "FrameCanvasAgent.h"
 #include "FrameDOMAgent.h"
 #include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
@@ -926,6 +927,9 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
     if (CheckedPtr pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent())
         pageCanvasAgent->frameNavigated(frame);
 
+    if (CheckedPtr frameCanvasAgent = frame.inspectorController().instrumentingAgents().enabledFrameCanvasAgent())
+        frameCanvasAgent->frameNavigated(frame);
+
     if (CheckedPtr animationAgent = instrumentingAgents.enabledAnimationAgent())
         animationAgent->frameNavigated(frame);
 
@@ -1272,22 +1276,21 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
 
 void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents& instrumentingAgents, CanvasBase& canvasBase)
 {
-    CheckedPtr<PageCanvasAgent> pageCanvasAgent;
+    RefPtr<InstrumentingAgents> agents = &instrumentingAgents;
 
     if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(canvasBase.renderingContext())) {
         RefPtr device = gpuCanvasContext->device();
         if (!device)
             return;
 
-        RefPtr agents = InspectorInstrumentation::instrumentingAgents(protect(device->scriptExecutionContext()));
+        agents = InspectorInstrumentation::instrumentingAgents(protect(device->scriptExecutionContext()));
         if (!agents)
             return;
+    }
 
-        pageCanvasAgent = agents->enabledPageCanvasAgent();
-    } else
-        pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent();
-
-    if (pageCanvasAgent)
+    if (CheckedPtr frameCanvasAgent = agents->enabledFrameCanvasAgent())
+        frameCanvasAgent->didChangeCSSCanvasClientNodes(canvasBase);
+    else if (CheckedPtr pageCanvasAgent = agents->enabledPageCanvasAgent())
         pageCanvasAgent->didChangeCSSCanvasClientNodes(canvasBase);
 }
 

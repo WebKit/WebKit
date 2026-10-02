@@ -1,0 +1,130 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    let iframe;
+
+    function addCrossOriginIFrame() {
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        iframe = document.createElement("iframe");
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/canvas/resources/iframe-with-canvas.html`;
+        document.body.appendChild(iframe);
+    }
+
+    function removeCrossOriginIFrame() {
+        iframe.remove();
+    }
+
+    function addSameOriginIFrame() {
+        iframe = document.createElement("iframe");
+        iframe.src = "resources/iframe-with-canvas.html";
+        document.body.appendChild(iframe);
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Canvas.IFrame");
+
+        let frameTarget;
+
+        function awaitCanvasAddedForFrameTarget() {
+            return new Promise((resolve) => {
+                let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                    let canvas = event.data.item;
+                    if (canvas.target.type !== WI.TargetType.Frame || canvas.target === InspectorTest.mainFrameTarget)
+                        return;
+                    WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
+                    resolve(canvas);
+                });
+            });
+        }
+
+        function logStackTrace(canvas) {
+            for (let [i, callFrame] of (canvas.stackTrace?.callFrames ?? []).entries()) {
+                let text = `  ${i}: ` + (callFrame.functionName || "(anonymous function)");
+                if (callFrame.nativeCode)
+                    text += " - [native code]";
+                else if (callFrame.programCode)
+                    text += " - [program code]";
+                else if (callFrame.sourceCodeLocation)
+                    text += " - " + callFrame.sourceCodeLocation.sourceCode.url.substring(callFrame.sourceCodeLocation.sourceCode.url.lastIndexOf("/") + 1);
+                InspectorTest.log(text);
+            }
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.Canvas.CrossOrigin.CanvasAdded",
+            description: "A canvas created by a cross-origin iframe should be reported by that iframe's frame target.",
+            async test() {
+                let canvasAddedPromise = awaitCanvasAddedForFrameTarget();
+
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+
+                let canvas = await canvasAddedPromise;
+                frameTarget = canvas.target;
+
+                InspectorTest.expectEqual(frameTarget.type, WI.TargetType.Frame, "Canvas target should have Frame type.");
+                InspectorTest.expectThat(frameTarget.hasDomain("Canvas"), "Frame target should have the Canvas domain.");
+                InspectorTest.expectEqual(canvas.contextType, WI.Canvas.ContextType.Canvas2D, "Canvas context should be 2D.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Canvas.CrossOrigin.StackTrace",
+            description: "The stack trace of a canvas created in a cross-origin iframe should resolve against that iframe's scripts.",
+            async test() {
+                let canvasAddedPromise = awaitCanvasAddedForFrameTarget();
+
+                await frameTarget.RuntimeAgent.evaluate.invoke({expression: "createCanvas()", objectGroup: "test"});
+
+                let canvas = await canvasAddedPromise;
+                InspectorTest.expectEqual(canvas.target, frameTarget, "Canvas should be reported by the same frame target.");
+                logStackTrace(canvas);
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Canvas.CrossOrigin.RequestContent",
+            description: "Canvas commands for a canvas in a cross-origin iframe should be handled by that iframe's frame target.",
+            async test() {
+                let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.target === frameTarget);
+                let {content} = await frameTarget.CanvasAgent.requestContent(canvas.identifier);
+                InspectorTest.expectThat(content.startsWith("data:image/png"), "Content should be a PNG data URL.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Canvas.CrossOrigin.RemoveIFrame",
+            description: "Removing the cross-origin iframe should remove its canvases.",
+            async test() {
+                let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+
+                InspectorTest.evaluateInPage("removeCrossOriginIFrame()");
+
+                await targetRemovedPromise;
+
+                let remainingCanvases = Array.from(WI.canvasManager.canvasCollection).filter((canvas) => canvas.target === frameTarget);
+                InspectorTest.expectEqual(remainingCanvases.length, 0, "Frame target should have no canvases.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Canvas.SameOrigin.CanvasAdded",
+            description: "A canvas created by a same-origin iframe should be reported by that iframe's frame target.",
+            async test() {
+                let canvasAddedPromise = awaitCanvasAddedForFrameTarget();
+
+                InspectorTest.evaluateInPage("addSameOriginIFrame()");
+
+                let canvas = await canvasAddedPromise;
+                InspectorTest.expectEqual(canvas.target.type, WI.TargetType.Frame, "Canvas target should have Frame type.");
+                InspectorTest.expectNotEqual(canvas.target, frameTarget, "Canvas target should not be the removed cross-origin frame target.");
+                InspectorTest.expectEqual(canvas.contextType, WI.Canvas.ContextType.Canvas2D, "Canvas context should be 2D.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that canvases created in iframes are reported through the frame target's Canvas domain under site isolation.</p>
+</body>

@@ -213,7 +213,7 @@ function test() {
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.startRecording(canvasId, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.startRecording(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
@@ -226,7 +226,7 @@ function test() {
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.stopRecording(canvasId, (error) => {
+            InspectorTest.mainFrameTarget.CanvasAgent.stopRecording(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
