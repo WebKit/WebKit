@@ -161,8 +161,8 @@ WorkerGlobalScope::~WorkerGlobalScope()
     m_performance = nullptr;
     m_crypto = nullptr;
 
-    // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
-    if (CheckedPtr workerReportingProxy = thread()->workerReportingProxy())
+    // Notify proxy that we are going away. This can free the WorkerThread object and the proxy, so do not access them after this.
+    if (auto* workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->workerGlobalScopeDestroyed();
 }
 
