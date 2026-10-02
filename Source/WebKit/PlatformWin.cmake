@@ -32,8 +32,6 @@ list(APPEND WebKit_SOURCES
     Shared/win/NativeWebWheelEventWin.cpp
     Shared/win/WebEventFactory.cpp
 
-    UIProcess/API/C/WKViewportAttributes.cpp
-
     UIProcess/API/C/win/WKView.cpp
 
     UIProcess/Automation/win/WebAutomationSessionWin.cpp
@@ -42,7 +40,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/WebGrammarDetail.cpp
     UIProcess/WebMemoryPressureHandler.cpp
-    UIProcess/WebViewportAttributes.cpp
 
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
