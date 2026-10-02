@@ -1,0 +1,15 @@
+A universal ::after rule that sets 'content' gives ::after a box when another rule without 'content' also matches it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.offsetHeight is 25
+
+dynamic = document.createElement('div')
+dynamic.className = 'box'
+document.body.appendChild(dynamic)
+PASS dynamic.offsetHeight is 25
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

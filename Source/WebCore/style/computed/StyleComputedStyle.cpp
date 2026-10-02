@@ -226,6 +226,7 @@ void ComputedStyle::copyContentFrom(const ComputedStyle& other)
 void ComputedStyle::copyPseudoElementBitsFrom(const ComputedStyle& other)
 {
     m_nonInheritedFlags.pseudoBits = other.m_nonInheritedFlags.pseudoBits;
+    m_nonInheritedFlags.pseudoElementBoxGeneration = other.m_nonInheritedFlags.pseudoElementBoxGeneration;
 }
 
 bool ComputedStyle::operator==(const ComputedStyle& other) const

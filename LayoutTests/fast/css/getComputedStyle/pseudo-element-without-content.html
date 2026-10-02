@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+*::before { box-sizing: border-box; }
+#target::before { color: rgb(255, 0, 0); }
+#target::after { color: rgb(0, 128, 0); }
+.a::before { color: rgb(1, 2, 3); }
+.b::before { color: rgb(4, 5, 6); }
+.with-content::before { content: "x"; }
+#parent { color: rgb(7, 8, 9); }
+</style>
+</head>
+<body>
+<div id="target">target</div>
+<div id="plain">plain</div>
+<div id="toggle" class="a">toggle</div>
+<div id="parent"><span id="child">child</span></div>
+<script>
+description("getComputedStyle() returns the matched style for ::before and ::after when none of the matching rules set 'content'.");
+
+document.body.offsetTop;
+
+debug("Rules without 'content'");
+shouldBeEqualToString("getComputedStyle(target, '::before').color", "rgb(255, 0, 0)");
+shouldBeEqualToString("getComputedStyle(target, '::after').color", "rgb(0, 128, 0)");
+shouldBeEqualToString("getComputedStyle(target, '::before').content", "none");
+
+debug("");
+debug("Universal rule without 'content'");
+shouldBeEqualToString("getComputedStyle(target, '::before').boxSizing", "border-box");
+shouldBeEqualToString("getComputedStyle(plain, '::before').boxSizing", "border-box");
+shouldBeEqualToString("getComputedStyle(plain, '::after').boxSizing", "content-box");
+
+debug("");
+debug("Switching between rules without 'content'");
+shouldBeEqualToString("getComputedStyle(toggle, '::before').color", "rgb(1, 2, 3)");
+toggle.className = "b";
+document.body.offsetTop;
+shouldBeEqualToString("getComputedStyle(toggle, '::before').color", "rgb(4, 5, 6)");
+toggle.className = "a";
+shouldBeEqualToString("getComputedStyle(toggle, '::before').color", "rgb(1, 2, 3)");
+
+debug("");
+debug("Adding 'content' to a pseudo-element that was previously skipped");
+toggle.className = "a with-content";
+document.body.offsetTop;
+shouldBeEqualToString("getComputedStyle(toggle, '::before').content", '"x"');
+shouldBeEqualToString("getComputedStyle(toggle, '::before').color", "rgb(1, 2, 3)");
+toggle.className = "b";
+shouldBeEqualToString("getComputedStyle(toggle, '::before').content", "none");
+shouldBeEqualToString("getComputedStyle(toggle, '::before').color", "rgb(4, 5, 6)");
+
+debug("");
+debug("Inherited values");
+shouldBeEqualToString("getComputedStyle(child, '::before').color", "rgb(7, 8, 9)");
+document.getElementById("parent").style.color = "rgb(10, 11, 12)";
+shouldBeEqualToString("getComputedStyle(child, '::before').color", "rgb(10, 11, 12)");
+</script>
+</body>
+</html>

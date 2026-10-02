@@ -315,6 +315,11 @@ inline bool ComputedStyleBase::hasPseudoStyle(PseudoElementType pseudo) const
     return m_nonInheritedFlags.hasPseudoStyle(pseudo);
 }
 
+inline PseudoElementBoxGeneration ComputedStyleBase::pseudoElementBoxGeneration() const
+{
+    return static_cast<PseudoElementBoxGeneration>(m_nonInheritedFlags.pseudoElementBoxGeneration);
+}
+
 inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
 {
     return m_nonInheritedFlags.hasAnyPublicPseudoStyles();

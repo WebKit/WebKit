@@ -29,16 +29,21 @@
 #include "config.h"
 #include "RuleData.h"
 
+#include "CSSContentValue.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
+#include "CSSKeywordValueInlines.h"
+#include "CSSPropertyNames.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "CSSValueList.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
+#include "StylePropertiesInlines.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -125,6 +130,59 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& se
     return PropertyAllowlist::None;
 }
 
+static bool isKeywordOrKeywordList(const CSSValue& value, CSSValueID keyword)
+{
+    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
+        for (auto& item : *list) {
+            if (!isValueID(item, keyword))
+                return false;
+        }
+        return true;
+    }
+    return isValueID(value, keyword);
+}
+
+// ::before/::after may follow another pseudo-element, like ::part(foo)::before or ::slotted(span)::after.
+static bool selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
+{
+    for (auto* component = &selector; component; component = component->precedingInComplexSelector()) {
+        if (component->matchesPseudoElement() && (component->pseudoElement() == CSSSelector::PseudoElement::Before || component->pseudoElement() == CSSSelector::PseudoElement::After))
+            return true;
+    }
+    return false;
+}
+
+// ::before/::after only generate a box with non-'none' content, which animations and transitions can also supply.
+static PseudoElementBoxGeneration computePseudoElementBoxGeneration(const CSSSelector& selector, const StyleProperties& properties)
+{
+    if (!selectorHasBeforeOrAfterPseudoElement(selector))
+        return PseudoElementBoxGeneration::NotForBeforeOrAfter;
+
+    for (auto property : properties) {
+        auto& value = *property.value();
+        switch (property.id()) {
+        case CSSPropertyContent: {
+            auto* contentValue = dynamicDowncast<CSSContentValue>(value);
+            if (!contentValue || !(contentValue->content().isNone() || contentValue->content().isNormal()))
+                return PseudoElementBoxGeneration::Normal;
+            break;
+        }
+        case CSSPropertyAnimationName:
+            if (!isKeywordOrKeywordList(value, CSSValueNone))
+                return PseudoElementBoxGeneration::Normal;
+            break;
+        case CSSPropertyTransitionBehavior:
+            // Only allow-discrete transitions can change 'content' or 'display'.
+            if (!isKeywordOrKeywordList(value, CSSValueNormal))
+                return PseudoElementBoxGeneration::Normal;
+            break;
+        default:
+            break;
+        }
+    }
+    return PseudoElementBoxGeneration::NotForBeforeOrAfter;
+}
+
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)
     : m_styleRuleWithSelectorIndex(&styleRule, static_cast<uint16_t>(selectorIndex))
     , m_selectorListIndex(selectorListIndex)
@@ -133,6 +191,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_propertyAllowlist(std::to_underlying(determinePropertyAllowlist(selector())))
     , m_isStartingStyle(std::to_underlying(isStartingStyle))
     , m_isEnabled(true)
+    , m_pseudoElementBoxGeneration(std::to_underlying(computePseudoElementBoxGeneration(selector(), styleRule.properties())))
     , m_position(position)
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(selector()))
 {

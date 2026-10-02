@@ -513,6 +513,11 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
         m_universalHTMLPseudoElementTypes.add(*stylePseudoElement);
         if (!isHTMLNamespace)
             m_universalPseudoElementTypes.add(*stylePseudoElement);
+        if (ruleData.pseudoElementBoxGeneration() == PseudoElementBoxGeneration::Normal) {
+            m_universalHTMLPseudoElementBoxGeneration = PseudoElementBoxGeneration::Normal;
+            if (!isHTMLNamespace)
+                m_universalPseudoElementBoxGeneration = PseudoElementBoxGeneration::Normal;
+        }
         return true;
     };
 

@@ -281,6 +281,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     } else {
         // If pseudo-element is not requested then just mark the bits that tell that this element has these.
         m_matchedPseudoElements.add(pseudoElementTypes & allPublicPseudoElementTypes);
+        if ((isHTMLElement ? ruleSet.universalHTMLPseudoElementBoxGeneration() : ruleSet.universalPseudoElementBoxGeneration()) == PseudoElementBoxGeneration::Normal)
+            m_pseudoElementBoxGeneration = PseudoElementBoxGeneration::Normal;
     }
 }
 
@@ -630,6 +632,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     }
 
     m_matchedPseudoElements.add(context.publicPseudoElements);
+    if (ruleData.pseudoElementBoxGeneration() == PseudoElementBoxGeneration::Normal && !context.publicPseudoElements.isEmpty())
+        m_pseudoElementBoxGeneration = PseudoElementBoxGeneration::Normal;
     m_styleRelations.appendVector(context.styleRelations);
 
     return selectorMatches;
@@ -647,8 +651,11 @@ void ElementRuleCollector::collectMatchingRulesForListSlow(const RuleSet::RuleDa
         if (m_selectorMatchingState && m_selectorMatchingState->selectorFilter.fastRejectSelector(ruleData.descendantSelectorIdentifierHashes()))
             continue;
 
-        if (matchRequest.ruleSet.hasContainerQueries() && !containerQueriesMatch(ruleData, matchRequest))
+        if (matchRequest.ruleSet.hasContainerQueries() && !containerQueriesMatch(ruleData, matchRequest)) {
+            if (ruleData.pseudoElementBoxGeneration() == PseudoElementBoxGeneration::Normal)
+                m_pseudoElementBoxGeneration = PseudoElementBoxGeneration::Normal;
             continue;
+        }
 
         std::optional<Vector<ScopingRootWithDistance>> scopingRoots;
         if (matchRequest.ruleSet.hasScopeRules()) {

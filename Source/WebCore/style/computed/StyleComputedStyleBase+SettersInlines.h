@@ -49,11 +49,12 @@ template<typename T, typename U> inline bool compareEqual(const T& a, const U& b
 
 // MARK: - ComputedStyleBase::NonInheritedFlags
 
-inline void ComputedStyleBase::NonInheritedFlags::setHasPseudoStyles(EnumSet<PseudoElementType> pseudoElementSet)
+inline void ComputedStyleBase::NonInheritedFlags::setHasPseudoStyles(EnumSet<PseudoElementType> pseudoElementSet, PseudoElementBoxGeneration boxGeneration)
 {
     ASSERT(pseudoElementSet);
     ASSERT(pseudoElementSet.containsOnly(allPublicPseudoElementTypes));
     pseudoBits = pseudoElementSet.toRaw();
+    pseudoElementBoxGeneration = std::to_underlying(boxGeneration);
 }
 
 // MARK: - Non-property setters
@@ -242,9 +243,9 @@ inline void ComputedStyleBase::setUsedAppleVisualEffectForSubtree(AppleVisualEff
 
 // MARK: - Pseudo element/style
 
-inline void ComputedStyleBase::setHasPseudoStyles(EnumSet<PseudoElementType> set)
+inline void ComputedStyleBase::setHasPseudoStyles(EnumSet<PseudoElementType> set, PseudoElementBoxGeneration boxGeneration)
 {
-    m_nonInheritedFlags.setHasPseudoStyles(set);
+    m_nonInheritedFlags.setHasPseudoStyles(set, boxGeneration);
 }
 
 inline void ComputedStyleBase::setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&& identifier)
