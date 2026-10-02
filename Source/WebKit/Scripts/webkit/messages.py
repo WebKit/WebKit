@@ -1546,6 +1546,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::BufferInSetType': ['"BufferIdentifierSet.h"'],
         'WebKit::BufferSetBackendHandle': ['"BufferAndBackendInfo.h"'],
         'WebKit::CallDownloadDidStart': ['"DownloadManager.h"'],
+        'WebKit::CompletesDoubleClick': ['"GestureTypes.h"'],
         'WebKit::ConsumerSharedCARingBufferHandle': ['"SharedCARingBuffer.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
         'WebKit::ContentWorldData': ['"ContentWorldData.h"'],

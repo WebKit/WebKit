@@ -107,6 +107,7 @@ NS_SWIFT_UI_ACTOR
 - (void)setUpPanGestureRecognizer;
 - (void)setUpDOMDoubleClickGestureRecognizer;
 - (void)resetDOMDoubleClickGestureRecognizer;
+- (BOOL)takeCompletedDOMDoubleClick;
 - (WKDeferringGestureRecognizer *)makeImageAnalysisDeferringGestureRecognizerWithName:(NSString *)name;
 
 - (NSPoint)panVelocityInView:(nullable NSView *)view;

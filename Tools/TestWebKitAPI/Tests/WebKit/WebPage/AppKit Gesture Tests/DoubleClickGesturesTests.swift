@@ -186,6 +186,143 @@ extension AppKitGesturesTests.DoubleClick {
     }
 
     @Test
+    func doubleClickWithListenerOnUnselectableContentFiresOneClickPerPress() async throws {
+        try await loadUnselectableHTML(dblclickHandler: true)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown, .mouseup, .click, .dblclick]))
+
+        let bounds = try await screenBounds(ofElementWithID: "div")
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        // A redundant single click for the second press can be dispatched after the dblclick, so give it time to arrive.
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .mousedown, detail: 1),
+            DOMEvent(type: .mouseup, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .mousedown, detail: 2),
+            DOMEvent(type: .mouseup, detail: 2),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleClickWithoutListenerOnUnselectableContentFiresTwoSingleClicks() async throws {
+        try await loadUnselectableHTML()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click]))
+
+        let bounds = try await screenBounds(ofElementWithID: "div")
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleClickWithAncestorListenerOnStyleAdjustedContentFiresOneClickPerPress() async throws {
+        try await loadUnselectableHTML()
+        try await page.callJavaScript(
+            arguments: ["elementID": "div", "interactive": true],
+            script: styleAdjustmentForCustomWidgetScript
+        )
+        try await page.callJavaScript {
+            """
+            document.body.addEventListener("dblclick", () => { }, { capture: true });
+            """
+        }
+        await page.waitForNextPresentationUpdate()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown, .mouseup, .click, .dblclick]))
+
+        let bounds = try await screenBounds(ofElementWithID: "div")
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .mousedown, detail: 1),
+            DOMEvent(type: .mouseup, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .mousedown, detail: 2),
+            DOMEvent(type: .mouseup, detail: 2),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
+    func doubleClickNextToClickableElementTargetsItWithBothClicks() async throws {
+        let html = """
+            <body style="margin: 0;">
+                <div id="target" style="position: absolute; left: 100px; top: 100px; width: 40px; height: 40px; background-color: black; -webkit-user-select: none;"></div>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        try await page.callJavaScript {
+            """
+            document.body.addEventListener("dblclick", () => { });
+            """
+        }
+
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "target", for: [.click]))
+
+        let bounds = try await screenBounds(ofElementWithID: "target")
+        let besideTarget = CGPoint(x: bounds.maxX + 3, y: bounds.midY)
+
+        await recap.play { composer in
+            composer._wk_click(at: besideTarget, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: besideTarget, for: .seconds(0.1))
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 2),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test
     func singleClickReportsDetailOne() async throws {
         try await loadHTML()
         try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
@@ -364,6 +501,16 @@ extension AppKitGesturesTests.DoubleClick {
 
         let html = """
             <div \(dblclickHandlerMarkup) id="div" style="width: 160px; font-size: 30px;">\(Self.text)</div>
+            """
+
+        try await page.load(html: html).wait()
+    }
+
+    private func loadUnselectableHTML(dblclickHandler: Bool = false) async throws {
+        let dblclickHandlerMarkup = dblclickHandler ? "ondblclick='void(0)'" : ""
+
+        let html = """
+            <div \(dblclickHandlerMarkup) id="div" style="width: 200px; height: 200px; background-color: black; -webkit-user-select: none;"></div>
             """
 
         try await page.load(html: html).wait()
