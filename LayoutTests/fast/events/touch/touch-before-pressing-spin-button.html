@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style type="text/css">
 #box {
     background-color:blue;
@@ -15,19 +15,28 @@
 <div><input type="number" id="number" value="1"></div>
 <script>
 description('Test if a spin-button works correctly after touch events.');
-if (window.eventSender) {
-    eventSender.addTouchPoint(50, 50);
-    eventSender.touchStart();
+window.jsTestIsAsync = true;
 
-    var numberInput = document.getElementById('number');
-    eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('numberInput.value', '"2"');
-} else {
-    debug('Needs eventSender.');
+var numberInput = document.getElementById('number');
+
+async function runTest() {
+    if (window.eventSender) {
+        eventSender.addTouchPoint(50, 50);
+        await eventSender.asyncTouchStart();
+
+        eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        shouldBe('numberInput.value', '"2"');
+    } else {
+        debug('Needs eventSender.');
+    }
 }
+
+onload = async () => {
+    await runTest();
+    finishJSTest();
+};
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

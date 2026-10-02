@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <style type="text/css">
 #box {
     background-color: blue;
@@ -40,7 +40,9 @@ function isBoxActive()
 
 description("Tests that tap gesture events set and clear the active state of elements.");
 
-function runTests()
+window.jsTestIsAsync = true;
+
+async function runTests()
 {
     if (!window.eventSender) {
         debug('This test requires DRT.');
@@ -81,26 +83,28 @@ function runTests()
 
     debug("Verify that touchstart doesn't trigger active state");
     eventSender.addTouchPoint(50, 50);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
     shouldBeFalse("isBoxActive()");
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 
     debug("Verify that touchstart/touchend doesn't cancel active");
     eventSender.gestureTapDown(50, 50);
     shouldBeTrue("isBoxActive()");
     eventSender.addTouchPoint(50, 50);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
     shouldBeTrue("isBoxActive()");
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
     shouldBeTrue("isBoxActive()");
     eventSender.gestureTap(50, 50);
     shouldBeFalse("isBoxActive()");
 }
 
-runTests();
+onload = async () => {
+    await runTests();
+    finishJSTest();
+};
 </script>
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

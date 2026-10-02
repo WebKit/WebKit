@@ -1,16 +1,16 @@
-function tap(x, y) {
+async function tap(x, y) {
     if (!window.eventSender)
         return;
 
     eventSender.addTouchPoint(x, y);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 }
 
 function tapSoon(x, y) {
-    setTimeout(function () {
-        tap(x, y);
+    setTimeout(async function () {
+        await tap(x, y);
     }, 10);
 }
 

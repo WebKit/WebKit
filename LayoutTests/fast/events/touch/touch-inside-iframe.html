@@ -18,13 +18,13 @@ function testComplete(event)
     finishJSTest();
 }
 
-function runTest() {
+async function runTest() {
     if (window.eventSender) {
         // Touch the center of the div in the iframe.
         // 100px is offset to iframe in main frame,
         // 2px for the iframe border, 50px to get to centre of the div.
         eventSender.addTouchPoint(152, 152);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
     } else {
        debug('This test requires DRT.');
     }

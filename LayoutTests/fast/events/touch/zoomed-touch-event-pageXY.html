@@ -31,14 +31,6 @@ function touchEventCallback() {
     } else {
         debug(event.type);
     }
-
-    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL) {
-        // If we've got here, we can safely say we were successfully parsed :) We need to
-        // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
-        // footer message.
-        successfullyParsed = true;
-        finishJSTest();
-    }
 }
 
 div.addEventListener("touchstart", touchEventCallback, false);
@@ -102,37 +94,39 @@ function verifyTouch(which) {
     }
 }
 
-function sendTouchSequence()
+async function sendTouchSequence()
 {
     eventSender.addTouchPoint(8*2, 12*2);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     debug('move');
     eventSender.updateTouchPoint(0, 10*2, 15*2);
-    eventSender.touchMove();
+    await eventSender.asyncTouchMove();
 
     debug('add second touch');
     eventSender.addTouchPoint(40*2, 45*2);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     debug('end');
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
+
+    finishJSTest();
 }
 
+description("This tests pageX and pageY coordinates on touch events and touches when zoomed to 2x scale.");
+window.jsTestIsAsync = true;
 
-if (window.eventSender) {
-    description("This tests pageX and pageY coordinates on touch events and touches when zoomed to 2x scale.");
-    window.jsTestIsAsync = true;
-
-    // Give some time for the viewport scale to set in.
-    setTimeout(function() {
-        lastEvent = null;
-        sendTouchSequence();
-    }, 100);
-
-} else {
-    debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+onload = () => {
+    if (window.eventSender) {
+        // Give some time for the viewport scale to set in.
+        setTimeout(async function() {
+            lastEvent = null;
+            await sendTouchSequence();
+        }, 100);
+    } else {
+        debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+    }
 }
 </script>
 </body>

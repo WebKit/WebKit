@@ -106,29 +106,29 @@ function verifyTouch(which) {
     }
 }
 
-function sendTouchSequence()
+async function sendTouchSequence()
 {
     eventSender.mouseMoveTo(22, 25);
     eventSender.mouseDown();
     eventSender.mouseUp();
 
     eventSender.addTouchPoint(22, 25);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
 }
 
+description("This tests pageX and pageY coordinates on touch events and touches.");
+window.jsTestIsAsync = true;
 
-if (window.eventSender) {
-    description("This tests pageX and pageY coordinates on touch events and touches.");
-    window.jsTestIsAsync = true;
-
-    lastEvent = null;
-    sendTouchSequence();
-
-} else {
-    debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+onload = async () => {
+    if (window.eventSender) {
+        lastEvent = null;
+        await sendTouchSequence();
+    } else {
+        debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+    }
 }
 
 

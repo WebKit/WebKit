@@ -25,7 +25,7 @@
             border: none;
         }
     </style>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
 </head>
 <body>
     <div id='sandbox'>
@@ -34,9 +34,9 @@
     </div>
 
     <script>
-        var hoveredTop, hoveredIframe1, hoveredIframe2;
+        window.jsTestIsAsync = true;
 
-        function runTest() {
+        async function runTest() {
             if (window.testRunner) {
                 var idoc1 = document.getElementById('iframe1').contentDocument;
                 var idoc2 = document.getElementById('iframe2').contentDocument;
@@ -45,7 +45,7 @@
                 eventSender.clearTouchPoints();
 
                 eventSender.addTouchPoint(50, 50);
-                eventSender.touchStart();
+                await eventSender.asyncTouchStart();
                 hoveredTop = document.querySelectorAll('iframe:hover');
                 hoveredIframe1 = idoc1.querySelectorAll('body:hover');
                 hoveredIframe2 = idoc2.querySelectorAll('body:hover');
@@ -53,10 +53,10 @@
                 shouldBe('hoveredIframe1.length', '1');
                 shouldBe('hoveredIframe2.length', '0');
                 eventSender.releaseTouchPoint(0);
-                eventSender.touchEnd();
+                await eventSender.asyncTouchEnd();
 
                 eventSender.addTouchPoint(150, 50);
-                eventSender.touchStart();
+                await eventSender.asyncTouchStart();
                 hoveredTop = document.querySelectorAll('iframe:hover');
                 hoveredIframe1 = idoc1.querySelectorAll('body:hover');
                 hoveredIframe2 = idoc2.querySelectorAll('body:hover');
@@ -64,10 +64,10 @@
                 shouldBe('hoveredIframe1.length', '0');
                 shouldBe('hoveredIframe2.length', '1');
                 eventSender.releaseTouchPoint(0);
-                eventSender.touchCancel();
+                await eventSender.asyncTouchCancel();
 
                 eventSender.addTouchPoint(250, 50);
-                eventSender.touchStart();
+                await eventSender.asyncTouchStart();
                 hoveredTop = document.querySelectorAll('iframe:hover');
                 hoveredIframe1 = idoc1.querySelectorAll('body:hover');
                 hoveredIframe2 = idoc2.querySelectorAll('body:hover');
@@ -75,7 +75,7 @@
                 shouldBe('hoveredIframe1.length', '0');
                 shouldBe('hoveredIframe2.length', '0');
                 eventSender.addTouchPoint(150, 50);
-                eventSender.touchMove();
+                await eventSender.asyncTouchMove();
                 hoveredTop = document.querySelectorAll('#sandbox:hover');
                 hoveredIframe1 = idoc1.querySelectorAll('body:hover');
                 hoveredIframe2 = idoc2.querySelectorAll('body:hover');
@@ -83,7 +83,7 @@
                 shouldBe('hoveredIframe1.length', '0');
                 shouldBe('hoveredIframe2.length', '0');
                 eventSender.releaseTouchPoint(0);
-                eventSender.touchMove();
+                await eventSender.asyncTouchMove();
                 hoveredTop = document.querySelectorAll('#sandbox:hover');
                 hoveredIframe1 = idoc1.querySelectorAll('body:hover');
                 hoveredIframe2 = idoc2.querySelectorAll('body:hover');
@@ -91,11 +91,13 @@
                 shouldBe('hoveredIframe1.length', '0');
                 shouldBe('hoveredIframe2.length', '0');
                 eventSender.releaseTouchPoint(0);
-                eventSender.touchEnd();
+                await eventSender.asyncTouchEnd();
             }
         }
-        runTest();
+        onload = async () => {
+            await runTest();
+            finishJSTest();
+        };
     </script>
-    <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

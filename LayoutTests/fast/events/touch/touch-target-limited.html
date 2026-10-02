@@ -93,33 +93,39 @@ description("Tests that the target of touches match the element where the event 
 window.jsTestIsAsync = true;
 
 
-if (window.eventSender) {
-    eventSender.clearTouchPoints();
-    eventSender.addTouchPoint(50, 150);
-    eventSender.addTouchPoint(50, 250);
-    eventSender.touchStart();
+async function runTest() {
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        eventSender.addTouchPoint(50, 150);
+        eventSender.addTouchPoint(50, 250);
+        await eventSender.asyncTouchStart();
 
-    eventSender.updateTouchPoint(0, 50, 250);
-    eventSender.updateTouchPoint(1, 50, 150);
-    eventSender.touchMove();
+        eventSender.updateTouchPoint(0, 50, 250);
+        eventSender.updateTouchPoint(1, 50, 150);
+        await eventSender.asyncTouchMove();
 
-    eventSender.updateTouchPoint(0, 1000, 1000);
-    eventSender.updateTouchPoint(1, 1000, 1000);
-    eventSender.touchMove();
+        eventSender.updateTouchPoint(0, 1000, 1000);
+        eventSender.updateTouchPoint(1, 1000, 1000);
+        await eventSender.asyncTouchMove();
 
-    eventSender.releaseTouchPoint(0);
-    eventSender.releaseTouchPoint(1);
-    eventSender.touchEnd();
+        eventSender.releaseTouchPoint(0);
+        eventSender.releaseTouchPoint(1);
+        await eventSender.asyncTouchEnd();
 
-    eventSender.addTouchPoint(50, 250);
-    eventSender.addTouchPoint(50, 150);
-    eventSender.touchStart();
+        eventSender.addTouchPoint(50, 250);
+        eventSender.addTouchPoint(50, 150);
+        await eventSender.asyncTouchStart();
 
-    eventSender.updateTouchPoint(0, 500, 500);
-    eventSender.updateTouchPoint(1, 500, 500);
-    eventSender.touchMove();
-} else
-    debug('This test requires DRT.');
+        eventSender.updateTouchPoint(0, 500, 500);
+        eventSender.updateTouchPoint(1, 500, 500);
+        await eventSender.asyncTouchMove();
+    } else
+        debug('This test requires DRT.');
+}
+
+onload = async () => {
+    await runTest();
+}
 
 </script>
 </body>

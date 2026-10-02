@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style>
     #touchMe {
         background-color: blue;
@@ -18,32 +18,34 @@
 <body>
 <div id="touchMe" ontouchstart=""></div>
 <script>
-
 description("This tests the :active selector on touchable elements");
+window.jsTestIsAsync = true;
 
-if (!window.eventSender)
-    debug("This test will FAIL outside of DRT, but you can test it manually by touching the blue square below. If it turns red when touched, the test is a PASS.");
+async function runTest() {
+    touchMe = document.getElementById("touchMe");
 
-touchMe = document.getElementById("touchMe");
+    shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(0, 0, 255)'");
 
-shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(0, 0, 255)'");
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        eventSender.addTouchPoint(touchMe.offsetLeft + 10, touchMe.offsetTop + 10);
+        await eventSender.asyncTouchStart();
+    }
 
-if (window.eventSender) {
-    eventSender.clearTouchPoints();
-    eventSender.addTouchPoint(touchMe.offsetLeft + 10, touchMe.offsetTop + 10);
-    eventSender.touchStart();
+    shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(255, 0, 0)'");
+
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        await eventSender.asyncTouchEnd();
+    }
+
+    shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(0, 0, 255)'");
 }
 
-shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(255, 0, 0)'");
-
-if (window.eventSender) {
-    eventSender.clearTouchPoints();
-    eventSender.touchEnd();
-}
-
-shouldBe("getComputedStyle(touchMe).backgroundColor", "'rgb(0, 0, 255)'");
-
-</script>    
-<script src="../../../resources/js-test-post.js"></script>
+onload = async () => {
+    await runTest();
+    finishJSTest();
+};
+</script>
 </body>
 </html>

@@ -27,12 +27,12 @@ function testComplete(event)
     finishJSTest();
 }
 
-function runTest()
+async function runTest()
 {
     if (window.eventSender) {
         // Touch the center of the div.
         eventSender.addTouchPoint(50, 50);
-        eventSender.touchStart();
+        await eventSender.asyncTouchStart();
     } else
         debug('This test requires DRT.');
 }

@@ -14,15 +14,15 @@ function doGC()
         var s = new String("");
 }
 
-function sendTouchUp()
+async function sendTouchUp()
 {
     doGC();
     // This touchend will cause a crash if the bug is present.
     eventSender.releaseTouchPoint(0);
-    eventSender.touchEnd();
+    await eventSender.asyncTouchEnd();
     // This touchstart will finish the test when we don't crash.
     eventSender.addTouchPoint(10,10);
-    eventSender.touchStart();
+    await eventSender.asyncTouchStart();
 }
 
 function finishTest(e)
