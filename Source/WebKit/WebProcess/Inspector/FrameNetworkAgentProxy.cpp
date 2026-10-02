@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
