@@ -31,6 +31,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <pal/system/ios/UserInterfaceIdiom.h>
+#endif
+
+#if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -68,6 +71,12 @@ bool evaluateURLEnvironment(URLEnvironment environment)
     case URLEnvironment::LensApp:
 #if PLATFORM(IOS_FAMILY)
         return WTF::IOSApplication::isLensApp();
+#else
+        return false;
+#endif
+    case URLEnvironment::SafariWebApp:
+#if PLATFORM(MAC)
+        return WTF::MacApplication::isSafariWebApp();
 #else
         return false;
 #endif

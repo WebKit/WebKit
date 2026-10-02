@@ -201,6 +201,7 @@ WTF_EXPORT_PRIVATE bool isMiniBrowser();
 WTF_EXPORT_PRIVATE bool isQuickenEssentials();
 WTF_EXPORT_PRIVATE bool isSafari();
 WTF_EXPORT_PRIVATE bool isSafariTechnologyPreview();
+WTF_EXPORT_PRIVATE bool isSafariWebApp();
 WTF_EXPORT_PRIVATE bool isVersions();
 WTF_EXPORT_PRIVATE bool isHRBlock();
 WTF_EXPORT_PRIVATE bool isTurboTax();
