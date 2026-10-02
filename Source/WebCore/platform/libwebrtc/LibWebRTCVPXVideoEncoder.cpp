@@ -278,13 +278,18 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
     Ref protectedFrame = rawFrame.frame;
     RetainPtr buffer = protectedFrame->pixelBuffer();
     auto colorSpace = protectedFrame->colorSpace();
-    if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true)) {
-        if (isRGBVideoPixelFormat(*pixelFormat)) {
-            // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
-            colorSpace = srgbColorSpace();
-            buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
-        }
+    if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true); pixelFormat && isRGBVideoPixelFormat(*pixelFormat)) {
+        // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
+        colorSpace = srgbColorSpace();
+        buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
+    } else if (buffer) {
+        auto bufferPixelFormat = CVPixelBufferGetPixelFormatType(buffer.get());
+        if (bufferPixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange && bufferPixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
+            buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), colorSpace.fullRange.value_or(false) ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
     }
+
+    if (!buffer)
+        return VideoEncoder::EncodePromise::createAndReject("Unsupported pixel format"_s);
 
     auto frameBuffer = webrtc::pixelBufferToFrame(buffer.get());
     if (m_config.width != static_cast<size_t>(frameBuffer->width()) || m_config.height != static_cast<size_t>(frameBuffer->height()))

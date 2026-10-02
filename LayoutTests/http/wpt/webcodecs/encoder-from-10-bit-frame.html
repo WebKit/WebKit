@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/videoframe-utilities.js"></script>
+<canvas style="display: none" id="referenceCanvas"></canvas>
+<canvas style="display: none" id="resultCanvas"></canvas>
+<script>
+// Decoding VP9 profile 2 gives 10-bit frames; encoding those again must preserve pixel values.
+const colors = [[255, 0, 0, 255], [0, 255, 0, 255], [30, 30, 230, 255]];
+const subtests = [];
+for (const codec of ["vp8", "vp09.00.10.08"]) {
+    for (const preferSoftware of [true, false]) {
+        for (const color of colors)
+            subtests.push({ codec, preferSoftware, color });
+    }
+}
+
+for (const { codec, preferSoftware, color } of subtests) {
+    promise_test(async () => {
+        const pattern = createTestImageData(referenceCanvas.width, referenceCanvas.height, color);
+        const i420Data = sRGBImageDataToI420BT709(pattern, false);
+        const videoFrame = new VideoFrame(i420Data.data, {
+            format: i420Data.format,
+            colorSpace: i420Data.colorSpace,
+            codedWidth: i420Data.width,
+            codedHeight: i420Data.height,
+            layout: i420Data.layout,
+            timestamp: 0
+        });
+
+        const highBitDepthFrame = await encodeDecodeVideoFrame(videoFrame, "vp09.02.10.10", preferSoftware);
+        const testedVideoFrame = await encodeDecodeVideoFrame(highBitDepthFrame, codec, preferSoftware);
+        highBitDepthFrame.close();
+
+        resultCanvas.getContext("2d").drawImage(testedVideoFrame, 0, 0);
+        testedVideoFrame.close();
+        referenceCanvas.getContext("2d").drawImage(videoFrame, 0, 0);
+        videoFrame.close();
+
+        const referenceColor = referenceCanvas.getContext("2d").getImageData(0, 0, 1, 1).data;
+        const resultColor = resultCanvas.getContext("2d").getImageData(0, 0, 1, 1).data;
+        assert_array_approx_equals(resultColor, referenceColor, 20);
+        assert_array_approx_equals(resultColor, color, 20);
+    }, `Encoding a 10-bit frame to ${codec} preserves pixel values color:${color} preferSoftware:${preferSoftware}`);
+}
+</script>
