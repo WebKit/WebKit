@@ -6791,6 +6791,18 @@ class WebKitStyleTest(CppStyleTestBase):
 
     def test_glib_string_wrappers(self):
         self.assert_lint(
+            'g_key_file_load_from_data(keyFile, data.legacyCStringPointer(), -1, G_KEY_FILE_NONE, &error);',
+            "Use 'gKeyFileLoadFromData()' from <wtf/glib/GLibExtras.h> instead of 'g_key_file_load_from_data()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto escaped = GMallocString::unsafeAdoptFromUTF8(g_markup_escape_text(label.utf8().legacyCStringPointer(), -1));',
+            "Use 'gMarkupEscapeText()' from <wtf/glib/GLibExtras.h> instead of 'g_markup_escape_text()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/glib_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
             'char* copy = g_strdup(string.utf8().legacyCStringPointer());',
             "Use 'gStrdup()' from <wtf/glib/GLibExtras.h> instead of 'g_strdup()', and pass the typed string instead of calling legacyCStringPointer()."
             "  [runtime/glib_string_wrappers] [4]",
@@ -6914,6 +6926,41 @@ class WebKitStyleTest(CppStyleTestBase):
 
         self.assert_lint(
             'const char* name = string.legacyCStringPointer();',
+            '',
+            'foo.cpp')
+
+    def test_legacy_cstring_pointer_with_length(self):
+        self.assert_lint(
+            'GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(markup.legacyCStringPointer(), markup.length()));',
+            "Store 'markup.span()', or 'byteCast<char>(markup.span())' for a const char* parameter, in a local and pass its data() and size() "
+            "instead of calling legacyCStringPointer(), since the length is passed too. Use 'gBytesNew()' or 'gBytesNewStatic()' from "
+            "<wtf/glib/GLibExtras.h> instead of 'g_bytes_new()' or 'g_bytes_new_static()'."
+            "  [runtime/legacy_cstring_pointer_with_length] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'send(socket, message.utf8().legacyCStringPointer(), message.utf8().size(), 0);',
+            "Store 'message.utf8().span()', or 'byteCast<char>(message.utf8().span())' for a const char* parameter, in a local and pass its data() and size() "
+            "instead of calling legacyCStringPointer(), since the length is passed too. Use 'gBytesNew()' or 'gBytesNewStatic()' from "
+            "<wtf/glib/GLibExtras.h> instead of 'g_bytes_new()' or 'g_bytes_new_static()'."
+            "  [runtime/legacy_cstring_pointer_with_length] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'gtk_im_context_set_surrounding(context, priv->text.legacyCStringPointer(), priv->text.length(), cursor);',
+            "Store 'priv->text.span()', or 'byteCast<char>(priv->text.span())' for a const char* parameter, in a local and pass its data() and size() "
+            "instead of calling legacyCStringPointer(), since the length is passed too. Use 'gBytesNew()' or 'gBytesNewStatic()' from "
+            "<wtf/glib/GLibExtras.h> instead of 'g_bytes_new()' or 'g_bytes_new_static()'."
+            "  [runtime/legacy_cstring_pointer_with_length] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'loadFromData(file, data.utf8().legacyCStringPointer(), data.length());',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'gdk_clipboard_set_text(clipboard, string.legacyCStringPointer());',
             '',
             'foo.cpp')
 

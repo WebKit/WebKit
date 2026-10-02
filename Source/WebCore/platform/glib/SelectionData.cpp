@@ -20,6 +20,7 @@
 #include "SelectionData.h"
 
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -110,7 +111,7 @@ void SelectionData::setURL(const URL& url, const String& label)
         return;
 
     String actualLabel = label.isEmpty() ? url.string() : label;
-    auto escaped = GMallocString::unsafeAdoptFromUTF8(g_markup_escape_text(actualLabel.utf8().legacyCStringPointer(), -1));
+    auto escaped = gMarkupEscapeText(actualLabel.utf8());
     setMarkup(makeString("<a href=\""_s, url.string(), "\">"_s, escaped.span(), "</a>"_s));
 }
 

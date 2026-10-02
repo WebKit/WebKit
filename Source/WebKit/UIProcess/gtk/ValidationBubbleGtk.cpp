@@ -28,9 +28,8 @@
 
 #include "GtkVersioning.h"
 #include "WebKitWebViewBasePrivate.h"
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/UTF8CStringView.h>
 
 namespace WebKit {
 
@@ -44,9 +43,8 @@ ValidationBubbleGtk::ValidationBubbleGtk(GtkWidget* webView, String&& message, c
     GtkWidget* label = gtk_label_new(nullptr);
 
     // https://docs.gtk.org/Pango/pango_markup.html
-    auto messageUTF8 = m_message.utf8();
-    GUniquePtr<char> escapedMessage(g_markup_escape_text(messageUTF8.legacyCStringPointer(), messageUTF8.length()));
-    String markup = makeString("<span font='"_s, m_fontSize, "'>"_s, UTF8CStringView::unsafeFromUTF8(escapedMessage.get()), "</span>"_s);
+    auto escapedMessage = gMarkupEscapeText(m_message.utf8());
+    String markup = makeString("<span font='"_s, m_fontSize, "'>"_s, escapedMessage.span(), "</span>"_s);
     gtk_label_set_markup(GTK_LABEL(label), markup.utf8().legacyCStringPointer());
 
     gtk_widget_set_halign(label, GTK_ALIGN_START);

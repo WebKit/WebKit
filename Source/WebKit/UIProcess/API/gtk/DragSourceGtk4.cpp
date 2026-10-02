@@ -34,6 +34,7 @@
 #include <WebCore/NativeImage.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -79,20 +80,20 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     Vector<GdkContentProvider*> providers;
     if (m_selectionData->hasMarkup()) {
         auto markup = m_selectionData->markup().utf8();
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(markup.legacyCStringPointer(), markup.length()));
+        GRefPtr bytes = gBytesNew(markup.span());
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
 
     if (m_selectionData->hasURIList()) {
         auto uriList = m_selectionData->uriList().utf8();
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(uriList.legacyCStringPointer(), uriList.length()));
+        GRefPtr bytes = gBytesNew(uriList.span());
         providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
     }
 
     if (m_selectionData->hasURL()) {
         const auto& urlString = m_selectionData->url().string();
         auto url = makeString(urlString, '\n', m_selectionData->hasText() ? m_selectionData->text() : urlString).utf8();
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(url.span().data(), url.length()));
+        GRefPtr bytes = gBytesNew(url.span());
         providers.append(gdk_content_provider_new_for_bytes("_NETSCAPE_URL", bytes.get()));
     }
 

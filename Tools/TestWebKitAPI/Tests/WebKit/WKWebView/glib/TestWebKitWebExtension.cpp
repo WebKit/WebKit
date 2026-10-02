@@ -25,6 +25,7 @@
 #include "WebExtensionUtilities.h"
 #include <WebKitWebExtensionInternal.h>
 #include <wtf/HashMap.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -33,7 +34,7 @@ using namespace TestWebKitAPI;
 
 static GRefPtr<GBytes> createGBytes(const gchar* string)
 {
-    return adoptGRef(g_bytes_new_static(string, strlen(string)));
+    return gBytesNewStatic(unsafeSpan(string));
 }
 
 static void testExtensionCreationFromDirectory(Test*, gconstpointer)

@@ -34,6 +34,7 @@
 #include "WebScriptMessageHandler.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -136,7 +137,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     webViewResult.iterator->value = client;
 
     auto html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI).toString().utf8();
-    GRefPtr bytes = adoptGRef(g_bytes_new(html.span().data(), html.length()));
+    GRefPtr bytes = gBytesNew(html.span());
     GRefPtr stream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
     webkit_uri_scheme_request_finish(request, stream.get(), html.length(), "text/html");
 }
@@ -158,7 +159,8 @@ void RemoteInspectorProtocolHandler::updateTargetList(WebKitWebView* webView)
     clientForWebView->appendTargetList(scriptBuilder, RemoteInspectorClient::InspectorType::UI, RemoteInspectorClient::ShouldEscapeSingleQuote::Yes);
     scriptBuilder.append("';"_s);
     auto script = scriptBuilder.toString().utf8();
-    webkit_web_view_evaluate_javascript(webView, script.legacyCStringPointer(), script.length(), nullptr, nullptr, nullptr, nullptr, nullptr);
+    auto scriptCharacters = byteCast<char>(script.span());
+    webkit_web_view_evaluate_javascript(webView, scriptCharacters.data(), scriptCharacters.size(), nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
 void RemoteInspectorProtocolHandler::webViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent event, RemoteInspectorProtocolHandler* handler)

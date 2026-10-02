@@ -37,6 +37,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefPtr.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -516,7 +517,7 @@ void webkit_user_content_filter_store_fetch_identifiers(WebKitUserContentFilterS
         auto result = GMallocSpan<gchar*>::malloc(bytesToAllocate);
         for (size_t i = 0; i < identifiers.size(); ++i) {
             const auto identifier = identifiers[i].utf8();
-            result[i] = g_strndup(identifier.legacyCStringPointer(), identifier.length());
+            result[i] = gStrdup(identifier);
         }
         result[identifiers.size()] = nullptr;
 

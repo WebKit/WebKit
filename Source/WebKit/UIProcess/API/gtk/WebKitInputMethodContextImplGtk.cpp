@@ -109,7 +109,8 @@ static void contextCommitCallback(WebKitInputMethodContextImplGtk* context, cons
 static gboolean contextRetrieveSurrounding(WebKitInputMethodContextImplGtk* context)
 {
     auto* priv = context->priv;
-    gtk_im_context_set_surrounding(priv->context.get(), priv->surroundingText.legacyCStringPointer(), priv->surroundingText.length(), priv->surroundingCursorIndex);
+    auto surroundingTextCharacters = byteCast<char>(priv->surroundingText.span());
+    gtk_im_context_set_surrounding(priv->context.get(), surroundingTextCharacters.data(), surroundingTextCharacters.size(), priv->surroundingCursorIndex);
     return TRUE;
 }
 

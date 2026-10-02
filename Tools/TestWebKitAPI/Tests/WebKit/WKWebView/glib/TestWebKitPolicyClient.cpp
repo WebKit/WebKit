@@ -483,9 +483,9 @@ static void testUpgradeToHTTPSPolicy(PolicyClientTest* test, gconstpointer)
 
 static void policySchemeRequestCallback(WebKitURISchemeRequest* request, gpointer)
 {
-    static const char* replyHTML = "<html><body>custom scheme</body></html>";
-    GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(replyHTML, strlen(replyHTML), nullptr));
-    webkit_uri_scheme_request_finish(request, stream.get(), strlen(replyHTML), "text/html");
+    auto replyHTML = "<html><body>custom scheme</body></html>"_span;
+    GRefPtr stream = gMemoryInputStreamNewFromData(replyHTML);
+    webkit_uri_scheme_request_finish(request, stream.get(), replyHTML.size(), "text/html");
 }
 
 static void testUpgradeToHTTPSPolicySecureSchemes(PolicyClientTest* test, gconstpointer)

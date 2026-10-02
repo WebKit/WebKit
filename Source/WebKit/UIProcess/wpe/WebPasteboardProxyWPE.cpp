@@ -34,6 +34,7 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 
 #if ENABLE(WPE_PLATFORM)
@@ -111,7 +112,7 @@ void WebPasteboardProxy::readBuffer(IPC::Connection&, const String&, const Strin
 #if ENABLE(WPE_PLATFORM)
 static void setClipboardContentFromSpan(WPEClipboardContent* content, const char* type, std::span<const char8_t> text)
 {
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(text.data(), text.size()));
+    GRefPtr bytes = gBytesNew(text);
     wpe_clipboard_content_set_bytes(content, type, bytes.get());
 }
 #endif

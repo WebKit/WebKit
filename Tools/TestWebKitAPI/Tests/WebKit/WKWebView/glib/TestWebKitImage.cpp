@@ -25,6 +25,7 @@
 #include <span>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 class WebKitImageTest : public Test {
@@ -78,7 +79,7 @@ public:
 
 static void testWebKitImagePropertiesConstruct(WebKitImageTest*, gconstpointer)
 {
-    GRefPtr<WebKitImage> image = adoptGRef(webkitImageNew(1, 2, 4, adoptGRef(g_bytes_new_static("test_data", 9))));
+    GRefPtr<WebKitImage> image = adoptGRef(webkitImageNew(1, 2, 4, gBytesNewStatic("test_data"_span)));
 
     int width, height;
     GUniqueOutPtr<char> type;
@@ -95,7 +96,7 @@ static void testWebKitImagePropertiesConstruct(WebKitImageTest*, gconstpointer)
     g_assert_cmpint(width, ==, 1);
     g_assert_cmpint(height, ==, 2);
     g_assert_cmpuint(stride, ==, 4);
-    GRefPtr<GBytes> data = adoptGRef(g_bytes_new_static("test_data", 9));
+    GRefPtr data = gBytesNewStatic("test_data"_span);
     g_assert_true(g_bytes_equal(data.get(), retrieved_data));
 }
 

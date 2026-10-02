@@ -831,9 +831,9 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 
     htmlBuilder.append(tablesBuilder.toString(), "</body></html>"_s);
 
-    auto html = htmlBuilder.toString().utf8();
-    gsize streamLength = html.length();
-    GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(gStrdup(html), streamLength, g_free));
+    GMallocString html { htmlBuilder.toString().utf8() };
+    auto streamLength = html.lengthInBytes();
+    GRefPtr stream = gMemoryInputStreamNewFromData(WTF::move(html));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
 
     if (requestURL.path() == "/stdout"_s)

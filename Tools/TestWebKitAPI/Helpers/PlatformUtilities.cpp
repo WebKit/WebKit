@@ -88,7 +88,8 @@ WKRetainPtr<WKStringRef> toWK(const char* utf8String)
 
 WKRetainPtr<WKStringRef> toWK(const UTF8CString& string)
 {
-    return adoptWK(WKStringCreateWithUTF8CStringWithLength(string.legacyCStringPointer(), string.length()));
+    auto characters = byteCast<char>(string.span());
+    return adoptWK(WKStringCreateWithUTF8CStringWithLength(characters.data(), characters.size()));
 }
 
 WKRetainPtr<WKStringRef> toWK(const String& string)

@@ -31,6 +31,7 @@
 #include "RemoteInspectorClient.h"
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -88,7 +89,8 @@ unsigned RemoteInspectorHTTPServer::handleRequest(const char* path, SoupMessageH
     if (UTF8CStringView::unsafeFromUTF8(path) == "/"_s) {
         auto html = m_client->buildTargetListPage(RemoteInspectorClient::InspectorType::HTTP).toString().utf8();
         soup_message_headers_append(responseHeaders, "Content-Type", "text/html");
-        soup_message_body_append(responseBody, SOUP_MEMORY_COPY, html.legacyCStringPointer(), html.length());
+        auto htmlBytes = html.span();
+        soup_message_body_append(responseBody, SOUP_MEMORY_COPY, htmlBytes.data(), htmlBytes.size());
         return SOUP_STATUS_OK;
     }
 
@@ -140,8 +142,8 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
         return;
 
     auto utf8 = message.utf8();
-    // Soup is going to copy the data immediately, so we can use g_bytes_new_static() here to avoid more data copies.
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.legacyCStringPointer(), utf8.length()));
+    // Soup is going to copy the data immediately, so we can use gBytesNewStatic() here to avoid more data copies.
+    GRefPtr bytes = gBytesNewStatic(utf8.span());
     soup_websocket_connection_send_message(webSocketConnection, SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
 }
 
