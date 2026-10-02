@@ -1,4 +1,21 @@
 ================
+WebKitGTK 2.54.1
+================
+
+What's new in WebKitGTK 2.54.1?
+
+  - Allow pasting in-memory image data from clipboard.
+  - Add User-Agent quirk for Amazon Luna.
+  - Align the filter surface with the device pixel grid.
+  - Fix rendering of scaled or transformed no-repeat background images.
+  - Fix rendering of preserve-3d layers when a layer crosses the camera plane.
+  - Fix SkiaCompositingLayer filter rendering under transforms.
+  - Do not rasterize the part of a tile that the clip drops.
+  - Skip non-composited frames when damage is empty.
+  - Fix text deleted by input method delete-surrounding in contenteditable.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.54.0
 ================
 
