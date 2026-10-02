@@ -16,17 +16,6 @@ function test()
         name: "HAR.Page.Priority",
         description: "Should be able to generate a HAR with all of this test page's resources.",
         async test() {
-            function buildHAR(entries) {
-                return {
-                    log: {
-                        version: "1.2",
-                        creator: WI.HARBuilder.creator(),
-                        pages: WI.HARBuilder.pages(),
-                        entries: entries.map((entry, index) => WI.HARBuilder.entry(entry, "")),
-                    }
-                };
-            }
-
             await NetworkAgent.setResourceCachingDisabled(false);
 
             await Promise.all([
@@ -43,7 +32,20 @@ function test()
 
             await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
-            let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
+            let resources = [];
+            for (let target of WI.targetManager.targets) {
+                if (target.isProvisional)
+                    continue;
+
+                if (target.type === WI.Target.Type.Frame && target.networkManager?.mainFrame) {
+                    let frame = target.networkManager.mainFrame;
+                    if (frame.mainResource)
+                        resources.push(frame.mainResource);
+                    if (frame.resourceCollection)
+                        resources.push(...frame.resourceCollection);
+                }
+            }
+
             if (resources.length) {
                 console.log(`Got ${resources.length} resources`);
 
