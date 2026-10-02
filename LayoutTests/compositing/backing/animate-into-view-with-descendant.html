@@ -64,6 +64,13 @@
     const animation = document.getElementById('target').getAnimations()[0];
     await animationAcceleration(animation);
 
+    // The dump includes the animated transform, so freeze the animation at a fixed time. Otherwise the value
+    // depends on how long the test took to get here, and a loaded machine can advance past the 0%-19% keyframe
+    // plateau the expectation was taken from. A zero playback rate rather than pause(), because the layer only
+    // has backing store while the animation is running.
+    animation.currentTime = 0;
+    animation.playbackRate = 0;
+
     document.getElementById('layers').innerText = window.internals?.layerTreeAsText(document, window.internals?.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
 
     window.testRunner?.notifyDone();

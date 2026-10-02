@@ -1,0 +1,6 @@
+Held zoom out at (600, 400):
+  at scale 0.96: PASS (anchor held off the document)
+  at scale 0.88: PASS (anchor held off the document)
+  at scale 0.81: PASS (anchor held off the document)
+After release:
+  at scale 1.00: PASS (back on the document)

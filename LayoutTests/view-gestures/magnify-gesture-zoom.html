@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            width: 1200px;
+            height: 2000px;
+        }
+        .target {
+            margin: 100px;
+            width: 400px;
+            height: 400px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script src="resources/view-gesture-helpers.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function doMagnify()
+        {
+            const output = ['Before magnify: ' + visualViewportDescription()];
+
+            await UIHelper.magnifyGestureAt(300, 300, 0.25);
+            output.push('After magnify:  ' + visualViewportDescription());
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doMagnify, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+    <div class="target"></div>
+</body>
+</html>

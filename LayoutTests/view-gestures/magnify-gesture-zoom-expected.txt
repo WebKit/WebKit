@@ -1,0 +1,3 @@
+Before magnify: left: 0 top 0 width 785 height 585 scale 1.00
+After magnify:  left: 60 top 60 width 628 height 468 scale 1.25
+

@@ -56,6 +56,7 @@ private:
     RefPtr<OpaqueJSString> caLayerTreeAsTextForLayerWithID(uint64_t layerID) const override;
     NSUndoManager *platformUndoManager() const override;
     JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const final;
+    RefPtr<OpaqueJSString> delegatedZoomOverrideAsText() const final;
 
     RefPtr<OpaqueJSString> scrollingTreeAsText() const override;
     RefPtr<OpaqueJSString> scrollingTreeIncludingNodeIDsAsText() const override;

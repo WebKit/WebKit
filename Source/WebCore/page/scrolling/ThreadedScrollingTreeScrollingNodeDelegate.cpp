@@ -195,9 +195,16 @@ void ThreadedScrollingTreeScrollingNodeDelegate::didStopScrollSnapAnimation()
 ScrollExtents ThreadedScrollingTreeScrollingNodeDelegate::scrollExtents() const
 {
     Ref scrollingNode = this->scrollingNode();
+    // scrollableAreaSize() is the frame view's visibleSize(), which has the delegated page scale divided out
+    // of it. Put it back to get the snapport the snap offsets were computed in.
+    auto snapportSize = scrollingNode->scrollableAreaSize();
+    if (RefPtr frameNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(scrollingNode.get()))
+        snapportSize.scale(frameNode->delegatedPageScaleFactor());
+
     return {
         scrollingNode->totalContentsSize(),
-        scrollingNode->scrollableAreaSize()
+        scrollingNode->scrollableAreaSize(),
+        snapportSize
     };
 }
 

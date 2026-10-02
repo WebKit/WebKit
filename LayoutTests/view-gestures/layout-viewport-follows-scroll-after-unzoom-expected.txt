@@ -1,0 +1,3 @@
+After zoom and un-zoom: left: 0 top 0 width 785 height 585 scale 1.00
+After scrolling to 410: left: 0 top 410 width 785 height 585
+

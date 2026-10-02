@@ -741,8 +741,6 @@ void EventSenderProxy::smartMagnify()
     });
 }
 
-#if ENABLE(MAC_GESTURE_EVENTS)
-
 static void sendMagnifyEvent(TestController& testController, WKPoint position, NSInteger eventNumber, NSTimeInterval time, double scale, NSEventPhase phase, const String& description)
 {
     auto* mainWebView = testController.mainWebView();
@@ -775,7 +773,5 @@ void EventSenderProxy::scaleGestureEnd(double scale)
 {
     sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseEnded, "scaleGestureEnd"_s);
 }
-
-#endif // ENABLE(MAC_GESTURE_EVENTS)
 
 } // namespace WTR

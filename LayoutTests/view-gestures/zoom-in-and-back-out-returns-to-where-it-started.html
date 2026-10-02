@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zooming in and back out at the same point returns to where it started</title>
+    <style>
+        body {
+            margin: 0;
+            /* Bigger than the view in both directions, so the scroll position can start with room on every side. */
+            width: 140%;
+            height: 3000px;
+            background: repeating-linear-gradient(45deg, silver 0 40px, gray 40px 80px);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // The sibling tests cover zoom outs that ask for more than the settled page can give, where something has to
+        // move and the only question left is when. This one covers the case where nothing has to move: pinching in at
+        // a point and back out at the same point retraces the anchoring position, so it lands on the legal position it
+        // started from and there is no debt on either axis. Whatever a page gives up here, it gives up for no reason,
+        // which is what a debt measured against the wrong scroll range looks like - a drawing area that assumed every
+        // page fits the view would hand back the whole scroll offset rather than nothing at all. It is also the
+        // gesture a user can check by hand without holding any numbers in their head: pinch in, pinch out, and the
+        // pixel under the cursor should be the one that was there to begin with.
+        const origin = { x: 600, y: 400 };
+
+        async function anchorState()
+        {
+            const scale = await UIHelper.zoomScale();
+            const override = await UIHelper.delegatedZoomOverrideAsText();
+            const anchoringScrollPosition = override.match(/anchoring scroll position \((-?\d+), (-?\d+)\)/);
+            if (!anchoringScrollPosition)
+                return { scale, x: NaN, y: NaN };
+
+            return { scale, x: parseInt(anchoringScrollPosition[1]), y: parseInt(anchoringScrollPosition[2]) };
+        }
+
+        // The content point the cursor is over, in unscaled content coordinates.
+        function contentPointUnderOrigin(state)
+        {
+            return { x: state.x + origin.x / state.scale, y: state.y + origin.y / state.scale };
+        }
+
+        function sameContentResult(state, pinched)
+        {
+            const contentPoint = contentPointUnderOrigin(state);
+            const slip = { x: contentPoint.x - pinched.x, y: contentPoint.y - pinched.y };
+
+            // Scroll positions are integers on both sides and have been through LayoutUnit, and the content point
+            // divides the origin by the scale, so a pixel of rounding in the position is a pixel and a bit here.
+            if (Math.abs(slip.x) <= 2 && Math.abs(slip.y) <= 2)
+                return `  at scale ${state.scale.toFixed(2)}: PASS (the content under the cursor didn't move)`;
+
+            return `  at scale ${state.scale.toFixed(2)}: FAIL (the content under the cursor moved by (${slip.x.toFixed(0)}, ${slip.y.toFixed(0)}), and nothing was asking it to)`;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            // Scroll room on every side. A position flush against an edge would hide a debt computed against the wrong
+            // range, because giving up all of a zero offset and giving up none of it look the same.
+            window.scrollTo(100, 500);
+            await UIHelper.renderingUpdate();
+
+            const before = { scale: await UIHelper.zoomScale(), x: window.scrollX, y: window.scrollY };
+            const maxScroll = {
+                x: document.scrollingElement.scrollWidth - window.innerWidth,
+                y: document.scrollingElement.scrollHeight - window.innerHeight,
+            };
+            const pinched = contentPointUnderOrigin(before);
+
+            output.push(`At page scale ${before.scale.toFixed(2)}, scrolled to (${before.x}, ${before.y}) of (${maxScroll.x}, ${maxScroll.y}), the cursor at (${origin.x}, ${origin.y}) is over content (${pinched.x}, ${pinched.y}):`);
+            if (before.x <= 0 || before.y <= 0 || before.x >= maxScroll.x || before.y >= maxScroll.y)
+                output.push('  FAIL (the page starts flush against an edge, so keeping the anchor and giving it up look alike)');
+
+            // In first, as a complete gesture, so the page scale is committed and the zoom out starts from the state a
+            // user would actually be pinching out of.
+            await UIHelper.magnifyGestureAt(origin.x, origin.y, 1);
+            const zoomedIn = { scale: await UIHelper.zoomScale(), x: window.scrollX, y: window.scrollY };
+            output.push(`Zoomed in at the cursor to scale ${zoomedIn.scale.toFixed(2)}, scrolled to (${zoomedIn.x}, ${zoomedIn.y}):`);
+            output.push(sameContentResult(zoomedIn, pinched));
+
+            // And back out at the same point, held and continued so one gesture walks down the scale, crossing page
+            // scale 1 into the elastic range the way a pinch out does.
+            await UIHelper.beginMagnifyGestureAt(origin.x, origin.y, -0.0625);
+            let state = await anchorState();
+            output.push('Held a zoom out at the same point:');
+            output.push(sameContentResult(state, pinched));
+
+            for (let step = 0; step < 12 && state.scale > 0.98; ++step) {
+                await UIHelper.continueMagnifyGesture(-0.0625);
+                state = await anchorState();
+                output.push(sameContentResult(state, pinched));
+            }
+
+            // Below page scale 1 the release has a scale to clamp as well as a position to commit, which is where a
+            // page that had given nothing up could still lose the round trip.
+            if (state.scale > 1)
+                output.push('  FAIL (the zoom out stopped above page scale 1, so the release has no scale to clamp)');
+
+            await UIHelper.endMagnifyGesture();
+
+            const after = { scale: await UIHelper.zoomScale(), x: window.scrollX, y: window.scrollY };
+            const cameBack = Math.abs(after.x - before.x) <= 1 && Math.abs(after.y - before.y) <= 1 && Math.abs(after.scale - before.scale) <= 0.01;
+
+            output.push(`After release at scale ${after.scale.toFixed(2)}:`);
+            output.push(sameContentResult(after, pinched));
+            output.push('  ' + (cameBack ? 'PASS (the page is back at the scale and scroll position it started at)' : `FAIL (started at scale ${before.scale.toFixed(2)} scrolled to (${before.x}, ${before.y}), came back to scale ${after.scale.toFixed(2)} scrolled to (${after.x}, ${after.y}))`));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

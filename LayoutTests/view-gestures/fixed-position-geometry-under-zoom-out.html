@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fixed-position geometry under a delegated macOS zoom out</title>
+    <style>
+        body {
+            margin: 0;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+        .bar {
+            position: fixed;
+            left: 10px;
+            width: 200px;
+            height: 40px;
+            background-color: black;
+        }
+        #top { top: 10px; }
+        #bottom { bottom: 10px; }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Zooming out below unity is rubber banding, so the page scale in the web process stays at 1 and the only
+        // word it gets of the zoom is the layout viewport the UI process sends. The visible viewport is taller than
+        // the view down there, and the layout viewport has to grow with it: otherwise a bottom-anchored fixed bar
+        // stays at the bottom of the unzoomed viewport, floating up into the text, and the scrolling tree, which
+        // does know the viewport grew, snaps it back down on the frames it wins.
+        function geometry(label)
+        {
+            const layoutViewport = internals.layoutViewportRect();
+            const top = document.getElementById('top').getBoundingClientRect();
+            const bottom = document.getElementById('bottom').getBoundingClientRect();
+
+            // The visible size is only reported as an integer, so allow a pixel of slack: the elastic scale makes
+            // these fractional, and being a fraction of a pixel out is not the bug this is looking for.
+            const isTenPixels = distance => Math.abs(distance - 10) <= 1 ? 'PASS' : `FAIL (${distance.toFixed(2)}px)`;
+
+            return `${label}\n`
+                + `  layout viewport ${Math.round(layoutViewport.width)}x${Math.round(layoutViewport.height)},`
+                + ` visible viewport ${window.innerWidth}x${window.innerHeight}\n`
+                + `  top bar 10px below the top of the visible viewport: ${isTenPixels(top.y)}\n`
+                + `  bottom bar 10px above the bottom of the visible viewport: ${isTenPixels(window.innerHeight - bottom.bottom)}`;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            output.push(geometry('Unzoomed:'));
+
+            // Held, so the zoomed-out viewport is still in place when we read it. Pinching at the top left corner
+            // leaves the anchoring scroll position at the origin, since below unity a pinch anywhere else moves the
+            // page off the document to keep the content under the cursor, and the client rects here are resolved
+            // against a layout viewport that moves with it. This is about the viewport's size.
+            await UIHelper.beginMagnifyGestureAt(0, 0, -0.9);
+            output.push(geometry('Zoomed out:'));
+
+            await UIHelper.endMagnifyGesture();
+            output.push(geometry('After release:'));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="bar" id="top"></div>
+    <div class="bar" id="bottom"></div>
+    <pre id="output"></pre>
+</body>
+</html>

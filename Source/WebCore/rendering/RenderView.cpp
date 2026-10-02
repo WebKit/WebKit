@@ -345,8 +345,11 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
     ASSERT(!needsLayout());
-    // RenderViews should never be called to paint with an offset not on device pixels.
-    ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
+    // RenderViews should never be called to paint with an offset not on device pixels. Where the page scale joins
+    // the layer rather than the layout, the backing store grid is the device scale times the page scale, so
+    // snapping an integral position to it can land a fraction of a CSS pixel.
+    ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset
+        || (document().pixelSnappingScaleFactor() != document().deviceScaleFactor() && paintOffset.x().abs() < 1 && paintOffset.y().abs() < 1));
 
     // This avoids painting garbage between columns if there is a column gap.
     Ref frameView = this->frameView();

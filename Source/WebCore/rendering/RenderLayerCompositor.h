@@ -363,6 +363,7 @@ public:
     float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
     float pageScaleFactor() const override;
     float zoomedOutPageScaleFactor() const override;
+    bool delegatesScaling() const override;
     FloatSize enclosingFrameViewVisibleSize() const override;
     void didChangePlatformLayerForLayer(const GraphicsLayer*) override { }
 
@@ -424,6 +425,7 @@ public:
     const Color& rootExtendedBackgroundColor() const LIFETIME_BOUND { return m_rootExtendedBackgroundColor; }
 
     void updateRootContentLayerClipping();
+    void updateRootContentsLayerAppliesPageScale();
 
     void setRootElementCapturedInViewTransition(bool);
 

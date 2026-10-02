@@ -34,6 +34,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <optional>
 #include <stdint.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/Identified.h>
@@ -101,7 +102,11 @@ public:
     virtual void sizeToContentAutoSizeMaximumSizeDidChange() { }
 
     virtual void adjustTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */, WebCore::FloatPoint /* originInVisibleRect */) { }
-    virtual void commitTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */) { }
+    // A zoom that picks its own destination up front, rather than tracking a gesture, passes it as
+    // `targetScrollPosition` in unscaled content coordinates. Ports that apply the page scale in the UI process
+    // need it stated outright, because there `originInLayerForPageScale` is not a translation they can consume
+    // (see RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom()).
+    virtual void commitTransientZoom(double, WebCore::FloatPoint /* originInLayerForPageScale */, std::optional<WebCore::FloatPoint> /* targetScrollPosition */) { }
     virtual std::optional<double> committedTransientZoomScale() const { return std::nullopt; }
 
     virtual void viewIsBecomingVisible() { }

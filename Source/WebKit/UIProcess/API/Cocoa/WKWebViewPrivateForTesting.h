@@ -66,6 +66,10 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 - (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer;
 
 - (NSDictionary<NSString *, id> *)_propertiesOfLayerWithID:(unsigned long long)layerID;
+
+// The transient zoom override on the scrolled-contents layer, empty when there is none. macOS only.
+- (NSString *)_delegatedZoomOverrideAsTextForTesting;
+
 - (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID isVertical:(bool)isVertical;
 
 - (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(nullable NSString *)nonce applicationBundleID:(NSString *)bundleID ephemeral:(BOOL)ephemeral WK_API_AVAILABLE(macos(13.0), ios(16.0));

@@ -2624,3 +2624,8 @@ editing/selection/select-across-readonly-input-2.html [ Failure ]
 editing/selection/select-across-readonly-input-3.html [ Failure ]
 editing/selection/select-across-readonly-input-4.html [ Failure ]
 editing/selection/select-across-readonly-input-5.html [ Failure ]
+
+# webkit.org/b/322505 With unified zoom scroll positions stay unscaled, so a half-layout-pixel target can't be
+# represented in the integer ScrollPosition and gets rounded, which shifts the layout viewport for fixed targets.
+# iOS skips these for the same reason, see platform/ios/TestExpectations.
+webkit.org/b/322505 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]

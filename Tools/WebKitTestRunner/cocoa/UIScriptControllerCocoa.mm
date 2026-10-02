@@ -202,6 +202,11 @@ JSObjectRef UIScriptControllerCocoa::propertiesOfLayerWithID(uint64_t layerID) c
     return JSValueToObject(m_context->jsContext(), [jsValue JSValueRef], nullptr);
 }
 
+RefPtr<OpaqueJSString> UIScriptControllerCocoa::delegatedZoomOverrideAsText() const
+{
+    return adoptRef(JSStringCreateWithCFString((CFStringRef)[webView() _delegatedZoomOverrideAsTextForTesting]));
+}
+
 RefPtr<OpaqueJSString> UIScriptControllerCocoa::firstRedoLabel() const
 {
     return adoptRef(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName));

@@ -34,6 +34,10 @@ namespace WebCore {
 struct ScrollExtents {
     FloatSize contentsSize;
     FloatSize viewportSize;
+    // The snapport, in the coordinates the snap offsets and areas were computed in. This differs from
+    // viewportSize when the page scale is applied above the contents, since viewportSize then has that
+    // scale divided out of it and the snap offsets do not.
+    FloatSize snapportSize;
 
     FloatPoint minimumScrollOffset() const { return { }; }
     FloatPoint maximumScrollOffset() const { return toFloatPoint(contentsSize - viewportSize).expandedTo({ 0, 0 }); }

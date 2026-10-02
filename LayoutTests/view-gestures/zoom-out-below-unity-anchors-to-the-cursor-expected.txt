@@ -1,0 +1,4 @@
+Zoomed out from unity at scale 0.96: PASS
+  released at scale 1.00, scroll (0, 0)
+Zoomed out through unity at scale 0.75: PASS
+  released at scale 1.00, scroll (0, 0)

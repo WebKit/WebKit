@@ -1,0 +1,26 @@
+Fixed bars inset 10px from the edges of the view, and one centred in it:
+  Before zooming at scale 1.00:
+    top left bar    : PASS
+    bottom left bar : PASS
+    top right bar   : PASS
+    centred bar     : PASS
+  Held zoom out at scale 0.96:
+    top left bar    : PASS
+    bottom left bar : PASS
+    top right bar   : PASS
+    centred bar     : PASS
+  Held zoom out at scale 0.88:
+    top left bar    : PASS
+    bottom left bar : PASS
+    top right bar   : PASS
+    centred bar     : PASS
+  Held zoom out at scale 0.81:
+    top left bar    : PASS
+    bottom left bar : PASS
+    top right bar   : PASS
+    centred bar     : PASS
+  After release at scale 1.00:
+    top left bar    : PASS
+    bottom left bar : PASS
+    top right bar   : PASS
+    centred bar     : PASS

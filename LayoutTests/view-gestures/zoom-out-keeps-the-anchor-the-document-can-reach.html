@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Releasing a delegated zoom out keeps the part of the anchor the document can reach</title>
+    <style>
+        body {
+            margin: 0;
+            /* Wider than the view, so there is horizontal scroll room left over at page scale 1. */
+            width: 140%;
+            height: 3000px;
+            background: repeating-linear-gradient(90deg, silver 0 40px, gray 40px 80px);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // The companion test, zoom-out-gives-up-none-of-the-anchor-during-the-pinch.html, uses a page whose width fits
+        // the view, so the only legal horizontal scroll position at page scale 1 is 0. That case can't tell a drawing
+        // area that knows how wide the document is from one that assumes every document fits the view: both bring the
+        // page back to the same single position at the release, because both clamp to it. Here the document is wider
+        // than the view and starts near its right edge, so part of what the anchor asks for is reachable and part of it
+        // isn't, and only the unreachable part may come off. Getting this wrong is not a subtle failure: the content
+        // under the cursor walks away from it by the scroll room that was there all along.
+        //
+        // The scale each axis runs out of room at is its own, so the two are checked separately: here the anchor leaves
+        // the document's top before it reaches its right edge.
+        async function anchorState()
+        {
+            const scale = await UIHelper.zoomScale();
+            const override = await UIHelper.delegatedZoomOverrideAsText();
+            const anchoringScrollPosition = override.match(/anchoring scroll position \((-?\d+), (-?\d+)\)/);
+            if (!anchoringScrollPosition)
+                return { scale, x: NaN, y: NaN };
+
+            return { scale, x: parseInt(anchoringScrollPosition[1]), y: parseInt(anchoringScrollPosition[2]) };
+        }
+
+        // The content point the cursor is over, in unscaled content coordinates.
+        function contentPointUnderOrigin(state, origin)
+        {
+            return { x: state.x + origin.x / state.scale, y: state.y + origin.y / state.scale };
+        }
+
+        // window.inner* is the viewport in content coordinates, so taking the scale out gives its size at scale 1,
+        // which is the size the settled page is scrolled within. At any other scale it is that over the scale.
+        function scrollRange(layout, scale)
+        {
+            return {
+                x: Math.max(document.scrollingElement.scrollWidth - layout.width / scale, 0),
+                y: Math.max(document.scrollingElement.scrollHeight - layout.height / scale, 0),
+            };
+        }
+
+        // How far past the document's edges the anchor for a given scale sits, per axis, and zero where it is inside
+        // them. Computed from the state before the gesture and the page's own size, so it doesn't depend on anything
+        // the gesture reports.
+        function anchorPastTheDocument(before, origin, layout, scale)
+        {
+            const anchor = {
+                x: before.x + origin.x * (1 / before.scale - 1 / scale),
+                y: before.y + origin.y * (1 / before.scale - 1 / scale),
+            };
+            const range = scrollRange(layout, scale);
+            return {
+                x: anchor.x - Math.min(Math.max(anchor.x, 0), range.x),
+                y: anchor.y - Math.min(Math.max(anchor.y, 0), range.y),
+            };
+        }
+
+        // The pinch holds the whole anchor, reachable or not, so the content under the cursor is the content that was
+        // under it when the gesture started. Reported with where the position holding it is, so the run shows the
+        // anchor crossing out of the document part of the way down rather than being off it from the start.
+        function heldResult(state, before, origin, layout)
+        {
+            const initialContentPoint = contentPointUnderOrigin(before, origin);
+            const contentPoint = contentPointUnderOrigin(state, origin);
+            const slip = { x: initialContentPoint.x - contentPoint.x, y: initialContentPoint.y - contentPoint.y };
+            const pastTheDocument = anchorPastTheDocument(before, origin, layout, state.scale);
+            const past = { x: Math.round(pastTheDocument.x), y: Math.round(pastTheDocument.y) };
+
+            // The anchoring position is reported as integers and has been through LayoutUnit.
+            if (Math.abs(slip.x) <= 2 && Math.abs(slip.y) <= 2)
+                return `  at scale ${state.scale.toFixed(2)}: PASS (holding the pinched content under the cursor, ${past.x || past.y ? `${Math.abs(past.x)}, ${Math.abs(past.y)} past the document's edges` : 'from a position on the document'})`;
+
+            return `  at scale ${state.scale.toFixed(2)}: FAIL (gave up (${slip.x.toFixed(0)}, ${slip.y.toFixed(0)}) of the anchor)`;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+            const zoomOutOrigin = { x: 480, y: 500 };
+
+            // Zoom in, then take the page to its right edge and back off a little, so that zooming back out starts with
+            // an anchor the document can reach and only runs out of room part of the way down. That is the case a pinch
+            // out on a page with any overflow actually hits: the release has to land on the document's right edge,
+            // rather than give up the whole width of scroll room it still had.
+            await UIHelper.magnifyGestureAt(100, 100, 1);
+            document.scrollingElement.scrollLeft = document.scrollingElement.scrollWidth;
+            await UIHelper.renderingUpdate();
+            document.scrollingElement.scrollLeft = window.scrollX - 50;
+            await UIHelper.renderingUpdate();
+
+            const before = { scale: await UIHelper.zoomScale(), x: window.scrollX, y: window.scrollY };
+            const layout = { width: window.innerWidth * before.scale, height: window.innerHeight * before.scale };
+
+            output.push(`Zoomed in at (100, 100) to scale ${before.scale.toFixed(2)}, scrolled to just short of the right edge, then held a zoom out at (${zoomOutOrigin.x}, ${zoomOutOrigin.y}):`);
+
+            // Held, and continued rather than restarted, so one gesture walks down the scale the way a pinch out does.
+            await UIHelper.beginMagnifyGestureAt(zoomOutOrigin.x, zoomOutOrigin.y, -0.0625);
+            const firstHeld = await anchorState();
+            output.push(heldResult(firstHeld, before, zoomOutOrigin, layout));
+
+            // Down to where the zoom out is nearly all the way to the scale it settles at, so the anchor has crossed
+            // out of the document while the room the document still has is what the release must land on.
+            let held = firstHeld;
+            for (let step = 0; step < 5; ++step) {
+                await UIHelper.continueMagnifyGesture(-0.0625);
+                held = await anchorState();
+                output.push(heldResult(held, before, zoomOutOrigin, layout));
+            }
+
+            await UIHelper.endMagnifyGesture();
+
+            // The page the web process settled on is what the cursor is left sitting over, so read the released state
+            // from the document rather than from the UI process's bookkeeping.
+            const released = { scale: await UIHelper.zoomScale(), x: window.scrollX, y: window.scrollY };
+            const range = scrollRange(layout, released.scale);
+            const pastTheDocument = anchorPastTheDocument(before, zoomOutOrigin, layout, released.scale);
+            const initialContentPoint = contentPointUnderOrigin(before, zoomOutOrigin);
+            const releasedContentPoint = contentPointUnderOrigin(released, zoomOutOrigin);
+            const slip = { x: initialContentPoint.x - releasedContentPoint.x, y: initialContentPoint.y - releasedContentPoint.y };
+
+            output.push(`After release at scale ${released.scale.toFixed(2)}:`);
+            output.push(`  scroll room the document has: ${range.x.toFixed(0)}, of which the anchor asks for ${(range.x + pastTheDocument.x).toFixed(0)}, so ${pastTheDocument.x.toFixed(0)} of it can't be reached`);
+
+            // The point of the test is scroll room that must not be given up. Without it this is the companion test.
+            if (!range.x)
+                output.push('  FAIL (the document fits the view horizontally, so there is no left over scroll room to keep)');
+            if (!Math.round(pastTheDocument.x))
+                output.push('  FAIL (the anchor is reachable, so there is nothing here the release has to bring back)');
+            if (pastTheDocument.x >= range.x)
+                output.push('  FAIL (the anchor overshoots by more than the scroll room, so keeping the room and giving it up look alike)');
+            if (Math.round(anchorPastTheDocument(before, zoomOutOrigin, layout, firstHeld.scale).x))
+                output.push('  FAIL (the anchor is already out of reach at the first step, so the test isn\'t reaching the part of the zoom out that is on the document)');
+
+            // Only the unreachable part may come off. Every other schedule shows up here: clamping as the gesture goes
+            // would have taken it off earlier and left it on the page, and clamping to 0 instead of to the document's
+            // right edge would take the leftover scroll room with it.
+            const gaveUpOnlyTheUnreachablePart = Math.abs(slip.x - pastTheDocument.x) <= 2 && Math.abs(slip.y - pastTheDocument.y) <= 2;
+            output.push('  ' + (gaveUpOnlyTheUnreachablePart
+                ? `PASS (the page came back by (${(-pastTheDocument.x).toFixed(0)}, ${(-pastTheDocument.y).toFixed(0)}), the part of the anchor this scale can't reach, and no more)`
+                : `FAIL (the content under the cursor moved by (${(-slip.x).toFixed(0)}, ${(-slip.y).toFixed(0)}), expected (${(-pastTheDocument.x).toFixed(0)}, ${(-pastTheDocument.y).toFixed(0)}))`));
+
+            const landedOnTheDocument = released.x >= -2 && released.x <= range.x + 2 && released.y >= -2 && released.y <= range.y + 2;
+            output.push('  ' + (landedOnTheDocument
+                ? `PASS (settled at (${released.x}, ${released.y}), inside the (0 to ${range.x.toFixed(0)}, 0 to ${range.y.toFixed(0)}) the document allows)`
+                : `FAIL (settled at (${released.x}, ${released.y}), outside the (0 to ${range.x.toFixed(0)}, 0 to ${range.y.toFixed(0)}) the document allows)`));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

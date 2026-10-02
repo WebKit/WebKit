@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            /* Bigger than the view, so the root layer is sized by the document rather than clamped to the view. */
+            width: 1200px;
+            height: 2000px;
+            background-color: white;
+        }
+        .strip {
+            /* Off the pixel grid at any scale, so the boxes can't land on it by accident. */
+            margin-left: 0.2431px;
+            font-size: 0;
+        }
+        .box {
+            display: inline-block;
+            width: 47.8003748828492px;
+            height: 40px;
+            background-color: #102040;
+            /* One composited layer per box, so each box brings its own layer origin. */
+            will-change: transform;
+        }
+        .box:nth-child(2n) {
+            width: 39.93px;
+            background-color: #104040;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        // Contents are snapped to the pixel grid the layer rasterizes onto, which includes the page scale factor
+        // when scaling is delegated to the compositor, and are snapped relative to the layer's own origin. A layer
+        // whose origin isn't on that grid therefore puts every edge inside it a fraction of a pixel away from where
+        // the same edge in the layer next to it went, and the page behind them shows through the difference as a
+        // seam that flickers as the scale changes. See RenderLayerBacking::pixelSnappingScaleFactor().
+        const scale = 1.21;
+
+        // Positions are stored as LayoutUnits, which are 1/64 of a CSS pixel, so a position that is exactly on the
+        // grid still comes back a fraction of a pixel away from it.
+        const tolerance = 0.05;
+
+        function geometryOffStorePixels(layerTreeText)
+        {
+            const offGrid = [];
+            for (const match of layerTreeText.matchAll(/\((?:position|bounds) (-?[\d.]+) (-?[\d.]+)\)/g)) {
+                for (const value of [match[1], match[2]]) {
+                    const storePixels = value * scale;
+                    if (Math.abs(storePixels - Math.round(storePixels)) > tolerance)
+                        offGrid.push(`${match[0]}: ${value} is ${storePixels.toFixed(3)} store pixels`);
+                }
+            }
+            return offGrid;
+        }
+
+        async function runTest()
+        {
+            const output = [];
+            await UIHelper.magnifyGestureAt(0, 0, scale - 1);
+            await UIHelper.ensureStablePresentationUpdate();
+
+            output.push(`Page scale: ${window.visualViewport.scale.toFixed(2)}`);
+
+            const offGrid = geometryOffStorePixels(internals.layerTreeAsText(document));
+            if (offGrid.length)
+                output.push(`FAIL: ${offGrid.length} layer coordinates are not on a store pixel:`, ...offGrid);
+            else
+                output.push('PASS: every layer position and size lands on a store pixel.');
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="strip"><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div></div>
+    <pre id="output"></pre>
+</body>
+</html>

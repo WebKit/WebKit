@@ -1,0 +1,12 @@
+Unzoomed:
+  layout viewport 785x600, visible viewport 800x600
+  top bar 10px below the top of the visible viewport: PASS
+  bottom bar 10px above the bottom of the visible viewport: PASS
+Zoomed out:
+  layout viewport 814x622, visible viewport 814x622
+  top bar 10px below the top of the visible viewport: PASS
+  bottom bar 10px above the bottom of the visible viewport: PASS
+After release:
+  layout viewport 785x600, visible viewport 785x600
+  top bar 10px below the top of the visible viewport: PASS
+  bottom bar 10px above the bottom of the visible viewport: PASS

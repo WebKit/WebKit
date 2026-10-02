@@ -1,9 +1,9 @@
 
 (Frame scrolling node
-  (scroll position 40 1000)
-  (scrollable area size 785 585)
-  (contents size 4016 4042)
-  (requested scroll position 40 1000)
+  (scroll position 20 500)
+  (scrollable area size 393 293)
+  (contents size 2008 2021)
+  (requested scroll position 20 500)
   (requested scroll position represents programmatic scroll 1)
   (scrollable area parameters
     (horizontal scroll elasticity 2)
@@ -12,7 +12,6 @@
     (vertical scrollbar mode 0)
     (allows horizontal scrolling 1)
     (allows vertical scrolling 1))
-  (frame scale factor 2.00)
   (layout viewport at (0,207.50) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (1223,1436))
@@ -43,23 +42,22 @@
 )
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 4016.00 4042.00)
+  (bounds 2008.00 2021.00)
   (children 1
     (GraphicsLayer
       (bounds 2008.00 2021.00)
       (contentsOpaque 1)
-      (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 4
         (GraphicsLayer
           (position 0.00 207.50)
           (bounds 785.00 585.00)
           (children 1
             (GraphicsLayer
-              (position 0.00 -0.50)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 785.00 101.00)
+                  (bounds 785.00 100.00)
+                  (contentsOpaque 1)
                 )
               )
             )
@@ -70,11 +68,12 @@
           (bounds 785.00 585.00)
           (children 1
             (GraphicsLayer
-              (position 0.00 484.50)
+              (position 0.00 485.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 785.00 101.00)
+                  (bounds 785.00 100.00)
+                  (contentsOpaque 1)
                 )
               )
             )
@@ -85,11 +84,11 @@
           (bounds 785.00 585.00)
           (children 1
             (GraphicsLayer
-              (position 0.00 -0.50)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 100.00 586.00)
+                  (bounds 100.00 585.00)
+                  (contentsOpaque 1)
                 )
               )
             )
@@ -100,11 +99,12 @@
           (bounds 785.00 585.00)
           (children 1
             (GraphicsLayer
-              (position 685.00 -0.50)
+              (position 685.00 0.00)
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 100.00 586.00)
+                  (bounds 100.00 585.00)
+                  (contentsOpaque 1)
                 )
               )
             )

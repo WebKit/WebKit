@@ -2912,6 +2912,7 @@ header: <WebCore/ScrollingStateNode.h>
 #    OverflowScrollingNode - Duplicate value
     KeyboardScrollData
     OverlayScrollbarsEnabled
+    InsetForLeftScrollbarSpace
     ChildNodes
 #    LayerHostingContextIdentifier - Duplicate value
 };

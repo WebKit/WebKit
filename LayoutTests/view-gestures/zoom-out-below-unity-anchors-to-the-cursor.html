@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A delegated zoom out below unity keeps the pinched content under the cursor</title>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Anchoring a delegated zoom is done by scrolling, and below unity the scroll position the anchor asks for
+        // walks off the top left of the document. Clamping it to the document there pulled the content out from under
+        // the cursor: the page shrank into the document's corner instead of shrinking about the point being pinched.
+        //
+        // The content point under the cursor is scroll + origin / scale, both read from the UI process: below unity
+        // the web process is still at page scale 1, so nothing in the render tree can answer this.
+        async function contentPointUnderGestureOrigin(origin)
+        {
+            const scale = await UIHelper.zoomScale();
+            const override = await UIHelper.delegatedZoomOverrideAsText();
+            const anchoringScrollPosition = override.match(/anchoring scroll position \((-?\d+), (-?\d+)\)/);
+            if (!anchoringScrollPosition)
+                return { scale, x: NaN, y: NaN };
+
+            return {
+                scale,
+                x: parseInt(anchoringScrollPosition[1]) + origin.x / scale,
+                y: parseInt(anchoringScrollPosition[2]) + origin.y / scale
+            };
+        }
+
+        async function anchorResult(label, origin, expectedContentPoint)
+        {
+            const contentPoint = await contentPointUnderGestureOrigin(origin);
+
+            // The scroll position is reported as an integer, so allow a pixel of slack.
+            const isAnchored = Math.abs(contentPoint.x - expectedContentPoint.x) <= 1 && Math.abs(contentPoint.y - expectedContentPoint.y) <= 1;
+            const found = `(${contentPoint.x.toFixed(0)}, ${contentPoint.y.toFixed(0)})`;
+            const expected = `(${expectedContentPoint.x.toFixed(0)}, ${expectedContentPoint.y.toFixed(0)})`;
+
+            return `${label} at scale ${contentPoint.scale.toFixed(2)}: ` + (isAnchored ? 'PASS' : `FAIL (content point ${found} under the cursor, expected ${expected})`);
+        }
+
+        async function doTest()
+        {
+            const output = [];
+            const origin = { x: 400, y: 300 };
+
+            // Straight from unity, where the content point under the cursor is the cursor.
+            await UIHelper.beginMagnifyGestureAt(origin.x, origin.y, -0.9);
+            output.push(await anchorResult('Zoomed out from unity', origin, origin));
+            await UIHelper.endMagnifyGesture();
+            output.push(`  released at scale ${(await UIHelper.zoomScale()).toFixed(2)}, scroll (${Math.round(window.scrollX)}, ${Math.round(window.scrollY)})`);
+
+            // And from zoomed in, so the gesture crosses unity into the rubber band and has to hold the same point
+            // on both sides of it.
+            await UIHelper.magnifyGestureAt(origin.x, origin.y, 0.5);
+            const zoomedInScale = await UIHelper.zoomScale();
+            const pinchedContentPoint = { x: window.scrollX + origin.x / zoomedInScale, y: window.scrollY + origin.y / zoomedInScale };
+
+            await UIHelper.beginMagnifyGestureAt(origin.x, origin.y, -0.9);
+            output.push(await anchorResult('Zoomed out through unity', origin, pinchedContentPoint));
+            await UIHelper.endMagnifyGesture();
+            output.push(`  released at scale ${(await UIHelper.zoomScale()).toFixed(2)}, scroll (${Math.round(window.scrollX)}, ${Math.round(window.scrollY)})`);
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

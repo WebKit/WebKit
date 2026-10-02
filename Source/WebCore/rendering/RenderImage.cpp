@@ -686,12 +686,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         paintRect = replacedContentRect;
     }
 
+    float snappingScaleFactor = protect(document())->pixelSnappingScaleFactor();
     bool clip = !contentBoxRect.contains(paintRect);
     GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)
-        context.clip(contentBoxRect);
+        context.clip(snapRectToDevicePixels(contentBoxRect, snappingScaleFactor));
 
-    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(paintRect, deviceScaleFactor));
+    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(paintRect, snappingScaleFactor));
 
     if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);

@@ -680,10 +680,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
     bool wasStableState = page->inStableState();
 
-    page->updateVisibleContentRects(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
-
-    auto layoutViewport = page->unconstrainedLayoutViewportRect();
-    page->adjustLayersForLayoutViewport(page->unobscuredContentRect().location(), layoutViewport, page->displayedContentScale());
+    auto layoutViewport = page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
 
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
     self.webView->_needsScrollend = NO;

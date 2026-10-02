@@ -79,11 +79,10 @@ interface EventSendingController {
     // Two finger trackpad tap on macOS.
     undefined smartMagnify();
 
-#if defined(ENABLE_MAC_GESTURE_EVENTS) && ENABLE_MAC_GESTURE_EVENTS
-    // Gesture events.
+    // Pinch-to-zoom on a macOS trackpad. Not guarded by ENABLE(MAC_GESTURE_EVENTS), like smartMagnify above,
+    // since the magnification view gesture works without it. A no-op off macOS.
     undefined scaleGestureStart(double scale);
     undefined scaleGestureChange(double scale);
     undefined scaleGestureEnd(double scale);
-#endif
 };
 

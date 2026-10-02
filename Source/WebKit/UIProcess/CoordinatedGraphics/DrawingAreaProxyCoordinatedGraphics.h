@@ -77,7 +77,7 @@ private:
 
 #if PLATFORM(GTK)
     void adjustTransientZoom(double scale, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
-    void commitTransientZoom(double scale, WebCore::FloatPoint originInLayerForPageScale) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint originInLayerForPageScale, std::optional<WebCore::FloatPoint> targetScrollPosition) override;
 #endif
 
     // IPC message handlers

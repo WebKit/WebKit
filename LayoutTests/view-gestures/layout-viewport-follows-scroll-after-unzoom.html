@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            width: 1200px;
+            height: 3000px;
+        }
+        .target {
+            margin: 100px;
+            width: 400px;
+            height: 400px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script src="resources/view-gesture-helpers.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function layoutViewportDescription()
+        {
+            if (!window.internals)
+                return '';
+            const rect = internals.layoutViewportRect();
+            return `left: ${Math.round(rect.x)} top ${Math.round(rect.y)} width ${Math.round(rect.width)} height ${Math.round(rect.height)}`;
+        }
+
+        // Zooming installs a layout viewport override and un-zooming has to remove it. The UI process stops
+        // sending layout viewport updates at unity, so an override left behind would stay stuck where the un-zoom
+        // ended and cull content-visibility and IntersectionObserver content as you scroll.
+        async function doTest()
+        {
+            const output = [];
+
+            await UIHelper.magnifyGestureAt(300, 300, 0.25);
+            await UIHelper.magnifyGestureAt(300, 300, -0.25);
+            output.push('After zoom and un-zoom: ' + visualViewportDescription());
+
+            await UIHelper.mouseWheelScrollAt(300, 300, 0, -1, 0, -40);
+            output.push('After scrolling to ' + Math.round(window.scrollY) + ': ' + layoutViewportDescription());
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+    <div class="target"></div>
+</body>
+</html>

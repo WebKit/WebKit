@@ -289,9 +289,14 @@ public:
     WEBCORE_EXPORT int mainFrameHeaderHeight() const;
     WEBCORE_EXPORT int mainFrameFooterHeight() const;
     WEBCORE_EXPORT float mainFrameScaleFactor() const;
+    // Used when the UI process owns the page scale but isn't sending a delegated viewport update.
+    WEBCORE_EXPORT void setMainFrameDelegatedPageScaleFactor(float);
     WEBCORE_EXPORT FloatSize totalContentsSize() const;
     WEBCORE_EXPORT FloatRect layoutViewport() const;
-    
+    // The view size less the space the scrollbars take, in view coordinates, so it doesn't track the zoom.
+    // See ScrollView::sizeForVisibleContent().
+    WEBCORE_EXPORT FloatSize mainFrameSizeForVisibleContent() const;
+
     WEBCORE_EXPORT void viewWillStartLiveResize();
     WEBCORE_EXPORT void viewWillEndLiveResize();
     WEBCORE_EXPORT void viewSizeDidChange();

@@ -99,11 +99,9 @@ public:
 
     void smartMagnify();
 
-#if ENABLE(MAC_GESTURE_EVENTS)
     void scaleGestureStart(double scale);
     void scaleGestureChange(double scale);
     void scaleGestureEnd(double scale);
-#endif
 
     void disable() { m_isDisabled = true; }
 

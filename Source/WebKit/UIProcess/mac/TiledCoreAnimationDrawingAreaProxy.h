@@ -62,7 +62,7 @@ private:
     void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) override;
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
-    void commitTransientZoom(double scale, WebCore::FloatPoint originInLayerForPageScale) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint originInLayerForPageScale, std::optional<WebCore::FloatPoint> targetScrollPosition) override;
 
     void waitForDidUpdateActivityState(ActivityStateChangeID) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;

@@ -1,0 +1,11 @@
+Zoomed in at (100, 100) to scale 2.00, scrolled to just short of the right edge, then held a zoom out at (480, 500):
+  at scale 1.80: PASS (holding the pinched content under the cursor, from a position on the document)
+  at scale 1.62: PASS (holding the pinched content under the cursor, 0, 9 past the document's edges)
+  at scale 1.46: PASS (holding the pinched content under the cursor, 7, 43 past the document's edges)
+  at scale 1.31: PASS (holding the pinched content under the cursor, 30, 81 past the document's edges)
+  at scale 1.18: PASS (holding the pinched content under the cursor, 56, 123 past the document's edges)
+  at scale 1.06: PASS (holding the pinched content under the cursor, 85, 170 past the document's edges)
+After release at scale 1.06:
+  scroll room the document has: 360, of which the anchor asks for 444, so 85 of it can't be reached
+  PASS (the page came back by (-85, 170), the part of the anchor this scale can't reach, and no more)
+  PASS (settled at (360, 0), inside the (0 to 360, 0 to 2462) the document allows)

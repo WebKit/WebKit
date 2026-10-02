@@ -1,0 +1,7 @@
+Zoomed in at (100, 100), then held a zoom out at (700, 500):
+  at scale 1.20: PASS (the scrolled contents layer carries the anchoring scroll position)
+  at scale 0.96: PASS (the scrolled contents layer carries the anchoring scroll position)
+  at scale 0.96: PASS (the anchoring scroll position is held off the document)
+After release at scale 1.00:
+  PASS (the page came back by (201, 134), the overhang the pinch was holding, and no more)
+  PASS (the page is back on the document)

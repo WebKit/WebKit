@@ -195,7 +195,7 @@ void DrawingAreaProxyCoordinatedGraphics::adjustTransientZoom(double scale, Floa
     send(Messages::DrawingArea::AdjustTransientZoom(scale, originInLayerForPageScale));
 }
 
-void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin)
+void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin, std::optional<FloatPoint>)
 {
     sendWithAsyncReply(Messages::DrawingArea::CommitTransientZoom(scale, origin), [] { });
 }
