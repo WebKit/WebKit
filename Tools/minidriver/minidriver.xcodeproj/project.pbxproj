@@ -251,7 +251,9 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/../../Source/WebKit/Scripts/generate-automation-atom.py",
+				"$(SRCROOT)/../../Source/WebKit/Scripts/generate-webdriver-bidi-command-names.py",
 				"$(SRCROOT)/../../Source/JavaScriptCore/Scripts/make-js-file-arrays.py",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/CombinedWebDriverBidiDomains.json",
 				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/utils.js",
 				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/ElementAttribute.js",
 				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/ElementDisplayed.js",
@@ -274,10 +276,11 @@
 				"$(DERIVED_FILE_DIR)/FormSubmit.js",
 				"$(DERIVED_FILE_DIR)/WebDriverAtoms.h",
 				"$(DERIVED_FILE_DIR)/WebDriverAtoms.cpp",
+				"$(DERIVED_FILE_DIR)/WebDriverBidiCommandNames.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nmkdir -p \"${DERIVED_FILE_DIR}\"\nATOMS_DIR=\"${SRCROOT}/../../Source/WebKit/UIProcess/Automation/atoms\"\nATOMS=\"ElementAttribute ElementDisplayed ElementEnabled ElementText EnterFullscreen FindNodes FormElementClear FormSubmit\"\nfor ATOM in ${ATOMS}; do\n    python3 \"${SRCROOT}/../../Source/WebKit/Scripts/generate-automation-atom.py\" \"${ATOMS_DIR}/${ATOM}.js\" \"${DERIVED_FILE_DIR}/${ATOM}.js\"\ndone\npython3 \"${SRCROOT}/../../Source/JavaScriptCore/Scripts/make-js-file-arrays.py\" --fail-if-non-ascii -n WebDriver \"${DERIVED_FILE_DIR}/WebDriverAtoms.h\" \"${DERIVED_FILE_DIR}/WebDriverAtoms.cpp\" \"${DERIVED_FILE_DIR}/ElementAttribute.js\" \"${DERIVED_FILE_DIR}/ElementDisplayed.js\" \"${DERIVED_FILE_DIR}/ElementEnabled.js\" \"${DERIVED_FILE_DIR}/ElementText.js\" \"${DERIVED_FILE_DIR}/EnterFullscreen.js\" \"${DERIVED_FILE_DIR}/FindNodes.js\" \"${DERIVED_FILE_DIR}/FormElementClear.js\" \"${DERIVED_FILE_DIR}/FormSubmit.js\"\n";
+			shellScript = "set -e\nmkdir -p \"${DERIVED_FILE_DIR}\"\npython3 \"${SRCROOT}/../../Source/WebKit/Scripts/generate-webdriver-bidi-command-names.py\" --output \"${DERIVED_FILE_DIR}/WebDriverBidiCommandNames.h\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/CombinedWebDriverBidiDomains.json\"\nATOMS_DIR=\"${SRCROOT}/../../Source/WebKit/UIProcess/Automation/atoms\"\nATOMS=\"ElementAttribute ElementDisplayed ElementEnabled ElementText EnterFullscreen FindNodes FormElementClear FormSubmit\"\nfor ATOM in ${ATOMS}; do\n    python3 \"${SRCROOT}/../../Source/WebKit/Scripts/generate-automation-atom.py\" \"${ATOMS_DIR}/${ATOM}.js\" \"${DERIVED_FILE_DIR}/${ATOM}.js\"\ndone\npython3 \"${SRCROOT}/../../Source/JavaScriptCore/Scripts/make-js-file-arrays.py\" --fail-if-non-ascii -n WebDriver \"${DERIVED_FILE_DIR}/WebDriverAtoms.h\" \"${DERIVED_FILE_DIR}/WebDriverAtoms.cpp\" \"${DERIVED_FILE_DIR}/ElementAttribute.js\" \"${DERIVED_FILE_DIR}/ElementDisplayed.js\" \"${DERIVED_FILE_DIR}/ElementEnabled.js\" \"${DERIVED_FILE_DIR}/ElementText.js\" \"${DERIVED_FILE_DIR}/EnterFullscreen.js\" \"${DERIVED_FILE_DIR}/FindNodes.js\" \"${DERIVED_FILE_DIR}/FormElementClear.js\" \"${DERIVED_FILE_DIR}/FormSubmit.js\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
