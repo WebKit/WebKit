@@ -15,6 +15,7 @@ class WebKitTableOfContents {
     private static $editing = false;
     private static $toc = array();
     private static $attr_regex = '\{((?:[ ]*[#.][-_:a-zA-Z0-9]+){1,})[ ]*\}';
+    private static $heading_level = 2;
 
     public static function init() {
         add_filter( 'wp_insert_post_data', array( 'WebKitTableOfContents', 'wp_insert_post_data' ), 20, 2 );
@@ -41,7 +42,9 @@ class WebKitTableOfContents {
 
     public static function filterIndex($value, $key) {
         list($level, $anchor) = explode('::', $key);
-        if ( $level < 3 ) self::$toc[ $key ] = $value;
+        $post_heading_level = get_post_meta(get_the_ID(), 'table-of-contents-heading-level', true);
+        $threshold = intval($post_heading_level) > 0 ? $post_heading_level : WebKitTableOfContents::$heading_level;
+        if ( $level <= $threshold ) self::$toc[ $key ] = $value;
     }
 
     public static function renderMarkup() {

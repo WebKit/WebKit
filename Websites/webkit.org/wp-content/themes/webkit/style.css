@@ -1223,7 +1223,6 @@ footer .menu {
 
 /** Code Syntax Highlighting **/
 pre {
-    width: calc(100% + 6rem);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     background-color: hsl(0, 0%, 94.9%);
@@ -1233,7 +1232,6 @@ pre {
     border-radius: 2px;
     box-sizing: border-box;
     padding: 3rem;
-    margin-left: -3rem;
 }
 
 code {
@@ -2069,12 +2067,6 @@ article .table-of-contents label {
     margin-top: 1.65rem;
 }
 
-.with-toc pre:nth-child(-n+6),
-#post-4132 pre:nth-child(-n+10) {
-    width: 55%;
-    z-index: -1;
-}
-
 /** Logo **/
 .site-logo {
     float: left;
@@ -2610,10 +2602,10 @@ header .search-input:not([value=""]) {
         margin-top: -40%;
     }
 
-    .with-toc pre:nth-child(-n+8),
     article pre {
         position: relative;
         width: 100vw;
+        max-width: 100vw;
         left: 50%;
         transform: translate(-50%);
         margin-left: 0;
@@ -2743,11 +2735,6 @@ header .search-input:not([value=""]) {
         margin-bottom: 3rem;
     }
 
-    .with-toc pre:nth-child(-n+6),
-    #post-4132 pre:nth-child(-n+8) {
-        width: 100vw;
-    }
-
     article video.alignleft,
     article video.alignright {
         max-width: 100%;
@@ -2863,11 +2850,6 @@ header .search-input:not([value=""]) {
 
     .table-of-contents h6 {
         margin-bottom: 3rem;
-    }
-
-    .with-toc pre:nth-child(-n+6),
-    #post-4132 pre:nth-child(-n+8) {
-        width: 100vw;
     }
 }
 
