@@ -25,31 +25,27 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(VISION) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
-#import <WebCore/FloatSize.h>
-#import <WebCore/LayerHostingContextIdentifier.h>
+#import <UIKit/UIKit.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-// Owns one volumetric UIWindowScene hosting an element's model content; one per presented element.
-@interface WKPortalVolumetricSceneController : NSObject
+// Captures spatial drags over a volumetric scene, which has no glass for a UIPanGestureRecognizer to sit on. An
+// invisible RealityKit entity fills the volume instead; nothing arrives until it is given a non-degenerate box.
+NS_SWIFT_UI_ACTOR
+@interface WKPortalVolumetricGestureController : NSObject
 
-// closeHandler runs only for a user-initiated close.
-- (instancetype)initWithCloseHandler:(void (^)(void))closeHandler;
+@property (nonatomic, copy, nullable) void (^onDragBegan)(CGPoint);
+@property (nonatomic, copy, nullable) void (^onDragChanged)(CGPoint);
+@property (nonatomic, copy, nullable) void (^onDragEnded)(void);
 
-- (void)presentWithCompletion:(void (^)(BOOL success))completion;
-- (void)dismissWithCompletion:(nullable void (^)(void))completion;
+- (UIViewController *)makeHostingController;
 
-// Returns the volume's extent in meters, or zero if the scene has not laid out yet.
-- (WebCore::FloatSize)hostContentWithContext:(WebCore::LayerHostingContextIdentifier)contentContext pid:(int)pid;
-
-- (void)setVolumeSizeChangedHandler:(nullable void (^)(WebCore::FloatSize))handler;
-
-// Reports spatial drags inside the volume, with locations in points.
-- (void)installInputSurfaceWithBegan:(void (^)(CGPoint))began changed:(void (^)(CGPoint))changed ended:(void (^)(void))ended;
-
-- (void)updateLayoutForVolumeSize;
+// Extents in meters, not points.
+- (void)updateProxyExtentsWithWidth:(float)width height:(float)height depth:(float)depth;
 
 @end
 

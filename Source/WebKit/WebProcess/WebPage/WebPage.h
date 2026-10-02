@@ -1490,6 +1490,7 @@ public:
 
 #if ENABLE(MODEL_PROCESS)
     void requestInteractiveModelElementAtPoint(WebCore::IntPoint clientPosition);
+    void stageModeSessionDidBegin(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
     void stageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier>, const WebCore::TransformationMatrix&);
     void stageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier>);
 #endif

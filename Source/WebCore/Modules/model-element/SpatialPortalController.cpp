@@ -767,6 +767,11 @@ CheckedPtr<SpatialPortalController> SpatialPortalController::interactiveControll
     if (!controller || !controller->supportsInteraction())
         return nullptr;
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (controller->presentationMode() == ModelPresentationMode::Volumetric)
+        return nullptr;
+#endif
+
     return controller;
 }
 

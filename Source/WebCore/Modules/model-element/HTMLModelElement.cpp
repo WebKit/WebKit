@@ -1238,12 +1238,11 @@ bool HTMLModelElement::canSetEntityTransform() const
 
 bool HTMLModelElement::supportsStageModeInteraction() const
 {
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    // The inline box is blank while the content is presented elsewhere, so a hit-test over it must not drive
-    // stage mode.
-    if (m_presentationMode != ModelPresentationMode::Inline)
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    if (m_presentationMode == ModelPresentationMode::Immersive)
         return false;
 #endif
+    // Volumetric content is still interactive, in the volume. Callers exclude hit-tests over its blank inline box.
     return canSetEntityTransform();
 }
 

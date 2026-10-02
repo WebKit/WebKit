@@ -2092,6 +2092,9 @@ void ModelProcessModelPlayerProxy::updateLightingForPresentationMode()
 
 void ModelProcessModelPlayerProxy::setPresentationMode(WebCore::ModelPresentationMode mode)
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    auto previousMode = m_presentationMode;
+#endif
     m_presentationMode = mode;
 
     switch (mode) {
@@ -2111,6 +2114,13 @@ void ModelProcessModelPlayerProxy::setPresentationMode(WebCore::ModelPresentatio
     }
 
     m_entityTransformToRestore = std::nullopt;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // Teardown destroys the volume's input surface without an end event.
+    if (previousMode == WebCore::ModelPresentationMode::Volumetric && isPresentedInline())
+        endStageModeInteraction();
+#endif
+
     applyPresentationTransform();
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     updateLightingForPresentationMode();

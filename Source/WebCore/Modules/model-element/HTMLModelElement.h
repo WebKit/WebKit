@@ -222,6 +222,7 @@ public:
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     RefPtr<ModelPlayer> liveModelPlayer() const;
+    bool isPresentedInVolumetricScene() const { return m_presentationMode == ModelPresentationMode::Volumetric; }
 #endif
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
