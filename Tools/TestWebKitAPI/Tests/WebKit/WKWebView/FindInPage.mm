@@ -32,6 +32,7 @@
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/cocoa/TextFinderTester.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -75,32 +76,12 @@ static double waitForVideoCurrentTimeNear(TestWKWebView *webView, double expecte
 
 #if !PLATFORM(IOS_FAMILY)
 
-typedef enum : NSUInteger {
-    NSTextFinderAsynchronousDocumentFindOptionsBackwards = 1 << 0,
-    NSTextFinderAsynchronousDocumentFindOptionsWrap = 1 << 1,
-    NSTextFinderAsynchronousDocumentFindOptionsCaseInsensitive = 1 << 2,
-    NSTextFinderAsynchronousDocumentFindOptionsStartsWith = 1 << 3,
-} NSTextFinderAsynchronousDocumentFindOptions;
-
 constexpr auto noFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)0;
 constexpr auto backwardsFindOptions = NSTextFinderAsynchronousDocumentFindOptionsBackwards;
 constexpr auto wrapFindOptions = NSTextFinderAsynchronousDocumentFindOptionsWrap;
 constexpr auto wrapBackwardsFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)(NSTextFinderAsynchronousDocumentFindOptionsWrap | NSTextFinderAsynchronousDocumentFindOptionsBackwards);
 
-@protocol NSTextFinderAsynchronousDocumentFindMatch <NSObject>
-@property (retain, nonatomic, readonly) NSArray *textRects;
-- (void)generateTextImage:(void (^)(NSImage *generatedImage))completionHandler;
-@end
-
 typedef id <NSTextFinderAsynchronousDocumentFindMatch> FindMatch;
-
-@interface WKWebView (NSTextFinderSupport)
-
-- (void)findMatchesForString:(NSString *)targetString relativeToMatch:(FindMatch)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector;
-- (void)replaceMatches:(NSArray<FindMatch> *)matches withString:(NSString *)replacementString inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector;
-- (void)selectFindMatch:(id<NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(void))completionHandler;
-
-@end
 
 struct FindResult {
     RetainPtr<NSArray> matches;
