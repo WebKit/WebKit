@@ -67,7 +67,6 @@ dom/ViewTransition.cpp
 html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
-html/HTMLInputElement.cpp
 html/canvas/CanvasFilterContextSwitcher.cpp
 html/canvas/CanvasRenderingContext.cpp
 html/canvas/CanvasRenderingContext2D.cpp
