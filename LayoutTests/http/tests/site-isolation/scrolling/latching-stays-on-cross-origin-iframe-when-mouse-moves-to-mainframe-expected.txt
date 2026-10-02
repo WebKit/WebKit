@@ -1,0 +1,12 @@
+Verifies that a wheel gesture that begins over a cross-origin iframe stays latched to that iframe even after the mouse moves over the main frame mid-gesture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.scrollY > 0 is true
+PASS window.scrollY == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
