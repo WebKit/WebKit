@@ -43,7 +43,7 @@ public:
     void resetLineClamp();
 
 private:
-    CheckedPtr<const RenderBlock> m_blockContainer;
+    const CheckedRef<const RenderBlock> m_blockContainer;
     bool m_isLineClampRoot { false };
     std::optional<RenderLayoutState::LineClamp> m_previousLineClamp { };
     std::optional<RenderLayoutState::LegacyLineClamp> m_skippedLegacyLineClampToRestore { };
@@ -57,16 +57,19 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
         return;
 
     m_previousLineClamp = layoutState->lineClamp();
+    auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines().tryValue();
     if (blockContainer.isFieldset() || (layoutState->legacyLineClamp() && blockContainer.isNonReplacedAtomicInlineLevelBox()) || blockContainer.isFloatingOrOutOfFlowPositioned()) {
         // Legacy line clamp does not cross into the interior of an atomic inline-level box.
         layoutState->setLineClamp({ });
 
         m_skippedLegacyLineClampToRestore = layoutState->legacyLineClamp();
         layoutState->setLegacyLineClamp({ });
-        return;
+        // The box may still clamp its own content.
+        if (!maximumLinesForBlockContainer)
+            return;
     }
 
-    if (auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines().tryValue()) {
+    if (maximumLinesForBlockContainer) {
         // Ignore top level legacy line clamp for now.
         if (m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy)
             return;
@@ -104,7 +107,7 @@ inline LineClampUpdater::~LineClampUpdater()
     }
 
     auto lineClamp = layoutState->lineClamp();
-    if (!lineClamp) {
+    if (!lineClamp || m_blockContainer->establishesIndependentFormattingContext()) {
         // "Only line boxes in the same block formatting context are counted: the contents of descendants
         // that establish independent formatting contexts are skipped over while counting line boxes."
         // https://drafts.csswg.org/css-overflow-4/#max-lines
