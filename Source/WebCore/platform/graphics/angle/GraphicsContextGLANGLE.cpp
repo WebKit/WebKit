@@ -1449,11 +1449,35 @@ void GraphicsContextGLANGLE::flush()
     GL_Flush();
 }
 
+bool GraphicsContextGLANGLE::isDefaultFramebufferBound(GCGLenum target) const
+{
+    // The default framebuffer is emulated with an internal FBO. The internal FBO attachments are
+    // maintained by reshapeFBOs() and the drawing buffer is read back through them, so the
+    // attachment state must not be modifiable through the API.
+    GCGLuint fbo = 0;
+    switch (target) {
+    case GL_FRAMEBUFFER:
+    case GL_DRAW_FRAMEBUFFER:
+        fbo = m_state.boundDrawFBO;
+        break;
+    case GL_READ_FRAMEBUFFER:
+        fbo = m_state.boundReadFBO;
+        break;
+    default:
+        // Invalid target. Let the driver generate the error.
+        return false;
+    }
+    return fbo && (fbo == m_fbo || fbo == m_multisampleFBO || fbo == m_preserveDrawingBufferFBO);
+}
+
 void GraphicsContextGLANGLE::framebufferRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject buffer)
 {
     if (!makeContextCurrent())
         return;
-
+    if (isDefaultFramebufferBound(target)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
 }
 
@@ -1461,7 +1485,10 @@ void GraphicsContextGLANGLE::framebufferTexture2D(GCGLenum target, GCGLenum atta
 {
     if (!makeContextCurrent())
         return;
-
+    if (isDefaultFramebufferBound(target)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferTexture2D(target, attachment, textarget, texture, level);
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
@@ -2602,7 +2629,10 @@ void GraphicsContextGLANGLE::framebufferTextureLayer(GCGLenum target, GCGLenum a
 {
     if (!makeContextCurrent())
         return;
-
+    if (isDefaultFramebufferBound(target)) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_FramebufferTextureLayer(target, attachment, texture, level, layer);
 }
 

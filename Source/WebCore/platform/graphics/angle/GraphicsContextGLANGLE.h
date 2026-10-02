@@ -417,6 +417,9 @@ protected:
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
     bool validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    // Returns true if the framebuffer bound to `target` is one of the internal FBOs that emulate
+    // the default framebuffer.
+    bool isDefaultFramebufferBound(GCGLenum target) const;
     void prepareForDrawingBufferWriteIfBound();
     virtual void prepareForDrawingBufferWrite();
 
