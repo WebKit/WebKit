@@ -23,7 +23,7 @@
 """Layout test suite format with LayoutTestStatus enum."""
 
 from enum import Flag, auto
-from typing import Dict, Set, Optional, List, Type, Tuple
+from typing import Dict, FrozenSet, Set, Optional, List, Type, Tuple
 
 from webkitexpectationspy.suites.base import TestSuiteFormat
 from webkitexpectationspy.modifiers import ModifiersBase, LayoutTestModifiers
@@ -66,6 +66,28 @@ class LayoutTestStatus(Flag):
 
 
 class LayoutTestSuite(TestSuiteFormat):
+    DEFAULT_VERSION_ORDER = (
+        'mojave', 'catalina', 'bigsur', 'monterey', 'ventura', 'sonoma', 'sequoia', 'tahoe', 'goldengate',
+        'ios16', 'ios17', 'ios18', 'ios26', 'ios27',
+    )
+    DEFAULT_FLAVOR_TOKENS = frozenset({
+        'wk1', 'wk2', 'siteisolation', 'gpuprocess', 'lbse', 'webgl',
+        'isolatedtree', 'wayland', 'gtk3', 'legacyapi',
+    })
+
+    def __init__(
+        self,
+        version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None,
+        version_tokens: Optional[Set[str]] = None,
+        flavor_tokens: Optional[Set[str]] = None,
+    ) -> None:
+        """version_name_map maps the running port's version names, including internal aliases, to version numbers.
+        version_tokens lists every version name any line may use, so names for other platforms still parse.
+        """
+        self._version_name_map = {name.lower(): tuple(number) for name, number in (version_name_map or {}).items()}
+        self._version_tokens = {token.lower() for token in version_tokens} if version_tokens is not None else set(self.DEFAULT_VERSION_ORDER)
+        self._flavor_tokens = frozenset(token.lower() for token in flavor_tokens) if flavor_tokens is not None else self.DEFAULT_FLAVOR_TOKENS
+
     @property
     def name(self) -> str:
         return 'layout-tests'
@@ -88,7 +110,7 @@ class LayoutTestSuite(TestSuiteFormat):
 
     @property
     def modifier_map(self) -> Set[str]:
-        return {'skip', 'slow', 'wontfix', 'rebaseline'}
+        return {'skip', 'slow', 'wontfix', 'rebaseline', 'dumpjsconsoleloginstderr'}
 
     @property
     def modifier_class(self) -> Type[ModifiersBase]:
@@ -104,18 +126,21 @@ class LayoutTestSuite(TestSuiteFormat):
 
     @property
     def version_tokens(self) -> Set[str]:
-        return {
-            'monterey', 'ventura', 'sonoma', 'sequoia',
-            'ios16', 'ios17', 'ios18',
-            'bigsur', 'catalina', 'mojave',
-        }
+        return self._version_tokens | set(self._version_name_map)
 
     @property
     def version_order(self) -> List[str]:
-        return [
-            'mojave', 'catalina', 'bigsur', 'monterey', 'ventura', 'sonoma', 'sequoia',
-            'ios16', 'ios17', 'ios18',
-        ]
+        if self._version_name_map:
+            return sorted(self._version_name_map, key=lambda name: (self._version_name_map[name], name))
+        return list(self.DEFAULT_VERSION_ORDER)
+
+    @property
+    def version_name_map(self) -> Dict[str, Tuple[int, ...]]:
+        return self._version_name_map
+
+    @property
+    def flavor_tokens(self) -> Optional[FrozenSet[str]]:
+        return self._flavor_tokens
 
     def is_wildcard_pattern(self, pattern: str) -> bool:
         if pattern.endswith('*'):

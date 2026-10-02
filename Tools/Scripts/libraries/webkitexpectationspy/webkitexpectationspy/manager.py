@@ -24,7 +24,7 @@
 
 import logging
 import os
-from typing import List, Set, Dict, Optional
+from typing import List, Set, Dict, Optional, Tuple
 
 from webkitexpectationspy.expectations import Expectation
 from webkitexpectationspy.parser import ExpectationParser, ParseWarning
@@ -90,49 +90,61 @@ class ExpectationsManager:
         test_name: str,
         current_config: Optional[Set[str]] = None,
         current_version: Optional[str] = None,
-        version_order: Optional[List[str]] = None
+        version_order: Optional[List[str]] = None,
+        version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None,
     ) -> Optional[Expectation]:
         if version_order is None and self._suite:
             version_order = self._suite.version_order
+        if version_name_map is None and self._suite:
+            version_name_map = self._suite.version_name_map
         return self._model.get_expectation(
-            test_name, current_config, current_version, version_order)
+            test_name, current_config, current_version, version_order, version_name_map)
 
     def get_expectation_or_pass(
         self,
         test_name: str,
         current_config: Optional[Set[str]] = None,
         current_version: Optional[str] = None,
-        version_order: Optional[List[str]] = None
+        version_order: Optional[List[str]] = None,
+        version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None,
     ) -> Expectation:
         if version_order is None and self._suite:
             version_order = self._suite.version_order
+        if version_name_map is None and self._suite:
+            version_name_map = self._suite.version_name_map
         return self._model.get_expectation_or_pass(
-            test_name, current_config, current_version, version_order)
+            test_name, current_config, current_version, version_order, version_name_map)
 
     def get_skipped_tests(
         self,
         all_tests: List[str],
         current_config: Optional[Set[str]] = None,
         current_version: Optional[str] = None,
-        version_order: Optional[List[str]] = None
+        version_order: Optional[List[str]] = None,
+        version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None,
     ) -> Set[str]:
         if version_order is None and self._suite:
             version_order = self._suite.version_order
+        if version_name_map is None and self._suite:
+            version_name_map = self._suite.version_name_map
         return self._model.get_skipped_tests(
-            all_tests, current_config, current_version, version_order)
+            all_tests, current_config, current_version, version_order, version_name_map)
 
     def get_slow_tests(
         self,
         all_tests: List[str],
         current_config: Optional[Set[str]] = None,
         current_version: Optional[str] = None,
-        version_order: Optional[List[str]] = None
+        version_order: Optional[List[str]] = None,
+        version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None,
     ) -> Dict[str, Optional[int]]:
         """Return dict mapping slow test names to timeouts (None for default 5x)."""
         if version_order is None and self._suite:
             version_order = self._suite.version_order
+        if version_name_map is None and self._suite:
+            version_name_map = self._suite.version_name_map
         return self._model.get_slow_tests(
-            all_tests, current_config, current_version, version_order)
+            all_tests, current_config, current_version, version_order, version_name_map)
 
     def lint(self, all_tests=None):
         """Validate expectations and return warnings; pass all_tests to detect stale entries."""

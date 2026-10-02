@@ -28,7 +28,7 @@ Suites with richer status sets (layout tests) or extra modifiers subclass
 and override only the differing pieces.
 """
 
-from typing import Dict, Set, Optional, List, Type, Tuple
+from typing import Dict, FrozenSet, Set, Optional, List, Type, Tuple
 
 from webkitexpectationspy.configuration import ConfigurationCategory
 from webkitexpectationspy.expectations import ResultStatus
@@ -78,6 +78,15 @@ class TestSuiteFormat:
     @property
     def version_order(self) -> List[str]:
         return []
+
+    @property
+    def version_name_map(self) -> Dict[str, Tuple[int, ...]]:
+        return {}
+
+    @property
+    def flavor_tokens(self) -> Optional[FrozenSet[str]]:
+        """Accepted flavor tokens, or None to accept any identifier as a flavor."""
+        return None
 
     @property
     def additional_tokens(self) -> Dict[ConfigurationCategory, Set[str]]:
