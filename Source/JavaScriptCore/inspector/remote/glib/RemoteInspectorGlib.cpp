@@ -283,6 +283,9 @@ void RemoteInspector::setup(TargetID targetIdentifier)
     RemoteControllableTarget* target;
     {
         Locker locker { m_mutex };
+        if (m_targetConnectionMap.contains(targetIdentifier))
+            return;
+
         target = m_targetMap.get(targetIdentifier);
         if (!target)
             return;
