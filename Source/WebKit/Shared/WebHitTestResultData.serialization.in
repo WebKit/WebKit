@@ -56,7 +56,6 @@ struct WebKit::WebHitTestResultData {
     WebKit::WebHitTestResultData::ElementType elementType;
     std::optional<WebKit::FrameInfoData> frameInfo;
     std::optional<WebCore::FrameIdentifier> targetFrame;
-    std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData;
     String lookupText;
     String tooltipText;
     String imageText;

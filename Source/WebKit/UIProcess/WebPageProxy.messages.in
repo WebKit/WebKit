@@ -496,7 +496,7 @@ messages -> WebPageProxy {
     HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
 #if PLATFORM(MAC)
-    DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData) CanDispatchOutOfOrder
+    DidPerformImmediateActionHitTest(Variant<WebKit::WebHitTestResultData, WebCore::RemoteUserInputEventData> result, bool contentPreventsDefault, WebKit::UserData userData) CanDispatchOutOfOrder
 #endif
     HandleMessage(String messageName, WebKit::UserData messageBody) AllowedWhenWaitingForSyncReply
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous

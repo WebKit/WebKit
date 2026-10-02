@@ -827,11 +827,10 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
     auto subframe = EventHandler::subframeForTargetNode(protect(hitTestResult.targetNode()).get());
     if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
         if (RefPtr remoteFrameView = remoteFrame->view()) {
-            immediateActionResult.remoteUserInputEventData = RemoteUserInputEventData {
+            send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(RemoteUserInputEventData {
                 remoteFrame->frameID(),
                 remoteFrameView->convertFromRootView(roundedIntPoint(locationInViewCoordinates))
-            };
-            send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, false, UserData()));
+            }, false, UserData()));
             return;
         }
     }
