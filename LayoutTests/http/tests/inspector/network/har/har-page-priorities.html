@@ -10,6 +10,10 @@
 <script>
 function test()
 {
+    if (window.GCController) {
+        GCController.collect();
+    }
+
     let suite = InspectorTest.createAsyncSuite("HAR.Page");
 
     suite.addTestCase({
@@ -23,10 +27,14 @@ function test()
                 WI.networkManager.mainFrame.clearProvisionalLoad(false),
             ]);
 
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
+
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
                 InspectorTest.reloadPage({ignoreCache: true}),
             ]);
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
             let har = await WI.HARBuilder.buildArchive(resources);
