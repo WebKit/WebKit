@@ -13320,10 +13320,10 @@ void WebPageProxy::didShowContextMenu()
         pageClient->didShowContextMenu();
 }
 
-void WebPageProxy::didDismissContextMenu()
+void WebPageProxy::didDismissContextMenu(const FrameInfoData& frameInfo)
 {
     if (hasRunningProcess())
-        send(Messages::WebPage::DidDismissContextMenu());
+        sendToProcessContainingFrame(frameInfo.frameID, Messages::WebPage::DidDismissContextMenu());
 
     if (RefPtr pageClient = this->pageClient())
         pageClient->didDismissContextMenu();

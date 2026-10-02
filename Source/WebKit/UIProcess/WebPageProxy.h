@@ -1958,7 +1958,7 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     // Called by the WebContextMenuProxy.
     void didShowContextMenu();
-    void didDismissContextMenu();
+    void didDismissContextMenu(const FrameInfoData&);
     void contextMenuItemSelected(const WebContextMenuItemData&, const FrameInfoData&);
     void handleContextMenuKeyEvent();
 #endif
