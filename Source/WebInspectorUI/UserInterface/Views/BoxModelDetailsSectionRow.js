@@ -155,17 +155,32 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
         function createValueElement(type, value, name, propertyName)
         {
-            // Check if the value is a float and whether it should be rounded.
-            let floatValue = parseFloat(value);
-            let shouldRoundValue = !isNaN(floatValue) && (floatValue % 1 !== 0);
+            const maximumValueLength = 8;
 
-            if (isNaN(floatValue))
-                value = figureDash;
+            let floatValue = parseFloat(value);
+            let displayValue = figureDash;
+
+            if (!isNaN(floatValue)) {
+                displayValue = (floatValue % 1 !== 0) ? ("~" + floatValue.maxDecimals(2)) : String(value);
+
+                if (displayValue.length > maximumValueLength) {
+                    let integerValue = "~" + floatValue.maxDecimals(0);
+
+                    if (integerValue.length <= maximumValueLength)
+                        displayValue = integerValue;
+                    else {
+                        let exponentialValue = "~" + floatValue.toExponential(1);
+                        displayValue = exponentialValue.length < integerValue.length ? exponentialValue : integerValue;
+                    }
+                }
+            }
 
             let element = document.createElement(type);
-            element.textContent = shouldRoundValue ? ("~" + Math.round(floatValue * 100) / 100) : value;
-            if (shouldRoundValue)
+            element.textContent = displayValue;
+
+            if (displayValue !== String(value) && displayValue !== figureDash)
                 element.title = value;
+
             element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
             return element;
         }

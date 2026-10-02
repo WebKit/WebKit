@@ -74,6 +74,20 @@
     margin-inline-start: 20px;
 }
 
+.details-section .row.box-model .box.border:is(.has-top-left-radius, .has-top-right-radius) {
+    padding-block-start: calc(3px + 1.5em);
+}
+
+.details-section .row.box-model .box.border:is(.has-top-left-radius, .has-top-right-radius) > .label {
+    inset-block-start: 3px;
+    inset-inline-start: 4px;
+    margin-inline-start: 0;
+}
+
+.details-section .row.box-model .box.border:is(.has-top-left-radius, .has-top-right-radius) > :is(.top-left, .top, .top-right) {
+    inset-block-start: calc(3px + 1.5em);
+}
+
 .details-section .row.box-model .box.border.has-top-left-radius,
 .details-section .row.box-model .box.border.has-top-left-radius .box {
     border-top-left-radius: var(--has-border-radius-border-radius);
