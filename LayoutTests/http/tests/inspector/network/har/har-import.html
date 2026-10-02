@@ -177,19 +177,13 @@ function test()
             InspectorTest.expectThat(localResources, "Should be able to import a HAR from Chromium.");
 
             const siteEntry = localResources[0];
-            InspectorTest.expectEqual(WI.Resource.displayNameForPriority(siteEntry.priority),
-                "VeryHigh",
-                "Priority of HTML of the website should be 'VeryHigh'");
+            InspectorTest.expectEqual(WI.Resource.displayNameForPriority(siteEntry.priority), "Very High", "Priority of HTML of the website should be 'Very High'");
             InspectorTest.expectEqual(siteEntry.protocol, "h2", "HTTP Version http/2.0 should be shown as 'h2'");
             localResources.forEach((entry) => {
                 if ((/chevron\.svg$/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "Low",
-                        "Chevron image has 'Low' priority");
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "Low", "Chevron image has 'Low' priority");
                 } else if ((/\.svg$/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "High",
-                        "Image has 'High' priority");
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "High", "Image has 'High' priority");
                 }
             });
         }
@@ -205,24 +199,16 @@ function test()
             InspectorTest.expectThat(localResources, "Should be able to import a HAR from Gecko.");
 
             const siteEntry = localResources[0];
-            InspectorTest.expectEqual(WI.Resource.displayNameForPriority(siteEntry.priority),
-                "VeryHigh",
-                "Priority 'Highest' for HTML of the website should be shown as 'VeryHigh'");
+            InspectorTest.expectEqual(WI.Resource.displayNameForPriority(siteEntry.priority), "Very High", "Priority 'Highest' for HTML of the website should be shown as 'Very High'");
             InspectorTest.expectEqual(siteEntry.protocol, "h2", "HTTP Version HTTP/2 should be shown as 'h2'");
             localResources.forEach((entry) => {
                 if ((/\.svg$/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "High",
-                        "Image has 'High' priority");
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "High", "Image has 'High' priority");
                 } else if ((/\/fonts/).test(entry.url)) {
                     if ((/woff2/).test(entry.url)) {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "High",
-                            "Font has 'High' priority");
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "High", "Font has 'High' priority");
                     } else {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "Medium",
-                            "Font CSS as 'Normal' should be shown as 'Medium' priority");
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "Medium", "Font CSS as 'Normal' should be shown as 'Medium' priority");
                     }
                 }
             });

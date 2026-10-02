@@ -513,6 +513,8 @@ WI.HARBuilder = class HARBuilder
         case "veryhigh":
         case "highest": // Gecko based HAR tooling equivalent
             return WI.Resource.NetworkPriority.Veryhigh;
+        case undefined:
+            return WI.Resource.NetworkPriority.Unknown;
         default:
             console.warn("Unknown HAR priority value", priority);
         }
