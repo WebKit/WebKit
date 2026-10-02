@@ -1030,6 +1030,36 @@ void TextureMapperLayer::paintUsingOverlapRegions(TextureMapperPaintOptions& opt
     }
 }
 
+IntRect TextureMapperLayer::filterSourceClipBounds(const IntRect& clipBounds, TextureMapperPaintOptions& options) const
+{
+    if (!hasFilters() || !m_currentFilters.hasOutsets())
+        return clipBounds;
+
+    TransformationMatrix layerToDevice(options.transform);
+    layerToDevice.multiply(m_layerTransforms.combined);
+    if (!layerToDevice.isAffine())
+        return clipBounds;
+    auto deviceToLayer = layerToDevice.inverse();
+    if (!deviceToLayer)
+        return clipBounds;
+
+    // Like Chromium, also include the content outside the clip that the filters read, for example content
+    // whose drop shadow falls into the clip. The filters read past each edge by the outset on the opposite side.
+    auto outsets = m_currentFilters.outsets();
+    auto localReach = deviceToLayer->mapRect(FloatRect(clipBounds));
+    localReach.move(-outsets.right(), -outsets.bottom());
+    localReach.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());
+
+    auto reach = enclosingIntRect(layerToDevice.mapRect(localReach));
+    reach.unite(clipBounds);
+
+    // If that does not fit a single texture, use the clip only.
+    auto maxTextureSize = options.textureMapper.maxTextureSize();
+    if (reach.width() > maxTextureSize.width() || reach.height() > maxTextureSize.height())
+        return clipBounds;
+    return reach;
+}
+
 Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions& options)
 {
     Region overlapRegion;
@@ -1044,6 +1074,7 @@ Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(Tex
         nonOverlapRegion
     };
     data.clipBounds.move(-options.offset);
+    data.clipBounds = filterSourceClipBounds(data.clipBounds, options);
     computeOverlapRegions(data, options.transform, false);
     ASSERT(nonOverlapRegion.isEmpty());
 
