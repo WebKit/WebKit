@@ -49,7 +49,7 @@ namespace WebGPU::Metal {
 static bool enablePsoLogging();
 #endif
 
-std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
+std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WebGPU::ConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 
@@ -86,8 +86,8 @@ std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, 
 
     const auto& entryPointInformation = iterator->value;
 
-    for (const auto entry : constants) {
-        auto keyEntry = fromAPI(entry.key);
+    for (const auto& entry : constants) {
+        auto& keyEntry = entry.key;
         auto indexIterator = entryPointInformation.specializationConstants.find(keyEntry);
         if (indexIterator == entryPointInformation.specializationConstants.end()) {
             // Per WebGPU spec: providing a value for an override declared in the

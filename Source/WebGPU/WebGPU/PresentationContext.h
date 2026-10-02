@@ -58,9 +58,9 @@ public:
 
     virtual ~PresentationContext();
 
-    WGPUTextureFormat NODELETE getPreferredFormat(const Adapter&);
+    WebGPU::TextureFormat NODELETE getPreferredFormat(const Adapter&);
 
-    virtual void configure(Device&, const WGPUSwapChainDescriptor&);
+    virtual void configure(const WebGPU::CanvasConfiguration&);
     virtual void unconfigure();
 
     virtual void present(uint32_t);

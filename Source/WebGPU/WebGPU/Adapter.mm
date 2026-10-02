@@ -53,20 +53,11 @@ Adapter::Adapter(Instance& instance)
 
 Adapter::~Adapter() = default;
 
-size_t Adapter::enumerateFeatures(WGPUFeatureName* features)
+Vector<WebGPU::FeatureName> Adapter::features() const
 {
-    // The API contract for this requires that sufficient space has already been allocated for the output.
-    // This requires the caller calling us twice: once to get the amount of space to allocate, and once to fill the space.
-    if (features)
-        std::ranges::copy(m_capabilities.features, features);
-    return m_capabilities.features.size();
+    return featuresFromAPI(m_capabilities.features.span());
 }
 
-bool Adapter::getLimits(WGPUSupportedLimits& limits)
-{
-    limits.limits = toAPI(m_capabilities.limits);
-    return true;
-}
 
 static uint32_t subgroupSize(id<MTLDevice> device)
 {
@@ -91,15 +82,13 @@ static uint32_t subgroupSize(id<MTLDevice> device)
     return static_cast<uint32_t>(pipelineState.threadExecutionWidth);
 }
 
-void Adapter::getInfo(WGPUAdapterInfo& info)
+WebGPU::AdapterInfo Adapter::info()
 {
-    // FIXME: What should the vendorID and deviceID be?
-    info.vendorID = 0;
-    info.deviceID = 0;
-    info.name = m_device.name.UTF8String;
-    info.driverDescription = "";
-    info.adapterType = m_device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
-    info.backendType = WGPUBackendType_Metal;
+    WebGPU::AdapterInfo info {
+        .name = m_device.name,
+        // A Metal device is never a fallback (software) adapter.
+        .isFallbackAdapter = false,
+    };
     if (hasFeature(WGPUFeatureName_Subgroups)) {
         // Metal exposes a single SIMD-group (subgroup) width per device, so
         // min and max are equal. It's a fixed 32 on Apple Silicon; on other
@@ -112,6 +101,21 @@ void Adapter::getInfo(WGPUAdapterInfo& info)
         info.subgroupMinSize = 4;
         info.subgroupMaxSize = 128;
     }
+    return info;
+}
+
+void Adapter::getInfo(WGPUAdapterInfo& info)
+{
+    auto apiInfo = this->info();
+    // FIXME: What should the vendorID and deviceID be?
+    info.vendorID = 0;
+    info.deviceID = 0;
+    info.name = m_device.name.UTF8String;
+    info.driverDescription = "";
+    info.adapterType = m_device.hasUnifiedMemory ? WGPUAdapterType_IntegratedGPU : WGPUAdapterType_DiscreteGPU;
+    info.backendType = WGPUBackendType_Metal;
+    info.subgroupMinSize = apiInfo.subgroupMinSize;
+    info.subgroupMaxSize = apiInfo.subgroupMaxSize;
 }
 
 bool Adapter::hasFeature(WGPUFeatureName feature)
@@ -119,10 +123,10 @@ bool Adapter::hasFeature(WGPUFeatureName feature)
     return m_capabilities.features.contains(feature);
 }
 
-void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
+void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&& callback)
 {
     if (m_deviceRequested) {
-        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Adapter can only request one device"_s);
+        callback(makeUnexpected("Adapter can only request one device"_s));
         makeInvalid();
         return;
     }
@@ -130,23 +134,26 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     Limits limits { };
 
     if (descriptor.requiredLimits) {
-        limits = fromAPI(descriptor.requiredLimits->limits);
+        limits = *descriptor.requiredLimits;
 
         if (!WebGPU::Metal::isValid(limits)) {
-            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
+            callback(makeUnexpected("Device does not support requested limits"_s));
             return;
         }
 
         if (anyLimitIsBetterThan(limits, m_capabilities.limits)) {
-            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
+            callback(makeUnexpected("Device does not support requested limits"_s));
             return;
         }
     } else
         limits = defaultLimits();
 
-    Vector<WGPUFeatureName> features(requiredFeaturesSpan(descriptor));
+    // The capabilities keep the C API features.
+    auto features = WTF::map(descriptor.requiredFeatures, [](auto feature) {
+        return toAPI(feature);
+    });
     if (includesUnsupportedFeatures(features, m_capabilities.features)) {
-        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested features"_s);
+        callback(makeUnexpected("Device does not support requested features"_s));
         return;
     }
 
@@ -156,10 +163,10 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         m_capabilities.baseCapabilities,
     };
 
-    auto label = fromAPI(descriptor.label);
+    auto label = descriptor.label;
     m_deviceRequested = true;
     // FIXME: this should be asynchronous - https://bugs.webkit.org/show_bug.cgi?id=233621
-    callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTF::move(label), WTF::move(capabilities), *this), { });
+    callback(Device::create(this->m_device, WTF::move(label), WTF::move(capabilities), *this));
 }
 
 bool Adapter::isXRCompatible() const
@@ -183,12 +190,19 @@ void wgpuAdapterRelease(WGPUAdapter adapter)
 
 size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
 {
-    return protect(WebGPU::Metal::fromAPI(adapter))->enumerateFeatures(features);
+    // The caller calls this twice: once for the count, and once with space for that many features.
+    auto apiFeatures = protect(WebGPU::Metal::fromAPI(adapter))->features();
+    if (features) {
+        for (auto [i, feature] : indexedRange(apiFeatures))
+            unsafeMakeSpan(features, apiFeatures.size())[i] = WebGPU::Metal::toAPI(feature);
+    }
+    return apiFeatures.size();
 }
 
 WGPUBool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
-    return WebGPU::Metal::fromAPI(adapter).getLimits(*limits);
+    limits->limits = WebGPU::Metal::toAPI(WebGPU::Metal::fromAPI(adapter).limits());
+    return true;
 }
 
 void wgpuAdapterGetInfo(WGPUAdapter adapter, WGPUAdapterInfo* info)
@@ -201,17 +215,32 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
     return protect(WebGPU::Metal::fromAPI(adapter))->hasFeature(feature);
 }
 
+// The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no device.
+static void requestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor& descriptor, Function<void(WGPURequestDeviceStatus, WGPUDevice, const char*)>&& callback)
+{
+    Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
+    WebGPU::Metal::DeviceDescriptorStorage storage;
+    auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor, storage);
+    if (!apiDescriptor)
+        return callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested features");
+    protectedAdapter->requestDevice(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+        if (!device)
+            return callback(WGPURequestDeviceStatus_Error, nullptr, device.error().utf8().legacyCStringPointer());
+        callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), "");
+    });
+}
+
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    protect(WebGPU::Metal::fromAPI(adapter))->requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, Ref<WebGPU::Metal::Device>&& device, String&& message) {
-        callback(status, WebGPU::Metal::releaseToAPI(WTF::move(device)), message.utf8().legacyCStringPointer(), userdata);
+    requestDevice(adapter, *descriptor, [callback, userdata](WGPURequestDeviceStatus status, WGPUDevice device, const char* message) {
+        callback(status, device, message, userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
-    protect(WebGPU::Metal::fromAPI(adapter))->requestDevice(*descriptor, [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPURequestDeviceStatus status, Ref<WebGPU::Metal::Device>&& device, String&& message) {
-        callback(status, WebGPU::Metal::releaseToAPI(WTF::move(device)), message.utf8().legacyCStringPointer());
+    requestDevice(adapter, *descriptor, [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPURequestDeviceStatus status, WGPUDevice device, const char* message) {
+        callback(status, device, message);
     });
 }
 

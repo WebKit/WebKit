@@ -80,8 +80,8 @@ public:
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data) HAS_SWIFTCXX_THUNK;
     void clearBuffer(id<MTLBuffer>, NSUInteger offset = 0, NSUInteger size = NSUIntegerMax);
-    void writeTexture(const WGPUTexelCopyTextureInfo& destination, std::span<uint8_t> data, const WGPUTexelCopyBufferLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
-    void copyExternalImageToTexture(const WGPUImageCopyExternalImage& source, const WGPUImageCopyTextureTagged& destination, const WGPUExtent3D& copySize);
+    void writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::span<uint8_t> data, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D& writeSize, bool skipValidation = false);
+    void copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& source, const WebGPU::ImageCopyTextureTagged& destination, const WebGPU::Extent3D& copySize);
     void setLabel(String&&) final;
 
     void onSubmittedWorkScheduled(Function<void()>&&);
@@ -91,7 +91,8 @@ public:
     void setCommittedSignalEvent(id<MTLSharedEvent>, size_t frameIndex);
 
     const Device& device() const SWIFT_RETURNS_INDEPENDENT_VALUE;
-    void clearTextureIfNeeded(const WGPUTexelCopyTextureInfo&, NSUInteger);
+    void generateAValidationError(String&&);
+    void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger);
     id<MTLCommandBuffer> _Nullable commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
     void commitMTLCommandBuffer(id<MTLCommandBuffer>);
     void removeMTLCommandBuffer(id<MTLCommandBuffer>);
@@ -133,8 +134,8 @@ private:
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 
-    NSString * _Nullable errorValidatingWriteTexture(const WGPUTexelCopyTextureInfo&, const WGPUTexelCopyBufferLayout&, const WGPUExtent3D&, size_t, const Texture&) const;
-    NSString * _Nullable errorValidatingCopyExternalImageToTexture(const WGPUImageCopyTextureTagged&, const WGPUExtent3D&, const Texture&, const Device&) const;
+    NSString * _Nullable errorValidatingWriteTexture(const WebGPU::TexelCopyTextureInfo&, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D&, size_t, const Texture&) const;
+    NSString * _Nullable errorValidatingCopyExternalImageToTexture(const WebGPU::ImageCopyTextureTagged&, const WebGPU::Extent3D&, const Texture&, const Device&) const;
     // Renders one source texel per destination texel, so the pipeline only varies by the destination's
     // pixel format. Cached per format, because a copy per animation frame is the expected usage.
     id<MTLRenderPipelineState> _Nullable copyExternalImagePipelineState(MTLPixelFormat);

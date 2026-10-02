@@ -120,15 +120,6 @@ public:
     NSUInteger NODELETE argumentBufferIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
     std::optional<uint32_t> NODELETE bufferSizeIndexForEntryIndex(uint32_t bindingIndex, ShaderStage renderStage) const;
 
-    static bool NODELETE isPresent(const WGPUBufferBindingLayout&);
-    static bool isPresent(const WGPUSamplerBindingLayout&);
-    static bool isPresent(const WGPUTextureBindingLayout&);
-    static bool isPresent(const WGPUStorageTextureBindingLayout&);
-    static BufferBindingLayout NODELETE bindingLayoutFromAPI(const WGPUBufferBindingLayout&);
-    static SamplerBindingLayout NODELETE bindingLayoutFromAPI(const WGPUSamplerBindingLayout&);
-    static TextureBindingLayout NODELETE bindingLayoutFromAPI(const WGPUTextureBindingLayout&);
-    static StorageTextureBindingLayout NODELETE bindingLayoutFromAPI(const WGPUStorageTextureBindingLayout&);
-
     const EntriesContainer& entries() const LIFETIME_BOUND { return m_bindGroupLayoutEntries; }
     const Vector<const Entry*> sortedEntries() const;
     uint32_t NODELETE sizeOfVertexDynamicOffsets() const;
@@ -180,6 +171,16 @@ private:
     uint32_t m_dynamicUniformBuffers { 0 };
     uint32_t m_dynamicStorageBuffers { 0 };
     uint32_t m_uniqueIdentifier { 0 };
+};
+
+// An entry of a bind group layout to create. The entries of the layouts that pipelines generate
+// from their shaders have their own Metal binding per stage, and they include entries for the
+// array lengths of runtime-sized buffers, with the binding type WGPUBufferBindingType_ArrayLength.
+struct ResolvedBindGroupLayoutEntry {
+    uint32_t binding { 0 };
+    std::array<uint32_t, WGPUShaderStage_Compute / 2 + 1> metalBinding { };
+    WGPUShaderStage visibility { WGPUShaderStage_None };
+    BindGroupLayout::Entry::BindingLayout bindingLayout;
 };
 
 } // namespace WebGPU::Metal

@@ -196,6 +196,85 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WebGPU::Metal {
 
+// A process has only one implementation of the C++ API, so the C++ API objects that WebGPU::Metal
+// receives are WebGPU::Metal objects.
+inline BindGroupLayout& metal(WebGPU::BindGroupLayout& bindGroupLayout)
+{
+    return static_cast<BindGroupLayout&>(bindGroupLayout);
+}
+
+inline PipelineLayout& metal(WebGPU::PipelineLayout& pipelineLayout)
+{
+    return static_cast<PipelineLayout&>(pipelineLayout);
+}
+
+inline ShaderModule& metal(WebGPU::ShaderModule& shaderModule)
+{
+    return static_cast<ShaderModule&>(shaderModule);
+}
+
+inline Buffer& metal(WebGPU::Buffer& buffer)
+{
+    return static_cast<Buffer&>(buffer);
+}
+
+inline Device& metal(WebGPU::Device& device)
+{
+    return static_cast<Device&>(device);
+}
+
+inline ExternalTexture& metal(WebGPU::ExternalTexture& externalTexture)
+{
+    return static_cast<ExternalTexture&>(externalTexture);
+}
+
+inline QuerySet& metal(WebGPU::QuerySet& querySet)
+{
+    return static_cast<QuerySet&>(querySet);
+}
+
+inline RenderBundle& metal(WebGPU::RenderBundle& renderBundle)
+{
+    return static_cast<RenderBundle&>(renderBundle);
+}
+
+inline Sampler& metal(WebGPU::Sampler& sampler)
+{
+    return static_cast<Sampler&>(sampler);
+}
+
+inline Texture& metal(WebGPU::Texture& texture)
+{
+    return static_cast<Texture&>(texture);
+}
+
+inline TextureView& metal(WebGPU::TextureView& textureView)
+{
+    return static_cast<TextureView&>(textureView);
+}
+
+// For Swift, which cannot call the functions above: it does not see that the WebGPU::Metal classes
+// derive from the C++ API classes.
+inline Buffer& metal(const Ref<WebGPU::Buffer>& buffer)
+{
+    return metal(buffer.get());
+}
+
+inline QuerySet& metal(const Ref<WebGPU::QuerySet>& querySet)
+{
+    return metal(querySet.get());
+}
+
+inline QuerySet* metalOrNull(const RefPtr<WebGPU::QuerySet>& querySet)
+{
+    return querySet ? &metal(*querySet) : nullptr;
+}
+
+inline Texture& metal(const Ref<WebGPU::Texture>& texture)
+{
+    return metal(texture.get());
+}
+
 // FIXME: It would be cool if we didn't have to list all these overloads, but instead could do something like bridge_cast() in WTF.
 
 inline Adapter& fromAPI(WGPUAdapter adapter)
@@ -478,130 +557,10 @@ inline WGPUSwapChain toAPISwapChain(WebGPU::PresentationContext& presentationCon
     return &downcast<PresentationContext>(presentationContext);
 }
 
-// Associates a chainable extension struct with its sType tag. Specialize for each struct
-// that findChainedStruct() is used with.
-template<typename T> struct ChainedStructSType;
-
-template<> struct ChainedStructSType<WGPUShaderSourceWGSL> {
-    static constexpr WGPUSType value = WGPUSType_ShaderSourceWGSL;
-};
-
-template<> struct ChainedStructSType<WGPUInstanceCocoaDescriptor> {
-    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor);
-};
-
-template<> struct ChainedStructSType<WGPUSurfaceDescriptorCocoaCustomSurface> {
-    static constexpr WGPUSType value = static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking);
-};
-
-// Walks a descriptor's nextInChain looking for one particular extension struct. Every
-// chainable struct starts with its WGPUChainedStruct, so the match can be cast to it.
-template<typename T>
-inline const T* findChainedStruct(const WGPUChainedStruct* chain)
-{
-    static_assert(std::is_same_v<decltype(T::chain), WGPUChainedStruct>);
-    for (; chain; chain = chain->next) {
-        if (chain->sType == ChainedStructSType<T>::value)
-            return reinterpret_cast<const T*>(chain);
-    }
-    return nullptr;
-}
-
-inline String fromAPI(const char* string)
-{
-    return String::fromUTF8(string);
-}
-
-inline String fromAPI(WGPUStringView string)
-{
-    if (!string.data)
-        return { };
-    if (string.length == WGPU_STRLEN)
-        return String::fromUTF8(string.data);
-    return String::fromUTF8(unsafeMakeSpan(string.data, string.length));
-}
-
 // Literals have static storage, so the view can borrow them freely.
 inline WGPUStringView toAPI(ASCIILiteral literal)
 {
     return { literal.characters(), literal.length() };
-}
-
-// Borrows already-encoded UTF-8 bytes, so the result only lives as long as the argument.
-inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
-{
-    auto bytes = byteCast<char>(string.span());
-    return { bytes.data(), bytes.size() };
-}
-
-inline std::span<const WGPUBindGroupLayout> bindGroupLayoutsSpan(const WGPUPipelineLayoutDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.bindGroupLayouts, descriptor.bindGroupLayoutCount);
-}
-
-inline std::span<const WGPUTextureFormat> colorFormatsSpan(const WGPURenderBundleEncoderDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.colorFormats, descriptor.colorFormatCount);
-}
-
-inline std::span<const WGPUBindGroupEntry> entriesSpan(const WGPUBindGroupDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.entries, descriptor.entryCount);
-}
-
-inline std::span<const WGPUBindGroupLayoutEntry> entriesSpan(const WGPUBindGroupLayoutDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.entries, descriptor.entryCount);
-}
-
-inline std::span<const WGPUConstantEntry> constantsSpan(const WGPUComputeState& state)
-{
-    return unsafeMakeSpan(state.constants, state.constantCount);
-}
-
-inline std::span<const WGPUConstantEntry> constantsSpan(const WGPUVertexState& state)
-{
-    return unsafeMakeSpan(state.constants, state.constantCount);
-}
-
-inline std::span<const WGPUConstantEntry> constantsSpan(const WGPUFragmentState& state)
-{
-    return unsafeMakeSpan(state.constants, state.constantCount);
-}
-
-inline std::span<const WGPUShaderModuleCompilationHint> hintsSpan(const WGPUShaderModuleDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.hints, descriptor.hintCount);
-}
-
-inline std::span<const WGPUTextureFormat> viewFormatsSpan(const WGPUTextureDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.viewFormats, descriptor.viewFormatCount);
-}
-
-inline std::span<const WGPUVertexAttribute> attributesSpan(const WGPUVertexBufferLayout& layout)
-{
-    return unsafeMakeSpan(layout.attributes, layout.attributeCount);
-}
-
-inline std::span<const WGPUFeatureName> requiredFeaturesSpan(const WGPUDeviceDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.requiredFeatures, descriptor.requiredFeatureCount);
-}
-
-inline std::span<const WGPURenderPassColorAttachment> colorAttachmentsSpan(const WGPURenderPassDescriptor& descriptor)
-{
-    return unsafeMakeSpan(descriptor.colorAttachments, descriptor.colorAttachmentCount);
-}
-
-inline std::span<const WGPUVertexBufferLayout> buffersSpan(const WGPUVertexState& state)
-{
-    return unsafeMakeSpan(state.buffers, state.bufferCount);
-}
-
-inline std::span<const WGPUColorTargetState> targetsSpan(const WGPUFragmentState& state)
-{
-    return unsafeMakeSpan(state.targets, state.targetCount);
 }
 
 template<typename R, typename... Args>

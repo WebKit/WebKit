@@ -80,7 +80,7 @@ class TextureView;
 class RenderBundleEncoder final : public WebGPU::RenderBundleEncoder, public WGPURenderBundleEncoderImpl, public CommandsMixin {
     WTF_MAKE_TZONE_ALLOCATED(RenderBundleEncoder);
 public:
-    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
+    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WebGPU::RenderBundleEncoderDescriptor& descriptor, Device& device)
     {
         return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, descriptor, device));
     }
@@ -96,14 +96,17 @@ public:
     FinalizeRenderCommand drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
     FinalizeRenderCommand drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     FinalizeRenderCommand drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
-    Ref<RenderBundle> finish(const WGPURenderBundleDescriptor&);
+    Ref<RenderBundle> finish(const WebGPU::RenderBundleDescriptor&);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
-    void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<Vector<uint32_t>>&& dynamicOffsets);
-    void setIndexBuffer(Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
+    // std::nullopt dynamic offsets are not validated against the bind group layout.
+    void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets);
+    // A std::nullopt size is the rest of the buffer after the offset.
+    void setIndexBuffer(Buffer&, WebGPU::IndexFormat, uint64_t offset, std::optional<uint64_t> size);
     void setPipeline(const RenderPipeline&);
-    void setVertexBuffer(uint32_t slot, Buffer*, uint64_t offset, uint64_t size);
+    void setVertexBuffer(uint32_t slot, Buffer*, uint64_t offset, std::optional<uint64_t> size);
+    void makeInvalid(NSString* = nil);
     void setLabel(String&&) final;
 
     bool NODELETE isValid() const final;
@@ -117,14 +120,14 @@ public:
     Device& device() const { return m_device; }
 
 private:
-    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, const WGPURenderBundleEncoderDescriptor&, Device&);
+    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, const WebGPU::RenderBundleEncoderDescriptor&, Device&);
+    void setBindGroupWithOwnedDynamicOffsets(uint32_t groupIndex, const BindGroup*, std::optional<Vector<uint32_t>>&& dynamicOffsets);
     RenderBundleEncoder(Device&, NSString*);
 
     bool NODELETE validatePopDebugGroup() const;
     id<MTLIndirectRenderCommand> currentRenderCommand();
     bool replayingCommands() const;
 
-    void makeInvalid(NSString* = nil);
     bool executePreDrawCommands(bool needsValidationLayerWorkaround, bool passWasSplit, uint32_t firstInstance = 0, uint32_t instanceCount = 0);
     void endCurrentICB();
     bool addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);

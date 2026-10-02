@@ -74,25 +74,25 @@ static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(W
     return std::make_pair(ComputePipeline::createInvalid(object), error);
 }
 
-std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync, const ComputePipeline* pipelineToReplace)
+Ref<ComputePipeline> Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& descriptor)
 {
     std::optional<std::pair<Ref<ComputePipeline>, NSString*>> result;
-    createComputePipeline(descriptor, isAsync, pipelineToReplace, LibraryCompilation::Synchronous, [&](std::pair<Ref<ComputePipeline>, NSString*>&& pipelineAndError) {
+    createComputePipeline(descriptor, false, nullptr, LibraryCompilation::Synchronous, [&](std::pair<Ref<ComputePipeline>, NSString*>&& pipelineAndError) {
         result = WTF::move(pipelineAndError);
     });
     // LibraryCompilation::Synchronous never defers the completion handler.
     RELEASE_ASSERT(result);
-    return WTF::move(*result);
+    return WTF::move(result->first);
 }
 
-void Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync, const ComputePipeline* pipelineToReplace, LibraryCompilation libraryCompilation, CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)>&& callback)
+void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& descriptor, bool isAsync, const ComputePipeline* pipelineToReplace, LibraryCompilation libraryCompilation, CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)>&& callback)
 {
-    Ref shaderModule = WebGPU::Metal::fromAPI(descriptor.compute.module);
+    Ref shaderModule = metal(descriptor.compute.module.get());
     RefPtr<PipelineLayout> pipelineLayout;
     if (pipelineToReplace)
         pipelineLayout = &pipelineToReplace->pipelineLayout();
     else if (descriptor.layout)
-        pipelineLayout = &WebGPU::Metal::fromAPI(descriptor.layout);
+        pipelineLayout = &metal(*descriptor.layout);
 
     if (!shaderModule->isValid() || &shaderModule->device() != this || !pipelineLayout)
         return callback(returnInvalidComputePipeline(*this, isAsync));
@@ -101,11 +101,11 @@ void Device::createComputePipeline(const WGPUComputePipelineDescriptor& descript
         return callback(returnInvalidComputePipeline(*this, isAsync, @"GPUDevice.createComputePipeline: Pipeline layout is invalid"));
 
     auto& deviceLimits = limits();
-    auto label = fromAPI(descriptor.label).createNSString();
-    auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule->defaultComputeEntryPoint();
+    auto label = descriptor.label.createNSString();
+    auto entryPointName = descriptor.compute.entryPoint.isNull() ? shaderModule->defaultComputeEntryPoint() : descriptor.compute.entryPoint;
     NSError *error;
     BufferBindingSizesForPipeline minimumBufferSizes;
-    auto preparedLibrary = prepareLibrary(shaderModule.get(), pipelineLayout.get(), entryPointName, label.get(), constantsSpan(descriptor.compute), minimumBufferSizes, &error);
+    auto preparedLibrary = prepareLibrary(shaderModule.get(), pipelineLayout.get(), entryPointName, label.get(), descriptor.compute.constants, minimumBufferSizes, &error);
     if (!preparedLibrary || &pipelineLayout->device() != this)
         return callback(returnInvalidComputePipeline(*this, isAsync, error.localizedDescription ?: @"Compute library failed creation"));
 
@@ -137,7 +137,7 @@ void Device::createComputePipeline(const WGPUComputePipelineDescriptor& descript
     // Resolve the bind group layout now, while the descriptor is still guaranteed to be alive.
     Ref finalPipelineLayout = *pipelineLayout;
     if (!pipelineToReplace && pipelineLayout->isAutoLayout() && entryPointInformation.defaultLayout) {
-        Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
+        Vector<Vector<ResolvedBindGroupLayoutEntry>> bindGroupEntries;
         if (NSString *layoutError = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
             return callback(returnInvalidComputePipeline(*this, isAsync, layoutError));
 
@@ -180,11 +180,14 @@ void Device::createComputePipeline(const WGPUComputePipelineDescriptor& descript
     compileLibrary(compileRequest, libraryCompilation, WTF::move(finishCreation));
 }
 
-static CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)> asyncComputePipelineCompletion(Device& device, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
+static CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)> asyncComputePipelineCompletion(Device& device, CompletionHandler<void(std::expected<Ref<ComputePipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     return [protectedDevice = protect(device), callback = WTF::move(callback)](std::pair<Ref<ComputePipeline>, NSString*>&& pipelineAndError) mutable {
         auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = String { pipelineAndError.second }]() mutable {
-            callback((pipeline->isValid() || protectedDevice->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipeline), WTF::move(message));
+            // A lost device makes invalid objects without errors.
+            if (pipeline->isValid() || protectedDevice->isDestroyed())
+                return callback(WTF::move(pipeline));
+            callback(makeUnexpected(WebGPU::PipelineError { .reason = WebGPU::PipelineErrorReason::Validation, .message = WTF::move(message) }));
         };
 
         // Resolve on a later turn of the WebGPU thread, never re-entrantly from the caller.
@@ -196,12 +199,12 @@ static CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)> asy
     };
 }
 
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
+void Device::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<ComputePipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     createComputePipeline(descriptor, true, nullptr, asynchronousIfPossible(), asyncComputePipelineCompletion(*this, WTF::move(callback)));
 }
 
-void Device::createComputePipelineWithPipelineLayoutFromPipelineAsync(const WGPUComputePipelineDescriptor& descriptor, const ComputePipeline& pipelineToReplace, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
+void Device::createComputePipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, const ComputePipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<ComputePipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     bool wasErrorReportingPaused = pauseErrorReporting(true);
     createComputePipeline(descriptor, true, &pipelineToReplace, asynchronousIfPossible(), asyncComputePipelineCompletion(*this, WTF::move(callback)));

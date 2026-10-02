@@ -33,11 +33,13 @@
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <WebGPU/WebGPUExt.h>
+#import <optional>
 #import <utility>
 #import <wtf/CanBorrow.h>
 #import <wtf/Compiler.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
@@ -65,7 +67,7 @@ public:
         size_t endOffset; // Exclusive
     };
 
-    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsage usage, State initialState, MappingRange initialMappingRange, Device& device)
+    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t initialSize, OptionSet<WebGPU::BufferUsage> usage, State initialState, MappingRange initialMappingRange, Device& device)
     {
         return adoptRef(*new Buffer(buffer, initialSize, usage, initialState, initialMappingRange, device));
     }
@@ -77,9 +79,13 @@ public:
     ~Buffer();
 
     void destroy();
-    std::span<uint8_t> getMappedRange(size_t offset, size_t) HAS_SWIFTCXX_THUNK;
-    void bufferCopy(std::span<const uint8_t>, size_t offset);
-    void mapAsync(WGPUMapMode, size_t offset, size_t, CompletionHandler<void(WGPUMapAsyncStatus)>&& callback);
+    // A std::nullopt size is the rest of the buffer after the offset.
+    void mapAsync(OptionSet<WebGPU::MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&);
+    void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&);
+    void copyFrom(std::span<const uint8_t>, size_t offset);
+    // The mapped range as a span, for the C API. The C++ API has getMappedRange() instead,
+    // because a proxy cannot return a pointer into the mapping.
+    std::span<uint8_t> getMappedRangeSpan(uint64_t offset, std::optional<uint64_t> size) HAS_SWIFTCXX_THUNK;
     void unmap();
     void setLabel(String&&) final;
     void generateAValidationError(String&&);
@@ -99,7 +105,7 @@ public:
 
     uint64_t NODELETE initialSize() const;
     uint64_t currentSize() const;
-    WGPUBufferUsage usage() const { return m_usage; }
+    OptionSet<WebGPU::BufferUsage> usage() const { return m_usage; }
     State state() const { return m_state; }
 
     Device& device() const { return m_device; }
@@ -137,11 +143,11 @@ public:
     bool needsIndexValidation(uint32_t, uint16_t);
 
 private:
-    Buffer(id<MTLBuffer>, uint64_t initialSize, WGPUBufferUsage, State initialState, MappingRange initialMappingRange, Device&);
+    Buffer(id<MTLBuffer>, uint64_t initialSize, OptionSet<WebGPU::BufferUsage>, State initialState, MappingRange initialMappingRange, Device&);
     Buffer(Device&);
 
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
-    NSString * _Nullable errorValidatingMapAsync(WGPUMapMode, size_t offset, size_t rangeSize) const;
+    NSString * _Nullable errorValidatingMapAsync(OptionSet<WebGPU::MapMode>, size_t offset, size_t rangeSize) const;
     bool NODELETE validateUnmap() const;
     void NODELETE setState(State);
     void incrementBufferMapCount();
@@ -152,13 +158,13 @@ private:
     // https://gpuweb.github.io/gpuweb/#buffer-interface
 
     const uint64_t m_initialSize { 0 };
-    const WGPUBufferUsage m_usage { 0 };
+    const OptionSet<WebGPU::BufferUsage> m_usage;
     State m_state { State::Unmapped };
     // [[mapping]] is unnecessary; we can just use m_device.contents.
     MappingRange m_mappingRange { 0, 0 };
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
-    WGPUMapMode m_mapMode { WGPUMapMode_None };
+    OptionSet<WebGPU::MapMode> m_mapMode;
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
     uint32_t m_maxValidatedUnsignedIndex { 0 };

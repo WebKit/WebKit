@@ -47,7 +47,7 @@ struct PreparedLibrary {
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 };
 
-std::optional<PreparedLibrary> prepareLibrary(const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **);
+std::optional<PreparedLibrary> prepareLibrary(const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WebGPU::ConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **);
 
 struct LibraryCompileRequest {
     id<MTLLibrary> cachedLibrary { nil };

@@ -32,6 +32,18 @@
 //
 // Enum and flag values are free to change; implementations convert them with switch
 // functions.
+//
+// Swift C++ interop constrains the types that Swift code takes:
+// - Swift 6.3 and 6.4 crash (swift-frontend) when Swift code copies a struct that holds a
+//   WTF::Variant. std::variant copies
+//   without problems, so the types that Swift takes hold std::variant.
+// - Swift 6.3 makes no C++ thunk for an @_expose(Cxx) Swift function that takes a
+//   SWIFT_NONCOPYABLE type, borrowing or not. The function is silently left out of the generated
+//   header. Swift 6.4 makes the thunk for a borrowing parameter. So the types that Swift takes are
+//   not SWIFT_NONCOPYABLE. SWIFT_NONESCAPABLE types work with both.
+// The alternative is to hold WTF::Variant, to not use SWIFT_NONCOPYABLE, to take the types as
+// borrowing in Swift and to never copy them there. Copying one, such as with `copy`, then crashes
+// the compiler.
 
 #pragma once
 
@@ -40,10 +52,24 @@
 #ifdef __cplusplus
 
 #include <cstdint>
+#include <optional>
+#include <span>
+#include <variant> // NOLINT: See the Swift C++ interop constraints above.
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Ref.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+
+typedef struct __CVBuffer* CVPixelBufferRef;
+typedef struct __IOSurface* IOSurfaceRef;
+#endif
 
 namespace WebGPU {
 
@@ -147,6 +173,12 @@ enum class ErrorFilter : uint8_t {
     Internal,
 };
 
+enum class ErrorType : uint8_t {
+    Validation,
+    OutOfMemory,
+    Internal,
+};
+
 enum class FeatureName : uint8_t {
     DepthClipControl,
     Depth32floatStencil8,
@@ -203,9 +235,21 @@ enum class MipmapFilterMode : uint8_t {
     Linear,
 };
 
+enum class PipelineErrorReason : uint8_t {
+    Validation,
+    Internal,
+};
+
 enum class PowerPreference : bool {
     LowPower,
     HighPerformance,
+};
+
+enum class PredefinedColorSpace : uint8_t {
+    SRGB, // NOLINT
+    SRGBLinear,
+    DisplayP3,
+    DisplayP3Linear,
 };
 
 enum class PrimitiveTopology : uint8_t {
@@ -475,6 +519,14 @@ enum class VertexStepMode : uint8_t {
     Instance,
 };
 
+// The clockwise rotation that presents a video frame.
+enum class VideoFrameRotation : uint8_t {
+    None,
+    Right,
+    UpsideDown,
+    Left,
+};
+
 enum class XREye : uint8_t {
     None,
     Left,
@@ -485,6 +537,16 @@ struct Extent3D {
     uint32_t width { 0 };
     uint32_t height { 1 };
     uint32_t depthOrArrayLayers { 1 };
+};
+
+struct Extent2D {
+    uint32_t width { 0 };
+    uint32_t height { 0 };
+};
+
+struct Origin2D {
+    uint32_t x { 0 };
+    uint32_t y { 0 };
 };
 
 struct Origin3D {
@@ -565,6 +627,492 @@ class XRBinding;
 class XRProjectionLayer;
 class XRSubImage;
 class XRView;
+
+// Descriptors are call parameters only. Implementations must not store them.
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubufferdescriptor
+struct BufferDescriptor {
+    String label;
+    OptionSet<BufferUsage> usage;
+    uint64_t size { 0 };
+    bool mappedAtCreation { false };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuquerysetdescriptor
+struct QuerySetDescriptor {
+    String label;
+    QueryType type { QueryType::Occlusion };
+    uint32_t count { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpusamplerdescriptor
+struct SamplerDescriptor {
+    String label;
+    AddressMode addressModeU { AddressMode::ClampToEdge };
+    AddressMode addressModeV { AddressMode::ClampToEdge };
+    AddressMode addressModeW { AddressMode::ClampToEdge };
+    FilterMode magFilter { FilterMode::Nearest };
+    FilterMode minFilter { FilterMode::Nearest };
+    MipmapFilterMode mipmapFilter { MipmapFilterMode::Nearest };
+    float lodMinClamp { 0 };
+    float lodMaxClamp { 32 };
+    std::optional<CompareFunction> compare; // std::nullopt: not a comparison sampler.
+    uint16_t maxAnisotropy { 1 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gputexturedescriptor
+struct TextureDescriptor {
+    String label;
+    OptionSet<TextureUsage> usage;
+    TextureDimension dimension { TextureDimension::_2d };
+    Extent3D size;
+    TextureFormat format { TextureFormat::R8unorm };
+    uint32_t mipLevelCount { 1 };
+    uint32_t sampleCount { 1 };
+    std::span<const TextureFormat> viewFormats; // Borrowed for the duration of the call.
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gputextureviewdescriptor
+// The std::nullopt members take their values from the texture, as described in
+// https://gpuweb.github.io/gpuweb/#abstract-opdef-resolving-gputextureviewdescriptor-defaults.
+struct TextureViewDescriptor {
+    String label;
+    std::optional<TextureFormat> format;
+    std::optional<TextureViewDimension> dimension;
+    uint32_t baseMipLevel { 0 };
+    std::optional<uint32_t> mipLevelCount;
+    uint32_t baseArrayLayer { 0 };
+    std::optional<uint32_t> arrayLayerCount;
+    TextureAspect aspect { TextureAspect::All };
+    OptionSet<TextureUsage> usage; // Empty: the usage of the texture.
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpushadermodulecompilationhint
+struct ShaderModuleCompilationHint {
+    String entryPoint;
+    Ref<PipelineLayout> layout;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpushadermoduledescriptor
+struct ShaderModuleDescriptor {
+    String label;
+    String code; // WGSL.
+    std::span<const ShaderModuleCompilationHint> hints; // Borrowed for the duration of the call.
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucommandencoderdescriptor
+struct CommandEncoderDescriptor {
+    String label;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucommandbufferdescriptor
+struct CommandBufferDescriptor {
+    String label;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpasstimestampwrites
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucomputepasstimestampwrites
+struct PassTimestampWrites {
+    Ref<QuerySet> querySet;
+    std::optional<uint32_t> beginningOfPassWriteIndex;
+    std::optional<uint32_t> endOfPassWriteIndex;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucomputepassdescriptor
+struct ComputePassDescriptor {
+    String label;
+    std::optional<PassTimestampWrites> timestampWrites;
+};
+
+// A texture as a render pass attachment is its default view. std::variant, not WTF::Variant, because
+// Swift takes RenderPassDescriptor. See the Swift C++ interop constraints above.
+using RenderPassAttachmentView = std::variant<Ref<TextureView>, Ref<Texture>>; // NOLINT
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpasscolorattachment
+struct RenderPassColorAttachment {
+    RenderPassAttachmentView view;
+    std::optional<uint32_t> depthSlice;
+    std::optional<RenderPassAttachmentView> resolveTarget;
+    Color clearValue;
+    LoadOp loadOp { LoadOp::Load };
+    StoreOp storeOp { StoreOp::Store };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpassdepthstencilattachment
+struct RenderPassDepthStencilAttachment {
+    RenderPassAttachmentView view;
+    float depthClearValue { 0 };
+    std::optional<LoadOp> depthLoadOp;
+    std::optional<StoreOp> depthStoreOp;
+    bool depthReadOnly { false };
+    uint32_t stencilClearValue { 0 };
+    std::optional<LoadOp> stencilLoadOp;
+    std::optional<StoreOp> stencilStoreOp;
+    bool stencilReadOnly { false };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpassdescriptor
+struct RenderPassDescriptor {
+    String label;
+    // Borrowed for the duration of the call. std::nullopt: no color attachment in that slot.
+    std::span<const std::optional<RenderPassColorAttachment>> colorAttachments;
+    std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
+    RefPtr<QuerySet> occlusionQuerySet;
+    std::optional<PassTimestampWrites> timestampWrites;
+    std::optional<uint64_t> maxDrawCount;
+
+    size_t colorAttachmentCount() const { return colorAttachments.size(); }
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#gpuerror
+struct Error {
+    ErrorType type { ErrorType::Validation };
+    String message;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurequestadapteroptions
+struct RequestAdapterOptions {
+    std::optional<PowerPreference> powerPreference;
+    bool forceFallbackAdapter { false };
+    bool xrCompatible { false };
+};
+
+// https://gpuweb.github.io/gpuweb/#gpuadapterinfo
+struct AdapterInfo {
+    String name;
+    bool isFallbackAdapter { false };
+    uint32_t subgroupMinSize { 0 };
+    uint32_t subgroupMaxSize { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpudevicedescriptor
+struct DeviceDescriptor {
+    String label;
+    std::span<const FeatureName> requiredFeatures; // Borrowed for the duration of the call.
+    std::optional<Limits> requiredLimits; // std::nullopt: the default limits.
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucanvasconfiguration, with the size of the canvas, which
+// the canvas knows and the configuration does not.
+struct CanvasConfiguration {
+    Ref<Device> device;
+    TextureFormat format { TextureFormat::Bgra8unorm };
+    OptionSet<TextureUsage> usage { TextureUsage::RenderAttachment };
+    std::span<const TextureFormat> viewFormats; // Borrowed for the duration of the call.
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    CanvasToneMappingMode toneMappingMode { CanvasToneMappingMode::Standard };
+    CanvasAlphaMode compositingAlphaMode { CanvasAlphaMode::Opaque };
+    bool reportValidationErrors { true };
+    uint32_t width { 0 };
+    uint32_t height { 0 };
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucopyexternalimagedestinfo
+struct ImageCopyTextureTagged {
+    Ref<Texture> texture;
+    uint32_t mipLevel { 0 };
+    Origin3D origin;
+    TextureAspect aspect { TextureAspect::All };
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    bool premultipliedAlpha { false };
+};
+
+#if PLATFORM(COCOA)
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuexternaltexturedescriptor, with the pixel buffer of the
+// video source.
+struct ExternalTextureDescriptor {
+    String label;
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    // The size the source presents the frame at, which the pixel buffer does not carry. Zero when
+    // the source could not say, and then the decoded size of the frame stands in for it.
+    Extent2D visibleSize;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucopyexternalimagesourceinfo, with the IOSurface of an
+// image or canvas, or the pixel buffer of a video frame, as the source. Exactly one of them is set.
+struct ImageCopyExternalImage {
+    RetainPtr<IOSurfaceRef> source;
+    // The format of the single plane of the IOSurface. An accelerated 2D canvas can be backed by it.
+    std::optional<TextureFormat> sourceFormat;
+    // The logical extent of the IOSurface, which may be larger.
+    Extent2D sourceSize;
+    // A video frame carries its own extent, crop and primaries, and it is treated as opaque.
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    // The display transform of the frame: a horizontal mirror, then a clockwise rotation.
+    VideoFrameRotation pixelBufferRotation { VideoFrameRotation::None };
+    bool pixelBufferIsMirrored { false };
+    Origin2D origin;
+    bool flipY { false };
+    // False when the alpha channel of the source carries no data, as for an opaque canvas.
+    bool hasAlpha { true };
+    bool premultipliedAlpha { true };
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+};
+#endif
+
+// https://immersive-web.github.io/WebXR-WebGPU-Binding/#dictdef-xrgpuprojectionlayerinit
+struct XRProjectionLayerDescriptor {
+    TextureFormat colorFormat { TextureFormat::Bgra8unorm };
+    std::optional<TextureFormat> depthStencilFormat;
+    OptionSet<TextureUsage> textureUsage { TextureUsage::RenderAttachment };
+    double scaleFactor { 1 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderbundleencoderdescriptor
+struct RenderBundleEncoderDescriptor {
+    String label;
+    // Borrowed for the duration of the call. std::nullopt: no color attachment in that slot.
+    std::span<const std::optional<TextureFormat>> colorFormats;
+    std::optional<TextureFormat> depthStencilFormat;
+    uint32_t sampleCount { 1 };
+    bool depthReadOnly { false };
+    bool stencilReadOnly { false };
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderbundledescriptor
+struct RenderBundleDescriptor {
+    String label;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gputexelcopybufferlayout
+struct TexelCopyBufferLayout {
+    uint64_t offset { 0 };
+    std::optional<uint32_t> bytesPerRow;
+    std::optional<uint32_t> rowsPerImage;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gputexelcopybufferinfo
+struct TexelCopyBufferInfo {
+    TexelCopyBufferLayout layout;
+    Ref<Buffer> buffer;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gputexelcopytextureinfo
+struct TexelCopyTextureInfo {
+    Ref<Texture> texture;
+    uint32_t mipLevel { 0 };
+    Origin3D origin;
+    TextureAspect aspect { TextureAspect::All };
+};
+
+// https://gpuweb.github.io/gpuweb/#dom-gpuprogrammablestage-constants
+struct ConstantEntry {
+    String key;
+    double value { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuprogrammablestage
+struct ProgrammableStage {
+    Ref<ShaderModule> module;
+    String entryPoint; // A null string: the only entry point of the module for the stage.
+    std::span<const ConstantEntry> constants; // Borrowed for the duration of the call.
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucomputepipelinedescriptor
+struct ComputePipelineDescriptor {
+    String label;
+    RefPtr<PipelineLayout> layout;
+    ProgrammableStage compute;
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuvertexattribute
+struct VertexAttribute {
+    VertexFormat format { VertexFormat::Uint8x2 };
+    uint64_t offset { 0 };
+    uint32_t shaderLocation { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuvertexbufferlayout
+struct VertexBufferLayout {
+    uint64_t arrayStride { 0 };
+    VertexStepMode stepMode { VertexStepMode::Vertex };
+    std::span<const VertexAttribute> attributes; // Borrowed for the duration of the call.
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuvertexstate
+struct VertexState {
+    ProgrammableStage stage;
+    // Borrowed for the duration of the call. std::nullopt: no vertex buffer in that slot.
+    std::span<const std::optional<VertexBufferLayout>> buffers;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpublendcomponent
+struct BlendComponent {
+    BlendOperation operation { BlendOperation::Add };
+    BlendFactor srcFactor { BlendFactor::One };
+    BlendFactor dstFactor { BlendFactor::Zero };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpublendstate
+struct BlendState {
+    BlendComponent color;
+    BlendComponent alpha;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpucolortargetstate
+struct ColorTargetState {
+    TextureFormat format { TextureFormat::R8unorm };
+    std::optional<BlendState> blend;
+    OptionSet<ColorWrite> writeMask { ColorWrite::Red, ColorWrite::Green, ColorWrite::Blue, ColorWrite::Alpha };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpufragmentstate
+struct FragmentState {
+    ProgrammableStage stage;
+    // Borrowed for the duration of the call. std::nullopt: no color target in that slot.
+    std::span<const std::optional<ColorTargetState>> targets;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuprimitivestate
+struct PrimitiveState {
+    PrimitiveTopology topology { PrimitiveTopology::TriangleList };
+    std::optional<IndexFormat> stripIndexFormat;
+    FrontFace frontFace { FrontFace::CCW };
+    CullMode cullMode { CullMode::None };
+    bool unclippedDepth { false };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpustencilfacestate
+struct StencilFaceState {
+    CompareFunction compare { CompareFunction::Always };
+    StencilOperation failOp { StencilOperation::Keep };
+    StencilOperation depthFailOp { StencilOperation::Keep };
+    StencilOperation passOp { StencilOperation::Keep };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpudepthstencilstate
+struct DepthStencilState {
+    TextureFormat format { TextureFormat::Depth24plus };
+    std::optional<bool> depthWriteEnabled;
+    std::optional<CompareFunction> depthCompare;
+    StencilFaceState stencilFront;
+    StencilFaceState stencilBack;
+    uint32_t stencilReadMask { 0xFFFFFFFF };
+    uint32_t stencilWriteMask { 0xFFFFFFFF };
+    int32_t depthBias { 0 };
+    float depthBiasSlopeScale { 0 };
+    float depthBiasClamp { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpumultisamplestate
+struct MultisampleState {
+    uint32_t count { 1 };
+    uint32_t mask { 0xFFFFFFFF };
+    bool alphaToCoverageEnabled { false };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpurenderpipelinedescriptor
+struct RenderPipelineDescriptor {
+    String label;
+    RefPtr<PipelineLayout> layout; // nullptr: a layout that the pipeline generates from its shaders.
+    VertexState vertex;
+    PrimitiveState primitive;
+    std::optional<DepthStencilState> depthStencil;
+    MultisampleState multisample;
+    std::optional<FragmentState> fragment;
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#gpupipelineerror
+struct PipelineError {
+    PipelineErrorReason reason { PipelineErrorReason::Validation };
+    String message;
+};
+
+// https://gpuweb.github.io/gpuweb/#gpucompilationmessage
+struct CompilationMessage {
+    String message;
+    CompilationMessageType type { CompilationMessageType::Error };
+    uint64_t lineNum { 0 };
+    uint64_t linePos { 0 };
+    uint64_t offset { 0 };
+    uint64_t length { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#gpucompilationinfo
+struct CompilationInfo {
+    Vector<CompilationMessage> messages;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubufferbindinglayout
+struct BufferBindingLayout {
+    BufferBindingType type { BufferBindingType::Uniform };
+    bool hasDynamicOffset { false };
+    uint64_t minBindingSize { 0 };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpusamplerbindinglayout
+struct SamplerBindingLayout {
+    SamplerBindingType type { SamplerBindingType::Filtering };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gputexturebindinglayout
+struct TextureBindingLayout {
+    TextureSampleType sampleType { TextureSampleType::Float };
+    TextureViewDimension viewDimension { TextureViewDimension::_2d };
+    bool multisampled { false };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpustoragetexturebindinglayout
+struct StorageTextureBindingLayout {
+    StorageTextureAccess access { StorageTextureAccess::WriteOnly };
+    TextureFormat format { TextureFormat::R8unorm };
+    TextureViewDimension viewDimension { TextureViewDimension::_2d };
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpuexternaltexturebindinglayout
+struct ExternalTextureBindingLayout {
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubindgrouplayoutentry
+// A valid entry has exactly one of the binding layout members. The implementation validates this,
+// as the specification requires.
+struct BindGroupLayoutEntry {
+    uint32_t binding { 0 };
+    OptionSet<ShaderStage> visibility;
+    std::optional<BufferBindingLayout> buffer;
+    std::optional<SamplerBindingLayout> sampler;
+    std::optional<TextureBindingLayout> texture;
+    std::optional<StorageTextureBindingLayout> storageTexture;
+    std::optional<ExternalTextureBindingLayout> externalTexture;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubindgrouplayoutdescriptor
+struct BindGroupLayoutDescriptor {
+    String label;
+    std::span<const BindGroupLayoutEntry> entries; // Borrowed for the duration of the call.
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpupipelinelayoutdescriptor
+struct PipelineLayoutDescriptor {
+    String label;
+    // Borrowed for the duration of the call. std::nullopt makes a layout that the pipeline
+    // generates from its shaders.
+    std::optional<std::span<const Ref<BindGroupLayout>>> bindGroupLayouts;
+} SWIFT_NONESCAPABLE;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubufferbinding
+struct BufferBinding {
+    Ref<Buffer> buffer;
+    uint64_t offset { 0 };
+    std::optional<uint64_t> size; // std::nullopt: the rest of the buffer after the offset.
+};
+
+// https://gpuweb.github.io/gpuweb/#typedefdef-gpubindingresource
+using BindingResource = Variant<Ref<Sampler>, Ref<Texture>, Ref<TextureView>, BufferBinding, Ref<ExternalTexture>>;
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubindgroupentry
+struct BindGroupEntry {
+    uint32_t binding { 0 };
+    BindingResource resource;
+};
+
+// https://gpuweb.github.io/gpuweb/#dictdef-gpubindgroupdescriptor
+struct BindGroupDescriptor {
+    String label;
+    Ref<BindGroupLayout> layout;
+    std::span<const BindGroupEntry> entries; // Borrowed for the duration of the call.
+} SWIFT_NONESCAPABLE;
 
 } // namespace WebGPU
 

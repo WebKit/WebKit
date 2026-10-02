@@ -1191,11 +1191,7 @@ typedef struct WGPUCompilationInfo {
 typedef struct WGPUComputePassDescriptor {
     WGPU_NULLABLE WTF::String label;
     WGPU_NULLABLE WGPUPassTimestampWrites const * timestampWrites;
-} SWIFT_ESCAPABLE WGPUComputePassDescriptor WGPU_STRUCTURE_ATTRIBUTE; // FIXME: This is unsafe!
-
-static inline WGPU_NULLABLE WGPUPassTimestampWrites const * _Nullable __counted_by(1) wgpuGetComputePassDescriptorTimestampWrites(const WGPUComputePassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
-    return descriptor->timestampWrites;
-}
+} WGPUComputePassDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUComputeState {
     WGPUShaderModule module;
@@ -1316,20 +1312,7 @@ typedef struct WGPURenderPassDescriptor {
     WGPU_NULLABLE WGPURenderPassDepthStencilAttachment const * depthStencilAttachment;
     WGPU_NULLABLE WGPUQuerySet occlusionQuerySet;
     WGPU_NULLABLE WGPUPassTimestampWrites const * timestampWrites;
-} SWIFT_ESCAPABLE WGPURenderPassDescriptor WGPU_STRUCTURE_ATTRIBUTE; // FIXME: This is unsafe!
-
-inline WGPUPassTimestampWrites const * _Nullable __counted_by(1) wgpuGetRenderPassDescriptorTimestampWrites(const WGPURenderPassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
-    return descriptor->timestampWrites;
-}
-
-inline WGPURenderPassColorAttachment const * __counted_by(count) wgpuGetRenderPassDescriptorColorAttachments(const WGPURenderPassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND, size_t count) {
-    ((void)count);
-    return descriptor->colorAttachments;
-}
-
-inline WGPURenderPassDepthStencilAttachment const * _Nullable __counted_by(1) wgpuGetRenderPassDescriptorDepthStencilAttachment(const WGPURenderPassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
-    return descriptor->depthStencilAttachment;
-}
+} WGPURenderPassDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUVertexState {
     WGPUShaderModule module;

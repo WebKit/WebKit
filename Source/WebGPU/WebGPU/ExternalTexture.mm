@@ -36,12 +36,13 @@
 
 namespace WebGPU::Metal {
 
-Ref<ExternalTexture> Device::createExternalTexture(const WGPUExternalTextureDescriptor& descriptor)
+Ref<ExternalTexture> Device::importExternalTexture(const WebGPU::ExternalTextureDescriptor& descriptor)
 {
     if (!isValid())
         return ExternalTexture::createInvalid(*this);
 
-    return ExternalTexture::create(RetainPtr { descriptor.pixelBuffer }.get(), descriptor.colorSpace, simd::uint2 { descriptor.visibleWidth, descriptor.visibleHeight }, *this);
+    // The external texture keeps the C API color space, which the pixel buffer conversions take.
+    return ExternalTexture::create(descriptor.pixelBuffer.get(), toAPI(descriptor.colorSpace), simd::uint2 { descriptor.visibleSize.width, descriptor.visibleSize.height }, *this);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternalTexture);
