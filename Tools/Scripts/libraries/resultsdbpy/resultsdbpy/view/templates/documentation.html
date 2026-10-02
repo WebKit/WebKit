@@ -517,10 +517,11 @@ const documentation = {
                     '        "urls": [\n' +
                     '            {\n' +
                     '                "start_time": <UTC time build started>,\n' +
-                    '                "end_time": <UTC time build ended>,\n' +
+                    '                "uuid": <UUID for test run>,\n' +
                     '                "queue": <url to queue a>,\n' +
                     '                "worker": <url to worker a>,\n' +
-                    '                "build": <url to build a>\n' +
+                    '                "build": <url to build a>,\n' +
+                    '                "details": [[<details key>, <its value>], ...]\n' +
                     '            }\n' +
                     '        ]\n' +
                     '    }, {\n' +
@@ -528,7 +529,7 @@ const documentation = {
                     '        "urls": [\n' +
                     '            {\n' +
                     '                "start_time": <UTC time build started>,\n' +
-                    '                "end_time": <UTC time build ended>,\n' +
+                    '                "uuid": <UUID for test run>,\n' +
                     '                "queue": <url to queue a>,\n' +
                     '                "worker": <url to worker a>,\n' +
                     '                "build": <url to build a>\n' +
@@ -537,6 +538,7 @@ const documentation = {
                     '    }\n' +
                     ']'),
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                    `"details" is the upload's details dictionary as [key, value] pairs, unchanged and in upload order. It is only present when the upload's details have entries.`,
                 ],
             ),
             documentEndpoint(

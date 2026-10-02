@@ -245,6 +245,9 @@ class URLFactoryTest(WaitForDockerTestCase):
 
 class CIContextTest(WaitForDockerTestCase):
     KEYSPACE = 'suite_context_test_keyspace'
+    CONFIGURATION = Configuration(platform='mac', version_name='Catalina', version='10.15.0', sdk='19A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2')
+    BUILD = 'https://ci.example.com/build/1'
+    POST_BUILD = 'https://ci.example.com/post-build/1'
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.webkit(), MockModelFactory.safari(), URLFactoryTest.mock():
@@ -278,6 +281,25 @@ class CIContextTest(WaitForDockerTestCase):
 
                     MockModelFactory.iterate_all_commits(self.model, callback)
                     MockModelFactory.process_results(self.model, configuration)
+
+    def init_database_with_details(self, details, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.webkit(), MockModelFactory.safari():
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
+            results = MockModelFactory.layout_test_results()
+            results['details'] = details
+            MockModelFactory.add_mock_results(self.model, configuration=self.CONFIGURATION, test_results=results)
+            MockModelFactory.process_results(self.model, configuration=self.CONFIGURATION)
+
+    def urls_for_commit(self, configuration):
+        urls = self.model.ci_context.find_urls_by_commit(
+            configurations=[configuration],
+            suite='layout-tests',
+            begin=1601660000,
+            end=1601660000,
+        )
+        self.assertEqual(len(urls), 1)
+        return next(iter(urls.values()))[0]
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_builder_for_single_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -326,3 +348,40 @@ class CIContextTest(WaitForDockerTestCase):
             end_query_time=(time.time() - 60 * 60),
         )
         self.assertEqual(len(urls), 0)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_details_with_several_links(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database_with_details(dict(link=self.BUILD, build_link=self.BUILD, post_build_link=self.POST_BUILD), redis=redis, cassandra=cassandra)
+        urls = self.urls_for_commit(self.CONFIGURATION)
+        self.assertEqual(urls['build'], self.BUILD)
+        self.assertEqual(urls['details'], [['link', self.BUILD], ['build_link', self.BUILD], ['post_build_link', self.POST_BUILD]])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_details_stored_as_sent(self, redis=StrictRedis, cassandra=CassandraContext):
+        details = {' Post_Build_LINK ': self.POST_BUILD, 'logs_link': 'javascript:alert(1)', 'link': '/builds/1', 'build-number': 7}
+        self.init_database_with_details(details, redis=redis, cassandra=cassandra)
+        self.assertEqual(self.urls_for_commit(self.CONFIGURATION)['details'], [[key, value] for key, value in details.items()])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_details_cannot_replace_uuid_or_start_time(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database_with_details(dict(link=self.BUILD, uuid='from details', start_time='from details'), redis=redis, cassandra=cassandra)
+        urls = self.urls_for_commit(self.CONFIGURATION)
+        self.assertIsInstance(urls['uuid'], int)
+        self.assertIsInstance(urls['start_time'], int)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_no_details_for_empty_details(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database_with_details({}, redis=redis, cassandra=cassandra)
+        self.assertEqual(sorted(self.urls_for_commit(self.CONFIGURATION).keys()), ['start_time', 'uuid'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_details_for_buildbot(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        urls = self.urls_for_commit(Configuration(version_name='Mojave', flavor='wk2'))
+        self.assertEqual(sorted(urls.keys()), ['build', 'details', 'queue', 'start_time', 'uuid', 'worker'])
+        self.assertEqual(urls['details'], [
+            ['buildbot-master', URLFactoryTest.BUILD_MASTER],
+            ['builder-name', 'Mojave-Release-WK2-Tests'],
+            ['build-number', '1'],
+            ['buildbot-worker', 'bot1'],
+        ])
