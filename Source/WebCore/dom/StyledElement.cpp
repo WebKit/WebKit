@@ -151,6 +151,12 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
         document().setHasElementUsingStyleBasedEditability();
 }
 
+bool StyledElement::isStyleAttributeAllowedByContentSecurityPolicy(const AtomString& styleString, OrdinalNumber startLineNumber)
+{
+    Ref policyDocument = document().contextDocument();
+    return protect(policyDocument->contentSecurityPolicy())->allowInlineStyle(policyDocument->url().string(), startLineNumber, styleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree());
+}
+
 void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
 {
     Ref document = this->document();
@@ -160,7 +166,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     if (newStyleString.isNull())
         ensureMutableInlineStyle()->clear();
-    else if (reason == AttributeModificationReason::ByCloning || protect(document->contentSecurityPolicy())->allowInlineStyle(document->url().string(), startLineNumber, newStyleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree()))
+    else if (reason == AttributeModificationReason::ByCloning || isStyleAttributeAllowedByContentSecurityPolicy(newStyleString, startLineNumber))
         setInlineStyleFromString(newStyleString);
 
     elementData()->setStyleAttributeIsDirty(false);
