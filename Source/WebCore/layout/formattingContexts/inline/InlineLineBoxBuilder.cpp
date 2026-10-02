@@ -538,6 +538,20 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         }
         ASSERT(run.isOutOfFlow());
     }
+
+    auto blockEllipsisContentOnly = [&] {
+        if (!lineLayoutResult().blockEllipsis || rootInlineBox.hasContent())
+            return false;
+        for (auto& run : inlineContent) {
+            if (run.isContentful())
+                return false;
+        }
+        return true;
+    };
+    if (blockEllipsisContentOnly()) {
+        // Such line box is considered to contain a strut regardless of the document's mode (css-overflow-4 block-ellipsis).
+        rootInlineBox.setHasContent();
+    }
 }
 
 void LineBoxBuilder::constructBlockContent(LineBox& lineBox)

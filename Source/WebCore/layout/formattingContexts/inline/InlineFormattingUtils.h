@@ -73,6 +73,8 @@ public:
 
     bool NODELETE shouldDiscardRemainingContentInBlockDirection() const;
 
+    std::optional<BlockOverflowEllipsis> blockEllipsisForLine() const;
+
 private:
     bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
 

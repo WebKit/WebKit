@@ -5233,6 +5233,7 @@ webkit.org/b/319311 [ Debug ] fast/repaint/missing-out-of-flow-repaint-on-destro
 webkit.org/b/319312 [ Debug ] workers/bomb.html [ Skip ]
 
 [ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-023.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-028.html [ ImageOnlyFailure ]
 
 webkit.org/b/319950 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing.html [ Failure ]
 
