@@ -757,6 +757,8 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
                         subContext.scopingRootMatchesVisited = false;
                         subContext.isEvaluatingScopingRoot = true;
                         auto match = checker.match(selector, *ancestor, subContext);
+                        m_styleRelations.appendVector(subContext.styleRelations);
+                        subContext.styleRelations.clear();
                         if (match)
                             scopingRoots.append({ ancestor, distance, subContext.scopingRootMatchesVisited });
                     };
