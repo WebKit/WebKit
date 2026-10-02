@@ -69,6 +69,27 @@ std::optional<MediaQuery> MediaQueryParser::parseCondition(CSSParserTokenRange r
     return MediaQuery { { }, { }, condition };
 }
 
+static size_t mediaQueryCount(const CSSParserTokenRange& range)
+{
+    size_t commaCount = 0;
+    unsigned nestingLevel = 0;
+    for (auto& token : range.span()) {
+        switch (token.getBlockType()) {
+        case CSSParserToken::BlockStart:
+            ++nestingLevel;
+            break;
+        case CSSParserToken::BlockEnd:
+            --nestingLevel;
+            break;
+        case CSSParserToken::NotBlock:
+            if (!nestingLevel && token.type() == CommaToken)
+                ++commaCount;
+            break;
+        }
+    }
+    return commaCount + 1;
+}
+
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     range.consumeWhitespace();
@@ -77,6 +98,8 @@ MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& rang
         return { };
 
     MediaQueryList list;
+
+    list.reserveInitialCapacity(mediaQueryCount(range));
 
     while (true) {
         auto begin = range;
