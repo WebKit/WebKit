@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div>
+<select id="multiple" size="3" multiple style="padding-left: 30px">
+<option>Option 1</option>
+<option>Option 2</option>
+<option>Option 3</option>
+<option>Option 4</option>
+<option>Option 5</option>
+</select>
+</div>
+<div>
+<select id="single" size="3" style="padding-left: 30px">
+<option>Option 1</option>
+<option selected>Option 2</option>
+<option>Option 3</option>
+<option>Option 4</option>
+<option>Option 5</option>
+</select>
+</div>
+<div>
+<select id="unscrollable" size="3" style="padding-left: 30px">
+<option selected>Option 1</option>
+<option>Option 2</option>
+<option>Option 3</option>
+</select>
+</div>
+<!-- Makes the document, rather than the listbox that cannot scroll, autoscroll. -->
+<div style="height: 2000px"></div>
+<script>
+description('A drag that starts in the padding of a listbox, outside of any option, should not change the selection or fire change events.');
+jsTestIsAsync = true;
+
+let changeEventCount = 0;
+for (const select of document.querySelectorAll('select'))
+    select.addEventListener('change', () => ++changeEventCount);
+
+function selectedOptionsText(id)
+{
+    return Array.from(document.getElementById(id).selectedOptions, option => option.text).join();
+}
+
+function dragFromPadding(id, moves)
+{
+    const select = document.getElementById(id);
+    const x = select.offsetLeft + 10;
+    const y = select.offsetTop + 10;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    for (const [dx, dy] of moves)
+        eventSender.mouseMoveTo(x + dx, y + dy);
+    return new Promise(resolve => setTimeout(() => {
+        eventSender.mouseUp();
+        resolve();
+    }, 200));
+}
+
+window.onload = async () => {
+    if (!window.eventSender) {
+        debug('This test requires eventSender.');
+        return;
+    }
+
+    eventSender.dragMode = false;
+
+    debug('Dragging sideways out of a multiple-selection listbox:');
+    await dragFromPadding('multiple', [[0, 20], [600, 20]]);
+    shouldBeEqualToString('selectedOptionsText("multiple")', '');
+    shouldBe('changeEventCount', '0');
+
+    debug('');
+    debug('Autoscrolling a single-selection listbox:');
+    await dragFromPadding('single', [[0, 20], [0, 200]]);
+    shouldBeEqualToString('selectedOptionsText("single")', 'Option 2');
+    shouldBe('changeEventCount', '0');
+
+    debug('');
+    debug('Dragging onto an option of a single-selection listbox that cannot scroll:');
+    await dragFromPadding('unscrollable', [[30, 20]]);
+    shouldBeEqualToString('selectedOptionsText("unscrollable")', 'Option 1');
+    shouldBe('changeEventCount', '0');
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

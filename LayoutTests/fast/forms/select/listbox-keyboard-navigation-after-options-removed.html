@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<select id="up" size="4">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+</select>
+<select id="down" size="4">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+</select>
+<script>
+description('Arrow keys should move from the selected option of a listbox after an option before it was removed.');
+
+const up = document.getElementById('up');
+const down = document.getElementById('down');
+
+function clickLastOption(select)
+{
+    const rowHeight = select.clientHeight / select.size;
+    eventSender.mouseMoveTo(select.offsetLeft + 7, select.offsetTop + select.clientTop + 3.5 * rowHeight);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+if (!window.eventSender)
+    debug('This test requires eventSender.');
+else {
+    clickLastOption(up);
+    shouldBeEqualToString('up.value', '4');
+    up.options[2].remove();
+    eventSender.keyDown('upArrow');
+    shouldBeEqualToString('up.value', '2');
+
+    clickLastOption(down);
+    shouldBeEqualToString('down.value', '4');
+    down.options[2].remove();
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('down.value', '4');
+}
+</script>
+</body>
+</html>

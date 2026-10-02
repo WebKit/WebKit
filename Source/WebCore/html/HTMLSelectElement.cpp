@@ -1317,6 +1317,22 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     updateValidity();
 }
 
+bool HTMLSelectElement::updateListBoxSelectionForDrag(int listIndex)
+{
+    if (m_lastOnChangeSelection.isEmpty())
+        return false;
+
+    // Only extend selection if there is something selected.
+    if (m_multiple && m_activeSelectionAnchorIndex < 0)
+        return false;
+
+    if (!m_multiple)
+        setActiveSelectionAnchorIndex(listIndex);
+    setActiveSelectionEndIndex(listIndex);
+    updateListBoxSelection(!m_multiple);
+    return true;
+}
+
 void HTMLSelectElement::listBoxOnChange()
 {
     ASSERT(!isSingleSelectDropdownBox());
@@ -1348,6 +1364,14 @@ void HTMLSelectElement::listBoxOnChange()
         dispatchInputEvent();
         dispatchFormControlChangeEvent();
     }
+}
+
+void HTMLSelectElement::handleListBoxMouseRelease()
+{
+    if (m_lastOnChangeSelection.isEmpty())
+        return;
+
+    listBoxOnChange();
 }
 
 void HTMLSelectElement::dispatchChangeEventForMenuList()
@@ -1419,8 +1443,10 @@ void HTMLSelectElement::invalidateSelectedItems()
 void HTMLSelectElement::setRecalcListItems()
 {
     m_shouldRecalcListItems = true;
-    // Manual selection anchor is reset when manipulating the select programmatically.
+    // Manual selection state is reset when manipulating the select programmatically.
     m_activeSelectionAnchorIndex = -1;
+    m_activeSelectionEndIndex = -1;
+    m_allowsNonContiguousSelection = false;
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();
     if (!isConnected()) {
@@ -2045,7 +2071,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     // If the anchor hasn't been set, and we're doing a single selection or a
     // shift selection, then initialize the anchor to the first selected index.
     if (m_activeSelectionAnchorIndex < 0 && !multiSelect)
-        setActiveSelectionAnchorIndex(selectedIndex());
+        setActiveSelectionAnchorIndex(optionToListIndex(selectedIndex()));
 
     // Set the selection state of the clicked option.
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(clickedElement); option && !option->isDisabledFormControl())
@@ -2108,20 +2134,8 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         IntPoint localOffset = roundedIntPoint(renderListBox->absoluteToLocal(mouseEvent->absoluteLocation(), MapCoordinatesMode::UseTransforms));
         int listIndex = renderListBox->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
-            if (!isDisabledFormControl()) {
-                if (m_multiple) {
-                    // Only extend selection if there is something selected.
-                    if (m_activeSelectionAnchorIndex < 0)
-                        return;
-
-                    setActiveSelectionEndIndex(listIndex);
-                    updateListBoxSelection(false);
-                } else {
-                    setActiveSelectionAnchorIndex(listIndex);
-                    setActiveSelectionEndIndex(listIndex);
-                    updateListBoxSelection(true);
-                }
-            }
+            if (!isDisabledFormControl() && !updateListBoxSelectionForDrag(listIndex))
+                return;
             if (frame) {
                 frame->eventHandler().setCapturingMouseEventsElement(this);
                 m_isCapturingMouseEvents = true;
@@ -2135,13 +2149,11 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             m_isCapturingMouseEvents = false;
         }
         // If this select is autoscrolling, stopAutoscroll() will call
-        // listBoxOnChange() when the autoscroll timer stops,
+        // handleListBoxMouseRelease() when the autoscroll timer stops,
         // so avoid calling it here.
         if (frame->eventHandler().autoscrollRenderer() == renderer())
             return;
-        if (m_lastOnChangeSelection.isEmpty())
-            return;
-        listBoxOnChange();
+        handleListBoxMouseRelease();
     } else if (event.type() == eventNames.keydownEvent) {
         RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
         if (!keyboardEvent)

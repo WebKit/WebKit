@@ -708,12 +708,7 @@ void RenderListBox::autoscroll(const IntPoint&)
 
     if (endIndex >= 0) {
         m_inAutoscroll = true;
-
-        if (!selectElement().multiple())
-            protect(selectElement())->setActiveSelectionAnchorIndex(endIndex);
-
-        selectElement().setActiveSelectionEndIndex(endIndex);
-        protect(selectElement())->updateListBoxSelection(!selectElement().multiple());
+        protect(selectElement())->updateListBoxSelectionForDrag(endIndex);
         m_inAutoscroll = false;
     }
 }
@@ -723,7 +718,7 @@ void RenderListBox::stopAutoscroll()
     if (selectElement().isDisabledFormControl())
         return;
 
-    protect(selectElement())->listBoxOnChange();
+    protect(selectElement())->handleListBoxMouseRelease();
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)

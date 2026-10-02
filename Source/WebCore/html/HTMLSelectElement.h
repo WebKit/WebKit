@@ -186,9 +186,10 @@ public:
     int optionToListIndex(int optionIndex) const;
     int activeSelectionStartListIndex() const;
     int activeSelectionEndListIndex() const;
-    void setActiveSelectionAnchorIndex(int);
     void NODELETE setActiveSelectionEndIndex(int);
     void updateListBoxSelection(bool deselectOtherOptions);
+    bool updateListBoxSelectionForDrag(int listIndex);
+    void handleListBoxMouseRelease();
 
     // For use in the implementation of HTMLOptionElement.
     void optionSelectionStateChanged(HTMLOptionElement&, bool optionIsSelected);
@@ -299,6 +300,7 @@ private:
     void deselectItemsWithoutValidation(HTMLElement* elementToExclude = nullptr);
     void parseMultipleAttribute(const AtomString&);
     int lastSelectedListIndex() const;
+    void setActiveSelectionAnchorIndex(int);
     void updateSelectedState(int listIndex, bool multi, bool shift);
     void menuListDefaultEventHandler(Event&);
     void baseAppearanceListBoxDefaultEventHandler(Event&);

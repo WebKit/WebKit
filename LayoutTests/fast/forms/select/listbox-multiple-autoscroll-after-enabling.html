@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<select id="select" size="3" multiple disabled>
+<option>Option 1</option>
+<option selected>Option 2</option>
+<option>Option 3</option>
+<option>Option 4</option>
+<option>Option 5</option>
+</select>
+<script>
+description('Autoscrolling a multiple-selection listbox that was enabled after the drag started should not assert or change the selection.');
+jsTestIsAsync = true;
+
+const select = document.getElementById('select');
+
+function selectedOptionsText()
+{
+    return Array.from(select.selectedOptions, option => option.text).join();
+}
+
+window.onload = () => {
+    if (!window.eventSender) {
+        debug('This test requires eventSender.');
+        return;
+    }
+
+    // Pressing the mouse button on a disabled listbox doesn't set a selection anchor.
+    const x = select.offsetLeft + 7;
+    const y = select.offsetTop + 7;
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(x, y + 20);
+    eventSender.mouseMoveTo(x, y + 200);
+
+    select.disabled = false;
+
+    setTimeout(() => {
+        eventSender.mouseUp();
+        testPassed('Did not crash.');
+        shouldBeEqualToString('selectedOptionsText()', 'Option 2');
+        finishJSTest();
+    }, 200);
+};
+</script>
+</body>
+</html>

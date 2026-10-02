@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<select id="select" size="6" multiple>
+<optgroup label="Group">
+<option>A</option>
+<option selected>B</option>
+</optgroup>
+<option>C</option>
+<option>D</option>
+<option>E</option>
+</select>
+<script>
+description('Shift-clicking an option of a multiple-selection listbox should select the range from the selected option, also when an optgroup precedes it.');
+
+const select = document.getElementById('select');
+
+function selectedOptionsText()
+{
+    return Array.from(select.selectedOptions, option => option.text).join();
+}
+
+if (!window.eventSender)
+    debug('This test requires eventSender.');
+else {
+    // The rows are Group, A, B, C, D, and E.
+    const rowHeight = select.clientHeight / select.size;
+    eventSender.mouseMoveTo(select.offsetLeft + 7, select.offsetTop + select.clientTop + 3.5 * rowHeight);
+    eventSender.mouseDown(0, ['shiftKey']);
+    eventSender.mouseUp(0, ['shiftKey']);
+    shouldBeEqualToString('selectedOptionsText()', 'B,C');
+}
+</script>
+</body>
+</html>

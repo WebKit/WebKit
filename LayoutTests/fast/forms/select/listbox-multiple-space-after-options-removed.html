@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialNavigationEnabled=true ] -->
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<select id="select" size="4" multiple>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+</select>
+<script>
+description('With spatial navigation, the space key should not toggle an option of a multiple-selection listbox after its active option was removed.');
+
+const select = document.getElementById('select');
+
+function selectedOptionsText()
+{
+    return Array.from(select.selectedOptions, option => option.text).join();
+}
+
+if (!window.eventSender)
+    debug('This test requires eventSender.');
+else {
+    select.focus();
+
+    // Arrow keys move the active option without selecting it.
+    for (let i = 0; i < 4; ++i)
+        eventSender.keyDown('downArrow');
+    shouldBeEqualToString('selectedOptionsText()', '');
+
+    select.options[3].remove();
+    eventSender.keyDown(' ');
+    shouldBeEqualToString('selectedOptionsText()', '');
+
+    eventSender.keyDown('downArrow');
+    eventSender.keyDown(' ');
+    shouldBeEqualToString('selectedOptionsText()', '1');
+}
+</script>
+</body>
+</html>

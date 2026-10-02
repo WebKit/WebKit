@@ -4458,6 +4458,14 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrollin
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-options-visual-order.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-keyboard-selection.optional.html [ Failure ]
 fast/css/container-query-listbox.html [ Skip ]
+fast/forms/select/listbox-drag-from-padding.html [ Skip ]
+fast/forms/select/listbox-keyboard-navigation-after-options-removed.html [ Skip ]
+fast/forms/select/listbox-multiple-autoscroll-after-enabling.html [ Skip ]
+fast/forms/select/listbox-multiple-autoscroll-after-option-disabled.html [ Skip ]
+fast/forms/select/listbox-multiple-autoscroll-after-options-change.html [ Skip ]
+fast/forms/select/listbox-multiple-autoscroll-from-padding.html [ Skip ]
+fast/forms/select/listbox-multiple-shift-click-with-optgroup.html [ Skip ]
+fast/forms/select/listbox-multiple-space-after-options-removed.html [ Skip ]
 fast/forms/select/multiselect-in-listbox-mouse-release-outside.html [ Skip ]
 
 # To investigate: might need to relax the tests, or adapt native thumb appearance.

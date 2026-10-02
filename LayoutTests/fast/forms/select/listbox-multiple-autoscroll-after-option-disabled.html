@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<select id="select" size="3" multiple style="padding-left: 30px">
+<option>Option 1</option>
+<option>Option 2</option>
+<option>Option 3</option>
+<option>Option 4</option>
+<option>Option 5</option>
+</select>
+<script>
+description('Autoscrolling a multiple-selection listbox after disabling an option reset its selection anchor should not assert or change the selection.');
+jsTestIsAsync = true;
+
+const select = document.getElementById('select');
+
+function selectedOptionsText()
+{
+    return Array.from(select.selectedOptions, option => option.text).join();
+}
+
+window.onload = () => {
+    if (!window.eventSender) {
+        debug('This test requires eventSender.');
+        return;
+    }
+
+    const x = select.offsetLeft + 10;
+    const y = select.offsetTop + 10;
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(x + 30, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    shouldBeEqualToString('selectedOptionsText()', 'Option 1');
+
+    // Disabling an option resets the selection anchor.
+    select.options[4].disabled = true;
+
+    // Pressing in the padding doesn't hit an option, so no new selection anchor is set.
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(x, y + 20);
+    eventSender.mouseMoveTo(x, y + 200);
+
+    setTimeout(() => {
+        eventSender.mouseUp();
+        testPassed('Did not crash.');
+        shouldBeEqualToString('selectedOptionsText()', 'Option 1');
+        finishJSTest();
+    }, 200);
+};
+</script>
+</body>
+</html>
