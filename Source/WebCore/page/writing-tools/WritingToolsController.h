@@ -196,6 +196,7 @@ private:
     std::optional<SimpleRange> validatedRangeForSuggestionMarker(const SimpleRange& sessionRange, Node&, const DocumentMarker&, const String& expectedCurrentText) const;
 
     void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
+    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&, WritingToolsCompositionCommand&);
     void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
 
     void compositionSessionDidFinishReplacement();

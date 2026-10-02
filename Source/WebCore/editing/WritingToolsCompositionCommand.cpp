@@ -42,7 +42,7 @@ WritingToolsCompositionCommand::WritingToolsCompositionCommand(Ref<Document>&& d
 
 void WritingToolsCompositionCommand::replaceContentsOfRangeWithFragment(RefPtr<DocumentFragment>&& fragment, const SimpleRange& range, MatchStyle matchStyle, State state)
 {
-    auto contextRange = m_endingContextRange;
+    auto contextRange = m_currentContextRange;
 
     auto contextRangeCount = characterCount(contextRange);
     auto resolvedCharacterRange = characterRange(contextRange, range);

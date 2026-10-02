@@ -54,6 +54,7 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
+#import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <ranges>
 #import <wtf/Scope.h>
@@ -393,6 +394,8 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
     // This ensures that subsequent calls of this function should effectively be treated as just more iterations
     // of the following for-loop.
 
+    RefPtr<WritingToolsCompositionCommand> groupedReplacements;
+
     for (const auto& suggestion : suggestions) {
         // When receiving the suggestions from a proofreading session, immediately replace all the corresponding
         // original text with the replacement text, and add a document marker to each to track them and to be able
@@ -409,7 +412,10 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
             auto markerData = DocumentMarker::WritingToolsTextSuggestionData { originalString, suggestion.identifier, DocumentMarker::WritingToolsTextSuggestionData::State::Rejected, DocumentMarker::WritingToolsTextSuggestionData::Decoration::None };
             addMarker(resolvedRange, DocumentMarkerType::WritingToolsTextSuggestion, markerData);
         } else {
-            replaceContentsOfRangeInSession(*state, resolvedRange, suggestion.replacement);
+            if (!groupedReplacements)
+                groupedReplacements = WritingToolsCompositionCommand::create(Ref { *document }, sessionRange);
+
+            replaceContentsOfRangeInSession(*state, resolvedRange, suggestion.replacement, *groupedReplacements);
 
             // After replacement, the session range is "stale", so it needs to be re-computed before being used again.
 
@@ -423,6 +429,11 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
 
             state->replacementLocationOffset += static_cast<int>(suggestion.replacement.length()) - static_cast<int>(suggestion.originalRange.length);
         }
+    }
+
+    if (groupedReplacements) {
+        EditingScope editingScope { *document };
+        groupedReplacements->commit();
     }
 
     for (auto& transparentContentMarkerIdentifier : transparentContentMarkerIdentifiers) {
@@ -1432,6 +1443,15 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
         return { { *targetNode, *targetMarker } };
 
     return std::nullopt;
+}
+
+void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& state, const SimpleRange& range, const String& replacementText, WritingToolsCompositionCommand& groupedReplacements)
+{
+    RefPtr document = this->document();
+
+    EditingScope editingScope { *document };
+    groupedReplacements.replaceContentsOfRangeWithFragment(createFragmentFromText(range, replacementText), range, WritingToolsCompositionCommand::MatchStyle::Yes, WritingToolsCompositionCommand::State::InProgress);
+    state.contextRange = createLiveRange(groupedReplacements.currentContextRange());
 }
 
 void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& state, const SimpleRange& range, const String& replacementText)

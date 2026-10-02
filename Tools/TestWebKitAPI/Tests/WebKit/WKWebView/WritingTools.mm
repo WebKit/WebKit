@@ -533,6 +533,48 @@ TEST(WritingTools, ProofreadingWithLongReplacement)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, ProofreadingUndoRevertsEverySuggestionInBatch)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"I don't thin so. I didn't quite here him.";
+    NSString *proofreadText = @"I don't someveryveryverylongword so. I didn't quite hear him.";
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
+        auto suggestions = @[
+            adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(8, 4) replacement:@"someveryveryverylongword"]).get(),
+            adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(32, 4) replacement:@"hear"]).get()
+        ];
+
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+        [webView waitForNextPresentationUpdate];
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
+
+        [webView _synchronouslyExecuteEditCommand:@"Redo" argument:@""];
+        EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, ProofreadingShowOriginal)
 {
     RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
