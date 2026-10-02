@@ -287,7 +287,7 @@ static void bindPulse(Vector<UTF8CString>& args)
     if (pulseServer) {
         auto pulseServerString = UTF8CStringView::unsafeFromUTF8(pulseServer);
         if (startsWith(pulseServerString.span(), "unix:"_s))
-            bindIfExists(args, UTF8CStringView::fromUTF8(pulseServerString.span().subspan(5)), BindFlags::ReadWrite);
+            bindIfExists(args, UTF8CStringView::fromUTF8(pulseServerString.spanIncludingNullTerminator().subspan(5)), BindFlags::ReadWrite);
         // else it uses tcp
     } else {
         const char* runtimeDir = g_get_user_runtime_dir();
@@ -748,7 +748,7 @@ static std::optional<UTF8CString> directoryContainingDBusSocket(StringView dbusA
     if (!dbusAddressString.startsWith("unix:"_s))
         return std::nullopt;
 
-    if (auto pathStart = dbusAddressString.find("path="_s)) {
+    if (auto pathStart = dbusAddressString.find("path="_s); pathStart != notFound) {
         pathStart += strlen("path=");
 
         auto pathEnd = dbusAddressString.find(',', pathStart);
