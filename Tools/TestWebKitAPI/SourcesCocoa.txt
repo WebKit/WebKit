@@ -56,6 +56,7 @@ Helpers/cocoa/TestWKWebView.mm @nonARC
 Helpers/cocoa/TestWKWebViewConfiguration.mm @nonARC
 Helpers/cocoa/UISideCompositingScope.mm @nonARC
 Helpers/cocoa/UserMediaCaptureUIDelegate.mm @nonARC
+Helpers/cocoa/FindCAPITester.mm @nonARC
 Helpers/cocoa/FindInPageUtilities.mm @nonARC
 Helpers/cocoa/FindStateSnapshot.mm @nonARC
 Helpers/cocoa/FindTestPage.mm @nonARC
@@ -151,6 +152,7 @@ Tests/WebKit/WKWebView/ExitFullscreenOnEnterPiP.mm @nonARC
 Tests/WebKit/WKWebView/ExitPiPOnSuspendVideoElement.mm @nonARC
 Tests/WebKit/WKWebView/FTP.mm @nonARC
 Tests/WebKit/WKWebView/FileSystemAccess.mm @nonARC
+Tests/WebKit/WKWebView/FindCAPI.mm @nonARC
 Tests/WebKit/WKWebView/FindInPage.mm @nonARC
 Tests/WebKit/WKWebView/FindInPageAPI.mm @nonARC
 Tests/WebKit/WKWebView/FindPublicAPI.mm @nonARC
