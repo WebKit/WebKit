@@ -191,7 +191,9 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 {
     auto logicalGridItems = constructLogicalGridItems(root());
     CheckedRef gridStyle = root().style();
-    auto explicitGridTrackSizes = ExplicitGridResolver::resolve(gridStyle, layoutConstraints);
+    auto usedColumnGap = usedGapValue(gridStyle->columnGap(), gridStyle);
+    auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
+    auto explicitGridTrackSizes = ExplicitGridResolver::resolve(gridStyle, layoutConstraints, usedColumnGap, usedRowGap);
     auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, explicitGridTrackSizes);
 
     GridAutoFlowOptions autoFlowOptions {
@@ -217,7 +219,7 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
 
-    GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap(), gridStyle), usedGapValue(gridStyle->rowGap(), gridStyle) };
+    GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
 
     // https://drafts.csswg.org/css-grid-1/#layout-algorithm
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
@@ -319,6 +321,8 @@ IntrinsicWidthSizingPath GridFormattingContext::classifyIntrinsicWidthSizingPath
 // The max-content size (min-content size) of a grid container is the sum of
 // the grid container's track sizes (including gutters) in the appropriate axis,
 // when the grid is sized under a max-content constraint (min-content constraint).
+// FIXME: Pass in the grid container's min-width and max-width so that auto-repeat can resolve its
+// number of repetitions against them. https://drafts.csswg.org/css-grid-1/#auto-repeat
 GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWidths()
 {
     CheckedRef gridStyle = root().style();
@@ -331,8 +335,10 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     // For intrinsic sizing, percentages in track sizes must be treated as auto. The explicit grid is
     // shared by both intrinsic sizing scenarios and neither is definite, so resolving it against the
     // min-content constraint treats its percentages as auto for both.
+    auto usedColumnGap = usedGapValue(gridStyle->columnGap(), gridStyle);
+    auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
     GridDefinition gridDefinition {
-        ExplicitGridResolver::resolve(gridStyle, { AxisConstraint::minContent(), AxisConstraint::minContent() }),
+        ExplicitGridResolver::resolve(gridStyle, { AxisConstraint::minContent(), AxisConstraint::minContent() }, usedColumnGap, usedRowGap),
         gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoColumns()),
         gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoRows()),
         autoFlowOptions,
@@ -341,9 +347,6 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
 
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
-
-    auto usedColumnGap = usedGapValue(gridStyle->columnGap(), gridStyle);
-    auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
 
     auto logicalGridItems = constructLogicalGridItems(root());
     auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, gridDefinition.explicitGridTrackSizes);

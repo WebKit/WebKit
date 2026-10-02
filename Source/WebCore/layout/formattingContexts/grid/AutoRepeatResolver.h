@@ -25,14 +25,11 @@
 
 #pragma once
 
-#include "ExplicitGridTrackSizes.h"
-
 namespace WebCore {
 
 class LayoutUnit;
 
 namespace Style {
-class ComputedStyle;
 struct GridTemplateList;
 struct ZoomFactor;
 }
@@ -40,18 +37,11 @@ struct ZoomFactor;
 namespace Layout {
 
 struct AxisConstraint;
-struct GridLayoutConstraints;
 
-// https://drafts.csswg.org/css-grid-1/#explicit-grids
-// Resolves grid-template-{columns,rows} into the explicit grid's track lists. The rest of grid
-// layout reads the explicit grid from the result rather than from style, because repeat() and
-// auto-repeat mean the track lists in style are not the explicit grid's final tracks.
-class ExplicitGridResolver {
+// https://drafts.csswg.org/css-grid-1/#auto-repeat
+class AutoRepeatResolver {
 public:
-    static ExplicitGridTrackSizes resolve(const Style::ComputedStyle& gridContainerStyle, const GridLayoutConstraints&, LayoutUnit usedColumnGap, LayoutUnit usedRowGap);
-
-private:
-    static Vector<Style::GridTrackSize> resolveTrackSizes(const Style::GridTemplateList&, const AxisConstraint&, LayoutUnit usedGap, Style::ZoomFactor);
+    static size_t resolveRepetitions(const Style::GridTemplateList&, const AxisConstraint&, LayoutUnit usedGap, Style::ZoomFactor);
 };
 
 } // namespace Layout
