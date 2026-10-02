@@ -330,7 +330,8 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1lu) : 0lu;
 
         auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine, isFirstFormattedLineCandidate);
-        if (lineLayoutResult.blockEllipsis)
+        // Either this line is the clamped line (it has the block ellipsis) or we are coming back from a block (block-in-inline) that took the clamp point.
+        if (lineLayoutResult.blockEllipsis || (lineLayoutResult.isBlockContent() && formattingUtils().shouldDiscardRemainingContentInBlockDirection()))
             layoutResult->lineClamp.contentFitsWithinMaximumLines = lineLayoutResult.isLastLineWithoutBlockEllipsis;
         auto hasContentfulInFlowContent = lineLayoutResult.hasContentfulInFlowContent();
 

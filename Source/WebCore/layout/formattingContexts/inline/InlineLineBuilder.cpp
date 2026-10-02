@@ -397,7 +397,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { }
         , lineContent->range.isEmpty() && !blockEllipsis ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
         , blockEllipsis
-        , blockEllipsis && ((isLastInlineContent && !nextContentfulInlineItem(lineContent->range.endIndex(), lineInput.needsLayoutRange.endIndex())) || m_lineClamp.isLastLineWithoutBlockEllipsis)
+        , (isLastInlineContent && !nextContentfulInlineItem(lineContent->range.endIndex(), lineInput.needsLayoutRange.endIndex())) || m_lineClamp.isLastLineWithoutBlockEllipsis
     };
 }
 

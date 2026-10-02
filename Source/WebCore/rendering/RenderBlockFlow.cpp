@@ -907,8 +907,17 @@ static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContai
     }
     if (!blockWithClampedLine || !blockWithClampedLine->inlineLayout()->contentFitsWithinMaximumLines())
         return false;
-    // Any in-flow content after the block with the clamped line means there's a clamp point after the clamped line.
     for (CheckedPtr<const RenderObject> renderer = blockWithClampedLine.get(); renderer && renderer != &lineClampContainer; renderer = renderer->parent()) {
+        CheckedPtr parent = renderer->parent();
+        if (is<RenderInline>(*parent))
+            continue;
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
+            if (!blockFlow->inlineLayout() || !blockFlow->inlineLayout()->contentFitsWithinMaximumLines())
+                return false;
+            continue;
+        }
+        // "A point between two in-flow block-level sibling boxes in the line-clamp container's block formatting context."
+        // https://drafts.csswg.org/css-overflow-4/#line-clamp-containers
         if (renderer->nextInFlowSibling())
             return false;
     }

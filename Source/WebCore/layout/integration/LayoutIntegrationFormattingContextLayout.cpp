@@ -162,6 +162,15 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
     }
 }
 
+static inline size_t NODELETE remainingLinesForLineClamp(auto& inlineLayoutState)
+{
+    // The lines we have already put on the parent's own lines (and in its earlier nested blocks) are part of the clamp's
+    // budget, and the nested block has to lay out within what is left of it. A block level sibling gets this from
+    // LineClampUpdater, which drops each preceding sibling's line count from the budget as it goes.
+    auto maximumLines = inlineLayoutState.parentBlockLayoutState().lineClamp()->maximumLines;
+    return maximumLines - std::min(maximumLines, inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks());
+}
+
 static inline void NODELETE updateRenderTreeLineClampBeforeLayout(auto& inlineLayoutState, auto& renderTreeLayoutState)
 {
     auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
@@ -178,16 +187,11 @@ static inline void NODELETE updateRenderTreeLineClampBeforeLayout(auto& inlineLa
         return;
     }
 
-    // The lines we have already put on the parent's own lines are part of the clamp's budget, and the nested block
-    // has to lay out within what is left of it. A block level sibling gets this from LineClampUpdater, which drops
-    // each preceding sibling's line count from the budget as it goes.
-    if (auto renderTreeLineClamp = renderTreeLayoutState.lineClamp()) {
-        auto maximumLines = renderTreeLineClamp->maximumLines;
-        renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { maximumLines - std::min(maximumLines, currentLineCount), renderTreeLineClamp->shouldDiscardOverflow });
-    }
+    if (auto renderTreeLineClamp = renderTreeLayoutState.lineClamp())
+        renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { remainingLinesForLineClamp(inlineLayoutState), renderTreeLineClamp->shouldDiscardOverflow });
 }
 
-static inline void NODELETE updateIFCLineClampAfterLayout(auto& inlineLayoutState, auto& renderTreeLayoutState, const RenderBox& blockRenderer)
+static inline void NODELETE updateIFCLineClampAfterLayout(auto& inlineLayoutState, auto& renderTreeLayoutState)
 {
     auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
 
@@ -202,11 +206,12 @@ static inline void NODELETE updateIFCLineClampAfterLayout(auto& inlineLayoutStat
         return;
     }
 
-    // The lines the nested block just produced count towards the clamp for the lines that follow it, the way a block
-    // level sibling's do.
-    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(blockRenderer);
-    if (blockFlow && blockFlow->childrenInline())
-        inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(currentLineCount + blockFlow->lineCount());
+    // The lines the nested block just produced (what it took off the budget it was given, including the lines of its own
+    // nested blocks) count towards the clamp for the lines that follow it, the way a block level sibling's do.
+    if (auto renderTreeLineClamp = renderTreeLayoutState.lineClamp()) {
+        auto remainingLines = remainingLinesForLineClamp(inlineLayoutState);
+        inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(currentLineCount + remainingLines - std::min(remainingLines, renderTreeLineClamp->maximumLines));
+    }
 }
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
@@ -259,7 +264,7 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         }
         blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), borderBoxTop });
 
-        updateIFCLineClampAfterLayout(inlineLayoutState, renderTreeLayoutState, blockRenderer.get());
+        updateIFCLineClampAfterLayout(inlineLayoutState, renderTreeLayoutState);
         // Floats are positioned relative to their containing block's border box, which sits at borderBoxTop within the line (see setTopLeft above) and not at the line's top left.
         populateIFCWithNewlyPlacedFloats(blockRenderer.get(), placedFloats, blockLineLogicalTopLeft + LayoutSize { blockGeometry.marginStart(), borderBoxTop });
         auto marginState = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);

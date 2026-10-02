@@ -103,7 +103,16 @@ inline LineClampUpdater::~LineClampUpdater()
         return;
     }
 
-    size_t lineCount = 0;
+    auto lineClamp = layoutState->lineClamp();
+    if (!lineClamp) {
+        // "Only line boxes in the same block formatting context are counted: the contents of descendants
+        // that establish independent formatting contexts are skipped over while counting line boxes."
+        // https://drafts.csswg.org/css-overflow-4/#max-lines
+        layoutState->setLineClamp(m_previousLineClamp);
+        return;
+    }
+
+    size_t lineCount = m_isLineClampRoot ? 0 : m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineClamp->maximumLines);
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
         lineCount = blockFlow->lineCount();
     layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow });
