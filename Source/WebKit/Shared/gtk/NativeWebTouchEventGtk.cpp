@@ -30,6 +30,7 @@
 
 #include "GtkVersioning.h"
 #include "WebEventFactory.h"
+#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 
@@ -42,6 +43,11 @@ namespace WebKit {
 NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
     : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTF::move(touchPoints)))
     , m_nativeEvent(constructNativeEvent(event))
+{
+}
+
+NativeWebTouchEvent::NativeWebTouchEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, Vector<WebPlatformTouchPoint>&& touchPoints)
+    : WebTouchEvent({ type, modifiers, MonotonicTime::now() }, WTF::move(touchPoints), { }, { })
 {
 }
 

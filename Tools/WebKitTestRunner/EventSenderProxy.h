@@ -133,6 +133,16 @@ public:
     void clearTouchPoints();
     void releaseTouchPoint(int index);
     void cancelTouchPoint(int index);
+
+#if PLATFORM(GTK)
+    struct TouchPoint {
+        enum class State : uint8_t { Stationary, Pressed, Moved, Released, Cancelled };
+        unsigned id { 0 };
+        State state { State::Stationary };
+        int x { 0 };
+        int y { 0 };
+    };
+#endif
 #endif
 
     // Double two-finger tap on trackpad.
@@ -180,6 +190,10 @@ private:
 #endif
 #if PLATFORM(GTK)
     bool m_hasPreciseDeltas { false };
+#if ENABLE(TOUCH_EVENTS)
+    Vector<TouchPoint> m_touchPoints;
+    unsigned m_touchModifiers { 0 };
+#endif
 #endif
 #if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     std::unique_ptr<EventSenderProxyClient> m_client;
