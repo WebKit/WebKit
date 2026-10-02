@@ -487,5 +487,9 @@ ScrollingNodeID ScrollAnimator::scrollingNodeIDForTesting() const
     return protect(scrollableArea())->scrollingNodeIDForTesting();
 }
 
+ScrollAxisLock ScrollAnimator::scrollAxisLock() const
+{
+    return protect(scrollableArea())->scrollAxisLock();
+}
 
 } // namespace WebCore
