@@ -381,6 +381,8 @@ void HTMLLinkElement::process()
         options.fetchPriority = fetchPriority();
 
         auto request = createPotentialAccessControlRequest(URL { m_url }, WTF::move(options), document, crossOrigin());
+        if (!isActive)
+            request.setInitialPriority(WTF::move(*priority));
         request.setPriority(WTF::move(priority));
         request.setCharset(WTF::move(charset));
         request.setInitiator(*this);

@@ -81,6 +81,7 @@ RefPtr<CachedScript> LoadableSpeculationRules::requestSpeculationRules(Document&
     auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, ""_s);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setPriority(ResourceLoadPriority::Low);
+    request.setInitialPriority(ResourceLoadPriority::Low);
 
     auto result = protect(document.cachedResourceLoader())->requestScript(WTF::move(request));
     return result ? RefPtr { WTF::move(result.value()) } : nullptr;

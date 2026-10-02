@@ -60,22 +60,26 @@ function test()
                 } else if ((/image\/png/).test(entry.mimeType)) {
                     InspectorTest.expectEqual(priorityName, "Low", `Image ${entry.url} should have a Low priority`);
                 } else if ((/javascript$/).test(entry.mimeType)) {
-                    InspectorTest.expectEqual(initialPriorityName, "High", `JavaScript ${entry.url} should start with a High priority`);
                     if ((/async$/).test(entry.url)) {
-                        InspectorTest.expectEqual(priorityName, "Medium", `- Async JavaScript should be reduced to Medium priority`);
+                        InspectorTest.expectEqual(initialPriorityName, "Medium", `JavaScript ${entry.url} should start with a Medium priority`);
+                        InspectorTest.expectEqual(priorityName, "Medium", `- Async JavaScript should stay with a Medium priority`);
                     } else {
+                        InspectorTest.expectEqual(initialPriorityName, "High", `JavaScript ${entry.url} should start with a High priority`);
                         InspectorTest.expectEqual(priorityName, "High", `- JavaScript should still have a High priority`);
                     }
                 } else if ((/beacon/).test(entry.url)) {
                     InspectorTest.expectEqual(priorityName, "Very Low", `Beacon ${entry.url} should have Very Low priority`);
                 } else if ((/\.css/).test(entry.url)) {
-                    InspectorTest.expectEqual(initialPriorityName, "High", `Stylesheet ${entry.url} should start with a High priority`);
                     if ((/print$/).test(entry.url)) {
-                        InspectorTest.expectEqual(priorityName, "Very Low", `- Print stylesheet should be reduced to a Very Low priority`);
-                    } else if ((/low$/).test(entry.url)) {
-                        InspectorTest.expectEqual(priorityName, "Medium", `- Priority was only reduced to Medium`);
+                        InspectorTest.expectEqual(initialPriorityName, "Very Low", `Stylesheet ${entry.url} should start with a Very Low priority`);
+                        InspectorTest.expectEqual(priorityName, "Very Low", `- Print stylesheet should stay with a Very Low priority`);
                     } else {
-                        InspectorTest.expectEqual(priorityName, "High", `- Screen stylesheet should stay at a High priority`);
+                        InspectorTest.expectEqual(initialPriorityName, "High", `Stylesheet ${entry.url} should start with a High priority`);
+                        if ((/low$/).test(entry.url)) {
+                            InspectorTest.expectEqual(priorityName, "Medium", `- Priority was only reduced to Medium`);
+                        } else {
+                            InspectorTest.expectEqual(priorityName, "High", `- Screen stylesheet should stay at a High priority`);
+                        }
                     }
                 } else if ((/\.woff$/).test(entry.url)) {
                     InspectorTest.expectEqual(initialPriorityName, "Medium", `Font ${entry.url} should start with a Medium priority`);

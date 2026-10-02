@@ -152,7 +152,7 @@ public:
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
     void NODELETE setLoadPriority(const std::optional<ResourceLoadPriority>&, RequestPriority);
     ResourceLoadPriority initialPriority() const { return m_initialPriority; }
-    void NODELETE setInitialPriority(ResourceLoadPriority);
+    void NODELETE setInitialPriority(std::optional<ResourceLoadPriority>);
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
