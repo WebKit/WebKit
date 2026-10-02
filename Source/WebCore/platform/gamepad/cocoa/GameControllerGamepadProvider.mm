@@ -39,20 +39,22 @@
 
 #import "GameControllerSoftLink.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/GameControllerAdditions.mm>
-#else
 namespace WebCore {
 
-static bool shouldExcludeGameController(GCController *)
+static bool shouldExcludeGameController(GCController *controller)
 {
-    return false;
-}
-
-}
+#if PLATFORM(VISION) && HAVE(SPATIAL_CONTROLLERS)
+    if ((canLoad_GameController_GCProductCategoryLeftSpatialController() && [controller.productCategory isEqualToString:GCProductCategoryLeftSpatialController])
+        || (canLoad_GameController_GCProductCategoryRightSpatialController() && [controller.productCategory isEqualToString:GCProductCategoryRightSpatialController])) {
+        LOG(Gamepad, "Excluding controller %p", controller);
+        return true;
+    }
+#else
+    UNUSED_PARAM(controller);
 #endif
 
-namespace WebCore {
+    return false;
+}
 
 #if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 

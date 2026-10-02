@@ -72,8 +72,11 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCMouse, WEBCORE
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *, WEBCORE_EXPORT)
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.mm>)
-#import <WebKitAdditions/GameControllerSoftLinkAdditions.mm>
+#if PLATFORM(VISION) && HAVE(SPATIAL_CONTROLLERS)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCProductCategoryLeftSpatialController, NSString *, WEBCORE_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCProductCategoryRightSpatialController, NSString *, WEBCORE_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCControllerAxisInput, WEBCORE_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCControllerDirectionPad, WEBCORE_EXPORT)
 #endif
 
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
