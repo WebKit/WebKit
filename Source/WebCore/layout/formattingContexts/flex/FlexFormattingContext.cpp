@@ -793,6 +793,18 @@ LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& 
         return computeFlexBaseSize(flexLayoutItem, flexBasis);
 
     auto flexBasisAsMainSize = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
+
+    // A calc-size() over an auto basis stands for the main size property, and a property whose used value depends on
+    // the available space has to be resolved in that space rather than read off the item's max-content contribution.
+    // The block axis lays the item out, which already does that.
+    if (flexLayoutItem.mainAxisIsInlineAxis && flexBasis.isCalcSize() && flexBasis.isAuto()) {
+        auto& mainSize = flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem);
+        if (mainSize.isFitContent() || mainSize.isStretch() || mainSize.isPercentOrCalculated()) {
+            if (auto extent = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, mainSize, m_constraints.mainAxisSizeForLengthResolution))
+                return integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, flexBasis.calcSize(), std::max(0_lu, *extent), m_constraints.mainAxisSizeForLengthResolution);
+        }
+    }
+
     auto flexBaseSize = computeFlexBaseSize(flexLayoutItem, flexBasis);
 
     // A `content` basis is not a value the item can be laid out with, so it is measured as max-content
