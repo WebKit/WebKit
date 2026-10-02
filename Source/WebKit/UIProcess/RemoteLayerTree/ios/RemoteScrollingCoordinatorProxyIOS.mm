@@ -168,7 +168,7 @@ void RemoteScrollingCoordinatorProxyIOS::selectOverlayRegionScrollViewIfNeeded()
         RetainPtr mainScrollView = (WKBaseScrollView *)[cocoaView scrollView];
 
         RefPtr rootNode = scrollingTree().rootNode();
-        if (scrollViewCanHaveOverlayRegions(mainScrollView.get(), mainScrollView.get()) && rootNode && rootNode->snapOffsetsInfo().isEmpty())
+        if (hasScrollableOrZoomedMainFrame() && scrollViewCanHaveOverlayRegions(mainScrollView.get(), mainScrollView.get()) && rootNode && rootNode->snapOffsetsInfo().isEmpty())
             newSelectedScrollView = mainScrollView;
         else {
             Vector<RetainPtr<WKBaseScrollView>> candidateScrollViews;
@@ -532,6 +532,7 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
         if (currNode->hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo)
             || currNode->hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)
+            || currNode->hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)
             || currNode->hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)
             || currNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
             m_needsOverlayRegionScrollViewSelection = true;

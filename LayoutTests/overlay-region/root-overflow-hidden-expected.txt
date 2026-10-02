@@ -1,0 +1,14 @@
+Scrollable page:
+      (scrolling behavior 2)
+
+After adding overflow: hidden to the root:
+      (scrolling behavior 0)
+
+After removing overflow: hidden from the root:
+      (scrolling behavior 2)
+
+After showing a modal and adding overflow: hidden to the root:
+      (scrolling behavior 0)
+
+After dismissing the modal and removing overflow: hidden from the root:
+      (scrolling behavior 2)
