@@ -83,7 +83,7 @@ static LoadPriority toProtocol(WebCore::ResourceLoadPriority priority)
     case WebCore::ResourceLoadPriority::High:
         return LoadPriority::High;
     case WebCore::ResourceLoadPriority::VeryHigh:
-        return Network::LoadPriority::Veryhigh;
+        return LoadPriority::Veryhigh;
     }
     ASSERT_NOT_REACHED();
     return LoadPriority::Verylow;
