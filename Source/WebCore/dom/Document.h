@@ -1864,7 +1864,7 @@ public:
     void attachToCachedFrame(CachedFrameBase&);
     void detachFromCachedFrame(CachedFrameBase&);
 
-    void orientationChanged(IntDegrees orientation);
+    WEBCORE_EXPORT void orientationChanged(IntDegrees orientation);
     OrientationNotifier& orientationNotifier();
 
     WEBCORE_EXPORT const AtomString& NODELETE bgColor() const;

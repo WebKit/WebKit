@@ -1424,4 +1424,30 @@ TEST(SiteIsolation, ImmediateActionOffersLookUpInCrossOriginIframe)
 
 #endif // PLATFORM(MAC)
 
+#if ENABLE(ORIENTATION_EVENTS) && PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, CrossSiteIFrameReceivesOrientationChangeEvent)
+{
+    auto mainFrameHTML = "<iframe src='https://webkit.org/subframe'></iframe>"_s;
+    auto subFrameHTML = "<script>window.addEventListener('orientationchange', () => { window.gotOrientationChange = true; });</script>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameHTML } },
+        { "/subframe"_s, { subFrameHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView _setInterfaceOrientationOverride:UIInterfaceOrientationLandscapeRight];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.gotOrientationChange === true" inFrame:childFrame.get()] boolValue];
+    }));
+}
+
+#endif // ENABLE(ORIENTATION_EVENTS) && PLATFORM(IOS_FAMILY)
+
 } // namespace TestWebKitAPI
