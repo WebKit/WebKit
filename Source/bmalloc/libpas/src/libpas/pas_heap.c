@@ -62,7 +62,8 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
     PAS_ASSERT(pas_is_aligned(config->get_type_size(heap_ref->type),
                               config->get_type_alignment(heap_ref->type)));
     
-    heap = pas_immortal_heap_allocate(sizeof(pas_heap), "pas_heap", pas_object_allocation);
+    heap = pas_immortal_heap_allocate_with_alignment(
+        sizeof(pas_heap), PAS_ALIGNOF(pas_heap), "pas_heap", pas_object_allocation);
 
     begin = (uintptr_t)heap;
     PAS_PROFILE(CREATE_HEAP, begin);

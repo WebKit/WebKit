@@ -51,7 +51,8 @@ typedef uint64_t pas_compact_atomic_ptr_impl;
         PAS_ATOMIC_TYPE(pas_compact_atomic_ptr_impl) payload; \
     }; \
     \
-    PAS_DEFINE_COMPACT_PTR_HELPERS(type, name); \
+    PAS_DEFINE_COMPACT_PTR_HELPERS( \
+        type, name, PAS_INTERNAL_MIN_ALIGN_SHIFT, (pas_compact_atomic_ptr_impl)~(pas_compact_atomic_ptr_impl)0); \
     \
     static inline void name ## _store(name* ptr, type* value) \
     { \

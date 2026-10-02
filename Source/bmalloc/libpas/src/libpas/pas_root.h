@@ -106,6 +106,7 @@ struct pas_root {
     unsigned pas_crash_report_version;
 #endif
     bool* probabilistic_guard_malloc_has_been_used;
+    size_t* compact_heap_reservation_top_bump;
 };
 
 #define PAS_ROOT_MAGIC 0xbeeeeeeeefllu

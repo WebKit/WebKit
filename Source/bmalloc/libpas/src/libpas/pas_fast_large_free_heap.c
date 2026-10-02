@@ -84,8 +84,9 @@ static void insert_node(pas_fast_large_free_heap* heap,
     PAS_ASSERT(new_free.begin);
     PAS_ASSERT(new_free.end > new_free.begin);
     
-    node = pas_utility_heap_allocate(sizeof(pas_fast_large_free_heap_node),
-                                     "pas_fast_large_free_heap_node");
+    node = pas_utility_heap_allocate_with_alignment(sizeof(pas_fast_large_free_heap_node),
+                                                    PAS_ALIGNOF(pas_fast_large_free_heap_node),
+                                                    "pas_fast_large_free_heap_node");
     node->free = new_free;
 
     initialize_cartesian_config(&cartesian_config);

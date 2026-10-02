@@ -43,7 +43,7 @@ pas_bitfit_heap* pas_bitfit_heap_create(pas_segregated_heap* segregated_heap,
 
     result = pas_immortal_heap_allocate_with_alignment(
         sizeof(pas_bitfit_heap),
-        sizeof(pas_versioned_field),
+        PAS_ALIGNOF(pas_bitfit_heap),
         "pas_bitfit_heap",
         pas_object_allocation);
 

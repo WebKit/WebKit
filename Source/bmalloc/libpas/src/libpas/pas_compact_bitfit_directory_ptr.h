@@ -33,7 +33,7 @@ PAS_BEGIN_EXTERN_C;
 struct pas_bitfit_directory;
 typedef struct pas_bitfit_directory pas_bitfit_directory;
 
-PAS_DEFINE_COMPACT_PTR(pas_bitfit_directory, pas_compact_bitfit_directory_ptr);
+PAS_DEFINE_OVERALIGNED_COMPACT_PTR(pas_bitfit_directory, pas_compact_bitfit_directory_ptr);
 
 PAS_END_EXTERN_C;
 

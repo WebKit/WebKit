@@ -36,6 +36,17 @@ PAS_API extern size_t pas_compact_heap_reservation_guard_size;
 PAS_API extern uintptr_t pas_compact_heap_reservation_base;
 PAS_API extern size_t pas_compact_heap_reservation_available_size;
 PAS_API extern size_t pas_compact_heap_reservation_bump;
+PAS_API extern size_t pas_compact_heap_reservation_top_bump;
+
+/* The reservation is allocated from two fronts. Allocations that are at least
+   PAS_OVERALIGNED_COMPACT_PTR_ALIGN-aligned come from the top, growing down; everything else comes
+   from the bottom, growing up (tracked by pas_compact_heap_reservation_bump). This keeps the bottom
+   front within reach of PAS_DEFINE_COMPACT_PTR, while PAS_DEFINE_OVERALIGNED_COMPACT_PTR can reach
+   either front. Both bumps are offsets from pas_compact_heap_reservation_base. */
+static inline bool pas_compact_heap_reservation_is_overaligned(size_t alignment)
+{
+    return alignment >= PAS_OVERALIGNED_COMPACT_PTR_ALIGN;
+}
 
 /* FIXME: This should support pas_alignment at some point. */
 PAS_API pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(

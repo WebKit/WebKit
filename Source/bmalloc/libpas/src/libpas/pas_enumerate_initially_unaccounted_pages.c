@@ -61,6 +61,10 @@ bool pas_enumerate_initially_unaccounted_pages(pas_enumerator* enumerator)
     uintptr_t compact_heap_reservation_base;
     uintptr_t compact_heap_reservation_bump;
     uintptr_t compact_heap_reservation_guard_size;
+    uintptr_t compact_heap_reservation_available_size;
+    uintptr_t compact_heap_reservation_top_bump;
+    uintptr_t top_begin;
+    uintptr_t top_end;
 
     if (!pas_enumerator_copy_remote(
             enumerator, &compact_heap_reservation_base, enumerator->root->compact_heap_reservation_base, sizeof(uintptr_t)))
@@ -74,12 +78,30 @@ bool pas_enumerate_initially_unaccounted_pages(pas_enumerator* enumerator)
             enumerator, &compact_heap_reservation_guard_size, enumerator->root->compact_heap_reservation_guard_size, sizeof(size_t)))
         return false;
 
+    if (!pas_enumerator_copy_remote(
+            enumerator, &compact_heap_reservation_available_size, enumerator->root->compact_heap_reservation_available_size, sizeof(size_t)))
+        return false;
+
+    if (!pas_enumerator_copy_remote(
+            enumerator, &compact_heap_reservation_top_bump, enumerator->root->compact_heap_reservation_top_bump, sizeof(size_t)))
+        return false;
+
     pas_enumerator_add_unaccounted_pages(
         enumerator,
         (char*)compact_heap_reservation_base + compact_heap_reservation_guard_size,
         pas_round_up_to_power_of_2(
             compact_heap_reservation_bump - compact_heap_reservation_guard_size,
             enumerator->root->page_malloc_alignment));
+
+    /* The top front of the reservation grows down from the end. */
+    top_begin = pas_round_down_to_power_of_2(
+        compact_heap_reservation_base + compact_heap_reservation_top_bump,
+        enumerator->root->page_malloc_alignment);
+    top_end = pas_round_up_to_power_of_2(
+        compact_heap_reservation_base + compact_heap_reservation_available_size,
+        enumerator->root->page_malloc_alignment);
+    if (compact_heap_reservation_top_bump < compact_heap_reservation_available_size)
+        pas_enumerator_add_unaccounted_pages(enumerator, (void*)top_begin, top_end - top_begin);
 
     if (!pas_enumerable_range_list_iterate_remote(
             enumerator->root->enumerable_page_malloc_page_list,

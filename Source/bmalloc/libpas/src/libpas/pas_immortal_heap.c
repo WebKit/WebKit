@@ -35,16 +35,20 @@
 
 uintptr_t pas_immortal_heap_current;
 uintptr_t pas_immortal_heap_end;
+uintptr_t pas_immortal_heap_overaligned_current;
+uintptr_t pas_immortal_heap_overaligned_end;
 size_t pas_immortal_heap_allocated_external = 0;
 size_t pas_immortal_heap_allocated_internal = 0;
 size_t pas_immortal_heap_allocation_granule = 65536;
 
 static bool bump_is_ok(uintptr_t bump,
-                       size_t size)
+                       size_t size,
+                       uintptr_t current,
+                       uintptr_t end)
 {
-    return bump <= pas_immortal_heap_end
-        && bump >= pas_immortal_heap_current
-        && pas_immortal_heap_end - bump >= size;
+    return bump <= end
+        && bump >= current
+        && end - bump >= size;
 }
 
 void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
@@ -56,11 +60,23 @@ void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
     static const unsigned verbosity = 0;
 
     uintptr_t aligned_bump;
+    uintptr_t* current;
+    uintptr_t* end;
 
     pas_heap_lock_assert_held();
+
+    /* Overaligned allocations have to come from the top front of the compact heap reservation and
+       everything else has to come from the bottom front, so we have a chunk for each. */
+    if (pas_compact_heap_reservation_is_overaligned(alignment)) {
+        current = &pas_immortal_heap_overaligned_current;
+        end = &pas_immortal_heap_overaligned_end;
+    } else {
+        current = &pas_immortal_heap_current;
+        end = &pas_immortal_heap_end;
+    }
     
-    aligned_bump = pas_round_up_to_power_of_2(pas_immortal_heap_current, alignment);
-    if (!bump_is_ok(aligned_bump, size)) {
+    aligned_bump = pas_round_up_to_power_of_2(*current, alignment);
+    if (!bump_is_ok(aligned_bump, size, *current, *end)) {
         size_t allocation_size;
         pas_aligned_allocation_result allocation_result;
 
@@ -70,20 +86,20 @@ void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
         if (!allocation_result.result)
             pas_panic_on_out_of_memory_error();
         PAS_ASSERT(allocation_result.result_size == allocation_size);
-        PAS_ASSERT(!allocation_result.right_padding_size);
         
-        pas_immortal_heap_current = (uintptr_t)allocation_result.result;
-        pas_immortal_heap_end = pas_immortal_heap_current + allocation_size;
+        *current = (uintptr_t)allocation_result.result;
+        *end = *current + allocation_size;
 
-        pas_immortal_heap_allocated_external += allocation_size + allocation_result.left_padding_size;
+        pas_immortal_heap_allocated_external +=
+            allocation_size + allocation_result.left_padding_size + allocation_result.right_padding_size;
 
-        aligned_bump = pas_immortal_heap_current;
+        aligned_bump = *current;
 
-        PAS_ASSERT(bump_is_ok(aligned_bump, size));
+        PAS_ASSERT(bump_is_ok(aligned_bump, size, *current, *end));
         PAS_ASSERT(pas_is_aligned(aligned_bump, alignment));
     }
 
-    pas_immortal_heap_current = aligned_bump + size;
+    *current = aligned_bump + size;
 
     pas_did_allocate((void*)aligned_bump, size, pas_immortal_heap_kind, name, allocation_kind);
     pas_immortal_heap_allocated_internal += size;
