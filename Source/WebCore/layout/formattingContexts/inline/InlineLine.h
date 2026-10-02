@@ -74,7 +74,7 @@ public:
     InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
     size_t hangingTrailingWhitespaceLength() const { return m_hangingContent.trailingWhitespaceLength(); }
     bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
-    void detachHangingTrailingWhitespaceIfApplicable();
+    std::optional<size_t> detachHangingTrailingWhitespaceIfApplicable();
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
@@ -246,7 +246,7 @@ public:
         bool contentNeedsBidiReordering { false };
         size_t nonSpanningInlineLevelBoxCount { 0 };
     };
-    Result close();
+    Result close(TrailingContentAction hangingTrailingWhitespace = TrailingContentAction::Preserve);
 
     static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&, InlineItemRange, const InlineItemList&);
     static bool NODELETE hasTrailingForcedLineBreak(const RunList&);
@@ -255,6 +255,7 @@ private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
 
     void NODELETE resetTrailingContent();
+    void removeHangingTrailingWhitespace();
 
     bool lineHasVisuallyNonEmptyContent() const;
 

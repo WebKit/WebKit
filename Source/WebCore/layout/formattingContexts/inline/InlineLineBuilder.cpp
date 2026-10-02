@@ -319,7 +319,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
 {
     initialize(lineInput.initialLogicalRect, lineInput.needsLayoutRange, lineInput.blockEllipsis, previousLine, isFirstFormattedLineCandidate);
     auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
-    auto result = m_line.close();
+    auto result = m_line.close(m_lineClamp.blockEllipsis ? Line::TrailingContentAction::Remove : Line::TrailingContentAction::Preserve);
     auto inlineContentEnding = result.isContentful ? InlineFormattingUtils::inlineContentEnding(result) : std::nullopt;
 
     // A line with no inline content (e.g. block content) is not where the ellipsis goes.

@@ -84,8 +84,11 @@ void Line::resetTrailingContent()
     m_trailingSoftHyphenWidth = { };
 }
 
-Line::Result Line::close()
+Line::Result Line::close(TrailingContentAction hangingTrailingWhitespace)
 {
+    if (hangingTrailingWhitespace == TrailingContentAction::Remove)
+        removeHangingTrailingWhitespace();
+
     auto trailingClonedDecorationWidth = [&] {
         auto decorationWidth = InlineLayoutUnit { };
         for (CheckedPtr inlineBox : m_inlineBoxListWithClonedDecorationEnd) {
@@ -232,18 +235,35 @@ void Line::handleTrailingHangingContent(std::optional<IntrinsicWidthMode> intrin
     }
 }
 
-void Line::detachHangingTrailingWhitespaceIfApplicable()
+std::optional<size_t> Line::detachHangingTrailingWhitespaceIfApplicable()
 {
     if (m_runs.isEmpty() || !isHangingTrailingContentWhitespace())
-        return;
+        return { };
     // The hanging whitespace ends the last text run, which may still be followed by non-content runs (e.g. </span>).
     for (auto index = m_runs.size(); index--;) {
         if (!m_runs[index].isText())
             continue;
-        if (auto trailingRun = m_runs[index].detachTrailingWhitespace())
+        if (auto trailingRun = m_runs[index].detachTrailingWhitespace()) {
             m_runs.insert(index + 1, *trailingRun);
-        return;
+            return index + 1;
+        }
+        // The hanging whitespace is a run of its own already.
+        return index;
     }
+    return { };
+}
+
+void Line::removeHangingTrailingWhitespace()
+{
+    auto hangingWhitespaceRunIndex = detachHangingTrailingWhitespaceIfApplicable();
+    if (!hangingWhitespaceRunIndex)
+        return;
+    auto removedWidth = m_runs[*hangingWhitespaceRunIndex].logicalWidth();
+    m_runs.removeAt(*hangingWhitespaceRunIndex);
+    for (auto index = *hangingWhitespaceRunIndex; index < m_runs.size(); ++index)
+        m_runs[index].moveHorizontally(-removedWidth);
+    m_contentLogicalWidth -= removedWidth;
+    m_hangingContent.resetTrailingContent();
 }
 
 void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)

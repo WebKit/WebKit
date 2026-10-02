@@ -4297,7 +4297,6 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-05
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-052.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-053.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-032.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-033.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-035.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-037.html [ ImageOnlyFailure ]
