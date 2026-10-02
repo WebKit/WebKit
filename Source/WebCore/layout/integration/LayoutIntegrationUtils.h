@@ -52,10 +52,10 @@ public:
     LayoutUnit minContentWidth(const ElementBox&) const;
     LayoutUnit minContentHeight(const ElementBox&) const;
     LayoutUnit minContentWidthForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
-    LayoutUnit minContentHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
-    LayoutUnit maxContentHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
-    LayoutUnit minContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
-    LayoutUnit maxContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
+    LayoutUnit minContentHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
+    LayoutUnit maxContentHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
+    LayoutUnit minContentContributionHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
+    LayoutUnit maxContentContributionHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
     LayoutUnit minContentLogicalWidthContribution(const ElementBox&) const;
     LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
