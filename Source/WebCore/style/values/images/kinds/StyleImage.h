@@ -47,6 +47,7 @@ class Document;
 class ImageSizingContext;
 class RenderElement;
 class RenderObject;
+struct NinePieceGeometry;
 struct ResourceLoaderOptions;
 
 namespace Style {
@@ -107,7 +108,7 @@ public:
 
     // Drawing
     ImageDrawResult drawTiled(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
-    ImageDrawResult drawTiled(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, WebCore::Image::TileRule, WebCore::Image::TileRule, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
+    ImageDrawResult drawNinePiece(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
 
     // Derived type.
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }

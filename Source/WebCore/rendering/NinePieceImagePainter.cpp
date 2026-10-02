@@ -242,25 +242,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
         options = { options, AXCustomColorModeController::shouldInvertSVGImage(*renderer) ? InvertContent::Yes : InvertContent::No };
 #endif
 
-    for (auto piece : allImagePieces) {
-        if (geometry.shouldSkipPiece(piece))
-            continue;
-
-        if (isCornerPiece(piece)) {
-            graphicsContext.drawImage(*image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], options, &extras);
-            continue;
-        }
-
-        auto hRule = isHorizontalPiece(piece)
-            ? static_cast<Image::TileRule>(geometry.horizontalRule)
-            : Image::StretchTile;
-
-        auto vRule = isVerticalPiece(piece)
-            ? static_cast<Image::TileRule>(geometry.verticalRule)
-            : Image::StretchTile;
-
-        styleImage->drawTiled(graphicsContext, *image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, options, &extras);
-    }
+    styleImage->drawNinePiece(graphicsContext, *image, concreteObjectSize, geometry, options, &extras);
 }
 
 // MARK: - Painter entry point
