@@ -264,22 +264,24 @@ class SpatialVideoSupport extends MediaControllerSupport
     _buildMesh(projection)
     {
         const fov = this._fovDegrees;
+        let geometry;
         if (projection === "fisheye") {
-            this._mesh = this._makeFisheye(fov || 180);
+            geometry = this._makeFisheye(fov || 180);
             this._feather = SpatialVideoSupport.FeatherFraction;
         } else if (projection === "wideFOV") {
-            this._mesh = this._makeFisheye(fov || 150);
+            geometry = this._makeFisheye(fov || 150);
             this._feather = SpatialVideoSupport.FeatherFraction;
         } else if (projection === "equirect180") {
-            this._mesh = this._makeSphere(Math.PI);
+            geometry = this._makeSphere(Math.PI);
             this._feather = SpatialVideoSupport.FeatherFraction;
         } else if (projection === "equiAngularCubemap") {
-            this._mesh = this._makeEquiAngularCubemap();
+            geometry = this._makeEquiAngularCubemap();
             this._feather = 0;
         } else {
-            this._mesh = this._makeSphere(2 * Math.PI);
+            geometry = this._makeSphere(2 * Math.PI);
             this._feather = 0;
         }
+        this._mesh = this._uploadMesh(geometry);
         this._applyMipmapLimit();
     }
 
@@ -334,7 +336,7 @@ class SpatialVideoSupport extends MediaControllerSupport
                 }
             }
         }
-        return this._uploadMesh(positions, texCoords, edges, indices);
+        return { positions, texCoords, edges, indices };
     }
 
     _makeSphere(span, radius = 10)
@@ -358,7 +360,7 @@ class SpatialVideoSupport extends MediaControllerSupport
                 indices.push(topLeft, topLeft + 1, bottomLeft, topLeft + 1, bottomLeft + 1, bottomLeft);
             }
         }
-        return this._uploadMesh(positions, texCoords, edges, indices);
+        return { positions, texCoords, edges, indices };
     }
 
     _makeFisheye(fovDegrees, radius = 10)
@@ -382,10 +384,10 @@ class SpatialVideoSupport extends MediaControllerSupport
                 indices.push(topLeft, topLeft + 1, bottomLeft, topLeft + 1, bottomLeft + 1, bottomLeft);
             }
         }
-        return this._uploadMesh(positions, texCoords, edges, indices);
+        return { positions, texCoords, edges, indices };
     }
 
-    _uploadMesh(positions, texCoords, edges, indices)
+    _uploadMesh({ positions, texCoords, edges, indices })
     {
         const gl = this._gl;
         const position = gl.createBuffer();
