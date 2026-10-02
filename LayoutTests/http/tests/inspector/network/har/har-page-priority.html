@@ -17,8 +17,6 @@ function test()
 
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
-                WI.networkManager.mainFrame.removeAllResources(),
-                WI.networkManager.mainFrame.clearProvisionalLoad(false),
                 InspectorTest.reloadPage({ignoreCache: true}),
             ]);
 
