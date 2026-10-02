@@ -64,6 +64,7 @@ struct GridAutoFlowOptions {
 struct GridLayoutResult {
     UsedTrackSizes usedTrackSizes;
     GridItemRects gridItemRects;
+    LayoutUnit blockContentSize;
 };
 
 // The number of implicit tracks generated before the start of the explicit grid, per axis, because
