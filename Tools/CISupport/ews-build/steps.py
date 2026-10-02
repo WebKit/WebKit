@@ -7649,6 +7649,8 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
         self.rebase_enabled = rebase_enabled
         self.contributors = {}
+        self.verify_commit_count_command = None
+        self.summary = ''
 
     def number_commits_to_canonicalize(self):
         commit_count = self.getProperty('commit_count', 1)
@@ -7670,6 +7672,8 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         commands = [self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0()))]
         if self.rebase_enabled:
             commands += [['git', 'pull', remote, base_ref, '--rebase']]
+            self.verify_commit_count_command = self.shell_command(f'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq {self.getProperty("commit_count", 1)}')
+            commands.append(self.verify_commit_count_command)
             if head_ref:
                 commands += [['git', 'branch', '-f', base_ref, head_ref]]
             commands += [['git', 'checkout', '--progress', base_ref]]
@@ -7699,9 +7703,19 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
         rc = yield super().run()
+
+        if rc == FAILURE and self.verify_commit_count_command and self.last_command == self.verify_commit_count_command:
+            pr_number = self.getProperty('github.number')
+            self.summary = f'Changes already landed on {base_ref}'
+            self.setProperty('build_finish_summary', self.summary)
+            self.setProperty('comment_text', f'Commits in PR #{pr_number} were dropped when rebasing onto {base_ref} because their changes have already landed, blocking PR #{pr_number}. Update the pull request to contain only unlanded changes, or close it.')
+            self.haltOnFailure = False
+            self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest()])
         defer.returnValue(rc)
 
     def getResultSummary(self):
+        if self.summary:
+            return {'step': self.summary}
         commit_pluralized = "commit" if self.number_commits_to_canonicalize() == 1 else "commits"
         if self.results == SUCCESS:
             return {'step': f'Canonicalized {commit_pluralized}'}
