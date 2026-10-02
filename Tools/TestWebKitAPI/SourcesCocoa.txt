@@ -62,6 +62,7 @@ Helpers/cocoa/FindTestPage.mm @nonARC
 Helpers/cocoa/MouseSupportUIDelegate.mm @nonARC
 Helpers/cocoa/PasteboardUtilities.mm @nonARC
 Helpers/cocoa/PDFTestHelpers.mm @nonARC
+Helpers/cocoa/PrivateFindSPITester.mm @nonARC
 Helpers/cocoa/PublicFindAPITester.mm @nonARC
 Helpers/cocoa/SiteIsolationTestUtilities.mm @nonARC
 Helpers/cocoa/SiteIsolationUtilities.mm @nonARC
@@ -153,6 +154,7 @@ Tests/WebKit/WKWebView/FTP.mm @nonARC
 Tests/WebKit/WKWebView/FileSystemAccess.mm @nonARC
 Tests/WebKit/WKWebView/FindInPage.mm @nonARC
 Tests/WebKit/WKWebView/FindInPageAPI.mm @nonARC
+Tests/WebKit/WKWebView/FindPrivateSPI.mm @nonARC
 Tests/WebKit/WKWebView/FindPublicAPI.mm @nonARC
 Tests/WebKit/WKWebView/FirstVisuallyNonEmptyMilestone.mm @nonARC
 Tests/WebKit/WKWebView/FixedLayoutSize.mm @nonARC
