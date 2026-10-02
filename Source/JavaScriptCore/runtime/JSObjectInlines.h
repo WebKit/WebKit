@@ -37,6 +37,7 @@
 #include <JavaScriptCore/MegamorphicCache.h>
 #include <JavaScriptCore/ObjectInitializationScope.h>
 #include <JavaScriptCore/SparseArrayValueMap.h>
+#include <JavaScriptCore/StructureCreateInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
 #include <JavaScriptCore/VM.h>

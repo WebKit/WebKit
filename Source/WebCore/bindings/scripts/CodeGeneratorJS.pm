@@ -8910,6 +8910,7 @@ sub GenerateConstructorDefinition
             my $implType = GetImplClassName($interface);
 
             AddToImplIncludes("JSDOMConvertInterface.h");
+            AddToImplIncludes("<JavaScriptCore/StructureCreateInlines.h>");
 
             my @constructionConversionArguments = ();
             push(@constructionConversionArguments, "*lexicalGlobalObject");

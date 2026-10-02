@@ -561,7 +561,7 @@ public:
     // in-place.
     inline void nukeStructureAndSetButterfly(VM&, StructureID oldStructureID, Butterfly*); // Defined in JSObjectInlines.h
 
-    void setStructure(VM&, Structure*);
+    inline void setStructure(VM&, Structure*); // Defined in StructureCreateInlines.h
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
     JS_EXPORT_PRIVATE void convertToUncacheableDictionary(VM&);
@@ -1058,13 +1058,6 @@ inline bool JSObject::isErrorInstance() const
 inline bool JSObject::isWithScope() const
 {
     return type() == WithScopeType;
-}
-
-inline void JSObject::setStructure(VM& vm, Structure* structure)
-{
-    ASSERT(structure);
-    ASSERT(!butterfly() == !(structure->outOfLineCapacity() || structure->hasIndexingHeader(this)));
-    JSCell::setStructure(vm, structure);
 }
 
 inline JSObject* asObject(JSCell* cell)

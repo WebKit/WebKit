@@ -38,6 +38,13 @@
 
 namespace JSC {
 
+inline void JSObject::setStructure(VM& vm, Structure* structure)
+{
+    ASSERT(structure);
+    ASSERT(!butterfly() == !(structure->outOfLineCapacity() || structure->hasIndexingHeader(this)));
+    JSCell::setStructure(vm, structure);
+}
+
 inline void JSObject::didBecomePrototype(VM& vm)
 {
     Structure* oldStructure = structure();
