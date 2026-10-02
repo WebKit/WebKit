@@ -1,5 +1,5 @@
 
-FAIL loopback to loopback: no permission required. assert_equals: expected "loaded" but got "timeout"
-FAIL loopback to local: no permission required. assert_equals: expected "loaded" but got "timeout"
-FAIL loopback to public: no permission required. assert_equals: expected "loaded" but got "timeout"
+PASS loopback to loopback: no permission required.
+PASS loopback to local: no permission required.
+PASS loopback to public: no permission required.
 

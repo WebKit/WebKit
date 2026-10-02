@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT LNA Public to local with permission Test timed out
-NOTRUN LNA Public to local with permission denied
-NOTRUN LNA Public to local http mixed content bypass
-NOTRUN LNA Public to public http mixed content bypass failure
+PASS LNA Public to local with permission
+PASS LNA Public to local with permission denied
+PASS LNA Public to local http mixed content bypass
+PASS LNA Public to public http mixed content bypass failure
 

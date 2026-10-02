@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT LNA Public to loopback websocket with permission Test timed out
-NOTRUN LNA Public to loopback websocket without permission
-NOTRUN LNA local to loopback websocket with permission
-NOTRUN LNA local to loopback websocket without permission
+PASS LNA Public to loopback websocket with permission
+FAIL LNA Public to loopback websocket without permission assert_equals: expected "close: code 1006" but got "open"
+PASS LNA local to loopback websocket with permission
+PASS LNA local to loopback websocket without permission
 
