@@ -29,17 +29,14 @@
 
 namespace WebCore {
 
-// https://drafts.csswg.org/css-sizing-3/#intrinsic-sizes
+// https://html.spec.whatwg.org/multipage/input.html#dom-input-height
 //
 //   Specified size:      none
 //   Default object size: the CSS default object size
 //   Algorithm:           the default sizing algorithm
-class ReplacedElementIntrinsicSizing final : public DefaultSizing {
+class ImageInputTypeSizing final : public DefaultSizing {
 public:
-    explicit ReplacedElementIntrinsicSizing(float density = 1)
-        : DefaultSizing(std::nullopt, density)
-    {
-    }
+    ImageInputTypeSizing() = default;
 };
 
 } // namespace WebCore

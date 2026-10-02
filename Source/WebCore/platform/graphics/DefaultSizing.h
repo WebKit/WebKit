@@ -35,7 +35,7 @@ namespace WebCore {
 //   Specified size:      none
 //   Default object size: the box it is shown in, or the CSS default object size
 //   Algorithm:           the default sizing algorithm
-class DefaultSizing final : public ImageSizingContext {
+class DefaultSizing : public ImageSizingContext {
 public:
     explicit DefaultSizing(std::optional<FloatSize> box = std::nullopt, float density = 1)
         : m_box(box)

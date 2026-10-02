@@ -32,12 +32,12 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "ImageInputTypeSizing.h"
 #include "InputTypeNames.h"
 #include "MouseEvent.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
-#include "ReplacedElementIntrinsicSizing.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -189,7 +189,7 @@ unsigned ImageInputType::height() const
     RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image()) {
         if (RefPtr image = protect(imageLoader->image())->image())
-            return LayoutUnit(ReplacedElementIntrinsicSizing { }.resolve(image->naturalDimensions()).size().height()).toUnsigned();
+            return LayoutUnit(ImageInputTypeSizing { }.resolve(image->naturalDimensions()).size().height()).toUnsigned();
     }
 
     return 0;
@@ -214,7 +214,7 @@ unsigned ImageInputType::width() const
     RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image()) {
         if (RefPtr image = protect(imageLoader->image())->image())
-            return LayoutUnit(ReplacedElementIntrinsicSizing { }.resolve(image->naturalDimensions()).size().width()).toUnsigned();
+            return LayoutUnit(ImageInputTypeSizing { }.resolve(image->naturalDimensions()).size().width()).toUnsigned();
     }
 
     return 0;

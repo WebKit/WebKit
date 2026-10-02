@@ -41,6 +41,7 @@
 #include "HTMLAttachmentElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
+#include "HTMLImageDensityCorrectedSizing.h"
 #include "HTMLImageLoader.h"
 #include "HTMLMapElement.h"
 #include "HTMLParserIdioms.h"
@@ -65,7 +66,6 @@
 #include "RenderImage.h"
 #include "RenderImageResource.h"
 #include "RenderView.h"
-#include "ReplacedElementIntrinsicSizing.h"
 #include "RequestPriority.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -676,24 +676,22 @@ HTMLPictureElement* HTMLImageElement::pictureElement() const
 {
     return m_pictureElement.get();
 }
-    
+
 void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 {
     m_pictureElement = pictureElement;
 }
-    
-LayoutSize HTMLImageElement::naturalSize() const
+
+LayoutSize HTMLImageElement::densityCorrectedNaturalSize() const
 {
+    // https://html.spec.whatwg.org/multipage/images.html#density-corrected-intrinsic-width-and-height
+
     RefPtr image = m_imageLoader->image();
     if (!image || !image->hasImage())
         return { };
 
-    CheckedPtr renderer = this->renderer();
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer.get());
-    auto naturalDimensions = renderImage ? protect(renderImage->imageResource())->naturalDimensions()
-        : image->naturalDimensions(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
-
-    return LayoutSize(ReplacedElementIntrinsicSizing { m_imageDevicePixelRatio }.resolve(naturalDimensions).size());
+    auto naturalDimensions = image->naturalDimensions(ImageOrientation::Orientation::FromImage);
+    return LayoutSize(HTMLImageDensityCorrectedSizing { m_imageDevicePixelRatio }.resolve(naturalDimensions).size());
 }
 
 unsigned HTMLImageElement::width()
@@ -707,7 +705,7 @@ unsigned HTMLImageElement::width()
             return optionalWidth.value();
 
         // otherwise fall back to what naturalWidth returns
-        return naturalSize().width().toUnsigned();
+        return densityCorrectedNaturalSize().width().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -728,7 +726,7 @@ unsigned HTMLImageElement::height()
             return optionalHeight.value();
 
         // otherwise fall back to what naturalHeight returns
-        return naturalSize().height().toUnsigned();
+        return densityCorrectedNaturalSize().height().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -740,12 +738,12 @@ unsigned HTMLImageElement::height()
 
 unsigned HTMLImageElement::naturalWidth() const
 {
-    return naturalSize().width().toUnsigned();
+    return densityCorrectedNaturalSize().width().toUnsigned();
 }
 
 unsigned HTMLImageElement::naturalHeight() const
 {
-    return naturalSize().height().toUnsigned();
+    return densityCorrectedNaturalSize().height().toUnsigned();
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const

@@ -29,14 +29,14 @@
 
 namespace WebCore {
 
-// https://drafts.csswg.org/css-sizing-3/#intrinsic-sizes
+// https://html.spec.whatwg.org/multipage/images.html#density-corrected-intrinsic-width-and-height
 //
 //   Specified size:      none
 //   Default object size: the CSS default object size
-//   Algorithm:           the default sizing algorithm
-class ReplacedElementIntrinsicSizing final : public DefaultSizing {
+//   Algorithm:           the default sizing algorithm, with the natural dimensions divided by the current pixel density
+class HTMLImageDensityCorrectedSizing final : public DefaultSizing {
 public:
-    explicit ReplacedElementIntrinsicSizing(float density = 1)
+    explicit HTMLImageDensityCorrectedSizing(float density)
         : DefaultSizing(std::nullopt, density)
     {
     }

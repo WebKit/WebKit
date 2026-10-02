@@ -256,7 +256,8 @@ private:
 
     std::optional<float> autoSizesLayoutWidth() const;
 
-    LayoutSize naturalSize() const;
+    // https://html.spec.whatwg.org/multipage/images.html#density-corrected-intrinsic-width-and-height
+    LayoutSize densityCorrectedNaturalSize() const;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 

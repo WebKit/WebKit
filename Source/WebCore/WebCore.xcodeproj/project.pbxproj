@@ -59,6 +59,8 @@
 
 /* Begin PBXBuildFile section */
 		4C1117D4C483A9BC36554D2F /* SVGImageElementSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 775ED9913673971DA280FD1E /* SVGImageElementSizing.h */; };
+		281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */; };
+		7062FCE22554E977B1F0B135 /* HTMLImageDensityCorrectedSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 73AFE9029ADA26681AC9083A /* HTMLImageDensityCorrectedSizing.h */; };
 		D93A5C8E2B10F46A7C05E8D3 /* ReplacedElementIntrinsicSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B7A2C10F63D5948A1E2B70 /* ReplacedElementIntrinsicSizing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0D90A26CC06154520622388D /* StyleBackgroundImageSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = EE25250FA9F1E8ED3329837C /* StyleBackgroundImageSizing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		349BF87E63040DFC90F188F6 /* StyleBorderImageSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BB42F262C9B6E31293B37C /* StyleBorderImageSizing.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7849,6 +7851,8 @@
 /* Begin PBXFileReference section */
 		775ED9913673971DA280FD1E /* SVGImageElementSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGImageElementSizing.h; sourceTree = "<group>"; };
 		1401B330E419558F99500E10 /* StyleImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImage.cpp; sourceTree = "<group>"; };
+		67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageInputTypeSizing.h; sourceTree = "<group>"; };
+		73AFE9029ADA26681AC9083A /* HTMLImageDensityCorrectedSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLImageDensityCorrectedSizing.h; sourceTree = "<group>"; };
 		E4B7A2C10F63D5948A1E2B70 /* ReplacedElementIntrinsicSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplacedElementIntrinsicSizing.h; sourceTree = "<group>"; };
 		5771A5E7578EF81664D18C61 /* StyleBackgroundImageSizing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBackgroundImageSizing.cpp; sourceTree = "<group>"; };
 		EE25250FA9F1E8ED3329837C /* StyleBackgroundImageSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBackgroundImageSizing.h; sourceTree = "<group>"; };
@@ -33844,6 +33848,7 @@
 				A871DE180A152AC800B12A68 /* HTMLIFrameElement.cpp */,
 				A871DE1E0A152AC800B12A68 /* HTMLIFrameElement.h */,
 				855542970AA4938800BA89F2 /* HTMLIFrameElement.idl */,
+				73AFE9029ADA26681AC9083A /* HTMLImageDensityCorrectedSizing.h */,
 				7C67712A2527D5C700FDEF00 /* HTMLImageElement+CSSOMView.idl */,
 				A8EA7D290A19385500A8EF5F /* HTMLImageElement.cpp */,
 				A8EA7D250A19385500A8EF5F /* HTMLImageElement.h */,
@@ -34033,6 +34038,7 @@
 				97205AB21239291000B17380 /* ImageDocument.h */,
 				F55B3D8D1251F12D003EF269 /* ImageInputType.cpp */,
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
+				67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */,
 				556DC2093B5FAC965262859B /* ImageRequestState.h */,
 				E52EFDF32112875A00AD282A /* InputMode.cpp */,
 				E52EFDF22112875A00AD282A /* InputMode.h */,
@@ -46549,6 +46555,7 @@
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
+				7062FCE22554E977B1F0B135 /* HTMLImageDensityCorrectedSizing.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
 				A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */,
 				A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */,
@@ -46756,6 +46763,7 @@
 				ECC2B535B9F2983B774A915F /* ImageDrawingExtras.h in Headers */,
 				5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */,
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
+				281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */,
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
