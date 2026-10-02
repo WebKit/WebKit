@@ -38,16 +38,12 @@ function test()
                 WI.networkManager.mainFrame.clearProvisionalLoad(false),
             ]);
 
-            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
-
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
                 InspectorTest.reloadPage({ignoreCache: true, revalidateAllResources: true}),
             ]);
 
             resources.unshift(WI.networkManager.mainFrame.mainResource);
-
-            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
             await resourcePromise;
 
