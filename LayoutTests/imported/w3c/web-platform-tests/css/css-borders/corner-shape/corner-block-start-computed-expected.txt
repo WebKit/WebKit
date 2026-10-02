@@ -1,6 +1,6 @@
 
-PASS Property corner-block-start value '0px round'
+FAIL Property corner-block-start value '0px round' assert_equals: expected "normal" but got "0px"
 PASS Property corner-block-start value '10px bevel'
-PASS Property corner-block-start value 'normal / 2px round'
-PASS Property corner-block-start value '4px 2% squircle / 1em scoop'
+FAIL Property corner-block-start value 'normal / 2px round' assert_true: 'normal / 2px round' is a supported value for corner-block-start. expected true got false
+FAIL Property corner-block-start value '4px 2% squircle / 1em scoop' assert_true: '4px 2% squircle / 1em scoop' is a supported value for corner-block-start. expected true got false
 

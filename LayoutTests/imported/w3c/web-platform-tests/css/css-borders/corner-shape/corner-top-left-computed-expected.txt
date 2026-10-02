@@ -1,7 +1,7 @@
 
-PASS Property corner-top-left value '0px round'
-PASS Property corner-top-left value 'normal'
-PASS Property corner-top-left value '4px round'
+FAIL Property corner-top-left value '0px round' assert_equals: expected "normal" but got "0px"
+FAIL Property corner-top-left value 'normal' assert_true: 'normal' is a supported value for corner-top-left. expected true got false
+FAIL Property corner-top-left value '4px round' assert_equals: expected "4px superellipse(1)" but got "4px"
 PASS Property corner-top-left value '2% notch'
 PASS Property corner-top-left value '4px 2% squircle'
 PASS Property corner-top-left value 'superellipse(-0.5) 30% 10px'

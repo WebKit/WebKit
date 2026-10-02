@@ -64,6 +64,11 @@ namespace CSSPropertyParserHelpers {
 
 enum class SupportWebKitBorderRadiusQuirk : bool { No, Yes };
 
+// NOTE: The border radius consumers below stop as soon as the tokens stop
+// looking like radii instead of requiring the range to be at its end, so that
+// shorthands which continue past the radii, such as `corner`, can use them.
+// Callers are responsible for rejecting anything left over.
+
 template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::BorderRadius> consumeBorderRadius(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
@@ -73,15 +78,16 @@ template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::
 
     OptionalRadiiForAxis horizontalRadii;
     unsigned i = 0;
-    for (; i < 4 && !range.atEnd() && range.peek().type() != DelimiterToken; ++i) {
-        horizontalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
-        if (!horizontalRadii[i])
-            return { };
+    for (; i < 4; ++i) {
+        auto radius = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
+        if (!radius)
+            break;
+        horizontalRadii[i] = WTF::move(radius);
     }
     if (!horizontalRadii[0])
         return { };
 
-    if (range.atEnd()) {
+    if (!consumeSlashIncludingWhitespace(range)) {
         if constexpr (supportQuirk == SupportWebKitBorderRadiusQuirk::Yes) {
             // Legacy syntax: `-webkit-border-radius: l1 l2` is equivalent to border-radius: `l1 / l2`.
             if (i == 2) {
@@ -105,16 +111,14 @@ template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::
         };
     }
 
-    if (!consumeSlashIncludingWhitespace(range))
-        return { };
-
     OptionalRadiiForAxis verticalRadii;
-    for (unsigned i = 0; i < 4 && !range.atEnd(); ++i) {
-        verticalRadii[i] = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
-        if (!verticalRadii[i])
-            return { };
+    for (unsigned j = 0; j < 4; ++j) {
+        auto radius = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
+        if (!radius)
+            break;
+        verticalRadii[j] = WTF::move(radius);
     }
-    if (!verticalRadii[0] || !range.atEnd())
+    if (!verticalRadii[0])
         return { };
 
     return CSS::BorderRadius {
@@ -154,15 +158,12 @@ std::optional<CSS::BorderRadiusSide> consumeUnresolvedBorderRadiusSide(CSSParser
     if (!second)
         second = first;
 
-    if (range.atEnd()) {
+    if (!consumeSlashIncludingWhitespace(range)) {
         return CSS::BorderRadiusSide {
             .horizontal = { *first, *second },
             .vertical = { *first, *second }
         };
     }
-
-    if (!consumeSlashIncludingWhitespace(range))
-        return { };
 
     auto verticalFirst = MetaConsumer<LengthPercentage>::consume(range, state);
     if (!verticalFirst)
@@ -171,13 +172,35 @@ std::optional<CSS::BorderRadiusSide> consumeUnresolvedBorderRadiusSide(CSSParser
     if (!verticalSecond)
         verticalSecond = verticalFirst;
 
-    if (!range.atEnd())
-        return { };
-
     return CSS::BorderRadiusSide {
         .horizontal = { *first, *second },
         .vertical = { *verticalFirst, *verticalSecond }
     };
+}
+
+std::optional<CSS::BorderRadius::Corner> consumeUnresolvedBorderRadiusCorner(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'border-top-left-radius'> = <length-percentage [0,∞]>{1,2}
+    // https://drafts.csswg.org/css-backgrounds/#propdef-border-top-left-radius
+    //
+    // The single corner shorthands additionally accept the slash form of
+    // <'border-radius'>, so `corner-top-left: 10px / 5px` is allowed.
+
+    using LengthPercentage = CSS::LengthPercentage<CSS::Nonnegative>;
+
+    auto horizontal = MetaConsumer<LengthPercentage>::consume(range, state);
+    if (!horizontal)
+        return { };
+
+    if (consumeSlashIncludingWhitespace(range)) {
+        auto vertical = MetaConsumer<LengthPercentage>::consume(range, state);
+        if (!vertical)
+            return { };
+        return CSS::BorderRadius::Corner { *horizontal, *vertical };
+    }
+
+    auto vertical = MetaConsumer<LengthPercentage>::consume(range, state);
+    return CSS::BorderRadius::Corner { *horizontal, vertical.value_or(*horizontal) };
 }
 
 // MARK: - Border Image

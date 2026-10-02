@@ -1,14 +1,14 @@
 
-PASS e.style['corner'] = "round 30%" should set the property value
+FAIL e.style['corner'] = "round 30%" should set the property value assert_equals: serialization should be canonical expected "30% round" but got "30%"
 PASS e.style['corner'] = "10px bevel" should set the property value
-PASS e.style['corner'] = "round 10% / 2rem squircle" should set the property value
-PASS e.style['corner'] = "notch 10px / squircle 30% 10px / 1rem bevel / 2px round" should set the property value
-PASS e.style['corner'] = "normal" should set the property value
-PASS e.style['corner'] = "4px 2% round" should set the property value
-PASS e.style['corner'] = "4px 2% round / bevel 1em / normal" should set the property value
-PASS e.style['corner'] = "normal / 1px round / normal / 3% squircle" should set the property value
-PASS e.style['corner'] = "normal / superellipse(-0.5) 30% 10px / 10px 1rem notch" should set the property value
-PASS e.style['corner'] = "0px notch" should set the property value
-PASS e.style['corner'] = "0px superellipse(1)" should set the property value
-PASS e.style['corner'] = "0px round" should set the property value
+FAIL e.style['corner'] = "round 10% / 2rem squircle" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner'] = "notch 10px / squircle 30% 10px / 1rem bevel / 2px round" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner'] = "4px 2% round" should set the property value assert_equals: serialization should be canonical expected "4px 2% round" but got "4px 2%"
+FAIL e.style['corner'] = "4px 2% round / bevel 1em / normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner'] = "normal / 1px round / normal / 3% squircle" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner'] = "normal / superellipse(-0.5) 30% 10px / 10px 1rem notch" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner'] = "0px notch" should set the property value assert_equals: serialization should be canonical expected "0px notch" but got "notch"
+FAIL e.style['corner'] = "0px superellipse(1)" should set the property value assert_equals: serialization should be canonical expected "normal" but got "superellipse(1)"
+FAIL e.style['corner'] = "0px round" should set the property value assert_equals: serialization should be canonical expected "normal" but got "0px"
 
