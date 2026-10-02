@@ -202,11 +202,16 @@ inline static RetainPtr<UIToolbar> createToolbarWithItems(NSArray<UIBarButtonIte
     if (toolbarMargin) {
         auto applyMarginToToolbar = [toolbarMargin](UIToolbar *toolbar) {
             toolbar.translatesAutoresizingMaskIntoConstraints = NO;
+
+            RetainPtr topConstraint = [toolbar.topAnchor constraintEqualToAnchor:toolbar.superview.topAnchor constant:toolbarMargin];
+            RetainPtr bottomConstraint = [toolbar.bottomAnchor constraintEqualToAnchor:toolbar.superview.bottomAnchor constant:-toolbarMargin];
+            [topConstraint setPriority:UILayoutPriorityRequired - 1];
+            [bottomConstraint setPriority:UILayoutPriorityRequired - 1];
             [NSLayoutConstraint activateConstraints:@[
                 [toolbar.leadingAnchor constraintEqualToAnchor:toolbar.superview.leadingAnchor],
                 [toolbar.trailingAnchor constraintEqualToAnchor:toolbar.superview.trailingAnchor],
-                [toolbar.topAnchor constraintEqualToAnchor:toolbar.superview.topAnchor constant:toolbarMargin],
-                [toolbar.bottomAnchor constraintEqualToAnchor:toolbar.superview.bottomAnchor constant:-toolbarMargin],
+                topConstraint,
+                bottomConstraint,
             ]];
         };
 
