@@ -8,6 +8,7 @@ import unittest
 
 from unittest import mock
 
+from webkitpy import llvm_profile_utils
 from webkitpy.llvm_profile_utils import (FRAMEWORK_NAME_PATTERN, LLVMProfDataExecutable, LLVMProfileData,
                                          ProfiledFramework, REQUIRED_FRAMEWORK_NAMES,
                                          merge_raw_profiles_in_directory, resolve_profiled_frameworks,
@@ -365,6 +366,106 @@ class MergeRawProfilesTest(unittest.TestCase):
                                       [os.path.join(directory, 'WebKit_arm64_pid1_0.profraw')]),
                                      (os.path.join(directory, 'WebKitLegacy.profdata'),
                                       [os.path.join(directory, 'WebKitLegacy_arm64_pid1_0.profraw')])])
+
+
+class LLVMProfDataExecutableTest(unittest.TestCase):
+    MOCK_BINARY = '/mock/bin/llvm-profdata'
+    OLD_TOOLCHAIN = '/Applications/Xcode.app/Contents/Developer/Toolchains/OSX26.6.xctoolchain/usr/bin/llvm-profdata'
+    DEFAULT_TOOLCHAIN = '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata'
+    NO_VERSION = '/opt/llvm/bin/llvm-profdata'
+
+    def _executable_class(self, search_path, xcrun_paths, versions, failing_binaries=()):
+        class Executable(LLVMProfDataExecutable):
+            pass
+
+        invocations = []
+
+        def run(command, *args, **kwargs):
+            binary_path = command[0]
+            if command[1:] == ['--version']:
+                version = versions.get(binary_path)
+                if version is None:
+                    return subprocess.CompletedProcess(command, returncode=1, stdout='', stderr='unknown option')
+                return subprocess.CompletedProcess(command, returncode=0, stdout=f'Apple LLVM version {version}\n  Optimized build.\n', stderr='')
+            invocations.append(binary_path)
+            returncode = 1 if binary_path in failing_binaries else 0
+            return subprocess.CompletedProcess(command, returncode=returncode, stdout='', stderr='')
+
+        sdk_paths = iter(xcrun_paths)
+        patches = [mock.patch.object(llvm_profile_utils.shutil, 'which', return_value=search_path),
+                   mock.patch.object(llvm_profile_utils, 'locate_binary_xcrun', lambda sdk, name: next(sdk_paths, None)),
+                   mock.patch.object(llvm_profile_utils.subprocess, 'run', run)]
+        for patch in patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+        return Executable, invocations
+
+    def test_detected_binaries_are_ordered_from_oldest_to_newest_version(self):
+        executable, _ = self._executable_class(self.DEFAULT_TOOLCHAIN, [self.MOCK_BINARY, self.OLD_TOOLCHAIN],
+                                               {self.DEFAULT_TOOLCHAIN: '23.0.0', self.MOCK_BINARY: '21.0.0',
+                                                self.OLD_TOOLCHAIN: '21.0.0'})
+
+        self.assertEqual(executable.detect_binaries(), [self.MOCK_BINARY, self.OLD_TOOLCHAIN, self.DEFAULT_TOOLCHAIN])
+
+    def test_versions_compare_numerically(self):
+        executable, _ = self._executable_class(self.DEFAULT_TOOLCHAIN, [self.MOCK_BINARY],
+                                               {self.DEFAULT_TOOLCHAIN: '10.0.1', self.MOCK_BINARY: '9.1.0'})
+
+        self.assertEqual(executable.detect_binaries(), [self.MOCK_BINARY, self.DEFAULT_TOOLCHAIN])
+
+    def test_binaries_without_a_version_go_after_the_versioned_ones(self):
+        executable, _ = self._executable_class(self.NO_VERSION, [self.DEFAULT_TOOLCHAIN, self.MOCK_BINARY],
+                                               {self.DEFAULT_TOOLCHAIN: '23.0.0', self.MOCK_BINARY: '21.0.0'})
+
+        self.assertEqual(executable.detect_binaries(), [self.MOCK_BINARY, self.DEFAULT_TOOLCHAIN, self.NO_VERSION])
+
+    def test_a_binary_that_cannot_be_launched_has_no_version(self):
+        with mock.patch.object(llvm_profile_utils.subprocess, 'run', side_effect=OSError('No such file')):
+            self.assertIsNone(LLVMProfDataExecutable.binary_version(self.NO_VERSION))
+
+    def test_the_last_working_binary_keeps_being_used(self):
+        executable, invocations = self._executable_class(self.DEFAULT_TOOLCHAIN, [self.MOCK_BINARY, self.OLD_TOOLCHAIN],
+                                                         {self.DEFAULT_TOOLCHAIN: '23.0.0', self.MOCK_BINARY: '21.0.0',
+                                                          self.OLD_TOOLCHAIN: '21.0.0'})
+
+        for _ in range(3):
+            executable.run(['merge'])
+
+        self.assertEqual(invocations, [self.MOCK_BINARY] * 3)
+
+    def test_a_failing_binary_falls_back_and_the_fallback_sticks(self):
+        executable, invocations = self._executable_class(self.DEFAULT_TOOLCHAIN, [self.MOCK_BINARY, self.OLD_TOOLCHAIN],
+                                                         {self.DEFAULT_TOOLCHAIN: '23.0.0', self.MOCK_BINARY: '21.0.0',
+                                                          self.OLD_TOOLCHAIN: '21.0.0'},
+                                                         failing_binaries=[self.MOCK_BINARY])
+
+        executable.run(['merge'])
+        executable.run(['merge'])
+
+        self.assertEqual(invocations, [self.MOCK_BINARY, self.OLD_TOOLCHAIN, self.OLD_TOOLCHAIN])
+
+    def test_when_the_preferred_binary_stops_working_the_next_one_is_tried_before_wrapping_around(self):
+        executable, invocations = self._executable_class(self.DEFAULT_TOOLCHAIN, [self.MOCK_BINARY, self.OLD_TOOLCHAIN],
+                                                         {self.DEFAULT_TOOLCHAIN: '23.0.0', self.MOCK_BINARY: '21.0.0',
+                                                          self.OLD_TOOLCHAIN: '21.0.0'})
+        executable.preferred_binary_path = self.OLD_TOOLCHAIN
+
+        with mock.patch.object(executable, 'detect_binaries',
+                               return_value=[self.MOCK_BINARY, self.OLD_TOOLCHAIN, self.DEFAULT_TOOLCHAIN]):
+            self.assertEqual(executable.preference_ordered_paths(),
+                             [self.OLD_TOOLCHAIN, self.DEFAULT_TOOLCHAIN, self.MOCK_BINARY])
+
+    def test_every_binary_is_tried_once_when_all_fail(self):
+        executable, invocations = self._executable_class(self.DEFAULT_TOOLCHAIN, [self.MOCK_BINARY, self.OLD_TOOLCHAIN],
+                                                         {self.DEFAULT_TOOLCHAIN: '23.0.0', self.MOCK_BINARY: '21.0.0',
+                                                          self.OLD_TOOLCHAIN: '21.0.0'},
+                                                         failing_binaries=[self.MOCK_BINARY, self.OLD_TOOLCHAIN,
+                                                                           self.DEFAULT_TOOLCHAIN])
+
+        with self.assertRaises(subprocess.CalledProcessError):
+            executable.run(['merge'], check=True)
+
+        self.assertEqual(invocations, [self.MOCK_BINARY, self.OLD_TOOLCHAIN, self.DEFAULT_TOOLCHAIN])
 
 
 REQUIRES_COMPRESSION_TOOL = unittest.skipUnless(os.path.exists('/usr/bin/compression_tool'),

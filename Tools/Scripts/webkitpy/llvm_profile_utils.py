@@ -115,36 +115,40 @@ def simplify_profile_weights(profile_weights):
 
 
 class ExecutablesFromEnvAndXcode:
-    PREFERRED_EXECUTABLE_INDEX = 0
     EXECUTABLE_NAME = None
+    preferred_binary_path = None
+
+    @classmethod
+    def order_binaries(cls, binary_paths):
+        return binary_paths
 
     @classmethod
     @cache
     def detect_binaries(cls):
-        llvm_profdata_binaries = []
+        binary_paths = []
 
-        llvm_profdata_from_search_path = shutil.which(cls.EXECUTABLE_NAME)
-        if llvm_profdata_from_search_path:
-            llvm_profdata_binaries.append(llvm_profdata_from_search_path)
+        binary_path_from_search_path = shutil.which(cls.EXECUTABLE_NAME)
+        if binary_path_from_search_path:
+            binary_paths.append(binary_path_from_search_path)
 
         for sdk_name in ('macosx.internal', 'iphoneos.internal', 'macosx', 'iphoneos'):
             binary_path = locate_binary_xcrun(sdk_name, cls.EXECUTABLE_NAME)
             if not binary_path:
                 continue
-            if binary_path in llvm_profdata_binaries:
+            if binary_path in binary_paths:
                 continue
-            llvm_profdata_binaries.append(binary_path)
+            binary_paths.append(binary_path)
 
-        logger.debug(f'Available {cls.EXECUTABLE_NAME} from {llvm_profdata_binaries}')
+        binary_paths = cls.order_binaries(binary_paths)
+        logger.debug(f'Available {cls.EXECUTABLE_NAME} from {binary_paths}')
 
-        return llvm_profdata_binaries
+        return binary_paths
 
     @classmethod
     def preference_ordered_paths(cls):
-        count = len(cls.detect_binaries())
-        for _ in range(count):
-            cls.PREFERRED_EXECUTABLE_INDEX = (cls.PREFERRED_EXECUTABLE_INDEX + 1) % count
-            yield cls.detect_binaries()[cls.PREFERRED_EXECUTABLE_INDEX]
+        binary_paths = cls.detect_binaries()
+        start = binary_paths.index(cls.preferred_binary_path) if cls.preferred_binary_path in binary_paths else 0
+        return binary_paths[start:] + binary_paths[:start]
 
     @classmethod
     def run(cls, command, *args, check=False, stdout=None, stderr=None, capture_output=False,
@@ -158,6 +162,7 @@ class ExecutablesFromEnvAndXcode:
                                                check=False, capture_output=kwarg_capture_output,
                                                stdout=stdout, stderr=stderr, **kwargs)
             if not completed_process.returncode:
+                cls.preferred_binary_path = binary_path
                 break
 
             logger.debug(f'Failed to {command} with binary {binary_path}\n'
@@ -173,6 +178,31 @@ class ExecutablesFromEnvAndXcode:
 
 class LLVMProfDataExecutable(ExecutablesFromEnvAndXcode):
     EXECUTABLE_NAME = 'llvm-profdata'
+    VERSION_PATTERN = re.compile(r'LLVM version (\d+(?:\.\d+)*)')
+
+    @classmethod
+    @cache
+    def binary_version(cls, binary_path):
+        try:
+            completed_process = subprocess.run([binary_path, '--version'], check=False, text=True,
+                                               capture_output=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired) as e:
+            logger.debug(f'Failed to get the version of {binary_path}: {e}')
+            return None
+        match = cls.VERSION_PATTERN.search(completed_process.stdout or '')
+        if completed_process.returncode or not match:
+            logger.debug(f'Failed to get the version of {binary_path}\n'
+                         f'return_code: {completed_process.returncode}\n'
+                         f'stdout: {completed_process.stdout}\n'
+                         f'stderr: {completed_process.stderr}\n')
+            return None
+        return tuple(int(component) for component in match.group(1).split('.'))
+
+    @classmethod
+    def order_binaries(cls, binary_paths):
+        versions = {binary_path: cls.binary_version(binary_path) for binary_path in binary_paths}
+        logger.debug(f'{cls.EXECUTABLE_NAME} versions: {versions}')
+        return sorted(binary_paths, key=lambda binary_path: (versions[binary_path] is None, versions[binary_path] or ()))
 
 
 class LLVMProfileData:

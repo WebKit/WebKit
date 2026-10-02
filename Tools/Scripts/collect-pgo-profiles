@@ -26,6 +26,7 @@ def check_or_create_empty_directory(path):
 
 
 def collect_pgo_profiles(harness, benchmark, output_directory, run_benchmark_args, benchmark_overrides, verbose):
+    pgo_profile_verbose_args = ['--verbose'] if verbose else []
     benchmark_profile_directory = os.path.join(output_directory, benchmark)
     os.makedirs(benchmark_profile_directory)
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -46,10 +47,8 @@ def collect_pgo_profiles(harness, benchmark, output_directory, run_benchmark_arg
         logger.info(f'Running {benchmark} with {shlex.join(command)}')
         subprocess.run(command, check=True)
 
-    merge_command = [sys.executable, PGO_PROFILE, 'merge', benchmark_profile_directory]
-    if verbose:
-        merge_command.append('--verbose')
-    subprocess.run(merge_command, check=True)
+    subprocess.run([sys.executable, PGO_PROFILE, 'merge', benchmark_profile_directory, *pgo_profile_verbose_args],
+                   check=True)
 
     return benchmark_profile_directory
 
@@ -91,7 +90,8 @@ def main():
 
     check_or_create_empty_directory(args.output_directory)
 
-    combine_command = [sys.executable, PGO_PROFILE, 'combine']
+    pgo_profile_verbose_args = ['--verbose'] if args.verbose else []
+    combine_command = [sys.executable, PGO_PROFILE, 'combine', *pgo_profile_verbose_args]
     for benchmark in args.benchmarks:
         profile_directory = collect_pgo_profiles(args.run_benchmark_harness, benchmark, args.output_directory,
                                                  run_benchmark_args, benchmark_overrides, args.verbose)
@@ -105,7 +105,7 @@ def main():
     compressed_profile_directory = os.path.join(args.output_directory, args.compressed_profile_sub_path)
     os.makedirs(compressed_profile_directory)
     subprocess.run([sys.executable, PGO_PROFILE, 'compress', '--input', combined_profile_directory,
-                    '--output', compressed_profile_directory], check=True)
+                    '--output', compressed_profile_directory, *pgo_profile_verbose_args], check=True)
 
     logger.info(f'Compressed profile is located at {compressed_profile_directory}')
 
