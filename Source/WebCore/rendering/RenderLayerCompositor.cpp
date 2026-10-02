@@ -60,6 +60,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerBacking.h"
@@ -3972,8 +3973,12 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject&
     if (!(m_compositingTriggers & ChromeClient::CanvasTrigger))
         return false;
 
-    if (!renderer.isRenderHTMLCanvas())
+    CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer);
+    if (!canvasRenderer)
         return false;
+
+    if (canvasRenderer->hasDrawableContent())
+        return true;
 
     bool isCanvasLargeEnoughOrHDRToForceCompositing = true;
 #if !USE(COMPOSITING_FOR_SMALL_CANVASES)

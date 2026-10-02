@@ -53,6 +53,8 @@ public:
     RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
     void setInnerRenderer(RenderBlock*);
 
+    bool hasDrawableContent() const;
+
     std::optional<CanvasElementSnapshot> drawableRendererSnapshot(RenderElement&) const;
 
 private:

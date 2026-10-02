@@ -158,7 +158,10 @@ using namespace HTMLNames;
 CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject& renderer)
 {
     ASSERT(renderer.isRenderHTMLCanvas());
-    RefPtr context = downcast<RenderHTMLCanvas>(renderer).canvasElement().renderingContext();
+    CheckedRef canvasRenderer = downcast<RenderHTMLCanvas>(renderer);
+    RefPtr context = canvasRenderer->canvasElement().renderingContext();
+    if (canvasRenderer->hasDrawableContent() && !(context && context->delegatesDisplay()))
+        return CanvasPaintedToLayer;
     if (!context)
         return CanvasPaintedToEnclosingLayer;
     if (context->delegatesDisplay())

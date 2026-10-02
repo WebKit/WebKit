@@ -86,6 +86,11 @@ bool RenderHTMLCanvas::canHaveChildren() const
     return settings().htmlInCanvasEnabled() && (protect(canvasElement())->canvasContent() == CanvasContent::Drawable || firstChild());
 }
 
+bool RenderHTMLCanvas::hasDrawableContent() const
+{
+    return settings().htmlInCanvasEnabled() && protect(canvasElement())->canvasContent() == CanvasContent::Drawable;
+}
+
 void RenderHTMLCanvas::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;

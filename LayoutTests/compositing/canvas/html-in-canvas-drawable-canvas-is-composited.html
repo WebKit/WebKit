@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.addEventListener('load', () => {
+        const ctx = document.getElementById('drawable-with-context').getContext('2d');
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 20, 20);
+
+        if (window.testRunner) {
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+        }
+    });
+</script>
+</head>
+<body>
+<p>Tests that a small canvas with content="drawable" gets its own composited layer, with or without a 2D context. The last canvas is not drawable and should not be composited.</p>
+<canvas id="drawable-without-context" width="20" height="20" content="drawable">
+    <div drawable>Hello</div>
+</canvas>
+<canvas id="drawable-with-context" width="20" height="20" content="drawable">
+    <div drawable>Hello</div>
+</canvas>
+<canvas id="not-drawable" width="20" height="20"></canvas>
+
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>
