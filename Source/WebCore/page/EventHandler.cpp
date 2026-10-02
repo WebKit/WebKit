@@ -2562,7 +2562,7 @@ bool EventHandler::swallowAnyClickEvent(const PlatformMouseEvent& platformMouseE
     bool swallowed = false;
     RefPtr clickCaptureElement = std::exchange(m_clickCaptureElement, nullptr);
     if (clickCaptureElement) {
-        updateMouseEventTargetNode(eventName, nodeToClick.get(), platformMouseEvent, FireMouseOverOut::Yes);
+        updateMouseEventTargetNode(eventName, protect(mouseEvent.targetNode()).get(), platformMouseEvent, FireMouseOverOut::Yes);
         swallowed = !dispatchAnyClickEvent(eventName, clickCaptureElement.get(), m_clickCount, platformMouseEvent);
     } else if (nodeToClick)
         swallowed = !dispatchMouseEvent(eventName, nodeToClick.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
