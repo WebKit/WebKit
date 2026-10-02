@@ -578,7 +578,6 @@ fast/canvas/canvas-blend-image.html [ Failure ]
 fast/canvas/canvas-blend-solid.html [ Failure ]
 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 fast/canvas/toDataURL-supportedTypes.html [ Failure ]
-fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 
 # security/
 # Require EventSender support
@@ -749,8 +748,6 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-perspective.html [ ImageOnlyFailure ]
-
-webkit.org/b/244474 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 
 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]

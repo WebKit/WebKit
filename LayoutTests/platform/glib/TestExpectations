@@ -2727,9 +2727,6 @@ webkit.org/b/292182 webgl/2.0.y/conformance/textures/misc/texture-srgb-upload.ht
 # Not applicable.
 webgl/webgl-backend-type.html [ Skip ]
 
-# Failing with ANGLE backend
-fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
-
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
 webgl/webgl-draft-extensions-flag-on.html [ Skip ]
 

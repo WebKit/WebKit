@@ -1862,9 +1862,7 @@ webkit.org/b/274059 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
 fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Failure
 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
-fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
-fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
@@ -1916,7 +1914,6 @@ webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
 
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Slow ]
 fast/canvas/webgl/lose-context-on-timeout.html [ Slow ]
-fast/canvas/webgl/uninitialized-test.html [ Slow ]
 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Slow ]
 
 fast/canvas/webgl/debug-messages-to-console.html [ Failure Pass ]

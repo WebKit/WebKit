@@ -3738,7 +3738,6 @@ webkit.org/b/207858 webgl/smell-test.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-backing-store-size-update.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-border.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-box-shadow.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure Timeout ] # rdar://177980099
 
 webkit.org/b/209257 svg/as-object/object-box-sizing-no-width-height.html [ Pass Failure ]
@@ -8223,8 +8222,6 @@ webkit.org/b/288957 imported/w3c/web-platform-tests/css/CSS2/tables/border-colla
 imported/w3c/web-platform-tests/css/CSS2/stacking-context/composite-change-after-scroll-preserves-stacking-order.html [ ImageOnlyFailure ]
 
 webkit.org/b/288518 fast/text/emoji-num-glyphs.html [ Pass Failure Timeout ] # rdar://178675578
-
-  fast/canvas/webgl/gl-teximage.html [ Failure ]
 
 webkit.org/b/294152 http/tests/misc/timer-vs-loading.html [ Timeout ]
 
