@@ -1632,7 +1632,16 @@ void WebPageProxy::textInputContextsInRect(FloatRect rect, CompletionHandler<voi
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    auto contexts = Box<Vector<ElementContext>>::create();
+    Ref aggregator = CallbackAggregator::create([contexts, completionHandler = WTF::move(completionHandler)]() mutable {
+        completionHandler(*contexts);
+    });
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), [contexts, aggregator](auto&& context) {
+            contexts->appendVector(context);
+        }, pageID);
+    });
 }
 
 void WebPageProxy::focusTextInputContextAndPlaceCaret(const ElementContext& context, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)

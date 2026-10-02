@@ -1591,20 +1591,7 @@ bool Page::shouldBuildEditableRegion() const
 
 Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInRootViewCoordinates) const
 {
-    RefPtr localMainFrame = this->localMainFrame();
-    RefPtr frameView = localMainFrame ? localMainFrame->view() : nullptr;
-    if (!frameView)
-        return { };
-
-    RefPtr document = localMainFrame->document();
-    if (!document)
-        return { };
-
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-    LayoutRect searchRectInMainFrameCoordinates = frameView->rootViewToContents(roundedIntRect(searchRectInRootViewCoordinates));
-    HitTestResult hitTestResult { searchRectInMainFrameCoordinates };
-    if (!document->hitTest(hitType, hitTestResult))
-        return { };
 
     auto rootEditableElement = [](Node& node) -> Element* {
         if (RefPtr element = dynamicDowncast<HTMLTextFormControlElement>(node)) {
@@ -1616,11 +1603,27 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     };
 
     OrderedHashSet<Ref<Element>> rootEditableElements;
-    auto& nodeSet = hitTestResult.listBasedTestResult();
-    for (auto& node : nodeSet) {
-        if (RefPtr editableElement = rootEditableElement(node)) {
-            ASSERT(searchRectInRootViewCoordinates.inclusivelyIntersects(editableElement->boundingBoxInRootViewCoordinates()));
-            rootEditableElements.add(editableElement.releaseNonNull());
+    for (auto& weakRootFrame : m_rootFrames) {
+        Ref rootFrame = weakRootFrame.get();
+        RefPtr frameView = rootFrame->view();
+        if (!frameView)
+            continue;
+
+        RefPtr document = rootFrame->document();
+        if (!document)
+            continue;
+
+        LayoutRect searchRectInContentsCoordinates { roundedIntRect(frameView->rootViewToContentsAcrossIsolatedFrames(searchRectInRootViewCoordinates)) };
+        HitTestResult hitTestResult { searchRectInContentsCoordinates };
+        if (!document->hitTest(hitType, hitTestResult))
+            continue;
+
+        auto& nodeSet = hitTestResult.listBasedTestResult();
+        for (auto& node : nodeSet) {
+            if (RefPtr editableElement = rootEditableElement(node)) {
+                ASSERT(searchRectInRootViewCoordinates.inclusivelyIntersects(editableElement->boundingBoxInMainFrameViewCoordinates()));
+                rootEditableElements.add(editableElement.releaseNonNull());
+            }
         }
     }
 
@@ -1631,7 +1634,7 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     // even if it's empty. So, we special case it here.
     RefPtr focusedOrMainFrame = focusController().focusedOrMainFrame();
     if (RefPtr focusedElement = focusedOrMainFrame ? focusedOrMainFrame->document()->focusedElement() : nullptr) {
-        if (searchRectInRootViewCoordinates.inclusivelyIntersects(focusedElement->boundingBoxInRootViewCoordinates())) {
+        if (searchRectInRootViewCoordinates.inclusivelyIntersects(focusedElement->boundingBoxInMainFrameViewCoordinates())) {
             if (RefPtr editableElement = rootEditableElement(*focusedElement))
                 rootEditableElements.add(editableElement.releaseNonNull());
         }
