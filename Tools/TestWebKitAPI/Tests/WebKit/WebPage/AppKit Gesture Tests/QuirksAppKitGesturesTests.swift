@@ -228,4 +228,134 @@ extension AppKitGesturesTests.Quirks {
     }
 }
 
+private struct MagnificationEventCounts {
+    var down = 0
+    var up = 0
+    var move = 0
+    var wheel = 0
+    var wheelWhileButtonIsDown = 0
+    var gestureChange = 0
+    var gestureChangeWhileButtonIsDown = 0
+}
+
+extension AppKitGesturesTests.Quirks {
+    private func installMagnificationEventCounters(preventingGestureEvents: Bool) async throws {
+        try await page.callJavaScript(arguments: ["frameID": "surfaceFrame", "preventingGestureEvents": preventingGestureEvents]) {
+            """
+            const surfaceDocument = document.getElementById(frameID).contentDocument;
+            window.magnificationEvents = { down: 0, up: 0, move: 0, wheel: 0, heldWheel: 0, gchange: 0, heldGchange: 0 };
+            let buttonIsDown = false;
+            surfaceDocument.addEventListener("mousedown", () => { buttonIsDown = true; window.magnificationEvents.down++; }, true);
+            surfaceDocument.addEventListener("mouseup", () => { buttonIsDown = false; window.magnificationEvents.up++; }, true);
+            surfaceDocument.addEventListener("mousemove", () => { window.magnificationEvents.move++; }, true);
+            surfaceDocument.addEventListener("wheel", () => {
+                window.magnificationEvents.wheel++;
+                if (buttonIsDown)
+                    window.magnificationEvents.heldWheel++;
+            }, true);
+            surfaceDocument.addEventListener("gesturechange", () => {
+                window.magnificationEvents.gchange++;
+                if (buttonIsDown)
+                    window.magnificationEvents.heldGchange++;
+            }, true);
+            for (const type of ["gesturestart", "gesturechange", "gestureend"]) {
+                surfaceDocument.addEventListener(type, event => {
+                    if (preventingGestureEvents)
+                        event.preventDefault();
+                }, true);
+            }
+            """
+        }
+    }
+
+    private func magnificationEventCounts() async throws -> MagnificationEventCounts {
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let values = try await page.callJavaScript(returning: [Double].self) {
+            """
+            const e = window.magnificationEvents;
+            return [e.down, e.up, e.move, e.wheel, e.heldWheel, e.gchange, e.heldGchange];
+            """
+        }
+
+        try #require(values.count == 7)
+
+        return MagnificationEventCounts(
+            down: Int(values[0]),
+            up: Int(values[1]),
+            move: Int(values[2]),
+            wheel: Int(values[3]),
+            wheelWhileButtonIsDown: Int(values[4]),
+            gestureChange: Int(values[5]),
+            gestureChangeWhileButtonIsDown: Int(values[6])
+        )
+    }
+
+    private func magnifyAfterMouseTracking(
+        over surface: ManipulationSurface,
+        followedByTranslationOf translation: CGSize? = nil
+    ) async throws {
+        let center = CGPoint(x: surface.bounds.midX, y: surface.bounds.midY)
+
+        await recap.play { composer in
+            composer._wk_magnify(
+                withStart: CGPoint(x: center.x - 30, y: center.y),
+                end: CGPoint(x: center.x + 30, y: center.y),
+                spreadBy: 100,
+                duration: .seconds(0.5),
+                precededByDragOf: CGSize(width: 0, height: 40),
+                followedByTranslationOf: translation
+            )
+            composer._wk_mouseUp()
+        }
+    }
+
+    @Test
+    func magnificationGestureAfterMouseTrackingReleasesTheMouseButtonForContentThatDoesNotHandleIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installMagnificationEventCounters(preventingGestureEvents: false)
+
+        try await magnifyAfterMouseTracking(over: surface)
+
+        let counts = try await magnificationEventCounts()
+
+        try #require(counts.down > 0, "\(counts)")
+        try #require(counts.wheel > 0, "\(counts)")
+        #expect(counts.wheelWhileButtonIsDown * 2 < counts.wheel)
+        #expect(counts.down == counts.up)
+    }
+
+    @Test
+    func magnificationGestureAfterMouseTrackingKeepsTheMouseButtonDownForContentThatHandlesIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installMagnificationEventCounters(preventingGestureEvents: true)
+
+        try await magnifyAfterMouseTracking(over: surface)
+
+        let counts = try await magnificationEventCounts()
+
+        try #require(counts.gestureChange > 0, "\(counts)")
+        #expect(counts.gestureChangeWhileButtonIsDown * 2 > counts.gestureChange)
+        #expect(counts.wheel == 0)
+        #expect(counts.down == 1)
+        #expect(counts.up == 1)
+    }
+
+    @Test
+    func translationAfterAMagnificationGestureResumesMouseTrackingForContentThatDoesNotHandleIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installMagnificationEventCounters(preventingGestureEvents: false)
+
+        try await magnifyAfterMouseTracking(over: surface, followedByTranslationOf: CGSize(width: 0, height: 120))
+
+        let counts = try await magnificationEventCounts()
+
+        try #require(counts.wheel > 0, "\(counts)")
+        #expect(counts.down > 1)
+        #expect(counts.move > 0)
+        #expect(counts.down == counts.up)
+    }
+}
+
 #endif // HAVE_APPKIT_GESTURES_SUPPORT
