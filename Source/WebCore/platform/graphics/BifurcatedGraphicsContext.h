@@ -110,8 +110,6 @@ public:
     void drawSystemImage(SystemImage&, const FloatRect&) final;
     void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
     ImageDrawResult drawImage(Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr) final;
-    ImageDrawResult drawTiledImage(Image&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
-    ImageDrawResult drawTiledImage(Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule, Image::TileRule, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 
 #if ENABLE(VIDEO)

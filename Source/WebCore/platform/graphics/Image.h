@@ -196,19 +196,16 @@ public:
     WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap(ConcreteObjectSize) const;
     WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
+    // Supporting tiled drawing
+    static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
+    virtual std::optional<Color> singlePixelSolidColor() const;
+
 protected:
     WEBCORE_EXPORT Image(ImageObserver* = nullptr);
-
-    static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) = 0;
-    ImageDrawResult drawTiled(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
-    ImageDrawResult drawTiled(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
-
-    // Supporting tiled drawing
-    virtual std::optional<Color> singlePixelSolidColor() const;
 
     virtual bool canReplaceData() const { return false; }
     virtual void dataReplaced() { }

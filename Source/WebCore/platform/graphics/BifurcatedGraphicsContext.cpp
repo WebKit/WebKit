@@ -427,26 +427,6 @@ ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, ConcreteObjec
     return result;
 }
 
-ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
-{
-    auto result = m_primaryContext.drawTiledImage(image, concreteObjectSize, destination, source, tileSize, spacing, options, extras);
-    m_secondaryContext.drawTiledImage(image, concreteObjectSize, destination, source, tileSize, spacing, options, extras);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-
-    return result;
-}
-
-ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, ImagePaintingOptions options, const ImageDrawingExtras* extras)
-{
-    auto result = m_primaryContext.drawTiledImage(image, concreteObjectSize, destination, source, tileScaleFactor, hRule, vRule, options, extras);
-    m_secondaryContext.drawTiledImage(image, concreteObjectSize, destination, source, tileScaleFactor, hRule, vRule, options, extras);
-    
-    VERIFY_STATE_SYNCHRONIZATION();
-
-    return result;
-}
-
 #if ENABLE(VIDEO)
 void BifurcatedGraphicsContext::drawVideoFrame(const VideoFrame& videoFrame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, ImagePaintingOptions options)
 {

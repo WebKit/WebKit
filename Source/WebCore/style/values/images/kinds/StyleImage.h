@@ -105,6 +105,10 @@ public:
     virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const { return { }; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
+    // Drawing
+    ImageDrawResult drawTiled(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
+    ImageDrawResult drawTiled(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, WebCore::Image::TileRule, WebCore::Image::TileRule, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
+
     // Derived type.
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }
     ALWAYS_INLINE bool isCursorImage() const { return m_type == Type::CursorImage; }

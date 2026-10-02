@@ -584,7 +584,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 ? ConcreteObjectSize::fixed(geometry.tileSizeWithoutPixelSnapping / usedZoom, usedZoom)
                 : ConcreteObjectSize::fixed(image->size());
             auto extras = bgImage->drawingExtrasForRenderer(clientForBackgroundImage);
-            auto drawResult = context.drawTiledImage(*image, concreteObjectSize, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options, &extras);
+            auto drawResult = bgImage->drawTiled(context, *image, concreteObjectSize, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options, &extras);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());

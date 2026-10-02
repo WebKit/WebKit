@@ -120,9 +120,6 @@ private:
 
     ImageDrawResult drawImage(Image&, ConcreteObjectSize, const FloatRect&, const FloatRect&, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage }, const ImageDrawingExtras* = nullptr) final { return ImageDrawResult::DidNothing; }
 
-    ImageDrawResult drawTiledImage(Image&, ConcreteObjectSize, const FloatRect&, const FloatPoint&, const FloatSize&, const FloatSize&, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final { return ImageDrawResult::DidNothing; }
-    ImageDrawResult drawTiledImage(Image&, ConcreteObjectSize, const FloatRect&, const FloatRect&, const FloatSize&, Image::TileRule, Image::TileRule, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final { return ImageDrawResult::DidNothing; }
-
     void drawFocusRing(const Path&, float, const Color&, float) final { }
     void drawFocusRing(const Vector<FloatRect>&, float, const Color&, float) final { }
 

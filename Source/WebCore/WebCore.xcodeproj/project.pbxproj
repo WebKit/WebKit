@@ -7846,6 +7846,8 @@
 
 /* Begin PBXFileReference section */
 		775ED9913673971DA280FD1E /* SVGImageElementSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGImageElementSizing.h; sourceTree = "<group>"; };
+		1401B330E419558F99500E10 /* StyleImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImage.cpp; sourceTree = "<group>"; };
+		E4B7A2C10F63D5948A1E2B70 /* ReplacedElementIntrinsicSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplacedElementIntrinsicSizing.h; sourceTree = "<group>"; };
 		5771A5E7578EF81664D18C61 /* StyleBackgroundImageSizing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBackgroundImageSizing.cpp; sourceTree = "<group>"; };
 		EE25250FA9F1E8ED3329837C /* StyleBackgroundImageSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBackgroundImageSizing.h; sourceTree = "<group>"; };
 		A3BB42F262C9B6E31293B37C /* StyleBorderImageSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBorderImageSizing.h; sourceTree = "<group>"; };
@@ -37954,6 +37956,7 @@
 				BC1777712F42418A00E318C5 /* StyleGeneratedImage.h */,
 				BC1777742F42418A00E318C5 /* StyleGradientImage.cpp */,
 				BC1777732F42418A00E318C5 /* StyleGradientImage.h */,
+				1401B330E419558F99500E10 /* StyleImage.cpp */,
 				BC1777752F42418A00E318C5 /* StyleImage.h */,
 				BC1777772F42418A00E318C5 /* StyleImageSet.cpp */,
 				BC1777762F42418A00E318C5 /* StyleImageSet.h */,

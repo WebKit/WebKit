@@ -259,7 +259,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
             ? static_cast<Image::TileRule>(geometry.verticalRule)
             : Image::StretchTile;
 
-        graphicsContext.drawTiledImage(*image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, options, &extras);
+        styleImage->drawTiled(graphicsContext, *image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, options, &extras);
     }
 }
 
