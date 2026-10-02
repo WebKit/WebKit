@@ -92,6 +92,7 @@ private:
     std::optional<uint64_t> m_duration;
     std::atomic<bool> m_isClosed { false };
     RefPtr<VideoInfo> m_videoInfo WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
+    bool m_hasUnsupportedOutput WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton()) { false };
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     Lock m_pixelBufferPoolLock;
     size_t m_pixelBufferPoolWidth WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock) { 0 };
@@ -151,8 +152,11 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
     auto data = frameData->span();
 
     if (isVPx()) {
-        if (auto record = vpCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data))
+        if (auto record = vpCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data)) {
+            if (record->bitDepth > 10)
+                return VideoDecoder::DecodePromise::createAndReject("VPx decoding of 12-bit content is not supported"_s);
             m_videoInfo = createVideoInfoFromVPCodecConfigurationRecord(*record, m_colorSpace);
+        }
     } else if (RefPtr videoInfo = createVideoInfoFromAV1Stream(data, std::nullopt, m_colorSpace))
         m_videoInfo = WTF::move(videoInfo);
 
@@ -160,10 +164,14 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(VideoE
     image.SetEncodedData(webrtc::WebKitEncodedImageBufferWrapper::create(const_cast<uint8_t*>(data.data()), data.size()));
     image._frameType = frame.isKeyFrame ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
 
+    m_hasUnsupportedOutput = false;
     auto error = m_internalDecoder->Decode(image, false, 0);
 
     if (error && (error != WEBRTC_VIDEO_CODEC_NO_OUTPUT || m_treatNoOutputAsError))
         return VideoDecoder::DecodePromise::createAndReject(makeString("VPx decoding failed with error "_s, error));
+
+    if (m_hasUnsupportedOutput)
+        return VideoDecoder::DecodePromise::createAndReject("VPx decoding produced an unsupported pixel format"_s);
 
     return VideoDecoder::DecodePromise::createAndResolve();
 }
@@ -293,8 +301,11 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
         }));
     });
 
-    if (!videoFrame)
+    if (!videoFrame) {
+        RELEASE_LOG_ERROR(Media, "LibWebRTCVPXInternalVideoDecoder::Decoded failed to decode image");
+        m_hasUnsupportedOutput = true;
         return 0;
+    }
 
     m_outputCallback(VideoDecoder::DecodedFrame { videoFrame.releaseNonNull(), m_timestamp, m_duration });
     return 0;
