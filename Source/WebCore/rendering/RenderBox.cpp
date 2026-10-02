@@ -3772,7 +3772,14 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         return keywordLogicalHeight;
 
     auto calcSize = logicalHeight.calcSize();
-    auto percentageBaseLogicalHeight = calcSize.hasPercentage() ? computePercentageLogicalHeight(Style::PreferredSize { Style::PreferredSize::Percentage { 100 } }).value_or(0_lu) : 0_lu;
+    auto percentageBaseLogicalHeight = [&]() -> LayoutUnit {
+        if (!calcSize.hasPercentage())
+            return 0_lu;
+        if (auto resolved = computePercentageLogicalHeight(Style::PreferredSize { Style::PreferredSize::Percentage { 100 } }))
+            return *resolved;
+        CheckedPtr containingBlock = this->containingBlock();
+        return containingBlock ? containingBlock->availableLogicalHeightForPercentageComputation().value_or(0_lu) : 0_lu;
+    }();
     auto keywordContentLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(*keywordLogicalHeight);
     return adjustIntrinsicLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(calcSize, keywordContentLogicalHeight, percentageBaseLogicalHeight));
 }

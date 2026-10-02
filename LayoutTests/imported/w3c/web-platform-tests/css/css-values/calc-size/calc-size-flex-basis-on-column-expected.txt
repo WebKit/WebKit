@@ -8,7 +8,7 @@ PASS resolved value for height resulting from flex-basis: content
 PASS resolved value for height resulting from flex-basis: auto
 PASS resolved value for height resulting from flex-basis: calc-size(any, 357px)
 PASS resolved value for height resulting from flex-basis: calc-size(any, 220%)
-FAIL resolved value for height resulting from flex-basis: calc-size(max-content, 350%) assert_equals: resulting height is correct expected "700px" but got "20px"
+PASS resolved value for height resulting from flex-basis: calc-size(max-content, 350%)
 PASS resolved value for height resulting from flex-basis: calc-size(fit-content, 172px)
 PASS resolved value for height resulting from flex-basis: calc-size(37px, 193px)
 PASS resolved value for height resulting from flex-basis: calc-size(83px, size * 3)
