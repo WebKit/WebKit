@@ -1,0 +1,21 @@
+DeleteToBeginningOfLine / DeleteToEndOfLine delete to the nearest visual line break, so they should report the deleteSoftLine* inputType values rather than deleteHardLine*, in both contenteditable and textarea editing hosts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+contenteditable:
+PASS beforeInputType is "deleteSoftLineBackward"
+PASS inputType is "deleteSoftLineBackward"
+PASS beforeInputType is "deleteSoftLineForward"
+PASS inputType is "deleteSoftLineForward"
+
+textarea:
+PASS beforeInputType is "deleteSoftLineBackward"
+PASS inputType is "deleteSoftLineBackward"
+PASS beforeInputType is "deleteSoftLineForward"
+PASS inputType is "deleteSoftLineForward"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+foo
+

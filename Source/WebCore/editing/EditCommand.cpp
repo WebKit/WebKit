@@ -84,9 +84,9 @@ ASCIILiteral inputTypeNameForEditingAction(EditAction action)
     case EditAction::TypingDeleteWordForward:
         return "deleteWordForward"_s;
     case EditAction::TypingDeleteLineBackward:
-        return "deleteHardLineBackward"_s;
+        return "deleteSoftLineBackward"_s;
     case EditAction::TypingDeleteLineForward:
-        return "deleteHardLineForward"_s;
+        return "deleteSoftLineForward"_s;
     case EditAction::TypingDeletePendingComposition:
         return "deleteCompositionText"_s;
     case EditAction::TypingDeleteFinalComposition:
