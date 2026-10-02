@@ -152,6 +152,10 @@ public:
     bool mayHaveLayerInSubtree() const { return m_mayHaveLayerInSubtree; }
     void setMayHaveLayerInSubtreeIncludingAncestors();
 
+    // Never cleared, so it may be a false positive - just like the mayHaveLayerInSubtree() logic.
+    bool mayHaveNonScalingStrokeInSubtree() const { return m_mayHaveNonScalingStrokeInSubtree; }
+    void setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
+
     virtual void dirtyLineFromChangedChild() { }
 
     void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
@@ -482,7 +486,8 @@ private:
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1 { false };
     unsigned m_scrollAnchoringSuppressionStyleChanged : 1 { false };
     unsigned m_isInPendingSVGTransformAttributeUpdates : 1 { false };
-    // 11 bits free.
+    unsigned m_mayHaveNonScalingStrokeInSubtree : 1 { false };
+    // 10 bits free.
 
     Style::ComputedStyle m_style;
 };

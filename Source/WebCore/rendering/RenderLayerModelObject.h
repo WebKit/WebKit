@@ -161,6 +161,9 @@ public:
     // a renderer whose transform changed without a layout. No-op otherwise.
     virtual void invalidateCachedSVGTransformDependentBoundingBoxes() { }
 
+    void invalidateCachedSVGBoundingBoxesOfAncestors() const;
+    void invalidateNonScalingStrokeCachesInSubtreeForSVG(const std::optional<AffineTransform>& oldTransform, const AffineTransform& newTransform);
+
     inline bool shouldUsePositionedClipping() const;
 
 #if ASSERT_ENABLED

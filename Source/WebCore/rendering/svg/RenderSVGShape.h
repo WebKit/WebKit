@@ -104,6 +104,8 @@ public:
 
     AffineTransform nonScalingStrokeTransform() const;
 
+    void invalidateNonScalingStrokeCaches();
+
 protected:
     void element() const = delete;
 
@@ -131,6 +133,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
 
     void layout() final;
+    void updateFromStyle() final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;

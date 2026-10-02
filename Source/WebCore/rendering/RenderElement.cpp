@@ -741,6 +741,14 @@ void RenderElement::setMayHaveLayerInSubtreeIncludingAncestors()
         renderer->m_mayHaveLayerInSubtree = true;
 }
 
+void RenderElement::setMayHaveNonScalingStrokeInSubtreeIncludingAncestors()
+{
+    m_mayHaveNonScalingStrokeInSubtree = true;
+
+    for (auto* renderer = parent(); renderer && !renderer->isRenderSVGRoot() && !renderer->m_mayHaveNonScalingStrokeInSubtree; renderer = renderer->parent())
+        renderer->m_mayHaveNonScalingStrokeInSubtree = true;
+}
+
 static RenderLayer* findNextLayer(const RenderElement& currRenderer, const RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent = true)
 {
     // Step 1: If our layer is a child of the desired parent, then return our layer.
@@ -1248,6 +1256,9 @@ void RenderElement::insertedIntoTree()
 {
     if (m_mayHaveLayerInSubtree)
         setMayHaveLayerInSubtreeIncludingAncestors();
+
+    if (m_mayHaveNonScalingStrokeInSubtree)
+        setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
 
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.

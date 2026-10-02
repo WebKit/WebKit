@@ -345,6 +345,24 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
+void RenderSVGShape::updateFromStyle()
+{
+    RenderSVGModelObject::updateFromStyle();
+
+    if (hasNonScalingStroke())
+        setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
+}
+
+void RenderSVGShape::invalidateNonScalingStrokeCaches()
+{
+    if (!hasNonScalingStroke() || !hasPath())
+        return;
+
+    m_strokeBoundingBox = std::nullopt;
+    m_approximateStrokeBoundingBox = std::nullopt;
+    invalidateCachedVisualOverflowRect();
+}
+
 FloatRect RenderSVGShape::strokeBoundingBox() const
 {
     if (m_shapeType == ShapeType::Empty)

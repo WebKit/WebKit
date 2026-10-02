@@ -1744,7 +1744,7 @@ void RenderLayer::updateTransform()
     bool had3DTransform = has3DTransform();
 
     std::optional<TransformationMatrix> oldTransform;
-    if (m_transform && hasTransform)
+    if (m_transform)
         oldTransform = *m_transform;
     if (hasTransform != !!m_transform) {
         if (hasTransform)
@@ -1773,6 +1773,9 @@ void RenderLayer::updateTransform()
         LOG_WITH_STREAM(Compositing, stream << "Changed transform value for " << this << " from " << *oldTransform << " to " << *m_transform);
         setSelfAndDescendantsNeedPositionUpdate();
     }
+
+    if (renderer().mayHaveNonScalingStrokeInSubtree())
+        renderer().invalidateNonScalingStrokeCachesInSubtreeForSVG(oldTransform ? oldTransform->toAffineTransform() : AffineTransform(), m_transform ? m_transform->toAffineTransform() : AffineTransform());
 }
 
 void RenderLayer::forceStackingContextIfNeeded()

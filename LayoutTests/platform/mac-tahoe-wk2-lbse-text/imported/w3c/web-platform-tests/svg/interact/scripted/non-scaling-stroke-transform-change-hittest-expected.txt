@@ -1,0 +1,4 @@
+
+PASS elementFromPoint(...) on non-scaling strokes after a transform change, initial scale(4)
+PASS elementFromPoint(...) on non-scaling strokes after a transform change, after changing to scale(2)
+
