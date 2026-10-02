@@ -65,6 +65,7 @@ enum class SourceProviderSourceType : uint8_t {
     JSON,
     Text,
     ImportMap,
+    CSS,
 };
 
 using BytecodeCacheGenerator = Function<RefPtr<CachedBytecode>()>;
@@ -141,6 +142,7 @@ public:
         case SourceProviderSourceType::Module:
         case SourceProviderSourceType::JSON:
         case SourceProviderSourceType::Text:
+        case SourceProviderSourceType::CSS:
             return true;
         default:
             return false;

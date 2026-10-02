@@ -55,6 +55,8 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     static SyntheticModuleRecord* create(JSGlobalObject*, VM&, Structure*, const Identifier& moduleKey, SourceProviderSourceType);
 
+    static SyntheticModuleRecord* tryCreateDefaultExportSyntheticModule(JSGlobalObject*, const Identifier& moduleKey, JSValue, SourceProviderSourceType);
+
     static SyntheticModuleRecord* parseJSONModule(JSGlobalObject*, const Identifier& moduleKey, SourceCode&&);
     static SyntheticModuleRecord* createTextModule(JSGlobalObject*, const Identifier& moduleKey, SourceCode&&);
 
@@ -64,7 +66,6 @@ public:
 private:
     SyntheticModuleRecord(VM&, Structure*, const Identifier& moduleKey, SourceProviderSourceType);
 
-    static SyntheticModuleRecord* tryCreateDefaultExportSyntheticModule(JSGlobalObject*, const Identifier& moduleKey, JSValue, SourceProviderSourceType);
     static SyntheticModuleRecord* tryCreateWithExportNamesAndValues(JSGlobalObject*, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, ArgList exportValues, SourceProviderSourceType);
 
     void finishCreation(JSGlobalObject*, VM&);
