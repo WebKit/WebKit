@@ -2793,9 +2793,9 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
             return attachment == GraphicsContextGL::BACK && m_attributes.alpha ? 8 : 0;
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
-            return attachment == GraphicsContextGL::DEPTH ? 24 : 0;
+            return attachment == GraphicsContextGL::DEPTH ? m_defaultFramebuffer->depthBits() : 0;
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
-            return attachment == GraphicsContextGL::STENCIL ? 8 : 0;
+            return attachment == GraphicsContextGL::STENCIL ? m_defaultFramebuffer->stencilBits() : 0;
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
             return static_cast<unsigned>(GraphicsContextGL::UNSIGNED_NORMALIZED);
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:

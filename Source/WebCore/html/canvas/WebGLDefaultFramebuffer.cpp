@@ -81,6 +81,9 @@ WebGLDefaultFramebuffer::WebGLDefaultFramebuffer(WebGLRenderingContextBase& cont
             m_unpreservedBuffers |= GraphicsContextGL::DEPTH_BUFFER_BIT;
     }
 
+    if (attributes.antialias)
+        m_sampleCount = std::min(4, context.maxSamples());
+
     if (attributes.antialias || attributes.preserveDrawingBuffer)
         m_fbo = gl->createFramebuffer();
 }
@@ -163,7 +166,7 @@ bool WebGLDefaultFramebuffer::reshape(IntSize size)
     ScopedWebGLRestoreRenderbuffer restoreRenderbuffer { context };
     ScopedWebGLRestoreFramebuffer restoreFramebuffer { context };
 
-    GCGLsizei sampleCount = attributes.antialias ? std::min(4, context->maxSamples()) : 0;
+    GCGLsizei sampleCount = m_sampleCount;
     GCGLenum colorFormat = attributes.alpha ? GraphicsContextGL::RGBA8 : GraphicsContextGL::RGB8;
 
     gl->reshape(size.width(), size.height());
