@@ -1,0 +1,8 @@
+
+PASS script-src 'unsafe-inline'X ignores the invalid token, so inline script is blocked.
+PASS script-src 'self''unsafe-inline' ignores the invalid token, so inline script is blocked.
+PASS script-src 'unsafe-inline' 'unsafe-eval'X ignores the invalid token, so eval() is blocked.
+PASS script-src 'self'/foo/ ignores the invalid token, so a same-origin script is blocked.
+PASS script-src 'nonce-abc' 'strict-dynamic'X ignores the invalid token, so a dynamically inserted script is blocked.
+PASS style-src 'strict-dynamic''unsafe-inline' ignores the invalid token, so inline style is blocked.
+
