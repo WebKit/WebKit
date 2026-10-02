@@ -29,6 +29,7 @@
 #import "FrameTreeChecks.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -66,6 +67,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
@@ -8698,6 +8700,130 @@ TEST(ProcessSwap, CrossSiteNavigationToCOOPReusesProvisionalProcess)
     EXPECT_NE(provisionalPID, 0);
     EXPECT_NE(pid1, pid2);
     EXPECT_EQ(provisionalPID, pid2);
+}
+
+// WebKit only dispatches beforeunload events if the UI delegate can run the beforeunload confirm panel.
+@interface PSONBeforeUnloadUIDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation PSONBeforeUnloadUIDelegate
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    completionHandler(YES);
+}
+@end
+
+static void runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(bool siteIsolationEnabled)
+{
+    using namespace TestWebKitAPI;
+
+    constexpr unsigned messageCount = 5000;
+    HTTPServer server({
+        { "/source.html"_s, { makeString("<a id='link' href='destination.html'>link</a><script>addEventListener('beforeunload', () => { for (let i = 0; i < "_s, messageCount, "; ++i) webkit.messageHandlers.testHandler.postMessage('message'); });</script>"_s) } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Cache-Control"_s, "max-age=3600"_s } }, "bar"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    setFeatureEnabled(webViewConfiguration.get(), @"CrossOriginOpenerPolicyEnabled", true);
+    setFeatureEnabled(webViewConfiguration.get(), @"SiteIsolationEnabled", siteIsolationEnabled);
+
+    RetainPtr messageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    RetainPtr uiDelegate = adoptNS([[PSONBeforeUnloadUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    // Put the destination in the HTTP cache, the network process will respond from the cache without
+    // going through the test server, which runs on the main queue and would not respond until all the
+    // messages below are handled.
+    [webView loadRequest:server.request("/destination.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:server.request("/source.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto requestCount = server.totalRequests();
+
+    // Make sure the process swap will use a process that has finished launching, so that the provisional
+    // page's process identifier is known while the messages below are handled.
+    [processPool _warmInitialProcess];
+    ASSERT_TRUE(Util::waitFor([&] {
+        for (NSNumber *pid in [processPool _prewarmedProcessIdentifiersForTesting]) {
+            if (pid.intValue)
+                return true;
+        }
+        return false;
+    }));
+
+    // The old process runs the source page's beforeunload handler, which sends many messages, after it gets the
+    // navigation policy decision and before it sends DidStartProvisionalLoadForFrame. The UI process handles
+    // messages from a web process in throttled batches, and each message is handled slowly until the network
+    // process has triggered the COOP process swap, so the UI process handles the old process's
+    // DidStartProvisionalLoadForFrame after the provisional page for the same navigation has been created.
+    // Sending the messages after the policy decision keeps the decision from waiting behind them.
+    __block unsigned handledMessageCount = 0;
+    __block bool handledAllMessages = false;
+    // Bound the time spent so that the test fails instead of timing out if the process swap does not happen.
+    auto slowHandlingDeadline = MonotonicTime::now() + 5_s;
+    // The message handler is kept alive by the web view's configuration, so it must not retain the web view.
+    WeakObjCPtr<WKWebView> weakWebView = webView.get();
+    [messageHandler addMessage:@"message" withHandler:^{
+        if (![weakWebView.get() _provisionalWebProcessIdentifier] && MonotonicTime::now() < slowHandlingDeadline)
+            usleep(1000);
+        if (++handledMessageCount == messageCount) {
+            // The old process's DidStartProvisionalLoadForFrame is already queued after the last message.
+            RunLoop::mainSingleton().dispatch(makeBlockPtr(^{
+                handledAllMessages = true;
+            }));
+        }
+    }];
+
+    // Don't let the new process commit before the old process's DidStartProvisionalLoadForFrame is handled.
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        Util::run(&handledAllMessages);
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    __block unsigned didStartProvisionalNavigationCount = 0;
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *webView, WKNavigation *) {
+        ++didStartProvisionalNavigationCount;
+        EXPECT_NE([webView _provisionalWebProcessIdentifier], 0);
+    };
+
+    __block bool navigationEnded = false;
+    __block RetainPtr<NSError> navigationError;
+    [navigationDelegate waitForDidFinishNavigationWithCompletionHandler:^(NSError *error) {
+        navigationError = error;
+        navigationEnded = true;
+    }];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
+    Util::run(&navigationEnded);
+
+    EXPECT_NULL(navigationError.get());
+    EXPECT_EQ(didStartProvisionalNavigationCount, 1u);
+    EXPECT_EQ(server.totalRequests(), requestCount);
+    EXPECT_NE([webView _webProcessIdentifier], pid1);
+    EXPECT_WK_STREQ([webView _committedURL].absoluteString, server.request("/destination.html"_s).URL.absoluteString);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwap)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(false);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwapWithSiteIsolation)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(true);
 }
 
 enum class IsSameOrigin : bool { No, Yes };
