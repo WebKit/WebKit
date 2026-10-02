@@ -881,11 +881,7 @@ webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-te
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
 webkit.org/b/140588 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
-webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
-webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
 webkit.org/b/140590 svg/custom/svg-fonts-in-text-controls.html [ Failure ]
-webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
-webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/140589 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
 webkit.org/b/140589 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/137098 svg/text/text-hkern.svg [ Failure ]

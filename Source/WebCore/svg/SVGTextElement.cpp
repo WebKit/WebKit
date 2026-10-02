@@ -53,7 +53,6 @@ bool SVGTextElement::childShouldCreateRenderer(const Node& child) const
 {
     if (child.isTextNode()
         || child.hasTagName(SVGNames::aTag)
-        || child.hasTagName(SVGNames::altGlyphTag)
         || child.hasTagName(SVGNames::textPathTag)
         || child.hasTagName(SVGNames::trefTag)
         || child.hasTagName(SVGNames::tspanTag))

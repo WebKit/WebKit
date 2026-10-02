@@ -37,13 +37,10 @@ layer at (0,0) size 800x600
             chunk 1 text run 14 at (170.11,144.02) startOffset 13 endOffset 14 width 3.00: "i"
             chunk 1 text run 15 at (175.01,145.00) startOffset 14 endOffset 15 width 7.00: "n"
             chunk 1 text run 16 at (182.37,146.47) startOffset 15 endOffset 16 width 8.00: "k"
-    RenderSVGText {text} at (100,185) size 102x19 contains 1 chunk(s)
-      RenderSVGInline {a} at (0,0) size 102x19
-        RenderSVGTSpan {altGlyph} at (0,0) size 11x19
-          RenderSVGInlineText {#text} at (0,0) size 11x19
-            chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 1 width 11.00: "A"
-        RenderSVGInlineText {#text} at (11,0) size 91x19
-          chunk 1 text run 1 at (111.00,200.00) startOffset 0 endOffset 15 width 91.00: "ltGlyph content"
+    RenderSVGText {text} at (100,185) size 91x19 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 91x19
+        RenderSVGInlineText {#text} at (0,0) size 91x19
+          chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 15 width 91.00: "ltGlyph content"
     RenderSVGText {text} at (100,235) size 121x19 contains 1 chunk(s)
       RenderSVGTSpan {tspan} at (0,0) size 121x19
         RenderSVGInline {a} at (0,0) size 121x19

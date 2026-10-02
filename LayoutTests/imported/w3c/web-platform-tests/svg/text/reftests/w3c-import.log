@@ -134,6 +134,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-transform-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-transform-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-transform-002.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-unknown-element-not-rendered-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-unknown-element-not-rendered-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-unknown-element-not-rendered.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg

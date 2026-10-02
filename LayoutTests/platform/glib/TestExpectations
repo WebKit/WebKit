@@ -3904,7 +3904,6 @@ webkit.org/b/131347 fast/repaint/hidpi-inline-outline-atomic-child-overflow.html
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailure ]
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
-webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
