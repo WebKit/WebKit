@@ -123,16 +123,19 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecution
     , m_protectedURL { WTF::move(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
+    Ref securityOrigin = *scriptExecutionContext.securityOrigin();
     // CSP3 2.2.2: a policy's self-origin is the response URL's origin. Apply when the runtime
     // origin is opaque and the URL is http(s); local schemes inherit via Document::initSecurityContext.
-    bool hasOpaqueOriginWithResponseURL = scriptExecutionContext.securityOrigin()->isOpaque() && m_protectedURL.protocolIsInHTTPFamily();
+    bool hasOpaqueOriginWithResponseURL = securityOrigin->isOpaque() && m_protectedURL.protocolIsInHTTPFamily();
     if (hasOpaqueOriginWithResponseURL)
         updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
     else
-        updateSourceSelf(*protect(scriptExecutionContext.securityOrigin()));
+        updateSourceSelf(securityOrigin);
     // FIXME: handle the non-document case.
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext)) {
-        if (auto* page = document->page())
+        RefPtr page = document->page();
+        bool shouldApplyExtensionContentSecurityPolicy = LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(securityOrigin->protocol()) || document->settings().contentSecurityPolicyExtensionModeAppliesToAllSchemesForTesting();
+        if (page && shouldApplyExtensionContentSecurityPolicy)
             m_contentSecurityPolicyModeForExtension = page->contentSecurityPolicyModeForExtension();
     }
 }
@@ -144,6 +147,7 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other, Sh
     if (m_hasAPIPolicy)
         return;
     ASSERT(m_policies.isEmpty());
+    m_contentSecurityPolicyModeForExtension = other->m_contentSecurityPolicyModeForExtension;
     m_sandboxFlags = other->m_sandboxFlags;
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited, String { });

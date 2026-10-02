@@ -1612,6 +1612,14 @@ ContentInsetBackgroundFillEnabled:
     default: false
     WebKit: WebKit::defaultContentInsetBackgroundFillEnabled()
 
+ContentSecurityPolicyExtensionModeAppliesToAllSchemesForTesting:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Apply Extension CSP Mode To All Schemes (For Testing)"
+  humanReadableDescription: "Apply the extension Content Security Policy mode to documents regardless of their scheme"
+  defaultValue: false
+
 ContextMenuQRCodeDetectionEnabled:
   type: bool
   status: embedder

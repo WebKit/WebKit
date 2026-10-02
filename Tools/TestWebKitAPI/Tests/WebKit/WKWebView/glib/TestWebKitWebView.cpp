@@ -2385,6 +2385,13 @@ static void testWebViewWebExtensionMode(WebViewTest* test, gconstpointer)
 
     // Create a new web view with an extension mode that blocks the unsafe-inline keyword.
     auto webView = test->createWebView("web-extension-mode", WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3, nullptr);
+
+    // The extension CSP mode only applies to schemes that bypass CSP, so opt in to applying it to about:blank.
+    g_autoptr(WebKitFeatureList) featureList = webkit_settings_get_development_features();
+    WebKitFeature* feature = webkit_feature_list_find(featureList, "ContentSecurityPolicyExtensionModeAppliesToAllSchemesForTesting");
+    g_assert_nonnull(feature);
+    webkit_settings_set_feature_enabled(webkit_web_view_get_settings(webView.get()), feature, TRUE);
+
     test->loadHtml(html, nullptr, webView.get());
     test->waitUntilLoadFinished(webView.get());
     value = test->runJavaScriptAndWaitUntilFinished("document.title == 'unset';", &error.outPtr(), webView.get());

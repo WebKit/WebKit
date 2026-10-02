@@ -1345,6 +1345,41 @@ TEST(WKWebExtensionAPIPermissions, CORSFailureFromPageDoesNotPromptExtension)
     EXPECT_EQ(promptCount, 0ul);
 }
 
+// The extension Content Security Policy mode should only apply to extension documents, not to web page
+// subframes loaded inside an extension page. Otherwise, the web page's own CSP is parsed with the extension
+// restrictions, and keywords like 'unsafe-inline' are dropped from script-src in Manifest V3.
+TEST(WKWebExtensionAPIPermissions, CSPExtensionModeNotAppliedToWebPageSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Security-Policy"_s, "script-src 'self' 'unsafe-inline'"_s } },
+            "<script>window.inlineScriptRan = true</script><script src='/frame.js'></script>"_s } },
+        { "/frame.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, "parent.postMessage({ inlineScriptRan: window.inlineScriptRan === true }, '*')"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *frameURL = server.requestWithLocalhost("/frame.html"_s).URL;
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"window.addEventListener('message', (event) => {",
+        @"  browser.test.assertTrue(event.data?.inlineScriptRan, 'The inline script in the web page subframe should be allowed by its CSP')",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        [NSString stringWithFormat:@"document.getElementById('frame').src = '%@'", frameURL.absoluteString]
+    ]);
+
+    auto *testHTML = @"<iframe id='frame'></iframe><script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(corsManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
 TEST(WKWebExtensionAPIPermissions, HasAccessToFileURLsDefaultsToNo)
 {
     auto *manifest = @{

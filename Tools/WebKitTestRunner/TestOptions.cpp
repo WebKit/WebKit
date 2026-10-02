@@ -91,6 +91,7 @@ const TestFeatures& TestOptions::defaults()
             { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },
             { "CaptureVideoInGPUProcessEnabled", captureVideoInGPUProcessEnabledValue },
             { "ContentChangeObserverEnabled", false },
+            { "ContentSecurityPolicyExtensionModeAppliesToAllSchemesForTesting", true },
             { "CustomPasteboardDataEnabled", true },
             { "DOMPasteAllowed", true },
             { "DOMTestingAPIsEnabled", true },
