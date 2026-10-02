@@ -98,13 +98,13 @@ static NSError *managerError(NSString *description)
 
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
 {
-    return [self initWithManifest:manifest resources:resources extensionControllerConfiguration:nil];
+    return [self initWithManifest:manifest resources:resources extensionControllerConfiguration:nil usesEnhancedSecurity:NO];
 }
 
-- (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration
+- (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration usesEnhancedSecurity:(BOOL)usesEnhancedSecurity
 {
     RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    return [self initForExtension:extension.get() extensionControllerConfiguration:configuration];
+    return [self initForExtension:extension.get() extensionControllerConfiguration:configuration usesEnhancedSecurity:usesEnhancedSecurity];
 }
 
 - (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration

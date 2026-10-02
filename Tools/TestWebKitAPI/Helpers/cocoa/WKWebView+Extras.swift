@@ -180,3 +180,29 @@ extension WKWebView {
         }
     }
 }
+
+extension TestNavigationDelegate {
+    /// Waits for a content rule list to perform an action on a load.
+    ///
+    /// - Parameter body: Work that causes the action, such as loading a page with a resource a rule blocks.
+    public func nextContentRuleListAction(triggeredBy body: () -> Void) async {
+        let previousCallback = contentRuleListPerformedAction
+        defer { contentRuleListPerformedAction = previousCallback }
+
+        await withCheckedContinuation { continuation in
+            var resumed = false
+
+            // One load can perform several actions before this call resumes and restores the callback.
+            contentRuleListPerformedAction = { _, _, _, _ in
+                guard !resumed else {
+                    return
+                }
+
+                resumed = true
+                continuation.resume()
+            }
+
+            body()
+        }
+    }
+}

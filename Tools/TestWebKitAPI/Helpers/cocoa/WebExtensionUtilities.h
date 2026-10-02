@@ -49,7 +49,7 @@ NS_SWIFT_UI_ACTOR
 
 // The equivalent of Util::parseExtension() for callers that cannot spell RetainPtr, such as Swift.
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources;
-- (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration;
+- (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration usesEnhancedSecurity:(BOOL)usesEnhancedSecurity;
 
 // The equivalent of Util::shouldEnableSiteIsolationForWebExtensionsTest for callers that cannot reach C++ globals, such as Swift.
 @property (class, nonatomic) BOOL shouldEnableSiteIsolation;

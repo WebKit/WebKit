@@ -363,14 +363,9 @@ Tests/WebKit/WKWebView/WKURLSchemeHandler-1.mm @nonARC
 Tests/WebKit/WKWebView/WKURLSchemeHandler-leaks.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtension.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIBookmarks.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIDeclarativeNetRequest.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIDevTools.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIDOM.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIExtension.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIMenus.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPINamespace.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPINotifications.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIRuntime.mm @nonARC

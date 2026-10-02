@@ -42,17 +42,20 @@ import UIKit
 ///   - manifest: The extension's manifest, as it would appear in `manifest.json`.
 ///   - resources: The extension's resources, keyed by path.
 ///   - configuration: The controller configuration to use. Defaults to a non-persistent one.
+///   - usesEnhancedSecurity: Whether the manager's default window uses enhanced security.
 /// - Returns: A manager for the parsed extension.
 @MainActor
 public func parseWebExtension(
     manifest: [String: Any],
     resources: [String: Any] = [:],
-    configuration: WKWebExtensionController.Configuration? = nil
+    configuration: WKWebExtensionController.Configuration? = nil,
+    usesEnhancedSecurity: Bool = false
 ) -> TestWebExtensionManager {
     let manager = TestWebExtensionManager(
         manifest: manifest,
         resources: resources,
-        extensionControllerConfiguration: configuration
+        extensionControllerConfiguration: configuration,
+        usesEnhancedSecurity: usesEnhancedSecurity
     )
     manager.collectsFailures = true
     return manager
@@ -64,15 +67,22 @@ public func parseWebExtension(
 ///   - manifest: The extension's manifest, as it would appear in `manifest.json`.
 ///   - resources: The extension's resources, keyed by path.
 ///   - configuration: The controller configuration to use. Defaults to a non-persistent one.
+///   - usesEnhancedSecurity: Whether the manager's default window uses enhanced security.
 /// - Returns: A manager for the loaded extension.
 /// - Throws: the failure the extension reported if it could not be loaded.
 @MainActor
 public func loadWebExtension(
     manifest: [String: Any],
     resources: [String: Any] = [:],
-    configuration: WKWebExtensionController.Configuration? = nil
+    configuration: WKWebExtensionController.Configuration? = nil,
+    usesEnhancedSecurity: Bool = false
 ) throws -> TestWebExtensionManager {
-    let manager = parseWebExtension(manifest: manifest, resources: resources, configuration: configuration)
+    let manager = parseWebExtension(
+        manifest: manifest,
+        resources: resources,
+        configuration: configuration,
+        usesEnhancedSecurity: usesEnhancedSecurity
+    )
 
     manager.load()
 
