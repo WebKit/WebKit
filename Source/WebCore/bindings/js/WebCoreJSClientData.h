@@ -52,8 +52,6 @@ class JSHeapData {
 public:
     JSHeapData(JSC::Heap&);
 
-    static JSHeapData* ensureHeapData(JSC::Heap&);
-
     Lock& lock() LIFETIME_BOUND { return m_lock; }
     ExtendedDOMIsoSubspaces& subspaces() LIFETIME_BOUND { return m_subspaces; }
 
@@ -168,7 +166,7 @@ public:
 
     virtual String overrideSourceURL(const JSC::StackFrame&, const String& originalSourceURL) const;
 
-    JSHeapData& heapData() { return *m_heapData; }
+    JSHeapData& heapData() { return m_heapData.get(); }
 
     WebCoreBuiltinNames& builtinNames() LIFETIME_BOUND { return m_builtinNames; }
     JSBuiltinFunctions& builtinFunctions() LIFETIME_BOUND { return m_builtinFunctions; }
@@ -207,7 +205,8 @@ private:
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
 
-    JSHeapData* m_heapData;
+    // Declared before the client subspaces, which point into its subspaces, so that it outlives them.
+    const UniqueRef<JSHeapData> m_heapData;
     JSC::GCClient::IsoSubspace m_domBuiltinConstructorSpace;
     JSC::GCClient::IsoSubspace m_domConstructorSpace;
     JSC::GCClient::IsoSubspace m_domNamespaceObjectSpace;
