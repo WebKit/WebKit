@@ -2169,7 +2169,7 @@ bool AccessibilityObject::isReplacedElementForTextEmission() const
     // can apply the ignored check themselves: an ignored replaced element (e.g. a <legend>) emits
     // no U+FFFC, but its block boundaries still don't emit newlines.
     RefPtr node = this->node();
-    return node && !node->isTextNode() && isRendererReplacedElement(node->renderer());
+    return node && !node->isTextNode() && isRendererReplacedElement(protect(node->renderer()));
 }
 
 bool AccessibilityObject::isInUserAgentShadowTree() const
@@ -3733,7 +3733,7 @@ void AccessibilityObject::setFocused(bool focus)
 
         // Legacy WebKit1 case.
         if (frameView->platformWidget())
-            makeFirstResponderForPlatformWidget(page->chrome().client(), frameView->platformWidget());
+            makeFirstResponderForPlatformWidget(page->chrome().client(), *frameView);
 #endif
 #if PLATFORM(MAC)
         else

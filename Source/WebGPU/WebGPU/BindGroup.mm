@@ -611,7 +611,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 
     CVMetalTextureCacheFlush(m_coreVideoTextureCache.get(), 0);
     const bool supportsExtendedFormats = [m_device supportsFamily:MTLGPUFamilyApple4];
-    IOSurfaceRef ioSurface = CVPixelBufferGetIOSurface(pixelBuffer);
+    RetainPtr ioSurface = CVPixelBufferGetIOSurface(pixelBuffer);
     if (!ioSurface || isIntel()) {
         auto planeCount = std::max<size_t>(CVPixelBufferGetPlaneCount(pixelBuffer), 1);
         if (planeCount > 2) {
@@ -724,13 +724,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             mtlTexture1 = [mtlTexture1 newTextureViewWithPixelFormat:mtlTexture1.pixelFormat textureType:mtlTexture1.textureType levels:NSMakeRange(0, mtlTexture1.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture1.arrayLength) swizzle:*secondPlaneSwizzle];
     }
 
-    protect(m_defaultQueue)->onSubmittedWorkDone([plane0, plane1](WGPUQueueWorkDoneStatus) {
-        if (plane0)
-            CFRelease(plane0);
-
-        if (plane1)
-            CFRelease(plane1);
-    });
+    protect(m_defaultQueue)->onSubmittedWorkDone([plane0 = adoptCF(plane0), plane1 = adoptCF(plane1)](WGPUQueueWorkDoneStatus) { });
 
     float Ax = 1.f / (upperRight[0] - lowerLeft[0]);
     float Bx = -Ax * lowerLeft[0];
@@ -1480,7 +1474,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 Ref externalTexture = WebGPU::Metal::fromAPI(wgpuExternalTexture);
-                auto textureData = createExternalTextureFromPixelBuffer(externalTexture->pixelBuffer(), externalTexture->colorSpace(), PremultiplyAlpha::Yes);
+                auto textureData = createExternalTextureFromPixelBuffer(protect(externalTexture->pixelBuffer()), externalTexture->colorSpace(), PremultiplyAlpha::Yes);
                 id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
                 auto metalStage = metalRenderStage(stage);
                 if (stage != ShaderStage::Undefined) {
@@ -1714,7 +1708,7 @@ bool BindGroup::updateExternalTextures(ExternalTexture& externalTexture)
         return false;
 
     Ref device = m_device;
-    auto textureData = device->createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace(), Device::PremultiplyAlpha::Yes);
+    auto textureData = device->createExternalTextureFromPixelBuffer(protect(externalTexture.pixelBuffer()), externalTexture.colorSpace(), Device::PremultiplyAlpha::Yes);
     id<MTLTexture> texture0 = textureData.texture0 ?: device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
     id<MTLTexture> texture1 = textureData.texture1 ?: device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
     externalTexture.updateExternalTextures(texture0, texture1);

@@ -428,7 +428,7 @@ public:
     bool hasAttributedText() const;
     // Defined in AccessibilityObjectCocoa.mm: NSResponder is WAKResponder on iOS, which can
     // only be completed in an Objective-C++ translation unit.
-    static void makeFirstResponderForPlatformWidget(ChromeClient&, PlatformWidget);
+    static void makeFirstResponderForPlatformWidget(ChromeClient&, Widget&);
 #endif
     String textContentPrefixFromListMarker() const override;
 

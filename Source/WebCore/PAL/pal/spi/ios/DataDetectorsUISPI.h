@@ -57,7 +57,7 @@ DECLARE_SYSTEM_HEADER
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 @class UIContextMenuConfiguration;
-@interface DDContextMenuAction
+@interface DDContextMenuAction : NSObject
 + (NSDictionary *)updateContext:(NSDictionary *)context withSourceRect:(CGRect)sourceRect;
 + (UIContextMenuConfiguration *)contextMenuConfigurationForURL:(NSURL *)URL identifier:(NSString *)identifier selectedText:(NSString *)selectedText results:(NSArray *) results inView: (UIView *) view context:(NSDictionary *)context menuIdentifier:(NSString *)menuIdentifier;
 + (UIContextMenuConfiguration *)contextMenuConfigurationWithResult:(DDResultRef)result inView:(UIView *)view context:(NSDictionary *)context menuIdentifier:(NSString *)menuIdentifier;

@@ -61,7 +61,7 @@ namespace WebCore {
 
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType)
 {
-    [wrapper() detach];
+    [protect(wrapper()) detach];
 }
 
 void AccessibilityObject::detachFromParent()
@@ -83,7 +83,7 @@ void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
         parentWrapper = axParent->wrapper();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[wrapper() attachmentView] accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];
+    [protect([protect(wrapper()) attachmentView]) accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
@@ -102,7 +102,7 @@ FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect,
         CGRect cgRect = CGRectMake(point.x, point.y, size.width, size.height);
 
         NSRect nsRect = NSRectFromCGRect(cgRect);
-        NSView *view = frameView->documentView();
+        RetainPtr view = frameView->documentView();
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         nsRect = [[view window] convertRectToScreen:[view convertRect:nsRect toView:nil]];
@@ -123,7 +123,7 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
         return true;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    id attachmentView = widget ? NSAccessibilityUnignoredDescendant(widget->platformWidget()) : nil;
+    RetainPtr<id> attachmentView = widget ? NSAccessibilityUnignoredDescendant(protect(widget->platformWidget())) : nil;
     if (attachmentView)
         return [attachmentView accessibilityIsIgnored];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -198,7 +198,7 @@ String AccessibilityObject::subrolePlatformString() const
         return NSAccessibilitySearchFieldSubrole;
 
     if (isAttachment()) {
-        NSView* attachView = [wrapper() attachmentView];
+        RetainPtr<NSView> attachView = [protect(wrapper()) attachmentView];
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
@@ -514,7 +514,7 @@ AccessibilityRemoteToken AXRemoteFrame::generateRemoteToken() const
 {
     if (RefPtr parent = parentObject()) {
         // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
-        return { makeVector([NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()]) };
+        return { makeVector([NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:protect(parent->wrapper())]) };
     }
 
     return { };
@@ -523,8 +523,9 @@ AccessibilityRemoteToken AXRemoteFrame::generateRemoteToken() const
 void AXRemoteFrame::initializePlatformElementWithRemoteToken(AccessibilityRemoteToken token, int processIdentifier)
 {
     m_processIdentifier = processIdentifier;
-    if ([wrapper() respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
-        [(id)wrapper() accessibilitySetPresenterProcessIdentifier:processIdentifier];
+    RetainPtr wrapper = this->wrapper();
+    if ([wrapper respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)wrapper.get() accessibilitySetPresenterProcessIdentifier:processIdentifier];
     m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:WTF::toNSData(token.bytes.span()).get()]);
 
     if (CheckedPtr cache = axObjectCache())

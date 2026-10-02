@@ -1,4 +1,3 @@
-ComputePipeline.mm
 WGSL/AST/ASTStringDumper.h
 WGSL/CallGraph.h
 WGSL/Types.h

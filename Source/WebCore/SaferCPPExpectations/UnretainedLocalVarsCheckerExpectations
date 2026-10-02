@@ -1,8 +1,4 @@
 [ iOS ] Modules/system-preview/ARKitBadgeSystemImage.mm
-[ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
-[ Mac ] accessibility/mac/AXObjectCacheMac.mm
-[ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 bindings/js/ScriptControllerMac.mm
 bridge/objc/objc_class.mm
 [ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm

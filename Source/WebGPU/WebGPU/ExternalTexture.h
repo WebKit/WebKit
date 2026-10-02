@@ -27,14 +27,18 @@
 
 #import "BindableResource.h"
 #import "Device.h"
+#import <CoreVideo/CVPixelBuffer.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <simd/vector_types.h>
 #import <wtf/Ref.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/cf/CFTypeTraits.h>
 
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+
+WTF_DECLARE_CF_TYPE_TRAIT(CVPixelBuffer);
 
 struct WGPUExternalTextureImpl {
 };

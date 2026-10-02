@@ -27,6 +27,7 @@
 #import "ComputePipeline.h"
 
 #import "APIConversions.h"
+#import "ASTExpression.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
 #import "Instance.h"

@@ -703,12 +703,12 @@ id<MTLRenderPipelineState> Device::indexBufferClampPipeline(MTLIndexType indexTy
     static id<MTLFunction> functionUshort = nil;
     NSError *error = nil;
     static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    std::call_once(onceFlag, [&, &device = m_device] {
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
-        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+        /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:@R"(
 #define vertexCount 0
 #define primitiveRestart 1
 #define indexCountMinusOne 2
@@ -858,12 +858,12 @@ id<MTLRenderPipelineState> Device::indirectBufferClampPipeline(NSUInteger raster
     static id<MTLFunction> function = nil;
     NSError *error = nil;
     static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    std::call_once(onceFlag, [&, &device = m_device, maxVerticesPerDrawCall = m_maxVerticesPerDrawCall] {
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
-        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:[NSString stringWithFormat:@R"(
+        /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:[NSString stringWithFormat:@R"(
     using namespace metal;
     )"  OBJC_STRINGIFY(WEBKIT_DRAW_INDIRECT_STRUCT_TYPE)   @R"(
     [[vertex]] void vsIndirect(device const MTLDrawPrimitivesIndirectArguments& input [[buffer(0)]], device WebKitMTLDrawPrimitivesIndirectArguments& wkoutput [[buffer(1)]], const constant uint* minCounts [[buffer(2)]])
@@ -882,7 +882,7 @@ id<MTLRenderPipelineState> Device::indirectBufferClampPipeline(NSUInteger raster
         output.baseInstance = input.baseInstance;
         if (lostCondition)
             wkoutput.lostOrOOBRead = 1;
-    })", m_maxVerticesPerDrawCall, m_maxVerticesPerDrawCall, m_maxVerticesPerDrawCall] /* NOLINT */ options:options error:&error];
+    })", maxVerticesPerDrawCall, maxVerticesPerDrawCall, maxVerticesPerDrawCall] /* NOLINT */ options:options error:&error];
         if (error)
             WTFLogAlways("%@", error);
 
@@ -966,12 +966,12 @@ id<MTLFunction> Device::icbIndirectEncodeFunction(bool isIndexed, MTLIndexType i
     static std::once_flag onceFlag;
     // The shader below hardcodes [[buffer(1)]] for the ICB container to match bufferIndexForICBContainer().
     RELEASE_ASSERT(bufferIndexForICBContainer() == 1);
-    std::call_once(onceFlag, [&] {
+    std::call_once(onceFlag, [&, &device = m_device] {
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
-        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:@R"(
+        /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:@R"(
     using namespace metal;
     struct ICBContainer {
         device uint* outOfBoundsRead [[ id(0) ]];
@@ -1086,12 +1086,12 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     static id<MTLFunction> functionUshort = nil;
     NSError *error = nil;
     static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    std::call_once(onceFlag, [&, &device = m_device] {
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
-        /* NOLINT */ id<MTLLibrary> library = [m_device newLibraryWithSource:[NSString stringWithFormat:@R"(
+        /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:[NSString stringWithFormat:@R"(
     using namespace metal;
     struct ICBContainer {
         device uint* outOfBoundsRead [[ id(0) ]];

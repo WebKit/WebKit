@@ -99,17 +99,17 @@ JSC::VM* WorkerOrWorkletGlobalScope::vmIfExists() const
 
 void WorkerOrWorkletGlobalScope::disableEval(const String& errorMessage)
 {
-    m_script->disableEval(errorMessage);
+    protect(m_script)->disableEval(errorMessage);
 }
 
 void WorkerOrWorkletGlobalScope::disableWebAssembly(const String& errorMessage)
 {
-    m_script->disableWebAssembly(errorMessage);
+    protect(m_script)->disableWebAssembly(errorMessage);
 }
 
 void WorkerOrWorkletGlobalScope::setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement enforcement)
 {
-    m_script->setTrustedTypesEnforcement(enforcement);
+    protect(m_script)->setTrustedTypesEnforcement(enforcement);
 }
 
 bool WorkerOrWorkletGlobalScope::isJSExecutionForbidden() const

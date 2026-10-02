@@ -104,6 +104,11 @@ public:
         : CheckedRef(other.get())
     { }
 
+    template<typename X>
+    CheckedRef(const UniqueRef<X>& other) requires std::is_convertible_v<X*, T*>
+        : CheckedRef(other.get())
+    { }
+
     CheckedRef(HashTableDeletedValueType) : m_ptr(PtrTraits::hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
 
@@ -212,6 +217,8 @@ private:
 
 template<typename X, typename WeakPtrImplType> CheckedRef(WeakRef<X, WeakPtrImplType>&) -> CheckedRef<X>;
 template<typename X, typename WeakPtrImplType> CheckedRef(const WeakRef<X, WeakPtrImplType>&) -> CheckedRef<X>;
+template<typename X> CheckedRef(UniqueRef<X>&) -> CheckedRef<X>;
+template<typename X> CheckedRef(const UniqueRef<X>&) -> CheckedRef<X>;
 
 template <typename T, typename PtrTraits>
 struct GetPtrHelper<CheckedRef<T, PtrTraits>> {
@@ -303,13 +310,6 @@ template<typename T, typename PtrTraits>
 CheckedRef<T, PtrTraits> protect(CheckedRef<T, PtrTraits>&&)
 {
     static_assert(WTF::unreachableForType<T>, "Calling protect() on an rvalue is unnecessary; the caller already owns the value.");
-}
-
-template<typename T, typename PtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
-ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, PtrTraits> protect(const UniqueRef<T>& reference)
-{
-    return CheckedRef<T, PtrTraits>(reference.get());
 }
 
 template<typename P> struct CheckedRefHashTraits : SimpleClassHashTraits<CheckedRef<P>> {

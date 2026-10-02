@@ -172,7 +172,7 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WTWritingToolsViewController
+@interface WTWritingToolsViewController : NSObject
 
 @property (class, assign, readonly, getter=isAvailable) BOOL available;
 

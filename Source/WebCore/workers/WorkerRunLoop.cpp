@@ -144,7 +144,7 @@ public:
     {
         if (!m_runLoop.m_nestedCount) {
             m_runLoop.m_sharedTimer = makeUnique<WorkerSharedTimer>();
-            threadGlobalDataSingleton().threadTimers().setSharedTimer(m_runLoop.m_sharedTimer.get());
+            threadGlobalDataSingleton().threadTimers().setSharedTimer(protect(m_runLoop.m_sharedTimer));
         }
         m_runLoop.m_nestedCount++;
         if (m_isForDebugging == IsForDebugging::Yes)
@@ -238,7 +238,7 @@ void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
 
 #if PLATFORM(COCOA)
         if (WTF::CocoaApplication::isAppleApplication())
-            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
+            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), protect(m_sharedTimer)->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
 #endif
 
         // Reset status to start tracking a new sequence of spinning.
@@ -301,7 +301,7 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
 #endif
 
     if (predicate.isDefaultMode() && m_sharedTimer->isActive())
-        timeoutDelay = std::min(timeoutDelay, m_sharedTimer->fireTimeDelay());
+        timeoutDelay = std::min(timeoutDelay, protect(m_sharedTimer)->fireTimeDelay());
 
     if (script) {
         script->releaseHeapAccess();
@@ -347,7 +347,7 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
     case MessageQueueTimeout:
         if (!context->isClosing() && !isBeingDebugged()) {
             runInModeResult.firedSharedTimer = true;
-            m_sharedTimer->fire();
+            protect(m_sharedTimer)->fire();
         }
         break;
     }
@@ -422,7 +422,7 @@ void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* conte
 {
     if (m_task.isCleanupTask())
         m_task.performTask(*context);
-    else if (!context->isClosing() && context->script() && !context->script()->isTerminatingExecution()) {
+    else if (!context->isClosing() && context->script() && !protect(context->script())->isTerminatingExecution()) {
         JSC::VM& vm = context->script()->vm();
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         m_task.performTask(*context);
@@ -432,7 +432,7 @@ void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* conte
                 return;
             }
             Locker<JSC::JSLock> locker(vm.apiLock());
-            reportException(context->script()->globalScopeWrapper(), scope.exception());
+            reportException(protect(context->script())->globalScopeWrapper(), scope.exception());
         }
     }
 }

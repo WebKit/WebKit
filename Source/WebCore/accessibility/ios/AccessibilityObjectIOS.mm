@@ -86,7 +86,7 @@ FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect,
 
         // we need the web document view to give us our final screen coordinates
         // because that can take account of the scroller
-        id webDocument = [protect(wrapper()) _accessibilityWebDocumentView];
+        RetainPtr<id> webDocument = [protect(wrapper()) _accessibilityWebDocumentView];
         if (webDocument)
             cgRect = [webDocument convertRect:cgRect toView:nil];
         return cgRect;

@@ -1,4 +1,3 @@
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp

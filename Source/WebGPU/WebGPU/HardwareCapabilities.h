@@ -96,6 +96,6 @@ Limits NODELETE fromAPI(const WGPULimits&);
 WGPULimits NODELETE toAPI(const Limits&);
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
 bool isShaderValidationEnabled(id<MTLDevice>);
-bool NODELETE isWebGPUSwiftEnabled();
+bool isWebGPUSwiftEnabled();
 
 } // namespace WebGPU::Metal

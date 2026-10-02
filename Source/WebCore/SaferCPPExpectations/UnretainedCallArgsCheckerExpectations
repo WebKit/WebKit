@@ -1,8 +1,3 @@
-[ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
-[ Mac ] accessibility/cocoa/AXTextMarkerCocoa.mm
-[ Mac ] accessibility/mac/AXObjectCacheMac.mm
-[ Mac ] accessibility/mac/AccessibilityObjectMac.mm
-[ Mac ] accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 bridge/objc/WebScriptObject.mm
 bridge/objc/objc_utility.mm
 platform/cocoa/UserAgentCocoa.mm

@@ -1135,7 +1135,7 @@ private:
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 #if PLATFORM(COCOA)
     const std::unique_ptr<AXLiveRegionManager> m_liveRegionManager;
-    std::unique_ptr<AXFormActivityMonitor> m_formActivityMonitor;
+    const std::unique_ptr<AXFormActivityMonitor> m_formActivityMonitor;
 #endif
 
     static bool gAccessibilityEnhancedUserInterfaceEnabled;

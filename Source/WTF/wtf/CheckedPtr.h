@@ -130,6 +130,10 @@ public:
         : CheckedPtr(o.get())
     { }
 
+    template<typename X, typename Deleter> CheckedPtr(const std::unique_ptr<X, Deleter>& o) requires std::is_convertible_v<X*, T*>
+        : CheckedPtr(o.get())
+    { }
+
     CheckedPtr(HashTableDeletedValueType)
         : m_ptr(PtrTraits::hashTableDeletedValue())
     { }
@@ -221,6 +225,8 @@ private:
 
 template<typename X, typename Y, typename Z> CheckedPtr(WeakPtr<X, Y, Z>&) -> CheckedPtr<X>;
 template<typename X, typename Y, typename Z> CheckedPtr(const WeakPtr<X, Y, Z>&) -> CheckedPtr<X>;
+template<typename X, typename Deleter> CheckedPtr(std::unique_ptr<X, Deleter>&) -> CheckedPtr<X>;
+template<typename X, typename Deleter> CheckedPtr(const std::unique_ptr<X, Deleter>&) -> CheckedPtr<X>;
 
 template <typename T, typename PtrTraits>
 struct GetPtrHelper<CheckedPtr<T, PtrTraits>> {
@@ -252,13 +258,6 @@ template<typename T, typename PtrTraits>
 CheckedPtr<T, PtrTraits> protect(CheckedPtr<T, PtrTraits>&&)
 {
     static_assert(WTF::unreachableForType<T>, "Calling protect() on an rvalue is unnecessary; the caller already owns the value.");
-}
-
-template<typename T, typename Deleter, typename PtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
-ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(const std::unique_ptr<T, Deleter>& ptr)
-{
-    return CheckedPtr<T, PtrTraits>(ptr.get());
 }
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>

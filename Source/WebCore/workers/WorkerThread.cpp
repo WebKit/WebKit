@@ -166,7 +166,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
         sourceProvider = downcast<ScriptBufferSourceProvider>(sourceCode.provider());
 
         NakedPtr<JSC::Exception> uncaughtException;
-        auto parseResult = globalScope->script()->evaluate(sourceCode, uncaughtException, &exceptionMessage);
+        auto parseResult = protect(globalScope->script())->evaluate(sourceCode, uncaughtException, &exceptionMessage);
         if (uncaughtException && !globalScope->vm().isTerminationException(uncaughtException)) {
             // Per the spec, if the script has a parse error, fire a simple Event at
             // the Worker object rather than an ErrorEvent.
@@ -174,7 +174,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
                 globalScope->reportErrorToWorkerObject(exceptionMessage);
             else {
                 JSC::JSLockHolder lock(globalScope->vm());
-                reportException(globalScope->script()->globalScopeWrapper(), uncaughtException);
+                reportException(protect(globalScope->script())->globalScopeWrapper(), uncaughtException);
             }
         }
         finishedEvaluatingScript();
@@ -183,7 +183,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
         auto scriptFetcher = WorkerScriptFetcher::create(WTF::move(parameters), globalScope->credentials(), globalScope->destination(), globalScope->referrerPolicy());
         ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef());
         sourceProvider = downcast<ScriptBufferSourceProvider>(sourceCode.provider());
-        bool success = globalScope->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
+        bool success = protect(globalScope->script())->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
         if (success) {
             if (auto error = scriptFetcher->error()) {
                 if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
@@ -192,7 +192,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
                     exceptionMessage = "Importing a module script failed."_s;
                 globalScope->reportErrorToWorkerObject(exceptionMessage);
             } else if (!scriptFetcher->wasCanceled()) {
-                globalScope->script()->linkAndEvaluateModule(scriptFetcher.get(), sourceCode, &exceptionMessage);
+                protect(globalScope->script())->linkAndEvaluateModule(scriptFetcher.get(), sourceCode, &exceptionMessage);
                 finishedEvaluatingScript();
             }
         }

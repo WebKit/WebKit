@@ -2262,7 +2262,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
         return nil;
 
     AX_ASSERT([self isAttachment]);
-    Widget* widget = protect(self.axBackingObject)->widgetForAttachmentView();
+    RefPtr widget = protect(self.axBackingObject)->widgetForAttachmentView();
     if (!widget)
         return nil;
     return widget->platformWidget();

@@ -213,7 +213,7 @@ static inline NSInteger gmtToLocalTimeOffset(DateComponentsType type)
             return nil;
 
         RefPtr widget = backingObject->widgetForAttachmentView();
-        return widget ? NSAccessibilityUnignoredDescendant(widget->platformWidget()) : nil;
+        return widget ? NSAccessibilityUnignoredDescendant(protect(widget->platformWidget())) : nil;
     }, Accessibility::PluginTimeout);
 
     return result.value ? (*result.value).autorelease() : nil;
@@ -3850,7 +3850,7 @@ static id handleRangesForSearchPredicateAttribute(WebAccessibilityObjectWrapper*
 
         RetainPtr result = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
             protect(object->wrapper()).get(), NSAccessibilitySearchResultElementKey,
-            textMarkerRange->platformData().bridgingAutorelease(), NSAccessibilitySearchResultRangeKey,
+            (__bridge id)textMarkerRange->platformData().get(), NSAccessibilitySearchResultRangeKey,
             nil]);
         return [[[NSArray alloc] initWithObjects:result.get(), nil] autorelease];
     }
@@ -4549,7 +4549,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Tree items object returns a different set of children than those that are in children()
         // because an AXOutline (the mac role is becomes) has some odd stipulations.
         if (backingObject->isTree() || backingObject->isTreeItem() || backingObject->isRemoteFrame())
-            return children(*backingObject).count;
+            return [protect(children(*backingObject)) count];
 
         // FIXME: this is duplicating the logic in children(AXCoreObject&) so it should be reworked.
         size_t childrenSize = backingObject->crossFrameUnignoredChildrenCount();
@@ -4645,7 +4645,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     for (auto& actionData : actionsData) {
         auto treeID = actionData.treeID;
         auto targetID = actionData.targetID;
-        auto action = adoptNS([[NSAccessibilityCustomAction alloc] initWithName:actionData.name.createNSString().autorelease() handler:^BOOL {
+        RetainPtr action = adoptNS([[NSAccessibilityCustomAction alloc] initWithName:actionData.name.createNSString() handler:^BOOL {
             return Accessibility::performCustomActionPress(treeID, targetID);
         }]);
         [actions addObject:action.get()];

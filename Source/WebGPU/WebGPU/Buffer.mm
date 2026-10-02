@@ -727,7 +727,7 @@ WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
     return WebGPU::Metal::fromAPI(buffer).usage();
 }
 
-void NODELETE wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
+void wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
 {
 #if ENABLE(WEBGPU_SWIFT)
     protect(WebGPU::Metal::fromAPI(buffer))->bufferCopy(data, offset);

@@ -162,7 +162,7 @@ WorkerGlobalScope::~WorkerGlobalScope()
     m_crypto = nullptr;
 
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
-    if (auto* workerReportingProxy = thread()->workerReportingProxy())
+    if (CheckedPtr workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->workerGlobalScopeDestroyed();
 }
 
@@ -346,7 +346,7 @@ void WorkerGlobalScope::close()
         ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(context));
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        if (auto* workerReportingProxy = workerGlobalScope.thread()->workerReportingProxy())
+        if (CheckedPtr workerReportingProxy = workerGlobalScope.thread()->workerReportingProxy())
             workerReportingProxy->workerGlobalScopeClosed();
     } });
 }
@@ -467,11 +467,11 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
             NakedPtr<JSC::Exception> exception;
             ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()), scriptLoader->isRedirected() ? URL(scriptLoader->url()) : URL());
             sourceProvider = downcast<ScriptBufferSourceProvider>(sourceCode.provider());
-            script()->evaluate(sourceCode, exception);
+            protect(script())->evaluate(sourceCode, exception);
             if (exception) {
                 if (mutedErrors)
                     return Exception { ExceptionCode::NetworkError, "Network response is CORS-cross-origin"_s };
-                script()->setException(exception);
+                protect(script())->setException(exception);
                 return { };
             }
         }
@@ -489,7 +489,7 @@ EventTarget* WorkerGlobalScope::errorEventTarget()
 
 void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&&)
 {
-    if (auto* workerReportingProxy = thread()->workerReportingProxy())
+    if (CheckedPtr workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
@@ -537,7 +537,7 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
 std::optional<Vector<uint8_t>> WorkerGlobalScope::serializeAndWrapCryptoKey(CryptoKeyData&& keyData)
 {
     Ref protectedThis { *this };
-    auto* workerLoaderProxy = thread()->workerLoaderProxy();
+    CheckedPtr workerLoaderProxy = thread()->workerLoaderProxy();
     if (!workerLoaderProxy)
         return std::nullopt;
 
@@ -557,7 +557,7 @@ std::optional<Vector<uint8_t>> WorkerGlobalScope::serializeAndWrapCryptoKey(Cryp
 std::optional<Vector<uint8_t>> WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey)
 {
     Ref protectedThis { *this };
-    auto* workerLoaderProxy = thread()->workerLoaderProxy();
+    CheckedPtr workerLoaderProxy = thread()->workerLoaderProxy();
     if (!workerLoaderProxy)
         return std::nullopt;
 
@@ -729,7 +729,7 @@ void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBu
 
 void WorkerGlobalScope::reportErrorToWorkerObject(const String& errorMessage)
 {
-    if (auto* workerReportingProxy = thread()->workerReportingProxy())
+    if (CheckedPtr workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->reportErrorToWorkerObject(errorMessage);
 }
 
@@ -781,7 +781,7 @@ void WorkerGlobalScope::updateServiceWorkerClientData()
 
 void WorkerGlobalScope::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
 {
-    eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }, event = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTF::move(eventInit), Event::IsTrusted::Yes)] {
+    protect(eventLoop())->queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }, event = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTF::move(eventInit), Event::IsTrusted::Yes)] {
         protectedThis->dispatchEvent(event);
     });
 }
