@@ -1266,6 +1266,24 @@ if (WebKitLegacy_INSTALL_NAME_DIR)
     )
 endif ()
 
+set(WebKitLegacy_XIBS
+    ${WEBKITLEGACY_DIR}/en.lproj/WebJavaScriptTextInputPanel.xib
+    ${WEBKITLEGACY_DIR}/mac/Panels/en.lproj/WebAuthenticationPanel.xib
+)
+set(_wkl_localized_resources_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework/Versions/A/Resources/en.lproj)
+foreach (_xib IN LISTS WebKitLegacy_XIBS)
+    get_filename_component(_nib_name ${_xib} NAME_WE)
+    set(_nib ${_wkl_localized_resources_dir}/${_nib_name}.nib)
+    add_custom_command(OUTPUT ${_nib}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${_wkl_localized_resources_dir}
+        COMMAND ibtool --compile ${_nib} ${_xib}
+        DEPENDS ${_xib}
+        VERBATIM)
+    list(APPEND WebKitLegacy_NIBS ${_nib})
+endforeach ()
+add_custom_target(WebKitLegacy_CompileXIBs DEPENDS ${WebKitLegacy_NIBS})
+add_dependencies(WebKitLegacy WebKitLegacy_CompileXIBs)
+
 
 # WebKit reexports WebKitLegacy, so the legacy ObjC API is part of WebKit's
 # API.
