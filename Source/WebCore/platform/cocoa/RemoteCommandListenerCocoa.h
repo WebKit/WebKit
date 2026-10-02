@@ -48,6 +48,7 @@ private:
     void* m_commandHandler { nullptr };
 
     RemoteCommandsSet m_currentCommands;
+    bool m_currentSupportsSeeking { false };
 };
 
 }

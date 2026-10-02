@@ -105,7 +105,7 @@ void RemoteCommandListenerCocoa::updateSupportedCommands()
         return;
 
     auto currentCommands = !supportedCommands().isEmpty() ? supportedCommands().unionWith(minimalCommands()) : defaultCommands();
-    if (m_currentCommands == currentCommands)
+    if (m_currentCommands == currentCommands && m_currentSupportsSeeking == supportsSeeking())
         return;
 
     auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, currentCommands.size(), &kCFTypeArrayCallBacks));
@@ -128,6 +128,7 @@ void RemoteCommandListenerCocoa::updateSupportedCommands()
 
     MRMediaRemoteSetSupportedCommands(commandInfoArray.get(), MRMediaRemoteGetLocalOrigin(), nullptr, nullptr);
     m_currentCommands = currentCommands;
+    m_currentSupportsSeeking = supportsSeeking();
 }
 
 RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClient& client)
