@@ -1399,6 +1399,34 @@ TEST(SiteIsolation, FocusTextInputContextInOffsetCrossOriginIframeMovesCaret)
     EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart" inFrame:childFrame.get()] intValue]);
 }
 
+TEST(SiteIsolation, SetCanShowPlaceholderForElementInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body><input id='iframeInput' placeholder='ph''></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('iframeInput').focus()" inFrame:childFrame.get()];
+    while (![childFrame _isFocused])
+        childFrame = [webView firstChildFrame];
+
+    NSArray<_WKTextInputContext *> *contexts = synchronouslyRequestTextInputContextsInRect(webView.get(), [webView bounds]);
+    ASSERT_EQ(1UL, contexts.count);
+
+    RetainPtr<_WKTextInputContext> iframeField = contexts[0];
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.activeElement.matches(':placeholder-shown')" inFrame:childFrame.get()] boolValue]);
+    [webView _willBeginTextInteractionInTextInputContext:iframeField.get()];
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.activeElement.matches(':placeholder-shown')" inFrame:childFrame.get()] boolValue]);
+    [webView _didFinishTextInteractionInTextInputContext:iframeField.get()];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.activeElement.matches(':placeholder-shown')" inFrame:childFrame.get()] boolValue]);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
