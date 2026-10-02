@@ -30,6 +30,7 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
+#import "HeapInlines.h"
 #import "IntegrityInlines.h"
 #import "JITWorklist.h"
 #import "JSManagedValueInternal.h"
