@@ -45,10 +45,9 @@
 #include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "SelectPopoverElement.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/Ref.h>
@@ -482,8 +481,6 @@ void HTMLOptionElement::parseDisabledAttribute(const AtomString& value)
     {
         Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled }, { CSSSelector::PseudoClass::Enabled, !newDisabled } });
         m_disabled = newDisabled;
-        if (CheckedPtr renderer = this->renderer(); renderer && renderer->style().hasUsedAppearance())
-            renderer->repaint();
     }
 
     if (select)
