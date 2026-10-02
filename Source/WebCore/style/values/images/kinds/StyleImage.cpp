@@ -213,6 +213,11 @@ static ImageDrawResult drawTiledImage(GraphicsContext& ctxt, WebCore::Image& ima
     return ImageDrawResult::DidDraw;
 }
 
+ImageDrawResult Image::draw(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const WebCore::ImageDrawingExtras* extras) const
+{
+    return context.drawImage(image, concreteObjectSize, destination, source, options, extras);
+}
+
 ImageDrawResult Image::drawTiled(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, const WebCore::ImageDrawingExtras* extras) const
 {
     if (context.paintingDisabled())

@@ -178,7 +178,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
         : ConcreteObjectSize::fixed(image->size());
     auto extras = imageDrawingExtras();
-    auto drawResult = paintInfo.context().drawImage(*image, concreteObjectSize, rect, sourceRect, options, &extras);
+    auto drawResult = protect(imageResource().styleImage())->draw(paintInfo.context(), *image, concreteObjectSize, rect, sourceRect, options, &extras);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 

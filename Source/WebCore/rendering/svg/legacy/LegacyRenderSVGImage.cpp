@@ -191,6 +191,11 @@ IntSize LegacyRenderSVGImage::imageContainerSize() const
     return enclosingIntRect(m_objectBoundingBox).size();
 }
 
+Style::ImageDrawingExtras LegacyRenderSVGImage::imageDrawingExtras() const
+{
+    return imageResource().drawingExtras(protect(document())->encodingParseURL(protect(imageElement())->imageSourceURL()));
+}
+
 void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
     RefPtr<Image> image = imageResource().image();
@@ -221,8 +226,8 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     auto concreteObjectSize = image->drawsSVGImage()
         ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
         : ConcreteObjectSize::fixed(image->size());
-    auto extras = imageResource().drawingExtras(protect(document())->encodingParseURL(protect(imageElement())->imageSourceURL()));
-    context.drawImage(*image, concreteObjectSize, destRect, srcRect, options, &extras);
+    auto extras = imageDrawingExtras();
+    protect(imageResource().styleImage())->draw(context, *image, concreteObjectSize, destRect, srcRect, options, &extras);
 
     RefPtr cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())

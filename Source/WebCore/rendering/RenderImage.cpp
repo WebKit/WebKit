@@ -817,7 +817,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
             : ConcreteObjectSize::fixed(img->size());
         auto sourceRect = drawsSVG ? FloatRect { { }, containerSize } : FloatRect { { }, img->size(options.orientation()) };
         auto extras = imageDrawingExtras();
-        drawResult = paintInfo.context().drawImage(*img, concreteObjectSize, rect, sourceRect, options, &extras);
+        drawResult = protect(imageResource().styleImage())->draw(paintInfo.context(), *img, concreteObjectSize, rect, sourceRect, options, &extras);
     }
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
