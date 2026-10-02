@@ -375,14 +375,21 @@ static void notifyDebuggerOfVMStopping(VM& vm)
 #endif
 }
 
-static void notifyDebuggerOfVMResuming(VM& vm)
+// Returns true if the caller should fire the one-shot wasm debugger post-resume callback.
+bool VMManager::notifyDebuggerOfVMResuming(VM& vm)
 {
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-    if (auto* state = vm.debugStateIfExists()) [[unlikely]]
+    if (auto* state = vm.debugStateIfExists()) [[unlikely]] {
         state->clearStop();
+
+        bool isRunOne = m_worldMode == Mode::RunOne;
+        bool isLastStoppedVM = !m_numberOfStoppedVMs && m_worldMode == Mode::RunAll;
+        return (isRunOne || isLastStoppedVM) && m_wasmDebuggerResumePending.exchange(false);
+    }
 #else
     UNUSED_PARAM(vm);
 #endif
+    return false;
 }
 
 void VMManager::notifyVMBlocking(VM& vm)
@@ -567,7 +574,7 @@ void VMManager::enterStopTheWorldParticipation(VM& vm, StopTheWorldEvent event)
             auto requestBits = static_cast<StopRequestBits>(m_currentStopReason);
             m_pendingStopRequestBits.exchangeAnd(~requestBits);
             if (m_currentStopReason == StopReason::WasmDebugger)
-                m_needsWasmDebuggerOnResume.store(true);
+                m_wasmDebuggerResumePending.store(true);
             m_currentStopReason = StopReason::None;
 
             // No new callback target being specified means that we should not change m_useRunOneMode.
@@ -588,7 +595,7 @@ void VMManager::enterStopTheWorldParticipation(VM& vm, StopTheWorldEvent event)
         }
     }
 
-    unsigned numberOfStoppedVMs = UINT_MAX;
+    bool shouldDeliverResume = false;
 
     {
         Locker lock { m_worldLock };
@@ -596,13 +603,11 @@ void VMManager::enterStopTheWorldParticipation(VM& vm, StopTheWorldEvent event)
         // If we get here, we're either transitioning to RunOne or Running mode.
         RELEASE_ASSERT(!m_servingVM || m_servingVM == &vm);
 
-        numberOfStoppedVMs = --m_numberOfStoppedVMs;
-
-        notifyDebuggerOfVMResuming(vm);
+        --m_numberOfStoppedVMs;
+        shouldDeliverResume = notifyDebuggerOfVMResuming(vm);
     }
 
-    // Call post-resume callback once when last VM exits and all VMs are running.
-    if (!numberOfStoppedVMs && m_needsWasmDebuggerOnResume.exchange(false))
+    if (shouldDeliverResume)
         g_jscConfig.wasmDebuggerOnResume();
 }
 

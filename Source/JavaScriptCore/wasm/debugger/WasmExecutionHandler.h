@@ -121,7 +121,13 @@ public:
             m_debuggee = nullptr;
     }
 
-    JS_EXPORT_PRIVATE void switchTarget(uint64_t threadId);
+    JS_EXPORT_PRIVATE bool switchTarget(uint64_t threadId);
+
+    void setContinueDebuggeeOnly(bool only)
+    {
+        Locker locker { m_lock };
+        m_continueDebuggeeOnly = only;
+    }
 
     StopTheWorldStatus handleStopTheWorld(VM&, StopTheWorldEvent);
     void handlePostResume();
@@ -135,6 +141,9 @@ private:
     ResumeMode stopImpl(Locker<Lock>&) WTF_REQUIRES_LOCK(m_lock);
 
     void resumeImpl(Locker<Lock>&) WTF_REQUIRES_LOCK(m_lock);
+
+    void requestStopAllAndWait(Locker<Lock>&) WTF_REQUIRES_LOCK(m_lock);
+    bool canResumeDebuggeeAlone() const WTF_REQUIRES_LOCK(m_lock);
 
     bool stepAtBytecode(Locker<Lock>&, DebugState*) WTF_REQUIRES_LOCK(m_lock);
 
@@ -170,6 +179,7 @@ private:
     Condition m_debuggeeContinue;
     DebuggerState m_debuggerState WTF_GUARDED_BY_LOCK(m_lock) { DebuggerState::Replied };
     bool m_awaitingResumeNotification WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_continueDebuggeeOnly WTF_GUARDED_BY_LOCK(m_lock) { false };
     VM* m_debuggee WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
     std::optional<uint64_t> m_debugServerThreadId;
 };

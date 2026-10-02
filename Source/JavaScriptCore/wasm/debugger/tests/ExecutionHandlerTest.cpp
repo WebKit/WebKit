@@ -47,14 +47,17 @@
 #include "WasmVirtualAddress.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace ExecutionHandlerTest {
 
 using ExecutionHandlerTestSupport::getReplyCount;
+using ExecutionHandlerTestSupport::lastReply;
 using ExecutionHandlerTestSupport::setupTestEnvironment;
 using ExecutionHandlerTestSupport::verboseLogging;
 using ExecutionHandlerTestSupport::waitForCondition;
@@ -62,7 +65,6 @@ using ExecutionHandlerTestSupport::workerThreadTask;
 using JSC::JSWebAssemblyInstance;
 using JSC::VM;
 using JSC::VMManager;
-using JSC::Wasm::Breakpoint;
 using JSC::Wasm::DebugServer;
 using JSC::Wasm::DebugState;
 using JSC::Wasm::ExecutionHandler;
@@ -323,6 +325,94 @@ static void testBreakpointSingleStepping()
     clearBreakpointsAndResume();
 
     TEST_LOG(failuresFound == initialFailures ? "PASS" : "FAIL");
+}
+
+// 'c' after Hc<id> runs only that VM; Hc<id> switches the debuggee, and Hc-1 precedes a run-all 'c'.
+static void testContinueRunsOnlyContinueThread()
+{
+    TEST_LOG("\n=== Continue Runs Only Continue Thread ===");
+
+    interrupt();
+    setBreakpointsAtAllFunctionEntries();
+
+    // Stop at a site, so the debuggee is at an instruction it can run on from.
+    unsigned expectedReplyCount = getReplyCount() + 1;
+    executionHandler->resume();
+    waitForConditionAndCheck("Did not hit breakpoint after resume"_s, [&]() {
+        return getReplyCount() == expectedReplyCount && executionHandler->debuggeeStateForTest()->isStoppedAtBytecode();
+    });
+
+    VM* runner = executionHandler->debuggeeVM();
+    bool haveOther = false;
+    VMManager::forEachVM([&](VM& vm) {
+        if (&vm != runner)
+            haveOther = true;
+        return haveOther ? IterationStatus::Done : IterationStatus::Continue;
+    });
+    if (!haveOther) {
+        clearBreakpointsAndResume();
+        TEST_LOG("SKIP (needs a second VM)");
+        return;
+    }
+
+    String runnerThread = makeString(hex(runner->identifier().toUInt64(), Lowercase));
+    debugServer->handlePacket(makeString("Hc"_s, runnerThread));
+    CHECK(lastReply().startsWith("$OK#"_s), "Hc should be answered OK, got ", lastReply());
+
+    // An Hc naming no stopped VM is refused; the debuggee is unchanged.
+    debugServer->handlePacket("Hc7fffffff"_s);
+    CHECK(lastReply().startsWith("$E01#"_s), "Hc for an unknown thread should be refused, got ", lastReply());
+    CHECK(executionHandler->debuggeeVM() == runner, "A refused Hc must not change the debuggee");
+
+    // A VM that stays stopped keeps the very stop record it has now; one that ran gets a new one.
+    UncheckedKeyHashMap<VM*, const void*> stopRecords;
+    VMManager::forEachVM([&](VM& vm) {
+        if (&vm != runner)
+            stopRecords.add(&vm, vm.debugState()->stopData.get());
+        return IterationStatus::Continue;
+    });
+
+    // 'c' answers once the runner is running alone; its stop is reported when it reaches a site.
+    debugServer->handlePacket("c"_s);
+    waitForConditionAndCheck("The runner did not stop"_s, [&]() {
+        return lastReply().startsWith("$T"_s);
+    });
+    CHECK(lastReply().startsWith(makeString("$T05thread:"_s, runnerThread, ';')), "The stop should be the runner's, got ", lastReply());
+    validateStop();
+    CHECK(executionHandler->debuggeeVM() == runner, "The runner should be the debuggee after its stop");
+    for (auto& [vm, record] : stopRecords)
+        CHECK(vm->debugState()->stopData.get() == record, "Only the runner may run on a 'c' after Hc");
+
+    // After Hc-1, 'c' runs every VM again.
+    executionHandler->breakpointManager()->clearAllBreakpoints();
+    debugServer->handlePacket("Hc-1"_s);
+    CHECK(lastReply().startsWith("$OK#"_s), "Hc-1 should be answered OK, got ", lastReply());
+    debugServer->handlePacket("c"_s);
+    CHECK(VMManager::info().worldMode == VMManager::Mode::RunAll, "After Hc-1, 'c' should resume every VM");
+
+    // A disconnect while one VM runs alone must free the others; clear breakpoints so it never stops.
+    interrupt();
+    setBreakpointsAtAllFunctionEntries();
+    expectedReplyCount = getReplyCount() + 1;
+    executionHandler->resume();
+    waitForConditionAndCheck("Did not hit breakpoint after resume"_s, [&]() {
+        return getReplyCount() == expectedReplyCount && executionHandler->debuggeeStateForTest()->isStoppedAtBytecode();
+    });
+    executionHandler->breakpointManager()->clearAllBreakpoints();
+    VM* loneRunner = executionHandler->debuggeeVM();
+    debugServer->handlePacket(makeString("Hc"_s, hex(loneRunner->identifier().toUInt64(), Lowercase)));
+    debugServer->handlePacket("c"_s);
+    CHECK(VMManager::info().worldMode == VMManager::Mode::RunOne, "'c' after Hc should run the debuggee alone");
+
+    executionHandler->reset();
+    CHECK(VMManager::info().worldMode == VMManager::Mode::RunAll, "reset() should resume every VM, not leave them stopped");
+    VMManager::forEachVM([&](VM& vm) {
+        CHECK(!vm.debugState()->isStopped, "VM should be running after reset()");
+        return IterationStatus::Continue;
+    });
+    debugServer->handlePacket("Hc-1"_s);
+
+    TEST_LOG("PASS");
 }
 
 // Collects the live instances of each module, keyed by the module they were instantiated from.
@@ -686,6 +776,7 @@ UNUSED_FUNCTION static int runTests()
         testVMContextSwitching();
         testBreakpointContinueCycles();
         testBreakpointSingleStepping();
+        testContinueRunsOnlyContinueThread();
         testInstanceScopedAddressing();
         testPatchLifetime();
         testSharedBytecodeBreakpoints();
