@@ -7,18 +7,30 @@
 <script>
 function test()
 {
+    if (window.GCController) {
+        GCController.collect();
+    }
     let suite = InspectorTest.createAsyncSuite("HAR.Page");
 
     suite.addTestCase({
         name: "HAR.Page.Priority",
         description: "Should be able to generate a HAR with all of this test page's resources.",
         async test() {
+            function logWithTime(msg) {
+                const now = new Date();
+                console.log(`[${now.getTime()}] ${msg}`);
+                InspectorTest.log(`[${now.getTime()}] ${msg}`);
+            }
+
+            logWithTime("Starting test case");
             await NetworkAgent.setResourceCachingDisabled(false);
+            logWithTime("Caching disabled");
 
             await Promise.all([
                 WI.networkManager.mainFrame.removeAllResources(),
                 WI.networkManager.mainFrame.clearProvisionalLoad(false),
             ]);
+            logWithTime("Resources cleared");
 
             await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
@@ -26,11 +38,14 @@ function test()
                 InspectorTest.awaitEvent("LoadComplete"),
                 InspectorTest.reloadPage({ignoreCache: true}),
             ]);
+            logWithTime("LoadComplete + reload done")
 
             await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
+            logWithTime(`Collected ${resources.length} resources`);
             let har = await WI.HARBuilder.buildArchive(resources);
+            logWithTime("HAR built");
             let localResources = WI.networkManager.processHAR({json: har});
             let firstDuplicate = true;
 
