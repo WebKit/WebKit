@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+.hide-checkmarks option::checkmark,
+#hidden-checkmark option::checkmark {
+    display: none;
+}
+#custom-checkmark option::checkmark {
+    content: "•";
+}
+#drawn-checkmark option::checkmark {
+    content: "";
+    width: 4px;
+    height: 8px;
+    border: solid;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+#always-visible-checkmark option::checkmark {
+    visibility: visible;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="select">
+    <option>Apple</option>
+    <option selected>Banana</option>
+    <option>Cherry</option>
+</select>
+
+<select id="grouped-select">
+    <optgroup label="North America">
+        <option id="united-states">United States</option>
+        <option id="canada" selected>Canada</option>
+    </optgroup>
+</select>
+
+<select id="hidden-checkmark">
+    <option>Apple</option>
+    <option selected>Banana</option>
+</select>
+
+<select id="custom-checkmark">
+    <option>Apple</option>
+    <option selected>Banana</option>
+</select>
+
+<select id="drawn-checkmark">
+    <option>Apple</option>
+    <option selected>Banana</option>
+</select>
+
+<select id="always-visible-checkmark">
+    <option>Apple</option>
+    <option selected>Banana</option>
+</select>
+
+<div role="menu">
+    <div id="aria-menuitem" role="menuitem" aria-selected="true">Durian</div>
+</div>
+</div>
+
+<script>
+var output = "This test verifies that the selected option of a base-appearance select exposes the ::checkmark it shows as its AXMenuItemMarkChar, like AppKit marks the selected item of a pop-up button's menu.\n\n";
+
+function markChar(axElement) {
+    return axElement.stringAttributeValue("AXMenuItemMarkChar") || "none";
+}
+
+function markChars(menu) {
+    var marks = [];
+    for (var i = 0; i < menu.childrenCount; i++)
+        marks.push(markChar(menu.childAtIndex(i)));
+    return marks.join(", ");
+}
+
+var select;
+async function openPicker(id, menuItemCount) {
+    select = accessibilityController.accessibleElementById(id);
+    select.press();
+    output += await expectAsync("select.isExpanded", "true");
+    return menuItemCount ? await waitForBaseSelectMenu(select, menuItemCount) : null;
+}
+
+async function closePicker() {
+    select.press();
+    output += await expectAsync("select.isExpanded", "false");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        window.menu = await openPicker("select", 3);
+        output += await expectAsync("markChars(menu)", "'none, ✓, none'");
+
+        output += "\nHiding the checkmarks removes the mark, and showing them restores it.\n";
+        document.getElementById("select").classList.add("hide-checkmarks");
+        output += await expectAsync("markChars(menu)", "'none, none, none'");
+        document.getElementById("select").classList.remove("hide-checkmarks");
+        output += await expectAsync("markChars(menu)", "'none, ✓, none'");
+
+        output += "\nChanging the selection while the picker is open moves the mark.\n";
+        document.getElementById("select").value = "Cherry";
+        output += await expectAsync("markChars(menu)", "'none, none, ✓'");
+
+        output += "\nSelect Apple and reopen the picker. The mark should move to Apple.\n";
+        menu.childAtIndex(0).press();
+        output += await expectAsync("select.isExpanded", "false");
+        output += expect("select.stringValue.includes('Apple')", "true");
+        menu = await openPicker("select", 3);
+        output += await expectAsync("markChars(menu)", "'✓, none, none'");
+        await closePicker();
+
+        output += "\nOptions inside an optgroup are marked too.\n";
+        await openPicker("grouped-select");
+        output += await expectAsync("markChar(accessibilityController.accessibleElementById('canada'))", "'✓'");
+        output += expect("markChar(accessibilityController.accessibleElementById('united-states'))", "'none'");
+        await closePicker();
+
+        output += "\nA checkmark hidden with display: none isn't exposed.\n";
+        menu = await openPicker("hidden-checkmark", 2);
+        output += expect("markChars(menu)", "'none, none'");
+        await closePicker();
+
+        output += "\nA custom checkmark is exposed with its own glyph.\n";
+        menu = await openPicker("custom-checkmark", 2);
+        output += await expectAsync("markChars(menu)", "'none, •'");
+        await closePicker();
+
+        output += "\nA checkmark drawn without text is exposed as a check character.\n";
+        menu = await openPicker("drawn-checkmark", 2);
+        output += await expectAsync("markChars(menu)", "'none, ✓'");
+        await closePicker();
+
+        output += "\nOnly the selected option is marked, even when every option shows its checkmark.\n";
+        menu = await openPicker("always-visible-checkmark", 2);
+        output += await expectAsync("markChars(menu)", "'none, ✓'");
+        await closePicker();
+
+        output += "\nA selected menu item that isn't an option isn't marked.\n";
+        window.ariaMenuItem = accessibilityController.accessibleElementById("aria-menuitem");
+        output += expect("ariaMenuItem.isSelected", "true");
+        output += expect("markChar(ariaMenuItem)", "'none'");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

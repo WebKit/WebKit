@@ -1,0 +1,53 @@
+This test verifies that the selected option of a base-appearance select exposes the ::checkmark it shows as its AXMenuItemMarkChar, like AppKit marks the selected item of a pop-up button's menu.
+
+PASS: select.isExpanded === true
+PASS: markChars(menu) === 'none, ✓, none'
+
+Hiding the checkmarks removes the mark, and showing them restores it.
+PASS: markChars(menu) === 'none, none, none'
+PASS: markChars(menu) === 'none, ✓, none'
+
+Changing the selection while the picker is open moves the mark.
+PASS: markChars(menu) === 'none, none, ✓'
+
+Select Apple and reopen the picker. The mark should move to Apple.
+PASS: select.isExpanded === false
+PASS: select.stringValue.includes('Apple') === true
+PASS: select.isExpanded === true
+PASS: markChars(menu) === '✓, none, none'
+PASS: select.isExpanded === false
+
+Options inside an optgroup are marked too.
+PASS: select.isExpanded === true
+PASS: markChar(accessibilityController.accessibleElementById('canada')) === '✓'
+PASS: markChar(accessibilityController.accessibleElementById('united-states')) === 'none'
+PASS: select.isExpanded === false
+
+A checkmark hidden with display: none isn't exposed.
+PASS: select.isExpanded === true
+PASS: markChars(menu) === 'none, none'
+PASS: select.isExpanded === false
+
+A custom checkmark is exposed with its own glyph.
+PASS: select.isExpanded === true
+PASS: markChars(menu) === 'none, •'
+PASS: select.isExpanded === false
+
+A checkmark drawn without text is exposed as a check character.
+PASS: select.isExpanded === true
+PASS: markChars(menu) === 'none, ✓'
+PASS: select.isExpanded === false
+
+Only the selected option is marked, even when every option shows its checkmark.
+PASS: select.isExpanded === true
+PASS: markChars(menu) === 'none, ✓'
+PASS: select.isExpanded === false
+
+A selected menu item that isn't an option isn't marked.
+PASS: ariaMenuItem.isSelected === true
+PASS: markChar(ariaMenuItem) === 'none'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

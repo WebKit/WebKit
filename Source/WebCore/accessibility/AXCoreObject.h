@@ -700,6 +700,8 @@ public:
     virtual bool isChecked() const = 0;
     virtual bool isEnabled() const = 0;
     virtual bool isSelected() const = 0;
+    // The glyph of a selected option's visible ::checkmark (e.g. in a base-appearance select's picker), or the empty string.
+    virtual String selectedOptionCheckmark() const = 0;
     virtual bool isFocused() const = 0;
     virtual bool isIndeterminate() const = 0;
     virtual bool isLoaded() const = 0;

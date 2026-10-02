@@ -1197,6 +1197,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::ScreenRelativePosition:
         stream << "ScreenRelativePosition";
         break;
+    case AXProperty::SelectedOptionCheckmark:
+        stream << "SelectedOptionCheckmark";
+        break;
     case AXProperty::SelectedTextRange:
         stream << "SelectedTextRange";
         break;

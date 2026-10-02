@@ -99,6 +99,8 @@
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RemoteFrame.h"
+#include "RenderBlockFlow.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderImageResource.h"
@@ -3519,6 +3521,26 @@ bool AccessibilityObject::isSelected() const
 #endif // USE(ATSPI)
 
     return false;
+}
+
+String AccessibilityObject::selectedOptionCheckmark() const
+{
+    // Options in a base-appearance select render a ::checkmark, which the UA stylesheet hides unless the option is selected.
+    RefPtr option = dynamicDowncast<HTMLOptionElement>(node());
+    CheckedPtr renderer = option ? option->renderer() : nullptr;
+    CheckedPtr checkmark = renderer ? renderer->pseudoElementRenderer(PseudoElementType::Checkmark).get() : nullptr;
+    if (!checkmark || checkmark->style().usedVisibility() != Visibility::Visible || !option->selected())
+        return { };
+
+    StringBuilder glyph;
+    for (CheckedRef text : descendantsOfType<RenderText>(*checkmark))
+        glyph.append(text->text());
+    String trimmedGlyph = glyph.toString().trim(isASCIIWhitespace);
+    if (!trimmedGlyph.isEmpty())
+        return trimmedGlyph;
+
+    // A checkmark without text is drawn some other way, like with an image or borders.
+    return String { span(checkMarkCharacter) };
 }
 
 bool AccessibilityObject::isTabItemSelected() const

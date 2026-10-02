@@ -92,6 +92,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
+#import <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
 #import "ModelPlayerAccessibilityChildren.h"
@@ -656,6 +657,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         // Tree items normally do not support value, but should if they are checkable.
         [additional addObject:NSAccessibilityValueAttribute];
     }
+
+    // Menu items that are controls get controlAttrs instead of menuItemAttrs, so add the menu item mark they would otherwise lose.
+    if (backingObject->isMenuItem() && backingObject->isControl())
+        [additional addObject:(NSString *)kAXMenuItemMarkCharAttribute];
 
     return additional;
 }
@@ -1740,8 +1745,13 @@ static id handleDateTimeComponentsAttribute(WebAccessibilityObjectWrapper*, AXCo
 
 static id handleMenuItemMarkCharAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    const unichar ch = 0x2713;
-    return (backingObject.isChecked()) ? [NSString stringWithCharacters:&ch length:1] : nil;
+    if (backingObject.isChecked())
+        return String(span(checkMarkCharacter)).createNSString().autorelease();
+
+    // AppKit marks the selected item of a pop-up button's menu with a checkmark. Do the same for the selected
+    // option of a base-appearance select (exposed as a menu item), but only with the checkmark the page shows.
+    String checkmark = backingObject.selectedOptionCheckmark();
+    return checkmark.isEmpty() ? nil : checkmark.createNSString().autorelease();
 }
 
 static id handleMinValueAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)

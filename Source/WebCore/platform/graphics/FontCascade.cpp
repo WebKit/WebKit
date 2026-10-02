@@ -1107,7 +1107,7 @@ bool FontCascade::isCJKIdeographOrSymbol(char32_t c)
     if (c >= 0x2672 && c <= 0x267D)
         return true;
 
-    if ((c == 0x26A0) || (c == 0x26BD) || (c == 0x26BE) || (c == 0x2713) || (c == 0x271A) || (c == 0x273F) || (c == 0x2740) || (c == 0x2756))
+    if ((c == 0x26A0) || (c == 0x26BD) || (c == 0x26BE) || (c == checkMarkCharacter) || (c == 0x271A) || (c == 0x273F) || (c == 0x2740) || (c == 0x2756))
         return true;
 
     if (c >= 0x2776 && c <= 0x277F)

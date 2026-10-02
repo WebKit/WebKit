@@ -6375,7 +6375,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         //  who has changed selected state, not just on table or grid who has changed its selected cells.
         case AXNotification::SelectedCellsChanged:
         case AXNotification::SelectedStateChanged:
-            tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::IsSelected });
+            tree->queueNodeUpdate(notification.first->objectID(), { { AXProperty::IsSelected, AXProperty::SelectedOptionCheckmark } });
             break;
         case AXNotification::SetSizeChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { { AXProperty::SetSize, AXProperty::SupportsSetSize } });
@@ -6384,7 +6384,8 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::SpeakAs });
             break;
         case AXNotification::StyleChanged:
-            tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::ShowsCursorOnHover });
+            // A change to an option's ::checkmark style is reported as a style change to the option itself.
+            tree->queueNodeUpdate(notification.first->objectID(), { { AXProperty::ShowsCursorOnHover, AXProperty::SelectedOptionCheckmark } });
             break;
         case AXNotification::TextColorChanged:
             tree->updatePropertiesForSelfAndDescendants(notification.first.get(), { AXProperty::TextColor });
