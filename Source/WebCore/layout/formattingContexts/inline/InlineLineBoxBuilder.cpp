@@ -60,7 +60,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         // For now just include the hanging content in the root inline box as if it was not hanging (this is how legacy line layout works).
         return lineLayoutResult.contentGeometry.logicalWidth;
     };
-    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
     if (lineLayoutResult.isBlockContent())
         constructBlockContent(lineBox);
     else {
@@ -99,7 +99,7 @@ LineBox LineBoxBuilder::buildForRootInlineBoxOnly(size_t lineIndex)
     auto& lineLayoutResult = this->lineLayoutResult();
     ASSERT(lineLayoutResult.hasContentfulInlineContent());
 
-    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth, lineIndex, isFirstFormattedLine(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth, lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
     if (isFirstFormattedLine())
@@ -539,16 +539,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         ASSERT(run.isOutOfFlow());
     }
 
-    auto blockEllipsisContentOnly = [&] {
-        if (!lineLayoutResult().blockEllipsis || rootInlineBox.hasContent())
-            return false;
-        for (auto& run : inlineContent) {
-            if (run.isContentful())
-                return false;
-        }
-        return true;
-    };
-    if (blockEllipsisContentOnly()) {
+    if (lineBox.hasBlockEllipsisContentOnly()) {
         // Such line box is considered to contain a strut regardless of the document's mode (css-overflow-4 block-ellipsis).
         rootInlineBox.setHasContent();
     }

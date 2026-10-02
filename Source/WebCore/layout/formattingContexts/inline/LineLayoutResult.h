@@ -105,6 +105,7 @@ struct LineLayoutResult {
     bool hasContentfulInFlowContent() const { return inflowContentType().has_value(); }
     bool hasContentfulInlineContent() const { return inflowContentType() == InflowContentType::Inline; }
     bool isBlockContent() const { return inflowContentType() == InflowContentType::Block; }
+    bool hasBlockEllipsisContentOnly() const { return blockEllipsis && !contentfulInlineContentEnding; }
 
     bool endsWithHyphen() const { return contentfulInlineContentEnding && *contentfulInlineContentEnding == InlineContentEnding::Hyphen; }
     bool endsWithLineBreak() const { return contentfulInlineContentEnding && *contentfulInlineContentEnding == InlineContentEnding::LineBreak; }
