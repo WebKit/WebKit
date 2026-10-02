@@ -990,6 +990,60 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func clickingTwiceAtCaretInEditableContentOpensContextMenu() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let textBounds = try await screenBoundsOfText(Self.text)
+        let pastEndOfText = CGPoint(x: textBounds.maxX + 10, y: textBounds.midY)
+
+        let contextMenuEventCount = try await contextMenuEventCountAfterClickingTwice(at: pastEndOfText)
+        #expect(contextMenuEventCount == 1)
+    }
+
+    @Test(arguments: [true, false])
+    func clickingTwiceAtCaretInNonEditableContentDoesNotOpenContextMenu(onButton: Bool) async throws {
+        let html = """
+            <div id="div" style="font-size: 30px;">\(Self.text)</div>
+            <button id="button" style="font-size: 30px;">Reset</button>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await recap.play { composer in
+            composer._wk_click(at: crazyBounds.center, for: .seconds(1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let wordSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        let expectedWordSelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+        try #require(wordSelection == expectedWordSelection)
+
+        let clickLocation: CGPoint
+        let expectedSelection: JavaScriptSelection
+        if onButton {
+            clickLocation = try await screenBounds(ofElementWithID: "button").center
+            expectedSelection = .collapsed(.init(in: "button", at: "Reset".count))
+        } else {
+            let textBounds = try await screenBoundsOfText(Self.text)
+            clickLocation = CGPoint(x: textBounds.maxX + 10, y: textBounds.midY)
+            expectedSelection = .collapsed(.init(in: "div", at: Self.text.count))
+        }
+
+        let contextMenuEventCount = try await contextMenuEventCountAfterClickingTwice(at: clickLocation)
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(newSelection == expectedSelection)
+        #expect(contextMenuEventCount == 0)
+    }
+
+    @Test
     func scrollingDoesNotRemoveTextSelection() async throws {
         try await loadHTML()
 
@@ -2995,6 +3049,34 @@ extension AppKitGesturesTests.Basic {
                 return Number(document.getElementById(elementID).getAttribute("aria-valuenow"));
             }
             """
+        }
+    }
+
+    private func contextMenuEventCountAfterClickingTwice(at point: CGPoint) async throws -> Int {
+        try await page.callJavaScript {
+            """
+            window.contextMenuEventCount = 0;
+            document.addEventListener("contextmenu", event => {
+                window.contextMenuEventCount++;
+                event.preventDefault();
+            });
+            """
+        }
+
+        await recap.play { composer in
+            composer._wk_click(at: point, for: .seconds(0.05))
+            composer.advanceTime(1)
+            composer._wk_click(at: point, for: .seconds(0.05))
+        }
+
+        // A click at the caret presents the context menu only once a double click is no longer possible.
+        try await Task.sleep(for: .seconds(1))
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        return try await page.callJavaScript(returning: Int.self) {
+            "return window.contextMenuEventCount;"
         }
     }
 
