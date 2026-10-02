@@ -781,14 +781,13 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (!img || img->isNull())
         return ImageDrawResult::DidNothing;
 
-    // FIXME: Document when image != img.get().
-    RefPtr image = imageResource().image();
+    RefPtr styleImage = imageResource().styleImage();
 
     ImagePaintingOptions options = {
         CompositeOperator::SourceOver,
-        decodingModeForImageDraw(*image, paintInfo),
+        styleImage->decodingModeForImageDraw(*this, paintInfo),
         imageOrientation(),
-        image ? chooseInterpolationQuality(paintInfo.context(), *image, image.get(), LayoutSize(rect.size())) : InterpolationQuality::Default,
+        styleImage->interpolationQualityForImageDraw(paintInfo.context(), *this, styleImage.get(), LayoutSize(rect.size())),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
@@ -817,7 +816,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
             : ConcreteObjectSize::fixed(img->size());
         auto sourceRect = drawsSVG ? FloatRect { { }, containerSize } : FloatRect { { }, img->size(options.orientation()) };
         auto extras = imageDrawingExtras();
-        drawResult = protect(imageResource().styleImage())->draw(paintInfo.context(), *img, concreteObjectSize, rect, sourceRect, options, &extras);
+        drawResult = styleImage->draw(paintInfo.context(), *img, concreteObjectSize, rect, sourceRect, options, &extras);
     }
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)

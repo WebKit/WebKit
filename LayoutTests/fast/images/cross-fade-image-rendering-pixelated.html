@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<link rel="match" href="cross-fade-image-rendering-pixelated-expected.html">
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    image-rendering: pixelated;
+}
+.background {
+    background-image: cross-fade(url(resources/grid-small.png), url(resources/grid-small.png), 50%);
+    background-size: 100px 100px;
+}
+.content {
+    content: cross-fade(url(resources/grid-small.png), url(resources/grid-small.png), 50%);
+}
+</style>
+<div class="background"></div>
+<div class="content"></div>
