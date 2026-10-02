@@ -25,6 +25,8 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 [RValue] struct WebKit::NetworkProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters
 
+    WebKit::SecurityFlags securityFlags
+
     WebKit::CacheModel cacheModel
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

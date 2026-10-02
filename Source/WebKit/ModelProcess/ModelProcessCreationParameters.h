@@ -28,12 +28,14 @@
 #if ENABLE(MODEL_PROCESS)
 
 #include "AuxiliaryProcessCreationParameters.h"
+#include "SecurityFlags.h"
 #include <wtf/ProcessID.h>
 
 namespace WebKit {
 
 struct ModelProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+    SecurityFlags securityFlags;
     ProcessID parentPID;
     String applicationVisibleName;
     bool restrictiveRenderingMode { false };

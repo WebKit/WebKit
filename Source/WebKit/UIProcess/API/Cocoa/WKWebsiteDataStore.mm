@@ -34,6 +34,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "NetworkProcessProxy.h"
 #import "RestrictedOpenerType.h"
+#import "SecurityFlagsController.h"
 #import "ShouldGrandfatherStatistics.h"
 #import "UserNotificationsSPI.h"
 #import "WKError.h"
@@ -1505,6 +1506,22 @@ struct WKWebsiteData {
         else
             completionHandlerCopy(nil);
     });
+}
+
++ (void)_setDisabledSecurityFlagsForTesting:(NSArray<NSString *> *)flagNames
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    WebKit::SecurityFlagsController::singleton().setDisabledFlagsNamed(makeVector<String>(flagNames));
+#endif // ENGINEERING_BUILD
+}
+
+- (void)_isSecurityFlagEnabledInNetworkProcessForTesting:(NSString *)flagName completionHandler:(void(^)(NSNumber *))completionHandler
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    protect(protect(*_websiteDataStore)->networkProcess())->isSecurityFlagEnabledForTesting(flagName, [completionHandlerCopy = makeBlockPtr(completionHandler)] (std::optional<bool> enabled) {
+        completionHandlerCopy(enabled ? [NSNumber numberWithBool:*enabled] : nil);
+    });
+#endif // ENGINEERING_BUILD
 }
 
 + (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler

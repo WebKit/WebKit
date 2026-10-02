@@ -29,6 +29,7 @@
 
 #include "AuxiliaryProcess.h"
 #include "SandboxExtension.h"
+#include "SecurityFlags.h"
 #include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/Timer.h>
@@ -73,6 +74,9 @@ public:
 
     ModelConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
+    // Never sent to the WebContent process.
+    const SecurityFlags& securityFlags() const LIFETIME_BOUND { return m_securityFlags; }
+
     void tryExitIfUnusedAndUnderMemoryPressure();
 
     const String& applicationVisibleName() const { return m_applicationVisibleName; }
@@ -104,6 +108,7 @@ private:
     void initializeModelProcess(ModelProcessCreationParameters&&, CompletionHandler<void()>&&);
     void createModelConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<String>& attributionTaskID, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
+    void securityFlagsDidChange(SecurityFlags&&);
     void addSession(PAL::SessionID);
     void removeSession(PAL::SessionID);
 
@@ -120,6 +125,7 @@ private:
     WebCore::Timer m_idleExitTimer;
     String m_applicationVisibleName;
     std::optional<int> m_debugEntityMemoryLimit;
+    SecurityFlags m_securityFlags;
 };
 
 } // namespace WebKit

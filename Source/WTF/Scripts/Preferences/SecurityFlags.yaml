@@ -1,0 +1,16 @@
+# Security flags for the remote disable switch. Each flag guards a shipped security fix and defaults to
+# enforced; the remote list is the whole truth, so every flag it does not name stays enforced.
+#
+# The key is the radar number of the fix, spelled "radar" followed by the number, and is used verbatim as
+# both the wire identifier and the C++ member name — so renaming a key is a protocol change. Radar numbers
+# are what keep a key unique over time: one list is served to every OS version we still support.
+#
+# A flag may carry only humanReadableDescription, which is required because the key says nothing about what
+# the flag guards, and condition. The type is always bool and the default is always the secure value.
+#
+# Never reaches the WebContent process, which we assume is compromised.
+#
+# Sorted by radar number.
+
+radar184485266:
+  humanReadableDescription: "No security fix behind this one: it is the radar for the disable switch itself, and exists to validate the mechanism end to end before anything in production depends on it"

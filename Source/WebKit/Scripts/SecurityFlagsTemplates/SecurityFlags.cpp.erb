@@ -1,0 +1,75 @@
+/*
+ * <%= @warning %>
+ *
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "SecurityFlags.h"
+
+namespace WebKit {
+
+bool SecurityFlags::disableFlagNamed(StringView name)
+{
+<% @securityFlags.each do |flag| -%>
+<%- if flag.condition -%>
+#if <%= flag.condition %>
+<%- end -%>
+    if (name == "<%= flag.name %>"_s) {
+        m_disabledFlags.concurrentTestAndSet(<%= flag.index %>);
+        return true;
+    }
+<%- if flag.condition -%>
+#endif
+<%- end -%>
+<% end -%>
+    return false;
+}
+
+std::optional<bool> SecurityFlags::isFlagEnabledNamedForTesting(StringView name) const
+{
+<% @securityFlags.each do |flag| -%>
+<%- if flag.condition -%>
+#if <%= flag.condition %>
+<%- end -%>
+    if (name == "<%= flag.name %>"_s)
+        return <%= flag.name %>();
+<%- if flag.condition -%>
+#endif
+<%- end -%>
+<% end -%>
+    return std::nullopt;
+}
+
+void SecurityFlags::replaceWith(const SecurityFlags& other)
+{
+    for (size_t index = 0; index < flagCount; ++index) {
+        if (other.m_disabledFlags.get(index))
+            m_disabledFlags.concurrentTestAndSet(index);
+        else
+            m_disabledFlags.concurrentTestAndClear(index);
+    }
+}
+
+} // namespace WebKit

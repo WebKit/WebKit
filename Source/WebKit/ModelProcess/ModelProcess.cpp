@@ -122,6 +122,11 @@ void ModelProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdent
     completionHandler();
 }
 
+void ModelProcess::securityFlagsDidChange(SecurityFlags&& securityFlags)
+{
+    m_securityFlags.replaceWith(securityFlags);
+}
+
 void ModelProcess::removeModelConnectionToWebProcess(ModelConnectionToWebProcess& connection)
 {
     RELEASE_LOG(Process, "%p - ModelProcess::removeModelConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
@@ -199,6 +204,7 @@ void ModelProcess::initializeModelProcess(ModelProcessCreationParameters&& param
 {
     CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
+    m_securityFlags.replaceWith(parameters.securityFlags);
     m_debugEntityMemoryLimit = parameters.debugEntityMemoryLimit;
     WKREEngine::enableRestrictiveRenderingMode(parameters.restrictiveRenderingMode);
 
