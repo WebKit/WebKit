@@ -348,7 +348,8 @@ private:
     bool isLocalFileLoadAllowed(const URL&);
 #endif
 
-    WebCore::NetworkLoadPriority NODELETE toNetworkLoadPriority(WebCore::ResourceLoadPriority);
+    static WebCore::NetworkLoadPriority NODELETE toNetworkLoadPriority(WebCore::ResourceLoadPriority);
+    friend bool operator==(WebCore::NetworkLoadPriority, WebCore::ResourceLoadPriority);
 
     NetworkResourceLoadParameters m_parameters;
     Vector<Ref<SandboxExtension>> m_extensionsToRevoke;
