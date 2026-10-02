@@ -592,7 +592,7 @@ public:
 
     static bool rareDataChangeRequiresLayerRepaint(const NonInheritedRareData& a, const NonInheritedRareData& b, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
     {
-        if (a.effectiveBlendMode != b.effectiveBlendMode)
+        if (a.blendMode != b.blendMode)
             return true;
 
         if (a.backdropFilter != b.backdropFilter) {

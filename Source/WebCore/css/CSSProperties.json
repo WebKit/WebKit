@@ -10689,7 +10689,7 @@
             "codegen-properties": {
                 "computed-style-name-for-methods": "BlendMode",
                 "computed-style-setter-custom": true,
-                "computed-style-storage-name": "effectiveBlendMode",
+                "computed-style-storage-name": "blendMode",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "BlendMode",

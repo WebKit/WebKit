@@ -122,7 +122,7 @@ NonInheritedRareData::NonInheritedRareData()
     , transformStyle3D(static_cast<unsigned>(ComputedStyle::initialTransformStyle3D()))
     , transformStyleForcedToFlat(false)
     , backfaceVisibility(static_cast<unsigned>(ComputedStyle::initialBackfaceVisibility()))
-    , effectiveBlendMode(static_cast<unsigned>(ComputedStyle::initialBlendMode()))
+    , blendMode(static_cast<unsigned>(ComputedStyle::initialBlendMode()))
     , textDecorationStyle(static_cast<unsigned>(ComputedStyle::initialTextDecorationStyle()))
     , textGroupAlign(static_cast<unsigned>(ComputedStyle::initialTextGroupAlign()))
     , isolation(static_cast<unsigned>(ComputedStyle::initialIsolation()))
@@ -241,7 +241,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , transformStyle3D(o.transformStyle3D)
     , transformStyleForcedToFlat(o.transformStyleForcedToFlat)
     , backfaceVisibility(o.backfaceVisibility)
-    , effectiveBlendMode(o.effectiveBlendMode)
+    , blendMode(o.blendMode)
     , textDecorationStyle(o.textDecorationStyle)
     , textGroupAlign(o.textGroupAlign)
     , isolation(o.isolation)
@@ -367,7 +367,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && transformStyle3D == o.transformStyle3D
         && transformStyleForcedToFlat == o.transformStyleForcedToFlat
         && backfaceVisibility == o.backfaceVisibility
-        && effectiveBlendMode == o.effectiveBlendMode
+        && blendMode == o.blendMode
         && textDecorationStyle == o.textDecorationStyle
         && textGroupAlign == o.textGroupAlign
         && isolation == o.isolation
@@ -525,7 +525,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT_WITH_CAST(bool, transformStyleForcedToFlat);
     LOG_IF_DIFFERENT_WITH_CAST(BackfaceVisibility, backfaceVisibility);
 
-    LOG_IF_DIFFERENT_WITH_CAST(BlendMode, effectiveBlendMode);
+    LOG_IF_DIFFERENT_WITH_CAST(BlendMode, blendMode);
 
     LOG_IF_DIFFERENT_WITH_CAST(TextDecorationStyle, textDecorationStyle);
     LOG_IF_DIFFERENT_WITH_CAST(TextGroupAlign, textGroupAlign);
