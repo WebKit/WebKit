@@ -3,13 +3,13 @@ HAR Priorities Test.
 First image
 
 
-Boosted image
+Boosted image is first of the duplicated set
 
 
 Another image
 
 
-Duplicate request
+The second of the duplicated set
 
 
 
