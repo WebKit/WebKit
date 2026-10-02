@@ -4416,7 +4416,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         return std::max(0_lu, computeSizingKeywordLogicalWidthUsing(keyword, availableSpace, inlineConstraints.bordersPlusPadding()) - inlineConstraints.bordersPlusPadding());
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalWidth,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordLogicalWidth = WTF::switchOn(logicalWidth,
         [&](const typename SizeType::Fixed& fixedLogicalWidth) -> LayoutUnit {
             return adjustContentBoxLogicalWidthForBoxSizing(fixedLogicalWidth);
         },
@@ -4473,6 +4473,14 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
             return inlineConstraints.containingSize();
         }
     );
+
+    if (logicalWidth.isCalcSize()) {
+        auto calcSizeLogicalWidth = logicalWidth.calcSize();
+        if (calcSizeLogicalWidth.behavesAsKeyword())
+            return resolveCalcSizeLogicalWidth(calcSizeLogicalWidth, keywordLogicalWidth, inlineConstraints.containingSize());
+    }
+
+    return keywordLogicalWidth;
 }
 
 void RenderBox::computeOutOfFlowPositionedLogicalHeight(LogicalExtentComputedValues& computedValues) const
