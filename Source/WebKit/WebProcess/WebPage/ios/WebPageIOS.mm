@@ -4543,7 +4543,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     }
 
     ASSERT(targetFrame->view());
-    auto position = closestEditablePositionInElementForAbsolutePoint(*target, protect(targetFrame->view())->rootViewToContents(point));
+    auto position = closestEditablePositionInElementForAbsolutePoint(*target, roundedIntPoint(protect(targetFrame->view())->rootViewToContentsAcrossIsolatedFrames(FloatPoint { point })));
     if (position.isNull()) {
         completionHandler(false);
         return;

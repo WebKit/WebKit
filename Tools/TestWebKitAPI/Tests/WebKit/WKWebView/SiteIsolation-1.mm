@@ -1272,6 +1272,30 @@ TEST(SiteIsolation, SelectWithTwoTouchesInCrossOriginIframe)
     EXPECT_WK_STREQ("hello ", [webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()]);
 }
 
+static NSArray<_WKTextInputContext *> *synchronouslyRequestTextInputContextsInRect(WKWebView *webView, CGRect rect)
+{
+    __block RetainPtr<NSArray<_WKTextInputContext *>> result;
+    __block bool done = false;
+    [webView _requestTextInputContextsInRect:rect completionHandler:^(NSArray<_WKTextInputContext *> *contexts) {
+        result = contexts;
+        done = true;
+    }];
+    Util::run(&done);
+    return result.autorelease();
+}
+
+static UIResponder<UITextInput> *synchronouslyFocusTextInputContext(WKWebView *webView, _WKTextInputContext *context, CGPoint point)
+{
+    __block UIResponder<UITextInput> *result = nil;
+    __block bool done = false;
+    [webView _focusTextInputContext:context placeCaretAt:point completionHandler:^(UIResponder<UITextInput> *responder) {
+        result = responder;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
 TEST(SiteIsolation, RequestTextInputContextsInRectCoveringCrossOriginIframe)
 {
     HTTPServer server({
@@ -1284,13 +1308,7 @@ TEST(SiteIsolation, RequestTextInputContextsInRectCoveringCrossOriginIframe)
     [navigationDelegate waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
 
-    __block RetainPtr<NSArray<_WKTextInputContext *>> contexts;
-    __block bool done = false;
-    [webView _requestTextInputContextsInRect:[webView bounds] completionHandler:^(NSArray<_WKTextInputContext *> *results) {
-        contexts = results;
-        done = true;
-    }];
-    Util::run(&done);
+    NSArray<_WKTextInputContext *> *contexts = synchronouslyRequestTextInputContextsInRect(webView.get(), [webView bounds]);
 
     EXPECT_EQ(1UL, [contexts count]);
 }
@@ -1332,6 +1350,53 @@ TEST(SiteIsolation, RequestTextInputContextsInRectCoveringOffsetCrossOriginIfram
     contexts = textInputContextsSortedByX(webView.get(), CGRectMake(410, 220, 120, 60));
     ASSERT_EQ(1U, [contexts count]);
     EXPECT_EQ(CGRectMake(420, 230, 100, 40), [contexts objectAtIndex:0].boundingRect);
+}
+
+TEST(SiteIsolation, FocusTextInputContextInCrossOriginIframeMovesCaret)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><input id='iframeInput' value='hello world'>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    NSArray<_WKTextInputContext *> *contexts = synchronouslyRequestTextInputContextsInRect(webView.get(), [webView bounds]);
+    ASSERT_EQ(1UL, contexts.count);
+
+    RetainPtr<_WKTextInputContext> iframeField = contexts[0];
+    EXPECT_NOT_NULL(synchronouslyFocusTextInputContext(webView.get(), iframeField.get(), [iframeField boundingRect].origin));
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName" inFrame:childFrame.get()]);
+    EXPECT_WK_STREQ("iframeInput", [webView stringByEvaluatingJavaScript:@"document.activeElement.id" inFrame:childFrame.get()]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart" inFrame:childFrame.get()] intValue]);
+}
+
+TEST(SiteIsolation, FocusTextInputContextInOffsetCrossOriginIframeMovesCaret)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe style='margin-left: 100px; margin-top: 50px;' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><input id='iframeInput' value='hello world'>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    NSArray<_WKTextInputContext *> *contexts = synchronouslyRequestTextInputContextsInRect(webView.get(), [webView bounds]);
+    ASSERT_EQ(1UL, contexts.count);
+
+    RetainPtr<_WKTextInputContext> iframeField = contexts[0];
+    EXPECT_NOT_NULL(synchronouslyFocusTextInputContext(webView.get(), iframeField.get(), [iframeField boundingRect].origin));
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName" inFrame:childFrame.get()]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart" inFrame:childFrame.get()] intValue]);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

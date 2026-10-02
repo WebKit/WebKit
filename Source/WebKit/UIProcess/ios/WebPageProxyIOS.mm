@@ -1549,12 +1549,19 @@ void WebPageProxy::textInputContextsInRect(FloatRect rect, CompletionHandler<voi
 
 void WebPageProxy::focusTextInputContextAndPlaceCaret(const ElementContext& context, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!hasRunningProcess()) {
+    RefPtr process = WebProcessProxy::processForIdentifier(context.documentIdentifier->processIdentifier());
+    if (!process) {
         completionHandler(false);
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::FocusTextInputContextAndPlaceCaret(context, point), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    auto webPageID = webPageIDInProcess(*process);
+    if (!hasWebPageInProcess(*process, webPageID)) {
+        completionHandler(false);
+        return;
+    }
+
+    process->sendWithAsyncReply(Messages::WebPage::FocusTextInputContextAndPlaceCaret(context, point), WTF::move(completionHandler), webPageID);
 }
 
 void WebPageProxy::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
