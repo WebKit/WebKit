@@ -922,7 +922,7 @@ macro(WEBKIT_LIBRARY _target)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
     endif ()
 
-    if (APPLE AND ${${_target}_LIBRARY_TYPE} MATCHES SHARED)
+    if (APPLE AND ${${_target}_LIBRARY_TYPE} MATCHES "SHARED|MODULE")
         _WEBKIT_ADD_DSYM(${_target})
         _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()

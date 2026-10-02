@@ -69,3 +69,37 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
     add_custom_target(${_target}Entitlements DEPENDS ${_arg_OUTPUT})
     add_dependencies(${_target} ${_target}Entitlements)
 endfunction()
+
+# Embeds <xml_path> in <target>'s __TEXT,__entitlements and its DER encoding in
+# __TEXT,__ents_der, as simulator binaries require. The target relinks when the
+# entitlements change.
+function(WEBKIT_EMBED_ENTITLEMENTS _target _xml_path)
+    set(_der_output "${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements.der")
+    add_custom_command(
+        OUTPUT "${_der_output}"
+        COMMAND derq query -f xml -i "${_xml_path}" -o "${_der_output}" --raw
+        DEPENDS "${_xml_path}"
+        VERBATIM
+    )
+    target_sources(${_target} PRIVATE "${_der_output}")
+    target_link_options(${_target} PRIVATE
+        "LINKER:-sectcreate,__TEXT,__entitlements,${_xml_path}"
+        "LINKER:-sectcreate,__TEXT,__ents_der,${_der_output}")
+    set_property(TARGET ${_target} APPEND PROPERTY LINK_DEPENDS "${_xml_path}" "${_der_output}")
+endfunction()
+
+# Writes the get-task-allow entitlements used to sign simulator binaries.
+function(WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS _output)
+    string(CONCAT _content
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
+        "<plist version=\"1.0\">\n"
+        "<dict>\n"
+        "\t<key>com.apple.security.get-task-allow</key>\n"
+        "\t<true/>\n"
+        "</dict>\n"
+        "</plist>\n"
+    )
+    # Only writes when the content changes, so the signed targets don't relink on every configure.
+    file(CONFIGURE OUTPUT ${_output} CONTENT "${_content}")
+endfunction()

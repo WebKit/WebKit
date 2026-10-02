@@ -960,38 +960,8 @@ function(WEBKIT_DEFINE_AUXILIARY_PROCESSES)
         endif ()
     endfunction()
 
-    set(_der_script "${CMAKE_CURRENT_BINARY_DIR}/generate_der_entitlements.py")
-    file(WRITE ${_der_script} "
-import plistlib, sys
-with open(sys.argv[1], 'rb') as f:
-    ents = plistlib.load(f)
-def dl(n):
-    return bytes([n]) if n < 128 else (bytes([0x81, n]) if n < 256 else bytes([0x82, (n>>8)&0xff, n&0xff]))
-entries = b''
-for k, v in sorted(ents.items()):
-    e = bytes([0x0c]) + dl(len(k)) + k.encode() + bytes([0x01, 0x01, 0xff if v else 0x00])
-    entries += bytes([0x30]) + dl(len(e)) + e
-ctx = bytes([0xb0]) + dl(len(entries)) + entries
-inner = bytes([0x02, 0x01, 0x01]) + ctx
-with open(sys.argv[2], 'wb') as f:
-    f.write(bytes([0x70]) + dl(len(inner)) + inner)
-")
-    function(WEBKIT_GENERATE_DER_ENTITLEMENTS _xml_path _der_output)
-        execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} ${_der_script} "${_xml_path}" "${_der_output}")
-    endfunction()
-
     set(_sim_get_task_allow "${CMAKE_CURRENT_BINARY_DIR}/XPCService-get-task-allow.entitlements")
-    file(WRITE ${_sim_get_task_allow}
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
-        "<plist version=\"1.0\">\n"
-        "<dict>\n"
-        "\t<key>com.apple.security.get-task-allow</key>\n"
-        "\t<true/>\n"
-        "</dict>\n"
-        "</plist>\n"
-    )
+    WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS(${_sim_get_task_allow})
 
     if (USE_EXTENSIONKIT)
         WEBKIT_DEFINE_PROCESS_EXTENSIONS()
@@ -1060,17 +1030,9 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         if (NOT WEBKIT_SDK_IS_MACOS)
             # FIXME: These may be applicable to add for macOS too (with
             # different UIDeviceFamily).
-            execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_contents_dir}/Info.plist)
-            # TARGETED_DEVICE_FAMILY of the platform being built, which no XPC service
-            # target overrides. https://developer.apple.com/documentation/xcode/build-settings-reference
-            if (WEBKIT_SDK_IS_XROS)
-                set(_device_family 7)
-            else ()
-                set(_device_family 1)
-            endif ()
-            execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_device_family}]" ${_contents_dir}/Info.plist)
-            execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_contents_dir}/Info.plist)
-            execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_contents_dir}/Info.plist)
+            # No XPC service target sets TARGETED_DEVICE_FAMILY.
+            WEBKIT_GET_DEVICE_FAMILY(_device_family)
+            WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_contents_dir}/Info.plist ${_device_family})
 
             target_link_options(${_target} PRIVATE
                 "LINKER:-rpath,@executable_path/.."
@@ -1083,11 +1045,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             )
 
             if (WEBKIT_SDK_IS_SIMULATOR)
-                set(_xpc_der "${CMAKE_CURRENT_BINARY_DIR}/${_svc_BUNDLE_IDENTIFIER}.entitlements.der")
-                WEBKIT_GENERATE_DER_ENTITLEMENTS(${_default_sim_entitlements} ${_xpc_der})
-                target_link_options(${_target} PRIVATE
-                    "LINKER:-sectcreate,__TEXT,__entitlements,${_default_sim_entitlements}"
-                    "LINKER:-sectcreate,__TEXT,__ents_der,${_xpc_der}")
+                WEBKIT_EMBED_ENTITLEMENTS(${_target} ${_default_sim_entitlements})
                 # Overrides the generated entitlements.
                 set_property(TARGET ${_target} PROPERTY
                     CODE_SIGN_ENTITLEMENTS "${_sim_get_task_allow}")
@@ -2129,12 +2087,10 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
         configure_file(${_info_plist} ${_appex_dir}/Info.plist)
 
         # Add platform keys required by runningboardd/ExtensionKit validation.
-        execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_appex_dir}/Info.plist)
         # TARGETED_DEVICE_FAMILY from Configurations/BaseExtension.xcconfig, which
         # the extension targets set for every SDK.
-        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2,7]" ${_appex_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_appex_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_appex_dir}/Info.plist)
+        WEBKIT_GET_DEVICE_FAMILY(_device_family 1 2 7)
+        WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_appex_dir}/Info.plist ${_device_family})
 
         WEBKIT_EXECUTABLE_DECLARE(${_name})
         set(${_name}_SOURCES ${_swift_source})
@@ -2174,11 +2130,7 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
         )
 
         # Simulator: embed only. Device: embed and pass to codesign.
-        set(_ext_der "${CMAKE_CURRENT_BINARY_DIR}/${_name}.entitlements.der")
-        WEBKIT_GENERATE_DER_ENTITLEMENTS(${_entitlements} ${_ext_der})
-        target_link_options(${_name} PRIVATE
-            "LINKER:-sectcreate,__TEXT,__entitlements,${_entitlements}"
-            "LINKER:-sectcreate,__TEXT,__ents_der,${_ext_der}")
+        WEBKIT_EMBED_ENTITLEMENTS(${_name} ${_entitlements})
         if (NOT WEBKIT_SDK_IS_SIMULATOR)
             set_property(TARGET ${_name} PROPERTY
                 CODE_SIGN_ENTITLEMENTS "${_entitlements}")
