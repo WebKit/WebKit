@@ -66,6 +66,10 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
 
     createWebPage(configuration);
 
+    // Allow the DRM vblank timer creation code path to run - switch to a non-zero display ID.
+    static constexpr WebCore::PlatformDisplayID legacyDisplayID = 1;
+    m_pageProxy->windowScreenDidChange(legacyDisplayID);
+
     static struct wpe_view_backend_client s_backendClient = {
         // set_size
         [](void* data, uint32_t width, uint32_t height)
