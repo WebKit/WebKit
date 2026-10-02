@@ -590,7 +590,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
             }
 
-            if (!context.paintingDisabled()) {
+            if (drawResult != ImageDrawResult::DidNothing && !context.paintingDisabled()) {
                 if (m_renderer.element())
                     protect(m_renderer)->element()->setHasEverPaintedImages(true);
 

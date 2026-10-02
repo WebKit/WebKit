@@ -847,7 +847,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
 #endif
 
-    if (element() && !paintInfo.context().paintingDisabled())
+    if (drawResult != ImageDrawResult::DidNothing && element() && !paintInfo.context().paintingDisabled())
         protect(element())->setHasEverPaintedImages(true);
 
     return drawResult;
