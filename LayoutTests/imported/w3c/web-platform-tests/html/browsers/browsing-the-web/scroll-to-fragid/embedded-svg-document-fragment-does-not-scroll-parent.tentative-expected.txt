@@ -1,0 +1,5 @@
+
+PASS Scrolling to the fragment of an SVG document in an <object> does not scroll the parent document
+PASS Scrolling to the fragment of an SVG document in an <embed> does not scroll the parent document
+PASS Scrolling to the fragment of an SVG document in an <iframe> does not scroll the parent document
+

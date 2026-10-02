@@ -1,0 +1,5 @@
+
+PASS Scrolling to the fragment of an HTML document in an <object> scrolls the parent document to the <object>
+PASS Scrolling to the fragment of an HTML document in an <embed> scrolls the parent document to the <embed>
+PASS Scrolling to the fragment of an HTML document in an <iframe> scrolls the parent document to the <iframe>
+
