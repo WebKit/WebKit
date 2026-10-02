@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "ResourceLoadPriority.h"
 #include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/ResourceLoadPriority.h>
 #include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Platform.h>
