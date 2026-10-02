@@ -97,6 +97,16 @@ inline RemovedSubtreeObservability observabilityOfRemovedNode(Node& node)
     return node.refCount() > 1 && !isRootOfRemovedTree ? RemovedSubtreeObservability::MaybeObservableByRefPtr : RemovedSubtreeObservability::NotObservable;
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+inline RemovedSubtreeObservability observabilityOfRemovedShadowRoot(ShadowRoot& shadowRoot)
+{
+    constexpr unsigned referenceCountHeldByThisRemoval = 2;
+    ASSERT(!shadowRoot.parentNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(shadowRoot.refCount() >= referenceCountHeldByThisRemoval);
+    return shadowRoot.refCount() > referenceCountHeldByThisRemoval ? RemovedSubtreeObservability::MaybeObservableByRefPtr : RemovedSubtreeObservability::NotObservable;
+}
+#endif
+
 inline void updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
 {
     if (newStatus == RemovedSubtreeObservability::MaybeObservableByRefPtr)
@@ -118,6 +128,9 @@ static RemovedSubtreeResult notifyNodeRemovedFromDocument(ContainerNode& oldPare
         updateCanDelayNodeDeletion(canDelayNodeDeletion, AsyncNodeDeletionQueue::canNodeBeDeletedAsync(node));
         updateObservability(observability, observabilityOfRemovedNode(*currentNode));
         if (RefPtr root = currentNode->shadowRoot()) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            updateObservability(observability, observabilityOfRemovedShadowRoot(*root));
+#endif
             auto [shadowTreeSize, newObservability, canBeDelayed] = notifyNodeRemovedFromDocument(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, *root);
             subTreeSize += shadowTreeSize;
             updateCanDelayNodeDeletion(canDelayNodeDeletion, canBeDelayed);
@@ -140,6 +153,9 @@ static RemovedSubtreeResult notifyNodeRemovedFromTree(ContainerNode& oldParentOf
         updateCanDelayNodeDeletion(canDelayNodeDeletion, AsyncNodeDeletionQueue::canNodeBeDeletedAsync(node));
         updateObservability(observability, observabilityOfRemovedNode(*currentNode));
         if (RefPtr root = currentNode->shadowRoot()) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            updateObservability(observability, observabilityOfRemovedShadowRoot(*root));
+#endif
             auto [shadowTreeSize, newObservability, canBeDelayed] = notifyNodeRemovedFromTree(oldParentOfRemovedTree, TreeScopeChange::DidNotChange, *root);
             subTreeSize += shadowTreeSize;
             updateCanDelayNodeDeletion(canDelayNodeDeletion, canBeDelayed);

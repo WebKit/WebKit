@@ -1310,6 +1310,11 @@ RefPtr<ShadowRoot> Node::protectedContainingShadowRoot() const
     return containingShadowRoot();
 }
 
+bool Node::hasShadowRoot() const
+{
+    return shadowRoot();
+}
+
 #if ASSERT_ENABLED
 // https://dom.spec.whatwg.org/#concept-closed-shadow-hidden
 static bool isClosedShadowHiddenUsingSpecDefinition(const Node& A, const Node& B)

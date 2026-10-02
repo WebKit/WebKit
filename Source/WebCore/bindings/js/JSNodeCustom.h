@@ -73,7 +73,11 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalOb
 void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node& root);
 inline void willCreatePossiblyOrphanedTreeByRemoval(Node& root)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!root.wrapper() && root.hasChildNodes())
+#else
+    if (!root.wrapper() && (root.hasChildNodes() || root.hasShadowRoot()))
+#endif
         willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
 }
 
