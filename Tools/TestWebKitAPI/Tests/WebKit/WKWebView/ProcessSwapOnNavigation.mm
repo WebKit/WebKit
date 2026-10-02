@@ -2146,6 +2146,8 @@ static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
     RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
+    bool expectProcessSwap = shouldEnablePSON == ShouldEnablePSON::Yes || isSiteIsolationEnabled(webView.get());
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
@@ -2162,7 +2164,7 @@ static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
 
     EXPECT_WK_STREQ(@"pson://www.google.com/clientSideRedirect.html", [[webView URL] absoluteString]);
     auto googlePID = [webView _webProcessIdentifier];
-    if (shouldEnablePSON == ShouldEnablePSON::Yes)
+    if (expectProcessSwap)
         EXPECT_NE(webkitPID, googlePID);
     else
         EXPECT_EQ(webkitPID, googlePID);
@@ -2173,7 +2175,7 @@ static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
     EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
 
     auto applePID = [webView _webProcessIdentifier];
-    if (shouldEnablePSON == ShouldEnablePSON::Yes) {
+    if (expectProcessSwap) {
         EXPECT_NE(webkitPID, applePID);
         EXPECT_NE(webkitPID, googlePID);
     } else {
@@ -2413,6 +2415,8 @@ static void runNavigationWithLockedHistoryTest(ShouldEnablePSON shouldEnablePSON
         return;
     }
 
+    bool expectProcessSwap = shouldEnablePSON == ShouldEnablePSON::Yes || isSiteIsolationEnabled(webView.get());
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
@@ -2427,7 +2431,7 @@ static void runNavigationWithLockedHistoryTest(ShouldEnablePSON shouldEnablePSON
     done = false;
 
     auto applePID = [webView _webProcessIdentifier];
-    if (shouldEnablePSON == ShouldEnablePSON::Yes)
+    if (expectProcessSwap)
         EXPECT_NE(webkitPID, applePID);
     else
         EXPECT_EQ(webkitPID, applePID);
@@ -2492,6 +2496,8 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
 
     [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
 
+    bool expectProcessSwap = shouldEnablePSON == ShouldEnablePSON::Yes || isSiteIsolationEnabled(webView.get());
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
 
@@ -2515,7 +2521,7 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
     done = false;
 
     auto applePID = [webView _webProcessIdentifier];
-    if (shouldEnablePSON == ShouldEnablePSON::Yes)
+    if (expectProcessSwap)
         EXPECT_NE(webkitPID, applePID);
     else
         EXPECT_EQ(webkitPID, applePID);
