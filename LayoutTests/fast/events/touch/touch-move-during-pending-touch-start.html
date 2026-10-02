@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body onload="runTest();">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Tests that a touch move dispatched before the preceding touch start has been processed is still delivered to the page.');
+
+window.jsTestIsAsync = true;
+
+var receivedEvents = [];
+
+function logEvent(event)
+{
+    receivedEvents.push(event.type);
+}
+
+// The listeners must be non-passive so that the touch start is tracked synchronously and its
+// reply cannot reach the UI process before the touch move is dispatched below.
+for (const type of ['touchstart', 'touchmove', 'touchend'])
+    document.addEventListener(type, logEvent, { passive: false });
+
+async function runTest()
+{
+    // Touch event regions must reach the scrolling tree before touch events are dispatched.
+    await UIHelper.renderingComplete();
+
+    if (!window.eventSender) {
+        debug('This test requires WebKitTestRunner.');
+        finishJSTest();
+        return;
+    }
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(50, 50);
+
+    // Deliberately use the synchronous eventSender API rather than the asyncTouch* variants:
+    // the whole sequence has to be pushed back to back, the way a touchscreen or WebDriver
+    // delivers it, so that the touch move reaches the UI process while the touch start is
+    // still waiting for its reply from the web process. Awaiting each event instead would
+    // drain the pending touch event queue between events and not cover this case.
+    eventSender.touchStart();
+    eventSender.updateTouchPoint(0, 60, 150);
+    eventSender.touchMove();
+    eventSender.releaseTouchPoint(0);
+    eventSender.touchEnd();
+
+    await UIHelper.waitForCondition(() => receivedEvents.includes('touchend'));
+
+    shouldBeEqualToString("receivedEvents.join(' ')", 'touchstart touchmove touchend');
+    finishJSTest();
+}
+</script>
+</body>
+</html>
