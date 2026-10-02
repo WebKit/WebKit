@@ -743,8 +743,12 @@ ExceptionOr<Ref<DOMRect>> LocalDOMWindow::convertRectToMainFrameCoordinates(cons
     if (!view)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto contentsRect = enclosingIntRect(FloatRect(rect.x, rect.y, rect.width, rect.height));
-    return DOMRect::create(view->contentsToMainFrameView(contentsRect));
+    // Unlike other callers of contentsToMainFrameView, this rect comes from JS
+    // and it is CSS pixels that have not had zoom taken into account.
+    FloatRect contentsRect(rect.x, rect.y, rect.width, rect.height);
+    Ref frame = view->frame();
+    contentsRect.scale(frame->pageZoomFactor() * frame->frameScaleFactor());
+    return DOMRect::create(view->contentsToMainFrameView(enclosingIntRect(contentsRect)));
 }
 
 #if ENABLE(ORIENTATION_EVENTS)

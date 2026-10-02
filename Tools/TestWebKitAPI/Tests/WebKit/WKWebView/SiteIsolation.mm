@@ -4224,6 +4224,58 @@ TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInCrossOriginIframe)
     EXPECT_EQ(rect.size.height, 15);
 }
 
+TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInCrossOriginIframeWithPageZoom)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0; min-height: 1000px'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    worldConfiguration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+
+    auto convertRect = [&] {
+        NSArray *result = [webView objectByEvaluatingJavaScript:@"(() => { let r = window.convertRectToMainFrameCoordinates({ x: 20, y: 30, width: 10, height: 15 }); return [r.x, r.y, r.width, r.height]; })()" inFrame:childFrameInfo.get() inContentWorld:autofillWorld.get()];
+        EXPECT_EQ(result.count, 4u);
+        return CGRectMake([result[0] doubleValue], [result[1] doubleValue], [result[2] doubleValue], [result[3] doubleValue]);
+    };
+
+    CGRect rect;
+    EXPECT_TRUE(Util::waitFor([&] {
+        rect = convertRect();
+        return rect.origin.x == 120;
+    }));
+    EXPECT_EQ(rect.origin.x, 120);
+    EXPECT_EQ(rect.origin.y, 130);
+    EXPECT_EQ(rect.size.width, 10);
+    EXPECT_EQ(rect.size.height, 15);
+
+    // Zooming the page scales both the position and the size of the rect.
+    webView.get().pageZoom = 2;
+    EXPECT_TRUE(Util::waitFor([&] {
+        rect = convertRect();
+        return rect.origin.x != 120;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    rect = convertRect();
+    EXPECT_EQ(rect.origin.x, 240);
+    EXPECT_EQ(rect.origin.y, 260);
+    EXPECT_EQ(rect.size.width, 20);
+    EXPECT_EQ(rect.size.height, 30);
+}
+
 TEST(SiteIsolation, SetFocusedFrame)
 {
     auto mainframeHTML = "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s;
