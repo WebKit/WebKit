@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Constructing a Blob or File from parts that are too large to buffer should throw
+instead of crashing the process.</p>
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+// A Vector<uint8_t> cannot hold more than 0x7fffffff bytes, so parts totalling at
+// least this much cannot be buffered for the blob's data.
+const vectorLimit = 0x7fffffff;
+
+// Allocating a part is not what is under test. Do it outside the try block below, so
+// that failing to allocate a part cannot look like a passing test.
+function allocate(description, allocatePart)
+{
+    try {
+        return allocatePart();
+    } catch (e) {
+        log('SKIP ' + description + ' - could not allocate the part: ' + e.name);
+        return null;
+    }
+}
+
+function shouldThrow(description, constructBlob)
+{
+    let blob;
+    try {
+        blob = constructBlob();
+    } catch (e) {
+        if (e.name === 'RangeError')
+            log('PASS ' + description + ' threw RangeError');
+        else
+            log('FAIL ' + description + ' threw ' + e.name + ', expected RangeError');
+        return;
+    }
+    log('FAIL ' + description + ' did not throw, size is ' + blob.size);
+}
+
+function shouldHaveSize(description, constructBlob, expectedSize)
+{
+    let size;
+    try {
+        size = constructBlob().size;
+    } catch (e) {
+        log('FAIL ' + description + ' threw ' + e.name);
+        return;
+    }
+    if (size === expectedSize)
+        log('PASS ' + description + '.size is ' + size);
+    else
+        log('FAIL ' + description + '.size is ' + size + ', expected ' + expectedSize);
+}
+
+// One part over the limit, reached through each of the part types that the Blob
+// constructor buffers. The string is Latin-1, so it is an 8-bit string, which is
+// sized at 2 UTF-8 bytes per character.
+const buffer = allocate('new Blob([ArrayBuffer])', () => new ArrayBuffer(vectorLimit + 1));
+if (buffer)
+    shouldThrow('new Blob([ArrayBuffer])', () => new Blob([buffer]));
+
+const view = allocate('new Blob([Uint8Array])', () => new Uint8Array(vectorLimit + 1));
+if (view)
+    shouldThrow('new Blob([Uint8Array])', () => new Blob([view]));
+
+const string = allocate('new Blob([string])', () => '\xe9'.repeat((vectorLimit + 1) / 2));
+if (string)
+    shouldThrow('new Blob([string])', () => new Blob([string]));
+
+const fileBuffer = allocate('new File([ArrayBuffer])', () => new ArrayBuffer(vectorLimit + 1));
+if (fileBuffer)
+    shouldThrow('new File([ArrayBuffer])', () => new File([fileBuffer], 'file.txt'));
+
+// Parts that each fit, but that together do not. Every part here is within what a
+// Vector can hold, so this case cannot pass merely because a part failed to allocate.
+const almostTooLarge = allocate('new Blob([string, ArrayBuffer])', () => new ArrayBuffer(vectorLimit));
+if (almostTooLarge)
+    shouldThrow('new Blob([string, ArrayBuffer])', () => new Blob(['x', almostTooLarge]));
+
+// Parts that do fit must still work, including one part right at the limit and a
+// nested Blob part, which becomes its own item instead of being buffered.
+if (almostTooLarge)
+    shouldHaveSize('new Blob([ArrayBuffer])', () => new Blob([almostTooLarge]), vectorLimit);
+
+shouldHaveSize('new Blob([\'abc\', ArrayBuffer(1)])', () => new Blob(['abc', new ArrayBuffer(1)]), 4);
+shouldHaveSize('new Blob([Blob, \'de\'])', () => new Blob([new Blob(['abc']), 'de']), 5);
+</script>
+</body>
+</html>
