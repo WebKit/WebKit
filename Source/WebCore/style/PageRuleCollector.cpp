@@ -38,10 +38,17 @@
 namespace WebCore {
 namespace Style {
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 static inline bool comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
 {
     return r1->selector().specificityForPage() < r2->selector().specificityForPage();
 }
+#else
+static inline bool comparePageRules(const StyleRulePage& r1, const StyleRulePage& r2)
+{
+    return r1.selector().specificityForPage() < r2.selector().specificityForPage();
+}
+#endif
 
 bool PageRuleCollector::isLeftPage(int pageIndex) const
 {
@@ -79,7 +86,11 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
     if (!rules)
         return;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Vector<StyleRulePage*> matchedPageRules;
+#else
+    Vector<Ref<StyleRulePage>> matchedPageRules;
+#endif
     matchPageRulesForList(matchedPageRules, rules->pageRules(), isLeftPage, isFirstPage, pageName);
     if (matchedPageRules.isEmpty())
         return;
@@ -111,6 +122,7 @@ static bool checkPageSelectorComponents(const CSSSelector& selector, bool isLeft
     return true;
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 void PageRuleCollector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     for (unsigned i = 0; i < rules.size(); ++i) {
@@ -128,6 +140,23 @@ void PageRuleCollector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRul
         matchedRules.append(rule);
     }
 }
+#else
+void PageRuleCollector::matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+{
+    for (auto& rule : rules) {
+        if (!checkPageSelectorComponents(rule->selector(), isLeftPage, isFirstPage, pageName))
+            continue;
+
+        // If the rule has no properties to apply, then ignore it.
+        const StyleProperties& properties = rule->properties();
+        if (properties.isEmpty())
+            continue;
+
+        // Add this rule to our list of matched rules.
+        matchedRules.append(rule);
+    }
+}
+#endif
 
 } // namespace Style
 } // namespace WebCore

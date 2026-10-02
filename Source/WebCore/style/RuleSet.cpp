@@ -416,7 +416,11 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 
 void RuleSet::addPageRule(StyleRulePage& rule)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_pageRules.append(&rule);
+#else
+    m_pageRules.append(rule);
+#endif
 }
 
 void RuleSet::setViewTransitionRule(StyleRuleViewTransition& rule)

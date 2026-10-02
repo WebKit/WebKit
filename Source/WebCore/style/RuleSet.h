@@ -114,7 +114,11 @@ public:
     const RuleDataVector* rootElementRules() const { return &m_rootElementRules; }
     const RuleDataVector* universalRules() const { return &m_universalRules; }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
+#else
+    const Vector<Ref<StyleRulePage>>& pageRules() const { return m_pageRules; }
+#endif
 
     unsigned ruleCount() const { return m_ruleCount; }
 
@@ -218,7 +222,11 @@ private:
     RuleDataVector m_focusVisiblePseudoClassRules;
     RuleDataVector m_rootElementRules;
     RuleDataVector m_universalRules;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Vector<StyleRulePage*> m_pageRules;
+#else
+    Vector<Ref<StyleRulePage>> m_pageRules;
+#endif
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
