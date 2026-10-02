@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XML external entities are deprecated and will be removed in a future version of WebKit.
 This page contains the following errors:
 
 error on line 29 at column 13: Document is empty
