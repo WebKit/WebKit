@@ -719,14 +719,15 @@ void TextBoxPainter::paintSynthesizedGlyph()
         bool shouldFlip = (glyphRenderer->glyph() == SynthesizedGlyph::PickerDown) == textBox().writingMode().isLineInverted();
         GraphicsContextStateSaver stateSaver(context);
         if (shouldFlip) {
-            // A flipped chevron reads optically low, so lift it by a quarter of the glyph size.
-            context.concatCTM(AffineTransform { }.translate(center.x(), center.y() - size / 4).rotate(180).translate(-center.x(), -center.y()));
+            context.concatCTM(AffineTransform { }.translate(center.x(), center.y()).rotate(180).translate(-center.x(), -center.y()));
         }
 
         context.setLineCap(LineCap::Butt);
         context.setLineJoin(LineJoin::Miter);
         context.setStrokeThickness(std::max(1.0f, fontSize * 0.05f));
 
+        // A chevron's optical center is offset, so shift it by a quarter of the glyph size.
+        center.move(0, size / 4);
         // Draw chevron pointing down.
         Path chevron;
         chevron.moveTo({ center.x() - size, center.y() - size / 2 });

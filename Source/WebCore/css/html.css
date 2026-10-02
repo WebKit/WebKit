@@ -1134,6 +1134,11 @@ select::picker-icon {
     font: 100% system-ui;
     text-orientation: sideways;
     padding-inline: 0.15em;
+    transition: transform 150ms ease-out;
+}
+
+select:open::picker-icon {
+    transform: scale(-1);
 }
 
 :-internal-select-popover {
