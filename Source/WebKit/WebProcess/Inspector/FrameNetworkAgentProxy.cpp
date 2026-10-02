@@ -64,7 +64,6 @@
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
 #include <wtf/MonotonicTime.h>
-#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
