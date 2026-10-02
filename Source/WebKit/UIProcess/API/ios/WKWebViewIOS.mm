@@ -1092,6 +1092,8 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     
     WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateScrollViewForOverscrollBehavior(_scrollView.get(), horizontalOverscrollBehavior, verticalOverscrollBehavior, WebKit::ScrollingTreeScrollingNodeDelegateIOS::AllowOverscrollToPreventScrollPropagation::No);
 
+    [_scrollView setDirectionalLockEnabled:scrollingCoordinator->mainFrameScrollAxisLock() == WebCore::ScrollAxisLock::Auto];
+
     bool hasDockedInputView = !CGRectIsEmpty(_inputViewBoundsInWindow);
     bool isZoomed = !WebKit::scalesAreEssentiallyEqual(pageScaleFactor, mainFrameData.initialScaleFactor) && (pageScaleFactor > mainFrameData.initialScaleFactor);
 

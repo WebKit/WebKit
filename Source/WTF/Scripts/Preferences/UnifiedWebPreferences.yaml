@@ -1125,7 +1125,7 @@ CSSScrollAnchoringEnabled:
 
 CSSScrollAxisLockEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS Scroll Axis Lock"
   humanReadableDescription: "Enable scroll-axis-lock property"
