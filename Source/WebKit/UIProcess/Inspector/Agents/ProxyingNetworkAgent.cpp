@@ -39,13 +39,11 @@
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
-#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
-#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <optional>
 #include <tuple>
 #include <utility>
@@ -165,52 +163,6 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
     }
 
     return responseObject;
-}
-
-static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
-{
-    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
-
-    if (!networkLoadMetrics.protocol.isNull())
-        metrics->setProtocol(networkLoadMetrics.protocol);
-    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        if (additionalMetrics->initialPriority.has_value())
-            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority.value()));
-        if (additionalMetrics->priority != WebCore::NetworkLoadPriority::Unknown)
-            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
-        if (!additionalMetrics->remoteAddress.isNull())
-            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
-        if (!additionalMetrics->connectionIdentifier.isNull())
-            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
-        if (!additionalMetrics->requestHeaders.isEmpty())
-            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
-        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
-            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
-        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
-            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
-        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
-            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
-        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
-    }
-
-    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
-    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
-
-    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
-        .release();
-
-    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        if (!additionalMetrics->tlsProtocol.isEmpty())
-            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
-        if (!additionalMetrics->tlsCipher.isEmpty())
-            connectionPayload->setCipher(additionalMetrics->tlsCipher);
-    }
-
-    metrics->setSecurityConnection(WTF::move(connectionPayload));
-
-    return metrics;
 }
 
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
@@ -664,7 +616,11 @@ void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timesta
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics));
+
+    // Normally only needed for API call
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+
+    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics, resourceRequestType));
 }
 
 void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp, const String& errorText, bool canceled)

@@ -146,54 +146,6 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
     });
 }
 
-Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
-{
-    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
-
-    if (!networkLoadMetrics.protocol.isNull())
-        metrics->setProtocol(networkLoadMetrics.protocol);
-    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        if (additionalMetrics->initialPriority.has_value())
-            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority.value()));
-        else
-            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
-        if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
-        if (!additionalMetrics->remoteAddress.isNull())
-            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
-        if (!additionalMetrics->connectionIdentifier.isNull())
-            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
-        if (!additionalMetrics->requestHeaders.isEmpty())
-            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
-        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
-            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
-        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
-            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
-        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
-            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
-        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
-    }
-
-    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
-    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
-
-    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
-        .release();
-
-    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        if (!additionalMetrics->tlsProtocol.isEmpty())
-            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
-        if (!additionalMetrics->tlsCipher.isEmpty())
-            connectionPayload->setCipher(additionalMetrics->tlsCipher);
-    }
-
-    metrics->setSecurityConnection(WTF::move(connectionPayload));
-
-    return metrics;
-}
-
 static Inspector::Protocol::Network::ReferrerPolicy NODELETE toProtocol(ReferrerPolicy referrerPolicy)
 {
     switch (referrerPolicy) {
@@ -633,10 +585,6 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-
-    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
-    if (resourceData)
-        resourceRequestType = resourceData->cachedResource()->type();
 
     auto metrics = ResourceUtilities::buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics, resourceRequestType);
 
