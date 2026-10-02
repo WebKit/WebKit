@@ -16,6 +16,11 @@ function test()
             await NetworkAgent.setResourceCachingDisabled(false);
 
             await Promise.all([
+                WI.networkManager.mainFrame.removeAllResources(),
+                WI.networkManager.mainFrame.clearProvisionalLoad(false),
+            ]);
+
+            await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
                 InspectorTest.reloadPage({ignoreCache: true}),
             ]);
