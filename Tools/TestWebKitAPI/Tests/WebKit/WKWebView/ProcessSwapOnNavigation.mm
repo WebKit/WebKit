@@ -29,6 +29,7 @@
 #import "FrameTreeChecks.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -8837,6 +8838,81 @@ TEST(ProcessSwap, CrossSiteNavigationToCOOPReusesProvisionalProcess)
     EXPECT_NE(provisionalPID, 0);
     EXPECT_NE(pid1, pid2);
     EXPECT_EQ(provisionalPID, pid2);
+}
+
+static void runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(bool siteIsolationEnabled)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { "<a id='link' href='destination.html'>link</a>"_s } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "bar"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    setFeatureEnabled(webViewConfiguration.get(), @"CrossOriginOpenerPolicyEnabled", true);
+    setFeatureEnabled(webViewConfiguration.get(), @"SiteIsolationEnabled", siteIsolationEnabled);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:server.request("/source.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    // Simulate the old process's DidStartProvisionalLoadForFrame arriving after the network process has triggered
+    // the COOP process swap, e.g. because the UI process throttles incoming messages from web processes.
+    __block bool didDelayDidStartProvisionalLoad = false;
+    [webView _delayNextDidStartProvisionalLoadForTesting:^{
+        didDelayDidStartProvisionalLoad = true;
+    }];
+
+    // The new process asks for the response policy once it continues the navigation, so the provisional page for the
+    // navigation exists by then. Let the delayed message through before the new process can commit.
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        EXPECT_TRUE(didDelayDidStartProvisionalLoad);
+        EXPECT_NE([webView _provisionalWebProcessIdentifier], 0);
+        [webView _resumeDelayedDidStartProvisionalLoadForTesting];
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    __block unsigned didStartProvisionalNavigationCount = 0;
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        ++didStartProvisionalNavigationCount;
+    };
+
+    __block bool navigationEnded = false;
+    __block RetainPtr<NSError> navigationError;
+    [navigationDelegate waitForDidFinishNavigationWithCompletionHandler:^(NSError *error) {
+        navigationError = error;
+        navigationEnded = true;
+    }];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
+    Util::run(&navigationEnded);
+
+    EXPECT_NULL(navigationError.get());
+    EXPECT_EQ(didStartProvisionalNavigationCount, 1u);
+    EXPECT_NE([webView _webProcessIdentifier], pid1);
+    EXPECT_WK_STREQ([webView _committedURL].absoluteString, server.request("/destination.html"_s).URL.absoluteString);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwap)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(false);
+}
+
+TEST(ProcessSwap, LateDidStartProvisionalLoadAfterCOOPProcessSwapWithSiteIsolation)
+{
+    runLateDidStartProvisionalLoadAfterCOOPProcessSwapTest(true);
 }
 
 enum class IsSameOrigin : bool { No, Yes };
