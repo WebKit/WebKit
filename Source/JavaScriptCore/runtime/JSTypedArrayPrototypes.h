@@ -43,4 +43,17 @@ typedef JSGenericTypedArrayViewPrototype<JSFloat64Array> JSFloat64ArrayPrototype
 typedef JSGenericTypedArrayViewPrototype<JSBigInt64Array> JSBigInt64ArrayPrototype;
 typedef JSGenericTypedArrayViewPrototype<JSBigUint64Array> JSBigUint64ArrayPrototype;
 
+template<> const ClassInfo JSInt8ArrayPrototype::s_info;
+template<> const ClassInfo JSInt16ArrayPrototype::s_info;
+template<> const ClassInfo JSInt32ArrayPrototype::s_info;
+template<> const ClassInfo JSUint8ArrayPrototype::s_info;
+template<> const ClassInfo JSUint8ClampedArrayPrototype::s_info;
+template<> const ClassInfo JSUint16ArrayPrototype::s_info;
+template<> const ClassInfo JSUint32ArrayPrototype::s_info;
+template<> const ClassInfo JSFloat16ArrayPrototype::s_info;
+template<> const ClassInfo JSFloat32ArrayPrototype::s_info;
+template<> const ClassInfo JSFloat64ArrayPrototype::s_info;
+template<> const ClassInfo JSBigInt64ArrayPrototype::s_info;
+template<> const ClassInfo JSBigUint64ArrayPrototype::s_info;
+
 } // namespace JSC
