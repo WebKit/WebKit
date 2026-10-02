@@ -73,6 +73,7 @@ set(WEBKIT_SWIFT_UPCOMING_FEATURE_FLAGS
 
 set(WEBKIT_SWIFT_EXPERIMENTAL_FEATURE_FLAGS
     "-enable-experimental-feature DebugDescriptionMacro"
+    "-enable-experimental-feature ForeignReferenceTypeInheritance"
     "-enable-experimental-feature ImportCxxMembersLazily"
     "-enable-experimental-feature SuppressedAssociatedTypes"
     "-enable-experimental-feature SuppressedAssociatedTypesWithDefaults"
