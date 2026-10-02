@@ -1358,7 +1358,6 @@ Awaitable<std::optional<FrameTreeNodeData>> WebPage::getFrameTreeForBackForwardC
         mainFrame->frameID(),
         std::nullopt,
         topDocument ? std::optional { topDocument->identifier() } : std::nullopt,
-        getCurrentProcessID(),
         false,
         false,
         WebFrameMetrics { }

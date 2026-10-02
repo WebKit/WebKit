@@ -117,7 +117,6 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         WTF::move(originatingFrameID),
         originatingPageID,
         document ? std::optional { document->identifier() } : std::nullopt,
-        getCurrentProcessID(),
         requestingFrame ? requestingFrame->isFocused() : false
     };
 
