@@ -651,6 +651,13 @@ void HTMLImageElement::movingSteps(MovingType movingType, ContainerNode& oldPare
 {
     HTMLElement::movingSteps(movingType, oldParent);
 
+    if (!m_parsedUsemap.isNull()) {
+        if (movingType.didRemoveFromOldTreeScope)
+            protect(oldParent.treeScope())->removeImageElementByUsemap(m_parsedUsemap, *this);
+        if (movingType.didInsertIntoNewTreeScope)
+            protect(treeScope())->addImageElementByUsemap(m_parsedUsemap, *this);
+    }
+
     if (!movingType.isSubtreeRoot)
         return;
 

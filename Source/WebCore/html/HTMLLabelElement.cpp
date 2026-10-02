@@ -271,4 +271,21 @@ void HTMLLabelElement::removingSteps(RemovalType removalType, ContainerNode& old
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
+void HTMLLabelElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+
+    const auto& forValue = attributeWithoutSynchronization(forAttr);
+    if (movingType.didRemoveFromOldTreeScope) {
+        Ref oldScope = oldParent.treeScope();
+        if (oldScope->shouldCacheLabelsByForAttribute())
+            updateLabel(oldScope, forValue, nullAtom());
+    }
+    if (movingType.didInsertIntoNewTreeScope) {
+        Ref newScope = treeScope();
+        if (newScope->shouldCacheLabelsByForAttribute())
+            updateLabel(newScope, nullAtom(), forValue);
+    }
+}
+
 } // namespace

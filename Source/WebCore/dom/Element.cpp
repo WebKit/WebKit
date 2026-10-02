@@ -3144,6 +3144,31 @@ RenderPtr<RenderElement> Element::createElementRenderer(Style::ComputedStyle&& s
     return RenderElement::createFor(*this, WTF::move(style));
 }
 
+static void preserveCustomElementRegistryAfterLeavingTreeScope(Element& element, ContainerNode& oldParent)
+{
+    if (!oldParent.isInShadowTree())
+        return;
+    if (RefPtr registry = oldParent.treeScope().customElementRegistry()) {
+        if (registry->isScoped() && !element.usesScopedCustomElementRegistryMap()) [[unlikely]]
+            CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
+    }
+}
+
+static void preserveCustomElementRegistryAfterEnteringTreeScope(Element& element)
+{
+    if (element.usesScopedCustomElementRegistryMap()) {
+        if (CustomElementRegistry::registryForElement(element) == element.treeScope().customElementRegistry())
+            CustomElementRegistry::removeFromScopedCustomElementRegistryMap(element);
+    } else if (!element.usesNullCustomElementRegistry()) {
+        if (element.treeScope().customElementRegistry() != element.document().customElementRegistry()) [[unlikely]] {
+            // This element was moved into a shadow tree with a scoped custom element registry.
+            // Keep using the document's non-scoped custom element registry.
+            if (RefPtr window = element.document().window())
+                CustomElementRegistry::addToScopedCustomElementRegistryMap(element, protect(window->ensureCustomElementRegistry()));
+        }
+    }
+}
+
 Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     ContainerNode::insertionSteps(insertionType, parentOfInsertedTree);
@@ -3153,19 +3178,8 @@ Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionTy
             ? dynamicDowncast<HTMLDocument>(treeScope().documentScope()) : nullptr;
         addToIdAndNameMaps(protect(treeScope()), newHTMLDocument.get());
 
-        if (parentOfInsertedTree.isInTreeScope()) {
-            if (usesScopedCustomElementRegistryMap()) {
-                if (CustomElementRegistry::registryForElement(*this) == treeScope().customElementRegistry())
-                    CustomElementRegistry::removeFromScopedCustomElementRegistryMap(*this);
-            } else if (!usesNullCustomElementRegistry()) {
-                if (treeScope().customElementRegistry() != document().customElementRegistry()) [[unlikely]] {
-                    // This element was moved into a shadow tree with a scoped custom elemnt registry.
-                    // Keep using the document's non-scoped custom element registry.
-                    if (RefPtr window = document().window())
-                        CustomElementRegistry::addToScopedCustomElementRegistryMap(*this, protect(window->ensureCustomElementRegistry()));
-                }
-            }
-        }
+        if (parentOfInsertedTree.isInTreeScope())
+            preserveCustomElementRegistryAfterEnteringTreeScope(*this);
     }
 
     if (insertionType.connectedToDocument) {
@@ -3256,12 +3270,7 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
             && oldParentOfRemovedTree.isInDocumentTree() ? dynamicDowncast<HTMLDocument>(oldTreeScope->documentScope()) : nullptr;
 
         removeFromIdAndNameMaps(oldTreeScope, oldHTMLDocument.get());
-        if (oldParentOfRemovedTree.isInShadowTree()) {
-            if (RefPtr registry = oldTreeScope->customElementRegistry()) {
-                if (registry->isScoped() && !usesScopedCustomElementRegistryMap()) [[unlikely]]
-                    CustomElementRegistry::addToScopedCustomElementRegistryMap(*this, *registry);
-            }
-        }
+        preserveCustomElementRegistryAfterLeavingTreeScope(*this, oldParentOfRemovedTree);
     }
 
     if (removalType.disconnectedFromDocument) {
@@ -3327,10 +3336,14 @@ void Element::movingSteps(MovingType movingType, ContainerNode& oldParent)
     ContainerNode::movingSteps(movingType, oldParent);
 
     RefPtr htmlDocument = dynamicDowncast<HTMLDocument>(document());
-    if (movingType.didRemoveFromOldTreeScope)
+    if (movingType.didRemoveFromOldTreeScope) {
         removeFromIdAndNameMaps(protect(oldParent.treeScope()), oldParent.isInDocumentTree() ? htmlDocument.get() : nullptr);
-    if (movingType.didInsertIntoNewTreeScope)
+        preserveCustomElementRegistryAfterLeavingTreeScope(*this, oldParent);
+    }
+    if (movingType.didInsertIntoNewTreeScope) {
         addToIdAndNameMaps(protect(treeScope()), isInDocumentTree() ? htmlDocument.get() : nullptr);
+        preserveCustomElementRegistryAfterEnteringTreeScope(*this);
+    }
 
     if (!is<HTMLSlotElement>(*this))
         updateEffectiveTextDirectionIfNeeded();

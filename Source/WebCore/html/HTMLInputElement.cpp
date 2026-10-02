@@ -1820,6 +1820,18 @@ void HTMLInputElement::removingSteps(RemovalType removalType, ContainerNode& old
     resetListAttributeTargetObserver();
 }
 
+void HTMLInputElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLTextFormControlElement::movingSteps(movingType, oldParent);
+    if (!isRadioButton())
+        return;
+    if (movingType.didRemoveFromOldTreeScope)
+        protect(oldParent.treeScope())->radioButtonGroups().removeButton(*this);
+    if (movingType.didInsertIntoNewTreeScope && !form())
+        protect(treeScope())->radioButtonGroups().addButton(*this);
+    updateValidity();
+}
+
 void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     if (imageLoader())

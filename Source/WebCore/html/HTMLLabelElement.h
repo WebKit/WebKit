@@ -49,6 +49,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
+    void movingSteps(MovingType, ContainerNode& oldParent) final;
 
     bool isEventTargetedAtInteractiveDescendants(Event&) const;
 

@@ -1,0 +1,6 @@
+
+PASS An element with the global registry keeps it when moved into a shadow root with a scoped registry
+PASS An element with a scoped registry keeps it when moved out of its shadow root
+PASS An element with a scoped registry keeps it when moved into a shadow root with a different scoped registry
+PASS An element with the global registry isn't upgraded by a scoped registry when moved into its shadow root
+

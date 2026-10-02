@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<body>
+<label id="label1" for="checkbox">Label 1</label>
+<input type="checkbox" id="checkbox">
+<div id="host"></div>
+<p>PASS if no crash.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function touchAccessibility() {
+    if (!window.accessibilityController)
+        return;
+    const axCheckbox = accessibilityController.accessibleElementById("checkbox");
+    if (axCheckbox)
+        axCheckbox.width;
+}
+
+touchAccessibility();
+
+host.attachShadow({ mode: "open" }).moveBefore(label1, null);
+
+const label2 = document.createElement("label");
+label2.htmlFor = "checkbox";
+document.body.appendChild(label2);
+
+touchAccessibility();
+</script>
+</body>

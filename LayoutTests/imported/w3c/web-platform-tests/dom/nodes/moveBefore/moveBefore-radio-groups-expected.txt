@@ -1,0 +1,10 @@
+
+PASS A radio moved into a shadow root leaves the document's radio button group
+PASS A radio moved into a shadow root joins the shadow root's radio button group
+PASS A radio moved out of a shadow root joins the document's radio button group
+PASS Required radio group validity is updated when the checked radio moves to another tree
+PASS A required radio moved into a group with a checked radio matches :valid
+PASS A required radio moved into a group without a checked radio matches :invalid
+PASS Radios with a form owner stay in the form's group when moved into a shadow root
+PASS A radio moved within the same tree stays in its radio button group
+

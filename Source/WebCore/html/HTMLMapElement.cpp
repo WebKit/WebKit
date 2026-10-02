@@ -133,4 +133,15 @@ void HTMLMapElement::removingSteps(RemovalType removalType, ContainerNode& oldPa
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
+void HTMLMapElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+    if (movingType.didRemoveFromOldTreeScope)
+        protect(oldParent.treeScope())->removeImageMap(*this, m_name, m_registeredId);
+    if (movingType.didInsertIntoNewTreeScope) {
+        m_registeredId = getIdAttribute();
+        protect(treeScope())->addImageMap(*this, m_name, m_registeredId);
+    }
+}
+
 }
