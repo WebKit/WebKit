@@ -740,7 +740,7 @@ HAR Page Test.
         },
         "_serverPort": 8000,
         "_priority": "medium",
-        "_initiailPriority": "medium"
+        "_initialPriority": "medium"
       },
       {
         "pageref": "page_0",
