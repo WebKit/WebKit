@@ -223,4 +223,21 @@ promise_test(async () => {
     'Only one mutation batch should fire (the synchronous update), not a redundant async one.');
   observer.disconnect();
 }, 'Setting HTMLOptionElement.selected does not cause a redundant async selectedcontent update.');
+
+test(t => {
+  const select = makeOptionSelectedSelect();
+  const optionOne = select.querySelector('option.one');
+  const selectedcontent = select.querySelector('selectedcontent');
+  const originalChild = selectedcontent.firstChild;
+  const observer = new MutationObserver(() => {});
+  t.add_cleanup(() => observer.disconnect());
+  observer.observe(selectedcontent, {childList: true, subtree: true});
+
+  optionOne.selected = true;
+
+  assert_equals(selectedcontent.firstChild, originalChild,
+    'The <selectedcontent> children should not be replaced.');
+  assert_equals(observer.takeRecords().length, 0,
+    'Setting HTMLOptionElement.selected to its current value should not mutate the <selectedcontent>.');
+}, 'Setting HTMLOptionElement.selected to its current value does not update the <selectedcontent>.');
 </script>

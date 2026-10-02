@@ -2650,12 +2650,14 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!document().settings().mutationEventsEnabled());
 
+    m_hasQueuedSelectedContentUpdate = false;
     if (m_multiple || !m_selectedContentDescendantCount)
         return;
 
     RefPtr selectedOptionRef = selectedOption;
     if (!selectedOptionRef)
         selectedOptionRef = firstSelectedOption();
+    m_selectedContentOption = selectedOptionRef;
 
     Vector<Ref<HTMLSelectedContentElement>> selectedContentElements;
     for (Ref selectedContent : descendantsOfType<HTMLSelectedContentElement>(*const_cast<HTMLSelectElement*>(this))) {
@@ -2663,12 +2665,8 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
             selectedContentElements.append(selectedContent);
     }
 
-    for (Ref selectedContent : selectedContentElements) {
-        if (!selectedOptionRef)
-            selectedContent->removeChildren();
-        else
-            selectedOptionRef->cloneIntoSelectedContent(selectedContent);
-    }
+    for (Ref selectedContent : selectedContentElements)
+        selectedContent->updateFromOption(selectedOptionRef.get());
 }
 
 // https://html.spec.whatwg.org/#update-a-selectedcontent
@@ -2679,10 +2677,15 @@ void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& select
     if (selectedContent.isDisabled())
         return;
 
-    if (RefPtr selectedOption = firstSelectedOption())
-        selectedOption->cloneIntoSelectedContent(selectedContent);
-    else
-        selectedContent.removeChildren();
+    RefPtr selectedOption = firstSelectedOption();
+    m_selectedContentOption = selectedOption;
+    selectedContent.updateFromOption(selectedOption.get());
+}
+
+void HTMLSelectElement::updateSelectedContentIfSelectedOptionChanged()
+{
+    if (RefPtr selectedOption = selectedOptionForSelectedContent(); selectedOption != m_selectedContentOption.get())
+        updateSelectedContentIfEnabled(selectedOption.get());
 }
 
 RefPtr<HTMLOptionElement> HTMLSelectElement::selectedOptionForSelectedContent() const
@@ -2700,18 +2703,21 @@ void HTMLSelectElement::resetSelectedness(HTMLOptionElement* oldSelectedOption)
         updateSelectedContentIfEnabled(selectedOption.get());
 }
 
-void HTMLSelectElement::queueSelectedContentUpdate()
+void HTMLSelectElement::queueSelectedContentUpdate(const HTMLOptionElement& option)
 {
     if (m_hasQueuedSelectedContentUpdate || m_multiple || !m_selectedContentDescendantCount)
+        return;
+
+    // Without a selected option, removing or moving an unselected one can select another option.
+    if (!option.selectedWithoutUpdate() && m_selectedContentOption)
         return;
 
     m_hasQueuedSelectedContentUpdate = true;
     Ref document = this->document();
     protect(document->eventLoop())->queueMicrotask(document->vm(), [weakThis = WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> { *this }] {
         RefPtr select = weakThis;
-        if (!select)
+        if (!select || !std::exchange(select->m_hasQueuedSelectedContentUpdate, false))
             return;
-        select->m_hasQueuedSelectedContentUpdate = false;
         select->updateSelectedContentIfEnabled();
     });
 }

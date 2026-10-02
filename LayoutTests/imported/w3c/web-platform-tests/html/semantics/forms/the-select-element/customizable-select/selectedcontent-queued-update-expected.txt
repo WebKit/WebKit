@@ -1,0 +1,8 @@
+
+PASS Removing an option that causes another option to be selected updates selectedcontent.
+PASS Removing options queues a single update of selectedcontent.
+PASS A queued update of selectedcontent does nothing if it was updated in the meantime.
+PASS Inserting an option performs a pending update of selectedcontent.
+PASS Moving a selectedcontent element twice queues a single update.
+PASS A queued update of a moved selectedcontent element does nothing if it was updated in the meantime.
+

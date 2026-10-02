@@ -204,9 +204,10 @@ public:
 
     void updateSelectedContent(HTMLOptionElement* = nullptr) const;
     void updateSelectedContent(HTMLSelectedContentElement&) const;
-    void queueSelectedContentUpdate();
+    void queueSelectedContentUpdate(const HTMLOptionElement&);
     RefPtr<HTMLOptionElement> selectedOptionForSelectedContent() const;
     void resetSelectedness(HTMLOptionElement* oldSelectedOption);
+    void updateSelectedContentIfSelectedOptionChanged();
 
     void NODELETE registerSelectedContentElement();
     void NODELETE unregisterSelectedContentElement();
@@ -356,7 +357,8 @@ private:
     bool m_isCapturingMouseEvents { false };
     mutable bool m_shouldRecalcListItems;
     unsigned m_selectedContentDescendantCount { 0 };
-    bool m_hasQueuedSelectedContentUpdate { false };
+    mutable bool m_hasQueuedSelectedContentUpdate { false };
+    mutable WeakPtr<HTMLOptionElement, WeakPtrImplWithEventTargetData> m_selectedContentOption;
 
     std::optional<int> m_lastActiveIndex;
 

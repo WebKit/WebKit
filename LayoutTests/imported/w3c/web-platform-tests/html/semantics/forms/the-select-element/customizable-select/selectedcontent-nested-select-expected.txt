@@ -1,3 +1,4 @@
 
 PASS A selectedcontent element inside a nested select is disabled and never updated.
+PASS Removing an ancestor of a nested select enables its selectedcontent element.
 

@@ -160,9 +160,11 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
 {
     auto result = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
 
+    bool ownerSelectChanged = false;
     if (document().settings().htmlEnhancedSelectParsingEnabled() && !m_ownerSelect) {
         if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
             m_ownerSelect = select.get();
+            ownerSelectChanged = true;
             select->setRecalcListItems();
             // If this non-selected option is the first non-disabled option in a
             // single-select that has no explicitly selected option, select it by
@@ -181,7 +183,7 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
             select->invalidateButtonText();
         if (m_shadowTreeNeedsUpdate)
             protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
-        if (m_ownerSelect)
+        if (ownerSelectChanged)
             result = NeedsPostConnectionSteps::Yes;
     }
 
@@ -194,9 +196,13 @@ void HTMLOptionElement::postConnectionSteps()
     if (!select || !select->hasSelectedContentDescendants())
         return;
 
-    bool isSelected = select->isFinishedParsingChildren() ? selected() : selectedWithoutUpdate();
-    if (isSelected)
-        select->updateSelectedContent(this);
+    if (!select->isFinishedParsingChildren()) {
+        if (selectedWithoutUpdate())
+            select->updateSelectedContent(this);
+        return;
+    }
+
+    select->updateSelectedContentIfSelectedOptionChanged();
 }
 
 void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -217,8 +223,7 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     if (RefPtr select = std::exchange(m_ownerSelect, nullptr).get()) {
         select->setRecalcListItems();
         select->invalidateButtonText();
-        if (m_isSelected)
-            select->queueSelectedContentUpdate();
+        select->queueSelectedContentUpdate(*this);
         invalidateShadowTree();
     }
 }
@@ -245,15 +250,13 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
     if (oldSelect) {
         oldSelect->setRecalcListItems();
         oldSelect->invalidateButtonText();
-        if (m_isSelected)
-            oldSelect->queueSelectedContentUpdate();
+        oldSelect->queueSelectedContentUpdate(*this);
     }
 
     if (newSelect) {
         newSelect->setRecalcListItems();
         newSelect->invalidateButtonText();
-        if (m_isSelected)
-            newSelect->queueSelectedContentUpdate();
+        newSelect->queueSelectedContentUpdate(*this);
     }
 
     invalidateShadowTree();

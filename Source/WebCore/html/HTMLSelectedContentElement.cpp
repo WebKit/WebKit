@@ -70,38 +70,60 @@ auto HTMLSelectedContentElement::insertionSteps(InsertionType insertionType, Con
 
 void HTMLSelectedContentElement::postConnectionSteps()
 {
-    RefPtr select = recalculateDisabledness();
-    if (m_isDisabled || !select || select->multiple())
-        return;
-
-    select->updateSelectedContent(*this);
+    updateFromSelect();
 }
 
 void HTMLSelectedContentElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 
-    if (RefPtr select = m_owningSelect; select && !isInclusiveDescendantOf(*select)) {
-        select->unregisterSelectedContentElement();
-        m_owningSelect = nullptr;
-    }
+    recalculateDisabledness();
 }
 
 void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(movingType, oldParent);
 
+    RefPtr oldSelect = m_owningSelect;
+    bool wasDisabled = m_isDisabled;
     RefPtr select = recalculateDisabledness();
     if (m_isDisabled || !select || select->multiple())
         return;
 
+    if (!wasDisabled && select == oldSelect)
+        return;
+
+    if (m_hasPendingUpdate)
+        return;
+
+    m_hasPendingUpdate = true;
     Ref document = this->document();
-    protect(document->eventLoop())->queueMicrotask(document->vm(), [weakThis = WeakPtr<HTMLSelectedContentElement, WeakPtrImplWithEventTargetData> { *this }, weakSelect = WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> { *select }] {
-        RefPtr selectedContent = weakThis;
-        RefPtr select = weakSelect;
-        if (selectedContent && select)
-            select->updateSelectedContent(*selectedContent);
+    protect(document->eventLoop())->queueMicrotask(document->vm(), [weakThis = WeakPtr<HTMLSelectedContentElement, WeakPtrImplWithEventTargetData> { *this }] {
+        if (RefPtr selectedContent = weakThis; selectedContent && selectedContent->m_hasPendingUpdate)
+            selectedContent->updateFromSelect();
     });
+}
+
+// https://html.spec.whatwg.org/#update-a-selectedcontent
+void HTMLSelectedContentElement::updateFromSelect()
+{
+    m_hasPendingUpdate = false;
+
+    RefPtr select = m_owningSelect;
+    if (m_isDisabled || !select || select->multiple())
+        return;
+
+    select->updateSelectedContent(*this);
+}
+
+void HTMLSelectedContentElement::updateFromOption(HTMLOptionElement* option)
+{
+    m_hasPendingUpdate = false;
+
+    if (option)
+        option->cloneIntoSelectedContent(*this);
+    else
+        removeChildren();
 }
 
 // https://html.spec.whatwg.org/#recalculate-a-selectedcontent-element's-disabledness
