@@ -28,11 +28,13 @@
 #if USE(AVFOUNDATION)
 
 #include "Helpers/PlatformUtilities.h"
+#include <CoreAudio/CoreAudioTypes.h>
 #include <WebCore/AudioVideoRendererAVFObjC.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/TrackInfo.h>
 #include <wtf/Logger.h>
+#include <wtf/RunLoop.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -55,6 +57,43 @@ static RetainPtr<CMSampleBufferRef> createVideoSampleBuffer()
     CMSampleTimingInfo timing = { PAL::kCMTimeInvalid, PAL::kCMTimeZero, PAL::kCMTimeInvalid };
     CMSampleBufferRef rawSampleBuffer = nullptr;
     if (PAL::CMSampleBufferCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), true, nullptr, nullptr, formatDescription.get(), &timing, &rawSampleBuffer))
+        return nullptr;
+
+    return adoptCF(rawSampleBuffer);
+}
+
+static RetainPtr<CMSampleBufferRef> createAudioSampleBuffer()
+{
+    constexpr int32_t sampleRate = 44100;
+    constexpr size_t frameCount = 128;
+    constexpr size_t dataLength = frameCount * sizeof(float);
+    // Backs a non-owning block buffer, so it has to outlive every sample buffer handed out here.
+    static std::array<float, frameCount> silence { };
+
+    AudioStreamBasicDescription streamDescription { };
+    streamDescription.mSampleRate = sampleRate;
+    streamDescription.mFormatID = kAudioFormatLinearPCM;
+    streamDescription.mFormatFlags = kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked;
+    streamDescription.mChannelsPerFrame = 1;
+    streamDescription.mFramesPerPacket = 1;
+    streamDescription.mBytesPerFrame = sizeof(float);
+    streamDescription.mBytesPerPacket = sizeof(float);
+    streamDescription.mBitsPerChannel = 8 * sizeof(float);
+
+    CMAudioFormatDescriptionRef rawFormatDescription = nullptr;
+    if (PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &streamDescription, 0, nullptr, 0, nullptr, nullptr, &rawFormatDescription))
+        return nullptr;
+    RetainPtr formatDescription = adoptCF(rawFormatDescription);
+
+    CMBlockBufferRef rawBlockBuffer = nullptr;
+    if (PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, silence.data(), dataLength, kCFAllocatorNull, nullptr, 0, dataLength, 0, &rawBlockBuffer))
+        return nullptr;
+    RetainPtr blockBuffer = adoptCF(rawBlockBuffer);
+
+    // The format description is constant bitrate, so no per-sample size array is needed.
+    CMSampleTimingInfo timing = { PAL::CMTimeMake(1, sampleRate), PAL::kCMTimeZero, PAL::kCMTimeInvalid };
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, blockBuffer.get(), formatDescription.get(), frameCount, 1, &timing, 0, nullptr, &rawSampleBuffer))
         return nullptr;
 
     return adoptCF(rawSampleBuffer);
@@ -166,6 +205,103 @@ TEST_F(AudioVideoRendererAVFObjCTest, NoFlushWithDecompressionSessionForProtecte
     Util::runFor(0.1_s);
     EXPECT_EQ(flushToResumeCount, 0);
     EXPECT_EQ(errorCount, 0);
+}
+
+// prepareToSeek's fast path is taken when the destination is within 1ms of the synchronizer's
+// current time: the synchronizer isn't moved and no time jumped notification is awaited. These
+// tests use an audio-only renderer because that is the only way to make
+// allRenderersHaveAvailableSamples() — which gates the fast path — true synchronously; a video
+// track would have to wait on a first decoded frame.
+class AudioVideoRendererAVFObjCSeekTest : public testing::Test {
+public:
+    void SetUp() final
+    {
+        Ref logger = Logger::create(this);
+        renderer = AudioVideoRendererAVFObjC::create(logger, 0);
+        renderer->setPreferences({ });
+        audioTrackId = renderer->addTrack(TrackInfo::TrackType::Audio);
+    }
+
+    void TearDown() final
+    {
+        renderer = nullptr;
+    }
+
+    void enqueueAudioSample()
+    {
+        RetainPtr sampleBuffer = createAudioSampleBuffer();
+        ASSERT_TRUE(sampleBuffer);
+        renderer->enqueueSample(*audioTrackId, MediaSampleAVFObjC::create(sampleBuffer.get(), 0), { });
+    }
+
+    std::optional<MediaTime> seekAndWaitForReportedTime(const MediaTime& seekTime)
+    {
+        std::optional<MediaTime> reportedTime;
+        bool done = false;
+        renderer->prepareToSeek(seekTime)->whenSettled(RunLoop::currentSingleton(), [&](MediaTimePromise::Result result) {
+            if (result)
+                reportedTime = *result;
+            done = true;
+        });
+        Util::run(&done);
+        return reportedTime;
+    }
+
+    RefPtr<AudioVideoRenderer> renderer;
+    std::optional<AudioVideoRenderer::TrackIdentifier> audioTrackId;
+};
+
+TEST_F(AudioVideoRendererAVFObjCSeekTest, ShortForwardSeekReportsRequestedTime)
+{
+    ASSERT_TRUE(audioTrackId.has_value());
+    enqueueAudioSample();
+
+    // 1ms past the synchronizer's time, which is the furthest the fast path reaches.
+    auto seekTime = MediaTime(1, 1000);
+    auto reportedTime = seekAndWaitForReportedTime(seekTime);
+
+    // A completed seek with a finite time means the fast path ran; the slow path leaves the
+    // renderer seeking and resolves with an indefinite time.
+    ASSERT_FALSE(renderer->seeking());
+    ASSERT_TRUE(reportedTime.has_value());
+    ASSERT_TRUE(reportedTime->isFinite());
+
+    // The requested time, not the synchronizer's pre-seek time. Reporting the latter leaves
+    // currentTime short of a forward seek, and a page nudging forward into a buffered range
+    // re-seeks to the same place forever.
+    EXPECT_EQ(*reportedTime, seekTime);
+    EXPECT_GE(renderer->currentTime(), seekTime);
+}
+
+TEST_F(AudioVideoRendererAVFObjCSeekTest, ShortBackwardSeekReportsRequestedTime)
+{
+    ASSERT_TRUE(audioTrackId.has_value());
+    enqueueAudioSample();
+
+    // Park the synchronizer away from zero so there is room to seek backwards. This is far
+    // enough to take the slow path, which moves the synchronizer synchronously.
+    auto parkTime = MediaTime(100, 1000);
+    EXPECT_TRUE(seekAndWaitForReportedTime(parkTime).has_value());
+    ASSERT_TRUE(renderer->seeking());
+
+    // Clear the pending seek without moving the synchronizer back, then restore sample
+    // availability, which flush() dropped.
+    renderer->flush();
+    ASSERT_FALSE(renderer->seeking());
+    enqueueAudioSample();
+
+    auto seekTime = parkTime - MediaTime(1, 2000);
+    auto reportedTime = seekAndWaitForReportedTime(seekTime);
+
+    ASSERT_FALSE(renderer->seeking());
+    ASSERT_TRUE(reportedTime.has_value());
+    ASSERT_TRUE(reportedTime->isFinite());
+
+    // A backward seek has to report the requested time too, so clamping the reported time up to
+    // the synchronizer's would be just as wrong as leaving a forward seek short. currentTime is
+    // not checked: lowering the time floor below the timebase is a no-op, so it stays at
+    // parkTime until the synchronizer itself moves.
+    EXPECT_EQ(*reportedTime, seekTime);
 }
 
 } // namespace TestWebKitAPI

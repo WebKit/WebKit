@@ -714,7 +714,7 @@ Ref<MediaTimePromise> AudioVideoRendererAVFObjC::prepareToSeek(const MediaTime& 
         // In cases where the destination seek time matches too closely the synchronizer's existing time
         // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
         // the seek completed successfully.
-        setTimeFloor(synchronizerTime);
+        setTimeFloor(seekTime);
         m_seekState = SeekCompleted;
 
         auto shouldBePlaying = this->shouldBePlaying();
@@ -725,7 +725,7 @@ Ref<MediaTimePromise> AudioVideoRendererAVFObjC::prepareToSeek(const MediaTime& 
         else
             updateSharedTimebase();
 
-        return MediaTimePromise::createAndResolve(synchronizerTime);
+        return MediaTimePromise::createAndResolve(seekTime);
     }
 
     setHasAvailableVideoFrame(false);
