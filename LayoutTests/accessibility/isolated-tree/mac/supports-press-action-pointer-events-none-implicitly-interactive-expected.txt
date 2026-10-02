@@ -1,0 +1,14 @@
+This test ensures that pointer-events:none doesn't stop implicitly interactive elements, which can still be activated without a pointer (e.g. with the keyboard), from supporting the press action.
+
+PASS: menuButton.isPressActionSupported() === true
+link: PASS: element.isPressActionSupported() === true
+checkbox: PASS: element.isPressActionSupported() === true
+custom-button: PASS: element.isPressActionSupported() === true
+
+Pressing the button opens its menu.
+PASS: menuButton.isExpanded === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

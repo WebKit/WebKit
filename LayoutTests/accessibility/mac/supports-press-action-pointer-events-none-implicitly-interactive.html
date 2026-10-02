@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.trigger-group {
+    position: relative;
+    display: inline-block;
+}
+/* Like the global navigation on apple.com, where the button that toggles a menu sits over the end of the
+   menu's link, and only takes pointer events while it's keyboard focused. */
+#menu-button {
+    position: absolute;
+    top: 0;
+    inset-inline-end: -7px;
+    width: 22px;
+    height: 100%;
+    pointer-events: none;
+}
+#menu-button:focus-visible {
+    pointer-events: auto;
+}
+.no-pointer-events {
+    pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<div class="trigger-group">
+    <a href="#mac">Mac</a>
+    <button id="menu-button" aria-label="Mac menu" aria-expanded="false" aria-controls="menu" onclick="toggleMenu()"></button>
+</div>
+<ul id="menu" hidden>
+    <li><a href="#macbook-air">MacBook Air</a></li>
+</ul>
+
+<a id="link" class="no-pointer-events" href="#link">Link</a>
+<input id="checkbox" class="no-pointer-events" type="checkbox" aria-label="Checkbox">
+<div id="custom-button" class="no-pointer-events" role="button" tabindex="0">Custom button</div>
+</div>
+
+<script>
+var output = "This test ensures that pointer-events:none doesn't stop implicitly interactive elements, which can still be activated without a pointer (e.g. with the keyboard), from supporting the press action.\n\n";
+
+function toggleMenu() {
+    const button = document.getElementById("menu-button");
+    const expanded = button.getAttribute("aria-expanded") == "true";
+    button.setAttribute("aria-expanded", !expanded);
+    document.getElementById("menu").hidden = expanded;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var menuButton = accessibilityController.accessibleElementById("menu-button");
+    output += expect("menuButton.isPressActionSupported()", "true");
+    for (const id of ["link", "checkbox", "custom-button"]) {
+        window.element = accessibilityController.accessibleElementById(id);
+        output += `${id}: ${expect("element.isPressActionSupported()", "true")}`;
+    }
+
+    setTimeout(async function() {
+        output += "\nPressing the button opens its menu.\n";
+        menuButton.press();
+        output += await expectAsync("menuButton.isExpanded", "true");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

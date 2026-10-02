@@ -1669,10 +1669,19 @@ unsigned AXCoreObject::hierarchicalLevel() const
 
 bool AXCoreObject::supportsPressAction() const
 {
-    if (role() == AccessibilityRole::Presentational || hasPointerEventsNone())
+    if (role() == AccessibilityRole::Presentational)
         return false;
 
-    if (isImplicitlyInteractive() || hasClickHandler())
+    // pointer-events:none only stops pointer input. Implicitly interactive elements, like buttons, can still be
+    // activated without a pointer (e.g. with the keyboard), so they're still pressable.
+    if (isImplicitlyInteractive())
+        return true;
+
+    // But for anything else, pointer-events:none is an explicit signal that it isn't meant to be clicked.
+    if (hasPointerEventsNone())
+        return false;
+
+    if (hasClickHandler())
         return true;
 
     if ((isStaticText() || isImage()) && !isIgnored()) {
