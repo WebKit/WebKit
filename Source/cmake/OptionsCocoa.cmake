@@ -215,6 +215,10 @@ set(USE_ANGLE_EGL ON)
 # FIXME: CMake is not used for Production at this moment. https://bugs.webkit.org/show_bug.cgi?id=322112
 SET_AND_EXPOSE_TO_BUILD(ENGINEERING_BUILD ON)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR ENABLE_SANITIZERS)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_CONJECTURE_ASSERT ON)
+endif ()
+
 function(WEBKIT_ADD_SDK_IMPORTED_LIBRARY _target _library)
     if (NOT TARGET ${_target})
         add_library(${_target} UNKNOWN IMPORTED)
