@@ -41,6 +41,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "Image.h"
 #include "LayoutSize.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -52,7 +53,7 @@
 #include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "RenderElement.h"
-#include "RenderImage.h"
+#include "RenderElementInlines.h"
 #include "Settings.h"
 #include "UserScriptTypes.h"
 #include <pal/text/TextEncoding.h>
@@ -144,11 +145,13 @@ LayoutSize ImageDocument::imageSize()
     RefPtr imageElement = m_imageElement;
     ASSERT(imageElement);
     updateStyleIfNeeded();
-    RefPtr cachedImage = imageElement->cachedImage();
-    if (!cachedImage)
+    CheckedPtr renderer = imageElement->renderer();
+    if (!renderer)
         return { };
-    float zoom = frame() ? frame()->pageZoomFactor() : 1;
-    return CachedImage::clampForZoom(RenderImage::imageSizeAsRendered(*cachedImage, protect(imageElement->renderer()).get(), zoom), zoom);
+    auto size = renderer->usedZoomedImageSize();
+    if (!size)
+        return { };
+    return LayoutSize(*size);
 }
 
 void ImageDocument::updateDuringParsing()
@@ -190,10 +193,10 @@ void ImageDocument::finishedParsing()
         cachedImage->finishLoading(data.get(), { });
         cachedImage->finish();
 
-        // Report the natural image size in the page title, regardless of zoom level.
-        // At a zoom level of 1 the image is guaranteed to have an integer size.
         updateStyleIfNeeded();
-        IntSize size = flooredIntSize(LayoutSize { RenderImage::imageSizeAsRendered(*cachedImage, protect(imageElement->renderer()).get()) });
+        RefPtr sourceImage = imageElement->sourceImage();
+        auto naturalDimensions = sourceImage ? sourceImage->naturalDimensions() : NaturalDimensions::none();
+        auto size = flooredIntSize(FloatSize { naturalDimensions.width.value_or(0), naturalDimensions.height.value_or(0) });
         if (size.width()) {
             // Compute the title. We use the decoded filename of the resource, falling
             // back on the hostname if there is no path.

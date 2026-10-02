@@ -69,6 +69,7 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
+    bool hasDecodedImage() const final;
     FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;

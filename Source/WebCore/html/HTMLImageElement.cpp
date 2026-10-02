@@ -63,7 +63,9 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
+#include "RenderImageResource.h"
 #include "RenderView.h"
+#include "ReplacedElementIntrinsicSizing.h"
 #include "RequestPriority.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -683,9 +685,15 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 LayoutSize HTMLImageElement::naturalSize() const
 {
     RefPtr image = m_imageLoader->image();
-    if (!image)
+    if (!image || !image->hasImage())
         return { };
-    return LayoutSize { RenderImage::imageSizeAsRendered(*image, protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio) };
+
+    CheckedPtr renderer = this->renderer();
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer.get());
+    auto naturalDimensions = renderImage ? protect(renderImage->imageResource())->naturalDimensions()
+        : image->naturalDimensions(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+
+    return LayoutSize(ReplacedElementIntrinsicSizing { m_imageDevicePixelRatio }.resolve(naturalDimensions).size());
 }
 
 unsigned HTMLImageElement::width()

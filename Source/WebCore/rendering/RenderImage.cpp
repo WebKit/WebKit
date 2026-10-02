@@ -64,9 +64,9 @@
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ReplacedElementIntrinsicSizing.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
-#include "SVGSVGElement.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
 #include "StyleImageDrawingExtras.h"
@@ -223,8 +223,11 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
         auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(protect(document())->deviceScaleFactor());
         imageSize = brokenImageAndImageScaleFactor.first->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
-    } else
-        imageSize = protect(newImage->image())->size();
+    } else if (newImage->hasImage()) {
+        auto naturalDimensions = protect(newImage->image())->naturalDimensions(imageOrientation());
+        if (naturalDimensions.width && naturalDimensions.height)
+            imageSize = { *naturalDimensions.width, *naturalDimensions.height };
+    }
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
@@ -319,8 +322,8 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (newImage != imageResource().imagePtr() || !newImage)
         return;
 
-    // At a zoom level of 1 the image is guaranteed to have an integer size.
-    incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(imageResource().imageSize(1.0f)));
+    auto paintedSize = imageResource().hasDecodedImage() ? ReplacedElementIntrinsicSizing { }.resolve(imageResource().naturalDimensions()).size() : FloatSize { };
+    incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(paintedSize));
 
     ImageSizeChangeType imageSizeChange = ImageSizeChangeNone;
 
@@ -355,9 +358,14 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 
 IntSize RenderImage::imageContainerSize() const
 {
-    return isDimensionlessSVG()
-        ? flooredIntSize(contentBoxRect().size())
-        : flooredIntSize(replacedContentRect().size());
+    return hasNaturalAspectRatio()
+        ? flooredIntSize(replacedContentRect().size())
+        : flooredIntSize(contentBoxRect().size());
+}
+
+std::optional<FloatSize> RenderImage::usedImageSize() const
+{
+    return imageResource().usedImageSize(imageContainerSize());
 }
 
 Style::ImageDrawingExtras RenderImage::imageDrawingExtras() const
@@ -390,11 +398,11 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     if (parent()) {
         auto repaintRect = replacedContentRect();
         if (rect) {
-            // The image changed rect is in source image coordinates (pre-zooming),
-            // so map from the bounds of the image to the contentsBox.
-            RefPtr srcImg = imageResource().image(flooredIntSize(contentBoxSize()));
-            auto sourceSize = (srcImg->drawsSVGImage() ? FloatSize(imageContainerSize()) : srcImg->size()) / style().usedZoom();
-            repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), sourceSize), repaintRect)));
+            auto naturalDimensions = imageResource().naturalDimensions();
+            auto changedRectSpace = naturalDimensions.width && naturalDimensions.height
+                ? FloatSize { *naturalDimensions.width, *naturalDimensions.height }
+                : FloatSize(imageContainerSize()) / style().usedZoom();
+            repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), changedRectSpace), repaintRect)));
         }
         // FIXME: This needs to account for filter outsets: webkit.org/b/293553.
         repaintRectangle(repaintRect);
@@ -442,18 +450,9 @@ bool RenderImage::isShowingAltText() const
     return isShowingMissingOrImageError() && !m_altText.isEmpty();
 }
 
-bool RenderImage::isDimensionlessSVG() const
+bool RenderImage::hasNaturalAspectRatio() const
 {
-    RefPtr cachedImage = this->cachedImage();
-    if (!cachedImage)
-        return false;
-    RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
-    if (!svgImage)
-        return false;
-    RefPtr rootElement = svgImage->rootElement();
-    if (!rootElement)
-        return false;
-    return !rootElement->hasIntrinsicDimensions();
+    return imageResource().naturalDimensions().hasUsableAspectRatio();
 }
 
 bool RenderImage::shouldDisplayBrokenImageIcon() const
@@ -468,26 +467,13 @@ bool RenderImage::shouldDisplayBrokenImageIcon() const
 // https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765
 bool RenderImage::shouldRespectZeroIntrinsicWidth() const
 {
-    RefPtr cachedImage = this->cachedImage();
-    if (!cachedImage)
-        return false;
-    if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
-        if (auto rootElement = svgImage->rootElement())
-            return rootElement->hasIntrinsicWidth();
-    }
-    return false;
+    return imageResource().naturalDimensions().width.has_value();
 }
 
 bool RenderImage::shouldRespectZeroIntrinsicHeight() const
 {
-    RefPtr cachedImage = this->cachedImage();
-    if (!cachedImage)
-        return false;
-    if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
-        if (auto rootElement = svgImage->rootElement())
-            return rootElement->hasIntrinsicHeight() && !rootElement->hasIntrinsicWidth();
-    }
-    return false;
+    auto naturalDimensions = imageResource().naturalDimensions();
+    return naturalDimensions.height && !naturalDimensions.width;
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -689,20 +675,16 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     contentBoxRect.moveBy(paintOffset);
 
-    // For SVGs without intrinsic dimensions (no width/height/viewBox), use
-    // contentBoxRect for painting. Images without intrinsic dimensions
-    // fill the object area, so object-fit should have no effect.
     LayoutRect replacedContentRect;
-    if (isDimensionlessSVG())
-        replacedContentRect = contentBoxRect;
-    else {
+    LayoutRect paintRect;
+    if (hasNaturalAspectRatio()) {
         replacedContentRect = this->replacedContentRect();
         replacedContentRect.moveBy(paintOffset);
-    }
-
-    LayoutRect paintRect = replacedContentRect;
-    if (!isDimensionlessSVG())
         paintRect = computePaintRectForObjectViewBox(replacedContentRect);
+    } else {
+        replacedContentRect = contentBoxRect;
+        paintRect = replacedContentRect;
+    }
 
     bool clip = !contentBoxRect.contains(paintRect);
     GraphicsContextStateSaver stateSaver(context, clip);

@@ -37,6 +37,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
+#include "ReplacedElementIntrinsicSizing.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -186,8 +187,10 @@ unsigned ImageInputType::height() const
 
     // If the image is available, use its height.
     RefPtr imageLoader = element->imageLoader();
-    if (imageLoader && imageLoader->image())
-        return LayoutSize { RenderImage::imageSizeAsRendered(*protect(imageLoader->image()), renderer.get()) }.height().toUnsigned();
+    if (imageLoader && imageLoader->image()) {
+        if (RefPtr image = protect(imageLoader->image())->image())
+            return LayoutUnit(ReplacedElementIntrinsicSizing { }.resolve(image->naturalDimensions()).size().height()).toUnsigned();
+    }
 
     return 0;
 }
@@ -209,8 +212,10 @@ unsigned ImageInputType::width() const
 
     // If the image is available, use its width.
     RefPtr imageLoader = element->imageLoader();
-    if (imageLoader && imageLoader->image())
-        return LayoutSize { RenderImage::imageSizeAsRendered(*protect(imageLoader->image()), renderer.get()) }.width().toUnsigned();
+    if (imageLoader && imageLoader->image()) {
+        if (RefPtr image = protect(imageLoader->image())->image())
+            return LayoutUnit(ReplacedElementIntrinsicSizing { }.resolve(image->naturalDimensions()).size().width()).toUnsigned();
+    }
 
     return 0;
 }

@@ -74,6 +74,7 @@ public:
     virtual bool errorOccurred() const { return false; }
     virtual bool usesDataProtocol() const { return false; }
     virtual bool hasImage() const { return false; }
+    virtual bool hasDecodedImage() const { return true; }
     virtual URL url() const { return { }; }
 
     // Clients.

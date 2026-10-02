@@ -120,6 +120,11 @@ bool MultiImage::errorOccurred() const
     return m_selectedImage && protect(m_selectedImage)->errorOccurred();
 }
 
+bool MultiImage::hasDecodedImage() const
+{
+    return m_selectedImage && protect(m_selectedImage)->hasDecodedImage();
+}
+
 FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
 {
     if (!m_selectedImage)

@@ -358,6 +358,11 @@ bool CachedImage::hasImage() const
     return m_cachedImage->hasImage();
 }
 
+bool CachedImage::hasDecodedImage() const
+{
+    return m_cachedImage && !m_cachedImage->errorOccurred() && m_cachedImage->hasImage();
+}
+
 RefPtr<WebCore::Image> CachedImage::image(const RenderElement* renderer, const FloatSize&, const GraphicsContext&, bool) const
 {
     ASSERT(!m_isPending);

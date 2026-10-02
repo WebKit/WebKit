@@ -79,6 +79,7 @@ public:
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
     bool hasImage() const final;
+    bool hasDecodedImage() const final;
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool currentFrameIsComplete(const RenderElement*) const final;
     float imageScaleFactor() const final;

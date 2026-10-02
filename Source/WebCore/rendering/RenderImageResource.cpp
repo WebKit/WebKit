@@ -29,14 +29,22 @@
 #include "RenderImageResource.h"
 
 #include "CachedImage.h"
+#include "Font.h"
+#include "FontCascadeInlines.h"
 #include "NullGraphicsContext.h"
 #include "RenderElement.h"
+#include "RenderImage.h"
 #include "RenderObjectDocument.h"
+#include "ReplacedElementIntrinsicSizing.h"
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImageDrawingExtras.h"
 #include "StyleInvalidImage.h"
 #include <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#include "MultiRepresentationHEICMetrics.h"
+#endif
 
 namespace WebCore {
 
@@ -158,6 +166,60 @@ LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeTyp
     if (!m_styleImage)
         return { };
     return LayoutSize(protect(m_styleImage)->imageSize(m_renderer.get(), multiplier, type));
+}
+
+bool RenderImageResource::hasDecodedImage() const
+{
+    return m_styleImage && protect(m_styleImage)->hasDecodedImage();
+}
+
+NaturalDimensions RenderImageResource::naturalDimensions() const
+{
+    if (!m_renderer)
+        return NaturalDimensions::none();
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(m_renderer.get()); renderImage && renderImage->isMultiRepresentationHEIC())
+        return NaturalDimensions::fixed(renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size());
+#endif
+
+    if (!m_styleImage)
+        return NaturalDimensions::none();
+    return protect(m_styleImage)->naturalDimensions(*m_renderer, ReplacedElementIntrinsicSizing { });
+}
+
+std::optional<FloatSize> RenderImageResource::usedImageSize(FloatSize containerSize) const
+{
+    if (!hasDecodedImage() || !m_renderer)
+        return std::nullopt;
+
+    auto naturalDimensions = this->naturalDimensions();
+    if (naturalDimensions.width && naturalDimensions.height)
+        return FloatSize { *naturalDimensions.width, *naturalDimensions.height };
+
+    if (containerSize.isEmpty())
+        return std::nullopt;
+
+    if (auto usedZoom = m_renderer->style().usedZoom(); usedZoom != 1)
+        containerSize.scale(1 / usedZoom);
+    return containerSize;
+}
+
+float RenderImageResource::density() const
+{
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(m_renderer.get()))
+        return renderImage->imageDevicePixelRatio();
+    return 1;
+}
+
+LayoutSize RenderImageResource::intrinsicSize(float multiplier) const
+{
+    if (!hasDecodedImage())
+        return { };
+
+    auto size = ReplacedElementIntrinsicSizing { density() }.resolve(naturalDimensions()).size();
+    size.scale(multiplier);
+    return LayoutSize(size / protect(m_styleImage)->imageScaleFactor());
 }
 
 } // namespace WebCore
