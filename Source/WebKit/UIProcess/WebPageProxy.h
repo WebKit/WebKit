@@ -2766,6 +2766,8 @@ public:
     void applyDeferredTopDocumentSyncDataFromCommittedProcess(Ref<WebCore::DocumentSyncData>&&);
 
     void broadcastFrameTreeSyncData(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    bool updateFrameTreeSyncDataFromProcess(WebProcessProxy&, WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    void sendFrameGeometryFromOtherProcesses(WebFrameProxy&);
     void broadcastAllFrameTreeSyncData(IPC::Connection&, WebCore::FrameIdentifier,  Ref<WebCore::FrameTreeSyncData>&&);
 
     void didNotifyUserActivation(IPC::Connection&, WebCore::FrameIdentifier, MonotonicTime);

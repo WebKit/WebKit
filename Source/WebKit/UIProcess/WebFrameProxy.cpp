@@ -174,6 +174,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
     , m_frameLoadState(isMainFrame)
     , m_frameID(frameID)
     , m_layerHostingContextIdentifier(LayerHostingContextIdentifier::generate())
+    , m_processIdentifierAtLastCommit(process.process().coreProcessIdentifier())
     , m_effectiveSandboxFlags(effectiveSandboxFlags)
     , m_effectiveReferrerPolicy(effectiveReferrerPolicy)
     , m_scrollingMode(scrollingMode)
@@ -410,9 +411,15 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_frameGeometry = { };
     m_frameViewportInfo = { };
 
+    auto processIdentifier = process().coreProcessIdentifier();
+    bool didChangeProcess = std::exchange(m_processIdentifierAtLastCommit, processIdentifier) != processIdentifier;
+
     RefPtr webPage = page();
-    if (webPage && protect(webPage->preferences())->siteIsolationEnabled())
+    if (webPage && protect(webPage->preferences())->siteIsolationEnabled()) {
         broadcastFrameTreeSyncData(calculateFrameTreeSyncData());
+        if (didChangeProcess)
+            webPage->sendFrameGeometryFromOtherProcesses(*this);
+    }
 }
 
 void WebFrameProxy::didFinishLoad()

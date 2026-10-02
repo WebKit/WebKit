@@ -9444,20 +9444,18 @@ static bool NODELETE frameTreePropertyIsRestrictedToFrameOwningProcess(WebCore::
     }
 }
 
-void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+bool WebPageProxy::updateFrameTreeSyncDataFromProcess(WebProcessProxy& process, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
 {
-    Ref process = WebProcessProxy::fromConnection(connection);
-
     RefPtr webFrameProxy = WebFrameProxy::webFrame(frameID);
     if (!webFrameProxy)
-        return;
+        return false;
 
     // FIXME: This could instead be an option in FrameTreeSyncData.in to allow
     // certain properties to be mutable from non-frame-owning processes.
     if (frameTreePropertyIsRestrictedToFrameOwningProcess(static_cast<WebCore::FrameTreeSyncDataType>(data.value.index()))) {
-        if (&webFrameProxy->process() != &process.get()) {
+        if (&webFrameProxy->process() != &process) {
             // FIXME: make this a MESSAGE_CHECK.
-            return;
+            return false;
         }
     }
 
@@ -9468,10 +9466,97 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
     else if (auto* viewportInfo = std::get_if<WebCore::FrameViewportInfo>(&data.value))
         webFrameProxy->setFrameViewportInfo(*viewportInfo);
 
+    return true;
+}
+
+void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+
+    if (!updateFrameTreeSyncDataFromProcess(process, frameID, data))
+        return;
+
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
             return;
-        webProcess.send(Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess(frameID, WebCore::FrameTreeSyncSerializationData { data }), pageID);
+        webProcess.send(Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess({ { frameID, WebCore::FrameTreeSyncSerializationData { data } } }), pageID);
+    });
+}
+
+// WebProcess only broadcasts frame geometry when it changes, so a new frame hosted in a new
+// process might be missing geometry from other processes. This gathers frame geometry from all
+// processes and sends it to the new frame's process in one message.
+void WebPageProxy::sendFrameGeometryFromOtherProcesses(WebFrameProxy& frame)
+{
+    class FrameGeometryCallbackAggregator : public RefCounted<FrameGeometryCallbackAggregator> {
+    public:
+        static Ref<FrameGeometryCallbackAggregator> create(WebPageProxy& page, WebFrameProxy& frame) { return adoptRef(*new FrameGeometryCallbackAggregator(page, frame)); }
+
+        void didGetLocalFrameGeometry(WebProcessProxy& process, Vector<std::pair<FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>&& frameGeometry)
+        {
+            RefPtr page = m_page.get();
+            if (!page)
+                return;
+
+            for (auto& [frameID, data] : frameGeometry) {
+                auto dataType = static_cast<WebCore::FrameTreeSyncDataType>(data.value.index());
+                if (dataType != WebCore::FrameTreeSyncDataType::FrameGeometry && dataType != WebCore::FrameTreeSyncDataType::FrameViewportInfo)
+                    continue;
+                if (page->updateFrameTreeSyncDataFromProcess(process, frameID, data))
+                    m_reportedFrameGeometry.append({ frameID, dataType });
+            }
+        }
+
+        ~FrameGeometryCallbackAggregator()
+        {
+            RefPtr page = m_page.get();
+            RefPtr frame = WebFrameProxy::webFrame(m_frameID);
+            if (!page || !frame || frame->page() != page || &frame->process() != m_frameProcess.ptr())
+                return;
+
+            auto pageID = frame->webPageIDInCurrentProcess();
+            if (!pageID)
+                return;
+
+            Vector<std::pair<FrameIdentifier, WebCore::FrameTreeSyncSerializationData>> frameGeometry;
+            for (auto [reportedFrameID, dataType] : m_reportedFrameGeometry) {
+                RefPtr reportedFrame = WebFrameProxy::webFrame(reportedFrameID);
+                if (!reportedFrame || reportedFrame->page() != page || &reportedFrame->process() == m_frameProcess.ptr())
+                    continue;
+
+                if (dataType == WebCore::FrameTreeSyncDataType::FrameGeometry)
+                    frameGeometry.append({ reportedFrameID, { reportedFrame->frameGeometry() } });
+                else if (dataType == WebCore::FrameTreeSyncDataType::FrameViewportInfo)
+                    frameGeometry.append({ reportedFrameID, { reportedFrame->frameViewportInfo() } });
+            }
+
+            if (!frameGeometry.isEmpty())
+                protect(m_frameProcess)->send(Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess(WTF::move(frameGeometry)), *pageID);
+        }
+
+    private:
+        FrameGeometryCallbackAggregator(WebPageProxy& page, WebFrameProxy& frame)
+            : m_page(page)
+            , m_frameID(frame.frameID())
+            , m_frameProcess(frame.process())
+        {
+        }
+
+        WeakPtr<WebPageProxy> m_page;
+        FrameIdentifier m_frameID;
+        Ref<WebProcessProxy> m_frameProcess;
+        Vector<std::pair<FrameIdentifier, WebCore::FrameTreeSyncDataType>> m_reportedFrameGeometry;
+    };
+
+    Ref frameProcess = frame.process();
+    Ref callbackAggregator = FrameGeometryCallbackAggregator::create(*this, frame);
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess == frameProcess)
+            return;
+
+        webProcess.sendWithAsyncReply(Messages::WebPage::GetLocalFrameGeometry(), [callbackAggregator, process = Ref { webProcess }](auto&& frameGeometry) {
+            callbackAggregator->didGetLocalFrameGeometry(process, WTF::move(frameGeometry));
+        }, pageID);
     });
 }
 

@@ -329,7 +329,9 @@ public:
     std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
     void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }
 
+    const WebCore::FrameGeometrySyncData& frameGeometry() const { return m_frameGeometry; }
     void setFrameGeometry(const WebCore::FrameGeometrySyncData& geometry) { m_frameGeometry = geometry; }
+    const WebCore::FrameViewportInfo& frameViewportInfo() const { return m_frameViewportInfo; }
     void setFrameViewportInfo(const WebCore::FrameViewportInfo& viewportInfo) { m_frameViewportInfo = viewportInfo; }
 
     void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
@@ -406,6 +408,7 @@ private:
     std::optional<WebCore::IntRect> m_remoteFrameRect;
     WebCore::FrameGeometrySyncData m_frameGeometry;
     WebCore::FrameViewportInfo m_frameViewportInfo;
+    WebCore::ProcessIdentifier m_processIdentifierAtLastCommit;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     MonotonicTime m_lastActivationTimestamp { -MonotonicTime::infinity() };
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
