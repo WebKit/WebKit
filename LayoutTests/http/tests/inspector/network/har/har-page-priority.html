@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useConcurrentGC=true ] -->
 <html>
 <head>
 <meta charset="utf-8">
@@ -8,18 +8,31 @@
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("HAR.Page");
+    window.__testExecutionCount = window.__testExecutionCount || 0;
 
     suite.addTestCase({
         name: "HAR.Page.Priority",
         description: "Should be able to generate a HAR with all of this test page's resources.",
         async test() {
+            window.__testExecutionCount++;
+            InspectorTest.log(`[Frontend] Test iteration run count: ${window.__testExecutionCount}`);
+            let startTime = performance.now();
+            InspectorTest.log(`[Frontend] Initiating Promise.all at ${startTime.toFixed(2)}ms`);
+
             await NetworkAgent.setResourceCachingDisabled(false);
 
             await Promise.all([
-                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.awaitEvent("LoadComplete").then(() => {
+                    let eventTime = performance.now();
+                    InspectorTest.log(`[Frontend] RECEIVED 'LoadComplete' event at ${eventTime.toFixed(2)}ms (Delta: ${(eventTime - startTime).toFixed(2)}ms)`);
+                }),
                 WI.networkManager.mainFrame.removeAllResources(),
                 WI.networkManager.mainFrame.clearProvisionalLoad(false),
-                InspectorTest.reloadPage({ignoreCache: true}),
+                (async () => {
+                    InspectorTest.log(`[Frontend] Issuing InspectorTest.reloadPage() command...`);
+                    await InspectorTest.reloadPage({ignoreCache: true});
+                    InspectorTest.log(`[Frontend] InspectorTest.reloadPage() promise resolved at ${performance.now().toFixed(2)}ms`);
+                })()
             ]);
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
