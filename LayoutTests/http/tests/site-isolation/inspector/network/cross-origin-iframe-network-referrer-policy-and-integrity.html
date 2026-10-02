@@ -1,0 +1,75 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+// Unique URLs keep repeated runs from being served from the memory cache, which reports no request.
+function triggerMainFrameFetch() {
+    fetch("resources/integrity-target.txt?main-frame-fetch-" + Math.random(), {referrerPolicy: "origin", integrity: "sha256-J28BWuhFhKbPSZ3G99UX3srA4RJDsNBN4QrRJAIULso="});
+}
+
+function triggerMainFramePlainFetch() {
+    fetch("resources/integrity-target.txt?main-frame-plain-fetch-" + Math.random());
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.ReferrerPolicyAndIntegrity");
+
+    function awaitResourceWithURLContaining(substring) {
+        return new Promise((resolve) => {
+            let listener = WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                if (!event.data.resource.url.includes(substring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+                resolve(event.data.resource);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ReferrerPolicyAndIntegrity.MainFrame",
+        description: "A fetch in the main frame with a referrer policy and integrity metadata should report both on the resource.",
+        async test() {
+            let resourcePromise = awaitResourceWithURLContaining("main-frame-fetch");
+            InspectorTest.evaluateInPage("triggerMainFrameFetch()");
+            let resource = await resourcePromise;
+            InspectorTest.expectEqual(resource.referrerPolicy, "origin", "Referrer policy should be origin.");
+            InspectorTest.expectEqual(resource.integrity, "sha256-J28BWuhFhKbPSZ3G99UX3srA4RJDsNBN4QrRJAIULso=", "Integrity should be the supplied metadata.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ReferrerPolicyAndIntegrity.MainFrameDefaults",
+        description: "A fetch without options should report the default referrer policy and no integrity.",
+        async test() {
+            let resourcePromise = awaitResourceWithURLContaining("main-frame-plain-fetch");
+            InspectorTest.evaluateInPage("triggerMainFramePlainFetch()");
+            let resource = await resourcePromise;
+            InspectorTest.expectEqual(resource.referrerPolicy, "strict-origin-when-cross-origin", "Referrer policy should be the document default.");
+            InspectorTest.expectFalse(resource.integrity, "Integrity should be empty.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ReferrerPolicyAndIntegrity.CrossOriginIFrame",
+        description: "A fetch in a cross-origin iframe with a referrer policy and integrity metadata should report both on the resource.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-request-extras.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof fetchWithOptions === 'function'");
+
+            let resourcePromise = awaitResourceWithURLContaining("iframe-fetch");
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "fetchWithOptions()", objectGroup: "test"});
+            let resource = await resourcePromise;
+            InspectorTest.expectEqual(resource.referrerPolicy, "no-referrer", "Referrer policy should be no-referrer.");
+            InspectorTest.expectEqual(resource.integrity, "sha256-J28BWuhFhKbPSZ3G99UX3srA4RJDsNBN4QrRJAIULso=", "Integrity should be the supplied metadata.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that referrer policy and integrity metadata of requests reach the frontend under Site Isolation, for the main frame and a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-request-extras.html"></iframe>
+</body>

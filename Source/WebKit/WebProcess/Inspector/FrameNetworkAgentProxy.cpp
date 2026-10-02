@@ -40,6 +40,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FormData.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTTPHeaderMap.h>
@@ -174,7 +175,24 @@ static ResourceType resourceTypeForRequest(const ResourceRequest& request, Docum
     return ResourceType::Other;
 }
 
-void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader*)
+static RequestExtras copyRequestExtras(const ResourceRequest& request, ResourceLoader* resourceLoader)
+{
+    RequestExtras requestExtras;
+
+    if (RefPtr body = request.httpBody(); body && !body->isEmpty()) {
+        auto bytes = body->flatten();
+        requestExtras.postData = String::fromUTF8WithLatin1Fallback(bytes.span());
+    }
+
+    if (resourceLoader) {
+        requestExtras.referrerPolicy = resourceLoader->options().referrerPolicy;
+        requestExtras.integrity = resourceLoader->options().integrity;
+    }
+
+    return requestExtras;
+}
+
+void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     if (request.hiddenFromInspector())
         return;
@@ -216,7 +234,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
             qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
-            WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime, WTF::move(initiator)),
+            copyRequestExtras(request, resourceLoader), WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime, WTF::move(initiator)),
         page->identifier());
 }
 
@@ -256,7 +274,7 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
             qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
-            std::nullopt, ResourceType::Other, timestamp, walltime, WTF::move(initiator)),
+            copyRequestExtras(request, nullptr), std::nullopt, ResourceType::Other, timestamp, walltime, WTF::move(initiator)),
         page->identifier());
 }
 

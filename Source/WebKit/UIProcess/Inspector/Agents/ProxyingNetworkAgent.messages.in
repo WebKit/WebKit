@@ -26,7 +26,7 @@
     DispatchedTo=UI
 ]
 messages -> Inspector::ProxyingNetworkAgent {
-    RequestWillBeSent(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, String loaderId, String targetID, String documentURL, WebCore::ResourceRequest request, std::optional<WebCore::ResourceResponse> redirectResponse, Inspector::ResourceType resourceType, double timestamp, double walltime, Inspector::InitiatorData initiator)
+    RequestWillBeSent(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, String loaderId, String targetID, String documentURL, WebCore::ResourceRequest request, Inspector::RequestExtras requestExtras, std::optional<WebCore::ResourceResponse> redirectResponse, Inspector::ResourceType resourceType, double timestamp, double walltime, Inspector::InitiatorData initiator)
 
     ResponseReceived(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, String loaderId, WebCore::ResourceResponse response, Inspector::ResourceType resourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime)
 

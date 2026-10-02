@@ -1,0 +1,13 @@
+Test that request bodies of fetch and XHR POSTs sent from a cross-origin iframe reach the frontend under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.RequestData
+-- Running test case: SiteIsolation.Network.RequestData.CrossOriginIFrame.FetchText
+PASS: Request method should be POST.
+PASS: Request data should be the fetch body.
+
+-- Running test case: SiteIsolation.Network.RequestData.CrossOriginIFrame.XHRForm
+PASS: Request method should be POST.
+PASS: Request data should be the form-encoded body.
+
