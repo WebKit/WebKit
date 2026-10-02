@@ -504,6 +504,9 @@ public:
     bool isContinuingLoadAfterNavigationPolicyDecision() const { return m_isContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision; }
     void setIsContinuingLoad(ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad) { m_isContinuingLoad = shouldTreatAsContinuingLoad; }
 
+    bool isCacheOnlyLoadRetry() const { return m_isCacheOnlyLoadRetry; }
+    void markIsCacheOnlyLoadRetry() { m_isCacheOnlyLoadRetry = true; }
+
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
     void setIsRequestFromClientOrUserInput(bool isRequestFromClientOrUserInput) { m_isRequestFromClientOrUserInput = isRequestFromClientOrUserInput; }
 
@@ -524,6 +527,7 @@ public:
 
     std::optional<NavigationIdentifier> navigationID() const { return m_navigationID.asOptional(); }
     WEBCORE_EXPORT void NODELETE setNavigationID(NavigationIdentifier);
+    std::optional<NavigationIdentifier> takeNavigationID() { return std::exchange(m_navigationID, { }).asOptional(); }
 
     IsInitialAboutBlank isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
@@ -777,6 +781,7 @@ private:
 
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 
+    bool m_isCacheOnlyLoadRetry { false };
     bool m_isRequestFromClientOrUserInput { false };
     bool m_hasCrossOriginRedirect { false };
     bool m_loadStartedDuringSwipeAnimation { false };

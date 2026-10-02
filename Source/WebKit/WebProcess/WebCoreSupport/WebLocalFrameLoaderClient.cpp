@@ -605,7 +605,7 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(*webPage, m_frame, userData);
     RefPtr provisionalLoader = m_localFrame->loader().provisionalDocumentLoader();
 
-    if (!provisionalLoader || provisionalLoader->isContinuingLoadAfterProvisionalLoadStarted())
+    if (!provisionalLoader || provisionalLoader->isContinuingLoadAfterProvisionalLoadStarted() || provisionalLoader->isCacheOnlyLoadRetry())
         return;
     
     auto& url = provisionalLoader->url();
@@ -748,7 +748,8 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     // the entire LocalFrameLoaderClient function was complete.
     std::optional<WebCore::NavigationIdentifier> navigationID;
     ResourceRequest request;
-    if (RefPtr documentLoader = m_localFrame->loader().provisionalDocumentLoader()) {
+    Ref frameLoader = m_localFrame->loader();
+    if (RefPtr documentLoader = frameLoader->provisionalDocumentLoader() ?: frameLoader->policyDocumentLoader()) {
         navigationID = documentLoader->navigationID();
         request = documentLoader->request();
     }

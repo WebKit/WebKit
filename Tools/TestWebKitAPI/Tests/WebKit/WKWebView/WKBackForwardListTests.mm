@@ -917,6 +917,97 @@ TEST(WKBackForwardList, BackForwardNavigationSkipsClientSideRedirectWithCOOP)
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/source.html"_s).URL.absoluteString.UTF8String);
 }
 
+static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithFormSubmissionInBackList(const TestWebKitAPI::HTTPServer& server)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setUsesPageCache:NO];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:server.request("/form.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('testForm').submit()" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("/result.html", [webView URL].path);
+
+    [webView loadRequest:server.request("/other.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static TestWebKitAPI::HTTPServer formSubmissionServer()
+{
+    return TestWebKitAPI::HTTPServer({
+        { "/form.html"_s, { "<body><form id='testForm' method='POST' action='result.html'><input name='field' value='value'></form></body>"_s } },
+        { "/result.html"_s, { "result"_s } },
+        { "/other.html"_s, { "other"_s } },
+    });
+}
+
+TEST(WKBackForwardList, GoBackToFormSubmissionResubmitsWithinSameNavigation)
+{
+    auto server = formSubmissionServer();
+    auto [webView, navigationDelegate] = webViewWithFormSubmissionInBackList(server);
+
+    __block bool sawFormResubmission = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if (action.navigationType == WKNavigationTypeFormResubmitted)
+            sawFormResubmission = true;
+        decisionHandler(WKNavigationActionPolicyAllow);
+    };
+    __block bool didFailProvisionalNavigation = false;
+    navigationDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+        didFailProvisionalNavigation = true;
+    };
+    __block RetainPtr<WKNavigation> finishedNavigation;
+    __block bool didFinishNavigation = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        finishedNavigation = navigation;
+        didFinishNavigation = true;
+    };
+
+    RetainPtr backNavigation = [webView goBack];
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    EXPECT_TRUE(sawFormResubmission);
+    EXPECT_FALSE(didFailProvisionalNavigation);
+    EXPECT_EQ(finishedNavigation, backNavigation);
+    EXPECT_WK_STREQ("/result.html", [webView URL].path);
+}
+
+TEST(WKBackForwardList, GoBackToFormSubmissionDeclinedResubmissionFailsNavigation)
+{
+    auto server = formSubmissionServer();
+    auto [webView, navigationDelegate] = webViewWithFormSubmissionInBackList(server);
+
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(action.navigationType == WKNavigationTypeFormResubmitted ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+    };
+    __block unsigned failedProvisionalNavigationCount = 0;
+    __block RetainPtr<WKNavigation> failedNavigation;
+    __block RetainPtr<NSError> failedNavigationError;
+    __block bool didFailProvisionalNavigation = false;
+    navigationDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation, NSError *error) {
+        ++failedProvisionalNavigationCount;
+        failedNavigation = navigation;
+        failedNavigationError = error;
+        didFailProvisionalNavigation = true;
+    };
+
+    RetainPtr backNavigation = [webView goBack];
+    TestWebKitAPI::Util::run(&didFailProvisionalNavigation);
+
+    EXPECT_EQ(failedProvisionalNavigationCount, 1U);
+    EXPECT_EQ(failedNavigation, backNavigation);
+    EXPECT_WK_STREQ(NSURLErrorDomain, [failedNavigationError domain]);
+    EXPECT_EQ([failedNavigationError code], NSURLErrorCancelled);
+    EXPECT_FALSE([webView isLoading]);
+    EXPECT_WK_STREQ("/other.html", [webView URL].path);
+}
+
 TEST(WKBackForwardList, BackForwardNavigationLandsOnInitialItemPastJSChain)
 {
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);

@@ -1892,6 +1892,10 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
 
     auto&& substituteData = defaultSubstituteDataForURL(request.url());
     Ref loader = m_client->createDocumentLoader(WTF::move(request), WTF::move(substituteData));
+    if (auto navigationID = std::exchange(m_navigationIDForCacheOnlyLoadRetry, std::nullopt)) {
+        loader->setNavigationID(*navigationID);
+        loader->markIsCacheOnlyLoadRetry();
+    }
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protect(m_frame), loader, action.initiatedByMainFrame(), action.shouldOpenExternalURLsPolicy());
     loader->setIsContinuingLoad(shouldTreatAsContinuingLoad);
     loader->setIsRequestFromClientOrUserInput(action.isRequestFromClientOrUserInput());
@@ -3079,7 +3083,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
             // clear it here so this frame stops blocking its parent's completion.
             clearWaitingForDelegatedBackForwardLoad();
 
-            if (loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No) {
+            if (loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No && !m_isStoppingForCacheOnlyLoadRetry) {
                 auto willInternallyHandleFailure = (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && (!isHTTPSFirstApplicable || isHTTPFallbackInProgressOrUpgradeDisabled()))) ? WillInternallyHandleFailure::No : WillInternallyHandleFailure::Yes;
 
                 if (error.isCancellation() && m_needsCancellationForContentRuleListCrossOriginRedirect) {
@@ -4278,6 +4282,11 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if (m_quickRedirectComing)
             clientRedirectCancelledOrFinished(NewLoadInProgress::No);
 
+        // The cancellation of the cache-only load was not reported to the client, so report it now
+        // that the retry is not going to continue the navigation.
+        if (RefPtr policyDocumentLoader = m_policyDocumentLoader; policyDocumentLoader && policyDocumentLoader->isCacheOnlyLoadRetry() && navigationPolicyDecision != NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
+            dispatchDidFailProvisionalLoad(*policyDocumentLoader, cancelledError(policyDocumentLoader->request()), WillInternallyHandleFailure::No);
+
         if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess) {
             stopAllLoaders();
             m_checkTimer.stop();
@@ -4905,14 +4914,24 @@ void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
 
     FrameLoadType loadType = m_loadType;
     RefPtr item = history().provisionalItem();
-
-    stopAllLoaders(ClearProvisionalItem::No);
-    if (item)
-        loadDifferentDocumentItem(*item, protect(history().currentItem()).get(), loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
-    else {
+    if (!item) {
         ASSERT_NOT_REACHED();
         FRAMELOADER_RELEASE_LOG_ERROR(ResourceLoading, "retryAfterFailedCacheOnlyMainResourceLoad: Retrying load after failed cache-only main resource load failed because there is no provisional history item.");
+        stopAllLoaders(ClearProvisionalItem::No);
+        return;
     }
+
+    // The retry continues the same navigation, so the client should not see the cancellation
+    // of the cache-only load as a provisional load failure.
+    RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader;
+    auto navigationID = provisionalDocumentLoader ? provisionalDocumentLoader->takeNavigationID() : std::nullopt;
+    {
+        SetForScope retryGuard(m_isStoppingForCacheOnlyLoadRetry, true);
+        stopAllLoaders(ClearProvisionalItem::No);
+    }
+    m_navigationIDForCacheOnlyLoadRetry = navigationID;
+    loadDifferentDocumentItem(*item, protect(history().currentItem()).get(), loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
+    m_navigationIDForCacheOnlyLoadRetry = std::nullopt;
 }
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request)

@@ -1597,6 +1597,7 @@ void DocumentLoader::clearMainResourceLoader()
 {
     m_loadingMainResource = false;
     m_isContinuingLoad = ShouldTreatAsContinuingLoad::No;
+    m_isCacheOnlyLoadRetry = false;
 
     RefPtr frameLoader = this->frameLoader();
 
@@ -2431,6 +2432,7 @@ void DocumentLoader::clearMainResource()
 
     m_mainResource = nullptr;
     m_isContinuingLoad = ShouldTreatAsContinuingLoad::No;
+    m_isCacheOnlyLoadRetry = false;
 
     unregisterReservedServiceWorkerClient();
 }
