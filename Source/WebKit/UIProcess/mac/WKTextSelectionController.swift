@@ -114,7 +114,7 @@ extension WKTextSelectionController {
         }
 
         let editorState = page.editorState
-        return editorState.selectionType == .Caret
+        return editorState.selectionType == .Caret && editorState.isContentEditable
     }
 
     @objc(isTextSelectedAtPoint:)
