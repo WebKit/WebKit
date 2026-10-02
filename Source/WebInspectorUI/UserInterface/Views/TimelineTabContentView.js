@@ -491,9 +491,9 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         this._continueButton.hidden = false;
     }
 
-    _updateNavigationBarButtons(capturingState)
+    _updateNavigationBarButtons()
     {
-        if (capturingState === WI.TimelineManager.CapturingState.Stopping)
+        if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Stopping)
             this._showRecordStoppingSpinner();
         else if (!WI.modifierKeys.altKey || !WI.timelineManager.willAutoStop())
             this._showRecordButton();
@@ -503,17 +503,16 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
     _handleTimelineCapturingStateChanged(event)
     {
-        let {capturingState} = event.data;
-        let enabled = capturingState === WI.TimelineManager.CapturingState.Active || capturingState === WI.TimelineManager.CapturingState.Inactive;
-        let stopping = capturingState === WI.TimelineManager.CapturingState.Stopping;
+        let enabled = WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active || WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive;
+        let stopping = WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Stopping;
 
         this._toggleRecordingShortcut.disabled = !enabled || stopping;
         this._toggleNewRecordingShortcut.disabled = !enabled || stopping;
 
-        this._recordButton.toggled = capturingState !== WI.TimelineManager.CapturingState.Inactive;
+        this._recordButton.toggled = WI.timelineManager.isCapturing();
         this._recordButton.enabled = enabled;
 
-        this._updateNavigationBarButtons(capturingState);
+        this._updateNavigationBarButtons();
     }
 
     _inspectorVisibilityChanged(event)
@@ -523,7 +522,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
     _globalModifierKeysDidChange(event)
     {
-        this._updateNavigationBarButtons(WI.timelineManager.capturingState);
+        this._updateNavigationBarButtons();
     }
 
     _toggleRecordingOnSpacebar(event)
@@ -579,7 +578,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
         WI.timelineManager.relaxAutoStop();
 
-        this._updateNavigationBarButtons(WI.timelineManager.capturingState);
+        this._updateNavigationBarButtons();
     }
 
     _recordingsTreeSelectionDidChange(event)

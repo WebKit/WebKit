@@ -10,7 +10,7 @@ function test()
     function awaitCapturingState(capturingState) {
         return new Promise((resolve) => {
             let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
-                if (event.data.capturingState !== capturingState)
+                if (WI.timelineManager.capturingState !== capturingState)
                     return;
                 WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
                 resolve();
@@ -81,7 +81,7 @@ function test()
             // If Timelines.autoCaptureStarted event is dispatched, it will stop the active recording.
             let autoCaptureDidFire = false;
             let autoCaptureListener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
-                if (event.data.capturingState === WI.TimelineManager.CapturingState.Inactive)
+                if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive)
                     autoCaptureDidFire = true;
             });
 
