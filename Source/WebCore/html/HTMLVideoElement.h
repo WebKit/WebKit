@@ -157,9 +157,11 @@ public:
     bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
     void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
-    double cameraYaw() const { return m_cameraYaw; }
-    double cameraPitch() const { return m_cameraPitch; }
-    double cameraFieldOfView() const { return m_cameraFieldOfView; }
+    static constexpr double defaultSpatialCameraFieldOfView = 80;
+
+    double yaw() const;
+    double pitch() const;
+    double fieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
 
 private:
@@ -204,9 +206,9 @@ private:
 
     FloatSize m_lastReportedNaturalSize { };
 
-    double m_cameraYaw { 0 };
-    double m_cameraPitch { 0 };
-    double m_cameraFieldOfView { 0 };
+    std::optional<double> m_cameraYaw;
+    std::optional<double> m_cameraPitch;
+    std::optional<double> m_cameraFieldOfView;
 
     bool m_renderingCanBeAccelerated { false };
 

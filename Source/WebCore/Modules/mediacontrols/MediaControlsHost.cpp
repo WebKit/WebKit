@@ -367,6 +367,11 @@ bool MediaControlsHost::spatialVideoRenderingEnabled() const
     return m_mediaElement->document().settings().spatialVideoRenderingEnabled();
 }
 
+double MediaControlsHost::defaultSpatialCameraFieldOfView() const
+{
+    return HTMLVideoElement::defaultSpatialCameraFieldOfView;
+}
+
 static RefPtr<VideoTrackConfiguration> selectedVideoTrackConfiguration(HTMLMediaElement& mediaElement)
 {
     RefPtr videoTracks = mediaElement.videoTracks();
