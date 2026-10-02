@@ -167,13 +167,13 @@ private:
 
     void onBrowserTerminated(const String& sessionId);
 
-    typedef void (WebDriverService::*BidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
-    struct BidiCommand {
+    typedef void (WebDriverService::*StaticBidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    struct StaticBidiCommand {
         String method;
-        BidiCommandHandler handler;
+        StaticBidiCommandHandler handler;
     };
-    static const BidiCommand s_bidiCommands[];
-    static bool findBidiCommand(const RefPtr<JSON::Object>&, BidiCommandHandler*, RefPtr<JSON::Object>& parsedParams);
+    static const StaticBidiCommand s_staticBidiCommands[];
+    static const StaticBidiCommand* findStaticBidiCommand(const String& method);
 #endif // ENABLE(WEBDRIVER_BIDI)
 
     HTTPServer m_server;

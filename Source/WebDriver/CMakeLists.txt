@@ -18,6 +18,30 @@ set(WebDriver_SOURCES
 )
 
 if (ENABLE_WEBDRIVER_BIDI)
+    set(WebDriver_BIDI_PROTOCOL_INPUTS
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiBrowser.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiBrowsingContext.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiDigitalCredentials.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiLog.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiPermissions.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiScript.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiSession.json
+        ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiStorage.json
+    )
+    set(WebDriver_BIDI_COMMAND_NAMES_HEADER ${WebDriver_DERIVED_SOURCES_DIR}/WebDriverBidiCommandNames.h)
+    add_custom_command(
+        OUTPUT ${WebDriver_BIDI_COMMAND_NAMES_HEADER}
+        MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-webdriver-bidi-command-names.py
+        DEPENDS ${WebDriver_BIDI_PROTOCOL_INPUTS}
+        COMMAND
+            ${PYTHON_EXECUTABLE}
+            ${WEBKIT_DIR}/Scripts/generate-webdriver-bidi-command-names.py
+            --output ${WebDriver_BIDI_COMMAND_NAMES_HEADER}
+            ${WebDriver_BIDI_PROTOCOL_INPUTS}
+        VERBATIM
+    )
+
+    list(APPEND WebDriver_HEADERS ${WebDriver_BIDI_COMMAND_NAMES_HEADER})
     list(APPEND WebDriver_SOURCES WebSocketServer.cpp)
 endif ()
 
