@@ -401,6 +401,27 @@ bool FontCascade::primaryFontIsSystemFont() const
     return isSystemFont(RetainPtr { fontData->ctFont() }.get());
 }
 
+static RefPtr<const Font> fontForOrientation(const Font& font, char32_t character, Glyph glyph, NonCJKGlyphOrientation nonCJKGlyphOrientation)
+{
+    if (font.platformData().orientation() != FontOrientation::Vertical)
+        return &font;
+    if (FontCascade::isCJKIdeographOrSymbol(character)) {
+        if (!font.hasVerticalGlyphs())
+            return &font.brokenIdeographFont();
+    } else if (nonCJKGlyphOrientation == NonCJKGlyphOrientation::Mixed) {
+        Ref verticalRightFont = font.verticalRightOrientationFont();
+        Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(character);
+        if (verticalRightGlyph == glyph)
+            return verticalRightFont.ptr();
+    } else {
+        Ref uprightFont = font.uprightOrientationFont();
+        Glyph uprightGlyph = uprightFont->glyphForCharacter(character);
+        if (uprightGlyph != glyph)
+            return uprightFont.ptr();
+    }
+    return &font;
+}
+
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     auto codePoints = stringView.codePoints();
@@ -421,6 +442,22 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
 
     bool triedBaseCharacterFont = false;
 
+    // https://drafts.csswg.org/css-fonts-4/#cluster-matching: "If a sequence of multiple codepoints is canonically equivalent to a single character and the font supports that character, select this font for the sequence".
+    auto fontForPrecomposedCharacter = [&](const FontRanges& fontRanges) -> RefPtr<const Font> {
+        auto precomposed = precomposedCharacter(stringView);
+        if (!precomposed)
+            return nullptr;
+        char32_t character = *precomposed;
+        RefPtr font = fontRanges.fontForCharacter(character);
+        if (!font)
+            return nullptr;
+        if (font->platformData().orientation() == FontOrientation::Vertical)
+            font = fontForOrientation(*font, character, glyphDataForCharacter(character, false, FontVariant::Normal).glyph, m_fontDescription.nonCJKGlyphOrientation());
+        if (!font->supportsCodePoint(character))
+            return nullptr;
+        return font;
+    };
+
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         auto& fontRanges = fallbackRangesAt(i);
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
@@ -432,33 +469,22 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
         if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && font->shouldNotBeUsedForArabic())
             continue;
 #endif
-        if (font->platformData().orientation() == FontOrientation::Vertical) {
-            if (isCJKIdeographOrSymbol(baseCharacter)) {
-                if (!font->hasVerticalGlyphs())
-                    font = font->brokenIdeographFont();
-            } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {
-                Ref verticalRightFont = font->verticalRightOrientationFont();
-                Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(baseCharacter);
-                if (verticalRightGlyph == baseCharacterGlyphData.glyph)
-                    font = verticalRightFont.ptr();
-            } else {
-                Ref uprightFont = font->uprightOrientationFont();
-                Glyph uprightGlyph = uprightFont->glyphForCharacter(baseCharacter);
-                if (uprightGlyph != baseCharacterGlyphData.glyph)
-                    font = uprightFont.ptr();
-            }
-        }
+        font = fontForOrientation(*font, baseCharacter, baseCharacterGlyphData.glyph, m_fontDescription.nonCJKGlyphOrientation());
 
         if (font == baseCharacterGlyphData.font.get())
             triedBaseCharacterFont = true;
 
         if (font->canRenderCombiningCharacterSequence(stringView))
             return font;
+
+        if (RefPtr precomposedCharacterFont = fontForPrecomposedCharacter(fontRanges))
+            return precomposedCharacterFont;
     }
 
-    if (!triedBaseCharacterFont) {
-        RefPtr font = baseCharacterGlyphData.font.get();
-        if (font && font->canRenderCombiningCharacterSequence(stringView))
+    if (RefPtr font = baseCharacterGlyphData.font.get(); font && !triedBaseCharacterFont) {
+        if (font->canRenderCombiningCharacterSequence(stringView))
+            return font;
+        if (auto character = precomposedCharacter(stringView); character && font->supportsCodePoint(*character))
             return font;
     }
 
