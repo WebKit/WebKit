@@ -27,18 +27,42 @@
 #include "GStreamerAudioStreamDescription.h"
 #include "GStreamerCommon.h"
 #include "Logging.h"
-#include <wtf/MediaTime.h>
+
+GST_DEBUG_CATEGORY(webkit_mediastream_audio_source_debug);
+#define GST_CAT_DEFAULT webkit_mediastream_audio_source_debug
 
 namespace WebCore {
 
+static void ensureMediaStreamAudioSourceDebugCategory()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_mediastream_audio_source_debug, "webkitmediastreamaudiosource", 0, "WebKit MediaStream Audio Source");
+    });
+}
+
+static MediaTime mediaTimeFromFrames(size_t numberOfFrames, uint32_t sampleRate)
+{
+    return MediaTime((numberOfFrames * G_USEC_PER_SEC) / sampleRate, G_USEC_PER_SEC);
+}
+
 void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
 {
+    ensureMediaStreamAudioSourceDebugCategory();
+
     if (!bus.numberOfChannels() || bus.numberOfChannels() > 2) {
+        GST_ERROR("Unable to consume WebAudio data with %u channels", bus.numberOfChannels());
         RELEASE_LOG_ERROR(Media, "MediaStreamAudioSource::consumeAudio(%p) trying to consume bus with %u channels", this, bus.numberOfChannels());
         return;
     }
 
-    WTF::MediaTime mediaTime((m_numberOfFrames * G_USEC_PER_SEC) / m_currentSettings.sampleRate(), G_USEC_PER_SEC);
+    if (m_baseTime.isInvalid()) {
+        GRefPtr clock = adoptGRef(gst_system_clock_obtain());
+        m_baseTime = fromGstClockTime(gst_clock_get_time(clock.get()));
+    }
+
+    auto mediaTime = m_baseTime + mediaTimeFromFrames(m_numberOfFrames, m_currentSettings.sampleRate());
+    auto duration = mediaTimeFromFrames(numberOfFrames, m_currentSettings.sampleRate());
     m_numberOfFrames += numberOfFrames;
 
     // Lazily initialize caps, the settings don't change so this is OK.
@@ -51,6 +75,7 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
     auto channels = bus.numberOfChannels();
     GRefPtr buffer = adoptGRef(gst_buffer_new_and_alloc(sizeof(float) * numberOfFrames * channels));
     GST_BUFFER_PTS(buffer.get()) = toGstClockTime(mediaTime);
+    GST_BUFFER_DURATION(buffer.get()) = toGstClockTime(duration);
     GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_LIVE);
 
     {
@@ -73,5 +98,7 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
 }
 
 } // namespace WebCore
+
+#undef GST_CAT_DEFAULT
 
 #endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && ENABLE(WEB_AUDIO)
