@@ -4179,11 +4179,6 @@ NSObject *WebViewImpl::immediateActionAnimationControllerForHitTestResult(API::H
     return [m_view.get() _web_immediateActionAnimationControllerForHitTestResultInternal:hitTestResult withType:type userData:userData];
 }
 
-void WebViewImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, API::Object* userData)
-{
-    [m_immediateActionController didPerformImmediateActionHitTest:result contentPreventsDefault:contentPreventsDefault userData:userData];
-}
-
 void WebViewImpl::prepareForImmediateActionAnimation()
 {
     [m_view.get() _web_prepareForImmediateActionAnimation];

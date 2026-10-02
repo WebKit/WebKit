@@ -180,7 +180,9 @@
     if (!_page->mainFrame())
         return;
 
-    protect(_page)->performImmediateActionHitTestAtLocation(_page->mainFrame()->frameID(), [immediateActionRecognizer locationInView:retainPtr(immediateActionRecognizer.view).get()]);
+    protect(_page)->performImmediateActionHitTestAtLocation(_page->mainFrame()->frameID(), [immediateActionRecognizer locationInView:retainPtr(immediateActionRecognizer.view).get()], [weakSelf = WeakObjCPtr { self }] (const WebKit::WebHitTestResultData& hitTestResult, bool contentPreventsDefault, API::Object* userData) {
+        [weakSelf.get() didPerformImmediateActionHitTest:hitTestResult contentPreventsDefault:contentPreventsDefault userData:userData];
+    });
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -200,18 +202,13 @@
         // The hit test may be handed to a cross-origin iframe's process, so keep waiting on whichever process
         // has it until there's a result.
         auto deadline = MonotonicTime::now() + 500_ms;
-        auto frameID = _page->immediateActionHitTestFrameID();
         while (_state == WebKit::ImmediateActionState::Pending) {
-            Ref process = protect(_page)->processContainingFrame(frameID);
+            auto reply = protect(_page)->takeOutstandingImmediateActionHitTestReply();
             auto timeout = deadline - MonotonicTime::now();
-            if (timeout <= 0_s || !process->hasConnection() || protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(protect(_page)->webPageIDInProcessForFrame(frameID), timeout) != IPC::Error::NoError) {
+            if (!reply || timeout <= 0_s || protect(reply->second)->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::PerformImmediateActionHitTestAtLocation>(reply->first, timeout) != IPC::Error::NoError) {
                 _state = WebKit::ImmediateActionState::TimedOut;
                 break;
             }
-            auto nextFrameID = _page->immediateActionHitTestFrameID();
-            if (nextFrameID == frameID)
-                break;
-            frameID = nextFrameID;
         }
     }
 
