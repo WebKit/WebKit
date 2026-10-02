@@ -85,6 +85,7 @@ private:
     HashSet<IntRect> m_occlusionRects;
     enum class Inflated : bool { No, Yes };
     HashMap<IntRect, Inflated> m_guardRects;
+    HashSet<NodeIdentifier> m_guardContainersWithGuard;
     HashSet<NodeIdentifier> m_containerRemovalCandidates;
     HashSet<NodeIdentifier> m_containersToRemove;
     HashMap<NodeIdentifier, Vector<InteractionRegion>> m_discoveredRegionsByElement;

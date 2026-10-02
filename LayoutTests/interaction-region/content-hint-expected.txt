@@ -18,7 +18,6 @@
         (content hint photo),
         (interaction (1077.50,0) width=522.50 height=400),
         (interaction (0,416) width=522.50 height=400),
-        (guard (0,416) width=522.50 height=400),
         (interaction (578.50,416) width=443 height=400)
         (cornerRadius 8.00),
         (interaction (623,416) width=354 height=265.50)
