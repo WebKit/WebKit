@@ -33,6 +33,7 @@ struct WebKit::RemoteGraphicsContextGLInitializationState {
     GCGLint maxCubeMapTextureSize;
     GCGLint maxRenderbufferSize;
     std::array<GCGLint, 2> maxViewportDims;
+    std::array<GCGLint, 2> maxDrawingBufferSize;
     GCGLint maxSamples;
     GCGLint maxTransformFeedbackSeparateAttribs;
     GCGLint maxUniformBufferBindings;

@@ -668,6 +668,13 @@ void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
     if (isContextLost())
         return;
     willUpdateDrawingBufferContents(CallerTypeOther);
+    // If the default framebuffer is the source or the destination, it must be allocated to its
+    // current size and hold its cleared contents.
+    if (isDefaultFramebufferBoundForRead() || !m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeOther);
+    }
     protect(graphicsContextGL())->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
@@ -1122,7 +1129,11 @@ void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum target, GCGLint level, G
         return;
     if (!validateDefaultFramebufferRead("copyTexSubImage3D"_s))
         return;
-    clearIfComposited(CallerTypeOther);
+    if (isDefaultFramebufferBoundForRead()) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeOther);
+    }
     auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
@@ -1603,7 +1614,11 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
         return;
 
     willUpdateDrawingBufferContents();
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
@@ -1671,7 +1686,11 @@ void WebGL2RenderingContext::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, 
     willUpdateDrawingBufferContents();
     // Flush any pending implicit clears. This cannot be done after the
     // user-requested clearBuffer call because of scissor test side effects.
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     protect(graphicsContextGL())->clearBufferiv(buffer, drawbuffer, data.value());
 }
@@ -1703,7 +1722,11 @@ void WebGL2RenderingContext::clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, 
     willUpdateDrawingBufferContents();
     // Flush any pending implicit clears. This cannot be done after the
     // user-requested clearBuffer call because of scissor test side effects.
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     protect(graphicsContextGL())->clearBufferfv(buffer, drawbuffer, data.value());
 }
@@ -1718,7 +1741,11 @@ void WebGL2RenderingContext::clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, 
     willUpdateDrawingBufferContents();
     // Flush any pending implicit clears. This cannot be done after the
     // user-requested clearBuffer call because of scissor test side effects.
-    clearIfComposited(CallerTypeDrawOrClear);
+    if (!m_framebufferBinding) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeDrawOrClear);
+    }
 
     protect(graphicsContextGL())->clearBufferfi(buffer, drawbuffer, depth, stencil);
 }
@@ -2793,9 +2820,9 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
             return attachment == GraphicsContextGL::BACK && m_attributes.alpha ? 8 : 0;
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
-            return attachment == GraphicsContextGL::DEPTH ? 24 : 0;
+            return attachment == GraphicsContextGL::DEPTH ? m_defaultFramebuffer->depthBits() : 0;
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
-            return attachment == GraphicsContextGL::STENCIL ? 8 : 0;
+            return attachment == GraphicsContextGL::STENCIL ? m_defaultFramebuffer->stencilBits() : 0;
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
             return static_cast<unsigned>(GraphicsContextGL::UNSIGNED_NORMALIZED);
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:
@@ -3515,7 +3542,11 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
     if (!validateDefaultFramebufferRead("readPixels"_s))
         return;
 
-    clearIfComposited(CallerTypeOther);
+    if (isDefaultFramebufferBoundForRead()) {
+        if (!ensureDefaultFramebufferSize())
+            return;
+        clearIfComposited(CallerTypeOther);
+    }
 
     auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(rect);
     protect(graphicsContextGL())->readPixelsBufferObject(rect, format, type, offsetAndSkip.value(), m_packParameters.alignment, m_packParameters.rowLength);

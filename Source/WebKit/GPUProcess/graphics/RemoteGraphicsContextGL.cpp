@@ -150,6 +150,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
             .maxCubeMapTextureSize = context->maxCubeMapTextureSize(),
             .maxRenderbufferSize = context->maxRenderbufferSize(),
             .maxViewportDims = context->maxViewportDims(),
+            .maxDrawingBufferSize = context->maxDrawingBufferSize(),
         };
         // MAX_SAMPLES is core in ES3 and otherwise comes from GL_ANGLE_framebuffer_multisample.
         // Querying it without either would just add INVALID_ENUM to the error queue.

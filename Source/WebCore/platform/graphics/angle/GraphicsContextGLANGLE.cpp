@@ -421,6 +421,11 @@ std::array<GCGLint, 2> GraphicsContextGLANGLE::maxViewportDims()
     return dims;
 }
 
+std::array<GCGLint, 2> GraphicsContextGLANGLE::maxDrawingBufferSize()
+{
+    return { m_maxInternalFramebufferSize.width(), m_maxInternalFramebufferSize.height() };
+}
+
 GCGLint GraphicsContextGLANGLE::maxSamples()
 {
     return getInteger(GraphicsContextGL::MAX_SAMPLES);

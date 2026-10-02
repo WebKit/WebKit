@@ -41,8 +41,8 @@ class WebGLDefaultFramebuffer {
     WTF_MAKE_TZONE_ALLOCATED(WebGLDefaultFramebuffer);
     WTF_MAKE_NONCOPYABLE(WebGLDefaultFramebuffer);
 public:
-    // Creates the framebuffer with a 0x0 size. The caller must call reshape() once the
-    // context is initialized to allocate and configure the attachments.
+    // Creates the framebuffer with a 0x0 size. The caller must call setSize() and ensureSize()
+    // once the context is initialized to allocate and configure the attachments.
     static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&);
     ~WebGLDefaultFramebuffer();
 
@@ -75,9 +75,31 @@ public:
             || m_depthStencilAttachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT;
     }
     IntSize size() const { return m_size; }
-    // Returns false if the storage could not be allocated. The caller must then lose the context,
-    // as the default framebuffer is unusable.
-    [[nodiscard]] bool reshape(IntSize);
+
+    // The answers to the queries about the default framebuffer, such as DEPTH_BITS or SAMPLES.
+    // They depend only on the formats chosen at creation, not on whether or how the storage is
+    // allocated, so they are answered without querying the GraphicsContextGL.
+    GCGLint depthBits() const
+    {
+        if (!hasDepth())
+            return 0;
+        return m_depthStencilFormat == GraphicsContextGL::DEPTH_COMPONENT16 ? 16 : 24;
+    }
+    GCGLint stencilBits() const { return hasStencil() ? 8 : 0; }
+    GCGLsizei sampleCount() const { return m_sampleCount; }
+
+    // Sets the size of the drawing buffer, reported by size(). The storage is reallocated to the
+    // new size and cleared in the next ensureSize(). Resizing the canvas with separate width and
+    // height assignments thus does not allocate the storage for the intermediate sizes.
+    void setSize(IntSize);
+    // Reallocates the storage if the size was set since the last reallocation. Must be called
+    // before the storage is used. Returns false if the storage could not be allocated. The caller
+    // must then lose the context, as the default framebuffer is unusable.
+    [[nodiscard]] bool ensureSize();
+    // Returns true if the size set since the last reallocation needs less storage than the
+    // current storage. Then the storage can be reallocated right away to release memory, as the
+    // reallocation does not allocate more than is already allocated.
+    bool pendingSizeShrinksStorage() const { return m_needsReshape && m_size.unclampedArea() < m_storageSize.unclampedArea(); }
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
     void NODELETE markBuffersClear(GCGLbitfield clearBuffers);
     void NODELETE markAllUnpreservedBuffersDirty();
@@ -94,12 +116,13 @@ public:
 
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);
+    [[nodiscard]] bool reshape();
 
     WeakRef<WebGLRenderingContextBase> m_context;
 
     // m_fbo == 0 renders straight into the result FBO. When antialiasing or preserving
     // the drawing buffer m_fbo is an offscreen FBO created in the constructor; its
-    // renderbuffers are created and attached lazily on the first reshape(). The absence
+    // renderbuffers are created and attached lazily on the first ensureSize(). The absence
     // of a created renderbuffer is what signals that the FBO still needs configuring.
     PlatformGLObject m_fbo { 0 };
     PlatformGLObject m_colorBuffer { 0 };
@@ -107,8 +130,11 @@ private:
 
     GCGLenum m_depthStencilFormat { 0 };
     GCGLenum m_depthStencilAttachment { 0 };
+    GCGLsizei m_sampleCount { 0 };
 
     IntSize m_size;
+    IntSize m_storageSize; // The size of the storage, as of the last reallocation.
+    bool m_needsReshape { false };
     GCGLbitfield m_unpreservedBuffers { 0 };
     GCGLbitfield m_dirtyBuffers { 0 };
     bool m_drawBufferIsNone { false }; // Of m_fbo state.
