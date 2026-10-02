@@ -394,6 +394,20 @@ bool CachedImage::knownToBeOpaque(const RenderElement&) const
     return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque();
 }
 
+DecodingMode CachedImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
+{
+    if (!m_cachedImage || renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))
+        return Image::decodingModeForImageDraw(renderer, paintInfo);
+    return renderer.decodingModeForImageDraw(*protect(protect(m_cachedImage)->image()), paintInfo);
+}
+
+InterpolationQuality CachedImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+{
+    if (!m_cachedImage || renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))
+        return Image::interpolationQualityForImageDraw(context, renderer, layer, size);
+    return renderer.chooseInterpolationQuality(context, *protect(protect(m_cachedImage)->image()), layer, size);
+}
+
 bool CachedImage::usesDataProtocol() const
 {
     return m_url.resolved.protocolIsData();

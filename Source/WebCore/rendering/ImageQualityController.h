@@ -34,6 +34,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class Image;
+class IntSize;
 class LayoutSize;
 class RenderBoxModelObject;
 class RenderElement;
@@ -52,6 +53,7 @@ public:
     static std::optional<InterpolationQuality> NODELETE interpolationQualityFromStyle(const Style::ComputedStyle&);
     static InterpolationQuality chooseInterpolationQualityForSVG(GraphicsContext&, const RenderElement&, Image&);
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
+    InterpolationQuality chooseInterpolationQualityForBitmapOfSize(GraphicsContext&, RenderBoxModelObject*, const IntSize& imageSize, const void* layer, const LayoutSize&);
 
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }
 

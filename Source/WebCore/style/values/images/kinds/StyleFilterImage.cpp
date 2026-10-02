@@ -38,6 +38,7 @@
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "NullGraphicsContext.h"
+#include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
 #include "Settings.h"
@@ -172,6 +173,18 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
 bool FilterImage::knownToBeOpaque(const RenderElement&) const
 {
     return false;
+}
+
+DecodingMode FilterImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
+{
+    if (!m_image)
+        return Image::decodingModeForImageDraw(renderer, paintInfo);
+    return protect(m_image)->decodingModeForImageDraw(renderer, paintInfo);
+}
+
+InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+{
+    return renderer.chooseInterpolationQualityForBitmapOfSize(context, calculateImageBufferBackendSize(size, 1), layer, size);
 }
 
 FloatSize FilterImage::fixedSize(const RenderElement& renderer) const

@@ -32,6 +32,7 @@
 #include "DeprecatedCSSOMValue.h"
 #include "HTMLCanvasElement.h"
 #include "InspectorInstrumentation.h"
+#include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -98,6 +99,15 @@ bool CanvasImage::knownToBeOpaque(const RenderElement&) const
 {
     // FIXME: When CanvasRenderingContext2DSettings.alpha is implemented, this can be improved to check for it.
     return false;
+}
+
+InterpolationQuality CanvasImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+{
+    RefPtr element = this->element(protect(renderer.document()));
+    RefPtr image = element ? element->copiedImage() : nullptr;
+    if (!image)
+        return Image::interpolationQualityForImageDraw(context, renderer, layer, size);
+    return renderer.chooseInterpolationQuality(context, *image, layer, size);
 }
 
 FloatSize CanvasImage::fixedSize(const RenderElement& renderer) const

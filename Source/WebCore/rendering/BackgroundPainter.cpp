@@ -565,9 +565,9 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             ImagePaintingOptions options = {
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
                 layerBlendMode,
-                m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
+                bgImage->decodingModeForImageDraw(m_renderer, m_paintInfo),
                 orientation,
-                m_renderer.chooseInterpolationQuality(context, *image, &layer.layer, geometry.tileSize),
+                bgImage->interpolationQualityForImageDraw(context, m_renderer, &layer.layer, geometry.tileSize),
                 layer.layer.maskMode() == Style::MaskMode::Luminance ? DrawLuminanceMask::Yes : DrawLuminanceMask::No,
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)

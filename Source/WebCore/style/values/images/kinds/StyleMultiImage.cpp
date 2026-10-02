@@ -215,5 +215,19 @@ bool MultiImage::knownToBeOpaque(const RenderElement& renderer) const
     return m_selectedImage && protect(m_selectedImage)->knownToBeOpaque(renderer);
 }
 
+DecodingMode MultiImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
+{
+    if (!m_selectedImage)
+        return Image::decodingModeForImageDraw(renderer, paintInfo);
+    return protect(m_selectedImage)->decodingModeForImageDraw(renderer, paintInfo);
+}
+
+InterpolationQuality MultiImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+{
+    if (!m_selectedImage)
+        return Image::interpolationQualityForImageDraw(context, renderer, layer, size);
+    return protect(m_selectedImage)->interpolationQualityForImageDraw(context, renderer, layer, size);
+}
+
 } // namespace Style
 } // namespace WebCore

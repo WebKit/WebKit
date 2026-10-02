@@ -136,15 +136,21 @@ InterpolationQuality ImageQualityController::chooseInterpolationQualityForSVG(Gr
 InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void* layer, const LayoutSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
+    if (!(image.isBitmapImage() || image.isPDFDocumentImage()))
+        return InterpolationQuality::Default;
+
+    // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
+    // is actually being scaled.
+    return chooseInterpolationQualityForBitmapOfSize(context, object, IntSize(image.width(), image.height()), layer, size);
+}
+
+InterpolationQuality ImageQualityController::chooseInterpolationQualityForBitmapOfSize(GraphicsContext& context, RenderBoxModelObject* object, const IntSize& imageSize, const void* layer, const LayoutSize& size)
+{
+    if (context.paintingDisabled())
         return InterpolationQuality::Default;
 
     if (std::optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object->style()))
         return styleInterpolation.value();
-
-    // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
-    // is actually being scaled.
-    IntSize imageSize(image.width(), image.height());
 
     // Look ourselves up in the hashtables.
     auto i = m_objectLayerSizeMap.find(object);
@@ -181,7 +187,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
     if (m_renderView->page().inLowQualityImageInterpolationMode()) {
-        double totalPixels = static_cast<double>(image.width()) * static_cast<double>(image.height());
+        double totalPixels = static_cast<double>(imageSize.width()) * static_cast<double>(imageSize.height());
         if (totalPixels > cInterpolationCutoff)
             return InterpolationQuality::Low;
     }

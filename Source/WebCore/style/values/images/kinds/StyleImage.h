@@ -45,9 +45,12 @@ class CSSValue;
 class CSSValuePool;
 class Document;
 class ImageSizingContext;
+class LayoutSize;
+class RenderBoxModelObject;
 class RenderElement;
 class RenderObject;
 struct NinePieceGeometry;
+struct PaintInfo;
 struct ResourceLoaderOptions;
 
 namespace Style {
@@ -110,6 +113,10 @@ public:
     // Drawing
     ImageDrawResult drawTiled(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
     ImageDrawResult drawNinePiece(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
+
+    // Drawing options
+    virtual DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const { return DecodingMode::Synchronous; }
+    virtual InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderBoxModelObject&, const void*, const LayoutSize&) const { return InterpolationQuality::Default; }
 
     // Derived type.
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }
