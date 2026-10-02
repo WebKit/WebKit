@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<meta charset="utf-8">
+<title>The clones in selectedcontent that do not match :checked are not displayed by default</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<style>
+.base-select, .base-select::picker(select) {
+  appearance: base-select;
+}
+.override selectedcontent > option {
+  display: inline;
+}
+</style>
+
+<div id="container">
+<select multiple size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+<select multiple size="1" class="base-select">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+<select multiple>
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+<select multiple class="base-select">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+<select multiple size="1" class="override">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+</div>
+
+<script>
+add_completion_callback(() => document.getElementById("container").remove());
+
+const [autoSizeOne, baseSizeOne, auto, base, override] = document.querySelectorAll("select");
+
+function assertDisplay(select) {
+  const clones = [...select.querySelector("selectedcontent").children];
+  assert_equals(clones.length, select.options.length);
+  for (const [i, option] of [...select.options].entries()) {
+    const display = getComputedStyle(clones[i]).display;
+    if (option.selected)
+      assert_not_equals(display, "none", `clone ${i}`);
+    else
+      assert_equals(display, "none", `clone ${i}`);
+    assert_not_equals(getComputedStyle(option).display, "none", `option ${i}`);
+  }
+}
+
+for (const [select, description] of [[autoSizeOne, "appearance: auto and size=1"], [baseSizeOne, "appearance: base-select and size=1"], [auto, "appearance: auto"], [base, "appearance: base-select"]]) {
+  test(() => {
+    assertDisplay(select);
+  }, `Clones that do not match :checked are not displayed with ${description}`);
+
+  test(() => {
+    select.options[1].selected = true;
+    select.options[2].selected = false;
+    assertDisplay(select);
+  }, `Selecting and deselecting options changes which clones are displayed with ${description}`);
+}
+
+test(() => {
+  const clones = [...override.querySelector("selectedcontent").children];
+  assert_equals(clones.length, 3);
+  for (const clone of clones)
+    assert_equals(getComputedStyle(clone).display, "inline");
+}, "Author style can display clones that do not match :checked");
+</script>

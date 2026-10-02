@@ -2661,6 +2661,14 @@ HTMLEnhancedSelectMultipleAndListBoxEnabled:
   humanReadableDescription: "Enable enhanced HTML select element for the multiple attribute and for list box rendering"
   defaultValue: false
 
+HTMLEnhancedSelectMultipleSelectedContentEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Enhanced HTML select element selectedcontent for multiple"
+  humanReadableDescription: "Clone every option of a select element with the multiple attribute into its selectedcontent elements"
+  defaultValue: false
+
 HTMLEnhancedSelectParsingEnabled:
   type: bool
   status: stable

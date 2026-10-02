@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<meta charset="utf-8">
+<title>Toggling options in the picker of a select with the multiple attribute updates the clones in its selectedcontent</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+<select multiple size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option>One</option>
+  <option>Two</option>
+</select>
+<script>
+add_completion_callback(() => document.querySelector("select").remove());
+
+function activate(element) {
+  const rect = element.getBoundingClientRect();
+  return UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+promise_test(async () => {
+  const select = document.querySelector("select");
+  const selectedcontent = select.querySelector("selectedcontent");
+  const [one, two] = select.options;
+  const clones = [...selectedcontent.children];
+  assert_equals(clones.length, 2);
+
+  function assertClonesFollowOptions(description) {
+    assert_array_equals([...selectedcontent.children], clones, `${description}: the clones are not replaced`);
+    assert_equals(clones[0].matches(":checked"), one.selected, `${description}: first clone`);
+    assert_equals(clones[1].matches(":checked"), two.selected, `${description}: second clone`);
+    assert_equals(getComputedStyle(clones[0]).display == "none", !one.selected, `${description}: first clone display`);
+    assert_equals(getComputedStyle(clones[1]).display == "none", !two.selected, `${description}: second clone display`);
+  }
+
+  await activate(select);
+  await UIHelper.animationFrame();
+  assert_true(select.matches(":open"), "The picker is open");
+
+  await activate(two);
+  await UIHelper.animationFrame();
+  assert_array_equals([...select.selectedOptions], [two]);
+  assertClonesFollowOptions("After toggling the second option on");
+
+  await activate(one);
+  await UIHelper.animationFrame();
+  assert_array_equals([...select.selectedOptions], [one, two]);
+  assertClonesFollowOptions("After toggling the first option on");
+
+  await activate(two);
+  await UIHelper.animationFrame();
+  assert_array_equals([...select.selectedOptions], [one]);
+  assertClonesFollowOptions("After toggling the second option off");
+  assert_true(select.matches(":open"), "The picker is still open");
+}, "Toggling options in the picker updates which clones match :checked");
+</script>

@@ -12478,6 +12478,7 @@
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* LegacyDisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyDisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
 		49B34A467D95111C120F93C7 /* selectMultipleAndListBox.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = selectMultipleAndListBox.css; sourceTree = "<group>"; };
+		49B476966FAE0D229F699998 /* selectMultipleSelectedContent.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = selectMultipleSelectedContent.css; sourceTree = "<group>"; };
 		49B53D402B1AA58A0056A172 /* RenderTreeUpdaterViewTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterViewTransition.h; sourceTree = "<group>"; };
 		49B53D412B1AA58A0056A172 /* RenderTreeUpdaterViewTransition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterViewTransition.cpp; sourceTree = "<group>"; };
 		49BB8233299A53ED009143CB /* PopoverData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopoverData.h; sourceTree = "<group>"; };
@@ -42719,6 +42720,7 @@
 				BC2388902D8C816C00698102 /* PropertySetCSSDescriptors.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
 				49B34A467D95111C120F93C7 /* selectMultipleAndListBox.css */,
+				49B476966FAE0D229F699998 /* selectMultipleSelectedContent.css */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */,
@@ -49590,6 +49592,7 @@
 				BCD9EFEA2E18E58000D1C3DF /* StyleAspectRatio.h in Headers */,
 				BC63AD3B2F084C2F007B62C4 /* StyleBackdropFilterData.h in Headers */,
 				BC63AD392F084C2F007B62C4 /* StyleBackgroundData.h in Headers */,
+				0D90A26CC06154520622388D /* StyleBackgroundImageSizing.h in Headers */,
 				BCE9975F2E54B1FA0037CA52 /* StyleBackgroundLayer.h in Headers */,
 				BC4631F02EAC585B00EA911F /* StyleBackgroundLayers.h in Headers */,
 				BC2E5C972E47B80A0083FFF5 /* StyleBackgroundSize.h in Headers */,
@@ -49602,6 +49605,7 @@
 				BC63AD3D2F084C2F007B62C4 /* StyleBorderImageData.h in Headers */,
 				BC34D32B2E3E74BA001EAD95 /* StyleBorderImageOutset.h in Headers */,
 				BC34D32D2E3E7573001EAD95 /* StyleBorderImageRepeat.h in Headers */,
+				349BF87E63040DFC90F188F6 /* StyleBorderImageSizing.h in Headers */,
 				BC34D3252E3E7273001EAD95 /* StyleBorderImageSlice.h in Headers */,
 				BC34D3272E3E727D001EAD95 /* StyleBorderImageSource.h in Headers */,
 				BC34D3292E3E72DA001EAD95 /* StyleBorderImageWidth.h in Headers */,
@@ -49737,12 +49741,6 @@
 				BC092AA92E31573F002ACB2C /* StyleHyphenateLimitLines.h in Headers */,
 				BC1777832F42513300E318C5 /* StyleImage.h in Headers */,
 				DCF2ED1324BA51D75BA1FF5F /* StyleImageDrawingExtras.h in Headers */,
-				0D90A26CC06154520622388D /* StyleBackgroundImageSizing.h in Headers */,
-				349BF87E63040DFC90F188F6 /* StyleBorderImageSizing.h in Headers */,
-				C4392A480FD92D70B4E6E2EE /* StyleListStyleImageSizing.h in Headers */,
-				C82F6B1A9D4E37058B1C0F6D /* StyleMaskBorderSizing.h in Headers */,
-				D75EB37147EE6C8247F8D69A /* StyleMaskImageSizing.h in Headers */,
-				CB205C010BAA96825039DF6C /* StyleShapeOutsideSizing.h in Headers */,
 				BC4631762EA854B700EA911F /* StyleImageOrientation.h in Headers */,
 				BC731E752E636D8700A6584F /* StyleImageOrNone.h in Headers */,
 				BC22AA9E2E36A2BD009AC0C3 /* StyleImageWrapper.h in Headers */,
@@ -49764,6 +49762,7 @@
 				BC7826272E82152A00FB0C7E /* StyleLineHeight.h in Headers */,
 				BC092AFE2E33E8FD002ACB2C /* StyleLineWidth.h in Headers */,
 				7AB1C0202FD10001008AF649 /* StyleLinkParameters.h in Headers */,
+				C4392A480FD92D70B4E6E2EE /* StyleListStyleImageSizing.h in Headers */,
 				4C96385829BF4A51003E5741 /* StyleListStyleType.h in Headers */,
 				BC9ABA1A2DED228100F7E52D /* StyleMargin.h in Headers */,
 				BC7CEF5F2EC3C643008664ED /* StyleMarginTrim.h in Headers */,
@@ -49772,9 +49771,11 @@
 				BC63AD2A2F084C2F007B62C4 /* StyleMaskBorderData.h in Headers */,
 				BC34D3412E3E8C31001EAD95 /* StyleMaskBorderOutset.h in Headers */,
 				BC34D3442E3E8C31001EAD95 /* StyleMaskBorderRepeat.h in Headers */,
+				C82F6B1A9D4E37058B1C0F6D /* StyleMaskBorderSizing.h in Headers */,
 				BC34D3452E3E8C31001EAD95 /* StyleMaskBorderSlice.h in Headers */,
 				BC34D3432E3E8C31001EAD95 /* StyleMaskBorderSource.h in Headers */,
 				BC34D3422E3E8C31001EAD95 /* StyleMaskBorderWidth.h in Headers */,
+				D75EB37147EE6C8247F8D69A /* StyleMaskImageSizing.h in Headers */,
 				BC5EB69F0E81DAEB00B25965 /* StyleMaskLayer.h in Headers */,
 				BC4631EE2EAC55F400EA911F /* StyleMaskLayers.h in Headers */,
 				BC452A962ED2528000FD066C /* StyleMaskMode.h in Headers */,
@@ -49895,6 +49896,7 @@
 				BC22AA9C2E369F16009AC0C3 /* StyleShapeImageThreshold.h in Headers */,
 				BC22AA8E2E369EB1009AC0C3 /* StyleShapeMargin.h in Headers */,
 				BC22AA8F2E369EB1009AC0C3 /* StyleShapeOutside.h in Headers */,
+				CB205C010BAA96825039DF6C /* StyleShapeOutsideSizing.h in Headers */,
 				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */,
 				E46B72512B61141D00A1F9B5 /* StyleSheetContentsCache.h in Headers */,

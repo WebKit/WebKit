@@ -1,0 +1,81 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true ] -->
+<meta charset="utf-8">
+<title>The clones in selectedcontent follow the selectedness of their option without being replaced</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+
+<div hidden>
+<form>
+<select multiple>
+  <button><selectedcontent></selectedcontent></button>
+  <option value="one" selected>One</option>
+  <option value="two">Two</option>
+  <option value="three">Three</option>
+</select>
+</form>
+</div>
+
+<script>
+const select = document.querySelector("select");
+const selectedcontent = select.querySelector("selectedcontent");
+const options = [...select.options];
+const clones = [...selectedcontent.children];
+const observer = new MutationObserver(() => { });
+observer.observe(selectedcontent, { childList: true, subtree: true, attributes: true, characterData: true });
+
+function assertClonesFollowOptions() {
+  assert_equals(clones.length, 3);
+  assert_array_equals([...selectedcontent.children], clones, "The clones are not replaced");
+  for (const [i, clone] of clones.entries())
+    assert_equals(clone.matches(":checked"), options[i].selected, `clone ${i} :checked`);
+  assert_array_equals(observer.takeRecords(), [], "selectedcontent is not mutated");
+}
+
+test(() => {
+  assertClonesFollowOptions();
+}, "Initial state");
+
+test(() => {
+  options[1].setAttribute("selected", "");
+  assert_true(options[1].selected);
+  assertClonesFollowOptions();
+}, "Adding the selected attribute");
+
+test(() => {
+  options[2].selected = true;
+  assertClonesFollowOptions();
+  options[0].selected = false;
+  assertClonesFollowOptions();
+}, "Setting selected");
+
+test(() => {
+  select.selectedIndex = 2;
+  assert_array_equals([...select.selectedOptions], [options[2]]);
+  assertClonesFollowOptions();
+}, "Setting selectedIndex");
+
+test(() => {
+  select.value = "two";
+  assert_array_equals([...select.selectedOptions], [options[1]]);
+  assertClonesFollowOptions();
+}, "Setting value");
+
+test(() => {
+  select.selectedIndex = -1;
+  assert_array_equals([...select.selectedOptions], []);
+  assertClonesFollowOptions();
+}, "Setting selectedIndex to -1");
+
+test(() => {
+  document.querySelector("form").reset();
+  assert_array_equals([...select.selectedOptions], [options[0], options[1]]);
+  assertClonesFollowOptions();
+}, "Resetting the form");
+
+test(() => {
+  options[1].disabled = true;
+  assert_true(options[1].selected);
+  assertClonesFollowOptions();
+  assert_false(clones[1].disabled, "Attributes are not copied again");
+}, "Disabling a selected option");
+</script>

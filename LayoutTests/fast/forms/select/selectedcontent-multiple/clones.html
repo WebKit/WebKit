@@ -1,0 +1,95 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true ] -->
+<meta charset="utf-8">
+<title>selectedcontent in a select with the multiple attribute holds a clone of every option</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+
+<div hidden>
+<select id="select" multiple>
+  <button><selectedcontent></selectedcontent></button>
+  <option value="one" selected>One</option>
+  <option id="two" class="chip" value="two">Two <b>bold</b></option>
+  <optgroup label="Group">
+    <option value="three" selected>Three</option>
+  </optgroup>
+  <div><option value="four">Four</option></div>
+</select>
+</div>
+
+<script>
+const select = document.getElementById("select");
+const selectedcontent = select.querySelector("selectedcontent");
+const options = [...select.options];
+
+test(() => {
+  assert_equals(options.length, 4);
+  assert_equals(selectedcontent.childNodes.length, 4);
+  for (const [i, clone] of [...selectedcontent.childNodes].entries()) {
+    assert_true(clone instanceof HTMLOptionElement, `child ${i} is an option element`);
+    assert_not_equals(clone, options[i], `child ${i} is a clone`);
+  }
+  assert_equals(selectedcontent.innerHTML, options.map(option => option.outerHTML).join(""));
+}, "Every option in the list of options is cloned, including the option element itself");
+
+test(() => {
+  assert_equals(selectedcontent.children.length, 4);
+  for (const [i, clone] of [...selectedcontent.children].entries()) {
+    assert_equals(clone.selected, options[i].selected, `clone ${i} selected`);
+    assert_equals(clone.matches(":checked"), options[i].selected, `clone ${i} :checked`);
+  }
+}, "A clone is selected when its option is");
+
+test(() => {
+  assert_equals(select.length, 4);
+  assert_array_equals([...select.options], options);
+  assert_array_equals([...select.selectedOptions], [options[0], options[2]]);
+  assert_equals(select.value, "one");
+  assert_equals(selectedcontent.children.length, 4);
+  for (const clone of selectedcontent.children) {
+    assert_equals(clone.form, null);
+    assert_equals(clone.index, 0);
+  }
+}, "Clones are not options of the select");
+
+test(() => {
+  const clone = selectedcontent.children[1];
+  assert_equals(clone.id, "two");
+  assert_equals(document.getElementById("two"), clone);
+}, "The id of an option is cloned too, so getElementById() finds the clone first");
+
+test(() => {
+  const select = document.createElement("select");
+  select.multiple = true;
+  const selectedcontent = select.appendChild(document.createElement("button")).appendChild(document.createElement("selectedcontent"));
+  select.append(new Option("A", "a", true, true), new Option("B", "b"));
+  assert_equals(selectedcontent.innerHTML, "", "Not cloned while the select is not connected");
+
+  document.querySelector("div[hidden]").append(select);
+  assert_equals(selectedcontent.innerHTML, '<option value="a" selected="">A</option><option value="b">B</option>');
+  assert_true(selectedcontent.firstChild.matches(":checked"));
+  assert_false(selectedcontent.lastChild.matches(":checked"));
+}, "Inserting a select element clones its options into its selectedcontent element");
+
+test(() => {
+  const div = document.createElement("div");
+  div.innerHTML = '<select multiple><option selected>A</option><option>B</option><button><selectedcontent></selectedcontent></button></select>';
+  const select = div.firstChild;
+  document.querySelector("div[hidden]").append(div);
+  assert_equals(select.querySelector("selectedcontent").innerHTML, '<option selected="">A</option><option>B</option>');
+}, "A selectedcontent element that comes after the options clones them too");
+
+test(() => {
+  const select = document.createElement("select");
+  select.multiple = true;
+  const button = select.appendChild(document.createElement("button"));
+  const first = button.appendChild(document.createElement("selectedcontent"));
+  const second = button.appendChild(document.createElement("selectedcontent"));
+  select.append(new Option("A", "a", false, true));
+  document.querySelector("div[hidden]").append(select);
+  assert_equals(first.innerHTML, '<option value="a">A</option>');
+  assert_equals(second.innerHTML, '<option value="a">A</option>');
+  assert_not_equals(first.firstChild, second.firstChild);
+  assert_true(first.firstChild.matches(":checked"));
+  assert_true(second.firstChild.matches(":checked"));
+}, "Each selectedcontent element gets its own clones, whose selectedness does not come from the selected attribute");
+</script>

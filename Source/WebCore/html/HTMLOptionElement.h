@@ -79,6 +79,8 @@ public:
     void setDirty(bool dirty) { m_isDirty = dirty; }
 
     void cloneIntoSelectedContent(HTMLSelectedContentElement&);
+    Ref<HTMLOptionElement> cloneForSelectedContent();
+    HTMLOptionElement* selectedContentSource() const { return m_selectedContentSource.get(); }
 
     void updateUserAgentShadowTree() final;
 
@@ -116,6 +118,7 @@ private:
     bool m_isDirty { false };
     bool m_shadowTreeNeedsUpdate { false };
     WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> m_ownerSelect;
+    WeakPtr<HTMLOptionElement, WeakPtrImplWithEventTargetData> m_selectedContentSource;
     WeakPtr<HTMLSpanElement, WeakPtrImplWithEventTargetData> m_labelContainer;
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_slot;
 };
