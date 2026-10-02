@@ -2680,8 +2680,16 @@ set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/ios-inline-media-controls.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-inline-media-controls.css"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.css"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.css"
+)
+
+if (USE_THEME_ADWAITA)
+    list(APPEND MODERN_MEDIA_CONTROLS_STYLE_SHEETS
+        "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.css"
+        "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.css"
+    )
+endif ()
+
+list(APPEND MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/media-controls.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/media-document.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/metadata-container.css"
@@ -2755,21 +2763,29 @@ set(MODERN_MEDIA_CONTROLS_SCRIPTS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/metadata-container.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/placard.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/airplay-placard.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/fullscreen-placard.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/invalid-placard.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/pip-placard.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-activity-indicator.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/fullscreen-placard.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/tvos-layout-traits.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/tvos-media-controls.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/vision-slider.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/vision-volume-container.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/vision-media-controls.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/vision-layout-traits.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.js"
-    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-layout-traits.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-activity-indicator.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-layout-traits.js"
+)
+
+if (USE_THEME_ADWAITA)
+    list(APPEND MODERN_MEDIA_CONTROLS_SCRIPTS
+        "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.js"
+        "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.js"
+        "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-layout-traits.js"
+    )
+endif ()
+
+list(APPEND MODERN_MEDIA_CONTROLS_SCRIPTS
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/media-controller-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/airplay-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/audio-support.js"
