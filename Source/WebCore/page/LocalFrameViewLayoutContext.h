@@ -112,7 +112,7 @@ public:
     bool isSkippedContentRootForLayout(const RenderBox&) const;
 
     bool NODELETE isPercentHeightResolveDisabledFor(const RenderBox& flexItem);
-    bool NODELETE isComputingIntrinsicLogicalHeightFor(const RenderBox&) const;
+    bool NODELETE isInOrthogonalIntrinsicContributionLayout(const RenderBox&) const;
 
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
@@ -208,7 +208,7 @@ private:
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
     friend class FlexPercentResolveDisabler;
-    friend class IntrinsicLogicalHeightComputationScope;
+    friend class OrthogonalIntrinsicContributionLayoutScope;
     friend class ContentVisibilityOverrideScope;
     friend class RepaintBlocker;
 
@@ -257,8 +257,8 @@ private:
     void disablePercentHeightResolveFor(const RenderBox& flexItem);
     void enablePercentHeightResolveFor(const RenderBox& flexItem);
 
-    void addIntrinsicLogicalHeightComputationFor(const RenderBox&);
-    void removeIntrinsicLogicalHeightComputationFor(const RenderBox&);
+    void addOrthogonalIntrinsicContributionLayout(const RenderBox&);
+    void removeOrthogonalIntrinsicContributionLayout(const RenderBox&);
 
     void allowRepaints() { m_repaintsBlocked = false; }
     void blockRepaints() { m_repaintsBlocked = true; }
@@ -295,7 +295,7 @@ private:
     const std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
     SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
-    SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalHeightComputationList;
+    SingleThreadWeakHashSet<RenderBox> m_boxesInOrthogonalIntrinsicContributionLayout;
     Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
     std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;

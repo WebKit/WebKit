@@ -346,16 +346,16 @@ FlexPercentResolveDisabler::~FlexPercentResolveDisabler()
     m_layoutContext->enablePercentHeightResolveFor(m_flexItem);
 }
 
-IntrinsicLogicalHeightComputationScope::IntrinsicLogicalHeightComputationScope(LocalFrameViewLayoutContext& layoutContext, const RenderBox& box)
+OrthogonalIntrinsicContributionLayoutScope::OrthogonalIntrinsicContributionLayoutScope(LocalFrameViewLayoutContext& layoutContext, const RenderBox& box)
     : m_layoutContext(layoutContext)
     , m_box(box)
 {
-    m_layoutContext->addIntrinsicLogicalHeightComputationFor(box);
+    m_layoutContext->addOrthogonalIntrinsicContributionLayout(box);
 }
 
-IntrinsicLogicalHeightComputationScope::~IntrinsicLogicalHeightComputationScope()
+OrthogonalIntrinsicContributionLayoutScope::~OrthogonalIntrinsicContributionLayoutScope()
 {
-    m_layoutContext->removeIntrinsicLogicalHeightComputationFor(m_box);
+    m_layoutContext->removeOrthogonalIntrinsicContributionLayout(m_box);
 }
 
 ContentVisibilityOverrideScope::ContentVisibilityOverrideScope(LocalFrameViewLayoutContext& layoutContext, OptionSet<OverrideType> overrideTypes)
