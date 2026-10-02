@@ -106,6 +106,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "StyleSelfAlignmentData.h"
+#include "StyleSizing.h"
 #include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
@@ -2868,9 +2869,6 @@ LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth, Lay
 template<typename Keyword>
 std::pair<LayoutUnit, LayoutUnit> RenderBox::computeIntrinsicKeywordLogicalWidths(Keyword, LayoutUnit borderAndPadding) const
 {
-    if constexpr (std::same_as<Keyword, CSS::Keyword::MinIntrinsic>)
-        return computeIntrinsicKeywordLogicalWidths();
-
     if (shouldComputeLogicalWidthFromAspectRatio()) {
         auto maxLogicalWidth = computeLogicalWidthFromAspectRatio() - borderAndPadding;
         auto minLogicalWidth = maxLogicalWidth;
@@ -2940,6 +2938,12 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretc
     return std::max(borderAndPadding, logicalWidthResult);
 }
 
+LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::WebkitFillAvailable, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    // -webkit-fill-available resolves as stretch in the inline axis.
+    return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch { }, availableLogicalWidth, borderAndPadding);
+}
+
 LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent keyword, LayoutUnit /*availableLogicalWidth*/, LayoutUnit borderAndPadding) const
 {
     auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicKeywordLogicalWidths(keyword, borderAndPadding);
@@ -2952,10 +2956,10 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinCon
     return minLogicalWidth + borderAndPadding;
 }
 
-LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinIntrinsic keyword, LayoutUnit /*availableLogicalWidth*/, LayoutUnit borderAndPadding) const
+LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinIntrinsic, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
 {
-    auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicKeywordLogicalWidths(keyword, borderAndPadding);
-    return minLogicalWidth + borderAndPadding;
+    // Legacy min-intrinsic resolves as min-content.
+    return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
 }
 
 LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitContent keyword, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
@@ -2966,21 +2970,15 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitCon
 
 template<typename SizeType> LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
 {
-    auto keywordLogicalWidth = [&]() -> LayoutUnit {
-        if (logicalWidth.isStretch())
-            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch { }, availableLogicalWidth, borderAndPadding);
-        if (logicalWidth.isMinIntrinsic())
-            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
-        if (logicalWidth.isMaxContent())
-            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, availableLogicalWidth, borderAndPadding);
-        if (logicalWidth.isMinContent())
-            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
-        if (logicalWidth.isFitContent())
-            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitContent { }, availableLogicalWidth, borderAndPadding);
-
-        ASSERT_NOT_REACHED();
-        return 0;
-    }();
+    auto keywordLogicalWidth = logicalWidth.switchOnKeyword(
+        [&](const Style::IsSizingKeyword auto& keyword) -> LayoutUnit {
+            return computeSizingKeywordLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
+        },
+        [&](const auto&) -> LayoutUnit {
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    );
 
     if (!logicalWidth.isCalcSize())
         return keywordLogicalWidth;
@@ -3693,7 +3691,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         return intrinsic();
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordLogicalHeight = WTF::switchOn(logicalHeight,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordLogicalHeight = logicalHeight.switchOnKeyword(
         [&](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> {
             return minMaxContent();
         },

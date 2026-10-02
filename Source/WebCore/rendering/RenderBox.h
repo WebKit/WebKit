@@ -393,6 +393,7 @@ public:
     LayoutUnit availableLogicalHeightUsing(const Style::PreferredSize&, AvailableLogicalHeightType) const;
 
     LayoutUnit computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
+    LayoutUnit computeSizingKeywordLogicalWidthUsing(CSS::Keyword::WebkitFillAvailable, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
     LayoutUnit computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinIntrinsic, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
     LayoutUnit computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
     LayoutUnit computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;

@@ -41,5 +41,12 @@ concept IsIntrinsicOrStretchSizeKeyword = std::same_as<T, CSS::Keyword::MinConte
     || std::same_as<T, CSS::Keyword::Stretch>
     || std::same_as<T, CSS::Keyword::WebkitFillAvailable>;
 
+// The keywords that name a size, matching the computeSizingKeywordLogical*Using() overloads that
+// resolve them. min-intrinsic is the legacy spelling of min-content. The legacy intrinsic keyword is
+// not one of these, even though isSizingKeywordOrAuto() counts it, because nothing resolves it
+// through the sizing keyword path.
+template<typename T>
+concept IsSizingKeyword = IsIntrinsicOrStretchSizeKeyword<T> || std::same_as<T, CSS::Keyword::MinIntrinsic>;
+
 } // namespace Style
 } // namespace WebCore
