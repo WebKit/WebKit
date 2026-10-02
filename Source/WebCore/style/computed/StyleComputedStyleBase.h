@@ -546,6 +546,8 @@ public:
     inline std::optional<size_t> usedPositionOptionIndex() const;
     inline void setUsedPositionOptionIndex(std::optional<size_t>);
 
+    inline void setOverrideBlendMode(std::optional<BlendMode>);
+
     inline bool NODELETE effectiveInert() const;
     bool NODELETE effectiveInertOutOfLine() const;
     inline void setEffectiveInert(bool);

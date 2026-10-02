@@ -188,7 +188,7 @@ RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&
 
 static bool styleContainsComplexBackground(const Style::ComputedStyle& style)
 {
-    return style.blendMode() != BlendMode::Normal
+    return style.usedBlendMode() != BlendMode::Normal
         || Style::hasImageInAnyLayer(style.backgroundLayers())
 #if HAVE(CORE_MATERIAL)
         || appleVisualEffectNeedsBackdrop(style.appleVisualEffect())

@@ -213,6 +213,8 @@ public:
     PositionTryFallbacks positionTryFallbacks;
     std::optional<size_t> usedPositionOptionIndex;
 
+    std::optional<BlendMode> overrideBlendMode;
+
     BlockStepSize blockStepSize;
 
     PREFERRED_TYPE(BlockStepAlign) unsigned blockStepAlign : 2;

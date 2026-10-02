@@ -33,7 +33,7 @@ namespace WebCore {
 
 inline bool RenderElement::hasBackdropFilter() const { return !style().backdropFilter().isNone(); }
 inline bool RenderElement::hasBackground() const { return style().hasBackground(); }
-inline bool RenderElement::hasBlendMode() const { return style().blendMode() != BlendMode::Normal; }
+inline bool RenderElement::hasBlendMode() const { return style().usedBlendMode() != BlendMode::Normal; }
 inline bool RenderElement::hasClip() const { return isOutOfFlowPositioned() && !style().clip().isAuto(); }
 inline bool RenderElement::hasClipOrNonVisibleOverflow() const { return hasClip() || hasNonVisibleOverflow(); }
 inline bool RenderElement::hasClipPath() const { return !style().clipPath().isNone(); }
@@ -101,7 +101,7 @@ inline bool RenderElement::createsGroupForStyleExcludingClipPathAndMask(const St
 #if HAVE(CORE_MATERIAL)
         || style.appleVisualEffect() != AppleVisualEffect::None
 #endif
-        || style.blendMode() != BlendMode::Normal;
+        || style.usedBlendMode() != BlendMode::Normal;
 }
 
 inline bool RenderElement::createsGroupForStyle(const Style::ComputedStyle& style)

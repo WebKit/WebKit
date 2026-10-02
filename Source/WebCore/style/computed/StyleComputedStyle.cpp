@@ -599,6 +599,11 @@ float ComputedStyle::usedOutlineSize(Style::ZoomFactor zoom, float deviceScaleFa
     return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), zoom, deviceScaleFactor));
 }
 
+BlendMode ComputedStyle::usedBlendMode() const
+{
+    return m_nonInheritedData->rareData->overrideBlendMode.value_or(blendMode());
+}
+
 // MARK: - Derived Values
 
 template<typename OutsetValue>

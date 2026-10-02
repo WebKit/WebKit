@@ -213,7 +213,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
         }
     } else if (layer() && layer()->parent()) {
         gainedOrLostLayer = true;
-        if (oldStyle && oldStyle->blendMode() != BlendMode::Normal)
+        if (oldStyle && oldStyle->usedBlendMode() != BlendMode::Normal)
             layer()->willRemoveChildWithBlendMode();
         // For CSS renderers every transform-related property forces a layer, so reaching the
         // layer-removal branch means there is no transform and these flags can be cleared. Under
