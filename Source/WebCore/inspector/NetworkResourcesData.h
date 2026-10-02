@@ -33,6 +33,7 @@
 #include "InspectorResourceType.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <WebCore/CachedResource.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
