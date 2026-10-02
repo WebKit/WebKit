@@ -44,6 +44,9 @@ FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group
     , m_isArchiveProcess(loadedWebArchive == LoadedWebArchive::Yes)
 {
     m_process->incrementFrameProcessCount();
+    // These load frames from other sites into the same process without a FrameProcess for each.
+    if (!preferences.siteIsolationEnabled() || preferences.usesSingleWebProcess() || m_isArchiveProcess)
+        m_process->setMayHostAnySite();
     if (!preferences.siteIsolationEnabled()) {
         m_browsingContextGroup = nullptr;
         return;
