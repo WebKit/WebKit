@@ -305,6 +305,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/TextManipulationItem.h>
+#include <WebCore/UserContentURLPattern.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WrappedCryptoKey.h>
@@ -6045,6 +6046,24 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     bool navigatingIFrameWithoutSiteIsolation = !frame.isMainFrame() && !preferences->siteIsolationEnabled();
     if (policyAction != PolicyAction::Use || navigatingIFrameWithoutSiteIsolation) {
+        navigation.setUnpartitionedStorageSite(policyAction == PolicyAction::Use ? unpartitionedStorageSiteForNavigation(frame, navigation.currentRequest().url()) : std::nullopt);
+        if (auto& unpartitionedStorageSite = navigation.unpartitionedStorageSite()) {
+            addAllowedFirstPartyForCookies(protect(frame.process()), *unpartitionedStorageSite, LoadedWebArchive::No, [
+                weakThis = WeakPtr { *this },
+                navigation = protect(navigation),
+                websitePolicies = WTF::move(websitePolicies),
+                navigationAction = WTF::move(navigationAction),
+                message = WTF::move(message),
+                completionHandler = WTF::move(completionHandler)
+            ] mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return completionHandler(PolicyDecision { });
+                protectedThis->receivedPolicyDecision(PolicyAction::Use, navigation.ptr(), websitePoliciesAndProcess(websitePolicies.get(), protect(protectedThis->legacyMainFrameProcess())), WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTF::move(message), WTF::move(completionHandler));
+            });
+            return;
+        }
+
         auto previousPendingNavigationID = pageLoadState().pendingAPIRequest().navigationID;
         receivedPolicyDecision(policyAction, &navigation, navigatingIFrameWithoutSiteIsolation ? websitePoliciesAndProcess(websitePolicies.get(), protect(legacyMainFrameProcess())) : std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTF::move(message), WTF::move(completionHandler));
 #if HAVE(APP_SSO)
@@ -6120,6 +6139,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             navigation.upgradeCurrentInsecureRequest();
     }
 
+    navigation.setUnpartitionedStorageSite(unpartitionedStorageSiteForNavigation(frame, navigation.currentRequest().url()));
+
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, processSwapRequestedByClient);
     if (frame.isMainFrame() && shouldUseEnhancedSecurityHeuristics(preferences))
         internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), internals().pageLoadState.httpFallbackInProgress());
@@ -6137,7 +6158,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     Site site { navigation.currentRequest().url() };
     Site mainFrameSite = frame.isMainFrame() ? site : Site { pageLoadState().activeURL() };
-    auto continueWithProcessForNavigation = [
+    auto continueWithAllowedProcessForNavigation = [
         this,
         protectedThis = Ref { *this },
         policyAction,
@@ -6281,6 +6302,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
                 loadParameters.requester = action->requester;
             if (navigation->currentRequestIsRedirect())
                 loadParameters.originalRequest = navigation->originalRequest();
+            loadParameters.unpartitionedStorageSite = navigation->unpartitionedStorageSite();
 
             processNavigatingTo->send(Messages::WebPage::LoadRequest(WTF::move(loadParameters)), webPageIDInProcess(processNavigatingTo));
         }
@@ -6309,6 +6331,29 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         }
 
         receivedPolicyDecision(policyAction, navigation.ptr(), websitePoliciesAndProcess(navigation->websitePolicies(), processNavigatingTo), WTF::move(navigationAction), WillContinueLoadInNewProcess::No, WTF::move(optionalHandle), WTF::move(message), WTF::move(completionHandler));
+    };
+
+    auto continueWithProcessForNavigation = [
+        this,
+        protectedThis = Ref { *this },
+        navigation = protect(navigation),
+        continueWithAllowedProcessForNavigation = WTF::move(continueWithAllowedProcessForNavigation)
+    ] (Ref<WebProcessProxy>&& processNavigatingTo, SuspendedPageProxy* destinationSuspendedPage, ASCIILiteral reason) mutable {
+        auto& unpartitionedStorageSite = navigation->unpartitionedStorageSite();
+        if (!unpartitionedStorageSite)
+            return continueWithAllowedProcessForNavigation(WTF::move(processNavigatingTo), destinationSuspendedPage, reason);
+
+        ASSERT(!destinationSuspendedPage);
+        Ref process = processNavigatingTo;
+        auto shutdownPreventingScope = process->shutdownPreventingScope();
+        addAllowedFirstPartyForCookies(process, *unpartitionedStorageSite, LoadedWebArchive::No, [
+            processNavigatingTo = WTF::move(processNavigatingTo),
+            shutdownPreventingScope = WTF::move(shutdownPreventingScope),
+            reason,
+            continueWithAllowedProcessForNavigation = WTF::move(continueWithAllowedProcessForNavigation)
+        ] mutable {
+            continueWithAllowedProcessForNavigation(WTF::move(processNavigatingTo), nullptr, reason);
+        });
     };
 
 
@@ -6424,7 +6469,11 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     if (navigation)
         isSafeBrowsingCheckOngoing = navigation->safeBrowsingCheckOngoing() ? SafeBrowsingCheckOngoing::Yes : SafeBrowsingCheckOngoing::No;
 
-    completionHandler(PolicyDecision { isNavigatingToAppBoundDomain(), action, navigation ? std::optional { navigation->navigationID() } : std::nullopt, downloadID, WTF::move(websitePoliciesData), WTF::move(sandboxExtensionHandle), WTF::move(consoleMessage), isSafeBrowsingCheckOngoing });
+    std::optional<RegistrableDomain> unpartitionedStorageSite;
+    if (navigation && action == PolicyAction::Use)
+        unpartitionedStorageSite = navigation->unpartitionedStorageSite();
+
+    completionHandler(PolicyDecision { isNavigatingToAppBoundDomain(), action, navigation ? std::optional { navigation->navigationID() } : std::nullopt, downloadID, WTF::move(websitePoliciesData), WTF::move(sandboxExtensionHandle), WTF::move(consoleMessage), isSafeBrowsingCheckOngoing, nullptr, OriginKeyed::No, WTF::move(unpartitionedStorageSite) });
 }
 
 void WebPageProxy::receivedNavigationResponsePolicyDecision(WebCore::PolicyAction action, API::Navigation* navigation, const WebCore::ResourceRequest& request, Ref<API::NavigationResponse>&& navigationResponse, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -6704,6 +6753,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         }
         if (navigation.currentRequestIsRedirect() || navigation.originalRequest().url() != currentRequestURL)
             loadParameters.originalRequest = navigation.originalRequest();
+        loadParameters.unpartitionedStorageSite = navigation.unpartitionedStorageSite();
 
         if (isPendingInitialHistoryItem)
             frame.setIsPendingInitialHistoryItem(true);
@@ -18935,6 +18985,42 @@ void WebPageProxy::sendCORSDisablingPatternsToNetworkProcessIfNecessary()
     if (!networkProcess)
         return;
     networkProcess->send(Messages::NetworkProcess::SetCORSDisablingPatternsForPage(legacyMainFrameProcess().coreProcessIdentifier(), webPageIDInMainFrameProcess(), m_corsDisablingPatterns), 0);
+}
+
+std::optional<RegistrableDomain> WebPageProxy::unpartitionedStorageSiteForNavigation(const WebFrameProxy& frame, const URL& url) const
+{
+    if (m_configuration->shouldRelaxThirdPartyCookieBlocking() == ShouldRelaxThirdPartyCookieBlocking::No || frame.isMainFrame())
+        return std::nullopt;
+
+    if (frame.effectiveSandboxFlags().contains(SandboxFlag::Origin))
+        return std::nullopt;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    auto& extensionBaseURL = m_configuration->requiredWebExtensionBaseURL();
+    if (!extensionBaseURL.isValid())
+        return std::nullopt;
+
+    auto site = UserContentURLPattern::siteMatchedByPatterns(m_corsDisablingPatterns.map([](auto& patternString) {
+        return UserContentURLPattern { patternString };
+    }));
+    if (!site || !url.protocolIsInHTTPFamily() || !site->matches(url))
+        return std::nullopt;
+
+    RefPtr ancestor = frame.parentFrame();
+    for (; ancestor && !ancestor->isMainFrame(); ancestor = ancestor->parentFrame()) {
+        auto ancestorOrigin = ancestor->documentSecurityOriginData();
+        if (ancestorOrigin.isOpaque() || !site->matches(ancestorOrigin))
+            return std::nullopt;
+    }
+
+    if (!ancestor || !protocolHostAndPortAreEqual(ancestor->url(), extensionBaseURL))
+        return std::nullopt;
+
+    return site;
+#else
+    UNUSED_PARAM(url);
+    return std::nullopt;
+#endif
 }
 
 void WebPageProxy::setOverriddenMediaType(const String& mediaType)

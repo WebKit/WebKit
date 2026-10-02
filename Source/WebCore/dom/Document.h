@@ -1693,6 +1693,8 @@ public:
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     WEBCORE_EXPORT SecurityOrigin& topOrigin() const final;
+    bool hasUnpartitionedStorageAccess() const { return m_hasUnpartitionedStorageAccess; }
+    void updateHasUnpartitionedStorageAccess(const DocumentLoader*);
     URL topURL() const;
     inline ClientOrigin clientOrigin() const;
 
@@ -2312,6 +2314,7 @@ private:
     MediaProducerMediaStateFlags computeCaptureState() const;
 #endif
     void securityOriginDidChange() final;
+    bool computeHasUnpartitionedStorageAccess(const DocumentLoader*) const;
 
     inline Ref<DocumentSyncData> syncData();
     void NODELETE populateDocumentSyncDataForNewlyConstructedDocument(DocumentSyncDataType);
@@ -2809,6 +2812,7 @@ private:
     bool m_isNonRenderedPlaceholder : 1 { false };
     bool m_sawElementsInKnownNamespaces : 1 { false };
     bool m_isSrcdocDocument : 1 { false };
+    bool m_hasUnpartitionedStorageAccess : 1 { false };
     bool m_hasPreparedForDestruction : 1 { false };
     bool m_hasStyleWithViewportUnits : 1 { false };
     bool m_needsDOMWindowResizeEvent : 1 { false };

@@ -105,6 +105,7 @@ struct LoadParameters {
     uint64_t requiredCookiesVersion { 0 };
     std::optional<WebCore::NavigationRequester> requester;
     std::optional<WebCore::ResourceRequest> originalRequest;
+    std::optional<WebCore::RegistrableDomain> unpartitionedStorageSite;
 };
 
 } // namespace WebKit
