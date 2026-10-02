@@ -111,6 +111,10 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
 
     auto imageSourceURL = imageElement.document().completeURL(imageElement.imageSourceURL());
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    CachedResourceHandle protectedCachedImage { cachedImage };
+#endif
+
     auto pasteboardImageURL = url.isEmpty() ? imageSourceURL : url;
     if (!pasteboardImageURL.protocolIsFile()) {
         pasteboardImage.url.url = pasteboardImageURL;
