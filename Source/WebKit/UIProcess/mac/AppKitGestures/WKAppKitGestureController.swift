@@ -101,9 +101,15 @@ final class WKPanGestureRecognizer: NSPanGestureRecognizer {
     #if canImport(AppKit, _version: "2759")
     // swift-format-ignore: NoLeadingUnderscores
     override func _shouldRecognize(forDelta delta: NSPoint) -> NSPanShouldRecognizeResponse {
+        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        guard let webView, let page = webView._protectedPage() else {
+            return .fail
+        }
+        #else
         guard let webView, let page = webView._protectedPage().get() else {
             return .fail
         }
+        #endif
 
         guard webView.enclosingScrollView != nil else {
             return .recognize

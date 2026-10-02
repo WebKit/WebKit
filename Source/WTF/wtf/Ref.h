@@ -200,7 +200,7 @@ private:
     }
 
     typename PtrTraits::StorageType m_ptr;
-} SWIFT_ESCAPABLE;
+} SWIFT_ESCAPABLE SWIFT_REFCOUNTED_PTR(.get);
 
 // Template deduction guide.
 template<typename X, typename Y> Ref(const WeakRef<X, Y>&) -> Ref<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;

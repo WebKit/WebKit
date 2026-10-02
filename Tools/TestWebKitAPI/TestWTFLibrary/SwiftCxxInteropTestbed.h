@@ -30,6 +30,7 @@
 #import <expected>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Function.h>
+#import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
 
 namespace SwiftCxxInteropTestbed {
@@ -148,6 +149,9 @@ using MoveOnlyProbeExpected = std::expected<MoveOnlyProbe, ProbeError>;
 using SelfReferentialProbeExpected = std::expected<SelfReferentialProbe, ProbeError>;
 using CountedErrorExpected = std::expected<MoveOnlyProbe, CountingProbeError>;
 
+using SharedProbeRef = WTF::Ref<SharedProbe>;
+using SharedProbeRefPtr = WTF::RefPtr<SharedProbe>;
+
 // MARK: Function declarations
 
 int callIntBoolFunction(bool, IntBoolFunction&&);
@@ -221,6 +225,17 @@ CountedErrorExpected makeCountedErrorUnexpected(ProbeError);
 
 // Zero once every error the bridge constructed has been destroyed. See CountingProbeError.
 int liveCountingProbeErrorCount();
+
+// MARK: Ref and RefPtr
+
+// Each returns a new reference to the shared probe, which Swift takes over.
+SharedProbeRef makeSharedProbeRef();
+SharedProbeRefPtr makeSharedProbeRefPtr();
+SharedProbeRefPtr makeNullSharedProbeRefPtr();
+
+// The shared probe's reference count while the argument still holds its reference, or zero for a null RefPtr.
+int sharedProbeRefCountWhileHoldingRef(SharedProbeRef);
+int sharedProbeRefCountWhileHoldingRefPtr(SharedProbeRefPtr);
 
 // The `__take(_:)` witnesses for the `CxxConsumingExpected` conformances. Swift imports the rvalue
 // reference as the `consuming` the protocol hands over, and destroys the moved-from `Expected` once the
