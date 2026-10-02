@@ -472,11 +472,6 @@ bool Element::isKeyboardFocusable(const FocusEventData&) const
         if (root->delegatesFocus())
             return false;
     }
-    // Popovers with invokers delegate focus.
-    if (auto* popover = dynamicDowncast<HTMLElement>(*this)) {
-        if (popover->isPopoverShowing() && popover->popoverData()->invoker())
-            return false;
-    }
     return true;
 }
 
