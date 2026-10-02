@@ -42,6 +42,20 @@ set_target_properties(TestRunnerInjectedBundle PROPERTIES
     CODE_SIGN_BUNDLE "$<TARGET_BUNDLE_DIR:TestRunnerInjectedBundle>"
 )
 
+# Embed the Info.plist in the __TEXT,__info_plist section; WebKit's
+# isRunningTest() checks the resulting bundle identifier.
+set(PRODUCT_NAME WebKitTestRunner)
+set(PRODUCT_BUNDLE_IDENTIFIER com.apple.WebKit.WebKitTestRunner)
+configure_file("${WebKitTestRunner_DIR}/Info.plist"
+               "${CMAKE_CURRENT_BINARY_DIR}/WebKitTestRunner-Info.plist")
+unset(PRODUCT_NAME)
+unset(PRODUCT_BUNDLE_IDENTIFIER)
+
+target_link_options(WebKitTestRunner PRIVATE
+    "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/WebKitTestRunner-Info.plist")
+set_property(TARGET WebKitTestRunner APPEND PROPERTY LINK_DEPENDS
+    "${CMAKE_CURRENT_BINARY_DIR}/WebKitTestRunner-Info.plist")
+
 if (USE_APPLE_INTERNAL_SDK)
     set_property(TARGET WebKitTestRunner PROPERTY CODE_SIGN_ENTITLEMENTS
         "${WebKitTestRunner_DIR}/Configurations/WebKitTestRunner-internal.entitlements"
