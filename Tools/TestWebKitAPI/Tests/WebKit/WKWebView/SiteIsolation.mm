@@ -16239,6 +16239,29 @@ TEST(SiteIsolation, ContextMenuKeyInCrossOriginFrame)
     }));
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!window.receivedContextMenu"] boolValue]);
 }
+
+TEST(SiteIsolation, ContextMenuCopyInUnfocusedCrossOriginFrame)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe><input id='input'>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0; font-size: 100px'>hello<script>addEventListener('mousedown', event => event.preventDefault())</script></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, delegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 400));
+    [webView loadURL:[NSURL URLWithString:@"https://example.com/example"]];
+    [delegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('input').focus(); true"];
+
+    [NSPasteboard.generalPasteboard clearContents];
+    [webView rightClick:NSMakePoint(50, 350) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.title isEqualToString:@"Copy"];
+    }];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString] isEqualToString:@"hello"];
+    }));
+    EXPECT_WK_STREQ("input", [webView stringByEvaluatingJavaScript:@"document.activeElement.id"]);
+}
 #endif
 
 TEST(SiteIsolation, UserGesture)

@@ -13499,7 +13499,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
             protectedThis->m_navigationClient->contextMenuDidCreateDownload(*protectedThis, *download);
         });
     }
-    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    auto targetFrameID = frameInfo.frameID;
     platformDidSelectItemFromActiveContextMenu(item, targetFrameID, [weakThis = WeakPtr { *this }, item, targetFrameID] () mutable {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
