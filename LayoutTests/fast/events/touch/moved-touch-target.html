@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<script src="../../../resources/ui-helper.js"></script>
   <title>Moved Touch Target</title>
   <style>
   body {
@@ -42,7 +43,7 @@
 
     var expectedTouches = 2;
 
-    function targetTouched(event) {
+    async function targetTouched(event) {
         logTouch(event);
         expectedTouches--;
         if (expectedTouches) {
@@ -50,6 +51,7 @@
             var target = document.querySelector(".target");
             var container2 = document.querySelector(".container2");
             container2.appendChild(target);
+            await UIHelper.renderingComplete();
             tapSoon(110, 20);
         } else {
             debug("PASSED");
@@ -58,9 +60,11 @@
         }
     }
 
-    function init() {
+    async function init() {
         var target = document.querySelector(".target");
         target.addEventListener("touchstart", targetTouched, false);
+        await UIHelper.renderingComplete();
+
         debug("Should see two touches. The first should be at 20,20");
         tapSoon(20, 20);
     }

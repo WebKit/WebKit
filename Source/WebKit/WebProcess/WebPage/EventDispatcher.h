@@ -48,7 +48,7 @@
 #include "WebGestureEvent.h"
 #endif
 
-#if ENABLE(IOS_TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(COORDINATED_TOUCH_EVENTS)
 #include "WebTouchEvent.h"
 #include <wtf/CompletionHandler.h>
 #endif
@@ -125,6 +125,9 @@ private:
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&&);
+#elif ENABLE(COORDINATED_TOUCH_EVENTS)
+    void dispatchTouchEventViaMainThread(WebCore::PageIdentifier, const WebTouchEvent&, CompletionHandler<void(WebEventType, bool)>&&);
+    void touchEvent(WebCore::PageIdentifier, WebCore::FrameIdentifier, const WebTouchEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEvent(WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<WebCore::RemoteUserInputEventData>)>&&);

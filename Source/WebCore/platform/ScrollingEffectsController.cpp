@@ -431,6 +431,20 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     }
 #endif
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    if (m_client.scrollAnimationEnabled() && m_inScrollGesture) {
+        // For precise-delta wheel events, which are dispatched by touchpad or synthesized from touch events,
+        // scroll immediately with immediateScrollBy below.
+        // However, it's not enough for async scrolling while the main thread is busy.
+        // We have to start a scroll animation here to start monitoring the display link.
+        auto destination = scrollOffset;
+        destination.move(FloatSize { deltaX, deltaY });
+        float fromX = std::nextafter(destination.x(), scrollOffset.x());
+        float fromY = std::nextafter(destination.y(), scrollOffset.y());
+        startAnimatedScrollToDestination({ fromX, fromY }, destination);
+    }
+#endif
+
     m_client.immediateScrollBy({ deltaX, deltaY });
 
     return true;

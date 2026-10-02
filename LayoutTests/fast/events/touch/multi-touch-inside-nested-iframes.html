@@ -1,5 +1,6 @@
 <html>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style>
 #iframe1 {
   width: 200px;
@@ -108,6 +109,8 @@ function onTouch(event, receiver)
 }
 
 async function runTest() {
+    await UIHelper.renderingComplete();
+
     if (window.eventSender) {
         eventSender.clearTouchPoints();
         // Touch the center of innter iframe. 50px is offset to outer iframe in main frame,

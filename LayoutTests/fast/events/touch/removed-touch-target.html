@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<script src="../../../resources/ui-helper.js"></script>
   <title>Remove a Touch Target</title>
   <style>
   body {
@@ -54,9 +55,11 @@
         }
     }
 
-    function init() {
+    async function init() {
         var target = document.querySelector(".target");
         target.addEventListener("touchstart", targetTouched, false);
+        await UIHelper.renderingComplete();
+
         debug("Should see only one touch at 20,20");
         tapSoon(20, 20);
     }

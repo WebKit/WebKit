@@ -3483,6 +3483,9 @@ private:
 #endif
     void updateWheelEventActivityAfterProcessSwap();
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    void processNextQueuedTouchEvent();
+#endif
 #if ENABLE(TOUCH_EVENTS)
     void touchEventHandlingCompleted(IPC::Connection*, std::optional<WebEventType>, bool handled);
     void updateTouchEventTracking(const WebTouchEvent&);

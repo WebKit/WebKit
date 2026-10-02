@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 </head>
 <body onload="runTest();" style="width:2000px;height:2000px;">
 <div>This test is successful if event.clientX/Y are consistent with the generated input.</div>
@@ -20,6 +21,8 @@ async function runTest() {
 
 
     document.addEventListener("touchstart", touched, false);
+    await UIHelper.renderingComplete();
+
     if (window.eventSender) {
         eventSender.clearTouchPoints();
         eventSender.addTouchPoint(30, 70);

@@ -776,6 +776,17 @@ TrackingType ScrollingTree::eventTrackingTypeForPoint(EventTrackingRegions::Even
     return m_treeState.eventTrackingRegions.trackingTypeForPoint(eventType, p);
 }
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+std::optional<FloatSize> ScrollingTree::mainFrameScrollOffset() const
+{
+    RefPtr rootNode = m_rootNode;
+    if (!rootNode)
+        return { };
+    Locker locker { m_treeStateLock };
+    return rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition);
+}
+#endif
+
 WebCore::RectEdges<bool> ScrollingTree::pinnedStateIncludingAncestorsAtPoint(FloatPoint viewPoint)
 {
     RefPtr rootNode = m_rootNode;

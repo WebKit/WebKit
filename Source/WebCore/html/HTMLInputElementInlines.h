@@ -34,6 +34,9 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
 inline void HTMLInputElement::updateTouchEventHandler()
 {
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    setHasInternalTouchEventHandling(m_inputType->type() == InputType::Type::Range);
+#endif
     bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
     if (hasTouchEventHandler != m_hasTouchEventHandler) {
         if (hasTouchEventHandler) {

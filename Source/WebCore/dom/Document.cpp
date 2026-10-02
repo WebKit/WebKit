@@ -9675,7 +9675,7 @@ bool Document::hasTouchEventHandlers() const
 {
     auto touchEventHandlerCountsIsEmpty = true;
 
-#if ENABLE(TOUCH_EVENTS) && ENABLE(TOUCH_EVENT_REGIONS)
+#if ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENT_REGIONS)
     touchEventHandlerCountsIsEmpty = shouldUseTouchEventRegions() ? m_touchEventHandlerCounts.isEmptyIgnoringNullReferences() : true;
 #endif
 

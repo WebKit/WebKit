@@ -190,6 +190,13 @@ window.UIHelper = class UIHelper {
         await UIHelper.delayFor(0);
     }
 
+    static async renderingComplete()
+    {
+        // Wait for the platform layer tree to be updated
+        await UIHelper.animationFrame();
+        await UIHelper.animationFrame();
+    }
+
     static async waitForCondition(conditionFunc, maximumFrames = Infinity)
     {
         for (let frames = 0; !conditionFunc(); ++frames) {

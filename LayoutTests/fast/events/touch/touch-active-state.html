@@ -1,5 +1,6 @@
 <html>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style type="text/css">
 #box {
     background-color:blue;
@@ -29,6 +30,8 @@ function testComplete(event)
 
 async function runTest()
 {
+    await UIHelper.renderingComplete();
+
     if (window.eventSender) {
         // Touch the center of the div.
         eventSender.addTouchPoint(50, 50);

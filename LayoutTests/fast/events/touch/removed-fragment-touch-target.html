@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<script src="../../../resources/ui-helper.js"></script>
   <title>Removed Document Fragment Touch Target</title>
   <style>
   body {
@@ -67,11 +68,13 @@
         }
     }
 
-    function init() {
+    async function init() {
         var target = createElementsFromString("<div class='target'>This is the <strong>touch target</strong>.</div>");
         target.addEventListener("touchstart", targetTouched, false);
         var container = document.querySelector(".container");
         container.appendChild(target);
+        await UIHelper.renderingComplete();
+
         debug("Should see a single touch at 20,20");
         tapSoon(20, 20);
     }
