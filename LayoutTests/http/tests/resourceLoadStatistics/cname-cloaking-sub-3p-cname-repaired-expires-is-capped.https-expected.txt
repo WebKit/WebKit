@@ -1,0 +1,10 @@
+Test for CNAME Cloaking: a cookie whose Expires WebKit had to repair is capped like any other.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cookie named capped was repaired and capped.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

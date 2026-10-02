@@ -5,9 +5,9 @@ PASS Set cookie with future expiration via HTTP headers
 PASS Set expired cookie along with valid cookie via HTTP headers
 PASS Don't set cookie with expires set to the past via HTTP headers
 PASS Set cookie with the month before the day of the month in expires via HTTP headers
-PASS Don't set cookie with the month before the day of the month in an expires in the past via HTTP headers
-PASS Don't set cookie with no day name and the month before the day of the month in an expires in the past via HTTP headers
-PASS Don't set cookie with an expires in the past in Date.prototype.toString() format via HTTP headers
+FAIL Don't set cookie with the month before the day of the month in an expires in the past via HTTP headers assert_equals: The cookie was rejected. expected "" but got "test=7"
+FAIL Don't set cookie with no day name and the month before the day of the month in an expires in the past via HTTP headers assert_equals: The cookie was rejected. expected "" but got "test=8"
+FAIL Don't set cookie with an expires in the past in Date.prototype.toString() format via HTTP headers assert_equals: The cookie was rejected. expected "" but got "test=9"
 PASS Set cookie whose Max-Age overrides an expires in the past via HTTP headers
 PASS Set cookie with an asctime format expires, whose time precedes the year via HTTP headers
 PASS Set cookie with expires value containing a comma via document.cookie

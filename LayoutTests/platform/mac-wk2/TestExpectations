@@ -704,6 +704,7 @@ http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-bloc
 [ Tahoe+ ] http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Pass ]
 [ Tahoe+ ] http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Pass ]
 [ Tahoe+ ] http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Pass ]
+[ Tahoe+ ] http/tests/resourceLoadStatistics/partitioned-cookie-repaired-expires-stays-partitioned.https.html [ Pass ]
 [ Tahoe+ ] http/tests/cookies/multiple-cookies.https.html [ Pass ]
 [ Tahoe+ ] http/tests/cookies/multiple-cookies-iframes.https.html [ Pass Failure Slow ] # rdar://181856090
 [ Tahoe+ ] http/tests/cookies/max-partitioned-cookies.https.html [ Timeout ] # rdar://181722903

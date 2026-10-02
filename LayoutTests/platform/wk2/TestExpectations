@@ -661,6 +661,7 @@ http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-with-link-query
 http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Skip ]
 http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Skip ]
 http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Skip ]
+http/tests/resourceLoadStatistics/partitioned-cookie-repaired-expires-stays-partitioned.https.html [ Skip ]
 
 # This feature is currently disabled by default and unfinished <rdar://problem/38925077>.
 http/tests/navigation/process-swap-window-open.html [ Skip ]

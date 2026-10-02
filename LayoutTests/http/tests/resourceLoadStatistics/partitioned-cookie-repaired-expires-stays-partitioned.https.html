@@ -1,0 +1,74 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that WebKit's Set-Cookie Expires repair keeps a third party's partitioned cookie in its partition when only partitioned third-party cookies are allowed.");
+    jsTestIsAsync = true;
+
+    const firstPartyOrigin = "https://127.0.0.1:8443";
+    const thirdPartyOrigin = "https://localhost:8443";
+    const thisTest = "/resourceLoadStatistics/partitioned-cookie-repaired-expires-stays-partitioned.https.html";
+
+    function openIframe(url)
+    {
+        return new Promise(resolve => {
+            const element = document.createElement("iframe");
+            element.onload = resolve;
+            element.src = url;
+            document.body.appendChild(element);
+        });
+    }
+
+    function cookiePropertiesInThirdPartyFrame(name)
+    {
+        return new Promise(resolve => {
+            addEventListener("message", event => resolve(event.data), { once: true });
+            openIframe(thirdPartyOrigin + "/resourceLoadStatistics/resources/post-cookie-properties.html?name=" + name);
+        });
+    }
+
+    async function runFirstPartySteps()
+    {
+        await new Promise(resolve => testRunner.setStatisticsShouldBlockThirdPartyCookies(true, resolve, false, true));
+
+        // The month-first Expires is one CFNetwork rejects, so without the repair this is a session cookie.
+        await openIframe(thirdPartyOrigin + "/cookies/resources/set-cookies-needing-repair.py?case=partitioned");
+
+        // In this mode the third party sees only partitioned cookies, so finding it at all shows it kept its partition.
+        const properties = await cookiePropertiesInThirdPartyFrame("partitioned_date");
+        const results = [
+            ["partitioned cookie is visible to the third party under the first party", properties.found],
+            ["partitioned cookie was repaired to a persistent cookie", properties.found && properties.isSession === false],
+        ];
+
+        // An unpartitioned copy would be visible to the third party as a first party.
+        document.location.href = thirdPartyOrigin + thisTest + "#check=" + encodeURIComponent(JSON.stringify(results));
+    }
+
+    function runThirdPartyCheck()
+    {
+        for (const [label, passed] of JSON.parse(decodeURIComponent(document.location.hash.substring("#check=".length))))
+            passed ? testPassed(label) : testFailed(label);
+        shouldBeUndefined('internals.getCookies().find(cookie => cookie.name === "partitioned_date")');
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(false, () => {
+            setEnableFeature(false, () => testRunner.removeAllCookies(finishJSTest));
+        });
+    }
+
+    if (document.location.hash.startsWith("#check="))
+        runThirdPartyCheck();
+    else {
+        setEnableFeature(true, () => {
+            if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                testFailed("Localhost was classified as prevalent resource before the test starts.");
+            runFirstPartySteps();
+        });
+    }
+</script>
+</body>
+</html>
