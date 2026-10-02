@@ -27,6 +27,7 @@
 
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
+#include "PaintInfo.h"
 #include "RegionContext.h"
 #include "RenderLayerModelObject.h"
 #include "RenderStyleConstants.h"
@@ -37,8 +38,9 @@ namespace WebCore {
 class LegacyRenderSVGResourceClipper;
 class RenderSVGResourceClipper;
 
-// Applies a clip-path to a renderer and keeps it active for the scope's lifetime. Handles CSS
-// basic-shape and box clip-paths and SVG clipper resources, so it works for both CSS boxes and SVG.
+// Applies a clip-path to a renderer and keeps it active for the scope's lifetime, or, with
+// StateSavedByCaller::Yes, until the caller restores its saved state. Handles CSS basic-shape and
+// box clip-paths and SVG clipper resources, so it works for both CSS boxes and SVG.
 // Used by the layer paint path (RenderLayer::setupClipPath) and the SVG non-layer path
 // (SVGNonLayerClippingAndMaskingScope).
 //
@@ -56,7 +58,7 @@ public:
         NonLayerPaint
     };
 
-    ClipPathPaintScope(GraphicsContext&, RegionContext*, RenderLayerModelObject&, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode);
+    ClipPathPaintScope(GraphicsContext&, RegionContext*, RenderLayerModelObject&, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode, StateSavedByCaller = StateSavedByCaller::No);
 
     bool needsMaskClipping() const { return m_needsMaskClipping; }
 
@@ -68,10 +70,12 @@ private:
     void applyBasicShapeOrBoxClip(GraphicsContext&, RenderLayerModelObject&, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode);
     void applySVGResourceClip(GraphicsContext&, RenderLayerModelObject&, RenderSVGResourceClipper&, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, CoordinateMode);
     void applyLegacySVGResourceClip(GraphicsContext&, RenderLayerModelObject&, LegacyRenderSVGResourceClipper&, const LayoutSize& offsetFromRoot, const LayoutRect& clippedContentBounds);
+    void saveContextStateIfNeeded();
 
     GraphicsContextStateSaver m_clipSaver;
     RegionContextStateSaver m_regionSaver;
     bool m_needsMaskClipping : 1 { false };
+    bool m_savesContextState : 1 { true };
 };
 
 } // namespace WebCore
