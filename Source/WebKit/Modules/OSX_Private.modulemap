@@ -1164,11 +1164,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKWebProcessPlugInFormDelegatePrivate {
-    header "WKWebProcessPlugInFormDelegatePrivate.h"
-    export *
-  }
-
   explicit module WKWebProcessPlugInFrame {
     header "WKWebProcessPlugInFrame.h"
     export *

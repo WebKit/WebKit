@@ -1543,7 +1543,6 @@
 				WebKit/WKWebView/BasicProposedCredentialPlugIn.mm,
 				WebKit/WKWebView/BundleCSSStyleDeclarationHandlePlugIn.mm,
 				WebKit/WKWebView/BundleEditingDelegatePlugIn.mm,
-				WebKit/WKWebView/BundleFormDelegatePlugIn.mm,
 				WebKit/WKWebView/BundleParametersPlugIn.mm,
 				WebKit/WKWebView/BundleRangeHandlePlugIn.mm,
 				WebKit/WKWebView/BundleRetainPagePlugIn.mm,
