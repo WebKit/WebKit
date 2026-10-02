@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Scrolling to the fragment of an HTML document in a foreignObject of an embedded SVG document scrolls every ancestor document</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#scroll-to-the-fragment-identifier">
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#scroll-a-target-into-view">
+<meta name="assert" content="A fragment scroll in an HTML document nested in a foreignObject of a same-origin SVG document in an iframe scrolls the SVG document and the top-level document to reveal the target.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin:0">
+<div style="height:2000px"></div>
+<iframe id="frame" width="400" height="300"></iframe>
+<div style="height:3000px"></div>
+<script>
+promise_test(async () => {
+  const frame = document.getElementById("frame");
+  const loaded = new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+  frame.src = "resources/foreign-object-html-frame.svg";
+  await loaded;
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await new Promise(resolve => step_timeout(resolve, 100));
+  const svgDocument = frame.contentDocument;
+  const inner = svgDocument.getElementById("inner");
+  assert_not_equals(inner.contentDocument, null, "HTML document in the foreignObject loaded");
+  const target = inner.contentDocument.getElementById("t");
+  assert_not_equals(target, null, "fragment target exists in the HTML document");
+  assert_approx_equals(inner.contentWindow.scrollY, target.offsetTop, 5, "HTML document scroll position");
+  assert_approx_equals(frame.contentWindow.scrollY, svgDocument.getElementById("fo").y.baseVal.value, 5, "SVG document scroll position");
+  assert_approx_equals(window.scrollY, frame.offsetTop, 5, "top-level document scroll position");
+}, "Scrolling to the fragment of an HTML document in a foreignObject of an SVG document in an <iframe> scrolls every ancestor document");
+</script>
