@@ -39,8 +39,12 @@ public:
     LineClampUpdater(const RenderBlock& blockContainer);
     ~LineClampUpdater();
 
+    bool isLineClampRoot() const { return m_isLineClampRoot; }
+    void resetLineClamp();
+
 private:
     CheckedPtr<const RenderBlock> m_blockContainer;
+    bool m_isLineClampRoot { false };
     std::optional<RenderLayoutState::LineClamp> m_previousLineClamp { };
     std::optional<RenderLayoutState::LegacyLineClamp> m_skippedLegacyLineClampToRestore { };
 };
@@ -67,6 +71,7 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
         if (m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy)
             return;
         // New, top level line clamp.
+        m_isLineClampRoot = true;
         layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
         return;
     }
@@ -102,6 +107,15 @@ inline LineClampUpdater::~LineClampUpdater()
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
         lineCount = blockFlow->lineCount();
     layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow });
+}
+
+inline void LineClampUpdater::resetLineClamp()
+{
+    ASSERT(m_isLineClampRoot);
+    auto* layoutState = m_blockContainer->view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return;
+    layoutState->setLineClamp({ });
 }
 
 }

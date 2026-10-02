@@ -323,7 +323,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
     auto inlineContentEnding = result.isContentful ? InlineFormattingUtils::inlineContentEnding(result) : std::nullopt;
 
     // A line with no inline content (e.g. block content) is not where the ellipsis goes.
-    auto blockEllipsis = m_blockEllipsis && (inlineContentEnding || m_blockEllipsisContentOnly) ? m_blockEllipsis : std::nullopt;
+    auto blockEllipsis = m_lineClamp.blockEllipsis && (inlineContentEnding || m_lineClamp.blockEllipsisContentOnly) ? m_lineClamp.blockEllipsis : std::nullopt;
     // When the ellipsis moved the entire content to the next line, the line stays with the ellipsis and a strut (see LineLayoutResult::inflowContentType).
     auto hasContentfulInlineContent = inlineContentEnding || blockEllipsis;
 
@@ -397,6 +397,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { }
         , lineContent->range.isEmpty() && !blockEllipsis ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
         , blockEllipsis
+        , blockEllipsis && ((isLastInlineContent && !nextContentfulInlineItem(lineContent->range.endIndex(), lineInput.needsLayoutRange.endIndex())) || m_lineClamp.isLastLineWithoutBlockEllipsis)
     };
 }
 
@@ -462,8 +463,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
     m_candidateContentMaximumHeight = { };
-    m_blockEllipsis = blockEllipsis;
-    m_blockEllipsisContentOnly = false;
+    m_lineClamp = { blockEllipsis };
     inlineContentBreaker().setHyphenationDisabled(layoutState().isHyphenationDisabled());
 
     createLineSpanningInlineBoxes(needsLayoutRange);
@@ -667,7 +667,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
     auto handleLineEnding = [&] {
         auto isLastInlineContent = isLastLineWithInlineContent(lineContent, needsLayoutRange.endIndex(), m_line.runs());
         // The block ellipsis takes its space from the end of the line (see handleInlineContent).
-        auto horizontalAvailableSpace = std::max(InlineLayoutUnit { }, m_lineLogicalRect.width() - (m_blockEllipsis ? m_blockEllipsis->logicalWidth : InlineLayoutUnit { }));
+        auto horizontalAvailableSpace = std::max(InlineLayoutUnit { }, m_lineLogicalRect.width() - (m_lineClamp.blockEllipsis ? m_lineClamp.blockEllipsis->logicalWidth : InlineLayoutUnit { }));
         auto& rootStyle = this->rootStyle();
 
         auto handleTrailingContent = [&] {
@@ -1501,20 +1501,20 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         const auto& availableLineWidthOverride = layoutState().availableLineWidthOverride();
         auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
         auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : constraints.logicalRect.width();
-        if (m_blockEllipsis)
-            availableTotalWidthForContent = std::min(availableTotalWidthForContent, constraints.logicalRect.width() - m_blockEllipsis->logicalWidth);
+        if (m_lineClamp.blockEllipsis)
+            availableTotalWidthForContent = std::min(availableTotalWidthForContent, constraints.logicalRect.width() - m_lineClamp.blockEllipsis->logicalWidth);
         return availableWidth(m_line, availableTotalWidthForContent, intrinsicWidthMode());
     }();
 
     auto lineHasContent = m_line.hasContent();
-    auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty() || m_blockEllipsis;
+    auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty() || m_lineClamp.blockEllipsis;
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
 
     if (auto minimumRequiredWidth = continuousInlineContent.minimumRequiredWidth(); minimumRequiredWidth && *minimumRequiredWidth > availableWidthForCandidateContent) {
         if (verticalPositionHasFloatOrInlineContent)
             lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Wrap, InlineContentBreaker::IsEndOfLine::Yes, { }, { } };
     } else {
-        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), verticalPositionHasFloatOrInlineContent, !m_wrapOpportunityList.isEmpty(), !!m_blockEllipsis };
+        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), verticalPositionHasFloatOrInlineContent, !m_wrapOpportunityList.isEmpty(), !!m_lineClamp.blockEllipsis };
         auto needsClonedDecorationHandling = inlineContent.hasTrailingClonedDecoration() || !m_line.inlineBoxListWithClonedDecorationEnd().isEmpty();
         if (needsClonedDecorationHandling)
             lineBreakingResult = handleInlineContentWithClonedDecoration(lineCandidate, lineStatus);
@@ -1530,7 +1530,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         m_lineLogicalRect = constraints.logicalRect;
         m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
         // Wrapping off an empty line means the block ellipsis left no room for any of the content.
-        m_blockEllipsisContentOnly = m_blockEllipsis && lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap;
+        m_lineClamp.blockEllipsisContentOnly = m_lineClamp.blockEllipsis && lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap;
     }
     m_candidateContentMaximumHeight = constraints.logicalRect.height();
     return result;
@@ -1806,6 +1806,17 @@ static const InlineItem& NODELETE wrapOpportunityToRevertTo(const WrapOpportunit
     return *wrapOpportunityList.last();
 }
 
+static size_t NODELETE inlineItemIndex(const InlineItem& inlineItem, const InlineItemRange& layoutRange, std::span<const InlineItem> inlineItemList, const std::optional<InlineTextItem>& partialLeadingTextItem)
+{
+    // The partial leading text item is not part of the inline item list, but it is where the range starts.
+    if (partialLeadingTextItem && &*partialLeadingTextItem == &inlineItem)
+        return layoutRange.startIndex();
+    auto index = layoutRange.startIndex();
+    while (index < layoutRange.endIndex() && &inlineItemList[index] != &inlineItem)
+        ++index;
+    return index;
+}
+
 LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCandidate, const InlineItemRange& layoutRange, const InlineContentBreaker::Result& lineBreakingResult)
 {
     auto& candidateRuns = lineCandidate.inlineContent.continuousContent().runs();
@@ -1845,15 +1856,19 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
         // If the second 'X' overflows the line, the trailing whitespace gets trimmed which introduces a stray inline box
         // on the first line ('X <span>' and 'X</span>' first and second line respectively).
         // In such cases we need to revert the content on the line to a previous wrapping opportunity to keep such content together.
-        if (m_blockEllipsis && !m_line.hasContent()) {
-            // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut"
-            // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
-            // Everything placed on the line so far (inline box starts, floats, out-of-flow boxes) moves to the next line together with the content.
-            auto& leadingInlineItem = candidateRuns.first().inlineItem;
-            auto isPartialLeadingItem = m_partialLeadingTextItem && &*m_partialLeadingTextItem == &leadingInlineItem;
-            auto placedInlineItemEnd = isPartialLeadingItem ? layoutRange.startIndex() : static_cast<size_t>(&leadingInlineItem - m_inlineItemList.data());
-            revertLineToStart(layoutRange, placedInlineItemEnd);
-            return { InlineContentBreaker::IsEndOfLine::Yes, { 0, true } };
+        if (m_lineClamp.blockEllipsis) {
+            // Room for the block ellipsis may have pushed the last piece of content off this line, while it would fit without the ellipsis.
+            auto& continuousContent = lineCandidate.inlineContent.continuousContent();
+            auto isLastContent = !lineCandidate.inlineContent.trailingLineBreak() && !nextContentfulInlineItem(inlineItemIndex(candidateRuns.last().inlineItem, layoutRange, m_inlineItemList, m_partialLeadingTextItem) + 1, layoutRange.endIndex());
+            m_lineClamp.isLastLineWithoutBlockEllipsis = isLastContent && continuousContent.logicalWidth() - continuousContent.trailingTrimmableWidth() <= availableWidth(m_line, m_lineLogicalRect.width(), intrinsicWidthMode());
+
+            if (!m_line.hasContent()) {
+                // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut"
+                // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+                // Everything placed on the line so far (inline box starts, floats, out-of-flow boxes) moves to the next line together with the content.
+                revertLineToStart(layoutRange, inlineItemIndex(candidateRuns.first().inlineItem, layoutRange, m_inlineItemList, m_partialLeadingTextItem));
+                return { InlineContentBreaker::IsEndOfLine::Yes, { 0, true } };
+            }
         }
         auto needsRevert = m_line.trimmableTrailingWidth() && !m_line.runs().isEmpty() && m_line.runs().last().isInlineBoxStart();
         if (needsRevert && m_wrapOpportunityList.size() > 1) {
@@ -1923,17 +1938,13 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
         return 1;
     }
 
-    size_t numberOfFloatsInRange = 0;
-    auto endOfCandidateContent = layoutRange.startIndex();
-    for (; endOfCandidateContent < layoutRange.endIndex(); ++endOfCandidateContent) {
-        if (m_inlineItemList[endOfCandidateContent].isFloat())
-            ++numberOfFloatsInRange;
-        if (&m_inlineItemList[endOfCandidateContent] == &lastInlineItemToAdd) {
-            ++endOfCandidateContent;
-            break;
-        }
-    }
+    auto endOfCandidateContent = inlineItemIndex(lastInlineItemToAdd, layoutRange, m_inlineItemList, m_partialLeadingTextItem) + 1;
     ASSERT(endOfCandidateContent < layoutRange.endIndex());
+    size_t numberOfFloatsInRange = 0;
+    for (auto index = layoutRange.startIndex(); index < endOfCandidateContent; ++index) {
+        if (m_inlineItemList[index].isFloat())
+            ++numberOfFloatsInRange;
+    }
 
     LineCandidate lineCandidate;
     auto candidateStartEndIndex = std::pair<size_t, size_t> { layoutRange.startIndex(), endOfCandidateContent };
@@ -1994,6 +2005,17 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
     return committedCount;
 }
 
+const InlineItem* LineBuilder::nextContentfulInlineItem(size_t index, size_t needsLayoutEnd) const
+{
+    // Look ahead to see if there's more content: inline type of inline items or a block level box (block-in-inline).
+    auto& formattingContext = this->formattingContext();
+    for (auto i = index; i < needsLayoutEnd && i < m_inlineItemList.size(); ++i) {
+        if (m_inlineItemList[i].isBlock() || isContentfulOrHasDecoration(m_inlineItemList[i], formattingContext))
+            return &m_inlineItemList[i];
+    }
+    return nullptr;
+}
+
 bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, size_t needsLayoutEnd, const Line::RunList& lineRuns) const
 {
     if (lineContent.partialTrailingContentLength)
@@ -2011,15 +2033,9 @@ bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, si
         }
         return false;
     }
-    // Look ahead to see if there's more inline type of inline items.
-    for (auto i = lineContent.range.endIndex(); i < needsLayoutEnd && i < m_inlineItemList.size(); ++i) {
-        // A block level box (block-in-inline) closes the inline content: whatever follows it starts after the block and can't extend this line, so this is the line's last inline content.
-        if (m_inlineItemList[i].isBlock())
-            return true;
-        if (isContentfulOrHasDecoration(m_inlineItemList[i], formattingContext))
-            return false;
-    }
-    return true;
+    // A block level box (block-in-inline) closes the inline content: whatever follows it starts after the block and can't extend this line, so this is the line's last inline content.
+    auto* nextContent = nextContentfulInlineItem(lineContent.range.endIndex(), needsLayoutEnd);
+    return !nextContent || nextContent->isBlock();
 }
 
 }

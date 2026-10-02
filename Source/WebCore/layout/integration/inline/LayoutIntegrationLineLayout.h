@@ -110,6 +110,7 @@ public:
     LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
     bool NODELETE hasEllipsisInBlockDirectionOnLastFormattedLine() const;
+    bool contentFitsWithinMaximumLines() const { return m_inlineContent && m_inlineContent->contentFitsWithinMaximumLines(); }
     bool contains(const RenderElement& renderer) const;
 
     bool NODELETE isPaginated() const;

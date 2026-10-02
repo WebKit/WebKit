@@ -87,6 +87,7 @@ private:
     };
     std::optional<InitialLetterOffsets> adjustLineRectForInitialLetterIfApplicable(const Box& floatBox);
     bool isLastLineWithInlineContent(const LineContent&, size_t needsLayoutEnd, const Line::RunList&) const;
+    const InlineItem* nextContentfulInlineItem(size_t index, size_t needsLayoutEnd) const;
     InlineContentBreaker::Result handleInlineContentWithClonedDecoration(const LineCandidate&, InlineContentBreaker::LineStatus);
     InlineLayoutUnit clonedDecorationAtBreakingPosition(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&) const;
     InlineLayoutUnit placedClonedDecorationWidth(const InlineContentBreaker::ContinuousContent::RunList&) const;
@@ -111,8 +112,12 @@ private:
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
     TextSpacingContext m_textSpacingContext { };
-    std::optional<BlockOverflowEllipsis> m_blockEllipsis;
-    bool m_blockEllipsisContentOnly { false };
+    struct LineClamp {
+        std::optional<BlockOverflowEllipsis> blockEllipsis;
+        bool blockEllipsisContentOnly { false };
+        bool isLastLineWithoutBlockEllipsis { false };
+    };
+    LineClamp m_lineClamp;
 };
 
 }
