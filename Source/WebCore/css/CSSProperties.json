@@ -2696,6 +2696,19 @@
                 "url": "https://www.w3.org/TR/css-logical/#border-color"
             }
         },
+        "border-block-end-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-end-start-radius", "border-end-end-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
+            }
+        },
         "border-block-end-style": {
             "animation-type": "discrete",
             "initial": "none",
@@ -2791,6 +2804,19 @@
             "specification": {
                 "category": "css-logical-props",
                 "url": "https://www.w3.org/TR/css-logical/#border-color"
+            }
+        },
+        "border-block-start-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-start-start-radius", "border-start-end-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
             }
         },
         "border-block-start-style": {
@@ -2919,6 +2945,19 @@
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://www.w3.org/TR/css3-background/#the-border-color"
+            }
+        },
+        "border-bottom-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-bottom-left-radius", "border-bottom-right-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
             }
         },
         "border-bottom-left-radius": {
@@ -3304,6 +3343,19 @@
                 "url": "https://www.w3.org/TR/css-logical/#border-color"
             }
         },
+        "border-inline-end-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-start-end-radius", "border-end-end-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
+            }
+        },
         "border-inline-end-style": {
             "animation-type": "discrete",
             "initial": "none",
@@ -3399,6 +3451,19 @@
             "specification": {
                 "category": "css-logical-props",
                 "url": "https://www.w3.org/TR/css-logical/#border-color"
+            }
+        },
+        "border-inline-start-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-start-start-radius", "border-end-start-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
             }
         },
         "border-inline-start-style": {
@@ -3529,6 +3594,19 @@
                 "url": "https://www.w3.org/TR/css3-background/#the-border-color"
             }
         },
+        "border-left-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-top-left-radius", "border-bottom-left-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
+            }
+        },
         "border-left-style": {
             "animation-type": "discrete",
             "initial": "none",
@@ -3645,6 +3723,19 @@
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://www.w3.org/TR/css3-background/#the-border-color"
+            }
+        },
+        "border-right-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-top-right-radius", "border-bottom-right-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
             }
         },
         "border-right-style": {
@@ -3843,6 +3934,19 @@
             "specification": {
                 "category": "css-backgrounds",
                 "url": "https://www.w3.org/TR/css3-background/#the-border-radius"
+            }
+        },
+        "border-top-radius": {
+            "codegen-properties": {
+                "settings-flag": "cssBorderRadiusSideShorthandsEnabled",
+                "longhands": ["border-top-left-radius", "border-top-right-radius"],
+                "parser-function": "consumeBorderRadiusSideShorthand",
+                "parser-grammar-unused": "<length-percentage [0,inf]>{1,2} [ / <length-percentage [0,inf]>{1,2} ]?",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands"
             }
         },
         "border-top-right-radius": {
