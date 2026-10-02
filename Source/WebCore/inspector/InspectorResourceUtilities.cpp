@@ -504,7 +504,7 @@ static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(Netwo
     return Inspector::Protocol::Network::Metrics::Priority::Medium;
 }
 
-Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
 
@@ -514,6 +514,10 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
     // The additional metrics are only captured while an inspector is attached
     // (InspectorInstrumentation::firstFrontendCreated enables it in the NetworkProcess).
     if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (additionalMetrics->initialPriority.has_value())
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority.value()));
+        else
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())

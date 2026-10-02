@@ -1940,8 +1940,10 @@ localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
+localizedStrings["Veryhigh @ Network Priority"] = "VeryHigh";
 /* Energy Impact: Very High */
 localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
+localizedStrings["Verylow @ Network Priority"] = "VeryLow";
 /* Title for Video Codec row in Media Sidebar */
 localizedStrings["Video Codec @ Media Sidebar"] = "Video Codec";
 /* Title for Video Details section in Media Sidebar */

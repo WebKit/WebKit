@@ -190,7 +190,7 @@ WEBCORE_EXPORT bool cachedResourceContent(WebCore::CachedResource&, String* resu
 WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const WebCore::HTTPHeaderMap&);
 
 // Timebase-independent: every field is either a plain scalar or relative to the load itself.
-WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const WebCore::NetworkLoadMetrics&);
+WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const WebCore::NetworkLoadMetrics&, const WebCore::CachedResource::Type&);
 
 // ResourceTiming's first four fields are absolute protocol timestamps, so the caller supplies
 // monotonicToProtocolSeconds to express them in whichever timebase its target reports on. The
