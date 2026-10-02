@@ -767,26 +767,26 @@ PASS Web Animations: property <height> from [calc-size(37px, 200px)] to [calc-si
 PASS Web Animations: property <height> from [calc-size(37px, 200px)] to [calc-size(37px, size * 2 + 3% + 17px)] at (0.75) should be [125px]
 PASS Web Animations: property <height> from [calc-size(37px, 200px)] to [calc-size(37px, size * 2 + 3% + 17px)] at (1) should be [100px]
 PASS Web Animations: property <height> from [calc-size(37px, 200px)] to [calc-size(37px, size * 2 + 3% + 17px)] at (1.25) should be [75px]
-FAIL CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px] assert_equals: expected "87.5px " but got "125px "
+PASS CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px]
 PASS CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (0) should be [100px]
-FAIL CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px] assert_equals: expected "137.5px " but got "25px "
-FAIL CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px] assert_equals: expected "150px " but got "0px "
-FAIL CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px] assert_equals: expected "162.5px " but got "0px "
-FAIL CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px] assert_equals: expected "87.5px " but got "125px "
+PASS CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px]
+PASS CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px]
+PASS CSS Transitions: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px]
+PASS CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px]
 PASS CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (0) should be [100px]
-FAIL CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px] assert_equals: expected "137.5px " but got "25px "
-FAIL CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px] assert_equals: expected "150px " but got "0px "
-FAIL CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px] assert_equals: expected "162.5px " but got "0px "
-FAIL CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px] assert_equals: expected "87.5px " but got "125px "
+PASS CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px]
+PASS CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px]
+PASS CSS Transitions with transition: all: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px]
+PASS CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px]
 PASS CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (0) should be [100px]
-FAIL CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px] assert_equals: expected "137.5px " but got "25px "
-FAIL CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px] assert_equals: expected "150px " but got "0px "
-FAIL CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px] assert_equals: expected "162.5px " but got "0px "
-FAIL Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px] assert_equals: expected "87.5px " but got "125px "
+PASS CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px]
+PASS CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px]
+PASS CSS Animations: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px]
+PASS Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (-0.25) should be [87.5px]
 PASS Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (0) should be [100px]
-FAIL Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px] assert_equals: expected "137.5px " but got "25px "
-FAIL Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px] assert_equals: expected "150px " but got "0px "
-FAIL Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px] assert_equals: expected "162.5px " but got "0px "
+PASS Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (0.75) should be [137.5px]
+PASS Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (1) should be [150px]
+PASS Web Animations: property <height> from [calc-size(auto, size)] to [50%] at (1.25) should be [162.5px]
 PASS CSS Transitions: property <height> from [calc-size(auto, size * 2)] to [50%] at (-0.25) should be [250px]
 PASS CSS Transitions: property <height> from [calc-size(auto, size * 2)] to [50%] at (0) should be [200px]
 PASS CSS Transitions: property <height> from [calc-size(auto, size * 2)] to [50%] at (0.75) should be [50px]
