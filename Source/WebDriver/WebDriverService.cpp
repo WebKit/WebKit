@@ -84,6 +84,12 @@ WebDriverService::~WebDriverService()
 #if ENABLE(WEBDRIVER_BIDI)
     SessionHost::removeBrowserTerminatedObserver(m_browserTerminatedObserver);
 #endif
+
+    // As the runloop is already gone, just explicitly cancel the pending
+    // CompletionHandlers to avoid ASSERTs when they're destructed without
+    // being called.
+    for (auto& request : m_pendingRequests)
+        request = nullptr;
 }
 
 static void printUsageStatement(const char* programName)
@@ -422,9 +428,73 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
     for (const auto& parameter : parameters)
         parametersObject->setString(parameter.key, parameter.value);
 
-    ((*this).*handler)(WTF::move(parametersObject), [this, actualReplyHandler = WTF::move(actualReplyHandler)](CommandResult&& result) mutable {
-        sendResponse(WTF::move(actualReplyHandler), WTF::move(result));
+    // Session-less commands should not be enqueued
+    // https://www.w3.org/TR/webdriver2/#processing-model
+    if (!parametersObject->getString("sessionId"_s)) {
+        // When replacing an existing session, though, we should wait as
+        // a normal command in order to avoid leaving the driver/browser
+        // in an inconsistent state.
+        if (handler != &WebDriverService::newSession || !m_replaceOnNewSession) {
+            ((*this).*handler)(WTF::move(parametersObject), [this, actualReplyHandler = WTF::move(actualReplyHandler)](CommandResult&& result) mutable {
+                sendResponse(WTF::move(actualReplyHandler), WTF::move(result));
+            });
+            return;
+        }
+
+        flushRequestQueueWithResult(CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID, "Current session will be replaced."_s));
+    }
+
+    enqueueOrDispatchRequest([this, protectedThis = protect(*this), parametersObject = WTF::move(parametersObject), handler, actualReplyHandler = WTF::move(actualReplyHandler)](std::optional<CommandResult> earlyResult) mutable {
+        if (earlyResult) {
+            sendResponse(WTF::move(actualReplyHandler), WTF::move(earlyResult.value()));
+            // No need to drive the queue forward as earlyResult is used when flushing the queue.
+            return;
+        }
+
+        ((*this).*handler)(WTF::move(parametersObject), [this, protectedThis = protect(*this), actualReplyHandler = WTF::move(actualReplyHandler)](CommandResult&& result) mutable {
+            sendResponse(WTF::move(actualReplyHandler), WTF::move(result));
+            dispatchNextPendingRequest();
+        });
     });
+}
+
+void WebDriverService::enqueueOrDispatchRequest(CompletionHandler<void(std::optional<CommandResult>)>&& request)
+{
+    if (!m_hasRunningRequest) {
+        m_hasRunningRequest = true;
+        request(std::nullopt);
+        return;
+    }
+
+    // Rely on the running request to eventually pump the next event
+    RELEASE_LOG(WebDriverClassic, "WebDriverService::enqueueOrDispatchRequest Already running a command, enqueuing the incoming one");
+    m_pendingRequests.append(WTF::move(request));
+}
+
+void WebDriverService::dispatchNextPendingRequest()
+{
+    // Run on the next iteration to avoid deep recursion in the case of a
+    // sequence of synchronous commands
+    RunLoop::mainSingleton().dispatch([this, protectedThis = protect(*this)] {
+        ASSERT(m_hasRunningRequest);
+        if (m_pendingRequests.isEmpty()) {
+            m_hasRunningRequest = false;
+            return;
+        }
+
+        RELEASE_LOG(WebDriverClassic, "WebDriverService::dispatchNextPendingRequest dispatching next pending request");
+        auto request = m_pendingRequests.takeFirst();
+        m_hasRunningRequest = true;
+        request(std::nullopt);
+    });
+}
+
+void WebDriverService::flushRequestQueueWithResult(CommandResult&& flushResult)
+{
+    auto requestsToFlush = std::exchange(m_pendingRequests, { });
+    for (auto& request : requestsToFlush)
+        request({ flushResult });
+    // Do not clear m_hasRunningRequest as a command might be in flight and we can't interrupt it.
 }
 
 void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&& result) const

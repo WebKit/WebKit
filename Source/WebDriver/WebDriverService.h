@@ -28,6 +28,8 @@
 #include "HTTPServer.h"
 #include "Session.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
@@ -159,6 +161,9 @@ private:
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
     void sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&&) const;
+    void enqueueOrDispatchRequest(CompletionHandler<void(std::optional<CommandResult>)>&&);
+    void dispatchNextPendingRequest();
+    void flushRequestQueueWithResult(CommandResult&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
     bool acceptHandshake(HTTPRequestHandler::Request&&) override;
@@ -182,6 +187,9 @@ private:
     const Ref<SessionHost::BrowserTerminatedObserver> m_browserTerminatedObserver;
 #endif
     RefPtr<Session> m_session;
+
+    Deque<CompletionHandler<void(std::optional<CommandResult>)>> m_pendingRequests;
+    bool m_hasRunningRequest { false };
 
     String m_targetAddress;
     uint16_t m_targetPort { 0 };
