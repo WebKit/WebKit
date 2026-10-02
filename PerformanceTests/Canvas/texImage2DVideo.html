@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style type="text/css">
+canvas {
+    width: 100px;
+    height: 100px;
+}
+video {
+    display: none;
+}
+</style>
+<canvas id="target" width="800" height="800"></canvas>
+<video id="source" crossorigin="anonymous" muted></video>
+<script src="../resources/runner.js"></script>
+<script src="../resources/webgl-utils.js"></script>
+<script>
+const canvas = document.getElementById('target');
+const video = document.getElementById('source');
+
+let gl = null;
+let program = null;
+let texture = null;
+
+function render() {
+    if (video.readyState >= video.HAVE_CURRENT_DATA) {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        // Use texImage2D to update texture with video frame
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+
+        // Draw the video frame on to a quad
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+}
+
+// Initialize
+video.src = 'resources/bip-bop-4300x4300.mp4';
+video.onloadeddata = () => {
+    const result = initWebGL(canvas);
+    if (result) {
+        gl = result.gl;
+        program = result.program;
+        texture = result.texture;
+
+        // Initialize texture with video dimensions
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+
+        video.play();
+        PerfTestRunner.measureRunsPerSecond({run: render});
+    }
+}
+</script>
+</body>
+</html>
