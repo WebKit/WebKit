@@ -1012,6 +1012,38 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     completionHandler(std::nullopt, resultElementBounds, resultInViewCenterPoint, isObscured);
 }
 
+void WebAutomationSessionProxy::frameViewportInLayoutViewport(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FloatRect>)>&& completionHandler)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page) {
+        String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        completionHandler(windowNotFoundErrorType, std::nullopt);
+        return;
+    }
+
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr frameView = coreLocalFrame ? coreLocalFrame->view() : nullptr;
+    if (!frameView) {
+        String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        completionHandler(windowNotFoundErrorType, std::nullopt);
+        return;
+    }
+
+    Ref mainFrame = coreLocalFrame->mainFrame();
+    RefPtr mainFrameView = mainFrame->virtualView();
+    if (!mainFrameView) {
+        String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        completionHandler(windowNotFoundErrorType, std::nullopt);
+        return;
+    }
+
+    auto originInMainFrameView = convertPointFromFrameClientToMainFrameView(frameView.get(), { });
+    auto origin = mainFrameView->absoluteToLayoutViewportPoint(mainFrameView->rootViewToContents(originInMainFrameView));
+
+    completionHandler(std::nullopt, WebCore::FloatRect { origin, frameView->visibleContentRect().size() });
+}
+
 void WebAutomationSessionProxy::getComputedRole(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
 {
     String errorType;
