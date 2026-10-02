@@ -1658,8 +1658,10 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         if (m_parameters.request.initialPriority().has_value())
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = m_parameters.request.initialPriority().value();
 
-        if (!(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority == m_parameters.request.priority()))
-            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(m_parameters.request.priority());
+        ResourceLoadPriority currentPriority = m_networkLoad ? m_networkLoad->currentRequest().priority() : m_parameters.request.priority();
+
+        if (!(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority == currentPriority))
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(currentPriority);
     }
 
     if (isSynchronous())
