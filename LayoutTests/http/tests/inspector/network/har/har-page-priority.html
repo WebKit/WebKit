@@ -45,7 +45,7 @@ function test()
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
             if (resources.length) {
-                console.log(`LOG: Got ${resources.length} resources`);
+                console.log(`Got ${resources.length} resources`);
                 let har = buildHAR(resources);
                 let localResources = WI.networkManager.processHAR({json: har});
 
