@@ -77,11 +77,11 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
 
     if (maximumLinesForBlockContainer) {
         // Ignore top level legacy line clamp for now.
-        if (m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy)
+        if (m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy && m_blockContainer->style().boxOrient() != BoxOrient::Vertical)
             return;
         // New, top level line clamp.
         m_isLineClampRoot = true;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), m_blockContainer->style().overflowContinue() != OverflowContinue::Auto, m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy });
         return;
     }
 
@@ -94,7 +94,7 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             return;
         }
         auto effectiveShouldDiscard = m_previousLineClamp->shouldDiscardOverflow  || m_blockContainer->style().overflowContinue() == OverflowContinue::Discard;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard, m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy });
         return;
     }
 }
@@ -125,7 +125,7 @@ inline LineClampUpdater::~LineClampUpdater()
     size_t lineCount = m_isLineClampRoot ? 0 : m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineClamp->maximumLines);
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
         lineCount = blockFlow->lineCount();
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy });
 }
 
 inline void LineClampUpdater::setMaximumLines(size_t maximumLines)
@@ -134,7 +134,7 @@ inline void LineClampUpdater::setMaximumLines(size_t maximumLines)
     if (!layoutState)
         return;
     m_isLineClampRoot = true;
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, m_blockContainer->style().overflowContinue() == OverflowContinue::Discard, m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy });
 }
 
 inline void LineClampUpdater::resetLineClamp()
