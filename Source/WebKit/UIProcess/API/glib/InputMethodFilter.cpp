@@ -71,6 +71,8 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     }
 
     m_context = context;
+    m_cursorLocation = { };
+    m_surrounding = { };
     if (!m_context)
         return;
 
@@ -213,6 +215,8 @@ void InputMethodFilter::notifyFocusedOut()
         return;
 
     cancelComposition();
+    m_cursorLocation = { };
+    m_surrounding = { };
     webkit_input_method_context_notify_focus_out(m_context.get());
 }
 
