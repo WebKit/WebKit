@@ -340,7 +340,7 @@ struct TraversalContext {
         return enclosingBlockNumberMap.get(*enclosingBlocks.last());
     }
 
-    void NODELETE popEnclosingBlock()
+    void popEnclosingBlock()
     {
         enclosingBlocks.removeLast();
     }
@@ -1633,7 +1633,7 @@ static void collapseRedundantFormWrappersRecursive(Item& item)
     }
 }
 
-static Node* NODELETE nodeFromJSHandle(JSHandleIdentifier identifier)
+static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);
     if (!object)

@@ -1,6 +1,4 @@
-[ iOS ] Modules/system-preview/ARKitBadgeSystemImage.mm
 bindings/js/ScriptControllerMac.mm
-bridge/objc/objc_class.mm
 [ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp

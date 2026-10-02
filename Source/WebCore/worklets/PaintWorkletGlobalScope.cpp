@@ -157,8 +157,10 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
     // FIXME: construct documentDefinition (step 22).
 
     // FIXME: we should only repaint affected custom paint images <https://bugs.webkit.org/show_bug.cgi?id=192322>.
-    if (responsibleDocument() && responsibleDocument()->renderView())
-        responsibleDocument()->renderView()->repaintRootContents();
+    if (RefPtr document = responsibleDocument()) {
+        if (CheckedPtr renderView = document->renderView())
+            renderView->repaintRootContents();
+    }
 
     return { };
 }

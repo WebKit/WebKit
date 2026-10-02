@@ -231,9 +231,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
 JSValue ObjcClass::fallbackObject(JSGlobalObject* lexicalGlobalObject, Instance* instance, PropertyName propertyName)
 {
     auto* objcInstance = downcast<ObjcInstance>(instance);
-    id targetObject = objcInstance->getObject();
-    
-    if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
+    if (![protect(objcInstance->getObject()) respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return jsUndefined();
 
     if (!propertyName.publicName())

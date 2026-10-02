@@ -93,8 +93,8 @@ void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString
         break;
     case AttributeNames::columnspanAttr:
     case AttributeNames::rowspanAttr:
-        if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
-            downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
+        if (CheckedPtr cell = dynamicDowncast<RenderTableCell>(renderer()); cell && hasTagName(mtdTag))
+            cell->colSpanOrRowSpanChanged();
         break;
     case AttributeNames::tabindexAttr:
         if (auto optionalTabIndex = parseHTMLInteger(newValue))

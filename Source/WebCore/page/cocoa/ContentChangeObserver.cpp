@@ -113,7 +113,7 @@ auto ContentChangeObserver::viewportVisibilityForElement(const Element& element)
     if (!page)
         return ViewportVisibility::Unknown;
 
-    RefPtr rootView = page->mainFrame().virtualView();
+    RefPtr rootView = protect(page->mainFrame())->virtualView();
     if (!rootView)
         return ViewportVisibility::Unknown;
 
@@ -841,8 +841,8 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
     , m_hadRenderer(element.renderer())
 {
     // FIXME: Should this use `isConsideredVisible` like the destructor instead of `isVisuallyHidden`?
-    if (m_contentChangeObserver.shouldObserveVisibilityChangeForElement(element))
-        m_wasHidden = isVisuallyHidden(protect(m_element));
+    if (m_contentChangeObserver->shouldObserveVisibilityChangeForElement(element))
+        m_wasHidden = isVisuallyHidden(m_element);
 }
 
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
@@ -851,51 +851,51 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     if (!m_wasHidden.has_value())
         return;
 
-    if (!m_contentChangeObserver.isConsideredActionableContent(protect(m_element), m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
+    if (!m_contentChangeObserver->isConsideredActionableContent(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
         return;
 
     auto wasVisible = !m_wasHidden.value();
-    auto isVisible = isConsideredVisible(protect(m_element));
+    auto isVisible = isConsideredVisible(m_element);
     if (!wasVisible && isVisible)
-        m_contentChangeObserver.elementDidBecomeVisible(protect(m_element));
+        m_contentChangeObserver->elementDidBecomeVisible(m_element);
     else if (wasVisible && !isVisible)
-        m_contentChangeObserver.elementDidBecomeHidden(protect(m_element));
+        m_contentChangeObserver->elementDidBecomeHidden(m_element);
 }
 
 #if ENABLE(TOUCH_EVENTS)
 ContentChangeObserver::TouchEventScope::TouchEventScope(Document& document, PlatformEvent::Type eventType)
     : m_contentChangeObserver(document.contentChangeObserver())
 {
-    m_contentChangeObserver.touchEventDidStart(eventType);
+    m_contentChangeObserver->touchEventDidStart(eventType);
 }
 
 ContentChangeObserver::TouchEventScope::~TouchEventScope()
 {
-    m_contentChangeObserver.touchEventDidFinish();
+    m_contentChangeObserver->touchEventDidFinish();
 }
 #endif
 
 ContentChangeObserver::MouseMovedScope::MouseMovedScope(Document& document)
     : m_contentChangeObserver(document.contentChangeObserver())
 {
-    m_contentChangeObserver.mouseMovedDidStart();
+    m_contentChangeObserver->mouseMovedDidStart();
 }
 
 ContentChangeObserver::MouseMovedScope::~MouseMovedScope()
 {
-    m_contentChangeObserver.mouseMovedDidFinish();
-    m_contentChangeObserver.resetHiddenTouchTarget();
+    m_contentChangeObserver->mouseMovedDidFinish();
+    m_contentChangeObserver->resetHiddenTouchTarget();
 }
 
 ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Document& document)
     : m_contentChangeObserver(document.contentChangeObserver())
 {
-    m_contentChangeObserver.styleRecalcDidStart();
+    m_contentChangeObserver->styleRecalcDidStart();
 }
 
 ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope()
 {
-    m_contentChangeObserver.styleRecalcDidFinish();
+    m_contentChangeObserver->styleRecalcDidFinish();
 }
 
 ContentChangeObserver::DOMTimerScope::DOMTimerScope(Document* document, const DOMTimer& domTimer)

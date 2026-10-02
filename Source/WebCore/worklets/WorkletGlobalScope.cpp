@@ -121,7 +121,7 @@ String WorkletGlobalScope::userAgent(const URL& url) const
 void WorkletGlobalScope::evaluate()
 {
     if (m_code)
-        script()->evaluate(*m_code);
+        protect(script())->evaluate(*m_code);
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#parse-a-url
@@ -176,7 +176,7 @@ void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, co
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(!isMainThread());
-    script()->loadAndEvaluateModule(moduleURL, credentials, WTF::move(completionHandler));
+    protect(script())->loadAndEvaluateModule(moduleURL, credentials, WTF::move(completionHandler));
 }
 
 MessagePortChannelProvider& WorkletGlobalScope::messagePortChannelProvider()

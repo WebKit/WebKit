@@ -5792,7 +5792,7 @@ ExceptionOr<void> Internals::postSystemRemoteControlCommand(const String& comman
 void Internals::activeAudioRouteDidChange(bool shouldPause)
 {
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    MediaSessionHelper::sharedHelper().activeAudioRouteDidChange(shouldPause ? MediaSessionHelperClient::ShouldPause::Yes : MediaSessionHelperClient::ShouldPause::No);
+    protect(MediaSessionHelper::sharedHelper())->activeAudioRouteDidChange(shouldPause ? MediaSessionHelperClient::ShouldPause::Yes : MediaSessionHelperClient::ShouldPause::No);
 #else
     UNUSED_PARAM(shouldPause);
 #endif

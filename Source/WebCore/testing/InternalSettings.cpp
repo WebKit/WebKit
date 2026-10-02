@@ -485,10 +485,11 @@ ExceptionOr<bool> InternalSettings::shouldDisplayTrackKind(TrackKind kind)
 
 ExceptionOr<void> InternalSettings::setEditableRegionEnabled(bool enabled)
 {
-    if (!m_page)
+    RefPtr page = m_page;
+    if (!page)
         return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(EDITABLE_REGION)
-    m_page->setEditableRegionEnabled(enabled);
+    page->setEditableRegionEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

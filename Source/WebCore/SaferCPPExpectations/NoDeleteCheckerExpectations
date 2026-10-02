@@ -5,8 +5,6 @@ layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 page/EventHandler.cpp
-[ iOS ] page/Quirks.cpp
-page/text-extraction/TextExtraction.cpp
 rendering/GridLanesLayout.cpp
 rendering/RenderGeometryMap.cpp
 rendering/StyledMarkedText.cpp

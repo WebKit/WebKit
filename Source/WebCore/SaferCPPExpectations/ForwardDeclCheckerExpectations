@@ -14,8 +14,6 @@ html/HTMLMediaElement.cpp
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h
-page/Page.h
-[ iOS ] page/cocoa/ContentChangeObserver.h
 platform/PODRedBlackTree.h
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/graphics/ca/PlatformCALayer.h

@@ -58,10 +58,10 @@ static NSBundle *arKitBundle()
 
 static RetainPtr<CGPDFPageRef> loadARKitPDFPage(NSString *imageName)
 {
-    NSURL *url = [protect(arKitBundle()) URLForResource:imageName withExtension:@"pdf"];
+    RetainPtr url = [protect(arKitBundle()) URLForResource:imageName withExtension:@"pdf"];
     if (!url)
         return nullptr;
-    auto document = adoptCF(CGPDFDocumentCreateWithURL((CFURLRef)url));
+    RetainPtr document = adoptCF(CGPDFDocumentCreateWithURL((CFURLRef)url.get()));
     if (!document)
         return nullptr;
     if (!CGPDFDocumentGetNumberOfPages(document.get()))

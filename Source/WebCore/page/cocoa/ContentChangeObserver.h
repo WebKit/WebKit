@@ -28,6 +28,7 @@
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 
 #include <WebCore/CSSPropertyNames.h>
+#include <WebCore/DOMTimer.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
 #include <WebCore/PlatformEvent.h>
@@ -104,8 +105,8 @@ public:
         ~StyleChangeScope();
 
     private:
-        ContentChangeObserver& m_contentChangeObserver;
-        const Element& m_element;
+        const Ref<ContentChangeObserver> m_contentChangeObserver;
+        const Ref<const Element> m_element;
         std::optional<bool> m_wasHidden;
         bool m_hadRenderer { false };
     };
@@ -116,7 +117,7 @@ public:
         WEBCORE_EXPORT TouchEventScope(Document&, PlatformEvent::Type);
         WEBCORE_EXPORT ~TouchEventScope();
     private:
-        ContentChangeObserver& m_contentChangeObserver;
+        const Ref<ContentChangeObserver> m_contentChangeObserver;
     };
 #endif
 
@@ -125,7 +126,7 @@ public:
         WEBCORE_EXPORT MouseMovedScope(Document&);
         WEBCORE_EXPORT ~MouseMovedScope();
     private:
-        ContentChangeObserver& m_contentChangeObserver;
+        const Ref<ContentChangeObserver> m_contentChangeObserver;
     };
 
     class StyleRecalcScope {
@@ -133,7 +134,7 @@ public:
         StyleRecalcScope(Document&);
         ~StyleRecalcScope();
     private:
-        ContentChangeObserver& m_contentChangeObserver;
+        const Ref<ContentChangeObserver> m_contentChangeObserver;
     };
 
     class DOMTimerScope {
@@ -141,8 +142,8 @@ public:
         DOMTimerScope(Document*, const DOMTimer&);
         ~DOMTimerScope();
     private:
-        ContentChangeObserver* m_contentChangeObserver { nullptr };
-        const DOMTimer& m_domTimer;
+        const RefPtr<ContentChangeObserver> m_contentChangeObserver;
+        const Ref<const DOMTimer> m_domTimer;
     };
 
 private:

@@ -248,8 +248,8 @@ void MathMLPresentationElement::attributeChanged(const QualifiedName& name, cons
 {
     if (name == mathvariantAttr && acceptsLegacyMathVariantAttribute()) {
         m_mathVariant = std::nullopt;
-        if (renderer())
-            MathMLStyle::resolveMathMLStyleTree(renderer());
+        if (CheckedPtr renderer = this->renderer())
+            MathMLStyle::resolveMathMLStyleTree(renderer);
     }
 
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

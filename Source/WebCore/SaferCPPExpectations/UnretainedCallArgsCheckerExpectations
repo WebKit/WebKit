@@ -1,5 +1,4 @@
 bridge/objc/WebScriptObject.mm
-bridge/objc/objc_utility.mm
 platform/cocoa/UserAgentCocoa.mm
 platform/cocoa/WebAVPlayerLayer.mm
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm

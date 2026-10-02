@@ -108,7 +108,7 @@ public:
 
     bool shouldAllowMixedContentConnectionToLoopback(const URL&);
 
-    bool NODELETE shouldOpenAsAboutBlank(const String&) const;
+    bool shouldOpenAsAboutBlank(const String&) const;
 
     bool shouldBypassBackForwardCache() const;
 
@@ -169,7 +169,7 @@ public:
 
     WEBCORE_EXPORT bool shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node&) const;
 
-    bool NODELETE needsFacebookStoriesCreationFormQuirk(const Element&, const Style::ComputedStyle&) const;
+    bool needsFacebookStoriesCreationFormQuirk(const Element&, const Style::ComputedStyle&) const;
 
     enum class TikTokOverflowingContentQuirkType : bool { VideoSectionQuirk, CommentsSectionQuirk };
     std::optional<TikTokOverflowingContentQuirkType> needsTikTokOverflowingContentQuirk(const Element&, const Style::ComputedStyle& parentStyle) const;

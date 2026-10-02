@@ -114,7 +114,7 @@ ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue v
                 
             RefPtr rootObject = findRootObject(globalObject);
             result.objectValue = rootObject
-                ? (__bridge CFTypeRef)[webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject.get() rootObject:rootObject.get()]
+                ? (__bridge CFTypeRef)[webScriptObjectClassSingleton() _convertValueToObjcValue:value originRootObject:originRootObject.get() rootObject:rootObject.get()]
                 : nil;
         }
         break;
@@ -193,7 +193,7 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, id obj, Roo
 
     if (auto *str = dynamic_objc_cast<NSString>(obj))
         return convertNSStringToString(lexicalGlobalObject, str);
-    if ([obj isKindOfClass:webUndefinedClass()])
+    if ([obj isKindOfClass:webUndefinedClassSingleton()])
         return jsUndefined();
     if ((__bridge CFBooleanRef)obj == kCFBooleanTrue)
         return jsBoolean(true);
@@ -203,7 +203,7 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, id obj, Roo
         return jsNumber([obj doubleValue]);
     if ([obj isKindOfClass:[NSArray class]])
         return RuntimeArray::create(lexicalGlobalObject, new ObjcArray(obj, rootObject));
-    if ([obj isKindOfClass:webScriptObjectClass()]) {
+    if ([obj isKindOfClass:webScriptObjectClassSingleton()]) {
         JSObject* imp = [obj _imp];
         return imp ? imp : jsUndefined();
     }

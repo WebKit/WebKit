@@ -293,7 +293,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 if (resourceType.containsAny({ ResourceType::TopDocument, ResourceType::ChildDocument }))
                     initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
                 else if (currentDocument)
-                    currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
+                    protect(currentDocument->extensionStyleSheets())->addDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
             }, [&](const NotifyAction& actionData) {
                 results.summary.hasNotifications = true;
                 result.notifications.append(actionData.string);
@@ -357,7 +357,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 if (resourceType.containsAny({ ResourceType::TopDocument, ResourceType::ChildDocument }))
                     initiatingDocumentLoader.addPendingContentExtensionSheet(contentRuleListIdentifier, *styleSheetContents);
                 else if (currentDocument)
-                    currentDocument->extensionStyleSheets().maybeAddContentExtensionSheet(contentRuleListIdentifier, *styleSheetContents);
+                    protect(currentDocument->extensionStyleSheets())->maybeAddContentExtensionSheet(contentRuleListIdentifier, *styleSheetContents);
             }
         }
 
@@ -385,7 +385,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"_s))
                     || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/gtm.js"_s)))) {
                 if (RefPtr frame = currentDocument->frame())
-                    frame->script().evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s, JSC::SourceTaintedOrigin::Untainted });
+                    protect(frame->script())->evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s, JSC::SourceTaintedOrigin::Untainted });
             }
         }
     }
