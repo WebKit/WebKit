@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSSOM View Test: scrolling to the fragment of a same-origin embedded HTML document scrolls the parent document</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#scroll-a-target-into-view">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#scroll-to-the-fragment-identifier">
+<meta name="assert" content="Scroll a target into view continues through same-origin ancestor viewports, so a fragment scroll in a same-origin embedded HTML document also scrolls the parent document to the embedding element.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin:0">
+<div id="container" style="padding-block:3000px"></div>
+<script>
+async function loadEmbeddedHTML(t, tagName, urlAttribute) {
+  window.scrollTo(0, 0);
+  const element = document.createElement(tagName);
+  element.width = 394;
+  element.height = 322;
+  element.style.border = "0"; // A border would offset the scroll position by its width.
+  t.add_cleanup(() => { element.remove(); window.scrollTo(0, 0); });
+  const loaded = new Promise(resolve => element.addEventListener("load", resolve, { once: true }));
+  element[urlAttribute] = "support/scroll-to-fragment-target.html#t";
+  document.getElementById("container").append(element);
+  await loaded;
+  return element;
+}
+
+promise_test(async t => {
+  const element = await loadEmbeddedHTML(t, "object", "data");
+  await t.step_wait(() => window.scrollY == element.offsetTop, "parent document scrolled to the <object>");
+}, "Scrolling to the fragment of an HTML document in an <object> scrolls the parent document to the <object>");
+
+promise_test(async t => {
+  const element = await loadEmbeddedHTML(t, "embed", "src");
+  await t.step_wait(() => window.scrollY == element.offsetTop, "parent document scrolled to the <embed>");
+}, "Scrolling to the fragment of an HTML document in an <embed> scrolls the parent document to the <embed>");
+
+promise_test(async t => {
+  const element = await loadEmbeddedHTML(t, "iframe", "src");
+  await t.step_wait(() => window.scrollY == element.offsetTop, "parent document scrolled to the <iframe>");
+}, "Scrolling to the fragment of an HTML document in an <iframe> scrolls the parent document to the <iframe>");
+</script>
+</body>
