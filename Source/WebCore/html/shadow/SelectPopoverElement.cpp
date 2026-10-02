@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SelectPopoverElement.h"
 
+#include "AXObjectCache.h"
 #include "Document.h"
 #include "HTMLSelectElement.h"
 #include "ShadowRoot.h"
@@ -79,6 +80,8 @@ void SelectPopoverElement::popoverWasHidden()
 {
     if (RefPtr select = selectElement()) {
         select->setPopupIsVisible(false);
+        if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+            cache->onSelectPickerHidden(*this);
         select->focus();
     }
 }

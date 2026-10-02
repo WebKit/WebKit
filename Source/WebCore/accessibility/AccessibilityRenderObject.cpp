@@ -1021,11 +1021,11 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     AX_ASSERT(m_initialized);
 #endif
 
-    if (is<SelectPopoverElement>(node())) {
-        // The base-appearance select popover (Menu) must always be included so that it
-        // properly wraps the menu items. Check before the !m_renderer bailout
-        // because the popover has display:contents (no renderer) when closed.
-        return false;
+    if (RefPtr popover = dynamicDowncast<SelectPopoverElement>(node())) {
+        // The base-appearance select popover (Menu) must be included while it's open so that it
+        // properly wraps the menu items. Like the menu of a native pop-up button, it isn't exposed
+        // while closed. Check before the !m_renderer bailout, because the popover has no renderer when closed.
+        return !popover->isPopoverShowing();
     }
 
     if (!m_renderer)

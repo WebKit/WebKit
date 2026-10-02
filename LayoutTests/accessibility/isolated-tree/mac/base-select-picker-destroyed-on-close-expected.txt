@@ -1,0 +1,28 @@
+This test ensures that, like the menu of a native pop-up button, the accessibility objects of a base-appearance select's picker are destroyed when it closes, before focus moves back to the select. Otherwise, VoiceOver stays on the hidden option it was on, rather than following focus back to the select.
+
+A closed picker isn't exposed.
+PASS: select.childrenCount === 0
+PASS: webArea.uiElementForSearchPredicate(select, true, 'AXAnyTypeSearchKey', '', false).domIdentifier === 'after'
+
+Open the picker, then press an option to close it.
+PASS: menu.role === 'AXRole: '
+PASS: focusedOption.role === 'AXRole: '
+PASS: select.childrenCount === 0
+PASS: webArea.uiElementForSearchPredicate(select, true, 'AXAnyTypeSearchKey', '', false).domIdentifier === 'after'
+PASS: pressedOption.role === 'AXRole: '
+PASS: window.focusedOptionRoleWhenFocusReturned === 'AXRole: '
+PASS: select.stringValue.includes('Charlie') === true
+
+Reopen the picker, then press escape to close it.
+PASS: focusedOption.role.toLowerCase().includes('menuitem') === true
+PASS: focusedOption.parentElement().isEqual(menu) === true
+PASS: menu.parentElement().isEqual(select) === true
+PASS: menu.role === 'AXRole: '
+PASS: focusedOption.role === 'AXRole: '
+PASS: select.childrenCount === 0
+PASS: webArea.uiElementForSearchPredicate(select, true, 'AXAnyTypeSearchKey', '', false).domIdentifier === 'after'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  After

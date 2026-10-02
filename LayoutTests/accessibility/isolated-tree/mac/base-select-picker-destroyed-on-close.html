@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<button id="before">Before</button>
+<select id="select">
+    <option id="alpha">Alpha</option>
+    <option id="bravo" selected>Bravo</option>
+    <option id="charlie">Charlie</option>
+</select>
+<button id="after">After</button>
+
+<script>
+var output = "This test ensures that, like the menu of a native pop-up button, the accessibility objects of a base-appearance select's picker are destroyed when it closes, before focus moves back to the select. Otherwise, VoiceOver stays on the hidden option it was on, rather than following focus back to the select.\n\n";
+
+var webArea, select, menu, focusedOption, pressedOption;
+
+async function openPicker(expectedFocusedOptionID) {
+    select.press();
+    await waitFor(() => select.isExpanded);
+    menu = await waitForBaseSelectMenu(select, 3);
+    await waitFor(() => {
+        focusedOption = accessibilityController.focusedElement;
+        return focusedOption && focusedOption.domIdentifier == expectedFocusedOptionID;
+    });
+}
+
+async function verifyPickerWasDestroyed() {
+    await waitFor(() => !select.isExpanded);
+    await waitFor(() => accessibilityController.focusedElement && accessibilityController.focusedElement.domIdentifier == "select");
+    output += await expectAsync("menu.role", "'AXRole: '");
+    output += await expectAsync("focusedOption.role", "'AXRole: '");
+    output += await expectAsync("select.childrenCount", "0");
+    output += expect("webArea.uiElementForSearchPredicate(select, true, 'AXAnyTypeSearchKey', '', false).domIdentifier", "'after'");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        output += "A closed picker isn't exposed.\n";
+        output += expect("select.childrenCount", "0");
+        output += expect("webArea.uiElementForSearchPredicate(select, true, 'AXAnyTypeSearchKey', '', false).domIdentifier", "'after'");
+
+        document.getElementById("select").focus();
+        await waitFor(() => accessibilityController.focusedElement && accessibilityController.focusedElement.domIdentifier == "select");
+
+        // When focus moves back to the select, the option that was focused (where VoiceOver was) should already be gone.
+        window.focusedOptionRoleWhenFocusReturned = null;
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification != "AXFocusChanged" || !focusedOption || window.focusedOptionRoleWhenFocusReturned)
+                return;
+            let focusedElement = accessibilityController.focusedElement;
+            if (focusedElement && focusedElement.domIdentifier == "select")
+                window.focusedOptionRoleWhenFocusReturned = focusedOption.role;
+        });
+
+        output += "\nOpen the picker, then press an option to close it.\n";
+        await openPicker("bravo");
+        pressedOption = menu.childAtIndex(2);
+        pressedOption.press();
+        await verifyPickerWasDestroyed();
+        output += await expectAsync("pressedOption.role", "'AXRole: '");
+        output += expect("window.focusedOptionRoleWhenFocusReturned", "'AXRole: '");
+        output += expect("select.stringValue.includes('Charlie')", "true");
+        accessibilityController.removeNotificationListener();
+
+        output += "\nReopen the picker, then press escape to close it.\n";
+        await openPicker("charlie");
+        output += expect("focusedOption.role.toLowerCase().includes('menuitem')", "true");
+        output += expect("focusedOption.parentElement().isEqual(menu)", "true");
+        output += expect("menu.parentElement().isEqual(select)", "true");
+        eventSender.keyDown("escape");
+        await verifyPickerWasDestroyed();
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -2954,6 +2954,28 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 #endif
 }
 
+void AXObjectCache::onSelectPickerHidden(SelectPopoverElement& picker)
+{
+    // Like the menu of a native pop-up button, destroy the picker's accessibility objects when it closes, rather than keep
+    // them around, hidden, as descendants of the select. An assistive technology positioned on one of them would otherwise
+    // consider that position valid, and might not follow focus back to the select. VoiceOver, for instance, doesn't move
+    // when focus moves to an ancestor of where it already is. This is called before focus moves back to the select.
+    Vector<Ref<Node>> nodesToRemove;
+    for (Ref node : composedTreeDescendants</* InlineContextCapacity */ 0>(picker)) {
+        if (get(node.get()))
+            nodesToRemove.append(WTF::move(node));
+    }
+    for (Ref node : nodesToRemove)
+        remove(node.get());
+    remove(picker);
+
+    if (RefPtr axSelect = get(picker.selectElement())) {
+        childrenChanged(axSelect.get());
+        // Since the picker's object is gone, onPopoverToggle() won't post this for the picker closing.
+        postNotification(*axSelect, AXNotification::ExpandedChanged);
+    }
+}
+
 void AXObjectCache::onSelectedOptionChanged(Element& element)
 {
     if (hasCellARIARole(element))
