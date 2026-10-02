@@ -165,6 +165,73 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
     return responseObject;
 }
 
+static Inspector::Protocol::Network::LoadPriority toProtocol(NetworkLoadPriority priority)
+{
+    switch (priority) {
+    case NetworkLoadPriority::Verylow:
+        return Inspector::Protocol::Network::LoadPriority::Verylow;
+    case NetworkLoadPriority::Low:
+        return Inspector::Protocol::Network::LoadPriority::Low;
+    case NetworkLoadPriority::Medium:
+        return Inspector::Protocol::Network::LoadPriority::Medium;
+    case NetworkLoadPriority::High:
+        return Inspector::Protocol::Network::LoadPriority::High;
+    case NetworkLoadPriority::Veryhigh:
+        return Inspector::Protocol::Network::LoadPriority::Veryhigh;
+    case NetworkLoadPriority::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::LoadPriority::Medium;
+}
+
+static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+{
+    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
+
+    if (!networkLoadMetrics.protocol.isNull())
+        metrics->setProtocol(networkLoadMetrics.protocol);
+    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+        metrics->setInitialPriority(toProtocol(additionalMetrics->initialPriority));
+
+        if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
+            metrics->setPriority(toProtocol(additionalMetrics->priority));
+        if (!additionalMetrics->remoteAddress.isNull())
+            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
+        if (!additionalMetrics->connectionIdentifier.isNull())
+            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
+        if (!additionalMetrics->requestHeaders.isEmpty())
+            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
+        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
+        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
+        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
+            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
+        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
+    }
+
+    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
+    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
+
+    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
+        .release();
+
+    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+        if (!additionalMetrics->tlsProtocol.isEmpty())
+            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
+        if (!additionalMetrics->tlsCipher.isEmpty())
+            connectionPayload->setCipher(additionalMetrics->tlsCipher);
+    }
+
+    metrics->setSecurityConnection(WTF::move(connectionPayload));
+
+    return metrics;
+}
+
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
     : InspectorAgentBase("Network"_s, context)
     , m_frontendDispatcher(makeUniqueRef<NetworkFrontendDispatcher>(context.frontendRouter))

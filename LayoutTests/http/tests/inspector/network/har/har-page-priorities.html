@@ -97,11 +97,11 @@ function test()
 <h1>HAR Priorities Test.</h1>
 <h2>First image</h2>
 <img src="/resources/square100.png?1" width="100" height="100" alt="A 100x100 Square" />
-<h2>Boosted image is first of the duplicated set</h2>
+<h2>Priority boosted image is first of the duplicated set</h2>
 <img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" fetchpriority="high" />
 <h2>Another image</h2>
 <img src="/resources/square100.png?3" width="100" height="100" alt="A 100x100 Square" />
-<h2>The second of the duplicated set</h2>
+<h2>The second image of the duplicated set</h2>
 <img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" />
 <script>
 navigator.sendBeacon("http://127.0.0.1:8000/blink/sendbeacon/resources/save-beacon.py?name=priorities", "SameOrigin");
