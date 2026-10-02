@@ -83,15 +83,11 @@ bool URLMatch::RefinementSet::matchesPathPattern(const URL& url) const
     case PathComparison::PathContains:
         return url.path().contains(pathPattern);
     case PathComparison::PathStartsWith:
-        return startsWithLettersIgnoringASCIICase(url.path(), pathPattern);
+        return url.path().startsWith(pathPattern);
     case PathComparison::PathIs:
         return url.path() == pathPattern;
-    case PathComparison::PathOrFragmentContains:
-        return url.path().contains(pathPattern) || url.fragmentIdentifier().contains(pathPattern);
     case PathComparison::LastPathComponentIs:
         return url.lastPathComponent() == pathPattern;
-    case PathComparison::LastPathComponentStartsWith:
-        return url.lastPathComponent().startsWith(pathPattern);
     case PathComparison::LastPathComponentEndsWith:
         return url.lastPathComponent().endsWith(pathPattern);
     }
@@ -106,6 +102,9 @@ bool URLMatch::RefinementSet::matches(const URLMatchContext& context) const
         return false;
 
     if (!queryPattern.isNull() && !context.url().query().contains(queryPattern))
+        return false;
+
+    if (!fragmentPattern.isNull() && !context.url().fragmentIdentifier().contains(fragmentPattern))
         return false;
 
     if (environment && !evaluateURLEnvironment(*environment))
