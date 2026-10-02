@@ -34,10 +34,10 @@ function test()
 
             let resources = [];
             for (let target of WI.targetManager.targets) {
-                if (target.isProvisional)
+                if (!target || target.isProvisional)
                     continue;
 
-                if (target.type === WI.Target.Type.Frame && target.networkManager?.mainFrame) {
+                if (target.networkManager && target.networkManager.mainFrame) {
                     let frame = target.networkManager.mainFrame;
                     if (frame.mainResource)
                         resources.push(frame.mainResource);
