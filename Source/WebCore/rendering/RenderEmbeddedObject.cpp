@@ -39,8 +39,10 @@
 #include "HTMLParamElement.h"
 #include "HTMLPlugInElement.h"
 #include "HitTestResult.h"
+#include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -50,9 +52,11 @@
 #include "RenderBoxInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGRoot.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidgetInlines.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "SystemFontDatabase.h"
 #include "Text.h"
@@ -105,6 +109,42 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
     if (!pluginViewBase)
         return false;
     return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
+}
+
+static RefPtr<SVGSVGElement> embeddedSVGElement(const RenderWidget& renderer)
+{
+    RefPtr frameView = dynamicDowncast<LocalFrameView>(renderer.widget());
+    if (!frameView)
+        return nullptr;
+    CheckedPtr svgRoot = frameView->embeddedSVGRoot();
+    if (!svgRoot)
+        return nullptr;
+    if (CheckedPtr modernRoot = dynamicDowncast<RenderSVGRoot>(svgRoot.get()))
+        return &modernRoot->svgSVGElement();
+    if (CheckedPtr legacyRoot = dynamicDowncast<LegacyRenderSVGRoot>(svgRoot.get()))
+        return &legacyRoot->svgSVGElement();
+    return nullptr;
+}
+
+bool RenderEmbeddedObject::shouldRespectZeroIntrinsicWidth() const
+{
+    if (RefPtr svgElement = embeddedSVGElement(*this))
+        return svgElement->hasIntrinsicWidth();
+    return false;
+}
+
+bool RenderEmbeddedObject::shouldRespectZeroIntrinsicHeight() const
+{
+    RefPtr svgElement = embeddedSVGElement(*this);
+    if (!svgElement || !svgElement->hasIntrinsicHeight())
+        return false;
+    // A natural height of 0 is respected unless a natural width together with an
+    // aspect ratio can derive a non-zero height, in which case the derived height
+    // wins. The ratio may come from the SVG's viewBox or the CSS aspect-ratio
+    // property; see https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765.
+    if (!svgElement->hasIntrinsicWidth())
+        return true;
+    return svgElement->currentViewBoxRect().isEmpty() && !style().aspectRatio().hasRatio();
 }
 
 ScrollableArea* RenderEmbeddedObject::scrollableArea() const
