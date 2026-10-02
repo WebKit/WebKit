@@ -55,12 +55,7 @@ static bool didExitFullscreen;
 
 namespace TestWebKitAPI {
 
-// FIXME: Re-enable this test once webkit.org/b/248093 is resolved. Flaky timeout on Sonoma+ rdar://136717743
-#if (!defined(NDEBUG) || PLATFORM(MAC))
-TEST(Fullscreen, DISABLED_Focus)
-#else
 TEST(Fullscreen, Focus)
-#endif
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences].elementFullscreenEnabled = YES;

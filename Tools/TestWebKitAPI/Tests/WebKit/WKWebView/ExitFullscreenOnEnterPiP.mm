@@ -70,12 +70,7 @@ static bool pipDidExitFullscreen;
 
 namespace TestWebKitAPI {
 
-// FIXME: Re-enable this test once webkit.org/b/248093 is resolved.
-#if !defined(NDEBUG)
-TEST(ExitFullscreenOnEnterPiP, DISABLED_VideoFullscreen)
-#else
 TEST(ExitFullscreenOnEnterPiP, VideoFullscreen)
-#endif
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences].elementFullscreenEnabled = YES;
@@ -104,9 +99,7 @@ TEST(ExitFullscreenOnEnterPiP, VideoFullscreen)
     TestWebKitAPI::Util::run(&didExitPiP);
 }
 
-// FIXME: Re-enable this test for Big Sur once webkit.org/b/245241 is resolved
-// FIXME: Re-enable this test once webkit.org/b/248093 is resolved.
-TEST(ExitFullscreenOnEnterPiP, DISABLED_ElementFullscreen)
+TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
 {
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{
         @"WebCoreLogging": @"Fullscreen=debug",
