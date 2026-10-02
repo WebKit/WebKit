@@ -8729,6 +8729,7 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
         if (!context)
             return completionHandler(makeUnexpected<ResourceError>({ }));
 
+        context->setImageInterpolationQuality(WebCore::InterpolationQuality::High);
         context->drawNativeImage(*nativeImage, FloatRect({ }, roundedDestinationSize), FloatRect({ }, sourceSize), { CompositeOperator::Copy });
 
         completionHandler(bitmap.releaseNonNull());
