@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.Search.Frontend");
+
+    // Assembled at runtime so this script's own text never matches, and never logged.
+    const needle = ["global", "search", "needle"].join("-");
+
+    function describeMatch(node) {
+        let url = new URL(node.ownerDocument.documentURL);
+        return url.pathname.substring(url.pathname.lastIndexOf("/") + 1) + " owningTarget=" + (node.owningTarget ? "frame target" : "none");
+    }
+
+    suite.addTestCase({
+        name: "DOM.Search.Frontend.OneMatchPerDocument",
+        description: "A search should report the match in the main document and in the same-origin iframe once each, with or without site isolation.",
+        async test() {
+            await WI.domManager.requestDocument();
+            // Give frame targets, if any, time to produce their documents.
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            let nodes = await WI.domManager.performSearch(needle);
+            InspectorTest.expectEqual(nodes.length, 2, "Should find one match per document.");
+            for (let description of nodes.map(describeMatch).sort())
+                InspectorTest.log(description);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.Search.Frontend.CaseSensitive",
+        description: "caseSensitive should be honored.",
+        async test() {
+            InspectorTest.expectEqual((await WI.domManager.performSearch(needle.toUpperCase(), {caseSensitive: true})).length, 0, "Case-sensitive search with the wrong case should find nothing.");
+            InspectorTest.expectEqual((await WI.domManager.performSearch(needle.toUpperCase(), {caseSensitive: false})).length, 2, "Case-insensitive search should find both matches.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.Search.Frontend.NoResults",
+        description: "A query with no matches should resolve to an empty array.",
+        async test() {
+            let nodes = await WI.domManager.performSearch(["absent", "query", "zz"].join("-"));
+            InspectorTest.expectEqual(nodes.length, 0, "Should find nothing.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.Search.Frontend.Superseded",
+        description: "Starting a new search should make the previous one resolve to null.",
+        async test() {
+            let first = WI.domManager.performSearch(needle);
+            let second = WI.domManager.performSearch(needle);
+            InspectorTest.expectNull(await first, "The replaced search should resolve to null.");
+            InspectorTest.expectEqual((await second).length, 2, "The newer search should find both matches.");
+            WI.domManager.discardSearchResults();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.DOMManager.performSearch reports each DOM match once, with and without site isolation.</p>
+<div data-search="global-search-needle"></div>
+<iframe src="resources/dom-search-frontend-iframe.html"></iframe>
+</body>
+</html>

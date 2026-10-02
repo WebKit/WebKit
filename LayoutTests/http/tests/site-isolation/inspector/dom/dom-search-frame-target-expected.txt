@@ -1,0 +1,38 @@
+Tests that WI.DOMManager.performSearch searches cross-origin frame targets under site isolation and reports each match once.
+
+
+
+== Running test suite: SiteIsolation.DOM.Search
+-- Running test case: SiteIsolation.DOM.Search.Setup
+PASS: Page target should have a document.
+PASS: Should find the same-origin frame target.
+PASS: Should find the cross-origin frame target.
+PASS: Should find the same-site nested frame target.
+PASS: Should find the main-site nested frame target.
+
+-- Running test case: SiteIsolation.DOM.Search.EveryFrameOnce
+PASS: Should find every match.
+127.0.0.1/dom-search-frame-target.html via page target
+127.0.0.1/dom-search-nested-frame.html via frame target
+127.0.0.1/dom-search-same-origin-frame.html via page target
+localhost/dom-search-cross-origin-frame.html (shadow tree) via frame target
+localhost/dom-search-cross-origin-frame.html via frame target
+localhost/dom-search-nested-frame.html via frame target
+PASS: Each match should be reported once.
+
+-- Running test case: SiteIsolation.DOM.Search.CaseSensitive
+PASS: Case-sensitive search with the wrong case should find nothing.
+PASS: Case-insensitive search should find every match.
+
+-- Running test case: SiteIsolation.DOM.Search.Superseded
+PASS: The replaced search should resolve to null.
+PASS: The newer search should find every match.
+
+-- Running test case: SiteIsolation.DOM.Search.MatchesResolveToResources
+PASS: 127.0.0.1/dom-search-frame-target.html via page target should resolve to a resource.
+PASS: 127.0.0.1/dom-search-nested-frame.html via frame target should resolve to a resource.
+PASS: 127.0.0.1/dom-search-same-origin-frame.html via page target should resolve to a resource.
+PASS: localhost/dom-search-cross-origin-frame.html (shadow tree) via frame target should resolve to a resource.
+PASS: localhost/dom-search-cross-origin-frame.html via frame target should resolve to a resource.
+PASS: localhost/dom-search-nested-frame.html via frame target should resolve to a resource.
+

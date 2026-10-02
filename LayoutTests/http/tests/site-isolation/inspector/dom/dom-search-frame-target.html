@@ -1,0 +1,109 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.Search");
+
+    // Assembled at runtime so this script's own text never matches. Never log it: test output is
+    // appended to this page's DOM, which the page target searches.
+    const needle = ["global", "search", "needle"].join("-");
+    const expectedMatchCount = 6;
+
+    // Same polling as frame-document-splicing-frame-target.html, plus an execution context, which the
+    // deduplication in WI.DOMManager.performSearch keys on.
+    async function frameTargetWhenReady(substring) {
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            let target = await frameTargetForURLContaining(substring);
+            if (target && !target.isProvisional && target.executionContext && WI.domManager.frameTargetDocumentForTarget(target))
+                return target;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    function describeMatch(node) {
+        let url = new URL(node.ownerDocument.documentURL);
+        let name = url.hostname + "/" + url.pathname.substring(url.pathname.lastIndexOf("/") + 1);
+        return name + (node.isInShadowTree() ? " (shadow tree)" : "") + " via " + (node.owningTarget ? "frame target" : "page target");
+    }
+
+    function logMatches(nodes) {
+        let descriptions = nodes.map(describeMatch).sort();
+        for (let description of descriptions)
+            InspectorTest.log(description);
+        InspectorTest.expectEqual(new Set(descriptions).size, descriptions.length, "Each match should be reported once.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.Setup",
+        description: "Wait for every frame target to commit and produce a document.",
+        async test() {
+            InspectorTest.expectNotNull(await WI.domManager.requestDocument(), "Page target should have a document.");
+            for (let [label, substring] of [
+                ["same-origin frame", "/dom-search-same-origin-frame.html"],
+                ["cross-origin frame", "//localhost:8000/site-isolation/inspector/dom/resources/dom-search-cross-origin-frame.html"],
+                ["same-site nested frame", "//localhost:8000/site-isolation/inspector/dom/resources/dom-search-nested-frame.html"],
+                ["main-site nested frame", "//127.0.0.1:8000/site-isolation/inspector/dom/resources/dom-search-nested-frame.html"],
+            ])
+                InspectorTest.expectNotNull(await frameTargetWhenReady(substring), `Should find the ${label} target.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.EveryFrameOnce",
+        description: "Each frame's match should be reported exactly once, from the page target for frames in the main frame's process and from the frame's own target otherwise.",
+        async test() {
+            let nodes = await WI.domManager.performSearch(needle);
+            InspectorTest.expectEqual(nodes.length, expectedMatchCount, "Should find every match.");
+            logMatches(nodes);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.CaseSensitive",
+        description: "caseSensitive applies to every target.",
+        async test() {
+            InspectorTest.expectEqual((await WI.domManager.performSearch(needle.toUpperCase(), {caseSensitive: true})).length, 0, "Case-sensitive search with the wrong case should find nothing.");
+            InspectorTest.expectEqual((await WI.domManager.performSearch(needle.toUpperCase(), {caseSensitive: false})).length, expectedMatchCount, "Case-insensitive search should find every match.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.Superseded",
+        description: "Starting a new search should make the previous one resolve to null.",
+        async test() {
+            let first = WI.domManager.performSearch(needle);
+            let second = WI.domManager.performSearch(needle);
+            InspectorTest.expectNull(await first, "The replaced search should resolve to null.");
+            InspectorTest.expectEqual((await second).length, expectedMatchCount, "The newer search should find every match.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.MatchesResolveToResources",
+        description: "SearchSidebarPanel groups DOM matches by the resource for their document URL; each match must resolve to one.",
+        async test() {
+            let nodes = await WI.domManager.performSearch(needle);
+            nodes.sort((a, b) => describeMatch(a) < describeMatch(b) ? -1 : 1);
+            for (let node of nodes) {
+                let resource = WI.networkManager.resourcesForURL(node.ownerDocument.documentURL).firstValue;
+                InspectorTest.expectNotNull(resource, `${describeMatch(node)} should resolve to a resource.`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.DOMManager.performSearch searches cross-origin frame targets under site isolation and reports each match once.</p>
+<div data-search="global-search-needle"></div>
+<iframe src="resources/dom-search-same-origin-frame.html"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-search-cross-origin-frame.html"></iframe>
+</body>
+</html>

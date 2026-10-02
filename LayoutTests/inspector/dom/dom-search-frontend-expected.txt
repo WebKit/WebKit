@@ -1,0 +1,21 @@
+Tests that WI.DOMManager.performSearch reports each DOM match once, with and without site isolation.
+
+
+
+== Running test suite: DOM.Search.Frontend
+-- Running test case: DOM.Search.Frontend.OneMatchPerDocument
+PASS: Should find one match per document.
+dom-search-frontend-iframe.html owningTarget=none
+dom-search-frontend.html owningTarget=none
+
+-- Running test case: DOM.Search.Frontend.CaseSensitive
+PASS: Case-sensitive search with the wrong case should find nothing.
+PASS: Case-insensitive search should find both matches.
+
+-- Running test case: DOM.Search.Frontend.NoResults
+PASS: Should find nothing.
+
+-- Running test case: DOM.Search.Frontend.Superseded
+PASS: The replaced search should resolve to null.
+PASS: The newer search should find both matches.
+

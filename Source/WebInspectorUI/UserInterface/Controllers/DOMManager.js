@@ -52,6 +52,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._frameTargetDOMData = new Map;
         this._unsplicedFrameDocuments = [];
 
+        this._activeSearch = null;
+
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._handleEventBreakpointDisabledStateChanged, this);
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, this._handleEventBreakpointEditablePropertyChanged, this);
         WI.EventBreakpoint.addEventListener(WI.Breakpoint.Event.IgnoreCountDidChange, this._handleEventBreakpointEditablePropertyChanged, this);
@@ -678,6 +680,135 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._dispatchWhenDocumentAvailable((callbackWrapper) => {
             target.DOMAgent.pushNodeByPathToFrontend(path, callbackWrapper);
         }, callback);
+    }
+
+    async performSearch(query, {caseSensitive} = {})
+    {
+        // Resolves to null if a newer search starts first.
+        this.discardSearchResults();
+
+        let search = {sessions: []};
+        this._activeSearch = search;
+        let isActive = () => this._activeSearch === search;
+
+        let pageTarget = WI.assumingMainTarget();
+        if (pageTarget && !pageTarget.hasDomain("DOM"))
+            pageTarget = null;
+
+        // The page target already searches the main frame. Provisional targets may never reply.
+        let mainFrameIdentifier = WI.networkManager.mainFrame?.id;
+        let frameTargets = WI.targets.filter((target) => {
+            if (!(target instanceof WI.FrameTarget) || target.isProvisional || !target.hasDomain("DOM"))
+                return false;
+            return !pageTarget || !mainFrameIdentifier || target.executionContext?.frameId !== mainFrameIdentifier;
+        });
+
+        let targets = pageTarget ? [pageTarget, ...frameTargets] : frameTargets;
+        if (!targets.length)
+            return [];
+
+        if (pageTarget)
+            this.ensureDocument();
+
+        // Commands to a destroyed target never settle.
+        let targetRemovedPromises = new Map;
+        for (let target of targets)
+            targetRemovedPromises.set(target, Promise.withResolvers());
+
+        let handleTargetRemoved = (event) => {
+            targetRemovedPromises.get(event.data.target)?.resolve(null);
+        };
+
+        let send = (target, promise) => Promise.race([promise.catch(() => null), targetRemovedPromises.get(target).promise]);
+
+        let startSearch = async (target) => {
+            let result = await send(target, target.DOMAgent.performSearch.invoke({query, caseSensitive}));
+            if (!result?.resultCount)
+                return null;
+
+            if (!isActive()) {
+                target.DOMAgent.discardSearchResults(result.searchId);
+                return null;
+            }
+
+            search.sessions.push({target, searchId: result.searchId});
+            return result;
+        };
+
+        let fetchNodeIds = async (target, {searchId, resultCount}) => {
+            let response = await send(target, target.DOMAgent.getSearchResults(searchId, 0, resultCount));
+            return response?.nodeIds || [];
+        };
+
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
+
+        try {
+            let pageSearchPromise = pageTarget ? startSearch(pageTarget) : null;
+            let frameSearchPromises = frameTargets.map(startSearch);
+
+            let nodes = [];
+            let pageSearch = await pageSearchPromise;
+            if (pageSearch) {
+                for (let nodeId of await fetchNodeIds(pageTarget, pageSearch)) {
+                    let node = this.nodeForId(nodeId);
+                    if (node)
+                        nodes.push(node);
+                }
+            }
+
+            if (!isActive())
+                return null;
+
+            // Same-process frames are also searched by the page target; don't report them twice.
+            let framesWithPageTargetMatches = new Set;
+            for (let node of nodes) {
+                let frame = node.frame;
+                if (frame)
+                    framesWithPageTargetMatches.add(frame.id);
+            }
+
+            let frameTargetNodeLists = await Promise.all(frameTargets.map(async (target, index) => {
+                let frameSearch = await frameSearchPromises[index];
+                if (!frameSearch)
+                    return [];
+
+                let frameIdentifier = target.executionContext?.frameId;
+                if (frameIdentifier && framesWithPageTargetMatches.has(frameIdentifier))
+                    return [];
+
+                let nodeIds = await fetchNodeIds(target, frameSearch);
+
+                // Child frames in the same process have their own frame targets.
+                let frameDocument = this.frameTargetDocumentForTarget(target);
+                let frameNodes = [];
+                for (let nodeId of nodeIds) {
+                    let node = this.nodeForIdInFrameTarget(nodeId, target);
+                    if (node && node.ownerDocument === frameDocument)
+                        frameNodes.push(node);
+                }
+                return frameNodes;
+            }));
+
+            if (!isActive())
+                return null;
+
+            return nodes.concat(...frameTargetNodeLists);
+        } finally {
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, handleTargetRemoved, this);
+        }
+    }
+
+    discardSearchResults()
+    {
+        let search = this._activeSearch;
+        this._activeSearch = null;
+        if (!search)
+            return;
+
+        for (let {target, searchId} of search.sessions) {
+            if (!target.isDestroyed)
+                target.DOMAgent.discardSearchResults(searchId);
+        }
     }
 
     // DOMObserver
