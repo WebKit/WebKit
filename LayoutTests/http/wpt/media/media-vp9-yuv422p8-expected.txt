@@ -1,0 +1,4 @@
+
+PASS VP9 4:2:2 8-bit 128x128 renders the correct colors
+PASS VP9 4:2:2 8-bit 128x97 renders the correct colors
+

@@ -179,6 +179,33 @@ CVPixelBufferRef createPixelBufferFromI420ABuffer(const uint8_t* buffer, size_t 
     return pixelBuffer;
 }
 
+namespace {
+
+class PixelBufferBaseAddressLocker final {
+public:
+    explicit PixelBufferBaseAddressLocker(CVPixelBufferRef pixelBuffer)
+        : m_pixelBuffer(pixelBuffer)
+        , m_isLocked(CVPixelBufferLockBaseAddress(pixelBuffer, 0) == kCVReturnSuccess)
+    {
+    }
+
+    ~PixelBufferBaseAddressLocker()
+    {
+        if (m_isLocked)
+            CVPixelBufferUnlockBaseAddress(m_pixelBuffer, 0);
+    }
+
+    PixelBufferBaseAddressLocker(const PixelBufferBaseAddressLocker&) = delete;
+    PixelBufferBaseAddressLocker& operator=(const PixelBufferBaseAddressLocker&) = delete;
+
+    bool isLocked() const { return m_isLocked; }
+
+private:
+    const CVPixelBufferRef m_pixelBuffer;
+    const bool m_isLocked;
+};
+
+} // namespace
 
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame, CVPixelBufferRef pixel_buffer) {
     RTC_DCHECK(pixel_buffer);
@@ -186,7 +213,8 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame
     RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
     RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
 
-    if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
+    PixelBufferBaseAddressLocker locker(pixel_buffer);
+    if (!locker.isLocked())
         return false;
 
     auto src_width_y = frame->width();
@@ -217,12 +245,7 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame
         dst_y, dst_stride_y, dst_uv, dst_stride_uv,
         frame->width(), frame->height());
 
-    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
-
-    if (result)
-        return false;
-
-    return true;
+    return !result;
 }
 
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame, CVPixelBufferRef pixel_buffer)
@@ -232,7 +255,8 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame
     RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
     RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
 
-    if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
+    PixelBufferBaseAddressLocker locker(pixel_buffer);
+    if (!locker.isLocked())
         return false;
 
     auto src_y = const_cast<uint16_t*>(frame->DataY());
@@ -262,14 +286,13 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame
         || src_height_uv != dst_height_uv)
         return false;
 
-    libyuv::I010ToP010(src_y, src_stride_y,
-                       src_u, src_stride_u,
-                       src_v, src_stride_v,
-                       dst_y, dst_stride_y, dst_uv, dst_stride_uv,
-                       src_width_y, src_height_y);
+    int result = libyuv::I010ToP010(src_y, src_stride_y,
+                                    src_u, src_stride_u,
+                                    src_v, src_stride_v,
+                                    dst_y, dst_stride_y, dst_uv, dst_stride_uv,
+                                    src_width_y, src_height_y);
 
-    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
-    return true;
+    return !result;
 }
 
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I422BufferInterface* frame, CVPixelBufferRef pixel_buffer) {
@@ -278,7 +301,8 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I422BufferInterface* frame
     RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
     RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
 
-    if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
+    PixelBufferBaseAddressLocker locker(pixel_buffer);
+    if (!locker.isLocked())
         return false;
 
     auto src_width_y = frame->width();
@@ -299,22 +323,18 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I422BufferInterface* frame
     if (src_width_y != dst_width_y
         || src_height_y != dst_height_y
         || src_width_uv != dst_width_uv
-        || src_height_uv / 2 != dst_height_uv)
+        || (src_height_uv + 1) / 2 != dst_height_uv)
         return false;
 
+    // I422ToNV21 with U and V swapped writes NV12.
     int result = libyuv::I422ToNV21(
         frame->DataY(), frame->StrideY(),
-        frame->DataU(), frame->StrideU(),
         frame->DataV(), frame->StrideV(),
+        frame->DataU(), frame->StrideU(),
         dst_y, dst_stride_y, dst_uv, dst_stride_uv,
         frame->width(), frame->height());
 
-    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
-
-    if (result)
-        return false;
-
-    return true;
+    return !result;
 }
 
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I210BufferInterface* frame, CVPixelBufferRef pixel_buffer)
@@ -324,7 +344,8 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I210BufferInterface* frame
     RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
     RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
 
-    if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
+    PixelBufferBaseAddressLocker locker(pixel_buffer);
+    if (!locker.isLocked())
         return false;
 
     auto src_y = const_cast<uint16_t*>(frame->DataY());
@@ -354,14 +375,13 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I210BufferInterface* frame
         || src_height_uv != dst_height_uv)
         return false;
 
-    libyuv::I210ToP210(src_y, src_stride_y,
-                       src_u, src_stride_u,
-                       src_v, src_stride_v,
-                       dst_y, dst_stride_y, dst_uv, dst_stride_uv,
-                       src_width_y, src_height_y);
+    int result = libyuv::I210ToP210(src_y, src_stride_y,
+                                    src_u, src_stride_u,
+                                    src_v, src_stride_v,
+                                    dst_y, dst_stride_y, dst_uv, dst_stride_uv,
+                                    src_width_y, src_height_y);
 
-    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
-    return true;
+    return !result;
 }
 
 CVPixelBufferRef createPixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& createPixelBuffer)
@@ -393,14 +413,21 @@ CVPixelBufferRef createPixelBufferFromFrameBuffer(VideoFrameBuffer& buffer, cons
             return nullptr;
         }
 
+        bool copied;
         if (*bufferType == BufferType::I420)
-            CopyVideoFrameToPixelBuffer(buffer.GetI420(), pixelBuffer);
+            copied = CopyVideoFrameToPixelBuffer(buffer.GetI420(), pixelBuffer);
         else if (*bufferType == BufferType::I010)
-            CopyVideoFrameToPixelBuffer(buffer.GetI010(), pixelBuffer);
+            copied = CopyVideoFrameToPixelBuffer(buffer.GetI010(), pixelBuffer);
         else if (*bufferType == BufferType::I422)
-            CopyVideoFrameToPixelBuffer(buffer.GetI422(), pixelBuffer);
+            copied = CopyVideoFrameToPixelBuffer(buffer.GetI422(), pixelBuffer);
         else
-            CopyVideoFrameToPixelBuffer(buffer.GetI210(), pixelBuffer);
+            copied = CopyVideoFrameToPixelBuffer(buffer.GetI210(), pixelBuffer);
+
+        if (!copied) {
+            RTC_LOG(LS_WARNING) << "Copying video frame buffer to pixel buffer failed.";
+            CVPixelBufferRelease(pixelBuffer);
+            return nullptr;
+        }
         return pixelBuffer;
     }
 

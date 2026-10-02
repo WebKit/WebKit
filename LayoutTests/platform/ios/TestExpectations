@@ -5074,7 +5074,7 @@ imported/w3c/web-platform-tests/webaudio/idlharness.https.window.html [ Pass Cra
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-method-chaining.html [ Pass Crash ]
 storage/indexeddb/modern/deleteindex-4-private.html [ Pass Crash ]
 
-# No VP9 decoder on simulator and no ability to load VideoToolbox plugins.
+# No VP9 HW decoder on simulator and VP9 only allowed on battery powered device if HW is present.
 media/vp9.html [ Skip ]
 media/media-vp9-yuv422p10.html [ Skip ]
 
