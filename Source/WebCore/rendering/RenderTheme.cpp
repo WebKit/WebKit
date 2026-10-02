@@ -1759,12 +1759,12 @@ auto RenderTheme::colorCache(OptionSet<StyleColorOptions> options) const -> Colo
 
 static Color defaultLinkColor(bool useDarkAppearance)
 {
-    return useDarkAppearance ? SRGBA<uint8_t> { 158, 158, 255 } : SRGBA<uint8_t> { 0, 0, 238 };
+    return { useDarkAppearance ? SRGBA<uint8_t> { 158, 158, 255 } : SRGBA<uint8_t> { 0, 0, 238 }, Color::Flags::Semantic };
 }
 
 static Color defaultVisitedLinkColor(bool useDarkAppearance)
 {
-    return useDarkAppearance ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 85, 26, 139 };
+    return { useDarkAppearance ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 85, 26, 139 }, Color::Flags::Semantic };
 }
 
 Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOptions> options) const
@@ -1797,7 +1797,7 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
     // Text in active links. For light backgrounds, traditionally red.
     case CSSValueActivetext:
     case CSSValueWebkitActivelink: // Non-standard addition.
-        return useDarkAppearance ? SRGBA<uint8_t> { 255, 158, 158 } : Color::red;
+        return { useDarkAppearance ? SRGBA<uint8_t> { 255, 158, 158 } : Color::red, Color::Flags::Semantic };
 
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-buttonface
     // The face background color for push buttons.

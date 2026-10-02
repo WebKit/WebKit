@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<html>
+    <head>
+        <title>CSS Test: Don't apply -apple-color-filter to the active link color</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+
+        <style type="text/css">
+            body
+            {
+                margin: 0;
+                -apple-color-filter: invert();
+            }
+
+            a
+            {
+                display: block;
+                width: 200px;
+                height: 100px;
+                font: 20px/100px monospace;
+            }
+        </style>
+
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            function runTest()
+            {
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(100, 50);
+                    eventSender.mouseDown();
+                }
+
+                requestAnimationFrame(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            }
+        </script>
+    </head>
+    <body onload="setTimeout(runTest, 0)">
+        <a href="https://www.webkit.org/">active</a>
+    </body>
+</html>
