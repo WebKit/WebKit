@@ -151,6 +151,7 @@ public:
     static const Color& currentColor();
 
     bool containsCurrentColor() const;
+    bool containsCurrentAccentColor() const;
     bool NODELETE isCurrentColor() const;
     bool NODELETE isColorMix() const;
     bool NODELETE isContrastColor() const;
@@ -180,6 +181,7 @@ private:
 
 WebCore::Color resolveColor(const Color&, const ResolvedColors&);
 bool containsCurrentColor(const Color&);
+bool containsCurrentAccentColor(const Color&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const Color&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
