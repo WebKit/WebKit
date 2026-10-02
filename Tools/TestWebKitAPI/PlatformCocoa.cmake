@@ -938,8 +938,44 @@ add_dependencies(TestWebKit TestWebKitAPIWebProcessPlugIn)
 # URLForResource:withExtension:@"", which requires web-extension/, *.appex/,
 # and *.mlmodelc/ to retain their layout.
 set(_resources_bundle_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPIResources.bundle")
-set(_resources_dst_files)
+if (WEBKIT_SDK_IS_MACOS)
+    set(_resources_info_plist "${_resources_bundle_dir}/Contents/Info.plist")
+    set(_resources_dir "${_resources_bundle_dir}/Contents/Resources")
+else ()
+    set(_resources_info_plist ${_resources_bundle_dir})
+    set(_resources_dir ${_resources_bundle_dir})
+endif ()
 
+file(CONFIGURE OUTPUT ${_resources_info_plist} CONTENT [[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.apple.WebKit.TestWebKitAPIResources</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>TestWebKitAPIResources</string>
+    <key>CFBundlePackageType</key>
+    <string>BNDL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleSupportedPlatforms</key>
+    <array>
+        <string>@WEBKIT_PLATFORM_NAME@</string>
+    </array>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>@CMAKE_OSX_DEPLOYMENT_TARGET@</string>
+</dict>
+</plist>
+]] @ONLY)
+
+set(_resources_dst_files)
 function(_testwebkitapi_stage_resources source_root skip_pattern)
     file(GLOB_RECURSE _entries RELATIVE "${source_root}" "${source_root}/*")
     foreach (_rel IN LISTS _entries)
@@ -947,9 +983,9 @@ function(_testwebkitapi_stage_resources source_root skip_pattern)
             continue ()
         endif ()
         set(_src "${source_root}/${_rel}")
-        set(_dst "${_resources_bundle_dir}/${_rel}")
+        set(_dst "${_resources_dir}/${_rel}")
         set(_walk "${_dst}")
-        while (NOT _walk STREQUAL "${_resources_bundle_dir}" AND NOT _walk STREQUAL "/")
+        while (NOT _walk STREQUAL "${_resources_dir}" AND NOT _walk STREQUAL "/")
             get_filename_component(_walk "${_walk}" DIRECTORY)
             if (IS_SYMLINK "${_walk}")
                 file(REMOVE "${_walk}")
