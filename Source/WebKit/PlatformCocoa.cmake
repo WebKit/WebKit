@@ -165,6 +165,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/PDF/WKPDFPageNumberIndicator.mm
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtraction.swift
 
+    UIProcess/ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp
+
     WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 
     WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp
@@ -564,8 +566,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm
     UIProcess/ios/_WKCaptionStyleMenuControllerAVKit.mm
     UIProcess/ios/_WKCaptionStyleMenuControllerIOS.mm
-
-    UIProcess/ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp
 
     ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/ExtensionEventHandler.mm
 
