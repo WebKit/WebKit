@@ -257,7 +257,8 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     ASSERT(paintInfo.phase == PaintPhase::Foreground);
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), paintInfo.stateSavedByCaller == StateSavedByCaller::No);
+    paintInfo.stateSavedByCaller = StateSavedByCaller::No;
 
     auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
     paintInfo.context().translate(coordinateSystemOriginTranslation.width(), coordinateSystemOriginTranslation.height());
