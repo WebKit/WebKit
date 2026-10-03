@@ -61,22 +61,29 @@ Ref<CachedImage> CachedImage::create(const URL& url, const Ref<CSSImageValue>& c
     return CachedImage::create(URL { url }, cssValue.copyRef(), scaleFactor);
 }
 
-Ref<CachedImage> CachedImage::create(WebCore::CachedImage& cachedImage, float scaleFactor)
+Ref<CachedImage> CachedImage::create(WebCore::CachedImage& cachedImage, WTF::URL&& authoredURL, OptionSet<SVGReferencingMode> referencingModes, float scaleFactor)
 {
-    return CachedImage::create(URL { .resolved = cachedImage.url(), .modifiers = { } }, CSSImageValue::create(cachedImage), scaleFactor);
+    auto url = authoredURL.isNull() ? cachedImage.url() : WTF::move(authoredURL);
+    return adoptRef(*new CachedImage(URL { .resolved = WTF::move(url), .modifiers = { } }, CSSImageValue::create(cachedImage), scaleFactor, referencingModes));
 }
 
 Ref<CachedImage> CachedImage::copyOverridingScaleFactor(CachedImage& other, float scaleFactor)
 {
     if (other.m_scaleFactor == scaleFactor)
         return other;
-    return CachedImage::create(other.m_url, other.m_cssValue, scaleFactor);
+    return adoptRef(*new CachedImage(URL { other.m_url }, other.m_cssValue.copyRef(), scaleFactor, other.m_referencingModes));
 }
 
 CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor)
+    : CachedImage { WTF::move(url), WTF::move(cssValue), scaleFactor, { SVGReferencingMode::AnimatedImageDocument, SVGReferencingMode::ResourceDocument } }
+{
+}
+
+CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor, OptionSet<SVGReferencingMode> referencingModes)
     : Image { Type::CachedImage }
     , m_url { WTF::move(url) }
     , m_cssValue { WTF::move(cssValue) }
+    , m_referencingModes { referencingModes }
     , m_scaleFactor { scaleFactor }
 {
     m_cachedImage = m_cssValue->cachedImage();
@@ -131,7 +138,7 @@ LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const 
     if (!renderer)
         return nullptr;
 
-    if (!m_url.resolved.string().contains('#')) {
+    if (!m_referencingModes.contains(SVGReferencingMode::ResourceDocument) || !m_url.resolved.string().contains('#')) {
         m_isRenderSVGResource = false;
         return nullptr;
     }
@@ -167,7 +174,7 @@ RenderSVGResourceContainer* CachedImage::renderSVGResource(const RenderElement* 
     if (!renderer)
         return nullptr;
 
-    if (!m_url.resolved.string().contains('#'))
+    if (!m_referencingModes.contains(SVGReferencingMode::ResourceDocument) || !m_url.resolved.string().contains('#'))
         return nullptr;
 
     if (!m_cachedImage) {
@@ -319,12 +326,9 @@ void CachedImage::setContainerSizeForRenderer(const RenderElement&, const FloatS
     m_containerSize = containerSize;
 }
 
-ImageDrawingExtras CachedImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
+ImageDrawingExtras CachedImage::drawingExtrasForRenderer(const RenderElement& renderer) const
 {
-    // MemoryCache::removeFragmentIdentifierIfNeeded strips the fragment from m_url for HTTP.
-    // We read from the element's URL.
-    auto& imageURL = !url.isNull() ? url : m_url.resolved;
-    return { imageURL, linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), imageURL.fragmentIdentifier())) };
+    return { m_url.resolved, linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), m_url.resolved.fragmentIdentifier())) };
 }
 
 void CachedImage::addClient(RenderElement& renderer)

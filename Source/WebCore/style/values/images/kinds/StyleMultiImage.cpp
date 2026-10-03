@@ -156,11 +156,11 @@ NaturalDimensions MultiImage::naturalDimensions(const RenderElement& renderer, c
     return protect(m_selectedImage)->naturalDimensions(renderer, context);
 }
 
-ImageDrawingExtras MultiImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
+ImageDrawingExtras MultiImage::drawingExtrasForRenderer(const RenderElement& renderer) const
 {
     if (!m_selectedImage)
         return { };
-    return protect(m_selectedImage)->drawingExtrasForRenderer(renderer, url);
+    return protect(m_selectedImage)->drawingExtrasForRenderer(renderer);
 }
 
 void MultiImage::setContainerSizeForRenderer(const RenderElement& renderer, const FloatSize& containerSize)

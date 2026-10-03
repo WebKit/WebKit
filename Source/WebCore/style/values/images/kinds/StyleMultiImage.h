@@ -76,7 +76,7 @@ private:
     void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     void setContainerSizeForRenderer(const RenderElement&, const FloatSize&) override;
-    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const override;
+    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&) const override;
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;

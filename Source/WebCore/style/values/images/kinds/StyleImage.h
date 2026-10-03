@@ -107,7 +107,7 @@ public:
     // Rendering.
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
     virtual void setContainerSizeForRenderer(const RenderElement&, const FloatSize&) { }
-    virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const { return { }; }
+    virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&) const { return { }; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
     // Drawing

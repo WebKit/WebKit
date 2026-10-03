@@ -63,7 +63,7 @@ public:
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
     bool hasDecodedImage() const;
 
-    Style::ImageDrawingExtras drawingExtras(const URL& = { }) const;
+    Style::ImageDrawingExtras drawingExtras() const;
 
     NaturalDimensions naturalDimensions() const;
     inline LayoutSize imageSize(float multiplier) const { return imageSize(multiplier, CachedImage::UsedSize); }

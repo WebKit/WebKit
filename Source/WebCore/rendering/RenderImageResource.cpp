@@ -32,7 +32,7 @@
 #include "Font.h"
 #include "FontCascadeInlines.h"
 #include "NullGraphicsContext.h"
-#include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderObjectDocument.h"
 #include "ReplacedElementIntrinsicSizing.h"
@@ -109,7 +109,10 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
     if (!newImage)
         m_styleImage = nullptr;
     else {
-        m_styleImage = Style::CachedImage::create(*newImage);
+        WTF::URL authoredURL;
+        if (RefPtr element = m_renderer->element())
+            authoredURL = protect(m_renderer->document())->encodingParseURL(element->imageSourceURL());
+        m_styleImage = Style::CachedImage::create(*newImage, WTF::move(authoredURL), { Style::SVGReferencingMode::AnimatedImageDocument });
 
         RefPtr styleImage = m_styleImage;
         styleImage->addClient(*m_renderer);
@@ -154,11 +157,11 @@ bool RenderImageResource::currentFrameIsComplete() const
     return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
 }
 
-Style::ImageDrawingExtras RenderImageResource::drawingExtras(const URL& url) const
+Style::ImageDrawingExtras RenderImageResource::drawingExtras() const
 {
     if (!m_styleImage || !m_renderer)
         return { };
-    return protect(m_styleImage)->drawingExtrasForRenderer(*m_renderer, url);
+    return protect(m_styleImage)->drawingExtrasForRenderer(*m_renderer);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const

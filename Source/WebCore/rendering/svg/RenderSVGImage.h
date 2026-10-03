@@ -46,7 +46,6 @@ public:
 
     bool updateImageViewport();
     IntSize imageContainerSize() const;
-    Style::ImageDrawingExtras imageDrawingExtras() const;
 
     bool isObjectBoundingBoxValid() const { return !m_objectBoundingBox.isEmpty(); }
 

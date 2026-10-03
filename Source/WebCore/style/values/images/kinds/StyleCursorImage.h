@@ -56,7 +56,7 @@ private:
     explicit CursorImage(const Ref<Image>&, std::optional<HotSpot>, const URL&);
     explicit CursorImage(Ref<Image>&&, std::optional<HotSpot>, URL&&);
 
-    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const final;
+    ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&) const final;
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     ImageWithScale selectBestFitImage(const Document&) final;

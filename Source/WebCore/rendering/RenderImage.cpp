@@ -368,14 +368,6 @@ std::optional<FloatSize> RenderImage::usedImageSize() const
     return imageResource().usedImageSize(imageContainerSize());
 }
 
-Style::ImageDrawingExtras RenderImage::imageDrawingExtras() const
-{
-    URL imageSourceURL;
-    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
-        imageSourceURL = imageElement->currentURL();
-    return imageResource().drawingExtras(imageSourceURL);
-}
-
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
 {
     LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().usedZoom());
@@ -816,7 +808,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
             ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
             : ConcreteObjectSize::fixed(img->size());
         auto sourceRect = drawsSVG ? FloatRect { { }, containerSize } : FloatRect { { }, img->size(options.orientation()) };
-        auto extras = imageDrawingExtras();
+        auto extras = imageResource().drawingExtras();
         drawResult = styleImage->draw(paintInfo.context(), *img, concreteObjectSize, rect, sourceRect, options, &extras);
     }
 

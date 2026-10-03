@@ -113,9 +113,9 @@ ImageWithScale CursorImage::selectBestFitImage(const Document& document)
     return { m_image.ptr(), 1_css_dppx, std::nullopt };
 }
 
-ImageDrawingExtras CursorImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
+ImageDrawingExtras CursorImage::drawingExtrasForRenderer(const RenderElement& renderer) const
 {
-    return { !url.isNull() ? url : m_originalURL.resolved, renderer.style().linkParameters() };
+    return { m_originalURL.resolved, renderer.style().linkParameters() };
 }
 
 bool CursorImage::usesDataProtocol() const

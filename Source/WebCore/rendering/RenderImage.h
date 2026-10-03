@@ -142,7 +142,6 @@ private:
     void updateIntrinsicSizeIfNeeded(const LayoutSize&);
     // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
     IntSize imageContainerSize() const;
-    Style::ImageDrawingExtras imageDrawingExtras() const;
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
 

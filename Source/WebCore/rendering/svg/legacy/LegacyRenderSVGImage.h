@@ -32,10 +32,6 @@ namespace WebCore {
 class RenderImageResource;
 class SVGImageElement;
 
-namespace Style {
-class ImageDrawingExtras;
-}
-
 class LegacyRenderSVGImage final : public LegacyRenderSVGModelObject {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGImage);
@@ -47,7 +43,6 @@ public:
 
     bool updateImageViewport();
     IntSize imageContainerSize() const;
-    Style::ImageDrawingExtras imageDrawingExtras() const;
     void setNeedsBoundariesUpdate() override { m_needsBoundariesUpdate = true; }
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 

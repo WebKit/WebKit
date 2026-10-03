@@ -177,7 +177,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     auto concreteObjectSize = image->drawsSVGImage()
         ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
         : ConcreteObjectSize::fixed(image->size());
-    auto extras = imageDrawingExtras();
+    auto extras = imageResource().drawingExtras();
     auto drawResult = protect(imageResource().styleImage())->draw(paintInfo.context(), *image, concreteObjectSize, rect, sourceRect, options, &extras);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
@@ -280,11 +280,6 @@ IntSize RenderSVGImage::imageContainerSize() const
     }
 
     return enclosingIntRect(m_objectBoundingBox).size();
-}
-
-Style::ImageDrawingExtras RenderSVGImage::imageDrawingExtras() const
-{
-    return imageResource().drawingExtras(protect(document())->encodingParseURL(imageElement().imageSourceURL()));
 }
 
 bool RenderSVGImage::updateImageViewport()
