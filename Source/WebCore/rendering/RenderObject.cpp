@@ -891,14 +891,6 @@ LayoutRect RenderObject::subtreePaintRootRect(LayoutRect& topLevelRect, RespectT
     return result;
 }
 
-static inline bool NODELETE canRelyOnAncestorLayerFullRepaint(const RenderObject& rendererToRepaint, const RenderLayer& ancestorLayer)
-{
-    auto* renderElement = dynamicDowncast<RenderElement>(rendererToRepaint);
-    if (!renderElement || !renderElement->hasSelfPaintingLayer())
-        return true;
-    return ancestorLayer.renderer().hasNonVisibleOverflow();
-}
-
 RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
 {
     CheckedPtr<const RenderLayerModelObject> repaintContainer;
@@ -912,12 +904,12 @@ RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
                 auto compLayerStatus = enclosingLayer->enclosingCompositingLayerForRepaint();
                 if (compLayerStatus.layer) {
                     repaintContainer = &compLayerStatus.layer->renderer();
-                    fullRepaintAlreadyScheduled = compLayerStatus.fullRepaintAlreadyScheduled && canRelyOnAncestorLayerFullRepaint(*this, *compLayerStatus.layer);
+                    fullRepaintAlreadyScheduled = compLayerStatus.fullRepaintAlreadyScheduled;
                 }
             }
             if (hasRenderersWithPixelMovingFilter) {
                 if (CheckedPtr pixelMovingFilterLayer = enclosingLayer->enclosingPixelMovingFilterLayer()) {
-                    fullRepaintAlreadyScheduled = enclosingLayer->needsFullRepaint() && canRelyOnAncestorLayerFullRepaint(*this, *enclosingLayer);
+                    fullRepaintAlreadyScheduled = enclosingLayer->scheduledFullRepaintCovers();
                     return { fullRepaintAlreadyScheduled, &pixelMovingFilterLayer->renderer() };
                 }
             }
@@ -1027,9 +1019,11 @@ static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
 {
     if (!renderer.view().usesCompositing() && !renderer.document().ownerElement())
         return false;
-    for (auto* ancestorLayer = renderer.enclosingLayer(); ancestorLayer; ancestorLayer = ancestorLayer->paintOrderParent()) {
-        if (ancestorLayer->needsFullRepaint())
-            return canRelyOnAncestorLayerFullRepaint(renderer, *ancestorLayer);
+    for (const RenderLayer* ancestorLayer = renderer.enclosingLayer(), *selfPaintingDescendant = nullptr; ancestorLayer; ancestorLayer = ancestorLayer->paintOrderParent()) {
+        if (ancestorLayer->scheduledFullRepaintCovers(selfPaintingDescendant))
+            return true;
+        if (!selfPaintingDescendant && ancestorLayer->isSelfPaintingLayer())
+            selfPaintingDescendant = ancestorLayer;
     }
     return false;
 }
