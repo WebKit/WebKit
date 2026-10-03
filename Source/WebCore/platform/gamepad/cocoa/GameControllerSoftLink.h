@@ -97,11 +97,18 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, GameController, GCMouseDidStopBeingCurren
 SPECIALIZE_OBJC_TYPE_TRAITS(GCMouse, WebCore::getGCMouseClassSingleton())
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.h>)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
-#import <WebKitAdditions/GameControllerSoftLinkAdditions.h>
-#pragma clang diagnostic pop
+#if PLATFORM(VISION) && HAVE(SPATIAL_CONTROLLERS)
+#import <GameController/GCControllerAxisInput.h>
+#import <GameController/GCControllerButtonInput.h>
+#import <GameController/GCControllerDirectionPad.h>
+
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCProductCategoryLeftSpatialController, NSString *)
+#define GCProductCategoryLeftSpatialController WebCore::get_GameController_GCProductCategoryLeftSpatialControllerSingleton()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCProductCategoryRightSpatialController, NSString *)
+#define GCProductCategoryRightSpatialController WebCore::get_GameController_GCProductCategoryRightSpatialControllerSingleton()
+
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCControllerAxisInput)
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCControllerDirectionPad)
 #endif
 
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
