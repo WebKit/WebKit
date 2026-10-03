@@ -420,6 +420,7 @@ private:
 #endif
     
     void wheelEventHandlersChanged(bool) final;
+    void touchEventHandlersChanged(bool) final;
 
     void didAddHeaderLayer(WebCore::GraphicsLayer&) final;
     void didAddFooterLayer(WebCore::GraphicsLayer&) final;
