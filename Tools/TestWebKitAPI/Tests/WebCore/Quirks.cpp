@@ -255,6 +255,42 @@ TEST_F(QuirksTest, EveryMatchingRowContributesWhenSeveralSupplyTheSameBehavior)
     EXPECT_EQ(scriptsForScriptURL(quirks, "https://first.example.com/a.js"_s), expected);
 }
 
+TEST_F(QuirksTest, IdenticalBehaviorsWithParametersAreRecordedOnce)
+{
+    using namespace WebCore::QuirkBehaviorConditions;
+    static constexpr auto anyScriptURL = WebCore::URLMatch::anyURL();
+    static constexpr auto behavior = WebCore::QuirkBehaviors::needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(WebCore::QuirkParameters::fromScript("script"_s)).when(secondaryURLMatches(anyScriptURL));
+
+    WebCore::QuirksData quirks;
+    quirks.addBehavior(behavior);
+    quirks.addBehavior(behavior);
+
+    WebCore::QuirksData other;
+    other.addBehavior(behavior);
+    quirks.merge(other);
+
+    Vector<String> expected { "script"_str };
+    EXPECT_EQ(scriptsForScriptURL(quirks, "https://example.com/a.js"_s), expected);
+}
+
+#if PLATFORM(MAC)
+TEST_F(QuirksTest, RowsSplitAcrossPathAndFragmentEachApply)
+{
+    auto id = WebCore::QuirkBehaviorID::IsNeverRichlyEditableForTouchBarQuirk;
+
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.icloud.com/notes/"_s).isBehaviorEnabled(id));
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.icloud.com/#notes"_s).isBehaviorEnabled(id));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.icloud.com/mail/"_s).isBehaviorEnabled(id));
+}
+
+TEST_F(QuirksTest, AnIdenticalBehaviorFromSeveralRowsIsRecordedOnce)
+{
+    auto id = WebCore::QuirkBehaviorID::IsNeverRichlyEditableForTouchBarQuirk;
+
+    EXPECT_EQ(resolveQuirksForTopURL("https://www.icloud.com/notes/#notes"_s).behaviorsMatching(id).size(), 1u);
+}
+#endif
+
 static Vector<String> elementSelectorsFor(const WebCore::QuirksData& quirks, WebCore::QuirkBehaviorID id)
 {
     return WTF::compactMap(quirks.behaviors(), [&](const auto& behavior) -> std::optional<String> {

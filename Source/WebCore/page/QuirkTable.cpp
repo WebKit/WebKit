@@ -130,7 +130,7 @@ using namespace BuildCondition;
 static constexpr auto anyclipPlayerScriptURL = URLMatch::host("player.anyclip.com"_s).when(lastPathComponentEndsWith("lre.js"_s));
 static constexpr auto ceacBrowserCloseScriptURL = URLMatch::anyURL().when(lastPathComponentIs("CheckBrowserClose.js"_s));
 static constexpr auto googleSignInClientScriptURL = URLMatch::host("accounts.google.com"_s).when(pathIs("/gsi/client"_s));
-static constexpr auto webExPushDownloadScriptURL = URLMatch::anyURL().when(lastPathComponentStartsWith("pushdownload."_s));
+static constexpr auto webExPushDownloadScriptURL = URLMatch::anyURL().when(pathContains("/pushdownload."_s));
 static constexpr auto wordEditorScriptURL = URLMatch::anyURL().when(lastPathComponentIs("wordeditords.js"_s));
 static constexpr auto claudeLogoutURL = URLMatch::host("claude.ai"_s).when(pathIs("/api/auth/logout"_s));
 
@@ -393,8 +393,7 @@ static constexpr Quirk fullTable[] = {
         } },
 
     // facebook.com and messenger.com group calls fall back to an unsupported-browser page for Safari.
-    // The site serves "/groupcall/ROOM:", but pathStartsWith() requires a lowercased pattern.
-    { .match = URLMatch::domain(facebookGroupCallDomains).when(pathStartsWith("/groupcall/room:"_s)),
+    { .match = URLMatch::domain(facebookGroupCallDomains).when(pathStartsWith("/groupcall/ROOM:"_s)),
         .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent)) } },
 
     // flipkart.com rdar://49648520
@@ -534,10 +533,14 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("icloud.com"_s),
         .behaviors = { mayNeedToIgnoreContentObservation.when(elementMatchesSelector(onTreeItem)) } },
     // icloud.com rdar://131836301
-    { .match = URLMatch::domain("icloud.com"_s).when(pathOrFragmentContains("mail"_s)),
+    { .match = URLMatch::domain("icloud.com"_s).when(pathContains("mail"_s)),
+        .behaviors = { shouldSilenceWindowResizeEventsDuringApplicationSnapshotting } },
+    { .match = URLMatch::domain("icloud.com"_s).when(fragmentContains("mail"_s)),
         .behaviors = { shouldSilenceWindowResizeEventsDuringApplicationSnapshotting } },
     // icloud.com rdar://26013388
-    { .match = URLMatch::domain("icloud.com"_s).when(pathOrFragmentContains("notes"_s)),
+    { .match = URLMatch::domain("icloud.com"_s).when(pathContains("notes"_s)),
+        .behaviors = { isNeverRichlyEditableForTouchBarQuirk } },
+    { .match = URLMatch::domain("icloud.com"_s).when(fragmentContains("notes"_s)),
         .behaviors = { isNeverRichlyEditableForTouchBarQuirk } },
 
     { .match = URLMatch::domain("iheart.com"_s),

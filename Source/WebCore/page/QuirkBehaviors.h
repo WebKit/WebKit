@@ -193,6 +193,14 @@ struct QuirkParameters {
             .cookieNames = cookieNames
         };
     }
+
+    friend bool operator==(const QuirkParameters& a, const QuirkParameters& b)
+    {
+        return a.script == b.script
+            && a.userAgent == b.userAgent
+            && a.chromeCompatibilityVersion == b.chromeCompatibilityVersion
+            && std::ranges::equal(a.cookieNames, b.cookieNames);
+    }
 };
 
 enum class QuirkParametersNeeded : uint8_t {
@@ -242,6 +250,8 @@ struct QuirkConditions {
     std::optional<ASCIILiteral> elementSelector { std::nullopt };
     std::optional<URLMatch> secondaryURL { std::nullopt };
     std::optional<ASCIILiteral> documentSelector { std::nullopt };
+
+    friend bool operator==(const QuirkConditions&, const QuirkConditions&) = default;
 };
 
 struct QuirkBehavior {
@@ -257,6 +267,8 @@ struct QuirkBehavior {
     {
         return !conditions.secondaryURL || conditions.secondaryURL->matches(context);
     }
+
+    friend bool operator==(const QuirkBehavior&, const QuirkBehavior&) = default;
 
     consteval QuirkBehavior operator()(QuirkParameters params) const
     {
