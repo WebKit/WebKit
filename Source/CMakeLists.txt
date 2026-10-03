@@ -38,6 +38,7 @@ endif ()
 if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
     webkit_scope_target_interface_definitions(gtestFramework)
+    add_subdirectory(ThirdParty/gmock)
 endif ()
 
 if (USE_XDGMIME)
