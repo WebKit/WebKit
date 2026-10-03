@@ -3201,7 +3201,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
     return availableHeight();
 }
     
-void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
+void RenderBlock::layoutExcludedChildren(RelayoutChildren)
 {
     if (!isFieldset())
         return;
@@ -3217,12 +3217,14 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     for (auto& child : childrenOfType<RenderBox>(*this)) {
         if (&child == box || !child.isLegend())
             continue;
-        child.setIsExcludedFromNormalLayout(false);
+        if (child.isExcludedFromNormalLayout()) {
+            child.setIsExcludedFromNormalLayout(false);
+            child.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        }
     }
 
     RenderBox& legend = *box;
-    if (relayoutChildren == RelayoutChildren::Yes)
-        legend.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    legend.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
     legend.layoutIfNeeded();
     
     LayoutUnit logicalLeft;
