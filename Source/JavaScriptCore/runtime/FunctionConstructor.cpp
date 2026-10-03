@@ -83,6 +83,24 @@ ASCIILiteral functionConstructorPrefix(FunctionConstructionMode functionConstruc
     return ASCIILiteral { };
 }
 
+// Dynamic Code Brand Checks Proposal
+// https://tc39.es/proposal-dynamic-code-brand-checks/#sec-hostgetcodeforeval
+//
+// For object-typed arguments, ask the host for code via codeForEval()
+// before falling back to ToString().
+static String codeForEvalOrToString(JSGlobalObject* globalObject, JSValue value, ThrowScope& scope)
+{
+    if (value.isObject()) [[unlikely]] {
+        String code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, value);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!code.isNull())
+            return code;
+    }
+    String result = value.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return result;
+}
+
 static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, FunctionConstructionMode functionConstructionMode, ThrowScope& scope, std::optional<int>& functionConstructorParametersEndPosition)
 {
     ASCIILiteral prefix = functionConstructorPrefix(functionConstructionMode);
@@ -98,7 +116,7 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
         if (arg0.isString()) [[likely]]
             program = tryMakeString(prefix, functionName.string(), "(\n) {\n"_s, asString(arg0), "\n}"_s);
         else {
-            auto body = arg0.toWTFString(globalObject);
+            String body = codeForEvalOrToString(globalObject, arg0, scope);
             RETURN_IF_EXCEPTION(scope, { });
             program = tryMakeString(prefix, functionName.string(), "(\n) {\n"_s, body, "\n}"_s);
         }
@@ -116,10 +134,12 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
             arg0Length = asString(arg0)->length();
             program = tryMakeString(prefix, functionName.string(), "("_s, asString(arg0), "\n) {\n"_s, asString(arg1), "\n}"_s);
         } else {
-            auto arg = arg0.toWTFString(globalObject);
+            String arg = codeForEvalOrToString(globalObject, arg0, scope);
             RETURN_IF_EXCEPTION(scope, { });
-            auto body = arg1.toWTFString(globalObject);
+
+            String body = codeForEvalOrToString(globalObject, arg1, scope);
             RETURN_IF_EXCEPTION(scope, { });
+
             arg0Length = arg.length();
             program = tryMakeString(prefix, functionName.string(), "("_s, arg, "\n) {\n"_s, body, "\n}"_s);
         }
@@ -133,17 +153,13 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
         StringBuilder builder(OverflowPolicy::RecordOverflow);
         builder.append(prefix, functionName.string(), '(');
 
-        auto* jsString = args.at(0).toString(globalObject);
+        auto arg0Str = codeForEvalOrToString(globalObject, args.at(0), scope);
         RETURN_IF_EXCEPTION(scope, { });
-        auto view = jsString->view(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        builder.append(view.data);
+        builder.append(arg0Str);
         for (size_t i = 1; !builder.hasOverflowed() && i < args.size() - 1; i++) {
-            auto* jsString = args.at(i).toString(globalObject);
+            auto argStr = codeForEvalOrToString(globalObject, args.at(i), scope);
             RETURN_IF_EXCEPTION(scope, { });
-            auto view = jsString->view(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            builder.append(',', view.data);
+            builder.append(',', argStr);
         }
         if (builder.hasOverflowed()) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
@@ -152,11 +168,9 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
 
         functionConstructorParametersEndPosition = builder.length() + "\n)"_s.length();
 
-        auto* bodyString = args.at(args.size() - 1).toString(globalObject);
+        auto bodyStr = codeForEvalOrToString(globalObject, args.at(args.size() - 1), scope);
         RETURN_IF_EXCEPTION(scope, { });
-        auto body = bodyString->view(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        builder.append("\n) {\n"_s, body.data, "\n}"_s);
+        builder.append("\n) {\n"_s, bodyStr, "\n}"_s);
         if (builder.hasOverflowed()) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
             return { };
@@ -178,18 +192,24 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
 
     if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None) [[unlikely]] {
         bool isTrusted = true;
-        auto* structure = globalObject->trustedScriptStructure();
         for (size_t i = 0; i < args.size(); i++) {
             auto arg = args.at(i);
 
-            if (!arg.isObject() || structure != asObject(arg)->structure()) {
+            if (!arg.isObject()) {
+                isTrusted = false;
+                break;
+            }
+
+            String codeForEval = globalObject->globalObjectMethodTable()->codeForEval(globalObject, arg);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (codeForEval.isNull()) {
                 isTrusted = false;
                 break;
             }
         }
 
         if (!isTrusted) {
-            bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::Function, code, args);
+            bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::Function, code);
             RETURN_IF_EXCEPTION(scope, { });
             if (!canCompileStrings) {
                 throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
