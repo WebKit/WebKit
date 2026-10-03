@@ -113,7 +113,7 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
     // Get the first active connector.
     drmModeConnector* connector = nullptr;
     for (uint32_t connectorId : unsafeMakeSpan(resources->connectors, resources->count_connectors)) {
-        auto* connector = drmModeGetConnector(fd, connectorId);
+        connector = drmModeGetConnector(fd, connectorId);
         if (!connector)
             continue;
 
