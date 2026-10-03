@@ -609,6 +609,7 @@ class WebInspectorUIProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebNavigationState;
+class WebNotificationManagerMessageHandler;
 class WebOpenPanelResultListenerProxy;
 class WebPageDebuggable;
 class WebPageGroup;
@@ -2864,6 +2865,7 @@ public:
 #endif
 
     WebPageProxyMessageReceiverRegistration& NODELETE messageReceiverRegistration() LIFETIME_BOUND;
+    WebNotificationManagerMessageHandler& NODELETE notificationManagerMessageHandler() LIFETIME_BOUND;
 
 #if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
     bool shouldAllowAutoFillForCellularIdentifiers() const;

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "ServiceWorkerNotificationHandler.h"
+#include "ValidationProcedures.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotificationData.h>
@@ -53,6 +54,12 @@ void WebNotificationManagerMessageHandler::deref() const
 void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&& resources, CompletionHandler<void()>&& callback)
 {
     RELEASE_LOG(Push, "WebNotificationManagerMessageHandler showNotification called");
+
+    if (auto failure = ProcessSpeaksForDomain { connection }.checkUntrusted(WebCore::SecurityOriginData::fromURL(URL { data.originString }))) {
+        MESSAGE_CHECK_COMPLETION_BASE(*failure == IPC::ValidationFailure::Ignore, connection, callback());
+        callback();
+        return;
+    }
 
     if (!data.serviceWorkerRegistrationURL.isEmpty()) {
         ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTF::move(resources), WTF::move(callback));
@@ -125,9 +132,9 @@ void WebNotificationManagerMessageHandler::getPermissionStateSync(WebCore::Secur
     completionHandler({ });
 }
 
-std::optional<SharedPreferencesForWebProcess> WebNotificationManagerMessageHandler::sharedPreferencesForWebProcess(const IPC::Connection&) const
+std::optional<SharedPreferencesForWebProcess> WebNotificationManagerMessageHandler::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    return page().legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return WebProcessProxy::fromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

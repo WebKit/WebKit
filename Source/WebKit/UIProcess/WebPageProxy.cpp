@@ -1185,6 +1185,11 @@ WebPageProxyMessageReceiverRegistration& WebPageProxy::messageReceiverRegistrati
     return internals().messageReceiverRegistration;
 }
 
+WebNotificationManagerMessageHandler& WebPageProxy::notificationManagerMessageHandler()
+{
+    return internals().notificationManagerMessageHandler;
+}
+
 std::optional<SharedPreferencesForWebProcess> WebPageProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
 {
     return WebProcessProxy::fromConnection(connection)->sharedPreferencesForWebProcess();
