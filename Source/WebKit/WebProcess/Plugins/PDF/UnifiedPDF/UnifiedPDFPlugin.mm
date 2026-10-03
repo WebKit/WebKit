@@ -3994,9 +3994,10 @@ void UnifiedPDFPlugin::showTranslationUIForSelection(PDFSelection *selection)
     if (!page)
         return;
 
-    auto rectForSelectionInRootView = this->rectForSelectionInRootView(selection);
+    auto rectForSelectionInMainFrameView = convertFromRootViewToMainFrameView(rectForSelectionInRootView(selection));
     auto pluginFrameInRootView = convertFromPluginToRootView(IntRect { IntPoint { }, size() });
-    TranslationContextMenuInfo info { selection.string, WebCore::IntRect { rectForSelectionInRootView }, pluginFrameInRootView.location() };
+    auto pluginLocationInMainFrameView = convertFromRootViewToMainFrameView(FloatPoint { pluginFrameInRootView.location() });
+    TranslationContextMenuInfo info { selection.string, WebCore::IntRect { rectForSelectionInMainFrameView }, roundedIntPoint(pluginLocationInMainFrameView) };
     protect(page)->send(Messages::WebPageProxy::HandleContextMenuTranslation { info });
 }
 #endif

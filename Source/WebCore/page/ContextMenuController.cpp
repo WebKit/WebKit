@@ -661,8 +661,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         if (RefPtr view = frame->view()) {
             m_client->handleTranslation({
                 m_context.hitTestResult().selectedText(),
-                view->contentsToRootView(enclosingIntRect(protect(frame->selection())->selectionBounds())),
-                view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame()),
+                view->contentsToMainFrameView(enclosingIntRect(protect(frame->selection())->selectionBounds())),
+                view->contentsToMainFrameView(m_context.hitTestResult().roundedPointInInnerNodeFrame()),
                 m_context.hitTestResult().isContentEditable() ? TranslationContextMenuMode::Editable : TranslationContextMenuMode::NonEditable,
                 ImageOverlay::isInsideOverlay(frame->selection().selection()) ? TranslationContextMenuSource::Image : TranslationContextMenuSource::Unspecified,
             });
