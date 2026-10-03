@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <WebCore/FrameIdentifier.h>
+#include <WebCore/RemoteUserInputEventData.h>
 
 namespace WebCore {
 
 enum class DragEventHandled : bool { No, Yes };
 
-using DragEventTargetData = Variant<DragEventHandled, FrameIdentifier>;
+using DragEventTargetData = Variant<DragEventHandled, RemoteUserInputEventData>;
 
 }
