@@ -16979,8 +16979,12 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
 
     m_scrollbarOverlayStyle = scrollbarStyle;
 
-    if (hasRunningProcess())
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyle), m_webPageID);
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyle), pageID);
+    });
 }
 
 void WebPageProxy::getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
