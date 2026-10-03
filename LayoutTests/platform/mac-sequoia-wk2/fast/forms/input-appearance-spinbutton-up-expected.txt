@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (11,45) size 201x21
   RenderBlock {DIV} at (0,0) size 201x21
-    RenderText {#text} at (0,0) size 8x21
+    RenderText {#text} at (0,-1) size 8x23
       text run at (0,0) width 8: "1"
 layer at (212,42) size 19x27
   RenderBlock (relative positioned) {DIV} at (200,0) size 20x27

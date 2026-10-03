@@ -2470,9 +2470,6 @@ webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-inte
 # rdar://183487942 ([macOS 27] fast/inline/blocks-in-inline-ax-invalid.html is a flaky test failure)
 [ GoldenGate ] fast/inline/blocks-in-inline-ax-invalid.html [ Pass ImageOnlyFailure ]
 
-# rdar://162316605 fast/forms/input-appearance-spinbutton-up.html is a constant text failure
-[ Tahoe+ ] fast/forms/input-appearance-spinbutton-up.html [ Failure ]
-
 # rdar://162324754 media/modern-media-controls/volume-support/volume-support-drag-to-mute.html is a constant timeout
 [ Tahoe+ ] media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Timeout ]
 
