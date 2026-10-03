@@ -50,6 +50,7 @@
 .timeline-overview-graph.rendering-frame > .frame-marker {
     position: absolute;
     display: block;
+    z-index: 10;
     height: 3px;
     top: -5px;
 

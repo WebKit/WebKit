@@ -34,8 +34,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelinesViewModeSettings = this._createViewModeSettings(WI.TimelineOverview.ViewMode.Timelines, WI.TimelineOverview.MinimumDurationPerPixel, WI.TimelineOverview.MaximumDurationPerPixel, 0.01, 0, 15);
         this._instrumentTypes = WI.TimelineManager.availableTimelineTypes();
 
-        let minimumDurationPerPixel = 1 / WI.TimelineRecordFrame.MaximumWidthPixels;
-        let maximumDurationPerPixel = 1 / WI.TimelineRecordFrame.MinimumWidthPixels;
+        let minimumDurationPerPixel = 1 / 14;
+        let maximumDurationPerPixel = 1 / 4;
         this._renderingFramesViewModeSettings = this._createViewModeSettings(WI.TimelineOverview.ViewMode.RenderingFrames, minimumDurationPerPixel, maximumDurationPerPixel, minimumDurationPerPixel, 0, 100);
 
         this._recording = timelineRecording;
@@ -51,6 +51,21 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._graphsContainerView.element.classList.add("graphs-container");
         this._graphsContainerView.element.addEventListener("click", this._handleGraphsContainerClick.bind(this));
         this.addSubview(this._graphsContainerView);
+
+        this._canvasElement = this._graphsContainerView.element.appendChild(document.createElement("canvas"));
+        this._canvasElement.classList.add("timeline-overview-canvas");
+        this._canvasElement.width = 0;
+        this._canvasElement.height = 0;
+        this._canvasContext = this._canvasElement.getContext("2d");
+        this._canvasRectForOverviewGraph = new Map;
+        this._canvasWidth = 0;
+        this._canvasHeight = 0;
+        this._canvasScale = 1;
+        this._canvasLayoutSubviews = [];
+        this._canvasLayoutNeedsUpdate = true;
+
+        this._boundAppearanceDidChange = this._handleAppearanceDidChange.bind(this);
+        this._prefersDarkColorSchemeMediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
 
         this._selectedTimelineRecord = null;
         this._overviewGraphsByTypeMap = new Map;
@@ -354,7 +369,14 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     {
         super.attached();
 
+        this._prefersDarkColorSchemeMediaQueryList.addListener(this._boundAppearanceDidChange);
+        WI.notifications.addEventListener(WI.Notification.SystemAppearanceDidChange, this._handleAppearanceDidChange, this);
+        window.addEventListener("focus", this._boundAppearanceDidChange, {capture: true});
+        window.addEventListener("blur", this._boundAppearanceDidChange, {capture: true});
+        window.addEventListener("visibilitychange", this._boundAppearanceDidChange, {capture: true});
+
         for (let [type, overviewGraph] of this._overviewGraphsByTypeMap) {
+            overviewGraph.invalidateCSSVariableValues();
             if (this._canShowTimelineType(type))
                 overviewGraph.hidden = false;
         }
@@ -364,6 +386,12 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     detached()
     {
+        this._prefersDarkColorSchemeMediaQueryList.removeListener(this._boundAppearanceDidChange);
+        WI.notifications.removeEventListener(WI.Notification.SystemAppearanceDidChange, this._handleAppearanceDidChange, this);
+        window.removeEventListener("focus", this._boundAppearanceDidChange, {capture: true});
+        window.removeEventListener("blur", this._boundAppearanceDidChange, {capture: true});
+        window.removeEventListener("visibilitychange", this._boundAppearanceDidChange, {capture: true});
+
         for (let overviewGraph of this._overviewGraphsByTypeMap.values())
             overviewGraph.hidden = true;
 
@@ -448,6 +476,42 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         }
     }
 
+    clearCanvas(overviewGraph)
+    {
+        const drawOverviewGraph = false;
+        this._drawCanvas(overviewGraph, drawOverviewGraph);
+    }
+
+    updateCanvas(overviewGraph)
+    {
+        const drawOverviewGraph = true;
+        this._drawCanvas(overviewGraph, drawOverviewGraph);
+    }
+
+    canvasPositionForEventInGraph(overviewGraph, event)
+    {
+        if (this.layoutPending)
+            return {x: NaN, y: NaN};
+
+        let graphRect = this._canvasRectForOverviewGraph.get(overviewGraph);
+        let canvasRect = this._canvasElement.getBoundingClientRect();
+        if (!graphRect || !canvasRect.width || !canvasRect.height)
+            return {x: NaN, y: NaN};
+
+        let x = (event.clientX - canvasRect.left) * this._canvasWidth / canvasRect.width;
+        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+            x = this._canvasWidth - x;
+
+        let canvasY = (event.clientY - canvasRect.top) * this._canvasHeight / canvasRect.height;
+        let y = canvasY - graphRect.y;
+        return {x, y};
+    }
+
+    canvasHeightForOverviewGraph(overviewGraph)
+    {
+        return this._canvasRectForOverviewGraph.get(overviewGraph)?.canvasHeight || overviewGraph.height;
+    }
+
     discontinuitiesInTimeRange(startTime, endTime)
     {
         return this._recording.discontinuitiesInTimeRange(startTime, endTime);
@@ -499,10 +563,11 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelineRuler.secondsPerPixel = this.secondsPerPixel;
 
         if (!this._dontUpdateScrollLeft) {
-            this._ignoreNextScrollEvent = true;
             let scrollLeft = Math.ceil((scrollStartTime - startTime) / this.secondsPerPixel);
-            if (scrollLeft)
+            if (!isNaN(scrollLeft) && this._scrollContainerElement.scrollLeft !== scrollLeft) {
+                this._ignoreNextScrollEvent = true;
                 this._scrollContainerElement.scrollLeft = scrollLeft;
+            }
         }
 
         for (let overviewGraph of this._overviewGraphsByTypeMap.values()) {
@@ -514,14 +579,143 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             overviewGraph.currentTime = currentTime;
             overviewGraph.endTime = scrollStartTime + visibleDuration;
         }
+
+        this._updateCanvasLayout();
     }
 
     sizeDidChange()
     {
         this._cachedScrollContainerWidth = NaN;
+        this._canvasLayoutNeedsUpdate = true;
     }
 
     // Private
+
+    _drawCanvas(overviewGraph, drawOverviewGraph)
+    {
+        if (this.layoutPending)
+            return;
+
+        let rect = this._canvasRectForOverviewGraph.get(overviewGraph);
+        if (!rect)
+            return;
+
+        let context = this._canvasContext;
+        context.save();
+
+        let canvasScaleX = this._canvasScale;
+        let canvasScaleY = this._canvasScale;
+        let canvasTranslateX = 0;
+        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL) {
+            canvasScaleX = -canvasScaleX;
+            canvasTranslateX = rect.width * this._canvasScale;
+        }
+        context.setTransform(canvasScaleX, 0, 0, canvasScaleY, canvasTranslateX, rect.y * this._canvasScale);
+
+        context.beginPath();
+        context.rect(0, 0, rect.width, rect.canvasHeight);
+        context.clip();
+        context.clearRect(0, 0, rect.width, rect.canvasHeight);
+        if (drawOverviewGraph)
+            overviewGraph.drawCanvas(context);
+        context.restore();
+    }
+
+    _updateCanvasLayout()
+    {
+        let width = this.scrollContainerWidth;
+        if (isNaN(width))
+            width = 0;
+
+        let scale = window.devicePixelRatio || 1;
+        let subviews = this._graphsContainerView.subviews;
+        let shouldUpdate = this._canvasLayoutNeedsUpdate || width !== this._canvasWidth || scale !== this._canvasScale || subviews.length !== this._canvasLayoutSubviews.length;
+        if (!shouldUpdate) {
+            for (let i = 0; i < subviews.length; ++i) {
+                let subview = subviews[i];
+                if (subview !== this._canvasLayoutSubviews[i]) {
+                    shouldUpdate = true;
+                    break;
+                }
+
+                if (!(subview instanceof WI.TimelineOverviewGraph))
+                    continue;
+
+                if (subview.hidden === this._canvasRectForOverviewGraph.has(subview)) {
+                    shouldUpdate = true;
+                    break;
+                }
+
+                let rect = this._canvasRectForOverviewGraph.get(subview);
+                if (!subview.hidden && rect.height !== subview.height) {
+                    shouldUpdate = true;
+                    break;
+                }
+            }
+        }
+        if (!shouldUpdate)
+            return;
+
+        let canvasRectForOverviewGraph = new Map;
+        let height = 0;
+        if (width) {
+            height = this._graphsContainerView.element.offsetHeight;
+            for (let subview of this._graphsContainerView.subviews) {
+                if (!(subview instanceof WI.TimelineOverviewGraph) || subview.hidden)
+                    continue;
+
+                let y = subview.element.offsetTop + subview.element.clientTop;
+                let canvasHeight = subview.element.clientHeight;
+                if (!canvasHeight)
+                    continue;
+                canvasRectForOverviewGraph.set(subview, {x: 0, y, width, height: subview.height, canvasHeight});
+                height = Math.max(height, y + canvasHeight);
+            }
+        }
+
+        let canvasLayoutChanged = width !== this._canvasWidth || height !== this._canvasHeight || scale !== this._canvasScale || canvasRectForOverviewGraph.size !== this._canvasRectForOverviewGraph.size;
+        if (!canvasLayoutChanged) {
+            for (let [overviewGraph, rect] of canvasRectForOverviewGraph) {
+                let previousRect = this._canvasRectForOverviewGraph.get(overviewGraph);
+                if (!Object.shallowEqual(rect, previousRect)) {
+                    canvasLayoutChanged = true;
+                    break;
+                }
+            }
+        }
+
+        this._canvasRectForOverviewGraph = canvasRectForOverviewGraph;
+        this._canvasWidth = width;
+        this._canvasHeight = height;
+        this._canvasScale = scale;
+        this._canvasLayoutSubviews = subviews.slice();
+        this._canvasLayoutNeedsUpdate = false;
+
+        this._canvasElement.style.width = width + "px";
+        this._canvasElement.style.height = height + "px";
+
+        let canvasWidth = Math.ceil(width * this._canvasScale);
+        let canvasHeight = Math.ceil(height * this._canvasScale);
+        if (this._canvasElement.width !== canvasWidth)
+            this._canvasElement.width = canvasWidth;
+        if (this._canvasElement.height !== canvasHeight)
+            this._canvasElement.height = canvasHeight;
+
+        if (canvasLayoutChanged) {
+            this._canvasContext.save();
+            this._canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            this._canvasContext.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
+            this._canvasContext.restore();
+        }
+    }
+
+    _handleAppearanceDidChange()
+    {
+        for (let overviewGraph of this._overviewGraphsByTypeMap.values())
+            overviewGraph.invalidateCSSVariableValues();
+
+        this.needsLayout();
+    }
 
     _updateElementWidth(element, newWidth)
     {
@@ -555,10 +749,6 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     _handleWheelEvent(event)
     {
-        // Ignore cloned events that come our way, we already handled the original.
-        if (event.__cloned)
-            return;
-
         // Ignore wheel events while handing gestures.
         if (this._handlingGesture)
             return;
@@ -566,11 +756,27 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         // Require twice the vertical delta to overcome horizontal scrolling. This prevents most
         // cases of inadvertent zooming for slightly diagonal scrolls.
         if (Math.abs(event.deltaX) >= Math.abs(event.deltaY) * 0.5) {
-            // Clone the event to dispatch it on the scroll container. Mark it as cloned so we don't get into a loop.
-            let newWheelEvent = new event.constructor(event.type, event);
-            newWheelEvent.__cloned = true;
+            let startTime = this._startTime;
+            let endTime = this._endTime;
+            if (this._viewMode === WI.TimelineOverview.ViewMode.RenderingFrames) {
+                let renderingFramesTimeline = this._recording.timelines.get(WI.TimelineRecord.Type.RenderingFrame);
+                console.assert(renderingFramesTimeline, "Recording missing rendering frames timeline", this._recording);
+                startTime = 0;
+                endTime = renderingFramesTimeline.records.length;
+            }
 
-            this._scrollContainerElement.dispatchEvent(newWheelEvent);
+            let maximumScrollStartTime = Math.max(endTime - this.visibleDuration, startTime);
+            let deltaX = event.deltaX;
+            if (event.deltaMode === WheelEvent.DOM_DELTA_LINE)
+                deltaX *= 40; // Keep this in sync with `WebCore::Scrollbar::pixelsPerLineStep()`.
+            else if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE)
+                deltaX *= this.scrollContainerWidth;
+            if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+                deltaX *= -1;
+            this.scrollStartTime = Number.constrain(this.scrollStartTime + deltaX * this.secondsPerPixel, startTime, maximumScrollStartTime);
+
+            event.preventDefault();
+            event.stopPropagation();
             return;
         }
 
@@ -692,6 +898,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         this._overviewGraphsByTypeMap.delete(timeline.type);
         this._treeElementsByTypeMap.delete(timeline.type);
+
+        this.needsLayout();
     }
 
     _markerAdded(event)
@@ -701,7 +909,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     _handleGraphsContainerClick(event)
     {
-        // Set when a WI.TimelineRecordBar receives the "click" first and is about to be selected.
+        // Set when an overview graph handles the "click" first and is about to select a record.
         if (event.__timelineRecordClickEventHandled)
             return;
 
@@ -912,6 +1120,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     {
         this.element.classList.toggle(WI.TimelineOverview.EditInstrumentsStyleClassName, this._editingInstruments);
         this._timelineRuler.enabled = !this._editingInstruments;
+
+        this.needsLayout();
 
         this._updateWheelAndGestureHandlers();
         this._updateEditInstrumentsButton();
