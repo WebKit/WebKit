@@ -161,6 +161,7 @@ public:
     WebCore::Color usedAccentColor(OptionSet<StyleColorOptions>) const;
     static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
+    BlendMode usedBlendMode() const;
 
     Style::LineWidth NODELETE usedColumnRuleWidth() const;
 
