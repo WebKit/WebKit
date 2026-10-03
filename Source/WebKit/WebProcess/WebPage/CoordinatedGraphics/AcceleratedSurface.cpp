@@ -125,7 +125,7 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     , m_hardwareAccelerationEnabled(webPage.corePage()->settings().hardwareAccelerationEnabled())
 #endif
-    , m_backgroundColor(webPage.backgroundColor())
+    , m_backgroundColor(webPage.effectiveBackgroundColor())
     , m_swapChain(*this)
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
     , m_useExplicitSync(usesGL() && useExplicitSync())
@@ -989,7 +989,7 @@ void AcceleratedSurface::backgroundColorDidChange()
 {
     ASSERT(RunLoop::isMain());
     Ref webPage = m_webPage;
-    const auto& color = webPage->backgroundColor();
+    const auto color = webPage->effectiveBackgroundColor();
 
     bool wasOpaque = this->isOpaque();
     {
@@ -1113,8 +1113,10 @@ std::optional<SkColor> AcceleratedSurface::skiaClearColor(const OptionSet<WebCor
     if (backgroundColor && !backgroundColor->isOpaque())
         return SK_ColorTRANSPARENT;
 
-    if (reasons.contains(CompositionReason::AsyncScrolling))
-        return backgroundColor ? SkColor(*backgroundColor) : SK_ColorWHITE;
+    if (reasons.contains(CompositionReason::AsyncScrolling)) {
+        Ref webPage = m_webPage.get();
+        return backgroundColor ? SkColor(*backgroundColor) : SkColor(webPage->effectiveBackgroundColor());
+    }
 
     return std::nullopt;
 }
@@ -1130,11 +1132,10 @@ void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reas
     }
 
     if (reasons.contains(CompositionReason::AsyncScrolling)) {
-        if (backgroundColor) {
-            auto [r, g, b, a] = backgroundColor->toResolvedColorComponentsInColorSpace(WebCore::ColorSpaceName::SRGB);
-            glClearColor(r, g, b, a);
-        } else
-            glClearColor(1, 1, 1, 1);
+        Ref webPage = m_webPage.get();
+        auto color = backgroundColor.value_or(webPage->effectiveBackgroundColor());
+        auto [r, g, b, a] = color.toResolvedColorComponentsInColorSpace(WebCore::ColorSpaceName::SRGB);
+        glClearColor(r, g, b, a);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 }

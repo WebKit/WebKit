@@ -445,10 +445,12 @@ GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManage
 void webkit_web_view_set_background_color(WebKitWebView* webView, const GdkRGBA* rgba)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(rgba);
 
     auto& page = *webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
-    page.setBackgroundColor(WebKit::gdkRGBAToColor(*rgba));
+    if (rgba)
+        page.setBackgroundColor(WebKit::gdkRGBAToColor(*rgba));
+    else
+        page.setBackgroundColor(std::nullopt);
 }
 
 /**
@@ -470,7 +472,15 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, GdkRGBA* rgba)
     g_return_if_fail(rgba);
 
     auto& page = *webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
-    *rgba = WebKit::colorToGdkRGBA(page.backgroundColor().value_or(WebCore::Color::white));
+    if (auto color = page.backgroundColor()) {
+        *rgba = WebKit::colorToGdkRGBA(*color);
+        return;
+    }
+
+    if (page.useDarkAppearance())
+        *rgba = { 30.0 / 255.0, 30.0 / 255.0, 30.0 / 255.0, 1.0 };
+    else
+        *rgba = { 1.0, 1.0, 1.0, 1.0 };
 }
 
 /**

@@ -1921,6 +1921,7 @@ public:
     WebCore::IntRect rectForElementAtInteractionLocation() const;
 
     const std::optional<WebCore::Color>& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
+    WebCore::Color effectiveBackgroundColor() const;
 
     void suspendAllMediaBuffering();
     void resumeAllMediaBuffering();
@@ -3327,7 +3328,7 @@ private:
     bool m_isSuspendedUnderLock { false };
 
     HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypesWithCustomContentProviders;
-    std::optional<WebCore::Color> m_backgroundColor { WebCore::Color::white };
+    std::optional<WebCore::Color> m_backgroundColor;
 
     std::optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
 
