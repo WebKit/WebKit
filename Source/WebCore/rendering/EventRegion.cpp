@@ -157,6 +157,14 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         }
 
         if (interactionRegion->type == InteractionRegion::Type::Guard) {
+            // If an ancestor's region represents the guard container, a guard would block that region's effect.
+            bool isRepresentedByAncestor = !renderer.hasVisibleBoxDecorations()
+                && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion->nodeIdentifier);
+            if (isRepresentedByAncestor)
+                return;
+
+            m_guardContainersWithGuard.add(interactionRegion->nodeIdentifier);
+
             auto result = m_guardRects.add(rectForTracking, Inflated::No);
             if (!result.isNewEntry)
                 return;
@@ -215,6 +223,11 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(const RenderObject& 
             // If it has a border / background, stop the search.
             if (ancestor.hasVisibleBoxDecorations())
                 return false;
+
+            // If it is a guard container that kept its guard, and this region is its content, stop the search.
+            if (ancestorElementIdentifier == nodeIdentifier && m_guardContainersWithGuard.contains(ancestorElementIdentifier))
+                return false;
+
             continue;
         }
 

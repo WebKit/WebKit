@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    .container {
+        position: absolute;
+        top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 100%;
+        background-color: #add8ff;
+        cursor: pointer;
+    }
+    .container.large {
+        width: 160px;
+        height: 160px;
+    }
+    #alpha-image { left: 20px; }
+    #opaque-image { left: 96px; }
+    #link { left: 172px; }
+    #padded { left: 248px; }
+    #nested { left: 324px; }
+    #not-consolidated { left: 400px; }
+    #overflowing { left: 600px; }
+    #exact-fill { left: 700px; }
+
+    button, a {
+        display: flex;
+        padding: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+    }
+    img {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+    }
+    #padded button {
+        padding: 4px;
+    }
+    #padded img {
+        width: 40px;
+        height: 40px;
+    }
+    #overflowing button {
+        padding: 20px;
+    }
+    #exact-fill img {
+        width: 56px;
+        height: 56px;
+    }
+</style>
+<body>
+<!--
+    A transparent button or link whose only child is an image is a guard container: the image's region
+    represents it, and its Guard region extends that region. When the guard container fits in a clickable
+    ancestor's region, the ancestor's region represents it instead. It doesn't get a Guard, which would sit
+    above the ancestor's region and block its effect, and the image is consolidated into the ancestor.
+    This also applies when the guard container is larger than the image, when it fills the ancestor exactly,
+    and to nested guard containers. In "not-consolidated" the button is too far from the ancestor's edges, and
+    in "overflowing" it extends beyond the ancestor's region: the button keeps its Guard, and the image keeps
+    its region.
+-->
+<section id="test">
+    <div id="alpha-image" class="container"><button><img src="resources/image.png"></button></div>
+    <div id="opaque-image" class="container"><button><img src="resources/opaque-rgb.jpg"></button></div>
+    <div id="link" class="container"><a href="#"><img src="resources/image.png"></a></div>
+    <div id="padded" class="container"><button><img src="resources/image.png"></button></div>
+    <div id="nested" class="container"><a href="#"><button><img src="resources/image.png"></button></a></div>
+    <div id="not-consolidated" class="container large"><button><img src="resources/opaque-rgb.jpg"></button></div>
+    <div id="overflowing" class="container"><button><img src="resources/opaque-rgb.jpg"></button></div>
+    <div id="exact-fill" class="container"><button><img src="resources/image.png"></button></div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>
