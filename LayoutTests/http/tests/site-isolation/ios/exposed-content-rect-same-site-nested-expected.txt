@@ -1,0 +1,4 @@
+
+
+PASS exposedContentRect is mapped down to a cross-site frame through two same-site frames in the main frame's process
+
