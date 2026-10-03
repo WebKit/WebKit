@@ -143,6 +143,12 @@ extension NWConnection {
     }
 
     func terminate() async {
+        // A connection that was already cancelled, for instance by a test's own connection handler, never reports
+        // .cancelled again, so waiting for it here would never finish.
+        if case .cancelled = state {
+            return
+        }
+
         await withCheckedContinuation { continuation in
             // Strong capture: the handler is stored on the connection itself, so a weak
             // capture could never outlive a strong one. The cycle is broken on .cancelled.

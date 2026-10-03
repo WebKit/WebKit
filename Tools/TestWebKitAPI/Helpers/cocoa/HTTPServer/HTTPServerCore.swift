@@ -193,18 +193,28 @@ final class HTTPServerCore {
         } else if `protocol` == .http2 || `protocol` == .http3 || `protocol` == .http2Proxy {
             #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
             Task {
-                // FIXME: Handle errors better.
-                // swift-format-ignore: NeverUseForceTry
-                try! await respondToHTTPMessagingRequests(on: connection)
+                do {
+                    try await respondToHTTPMessagingRequests(on: connection)
+                } catch NWError.posix(.ECANCELED) {
+                    // `cancel()` cancels every connection when the server shuts down, including any still sending a response.
+                } catch {
+                    // FIXME: Handle errors better.
+                    fatalError("\(error)")
+                }
             }
             #else
             fatalError("HTTP messaging is not available in this configuration")
             #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
         } else {
             Task {
-                // FIXME: Handle errors better.
-                // swift-format-ignore: NeverUseForceTry
-                try! await respondToRequests(on: connection)
+                do {
+                    try await respondToRequests(on: connection)
+                } catch NWError.posix(.ECANCELED) {
+                    // `cancel()` cancels every connection when the server shuts down, including any still sending a response.
+                } catch {
+                    // FIXME: Handle errors better.
+                    fatalError("\(error)")
+                }
             }
         }
     }

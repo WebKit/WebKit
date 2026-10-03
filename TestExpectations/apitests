@@ -404,7 +404,7 @@ rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.InspectedWindow
 rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.PortMessagePassingToBackground [ Skip ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noNotificationsObjectWithoutPermission() [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noWebNavigationObjectWithoutPermission() [ Pass Timeout ]
-webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionController.WebAccessibleResourceInSubframeFromAboutBlank [ Pass Timeout ]
+webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionControllerTests/webAccessibleResourceInSubframeFromAboutBlank() [ Pass Timeout ]
 rdar://167044676 [ mac ] TestWebKitAPI.WKWebExtensionDataRecord.GetDataRecords [ Skip ]
 rdar://147858640 TestWebKitAPI.WKWebExtensionDataRecord.GetDataRecordsForMultipleContexts [ Skip ]
 rdar://125926932 TestWebKitAPI.WKWebExtensionDataRecord.RemoveDataRecords [ Skip ]
