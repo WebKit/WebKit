@@ -111,6 +111,7 @@ public:
     bool needsChromeMediaControlsPseudoElement() const;
     bool isMediaControlsMacInlineSizeSpecsEnabled() const;
     bool spatialVideoRenderingEnabled() const;
+    double defaultSpatialCameraFieldOfView() const;
     String spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);

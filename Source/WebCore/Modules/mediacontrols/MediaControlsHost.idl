@@ -70,6 +70,7 @@ enum DeviceType {
     readonly attribute boolean needsChromeMediaControlsPseudoElement;
     readonly attribute boolean isMediaControlsMacInlineSizeSpecsEnabled;
     readonly attribute boolean spatialVideoRenderingEnabled;
+    readonly attribute double defaultSpatialCameraFieldOfView;
     readonly attribute DOMString spatialVideoProjectionKind;
     readonly attribute long? spatialVideoHorizontalFieldOfView;
     undefined spatialCameraDidMove(unrestricted double yaw, unrestricted double pitch, unrestricted double fieldOfView);
