@@ -741,8 +741,15 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
     }
 
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
-        if (didDiscardContent)
-            layoutBox->rendererForIntegration()->clearNeedsLayout();
+        if (didDiscardContent) {
+            CheckedRef renderer = *layoutBox->rendererForIntegration();
+            // Atomic inline-level boxes after the clamp point are not laid out and neither is their content (e.g. inline-block, ruby annotation).
+            if (layoutBox->isAtomicInlineBox()) {
+                for (CheckedRef descendant : descendantsOfType<RenderObject>(downcast<RenderElement>(renderer.get())))
+                    descendant->clearNeedsLayout();
+            }
+            renderer->clearNeedsLayout();
+        }
 
         if (!layoutBox->isFloatingPositioned() && !layoutBox->isOutOfFlowPositioned())
             continue;
