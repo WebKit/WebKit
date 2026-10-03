@@ -31,7 +31,7 @@
 #include "Helpers/GraphicsTestUtilities.h"
 #include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/Color.h>
-#include <WebCore/GraphicsContextGLEGL.h>
+#include <WebCore/GraphicsContextGLCoordinated.h>
 #include <WebCore/ProcessIdentity.h>
 #include <atomic>
 #include <limits>
@@ -46,11 +46,11 @@ using namespace WebCore;
 
 namespace {
 
-using TestedGraphicsContextGLEGL = GraphicsContextGLEGL;
+using TestedGraphicsContextGLCoordinated = GraphicsContextGLCoordinated;
 
-static RefPtr<TestedGraphicsContextGLEGL> createTestedGraphicsContextGL(GraphicsContextGLAttributes attribute)
+static RefPtr<TestedGraphicsContextGLCoordinated> createTestedGraphicsContextGL(GraphicsContextGLAttributes attribute)
 {
-    return TestedGraphicsContextGLEGL::create(WTF::move(attribute));
+    return TestedGraphicsContextGLCoordinated::create(WTF::move(attribute));
 }
 
 class MockGraphicsContextGLClient final : public GraphicsContextGL::Client {
@@ -63,7 +63,7 @@ private:
     int m_contextLostCalls { 0 };
 };
 
-class GraphicsContextGLEGLTest : public ::testing::Test {
+class GraphicsContextGLCoordinatedTest : public ::testing::Test {
 protected:
     void SetUp() override // NOLINT
     {
@@ -86,7 +86,7 @@ protected:
     bool isWebGL2() const { return GetParam(); }
 #if ENABLE(WEBXR)
     GraphicsContextGLAttributes attributes();
-    RefPtr<TestedGraphicsContextGLEGL> createTestContext(IntSize contextSize);
+    RefPtr<TestedGraphicsContextGLCoordinated> createTestContext(IntSize contextSize);
 #endif
 
     void SetUp() override // NOLINT
@@ -115,7 +115,7 @@ GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
     return attributes;
 }
 
-RefPtr<TestedGraphicsContextGLEGL> AnyContextAttributeTest::createTestContext(IntSize contextSize)
+RefPtr<TestedGraphicsContextGLCoordinated> AnyContextAttributeTest::createTestContext(IntSize contextSize)
 {
     auto context = createTestedGraphicsContextGL(attributes());
     if (!context)
@@ -140,7 +140,7 @@ static ::testing::AssertionResult checkReadPixel(GraphicsContextGL& context, Int
 }
 #endif // ENABLE(WEBXR)
 
-TEST_F(GraphicsContextGLEGLTest, ClearBufferIncorrectSizes)
+TEST_F(GraphicsContextGLCoordinatedTest, ClearBufferIncorrectSizes)
 {
     using GL = GraphicsContextGL;
     GraphicsContextGLAttributes attributes;
@@ -226,7 +226,7 @@ TEST_F(GraphicsContextGLEGLTest, ClearBufferIncorrectSizes)
 
 // Test destroying graphics contexts so that the underlying current OpenGL context is different
 // than the underlying OpenGL context of destroyed context.
-TEST_F(GraphicsContextGLEGLTest, DestroyWithoutMakingCurrent)
+TEST_F(GraphicsContextGLCoordinatedTest, DestroyWithoutMakingCurrent)
 {
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = true;
@@ -242,7 +242,7 @@ TEST_F(GraphicsContextGLEGLTest, DestroyWithoutMakingCurrent)
     gl2 = nullptr; // Test the case where we destroy without context being current.
 }
 
-TEST_F(GraphicsContextGLEGLTest, TwoLinks)
+TEST_F(GraphicsContextGLCoordinatedTest, TwoLinks)
 {
     GraphicsContextGLAttributes attributes;
     auto gl = createTestedGraphicsContextGL(attributes);
@@ -262,7 +262,7 @@ TEST_F(GraphicsContextGLEGLTest, TwoLinks)
     gl = nullptr;
 }
 
-TEST_F(GraphicsContextGLEGLTest, CopyNativeImageNoDrawingBufferReturnsNullptr)
+TEST_F(GraphicsContextGLCoordinatedTest, CopyNativeImageNoDrawingBufferReturnsNullptr)
 {
     using GL = GraphicsContextGL;
     auto gl = createTestedGraphicsContextGL({ });
@@ -274,7 +274,7 @@ TEST_F(GraphicsContextGLEGLTest, CopyNativeImageNoDrawingBufferReturnsNullptr)
 
 // Test that the copy is in image orientation, i.e. the first row of the image is the top
 // row, even though the first row of the drawing buffer is the bottom row.
-TEST_F(GraphicsContextGLEGLTest, CopyNativeImageIsNotYFlipped)
+TEST_F(GraphicsContextGLCoordinatedTest, CopyNativeImageIsNotYFlipped)
 {
     using GL = GraphicsContextGL;
     auto gl = createTestedGraphicsContextGL({ });
@@ -300,7 +300,7 @@ TEST_F(GraphicsContextGLEGLTest, CopyNativeImageIsNotYFlipped)
 
 // Test copying images and mutating the drawing buffer.
 // The mutations should only be visible in the new buffers, and not the old ones.
-TEST_F(GraphicsContextGLEGLTest, CopyImageAndMutateDrawingBuffer)
+TEST_F(GraphicsContextGLCoordinatedTest, CopyImageAndMutateDrawingBuffer)
 {
     using GL = GraphicsContextGL;
     auto gl = createTestedGraphicsContextGL({ });
@@ -437,12 +437,12 @@ TEST_P(AnyContextAttributeTest, WebXRBlitTest)
 }
 #endif // ENABLE(WEBXR)
 
-INSTANTIATE_TEST_SUITE_P(GraphicsContextGLEGLTest,
+INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCoordinatedTest,
     AnyContextAttributeTest,
     testing::Values(true, false),
     TestParametersToStringFormatter());
 
-class GraphicsContextGLEGLReadPixelsTest : public ::testing::Test {
+class GraphicsContextGLCoordinatedReadPixelsTest : public ::testing::Test {
 protected:
     void SetUp() override // NOLINT
     {
@@ -455,11 +455,11 @@ protected:
         m_context->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
     }
 
-    RefPtr<TestedGraphicsContextGLEGL> m_context { nullptr };
+    RefPtr<TestedGraphicsContextGLCoordinated> m_context { nullptr };
     Color m_expectedColor { };
 };
 
-TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsSuccess)
+TEST_F(GraphicsContextGLCoordinatedReadPixelsTest, readPixelsSuccess)
 {
     EXPECT_TRUE(m_context->getErrors().isEmpty());
     uint8_t gotValues[4] = { 0, 0, 0, 0 };
@@ -470,7 +470,7 @@ TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsSuccess)
     EXPECT_TRUE(m_context->getErrors().isEmpty());
 }
 
-TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsTooLargeRect)
+TEST_F(GraphicsContextGLCoordinatedReadPixelsTest, readPixelsTooLargeRect)
 {
     EXPECT_TRUE(m_context->getErrors().isEmpty());
     uint8_t gotValues[4] = { 0, 0, 0, 0 };
@@ -481,7 +481,7 @@ TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsTooLargeRect)
     EXPECT_EQ(GCGLErrorCode::InvalidOperation, m_context->getErrors());
 }
 
-TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsWithStatusSuccess)
+TEST_F(GraphicsContextGLCoordinatedReadPixelsTest, readPixelsWithStatusSuccess)
 {
     uint8_t gotValues[4] = { 0, 0, 0, 0 };
     IntRect rect(1, 1, 1, 1);
@@ -491,7 +491,7 @@ TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsWithStatusSuccess)
     EXPECT_TRUE(m_context->getErrors().isEmpty());
 }
 
-TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsWithStatusTooLargeRect)
+TEST_F(GraphicsContextGLCoordinatedReadPixelsTest, readPixelsWithStatusTooLargeRect)
 {
     uint8_t gotValues[4] = { 0, 0, 0, 0 };
     IntRect rect(1, 1, 0x7fffffff, 0x7fffffff);
@@ -501,7 +501,7 @@ TEST_F(GraphicsContextGLEGLReadPixelsTest, readPixelsWithStatusTooLargeRect)
     EXPECT_EQ(GCGLErrorCode::InvalidOperation, m_context->getErrors());
 }
 
-class GraphicsContextGLEGLReshapeTest : public ::testing::Test {
+class GraphicsContextGLCoordinatedReshapeTest : public ::testing::Test {
 protected:
     static constexpr int INITIAL_WIDTH = 20;
     static constexpr int INITIAL_HEIGHT = 20;
@@ -513,10 +513,10 @@ protected:
         m_context->reshape(INITIAL_WIDTH, INITIAL_HEIGHT);
     }
 
-    RefPtr<TestedGraphicsContextGLEGL> m_context { nullptr };
+    RefPtr<TestedGraphicsContextGLCoordinated> m_context { nullptr };
 };
 
-TEST_F(GraphicsContextGLEGLReshapeTest, reshapeSuccess)
+TEST_F(GraphicsContextGLCoordinatedReshapeTest, reshapeSuccess)
 {
     const IntSize framebufferSize { 200, 200 };
 
@@ -527,7 +527,7 @@ TEST_F(GraphicsContextGLEGLReshapeTest, reshapeSuccess)
     EXPECT_EQ(m_context->getInternalFramebufferSize().height(), framebufferSize.height());
 }
 
-TEST_F(GraphicsContextGLEGLReshapeTest, reshapeWidthTooLarge)
+TEST_F(GraphicsContextGLCoordinatedReshapeTest, reshapeWidthTooLarge)
 {
     const IntSize framebufferSize { std::numeric_limits<int>::max(), 200 };
 
@@ -538,7 +538,7 @@ TEST_F(GraphicsContextGLEGLReshapeTest, reshapeWidthTooLarge)
     EXPECT_EQ(m_context->getInternalFramebufferSize().height(), INITIAL_HEIGHT);
 }
 
-TEST_F(GraphicsContextGLEGLReshapeTest, reshapeHeightTooLarge)
+TEST_F(GraphicsContextGLCoordinatedReshapeTest, reshapeHeightTooLarge)
 {
     const IntSize framebufferSize { 200, std::numeric_limits<int>::max() };
 

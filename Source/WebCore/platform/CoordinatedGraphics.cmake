@@ -28,7 +28,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/coordinated/CoordinatedPlatformLayerBufferSkiaDeferredImage.cpp
     platform/graphics/coordinated/CoordinatedPlatformLayerBufferSkiaImage.cpp
     platform/graphics/coordinated/CoordinatedTileBuffer.cpp
-    platform/graphics/coordinated/GraphicsContextGLEGLCoordinated.cpp
+    platform/graphics/coordinated/GraphicsContextGLCoordinated.cpp
+    platform/graphics/coordinated/GraphicsContextGLCoordinatedEpoxy.cpp
     platform/graphics/coordinated/GraphicsLayerAsyncContentsDisplayDelegateCoordinated.cpp
     platform/graphics/coordinated/GraphicsLayerContentsDisplayDelegateCoordinated.cpp
     platform/graphics/coordinated/GraphicsLayerCoordinated.cpp
@@ -71,6 +72,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/coordinated/CoordinatedPlatformLayerBuffer.h
     platform/graphics/coordinated/CoordinatedPlatformLayerBufferProxy.h
     platform/graphics/coordinated/CoordinatedTileBuffer.h
+    platform/graphics/coordinated/GraphicsContextGLCoordinated.h
     platform/graphics/coordinated/GraphicsLayerContentsDisplayDelegateCoordinated.h
     platform/graphics/coordinated/GraphicsLayerCoordinated.h
 )

@@ -35,12 +35,13 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 
 class GLFence;
+class CoordinatedWebGLTextureWrapper;
 
 class CoordinatedPlatformLayerBufferSkiaImage final : public CoordinatedPlatformLayerBuffer {
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> create(const sk_sp<SkImage>&, const sk_sp<GrContextThreadSafeProxy>&);
 #if ENABLE(WEBGL)
-    static std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> create(unsigned, const IntSize&, AlphaMode, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> create(Ref<CoordinatedWebGLTextureWrapper>&&, const IntSize&, AlphaMode, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
 #endif
     CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&&, AlphaMode, Rotation);
     virtual ~CoordinatedPlatformLayerBufferSkiaImage() = default;
