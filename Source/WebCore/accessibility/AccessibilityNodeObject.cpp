@@ -105,6 +105,7 @@
 #include "NodeTraversal.h"
 #include "ProgressTracker.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RadioButtonGroups.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
@@ -1273,6 +1274,12 @@ bool AccessibilityNodeObject::isRequired() const
     RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(node());
     if (formControlElement && formControlElement->isRequired())
         return true;
+
+    // A radio button is required when any button in its group is.
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(node()); input && input->isRadioButton()) {
+        if (auto* radioButtonGroups = input->radioButtonGroups(); radioButtonGroups && radioButtonGroups->isInRequiredGroup(*input))
+            return true;
+    }
 
     const AtomString& requiredValue = getAttribute(aria_requiredAttr);
     if (equalLettersIgnoringASCIICase(requiredValue, "true"_s))

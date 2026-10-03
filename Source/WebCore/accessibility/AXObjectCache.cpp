@@ -4459,9 +4459,16 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
                     postNotification(newControl.get(), AXNotification::TextChanged);
             }
         }
-    } else if (attrName == requiredAttr)
+    } else if (attrName == requiredAttr) {
         postNotification(element, AXNotification::RequiredStatusChanged);
-    else if (attrName == tabindexAttr) {
+        // A radio button is required when any button in its group is, so the others can change with it.
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); input && input->isRadioButton()) {
+            for (Ref radio : input->radioButtonGroup()) {
+                if (radio.ptr() != input.get())
+                    postNotification(radio.ptr(), AXNotification::RequiredStatusChanged);
+            }
+        }
+    } else if (attrName == tabindexAttr) {
         if (oldValue.isEmpty() || newValue.isEmpty()) {
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
             // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), we don't need to do issue any children-changed events,
@@ -6706,7 +6713,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::IdentifierAttribute });
             break;
         case AXNotification::RadioGroupMembershipChanged:
-            tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::RadioButtonGroupMembers });
+            tree->queueNodeUpdate(notification.first->objectID(), { { AXProperty::RadioButtonGroupMembers, AXProperty::IsRequired } });
             break;
         case AXNotification::ReadOnlyStatusChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::CanSetValueAttribute });
