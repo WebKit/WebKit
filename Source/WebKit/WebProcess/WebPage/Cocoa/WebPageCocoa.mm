@@ -4134,7 +4134,12 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     // FIXME: unobscuredContentSize has two incompatible callers. Scroll limits want the zoomed size, while layout
     // and scrollbars want the unzoomed view size. We pass the zoomed size to keep scrolling correct and fix up
     // the callers that need the other one.
-    frameView->setUnobscuredContentSize(unobscuredContentRect.size());
+    auto unobscuredContentSize = unobscuredContentRect.size();
+#if ENABLE(META_VIEWPORT)
+    if (m_viewportConfiguration.viewportArguments().interactiveWidgetValue == InteractiveWidgetValue::ResizesContent)
+        unobscuredContentSize = visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds().size();
+#endif
+    frameView->setUnobscuredContentSize(unobscuredContentSize);
     Ref page = *m_page;
     page->setContentInsets(visibleContentRectUpdateInfo.contentInsets());
     page->setUnobscuredSafeAreaInsets(visibleContentRectUpdateInfo.unobscuredSafeAreaInsets());
