@@ -229,21 +229,30 @@ static void testFindBoundaryLengths(FindFunction findFunction)
 {
     // Boundary lengths around the new intermediate SIMD tier find16()/find32() gained for
     // the [stride, threshold) gap (stride 8 for uint16_t / 4 for uint32_t on 128-bit SIMD;
-    // threshold is 32). Place the target character at every position for each length.
-    for (size_t length : { 1, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64 }) {
+    // threshold is 32), and around the lengths where find8() changes how it searches (16 and 64).
+    // Place the target character at every position for each length.
+    constexpr auto target = static_cast<UnsignedType>(0xBEEF);
+    for (size_t length : { 1, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64, 65, 79, 80, 81, 128 }) {
         Vector<UnsignedType> buffer(length, [](size_t i) {
             return static_cast<UnsignedType>(0x1000 + (i % 100));
         });
 
-        EXPECT_EQ(findFunction(buffer.span().data(), static_cast<UnsignedType>(0xBEEF), length), nullptr) << "length=" << length;
+        EXPECT_EQ(findFunction(buffer.span().data(), target, length), nullptr) << "length=" << length;
 
         for (size_t position = 0; position < length; ++position) {
             auto withTarget = buffer;
-            withTarget[position] = 0xBEEF;
-            EXPECT_EQ(findFunction(withTarget.span().data(), static_cast<UnsignedType>(0xBEEF), length), withTarget.span().data() + position)
+            withTarget[position] = target;
+            EXPECT_EQ(findFunction(withTarget.span().data(), target, length), withTarget.span().data() + position)
                 << "length=" << length << " position=" << position;
         }
     }
+}
+
+TEST(WTF_StringCommon, Find8BoundaryLengths)
+{
+    testFindBoundaryLengths<uint8_t>([](const uint8_t* pointer, uint8_t character, size_t length) {
+        return WTF::find8(pointer, character, length);
+    });
 }
 
 TEST(WTF_StringCommon, Find16BoundaryLengths)

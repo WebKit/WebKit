@@ -623,22 +623,22 @@ ALWAYS_INLINE static size_t NODELETE findInner(std::span<const SearchCharacterTy
     return index + i;
 }
 
+WTF_EXPORT_PRIVATE const uint8_t* NODELETE find8VectorizedImpl(const uint8_t* pointer, uint8_t character, size_t length);
+
 SUPPRESS_NODELETE ALWAYS_INLINE const uint8_t* NODELETE find8(const uint8_t* pointer, uint8_t character, size_t length)
 {
-    constexpr size_t thresholdLength = 16;
-
-    size_t index = 0;
-    size_t runway = std::min(thresholdLength, length);
-    for (; index < runway; ++index) {
-        if (pointer[index] == character)
-            return pointer + index;
-    }
-    if (runway == length)
+    if (length < SIMD::stride<uint8_t>) {
+        for (size_t index = 0; index < length; ++index) {
+            if (pointer[index] == character)
+                return pointer + index;
+        }
         return nullptr;
+    }
 
-    ASSERT(index < length);
-    // We rely on memchr already having SIMD optimization, so we don’t have to write our own.
-    return static_cast<const uint8_t*>(memchr(pointer + index, character, length - index));
+    if (auto index = SIMD::findFirstNonZeroIndex(SIMD::equal(SIMD::load(pointer), SIMD::splat<uint8_t>(character))))
+        return pointer + index.value();
+
+    return find8VectorizedImpl(pointer, character, length);
 }
 
 template<typename UnsignedType>

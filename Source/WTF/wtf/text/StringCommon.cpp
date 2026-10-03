@@ -32,6 +32,21 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
+SUPPRESS_NODELETE
+const uint8_t* find8VectorizedImpl(const uint8_t* pointer, uint8_t character, size_t length)
+{
+    constexpr size_t thresholdLength = 64;
+
+    size_t runway = std::min(thresholdLength, length);
+    if (auto* result = findImpl(pointer, character, runway))
+        return result;
+    if (runway == length)
+        return nullptr;
+
+    // We rely on memchr already having SIMD optimization, so we don’t have to write our own.
+    return static_cast<const uint8_t*>(memchr(pointer + runway, character, length - runway)); // NOLINT
+}
+
 SUPPRESS_NODELETE SUPPRESS_ASAN
 const float* findFloatAlignedImpl(const float* pointer, float target, size_t length)
 {
