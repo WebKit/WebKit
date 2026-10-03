@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/log-pause-location.js"></script>
+<script>function entry(){debugger;helper();done()}function helper(){leaf()}function leaf(){}function done(){}
+//# sourceURL=inline-source-map-entry.js
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjogMywgInNvdXJjZXMiOiBbImVudHJ5LW9yaWdpbmFsLmpzIl0sICJzb3VyY2VzQ29udGVudCI6IFsiZnVuY3Rpb24gZW50cnkoKSB7XG4gICAgZGVidWdnZXI7XG4gICAgaGVscGVyKCk7XG4gICAgZG9uZSgpO1xufVxuZnVuY3Rpb24gaGVscGVyKCkge1xuICAgIGxlYWYoKTtcbn1cbmZ1bmN0aW9uIGxlYWYoKSB7IH1cbmZ1bmN0aW9uIGRvbmUoKSB7IH1cbiJdLCAibmFtZXMiOiBbXSwgIm1hcHBpbmdzIjogIkFBQUEsaUJBQ0ksU0FDQSxTQUNBLE9BRUosa0JBQ0ksT0FFSixpQkFDQSJ9
+</script>
+<script>
+// This comments prevents the inlined source map from being in the results.
+function driver() { entry(); afterEntry(); }
+function afterEntry() { }
+</script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.Stepping.InlineScript.SourceMap");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.Stepping.InlineScript.SourceMap.OverIntoOut",
+        description: "Stepping through a source-mapped inline <script> displays the correct original location, and stepping out to the document is not mis-mapped.",
+        expression: "setTimeout(driver)",
+        steps: ["over", "in", "out", "out", "resume"],
+    });
+
+    function entryScriptLoaded() {
+        return WI.SourceMap.instances.some((sourceMap) => {
+            let sourceCode = sourceMap.originalSourceCode;
+            return sourceCode instanceof WI.Script && sourceCode.sourceURL === "inline-source-map-entry.js";
+        });
+    }
+
+    async function runWhenReady() {
+        for (let i = 0; i < 500; ++i) {
+            if (entryScriptLoaded())
+                break;
+            await Promise.delay(10);
+        }
+        await loadMainPageContent();
+        suite.runTestCasesAndFinish();
+    }
+    runWhenReady();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that stepping through a source-mapped inline script displays the correct original location and that stepping out to a document location is not incorrectly mapped through the source map.</p>
+</body>
+</html>

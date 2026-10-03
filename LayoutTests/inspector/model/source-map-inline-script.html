@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>function f(){debugger;g()}function g(){}
+//# sourceURL=inline-source-map-a.js
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjogMywgInNvdXJjZXMiOiBbImlubGluZS1hLW9yaWdpbmFsLmpzIl0sICJzb3VyY2VzQ29udGVudCI6IFsiZnVuY3Rpb24gZigpIHtcbiAgICBkZWJ1Z2dlcjtcbiAgICBnKCk7XG59XG5mdW5jdGlvbiBnKCkgeyB9XG4iXSwgIm5hbWVzIjogW10sICJtYXBwaW5ncyI6ICJBQUFBLGFBQ0ksU0FDQSxJQUVKIn0=
+</script>
+<script>function h(){debugger;
+k()}function k(){}
+//# sourceURL=inline-source-map-b.js
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjogMywgInNvdXJjZXMiOiBbImlubGluZS1iLW9yaWdpbmFsLmpzIl0sICJzb3VyY2VzQ29udGVudCI6IFsiZnVuY3Rpb24gaCgpIHtcbiAgICBkZWJ1Z2dlcjtcbiAgICBrKCk7XG59XG5mdW5jdGlvbiBrKCkgeyB9XG4iXSwgIm5hbWVzIjogW10sICJtYXBwaW5ncyI6ICJBQUFBLGFBQ0k7QUFDQSxJQUVKIn0=
+</script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SourceCodeLocation.InlineScript.SourceMap");
+
+    const scriptSourceURLA = "inline-source-map-a.js";
+    const scriptSourceURLB = "inline-source-map-b.js";
+
+    function mainResource() {
+        return WI.networkManager.mainFrame.mainResource;
+    }
+
+    function inlineScriptForSourceURL(sourceURL) {
+        return mainResource().sourceMaps
+            .map((sourceMap) => sourceMap.originalSourceCode)
+            .find((sourceCode) => sourceCode instanceof WI.Script && sourceCode.sourceURL === sourceURL) || null;
+    }
+
+    async function whenSourceMapsReady() {
+        for (let i = 0; i < 500; ++i) {
+            if (inlineScriptForSourceURL(scriptSourceURLA) && inlineScriptForSourceURL(scriptSourceURLB))
+                return;
+            await Promise.delay(10);
+        }
+        InspectorTest.fail("Timed out waiting for inline script source maps to load.");
+    }
+
+    function checkMapping({sourceURL, generatedLine, generatedColumn, originalFile, originalLine, originalColumn}) {
+        let script = inlineScriptForSourceURL(sourceURL);
+        InspectorTest.assert(script, `Should have found inline <script> "${sourceURL}".`);
+
+        let documentLine = script.range.startLine + generatedLine;
+        let documentColumn = generatedColumn + (!generatedLine ? script.range.startColumn : 0);
+
+        let sourceCodeLocation = mainResource().createSourceCodeLocation(documentLine, documentColumn);
+
+        InspectorTest.log(`\nGenerated (${generatedLine}, ${generatedColumn}) in ${sourceURL} [document (${documentLine}, ${documentColumn})]:`);
+        InspectorTest.expectTrue(sourceCodeLocation.hasMappedLocation(), "Should have a mapped location.");
+        InspectorTest.expectThat(sourceCodeLocation.displaySourceCode instanceof WI.SourceMapResource && sourceCodeLocation.displaySourceCode.displayName === originalFile, `Should map to "${originalFile}" (got "${sourceCodeLocation.displaySourceCode.displayName}").`);
+        InspectorTest.expectEqual(sourceCodeLocation.displayLineNumber, originalLine, `Mapped line should be ${originalLine}.`);
+        InspectorTest.expectEqual(sourceCodeLocation.displayColumnNumber, originalColumn, `Mapped column should be ${originalColumn}.`);
+    }
+
+    suite.addTestCase({
+        name: "SourceCodeLocation.InlineScript.SourceMap.FirstLineColumnOffset",
+        description: "An inline <script> whose first generated line is offset by the <script> tag maps back correctly.",
+        async test() {
+            await whenSourceMapsReady();
+            checkMapping({sourceURL: scriptSourceURLA, generatedLine: 0, generatedColumn: 0,  originalFile: "inline-a-original.js", originalLine: 0, originalColumn: 0});
+            checkMapping({sourceURL: scriptSourceURLA, generatedLine: 0, generatedColumn: 13, originalFile: "inline-a-original.js", originalLine: 1, originalColumn: 4});
+            checkMapping({sourceURL: scriptSourceURLA, generatedLine: 0, generatedColumn: 22, originalFile: "inline-a-original.js", originalLine: 2, originalColumn: 4});
+            checkMapping({sourceURL: scriptSourceURLA, generatedLine: 0, generatedColumn: 26, originalFile: "inline-a-original.js", originalLine: 4, originalColumn: 0});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SourceCodeLocation.InlineScript.SourceMap.LaterGeneratedLine",
+        description: "A generated position on a non-first line of an inline <script> is not given the first-line column offset.",
+        async test() {
+            await whenSourceMapsReady();
+            checkMapping({sourceURL: scriptSourceURLB, generatedLine: 0, generatedColumn: 13, originalFile: "inline-b-original.js", originalLine: 1, originalColumn: 4});
+            checkMapping({sourceURL: scriptSourceURLB, generatedLine: 1, generatedColumn: 0,  originalFile: "inline-b-original.js", originalLine: 2, originalColumn: 4});
+            checkMapping({sourceURL: scriptSourceURLB, generatedLine: 1, generatedColumn: 4,  originalFile: "inline-b-original.js", originalLine: 4, originalColumn: 0});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SourceCodeLocation.InlineScript.SourceMap.MultipleInlineScripts",
+        description: "A document with multiple source-mapped inline <script>s resolves each position through the correct <script>'s source map.",
+        async test() {
+            await whenSourceMapsReady();
+            InspectorTest.expectGreaterThanOrEqual(mainResource().sourceMaps.length, 2, "Document resource should have both inline source maps.");
+            checkMapping({sourceURL: scriptSourceURLA, generatedLine: 0, generatedColumn: 13, originalFile: "inline-a-original.js", originalLine: 1, originalColumn: 4});
+            checkMapping({sourceURL: scriptSourceURLB, generatedLine: 0, generatedColumn: 13, originalFile: "inline-b-original.js", originalLine: 1, originalColumn: 4});
+        }
+    });
+
+    function addPauseTestCase({name, description, expression, originalFile}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                await whenSourceMapsReady();
+                let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+                InspectorTest.evaluateInPage(expression);
+                await paused;
+
+                let location = WI.debuggerManager.activeCallFrame.sourceCodeLocation;
+                InspectorTest.expectThat(location.displaySourceCode instanceof WI.SourceMapResource && location.displaySourceCode.displayName === originalFile, `Paused location should display "${originalFile}" (got "${location.displaySourceCode.displayName}").`);
+                InspectorTest.expectEqual(location.displayLineNumber, 1, "Paused location should display the original `debugger;` line (1).");
+                InspectorTest.log(`PAUSE DISPLAY: ${location.displaySourceCode.displayName}:${location.displayLineNumber}:${location.displayColumnNumber}`);
+
+                await WI.debuggerManager.resume();
+            }
+        });
+    }
+
+    addPauseTestCase({
+        name: "SourceCodeLocation.InlineScript.SourceMap.PauseInFirstInlineScript",
+        description: "Pausing at `debugger;` in the first inline <script> displays the correct original location.",
+        expression: "setTimeout(f)",
+        originalFile: "inline-a-original.js",
+    });
+
+    addPauseTestCase({
+        name: "SourceCodeLocation.InlineScript.SourceMap.PauseInSecondInlineScript",
+        description: "Pausing at `debugger;` in the second inline <script> displays the correct original location.",
+        expression: "setTimeout(h)",
+        originalFile: "inline-b-original.js",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a source-mapped inline script resolves debugger/display locations back to the correct original position.</p>
+</body>
+</html>
