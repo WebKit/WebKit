@@ -178,9 +178,14 @@ WI.Popover = class Popover extends WI.Object
     {
         switch (event.type) {
         case "mousedown":
-        case "scroll":
             if (!this._element.contains(event.target) && !event.target.closest("." + WI.Popover.IgnoreAutoDismissClassName)
                 && !event[WI.Popover.EventPreventDismissSymbol]) {
+                this.dismiss();
+            }
+            break;
+        case "scroll":
+            if (!this._element.contains(event.target) && !event.target.closest("." + WI.Popover.IgnoreAutoDismissClassName)
+                && !event[WI.Popover.EventPreventDismissSymbol] && this._scrollShouldDismiss(event.target)) {
                 this.dismiss();
             }
             break;
@@ -620,6 +625,18 @@ WI.Popover = class Popover extends WI.Object
 
             WI.quickConsole.keyboardShortcutDisabled = true;
         }
+    }
+
+    _scrollShouldDismiss(scrollTarget)
+    {
+        // A document scroll can move the anchor, so allow the popover to dismiss.
+        if (!(scrollTarget instanceof Element))
+            return true;
+
+        // A scroll inside an unrelated container does not move the popover's anchor, so don't dismiss.
+        let scrollRect = WI.Rect.rectFromClientRect(scrollTarget.getBoundingClientRect());
+        let intersection = scrollRect.intersectionWithRect(this._targetFrame);
+        return intersection.size.width > 0 && intersection.size.height > 0;
     }
 };
 
