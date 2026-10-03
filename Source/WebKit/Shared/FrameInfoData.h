@@ -55,7 +55,6 @@ struct FrameInfoData {
     WebCore::FrameIdentifier frameID;
     Markable<WebPageProxyIdentifier> webPageProxyID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
-    ProcessID processID;
     bool isFocused { false };
     bool errorOccurred { false };
     WebFrameMetrics frameMetrics { };

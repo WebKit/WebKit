@@ -49,7 +49,8 @@ auto FrameInfo::stateSnapshot(WebCore::FrameIdentifier frameID) -> StateSnapshot
         frame->certificateInfo(),
         parent ? std::optional(parent->frameID()) : std::nullopt,
         frame->title(),
-        frame->isMainFrame()
+        frame->isMainFrame(),
+        frame->processID()
     };
 }
 

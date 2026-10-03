@@ -329,7 +329,6 @@ FrameInfoData WebFrame::info() const
         frameID(),
         page ? std::optional { page->webPageProxyIdentifier() } : std::nullopt,
         document ? std::optional { document->identifier() } : std::nullopt,
-        getCurrentProcessID(),
         isFocused(),
         loadingFrame && loadingFrame->loader().errorOccurredInLoading(),
         WTF::move(metrics)
