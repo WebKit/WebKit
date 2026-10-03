@@ -88,6 +88,7 @@
 #import <WebCore/MainThreadSharedTimer.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
+#import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/PictureInPictureSupport.h>
@@ -1180,8 +1181,13 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
     downcast<ScrollbarThemeMac>(theme).preferencesChanged();
     
     for (auto& page : m_pageMap.values()) {
-        if (RefPtr frameView = page->localMainFrameView())
-            frameView->scrollbarStyleDidChange();
+        RefPtr corePage = page->corePage();
+        if (!corePage)
+            continue;
+        for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(corePage->rootFrames())) {
+            if (RefPtr frameView = rootFrame->view())
+                frameView->scrollbarStyleDidChange();
+        }
     }
 
     NSScrollerStyle style = useOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
