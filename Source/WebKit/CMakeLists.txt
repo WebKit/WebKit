@@ -1322,11 +1322,16 @@ set(WebKit_WEBDRIVER_BIDI_PROTOCOL_GENERATOR_INPUTS
     ${WEBKIT_DIR}/UIProcess/Automation/protocol/BidiStorage.json
 )
 
+set(_platform_defines_file_arg)
+if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+    set(_platform_defines_file_arg --defines-file ${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE})
+endif ()
+
 add_custom_command(
     OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/CombinedWebDriverBidiDomains.json
     MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py
-    DEPENDS ${WebKit_WEBDRIVER_BIDI_PROTOCOL_GENERATOR_INPUTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py ${WebKit_WEBDRIVER_BIDI_PROTOCOL_GENERATOR_INPUTS} "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" > ${WebKit_DERIVED_SOURCES_DIR}/CombinedWebDriverBidiDomains.json
+    DEPENDS ${WebKit_WEBDRIVER_BIDI_PROTOCOL_GENERATOR_INPUTS} ${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py ${_platform_defines_file_arg} ${WebKit_WEBDRIVER_BIDI_PROTOCOL_GENERATOR_INPUTS} "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" > ${WebKit_DERIVED_SOURCES_DIR}/CombinedWebDriverBidiDomains.json
     VERBATIM)
 
 add_custom_command(

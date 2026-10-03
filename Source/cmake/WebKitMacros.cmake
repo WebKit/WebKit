@@ -1183,10 +1183,11 @@ function(_webkit_platform_args_clang_prefix _outvar _depfile _mt_target _wtf_inc
     set(${_outvar} ${_cmd} PARENT_SCOPE)
 endfunction()
 
-# Build-time command deriving the generators' --defines-file (the truthy feature
-# names) by preprocessing wtf/Platform.h, like Xcode's FEATURE_AND_PLATFORM_DEFINES.
-function(webkit_generate_platform_feature_defines_file _out_path_var)
-    set(_defines_file "${CMAKE_BINARY_DIR}/DerivedSources/platform-feature-defines.txt")
+# Build-time command deriving WEBKIT_PLATFORM_FEATURE_DEFINES_FILE, the generators'
+# --defines-file (the truthy feature names), by preprocessing wtf/Platform.h, like
+# Xcode's FEATURE_AND_PLATFORM_DEFINES. Generators in any directory may depend on it.
+function(webkit_generate_platform_feature_defines_file)
+    set(_defines_file "${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE}")
     set(_depfile "${CMAKE_BINARY_DIR}/DerivedSources/platform-feature-defines.d")
     _webkit_platform_args_empty_input(_empty_input)
     _webkit_platform_args_clang_prefix(_clang_cmd
@@ -1231,7 +1232,8 @@ function(webkit_generate_platform_feature_defines_file _out_path_var)
         COMMENT "Deriving generator feature defines from wtf/Platform.h"
         VERBATIM
     )
-    set(${_out_path_var} "${_defines_file}" PARENT_SCOPE)
+    # A custom command's rule only exists if a target in its directory uses it.
+    add_custom_target(PlatformFeatureDefines DEPENDS "${_defines_file}")
 endfunction()
 
 function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)

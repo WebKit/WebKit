@@ -2972,8 +2972,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions
 # --defines-file.
 set(_platform_defines_file_arg)
 set(_platform_defines_file_dep)
-if (APPLE)
-    webkit_generate_platform_feature_defines_file(WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
     set(_platform_defines_file_arg --defines-file "${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE}")
     set(_platform_defines_file_dep "${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE}")
 endif ()

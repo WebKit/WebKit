@@ -1760,11 +1760,16 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Worker.json
 )
 
+set(_platform_defines_file_arg)
+if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+    set(_platform_defines_file_arg --defines-file ${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE})
+endif ()
+
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py
-    DEPENDS ${JavaScriptCore_INSPECTOR_DOMAINS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JavaScriptCore_INSPECTOR_DOMAINS} "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" > ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
+    DEPENDS ${JavaScriptCore_INSPECTOR_DOMAINS} ${WEBKIT_PLATFORM_FEATURE_DEFINES_FILE}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py ${_platform_defines_file_arg} ${JavaScriptCore_INSPECTOR_DOMAINS} "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" > ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders

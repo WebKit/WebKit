@@ -5,6 +5,10 @@ if (USE_APPLE_INTERNAL_SDK)
     add_subdirectory(../../Internal/WebKit/WebKitAdditions ${CMAKE_BINARY_DIR}/WebKitAdditions)
 endif ()
 
+if (WEBKIT_PLATFORM_FEATURE_DEFINES_FILE)
+    webkit_generate_platform_feature_defines_file()
+endif ()
+
 add_subdirectory(bmalloc)
 add_subdirectory(WTF)
 
