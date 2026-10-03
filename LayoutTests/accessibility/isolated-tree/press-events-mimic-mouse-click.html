@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button">Button</button>
+<button id="cancels-pointerdown">Cancels pointerdown</button>
+
+<script>
+var output = "This test ensures that pressing an element via accessibility (e.g. with VoiceOver) dispatches the same events as a click of the primary mouse button, while keyboard activation and element.click() still dispatch a click that no pointing device produced.\n\n";
+
+var events = [];
+function logEvent(event) {
+    // Log what pages use to tell how a click happened.
+    let description = `${event.type}: detail ${event.detail}, button ${event.button}, buttons ${event.buttons}, isTrusted ${event.isTrusted}`;
+    if (event instanceof PointerEvent)
+        description += `, pointerId ${event.pointerId}, pointerType "${event.pointerType}", isPrimary ${event.isPrimary}`;
+    events.push(description);
+}
+
+for (const id of ["button", "cancels-pointerdown"]) {
+    for (const type of ["pointerdown", "mousedown", "pointerup", "mouseup", "click"])
+        document.getElementById(id).addEventListener(type, logEvent);
+}
+document.getElementById("cancels-pointerdown").addEventListener("pointerdown", (event) => event.preventDefault());
+
+async function logEventsFor(description, action) {
+    events = [];
+    action();
+    // The click comes last.
+    await waitFor(() => events.some((event) => event.startsWith("click")));
+    output += `${description}:\n${events.join("\n")}\n\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await logEventsFor("Accessibility press", () => accessibilityController.accessibleElementById("button").press());
+        // Canceling pointerdown prevents the compatibility mouse events, but not click.
+        await logEventsFor("Accessibility press, with pointerdown canceled", () => accessibilityController.accessibleElementById("cancels-pointerdown").press());
+
+        const button = document.getElementById("button");
+        await logEventsFor("element.click()", () => button.click());
+
+        if (window.eventSender) {
+            button.focus();
+            await logEventsFor("Enter key", () => eventSender.keyDown("\r"));
+
+            const rect = button.getBoundingClientRect();
+            eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            await logEventsFor("Mouse click, for comparison", () => {
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            });
+        }
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
