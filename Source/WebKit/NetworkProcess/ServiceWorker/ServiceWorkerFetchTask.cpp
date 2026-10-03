@@ -317,6 +317,11 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         }
     }
 
+    if (auto error = loader->doCrossOriginEmbedderPolicyHandlingOfNavigationResponse(response)) {
+        didFail(*error);
+        return;
+    }
+
     if (auto error = loader->doCrossOriginOpenerHandlingOfResponse(response)) {
         didFail(*error);
         return;
