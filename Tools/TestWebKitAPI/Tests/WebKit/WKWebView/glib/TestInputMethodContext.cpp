@@ -622,7 +622,7 @@ public:
 
     void setPreeditCursorOffset(int offset) { m_context->preeditCursorOffset = offset; }
 
-    void waitForCursorAreaCount(unsigned count)
+    void waitForCursorAreaCount(unsigned count, unsigned timeoutMilliseconds = 0)
     {
         if (m_context->cursorAreaCount >= count)
             return;
@@ -638,10 +638,46 @@ public:
 
             return TRUE;
         }, this);
-        g_main_loop_run(m_mainLoop);
+        runMainLoopWithTimeout(timeoutMilliseconds);
         g_clear_handle_id(&m_cursorAreaSourceID, g_source_remove);
         m_expectedCursorAreaCount = 0;
         g_assert_cmpuint(m_context->cursorAreaCount, >=, count);
+    }
+
+    void waitForSurroundingCount(unsigned count, unsigned timeoutMilliseconds = 0)
+    {
+        if (m_context->surroundingCount >= count)
+            return;
+
+        m_expectedSurroundingCount = count;
+        m_surroundingSourceID = g_idle_add([](gpointer userData) -> gboolean {
+            auto* test = static_cast<InputMethodTest*>(userData);
+            if (test->m_context->surroundingCount >= test->m_expectedSurroundingCount) {
+                test->m_surroundingSourceID = 0;
+                test->quitMainLoop();
+                return FALSE;
+            }
+
+            return TRUE;
+        }, this);
+        runMainLoopWithTimeout(timeoutMilliseconds);
+        g_clear_handle_id(&m_surroundingSourceID, g_source_remove);
+        m_expectedSurroundingCount = 0;
+        g_assert_cmpuint(m_context->surroundingCount, >=, count);
+    }
+
+    void runMainLoopWithTimeout(unsigned timeoutMilliseconds)
+    {
+        if (timeoutMilliseconds) {
+            m_timeoutSourceID = g_timeout_add(timeoutMilliseconds, [](gpointer userData) -> gboolean {
+                auto* test = static_cast<InputMethodTest*>(userData);
+                test->m_timeoutSourceID = 0;
+                test->quitMainLoop();
+                return G_SOURCE_REMOVE;
+            }, this);
+        }
+        g_main_loop_run(m_mainLoop);
+        g_clear_handle_id(&m_timeoutSourceID, g_source_remove);
     }
 
     void waitForSurroundingText(const char* text)
@@ -667,6 +703,9 @@ public:
     unsigned m_contentTypeNotificationCount { 0 };
     unsigned m_expectedCursorAreaCount { 0 };
     unsigned m_cursorAreaSourceID { 0 };
+    unsigned m_expectedSurroundingCount { 0 };
+    unsigned m_surroundingSourceID { 0 };
+    unsigned m_timeoutSourceID { 0 };
 };
 
 static void testWebKitInputMethodContextSimple(InputMethodTest* test, gconstpointer)
@@ -1181,6 +1220,14 @@ static void testWebKitInputMethodContextCursorArea(InputMethodTest* test, gconst
     test->m_events.clear();
     test->waitForCursorAreaCount(areaCountBeforeMoving + 1);
     g_assert_cmpint(test->cursorArea().x, >, firstArea.x);
+
+    // Focusing the same field again must send the cursor area and the surrounding text again,
+    // although neither has changed.
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    test->clearInputMethodCounters();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->waitForCursorAreaCount(1, 1000);
+    test->waitForSurroundingCount(1, 1000);
 }
 
 static void testWebKitInputMethodContextPreeditCursor(InputMethodTest* test, gconstpointer)
