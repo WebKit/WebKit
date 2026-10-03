@@ -46,6 +46,7 @@ typedef union _GdkEvent GdkEvent;
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#include <wpe/GRefPtrWPE.h>
 typedef struct _WPEEvent WPEEvent;
 #endif
 
@@ -101,6 +102,8 @@ public:
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(IOS_FAMILY)
     ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    WPEEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const LIFETIME_BOUND { return &m_nativeEvent; }
     const Vector<MSG>& pendingCharEvents() const LIFETIME_BOUND { return m_pendingCharEvents; }
@@ -125,6 +128,10 @@ private:
     NativeWebKeyboardEvent(WebKeyboardEventInit&&, ::WebEvent *);
 
     const RetainPtr<::WebEvent> m_nativeEvent;
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    explicit NativeWebKeyboardEvent(WebKeyboardEventInit&&, WPEEvent* = nullptr);
+
+    GRefPtr<WPEEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(WebKeyboardEventInit&&, const MSG&, Vector<MSG>&&);
 
