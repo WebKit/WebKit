@@ -59,6 +59,10 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
 
     m_previousLineClamp = layoutState->lineClamp();
     auto maximumLinesForBlockContainer = m_blockContainer->style().maxLines().tryValue();
+    // "If the box is a multicol container, the behavior is the same as continue: auto."
+    // https://drafts.csswg.org/css-overflow-4/#continue
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(blockContainer); blockFlow && blockFlow->multiColumnFlow())
+        maximumLinesForBlockContainer = { };
     if (blockContainer.isFieldset() || (layoutState->legacyLineClamp() && blockContainer.isNonReplacedAtomicInlineLevelBox()) || blockContainer.isFloatingOrOutOfFlowPositioned()) {
         // Legacy line clamp does not cross into the interior of an atomic inline-level box.
         layoutState->setLineClamp({ });
