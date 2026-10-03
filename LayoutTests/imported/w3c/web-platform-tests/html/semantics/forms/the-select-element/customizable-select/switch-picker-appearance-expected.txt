@@ -1,8 +1,5 @@
   Reset
 option two
-option one
-option two
-option three
 
 PASS Basic functionality of select picker and appearance
 PASS Basic functionality of select picker with appearance:auto

@@ -1,0 +1,5 @@
+
+PASS A select that stays a dropdown box when its size changes keeps its picker open.
+PASS A select that becomes a list box because of size stops matching :open.
+PASS A select that becomes a list box because of multiple stops matching :open.
+

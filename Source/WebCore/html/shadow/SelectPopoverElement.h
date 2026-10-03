@@ -46,9 +46,8 @@ private:
     bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
 
     void didAttachRenderers() final;
+    void setPopoverVisibilityState(PopoverVisibilityState) final;
     void popoverWasHidden() final;
-
-    bool m_wasBaseAppearancePicker { false };
 };
 
 } // namespace WebCore

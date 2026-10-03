@@ -135,11 +135,10 @@ public:
     void hidePopup();
 #endif
 
-    bool popupIsVisible() const { return m_popupIsVisible; }
     WEBCORE_EXPORT void setPopupIsVisible(bool);
     std::optional<FloatPoint> lastPopupLocationForTesting() const { return m_lastPopupLocationForTesting; }
 
-    bool NODELETE isOpen() const;
+    WEBCORE_EXPORT bool NODELETE isOpen() const;
 
     void didUpdateActiveOption(int optionIndex);
 
@@ -220,8 +219,7 @@ public:
     void hidePickerPopoverElement();
     void clearPickerOpeningMouseLocation() { m_pickerOpeningMouseLocation = { }; }
     bool consumePickerOpeningPress(const MouseEvent&);
-    enum class PickerCloseReason : bool { Appearance, PickerSupport };
-    void queuePickerClose(PickerCloseReason);
+    void closePickerIfNoLongerBaseAppearance();
 
     struct NavigationKeyIdentifiers {
         ASCIILiteral next;
@@ -306,7 +304,9 @@ private:
     void baseAppearanceListBoxDefaultEventHandler(Event&);
     void updateSelectedContentIfEnabled(HTMLOptionElement* = nullptr) const;
     RefPtr<HTMLOptionElement> firstSelectedOption() const;
-    void closePickerIfNoLongerSupported(bool hadOpenPicker);
+    void setSizeAndMultiple(unsigned size, bool multiple);
+    enum class PickerCloseReason : bool { Appearance, PickerSupport };
+    void queuePickerClose(PickerCloseReason);
     void updateOptionSlotIfNeeded(bool usedListBoxSlot);
     void optionDeselectedByUser(HTMLOptionElement&);
     bool handleImplicitSubmissionKeypress(KeyboardEvent&);
@@ -329,11 +329,16 @@ private:
     void removingSteps(RemovalType, ContainerNode&) final;
     void updateUserAgentShadowTree() final;
 
+    void didAttachRenderers() final;
     void didDetachRenderers() final;
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     void showPickerInternal();
+    bool NODELETE pickerPopoverIsShowing() const;
+    static unsigned NODELETE preferredSize(unsigned size, bool multiple);
+    bool NODELETE supportsBaseAppearancePicker() const { return supportsBaseAppearancePicker(m_size, m_multiple); }
+    bool NODELETE supportsBaseAppearancePicker(unsigned size, bool multiple) const;
 
     // TypeAheadDataSource functions.
     int indexOfSelectedOption() const final;
@@ -370,7 +375,6 @@ private:
     std::optional<FloatPoint> m_lastPopupLocationForTesting;
     std::optional<DoublePoint> m_pickerOpeningMouseLocation;
     bool m_popupIsVisible { false };
-    bool m_wasBaseAppearance { false };
     bool m_buttonTextNeedsUpdate { false };
 };
 

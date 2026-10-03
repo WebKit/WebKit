@@ -1,0 +1,4 @@
+
+PASS A select moved with moveBefore() while its picker is open keeps matching :open.
+PASS Removing a select while its picker is open closes the picker.
+
