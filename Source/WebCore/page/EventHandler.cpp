@@ -2975,7 +2975,7 @@ DragEventTargetData EventHandler::performDragAndDrop(const PlatformMouseEvent& e
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
     if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe)) {
         if (auto remoteUserInputEventData = userInputEventDataForRemoteFrame(remoteFrame.get(), result.roundedPointInInnerNodeFrame()))
-            return remoteUserInputEventData->targetFrameID;
+            return *remoteUserInputEventData;
     }
 #endif
     if (auto [isFrameOwner, targetFrame] = contentFrameForNode(m_dragTarget.copyRef().get()); isFrameOwner) {
@@ -2986,7 +2986,7 @@ DragEventTargetData EventHandler::performDragAndDrop(const PlatformMouseEvent& e
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
         if (RefPtr remoteTargetFrame = dynamicDowncast<RemoteFrame>(targetFrame)) {
             if (auto remoteUserInputEventData = userInputEventDataForRemoteFrame(remoteTargetFrame.get(), result.roundedPointInInnerNodeFrame()))
-                return remoteUserInputEventData->targetFrameID;
+                return *remoteUserInputEventData;
         }
 #endif
     } else if (RefPtr dragTarget = m_dragTarget) {
