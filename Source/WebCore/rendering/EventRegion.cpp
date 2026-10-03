@@ -301,7 +301,7 @@ void EventRegionContext::shrinkWrapInteractionRegions()
         }
 
         FloatRect layerBounds;
-        bool canUseSingleRect = true;
+        Region coveredRegion;
         Vector<InteractionRegion> toAddAfterMerge;
         Vector<FloatRect> discoveredRects;
         Vector<Path> discoveredClipPaths;
@@ -309,15 +309,18 @@ void EventRegionContext::shrinkWrapInteractionRegions()
         discoveredRects.reserveInitialCapacity(discoveredRegions.size());
         discoveredClipPaths.reserveInitialCapacity(discoveredRegions.size());
 
+        // Small gaps don't prevent the regions from filling a single rect.
+        constexpr float looseCoverageMargin = 3;
+
         for (const auto& discoveredRegion : discoveredRegions) {
             auto previousArea = layerBounds.area();
             auto rect = discoveredRegion.rectInLayerCoordinates;
-            auto overlap = rect;
-            overlap.intersect(layerBounds);
             layerBounds.unite(rect);
             auto growth = layerBounds.area() - previousArea;
-            if (growth > rect.area() - overlap.area() + std::numeric_limits<float>::epsilon())
-                canUseSingleRect = false;
+
+            auto coveredRect = rect;
+            coveredRect.inflate(looseCoverageMargin);
+            coveredRegion.unite(enclosingIntRect(coveredRect));
 
             auto rectForTracking = enclosingIntRect(rect);
             auto hint = m_interactionRectsAndContentHints.get(rectForTracking);
@@ -346,6 +349,11 @@ void EventRegionContext::shrinkWrapInteractionRegions()
             }
         }
 
+        bool canUseSingleRect = coveredRegion.contains(enclosingIntRect(layerBounds));
+        // The clip path of this region is relative to its own rect, and only describes its own shape.
+        if (region.clipPath && enclosingIntRect(layerBounds) != enclosingIntRect(region.rectInLayerCoordinates))
+            canUseSingleRect = false;
+
         if (canUseSingleRect)
             region.rectInLayerCoordinates = layerBounds;
         else {
@@ -364,15 +372,23 @@ void EventRegionContext::shrinkWrapInteractionRegions()
         }
 
         auto finalRegionRectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
-        auto originalIndex = i;
+
+        // Do not insert a new region if it creates a duplicated Interaction Rect, use its content hint instead.
+        bool hasDuplicatedRect = toAddAfterMerge.containsIf([&](auto& extraRegion) {
+            return enclosingIntRect(extraRegion.rectInLayerCoordinates) == finalRegionRectForTracking;
+        });
+        if (hasDuplicatedRect)
+            region.contentHint = m_interactionRectsAndContentHints.get(finalRegionRectForTracking);
+
+        bool coversRegionsWithContentHint = canUseSingleRect && !region.clipPath;
+        auto contentHint = region.contentHint;
         for (auto& extraRegion : toAddAfterMerge) {
             auto extraRectForTracking = enclosingIntRect(extraRegion.rectInLayerCoordinates);
-            // Do not insert a new region if it creates a duplicated Interaction Rect.
-            if (finalRegionRectForTracking == extraRectForTracking) {
-                m_interactionRegions[originalIndex].contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
+            if (finalRegionRectForTracking == extraRectForTracking)
                 continue;
-            }
             extraRegion.contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
+            if (coversRegionsWithContentHint && extraRegion.contentHint == contentHint)
+                continue;
             m_interactionRegions.insert(++i, WTF::move(extraRegion));
         }
     }
