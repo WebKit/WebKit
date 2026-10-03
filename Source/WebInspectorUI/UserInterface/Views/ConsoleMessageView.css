@@ -26,7 +26,7 @@
 .console-message, .console-user-command {
     position: relative;
     padding: 4px 12px 2px 20px;
-    min-height: 21px;
+    min-height: 21px; /* Keep in sync with `WI.ConsoleMessageView.MinimumHeight`. */
 }
 
 .console-user-command.special-user-log > .console-message-body {

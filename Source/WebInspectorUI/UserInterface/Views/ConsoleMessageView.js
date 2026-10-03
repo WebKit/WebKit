@@ -219,6 +219,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             if (!this._extraParameters || this._extraParameters.length <= 1)
                 this._objectTree.expand();
         }
+
+        this.dispatchEventToListeners(WI.ConsoleMessageView.Event.DisclosureChanged);
     }
 
     collapse()
@@ -231,6 +233,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             if (!this._extraParameters || this._extraParameters.length <= 1)
                 this._objectTree.collapse();
         }
+
+        this.dispatchEventToListeners(WI.ConsoleMessageView.Event.DisclosureChanged);
     }
 
     toggle()
@@ -377,6 +381,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                             else
                                 img.height = img.height / window.devicePixelRatio;
                             element.appendChild(img);
+
+                            this.dispatchEventToListeners(WI.ConsoleMessageView.Event.ImageLoaded);
                         });
                         img.addEventListener("error", (event) => {
                             this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
@@ -393,6 +399,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                             if (this._extraParameters)
                                 args.pushAll(this._extraParameters);
                             this._appendFormattedArguments(element, args);
+
+                            this.dispatchEventToListeners(WI.ConsoleMessageView.Event.ImageFailed);
                         });
                     }
                     return;
@@ -504,6 +512,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                     this._element.insertBefore(link, this._element.firstChild);
                 else
                     this._element.appendChild(link);
+
+                this.dispatchEventToListeners(WI.ConsoleMessageView.Event.LocationChanged);
             });
         }
     }
@@ -1090,7 +1100,19 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
     _handleDebuggerBlackboxChanged(event)
     {
-        if (this._callFrameView)
-            this._appendLocationLink();
+        if (!this._callFrameView)
+            return;
+
+        this._appendLocationLink();
+        this.dispatchEventToListeners(WI.ConsoleMessageView.Event.LocationChanged);
     }
 };
+
+WI.ConsoleMessageView.MinimumHeight = 21; /* Keep in sync with `.console-message, .console-user-command`. */
+
+WI.ConsoleMessageView.Event = {
+    DisclosureChanged: "console-message-view-disclosure-changed",
+    ImageFailed: "console-message-view-image-failed",
+    ImageLoaded: "console-message-view-image-loaded",
+    LocationChanged: "console-message-view-location-changed",
+}

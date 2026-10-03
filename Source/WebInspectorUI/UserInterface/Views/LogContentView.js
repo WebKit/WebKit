@@ -146,6 +146,25 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
 
         WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearLogOnNavigateSettingChanged, this);
+
+        this._orderedMessageElements = [];
+        this._topLevelItems = [];
+        this._virtualizedSpacersForSessionElement = new Map;
+        this._forceAllVirtualizedItemsAttached = true;
+        this._updateVirtualizedElementsScrollTop = NaN;
+        this._cachedScrollTop = 0;
+
+        this._updateVirtualizedElementsDebouncer = new Debouncer(() => {
+            this._updateVirtualizedElements(false);
+        });
+        let updateVirtualizedElementsThrottler = new Throttler(() => {
+            this._updateVirtualizedElements(true);
+        }, 1000 / 16);
+
+        this.messagesElement.addEventListener("scroll", function(event) {
+            updateVirtualizedElementsThrottler.fire();
+        });
+        this.messagesElement.addEventListener(WI.View.Event.ContentResized, this._handleContentDidResize.bind(this));
     }
 
     // Public
@@ -202,7 +221,60 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     {
         super.attached();
 
+        if (this._cachedScrollTop && !this.messagesElement.scrollTop)
+            this.messagesElement.scrollTop = this._cachedScrollTop;
+
         this._logViewController.renderPendingMessages();
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
+
+        WI.ConsoleGroup.addEventListener(WI.ConsoleGroup.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.addEventListener(WI.ConsoleMessageView.Event.ImageLoaded, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.addEventListener(WI.ConsoleMessageView.Event.ImageFailed, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.addEventListener(WI.ConsoleMessageView.Event.LocationChanged, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.addEventListener(WI.ConsoleMessageView.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ErrorObjectView.addEventListener(WI.ErrorObjectView.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ErrorObjectView.addEventListener(WI.ErrorObjectView.Event.StackChanged, this._handleVirtualizedElementChanged, this);
+        WI.ObjectTreeView.addEventListener(WI.ObjectTreeView.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ObjectTreeView.addEventListener(WI.ObjectTreeView.Event.Updated, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.addEventListener(WI.TreeOutline.Event.ElementDidChange, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.addEventListener(WI.TreeOutline.Event.ElementVisibilityDidChange, this._handleVirtualizedElementChanged, this);
+    }
+
+    detached()
+    {
+        WI.ConsoleGroup.removeEventListener(WI.ConsoleGroup.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.removeEventListener(WI.ConsoleMessageView.Event.ImageLoaded, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.removeEventListener(WI.ConsoleMessageView.Event.ImageFailed, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.removeEventListener(WI.ConsoleMessageView.Event.LocationChanged, this._handleVirtualizedElementChanged, this);
+        WI.ConsoleMessageView.removeEventListener(WI.ConsoleMessageView.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ErrorObjectView.removeEventListener(WI.ErrorObjectView.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ErrorObjectView.removeEventListener(WI.ErrorObjectView.Event.StackChanged, this._handleVirtualizedElementChanged, this);
+        WI.ObjectTreeView.removeEventListener(WI.ObjectTreeView.Event.DisclosureChanged, this._handleVirtualizedElementChanged, this);
+        WI.ObjectTreeView.removeEventListener(WI.ObjectTreeView.Event.Updated, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.removeEventListener(WI.TreeOutline.Event.ElementAdded, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.removeEventListener(WI.TreeOutline.Event.ElementDidChange, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.removeEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.removeEventListener(WI.TreeOutline.Event.ElementRevealed, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.removeEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._handleVirtualizedElementChanged, this);
+        WI.TreeOutline.removeEventListener(WI.TreeOutline.Event.ElementVisibilityDidChange, this._handleVirtualizedElementChanged, this);
+
+        this._cachedScrollTop = this.messagesElement.scrollTop;
+
+        this._updateVirtualizedElementsDebouncer.cancel();
+
+        super.detached();
+    }
+
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
     }
 
     closed()
@@ -265,6 +337,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }
 
         this._lastMessageView = messageView;
+
+        this._registerMessageElement(messageView.element);
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
     }
 
     get supportsSearch() { return true; }
@@ -427,26 +502,23 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _formatMessagesAsData(onlySelected)
     {
-        var messages = this._allMessageElements();
+        let messageElements = this._orderedMessageElements;
 
-        if (onlySelected) {
-            messages = messages.filter(function(message) {
-                return message.classList.contains(WI.LogContentView.SelectedStyleClassName);
-            });
-        }
+        if (onlySelected)
+            messageElements = messageElements.filter((message) => message.classList.contains(WI.LogContentView.SelectedStyleClassName));
 
         var data = "";
 
-        var isPrefixOptional = messages.length <= 1 && onlySelected;
-        messages.forEach(function(messageElement, index) {
+        let isPrefixOptional = messageElements.length <= 1 && onlySelected;
+        for (let messageElement of messageElements) {
             var messageView = messageElement.__messageView || messageElement.__commandView;
             if (!messageView)
-                return;
+                continue;
 
-            if (index > 0)
+            if (data)
                 data += "\n";
             data += messageView.toClipboardString(isPrefixOptional);
-        });
+        }
 
         return data;
     }
@@ -458,10 +530,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             return;
         }
 
-        for (let messageElement of this._allMessageElements()) {
-            if (messageElement.__messageView)
-                messageElement.__messageView.clearSessionState();
-        }
+        for (let messageElement of this._orderedMessageElements)
+            messageElement.__messageView?.clearSessionState();
 
         const isFirstSession = false;
         const newSessionReason = event.data.wasReloaded ? WI.ConsoleSession.NewSessionReason.PageReloaded : WI.ConsoleSession.NewSessionReason.PageNavigated;
@@ -791,7 +861,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (shouldScrollIntoView && !alreadySelectedMessage) {
             let lastMessage = this._selectedMessages.lastValue;
             if (lastMessage)
-                lastMessage.scrollIntoViewIfNeeded();
+                this._revealElement(lastMessage, true);
         }
     }
 
@@ -851,14 +921,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }
     }
 
-    _allMessageElements()
-    {
-        return Array.from(this.messagesElement.querySelectorAll(".console-message, .console-user-command"));
-    }
-
     _unfilteredMessageElements()
     {
-        return this._allMessageElements().filter(function(message) {
+        return this._orderedMessageElements.filter(function(message) {
             return !message.classList.contains(WI.LogContentView.FilteredOutStyleClassName);
         });
     }
@@ -877,16 +942,16 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _logCleared(event)
     {
-        for (let messageElement of this._allMessageElements()) {
-            if (messageElement.__messageView)
-                messageElement.__messageView.clearSessionState();
-        }
+        for (let messageElement of this._orderedMessageElements)
+            messageElement.__messageView?.clearSessionState();
 
         this._logViewController.clear();
 
         this._nestingLevel = 0;
         this._selectedMessages = [];
         this._immediatelyHiddenMessages.clear();
+
+        this._resetVirtualizedElements();
 
         if (this._currentSearchQuery)
             this.performSearch(this._currentSearchQuery);
@@ -935,19 +1000,19 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _messageSourceBarSelectionDidChange(event)
     {
-        this._filterMessageElements(this._allMessageElements());
+        this._filterMessageElements(this._orderedMessageElements);
     }
 
     _scopeBarSelectionDidChange(event)
     {
-        this._filterMessageElements(this._allMessageElements());
+        this._filterMessageElements(this._orderedMessageElements);
 
         this._showOrHideConditionallyVisibleScopeBarItemsAsNeeded();
     }
 
     _filterMessageElements(messageElements)
     {
-        messageElements.forEach(function(messageElement) {
+        for (let messageElement of messageElements) {
             let visible;
             if (messageElement.__commandView instanceof WI.ConsoleCommandView || messageElement.__message instanceof WI.ConsoleCommandResultMessage)
                 visible = this._scopeBar.selectedItems.some((item) => item.id === WI.LogContentView.Scopes.Evaluations || item.id === WI.LogContentView.Scopes.All);
@@ -962,9 +1027,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 classList.remove(WI.LogContentView.SelectedStyleClassName);
                 classList.add(WI.LogContentView.FilteredOutStyleClassName);
             }
-        }, this);
+        }
 
         this.performSearch(this._currentSearchQuery);
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
     }
 
     _updateOtherFiltersNavigationItemState()
@@ -1107,6 +1174,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             currentMessage.__messageView.collapse();
             event.preventDefault();
         }
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
     }
 
     _rightArrowWasPressed(event)
@@ -1122,6 +1191,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             currentMessage.__messageView.expand();
             event.preventDefault();
         }
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
     }
 
     _commandEnterWasPressed(event)
@@ -1156,6 +1227,238 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         return null;
     }
 
+    get _virtualized()
+    {
+        return WI.settings.experimentalConsoleVirtualization.value && this.isAttached && !this.hasPerformedSearch && this._topLevelItems.length > 100;
+    }
+
+    _resetVirtualizedElements()
+    {
+        this._orderedMessageElements = [];
+        this._topLevelItems = [];
+        this._virtualizedSpacersForSessionElement.clear();
+        this._forceAllVirtualizedItemsAttached = true;
+        this._updateVirtualizedElementsScrollTop = NaN;
+        this._updateVirtualizedElementsDebouncer.cancel();
+    }
+
+    _registerMessageElement(element)
+    {
+        this._orderedMessageElements.push(element);
+
+        let sessionElement = element.closest(".console-session");
+        if (!sessionElement)
+            return;
+
+        this._virtualizedSpacersForSessionElement.getOrInsertComputed(sessionElement, () => {
+            let topElement = document.createElement("div");
+            topElement.className = "console-virtualization-spacer";
+
+            let bottomElement = document.createElement("div");
+            bottomElement.className = "console-virtualization-spacer";
+
+            return {
+                headerHeight: 0,
+                headerElement: sessionElement.querySelector(".console-session-header"),
+                topElement,
+                bottomElement,
+            };
+        });
+
+        while (element.parentElement && element.parentElement !== sessionElement)
+            element = element.parentElement;
+        if (element.parentElement !== sessionElement)
+            return;
+
+        let lastItem = this._topLevelItems.lastValue;
+        if (lastItem?.element === element)
+            return;
+
+        this._topLevelItems.push({element, sessionElement, height: NaN});
+    }
+
+    _itemHeight(item)
+    {
+        if (item.element.classList.contains(WI.LogContentView.FilteredOutStyleClassName))
+            return 0;
+        return isNaN(item.height) ? WI.ConsoleMessageView.MinimumHeight : item.height;
+    }
+
+    _updateVirtualizedElements(scrolling)
+    {
+        if (!this._virtualized) {
+            if (!this._forceAllVirtualizedItemsAttached) {
+                this._attachAllVirtualizedItems();
+                this._forceAllVirtualizedItemsAttached = true;
+            }
+            return;
+        }
+
+        let viewportHeight = this.messagesElement.clientHeight;
+        if (!viewportHeight)
+            return;
+
+        let scrollTop = this.messagesElement.scrollTop;
+        if (scrolling && Math.abs(scrollTop - this._updateVirtualizedElementsScrollTop) < viewportHeight)
+            return;
+
+        this._updateVirtualizedElementsScrollTop = scrollTop;
+
+        this._forceAllVirtualizedItemsAttached = false;
+
+        for (let spacers of this._virtualizedSpacersForSessionElement.values()) {
+            if (spacers.headerElement?.isConnected)
+                spacers.headerHeight = spacers.headerElement.offsetHeight;
+        }
+        for (let item of this._topLevelItems) {
+            if ((!scrolling || isNaN(item.height)) && item.element.isConnected && !item.element.classList.contains(WI.LogContentView.FilteredOutStyleClassName)) {
+                let measured = item.element.offsetHeight;
+                if (measured > 0)
+                    item.height = measured;
+            }
+        }
+
+        let extraOffset = viewportHeight * 2;
+        let minimumOffset = scrollTop - extraOffset;
+        let maximumOffset = scrollTop + viewportHeight + extraOffset;
+
+        let stateForSession = new Map;
+        let firstVisibleItem = null;
+        let offset = 0;
+        let currentSessionElement = null;
+        let currentSessionState = null;
+        for (let item of this._topLevelItems) {
+            if (item.sessionElement !== currentSessionElement) {
+                offset += this._virtualizedSpacersForSessionElement.get(item.sessionElement)?.headerHeight || 0;
+                currentSessionState = stateForSession.getOrInsert(item.sessionElement, {top: 0, bottom: 0, elements: []});
+                currentSessionElement = item.sessionElement;
+            }
+
+            let height = this._itemHeight(item);
+            if (offset + height < minimumOffset)
+                currentSessionState.top += height;
+            else if (offset > maximumOffset)
+                currentSessionState.bottom += height;
+            else
+                currentSessionState.elements.push(item.element);
+
+            if (!firstVisibleItem && offset + height > scrollTop)
+                firstVisibleItem = item;
+
+            offset += height;
+        }
+
+        let firstVisibleItemOffsetTop = firstVisibleItem?.element.isConnected ? firstVisibleItem.element.totalOffsetTop : NaN;
+
+        for (let [sessionElement, spacers] of this._virtualizedSpacersForSessionElement) {
+            if (sessionElement.isConnected)
+                this._updateVirtualizedElement(sessionElement, spacers, stateForSession.get(sessionElement));
+        }
+
+        if (!isNaN(firstVisibleItemOffsetTop) && firstVisibleItem.element.isConnected) {
+            let delta = firstVisibleItem.element.totalOffsetTop - firstVisibleItemOffsetTop;
+            if (Math.abs(delta) >= 1)
+                this.messagesElement.scrollTop += delta;
+        }
+    }
+
+    _updateVirtualizedElement(sessionElement, spacers, state)
+    {
+        let desired = new Set(state?.elements || []);
+
+        for (let child = sessionElement.firstElementChild; child; ) {
+            let next = child.nextElementSibling;
+            if (child !== spacers.headerElement && child !== spacers.topElement && child !== spacers.bottomElement && !desired.has(child))
+                child.remove();
+            child = next;
+        }
+
+        if (state) {
+            spacers.topElement.style.height = state.top + "px";
+            spacers.bottomElement.style.height = state.bottom + "px";
+        }
+
+        let anchor = spacers.headerElement;
+        function attach(element) {
+            let reference = anchor ? anchor.nextSibling : sessionElement.firstChild;
+            if (reference !== element)
+                sessionElement.insertBefore(element, reference);
+            anchor = element;
+        }
+        attach(spacers.topElement);
+        for (let element of (state?.elements || []))
+            attach(element);
+        attach(spacers.bottomElement);
+    }
+
+    _attachAllVirtualizedItems()
+    {
+        let elementsForSessionElement = new Multimap;
+        for (let item of this._topLevelItems)
+            elementsForSessionElement.add(item.sessionElement, item.element);
+
+        for (let [sessionElement, spacers] of this._virtualizedSpacersForSessionElement) {
+            if (!sessionElement.isConnected)
+                continue;
+
+            spacers.topElement.remove();
+            spacers.bottomElement.remove();
+
+            let anchor = spacers.headerElement;
+            for (let element of (elementsForSessionElement.get(sessionElement) || [])) {
+                let reference = anchor ? anchor.nextSibling : sessionElement.firstChild;
+                if (reference !== element)
+                    sessionElement.insertBefore(element, reference);
+                anchor = element;
+            }
+        }
+    }
+
+    _handleVirtualizedElementChanged(event)
+    {
+        if (!this.messagesElement.contains(event.target.element))
+            return;
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
+    }
+
+    _handleContentDidResize(event)
+    {
+        if (!this.messagesElement.contains(event.target))
+            return;
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
+    }
+
+    _revealElement(element, centerIfNeeded)
+    {
+        if (!element)
+            return;
+
+        if (this._virtualized) {
+            let targetItem = this._topLevelItems.find((item) => item.element.contains(element)) || null;
+            if (targetItem) {
+                let offset = 0;
+                let previousSessionElement = null;
+                for (let item of this._topLevelItems) {
+                    if (item.sessionElement !== previousSessionElement) {
+                        offset += this._virtualizedSpacersForSessionElement.get(item.sessionElement)?.headerHeight || 0;
+                        previousSessionElement = item.sessionElement;
+                    }
+                    if (item === targetItem)
+                        break;
+                    offset += this._itemHeight(item);
+                }
+
+                let viewportHeight = this.messagesElement.clientHeight;
+                this.messagesElement.scrollTop = Math.max(0, offset - (viewportHeight / 2));
+                this._updateVirtualizedElementsDebouncer.force();
+            }
+        }
+
+        element.scrollIntoViewIfNeeded(centerIfNeeded);
+    }
+
     findBannerPerformSearch(findBanner, searchQuery)
     {
         this.performSearch(searchQuery);
@@ -1187,6 +1490,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._selectedSearchMatchIsValid = false;
         this._selectedSearchMatch = null;
         let numberOfResults = 0;
+
+        this._updateVirtualizedElementsDebouncer.delayForFrame();
 
         if (this._currentSearchQuery === "") {
             this.element.classList.remove(WI.LogContentView.SearchInProgressStyleClassName);
@@ -1285,7 +1590,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._selectedSearchMatch = this._searchMatches[index];
         this._selectedSearchMatch.highlight.classList.add(WI.LogContentView.SelectedStyleClassName);
 
-        this._selectedSearchMatch.message.scrollIntoViewIfNeeded(false);
+        this._revealElement(this._selectedSearchMatch.message, false);
     }
 
     _provisionalLoadStarted()
