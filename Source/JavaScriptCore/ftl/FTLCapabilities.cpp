@@ -201,6 +201,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case Construct:
     case DirectConstruct:
     case CallVarargs:
+    case CallVarargsWithSpread:
     case CallDirectEval:
     case TailCallVarargs:
     case TailCallVarargsInlinedCaller:
@@ -215,6 +216,8 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case CallCustomAccessorSetter:
     case VarargsLength:
     case LoadVarargs:
+    case VarargsLengthWithSpread:
+    case LoadVarargsWithSpread:
     case ValueToInt32:
     case DFG::Branch:
     case ToBoolean:
