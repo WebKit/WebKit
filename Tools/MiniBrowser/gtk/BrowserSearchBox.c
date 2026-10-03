@@ -139,6 +139,54 @@ static void searchEntryChangedCallback(GtkEntry *entry, BrowserSearchBox *search
     doSearch(searchBox);
 }
 
+static void get_selected_text_cb(GObject *object, GAsyncResult *result, gpointer userData)
+{
+    JSCValue *value;
+    GError *error = NULL;
+
+    value = webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
+    if (!value) {
+        g_warning("Error running javascript: %s", error->message);
+        g_error_free(error);
+        return;
+    }
+
+    if (!jsc_value_is_string(value)) {
+        g_warning("Error running javascript: unexpected return value");
+        g_object_unref(value);
+        return;
+    }
+
+    gchar *selectedText = jsc_value_to_string(value);
+    JSCException *exception = jsc_context_get_exception(jsc_value_get_context(value));
+    if (exception) {
+        g_warning("Error running javascript: %s", jsc_exception_get_message(exception));
+        g_free(selectedText);
+        g_object_unref(value);
+        return;
+    }
+
+    // Set selected text into search box.
+    BrowserSearchBox *searchBox = BROWSER_SEARCH_BOX(userData);
+    #if GTK_CHECK_VERSION(3, 98, 5)
+        gtk_editable_set_text(GTK_EDITABLE(searchBox->entry), selectedText);
+    #else
+        gtk_entry_set_text(GTK_ENTRY(searchBox->entry), selectedText);
+    #endif
+    g_free(selectedText);
+
+    g_object_unref(value);
+}
+
+static void searchEntryMapCallback(BrowserSearchBox *searchBox)
+{
+    gchar *script;
+
+    script = g_strdup_printf("window.getSelection().toString();");
+    webkit_web_view_evaluate_javascript(searchBox->webView, script, -1, NULL, NULL, NULL, get_selected_text_cb, searchBox);
+    g_free(script);
+}
+
 static void searchEntryActivatedCallback(BrowserSearchBox *searchBox)
 {
     searchNext(searchBox);
@@ -258,6 +306,7 @@ static void browser_search_box_init(BrowserSearchBox *searchBox)
     g_signal_connect_swapped(searchBox->entry, "icon-release", G_CALLBACK(searchEntryClearIconReleasedCallback), searchBox);
     g_signal_connect_after(searchBox->entry, "changed", G_CALLBACK(searchEntryChangedCallback), searchBox);
     g_signal_connect_swapped(searchBox->entry, "activate", G_CALLBACK(searchEntryActivatedCallback), searchBox);
+    g_signal_connect_swapped(searchBox->entry, "map", G_CALLBACK(searchEntryMapCallback), searchBox);
 }
 
 static void browserSearchBoxFinalize(GObject *gObject)
