@@ -4340,7 +4340,7 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-video-hidden.html [ Sk
 imported/w3c/web-platform-tests/css/css-overflow/unicode-bidi-plaintext-scroll-direction.html [ Skip ]
 
 # Fail to run due to rdar://169497013
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-026.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-026.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-027.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-028.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-032.html [ Skip ]

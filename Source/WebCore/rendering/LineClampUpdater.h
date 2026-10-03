@@ -29,6 +29,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/LocalFrameViewInlines.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/StyleDisplay.h>
 #include <WebCore/StyleMaximumLines.h>
 #include <wtf/CheckedPtr.h>
 
@@ -81,8 +82,9 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
 
     if (m_previousLineClamp) {
         // Propagated line clamp.
-        if (blockContainer.establishesIndependentFormattingContext()) {
-            // Contents of descendants that establish independent formatting contexts are skipped over while counting line boxes.
+        if (blockContainer.establishesIndependentFormattingContext() || blockContainer.style().display() == Style::DisplayType::RubyText) {
+            // Contents of descendants that establish independent formatting contexts are skipped over while counting line boxes,
+            // and a ruby annotation belongs to the line of its base: it is clamped with that line, not line by line on its own.
             layoutState->setLineClamp({ });
             return;
         }
