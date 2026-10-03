@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../network/resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function addSrcdocIFrame() {
+    let iframe = document.createElement("iframe");
+    iframe.srcdoc = "<p>srcdoc-frame-marker</p>";
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SrcdocIFrameResourceContent");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SrcdocIFrameResourceContent.Dynamic",
+        description: "A srcdoc iframe added to the page should have its content available.",
+        async test() {
+            InspectorTest.evaluateInPage(`addSrcdocIFrame()`);
+
+            let frame = await awaitChildFrame((frame) => frame.mainResource.url === "about:srcdoc");
+            InspectorTest.expectThat(!!frame, "srcdoc frame should be attached to the main frame.");
+            if (!frame)
+                return;
+
+            let resource = frame.mainResource;
+            InspectorTest.expectEqual(await awaitResourceSettled(resource), "finished", "srcdoc document should finish loading.");
+            InspectorTest.expectThat(!!resource.requestIdentifier, "srcdoc document should carry the request identifier of its load.");
+
+            let {content, error} = await Promise.race([
+                resource.requestContent(),
+                new Promise((resolve) => setTimeout(() => resolve({error: "timed out waiting for the content"}), 5000)),
+            ]);
+            if (error)
+                InspectorTest.log(`requestContent() failed with: ${error}`);
+            InspectorTest.expectThat(!error, "requestContent() should succeed.");
+            InspectorTest.expectThat(typeof content === "string" && content.includes("srcdoc-frame-marker"), `Content should contain "srcdoc-frame-marker".`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a dynamically added srcdoc iframe's content is available under Site Isolation.</p>
+</body>

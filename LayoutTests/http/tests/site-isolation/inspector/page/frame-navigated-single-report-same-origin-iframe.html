@@ -36,8 +36,9 @@ function test() {
             let child;
             let grandchild;
             for (let attempt = 0; attempt < 50; ++attempt) {
-                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/same-origin-frame-with-grandchild.html"));
-                grandchild = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
+                // A frame has no parent until its load commits.
+                child = WI.networkManager.frames.find((frame) => frame.parentFrame && frame.url && frame.url.endsWith("/same-origin-frame-with-grandchild.html"));
+                grandchild = WI.networkManager.frames.find((frame) => frame.parentFrame && frame.url && frame.url.endsWith("/resource-tree-frame.html"));
                 if (child && grandchild)
                     break;
                 await new Promise((resolve) => setTimeout(resolve, 20));

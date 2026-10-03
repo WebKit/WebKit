@@ -656,23 +656,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         var frame = this.frameForIdentifier(framePayload.id);
         if (!frame) {
-            // If the frame wasn't known before now, then the main resource was loaded instantly (about:blank, etc.)
-            // Make a new resource (which will make the frame). Mark will mark it as loaded at the end too since we
-            // don't expect any more events about the load finishing for these frames.
-            let resourceOptions = {
-                loaderIdentifier: framePayload.loaderId,
-            };
-            let frameOptions = {
-                name: framePayload.name,
-                securityOrigin: framePayload.securityOrigin,
-            };
-            let frameResource = this._addNewResourceToFrameOrTarget(framePayload.url, framePayload.id, resourceOptions, frameOptions);
-            frame = frameResource.parentFrame;
+            // No request was seen for this load (about:blank, etc.), so describe the frame from the payload.
+            frame = this._createFrame(framePayload);
+            this._dispatchFrameWasAddedEvent(frame);
             frameWasLoadedInstantly = true;
-
-            console.assert(frame);
-            if (!frame)
-                return;
         }
 
         if (framePayload.loaderId === frame.provisionalLoaderIdentifier) {
@@ -1279,7 +1266,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // tree fills those gaps, but live events can arrive before it has been merged, so still create a
         // stub frame on demand: the resource is then added as a subresource (firing ResourceWasAdded)
         // rather than being treated as the main resource of a brand-new frame (firing FrameWasAdded).
-        if (!frame && frameIdentifier.startsWith("frame-")) {
+        // A document request is the frame's own load, so it takes the new-frame path below instead.
+        let isDocument = resourceOptions.type === InspectorBackend.Enum.Page.ResourceType.Document;
+        if (!frame && !isDocument && frameIdentifier.startsWith("frame-")) {
             let mainResource = new WI.Resource("about:blank");
             frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
             this._frameIdentifierMap.set(frame.id, frame);
@@ -1291,7 +1280,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
 
         if (frame) {
-            if (resourceOptions.type === InspectorBackend.Enum.Page.ResourceType.Document && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === resourceOptions.loaderIdentifier)
+            if (isDocument && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === resourceOptions.loaderIdentifier)
                 resource = frame.provisionalMainResource;
             else {
                 resource = new WI.Resource(url, resourceOptions);
@@ -1335,7 +1324,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         console.assert(frame);
         console.assert(resource);
 
-        if (resource.loaderIdentifier !== frame.loaderIdentifier && frame.loaderIdentifier && !frame.provisionalLoaderIdentifier) {
+        // A document request starts the frame's next load even when the frame doesn't know its current loader yet.
+        let startsNewLoad = frame.loaderIdentifier || resource.type === WI.Resource.Type.Document;
+        if (resource.loaderIdentifier !== frame.loaderIdentifier && startsNewLoad && !frame.provisionalLoaderIdentifier) {
             // This is the start of a provisional load which happens before frameDidNavigate is called.
             // This resource will be the new mainResource if frameDidNavigate is called.
             frame.startProvisionalLoad(resource);
