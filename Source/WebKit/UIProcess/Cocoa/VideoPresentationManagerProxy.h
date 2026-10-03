@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-#include "FrameInfoData.h"
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
@@ -288,7 +287,6 @@ private:
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     void requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier, const String&);
     void requestHideCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier);
-    void performCaptionDisplaySettingsAction(PlaybackSessionContextIdentifier, Function<void(WebPageProxy&, const FrameInfoData&, WebCore::HTMLMediaElementIdentifier)>&& action);
 #endif
 
     // Messages to VideoPresentationManager
