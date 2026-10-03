@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/source-mapped-symbolic-breakpoint.js"></script>
+<script>
+function test()
+{
+    const scriptURLSuffix = "source-mapped-symbolic-breakpoint.js";
+    const zeroOffsetOriginalSymbol = "zeroOffsetOriginalFunctionName";
+    const originalSymbol = "originalFunctionName";
+    const otherOriginalSymbol = "otherOriginalFunctionName";
+    const originalSymbolRegex = "^(original|otherOriginal)FunctionName$";
+    const unrelatedOriginalSymbol = "unrelatedOriginalFunctionName";
+    const duplicatedOriginalSymbol = "duplicatedOriginalFunctionName";
+    const memberAssignmentOriginalSymbol = "memberAssignmentOriginalFunctionName";
+    const accessorOriginalSymbol = "accessorOriginalFunctionName";
+
+    function findSourceMap() {
+        return WI.SourceMap.instances.find((sourceMap) => sourceMap.originalSourceCode.url && sourceMap.originalSourceCode.url.endsWith(scriptURLSuffix));
+    }
+
+    async function awaitSourceMap() {
+        if (findSourceMap())
+            return;
+        await new Promise((resolve) => {
+            function listener(event) {
+                if (event.target.url && event.target.url.endsWith(scriptURLSuffix)) {
+                    WI.SourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, listener);
+                    resolve();
+                }
+            }
+            WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, listener);
+        });
+    }
+
+    function awaitResolution(breakpoint) {
+        let target = findSourceMap()?.originalSourceCode.target;
+        return new Promise((resolve) => {
+            function listener(event) {
+                if (event.data.breakpoint === breakpoint && (!target || event.data.target === target)) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.SourceMappedSymbolicBreakpointsResolved, listener);
+                    resolve();
+                }
+            }
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.SourceMappedSymbolicBreakpointsResolved, listener);
+        });
+    }
+
+    function triggerFunction(functionName, eventName) {
+        return Promise.all([
+            InspectorTest.awaitEvent(eventName),
+            InspectorTest.evaluateInPage(`${functionName}()`),
+        ]);
+    }
+
+    function startPauseTracking() {
+        let pauses = [];
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+            let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+            pauses.push({data: targetData.pauseData, reason: targetData.pauseReason});
+            WI.debuggerManager.resume();
+        });
+        return {
+            pauses,
+            stop() {
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+        };
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint.SourceMapped");
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.Configuration",
+        description: "A source-mapped symbolic breakpoint should preserve supported options and not use options that cannot be shared across its generated locations.",
+        async test() {
+            let breakpoint = new WI.SymbolicBreakpoint(originalSymbolRegex, {isRegex: true, sourceMapped: true});
+            InspectorTest.expectTrue(breakpoint.sourceMapped, "Breakpoint should use source maps.");
+            InspectorTest.expectTrue(breakpoint.isRegex, "Breakpoint should use a regular expression.");
+            InspectorTest.expectEqual(breakpoint.ignoreCount, 0, "Breakpoint should not use an ignore count.");
+
+            let restoredBreakpoint = WI.SymbolicBreakpoint.fromJSON(breakpoint.toJSON());
+            InspectorTest.expectTrue(restoredBreakpoint.sourceMapped, "Source Map mode should be preserved when serializing.");
+            InspectorTest.expectTrue(restoredBreakpoint.isRegex, "Regular Expression mode should be preserved when serializing.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.ExactFunction",
+        description: "A source-mapped symbolic breakpoint should only pause in the generated function corresponding to the original symbol, even when another generated function has the same name.",
+        async test() {
+            InspectorTest.log("Waiting for source map...");
+            await awaitSourceMap();
+
+            let sourceMap = findSourceMap();
+            InspectorTest.expectThat(!!sourceMap, "Should have a source map for the script.");
+            let breakpoint = new WI.SymbolicBreakpoint(originalSymbol, {sourceMapped: true});
+            let otherBreakpoint = new WI.SymbolicBreakpoint(otherOriginalSymbol, {sourceMapped: true});
+            let unrelatedBreakpoint = new WI.SymbolicBreakpoint(unrelatedOriginalSymbol, {sourceMapped: true});
+            let generatedFunctionInfos = await sourceMap.generatedFunctionInfoForOriginalSymbol(breakpoint);
+            let otherGeneratedFunctionInfos = await sourceMap.generatedFunctionInfoForOriginalSymbol(otherBreakpoint);
+            let unrelatedGeneratedFunctionInfos = await sourceMap.generatedFunctionInfoForOriginalSymbol(unrelatedBreakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 1, `Original symbol "${originalSymbol}" should resolve to one generated function.`);
+            InspectorTest.expectEqual(otherGeneratedFunctionInfos.length, 1, `Original symbol "${otherOriginalSymbol}" should resolve to one generated function.`);
+            InspectorTest.expectEqual(unrelatedGeneratedFunctionInfos.length, 1, `Original symbol "${unrelatedOriginalSymbol}" should resolve to one generated function.`);
+            InspectorTest.expectEqual(generatedFunctionInfos[0].name, "a", `Original symbol "${originalSymbol}" should resolve to generated symbol "a".`);
+            InspectorTest.expectEqual(otherGeneratedFunctionInfos[0].name, "a", `Original symbol "${otherOriginalSymbol}" should also resolve to generated symbol "a".`);
+            InspectorTest.expectEqual(unrelatedGeneratedFunctionInfos[0].name, originalSymbol, `Original symbol "${unrelatedOriginalSymbol}" should resolve to generated symbol "${originalSymbol}".`);
+            InspectorTest.expectFalse(generatedFunctionInfos[0].position.equals(otherGeneratedFunctionInfos[0].position), "Generated functions with the same name should have distinct breakpoint positions.");
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding breakpoint on the original symbol...");
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering other generated function with the same name...");
+            await triggerFunction("callOtherFunction", "TestPage-SymbolicBreakpoint-Other");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 0, "Should not pause in the other generated function.");
+
+            InspectorTest.log("Triggering unrelated generated function with the original name...");
+            await triggerFunction("callUnrelatedFunction", "TestPage-SymbolicBreakpoint-Unrelated");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 0, "Should not pause in an unrelated generated function with the original name.");
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause.");
+
+            let pause = pauseTracking.pauses.lastValue;
+            InspectorTest.expectEqual(pause.reason, WI.DebuggerManager.PauseReason.FunctionCall, "Pause reason should be a symbolic function call.");
+            InspectorTest.expectEqual(pause.data?.name, originalSymbol, "Pause data should identify the original symbol.");
+            InspectorTest.expectEqual(pause.data?.symbolicBreakpoint, breakpoint, "Pause should associate back to the original breakpoint.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Adding breakpoint on the other original symbol...");
+            let otherResolved = awaitResolution(otherBreakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(otherBreakpoint);
+            await otherResolved;
+
+            InspectorTest.log("Triggering other generated function with the same name...");
+            await triggerFunction("callOtherFunction", "TestPage-SymbolicBreakpoint-Other");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 2, "Should pause in the other generated function after adding its breakpoint.");
+            pause = pauseTracking.pauses.lastValue;
+            InspectorTest.expectEqual(pause.reason, WI.DebuggerManager.PauseReason.FunctionCall, "Pause reason should be a symbolic function call.");
+            InspectorTest.expectEqual(pause.data?.name, otherOriginalSymbol, "Pause data should identify the other original symbol.");
+            InspectorTest.expectEqual(pause.data?.symbolicBreakpoint, otherBreakpoint, "Pause should associate back to the other original breakpoint.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Removing breakpoints...");
+            breakpoint.remove();
+            otherBreakpoint.remove();
+
+            InspectorTest.log("Triggering generated functions...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            await triggerFunction("callOtherFunction", "TestPage-SymbolicBreakpoint-Other");
+            await triggerFunction("callUnrelatedFunction", "TestPage-SymbolicBreakpoint-Unrelated");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 2, "Should not pause again.");
+
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.ZeroOffset",
+        description: "A source-mapped symbolic breakpoint should match a generated function that begins at source offset zero.",
+        async test() {
+            await awaitSourceMap();
+
+            let breakpoint = new WI.SymbolicBreakpoint(zeroOffsetOriginalSymbol, {sourceMapped: true});
+            let generatedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(breakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 1, `Original symbol "${zeroOffsetOriginalSymbol}" should resolve to one generated function.`);
+            InspectorTest.expectEqual(generatedFunctionInfos[0].name, "z", `Original symbol "${zeroOffsetOriginalSymbol}" should resolve to generated symbol "z".`);
+            InspectorTest.expectEqual(generatedFunctionInfos[0].offset, 0, "Generated function should begin at source offset zero.");
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding breakpoint on the zero-offset function...");
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callZeroOffsetFunction", "TestPage-SymbolicBreakpoint-ZeroOffset");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause in the zero-offset function.");
+            InspectorTest.expectEqual(pauseTracking.pauses.lastValue.data?.name, zeroOffsetOriginalSymbol, "Pause data should identify the original symbol.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.Disabled",
+        description: "Disabling the original breakpoint should also stop the source-mapped breakpoint from pausing.",
+        async test() {
+            await awaitSourceMap();
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding breakpoint on the original symbol...");
+            let breakpoint = new WI.SymbolicBreakpoint(originalSymbol, {sourceMapped: true});
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Disabling breakpoint...");
+            breakpoint.disabled = true;
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 0, "Should not pause while disabled.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.Condition",
+        description: "A condition set on the original breakpoint should be honored by the source-mapped breakpoint.",
+        async test() {
+            await awaitSourceMap();
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding breakpoint with condition 'false'...");
+            let breakpoint = new WI.SymbolicBreakpoint(originalSymbol, {sourceMapped: true, condition: "false"});
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 0, "Should not pause when condition is false.");
+
+            InspectorTest.log("Setting condition to 'true'...");
+            let reResolved = awaitResolution(breakpoint);
+            breakpoint.condition = "true";
+            await reResolved;
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause when condition is true.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.CaseInsensitive",
+        description: "A case-insensitive source-mapped symbolic breakpoint should still match only the generated function corresponding to the original symbol.",
+        async test() {
+            await awaitSourceMap();
+
+            let lowercaseOriginalSymbol = originalSymbol.toLowerCase();
+            let breakpoint = new WI.SymbolicBreakpoint(lowercaseOriginalSymbol, {caseSensitive: false, sourceMapped: true});
+            let generatedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(breakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 1, `Case-insensitive original symbol "${lowercaseOriginalSymbol}" should resolve to one generated function.`);
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding case-insensitive breakpoint...");
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering unrelated generated function with the original name...");
+            await triggerFunction("callUnrelatedFunction", "TestPage-SymbolicBreakpoint-Unrelated");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 0, "Should not pause in an unrelated generated function with a case-insensitively matching name.");
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause in the matching generated function.");
+            InspectorTest.expectEqual(pauseTracking.pauses.lastValue.data?.name, lowercaseOriginalSymbol, "Pause data should identify the configured symbol.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.MultipleFunctions",
+        description: "A source-mapped symbolic breakpoint should pause in every generated function corresponding to the original symbol.",
+        async test() {
+            await awaitSourceMap();
+
+            let breakpoint = new WI.SymbolicBreakpoint(duplicatedOriginalSymbol, {sourceMapped: true});
+            let generatedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(breakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 2, `Original symbol "${duplicatedOriginalSymbol}" should resolve to two generated functions.`);
+            InspectorTest.expectEqual(new Set(generatedFunctionInfos.map((functionInfo) => functionInfo.offset)).size, 2, "Generated functions should have distinct offsets.");
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding breakpoint...");
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering first matching generated function...");
+            await triggerFunction("callDuplicateFunction1", "TestPage-SymbolicBreakpoint-Duplicate1");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause in the first matching function.");
+
+            InspectorTest.log("Triggering second matching generated function...");
+            await triggerFunction("callDuplicateFunction2", "TestPage-SymbolicBreakpoint-Duplicate2");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 2, "Should pause in the second matching function.");
+            InspectorTest.expectEqual(pauseTracking.pauses.lastValue.data?.name, duplicatedOriginalSymbol, "Pause data should identify the original symbol.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.RegularExpression",
+        description: "A regular expression source-mapped symbolic breakpoint should pause in each generated function corresponding to a matching original symbol.",
+        async test() {
+            await awaitSourceMap();
+
+            let breakpoint = new WI.SymbolicBreakpoint(originalSymbolRegex, {isRegex: true, sourceMapped: true});
+            let caseInsensitiveBreakpoint = new WI.SymbolicBreakpoint(originalSymbolRegex.toLowerCase(), {caseSensitive: false, isRegex: true, sourceMapped: true});
+            let generatedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(breakpoint);
+            let caseInsensitiveGeneratedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(caseInsensitiveBreakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 2, `Original symbol regular expression "${originalSymbolRegex}" should resolve to two generated functions.`);
+            InspectorTest.expectEqual(caseInsensitiveGeneratedFunctionInfos.length, 2, `Case-insensitive original symbol regular expression "${originalSymbolRegex.toLowerCase()}" should resolve to two generated functions.`);
+            InspectorTest.expectEqual(new Set(generatedFunctionInfos.map((functionInfo) => functionInfo.offset)).size, 2, "Generated functions should have distinct offsets.");
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding regular expression breakpoint...");
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering unrelated generated function...");
+            await triggerFunction("callUnrelatedFunction", "TestPage-SymbolicBreakpoint-Unrelated");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 0, "Should not pause in the generated function for a nonmatching original symbol.");
+
+            InspectorTest.log("Triggering first matching generated function...");
+            await triggerFunction("callOriginalFunction", "TestPage-SymbolicBreakpoint-Original");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause in the first matching function.");
+
+            InspectorTest.log("Triggering second matching generated function...");
+            await triggerFunction("callOtherFunction", "TestPage-SymbolicBreakpoint-Other");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 2, "Should pause in the second matching function.");
+            InspectorTest.expectEqual(pauseTracking.pauses.lastValue.data?.name, originalSymbolRegex, "Pause data should identify the configured regular expression.");
+            InspectorTest.expectEqual(pauseTracking.pauses.lastValue.data?.symbolicBreakpoint, breakpoint, "Pause should associate back to the regular expression breakpoint.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.MemberAssignment",
+        description: "A source-mapped symbolic breakpoint should resolve an anonymous function assigned to an object member.",
+        async test() {
+            await awaitSourceMap();
+
+            let breakpoint = new WI.SymbolicBreakpoint(memberAssignmentOriginalSymbol, {sourceMapped: true});
+            let generatedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(breakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 1, `Original symbol "${memberAssignmentOriginalSymbol}" should resolve to one generated function.`);
+            InspectorTest.expectEqual(generatedFunctionInfos[0].name, "f", `Original symbol "${memberAssignmentOriginalSymbol}" should resolve to generated symbol "f".`);
+
+            let pauseTracking = startPauseTracking();
+
+            InspectorTest.log("Adding breakpoint on the original member name...");
+            let resolved = awaitResolution(breakpoint);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering matching generated function...");
+            await triggerFunction("callMemberFunction", "TestPage-SymbolicBreakpoint-Member");
+            InspectorTest.expectEqual(pauseTracking.pauses.length, 1, "Should pause in the assigned function.");
+            InspectorTest.expectEqual(pauseTracking.pauses.lastValue.data?.name, memberAssignmentOriginalSymbol, "Pause data should identify the original member name.");
+
+            breakpoint.remove();
+            pauseTracking.stop();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.SourceMapped.AccessorAction",
+        description: "A source-mapped symbolic breakpoint on an accessor should run its action exactly once.",
+        async test() {
+            await awaitSourceMap();
+
+            let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: "++globalThis.accessorActionCount"});
+            let breakpoint = new WI.SymbolicBreakpoint(accessorOriginalSymbol, {sourceMapped: true, actions: [action], autoContinue: true});
+            let generatedFunctionInfos = await findSourceMap().generatedFunctionInfoForOriginalSymbol(breakpoint);
+            InspectorTest.expectEqual(generatedFunctionInfos.length, 1, `Original symbol "${accessorOriginalSymbol}" should resolve to one generated function.`);
+            InspectorTest.expectEqual(generatedFunctionInfos[0].name, accessorOriginalSymbol, "Accessor should use the runtime function name.");
+
+            let resolved = awaitResolution(breakpoint);
+
+            InspectorTest.log("Adding auto-continue breakpoint action on the accessor...");
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            await resolved;
+
+            InspectorTest.log("Triggering matching accessor...");
+            await triggerFunction("callAccessorFunction", "TestPage-SymbolicBreakpoint-Accessor");
+            let actionCount = await InspectorTest.evaluateInPage("accessorActionCount");
+            InspectorTest.expectEqual(actionCount, 1, "Breakpoint action should run exactly once.");
+
+            breakpoint.remove();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a SymbolicBreakpoint set on an original (pre-minified) symbol resolves to the exact minified function via source map <code>names</code>. <a href="https://bugs.webkit.org/show_bug.cgi?id=246055">Bug 246055</a>.</p>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Multimap
+class MapOfMaps
 {
-    constructor(items = [])
+    constructor()
     {
         this._map = new Map;
-
-        for (let [key, value] of items)
-            this.add(key, value);
     }
 
     // Public
@@ -40,56 +37,64 @@ class Multimap
         return this._map.size;
     }
 
-    has(key, value)
+    has(key1, key2)
     {
-        let valueSet = this._map.get(key);
-        if (!valueSet)
+        let valueMap = this._map.get(key1);
+        if (!valueMap)
             return false;
-        return value === undefined || valueSet.has(value);
+        return arguments.length === 1 || valueMap.has(key2);
     }
 
-    get(key)
+    get(key1, key2)
     {
-        return this._map.get(key);
+        let valueMap = this._map.get(key1);
+        if (arguments.length === 1)
+            return valueMap;
+        return valueMap?.get(key2);
     }
 
-    add(key, value)
+    getOrInsert(key1, key2, value)
     {
-        this._map.getOrInsert(key, new Set).add(value);
+        return this._map.getOrInsert(key1, new Map).getOrInsert(key2, value);
+    }
+
+    set(key1, key2, value)
+    {
+        this._map.getOrInsert(key1, new Map).set(key2, value);
         return this;
     }
 
-    delete(key, value)
+    delete(key1, key2)
     {
-        // Allow an entire key to be removed by not passing a value.
+        // Allow an entire key to be removed by not passing a second key.
         if (arguments.length === 1)
-            return this._map.delete(key);
+            return this._map.delete(key1);
 
-        let valueSet = this._map.get(key);
-        if (!valueSet)
+        let valueMap = this._map.get(key1);
+        if (!valueMap)
             return false;
 
-        let deleted = valueSet.delete(value);
+        let deleted = valueMap.delete(key2);
 
-        if (!valueSet.size)
-            this._map.delete(key);
+        if (!valueMap.size)
+            this._map.delete(key1);
 
         return deleted;
     }
 
-    take(key, value)
+    take(key1, key2)
     {
-        // Allow an entire key to be removed by not passing a value.
+        // Allow an entire key to be removed by not passing a second key.
         if (arguments.length === 1)
-            return this._map.take(key);
+            return this._map.take(key1);
 
-        let valueSet = this._map.get(key);
-        if (!valueSet)
+        let valueMap = this._map.get(key1);
+        if (!valueMap)
             return undefined;
 
-        let result = valueSet.take(value);
-        if (!valueSet.size)
-            this._map.delete(key);
+        let result = valueMap.take(key2);
+        if (!valueMap.size)
+            this._map.delete(key1);
         return result;
     }
 
@@ -101,36 +106,5 @@ class Multimap
     keys()
     {
         return this._map.keys();
-    }
-
-    *values()
-    {
-        for (let valueSet of this._map.values()) {
-            for (let value of valueSet)
-                yield value;
-        }
-    }
-
-    sets()
-    {
-        return this._map.entries();
-    }
-
-    *[Symbol.iterator]()
-    {
-        for (let [key, valueSet] of this._map) {
-            for (let value of valueSet)
-                yield [key, value];
-        }
-    }
-
-    copy()
-    {
-        return new Multimap(this.toJSON());
-    }
-
-    toJSON()
-    {
-        return Array.from(this);
     }
 }

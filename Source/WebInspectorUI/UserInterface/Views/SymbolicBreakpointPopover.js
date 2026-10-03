@@ -41,6 +41,11 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
     // Protected
 
+    get supportsIgnoreCount()
+    {
+        return !this._breakpoint?.sourceMapped && !this._sourceMappedCheckboxElement?.checked;
+    }
+
     populateContent()
     {
         let content = document.createDocumentFragment();
@@ -91,6 +96,16 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
         isRegexLabel.append(WI.UIString("Regular Expression"));
 
+        let sourceMappedLabel = content.appendChild(document.createElement("label"));
+        sourceMappedLabel.className = "source-mapped";
+
+        this._sourceMappedCheckboxElement = sourceMappedLabel.appendChild(document.createElement("input"));
+        this._sourceMappedCheckboxElement.type = "checkbox";
+        this._sourceMappedCheckboxElement.checked = false;
+        this._sourceMappedCheckboxElement.addEventListener("change", this.handleConfigurationChanged.bind(this));
+
+        sourceMappedLabel.append(WI.UIString("Source Map"));
+
         this.addRow("symbol", symbolLabelElement, content);
 
         // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
@@ -112,6 +127,7 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
         options.caseSensitive = this._caseSensitiveCheckboxElement.checked;
         options.isRegex = this._isRegexCheckboxElement.checked;
+        options.sourceMapped = this._sourceMappedCheckboxElement.checked;
 
         return new WI.SymbolicBreakpoint(symbol, options);
     }

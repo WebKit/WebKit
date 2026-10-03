@@ -78,7 +78,7 @@
     width: 360px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content width. */
 }
 
-.popover .edit-breakpoint-popover-content > table > tr > td > .editor + label + label {
+.popover .edit-breakpoint-popover-content > table > tr > td > .editor ~ label + label {
     margin-inline-start: 8px;
 }
 
