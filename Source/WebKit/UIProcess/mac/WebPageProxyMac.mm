@@ -424,10 +424,17 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(Ref<WebKit::WebMouseEvent>&
     if (legacyMainFrameProcess().state() != WebProcessProxy::State::Running)
         return false;
 
+    std::optional<FrameIdentifier> frameID;
     const Seconds messageTimeout(3);
-    auto sendResult = protect(legacyMainFrameProcess())->sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(WTF::move(event)), webPageIDInMainFrameProcess(), messageTimeout);
-    auto [result] = sendResult.takeReplyOr(false);
-    return result;
+    while (true) {
+        auto sendResult = processContainingFrame(frameID)->sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(frameID, event), webPageIDInProcessForFrame(frameID), messageTimeout);
+        auto [result] = sendResult.takeReplyOr(false);
+        auto* remoteUserInputEventData = std::get_if<RemoteUserInputEventData>(&result);
+        if (!remoteUserInputEventData)
+            return std::get<bool>(result);
+        event->setPosition(remoteUserInputEventData->transformedPoint);
+        frameID = remoteUserInputEventData->targetFrameID;
+    }
 }
 
 bool WebPageProxy::acceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent>&& event)
@@ -435,27 +442,40 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent>
     if (!hasRunningProcess())
         return false;
 
-    Ref legacyMainFrameProcess = m_legacyMainFrameProcess;
-    if (!legacyMainFrameProcess->hasConnection())
-        return false;
-
     if (shouldAvoidSynchronouslyWaitingToPreventDeadlock())
         return false;
 
-    legacyMainFrameProcess->send(Messages::WebPage::RequestAcceptsFirstMouse(eventNumber, WTF::move(event)), webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-    bool receivedReply = protect(legacyMainFrameProcess->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageIDInMainFrameProcess(), 250_ms, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+    std::optional<FrameIdentifier> frameID;
+    while (true) {
+        Ref process = processContainingFrame(frameID);
+        if (!process->hasConnection())
+            return false;
 
-    if (!receivedReply) {
-        WEBPAGEPROXY_RELEASE_LOG_ERROR(MouseHandling, "acceptsFirstMouse: associated WebContent failed to process RequestAcceptsFirstMouse within 250 ms");
-        return false;
+        auto pageID = webPageIDInProcessForFrame(frameID);
+        internals().acceptsFirstMouseRemoteUserInputEventData = std::nullopt;
+        process->send(Messages::WebPage::RequestAcceptsFirstMouse(frameID, eventNumber, event), pageID, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        bool receivedReply = protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(pageID, 250_ms, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+
+        if (!receivedReply) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(MouseHandling, "acceptsFirstMouse: associated WebContent failed to process RequestAcceptsFirstMouse within 250 ms");
+            return false;
+        }
+
+        auto remoteUserInputEventData = std::exchange(internals().acceptsFirstMouseRemoteUserInputEventData, std::nullopt);
+        if (!remoteUserInputEventData)
+            return m_acceptsFirstMouse;
+        event->setPosition(remoteUserInputEventData->transformedPoint);
+        frameID = remoteUserInputEventData->targetFrameID;
     }
-
-    return m_acceptsFirstMouse;
 }
 
-void WebPageProxy::handleAcceptsFirstMouse(bool acceptsFirstMouse)
+void WebPageProxy::handleAcceptsFirstMouse(Variant<bool, RemoteUserInputEventData>&& result)
 {
-    m_acceptsFirstMouse = acceptsFirstMouse;
+    WTF::switchOn(WTF::move(result), [&] (bool acceptsFirstMouse) {
+        m_acceptsFirstMouse = acceptsFirstMouse;
+    }, [&] (RemoteUserInputEventData&& remoteUserInputEventData) {
+        internals().acceptsFirstMouseRemoteUserInputEventData = WTF::move(remoteUserInputEventData);
+    });
 }
 
 void WebPageProxy::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)

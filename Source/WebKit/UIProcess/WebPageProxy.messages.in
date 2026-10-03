@@ -413,7 +413,7 @@ messages -> WebPageProxy {
 
     SetFocusedElementInputType(enum:uint8_t WebKit::InputType inputType)
 
-    HandleAcceptsFirstMouse(bool acceptsFirstMouse) CanDispatchOutOfOrder
+    HandleAcceptsFirstMouse(Variant<bool, WebCore::RemoteUserInputEventData> result) CanDispatchOutOfOrder
 #endif
 
     DidUpdateRenderingAfterCommittingLoad()

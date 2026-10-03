@@ -603,7 +603,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     InsertMultiRepresentationHEIC(std::span<const uint8_t> data, String altText)
 #endif
 
-    ShouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent> event) -> (bool result) Synchronous
+    ShouldDelayWindowOrderingEvent(std::optional<WebCore::FrameIdentifier> frameID, Ref<WebKit::WebMouseEvent> event) -> (Variant<bool, WebCore::RemoteUserInputEventData> result) Synchronous
 
     SetTextAsync(String text)
 
@@ -627,7 +627,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range)
-    RequestAcceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent> event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    RequestAcceptsFirstMouse(std::optional<WebCore::FrameIdentifier> frameID, int eventNumber, Ref<WebKit::WebMouseEvent> event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     SetCaretAnimatorType(enum:uint8_t WebCore::CaretAnimatorType caretType)
     SetCaretBlinkingSuspended(bool blinkSuspended)
 #endif
