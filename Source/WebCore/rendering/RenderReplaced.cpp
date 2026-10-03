@@ -589,6 +589,14 @@ void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(Fl
         }
     }
 
+    if (style().aspectRatio().isRatio() && !intrinsicRatio.isEmpty() && intrinsicSize.width() > 0) {
+        // aspect-ratio: <ratio> overrides the natural aspect ratio, so the natural block size is the natural inline size
+        // transferred through the preferred aspect ratio (e.g. a 300x150 canvas with aspect-ratio: 1/4 has a 300x1200 natural size for sizing purposes).
+        // https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765
+        auto coercedLogicalHeight = resolveHeightForRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), LayoutUnit { intrinsicSize.width() }, intrinsicRatio.transposedSize().aspectRatioDouble(), style().boxSizingForAspectRatio());
+        intrinsicSize.setHeight(std::max(0_lu, coercedLogicalHeight));
+    }
+
     // Now constrain the intrinsic size along each axis according to minimum and maximum width/heights along the
     // opposite axis. So for example a maximum width that shrinks our width will result in the height we compute here
     // having to shrink in order to preserve the aspect ratio. Because we compute these values independently along
