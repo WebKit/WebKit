@@ -1089,6 +1089,68 @@ TEST(SiteIsolation, ObscuredContentInsetsSurviveWindowOpenProcessSwap)
     EXPECT_EQ([insetTop doubleValue], 100);
 }
 
+TEST(SiteIsolation, WindowFeaturesOnlyAppliedInMainFrameProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script>w = window.open('https://webkit.org/opened', '_blank', 'left=50,top=60,width=300,height=200')</script>"_s } },
+        { "/opened"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr openerNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerNavigationDelegate allowAnyTLSCertificate];
+    RetainPtr opener = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [opener setNavigationDelegate:openerNavigationDelegate.get()];
+
+    __block Vector<CGRect> windowFrames;
+    RetainPtr openedUIDelegate = adoptNS([TestUIDelegate new]);
+    openedUIDelegate.get().getWindowFrameWithCompletionHandler = ^(WKWebView *, void (^completionHandler)(CGRect)) {
+        completionHandler(CGRectMake(0, 0, 800, 600));
+    };
+    openedUIDelegate.get().setWindowFrame = ^(WKWebView *, CGRect frame) {
+        windowFrames.append(frame);
+    };
+
+    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedNavigationDelegate allowAnyTLSCertificate];
+    __block RetainPtr<TestWKWebView> opened;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = openedNavigationDelegate.get();
+        opened.get().UIDelegate = openedUIDelegate.get();
+        // Like Safari, size the web view after creating it, so pages for the opened window created in
+        // other processes during initialization have an empty view size.
+        [opened setFrame:NSMakeRect(0, 0, 800, 600)];
+        return opened.get();
+    };
+    [opener setUIDelegate:openerUIDelegate.get()];
+
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!opened)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(opened.get(), { { RemoteFrame }, { "https://webkit.org"_s } });
+
+    // Make sure any window frame messages sent by either process have been received.
+    EXPECT_EQ([[opener objectByEvaluatingJavaScript:@"1"] intValue], 1);
+    EXPECT_EQ([[opener objectByEvaluatingJavaScript:@"1" inFrame:[opener firstChildFrame]] intValue], 1);
+
+    // Only the process with the local main frame can compute the window frame from the features.
+    // The example.com process, where the opened window's main frame is remote, would compute a frame
+    // based on an empty viewport size.
+    EXPECT_EQ(windowFrames.size(), 1u);
+    for (auto& frame : windowFrames) {
+        EXPECT_EQ(frame.size.width, 300);
+        EXPECT_EQ(frame.size.height, 200);
+    }
+}
+
 #endif // PLATFORM(MAC)
 
 TEST(SiteIsolation, CrossSiteIFrameWindowOpensMainFrameSite)

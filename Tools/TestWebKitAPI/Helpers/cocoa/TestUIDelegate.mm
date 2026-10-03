@@ -106,6 +106,12 @@
         completionHandler(CGRectZero);
 }
 
+- (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame
+{
+    if (_setWindowFrame)
+        _setWindowFrame(webView, frame);
+}
+
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
 {
     if (_runOpenPanelWithParameters)

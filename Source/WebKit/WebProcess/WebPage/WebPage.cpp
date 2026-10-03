@@ -1288,8 +1288,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setAllowedQueryParametersForAdvancedPrivacyProtections(WTF::move(parameters.allowedQueryParametersForAdvancedPrivacyProtections));
 #endif
     if (parameters.windowFeatures) {
-        page->applyWindowFeatures(*parameters.windowFeatures);
-        page->chrome().show();
+        if (!parameters.remotePageParameters) {
+            page->applyWindowFeatures(*parameters.windowFeatures);
+            page->chrome().show();
+        }
         page->setOpenedByDOM();
     }
 

@@ -34,6 +34,7 @@
 #if PLATFORM(MAC)
 @property (nonatomic, copy) void (^getContextMenuFromProposedMenu)(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^)(NSMenu *));
 @property (nonatomic, copy) void (^getWindowFrameWithCompletionHandler)(WKWebView *, void(^)(CGRect));
+@property (nonatomic, copy) void (^setWindowFrame)(WKWebView *, CGRect);
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 @property (nonatomic, copy) NSColor *(^adjustedColorForTopContentInsetColor)(WKWebView *webView, NSColor *proposedColor);
 #endif
