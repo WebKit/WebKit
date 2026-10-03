@@ -169,6 +169,7 @@ editing/input/ios [ Pass ]
 editing/pasteboard/dom-paste [ Pass ]
 editing/undo-manager [ Pass ]
 
+accessibility/radio-group-required.html [ Pass ]
 accessibility/set-selected-text-range-after-newline.html [ Pass ]
 accessibility/smart-invert.html [ Pass ]
 

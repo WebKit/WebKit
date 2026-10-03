@@ -1,0 +1,65 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<fieldset>
+  <legend>Size</legend>
+  <label><input type="radio" id="small" name="size" required> Small</label>
+  <label><input type="radio" id="medium" name="size"> Medium</label>
+  <label><input type="radio" id="large" name="size"> Large</label>
+</fieldset>
+<fieldset>
+  <legend>Color</legend>
+  <label><input type="radio" id="red" name="color"> Red</label>
+  <label><input type="radio" id="blue" name="color"> Blue</label>
+</fieldset>
+<fieldset id="shipping">
+  <legend>Shipping</legend>
+  <label><input type="radio" id="standard" name="shipping"> Standard</label>
+  <label><input type="radio" id="express" name="shipping"> Express</label>
+</fieldset>
+
+<script>
+var output = "This tests that every radio button in a group is required when any button in it has the required attribute, since that makes the whole group required.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function isRequired(id) {
+        return accessibilityController.accessibleElementById(id).isRequired;
+    }
+
+    output += expect("isRequired('small')", "true");
+    output += expect("isRequired('medium')", "true");
+    output += expect("isRequired('large')", "true");
+    output += expect("isRequired('red')", "false");
+    output += expect("isRequired('blue')", "false");
+    output += expect("isRequired('standard')", "false");
+    output += expect("isRequired('express')", "false");
+
+    setTimeout(async function() {
+        output += evalAndReturn("document.getElementById('blue').required = true;");
+        output += await expectAsync("isRequired('red')", "true");
+        output += expect("isRequired('blue')", "true");
+
+        output += evalAndReturn("document.getElementById('small').required = false;");
+        output += await expectAsync("isRequired('medium')", "false");
+        output += expect("isRequired('small')", "false");
+        output += expect("isRequired('large')", "false");
+
+        output += evalAndReturn("document.getElementById('shipping').insertAdjacentHTML('beforeend', '<label><input type=radio id=pickup name=shipping required> Pickup</label>');");
+        output += await expectAsync("isRequired('standard')", "true");
+        output += expect("isRequired('express')", "true");
+        output += expect("isRequired('pickup')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
