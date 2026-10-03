@@ -33,6 +33,7 @@
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
@@ -60,7 +61,7 @@ static std::span<const CGSize> CTRunGetAdvancesSpan(CTRunRef ctRun)
     return unsafeMakeSpan(baseAdvances, CTRunGetGlyphCount(ctRun));
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, std::span<const unsigned> originalIndices)
     : m_initialAdvance(CTRunGetInitialAdvance(ctRun))
     , m_font(font)
     , m_characters(characters)
@@ -78,7 +79,13 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), coreTextIndices.mutableSpan().data());
         coreTextIndicesSpan = coreTextIndices.span();
     }
-    m_coreTextIndices = coreTextIndicesSpan;
+    if (originalIndices.empty())
+        m_coreTextIndices = coreTextIndicesSpan;
+    else {
+        m_coreTextIndices = CoreTextIndicesVector(m_glyphCount, [&](size_t i) {
+            return originalIndices[coreTextIndicesSpan[i]];
+        });
+    }
 
     if (auto glyphsSpan = CTRunGetGlyphsSpan(ctRun); glyphsSpan.data())
         m_glyphs = glyphsSpan;
@@ -175,6 +182,49 @@ static CFDictionaryRef typesetterOptionsSingleton()
     return options.get().get();
 }
 
+struct PrecomposedCharacters {
+    Vector<char16_t, 64> characters;
+    // One entry per code unit of characters, plus one for the end.
+    Vector<unsigned, 64> originalIndices;
+};
+
+// https://drafts.csswg.org/css-fonts-4/#cluster-matching: "use the glyph associated with the canonically equivalent character for the entire cluster".
+static std::optional<PrecomposedCharacters> precomposedCharactersIfNeeded(std::span<const char16_t> characters, const Font& font, const AtomString& locale)
+{
+    if (font.canRenderCombiningCharacterSequence(characters))
+        return std::nullopt;
+
+    PrecomposedCharacters result;
+    bool hasPrecomposedCharacter = false;
+    CachedTextBreakIterator graphemeClusterIterator(characters, { }, TextBreakIterator::CharacterMode { }, locale);
+    for (unsigned clusterStart = 0; clusterStart < characters.size();) {
+        unsigned clusterEnd = graphemeClusterIterator.following(clusterStart).value_or(characters.size());
+        auto cluster = characters.subspan(clusterStart, clusterEnd - clusterStart);
+        auto character = font.canRenderCombiningCharacterSequence(cluster) ? std::nullopt : precomposedCharacter(cluster);
+        if (character && font.supportsCodePoint(*character)) {
+            hasPrecomposedCharacter = true;
+            std::array<char16_t, 2> codeUnits;
+            unsigned codeUnitCount = 0;
+            U16_APPEND_UNSAFE(codeUnits, codeUnitCount, *character);
+            result.characters.append(std::span { codeUnits }.first(codeUnitCount));
+            result.originalIndices.appendUsingFunctor(codeUnitCount, [&](size_t) {
+                return clusterStart;
+            });
+        } else {
+            result.characters.append(cluster);
+            result.originalIndices.appendUsingFunctor(cluster.size(), [&](size_t i) {
+                return clusterStart + i;
+            });
+        }
+        clusterStart = clusterEnd;
+    }
+
+    if (!hasPrecomposedCharacter)
+        return std::nullopt;
+    result.originalIndices.append(characters.size());
+    return result;
+}
+
 void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
 {
     if (!font) {
@@ -188,6 +238,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     char32_t baseCharacter = 0;
     RetainPtr<CFDictionaryRef> stringAttributes;
+    std::optional<PrecomposedCharacters> precomposedCharacters;
     if (effectiveFont->isSystemFontFallbackPlaceholder()) {
         // FIXME: This code path does not support small caps.
         isSystemFallback = true;
@@ -199,8 +250,12 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         stringAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, getCFStringAttributes(*effectiveFont, m_fontCascade->enableKerning(), effectiveFont->platformData().orientation(), m_fontCascade->fontDescription().usedLocale()).get()));
         // We don't know which font should be used to render this grapheme cluster, so enable CoreText's fallback mechanism by using the CTFont which doesn't have CoreText's fallback disabled.
         CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, effectiveFont->platformData().ctFont());
-    } else
+    } else {
         stringAttributes = getCFStringAttributes(*effectiveFont, m_fontCascade->enableKerning(), effectiveFont->platformData().orientation(), m_fontCascade->fontDescription().usedLocale());
+        precomposedCharacters = precomposedCharactersIfNeeded(characters, *effectiveFont, m_fontCascade->fontDescription().usedLocale());
+    }
+    auto charactersToShape = precomposedCharacters ? precomposedCharacters->characters.span() : characters;
+    auto originalIndices = precomposedCharacters ? precomposedCharacters->originalIndices.span() : std::span<const unsigned> { };
 
     RetainPtr<CTLineRef> line;
 
@@ -214,7 +269,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     );
 
     if (!m_mayUseNaturalWritingDirection || m_run->directionalOverride()) {
-        ProviderInfo info { characters, stringAttributes.get() };
+        ProviderInfo info { charactersToShape, stringAttributes.get() };
         // FIXME: Some SDKs complain that the second parameter below cannot be null.
         IGNORE_NULL_CHECK_WARNINGS_BEGIN
         RetainPtr typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run->ltr() ? typesetterOptionsSingleton<CoreTextTypesetterEmbeddingLevel::LTR>() : typesetterOptionsSingleton<CoreTextTypesetterEmbeddingLevel::RTL>()));
@@ -229,7 +284,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     } else {
         LOG_WITH_STREAM(TextShaping, stream << "Not forcing direction");
 
-        ProviderInfo info { characters, stringAttributes.get() };
+        ProviderInfo info { charactersToShape, stringAttributes.get() };
 
         line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, nullptr, &info));
     }
@@ -245,6 +300,10 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     CFIndex runCount = CFArrayGetCount(runArray.get());
 
     LOG_WITH_STREAM(TextShaping, stream << "Result: " << runCount << " runs.");
+
+    auto originalIndex = [&](CFIndex index) -> unsigned {
+        return originalIndices.empty() ? index : originalIndices[index];
+    };
 
     for (CFIndex r = 0; r < runCount; r++) {
         RetainPtr ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray.get(), m_run->ltr() ? r : runCount - 1 - r));
@@ -290,7 +349,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
         LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");
 
-        m_complexTextRuns.append(ComplexTextRun::create(ctRun.get(), *runFont, characters, stringLocation, runRange.location, runRange.location + runRange.length));
+        m_complexTextRuns.append(ComplexTextRun::create(ctRun.get(), *runFont, characters, stringLocation, originalIndex(runRange.location), originalIndex(runRange.location + runRange.length), originalIndices));
     }
 }
 
