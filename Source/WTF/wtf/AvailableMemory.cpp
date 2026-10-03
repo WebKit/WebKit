@@ -125,7 +125,7 @@ struct LinuxMemory {
         auto parsingBuffer = spanReinterpretCast<const Latin1Character>(unsafeMakeSpan(statmBuffer.data(), numBytes));
         skipUntil<isASCIIWhitespace>(parsingBuffer);
         if (parsingBuffer.size() && isASCIIWhitespace(parsingBuffer[0])) {
-            auto result = checkedProduct<size_t>(pageSize, parseInteger<size_t>(parsingBuffer).value_or(0));
+            auto result = checkedProduct<size_t>(pageSize, parseIntegerAllowingTrailingJunk<size_t>(parsingBuffer).value_or(0));
             if (!result.hasOverflowed()) [[likely]]
                 return result.value();
         }
