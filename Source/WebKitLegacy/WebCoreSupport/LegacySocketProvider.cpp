@@ -48,6 +48,11 @@ RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocke
 }
 #endif
 
+RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocketChannel(WebCore::WorkerGlobalScope&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker)
+{
+    return nullptr;
+}
+
 Ref<WebCore::WebTransportSession> LegacySocketProvider::createWebTransportSession(WebCore::ScriptExecutionContext& context, WebCore::WebTransportSessionClient& client)
 {
     return WebCore::emptySocketProvider()->createWebTransportSession(context, client);

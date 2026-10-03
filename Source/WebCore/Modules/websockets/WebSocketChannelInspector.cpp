@@ -30,64 +30,134 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
+#include "ScriptExecutionContext.h"
 #include "WebSocketFrame.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
 
 namespace WebCore {
 
-WebSocketChannelInspector::WebSocketChannelInspector(Document& document)
-    : m_document(document)
-    , m_progressIdentifier(WebSocketChannelIdentifier::generate())
+WebSocketChannelInspector::WebSocketChannelInspector(ScriptExecutionContext& context)
+    : m_progressIdentifier(WebSocketChannelIdentifier::generate())
 {
+    if (is<WorkerGlobalScope>(context)) {
+        if (CheckedPtr loaderProxy = dynamicDowncast<WorkerGlobalScope>(context)->thread()->workerLoaderProxy())
+            m_target = loaderProxy->loaderContextIdentifier();
+    } else {
+        ASSERT(is<Document>(context));
+        m_target = DocumentWeakPtr { downcast<Document>(context) };
+    }
 }
 
 WebSocketChannelInspector::~WebSocketChannelInspector() = default;
 
-void WebSocketChannelInspector::didCreateWebSocket(const URL& url) const
+void WebSocketChannelInspector::didCreateWebSocket(Document& document, WebSocketChannelIdentifier progressIdentifier, const URL& url)
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didCreateWebSocket(document.get(), m_progressIdentifier, url);
+    InspectorInstrumentation::didCreateWebSocket(&document, progressIdentifier, url);
 }
 
-void WebSocketChannelInspector::willSendWebSocketHandshakeRequest(ResourceRequest& request) const
+void WebSocketChannelInspector::willSendWebSocketHandshakeRequest(Document& document, WebSocketChannelIdentifier progressIdentifier, ResourceRequest& request)
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::willSendWebSocketHandshakeRequest(document.get(), m_progressIdentifier, request);
+    InspectorInstrumentation::willSendWebSocketHandshakeRequest(&document, progressIdentifier, request);
 }
 
 void WebSocketChannelInspector::didSendWebSocketHandshakeRequest(const ResourceRequest& request) const
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didSendWebSocketHandshakeRequest(document.get(), m_progressIdentifier, request);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    WTF::switchOn(m_target, [&](const DocumentWeakPtr& weakDocument) {
+        if (RefPtr document = weakDocument.get())
+            InspectorInstrumentation::didSendWebSocketHandshakeRequest(document.get(), m_progressIdentifier, request);
+    }, [&](ScriptExecutionContextIdentifier identifier) {
+        ScriptExecutionContext::postTaskTo(identifier, [progressIdentifier = m_progressIdentifier, request = request.isolatedCopy()](ScriptExecutionContext& context) {
+            if (RefPtr document = dynamicDowncast<Document>(context))
+                InspectorInstrumentation::didSendWebSocketHandshakeRequest(document.get(), progressIdentifier, request);
+        });
+    });
 }
 
 void WebSocketChannelInspector::didReceiveWebSocketHandshakeResponse(const ResourceResponse& response) const
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(document.get(), m_progressIdentifier, response);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    WTF::switchOn(m_target, [&](const DocumentWeakPtr& weakDocument) {
+        if (RefPtr document = weakDocument.get())
+            InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(document.get(), m_progressIdentifier, response);
+    }, [&](ScriptExecutionContextIdentifier identifier) {
+        ScriptExecutionContext::postTaskTo(identifier, [progressIdentifier = m_progressIdentifier, responseData = response.crossThreadData()](ScriptExecutionContext& context) mutable {
+            if (RefPtr document = dynamicDowncast<Document>(context)) {
+                auto response = ResourceResponse::fromCrossThreadData(WTF::move(responseData));
+                InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(document.get(), progressIdentifier, response);
+            }
+        });
+    });
 }
 
 void WebSocketChannelInspector::didCloseWebSocket() const
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didCloseWebSocket(document.get(), m_progressIdentifier);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    WTF::switchOn(m_target, [&](const DocumentWeakPtr& weakDocument) {
+        if (RefPtr document = weakDocument.get())
+            InspectorInstrumentation::didCloseWebSocket(document.get(), m_progressIdentifier);
+    }, [&](ScriptExecutionContextIdentifier identifier) {
+        ScriptExecutionContext::postTaskTo(identifier, [progressIdentifier = m_progressIdentifier](ScriptExecutionContext& context) {
+            if (RefPtr document = dynamicDowncast<Document>(context))
+                InspectorInstrumentation::didCloseWebSocket(document.get(), progressIdentifier);
+        });
+    });
 }
 
 void WebSocketChannelInspector::didReceiveWebSocketFrame(const WebSocketFrame& frame) const
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didReceiveWebSocketFrame(document.get(), m_progressIdentifier, frame);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    WTF::switchOn(m_target, [&](const DocumentWeakPtr& weakDocument) {
+        if (RefPtr document = weakDocument.get())
+            InspectorInstrumentation::didReceiveWebSocketFrame(document.get(), m_progressIdentifier, frame);
+    }, [&](ScriptExecutionContextIdentifier identifier) {
+        ScriptExecutionContext::postTaskTo(identifier, [progressIdentifier = m_progressIdentifier, frameCopy = frame, payload = Vector<uint8_t> { frame.payload }](ScriptExecutionContext& context) mutable {
+            if (RefPtr document = dynamicDowncast<Document>(context)) {
+                frameCopy.payload = payload.span();
+                InspectorInstrumentation::didReceiveWebSocketFrame(document.get(), progressIdentifier, frameCopy);
+            }
+        });
+    });
 }
 
 void WebSocketChannelInspector::didSendWebSocketFrame(const WebSocketFrame& frame) const
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didSendWebSocketFrame(document.get(), m_progressIdentifier, frame);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    WTF::switchOn(m_target, [&](const DocumentWeakPtr& weakDocument) {
+        if (RefPtr document = weakDocument.get())
+            InspectorInstrumentation::didSendWebSocketFrame(document.get(), m_progressIdentifier, frame);
+    }, [&](ScriptExecutionContextIdentifier identifier) {
+        ScriptExecutionContext::postTaskTo(identifier, [progressIdentifier = m_progressIdentifier, frameCopy = frame, payload = Vector<uint8_t> { frame.payload }](ScriptExecutionContext& context) mutable {
+            if (RefPtr document = dynamicDowncast<Document>(context)) {
+                frameCopy.payload = payload.span();
+                InspectorInstrumentation::didSendWebSocketFrame(document.get(), progressIdentifier, frameCopy);
+            }
+        });
+    });
 }
 
 void WebSocketChannelInspector::didReceiveWebSocketFrameError(const String& errorMessage) const
 {
-    if (RefPtr document = m_document.get())
-        InspectorInstrumentation::didReceiveWebSocketFrameError(document.get(), m_progressIdentifier, errorMessage);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    WTF::switchOn(m_target, [&](const DocumentWeakPtr& weakDocument) {
+        if (RefPtr document = weakDocument.get())
+            InspectorInstrumentation::didReceiveWebSocketFrameError(document.get(), m_progressIdentifier, errorMessage);
+    }, [&](ScriptExecutionContextIdentifier identifier) {
+        ScriptExecutionContext::postTaskTo(identifier, [progressIdentifier = m_progressIdentifier, errorMessage = errorMessage.isolatedCopy()](ScriptExecutionContext& context) {
+            if (RefPtr document = dynamicDowncast<Document>(context))
+                InspectorInstrumentation::didReceiveWebSocketFrameError(document.get(), progressIdentifier, errorMessage);
+        });
+    });
 }
 
 WebSocketFrame WebSocketChannelInspector::createFrame(std::span<const uint8_t> data, WebSocketFrame::OpCode opCode)

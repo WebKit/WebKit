@@ -41,10 +41,13 @@ public:
     ~WebSocketProvider();
 private:
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker) final;
+    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::WorkerGlobalScope&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker) final;
     Ref<WebCore::WebTransportSession> createWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&) final;
     void countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&&) final;
 
     explicit WebSocketProvider(WebPageProxyIdentifier);
+
+    Ref<IPC::Connection> networkProcessConnectionFromWorker();
 
     WebPageProxyIdentifier m_webPageProxyID;
     Lock m_networkProcessConnectionLock;
