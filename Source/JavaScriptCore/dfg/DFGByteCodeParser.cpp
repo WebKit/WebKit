@@ -1375,6 +1375,7 @@ private:
         switch (node->op()) {
         case ArithAdd:
         case ArithSub:
+        case ValueSub:
         case ValueAdd:
         case ArithBitAnd:
         case ValueBitAnd:
