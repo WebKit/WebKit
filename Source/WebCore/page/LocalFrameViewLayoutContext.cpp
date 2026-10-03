@@ -993,8 +993,12 @@ void LocalFrameViewLayoutContext::popLayoutState()
         return;
 
     auto currentLineClamp = layoutState()->legacyLineClamp();
+    auto remainingLineClamp = layoutState()->lineClamp();
 
     m_layoutStateStack.removeLast();
+
+    if (auto* layoutState = this->layoutState())
+        layoutState->setLineClamp(remainingLineClamp);
 
     if (currentLineClamp) {
         // Propagates the current line clamp state to the parent.
