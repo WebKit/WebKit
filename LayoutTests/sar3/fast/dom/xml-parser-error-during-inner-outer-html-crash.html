@@ -1,0 +1,75 @@
+<!doctype html>
+<meta charset="utf-8">
+<body>
+<p>This tests encountering a XML parser error during outerHTML. WebKit should not expose the shared document fragment.</p>
+<div id="result"></div>
+<script src="../../../resources/gc.js"></script>
+<script>
+(() => {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    let walker;
+    window.parentDonor = document.createElement("input");
+    parentDonor.type = "radio";
+    parentDonor.name = "g";
+
+    window.childReady = () => {
+        const escaped = window.parentDonor;
+        if (!escaped || escaped.parentNode) {
+            result.textContent = 'FAIL - escaped did not have a parent';
+            return;
+        }
+
+        document.adoptNode(escaped);
+        walker = document.createTreeWalker(escaped);
+        window.parentDonor = null;
+
+        document.querySelector("iframe").remove();
+
+        setTimeout(() => {
+            gc();
+
+            const nodeType = walker.currentNode.getRootNode({ composed: true }).nodeType;
+            result.textContent = nodeType == Node.ELEMENT_NODE ? 'PASS' : `FAIL - bad node type: ${nodeType}`;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    };
+
+    const childSource = `<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<div id="victim"></div>
+<div id="cleanup"></div>
+<script><![CDATA[
+(() => {
+    class XFragmentEscape extends HTMLElement {
+        constructor() {
+            super();
+            this.after(parent.parentDonor);
+        }
+    }
+    customElements.define("x-fragment-escape", XFragmentEscape);
+
+    try {
+        document.getElementById("victim").outerHTML =
+            "<x-fragment-escape></x-fragment-escape><";
+    } catch (error) {
+    }
+
+    document.getElementById("cleanup").innerHTML =
+        '<span xmlns="http://www.w3.org/1999/xhtml">cleanup</span>';
+    parent.childReady();
+})();
+]]><\/script>
+</body>
+</html>`;
+
+    const frame = document.createElement("iframe");
+    frame.src = URL.createObjectURL(new Blob([childSource], { type: "application/xhtml+xml" }));
+    document.body.append(frame);
+})();
+</script>
