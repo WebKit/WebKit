@@ -30,6 +30,7 @@
 #include "BorderShape.h"
 #include "ContainerNodeInlines.h"
 #include "ContentVisibilityDocumentState.h"
+#include "DisplayListRecorderImpl.h"
 #include "DocumentPage.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
@@ -72,6 +73,7 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderGrid.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -1447,6 +1449,26 @@ void RenderElement::setOutOfFlowChildNeedsStaticPositionLayout()
     setOutOfFlowChildNeedsStaticPositionLayoutBit(true);
 }
 
+void RenderElement::paintOrRecord(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    auto* drawableCanvas = paintInfo.drawableCanvas;
+    if (!drawableCanvas)
+        return paint(paintInfo, paintOffset);
+
+    if (!isCanvasDrawable()) {
+        if (parent() != drawableCanvas->innerRenderer())
+            return paint(paintInfo, paintOffset);
+        // FIXME: Use NullGraphicsContext to run through painting of the canvas's
+        // non-drawable top-level descendants.
+    }
+
+    PaintInfo localPaintInfo(paintInfo);
+    if (auto* recorder = drawableCanvas->drawableRendererRecorder(*this, localPaintInfo.context()))
+        localPaintInfo.setContext(*recorder);
+
+    paint(localPaintInfo, paintOffset);
+}
+
 static inline void paintPhase(RenderElement& element, PaintPhase phase, PaintInfo& paintInfo, const LayoutPoint& childPoint)
 {
     paintInfo.phase = phase;
@@ -1467,9 +1489,10 @@ void RenderElement::paintAsInlineBlock(PaintInfo& paintInfo, const LayoutPoint& 
         || paintInfo.phase == PaintPhase::AXCustomColorComputeBackdrops
         || paintInfo.phase == PaintPhase::AXCustomColorCollectBackgrounds
 #endif
+        || paintInfo.drawableCanvas;
         ;
     if (paintsAllPhasesAtomically)
-        paint(paintInfo, childPoint);
+        paintOrRecord(paintInfo, childPoint);
     else if (paintInfo.phase == paintPhaseToUse) {
         paintPhase(*this, PaintPhase::BlockBackground, paintInfo, childPoint);
         paintPhase(*this, PaintPhase::ChildBlockBackgrounds, paintInfo, childPoint);

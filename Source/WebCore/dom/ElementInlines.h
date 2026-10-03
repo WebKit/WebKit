@@ -88,6 +88,11 @@ inline const AtomString& Element::attributeWithDefaultARIA(const QualifiedName& 
     return defaultARIA ? defaultARIA->valueForAttribute(*this, name) : nullAtom();
 }
 
+inline bool Element::isCanvasDrawable() const
+{
+    return hasAttributeWithoutSynchronization(HTMLNames::drawableAttr);
+}
+
 inline String Element::attributeTrimmedWithDefaultARIA(const QualifiedName& name) const
 {
     const auto& originalValue = attributeWithDefaultARIA(name);

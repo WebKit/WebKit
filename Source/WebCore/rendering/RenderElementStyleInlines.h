@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ElementInlines.h>
 #include <WebCore/RenderElementInlines.h>
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StyleContainmentCheckerInlines.h>
@@ -51,6 +52,12 @@ inline FloatRect RenderElement::transformReferenceBoxRect(const Style::ComputedS
 inline bool RenderElement::hasAppleVisualEffect() const { return style().appleVisualEffect() != AppleVisualEffect::None; }
 inline bool RenderElement::hasAppleVisualEffectRequiringBackdropFilter() const { return appleVisualEffectNeedsBackdrop(style().appleVisualEffect()); }
 #endif
+
+inline bool RenderElement::isCanvasDrawable() const
+{
+    RefPtr element = this->element();
+    return element && element->isCanvasDrawable();
+}
 
 inline bool RenderElement::mayContainOutOfFlowPositionedObjects(const Style::ComputedStyle* styleToUse) const
 {

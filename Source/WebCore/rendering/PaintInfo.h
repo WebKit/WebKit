@@ -40,6 +40,7 @@ namespace WebCore {
 
 class AccessibilityRegionContext;
 class OverlapTestRequestClient;
+class RenderHTMLCanvas;
 class RenderInline;
 class RenderLayer;
 class RenderLayerModelObject;
@@ -142,6 +143,7 @@ struct PaintInfo {
     SUPPRESS_FORWARD_DECL_MEMBER const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
     SUPPRESS_FORWARD_DECL_MEMBER const RenderLayer* m_enclosingSelfPaintingLayer { nullptr };
     RegionContext* regionContext { nullptr }; // For PaintPhase::EventRegion and PaintPhase::Accessibility.
+    SUPPRESS_FORWARD_DECL_MEMBER RenderHTMLCanvas* drawableCanvas { nullptr };
 
 private:
     GraphicsContext* m_context;

@@ -406,6 +406,10 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
     case AttributeNames::inertAttr:
         invalidateStyle();
         return;
+    case AttributeNames::drawableAttr:
+        if (document().settings().htmlInCanvasEnabled())
+            invalidateStyleAndRenderersForSubtree();
+        return;
     case AttributeNames::inputmodeAttr:
         if (Ref document = this->document(); this == document->focusedElement()) {
             if (RefPtr page = document->page())
