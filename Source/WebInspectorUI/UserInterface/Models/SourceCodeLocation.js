@@ -54,30 +54,36 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         return new WI.SourceCodeLocation(null, Infinity, Infinity);
     }
 
+    static _sourceCodesAreEqual(a, b)
+    {
+        return WI.SourceCodeLocation._resolveSourceCode(a) === WI.SourceCodeLocation._resolveSourceCode(b);
+    }
+
+    static _resolveSourceCode(sourceCode) {
+        if (sourceCode instanceof WI.Script)
+            return sourceCode.resource;
+        return sourceCode;
+    }
+
     // Public
 
     isEqual(other)
     {
-        if (!other)
-            return false;
+        return other
+            && WI.SourceCodeLocation._sourceCodesAreEqual(this.sourceCode, other.sourceCode)
+            && this.position().equals(other.position());
+    }
 
-        if (this.lineNumber !== other.lineNumber)
-            return false;
+    isBefore(sourceCodeLocation)
+    {
+        return WI.SourceCodeLocation._sourceCodesAreEqual(this.sourceCode, sourceCodeLocation.sourceCode)
+            && this.position().isBefore(sourceCodeLocation.position());
+    }
 
-        if (this.columnNumber !== other.columnNumber)
-            return false;
-
-        function resolveSourceCode(sourceCode) {
-            if (sourceCode instanceof WI.Script)
-                return sourceCode.resource;
-            return sourceCode;
-        }
-        let thisSourceCode = resolveSourceCode(this.sourceCode);
-        let otherSourceCode = resolveSourceCode(other.sourceCode);
-        if (thisSourceCode !== otherSourceCode)
-            return false;
-
-        return true;
+    displayIsAfter(sourceCodeLocation)
+    {
+        return WI.SourceCodeLocation._sourceCodesAreEqual(this.displaySourceCode, sourceCodeLocation.displaySourceCode)
+            && this.displayPosition().isAfter(sourceCodeLocation.displayPosition());
     }
 
     get sourceCode()

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["source-map-stepping-typescript.ts"],
+  "sourcesContent": ["function compute(value: number): number {\n    debugger;\n    log(value); log(value + 1);\n    return value * 2;\n}\n\nfunction log(value: number): void {\n    (self as any).sink = value;\n}\n\n(self as any).compute = compute;\n"],
+  "mappings": "AAAA,SAAS,QAAQA,EAAuB,CACpC,SACA,WAAIA,CAAK,EAAG,IAAIA,EAAQ,CAAC,EAClBA,EAAQ,CACnB,CAEA,SAAS,IAAIA,EAAqB,CAC7B,KAAa,KAAOA,CACzB,CAEC,KAAa,QAAU",
+  "names": ["value"]
+}

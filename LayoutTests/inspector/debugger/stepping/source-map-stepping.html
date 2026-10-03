@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script src="resources/source-map-stepping.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.SourceMapStepping");
+
+    const sourceMappingURL = "source-map-stepping.js.map";
+
+    async function awaitSourceMap() {
+        for (let sourceMap of WI.SourceMap.instances) {
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap;
+        }
+        while (true) {
+            let {data} = await WI.SourceCode.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            if (data.sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return data.sourceMap;
+        }
+    }
+
+    let currentSteps = null;
+    let currentStepType = null;
+
+    // Drive stepping and log each surfaced pause. Intermediate (coalesced) pauses are suppressed
+    // by the source map stepping engine, so this only fires once per surfaced pause.
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        if (currentSteps)
+            step(currentSteps.length ? currentSteps.shift() : "resume");
+        else
+            step(currentStepType);
+    });
+
+    function addTestCase({name, description, expression, sourceMapStepping, stepType, steps}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                WI.settings.experimentalSourceMapStepping.value = sourceMapStepping;
+                currentSteps = steps ? steps.slice() : null;
+                currentStepType = stepType || null;
+
+                InspectorTest.log(`SOURCE MAP STEPPING: ${sourceMapStepping ? "enabled" : "disabled"}`);
+
+                let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+                InspectorTest.evaluateInPage(expression);
+                await resumed;
+                InspectorTest.log("RESUMED");
+
+                WI.settings.experimentalSourceMapStepping.value = false;
+            }
+        });
+    }
+
+    // "Step over" through `a(); b(); c();` which the bundler fused into the single generated
+    // statement `a(),b(),c()`. Disabled: one stop for the fused statement. Enabled: a stop for
+    // each original statement.
+    addTestCase({
+        name: "Debugger.SourceMapStepping.StepThrough.Disabled",
+        description: "Step-over uses generated-statement granularity, skipping the fused original statements.",
+        expression: "setTimeout(stepThrough)",
+        sourceMapStepping: false,
+        stepType: "over",
+    });
+    addTestCase({
+        name: "Debugger.SourceMapStepping.StepThrough.Enabled",
+        description: "Step-over follows the source map, pausing at each original statement.",
+        expression: "setTimeout(stepThrough)",
+        sourceMapStepping: true,
+        stepType: "over",
+    });
+
+    // "Step" (step-next) through `Math.max(a(), b(), c())`, a single original statement with
+    // several calls. Disabled: a stop at each generated sub-expression. Enabled: coalesced to
+    // one stop for the original statement.
+    addTestCase({
+        name: "Debugger.SourceMapStepping.Coalesce.Disabled",
+        description: "Step-next stops at each generated sub-expression of a single original statement.",
+        expression: "setTimeout(coalesce)",
+        sourceMapStepping: false,
+        stepType: "next",
+    });
+    addTestCase({
+        name: "Debugger.SourceMapStepping.Coalesce.Enabled",
+        description: "Step-next coalesces sub-expressions that map to the same original statement.",
+        expression: "setTimeout(coalesce)",
+        sourceMapStepping: true,
+        stepType: "next",
+    });
+
+    // Step into a mapped function and back out.
+    addTestCase({
+        name: "Debugger.SourceMapStepping.StepInAndOut.Enabled",
+        description: "Step-into enters a mapped callee and step-out returns to the mapped caller.",
+        expression: "setTimeout(stepInAndOut)",
+        sourceMapStepping: true,
+        steps: ["in", "in", "out", "resume"],
+    });
+
+    // Step over a loop body; iterations must still be surfaced (the loop control is a
+    // different original statement than the body, so it is not coalesced into the body).
+    addTestCase({
+        name: "Debugger.SourceMapStepping.Loop.Enabled",
+        description: "Stepping over a loop body stops on each iteration.",
+        expression: "setTimeout(loop)",
+        sourceMapStepping: true,
+        stepType: "over",
+    });
+
+    awaitSourceMap().then(() => {
+        suite.runTestCasesAndFinish();
+    }).catch((error) => {
+        InspectorTest.fail("Failed to load source map: " + error);
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking that debugger stepping follows source map granularity when the experimental setting is enabled.</p>
+</body>
+</html>

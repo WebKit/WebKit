@@ -442,6 +442,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         sourcesGroup.addSetting(WI.settings.experimentalLimitSourceCodeHighlighting, WI.UIString("Limit syntax highlighting on long lines of code"));
         sourcesGroup.addSetting(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion, WI.UIString("Use fuzzy matching for CSS code completion"));
 
+        // COMPATIBILITY (iOS 13.4): Debugger.stepNext did not exist yet.
+        let hasSourceMapStepping = InspectorBackend.hasCommand("Debugger.stepNext");
+        if (hasSourceMapStepping)
+            sourcesGroup.addSetting(WI.settings.experimentalSourceMapStepping, WI.UIString("Follow source maps when stepping"));
+
         experimentalSettingsView.addSeparator();
 
         let searchGroup = experimentalSettingsView.addGroup(WI.UIString("Search:"));
@@ -486,6 +491,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         listenForChange(WI.settings.experimentalLimitSourceCodeHighlighting);
         listenForChange(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion);
+        if (hasSourceMapStepping)
+            listenForChange(WI.settings.experimentalSourceMapStepping);
 
         this._createReferenceLink(experimentalSettingsView);
 
