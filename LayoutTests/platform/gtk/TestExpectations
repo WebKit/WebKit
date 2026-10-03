@@ -616,6 +616,10 @@ webgl/1.0.x/conformance/ogles/GL/ceil/ceil_001_to_006.html [ Slow ]
 webgl/1.0.x/conformance/ogles/GL/cos/cos_001_to_006.html [ Slow ]
 webgl/1.0.x/conformance/ogles/GL/floor/floor_001_to_006.html [ Slow ]
 webgl/buffer-copysubdata-overlap-no-crash.html [ Slow ]
+webgl/default-framebuffer-size-limits-1.html [ Slow ]
+webgl/default-framebuffer-size-limits-2.html [ Slow ]
+webgl/default-framebuffer-size-limits-3.html [ Slow ]
+webgl/default-framebuffer-size-limits-4.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests

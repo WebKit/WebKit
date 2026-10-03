@@ -1114,6 +1114,16 @@ webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/240821 [ x86_64 ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Failure Timeout ]
 
+
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-1.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-2.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-3.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-4.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-worker-1.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-worker-2.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-worker-3.html [ Failure ]
+webkit.org/b/326061 [ x86_64 ] webgl/default-framebuffer-size-limits-worker-4.html [ Failure ]
+
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
 
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
