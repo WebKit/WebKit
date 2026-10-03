@@ -1200,6 +1200,23 @@ void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextR
         return;
     }
 
+    // A request for a specific text input has to go to the process hosting that input, which need not be the one
+    // containing the focused frame.
+    if (request.textInputContext) {
+        auto inputPageID = request.textInputContext->webPageIdentifier;
+        RefPtr<WebProcessProxy> inputProcess;
+        forEachWebContentProcess([&](auto& process, auto pageID) {
+            if (inputPageID == pageID)
+                inputProcess = &process;
+        });
+        if (!inputProcess) {
+            completionHandler({ });
+            return;
+        }
+        inputProcess->sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), WTF::move(completionHandler), *inputPageID);
+        return;
+    }
+
     sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), Messages::WebPage::RequestDocumentEditingContext::Reply { WTF::move(completionHandler) });
 }
 
