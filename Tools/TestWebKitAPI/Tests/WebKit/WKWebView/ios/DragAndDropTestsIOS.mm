@@ -2504,6 +2504,52 @@ TEST(DragAndDropTests, DragLinkInCrossOriginIframeInsideOffsetSameSiteSubframe)
     EXPECT_WK_STREQ("https://first.example/", [result.draggedURL UTF8String] ?: "");
 }
 
+// Drags a 200x100 image at the top left corner of an iframe offset by (100, 150), and returns the
+// frame of the lift preview.
+static CGRect liftPreviewFrameForImageInOffsetIframe(ASCIILiteral innerFrameSource)
+{
+    HTTPServer server({
+        { "/main"_s, { makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 150px; width: 400px; height: 400px; border: none;' src='"_s, innerFrameSource, "'></iframe></body>"_s) } },
+        { "/inner"_s, { "<body style='margin: 0'>"
+            "<img src='/icon.png' style='position: absolute; left: 0; top: 0; width: 200px; height: 100px;'>"
+            "<script>addEventListener('load', () => window.webkit.messageHandlers.testHandler.postMessage('inner frame loaded'));</script>"
+            "</body>"_s } },
+        { "/icon.png"_s, { testIconImageData() } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool innerFrameLoaded = false;
+    [webView performAfterReceivingMessage:@"inner frame loaded" action:^{
+        innerFrameLoaded = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    if (!TestWebKitAPI::Util::runFor(&innerFrameLoaded, 10_s))
+        return CGRectNull;
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    // (150, 200) in the window is (50, 50) in the iframe, inside the image.
+    [simulator runFrom:CGPointMake(150, 200) to:CGPointMake(150, 500)];
+    RetainPtr<UITargetedDragPreview> liftPreview = [simulator liftPreviews].firstObject;
+    return [liftPreview view].frame;
+}
+
+TEST(DragAndDropTests, DragLiftPreviewForImageInSameSiteOffsetIframe)
+{
+    checkCGRectIsEqualToCGRectWithLogging({ { 100, 150 }, { 200, 100 } }, liftPreviewFrameForImageInOffsetIframe("https://example.com/inner"_s));
+}
+
+TEST(DragAndDropTests, DragLiftPreviewForImageInCrossOriginOffsetIframe)
+{
+    checkCGRectIsEqualToCGRectWithLogging({ { 100, 150 }, { 200, 100 } }, liftPreviewFrameForImageInOffsetIframe("https://webkit.org/inner"_s));
+}
+
 // Drags out of an iframe offset by (100, 150) and reports the dragstart event's
 // "screenX,screenY screenX-clientX,screenY-clientY". On iOS screenX/screenY are a point in the
 // top-level page's root view, so the difference against clientX/clientY must be the iframe's offset
