@@ -792,7 +792,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
             if (!m_lexer->hasLineTerminatorBeforeToken() && matchSpecIdentifier()) {
                 restoreSavePoint(context, savePoint);
                 semanticFailIfTrue(currentScope()->isGlobalCode() && !currentScope()->isModuleCode() && m_statementDepth == 1, "'using' declaration is not allowed at the top level of a script or eval");
-                semanticFailIfTrue(m_insideSwitchCaseBody, "'using' declaration is not allowed directly in a switch case or default clause");
+                semanticFailIfTrue(currentScope()->isSwitchBlockScope(), "'using' declaration is not allowed directly in a switch case or default clause");
                 result = parseVariableDeclaration(context, DeclarationType::UsingDeclaration);
                 shouldSetPauseLocation = true;
                 break;
@@ -827,7 +827,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
                 if (!m_lexer->hasLineTerminatorBeforeToken() && matchSpecIdentifier()) {
                     restoreSavePoint(context, savePoint);
                     semanticFailIfTrue(currentScope()->isGlobalCode() && !currentScope()->isModuleCode() && m_statementDepth == 1, "'await using' declaration is not allowed at the top level of a script or eval");
-                    semanticFailIfTrue(m_insideSwitchCaseBody, "'await using' declaration is not allowed directly in a switch case or default clause");
+                    semanticFailIfTrue(currentScope()->isSwitchBlockScope(), "'await using' declaration is not allowed directly in a switch case or default clause");
                     currentFunctionScope()->setUsesAwait();
                     result = parseVariableDeclaration(context, DeclarationType::AwaitUsingDeclaration);
                     shouldSetPauseLocation = true;
@@ -1908,7 +1908,6 @@ template <class TreeBuilder> TreeClauseList Parser<LexerType>::parseSwitchClause
     TreeExpression condition = parseExpression(context);
     failIfFalse(condition, "Cannot parse switch clause");
     consumeOrFail(COLON, "Expected a ':' after switch clause expression");
-    SetForScope switchCaseScope(m_insideSwitchCaseBody, true);
     TreeSourceElements statements = parseSourceElements(context, DontCheckForStrictMode);
     failIfFalse(statements, "Cannot parse the body of a switch clause");
     TreeClause clause = context.createClause(condition, statements);
@@ -1939,7 +1938,6 @@ template <class TreeBuilder> TreeClause Parser<LexerType>::parseSwitchDefaultCla
     unsigned startOffset = tokenStart();
     next();
     consumeOrFail(COLON, "Expected a ':' after switch default clause");
-    SetForScope switchCaseScope(m_insideSwitchCaseBody, true);
     TreeSourceElements statements = parseSourceElements(context, DontCheckForStrictMode);
     failIfFalse(statements, "Cannot parse the body of a switch default clause");
     TreeClause result = context.createClause(0, statements);
@@ -2033,9 +2031,6 @@ template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatement(TreeBuilder& context, BlockType type)
 {
     ASSERT(match(OPENBRACE));
-
-    // A block statement inside a switch case/default clause allows using declarations.
-    SetForScope switchCaseScope(m_insideSwitchCaseBody, false);
 
     // We should treat the first block statement of the function (the body of the function) as the lexical
     // scope of the function itself, and not the lexical scope of a 'block' statement within the function.

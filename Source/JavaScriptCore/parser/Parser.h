@@ -183,6 +183,7 @@ public:
 
     void startSwitch() { m_switchDepth++; }
     void endSwitch() { m_switchDepth--; }
+    bool isSwitchBlockScope() const { return !!m_switchDepth; }
     void startLoop() { m_loopDepth++; }
     void endLoop() { ASSERT(m_loopDepth); m_loopDepth--; }
     bool inLoop() { return !!m_loopDepth; }
@@ -2111,7 +2112,6 @@ private:
     int m_statementDepth;
     FunctionMode m_functionMode;
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
-    bool m_insideSwitchCaseBody { false };
     bool m_parsingBuiltin;
     bool m_isEvalContext;
     // offset 128
