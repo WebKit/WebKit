@@ -54,6 +54,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -71,6 +72,7 @@
 #import "Helpers/mac/LocalEventMonitorSwizzler.h"
 #import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <WebCore/WebAVPlayerLayer.h>
 #import <WebKit/_WKHitTestResult.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
@@ -1813,5 +1815,60 @@ TEST(SiteIsolation, ModifierKeyChangeOverLinkInCrossOriginIframe)
 }
 
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+static WebAVPlayerLayer *findWebAVPlayerLayerInLayerTree(CALayer *layer)
+{
+    if (auto *playerLayer = dynamic_objc_cast<WebAVPlayerLayer>(layer))
+        return playerLayer;
+    for (CALayer *sublayer in layer.sublayers) {
+        if (auto *playerLayer = findWebAVPlayerLayerInLayerTree(sublayer))
+            return playerLayer;
+    }
+    return nil;
+}
+
+TEST(SiteIsolation, CaptionDisplaySettingsPreviewInCrossSiteIframe)
+{
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<video id='video' controls muted autoplay src='/video-with-audio.mp4'></video>"_s } },
+        { "/video-with-audio.mp4"_s, { videoData.get() } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The UI process hosts the iframe's video in a WebAVPlayerLayer, which AVKit asks to preview caption styles.
+    RetainPtr<WebAVPlayerLayer> playerLayer;
+    EXPECT_TRUE(Util::waitFor([&] {
+        playerLayer = findWebAVPlayerLayerInLayerTree([webView layer]);
+        return !!playerLayer;
+    }));
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    NSString *previewCueCountScript = @"String(internals.shadowRoot(document.getElementById('video')).querySelectorAll('[useragentpart=\"-internal-cue-background\"]').length)";
+    EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:previewCueCountScript inFrame:childFrame.get()]);
+
+    [playerLayer setCaptionPreviewProfileID:@"TestProfile" position:CGPointZero text:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:previewCueCountScript inFrame:childFrame.get()] isEqualToString:@"1"];
+    }));
+
+    [playerLayer stopShowingCaptionPreview];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:previewCueCountScript inFrame:childFrame.get()] isEqualToString:@"0"];
+    }));
+}
+
+#endif // PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 } // namespace TestWebKitAPI
