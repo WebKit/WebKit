@@ -3153,13 +3153,10 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
         }
 
         if (shouldComputeLogicalHeightFromAspectRatio()) {
-            // blockSizeFromAspectRatio() derives the block size from logicalWidth(). A shrink-to-fit box has
-            // no inline size until it is laid out, so during a preferred-width pass logicalWidth() still
-            // carries the previous layout's value and feeding it back here grows the box on every relayout.
-            // A flex item whose main axis is its inline axis gets its inline size from the flex container only during layout, so logicalWidth() is current.
-            bool hasInlineSizeFromFlexContainer = isFlexItem() && FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(*this) && overridingBorderBoxLogicalWidth();
-            if (hasInvalidContentLogicalWidths() && !style.logicalWidth().isSpecified() && (isRenderGrid() || (sizesLogicalWidthToFitContent() && !hasInlineSizeFromFlexContainer)))
+            // blockSizeFromAspectRatio() derives the block size from logicalWidth(). While this box measures its own intrinsic widths it has no inline size yet,
+            if (!style.logicalWidth().isSpecified() && layoutContext().isComputingIntrinsicLogicalWidthFor(*this))
                 return { };
+
             return blockSizeFromAspectRatio(
                 horizontalBorderAndPaddingExtent(),
                 verticalBorderAndPaddingExtent(),
