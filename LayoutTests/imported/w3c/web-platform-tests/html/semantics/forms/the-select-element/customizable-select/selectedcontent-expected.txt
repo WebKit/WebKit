@@ -6,6 +6,8 @@ span two
 
 span two
 
+span one
+
 span two
 
 PASS The <selectedcontent> element should reflect the HTML contents of the selected <option>.
@@ -14,4 +16,5 @@ PASS <seletedcontent> behavior in disconnected <select>.
 PASS Setting HTMLOptionElement.selected updates the <selectedcontent>.
 PASS Setting the option selected attribute updates the <selectedcontent>.
 PASS Setting HTMLOptionElement.selected does not cause a redundant async selectedcontent update.
+PASS Setting HTMLOptionElement.selected to its current value does not update the <selectedcontent>.
 
