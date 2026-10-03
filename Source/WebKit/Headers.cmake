@@ -546,6 +546,8 @@ set(WebKit_PROJECT_HEADERS
     GPUProcess/graphics/Model/Float4x4.h
     GPUProcess/graphics/Model/ModelTypes.h
 
+    Platform/Logging.h
+
     Shared/mac/SecItemRequestData.h
 
     UIProcess/Cocoa/WKShareSheet.h

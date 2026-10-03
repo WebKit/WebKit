@@ -89,6 +89,9 @@ function(WEBKIT_EMBED_ENTITLEMENTS _target _xml_path)
 endfunction()
 
 # Writes the get-task-allow entitlements used to sign simulator binaries.
+# FIXME: get-task-allow isn't just used for simulated binaries; it's used by
+# any binary built for at-desk development. Most non-simulated binaries get
+# this entitlements through a process-entitlements.sh script applied above.
 function(WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS _output)
     string(CONCAT _content
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
