@@ -256,6 +256,11 @@ inline StyleAppearance ComputedStyleBase::usedAppearance() const
     return static_cast<StyleAppearance>(m_nonInheritedData->miscData->usedAppearance);
 }
 
+inline std::optional<Color> ComputedStyleBase::overridenBackgroundColor() const
+{
+    return m_nonInheritedData->rareData->overridenBackgroundColor;
+}
+
 inline ContentVisibility ComputedStyleBase::usedContentVisibility() const
 {
     return static_cast<ContentVisibility>(m_inheritedRareData->usedContentVisibility);

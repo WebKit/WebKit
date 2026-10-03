@@ -198,7 +198,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
     unsigned tableHorizontalBorderSpacing = 0;
     unsigned tableVerticalBorderSpacing = 0;
     if (CheckedPtr<const Style::ComputedStyle> tableStyle = safeStyleFrom(tableElement)) {
-        tableBackgroundColor = tableStyle->visitedDependentBackgroundColor();
+        tableBackgroundColor = tableStyle->visitedDependentUsedBackgroundColor();
         tableHorizontalBorderSpacing = tableStyle->borderHorizontalSpacing().resolveZoom(tableStyle->usedZoomForLength());
         tableVerticalBorderSpacing = tableStyle->borderVerticalSpacing().resolveZoom(tableStyle->usedZoomForLength());
 
@@ -260,7 +260,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                 // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
                 if (alternatingRowColorCount < 5) {
                     if (CheckedPtr<const Style::ComputedStyle> rowStyle = styleFrom(*tableRow)) {
-                        alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentBackgroundColor();
+                        alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentUsedBackgroundColor();
                         alternatingRowColorCount++;
                     }
                 }
@@ -304,7 +304,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                         // If the empty-cells style is set, we'll call it a data table.
                         return true;
                     }
-                    cellColor = cellStyle->visitedDependentBackgroundColor();
+                    cellColor = cellStyle->visitedDependentUsedBackgroundColor();
                 }
 
                 if (CheckedPtr cellRenderer = dynamicDowncast<RenderBlock>(cell->renderer())) {

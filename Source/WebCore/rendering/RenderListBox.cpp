@@ -563,7 +563,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         else
             backColor = theme().inactiveListBoxSelectionBackgroundColor(styleColorOptions());
     } else
-        backColor = itemStyle->visitedDependentBackgroundColorApplyingColorFilter();
+        backColor = itemStyle->visitedDependentUsedBackgroundColorApplyingColorFilter();
 
     // Draw the background for this list box item
     if (itemStyle->usedVisibility() == Visibility::Hidden)

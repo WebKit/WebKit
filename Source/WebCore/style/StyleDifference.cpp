@@ -776,7 +776,7 @@ public:
         return false;
     }
 
-    static bool rareDataChangeRequiresRepaint(const NonInheritedRareData& a, const NonInheritedRareData& b, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
+    static bool rareDataChangeRequiresRepaint(const NonInheritedRareData& a, const NonInheritedRareData& b, bool currentColorDiffers, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
     {
         if (a.shapeOutside != b.shapeOutside)
             return true;
@@ -791,6 +791,9 @@ public:
             return true;
 
         if (a.viewTransitionName != b.viewTransitionName)
+            return true;
+
+        if ((a.overridenBackgroundColor != b.overridenBackgroundColor) || (currentColorDiffers && a.overridenBackgroundColor->containsCurrentColor()))
             return true;
 
         return false;
@@ -876,13 +879,13 @@ public:
             }
         }
 
-        if (&a.nonInheritedData() != &b.nonInheritedData()) {
+        if (currentColorDiffers || &a.nonInheritedData() != &b.nonInheritedData()) {
             SUPPRESS_UNCOUNTED_ARG if (a.nonInheritedData().miscData.ptr() != b.nonInheritedData().miscData.ptr()
                 && miscDataChangeRequiresRepaint(*a.nonInheritedData().miscData, *b.nonInheritedData().miscData, changedContextSensitiveProperties))
                 return true;
 
-            SUPPRESS_UNCOUNTED_ARG if (a.nonInheritedData().rareData.ptr() != b.nonInheritedData().rareData.ptr()
-                && rareDataChangeRequiresRepaint(*a.nonInheritedData().rareData, *b.nonInheritedData().rareData, changedContextSensitiveProperties))
+            SUPPRESS_UNCOUNTED_ARG if ((currentColorDiffers || a.nonInheritedData().rareData.ptr() != b.nonInheritedData().rareData.ptr())
+                && rareDataChangeRequiresRepaint(*a.nonInheritedData().rareData, *b.nonInheritedData().rareData, currentColorDiffers, changedContextSensitiveProperties))
                 return true;
         }
 

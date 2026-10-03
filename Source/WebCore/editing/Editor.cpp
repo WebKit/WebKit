@@ -4790,7 +4790,7 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
 
     // FIXME: for now, always report the colors after applying -apple-color-filter. In future not all clients
     // may want this, so we may have to add a setting to control it. See also editingAttributedStringFromRange().
-    auto backgroundColor = style->visitedDependentBackgroundColorApplyingColorFilter();
+    auto backgroundColor = style->visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (backgroundColor.isVisible())
         attributes.backgroundColor = backgroundColor;
 

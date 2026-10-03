@@ -249,7 +249,7 @@ Color RenderReplaced::calculateHighlightColor() const
                     continue;
 
                 if (auto highlightStyle = lazyPseudoElementStyle({ PseudoElementType::Highlight, highlight.key }, &style()))
-                    return highlightStyle->backgroundColorResolvingCurrentColor();
+                    return highlightStyle->usedBackgroundColorResolvingCurrentColor();
             }
         }
     }

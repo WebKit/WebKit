@@ -306,7 +306,7 @@ bool ComputedStyle::borderAndBackgroundEqual(const ComputedStyle& other) const
 {
     return border() == other.border()
         && backgroundLayers() == other.backgroundLayers()
-        && backgroundColor() == other.backgroundColor();
+        && usedBackgroundColor() == other.usedBackgroundColor();
 }
 
 float ComputedStyle::usedLineHeight() const
@@ -598,6 +598,48 @@ Style::LineWidth ComputedStyle::usedOutlineWidth() const
 float ComputedStyle::usedOutlineSize(Style::ZoomFactor zoom, float deviceScaleFactor) const
 {
     return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), zoom, deviceScaleFactor));
+}
+
+// MARK: - Used background color.
+
+Color ComputedStyle::usedBackgroundColor() const
+{
+    if (auto overridenColor = overridenBackgroundColor())
+        return *overridenColor;
+    return backgroundColor();
+}
+
+WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColor() const
+{
+    return ColorResolver { *this }.colorResolvingCurrentColor(usedBackgroundColor());
+}
+
+WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColorApplyingColorFilter() const
+{
+    return ColorResolver { *this }.colorResolvingCurrentColorApplyingColorFilter(usedBackgroundColor());
+}
+
+WebCore::Color ComputedStyle::visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> paintBehavior) const
+{
+    auto colorResolver = backgroundColorResolver();
+    auto unvisitedLinkColor = usedBackgroundColorResolvingCurrentColor();
+
+    if (colorResolver.visitedDependentShouldReturnUnvisitedLinkColor(paintBehavior))
+        return unvisitedLinkColor;
+
+    auto visitedLinkColor = visitedLinkBackgroundColorResolvingCurrentColor();
+    if (ColorPropertyTraits<PropertyNameConstant<CSSPropertyBackgroundColor>>::excludesVisitedLinkColor(visitedLinkColor))
+        return unvisitedLinkColor;
+
+    // Take the alpha from the unvisited color, but get the RGB values from the visited color.
+    return visitedLinkColor.colorWithAlpha(unvisitedLinkColor.alphaAsFloat());
+}
+
+WebCore::Color ComputedStyle::visitedDependentUsedBackgroundColorApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
+{
+    auto color = visitedDependentUsedBackgroundColor(paintBehavior);
+    appleColorFilter().transformColor(color);
+    return color;
 }
 
 // MARK: - Derived Values

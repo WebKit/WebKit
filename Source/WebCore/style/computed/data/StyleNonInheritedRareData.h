@@ -213,6 +213,9 @@ public:
     PositionTryFallbacks positionTryFallbacks;
     std::optional<size_t> usedPositionOptionIndex;
 
+    // If set, this overrides the background color in NonInheritedData::backgroundData
+    Markable<Color> overridenBackgroundColor;
+
     BlockStepSize blockStepSize;
 
     PREFERRED_TYPE(BlockStepAlign) unsigned blockStepAlign : 2;

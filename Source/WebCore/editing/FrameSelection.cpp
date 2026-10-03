@@ -2086,7 +2086,7 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
 
     Color surface;
     for (CheckedPtr renderer = firstRenderer; renderer && !surface.isOpaque(); renderer = renderer->parent()) {
-        auto background = protect(renderer->style())->visitedDependentBackgroundColorApplyingColorFilter();
+        auto background = protect(renderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
         if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(renderer.get())) {
             if (!background.isVisible())
                 continue;
@@ -2122,8 +2122,8 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
     // CSS value "auto" is treated as an invalid color.
     if (elementStyle.caretColor().isAuto() && parentStyle) {
-        auto parentBackgroundColor = parentStyle->visitedDependentBackgroundColorApplyingColorFilter();
-        auto elementBackgroundColor = elementStyle.visitedDependentBackgroundColorApplyingColorFilter();
+        auto parentBackgroundColor = parentStyle->visitedDependentUsedBackgroundColorApplyingColorFilter();
+        auto elementBackgroundColor = elementStyle.visitedDependentUsedBackgroundColorApplyingColorFilter();
         auto disappearsIntoBackground = blendSourceOver(parentBackgroundColor, elementBackgroundColor) == parentBackgroundColor;
         if (disappearsIntoBackground)
             return parentStyle->visitedDependentCaretColorApplyingColorFilter();

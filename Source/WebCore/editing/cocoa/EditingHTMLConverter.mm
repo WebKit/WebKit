@@ -424,7 +424,7 @@ static void updateAttributes(const Node* node, const Style::ComputedStyle& style
     else
         [attributes removeObjectForKey:NSForegroundColorAttributeName];
 
-    auto backgroundColor = style.visitedDependentBackgroundColorApplyingColorFilter();
+    auto backgroundColor = style.visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (backgroundColor.isVisible())
         [attributes setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
     else

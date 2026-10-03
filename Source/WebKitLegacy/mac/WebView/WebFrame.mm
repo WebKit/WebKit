@@ -1059,7 +1059,7 @@ static NSURL *createUniqueWebDataURL();
     auto* bodyRenderer = body->renderer();
     if (!bodyRenderer)
         return nil;
-    auto color = bodyRenderer->style().visitedDependentBackgroundColorApplyingColorFilter();
+    auto color = bodyRenderer->style().visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (!color.isValid())
         return nil;
 #if !PLATFORM(IOS_FAMILY)

@@ -744,7 +744,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
                 attributes.add(name, value);
         };
 
-        auto bgColor = style.visitedDependentBackgroundColor();
+        auto bgColor = style.visitedDependentUsedBackgroundColor();
         if (bgColor.isValid() && bgColor.isVisible()) {
             auto [r, g, b, a] = bgColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
             addAttributeIfNeeded("bg-color"_s, makeString(r, ',', g, ',', b));

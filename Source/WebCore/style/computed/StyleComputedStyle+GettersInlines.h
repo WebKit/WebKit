@@ -299,7 +299,7 @@ inline bool ComputedStyle::isInterCharacterRubyPosition() const
 
 inline bool ComputedStyle::hasBackground() const
 {
-    return visitedDependentBackgroundColor().isVisible()
+    return visitedDependentUsedBackgroundColor().isVisible()
         || Style::hasImageInAnyLayer(backgroundLayers());
 }
 

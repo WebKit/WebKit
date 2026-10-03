@@ -2050,7 +2050,7 @@ using ElementToStyleProperties = HashMap<Ref<StyledElement>, Vector<CSSPropertyI
         Vector<CSSPropertyID, 3> propertiesToRemove;
         if (auto inlineBackgroundColor = style->propertyAsColor(CSSPropertyBackgroundColor)) {
             bool inlineColorIsValid = inlineBackgroundColor->isValid();
-            auto backgroundColor = inlineColorIsValid ? *inlineBackgroundColor : protect(renderer->style())->visitedDependentBackgroundColor();
+            auto backgroundColor = inlineColorIsValid ? *inlineBackgroundColor : protect(renderer->style())->visitedDependentUsedBackgroundColor();
             auto compositeOperator = document->compositeOperatorForBackgroundColor(backgroundColor, *renderer);
             if (compositeOperator != CompositeOperator::DestinationIn && compositeOperator != CompositeOperator::DestinationOut) {
                 bool inlineColorIsSemantic = inlineColorIsValid && inlineBackgroundColor->isSemantic();
