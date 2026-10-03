@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<title>Block-axis columns after a column spanner are painted at their layout position</title>
+<link rel="match" href="block-axis-columns-after-spanner-expected.html">
+<style>
+body { margin: 0; }
+.multicol {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    height: 70px;
+    -webkit-column-axis: vertical;
+    column-gap: 20px;
+    column-fill: auto;
+}
+.spanner {
+    column-span: all;
+    height: 20px;
+    background-color: blue;
+}
+.content {
+    height: 100px;
+    background-color: green;
+}
+</style>
+<div class="multicol">
+    <div class="spanner"></div>
+    <div class="content"></div>
+</div>
