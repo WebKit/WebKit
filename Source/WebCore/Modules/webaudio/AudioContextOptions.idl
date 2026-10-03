@@ -28,4 +28,5 @@
 ] dictionary AudioContextOptions {
     (AudioContextLatencyCategory or double) latencyHint = "interactive";
     float sampleRate;
+    [EnabledBySetting=AudioContextSetSinkIdEnabled] (DOMString or AudioSinkOptions) sinkId;
 };

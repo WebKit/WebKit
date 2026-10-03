@@ -1,0 +1,6 @@
+
+PASS sinkId returns the same AudioSinkInfo object on repeated gets.
+PASS setSinkId("") switches back to the default device from a silent sink.
+PASS Overlapping setSinkId() calls settle without clobbering each other.
+PASS Identical overlapping setSinkId() calls both resolve.
+
