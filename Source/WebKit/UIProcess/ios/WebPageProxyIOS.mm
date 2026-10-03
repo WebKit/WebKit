@@ -347,18 +347,22 @@ bool WebPageProxy::applyAutocorrection(const String& correction, const String& o
     return autocorrectionApplied;
 }
 
-void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& callbackFunction)
+void WebPageProxy::selectPositionAtBoundaryWithDirection(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::IntPoint point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
         callbackFunction();
         return;
     }
 
-    RefPtr focusedFrame = focusedOrMainFrame();
-    auto frameID = focusedFrame ? std::optional(focusedFrame->frameID()) : std::nullopt;
     Ref process = processContainingFrame(frameID);
     auto backgroundActivity = protect(process->throttler())->backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s);
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, granularity, direction, isInteractingWithFocusedElement), Messages::WebPage::SelectPositionAtBoundaryWithDirection::Reply { [callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)] () mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectPositionAtBoundaryWithDirection(frameID, point, granularity, direction, isInteractingWithFocusedElement), Messages::WebPage::SelectPositionAtBoundaryWithDirection::Reply { [weakThis = WeakPtr { *this }, granularity, direction, isInteractingWithFocusedElement, callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)](std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (protectedThis && remoteUserInputEventData) {
+            // The gesture landed on a cross-origin frame; re-dispatch it into that frame's process.
+            protectedThis->selectPositionAtBoundaryWithDirection(remoteUserInputEventData->targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), granularity, direction, isInteractingWithFocusedElement, WTF::move(callbackFunction));
+            return;
+        }
         callbackFunction();
     } });
 }
@@ -459,12 +463,24 @@ void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, Opt
     protect(legacyMainFrameProcess())->send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, modifiers, requestID), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& callback)
+void WebPageProxy::selectWithTwoTouches(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& callback)
 {
     if (!hasRunningProcess())
         return callback({ }, GestureType::Loupe, GestureRecognizerState::Possible, { });
 
-    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState), Messages::WebPage::SelectWithTwoTouches::Reply { WTF::move(callback) });
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::SelectWithTwoTouches(frameID, from, to, gestureType, gestureState), Messages::WebPage::SelectWithTwoTouches::Reply { [weakThis = WeakPtr { *this }, from, to, gestureType, gestureState, callback = WTF::move(callback)](const WebCore::IntPoint& point, GestureType innerGestureType, GestureRecognizerState innerGestureState, OptionSet<SelectionFlags> flags, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (protectedThis && remoteUserInputEventData) {
+            // The gesture landed on a cross-origin frame; re-dispatch it into that frame's process.
+            auto transformedFrom = roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint });
+            protectedThis->selectWithTwoTouches(remoteUserInputEventData->targetFrameID, transformedFrom, to + (transformedFrom - from), gestureType, gestureState,
+                [from, callback = WTF::move(callback)](const WebCore::IntPoint&, GestureType gestureType, GestureRecognizerState gestureState, OptionSet<SelectionFlags> flags) mutable {
+                callback(from, gestureType, gestureState, flags);
+            });
+            return;
+        }
+        callback(point, innerGestureType, innerGestureState, flags);
+    } });
 }
 
 void WebPageProxy::startInteractionWithPositionInformation(std::optional<WebCore::FrameIdentifier> frameID, const InteractionInformationAtPosition& positionInformation)

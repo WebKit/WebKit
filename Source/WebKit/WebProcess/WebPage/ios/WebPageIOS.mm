@@ -1727,26 +1727,22 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
     completionHandler(point, selectionTouch, flags);
 }
 
-// The UI process sends these points in the main frame's root view. In a cross-origin iframe's process the
-// iframe is the local root, so its own rootViewToContents would be off by the iframe's position. This is
-// the identity for a main frame.
-static IntPoint mainFrameRootViewToRootView(const LocalFrame& frame, const IntPoint& point)
+void WebPage::selectWithTwoTouches(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, std::optional<WebCore::RemoteUserInputEventData>)>&& completionHandler)
 {
-    RefPtr view = frame.view();
-    if (!view)
-        return point;
-    return roundedIntPoint(view->convertFromRootViewAcrossIsolatedFrames(FloatPoint { point }));
-}
+    RefPtr localRootFrame = this->localRootFrame(frameID);
 
-void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
-{
-    RefPtr frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForSelectionGesture(localRootFrame.get(), from)) {
+        completionHandler(from, gestureType, gestureState, { }, WTF::move(remoteUserInputEventData));
         return;
+    }
+
+    RefPtr<WebCore::LocalFrame> frame = frameID ? localRootFrame : RefPtr { m_page->focusController().focusedOrMainFrame() };
+    if (!frame)
+        return completionHandler({ }, gestureType, gestureState, { }, std::nullopt);
 
     RefPtr view = frame->view();
-    auto fromPosition = frame->visiblePositionForPoint(view->rootViewToContents(mainFrameRootViewToRootView(*frame, from)));
-    auto toPosition = frame->visiblePositionForPoint(view->rootViewToContents(mainFrameRootViewToRootView(*frame, to)));
+    auto fromPosition = frame->visiblePositionForPoint(view->rootViewToContents(from));
+    auto toPosition = frame->visiblePositionForPoint(view->rootViewToContents(to));
     if (auto range = makeSimpleRange(fromPosition, toPosition)) {
         if (!(fromPosition < toPosition))
             std::swap(range->start, range->end);
@@ -1754,7 +1750,7 @@ void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore:
     }
 
     // We can use the same callback for the gestures with one point.
-    completionHandler(from, gestureType, gestureState, { });
+    completionHandler(from, gestureType, gestureState, { }, std::nullopt);
 }
 
 void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completion)
@@ -2113,20 +2109,27 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
     completionHandler(selectionGeometries);
 }
 
-void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
+void WebPage::selectPositionAtBoundaryWithDirection(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::IntPoint& point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&& completionHandler)
 {
-    RefPtr frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
-        return completionHandler();
+    RefPtr localRootFrame = this->localRootFrame(frameID);
 
-    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, mainFrameRootViewToRootView(*frame, point), isInteractingWithFocusedElement);
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForSelectionGesture(localRootFrame.get(), point)) {
+        completionHandler(WTF::move(remoteUserInputEventData));
+        return;
+    }
+
+    RefPtr<WebCore::LocalFrame> frame = frameID ? localRootFrame : RefPtr { m_page->focusController().focusedOrMainFrame() };
+    if (!frame)
+        return completionHandler(std::nullopt);
+
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
 
     if (position.isNotNull()) {
         position = positionOfNextBoundaryOfGranularity(position, granularity, direction);
         if (position.isNotNull())
             protect(frame->selection())->setSelectedRange(makeSimpleRange(position), Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
     }
-    completionHandler();
+    completionHandler(std::nullopt);
 }
 
 void WebPage::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, CompletionHandler<void()>&& completionHandler)

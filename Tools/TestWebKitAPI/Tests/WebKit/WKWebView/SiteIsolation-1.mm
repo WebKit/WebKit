@@ -1334,13 +1334,9 @@ TEST(SiteIsolation, DocumentEditingContextInCrossOriginIframe)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-// Point-based selection. The UI process hands these messages a point in web-view coordinates, and every
-// web-process handler resolves it against `focusedOrMainFrame()`'s own LocalFrameView (via
-// `rootViewToContents`, directly or through `visiblePositionInFocusedNodeForPoint`). So each one needs to
-// reach the focused frame's process *and* have its point converted into that frame's root view; routing
-// alone would land the point off by the iframe's position. `SelectPositionAtPoint` and
-// `SelectTextWithGranularityAtPoint` are already handled, by hit-testing and re-dispatching on a
-// `RemoteUserInputEventData` reply.
+// Point-based selection. The UI process hands these messages a point in web-view coordinates. The iOS
+// selection gestures hit-test it and re-dispatch into the cross-origin iframe under it, so they work whether
+// or not that iframe is focused; `CharacterIndexForPointAsync` resolves it in the focused frame's process.
 
 // initial-scale=1 keeps CSS pixels equal to web-view coordinates, which the helper below relies on.
 static constexpr auto pointSelectionMainFrame = "<meta name='viewport' content='initial-scale=1'><body style='margin: 0'>main frame text<iframe id='iframe' style='position: absolute; left: 100px; top: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
@@ -1539,6 +1535,52 @@ TEST(SiteIsolation, FocusTextInputContextInOffsetCrossOriginIframeMovesCaret)
     RetainPtr childFrame = [webView firstChildFrame];
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName" inFrame:childFrame.get()]);
     EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart" inFrame:childFrame.get()] intValue]);
+}
+
+TEST(SiteIsolation, SelectPositionAtBoundaryInUnfocusedCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { pointSelectionMainFrame } },
+        { "/iframe"_s, { pointSelectionIframe } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    __block bool done = false;
+    [[webView textInputContentView] selectPositionAtBoundary:UITextGranularityWord inDirection:UITextStorageDirectionForward fromPoint:pointAtCharacterInIframe(webView.get(), childFrame.get(), 0) completionHandler:^{
+        done = true;
+    }];
+    EXPECT_TRUE(Util::runFor(&done, 5_s));
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return selectionAnchorOffsetInFrame(webView.get(), childFrame.get()) == 5;
+    }));
+}
+
+TEST(SiteIsolation, SelectWithTwoTouchesInUnfocusedCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { pointSelectionMainFrame } },
+        { "/iframe"_s, { pointSelectionIframe } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    CGPoint from = pointAtCharacterInIframe(webView.get(), childFrame.get(), 0);
+    CGPoint to = pointAtCharacterInIframe(webView.get(), childFrame.get(), 6);
+    [[webView textInputContentView] changeSelectionWithTouchesFrom:from to:to withGesture:UIWKGestureLoupe withState:UIGestureRecognizerStateEnded];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"hello "];
+    }));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
