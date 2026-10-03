@@ -2688,13 +2688,13 @@ private:
 #if PLATFORM(MAC)
     void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
     std::optional<WebCore::SimpleRange> lookupTextAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
-    void immediateActionDidUpdate();
-    void immediateActionDidCancel();
-    void immediateActionDidComplete();
+    void immediateActionDidUpdate(WebCore::FrameIdentifier);
+    void immediateActionDidCancel(WebCore::FrameIdentifier);
+    void immediateActionDidComplete(WebCore::FrameIdentifier);
 
     void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);
-    void dataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID);
+    void dataDetectorsDidHideUI(WebCore::FrameIdentifier, WebCore::PageOverlay::PageOverlayID);
 
     void handleAcceptedCandidate(WebCore::TextCheckingResult);
 #endif

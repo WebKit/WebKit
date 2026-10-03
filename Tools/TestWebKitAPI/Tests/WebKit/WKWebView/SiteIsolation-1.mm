@@ -1774,6 +1774,42 @@ TEST(SiteIsolation, ImmediateActionAnimationBeginsBeforeCrossOriginIframeAnswers
     EXPECT_EQ(actionType, _WKImmediateActionLookupText);
 }
 
+// Once a force click's animation has run, the mouse up that ends it only dispatches mouseup, without a click. That
+// relies on the animation's progress reaching the process that did the hit test, which is the iframe's.
+TEST(SiteIsolation, MouseUpAfterImmediateActionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframeAtTopLeft } },
+        { "/iframe"_s, { "<script>window.events = []; for (const type of ['mousedown', 'mouseup', 'click']) addEventListener(type, () => events.push(type));</script><body style='margin: 0'><div style='font-size: 32px;'>Foobar</div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = immediateActionWebViewWithCrossOriginIframe(server);
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto eventsInIframe = [&] {
+        return [webView stringByEvaluatingJavaScript:@"events.join()" inFrame:childFrame.get()];
+    };
+
+    NSPoint pointInWindow = [webView convertPoint:NSMakePoint(16, 16) toView:nil];
+    [webView mouseDownAtPoint:pointInWindow simulatePressure:NO];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [eventsInIframe() isEqualToString:@"mousedown"];
+    }));
+
+    auto [hitTestResult, actionType] = [webView simulateImmediateAction:NSMakePoint(16, 16)];
+    EXPECT_WK_STREQ("Foobar", [hitTestResult lookupText]);
+
+    auto immediateActionGesture = [webView immediateActionGesture];
+    [immediateActionGesture.delegate immediateActionRecognizerWillBeginAnimation:immediateActionGesture];
+    [immediateActionGesture.delegate immediateActionRecognizerDidUpdateAnimation:immediateActionGesture];
+    [immediateActionGesture.delegate immediateActionRecognizerDidCompleteAnimation:immediateActionGesture];
+
+    [webView mouseUpAtPoint:pointInWindow];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return ![eventsInIframe() isEqualToString:@"mousedown"];
+    }));
+    EXPECT_WK_STREQ("mousedown,mouseup", eventsInIframe());
+}
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(ORIENTATION_EVENTS) && PLATFORM(IOS_FAMILY)

@@ -443,14 +443,16 @@
     RefPtr<WebKit::WebPageProxy> page = _page.get();
     RetainPtr view = _view.get();
     WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.platformData.detectedDataOriginatingPageOverlay;
+    auto frameID = page->immediateActionHitTestFrameID();
     _currentActionContext = (WKDDActionContext *)[actionContext contextForView:view.get() altMode:YES interactionStartedHandler:^() {
-        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID), page->webPageIDInMainFrameProcess());
+        page->sendToProcessContainingFrame(frameID, Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
         if (RefPtr detectedDataTextIndicator = _hitTestResultData.platformData.detectedDataTextIndicator)
             page->setTextIndicator(WTF::move(detectedDataTextIndicator), WebCore::TextIndicatorLifetime::Permanent);
-        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID), page->webPageIDInMainFrameProcess());
+        page->sendToProcessContainingFrame(frameID, Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
     } interactionStoppedHandler:^() {
-        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID), page->webPageIDInMainFrameProcess());
+        if (frameID)
+            page->sendToProcessContainingFrame(frameID, Messages::WebPage::DataDetectorsDidHideUI(*frameID, overlayID));
         [self _clearImmediateActionState];
     }];
 
