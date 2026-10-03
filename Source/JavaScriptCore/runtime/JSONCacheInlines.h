@@ -33,6 +33,7 @@
 #include "Structure.h"
 #include "VM.h"
 #include <wtf/MathExtras.h>
+#include <wtf/SIMDHelpers.h>
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC {
@@ -51,8 +52,8 @@ ALWAYS_INLINE Ref<AtomStringImpl> JSONCache::makeIdentifier(VM& vm, std::span<co
         return AtomStringImpl::add(characters).releaseNonNull();
 
     auto lastCharacter = characters.back();
-    unsigned index = stringIndex(firstCharacter, lastCharacter, characters.size());
-    auto& slot = m_strings[index];
+    unsigned index = atomStringIndex(firstCharacter, lastCharacter, characters.size());
+    auto& slot = m_atomStrings[index];
     if (slot.m_length != characters.size() || !equal(slot.m_buffer, characters)) [[unlikely]] {
         auto result = AtomStringImpl::add(characters);
         slot.m_impl = result;
@@ -79,7 +80,7 @@ ALWAYS_INLINE AtomStringImpl* JSONCache::existingIdentifier(VM& vm, std::span<co
         return nullptr;
 
     auto lastCharacter = characters.back();
-    auto& slot = stringSlot(firstCharacter, lastCharacter, characters.size());
+    auto& slot = atomStringSlot(firstCharacter, lastCharacter, characters.size());
     if (slot.m_length != characters.size() || !equal(slot.m_buffer, characters)) [[unlikely]]
         return nullptr;
 
@@ -101,8 +102,8 @@ ALWAYS_INLINE JSString* JSONCache::makeJSString(VM& vm, std::span<const Characte
         return makeLongJSString(vm, characters);
 
     auto lastCharacter = characters.back();
-    unsigned index = stringIndex(firstCharacter, lastCharacter, characters.size());
-    auto& slot = m_strings[index];
+    unsigned index = atomStringIndex(firstCharacter, lastCharacter, characters.size());
+    auto& slot = m_atomStrings[index];
     if (slot.m_length == characters.size() && equal(slot.m_buffer, characters)) [[likely]] {
         if (JSString* cached = m_jsStrings[index])
             return cached;
@@ -240,11 +241,75 @@ ALWAYS_INLINE void JSONCache::addTransition(Structure* from, Structure* to, std:
     entry.to.setWithoutWriteBarrier(to);
 }
 
+ALWAYS_INLINE unsigned JSONCache::nameIndex(StructureID structureID)
+{
+    static_assert(hasOneBitSet(nameEntrySize));
+    return (static_cast<uint32_t>(structureID.bits() >> 4) * 0x9E3779B9U) >> (32 - WTF::fastLog2(nameEntrySize));
+}
+
+ALWAYS_INLINE unsigned JSONCache::prefixedNameIndex(StructureID structureID, uint32_t prefix)
+{
+    static_assert(hasOneBitSet(prefixedNameEntrySize) && hasOneBitSet(prefixedNameWays));
+    uint64_t key = (structureID.bits() >> 4) | (static_cast<uint64_t>(prefix) << 28);
+    return ((key * 0x9E3779B97F4A7C15ULL) >> (64 - WTF::fastLog2(prefixedNameEntrySize))) & ~(prefixedNameWays - 1);
+}
+
+ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length, NameSource source)
+{
+    ASSERT(length <= text.size());
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    static_assert(std::tuple_size_v<NameText> == 2 * stride);
+    constexpr simde_uint8x16_t lowIndices { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    constexpr simde_uint8x16_t highIndices { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+    auto load = [](std::span<const Latin1Character, stride> characters) ALWAYS_INLINE_LAMBDA {
+        return SIMD::load(std::bit_cast<const uint8_t*>(characters.data()));
+    };
+    NameSource expected { text };
+    auto lengths = SIMD::splat<uint8_t>(length);
+    auto low = SIMD::bitAnd(SIMD::bitXor(load(source.first<stride>()), load(expected.first<stride>())), SIMD::lessThan(lowIndices, lengths));
+    auto high = SIMD::bitAnd(SIMD::bitXor(load(source.last<stride>()), load(expected.last<stride>())), SIMD::lessThan(highIndices, lengths));
+    return !SIMD::isNonZero(SIMD::bitOr(low, high));
+}
+
+template<unsigned size>
+ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::NameTable<size>::match(unsigned index, StructureID from, std::span<const Latin1Character> source) const
+{
+    auto& entry = entries[index];
+    if (entry.from.value() != from || source.size() < maxNameTextLength)
+        return nullptr;
+    if (!textMatches(texts[index], entry.textLength, source.first<maxNameTextLength>()))
+        return nullptr;
+    return &entry;
+}
+
+ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::findName(StructureID from, unsigned index, std::span<const Latin1Character> source) const
+{
+    ASSERT(index == nameIndex(from));
+    if (auto* entry = m_names.match(index, from, source))
+        return entry;
+    if (source.size() < sizeof(uint32_t))
+        return nullptr;
+    unsigned set = prefixedNameIndex(from, WTF::unalignedLoad<uint32_t>(source.data()));
+    for (unsigned way = 0; way < prefixedNameWays; ++way) {
+        if (auto* entry = m_prefixedNames.match(set + way, from, source))
+            return entry;
+    }
+    return nullptr;
+}
+
 template<typename Visitor>
 void JSONCache::visitAggregate(Visitor& visitor)
 {
     if (!m_isParsing)
         return;
+    for (auto& entry : m_names.entries) {
+        visitor.append(entry.from);
+        visitor.append(entry.to);
+    }
+    for (auto& entry : m_prefixedNames.entries) {
+        visitor.append(entry.from);
+        visitor.append(entry.to);
+    }
     for (auto& entry : m_primaryTransitions) {
         visitor.append(entry.from);
         visitor.append(entry.to);

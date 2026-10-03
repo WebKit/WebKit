@@ -218,10 +218,17 @@ private:
         TokenType nextMaybeIdentifier();
         TokenType nextAfterValue();
         bool consumeColon();
+        void skipWhitespaceBeforeKey();
         CharType peek() const { return m_ptr < m_end ? *m_ptr : 0; }
         TokenType nextString();
         TokenType nextNumber();
         bool tryConsumeStringEqualTo(std::span<const Latin1Character>);
+        std::span<const CharType> remaining() const { return { m_ptr, static_cast<size_t>(m_end - m_ptr) }; }
+        void advance(unsigned length)
+        {
+            ASSERT(length <= static_cast<size_t>(m_end - m_ptr));
+            m_ptr += length;
+        }
 
 #if !ASSERT_ENABLED
         using LiteralParserTokenPtr = const LiteralParserToken<CharType>*;
@@ -301,9 +308,9 @@ private:
     JSArray* materializeArray(VM&, unsigned stackBase);
 
     static ALWAYS_INLINE bool equalIdentifier(UniquedStringImpl*, typename Lexer::LiteralParserTokenPtr);
-    ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
+    static ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, JSONCache&, typename Lexer::LiteralParserTokenPtr);
     ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
-    ALWAYS_INLINE JSString* makeJSString(VM&, typename Lexer::LiteralParserTokenPtr);
+    static ALWAYS_INLINE JSString* makeJSString(VM&, JSONCache&, typename Lexer::LiteralParserTokenPtr);
 
     void setErrorMessageForToken(TokenType);
 

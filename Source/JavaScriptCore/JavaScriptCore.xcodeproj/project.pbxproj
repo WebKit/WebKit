@@ -6174,6 +6174,7 @@
 		E32F713B281B3C6600AFD21D /* UnifiedSource3-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource3-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource3-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32F713C281B3C6600AFD21D /* UnifiedSource2-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource2-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource2-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32FEA2A27448F3600FF41C1 /* JSONCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONCacheInlines.h; sourceTree = "<group>"; };
+		DD9F6F27F5F64D0882634574 /* JSONCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONCache.cpp; sourceTree = "<group>"; };
 		E32FEA2B27448F3600FF41C1 /* JSONCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONCache.h; sourceTree = "<group>"; };
 		E3305FB020B0F78700CEB82B /* InByVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByVariant.cpp; sourceTree = "<group>"; };
 		E3305FB120B0F78800CEB82B /* InByVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByVariant.h; sourceTree = "<group>"; };
@@ -9432,6 +9433,7 @@
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
 				0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */,
+				DD9F6F27F5F64D0882634574 /* JSONCache.cpp */,
 				E32FEA2B27448F3600FF41C1 /* JSONCache.h */,
 				E32FEA2A27448F3600FF41C1 /* JSONCacheInlines.h */,
 				A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */,
