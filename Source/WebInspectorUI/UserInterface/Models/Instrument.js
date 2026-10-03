@@ -48,6 +48,8 @@ WI.Instrument = class Instrument
             return new WI.MediaInstrument;
         case WI.TimelineRecord.Type.Screenshots:
             return new WI.ScreenshotsInstrument;
+        case WI.TimelineRecord.Type.UserTiming:
+            return new WI.UserTimingInstrument;
         default:
             console.error("Unknown TimelineRecord.Type: " + type);
             return null;
@@ -69,7 +71,7 @@ WI.Instrument = class Instrument
         for (let target of WI.targets) {
             // COMPATIBILITY (macOS 15.4, iOS 18.4): `Timeline.start` did not exist yet for Worker targets.
             if (target.hasDomain("Timeline"))
-                target.TimelineAgent.start();
+                target.TimelineAgent.start(undefined, WI.timelineManager.activeRecording?.objectGroup);
         }
     }
 

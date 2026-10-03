@@ -1,0 +1,19 @@
+Tests 'console.time'/'console.timeEnd' Timeline event records.
+
+
+== Running test suite: TimelineEvent.ConsoleTime
+-- Running test case: TimelineEvent.ConsoleTime.OpenAndClose
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Should be a UserTimingTimelineRecord.
+PASS: Should be a ConsoleTime event.
+PASS: Should have the timer name.
+PASS: Should not have an end time.
+PASS: Should update dynamically.
+PASS: Should have a captured stack trace.
+PASS: Should have an initiator call frame.
+Finishing open record...
+PASS: Should have endTime after startTime.
+PASS: Should no longer update dynamically.
+

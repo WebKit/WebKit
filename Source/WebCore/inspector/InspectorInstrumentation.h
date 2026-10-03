@@ -293,6 +293,7 @@ public:
     static void consoleStopRecordingCanvas(GPUDevice&);
 
     static void performanceMark(ScriptExecutionContext&, const String&, std::optional<MonotonicTime>);
+    static void performanceMeasure(ScriptExecutionContext&, const String&, MonotonicTime startTime, MonotonicTime endTime, JSC::JSValue detail, JSC::JSGlobalObject&);
 
     static void didEnqueueFirstContentfulPaint(ScriptExecutionContext&);
     static void didEnqueueLargestContentfulPaint(ScriptExecutionContext&, const LargestContentfulPaint&);
@@ -513,6 +514,7 @@ private:
     static void consoleStopRecordingCanvasImpl(InstrumentingAgents&, GPUDevice&);
 
     static void performanceMarkImpl(InstrumentingAgents&, const String& label, std::optional<MonotonicTime>);
+    static void performanceMeasureImpl(InstrumentingAgents&, const String& label, MonotonicTime startTime, MonotonicTime endTime, JSC::JSValue detail, JSC::JSGlobalObject&);
     static void didEnqueueFirstContentfulPaintImpl(InstrumentingAgents&);
     static void didEnqueueLargestContentfulPaintImpl(InstrumentingAgents&, const LargestContentfulPaint&);
 
@@ -1805,6 +1807,13 @@ inline void InspectorInstrumentation::performanceMark(ScriptExecutionContext& co
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(context))
         performanceMarkImpl(*agents, label, WTF::move(startTime));
+}
+
+inline void InspectorInstrumentation::performanceMeasure(ScriptExecutionContext& context, const String& label, MonotonicTime startTime, MonotonicTime endTime, JSC::JSValue detail, JSC::JSGlobalObject& globalObject)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(context))
+        performanceMeasureImpl(*agents, label, startTime, endTime, detail, globalObject);
 }
 
 inline void InspectorInstrumentation::didEnqueueFirstContentfulPaint(ScriptExecutionContext& context)

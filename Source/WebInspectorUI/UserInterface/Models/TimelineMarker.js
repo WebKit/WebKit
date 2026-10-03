@@ -87,5 +87,6 @@ WI.TimelineMarker.Type = {
     LoadEvent: "load-event",
     DOMContentEvent: "dom-content-event",
     TimeStamp: "timestamp",
+    PerformanceMark: "performance-mark",
     Scanner: "scanner",
 };

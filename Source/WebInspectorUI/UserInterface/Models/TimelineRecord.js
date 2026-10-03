@@ -65,6 +65,8 @@ WI.TimelineRecord = class TimelineRecord extends WI.Object
             return WI.MediaTimelineRecord.fromJSON(json);
         case WI.TimelineRecord.Type.Screenshots:
             return WI.ScreenshotsTimelineRecord.fromJSON(json);
+        case WI.TimelineRecord.Type.UserTiming:
+            return WI.UserTimingTimelineRecord.fromJSON(json);
         default:
             console.error("Unknown TimelineRecord.Type: " + json.type, json);
             return null;
@@ -208,6 +210,7 @@ WI.TimelineRecord.Type = {
     HeapAllocations: "timeline-record-type-heap-allocations",
     Media: "timeline-record-type-media",
     Screenshots: "timeline-record-type-screenshots",
+    UserTiming: "timeline-record-type-user-timing",
 };
 
 WI.TimelineRecord.TypeIdentifier = "timeline-record";

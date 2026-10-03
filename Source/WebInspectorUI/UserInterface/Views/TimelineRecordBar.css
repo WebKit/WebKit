@@ -197,3 +197,13 @@ body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
     background-color: var(--network-request-color);
     border: none;
 }
+
+.timeline-record-bar.timeline-record-type-user-timing > .segment {
+    background-color: hsl(0, 0%, 70%);
+    --record-bar-segment-border-color: hsl(0, 0%, 55%);
+}
+
+.timeline-record-bar.timeline-record-type-user-timing.console-time > .segment {
+    background-color: hsl(111, 33%, 66%);
+    --record-bar-segment-border-color: hsl(111, 33%, 51%);
+}

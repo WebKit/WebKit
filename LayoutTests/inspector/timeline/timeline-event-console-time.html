@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testConsoleTimeOpen() {
+    console.time("openTimer");
+    savePageData({});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.ConsoleTime");
+
+    suite.addTestCase({
+        name: "TimelineEvent.ConsoleTime.OpenAndClose",
+        description: "'console.time' creates an open-ended UserTiming record that 'console.timeEnd' later closes.",
+        async test() {
+            await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testConsoleTimeOpen()`,
+                timelineType: WI.TimelineRecord.Type.UserTiming,
+            });
+
+            let recording = WI.timelineManager.activeRecording;
+            let timeline = recording.timelines.get(WI.TimelineRecord.Type.UserTiming);
+            let record = timeline.records[0];
+            InspectorTest.expectTrue(record instanceof WI.UserTimingTimelineRecord, "Should be a UserTimingTimelineRecord.");
+            InspectorTest.expectEqual(record.eventType, WI.UserTimingTimelineRecord.EventType.ConsoleTime, "Should be a ConsoleTime event.");
+            InspectorTest.expectEqual(record.label, "openTimer", "Should have the timer name.");
+            InspectorTest.expectTrue(isNaN(record.endTime), "Should not have an end time.");
+            InspectorTest.expectTrue(record.updatesDynamically, "Should update dynamically.");
+            InspectorTest.expectTrue(record.stackTrace instanceof WI.StackTrace, "Should have a captured stack trace.");
+            InspectorTest.expectTrue(record.initiatorCallFrame instanceof WI.CallFrame, "Should have an initiator call frame.");
+
+            InspectorTest.log("Finishing open record...");
+            let didDispatchUpdated = false;
+            record.singleFireEventListener(WI.TimelineRecord.Event.Updated, function(event) {
+                didDispatchUpdated = true;
+            });
+            record.finish(record.startTime + 0.1);
+            InspectorTest.assert(didDispatchUpdated, "Should update observers.");
+            InspectorTest.expectGreaterThan(record.endTime, record.startTime, "Should have endTime after startTime.");
+            InspectorTest.expectFalse(record.updatesDynamically, "Should no longer update dynamically.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests 'console.time'/'console.timeEnd' Timeline event records.</p>
+</body>
+</html>
