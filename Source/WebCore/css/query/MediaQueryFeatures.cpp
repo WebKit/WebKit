@@ -506,18 +506,16 @@ static const IntegerSchema& monochromeFeatureSchema()
         MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             Ref frame = *context.document->frame();
-            RefPtr localFrame = context.document->localMainFrame();
+            RefPtr mainFrameView = frame->mainFrame().virtualView();
             bool isMonochrome = [&] {
                 if (frame->settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::On)
                     return true;
                 if (frame->settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::Off)
                     return false;
-                if (localFrame)
-                    return screenIsMonochrome(protect(localFrame->view()).get());
-                return false;
+                return screenIsMonochrome(mainFrameView.get());
             }();
 
-            return isMonochrome && localFrame ? screenDepthPerComponent(protect(localFrame->view()).get()) : 0;
+            return isMonochrome ? screenDepthPerComponent(mainFrameView.get()) : 0;
         }
     };
     return schema;

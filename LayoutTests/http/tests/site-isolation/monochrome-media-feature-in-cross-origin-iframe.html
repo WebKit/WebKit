@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("The monochrome media feature should evaluate the same in a cross-origin iframe as in the main frame under site isolation.");
+
+var jsTestIsAsync = true;
+var result = null;
+
+window.internals.settings.forcedDisplayIsMonochromeAccessibilityValue = "on";
+var mainFrameMonochrome = [...Array(33).keys()].find(bits => matchMedia(`(monochrome: ${bits})`).matches);
+shouldBeTrue("matchMedia('(monochrome)').matches");
+
+window.addEventListener("message", function(event) {
+    result = event.data;
+    shouldBeTrue("result.monochromeMatches");
+    shouldBe("result.monochrome", "mainFrameMonochrome");
+    finishJSTest();
+}, false);
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/monochrome-media-feature-iframe.html"></iframe>
+</body>
+</html>
