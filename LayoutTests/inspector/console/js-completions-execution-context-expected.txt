@@ -1,0 +1,12 @@
+
+Tests that JavaScript code completions are isolated by execution context.
+
+
+== Running test suite: console.jsCompletions.ExecutionContext
+-- Running test case: console.jsCompletions.ExecutionContext.Cache
+PASS: The test page should have one subframe.
+PASS: Main frame completions should include the main frame property.
+PASS: Main frame completions should not include the subframe property.
+PASS: Subframe completions should include the subframe property.
+PASS: Subframe completions should not include the main frame property.
+
