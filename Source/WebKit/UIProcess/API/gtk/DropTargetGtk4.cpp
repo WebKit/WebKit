@@ -33,8 +33,10 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/DragData.h>
 #include <WebCore/PasteboardCustomData.h>
+#include <WebCore/TextResourceDecoder.h>
 #include <array>
 #include <gtk/gtk.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -188,15 +190,10 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
             }
 
             if (mimeType == "text/html"_s) {
-                gsize length;
-                const auto* markupData = g_bytes_get_data(data.get(), &length);
-                if (length) {
-                    auto spanData = span(data);
-                    // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
-                    if (length >= 2 && reinterpret_cast<const char16_t*>(markupData)[0] == 0xFEFF)
-                        m_selectionData->setMarkup(String(spanReinterpretCast<const char16_t>(spanData).subspan(1)));
-                    else
-                        m_selectionData->setMarkup(String(spanData));
+                auto markup = span(data);
+                if (!markup.empty()) {
+                    // A byte order mark selects UTF-16 or UTF-8, otherwise the data is UTF-8. Decode as plain text to skip charset sniffing.
+                    m_selectionData->setMarkup(TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding())->decodeAndFlush(markup));
                 }
             } else if (mimeType == "_NETSCAPE_URL"_s) {
                 auto urlData = span(data);
