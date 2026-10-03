@@ -1585,7 +1585,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
                 RefPtr<SerializedScriptValue> stateObject;
                 if (RefPtr currentItem = history().currentItem())
                     stateObject = currentItem->navigationAPIStateObject();
-                if (!dispatchNavigateEvent(loadType, request, false, formState.get(), event, stateObject.get()))
+                if (dispatchNavigateEvent(loadType, request, false, formState.get(), event, stateObject.get()).isNotCompleted())
                     return;
                 if (!frame->page())
                     return;
@@ -1748,7 +1748,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
-        if (!dispatchNavigateEvent(newLoadType, frameLoadRequest, true, formState.get(), event))
+        if (dispatchNavigateEvent(newLoadType, frameLoadRequest, true, formState.get(), event).isNotCompleted())
             return;
 
         oldDocumentLoader->setTriggeringAction(WTF::move(action));
@@ -1767,7 +1767,9 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         // instead of storing a lambda on the NavigationAction.
         action.setPendingDispatchNavigateEvent([weakThis = WeakPtr { *this }, newLoadType, frameLoadRequest, formState, event = RefPtr { event }] {
             RefPtr protectedThis = weakThis.get();
-            return protectedThis && protectedThis->dispatchNavigateEvent(newLoadType, frameLoadRequest, false, formState.get(), event.get());
+            if (!protectedThis)
+                return NavigateEventDispatchResult::aborted();
+            return protectedThis->dispatchNavigateEvent(newLoadType, frameLoadRequest, false, formState.get(), event.get());
         });
     }
 
@@ -3796,7 +3798,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     if (protect(request.requesterSecurityOrigin())->isSameOriginDomain(protect(protect(frame->document())->securityOrigin()).get())) {
         RefPtr formState = formSubmission ? protect(formSubmission->state()): nullptr;
-        if (!dispatchNavigateEvent(loadType, request, false, formState.get()))
+        if (dispatchNavigateEvent(loadType, request, false, formState.get()).isNotCompleted())
             return completionHandler();
     }
 
@@ -4234,7 +4236,7 @@ bool FrameLoader::dispatchPendingNavigateEventAfterNavigationPolicy(PendingNavig
     if (!pendingDispatchNavigateEvent)
         return true;
 
-    return pendingDispatchNavigateEvent();
+    return pendingDispatchNavigateEvent().isCompleted();
 }
 
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
@@ -4260,7 +4262,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             RefPtr document = frame->document();
             if (RefPtr window = document ? document->window() : nullptr) {
                 if (Ref navigation = window->navigation(); navigation->frame()) {
-                    if (navigation->dispatchTraversalNavigateEvent(*pendingItem) == Navigation::DispatchResult::Aborted)
+                    if (navigation->dispatchTraversalNavigateEvent(*pendingItem).isAborted())
                         navigateEventAborted = true;
                 }
             }
@@ -4327,8 +4329,8 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         return;
     }
 
-    if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : std::function<bool()> { }) {
-        if (!pendingDispatchNavigateEvent())
+    if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : NavigationAction::DispatchNavigateEventFunction { }) {
+        if (pendingDispatchNavigateEvent().isNotCompleted())
             return;
     }
 
@@ -4610,23 +4612,23 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
     return frame;
 }
 
-bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadRequest& request, bool isSameDocument, FormState* formState, Event* event, SerializedScriptValue* classicHistoryAPIState)
+NavigateEventDispatchResult FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadRequest& request, bool isSameDocument, FormState* formState, Event* event, SerializedScriptValue* classicHistoryAPIState)
 {
     RefPtr document = m_frame->document();
     if (!document || !document->settings().navigationAPIEnabled())
-        return true;
+        return NavigateEventDispatchResult::completed();
     RefPtr window = document->window();
     if (!window)
-        return true;
+        return NavigateEventDispatchResult::completed();
     if (request.skipNavigateEvent())
-        return true;
+        return NavigateEventDispatchResult::completed();
     // Download events are handled later in PolicyChecker::checkNavigationPolicy().
     if (!request.downloadAttribute().isNull())
-        return true;
+        return NavigateEventDispatchResult::completed();
 
     const URL& newURL = request.resourceRequest().url();
     if (!isSameDocument && !newURL.hasFetchScheme())
-        return true;
+        return NavigateEventDispatchResult::completed();
 
     auto navigationType = determineNavigationType(loadType, request.navigationHistoryBehavior());
 
@@ -4635,12 +4637,12 @@ bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadR
         auto apiType = action.navigationAPIType();
         // If this is from Navigation API and should be a traverse, dispatch proper traverse event.
         if (apiType && *apiType == NavigationNavigationType::Traverse)
-            return true;
+            return NavigateEventDispatchResult::completed();
     }
 
     // Traversals are handled earlier, in loadItem().
     if (navigationType == NavigationNavigationType::Traverse)
-        return true;
+        return NavigateEventDispatchResult::completed();
 
     RefPtr sourceElement = request.sourceElement();
     if (!sourceElement && event)
@@ -4841,9 +4843,9 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
             if (RefPtr window = frame().document()->window()) {
                 if (RefPtr navigation = window->navigation(); navigation->frame()) {
                     auto dispatchResult = navigation->dispatchTraversalNavigateEvent(item);
-                    if (dispatchResult == Navigation::DispatchResult::Aborted)
+                    if (dispatchResult.isAborted())
                         return;
-                    if (dispatchResult == Navigation::DispatchResult::DeferredCommit) {
+                    if (dispatchResult.isDeferredCommit()) {
                         // A precommit handler is still pending, so the traverse history step must
                         // not be applied yet. Navigation resumes it once the precommit handler
                         // promises fulfill, and discards it if the navigation is aborted before.

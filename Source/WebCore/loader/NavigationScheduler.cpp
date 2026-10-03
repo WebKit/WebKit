@@ -743,7 +743,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
                     bool isSameDocument = false;
                     FormState* formState = nullptr;
 
-                    if (!navigation->dispatchPushReplaceReloadNavigateEvent(url, navigationType, isSameDocument, formState))
+                    if (navigation->dispatchPushReplaceReloadNavigateEvent(url, navigationType, isSameDocument, formState).isNotCompleted())
                         return completionHandler(ScheduleLocationChangeResult::Stopped);
 
                     hasDispatchedNavigateEvent = true;

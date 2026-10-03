@@ -35,6 +35,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/LayoutPoint.h>
+#include <WebCore/NavigateEventDispatchResult.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/PendingNavigateEventIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -130,7 +131,9 @@ public:
     // over this navigation can resolve the navigation API type the same way.
     WEBCORE_EXPORT NavigationHistoryBehavior navigationHistoryBehavior() const;
 
-    void setPendingDispatchNavigateEvent(std::function<bool()>&& function)
+    using DispatchNavigateEventFunction = std::function<NavigateEventDispatchResult()>;
+
+    void setPendingDispatchNavigateEvent(DispatchNavigateEventFunction&& function)
     {
         m_pendingDispatchNavigateEvent = PendingNavigateEvent { PendingNavigateEventIdentifier::generate(), WTF::move(function) };
     }
@@ -140,14 +143,14 @@ public:
         return m_pendingDispatchNavigateEvent ? Markable { m_pendingDispatchNavigateEvent->identifier } : std::nullopt;
     }
 
-    std::function<bool()> takePendingDispatchNavigateEvent(PendingNavigateEventIdentifier identifier)
+    DispatchNavigateEventFunction takePendingDispatchNavigateEvent(PendingNavigateEventIdentifier identifier)
     {
         if (!m_pendingDispatchNavigateEvent || m_pendingDispatchNavigateEvent->identifier != identifier)
             return nullptr;
         return takePendingDispatchNavigateEvent();
     }
 
-    std::function<bool()> takePendingDispatchNavigateEvent()
+    DispatchNavigateEventFunction takePendingDispatchNavigateEvent()
     {
         auto pendingDispatchNavigateEvent = std::exchange(m_pendingDispatchNavigateEvent, std::nullopt);
         return pendingDispatchNavigateEvent ? WTF::move(pendingDispatchNavigateEvent->dispatch) : nullptr;
@@ -170,7 +173,7 @@ private:
 
     struct PendingNavigateEvent {
         PendingNavigateEventIdentifier identifier;
-        std::function<bool()> dispatch;
+        DispatchNavigateEventFunction dispatch;
     };
     std::optional<PendingNavigateEvent> m_pendingDispatchNavigateEvent;
 
