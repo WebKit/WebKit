@@ -1,0 +1,7465 @@
+Test HTML SourceMap with multiple JSON value types followed by multiple inline JavaScript statements
+
+
+== Running test suite: SourceMaps.HTML
+-- Running test case: SourceMaps.HTML.5
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| <#script type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 0 (0, 1)
+  0| <#script type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 1 (0, 2)
+  0| <s#cript type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 1 (0, 2)
+  0| <s#cript type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 2 (0, 3)
+  0| <sc#ript type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 2 (0, 3)
+  0| <sc#ript type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 3 (0, 4)
+  0| <scr#ipt type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 3 (0, 4)
+  0| <scr#ipt type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 4 (0, 5)
+  0| <scri#pt type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 4 (0, 5)
+  0| <scri#pt type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 5 (0, 6)
+  0| <scrip#t type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 5 (0, 6)
+  0| <scrip#t type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 6 (0, 7)
+  0| <script# type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 6 (0, 7)
+  0| <script# type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 7 (0, 8)
+  0| <script #type="application/json">
+  1| {
+  2|     "array": [
+Formatted: 7 (0, 8)
+  0| <script #type="application/json">
+  1| {
+  2|     "array": [
+
+Original: 8 (0, 9)
+  0| <script t#ype="application/json">
+  1| {
+  2|     "array": [
+Formatted: 8 (0, 9)
+  0| <script t#ype="application/json">
+  1| {
+  2|     "array": [
+
+Original: 9 (0, 10)
+  0| <script ty#pe="application/json">
+  1| {
+  2|     "array": [
+Formatted: 9 (0, 10)
+  0| <script ty#pe="application/json">
+  1| {
+  2|     "array": [
+
+Original: 10 (0, 11)
+  0| <script typ#e="application/json">
+  1| {
+  2|     "array": [
+Formatted: 10 (0, 11)
+  0| <script typ#e="application/json">
+  1| {
+  2|     "array": [
+
+Original: 11 (0, 12)
+  0| <script type#="application/json">
+  1| {
+  2|     "array": [
+Formatted: 11 (0, 12)
+  0| <script type#="application/json">
+  1| {
+  2|     "array": [
+
+Original: 12 (0, 13)
+  0| <script type=#"application/json">
+  1| {
+  2|     "array": [
+Formatted: 12 (0, 13)
+  0| <script type=#"application/json">
+  1| {
+  2|     "array": [
+
+Original: 13 (0, 14)
+  0| <script type="#application/json">
+  1| {
+  2|     "array": [
+Formatted: 13 (0, 14)
+  0| <script type="#application/json">
+  1| {
+  2|     "array": [
+
+Original: 14 (0, 15)
+  0| <script type="a#pplication/json">
+  1| {
+  2|     "array": [
+Formatted: 14 (0, 15)
+  0| <script type="a#pplication/json">
+  1| {
+  2|     "array": [
+
+Original: 15 (0, 16)
+  0| <script type="ap#plication/json">
+  1| {
+  2|     "array": [
+Formatted: 15 (0, 16)
+  0| <script type="ap#plication/json">
+  1| {
+  2|     "array": [
+
+Original: 16 (0, 17)
+  0| <script type="app#lication/json">
+  1| {
+  2|     "array": [
+Formatted: 16 (0, 17)
+  0| <script type="app#lication/json">
+  1| {
+  2|     "array": [
+
+Original: 17 (0, 18)
+  0| <script type="appl#ication/json">
+  1| {
+  2|     "array": [
+Formatted: 17 (0, 18)
+  0| <script type="appl#ication/json">
+  1| {
+  2|     "array": [
+
+Original: 18 (0, 19)
+  0| <script type="appli#cation/json">
+  1| {
+  2|     "array": [
+Formatted: 18 (0, 19)
+  0| <script type="appli#cation/json">
+  1| {
+  2|     "array": [
+
+Original: 19 (0, 20)
+  0| <script type="applic#ation/json">
+  1| {
+  2|     "array": [
+Formatted: 19 (0, 20)
+  0| <script type="applic#ation/json">
+  1| {
+  2|     "array": [
+
+Original: 20 (0, 21)
+  0| <script type="applica#tion/json">
+  1| {
+  2|     "array": [
+Formatted: 20 (0, 21)
+  0| <script type="applica#tion/json">
+  1| {
+  2|     "array": [
+
+Original: 21 (0, 22)
+  0| <script type="applicat#ion/json">
+  1| {
+  2|     "array": [
+Formatted: 21 (0, 22)
+  0| <script type="applicat#ion/json">
+  1| {
+  2|     "array": [
+
+Original: 22 (0, 23)
+  0| <script type="applicati#on/json">
+  1| {
+  2|     "array": [
+Formatted: 22 (0, 23)
+  0| <script type="applicati#on/json">
+  1| {
+  2|     "array": [
+
+Original: 23 (0, 24)
+  0| <script type="applicatio#n/json">
+  1| {
+  2|     "array": [
+Formatted: 23 (0, 24)
+  0| <script type="applicatio#n/json">
+  1| {
+  2|     "array": [
+
+Original: 24 (0, 25)
+  0| <script type="application#/json">
+  1| {
+  2|     "array": [
+Formatted: 24 (0, 25)
+  0| <script type="application#/json">
+  1| {
+  2|     "array": [
+
+Original: 25 (0, 26)
+  0| <script type="application/#json">
+  1| {
+  2|     "array": [
+Formatted: 25 (0, 26)
+  0| <script type="application/#json">
+  1| {
+  2|     "array": [
+
+Original: 26 (0, 27)
+  0| <script type="application/j#son">
+  1| {
+  2|     "array": [
+Formatted: 26 (0, 27)
+  0| <script type="application/j#son">
+  1| {
+  2|     "array": [
+
+Original: 27 (0, 28)
+  0| <script type="application/js#on">
+  1| {
+  2|     "array": [
+Formatted: 27 (0, 28)
+  0| <script type="application/js#on">
+  1| {
+  2|     "array": [
+
+Original: 28 (0, 29)
+  0| <script type="application/jso#n">
+  1| {
+  2|     "array": [
+Formatted: 28 (0, 29)
+  0| <script type="application/jso#n">
+  1| {
+  2|     "array": [
+
+Original: 29 (0, 30)
+  0| <script type="application/json#">
+  1| {
+  2|     "array": [
+Formatted: 29 (0, 30)
+  0| <script type="application/json#">
+  1| {
+  2|     "array": [
+
+Original: 30 (0, 31)
+  0| <script type="application/json"#>
+  1| {
+  2|     "array": [
+Formatted: 30 (0, 31)
+  0| <script type="application/json"#>
+  1| {
+  2|     "array": [
+
+Original: 31 (0, 32)
+  0| <script type="application/json">#
+  1| {
+  2|     "array": [
+Formatted: 31 (0, 32)
+  0| <script type="application/json">#
+  1| {
+  2|     "array": [
+
+Original: 32 (1, 0)
+  0| <script type="application/json">
+  1| #{
+  2|     "array": [
+  3|         1,
+Formatted: 32 (1, 0)
+  0| <script type="application/json">
+  1| #{
+  2|     "array": [
+  3|         1,
+
+Original: 33 (1, 1)
+  0| <script type="application/json">
+  1| {#
+  2|     "array": [
+  3|         1,
+Formatted: 33 (1, 1)
+  0| <script type="application/json">
+  1| {#
+  2|     "array": [
+  3|         1,
+
+Original: 34 (2, 0)
+  0| <script type="application/json">
+  1| {
+  2| #    "array": [
+  3|         1,
+  4|         "two",
+Formatted: 34 (2, 0)
+  0| <script type="application/json">
+  1| {
+  2| #    "array": [
+  3|         1,
+  4|         "two",
+
+Original: 35 (2, 1)
+  0| <script type="application/json">
+  1| {
+  2|  #   "array": [
+  3|         1,
+  4|         "two",
+Formatted: 35 (2, 1)
+  0| <script type="application/json">
+  1| {
+  2|  #   "array": [
+  3|         1,
+  4|         "two",
+
+Original: 36 (2, 2)
+  0| <script type="application/json">
+  1| {
+  2|   #  "array": [
+  3|         1,
+  4|         "two",
+Formatted: 36 (2, 2)
+  0| <script type="application/json">
+  1| {
+  2|   #  "array": [
+  3|         1,
+  4|         "two",
+
+Original: 37 (2, 3)
+  0| <script type="application/json">
+  1| {
+  2|    # "array": [
+  3|         1,
+  4|         "two",
+Formatted: 37 (2, 3)
+  0| <script type="application/json">
+  1| {
+  2|    # "array": [
+  3|         1,
+  4|         "two",
+
+Original: 38 (2, 4)
+  0| <script type="application/json">
+  1| {
+  2|     #"array": [
+  3|         1,
+  4|         "two",
+Formatted: 38 (2, 4)
+  0| <script type="application/json">
+  1| {
+  2|     #"array": [
+  3|         1,
+  4|         "two",
+
+Original: 39 (2, 5)
+  0| <script type="application/json">
+  1| {
+  2|     "#array": [
+  3|         1,
+  4|         "two",
+Formatted: 39 (2, 5)
+  0| <script type="application/json">
+  1| {
+  2|     "#array": [
+  3|         1,
+  4|         "two",
+
+Original: 40 (2, 6)
+  0| <script type="application/json">
+  1| {
+  2|     "a#rray": [
+  3|         1,
+  4|         "two",
+Formatted: 40 (2, 6)
+  0| <script type="application/json">
+  1| {
+  2|     "a#rray": [
+  3|         1,
+  4|         "two",
+
+Original: 41 (2, 7)
+  0| <script type="application/json">
+  1| {
+  2|     "ar#ray": [
+  3|         1,
+  4|         "two",
+Formatted: 41 (2, 7)
+  0| <script type="application/json">
+  1| {
+  2|     "ar#ray": [
+  3|         1,
+  4|         "two",
+
+Original: 42 (2, 8)
+  0| <script type="application/json">
+  1| {
+  2|     "arr#ay": [
+  3|         1,
+  4|         "two",
+Formatted: 42 (2, 8)
+  0| <script type="application/json">
+  1| {
+  2|     "arr#ay": [
+  3|         1,
+  4|         "two",
+
+Original: 43 (2, 9)
+  0| <script type="application/json">
+  1| {
+  2|     "arra#y": [
+  3|         1,
+  4|         "two",
+Formatted: 43 (2, 9)
+  0| <script type="application/json">
+  1| {
+  2|     "arra#y": [
+  3|         1,
+  4|         "two",
+
+Original: 44 (2, 10)
+  0| <script type="application/json">
+  1| {
+  2|     "array#": [
+  3|         1,
+  4|         "two",
+Formatted: 44 (2, 10)
+  0| <script type="application/json">
+  1| {
+  2|     "array#": [
+  3|         1,
+  4|         "two",
+
+Original: 45 (2, 11)
+  0| <script type="application/json">
+  1| {
+  2|     "array"#: [
+  3|         1,
+  4|         "two",
+Formatted: 45 (2, 11)
+  0| <script type="application/json">
+  1| {
+  2|     "array"#: [
+  3|         1,
+  4|         "two",
+
+Original: 46 (2, 12)
+  0| <script type="application/json">
+  1| {
+  2|     "array":# [
+  3|         1,
+  4|         "two",
+Formatted: 46 (2, 12)
+  0| <script type="application/json">
+  1| {
+  2|     "array":# [
+  3|         1,
+  4|         "two",
+
+Original: 47 (2, 13)
+  0| <script type="application/json">
+  1| {
+  2|     "array": #[
+  3|         1,
+  4|         "two",
+Formatted: 47 (2, 13)
+  0| <script type="application/json">
+  1| {
+  2|     "array": #[
+  3|         1,
+  4|         "two",
+
+Original: 48 (2, 14)
+  0| <script type="application/json">
+  1| {
+  2|     "array": [#
+  3|         1,
+  4|         "two",
+Formatted: 48 (2, 14)
+  0| <script type="application/json">
+  1| {
+  2|     "array": [#
+  3|         1,
+  4|         "two",
+
+Original: 49 (3, 0)
+  1| {
+  2|     "array": [
+  3| #        1,
+  4|         "two",
+  5|         null
+Formatted: 49 (3, 0)
+  1| {
+  2|     "array": [
+  3| #        1,
+  4|         "two",
+  5|         null
+
+Original: 50 (3, 1)
+  1| {
+  2|     "array": [
+  3|  #       1,
+  4|         "two",
+  5|         null
+Formatted: 50 (3, 1)
+  1| {
+  2|     "array": [
+  3|  #       1,
+  4|         "two",
+  5|         null
+
+Original: 51 (3, 2)
+  1| {
+  2|     "array": [
+  3|   #      1,
+  4|         "two",
+  5|         null
+Formatted: 51 (3, 2)
+  1| {
+  2|     "array": [
+  3|   #      1,
+  4|         "two",
+  5|         null
+
+Original: 52 (3, 3)
+  1| {
+  2|     "array": [
+  3|    #     1,
+  4|         "two",
+  5|         null
+Formatted: 52 (3, 3)
+  1| {
+  2|     "array": [
+  3|    #     1,
+  4|         "two",
+  5|         null
+
+Original: 53 (3, 4)
+  1| {
+  2|     "array": [
+  3|     #    1,
+  4|         "two",
+  5|         null
+Formatted: 53 (3, 4)
+  1| {
+  2|     "array": [
+  3|     #    1,
+  4|         "two",
+  5|         null
+
+Original: 54 (3, 5)
+  1| {
+  2|     "array": [
+  3|      #   1,
+  4|         "two",
+  5|         null
+Formatted: 54 (3, 5)
+  1| {
+  2|     "array": [
+  3|      #   1,
+  4|         "two",
+  5|         null
+
+Original: 55 (3, 6)
+  1| {
+  2|     "array": [
+  3|       #  1,
+  4|         "two",
+  5|         null
+Formatted: 55 (3, 6)
+  1| {
+  2|     "array": [
+  3|       #  1,
+  4|         "two",
+  5|         null
+
+Original: 56 (3, 7)
+  1| {
+  2|     "array": [
+  3|        # 1,
+  4|         "two",
+  5|         null
+Formatted: 56 (3, 7)
+  1| {
+  2|     "array": [
+  3|        # 1,
+  4|         "two",
+  5|         null
+
+Original: 57 (3, 8)
+  1| {
+  2|     "array": [
+  3|         #1,
+  4|         "two",
+  5|         null
+Formatted: 57 (3, 8)
+  1| {
+  2|     "array": [
+  3|         #1,
+  4|         "two",
+  5|         null
+
+Original: 58 (3, 9)
+  1| {
+  2|     "array": [
+  3|         1#,
+  4|         "two",
+  5|         null
+Formatted: 58 (3, 9)
+  1| {
+  2|     "array": [
+  3|         1#,
+  4|         "two",
+  5|         null
+
+Original: 59 (3, 10)
+  1| {
+  2|     "array": [
+  3|         1,#
+  4|         "two",
+  5|         null
+Formatted: 59 (3, 10)
+  1| {
+  2|     "array": [
+  3|         1,#
+  4|         "two",
+  5|         null
+
+Original: 60 (4, 0)
+  2|     "array": [
+  3|         1,
+  4| #        "two",
+  5|         null
+  6|     ],
+Formatted: 60 (4, 0)
+  2|     "array": [
+  3|         1,
+  4| #        "two",
+  5|         null
+  6|     ],
+
+Original: 61 (4, 1)
+  2|     "array": [
+  3|         1,
+  4|  #       "two",
+  5|         null
+  6|     ],
+Formatted: 61 (4, 1)
+  2|     "array": [
+  3|         1,
+  4|  #       "two",
+  5|         null
+  6|     ],
+
+Original: 62 (4, 2)
+  2|     "array": [
+  3|         1,
+  4|   #      "two",
+  5|         null
+  6|     ],
+Formatted: 62 (4, 2)
+  2|     "array": [
+  3|         1,
+  4|   #      "two",
+  5|         null
+  6|     ],
+
+Original: 63 (4, 3)
+  2|     "array": [
+  3|         1,
+  4|    #     "two",
+  5|         null
+  6|     ],
+Formatted: 63 (4, 3)
+  2|     "array": [
+  3|         1,
+  4|    #     "two",
+  5|         null
+  6|     ],
+
+Original: 64 (4, 4)
+  2|     "array": [
+  3|         1,
+  4|     #    "two",
+  5|         null
+  6|     ],
+Formatted: 64 (4, 4)
+  2|     "array": [
+  3|         1,
+  4|     #    "two",
+  5|         null
+  6|     ],
+
+Original: 65 (4, 5)
+  2|     "array": [
+  3|         1,
+  4|      #   "two",
+  5|         null
+  6|     ],
+Formatted: 65 (4, 5)
+  2|     "array": [
+  3|         1,
+  4|      #   "two",
+  5|         null
+  6|     ],
+
+Original: 66 (4, 6)
+  2|     "array": [
+  3|         1,
+  4|       #  "two",
+  5|         null
+  6|     ],
+Formatted: 66 (4, 6)
+  2|     "array": [
+  3|         1,
+  4|       #  "two",
+  5|         null
+  6|     ],
+
+Original: 67 (4, 7)
+  2|     "array": [
+  3|         1,
+  4|        # "two",
+  5|         null
+  6|     ],
+Formatted: 67 (4, 7)
+  2|     "array": [
+  3|         1,
+  4|        # "two",
+  5|         null
+  6|     ],
+
+Original: 68 (4, 8)
+  2|     "array": [
+  3|         1,
+  4|         #"two",
+  5|         null
+  6|     ],
+Formatted: 68 (4, 8)
+  2|     "array": [
+  3|         1,
+  4|         #"two",
+  5|         null
+  6|     ],
+
+Original: 69 (4, 9)
+  2|     "array": [
+  3|         1,
+  4|         "#two",
+  5|         null
+  6|     ],
+Formatted: 69 (4, 9)
+  2|     "array": [
+  3|         1,
+  4|         "#two",
+  5|         null
+  6|     ],
+
+Original: 70 (4, 10)
+  2|     "array": [
+  3|         1,
+  4|         "t#wo",
+  5|         null
+  6|     ],
+Formatted: 70 (4, 10)
+  2|     "array": [
+  3|         1,
+  4|         "t#wo",
+  5|         null
+  6|     ],
+
+Original: 71 (4, 11)
+  2|     "array": [
+  3|         1,
+  4|         "tw#o",
+  5|         null
+  6|     ],
+Formatted: 71 (4, 11)
+  2|     "array": [
+  3|         1,
+  4|         "tw#o",
+  5|         null
+  6|     ],
+
+Original: 72 (4, 12)
+  2|     "array": [
+  3|         1,
+  4|         "two#",
+  5|         null
+  6|     ],
+Formatted: 72 (4, 12)
+  2|     "array": [
+  3|         1,
+  4|         "two#",
+  5|         null
+  6|     ],
+
+Original: 73 (4, 13)
+  2|     "array": [
+  3|         1,
+  4|         "two"#,
+  5|         null
+  6|     ],
+Formatted: 73 (4, 13)
+  2|     "array": [
+  3|         1,
+  4|         "two"#,
+  5|         null
+  6|     ],
+
+Original: 74 (4, 14)
+  2|     "array": [
+  3|         1,
+  4|         "two",#
+  5|         null
+  6|     ],
+Formatted: 74 (4, 14)
+  2|     "array": [
+  3|         1,
+  4|         "two",#
+  5|         null
+  6|     ],
+
+Original: 75 (5, 0)
+  3|         1,
+  4|         "two",
+  5| #        null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 75 (5, 0)
+  3|         1,
+  4|         "two",
+  5| #        null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 76 (5, 1)
+  3|         1,
+  4|         "two",
+  5|  #       null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 76 (5, 1)
+  3|         1,
+  4|         "two",
+  5|  #       null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 77 (5, 2)
+  3|         1,
+  4|         "two",
+  5|   #      null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 77 (5, 2)
+  3|         1,
+  4|         "two",
+  5|   #      null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 78 (5, 3)
+  3|         1,
+  4|         "two",
+  5|    #     null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 78 (5, 3)
+  3|         1,
+  4|         "two",
+  5|    #     null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 79 (5, 4)
+  3|         1,
+  4|         "two",
+  5|     #    null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 79 (5, 4)
+  3|         1,
+  4|         "two",
+  5|     #    null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 80 (5, 5)
+  3|         1,
+  4|         "two",
+  5|      #   null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 80 (5, 5)
+  3|         1,
+  4|         "two",
+  5|      #   null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 81 (5, 6)
+  3|         1,
+  4|         "two",
+  5|       #  null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 81 (5, 6)
+  3|         1,
+  4|         "two",
+  5|       #  null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 82 (5, 7)
+  3|         1,
+  4|         "two",
+  5|        # null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 82 (5, 7)
+  3|         1,
+  4|         "two",
+  5|        # null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 83 (5, 8)
+  3|         1,
+  4|         "two",
+  5|         #null
+  6|     ],
+  7|     "boolean": true,
+Formatted: 83 (5, 8)
+  3|         1,
+  4|         "two",
+  5|         #null
+  6|     ],
+  7|     "boolean": true,
+
+Original: 84 (5, 9)
+  3|         1,
+  4|         "two",
+  5|         n#ull
+  6|     ],
+  7|     "boolean": true,
+Formatted: 84 (5, 9)
+  3|         1,
+  4|         "two",
+  5|         n#ull
+  6|     ],
+  7|     "boolean": true,
+
+Original: 85 (5, 10)
+  3|         1,
+  4|         "two",
+  5|         nu#ll
+  6|     ],
+  7|     "boolean": true,
+Formatted: 85 (5, 10)
+  3|         1,
+  4|         "two",
+  5|         nu#ll
+  6|     ],
+  7|     "boolean": true,
+
+Original: 86 (5, 11)
+  3|         1,
+  4|         "two",
+  5|         nul#l
+  6|     ],
+  7|     "boolean": true,
+Formatted: 86 (5, 11)
+  3|         1,
+  4|         "two",
+  5|         nul#l
+  6|     ],
+  7|     "boolean": true,
+
+Original: 87 (5, 12)
+  3|         1,
+  4|         "two",
+  5|         null#
+  6|     ],
+  7|     "boolean": true,
+Formatted: 87 (5, 12)
+  3|         1,
+  4|         "two",
+  5|         null#
+  6|     ],
+  7|     "boolean": true,
+
+Original: 88 (6, 0)
+  4|         "two",
+  5|         null
+  6| #    ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 88 (6, 0)
+  4|         "two",
+  5|         null
+  6| #    ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 89 (6, 1)
+  4|         "two",
+  5|         null
+  6|  #   ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 89 (6, 1)
+  4|         "two",
+  5|         null
+  6|  #   ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 90 (6, 2)
+  4|         "two",
+  5|         null
+  6|   #  ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 90 (6, 2)
+  4|         "two",
+  5|         null
+  6|   #  ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 91 (6, 3)
+  4|         "two",
+  5|         null
+  6|    # ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 91 (6, 3)
+  4|         "two",
+  5|         null
+  6|    # ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 92 (6, 4)
+  4|         "two",
+  5|         null
+  6|     #],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 92 (6, 4)
+  4|         "two",
+  5|         null
+  6|     #],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 93 (6, 5)
+  4|         "two",
+  5|         null
+  6|     ]#,
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 93 (6, 5)
+  4|         "two",
+  5|         null
+  6|     ]#,
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 94 (6, 6)
+  4|         "two",
+  5|         null
+  6|     ],#
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Formatted: 94 (6, 6)
+  4|         "two",
+  5|         null
+  6|     ],#
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Original: 95 (7, 0)
+  5|         null
+  6|     ],
+  7| #    "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 95 (7, 0)
+  5|         null
+  6|     ],
+  7| #    "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 96 (7, 1)
+  5|         null
+  6|     ],
+  7|  #   "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 96 (7, 1)
+  5|         null
+  6|     ],
+  7|  #   "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 97 (7, 2)
+  5|         null
+  6|     ],
+  7|   #  "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 97 (7, 2)
+  5|         null
+  6|     ],
+  7|   #  "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 98 (7, 3)
+  5|         null
+  6|     ],
+  7|    # "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 98 (7, 3)
+  5|         null
+  6|     ],
+  7|    # "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 99 (7, 4)
+  5|         null
+  6|     ],
+  7|     #"boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 99 (7, 4)
+  5|         null
+  6|     ],
+  7|     #"boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 100 (7, 5)
+  5|         null
+  6|     ],
+  7|     "#boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 100 (7, 5)
+  5|         null
+  6|     ],
+  7|     "#boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 101 (7, 6)
+  5|         null
+  6|     ],
+  7|     "b#oolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 101 (7, 6)
+  5|         null
+  6|     ],
+  7|     "b#oolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 102 (7, 7)
+  5|         null
+  6|     ],
+  7|     "bo#olean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 102 (7, 7)
+  5|         null
+  6|     ],
+  7|     "bo#olean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 103 (7, 8)
+  5|         null
+  6|     ],
+  7|     "boo#lean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 103 (7, 8)
+  5|         null
+  6|     ],
+  7|     "boo#lean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 104 (7, 9)
+  5|         null
+  6|     ],
+  7|     "bool#ean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 104 (7, 9)
+  5|         null
+  6|     ],
+  7|     "bool#ean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 105 (7, 10)
+  5|         null
+  6|     ],
+  7|     "boole#an": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 105 (7, 10)
+  5|         null
+  6|     ],
+  7|     "boole#an": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 106 (7, 11)
+  5|         null
+  6|     ],
+  7|     "boolea#n": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 106 (7, 11)
+  5|         null
+  6|     ],
+  7|     "boolea#n": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 107 (7, 12)
+  5|         null
+  6|     ],
+  7|     "boolean#": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 107 (7, 12)
+  5|         null
+  6|     ],
+  7|     "boolean#": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 108 (7, 13)
+  5|         null
+  6|     ],
+  7|     "boolean"#: true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 108 (7, 13)
+  5|         null
+  6|     ],
+  7|     "boolean"#: true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 109 (7, 14)
+  5|         null
+  6|     ],
+  7|     "boolean":# true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 109 (7, 14)
+  5|         null
+  6|     ],
+  7|     "boolean":# true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 110 (7, 15)
+  5|         null
+  6|     ],
+  7|     "boolean": #true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 110 (7, 15)
+  5|         null
+  6|     ],
+  7|     "boolean": #true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 111 (7, 16)
+  5|         null
+  6|     ],
+  7|     "boolean": t#rue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 111 (7, 16)
+  5|         null
+  6|     ],
+  7|     "boolean": t#rue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 112 (7, 17)
+  5|         null
+  6|     ],
+  7|     "boolean": tr#ue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 112 (7, 17)
+  5|         null
+  6|     ],
+  7|     "boolean": tr#ue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 113 (7, 18)
+  5|         null
+  6|     ],
+  7|     "boolean": tru#e,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 113 (7, 18)
+  5|         null
+  6|     ],
+  7|     "boolean": tru#e,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 114 (7, 19)
+  5|         null
+  6|     ],
+  7|     "boolean": true#,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 114 (7, 19)
+  5|         null
+  6|     ],
+  7|     "boolean": true#,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 115 (7, 20)
+  5|         null
+  6|     ],
+  7|     "boolean": true,#
+  8|     "nullValue": null,
+  9|     "number": 42,
+Formatted: 115 (7, 20)
+  5|         null
+  6|     ],
+  7|     "boolean": true,#
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Original: 116 (8, 0)
+  6|     ],
+  7|     "boolean": true,
+  8| #    "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 116 (8, 0)
+  6|     ],
+  7|     "boolean": true,
+  8| #    "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 117 (8, 1)
+  6|     ],
+  7|     "boolean": true,
+  8|  #   "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 117 (8, 1)
+  6|     ],
+  7|     "boolean": true,
+  8|  #   "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 118 (8, 2)
+  6|     ],
+  7|     "boolean": true,
+  8|   #  "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 118 (8, 2)
+  6|     ],
+  7|     "boolean": true,
+  8|   #  "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 119 (8, 3)
+  6|     ],
+  7|     "boolean": true,
+  8|    # "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 119 (8, 3)
+  6|     ],
+  7|     "boolean": true,
+  8|    # "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 120 (8, 4)
+  6|     ],
+  7|     "boolean": true,
+  8|     #"nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 120 (8, 4)
+  6|     ],
+  7|     "boolean": true,
+  8|     #"nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 121 (8, 5)
+  6|     ],
+  7|     "boolean": true,
+  8|     "#nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 121 (8, 5)
+  6|     ],
+  7|     "boolean": true,
+  8|     "#nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 122 (8, 6)
+  6|     ],
+  7|     "boolean": true,
+  8|     "n#ullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 122 (8, 6)
+  6|     ],
+  7|     "boolean": true,
+  8|     "n#ullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 123 (8, 7)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nu#llValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 123 (8, 7)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nu#llValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 124 (8, 8)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nul#lValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 124 (8, 8)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nul#lValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 125 (8, 9)
+  6|     ],
+  7|     "boolean": true,
+  8|     "null#Value": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 125 (8, 9)
+  6|     ],
+  7|     "boolean": true,
+  8|     "null#Value": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 126 (8, 10)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullV#alue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 126 (8, 10)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullV#alue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 127 (8, 11)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVa#lue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 127 (8, 11)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVa#lue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 128 (8, 12)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVal#ue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 128 (8, 12)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVal#ue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 129 (8, 13)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValu#e": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 129 (8, 13)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValu#e": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 130 (8, 14)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue#": null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 130 (8, 14)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue#": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 131 (8, 15)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue"#: null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 131 (8, 15)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue"#: null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 132 (8, 16)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue":# null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 132 (8, 16)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue":# null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 133 (8, 17)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": #null,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 133 (8, 17)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": #null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 134 (8, 18)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": n#ull,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 134 (8, 18)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": n#ull,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 135 (8, 19)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nu#ll,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 135 (8, 19)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nu#ll,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 136 (8, 20)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nul#l,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 136 (8, 20)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nul#l,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 137 (8, 21)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null#,
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 137 (8, 21)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null#,
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 138 (8, 22)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null,#
+  9|     "number": 42,
+ 10|     "object": {
+Formatted: 138 (8, 22)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null,#
+  9|     "number": 42,
+ 10|     "object": {
+
+Original: 139 (9, 0)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9| #    "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 139 (9, 0)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9| #    "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 140 (9, 1)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|  #   "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 140 (9, 1)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|  #   "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 141 (9, 2)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|   #  "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 141 (9, 2)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|   #  "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 142 (9, 3)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|    # "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 142 (9, 3)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|    # "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 143 (9, 4)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     #"number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 143 (9, 4)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     #"number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 144 (9, 5)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "#number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 144 (9, 5)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "#number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 145 (9, 6)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "n#umber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 145 (9, 6)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "n#umber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 146 (9, 7)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "nu#mber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 146 (9, 7)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "nu#mber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 147 (9, 8)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "num#ber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 147 (9, 8)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "num#ber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 148 (9, 9)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numb#er": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 148 (9, 9)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numb#er": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 149 (9, 10)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numbe#r": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 149 (9, 10)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numbe#r": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 150 (9, 11)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number#": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 150 (9, 11)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number#": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 151 (9, 12)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number"#: 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 151 (9, 12)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number"#: 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 152 (9, 13)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number":# 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 152 (9, 13)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number":# 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 153 (9, 14)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": #42,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 153 (9, 14)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": #42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 154 (9, 15)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 4#2,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 154 (9, 15)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 4#2,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 155 (9, 16)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42#,
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 155 (9, 16)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42#,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 156 (9, 17)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,#
+ 10|     "object": {
+ 11|         "key": "value"
+Formatted: 156 (9, 17)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,#
+ 10|     "object": {
+ 11|         "key": "value"
+
+Original: 157 (10, 0)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10| #    "object": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 157 (10, 0)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10| #    "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 158 (10, 1)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|  #   "object": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 158 (10, 1)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|  #   "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 159 (10, 2)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|   #  "object": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 159 (10, 2)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|   #  "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 160 (10, 3)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|    # "object": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 160 (10, 3)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|    # "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 161 (10, 4)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     #"object": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 161 (10, 4)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     #"object": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 162 (10, 5)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "#object": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 162 (10, 5)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "#object": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 163 (10, 6)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "o#bject": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 163 (10, 6)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "o#bject": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 164 (10, 7)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "ob#ject": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 164 (10, 7)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "ob#ject": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 165 (10, 8)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obj#ect": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 165 (10, 8)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obj#ect": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 166 (10, 9)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obje#ct": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 166 (10, 9)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obje#ct": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 167 (10, 10)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "objec#t": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 167 (10, 10)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "objec#t": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 168 (10, 11)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object#": {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 168 (10, 11)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object#": {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 169 (10, 12)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object"#: {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 169 (10, 12)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object"#: {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 170 (10, 13)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object":# {
+ 11|         "key": "value"
+ 12|     },
+Formatted: 170 (10, 13)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object":# {
+ 11|         "key": "value"
+ 12|     },
+
+Original: 171 (10, 14)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": #{
+ 11|         "key": "value"
+ 12|     },
+Formatted: 171 (10, 14)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": #{
+ 11|         "key": "value"
+ 12|     },
+
+Original: 172 (10, 15)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {#
+ 11|         "key": "value"
+ 12|     },
+Formatted: 172 (10, 15)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {#
+ 11|         "key": "value"
+ 12|     },
+
+Original: 173 (11, 0)
+  9|     "number": 42,
+ 10|     "object": {
+ 11| #        "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 173 (11, 0)
+  9|     "number": 42,
+ 10|     "object": {
+ 11| #        "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 174 (11, 1)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|  #       "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 174 (11, 1)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|  #       "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 175 (11, 2)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|   #      "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 175 (11, 2)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|   #      "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 176 (11, 3)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|    #     "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 176 (11, 3)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|    #     "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 177 (11, 4)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|     #    "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 177 (11, 4)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|     #    "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 178 (11, 5)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|      #   "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 178 (11, 5)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|      #   "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 179 (11, 6)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|       #  "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 179 (11, 6)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|       #  "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 180 (11, 7)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|        # "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 180 (11, 7)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|        # "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 181 (11, 8)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         #"key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 181 (11, 8)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         #"key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 182 (11, 9)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "#key": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 182 (11, 9)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "#key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 183 (11, 10)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "k#ey": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 183 (11, 10)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "k#ey": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 184 (11, 11)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "ke#y": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 184 (11, 11)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "ke#y": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 185 (11, 12)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key#": "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 185 (11, 12)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key#": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 186 (11, 13)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key"#: "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 186 (11, 13)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key"#: "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 187 (11, 14)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key":# "value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 187 (11, 14)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key":# "value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 188 (11, 15)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": #"value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 188 (11, 15)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": #"value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 189 (11, 16)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "#value"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 189 (11, 16)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "#value"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 190 (11, 17)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "v#alue"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 190 (11, 17)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "v#alue"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 191 (11, 18)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "va#lue"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 191 (11, 18)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "va#lue"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 192 (11, 19)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "val#ue"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 192 (11, 19)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "val#ue"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 193 (11, 20)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "valu#e"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 193 (11, 20)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "valu#e"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 194 (11, 21)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value#"
+ 12|     },
+ 13|     "string": "text"
+Formatted: 194 (11, 21)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value#"
+ 12|     },
+ 13|     "string": "text"
+
+Original: 195 (11, 22)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"#
+ 12|     },
+ 13|     "string": "text"
+Formatted: 195 (11, 22)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"#
+ 12|     },
+ 13|     "string": "text"
+
+Original: 196 (12, 0)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12| #    },
+ 13|     "string": "text"
+ 14| }
+Formatted: 196 (12, 0)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12| #    },
+ 13|     "string": "text"
+ 14| }
+
+Original: 197 (12, 1)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|  #   },
+ 13|     "string": "text"
+ 14| }
+Formatted: 197 (12, 1)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|  #   },
+ 13|     "string": "text"
+ 14| }
+
+Original: 198 (12, 2)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|   #  },
+ 13|     "string": "text"
+ 14| }
+Formatted: 198 (12, 2)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|   #  },
+ 13|     "string": "text"
+ 14| }
+
+Original: 199 (12, 3)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|    # },
+ 13|     "string": "text"
+ 14| }
+Formatted: 199 (12, 3)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|    # },
+ 13|     "string": "text"
+ 14| }
+
+Original: 200 (12, 4)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     #},
+ 13|     "string": "text"
+ 14| }
+Formatted: 200 (12, 4)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     #},
+ 13|     "string": "text"
+ 14| }
+
+Original: 201 (12, 5)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     }#,
+ 13|     "string": "text"
+ 14| }
+Formatted: 201 (12, 5)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     }#,
+ 13|     "string": "text"
+ 14| }
+
+Original: 202 (12, 6)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     },#
+ 13|     "string": "text"
+ 14| }
+Formatted: 202 (12, 6)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     },#
+ 13|     "string": "text"
+ 14| }
+
+Original: 203 (13, 0)
+ 11|         "key": "value"
+ 12|     },
+ 13| #    "string": "text"
+ 14| }
+ 15| </script>
+Formatted: 203 (13, 0)
+ 11|         "key": "value"
+ 12|     },
+ 13| #    "string": "text"
+ 14| }
+ 15| </script>
+
+Original: 204 (13, 1)
+ 11|         "key": "value"
+ 12|     },
+ 13|  #   "string": "text"
+ 14| }
+ 15| </script>
+Formatted: 204 (13, 1)
+ 11|         "key": "value"
+ 12|     },
+ 13|  #   "string": "text"
+ 14| }
+ 15| </script>
+
+Original: 205 (13, 2)
+ 11|         "key": "value"
+ 12|     },
+ 13|   #  "string": "text"
+ 14| }
+ 15| </script>
+Formatted: 205 (13, 2)
+ 11|         "key": "value"
+ 12|     },
+ 13|   #  "string": "text"
+ 14| }
+ 15| </script>
+
+Original: 206 (13, 3)
+ 11|         "key": "value"
+ 12|     },
+ 13|    # "string": "text"
+ 14| }
+ 15| </script>
+Formatted: 206 (13, 3)
+ 11|         "key": "value"
+ 12|     },
+ 13|    # "string": "text"
+ 14| }
+ 15| </script>
+
+Original: 207 (13, 4)
+ 11|         "key": "value"
+ 12|     },
+ 13|     #"string": "text"
+ 14| }
+ 15| </script>
+Formatted: 207 (13, 4)
+ 11|         "key": "value"
+ 12|     },
+ 13|     #"string": "text"
+ 14| }
+ 15| </script>
+
+Original: 208 (13, 5)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "#string": "text"
+ 14| }
+ 15| </script>
+Formatted: 208 (13, 5)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "#string": "text"
+ 14| }
+ 15| </script>
+
+Original: 209 (13, 6)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "s#tring": "text"
+ 14| }
+ 15| </script>
+Formatted: 209 (13, 6)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "s#tring": "text"
+ 14| }
+ 15| </script>
+
+Original: 210 (13, 7)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "st#ring": "text"
+ 14| }
+ 15| </script>
+Formatted: 210 (13, 7)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "st#ring": "text"
+ 14| }
+ 15| </script>
+
+Original: 211 (13, 8)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "str#ing": "text"
+ 14| }
+ 15| </script>
+Formatted: 211 (13, 8)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "str#ing": "text"
+ 14| }
+ 15| </script>
+
+Original: 212 (13, 9)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "stri#ng": "text"
+ 14| }
+ 15| </script>
+Formatted: 212 (13, 9)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "stri#ng": "text"
+ 14| }
+ 15| </script>
+
+Original: 213 (13, 10)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "strin#g": "text"
+ 14| }
+ 15| </script>
+Formatted: 213 (13, 10)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "strin#g": "text"
+ 14| }
+ 15| </script>
+
+Original: 214 (13, 11)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string#": "text"
+ 14| }
+ 15| </script>
+Formatted: 214 (13, 11)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string#": "text"
+ 14| }
+ 15| </script>
+
+Original: 215 (13, 12)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string"#: "text"
+ 14| }
+ 15| </script>
+Formatted: 215 (13, 12)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string"#: "text"
+ 14| }
+ 15| </script>
+
+Original: 216 (13, 13)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string":# "text"
+ 14| }
+ 15| </script>
+Formatted: 216 (13, 13)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string":# "text"
+ 14| }
+ 15| </script>
+
+Original: 217 (13, 14)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": #"text"
+ 14| }
+ 15| </script>
+Formatted: 217 (13, 14)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": #"text"
+ 14| }
+ 15| </script>
+
+Original: 218 (13, 15)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "#text"
+ 14| }
+ 15| </script>
+Formatted: 218 (13, 15)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "#text"
+ 14| }
+ 15| </script>
+
+Original: 219 (13, 16)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "t#ext"
+ 14| }
+ 15| </script>
+Formatted: 219 (13, 16)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "t#ext"
+ 14| }
+ 15| </script>
+
+Original: 220 (13, 17)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "te#xt"
+ 14| }
+ 15| </script>
+Formatted: 220 (13, 17)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "te#xt"
+ 14| }
+ 15| </script>
+
+Original: 221 (13, 18)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "tex#t"
+ 14| }
+ 15| </script>
+Formatted: 221 (13, 18)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "tex#t"
+ 14| }
+ 15| </script>
+
+Original: 222 (13, 19)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text#"
+ 14| }
+ 15| </script>
+Formatted: 222 (13, 19)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text#"
+ 14| }
+ 15| </script>
+
+Original: 223 (13, 20)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text"#
+ 14| }
+ 15| </script>
+Formatted: 223 (13, 20)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text"#
+ 14| }
+ 15| </script>
+
+Original: 224 (14, 0)
+ 12|     },
+ 13|     "string": "text"
+ 14| #}
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+Formatted: 224 (14, 0)
+ 12|     },
+ 13|     "string": "text"
+ 14| #}
+ 15| </script>
+ 16| <script>
+
+Original: 225 (14, 1)
+ 12|     },
+ 13|     "string": "text"
+ 14| }#
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+Formatted: 225 (14, 1)
+ 12|     },
+ 13|     "string": "text"
+ 14| }#
+ 15| </script>
+ 16| <script>
+
+Original: 226 (15, 0)
+ 13|     "string": "text"
+ 14| }
+ 15| #</script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 226 (15, 0)
+ 13|     "string": "text"
+ 14| }
+ 15| #</script>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 227 (15, 1)
+ 13|     "string": "text"
+ 14| }
+ 15| <#/script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 227 (15, 1)
+ 13|     "string": "text"
+ 14| }
+ 15| <#/script>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 228 (15, 2)
+ 13|     "string": "text"
+ 14| }
+ 15| </#script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 228 (15, 2)
+ 13|     "string": "text"
+ 14| }
+ 15| </#script>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 229 (15, 3)
+ 13|     "string": "text"
+ 14| }
+ 15| </s#cript>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 229 (15, 3)
+ 13|     "string": "text"
+ 14| }
+ 15| </s#cript>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 230 (15, 4)
+ 13|     "string": "text"
+ 14| }
+ 15| </sc#ript>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 230 (15, 4)
+ 13|     "string": "text"
+ 14| }
+ 15| </sc#ript>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 231 (15, 5)
+ 13|     "string": "text"
+ 14| }
+ 15| </scr#ipt>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 231 (15, 5)
+ 13|     "string": "text"
+ 14| }
+ 15| </scr#ipt>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 232 (15, 6)
+ 13|     "string": "text"
+ 14| }
+ 15| </scri#pt>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 232 (15, 6)
+ 13|     "string": "text"
+ 14| }
+ 15| </scri#pt>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 233 (15, 7)
+ 13|     "string": "text"
+ 14| }
+ 15| </scrip#t>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 233 (15, 7)
+ 13|     "string": "text"
+ 14| }
+ 15| </scrip#t>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 234 (15, 8)
+ 13|     "string": "text"
+ 14| }
+ 15| </script#>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 234 (15, 8)
+ 13|     "string": "text"
+ 14| }
+ 15| </script#>
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 235 (15, 9)
+ 13|     "string": "text"
+ 14| }
+ 15| </script>#
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 235 (15, 9)
+ 13|     "string": "text"
+ 14| }
+ 15| </script>#
+ 16| <script>
+ 17| let answer = 42;
+
+Original: 236 (16, 0)
+ 14| }
+ 15| </script>
+ 16| #<script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 236 (16, 0)
+ 14| }
+ 15| </script>
+ 16| #<script>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 237 (16, 1)
+ 14| }
+ 15| </script>
+ 16| <#script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 237 (16, 1)
+ 14| }
+ 15| </script>
+ 16| <#script>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 238 (16, 2)
+ 14| }
+ 15| </script>
+ 16| <s#cript>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 238 (16, 2)
+ 14| }
+ 15| </script>
+ 16| <s#cript>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 239 (16, 3)
+ 14| }
+ 15| </script>
+ 16| <sc#ript>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 239 (16, 3)
+ 14| }
+ 15| </script>
+ 16| <sc#ript>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 240 (16, 4)
+ 14| }
+ 15| </script>
+ 16| <scr#ipt>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 240 (16, 4)
+ 14| }
+ 15| </script>
+ 16| <scr#ipt>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 241 (16, 5)
+ 14| }
+ 15| </script>
+ 16| <scri#pt>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 241 (16, 5)
+ 14| }
+ 15| </script>
+ 16| <scri#pt>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 242 (16, 6)
+ 14| }
+ 15| </script>
+ 16| <scrip#t>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 242 (16, 6)
+ 14| }
+ 15| </script>
+ 16| <scrip#t>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 243 (16, 7)
+ 14| }
+ 15| </script>
+ 16| <script#>let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 243 (16, 7)
+ 14| }
+ 15| </script>
+ 16| <script#>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+
+Original: 244 (16, 8)
+ 14| }
+ 15| </script>
+ 16| <script>#let answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 244 (17, 0)
+ 15| </script>
+ 16| <script>
+ 17| #let answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 245 (16, 9)
+ 14| }
+ 15| </script>
+ 16| <script>l#et answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 246 (17, 1)
+ 15| </script>
+ 16| <script>
+ 17| l#et answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 246 (16, 10)
+ 14| }
+ 15| </script>
+ 16| <script>le#t answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 247 (17, 2)
+ 15| </script>
+ 16| <script>
+ 17| le#t answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 247 (16, 11)
+ 14| }
+ 15| </script>
+ 16| <script>let# answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 248 (17, 3)
+ 15| </script>
+ 16| <script>
+ 17| let# answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 248 (16, 12)
+ 14| }
+ 15| </script>
+ 16| <script>let #answer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 249 (17, 4)
+ 15| </script>
+ 16| <script>
+ 17| let #answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 249 (16, 13)
+ 14| }
+ 15| </script>
+ 16| <script>let a#nswer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 250 (17, 5)
+ 15| </script>
+ 16| <script>
+ 17| let a#nswer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 250 (16, 14)
+ 14| }
+ 15| </script>
+ 16| <script>let an#swer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 251 (17, 6)
+ 15| </script>
+ 16| <script>
+ 17| let an#swer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 251 (16, 15)
+ 14| }
+ 15| </script>
+ 16| <script>let ans#wer=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 252 (17, 7)
+ 15| </script>
+ 16| <script>
+ 17| let ans#wer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 252 (16, 16)
+ 14| }
+ 15| </script>
+ 16| <script>let answ#er=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 253 (17, 8)
+ 15| </script>
+ 16| <script>
+ 17| let answ#er = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 253 (16, 17)
+ 14| }
+ 15| </script>
+ 16| <script>let answe#r=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 254 (17, 9)
+ 15| </script>
+ 16| <script>
+ 17| let answe#r = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 254 (16, 18)
+ 14| }
+ 15| </script>
+ 16| <script>let answer#=42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 255 (17, 11)
+ 15| </script>
+ 16| <script>
+ 17| let answer #= 42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 255 (16, 19)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=#42;let result=answer*2;result++;</script>
+ 17|
+Formatted: 257 (17, 13)
+ 15| </script>
+ 16| <script>
+ 17| let answer = #42;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 256 (16, 20)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=4#2;let result=answer*2;result++;</script>
+ 17|
+Formatted: 259 (17, 14)
+ 15| </script>
+ 16| <script>
+ 17| let answer = 4#2;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 257 (16, 21)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42#;let result=answer*2;result++;</script>
+ 17|
+Formatted: 260 (17, 15)
+ 15| </script>
+ 16| <script>
+ 17| let answer = 42#;
+ 18| let result = answer * 2;
+ 19| result++;
+
+Original: 258 (16, 22)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;#let result=answer*2;result++;</script>
+ 17|
+Formatted: 261 (18, 0)
+ 16| <script>
+ 17| let answer = 42;
+ 18| #let result = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 259 (16, 23)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;l#et result=answer*2;result++;</script>
+ 17|
+Formatted: 263 (18, 1)
+ 16| <script>
+ 17| let answer = 42;
+ 18| l#et result = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 260 (16, 24)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;le#t result=answer*2;result++;</script>
+ 17|
+Formatted: 264 (18, 2)
+ 16| <script>
+ 17| let answer = 42;
+ 18| le#t result = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 261 (16, 25)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let# result=answer*2;result++;</script>
+ 17|
+Formatted: 265 (18, 3)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let# result = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 262 (16, 26)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let #result=answer*2;result++;</script>
+ 17|
+Formatted: 266 (18, 4)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let #result = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 263 (16, 27)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let r#esult=answer*2;result++;</script>
+ 17|
+Formatted: 267 (18, 5)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let r#esult = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 264 (16, 28)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let re#sult=answer*2;result++;</script>
+ 17|
+Formatted: 268 (18, 6)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let re#sult = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 265 (16, 29)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let res#ult=answer*2;result++;</script>
+ 17|
+Formatted: 269 (18, 7)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let res#ult = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 266 (16, 30)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let resu#lt=answer*2;result++;</script>
+ 17|
+Formatted: 270 (18, 8)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let resu#lt = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 267 (16, 31)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let resul#t=answer*2;result++;</script>
+ 17|
+Formatted: 271 (18, 9)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let resul#t = answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 268 (16, 32)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result#=answer*2;result++;</script>
+ 17|
+Formatted: 272 (18, 11)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result #= answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 269 (16, 33)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=#answer*2;result++;</script>
+ 17|
+Formatted: 274 (18, 13)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = #answer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 270 (16, 34)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=a#nswer*2;result++;</script>
+ 17|
+Formatted: 276 (18, 14)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = a#nswer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 271 (16, 35)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=an#swer*2;result++;</script>
+ 17|
+Formatted: 277 (18, 15)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = an#swer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 272 (16, 36)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=ans#wer*2;result++;</script>
+ 17|
+Formatted: 278 (18, 16)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = ans#wer * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 273 (16, 37)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answ#er*2;result++;</script>
+ 17|
+Formatted: 279 (18, 17)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answ#er * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 274 (16, 38)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answe#r*2;result++;</script>
+ 17|
+Formatted: 280 (18, 18)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answe#r * 2;
+ 19| result++;
+ 20| </script>
+
+Original: 275 (16, 39)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer#*2;result++;</script>
+ 17|
+Formatted: 281 (18, 20)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer #* 2;
+ 19| result++;
+ 20| </script>
+
+Original: 276 (16, 40)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*#2;result++;</script>
+ 17|
+Formatted: 283 (18, 22)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer * #2;
+ 19| result++;
+ 20| </script>
+
+Original: 277 (16, 41)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2#;result++;</script>
+ 17|
+Formatted: 285 (18, 23)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer * 2#;
+ 19| result++;
+ 20| </script>
+
+Original: 278 (16, 42)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;#result++;</script>
+ 17|
+Formatted: 286 (19, 0)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| #result++;
+ 20| </script>
+ 21|
+
+Original: 279 (16, 43)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;r#esult++;</script>
+ 17|
+Formatted: 288 (19, 1)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| r#esult++;
+ 20| </script>
+ 21|
+
+Original: 280 (16, 44)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;re#sult++;</script>
+ 17|
+Formatted: 289 (19, 2)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| re#sult++;
+ 20| </script>
+ 21|
+
+Original: 281 (16, 45)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;res#ult++;</script>
+ 17|
+Formatted: 290 (19, 3)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| res#ult++;
+ 20| </script>
+ 21|
+
+Original: 282 (16, 46)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;resu#lt++;</script>
+ 17|
+Formatted: 291 (19, 4)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| resu#lt++;
+ 20| </script>
+ 21|
+
+Original: 283 (16, 47)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;resul#t++;</script>
+ 17|
+Formatted: 292 (19, 5)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| resul#t++;
+ 20| </script>
+ 21|
+
+Original: 284 (16, 48)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result#++;</script>
+ 17|
+Formatted: 293 (19, 6)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result#++;
+ 20| </script>
+ 21|
+
+Original: 285 (16, 49)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result+#+;</script>
+ 17|
+Formatted: 294 (19, 7)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result+#+;
+ 20| </script>
+ 21|
+
+Original: 286 (16, 50)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++#;</script>
+ 17|
+Formatted: 295 (19, 8)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result++#;
+ 20| </script>
+ 21|
+
+Original: 287 (16, 51)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;#</script>
+ 17|
+Formatted: 296 (20, 0)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| #</script>
+ 21|
+
+Original: 288 (16, 52)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;<#/script>
+ 17|
+Formatted: 298 (20, 1)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| <#/script>
+ 21|
+
+Original: 289 (16, 53)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</#script>
+ 17|
+Formatted: 299 (20, 2)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </#script>
+ 21|
+
+Original: 290 (16, 54)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</s#cript>
+ 17|
+Formatted: 300 (20, 3)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </s#cript>
+ 21|
+
+Original: 291 (16, 55)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</sc#ript>
+ 17|
+Formatted: 301 (20, 4)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </sc#ript>
+ 21|
+
+Original: 292 (16, 56)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</scr#ipt>
+ 17|
+Formatted: 302 (20, 5)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </scr#ipt>
+ 21|
+
+Original: 293 (16, 57)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</scri#pt>
+ 17|
+Formatted: 303 (20, 6)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </scri#pt>
+ 21|
+
+Original: 294 (16, 58)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</scrip#t>
+ 17|
+Formatted: 304 (20, 7)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </scrip#t>
+ 21|
+
+Original: 295 (16, 59)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script#>
+ 17|
+Formatted: 305 (20, 8)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </script#>
+ 21|
+
+Original: 296 (16, 60)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>#
+ 17|
+Formatted: 306 (20, 9)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </script>#
+ 21|
+
+Original: 297 (17, 0)
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17| #
+Formatted: 307 (21, 0)
+ 19| result++;
+ 20| </script>
+ 21| #
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| <#script type="application/json">
+  1| {
+  2|     "array": [
+Original: 0 (0, 1)
+  0| <#script type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 1 (0, 2)
+  0| <s#cript type="application/json">
+  1| {
+  2|     "array": [
+Original: 1 (0, 2)
+  0| <s#cript type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 2 (0, 3)
+  0| <sc#ript type="application/json">
+  1| {
+  2|     "array": [
+Original: 2 (0, 3)
+  0| <sc#ript type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 3 (0, 4)
+  0| <scr#ipt type="application/json">
+  1| {
+  2|     "array": [
+Original: 3 (0, 4)
+  0| <scr#ipt type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 4 (0, 5)
+  0| <scri#pt type="application/json">
+  1| {
+  2|     "array": [
+Original: 4 (0, 5)
+  0| <scri#pt type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 5 (0, 6)
+  0| <scrip#t type="application/json">
+  1| {
+  2|     "array": [
+Original: 5 (0, 6)
+  0| <scrip#t type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 6 (0, 7)
+  0| <script# type="application/json">
+  1| {
+  2|     "array": [
+Original: 6 (0, 7)
+  0| <script# type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 7 (0, 8)
+  0| <script #type="application/json">
+  1| {
+  2|     "array": [
+Original: 7 (0, 8)
+  0| <script #type="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 8 (0, 9)
+  0| <script t#ype="application/json">
+  1| {
+  2|     "array": [
+Original: 8 (0, 9)
+  0| <script t#ype="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 9 (0, 10)
+  0| <script ty#pe="application/json">
+  1| {
+  2|     "array": [
+Original: 9 (0, 10)
+  0| <script ty#pe="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 10 (0, 11)
+  0| <script typ#e="application/json">
+  1| {
+  2|     "array": [
+Original: 10 (0, 11)
+  0| <script typ#e="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 11 (0, 12)
+  0| <script type#="application/json">
+  1| {
+  2|     "array": [
+Original: 11 (0, 12)
+  0| <script type#="application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 12 (0, 13)
+  0| <script type=#"application/json">
+  1| {
+  2|     "array": [
+Original: 12 (0, 13)
+  0| <script type=#"application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 13 (0, 14)
+  0| <script type="#application/json">
+  1| {
+  2|     "array": [
+Original: 13 (0, 14)
+  0| <script type="#application/json">
+  1| {
+  2|     "array": [
+
+Formatted: 14 (0, 15)
+  0| <script type="a#pplication/json">
+  1| {
+  2|     "array": [
+Original: 14 (0, 15)
+  0| <script type="a#pplication/json">
+  1| {
+  2|     "array": [
+
+Formatted: 15 (0, 16)
+  0| <script type="ap#plication/json">
+  1| {
+  2|     "array": [
+Original: 15 (0, 16)
+  0| <script type="ap#plication/json">
+  1| {
+  2|     "array": [
+
+Formatted: 16 (0, 17)
+  0| <script type="app#lication/json">
+  1| {
+  2|     "array": [
+Original: 16 (0, 17)
+  0| <script type="app#lication/json">
+  1| {
+  2|     "array": [
+
+Formatted: 17 (0, 18)
+  0| <script type="appl#ication/json">
+  1| {
+  2|     "array": [
+Original: 17 (0, 18)
+  0| <script type="appl#ication/json">
+  1| {
+  2|     "array": [
+
+Formatted: 18 (0, 19)
+  0| <script type="appli#cation/json">
+  1| {
+  2|     "array": [
+Original: 18 (0, 19)
+  0| <script type="appli#cation/json">
+  1| {
+  2|     "array": [
+
+Formatted: 19 (0, 20)
+  0| <script type="applic#ation/json">
+  1| {
+  2|     "array": [
+Original: 19 (0, 20)
+  0| <script type="applic#ation/json">
+  1| {
+  2|     "array": [
+
+Formatted: 20 (0, 21)
+  0| <script type="applica#tion/json">
+  1| {
+  2|     "array": [
+Original: 20 (0, 21)
+  0| <script type="applica#tion/json">
+  1| {
+  2|     "array": [
+
+Formatted: 21 (0, 22)
+  0| <script type="applicat#ion/json">
+  1| {
+  2|     "array": [
+Original: 21 (0, 22)
+  0| <script type="applicat#ion/json">
+  1| {
+  2|     "array": [
+
+Formatted: 22 (0, 23)
+  0| <script type="applicati#on/json">
+  1| {
+  2|     "array": [
+Original: 22 (0, 23)
+  0| <script type="applicati#on/json">
+  1| {
+  2|     "array": [
+
+Formatted: 23 (0, 24)
+  0| <script type="applicatio#n/json">
+  1| {
+  2|     "array": [
+Original: 23 (0, 24)
+  0| <script type="applicatio#n/json">
+  1| {
+  2|     "array": [
+
+Formatted: 24 (0, 25)
+  0| <script type="application#/json">
+  1| {
+  2|     "array": [
+Original: 24 (0, 25)
+  0| <script type="application#/json">
+  1| {
+  2|     "array": [
+
+Formatted: 25 (0, 26)
+  0| <script type="application/#json">
+  1| {
+  2|     "array": [
+Original: 25 (0, 26)
+  0| <script type="application/#json">
+  1| {
+  2|     "array": [
+
+Formatted: 26 (0, 27)
+  0| <script type="application/j#son">
+  1| {
+  2|     "array": [
+Original: 26 (0, 27)
+  0| <script type="application/j#son">
+  1| {
+  2|     "array": [
+
+Formatted: 27 (0, 28)
+  0| <script type="application/js#on">
+  1| {
+  2|     "array": [
+Original: 27 (0, 28)
+  0| <script type="application/js#on">
+  1| {
+  2|     "array": [
+
+Formatted: 28 (0, 29)
+  0| <script type="application/jso#n">
+  1| {
+  2|     "array": [
+Original: 28 (0, 29)
+  0| <script type="application/jso#n">
+  1| {
+  2|     "array": [
+
+Formatted: 29 (0, 30)
+  0| <script type="application/json#">
+  1| {
+  2|     "array": [
+Original: 29 (0, 30)
+  0| <script type="application/json#">
+  1| {
+  2|     "array": [
+
+Formatted: 30 (0, 31)
+  0| <script type="application/json"#>
+  1| {
+  2|     "array": [
+Original: 30 (0, 31)
+  0| <script type="application/json"#>
+  1| {
+  2|     "array": [
+
+Formatted: 31 (0, 32)
+  0| <script type="application/json">#
+  1| {
+  2|     "array": [
+Original: 31 (0, 32)
+  0| <script type="application/json">#
+  1| {
+  2|     "array": [
+
+Formatted: 32 (1, 0)
+  0| <script type="application/json">
+  1| #{
+  2|     "array": [
+  3|         1,
+Original: 32 (1, 0)
+  0| <script type="application/json">
+  1| #{
+  2|     "array": [
+  3|         1,
+
+Formatted: 33 (1, 1)
+  0| <script type="application/json">
+  1| {#
+  2|     "array": [
+  3|         1,
+Original: 33 (1, 1)
+  0| <script type="application/json">
+  1| {#
+  2|     "array": [
+  3|         1,
+
+Formatted: 34 (2, 0)
+  0| <script type="application/json">
+  1| {
+  2| #    "array": [
+  3|         1,
+  4|         "two",
+Original: 34 (2, 0)
+  0| <script type="application/json">
+  1| {
+  2| #    "array": [
+  3|         1,
+  4|         "two",
+
+Formatted: 35 (2, 1)
+  0| <script type="application/json">
+  1| {
+  2|  #   "array": [
+  3|         1,
+  4|         "two",
+Original: 35 (2, 1)
+  0| <script type="application/json">
+  1| {
+  2|  #   "array": [
+  3|         1,
+  4|         "two",
+
+Formatted: 36 (2, 2)
+  0| <script type="application/json">
+  1| {
+  2|   #  "array": [
+  3|         1,
+  4|         "two",
+Original: 36 (2, 2)
+  0| <script type="application/json">
+  1| {
+  2|   #  "array": [
+  3|         1,
+  4|         "two",
+
+Formatted: 37 (2, 3)
+  0| <script type="application/json">
+  1| {
+  2|    # "array": [
+  3|         1,
+  4|         "two",
+Original: 37 (2, 3)
+  0| <script type="application/json">
+  1| {
+  2|    # "array": [
+  3|         1,
+  4|         "two",
+
+Formatted: 38 (2, 4)
+  0| <script type="application/json">
+  1| {
+  2|     #"array": [
+  3|         1,
+  4|         "two",
+Original: 38 (2, 4)
+  0| <script type="application/json">
+  1| {
+  2|     #"array": [
+  3|         1,
+  4|         "two",
+
+Formatted: 39 (2, 5)
+  0| <script type="application/json">
+  1| {
+  2|     "#array": [
+  3|         1,
+  4|         "two",
+Original: 39 (2, 5)
+  0| <script type="application/json">
+  1| {
+  2|     "#array": [
+  3|         1,
+  4|         "two",
+
+Formatted: 40 (2, 6)
+  0| <script type="application/json">
+  1| {
+  2|     "a#rray": [
+  3|         1,
+  4|         "two",
+Original: 40 (2, 6)
+  0| <script type="application/json">
+  1| {
+  2|     "a#rray": [
+  3|         1,
+  4|         "two",
+
+Formatted: 41 (2, 7)
+  0| <script type="application/json">
+  1| {
+  2|     "ar#ray": [
+  3|         1,
+  4|         "two",
+Original: 41 (2, 7)
+  0| <script type="application/json">
+  1| {
+  2|     "ar#ray": [
+  3|         1,
+  4|         "two",
+
+Formatted: 42 (2, 8)
+  0| <script type="application/json">
+  1| {
+  2|     "arr#ay": [
+  3|         1,
+  4|         "two",
+Original: 42 (2, 8)
+  0| <script type="application/json">
+  1| {
+  2|     "arr#ay": [
+  3|         1,
+  4|         "two",
+
+Formatted: 43 (2, 9)
+  0| <script type="application/json">
+  1| {
+  2|     "arra#y": [
+  3|         1,
+  4|         "two",
+Original: 43 (2, 9)
+  0| <script type="application/json">
+  1| {
+  2|     "arra#y": [
+  3|         1,
+  4|         "two",
+
+Formatted: 44 (2, 10)
+  0| <script type="application/json">
+  1| {
+  2|     "array#": [
+  3|         1,
+  4|         "two",
+Original: 44 (2, 10)
+  0| <script type="application/json">
+  1| {
+  2|     "array#": [
+  3|         1,
+  4|         "two",
+
+Formatted: 45 (2, 11)
+  0| <script type="application/json">
+  1| {
+  2|     "array"#: [
+  3|         1,
+  4|         "two",
+Original: 45 (2, 11)
+  0| <script type="application/json">
+  1| {
+  2|     "array"#: [
+  3|         1,
+  4|         "two",
+
+Formatted: 46 (2, 12)
+  0| <script type="application/json">
+  1| {
+  2|     "array":# [
+  3|         1,
+  4|         "two",
+Original: 46 (2, 12)
+  0| <script type="application/json">
+  1| {
+  2|     "array":# [
+  3|         1,
+  4|         "two",
+
+Formatted: 47 (2, 13)
+  0| <script type="application/json">
+  1| {
+  2|     "array": #[
+  3|         1,
+  4|         "two",
+Original: 47 (2, 13)
+  0| <script type="application/json">
+  1| {
+  2|     "array": #[
+  3|         1,
+  4|         "two",
+
+Formatted: 48 (2, 14)
+  0| <script type="application/json">
+  1| {
+  2|     "array": [#
+  3|         1,
+  4|         "two",
+Original: 48 (2, 14)
+  0| <script type="application/json">
+  1| {
+  2|     "array": [#
+  3|         1,
+  4|         "two",
+
+Formatted: 49 (3, 0)
+  1| {
+  2|     "array": [
+  3| #        1,
+  4|         "two",
+  5|         null
+Original: 49 (3, 0)
+  1| {
+  2|     "array": [
+  3| #        1,
+  4|         "two",
+  5|         null
+
+Formatted: 50 (3, 1)
+  1| {
+  2|     "array": [
+  3|  #       1,
+  4|         "two",
+  5|         null
+Original: 50 (3, 1)
+  1| {
+  2|     "array": [
+  3|  #       1,
+  4|         "two",
+  5|         null
+
+Formatted: 51 (3, 2)
+  1| {
+  2|     "array": [
+  3|   #      1,
+  4|         "two",
+  5|         null
+Original: 51 (3, 2)
+  1| {
+  2|     "array": [
+  3|   #      1,
+  4|         "two",
+  5|         null
+
+Formatted: 52 (3, 3)
+  1| {
+  2|     "array": [
+  3|    #     1,
+  4|         "two",
+  5|         null
+Original: 52 (3, 3)
+  1| {
+  2|     "array": [
+  3|    #     1,
+  4|         "two",
+  5|         null
+
+Formatted: 53 (3, 4)
+  1| {
+  2|     "array": [
+  3|     #    1,
+  4|         "two",
+  5|         null
+Original: 53 (3, 4)
+  1| {
+  2|     "array": [
+  3|     #    1,
+  4|         "two",
+  5|         null
+
+Formatted: 54 (3, 5)
+  1| {
+  2|     "array": [
+  3|      #   1,
+  4|         "two",
+  5|         null
+Original: 54 (3, 5)
+  1| {
+  2|     "array": [
+  3|      #   1,
+  4|         "two",
+  5|         null
+
+Formatted: 55 (3, 6)
+  1| {
+  2|     "array": [
+  3|       #  1,
+  4|         "two",
+  5|         null
+Original: 55 (3, 6)
+  1| {
+  2|     "array": [
+  3|       #  1,
+  4|         "two",
+  5|         null
+
+Formatted: 56 (3, 7)
+  1| {
+  2|     "array": [
+  3|        # 1,
+  4|         "two",
+  5|         null
+Original: 56 (3, 7)
+  1| {
+  2|     "array": [
+  3|        # 1,
+  4|         "two",
+  5|         null
+
+Formatted: 57 (3, 8)
+  1| {
+  2|     "array": [
+  3|         #1,
+  4|         "two",
+  5|         null
+Original: 57 (3, 8)
+  1| {
+  2|     "array": [
+  3|         #1,
+  4|         "two",
+  5|         null
+
+Formatted: 58 (3, 9)
+  1| {
+  2|     "array": [
+  3|         1#,
+  4|         "two",
+  5|         null
+Original: 58 (3, 9)
+  1| {
+  2|     "array": [
+  3|         1#,
+  4|         "two",
+  5|         null
+
+Formatted: 59 (3, 10)
+  1| {
+  2|     "array": [
+  3|         1,#
+  4|         "two",
+  5|         null
+Original: 59 (3, 10)
+  1| {
+  2|     "array": [
+  3|         1,#
+  4|         "two",
+  5|         null
+
+Formatted: 60 (4, 0)
+  2|     "array": [
+  3|         1,
+  4| #        "two",
+  5|         null
+  6|     ],
+Original: 60 (4, 0)
+  2|     "array": [
+  3|         1,
+  4| #        "two",
+  5|         null
+  6|     ],
+
+Formatted: 61 (4, 1)
+  2|     "array": [
+  3|         1,
+  4|  #       "two",
+  5|         null
+  6|     ],
+Original: 61 (4, 1)
+  2|     "array": [
+  3|         1,
+  4|  #       "two",
+  5|         null
+  6|     ],
+
+Formatted: 62 (4, 2)
+  2|     "array": [
+  3|         1,
+  4|   #      "two",
+  5|         null
+  6|     ],
+Original: 62 (4, 2)
+  2|     "array": [
+  3|         1,
+  4|   #      "two",
+  5|         null
+  6|     ],
+
+Formatted: 63 (4, 3)
+  2|     "array": [
+  3|         1,
+  4|    #     "two",
+  5|         null
+  6|     ],
+Original: 63 (4, 3)
+  2|     "array": [
+  3|         1,
+  4|    #     "two",
+  5|         null
+  6|     ],
+
+Formatted: 64 (4, 4)
+  2|     "array": [
+  3|         1,
+  4|     #    "two",
+  5|         null
+  6|     ],
+Original: 64 (4, 4)
+  2|     "array": [
+  3|         1,
+  4|     #    "two",
+  5|         null
+  6|     ],
+
+Formatted: 65 (4, 5)
+  2|     "array": [
+  3|         1,
+  4|      #   "two",
+  5|         null
+  6|     ],
+Original: 65 (4, 5)
+  2|     "array": [
+  3|         1,
+  4|      #   "two",
+  5|         null
+  6|     ],
+
+Formatted: 66 (4, 6)
+  2|     "array": [
+  3|         1,
+  4|       #  "two",
+  5|         null
+  6|     ],
+Original: 66 (4, 6)
+  2|     "array": [
+  3|         1,
+  4|       #  "two",
+  5|         null
+  6|     ],
+
+Formatted: 67 (4, 7)
+  2|     "array": [
+  3|         1,
+  4|        # "two",
+  5|         null
+  6|     ],
+Original: 67 (4, 7)
+  2|     "array": [
+  3|         1,
+  4|        # "two",
+  5|         null
+  6|     ],
+
+Formatted: 68 (4, 8)
+  2|     "array": [
+  3|         1,
+  4|         #"two",
+  5|         null
+  6|     ],
+Original: 68 (4, 8)
+  2|     "array": [
+  3|         1,
+  4|         #"two",
+  5|         null
+  6|     ],
+
+Formatted: 69 (4, 9)
+  2|     "array": [
+  3|         1,
+  4|         "#two",
+  5|         null
+  6|     ],
+Original: 69 (4, 9)
+  2|     "array": [
+  3|         1,
+  4|         "#two",
+  5|         null
+  6|     ],
+
+Formatted: 70 (4, 10)
+  2|     "array": [
+  3|         1,
+  4|         "t#wo",
+  5|         null
+  6|     ],
+Original: 70 (4, 10)
+  2|     "array": [
+  3|         1,
+  4|         "t#wo",
+  5|         null
+  6|     ],
+
+Formatted: 71 (4, 11)
+  2|     "array": [
+  3|         1,
+  4|         "tw#o",
+  5|         null
+  6|     ],
+Original: 71 (4, 11)
+  2|     "array": [
+  3|         1,
+  4|         "tw#o",
+  5|         null
+  6|     ],
+
+Formatted: 72 (4, 12)
+  2|     "array": [
+  3|         1,
+  4|         "two#",
+  5|         null
+  6|     ],
+Original: 72 (4, 12)
+  2|     "array": [
+  3|         1,
+  4|         "two#",
+  5|         null
+  6|     ],
+
+Formatted: 73 (4, 13)
+  2|     "array": [
+  3|         1,
+  4|         "two"#,
+  5|         null
+  6|     ],
+Original: 73 (4, 13)
+  2|     "array": [
+  3|         1,
+  4|         "two"#,
+  5|         null
+  6|     ],
+
+Formatted: 74 (4, 14)
+  2|     "array": [
+  3|         1,
+  4|         "two",#
+  5|         null
+  6|     ],
+Original: 74 (4, 14)
+  2|     "array": [
+  3|         1,
+  4|         "two",#
+  5|         null
+  6|     ],
+
+Formatted: 75 (5, 0)
+  3|         1,
+  4|         "two",
+  5| #        null
+  6|     ],
+  7|     "boolean": true,
+Original: 75 (5, 0)
+  3|         1,
+  4|         "two",
+  5| #        null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 76 (5, 1)
+  3|         1,
+  4|         "two",
+  5|  #       null
+  6|     ],
+  7|     "boolean": true,
+Original: 76 (5, 1)
+  3|         1,
+  4|         "two",
+  5|  #       null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 77 (5, 2)
+  3|         1,
+  4|         "two",
+  5|   #      null
+  6|     ],
+  7|     "boolean": true,
+Original: 77 (5, 2)
+  3|         1,
+  4|         "two",
+  5|   #      null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 78 (5, 3)
+  3|         1,
+  4|         "two",
+  5|    #     null
+  6|     ],
+  7|     "boolean": true,
+Original: 78 (5, 3)
+  3|         1,
+  4|         "two",
+  5|    #     null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 79 (5, 4)
+  3|         1,
+  4|         "two",
+  5|     #    null
+  6|     ],
+  7|     "boolean": true,
+Original: 79 (5, 4)
+  3|         1,
+  4|         "two",
+  5|     #    null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 80 (5, 5)
+  3|         1,
+  4|         "two",
+  5|      #   null
+  6|     ],
+  7|     "boolean": true,
+Original: 80 (5, 5)
+  3|         1,
+  4|         "two",
+  5|      #   null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 81 (5, 6)
+  3|         1,
+  4|         "two",
+  5|       #  null
+  6|     ],
+  7|     "boolean": true,
+Original: 81 (5, 6)
+  3|         1,
+  4|         "two",
+  5|       #  null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 82 (5, 7)
+  3|         1,
+  4|         "two",
+  5|        # null
+  6|     ],
+  7|     "boolean": true,
+Original: 82 (5, 7)
+  3|         1,
+  4|         "two",
+  5|        # null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 83 (5, 8)
+  3|         1,
+  4|         "two",
+  5|         #null
+  6|     ],
+  7|     "boolean": true,
+Original: 83 (5, 8)
+  3|         1,
+  4|         "two",
+  5|         #null
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 84 (5, 9)
+  3|         1,
+  4|         "two",
+  5|         n#ull
+  6|     ],
+  7|     "boolean": true,
+Original: 84 (5, 9)
+  3|         1,
+  4|         "two",
+  5|         n#ull
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 85 (5, 10)
+  3|         1,
+  4|         "two",
+  5|         nu#ll
+  6|     ],
+  7|     "boolean": true,
+Original: 85 (5, 10)
+  3|         1,
+  4|         "two",
+  5|         nu#ll
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 86 (5, 11)
+  3|         1,
+  4|         "two",
+  5|         nul#l
+  6|     ],
+  7|     "boolean": true,
+Original: 86 (5, 11)
+  3|         1,
+  4|         "two",
+  5|         nul#l
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 87 (5, 12)
+  3|         1,
+  4|         "two",
+  5|         null#
+  6|     ],
+  7|     "boolean": true,
+Original: 87 (5, 12)
+  3|         1,
+  4|         "two",
+  5|         null#
+  6|     ],
+  7|     "boolean": true,
+
+Formatted: 88 (6, 0)
+  4|         "two",
+  5|         null
+  6| #    ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 88 (6, 0)
+  4|         "two",
+  5|         null
+  6| #    ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 89 (6, 1)
+  4|         "two",
+  5|         null
+  6|  #   ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 89 (6, 1)
+  4|         "two",
+  5|         null
+  6|  #   ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 90 (6, 2)
+  4|         "two",
+  5|         null
+  6|   #  ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 90 (6, 2)
+  4|         "two",
+  5|         null
+  6|   #  ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 91 (6, 3)
+  4|         "two",
+  5|         null
+  6|    # ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 91 (6, 3)
+  4|         "two",
+  5|         null
+  6|    # ],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 92 (6, 4)
+  4|         "two",
+  5|         null
+  6|     #],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 92 (6, 4)
+  4|         "two",
+  5|         null
+  6|     #],
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 93 (6, 5)
+  4|         "two",
+  5|         null
+  6|     ]#,
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 93 (6, 5)
+  4|         "two",
+  5|         null
+  6|     ]#,
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 94 (6, 6)
+  4|         "two",
+  5|         null
+  6|     ],#
+  7|     "boolean": true,
+  8|     "nullValue": null,
+Original: 94 (6, 6)
+  4|         "two",
+  5|         null
+  6|     ],#
+  7|     "boolean": true,
+  8|     "nullValue": null,
+
+Formatted: 95 (7, 0)
+  5|         null
+  6|     ],
+  7| #    "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 95 (7, 0)
+  5|         null
+  6|     ],
+  7| #    "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 96 (7, 1)
+  5|         null
+  6|     ],
+  7|  #   "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 96 (7, 1)
+  5|         null
+  6|     ],
+  7|  #   "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 97 (7, 2)
+  5|         null
+  6|     ],
+  7|   #  "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 97 (7, 2)
+  5|         null
+  6|     ],
+  7|   #  "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 98 (7, 3)
+  5|         null
+  6|     ],
+  7|    # "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 98 (7, 3)
+  5|         null
+  6|     ],
+  7|    # "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 99 (7, 4)
+  5|         null
+  6|     ],
+  7|     #"boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 99 (7, 4)
+  5|         null
+  6|     ],
+  7|     #"boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 100 (7, 5)
+  5|         null
+  6|     ],
+  7|     "#boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 100 (7, 5)
+  5|         null
+  6|     ],
+  7|     "#boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 101 (7, 6)
+  5|         null
+  6|     ],
+  7|     "b#oolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 101 (7, 6)
+  5|         null
+  6|     ],
+  7|     "b#oolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 102 (7, 7)
+  5|         null
+  6|     ],
+  7|     "bo#olean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 102 (7, 7)
+  5|         null
+  6|     ],
+  7|     "bo#olean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 103 (7, 8)
+  5|         null
+  6|     ],
+  7|     "boo#lean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 103 (7, 8)
+  5|         null
+  6|     ],
+  7|     "boo#lean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 104 (7, 9)
+  5|         null
+  6|     ],
+  7|     "bool#ean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 104 (7, 9)
+  5|         null
+  6|     ],
+  7|     "bool#ean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 105 (7, 10)
+  5|         null
+  6|     ],
+  7|     "boole#an": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 105 (7, 10)
+  5|         null
+  6|     ],
+  7|     "boole#an": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 106 (7, 11)
+  5|         null
+  6|     ],
+  7|     "boolea#n": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 106 (7, 11)
+  5|         null
+  6|     ],
+  7|     "boolea#n": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 107 (7, 12)
+  5|         null
+  6|     ],
+  7|     "boolean#": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 107 (7, 12)
+  5|         null
+  6|     ],
+  7|     "boolean#": true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 108 (7, 13)
+  5|         null
+  6|     ],
+  7|     "boolean"#: true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 108 (7, 13)
+  5|         null
+  6|     ],
+  7|     "boolean"#: true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 109 (7, 14)
+  5|         null
+  6|     ],
+  7|     "boolean":# true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 109 (7, 14)
+  5|         null
+  6|     ],
+  7|     "boolean":# true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 110 (7, 15)
+  5|         null
+  6|     ],
+  7|     "boolean": #true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 110 (7, 15)
+  5|         null
+  6|     ],
+  7|     "boolean": #true,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 111 (7, 16)
+  5|         null
+  6|     ],
+  7|     "boolean": t#rue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 111 (7, 16)
+  5|         null
+  6|     ],
+  7|     "boolean": t#rue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 112 (7, 17)
+  5|         null
+  6|     ],
+  7|     "boolean": tr#ue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 112 (7, 17)
+  5|         null
+  6|     ],
+  7|     "boolean": tr#ue,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 113 (7, 18)
+  5|         null
+  6|     ],
+  7|     "boolean": tru#e,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 113 (7, 18)
+  5|         null
+  6|     ],
+  7|     "boolean": tru#e,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 114 (7, 19)
+  5|         null
+  6|     ],
+  7|     "boolean": true#,
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 114 (7, 19)
+  5|         null
+  6|     ],
+  7|     "boolean": true#,
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 115 (7, 20)
+  5|         null
+  6|     ],
+  7|     "boolean": true,#
+  8|     "nullValue": null,
+  9|     "number": 42,
+Original: 115 (7, 20)
+  5|         null
+  6|     ],
+  7|     "boolean": true,#
+  8|     "nullValue": null,
+  9|     "number": 42,
+
+Formatted: 116 (8, 0)
+  6|     ],
+  7|     "boolean": true,
+  8| #    "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 116 (8, 0)
+  6|     ],
+  7|     "boolean": true,
+  8| #    "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 117 (8, 1)
+  6|     ],
+  7|     "boolean": true,
+  8|  #   "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 117 (8, 1)
+  6|     ],
+  7|     "boolean": true,
+  8|  #   "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 118 (8, 2)
+  6|     ],
+  7|     "boolean": true,
+  8|   #  "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 118 (8, 2)
+  6|     ],
+  7|     "boolean": true,
+  8|   #  "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 119 (8, 3)
+  6|     ],
+  7|     "boolean": true,
+  8|    # "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 119 (8, 3)
+  6|     ],
+  7|     "boolean": true,
+  8|    # "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 120 (8, 4)
+  6|     ],
+  7|     "boolean": true,
+  8|     #"nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 120 (8, 4)
+  6|     ],
+  7|     "boolean": true,
+  8|     #"nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 121 (8, 5)
+  6|     ],
+  7|     "boolean": true,
+  8|     "#nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 121 (8, 5)
+  6|     ],
+  7|     "boolean": true,
+  8|     "#nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 122 (8, 6)
+  6|     ],
+  7|     "boolean": true,
+  8|     "n#ullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 122 (8, 6)
+  6|     ],
+  7|     "boolean": true,
+  8|     "n#ullValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 123 (8, 7)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nu#llValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 123 (8, 7)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nu#llValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 124 (8, 8)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nul#lValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 124 (8, 8)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nul#lValue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 125 (8, 9)
+  6|     ],
+  7|     "boolean": true,
+  8|     "null#Value": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 125 (8, 9)
+  6|     ],
+  7|     "boolean": true,
+  8|     "null#Value": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 126 (8, 10)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullV#alue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 126 (8, 10)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullV#alue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 127 (8, 11)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVa#lue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 127 (8, 11)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVa#lue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 128 (8, 12)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVal#ue": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 128 (8, 12)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullVal#ue": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 129 (8, 13)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValu#e": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 129 (8, 13)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValu#e": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 130 (8, 14)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue#": null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 130 (8, 14)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue#": null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 131 (8, 15)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue"#: null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 131 (8, 15)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue"#: null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 132 (8, 16)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue":# null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 132 (8, 16)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue":# null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 133 (8, 17)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": #null,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 133 (8, 17)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": #null,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 134 (8, 18)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": n#ull,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 134 (8, 18)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": n#ull,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 135 (8, 19)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nu#ll,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 135 (8, 19)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nu#ll,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 136 (8, 20)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nul#l,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 136 (8, 20)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": nul#l,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 137 (8, 21)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null#,
+  9|     "number": 42,
+ 10|     "object": {
+Original: 137 (8, 21)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null#,
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 138 (8, 22)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null,#
+  9|     "number": 42,
+ 10|     "object": {
+Original: 138 (8, 22)
+  6|     ],
+  7|     "boolean": true,
+  8|     "nullValue": null,#
+  9|     "number": 42,
+ 10|     "object": {
+
+Formatted: 139 (9, 0)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9| #    "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 139 (9, 0)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9| #    "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 140 (9, 1)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|  #   "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 140 (9, 1)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|  #   "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 141 (9, 2)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|   #  "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 141 (9, 2)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|   #  "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 142 (9, 3)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|    # "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 142 (9, 3)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|    # "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 143 (9, 4)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     #"number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 143 (9, 4)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     #"number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 144 (9, 5)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "#number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 144 (9, 5)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "#number": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 145 (9, 6)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "n#umber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 145 (9, 6)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "n#umber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 146 (9, 7)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "nu#mber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 146 (9, 7)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "nu#mber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 147 (9, 8)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "num#ber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 147 (9, 8)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "num#ber": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 148 (9, 9)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numb#er": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 148 (9, 9)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numb#er": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 149 (9, 10)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numbe#r": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 149 (9, 10)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "numbe#r": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 150 (9, 11)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number#": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 150 (9, 11)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number#": 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 151 (9, 12)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number"#: 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 151 (9, 12)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number"#: 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 152 (9, 13)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number":# 42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 152 (9, 13)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number":# 42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 153 (9, 14)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": #42,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 153 (9, 14)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": #42,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 154 (9, 15)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 4#2,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 154 (9, 15)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 4#2,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 155 (9, 16)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42#,
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 155 (9, 16)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42#,
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 156 (9, 17)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,#
+ 10|     "object": {
+ 11|         "key": "value"
+Original: 156 (9, 17)
+  7|     "boolean": true,
+  8|     "nullValue": null,
+  9|     "number": 42,#
+ 10|     "object": {
+ 11|         "key": "value"
+
+Formatted: 157 (10, 0)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10| #    "object": {
+ 11|         "key": "value"
+ 12|     },
+Original: 157 (10, 0)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10| #    "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 158 (10, 1)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|  #   "object": {
+ 11|         "key": "value"
+ 12|     },
+Original: 158 (10, 1)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|  #   "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 159 (10, 2)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|   #  "object": {
+ 11|         "key": "value"
+ 12|     },
+Original: 159 (10, 2)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|   #  "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 160 (10, 3)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|    # "object": {
+ 11|         "key": "value"
+ 12|     },
+Original: 160 (10, 3)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|    # "object": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 161 (10, 4)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     #"object": {
+ 11|         "key": "value"
+ 12|     },
+Original: 161 (10, 4)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     #"object": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 162 (10, 5)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "#object": {
+ 11|         "key": "value"
+ 12|     },
+Original: 162 (10, 5)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "#object": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 163 (10, 6)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "o#bject": {
+ 11|         "key": "value"
+ 12|     },
+Original: 163 (10, 6)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "o#bject": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 164 (10, 7)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "ob#ject": {
+ 11|         "key": "value"
+ 12|     },
+Original: 164 (10, 7)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "ob#ject": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 165 (10, 8)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obj#ect": {
+ 11|         "key": "value"
+ 12|     },
+Original: 165 (10, 8)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obj#ect": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 166 (10, 9)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obje#ct": {
+ 11|         "key": "value"
+ 12|     },
+Original: 166 (10, 9)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "obje#ct": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 167 (10, 10)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "objec#t": {
+ 11|         "key": "value"
+ 12|     },
+Original: 167 (10, 10)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "objec#t": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 168 (10, 11)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object#": {
+ 11|         "key": "value"
+ 12|     },
+Original: 168 (10, 11)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object#": {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 169 (10, 12)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object"#: {
+ 11|         "key": "value"
+ 12|     },
+Original: 169 (10, 12)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object"#: {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 170 (10, 13)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object":# {
+ 11|         "key": "value"
+ 12|     },
+Original: 170 (10, 13)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object":# {
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 171 (10, 14)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": #{
+ 11|         "key": "value"
+ 12|     },
+Original: 171 (10, 14)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": #{
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 172 (10, 15)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {#
+ 11|         "key": "value"
+ 12|     },
+Original: 172 (10, 15)
+  8|     "nullValue": null,
+  9|     "number": 42,
+ 10|     "object": {#
+ 11|         "key": "value"
+ 12|     },
+
+Formatted: 173 (11, 0)
+  9|     "number": 42,
+ 10|     "object": {
+ 11| #        "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 173 (11, 0)
+  9|     "number": 42,
+ 10|     "object": {
+ 11| #        "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 174 (11, 1)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|  #       "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 174 (11, 1)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|  #       "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 175 (11, 2)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|   #      "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 175 (11, 2)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|   #      "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 176 (11, 3)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|    #     "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 176 (11, 3)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|    #     "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 177 (11, 4)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|     #    "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 177 (11, 4)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|     #    "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 178 (11, 5)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|      #   "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 178 (11, 5)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|      #   "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 179 (11, 6)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|       #  "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 179 (11, 6)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|       #  "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 180 (11, 7)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|        # "key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 180 (11, 7)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|        # "key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 181 (11, 8)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         #"key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 181 (11, 8)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         #"key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 182 (11, 9)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "#key": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 182 (11, 9)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "#key": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 183 (11, 10)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "k#ey": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 183 (11, 10)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "k#ey": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 184 (11, 11)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "ke#y": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 184 (11, 11)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "ke#y": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 185 (11, 12)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key#": "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 185 (11, 12)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key#": "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 186 (11, 13)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key"#: "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 186 (11, 13)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key"#: "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 187 (11, 14)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key":# "value"
+ 12|     },
+ 13|     "string": "text"
+Original: 187 (11, 14)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key":# "value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 188 (11, 15)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": #"value"
+ 12|     },
+ 13|     "string": "text"
+Original: 188 (11, 15)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": #"value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 189 (11, 16)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "#value"
+ 12|     },
+ 13|     "string": "text"
+Original: 189 (11, 16)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "#value"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 190 (11, 17)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "v#alue"
+ 12|     },
+ 13|     "string": "text"
+Original: 190 (11, 17)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "v#alue"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 191 (11, 18)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "va#lue"
+ 12|     },
+ 13|     "string": "text"
+Original: 191 (11, 18)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "va#lue"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 192 (11, 19)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "val#ue"
+ 12|     },
+ 13|     "string": "text"
+Original: 192 (11, 19)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "val#ue"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 193 (11, 20)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "valu#e"
+ 12|     },
+ 13|     "string": "text"
+Original: 193 (11, 20)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "valu#e"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 194 (11, 21)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value#"
+ 12|     },
+ 13|     "string": "text"
+Original: 194 (11, 21)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value#"
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 195 (11, 22)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"#
+ 12|     },
+ 13|     "string": "text"
+Original: 195 (11, 22)
+  9|     "number": 42,
+ 10|     "object": {
+ 11|         "key": "value"#
+ 12|     },
+ 13|     "string": "text"
+
+Formatted: 196 (12, 0)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12| #    },
+ 13|     "string": "text"
+ 14| }
+Original: 196 (12, 0)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12| #    },
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 197 (12, 1)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|  #   },
+ 13|     "string": "text"
+ 14| }
+Original: 197 (12, 1)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|  #   },
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 198 (12, 2)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|   #  },
+ 13|     "string": "text"
+ 14| }
+Original: 198 (12, 2)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|   #  },
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 199 (12, 3)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|    # },
+ 13|     "string": "text"
+ 14| }
+Original: 199 (12, 3)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|    # },
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 200 (12, 4)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     #},
+ 13|     "string": "text"
+ 14| }
+Original: 200 (12, 4)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     #},
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 201 (12, 5)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     }#,
+ 13|     "string": "text"
+ 14| }
+Original: 201 (12, 5)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     }#,
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 202 (12, 6)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     },#
+ 13|     "string": "text"
+ 14| }
+Original: 202 (12, 6)
+ 10|     "object": {
+ 11|         "key": "value"
+ 12|     },#
+ 13|     "string": "text"
+ 14| }
+
+Formatted: 203 (13, 0)
+ 11|         "key": "value"
+ 12|     },
+ 13| #    "string": "text"
+ 14| }
+ 15| </script>
+Original: 203 (13, 0)
+ 11|         "key": "value"
+ 12|     },
+ 13| #    "string": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 204 (13, 1)
+ 11|         "key": "value"
+ 12|     },
+ 13|  #   "string": "text"
+ 14| }
+ 15| </script>
+Original: 204 (13, 1)
+ 11|         "key": "value"
+ 12|     },
+ 13|  #   "string": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 205 (13, 2)
+ 11|         "key": "value"
+ 12|     },
+ 13|   #  "string": "text"
+ 14| }
+ 15| </script>
+Original: 205 (13, 2)
+ 11|         "key": "value"
+ 12|     },
+ 13|   #  "string": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 206 (13, 3)
+ 11|         "key": "value"
+ 12|     },
+ 13|    # "string": "text"
+ 14| }
+ 15| </script>
+Original: 206 (13, 3)
+ 11|         "key": "value"
+ 12|     },
+ 13|    # "string": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 207 (13, 4)
+ 11|         "key": "value"
+ 12|     },
+ 13|     #"string": "text"
+ 14| }
+ 15| </script>
+Original: 207 (13, 4)
+ 11|         "key": "value"
+ 12|     },
+ 13|     #"string": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 208 (13, 5)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "#string": "text"
+ 14| }
+ 15| </script>
+Original: 208 (13, 5)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "#string": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 209 (13, 6)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "s#tring": "text"
+ 14| }
+ 15| </script>
+Original: 209 (13, 6)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "s#tring": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 210 (13, 7)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "st#ring": "text"
+ 14| }
+ 15| </script>
+Original: 210 (13, 7)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "st#ring": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 211 (13, 8)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "str#ing": "text"
+ 14| }
+ 15| </script>
+Original: 211 (13, 8)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "str#ing": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 212 (13, 9)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "stri#ng": "text"
+ 14| }
+ 15| </script>
+Original: 212 (13, 9)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "stri#ng": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 213 (13, 10)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "strin#g": "text"
+ 14| }
+ 15| </script>
+Original: 213 (13, 10)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "strin#g": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 214 (13, 11)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string#": "text"
+ 14| }
+ 15| </script>
+Original: 214 (13, 11)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string#": "text"
+ 14| }
+ 15| </script>
+
+Formatted: 215 (13, 12)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string"#: "text"
+ 14| }
+ 15| </script>
+Original: 215 (13, 12)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string"#: "text"
+ 14| }
+ 15| </script>
+
+Formatted: 216 (13, 13)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string":# "text"
+ 14| }
+ 15| </script>
+Original: 216 (13, 13)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string":# "text"
+ 14| }
+ 15| </script>
+
+Formatted: 217 (13, 14)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": #"text"
+ 14| }
+ 15| </script>
+Original: 217 (13, 14)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": #"text"
+ 14| }
+ 15| </script>
+
+Formatted: 218 (13, 15)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "#text"
+ 14| }
+ 15| </script>
+Original: 218 (13, 15)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "#text"
+ 14| }
+ 15| </script>
+
+Formatted: 219 (13, 16)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "t#ext"
+ 14| }
+ 15| </script>
+Original: 219 (13, 16)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "t#ext"
+ 14| }
+ 15| </script>
+
+Formatted: 220 (13, 17)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "te#xt"
+ 14| }
+ 15| </script>
+Original: 220 (13, 17)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "te#xt"
+ 14| }
+ 15| </script>
+
+Formatted: 221 (13, 18)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "tex#t"
+ 14| }
+ 15| </script>
+Original: 221 (13, 18)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "tex#t"
+ 14| }
+ 15| </script>
+
+Formatted: 222 (13, 19)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text#"
+ 14| }
+ 15| </script>
+Original: 222 (13, 19)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text#"
+ 14| }
+ 15| </script>
+
+Formatted: 223 (13, 20)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text"#
+ 14| }
+ 15| </script>
+Original: 223 (13, 20)
+ 11|         "key": "value"
+ 12|     },
+ 13|     "string": "text"#
+ 14| }
+ 15| </script>
+
+Formatted: 224 (14, 0)
+ 12|     },
+ 13|     "string": "text"
+ 14| #}
+ 15| </script>
+ 16| <script>
+Original: 224 (14, 0)
+ 12|     },
+ 13|     "string": "text"
+ 14| #}
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+
+Formatted: 225 (14, 1)
+ 12|     },
+ 13|     "string": "text"
+ 14| }#
+ 15| </script>
+ 16| <script>
+Original: 225 (14, 1)
+ 12|     },
+ 13|     "string": "text"
+ 14| }#
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+
+Formatted: 226 (15, 0)
+ 13|     "string": "text"
+ 14| }
+ 15| #</script>
+ 16| <script>
+ 17| let answer = 42;
+Original: 226 (15, 0)
+ 13|     "string": "text"
+ 14| }
+ 15| #</script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 227 (15, 1)
+ 13|     "string": "text"
+ 14| }
+ 15| <#/script>
+ 16| <script>
+ 17| let answer = 42;
+Original: 227 (15, 1)
+ 13|     "string": "text"
+ 14| }
+ 15| <#/script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 228 (15, 2)
+ 13|     "string": "text"
+ 14| }
+ 15| </#script>
+ 16| <script>
+ 17| let answer = 42;
+Original: 228 (15, 2)
+ 13|     "string": "text"
+ 14| }
+ 15| </#script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 229 (15, 3)
+ 13|     "string": "text"
+ 14| }
+ 15| </s#cript>
+ 16| <script>
+ 17| let answer = 42;
+Original: 229 (15, 3)
+ 13|     "string": "text"
+ 14| }
+ 15| </s#cript>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 230 (15, 4)
+ 13|     "string": "text"
+ 14| }
+ 15| </sc#ript>
+ 16| <script>
+ 17| let answer = 42;
+Original: 230 (15, 4)
+ 13|     "string": "text"
+ 14| }
+ 15| </sc#ript>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 231 (15, 5)
+ 13|     "string": "text"
+ 14| }
+ 15| </scr#ipt>
+ 16| <script>
+ 17| let answer = 42;
+Original: 231 (15, 5)
+ 13|     "string": "text"
+ 14| }
+ 15| </scr#ipt>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 232 (15, 6)
+ 13|     "string": "text"
+ 14| }
+ 15| </scri#pt>
+ 16| <script>
+ 17| let answer = 42;
+Original: 232 (15, 6)
+ 13|     "string": "text"
+ 14| }
+ 15| </scri#pt>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 233 (15, 7)
+ 13|     "string": "text"
+ 14| }
+ 15| </scrip#t>
+ 16| <script>
+ 17| let answer = 42;
+Original: 233 (15, 7)
+ 13|     "string": "text"
+ 14| }
+ 15| </scrip#t>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 234 (15, 8)
+ 13|     "string": "text"
+ 14| }
+ 15| </script#>
+ 16| <script>
+ 17| let answer = 42;
+Original: 234 (15, 8)
+ 13|     "string": "text"
+ 14| }
+ 15| </script#>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 235 (15, 9)
+ 13|     "string": "text"
+ 14| }
+ 15| </script>#
+ 16| <script>
+ 17| let answer = 42;
+Original: 235 (15, 9)
+ 13|     "string": "text"
+ 14| }
+ 15| </script>#
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 236 (16, 0)
+ 14| }
+ 15| </script>
+ 16| #<script>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 236 (16, 0)
+ 14| }
+ 15| </script>
+ 16| #<script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 237 (16, 1)
+ 14| }
+ 15| </script>
+ 16| <#script>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 237 (16, 1)
+ 14| }
+ 15| </script>
+ 16| <#script>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 238 (16, 2)
+ 14| }
+ 15| </script>
+ 16| <s#cript>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 238 (16, 2)
+ 14| }
+ 15| </script>
+ 16| <s#cript>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 239 (16, 3)
+ 14| }
+ 15| </script>
+ 16| <sc#ript>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 239 (16, 3)
+ 14| }
+ 15| </script>
+ 16| <sc#ript>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 240 (16, 4)
+ 14| }
+ 15| </script>
+ 16| <scr#ipt>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 240 (16, 4)
+ 14| }
+ 15| </script>
+ 16| <scr#ipt>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 241 (16, 5)
+ 14| }
+ 15| </script>
+ 16| <scri#pt>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 241 (16, 5)
+ 14| }
+ 15| </script>
+ 16| <scri#pt>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 242 (16, 6)
+ 14| }
+ 15| </script>
+ 16| <scrip#t>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 242 (16, 6)
+ 14| }
+ 15| </script>
+ 16| <scrip#t>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 243 (16, 7)
+ 14| }
+ 15| </script>
+ 16| <script#>
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 243 (16, 7)
+ 14| }
+ 15| </script>
+ 16| <script#>let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 244 (16, 8)
+ 14| }
+ 15| </script>
+ 16| <script>#
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+Original: 244 (16, 8)
+ 14| }
+ 15| </script>
+ 16| <script>#let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 245 (17, 0)
+ 15| </script>
+ 16| <script>
+ 17| #let answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 245 (16, 8)
+ 14| }
+ 15| </script>
+ 16| <script>#let answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 246 (17, 1)
+ 15| </script>
+ 16| <script>
+ 17| l#et answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 245 (16, 9)
+ 14| }
+ 15| </script>
+ 16| <script>l#et answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 247 (17, 2)
+ 15| </script>
+ 16| <script>
+ 17| le#t answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 246 (16, 10)
+ 14| }
+ 15| </script>
+ 16| <script>le#t answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 248 (17, 3)
+ 15| </script>
+ 16| <script>
+ 17| let# answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 247 (16, 11)
+ 14| }
+ 15| </script>
+ 16| <script>let# answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 249 (17, 4)
+ 15| </script>
+ 16| <script>
+ 17| let #answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 248 (16, 12)
+ 14| }
+ 15| </script>
+ 16| <script>let #answer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 250 (17, 5)
+ 15| </script>
+ 16| <script>
+ 17| let a#nswer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 249 (16, 13)
+ 14| }
+ 15| </script>
+ 16| <script>let a#nswer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 251 (17, 6)
+ 15| </script>
+ 16| <script>
+ 17| let an#swer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 250 (16, 14)
+ 14| }
+ 15| </script>
+ 16| <script>let an#swer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 252 (17, 7)
+ 15| </script>
+ 16| <script>
+ 17| let ans#wer = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 251 (16, 15)
+ 14| }
+ 15| </script>
+ 16| <script>let ans#wer=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 253 (17, 8)
+ 15| </script>
+ 16| <script>
+ 17| let answ#er = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 252 (16, 16)
+ 14| }
+ 15| </script>
+ 16| <script>let answ#er=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 254 (17, 9)
+ 15| </script>
+ 16| <script>
+ 17| let answe#r = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 253 (16, 17)
+ 14| }
+ 15| </script>
+ 16| <script>let answe#r=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 255 (17, 10)
+ 15| </script>
+ 16| <script>
+ 17| let answer# = 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 254 (16, 18)
+ 14| }
+ 15| </script>
+ 16| <script>let answer#=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 256 (17, 11)
+ 15| </script>
+ 16| <script>
+ 17| let answer #= 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 255 (16, 18)
+ 14| }
+ 15| </script>
+ 16| <script>let answer#=42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 257 (17, 12)
+ 15| </script>
+ 16| <script>
+ 17| let answer =# 42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 255 (16, 19)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=#42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 258 (17, 13)
+ 15| </script>
+ 16| <script>
+ 17| let answer = #42;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 256 (16, 19)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=#42;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 259 (17, 14)
+ 15| </script>
+ 16| <script>
+ 17| let answer = 4#2;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 256 (16, 20)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=4#2;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 260 (17, 15)
+ 15| </script>
+ 16| <script>
+ 17| let answer = 42#;
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 257 (16, 21)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42#;let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 261 (17, 16)
+ 15| </script>
+ 16| <script>
+ 17| let answer = 42;#
+ 18| let result = answer * 2;
+ 19| result++;
+Original: 258 (16, 22)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;#let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 262 (18, 0)
+ 16| <script>
+ 17| let answer = 42;
+ 18| #let result = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 259 (16, 22)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;#let result=answer*2;result++;</script>
+ 17|
+
+Formatted: 263 (18, 1)
+ 16| <script>
+ 17| let answer = 42;
+ 18| l#et result = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 259 (16, 23)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;l#et result=answer*2;result++;</script>
+ 17|
+
+Formatted: 264 (18, 2)
+ 16| <script>
+ 17| let answer = 42;
+ 18| le#t result = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 260 (16, 24)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;le#t result=answer*2;result++;</script>
+ 17|
+
+Formatted: 265 (18, 3)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let# result = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 261 (16, 25)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let# result=answer*2;result++;</script>
+ 17|
+
+Formatted: 266 (18, 4)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let #result = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 262 (16, 26)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let #result=answer*2;result++;</script>
+ 17|
+
+Formatted: 267 (18, 5)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let r#esult = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 263 (16, 27)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let r#esult=answer*2;result++;</script>
+ 17|
+
+Formatted: 268 (18, 6)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let re#sult = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 264 (16, 28)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let re#sult=answer*2;result++;</script>
+ 17|
+
+Formatted: 269 (18, 7)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let res#ult = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 265 (16, 29)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let res#ult=answer*2;result++;</script>
+ 17|
+
+Formatted: 270 (18, 8)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let resu#lt = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 266 (16, 30)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let resu#lt=answer*2;result++;</script>
+ 17|
+
+Formatted: 271 (18, 9)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let resul#t = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 267 (16, 31)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let resul#t=answer*2;result++;</script>
+ 17|
+
+Formatted: 272 (18, 10)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result# = answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 268 (16, 32)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result#=answer*2;result++;</script>
+ 17|
+
+Formatted: 273 (18, 11)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result #= answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 269 (16, 32)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result#=answer*2;result++;</script>
+ 17|
+
+Formatted: 274 (18, 12)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result =# answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 269 (16, 33)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=#answer*2;result++;</script>
+ 17|
+
+Formatted: 275 (18, 13)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = #answer * 2;
+ 19| result++;
+ 20| </script>
+Original: 270 (16, 33)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=#answer*2;result++;</script>
+ 17|
+
+Formatted: 276 (18, 14)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = a#nswer * 2;
+ 19| result++;
+ 20| </script>
+Original: 270 (16, 34)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=a#nswer*2;result++;</script>
+ 17|
+
+Formatted: 277 (18, 15)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = an#swer * 2;
+ 19| result++;
+ 20| </script>
+Original: 271 (16, 35)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=an#swer*2;result++;</script>
+ 17|
+
+Formatted: 278 (18, 16)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = ans#wer * 2;
+ 19| result++;
+ 20| </script>
+Original: 272 (16, 36)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=ans#wer*2;result++;</script>
+ 17|
+
+Formatted: 279 (18, 17)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answ#er * 2;
+ 19| result++;
+ 20| </script>
+Original: 273 (16, 37)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answ#er*2;result++;</script>
+ 17|
+
+Formatted: 280 (18, 18)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answe#r * 2;
+ 19| result++;
+ 20| </script>
+Original: 274 (16, 38)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answe#r*2;result++;</script>
+ 17|
+
+Formatted: 281 (18, 19)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer# * 2;
+ 19| result++;
+ 20| </script>
+Original: 275 (16, 39)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer#*2;result++;</script>
+ 17|
+
+Formatted: 282 (18, 20)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer #* 2;
+ 19| result++;
+ 20| </script>
+Original: 276 (16, 39)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer#*2;result++;</script>
+ 17|
+
+Formatted: 283 (18, 21)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer *# 2;
+ 19| result++;
+ 20| </script>
+Original: 276 (16, 40)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*#2;result++;</script>
+ 17|
+
+Formatted: 284 (18, 22)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer * #2;
+ 19| result++;
+ 20| </script>
+Original: 277 (16, 40)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*#2;result++;</script>
+ 17|
+
+Formatted: 285 (18, 23)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer * 2#;
+ 19| result++;
+ 20| </script>
+Original: 277 (16, 41)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2#;result++;</script>
+ 17|
+
+Formatted: 286 (18, 24)
+ 16| <script>
+ 17| let answer = 42;
+ 18| let result = answer * 2;#
+ 19| result++;
+ 20| </script>
+Original: 278 (16, 42)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;#result++;</script>
+ 17|
+
+Formatted: 287 (19, 0)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| #result++;
+ 20| </script>
+ 21|
+Original: 279 (16, 42)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;#result++;</script>
+ 17|
+
+Formatted: 288 (19, 1)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| r#esult++;
+ 20| </script>
+ 21|
+Original: 279 (16, 43)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;r#esult++;</script>
+ 17|
+
+Formatted: 289 (19, 2)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| re#sult++;
+ 20| </script>
+ 21|
+Original: 280 (16, 44)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;re#sult++;</script>
+ 17|
+
+Formatted: 290 (19, 3)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| res#ult++;
+ 20| </script>
+ 21|
+Original: 281 (16, 45)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;res#ult++;</script>
+ 17|
+
+Formatted: 291 (19, 4)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| resu#lt++;
+ 20| </script>
+ 21|
+Original: 282 (16, 46)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;resu#lt++;</script>
+ 17|
+
+Formatted: 292 (19, 5)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| resul#t++;
+ 20| </script>
+ 21|
+Original: 283 (16, 47)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;resul#t++;</script>
+ 17|
+
+Formatted: 293 (19, 6)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result#++;
+ 20| </script>
+ 21|
+Original: 284 (16, 48)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result#++;</script>
+ 17|
+
+Formatted: 294 (19, 7)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result+#+;
+ 20| </script>
+ 21|
+Original: 285 (16, 49)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result+#+;</script>
+ 17|
+
+Formatted: 295 (19, 8)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result++#;
+ 20| </script>
+ 21|
+Original: 286 (16, 50)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++#;</script>
+ 17|
+
+Formatted: 296 (19, 9)
+ 17| let answer = 42;
+ 18| let result = answer * 2;
+ 19| result++;#
+ 20| </script>
+ 21|
+Original: 287 (16, 51)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;#</script>
+ 17|
+
+Formatted: 297 (20, 0)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| #</script>
+ 21|
+Original: 288 (16, 51)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;#</script>
+ 17|
+
+Formatted: 298 (20, 1)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| <#/script>
+ 21|
+Original: 288 (16, 52)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;<#/script>
+ 17|
+
+Formatted: 299 (20, 2)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </#script>
+ 21|
+Original: 289 (16, 53)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</#script>
+ 17|
+
+Formatted: 300 (20, 3)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </s#cript>
+ 21|
+Original: 290 (16, 54)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</s#cript>
+ 17|
+
+Formatted: 301 (20, 4)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </sc#ript>
+ 21|
+Original: 291 (16, 55)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</sc#ript>
+ 17|
+
+Formatted: 302 (20, 5)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </scr#ipt>
+ 21|
+Original: 292 (16, 56)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</scr#ipt>
+ 17|
+
+Formatted: 303 (20, 6)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </scri#pt>
+ 21|
+Original: 293 (16, 57)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</scri#pt>
+ 17|
+
+Formatted: 304 (20, 7)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </scrip#t>
+ 21|
+Original: 294 (16, 58)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</scrip#t>
+ 17|
+
+Formatted: 305 (20, 8)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </script#>
+ 21|
+Original: 295 (16, 59)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script#>
+ 17|
+
+Formatted: 306 (20, 9)
+ 18| let result = answer * 2;
+ 19| result++;
+ 20| </script>#
+ 21|
+Original: 296 (16, 60)
+ 14| }
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>#
+ 17|
+
+Formatted: 307 (21, 0)
+ 19| result++;
+ 20| </script>
+ 21| #
+Original: 297 (17, 0)
+ 15| </script>
+ 16| <script>let answer=42;let result=answer*2;result++;</script>
+ 17| #
+
+
