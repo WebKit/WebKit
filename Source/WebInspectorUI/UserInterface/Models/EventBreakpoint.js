@@ -57,7 +57,7 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
     // Static
 
-    static get supportsEditing()
+    static get supportsOptions()
     {
         // COMPATIBILITY (iOS 14): DOMDebugger.setEventBreakpoint did not have an "options" parameter yet.
         return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "options");
@@ -137,14 +137,32 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
         return super.special;
     }
 
-    get editable()
+    get supportsOptions()
     {
         if (this._eventListener) {
             // COMPATIBILITY (iOS 14): DOM.setBreakpointForEventListener did not have an "options" parameter yet.
             return InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options");
         }
 
-        return WI.EventBreakpoint.supportsEditing || super.editable;
+        return WI.EventBreakpoint.supportsOptions || super.supportsOptions;
+    }
+
+    get editable()
+    {
+        if (this._eventListener)
+            return false;
+
+        switch (this._type) {
+        case WI.EventBreakpoint.Type.Listener:
+            return this._eventName;
+        case WI.EventBreakpoint.Type.AnimationFrame:
+        case WI.EventBreakpoint.Type.Interval:
+        case WI.EventBreakpoint.Type.Timeout:
+            return true;
+        }
+
+        console.assert(false, this);
+        return false;
     }
 
     matches(eventName)
@@ -164,6 +182,12 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
     equals(other)
     {
         console.assert(other instanceof WI.EventBreakpoint, other);
+
+        if (this._type !== other.type)
+            return false;
+
+        if (this._type !== WI.EventBreakpoint.Type.Listener)
+            return true;
 
         return this._eventName === other.eventName
             && this._caseSensitive === other.caseSensitive

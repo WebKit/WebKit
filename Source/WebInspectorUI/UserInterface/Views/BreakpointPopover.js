@@ -50,26 +50,17 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
     // Static
 
-    static show(breakpoint, targetElement)
+    static show(breakpoint, targetElement, delegate)
     {
-        const delegate = null;
-        let popover;
-        if (breakpoint instanceof WI.EventBreakpoint)
-            popover = new WI.EventBreakpointPopover(delegate, breakpoint);
-        else if (breakpoint instanceof WI.URLBreakpoint)
-            popover = new WI.URLBreakpointPopover(delegate, breakpoint);
-        else if (breakpoint instanceof WI.SymbolicBreakpoint)
-            popover = new WI.SymbolicBreakpointPopover(delegate, breakpoint);
-        else
-            popover = new WI.BreakpointPopover(delegate, breakpoint);
+        let popover = new this(delegate, breakpoint);
         popover.show(targetElement);
     }
 
-    static appendContextMenuItems(contextMenu, breakpoint, targetElement)
+    static appendContextMenuItems(contextMenu, breakpoint, targetElement, delegate)
     {
-        if (breakpoint.editable && targetElement) {
+        if ((breakpoint.supportsOptions || breakpoint.editable) && targetElement) {
             contextMenu.appendItem(WI.UIString("Edit Breakpoint\u2026"), () => {
-                WI.BreakpointPopover.show(breakpoint, targetElement);
+                this.show(breakpoint, targetElement, delegate);
             });
         }
 
@@ -78,7 +69,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
                 breakpoint.disabled = !breakpoint.disabled;
             });
 
-            if (breakpoint.editable && breakpoint.autoContinue) {
+            if (breakpoint.supportsOptions && breakpoint.autoContinue) {
                 contextMenu.appendItem(WI.UIString("Cancel Automatic Continue"), () => {
                     breakpoint.autoContinue = !breakpoint.autoContinue;
                 });
@@ -89,7 +80,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             });
         }
 
-        if (breakpoint.editable && !breakpoint.autoContinue && !breakpoint.disabled && breakpoint.actions.length) {
+        if (breakpoint.supportsOptions && !breakpoint.autoContinue && !breakpoint.disabled && breakpoint.actions.length) {
             contextMenu.appendItem(WI.UIString("Set to Automatically Continue"), () => {
                 breakpoint.autoContinue = !breakpoint.autoContinue;
             });
@@ -142,10 +133,11 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
         this._tableElement = this._contentElement.appendChild(document.createElement("table"));
 
-        if (!this._breakpoint)
+        let editable = this._breakpoint?.editable;
+        if (!this._breakpoint || editable)
             this.populateContent();
 
-        if (this._breakpoint?.editable || this.constructor.supportsEditing) {
+        if (this._breakpoint?.supportsOptions || this.constructor.supportsOptions) {
             let conditionLabelElement = document.createElement("label");
             conditionLabelElement.textContent = WI.UIString("Condition");
 
@@ -242,7 +234,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             // CodeMirror needs to refresh after the popover is shown as otherwise it doesn't appear.
             setTimeout(() => {
                 this._conditionCodeMirror.refresh();
-                if (this._breakpoint)
+                if (this._breakpoint && !editable)
                     this._conditionCodeMirror.focus();
 
                 this.update();
@@ -261,21 +253,44 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
     dismiss()
     {
-        this._breakpoint ??= this.createBreakpoint({
-            condition: this._conditionCodeMirror ? this._conditionCodeMirror.getValue().trim() : "",
-            actions: this._actionViews.map((breakpointActionView) => breakpointActionView.action),
-            ignoreCount: this._ignoreCountInputElement ? this._parseIgnoreCountNumber() : 0,
-            autoContinue: this._autoContinueCheckboxElement ? this._autoContinueCheckboxElement.checked : false,
-        });
+        let existingBreakpoint = this._breakpoint;
 
-        // Remove Evaluate and Probe actions that have no data.
-        let emptyActions = this._breakpoint?.actions.filter(function(action) {
-            if (action.type === WI.BreakpointAction.Type.Sound)
-                return false;
-            return !action.data?.trim();
-        }) || [];
-        for (let action of emptyActions)
-            this._breakpoint.removeAction(action);
+        let actions = [];
+        for (let action of (existingBreakpoint?.actions.slice() || this._actionViews)) {
+            if (action instanceof WI.BreakpointActionView)
+                action = action.action;
+
+            // Remove Evaluate and Probe actions that have no data.
+            if (action.type !== WI.BreakpointAction.Type.Sound && !action.data?.trim()) {
+                existingBreakpoint?.removeAction(action);
+                continue;
+            }
+
+            actions.push(existingBreakpoint?.editable ? WI.BreakpointAction.fromJSON(action.toJSON()) : action);
+        }
+
+        let options = null;
+        if (!existingBreakpoint) {
+            options = {
+                condition: this._conditionCodeMirror?.getValue().trim() || "",
+                actions,
+                ignoreCount: this._parseIgnoreCountNumber() || 0,
+                autoContinue: this._autoContinueCheckboxElement?.checked || false,
+            };
+        } else if (existingBreakpoint.editable) {
+            options = {
+                disabled: existingBreakpoint.disabled,
+                condition: existingBreakpoint.condition,
+                actions,
+                ignoreCount: existingBreakpoint.ignoreCount,
+                autoContinue: existingBreakpoint.autoContinue,
+            };
+        }
+        if (options) {
+            let breakpoint = this.createBreakpoint(options);
+            if (!existingBreakpoint || (breakpoint && !existingBreakpoint.equals(breakpoint)))
+                this._breakpoint = breakpoint;
+        }
 
         super.dismiss();
     }
@@ -378,7 +393,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
     _parseIgnoreCountNumber()
     {
         let ignoreCount = 0;
-        if (this._ignoreCountInputElement.value) {
+        if (this._ignoreCountInputElement?.value) {
             ignoreCount = parseInt(this._ignoreCountInputElement.value, 10);
             if (isNaN(ignoreCount) || ignoreCount < 0)
                 ignoreCount = 0;

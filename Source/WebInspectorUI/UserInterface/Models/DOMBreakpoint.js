@@ -38,7 +38,8 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
             console.assert(WI.networkManager.mainFrame);
             this._url = WI.networkManager.mainFrame.url;
         } else if (domNodeOrInfo && typeof domNodeOrInfo === "object") {
-            this._domNode = null;
+            console.assert(!domNodeOrInfo.domNode || domNodeOrInfo.domNode instanceof WI.DOMNode, domNodeOrInfo.domNode);
+            this._domNode = domNodeOrInfo.domNode || null;
             this._path = domNodeOrInfo.path;
             this._url = domNodeOrInfo.url;
         }
@@ -89,10 +90,15 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
         return WI.DOMBreakpoint.displayNameForType(this._type);
     }
 
-    get editable()
+    get supportsOptions()
     {
         // COMPATIBILITY (iOS 14): DOMDebugger.setDOMBreakpoint did not have an "options" parameter yet.
         return InspectorBackend.hasCommand("DOMDebugger.setDOMBreakpoint", "options");
+    }
+
+    get editable()
+    {
+        return true;
     }
 
     get domNode()
@@ -110,6 +116,20 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
         this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeWillChange);
         this._domNode = domNode;
         this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeDidChange);
+    }
+
+    equals(other)
+    {
+        console.assert(other instanceof WI.DOMBreakpoint, other);
+
+        if (this._type !== other.type)
+            return false;
+
+        if (this._domNode && other.domNode && this._domNode === other.domNode)
+            return true;
+
+        return this._url === other.url
+            && this._path === other.path;
     }
 
     remove()

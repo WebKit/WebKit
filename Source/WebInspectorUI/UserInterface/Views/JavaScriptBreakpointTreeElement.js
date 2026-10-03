@@ -46,6 +46,13 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
         return {text: [this.breakpoint.contentIdentifier]};
     }
 
+    populateContextMenu(contextMenu, event)
+    {
+        WI.BreakpointPopover.appendContextMenuItems(contextMenu, this.breakpoint, this.status);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
     onattach()
     {
         super.onattach();
@@ -67,6 +74,11 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
     }
 
     // Private
+
+    _handleStatusImageElementDoubleClicked(event)
+    {
+        WI.BreakpointPopover.show(this.breakpoint, this.status);
+    }
 
     _updateTitles()
     {

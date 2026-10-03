@@ -34,7 +34,7 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
     // Static
 
-    static get supportsEditing()
+    static get supportsOptions()
     {
         return true;
     }
@@ -57,6 +57,7 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
             mode: "text/plain",
             matchBrackets: true,
             scrollbarStyle: null,
+            value: this.breakpoint?.symbol || "",
         });
         this._symbolCodeMirror.addKeyMap({
             "Enter": () => { this.dismiss(); },
@@ -74,7 +75,7 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
         this._caseSensitiveCheckboxElement = caseSensitiveLabel.appendChild(document.createElement("input"));
         this._caseSensitiveCheckboxElement.type = "checkbox";
-        this._caseSensitiveCheckboxElement.checked = true;
+        this._caseSensitiveCheckboxElement.checked = this.breakpoint?.caseSensitive ?? true;
 
         caseSensitiveLabel.append(WI.UIString("Case Sensitive"));
 
@@ -83,7 +84,7 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
         this._isRegexCheckboxElement = isRegexLabel.appendChild(document.createElement("input"));
         this._isRegexCheckboxElement.type = "checkbox";
-        this._isRegexCheckboxElement.checked = false;
+        this._isRegexCheckboxElement.checked = this.breakpoint?.isRegex || false;
         this._isRegexCheckboxElement.addEventListener("change", (event) => {
             this._updateSymbolCodeMirrorMode();
         });
