@@ -71,6 +71,7 @@ Tests/WebKit/WKWebView/mac/JavascriptURLNavigation.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/JSWrapperForNodeInWebFrame.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/KeyboardEventTests.mm @nonARC
 Tests/WebKit/WKWebView/mac/LegacyDragAndDropTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/LegacyWheelEventLatching.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/LimitTitleSize.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/LoadWebArchive.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/LoadWebViewWithEmptyAppName.mm @nonARC
