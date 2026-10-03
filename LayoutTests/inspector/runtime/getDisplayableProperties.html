@@ -54,6 +54,33 @@ function test()
         });
     }
 
+    function addNativeGetterTestCase({name, expression, propertyNames, shouldInvoke}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let evaluateResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.evaluate",
+                    params: {expression},
+                });
+                ProtocolTest.assert(!evaluateResponse.wasThrown);
+
+                let {properties} = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.getDisplayableProperties",
+                    params: {objectId: evaluateResponse.result.objectId},
+                });
+
+                for (let propertyName of propertyNames) {
+                    let property = properties.find((property) => property.name === propertyName);
+                    ProtocolTest.expectThat(property, `Should include "${propertyName}".`);
+                    if (shouldInvoke)
+                        ProtocolTest.expectThat(property && "value" in property && property.nativeGetter && !property.wasThrown, `"${propertyName}" should be invoked automatically.`);
+                    else
+                        ProtocolTest.expectThat(property?.get && !("value" in property) && !property.wasThrown, `"${propertyName}" should remain an accessor.`);
+                }
+            },
+        });
+    }
+
     addTestCase({
         name: "Runtime.getDisplayableProperties.Object",
         expression: `(function() { let r = Object(5); r.foo = "cat"; return r; })()`,
@@ -62,6 +89,34 @@ function test()
     addTestCase({
         name: "Runtime.getDisplayableProperties.Array",
         expression: `['red', 'green', 'blue']`,
+    });
+
+    addNativeGetterTestCase({
+        name: "Runtime.getDisplayableProperties.NativeInstance",
+        expression: `document.createElement("canvas").getContext("2d")`,
+        propertyNames: ["canvas"],
+        shouldInvoke: true,
+    });
+
+    addNativeGetterTestCase({
+        name: "Runtime.getDisplayableProperties.NativeConstructor",
+        expression: `CanvasRenderingContext2D`,
+        propertyNames: ["arguments", "caller"],
+        shouldInvoke: false,
+    });
+
+    addNativeGetterTestCase({
+        name: "Runtime.getDisplayableProperties.NativePrototype",
+        expression: `CanvasRenderingContext2D.prototype`,
+        propertyNames: ["canvas"],
+        shouldInvoke: false,
+    });
+
+    addNativeGetterTestCase({
+        name: "Runtime.getDisplayableProperties.NativeInvalidReceiver",
+        expression: `Object.create(CanvasRenderingContext2D.prototype)`,
+        propertyNames: ["canvas"],
+        shouldInvoke: false,
     });
 
     addTestCase({
