@@ -2835,7 +2835,7 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
 
     // U holds the (continuously updated) remaining part of the dividend, which
     // eventually becomes the remainder.
-    Vector<Digit, 16> u(a.size() + 1);
+    Vector<Digit, 32> u(a.size() + 1);
     auto uSpan = u.mutableSpan();
     {
         auto filled = leftShift(uSpan, a, shift);
@@ -2958,7 +2958,6 @@ void JSBigInt::burnikelZieglerBasecase(std::span<Digit> q, std::span<Digit> r, s
         }
         return;
     }
-    // FIXME: divideSchoolbook allocates its copy of the dividend on the heap when it is longer than 15 digits.
     auto [quotient, remainder] = divideSchoolbook(q, r, a, b);
     zeroSpan(q.subspan(quotient.size()));
     zeroSpan(r.subspan(remainder.size()));
