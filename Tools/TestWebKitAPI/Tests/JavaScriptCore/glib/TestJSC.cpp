@@ -3684,6 +3684,38 @@ static void testJSCExceptions()
         checker.watch(context.get());
         g_assert_false(jsc_context_get_exception(context.get()));
 
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate_with_source_uri(context.get(),
+            "function fünf() {\n"
+            "    throw new Error('Größe ✓');\n"
+            "}\n"
+            "fünf();\n",
+            -1, "file:///skript/größe.js", 1));
+        checker.watch(result.get());
+
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        auto* exception = jsc_context_get_exception(context.get());
+        g_assert_true(JSC_IS_EXCEPTION(exception));
+        checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_message(exception), ==, "Größe ✓");
+        // The source URI is a URL, so it comes back percent-encoded; the function name and message stay UTF-8.
+        g_assert_cmpstr(jsc_exception_get_source_uri(exception), ==, "file:///skript/gr%C3%B6%C3%9Fe.js");
+        g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 2);
+        g_assert_true(g_str_has_prefix(jsc_exception_get_backtrace_string(exception), "fünf@file:///skript/gr%C3%B6%C3%9Fe.js:2:"));
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_true(g_str_has_prefix(reportString.get(), "file:///skript/gr%C3%B6%C3%9Fe.js:2:"));
+        g_assert_nonnull(g_strstr_len(reportString.get(), -1, " Error: Größe ✓\n  fünf@file:///skript/gr%C3%B6%C3%9Fe.js:2:"));
+        g_assert_nonnull(g_strstr_len(reportString.get(), -1, "\n  global code@file:///skript/gr%C3%B6%C3%9Fe.js:4:"));
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_assert_false(jsc_context_get_exception(context.get()));
+
         GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "createError", G_CALLBACK(createError), nullptr, nullptr, G_TYPE_NONE, 0, G_TYPE_NONE));
         checker.watch(function.get());
         jsc_context_set_value(context.get(), "createError", function.get());

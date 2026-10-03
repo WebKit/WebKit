@@ -389,7 +389,7 @@ char* jsc_exception_report(JSCException* exception)
     jscExceptionEnsureProperties(exception);
     auto report = StringBuilder();
     if (priv->sourceURI)
-        report.append(unsafeSpan(priv->sourceURI.get()));
+        report.append(String::fromUTF8(priv->sourceURI.get()));
     if (priv->lineNumber)
         report.append(':', priv->lineNumber);
     if (priv->columnNumber)
@@ -397,11 +397,11 @@ char* jsc_exception_report(JSCException* exception)
     report.append(' ');
     GUniquePtr<char> errorMessage(jsc_exception_to_string(exception));
     if (errorMessage)
-        report.append(unsafeSpan(errorMessage.get()));
+        report.append(String::fromUTF8(errorMessage.get()));
     report.append('\n');
 
     if (priv->backtrace) {
-        for (auto line : StringView::fromLatin1(priv->backtrace.get()).split('\n'))
+        for (auto& line : String::fromUTF8(priv->backtrace.get()).split('\n'))
             report.append("  "_s, line, '\n');
     }
 
