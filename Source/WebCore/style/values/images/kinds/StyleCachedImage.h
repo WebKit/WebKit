@@ -91,6 +91,7 @@ public:
     bool currentFrameIsComplete(const RenderElement*) const final;
     float imageScaleFactor() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
+    bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const final;
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderBoxModelObject&, const void* layer, const LayoutSize&) const final;
     bool usesDataProtocol() const final;

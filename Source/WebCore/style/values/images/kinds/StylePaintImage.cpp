@@ -121,6 +121,19 @@ bool PaintImage::knownToBeOpaque(const RenderElement&) const
     return false;
 }
 
+bool PaintImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
+{
+    if (size.isEmpty())
+        return false;
+
+    RefPtr selectedGlobalScope = protect(renderer.document())->paintWorkletGlobalScopeForName(m_name.value);
+    if (!selectedGlobalScope)
+        return false;
+
+    Locker locker { selectedGlobalScope->paintDefinitionLock() };
+    return !!selectedGlobalScope->paintDefinitionMap().get(m_name.value);
+}
+
 FloatSize PaintImage::fixedSize(const RenderElement&) const
 {
     return { };

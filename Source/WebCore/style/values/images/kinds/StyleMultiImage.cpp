@@ -215,6 +215,11 @@ bool MultiImage::knownToBeOpaque(const RenderElement& renderer) const
     return m_selectedImage && protect(m_selectedImage)->knownToBeOpaque(renderer);
 }
 
+bool MultiImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
+{
+    return m_selectedImage && protect(m_selectedImage)->canDrawAtSize(renderer, size);
+}
+
 DecodingMode MultiImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_selectedImage)

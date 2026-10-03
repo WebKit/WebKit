@@ -222,6 +222,11 @@ bool CrossfadeImage::knownToBeOpaque(const RenderElement& renderer) const
     return true;
 }
 
+bool CrossfadeImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
+{
+    return !size.isEmpty() && m_from && m_to && protect(m_from)->canDrawAtSize(renderer, size) && protect(m_to)->canDrawAtSize(renderer, size);
+}
+
 FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
 {
     if (!m_from || !m_to)

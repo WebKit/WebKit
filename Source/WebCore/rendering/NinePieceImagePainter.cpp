@@ -226,6 +226,9 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
         .fill = ninePieceImage.slice().fill.has_value(),
     };
 
+    if (!styleImage->canDrawAtSize(renderer, source))
+        return;
+
     RefPtr image = styleImage->image(&renderer, source, graphicsContext);
     if (!image)
         return;

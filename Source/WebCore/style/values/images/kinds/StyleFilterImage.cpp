@@ -175,6 +175,11 @@ bool FilterImage::knownToBeOpaque(const RenderElement&) const
     return false;
 }
 
+bool FilterImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
+{
+    return !size.isEmpty() && m_image && protect(m_image)->canDrawAtSize(renderer, size);
+}
+
 DecodingMode FilterImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_image)

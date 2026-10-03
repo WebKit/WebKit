@@ -398,6 +398,16 @@ bool CachedImage::knownToBeOpaque(const RenderElement&) const
     return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque();
 }
 
+bool CachedImage::canDrawAtSize(const RenderElement& renderer, const FloatSize&) const
+{
+    if (m_isPending)
+        return false;
+    if (renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))
+        return true;
+    RefPtr image = m_cachedImage ? protect(m_cachedImage)->image() : nullptr;
+    return image && !image->isNull();
+}
+
 DecodingMode CachedImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_cachedImage || renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))

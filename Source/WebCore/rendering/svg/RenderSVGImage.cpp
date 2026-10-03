@@ -153,7 +153,11 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     if (!imageResource().cachedImage() || rect.width() <= 0 || rect.height() <= 0)
         return ImageDrawResult::DidNothing;
 
-    RefPtr<Image> image = imageResource().image();
+    RefPtr styleImage = imageResource().styleImage();
+    if (!styleImage || !styleImage->canDrawAtSize(*this, rect.size()))
+        return ImageDrawResult::DidNothing;
+
+    RefPtr image = imageResource().image();
     if (!image || image->isNull())
         return ImageDrawResult::DidNothing;
 

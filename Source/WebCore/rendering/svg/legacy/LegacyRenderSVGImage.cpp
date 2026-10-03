@@ -193,7 +193,11 @@ IntSize LegacyRenderSVGImage::imageContainerSize() const
 
 void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
-    RefPtr<Image> image = imageResource().image();
+    RefPtr styleImage = imageResource().styleImage();
+    if (!styleImage || !styleImage->canDrawAtSize(*this, m_objectBoundingBox.size()))
+        return;
+
+    RefPtr image = imageResource().image();
     if (!image)
         return;
 

@@ -770,11 +770,13 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (isShowingMissingOrImageError() || rect.width() <= 0 || rect.height() <= 0)
         return ImageDrawResult::DidNothing;
 
-    RefPtr<Image> img = imageResource().image(flooredIntSize(rect.size()));
-    if (!img || img->isNull())
+    RefPtr styleImage = imageResource().styleImage();
+    if (!styleImage || !styleImage->canDrawAtSize(*this, flooredIntSize(rect.size())))
         return ImageDrawResult::DidNothing;
 
-    RefPtr styleImage = imageResource().styleImage();
+    RefPtr img = imageResource().image(flooredIntSize(rect.size()));
+    if (!img || img->isNull())
+        return ImageDrawResult::DidNothing;
 
     ImagePaintingOptions options = {
         CompositeOperator::SourceOver,
