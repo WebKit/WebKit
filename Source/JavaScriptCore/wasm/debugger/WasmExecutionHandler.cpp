@@ -484,7 +484,7 @@ bool ExecutionHandler::stepAtBytecode(Locker<Lock>& locker, DebugState* state)
     auto setStepBreakpointsFromDebugInfo = [&]() WTF_REQUIRES_LOCK(m_lock) {
         const auto& moduleInfo = stopData.instance->moduleInformation();
         auto functionIndex = stopData.callee->functionIndex();
-        uint32_t offset = stopData.address.offset();
+        uint32_t offset = stopData.address.moduleOffset();
         const auto* nextInstructions = moduleInfo.ensureFunctionDebugInfo(functionIndex).findNextInstructions(offset);
         RELEASE_ASSERT(nextInstructions, "Didn't find nextInstructions");
         for (uint32_t nextOffset : *nextInstructions)
@@ -685,7 +685,7 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
-    if (!instance->moduleInformation().isInstructionStart(address.offset())) {
+    if (!instance->moduleInformation().isInstructionStart(address.moduleOffset())) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Not an instruction boundary: ", address);
         sendErrorReply(ProtocolError::InvalidAddress);
         return;

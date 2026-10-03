@@ -71,7 +71,7 @@ static void testWASMVirtualAddressConstants()
     // Test virtualAddress encoding for different instance IDs
     VirtualAddress instance0Obj = VirtualAddress::createModule(0, 0);
     VirtualAddress instance1Obj = VirtualAddress::createModule(1, 0);
-    VirtualAddress instance0Mem = VirtualAddress::createMemory(0, 0);
+    VirtualAddress instance0Mem = VirtualAddress::createMemory(0, 0, 0);
 
     TEST_ASSERT(instance0Obj == 0x4000000000000000ULL, "Instance 0 obj should be at encoded address");
     TEST_ASSERT(instance1Obj == 0x4000000100000000ULL, "Instance 1 obj should be at encoded address");
@@ -80,7 +80,7 @@ static void testWASMVirtualAddressConstants()
     // Test address decoding
     TEST_ASSERT(instance0Obj.type() == VirtualAddress::Type::Module, "Should decode as Module");
     TEST_ASSERT(!instance0Obj.instanceId(), "Should decode instance ID 0");
-    TEST_ASSERT(!instance0Obj.offset(), "Should decode offset 0");
+    TEST_ASSERT(!instance0Obj.moduleOffset(), "Should decode offset 0");
 
     dataLogLn("VirtualAddress design tests completed");
 }
@@ -93,34 +93,39 @@ static void testWASMVirtualAddressEncoding()
     struct AddressTest {
         VirtualAddress::Type type;
         uint32_t instanceId;
-        uint32_t offset;
+        uint32_t memoryIndex; // Module addresses have no memory index; left 0 there.
+        uint64_t offset;
         ASCIILiteral description;
     };
 
     AddressTest tests[] = {
-        { VirtualAddress::Type::Memory, 0, 0, "Instance 0 memory base"_s },
-        { VirtualAddress::Type::Memory, 1, 0x1000, "Instance 1 memory offset"_s },
-        { VirtualAddress::Type::Memory, 0x1000, 0x2000, "Instance 4096 memory offset"_s },
-        { VirtualAddress::Type::Module, 0, 0, "Instance 0 obj base"_s },
-        { VirtualAddress::Type::Module, 1, 0x2000, "Instance 1 obj offset"_s },
-        { VirtualAddress::Type::Module, 0x2000, 0x3000, "Instance 8192 obj offset"_s }
+        { VirtualAddress::Type::Memory, 0, 0, 0, "Instance 0 memory 0 base"_s },
+        { VirtualAddress::Type::Memory, 1, 0, 0x1000, "Instance 1 memory 0 offset"_s },
+        { VirtualAddress::Type::Memory, 0x1000, 0, 0x2000, "Instance 4096 memory 0 offset"_s },
+        { VirtualAddress::Type::Memory, 0, 1, 0x1000, "Instance 0 memory 1 offset"_s },
+        { VirtualAddress::Type::Memory, 3, maxMemories - 1, 0x4000, "Instance 3 highest memory"_s },
+        { VirtualAddress::Type::Memory, 2, 5, (1ULL << VirtualAddress::memoryOffsetBits) - 1, "Largest memory64 offset"_s },
+        { VirtualAddress::Type::Module, 0, 0, 0, "Instance 0 obj base"_s },
+        { VirtualAddress::Type::Module, 1, 0, 0x2000, "Instance 1 obj offset"_s },
+        { VirtualAddress::Type::Module, 0x2000, 0, 0x3000, "Instance 8192 obj offset"_s }
     };
 
     for (const auto& test : tests) {
-        VirtualAddress encoded = (test.type == VirtualAddress::Type::Memory)
-            ? VirtualAddress::createMemory(test.instanceId, test.offset)
-            : VirtualAddress::createModule(test.instanceId, test.offset);
+        bool isMemory = test.type == VirtualAddress::Type::Memory;
+        VirtualAddress encoded = isMemory
+            ? VirtualAddress::createMemory(test.instanceId, test.memoryIndex, test.offset)
+            : VirtualAddress::createModule(test.instanceId, static_cast<uint32_t>(test.offset));
 
-        VirtualAddress::Type decodedType = encoded.type();
-        uint32_t decodedId = encoded.instanceId();
-        uint32_t decodedOffset = encoded.offset();
-
-        TEST_ASSERT(decodedType == test.type,
+        TEST_ASSERT(encoded.type() == test.type,
             makeString("Address encoding/decoding type mismatch for "_s, test.description));
-        TEST_ASSERT(decodedId == test.instanceId,
+        TEST_ASSERT(encoded.instanceId() == test.instanceId,
             makeString("Address encoding/decoding ID mismatch for "_s, test.description));
-        TEST_ASSERT(decodedOffset == test.offset,
+        TEST_ASSERT((isMemory ? encoded.memoryOffset() : encoded.moduleOffset()) == test.offset,
             makeString("Address encoding/decoding offset mismatch for "_s, test.description));
+        if (isMemory) {
+            TEST_ASSERT(encoded.memoryIndex() == test.memoryIndex,
+                makeString("Address encoding/decoding memory index mismatch for "_s, test.description));
+        }
     }
 
     dataLogLn("VirtualAddress encoding/decoding tests completed");
@@ -139,7 +144,7 @@ static void testWASMVirtualAddressBoundaries()
     TEST_ASSERT(VirtualAddress::INVALID_END == 0xFFFFFFFFFFFFFFFFULL, "Invalid end should be correct");
 
     // Test reasonable boundary addresses (avoid overflow with max values)
-    VirtualAddress memoryBoundary = VirtualAddress::createMemory(0x1000, 0x1000);
+    VirtualAddress memoryBoundary = VirtualAddress::createMemory(0x1000, 0, 0x1000);
     VirtualAddress moduleBoundary = VirtualAddress::createModule(0x1000, 0x1000);
 
     TEST_ASSERT(memoryBoundary.value() >= VirtualAddress::MEMORY_BASE && memoryBoundary.value() <= VirtualAddress::MEMORY_END, "Memory boundary should be within range");
@@ -164,7 +169,7 @@ static void testWASMVirtualAddressLLDBEnumeration()
 
     RegionTest regionTests[] = {
         // Core WASM addresses
-        { VirtualAddress::createMemory(0, 0), "Instance 0 memory base"_s, true },
+        { VirtualAddress::createMemory(0, 0, 0), "Instance 0 memory base"_s, true },
         { VirtualAddress::createModule(0, 0), "Instance 0 module base"_s, true },
         { 0x8000000000000000ULL, "Invalid type probe"_s, true }, // Invalid type (0x02)
         { 0xC000000000000000ULL, "Invalid2 type probe"_s, true }, // Invalid2 type (0x03)
@@ -192,11 +197,12 @@ static void testWASMVirtualAddressEdgeCases()
     dataLogLn("=== Testing VirtualAddress Edge Cases ===");
 
     // Test maximum values for each field
-    uint32_t maxId = VirtualAddress::MAX_ID; // 30 bits
-    uint32_t maxOffset = 0xFFFFFFFF; // 32 bits
+    uint32_t maxId = VirtualAddress::MAX_ID;
+    uint32_t maxModuleOffsetValue = 0xFFFFFFFF; // the Module offset field is 32 bits
+    uint64_t maxMemoryOffsetValue = (1ULL << VirtualAddress::memoryOffsetBits) - 1; // 34 bits, for memory64
 
     // Test maximum ID values
-    VirtualAddress maxMemoryId = VirtualAddress::createMemory(maxId, 0);
+    VirtualAddress maxMemoryId = VirtualAddress::createMemory(maxId, 0, 0);
     VirtualAddress maxModuleId = VirtualAddress::createModule(maxId, 0);
 
     TEST_ASSERT(maxMemoryId.instanceId() == maxId, "Should handle maximum memory instance ID");
@@ -205,11 +211,17 @@ static void testWASMVirtualAddressEdgeCases()
     TEST_ASSERT(maxModuleId.type() == VirtualAddress::Type::Module, "Max ID should preserve module type");
 
     // Test maximum offset values
-    VirtualAddress maxMemoryOffset = VirtualAddress::createMemory(0, maxOffset);
-    VirtualAddress maxModuleOffset = VirtualAddress::createModule(0, maxOffset);
+    VirtualAddress maxMemoryOffset = VirtualAddress::createMemory(0, 0, maxMemoryOffsetValue);
+    VirtualAddress maxModuleOffset = VirtualAddress::createModule(0, maxModuleOffsetValue);
 
-    TEST_ASSERT(maxMemoryOffset.offset() == maxOffset, "Should handle maximum memory offset");
-    TEST_ASSERT(maxModuleOffset.offset() == maxOffset, "Should handle maximum module offset");
+    TEST_ASSERT(maxMemoryOffset.memoryOffset() == maxMemoryOffsetValue, "Should handle maximum memory offset");
+    TEST_ASSERT(maxModuleOffset.moduleOffset() == maxModuleOffsetValue, "Should handle maximum module offset");
+
+    // The whole Memory quadrant has to be reachable and nothing may spill past it.
+    TEST_ASSERT(VirtualAddress::createMemory(maxId, maxMemories - 1, maxMemoryOffsetValue).value() <= VirtualAddress::MEMORY_END,
+        "Every encodable memory address should stay inside the memory quadrant");
+    TEST_ASSERT(VirtualAddress::createMemory(maxId, (1U << VirtualAddress::memoryIndexBits) - 1, maxMemoryOffsetValue).value() == VirtualAddress::MEMORY_END,
+        "The largest memory address should land exactly on MEMORY_END");
 
     // Test Invalid type addresses
     VirtualAddress invalidAddr1(0x8000000000000000ULL);
@@ -231,6 +243,45 @@ static void testWASMVirtualAddressEdgeCases()
     TEST_ASSERT(invalidStart.type() == VirtualAddress::Type::Invalid, "Invalid start should be Invalid type");
 
     dataLogLn("VirtualAddress edge cases tests completed");
+}
+
+static void testWASMVirtualAddressMultiMemoryAndMemory64()
+{
+    dataLogLn("=== Testing VirtualAddress Multi-Memory and Memory64 ===");
+
+    // Addresses LLDB already holds keep their value, a bare DWARF offset included.
+    TEST_ASSERT(VirtualAddress::createMemory(0, 0, 0) == 0x0000000000000000ULL, "Instance 0 memory 0 base should be unchanged");
+    TEST_ASSERT(VirtualAddress::createMemory(0, 0, 0xfe00) == 0x000000000000fe00ULL, "A bare linear-memory offset should be unchanged");
+    TEST_ASSERT(VirtualAddress::createModule(0, 0) == 0x4000000000000000ULL, "Instance 0 module base should be unchanged");
+    TEST_ASSERT(VirtualAddress::createModule(1, 0) == 0x4000000100000000ULL, "Instance 1 module base should be unchanged");
+    TEST_ASSERT(VirtualAddress::createModule(1, 0x18b) == 0x400000010000018bULL, "A PC in instance 1 should be unchanged");
+
+    // The memory index sits below the instance ID, so an instance's memories are contiguous.
+    TEST_ASSERT(VirtualAddress::createMemory(0, 1, 0) == 0x0000000400000000ULL, "Instance 0 memory 1 base");
+    TEST_ASSERT(VirtualAddress::createMemory(0, 2, 0) == 0x0000000800000000ULL, "Instance 0 memory 2 base");
+    TEST_ASSERT(VirtualAddress::createMemory(1, 0, 0) == 0x0000020000000000ULL, "Instance 1 memory 0 base");
+    TEST_ASSERT(VirtualAddress::createMemory(1, 1, 0) == 0x0000020400000000ULL, "Instance 1 memory 1 base");
+    TEST_ASSERT(VirtualAddress::createMemory(0, maxMemories - 1, 0) < VirtualAddress::createMemory(1, 0, 0),
+        "All of one instance's memories should precede the next instance's");
+
+    // A memory64 memory may be 16 GiB, past what a 32-bit offset could reach.
+    uint64_t eightGiB = 8ULL * 1024 * 1024 * 1024;
+    VirtualAddress deep = VirtualAddress::createMemory(0, 0, eightGiB);
+    TEST_ASSERT(deep.memoryOffset() == eightGiB, "An 8 GiB offset should round-trip");
+    TEST_ASSERT(deep.type() == VirtualAddress::Type::Memory, "A large offset should not reach the type");
+    TEST_ASSERT(!deep.memoryIndex(), "A large offset should not reach the memory index");
+    TEST_ASSERT(!deep.instanceId(), "A large offset should not reach the instance ID");
+    TEST_ASSERT((1ULL << VirtualAddress::memoryOffsetBits) >= maxBufferByteLength(AddressType { AddressType::I64 }),
+        "The offset field should cover the largest memory64 linear memory");
+
+    // The fields must stay independent: setting one must not disturb the others.
+    VirtualAddress mixed = VirtualAddress::createMemory(1234, 56, (1ULL << VirtualAddress::memoryOffsetBits) - 1);
+    TEST_ASSERT(mixed.type() == VirtualAddress::Type::Memory, "Mixed address should decode its type");
+    TEST_ASSERT(mixed.instanceId() == 1234, "Mixed address should decode its instance ID");
+    TEST_ASSERT(mixed.memoryIndex() == 56, "Mixed address should decode its memory index");
+    TEST_ASSERT(mixed.memoryOffset() == (1ULL << VirtualAddress::memoryOffsetBits) - 1, "Mixed address should decode its offset");
+
+    dataLogLn("VirtualAddress multi-memory and memory64 tests completed");
 }
 
 static void testWASMVirtualAddressHashTraits()
@@ -304,6 +355,7 @@ static void testWASMVirtualAddressOperators()
     testWASMVirtualAddressBoundaries();
     testWASMVirtualAddressLLDBEnumeration();
     testWASMVirtualAddressEdgeCases();
+    testWASMVirtualAddressMultiMemoryAndMemory64();
     testWASMVirtualAddressHashTraits();
     testWASMVirtualAddressOperators();
 
