@@ -980,7 +980,7 @@ struct WebViewAndDelegates {
     RetainPtr<TestUIDelegate> uiDelegate;
 };
 
-static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true)
+static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(const HTTPServer& server, NSString *url = @"https://example.com/example", bool waitForOpenedNavigation = true, RetainPtr<WKProcessPool> processPool = nil)
 {
     __block WebViewAndDelegates opener;
     __block WebViewAndDelegates opened;
@@ -988,6 +988,8 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     [opener.navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
+    if (processPool)
+        configuration.processPool = processPool.get();
     opener.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     opener.webView.get().navigationDelegate = opener.navigationDelegate.get();
     opener.uiDelegate = adoptNS([TestUIDelegate new]);
@@ -2907,6 +2909,258 @@ TEST(SiteIsolation, RemoveFrameFromRemoteFrame)
             { { "https://webkit.org"_s } }
         }
     });
+}
+
+static void closeOpenedViewAndCheckOpenerProcess(WebViewAndDelegates& opener, WebViewAndDelegates& opened)
+{
+    pid_t sharedProcessPid = opener.webView.get()._webProcessIdentifier;
+    EXPECT_EQ(opened.webView.get()._webProcessIdentifier, sharedProcessPid);
+
+    __block bool openerProcessTerminated { false };
+    opener.navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        openerProcessTerminated = true;
+    };
+
+    [opened.webView _close];
+    while (!openerProcessTerminated && ![[opener.webView objectByEvaluatingJavaScript:@"w.closed"] boolValue])
+        Util::spinRunLoop();
+
+    EXPECT_FALSE(openerProcessTerminated);
+    EXPECT_TRUE(processStillRunning(sharedProcessPid));
+}
+
+TEST(SiteIsolation, RemoveCrossSiteIframeWithSameSiteGrandchildThenClosePage)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/main')</script>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<iframe src='https://example.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener");
+
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame, { { "https://example.com"_s } } } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s, { { RemoteFrame } } } }
+        }
+    });
+
+    NSDictionary *result = [opened.webView objectByEvaluatingJavaScript:@"(() => {"
+        "    let grandchild = frames[0][0];"
+        "    let closedBeforeRemoval = grandchild.closed;"
+        "    let unloadRan = false;"
+        "    let historyLengthThrew = false;"
+        "    grandchild.addEventListener('unload', () => {"
+        "        unloadRan = true;"
+        "        try { grandchild.history.length } catch (e) { historyLengthThrew = true }"
+        "    });"
+        "    document.querySelector('iframe').remove();"
+        "    return { closedBeforeRemoval, unloadRan, historyLengthThrew, closedAfterRemoval: grandchild.closed };"
+        "})()"];
+
+    EXPECT_FALSE([result[@"closedBeforeRemoval"] boolValue]);
+    EXPECT_TRUE([result[@"unloadRan"] boolValue]);
+    EXPECT_FALSE([result[@"historyLengthThrew"] boolValue]);
+    EXPECT_TRUE([result[@"closedAfterRemoval"] boolValue]);
+
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { "https://example.com"_s }
+    });
+
+    closeOpenedViewAndCheckOpenerProcess(opener, opened);
+}
+
+TEST(SiteIsolation, SameSiteMainFrameNavigationWithCrossSiteIframeThenClosePage)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/main')</script>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<iframe src='https://example.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "hi"_s } },
+        { "/newpage"_s, { "done"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener", true, processPoolWithBackForwardCacheDisabled());
+
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame, { { "https://example.com"_s } } } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s, { { RemoteFrame } } } }
+        }
+    });
+
+    [opener.webView objectByEvaluatingJavaScript:@"grandchild = w.frames[0][0];"
+        "unloadRan = false;"
+        "historyLengthThrew = false;"
+        "grandchild.addEventListener('unload', () => {"
+        "    unloadRan = true;"
+        "    try { grandchild.history.length } catch (e) { historyLengthThrew = true }"
+        "});"
+        "w.location = 'https://example.com/newpage';"];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE([[opener.webView objectByEvaluatingJavaScript:@"unloadRan"] boolValue]);
+    EXPECT_FALSE([[opener.webView objectByEvaluatingJavaScript:@"historyLengthThrew"] boolValue]);
+    EXPECT_TRUE([[opener.webView objectByEvaluatingJavaScript:@"grandchild.closed"] boolValue]);
+
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { "https://example.com"_s }
+    });
+
+    closeOpenedViewAndCheckOpenerProcess(opener, opened);
+}
+
+TEST(SiteIsolation, ClosePageWithSameSiteGrandchildOfCrossSiteIframe)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/main')</script>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<iframe src='https://example.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener");
+
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame, { { "https://example.com"_s } } } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s, { { RemoteFrame } } } }
+        }
+    });
+
+    [opener.webView objectByEvaluatingJavaScript:@"unloadRan = false;"
+        "w.frames[0][0].addEventListener('unload', () => { unloadRan = true });"];
+
+    closeOpenedViewAndCheckOpenerProcess(opener, opened);
+    EXPECT_TRUE([[opener.webView objectByEvaluatingJavaScript:@"unloadRan"] boolValue]);
+}
+
+TEST(SiteIsolation, RemoveCrossSiteIframeWithHiddenSameSiteGrandchild)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/child'></iframe><iframe src='https://webkit.org/other'></iframe>"_s } },
+        { "/child"_s, { "<iframe style='display:none' src='https://example.com/grandchild'></iframe>"_s } },
+        { "/other"_s, { "hi"_s } },
+        { "/grandchild"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame, { { "https://example.com"_s } } }, { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s, { { RemoteFrame } } }, { "https://webkit.org"_s } }
+        }
+    });
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+}
+
+TEST(SiteIsolation, RemoveCrossSiteIframeWhoseChildIsNavigatingToTheMainFrameSite)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/main')</script>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<iframe src='https://apple.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "hi"_s } },
+        { "/never_respond"_s, { HTTPResponse::Behavior::NeverSendResponse } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener");
+
+    [opened.webView objectByEvaluatingJavaScript:@"frames[0][0].location = 'https://example.com/never_respond'"];
+    while (server.totalRequests() < 5u)
+        Util::spinRunLoop();
+
+    [opened.webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
+
+    closeOpenedViewAndCheckOpenerProcess(opener, opened);
+}
+
+TEST(SiteIsolation, RemoveCrossSiteIframeWithSameSiteDescendantBelowAnotherSite)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/main')</script>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<iframe src='https://apple.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "<iframe src='https://example.com/greatgrandchild'></iframe>"_s } },
+        { "/greatgrandchild"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener");
+    while (![[opened.webView objectByEvaluatingJavaScript:@"frames[0][0].length === 1"] boolValue])
+        Util::spinRunLoop();
+
+    NSDictionary *result = [opened.webView objectByEvaluatingJavaScript:@"(() => {"
+        "    let innermost = frames[0][0][0];"
+        "    let unloadRan = false;"
+        "    innermost.addEventListener('unload', () => { unloadRan = true });"
+        "    document.querySelector('iframe').remove();"
+        "    return { unloadRan, closed: innermost.closed };"
+        "})()"];
+
+    EXPECT_TRUE([result[@"unloadRan"] boolValue]);
+    EXPECT_TRUE([result[@"closed"] boolValue]);
+
+    closeOpenedViewAndCheckOpenerProcess(opener, opened);
+}
+
+TEST(SiteIsolation, RemoveCrossSiteIframeAgainFromSameSiteGrandchildUnloadHandler)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://example.com/main')</script>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<iframe src='https://example.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/opener");
+
+    [opened.webView objectByEvaluatingJavaScript:@"(() => {"
+        "    let iframe = document.querySelector('iframe');"
+        "    frames[0][0].addEventListener('unload', () => { iframe.remove() });"
+        "    try { iframe.remove() } catch (e) { }"
+        "})()"];
+
+    closeOpenedViewAndCheckOpenerProcess(opener, opened);
+}
+
+TEST(SiteIsolation, UnloadOrderOfSameSiteChildAndGrandchildUnderCrossSiteParent)
+{
+    HTTPServer server({
+        { "/top"_s, { "<iframe src='https://example.com/child'></iframe>"_s } },
+        { "/child"_s, { "<script>addEventListener('unload', () => { window.webkit.messageHandlers.testHandler.postMessage('child') })</script><iframe src='https://example.com/grandchild'></iframe>"_s } },
+        { "/grandchild"_s, { "<script>addEventListener('unload', () => { window.webkit.messageHandlers.testHandler.postMessage('grandchild') })</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get(), CGRectZero, true);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/top"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    while (![[webView objectByEvaluatingJavaScript:@"frames[0].length === 1"] boolValue])
+        Util::spinRunLoop();
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
+    while ([[messageHandler receivedMessages] count] < 2u)
+        Util::spinRunLoop();
+
+    EXPECT_WK_STREQ([[messageHandler receivedMessages] componentsJoinedByString:@","], "child,grandchild");
 }
 
 TEST(SiteIsolation, ProvisionalLoadFailure)
