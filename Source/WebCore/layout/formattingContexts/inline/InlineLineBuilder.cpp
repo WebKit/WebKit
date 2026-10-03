@@ -1529,8 +1529,6 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         // In some other cases we can't put any content on the line due to such newly discovered floats (e.g. shape-outside floats with gaps in-between them in vertical axis)
         m_lineLogicalRect = constraints.logicalRect;
         m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
-        // Wrapping off an empty line means the block ellipsis left no room for any of the content.
-        m_lineClamp.blockEllipsisContentOnly = m_lineClamp.blockEllipsis && lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap;
     }
     m_candidateContentMaximumHeight = constraints.logicalRect.height();
     return result;
@@ -1862,10 +1860,13 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
             auto isLastContent = !lineCandidate.inlineContent.trailingLineBreak() && !nextContentfulInlineItem(inlineItemIndex(candidateRuns.last().inlineItem, layoutRange, m_inlineItemList, m_partialLeadingTextItem) + 1, layoutRange.endIndex());
             m_lineClamp.isLastLineWithoutBlockEllipsis = isLastContent && continuousContent.logicalWidth() - continuousContent.trailingTrimmableWidth() <= availableWidth(m_line, m_lineLogicalRect.width(), intrinsicWidthMode());
 
-            if (!m_line.hasContent()) {
+            // The block ellipsis displaces content back to the last soft wrap opportunity on the line. With none (an empty line, or
+            // e.g. text-wrap-mode: nowrap, where <wbr> is not one), that is the start of the line and all of the line's content moves.
+            if (m_wrapOpportunityList.isEmpty()) {
                 // "If this results in the entire contents of the line box being displaced, the line box is considered to contain a strut"
                 // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
-                // Everything placed on the line so far (inline box starts, floats, out-of-flow boxes) moves to the next line together with the content.
+                // Everything placed on the line so far (content, inline box starts, floats, out-of-flow boxes) moves to the next line together with the content.
+                m_lineClamp.blockEllipsisContentOnly = true;
                 revertLineToStart(layoutRange, inlineItemIndex(candidateRuns.first().inlineItem, layoutRange, m_inlineItemList, m_partialLeadingTextItem));
                 return { InlineContentBreaker::IsEndOfLine::Yes, { 0, true } };
             }
@@ -1965,7 +1966,7 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
 
 void LineBuilder::revertLineToStart(const InlineItemRange& layoutRange, size_t placedInlineItemEnd)
 {
-    ASSERT(!m_line.hasContent());
+    ASSERT(m_wrapOpportunityList.isEmpty());
     // Floats placed on this line move to the next line with the rest of the content (suspended floats are taken care of by the caller).
     for (auto index = layoutRange.startIndex(); index < placedInlineItemEnd; ++index) {
         auto& inlineItem = m_inlineItemList[index];
