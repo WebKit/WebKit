@@ -67,6 +67,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLPlugInElement.h>
@@ -719,6 +720,31 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
 #endif
 
     return true;
+}
+
+RefPtr<FrameView> PDFPluginBase::rootView() const
+{
+    RefPtr view = m_view.get();
+    return view ? view->root() : nullptr;
+}
+
+FloatPoint PDFPluginBase::convertFromRootViewToMainFrameView(FloatPoint point) const
+{
+    // Without a root view, the plugin is not in a view hierarchy, so there is nothing to convert through.
+    RefPtr rootView = this->rootView();
+    if (!rootView)
+        return point;
+
+    return rootView->convertToRootViewAcrossIsolatedFrames(point);
+}
+
+FloatRect PDFPluginBase::convertFromRootViewToMainFrameView(FloatRect rect) const
+{
+    RefPtr rootView = this->rootView();
+    if (!rootView)
+        return rect;
+
+    return rootView->convertToRootViewAcrossIsolatedFrames(rect);
 }
 
 #if ENABLE(PDF_HUD)

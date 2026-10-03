@@ -38,6 +38,7 @@
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/ColorCocoa.h>
+#import <WebCore/DictionaryPopupInfo.h>
 
 @implementation WKWebView (WKTestingMac)
 
@@ -132,6 +133,22 @@
 - (void)_setSelectedColorForColorPicker:(NSColor *)color
 {
     protect(_page->colorPickerClient())->didChooseColor(WebCore::colorFromCocoaColor(color));
+}
+
+- (void)_setDidPerformDictionaryLookupHandlerForTesting:(void (^)(NSString *, CGRect))handler
+{
+    if (!handler)
+        return _page->setDidPerformDictionaryLookupCallbackForTesting({ });
+
+    _page->setDidPerformDictionaryLookupCallbackForTesting([handler = makeBlockPtr(handler)](const WebCore::DictionaryPopupInfo& info) {
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+        RetainPtr text = [info.platformData.attributedString.nsAttributedString() string];
+#else
+        RetainPtr text = info.text.createNSString();
+#endif
+        RefPtr textIndicator = info.textIndicator;
+        handler(text.get(), textIndicator ? CGRect(textIndicator->textBoundingRectInRootViewCoordinates()) : CGRectNull);
+    });
 }
 
 - (void)_createFlagsChangedEventMonitorForTesting

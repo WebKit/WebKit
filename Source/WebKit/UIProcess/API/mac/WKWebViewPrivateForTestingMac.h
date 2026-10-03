@@ -55,6 +55,9 @@
 
 - (void)_setSelectedColorForColorPicker:(NSColor *)color;
 
+// The looked-up text and highlight rect, in root view coordinates. Pass nil to clear.
+- (void)_setDidPerformDictionaryLookupHandlerForTesting:(void (^)(NSString *text, CGRect textBoundingRect))handler;
+
 @property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
 @property (nonatomic, readonly) NSRect _windowRelativeBoundsForCustomSwipeViewsForTesting;
 

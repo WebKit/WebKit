@@ -140,7 +140,7 @@ public:
     WEBCORE_EXPORT void removeFromParent();
     WEBCORE_EXPORT virtual void setParent(ScrollView* view);
     WEBCORE_EXPORT ScrollView* NODELETE parent() const;
-    FrameView* NODELETE root() const;
+    WEBCORE_EXPORT FrameView* NODELETE root() const;
 
     virtual void handleEvent(Event&) { }
 
