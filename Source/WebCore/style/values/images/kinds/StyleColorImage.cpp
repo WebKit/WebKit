@@ -90,6 +90,11 @@ bool ColorImage::knownToBeOpaque(const RenderElement& renderer) const
     return ColorResolver { renderer.style() }.colorResolvingCurrentColor(m_color).isOpaque();
 }
 
+bool ColorImage::containsCurrentColor() const
+{
+    return m_color.containsCurrentColor();
+}
+
 FloatSize ColorImage::fixedSize(const RenderElement&) const
 {
     return { };

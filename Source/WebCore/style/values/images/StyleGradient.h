@@ -393,6 +393,9 @@ Ref<WebCore::Gradient> createPlatformGradient(const Gradient&, const FloatSize&,
 // Returns whether it caching based on the gradient's stops is allowed.
 WEBCORE_EXPORT bool stopsAreCacheable(const Gradient&);
 
+// Returns whether any of the gradient's stops depend on currentColor.
+bool containsCurrentColor(const Gradient&);
+
 // Returns whether the gradient is opaque.
 bool isOpaque(const Gradient&, const Style::ComputedStyle&);
 

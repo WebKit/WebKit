@@ -71,6 +71,7 @@ private:
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool currentFrameIsComplete(const RenderElement*) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
+    bool containsCurrentColor() const final;
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, const void* layer, const LayoutSize&) const final;
     FloatSize fixedSize(const RenderElement&) const final;

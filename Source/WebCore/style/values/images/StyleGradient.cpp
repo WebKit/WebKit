@@ -1189,28 +1189,37 @@ Ref<WebCore::Gradient> createPlatformGradient(const Gradient& gradient, const Fl
     return WTF::switchOn(gradient, [&](auto& gradient) { return createPlatformGradient(gradient, size, style); });
 }
 
-// MARK: - stopsAreCacheable
+// MARK: - containsCurrentColor
 
-static bool stopColorIsCacheable(const Color& stopColor)
+static bool stopColorContainsCurrentColor(const Color& stopColor)
 {
-    return !containsCurrentColor(stopColor);
+    return containsCurrentColor(stopColor);
 }
 
-static bool stopColorIsCacheable(const Markable<Color>& stopColor)
+static bool stopColorContainsCurrentColor(const Markable<Color>& stopColor)
 {
-    return !stopColor || stopColorIsCacheable(*stopColor);
+    return stopColor && stopColorContainsCurrentColor(*stopColor);
 }
 
-template<typename Gradient> static bool stopsAreCacheable(const Gradient& gradient)
+template<typename Gradient> static bool stopsContainCurrentColor(const Gradient& gradient)
 {
-    return std::ranges::all_of(gradient.parameters.stops, [](auto& stop) {
-        return stopColorIsCacheable(stop.color);
+    return std::ranges::any_of(gradient.parameters.stops, [](auto& stop) {
+        return stopColorContainsCurrentColor(stop.color);
     });
 }
 
+bool containsCurrentColor(const Gradient& gradient)
+{
+    return WTF::switchOn(gradient, [](auto& gradient) {
+        return stopsContainCurrentColor(gradient);
+    });
+}
+
+// MARK: - stopsAreCacheable
+
 bool stopsAreCacheable(const Gradient& gradient)
 {
-    return WTF::switchOn(gradient, [](auto& gradient) { return stopsAreCacheable(gradient); });
+    return !containsCurrentColor(gradient);
 }
 
 // MARK: - isOpaque
