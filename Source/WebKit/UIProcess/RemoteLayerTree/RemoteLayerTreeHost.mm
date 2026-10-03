@@ -552,7 +552,7 @@ void RemoteLayerTreeHost::remotePageProcessDidTerminate(WebCore::ProcessIdentifi
 #if ENABLE(THREADED_ANIMATIONS)
     for (auto& [layerID, node] : m_nodes) {
         if (layerID.processIdentifier() == processIdentifier)
-            animationsWereRemovedFromNode(node);
+            protect(node)->setAcceleratedEffectsAndBaseValues({ }, { }, *this);
     }
 #endif
 }

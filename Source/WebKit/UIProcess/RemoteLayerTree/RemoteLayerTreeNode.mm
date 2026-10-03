@@ -433,8 +433,10 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
 
     m_hasHighImpactMonotonicAnimations = false;
 
-    if (effects.isEmpty())
+    if (effects.isEmpty()) {
+        m_animationStack = nullptr;
         return;
+    }
 
     Ref animationStack = RemoteAnimationStack::create(effects.map([&](const Ref<WebCore::AcceleratedEffect>& effect) {
         TimelineID timelineID { effect->timelineIdentifier(), m_layerID.processIdentifier() };

@@ -266,7 +266,6 @@ webkit.org/b/326001 TestWebKitAPI.SiteIsolation.NavigateFrameWithSiblingsBackFor
 webkit.org/b/310149 [ mac release ] TestWebKitAPI.SiteIsolation.PostMessageWithMessagePorts [ Skip ]
 webkit.org/b/325842 [ mac release ] TestWebKitAPI.SiteIsolation.ProcessReuse [ Pass Crash ]
 webkit.org/b/325842 [ mac release ] TestWebKitAPI.SiteIsolation.ProcessReuseWithBFCache [ Pass Crash ]
-webkit.org/b/325224 [ ios ] TestWebKitAPI.SiteIsolation.RemoteTimelinesAndAnimationsClearedWhenIframeProcessCrashes [ Failure ]
 rdar://134545195 TestWebKitAPI.SleepDisabler.Basic [ Skip ]
 rdar://134545195 TestWebKitAPI.SleepDisabler.ChangeSrc [ Skip ]
 rdar://134545195 TestWebKitAPI.SleepDisabler.Close [ Skip ]
