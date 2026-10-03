@@ -308,6 +308,9 @@ void AcceleratedBackingStore::Buffer::paint(cairo_t* cr, const IntRect& clipRect
 
     if (auto* surface = this->surface()) {
         cairo_save(cr);
+        // Clip in widget coordinates, before the flip below, so that only clipRect is painted.
+        cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
+        cairo_clip(cr);
 #if USE(GBM)
         if (type() == Type::Gbm) {
             cairo_matrix_t transform;
@@ -315,10 +318,9 @@ void AcceleratedBackingStore::Buffer::paint(cairo_t* cr, const IntRect& clipRect
             cairo_transform(cr, &transform);
         }
 #endif
-        cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
         cairo_set_source_surface(cr, surface, 0, 0);
         cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-        cairo_fill(cr);
+        cairo_paint(cr);
         cairo_restore(cr);
     }
 }
