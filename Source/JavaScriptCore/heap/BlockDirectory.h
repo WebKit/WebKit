@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/Lock.h>
+#include <wtf/ReadWriteLock.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 
@@ -47,6 +48,23 @@ class MarkedSpace;
 class LLIntOffsetsExtractor;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BlockDirectory);
+
+// This just renames the fields of ReadWriteLock so they're less confusing for the way the lock is
+// used in the BlockDirectory. The bits are readable / concurrently accessible while the mutate
+// lock is held. When the grow lock is held the buffer can be resized or modified without concurrent
+// access.
+class WTF_CAPABILITY_LOCK MutateGrowLock : private ReadWriteLock {
+public:
+    void mutateLock() WTF_ACQUIRES_SHARED_LOCK() { readLock(); }
+    void mutateUnlock() WTF_RELEASES_SHARED_LOCK() { readUnlock(); }
+    void growLock() WTF_ACQUIRES_LOCK() { writeLock(); }
+    void growUnlock() WTF_RELEASES_LOCK() { writeUnlock(); }
+
+    using MutateLockView = WTF::ReadLockView;
+    using GrowLockView = WTF::WriteLockView;
+    MutateLockView& mutate() WTF_RETURNS_LOCK(*this) { return read(); }
+    GrowLockView& grow() WTF_RETURNS_LOCK(*this) { return write(); }
+};
 
 class BlockDirectory {
     WTF_MAKE_NONCOPYABLE(BlockDirectory);
@@ -67,7 +85,7 @@ public:
     void endMarking();
     void NODELETE snapshotUnsweptForEdenCollection();
     void NODELETE snapshotUnsweptForFullCollection();
-    void sweep();
+    void sweepAll();
     void shrink();
     void assertNoUnswept();
     size_t cellSize() const { return m_cellSize; }
@@ -90,49 +108,92 @@ public:
 
 #if ASSERT_ENABLED
     JS_EXPORT_PRIVATE void assertIsMutatorOrMutatorIsStopped() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_bitvectorLock);
-    void assertSweeperIsSuspended() const WTF_ASSERTS_ACQUIRED_LOCK(m_bitvectorLock);
 #else
     ALWAYS_INLINE void assertIsMutatorOrMutatorIsStopped() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_bitvectorLock) { }
-    ALWAYS_INLINE void assertSweeperIsSuspended() const WTF_ASSERTS_ACQUIRED_LOCK(m_bitvectorLock) { }
 #endif
-    // This feels like it shouldn't be needed to go from assertIsMutatorOrMutatorIsStopped -> Locker but Clang's seems to think it is necessary
-    // to release the capability.
-    ALWAYS_INLINE void releaseAssertAcquiredBitVectorLock() const WTF_RELEASES_SHARED_CAPABILITY(m_bitvectorLock) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { }
+    MutateGrowLock& bitvectorLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_bitvectorLock) { return m_bitvectorLock; }
 
-    Lock& bitvectorLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_bitvectorLock) { return m_bitvectorLock; }
+    void assertInUse(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) WTF_ASSERTS_ACQUIRED_CAPABILITY(m_blockOwnership)
+    {
+        ASSERT_UNUSED(index, isInUse(index));
+    }
 
-#define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
-    bool is ## capitalBitName(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.is ## capitalBitName(index); } \
+#if ASSERT_ENABLED
+    JS_EXPORT_PRIVATE void assertWorldIsStopped() const WTF_ASSERTS_ACQUIRED_LOCK(m_bitvectorLock) WTF_ASSERTS_ACQUIRED_CAPABILITY(m_blockOwnership);
+#else
+    ALWAYS_INLINE void assertWorldIsStopped() const WTF_ASSERTS_ACQUIRED_LOCK(m_bitvectorLock) WTF_ASSERTS_ACQUIRED_CAPABILITY(m_blockOwnership) { }
+#endif
+
+    // The only place we allow touching the BlockOwned destructible bit is from
+    // HeapCell::notifyNeedsDestruction(). That's safe because sweeping only runs on the mutator but
+    // if we ever move sweeping off the mutator we'd have to give up on this optimization.
+    void assertMayNotifyNeedsDestruction() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_blockOwnership) { }
+
+    // The named, lock-annotated accessors. Use these rather than going through m_bits directly.
+    //
+    // Writing any block's BlockOwned bit also requires m_blockOwnership. Bulk reading does not,
+    // since a reader that races with the owner will fail to either claim the block or in
+    // post-claim validation independent of what it read.
+#define BLOCK_DIRECTORY_BIT_OWNERSHIP_BlockOwned WTF_REQUIRES_LOCK(m_blockOwnership)
+#define BLOCK_DIRECTORY_BIT_OWNERSHIP_Unowned
+#define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName, ownership)     \
+    bool is ## capitalBitName(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentGet(std::memory_order_relaxed); } \
     bool is ## capitalBitName(MarkedBlock::Handle* block) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return is ## capitalBitName(block->index()); } \
     BlockDirectoryBits::BlockDirectoryBitVectorView<BlockDirectoryBits::Kind::capitalBitName> lowerBitName ## BitsView() const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return m_bits.lowerBitName(); } \
     \
-    void setIs ## capitalBitName(size_t index, bool value) WTF_REQUIRES_LOCK(m_bitvectorLock) { m_bits.setIs ## capitalBitName(index, value); } \
-    void setIs ## capitalBitName(MarkedBlock::Handle* block, bool value) WTF_REQUIRES_LOCK(m_bitvectorLock) { setIs ## capitalBitName(block->index(), value); } \
+    void setIs ## capitalBitName(size_t index, bool value) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentSet(value, std::memory_order_relaxed); } \
+    void setIs ## capitalBitName(MarkedBlock::Handle* block, bool value) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { setIs ## capitalBitName(block->index(), value); } \
+    bool testAndClearIs ## capitalBitName(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) BLOCK_DIRECTORY_BIT_OWNERSHIP_ ## ownership { return m_bits.bit<BlockDirectoryBits::Kind::capitalBitName>(index).concurrentTestAndClear(std::memory_order_relaxed); } \
     BlockDirectoryBits::BlockDirectoryBitVectorRef<BlockDirectoryBits::Kind::capitalBitName> lowerBitName ## Bits() WTF_REQUIRES_LOCK(m_bitvectorLock) { return m_bits.lowerBitName(); }
 
     FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_ACCESSORS)
 #undef BLOCK_DIRECTORY_BIT_ACCESSORS
+#undef BLOCK_DIRECTORY_BIT_OWNERSHIP_Unowned
+#undef BLOCK_DIRECTORY_BIT_OWNERSHIP_BlockOwned
+
+    // The inUse bit acts as a per-block lock, holding it allows access to the BlockOwned bits for that block.
+    // NOTE: The most common idiom of searching the bits for some combination of bits then taking the inUse
+    // for that block has to handle time-of-check, time-of-use problem by re-validating the bits in question.
+    // after this function returns true.
+    [[nodiscard]] bool claimInUse(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
+    {
+        return !m_bits.bit<BlockDirectoryBits::Kind::InUse>(index).concurrentTestAndSet(std::memory_order_acquire);
+    }
+
+    void releaseInUse(size_t index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
+    {
+        m_bits.bit<BlockDirectoryBits::Kind::InUse>(index).concurrentSet(false, std::memory_order_release);
+    }
 
     // A destructible block still owes its old owner a destructor pass over every one of its cells,
     // and whoever took it would have to pay that inline, so it stays with the sweeper until the bit
     // says the destructors have run.
-    auto stealableBits() const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return emptyBitsView() & ~destructibleBitsView() & ~inUseBitsView(); }
+    auto stealableBits() const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return emptyBitsView() & ~destructibleBitsView(); }
     bool isStealable(size_t index) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock) { return stealableBits()[index]; }
 
     template<typename Func>
     void forEachBitVector(NOESCAPE const Func& func) WTF_REQUIRES_LOCK(m_bitvectorLock)
     {
-#define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
-        func(m_bits.lowerBitName());
+#define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName, ownership) \
+        func(lowerBitName ## Bits());
         FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_CALLBACK);
 #undef BLOCK_DIRECTORY_BIT_CALLBACK
     }
-    
+
+    void clearBitsForRemovedBlock(size_t index) WTF_REQUIRES_LOCK(m_bitvectorLock) WTF_REQUIRES_LOCK(m_blockOwnership)
+    {
+        // We don't have to clear inUse last here because we're holding the exclusive growth lock.
+#define BLOCK_DIRECTORY_BIT_CLEAR(lowerBitName, capitalBitName, ownership) \
+        setIs##capitalBitName(index, false);
+        FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_CLEAR)
+#undef BLOCK_DIRECTORY_BIT_CLEAR
+    }
+
     template<typename Func>
     void forEachBitVectorWithName(NOESCAPE const Func& func) const WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock)
     {
-#define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
-        func(m_bits.lowerBitName(), #capitalBitName);
+#define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName, ownership) \
+        func(lowerBitName ## BitsView(), #capitalBitName);
         FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_CALLBACK);
 #undef BLOCK_DIRECTORY_BIT_CALLBACK
     }
@@ -145,8 +206,8 @@ public:
 
     MarkedBlock::Handle* findEmptyBlockToSteal();
 
-    // Callers must already have cleared the block's in-use bit.
-    void noteBlockMayBeStealable(unsigned index) WTF_REQUIRES_LOCK(m_bitvectorLock);
+    // Call while holding the block's inUse bit; this releases it.
+    void noteBlockMayBeStealable(unsigned index) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock);
 
     inline MarkedBlock::Handle* findBlockToSweep();
     MarkedBlock::Handle* findBlockToSweep(unsigned& unsweptCursor);
@@ -155,7 +216,7 @@ public:
     MarkedBlock::Handle* NODELETE findMarkedBlockHandleDebug(MarkedBlock*);
 
     void didFinishUsingBlock(MarkedBlock::Handle*);
-    void didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle*) WTF_REQUIRES_LOCK(m_bitvectorLock);
+    void didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle*) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock);
 
     Subspace* subspace() const { return m_subspace; }
     MarkedSpace& NODELETE markedSpace() const;
@@ -179,10 +240,9 @@ private:
     Vector<std::pair<MarkedBlock::Handle*, MarkedBlock*>> m_blocks;
     Vector<unsigned> m_freeBlockIndices;
 
-    // Mutator uses this to guard resizing the bitvectors. Those things in the GC that may run
-    // concurrently to the mutator must lock this when accessing the bitvectors.
     BlockDirectoryBits m_bits WTF_GUARDED_BY_LOCK(m_bitvectorLock); // Don't access this directly use one of the accessors above.
-    Lock m_bitvectorLock;
+    MutateGrowLock m_bitvectorLock;
+    [[no_unique_address]] BlockOwnership m_blockOwnership;
     Lock m_localAllocatorsLock;
     CellAttributes m_attributes;
 
@@ -191,8 +251,8 @@ private:
     // After you do something to a block based on one of these cursors, you clear the bit in the
     // corresponding bitvector and leave the cursor where it was. We can use unsigned instead of size_t since
     // this number is bound by capacity of Vector m_blocks, which must be within unsigned.
-    unsigned m_emptyCursor { 0 };
-    unsigned m_unsweptCursor { 0 }; // Points to the next block that is a candidate for incremental sweeping.
+    Atomic<unsigned> m_emptyCursor { 0 };
+    Atomic<unsigned> m_unsweptCursor { 0 }; // Points to the next block that is a candidate for incremental sweeping.
 
     // FIXME: All of these should probably be references.
     // https://bugs.webkit.org/show_bug.cgi?id=166988
