@@ -57,9 +57,13 @@ Helpers/cocoa/TestWKWebViewConfiguration.mm @nonARC
 Helpers/cocoa/UISideCompositingScope.mm @nonARC
 Helpers/cocoa/UserMediaCaptureUIDelegate.mm @nonARC
 Helpers/cocoa/FindInPageUtilities.mm @nonARC
+Helpers/cocoa/FindInteractionTester.mm @nonARC
+Helpers/cocoa/FindStateSnapshot.mm @nonARC
+Helpers/cocoa/FindTestPage.mm @nonARC
 Helpers/cocoa/MouseSupportUIDelegate.mm @nonARC
 Helpers/cocoa/PasteboardUtilities.mm @nonARC
 Helpers/cocoa/PDFTestHelpers.mm @nonARC
+Helpers/cocoa/PublicFindAPITester.mm @nonARC
 Helpers/cocoa/SiteIsolationTestUtilities.mm @nonARC
 Helpers/cocoa/SiteIsolationUtilities.mm @nonARC
 Helpers/ios/IOSMouseEventTestHarness.mm @nonARC
@@ -151,6 +155,8 @@ Tests/WebKit/WKWebView/FTP.mm @nonARC
 Tests/WebKit/WKWebView/FileSystemAccess.mm @nonARC
 Tests/WebKit/WKWebView/FindInPage.mm @nonARC
 Tests/WebKit/WKWebView/FindInPageAPI.mm @nonARC
+Tests/WebKit/WKWebView/FindInteraction.mm @nonARC
+Tests/WebKit/WKWebView/FindPublicAPI.mm @nonARC
 Tests/WebKit/WKWebView/FirstVisuallyNonEmptyMilestone.mm @nonARC
 Tests/WebKit/WKWebView/FixedLayoutSize.mm @nonARC
 Tests/WebKit/WKWebView/FocusWebView.mm @nonARC
