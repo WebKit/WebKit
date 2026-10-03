@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Custom Highlight API: generated content inside a highlight range paints as it does without the node index</title>
+<style>
+#target {
+    font: 16px/20px monospace;
+    white-space: pre;
+    width: max-content;
+    color: black;
+}
+#generated::before {
+    content: "BBBB";
+}
+#target::highlight(test),
+#generated::highlight(test) {
+    background-color: lime;
+}
+</style>
+</head>
+<body>
+<p>PASS if the two groups of A are on lime and the four B between them are not.</p>
+<div id="target">AAAA<span id="generated"></span>AAAA</div>
+<script>
+const target = document.getElementById("target");
+const range = new Range();
+range.setStart(target, 0);
+range.setEnd(target, target.childNodes.length);
+CSS.highlights.set("test", new Highlight(range));
+</script>
+</body>
+</html>

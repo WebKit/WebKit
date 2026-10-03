@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Highlight.h"
 
+#include "ComposedTreeIterator.h"
+#include "Element.h"
 #include "IDLTypes.h"
 #include "JSDOMSetLike.h"
 #include "JSStaticRange.h"
@@ -33,6 +35,7 @@
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "StaticRange.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -74,6 +77,7 @@ void Highlight::initializeSetLike(DOMSetAdapter& set)
 
 bool Highlight::removeFromSetLike(const AbstractRange& range)
 {
+    invalidateHighlightRangesForNode();
     return m_highlightRanges.removeFirstMatching([&range](const Ref<HighlightRange>& current) {
         repaintRange(range);
         return &current->range() == &range;
@@ -82,12 +86,14 @@ bool Highlight::removeFromSetLike(const AbstractRange& range)
 
 void Highlight::clearFromSetLike()
 {
+    invalidateHighlightRangesForNode();
     for (auto& highlightRange : std::exchange(m_highlightRanges, { }))
         repaintRange(highlightRange->range());
 }
 
 bool Highlight::addToSetLike(AbstractRange& range)
 {
+    invalidateHighlightRangesForNode();
     auto index = m_highlightRanges.findIf([&range](const Ref<HighlightRange>& current) {
         return &current->range() == &range;
     });
@@ -112,6 +118,55 @@ void Highlight::setAllRangesNeedPositionUpdate()
 {
     for (auto& highlightRange : m_highlightRanges)
         highlightRange->setNeedsPositionUpdate();
+}
+
+void Highlight::invalidateHighlightRangesForNode()
+{
+    m_hasValidHighlightRangesForNode = false;
+    m_highlightRangesForNode.clear();
+}
+
+void Highlight::rebuildHighlightRangesForNode()
+{
+    m_highlightRangesForNode.clear();
+    m_hasValidHighlightRangesForNode = true;
+
+    for (auto& highlightRange : m_highlightRanges) {
+        auto addHighlightRangeForNode = [&](Node& node) {
+            if (!node.renderer())
+                return;
+            auto addResult = m_highlightRangesForNode.ensure(node, [] {
+                return Vector<Ref<HighlightRange>> { };
+            });
+            auto& rangesForNode = addResult.iterator->value;
+            if (rangesForNode.isEmpty() || rangesForNode.last().ptr() != highlightRange.ptr())
+                rangesForNode.append(highlightRange);
+        };
+
+        auto sortedRange = makeSimpleRange(highlightRange->range());
+        if (is_gt(treeOrder<ComposedTree>(sortedRange.start, sortedRange.end)))
+            std::swap(sortedRange.start, sortedRange.end);
+        for (Ref node : intersectingNodes(sortedRange)) {
+            addHighlightRangeForNode(node);
+            if (RefPtr host = dynamicDowncast<Element>(node.get()); host && host->shadowRoot()) {
+                for (Ref descendant : composedTreeDescendants(*host))
+                    addHighlightRangeForNode(descendant);
+            }
+        }
+    }
+}
+
+const Vector<Ref<HighlightRange>>& Highlight::highlightRangesFor(const Node& node)
+{
+    if (!m_hasValidHighlightRangesForNode)
+        rebuildHighlightRangesForNode();
+
+    auto it = m_highlightRangesForNode.find(node);
+    if (it == m_highlightRangesForNode.end()) {
+        static NeverDestroyed<Vector<Ref<HighlightRange>>> emptyVector;
+        return emptyVector.get();
+    }
+    return it->value;
 }
 
 void Highlight::setPriority(int priority)

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script src="resources/custom-highlight-repaint.js"></script>
+<title>Tracking the repaint cost of registered CSS Custom Highlight API ranges that are off-screen</title>
+<style>
+    body { margin: 0; }
+    #doc {
+        width: 784px;
+        padding: 8px;
+        outline: 0;
+        font: 13px/19.5px monospace, monospace;
+    }
+    #doc p {
+        margin: 0;
+        white-space: break-spaces;
+    }
+    ::highlight(demo) {
+        color: hsl(0 80% 45%);
+    }
+</style>
+</head>
+<body>
+<pre id="log"></pre>
+<div id="doc"></div>
+<script>
+const SCROLL_Y = 60000; // Far past the 19 paragraphs that hold every range.
+
+function setupTest() {
+    if (!window.CSS || !CSS.highlights) {
+        PerfTestRunner.log("FAIL: this browser has no CSS Custom Highlight API.");
+        return;
+    }
+    buildDocument();
+    registerHighlights();
+    window.scrollTo(0, SCROLL_Y);
+    if (!window.scrollY) {
+        PerfTestRunner.log("FAIL: could not scroll the highlighted paragraphs out of view.");
+        return;
+    }
+    PerfTestRunner.prepareToMeasureValuesAsync({ done: cleanUp, unit: "ms" });
+    requestAnimationFrame(runRepaintTest);
+}
+
+onload = setupTest;
+</script>
+</body>
+</html>

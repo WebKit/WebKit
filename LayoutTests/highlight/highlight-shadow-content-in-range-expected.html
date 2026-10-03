@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+#target {
+    font: 16px/20px monospace;
+    white-space: pre;
+    width: max-content;
+    color: black;
+}
+#target::highlight(test),
+#inner::highlight(test) {
+    background-color: lime;
+}
+</style>
+</head>
+<body>
+<p>PASS if the bar below is one solid lime rectangle with no gap in the middle.</p>
+<div id="target">AAAA<span id="inner">AAAA</span>AAAA</div>
+<script>
+const target = document.getElementById("target");
+const range = new Range();
+range.setStart(target, 0);
+range.setEnd(target, target.childNodes.length);
+CSS.highlights.set("test", new Highlight(range));
+</script>
+</body>
+</html>
