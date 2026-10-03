@@ -2465,6 +2465,24 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     # Must be in place before WebProcess links and seals the .xpc.
     add_dependencies(WebProcess WebContentProcessNib)
 
+    set(_wk_xcassets
+        ${WEBKIT_DIR}/Resources/SafeBrowsing.xcassets
+        ${WEBKIT_DIR}/HTTPSBrowsingWarning.xcassets
+    )
+    list(TRANSFORM _wk_xcassets APPEND "/*" OUTPUT_VARIABLE _wk_xcassets_globs)
+    # FIXME: GLOB isn't suitable for incremental builds (rdar://188725492)
+    file(GLOB_RECURSE _wk_xcassets_contents LIST_DIRECTORIES true ${_wk_xcassets_globs})
+    WEBKIT_XCRUN(_actool -f actool)
+    add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/Assets.car
+        COMMAND ${_actool} --compile ${WebKit_RESOURCES_DIR} --output-format human-readable-text
+            --platform macosx --target-device mac --minimum-deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET}
+            ${_wk_xcassets}
+        DEPENDS ${_wk_xcassets} ${_wk_xcassets_contents}
+        COMMENT "Compiling WebKit asset catalogs"
+        VERBATIM)
+    add_custom_target(WebKit_Assets DEPENDS ${WebKit_RESOURCES_DIR}/Assets.car)
+    add_dependencies(WebKit WebKit_Assets)
+
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel COMMAND
         ${CMAKE_COMMAND} -E copy_if_different ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel
         VERBATIM)
