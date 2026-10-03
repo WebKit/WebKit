@@ -2960,10 +2960,11 @@ JSC_DEFINE_JIT_OPERATION(operationNewTypedArrayBuffer, JSObject*, (JSGlobalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    size_t length = JSValue::decode(encodedArgument).toIndex(globalObject, "length"_s);
+    JSGlobalObject* arrayBufferGlobalObject = structure->realm();
+    size_t length = JSValue::decode(encodedArgument).toIndex(arrayBufferGlobalObject, "length"_s);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, constructArrayBufferWithSize(globalObject, structure, length));
+    OPERATION_RETURN(scope, constructArrayBufferWithSize(structure, length));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewTypedArrayBufferWithSize, JSObject*, (JSGlobalObject* globalObject, Structure* structure, intptr_t length))
@@ -2972,7 +2973,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewTypedArrayBufferWithSize, JSObject*, (JSGlo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, constructArrayBufferWithSize(globalObject, structure, length));
+    OPERATION_RETURN(scope, constructArrayBufferWithSize(structure, length));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM* vmPointer, Structure* structure))

@@ -161,8 +161,12 @@ JSC_DEFINE_HOST_FUNCTION(constructSharedArrayBuffer, (JSGlobalObject* globalObje
     return JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Shared>::constructImpl(globalObject, callFrame);
 }
 
-JSObject* constructArrayBufferWithSize(JSGlobalObject* globalObject, Structure* structure, size_t length)
+JSObject* constructArrayBufferWithSize(Structure* structure, size_t length)
 {
+    // Builtin constructors run in the realm in which they were created. The DFG/FTL speculates the
+    // specific callee and bakes in the structure for that realm, so get the realm from the
+    // structure.
+    JSGlobalObject* globalObject = structure->realm();
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
