@@ -63,6 +63,14 @@ WI.RemoteObject = class RemoteObject
                 this._functionDescription = this._description;
                 this._description = "class " + className;
             }
+
+            if (!this._isFakeObject()) {
+                this._unregisterToken = Symbol();
+                WI.RemoteObject._finalizationRegistry.register(this, {
+                    targetWeakRef: new WeakRef(this._target),
+                    objectId: this._objectId,
+                }, this._unregisterToken);
+            }
         } else {
             // Primitive, BigInt, or null.
             console.assert(type !== "object" || value === null);
@@ -539,8 +547,16 @@ WI.RemoteObject = class RemoteObject
 
     release()
     {
-        if (this._objectId && !this._isFakeObject())
-            this._target.RuntimeAgent.releaseObject(this._objectId);
+        if (!this._objectId || this._isFakeObject())
+            return;
+
+        if (!this._unregisterToken)
+            return;
+
+        this._target.RuntimeAgent.releaseObject(this._objectId);
+
+        WI.RemoteObject._finalizationRegistry.unregister(this._unregisterToken);
+        this._unregisterToken = null;
     }
 
     arrayLength()
@@ -651,3 +667,9 @@ WI.RemoteObject.SourceCodeLocationPromise = {
     NoSourceFound: "remote-object-source-code-location-promise-no-source-found",
     MissingObjectId: "remote-object-source-code-location-promise-missing-object-id"
 };
+
+WI.RemoteObject._finalizationRegistry = new FinalizationRegistry(function(heldValue) {
+    let target = heldValue.targetWeakRef.deref();
+    if (target && !target.isDestroyed)
+        target.RuntimeAgent.releaseObject(heldValue.objectId);
+});
