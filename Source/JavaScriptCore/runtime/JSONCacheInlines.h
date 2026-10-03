@@ -347,25 +347,61 @@ ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length,
     return !SIMD::isNonZero(SIMD::bitOr(low, high));
 }
 
+// Matching 16-bit source also requires the high byte of each character to be zero.
+ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length, NameSource16 source)
+{
+    ASSERT(length <= text.size());
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    constexpr simde_uint8x16_t lowIndices { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    constexpr simde_uint8x16_t highIndices { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+    auto loadSource = [](std::span<const char16_t, stride> characters) ALWAYS_INLINE_LAMBDA {
+        return simde_vld2q_u8(std::bit_cast<const uint8_t*>(characters.data()));
+    };
+    auto load = [](std::span<const Latin1Character, stride> characters) ALWAYS_INLINE_LAMBDA {
+        return SIMD::load(std::bit_cast<const uint8_t*>(characters.data()));
+    };
+    NameSource expected { text };
+    auto lengths = SIMD::splat<uint8_t>(length);
+    auto first = loadSource(source.first<stride>());
+    auto last = loadSource(source.last<stride>());
+    auto low = SIMD::bitAnd(SIMD::bitOr(SIMD::bitXor(first.val[0], load(expected.first<stride>())), first.val[1]), SIMD::lessThan(lowIndices, lengths));
+    auto high = SIMD::bitAnd(SIMD::bitOr(SIMD::bitXor(last.val[0], load(expected.last<stride>())), last.val[1]), SIMD::lessThan(highIndices, lengths));
+    return !SIMD::isNonZero(SIMD::bitOr(low, high));
+}
+
 template<unsigned size>
-ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::NameTable<size>::match(unsigned index, StructureID from, std::span<const Latin1Character> source) const
+template<typename CharacterType>
+ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::NameTable<size>::match(unsigned index, StructureID from, std::span<const CharacterType> source) const
 {
     auto& entry = m_entries[index];
     if (entry.from.value() != from || source.size() < maxNameTextLength)
         return nullptr;
-    if (!textMatches(m_texts[index], entry.textLength, source.first<maxNameTextLength>()))
+    if (!textMatches(m_texts[index], entry.textLength, source.template first<maxNameTextLength>()))
         return nullptr;
     return &entry;
 }
 
-ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::findName(StructureID from, unsigned index, std::span<const Latin1Character> source) const
+ALWAYS_INLINE uint32_t JSONCache::sourcePrefix(std::span<const Latin1Character> source)
+{
+    return WTF::unalignedLoad<uint32_t>(source.data());
+}
+
+ALWAYS_INLINE uint32_t JSONCache::sourcePrefix(std::span<const char16_t> source)
+{
+    uint64_t characters = WTF::unalignedLoad<uint64_t>(source.data());
+    characters = (characters | (characters >> 8)) & 0x0000FFFF0000FFFFULL;
+    return static_cast<uint32_t>(characters | (characters >> 16));
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::findName(StructureID from, unsigned index, std::span<const CharacterType> source) const
 {
     ASSERT(index == nameIndex(from));
     if (auto* entry = m_names.match(index, from, source))
         return entry;
     if (source.size() < sizeof(uint32_t))
         return nullptr;
-    unsigned set = prefixedNameIndex(from, WTF::unalignedLoad<uint32_t>(source.data()));
+    unsigned set = prefixedNameIndex(from, sourcePrefix(source));
     for (unsigned way = 0; way < prefixedNameWays; ++way) {
         if (auto* entry = m_prefixedNames.match(set + way, from, source))
             return entry;

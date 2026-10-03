@@ -140,10 +140,10 @@ public:
     static ALWAYS_INLINE unsigned nameIndex(StructureID);
     // Returns the entry whose text the source starts with, for a transition from the Structure whose
     // nameIndex() is index. The caller consumes entry->textLength characters of the source.
-    ALWAYS_INLINE const NameEntry* findName(StructureID from, unsigned index, std::span<const Latin1Character> source) const LIFETIME_BOUND;
+    template<typename CharacterType> ALWAYS_INLINE const NameEntry* findName(StructureID from, unsigned index, std::span<const CharacterType> source) const LIFETIME_BOUND;
 
     // addName() serves Structures with a single transition. addPrefixedName() serves the others: the first
-    // four bytes of the key's source text are part of its index, so that a Structure with several transitions
+    // four characters of the key's source text are part of its index, so that a Structure with several transitions
     // can have an entry for each of them.
     void addName(Structure* from, Structure* to, PropertyOffset);
     void addPrefixedName(Structure* from, Structure* to, PropertyOffset);
@@ -191,6 +191,7 @@ private:
     static constexpr unsigned maxNameLength = maxNameTextLength - 3;
     using NameText = std::array<Latin1Character, maxNameTextLength>;
     using NameSource = std::span<const Latin1Character, maxNameTextLength>;
+    using NameSource16 = std::span<const char16_t, maxNameTextLength>;
 
     // Slots [0, primaryStringCapacity) are the primary table and the rest the secondary one. A new string
     // takes its primary slot and demotes the previous occupant to that string's secondary slot, so that two
@@ -218,17 +219,22 @@ private:
     static ALWAYS_INLINE unsigned secondaryTransitionIndex(uint64_t key);
     template<typename CharacterType> static ALWAYS_INLINE Structure* transitionIfMatches(const TransitionEntry&, StructureID from, std::span<const CharacterType> name);
     static ALWAYS_INLINE unsigned prefixedNameIndex(StructureID, uint32_t prefix);
+    // Names are indexed by the first characters of their source text truncated to bytes, so that 16-bit
+    // source finds the entries recorded from 8-bit source.
+    static ALWAYS_INLINE uint32_t sourcePrefix(std::span<const Latin1Character> source);
+    static ALWAYS_INLINE uint32_t sourcePrefix(std::span<const char16_t> source);
     static ALWAYS_INLINE unsigned stringIndex(std::span<const Latin1Character> source);
     static std::span<const Latin1Character> recordableName(Structure* from, Structure* to, PropertyOffset);
     static unsigned makeText(NameText&, std::span<const Latin1Character> name);
     static uint32_t textPrefix(std::span<const Latin1Character> name);
     static ALWAYS_INLINE bool textMatches(const NameText&, unsigned length, NameSource);
+    static ALWAYS_INLINE bool textMatches(const NameText&, unsigned length, NameSource16);
 
     // Texts are kept apart from the entries, which a parse reads for every key, so that the entries
     // occupy fewer cache lines. A text is only meaningful while its entry has a source Structure.
     template<unsigned size>
     struct NameTable {
-        ALWAYS_INLINE const NameEntry* match(unsigned index, StructureID from, std::span<const Latin1Character> source) const LIFETIME_BOUND;
+        template<typename CharacterType> ALWAYS_INLINE const NameEntry* match(unsigned index, StructureID from, std::span<const CharacterType> source) const LIFETIME_BOUND;
         template<unsigned ways> void insert(unsigned set, Structure* from, Structure* to, PropertyOffset, const NameText&, unsigned textLength);
 
         std::array<NameEntry, size> m_entries { };
