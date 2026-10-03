@@ -423,15 +423,16 @@ WI.TabBrowser = class TabBrowser extends WI.View
             return;
 
         this._ignoreSidebarEvents = true;
+        using resetIgnoreSidebarEvents = new ScopeExit(() => {
+            this._ignoreSidebarEvents = false;
+        });
 
         this._navigationSidebar.removeSidebarPanel(0);
 
         console.assert(!this._navigationSidebar.sidebarPanels.length);
 
-        if (!tabContentView) {
-            this._ignoreSidebarEvents = false;
+        if (!tabContentView)
             return;
-        }
 
         if (tabContentView.navigationSidebarWidthSetting.value)
             this._navigationSidebar.width = tabContentView.navigationSidebarWidthSetting.value;
@@ -439,13 +440,11 @@ WI.TabBrowser = class TabBrowser extends WI.View
         var navigationSidebarPanel = tabContentView.navigationSidebarPanel;
         if (!navigationSidebarPanel) {
             this._navigationSidebar.collapsed = true;
-            this._ignoreSidebarEvents = false;
             return;
         }
 
         if (tabContentView.managesNavigationSidebarPanel) {
             tabContentView.showNavigationSidebarPanel();
-            this._ignoreSidebarEvents = false;
             return;
         }
 
@@ -453,8 +452,6 @@ WI.TabBrowser = class TabBrowser extends WI.View
         this._navigationSidebar.selectedSidebarPanel = navigationSidebarPanel;
 
         this._navigationSidebar.collapsed = tabContentView.navigationSidebarCollapsedSetting.value;
-
-        this._ignoreSidebarEvents = false;
     }
 
     _showDetailsSidebarPanelsForTabContentView(tabContentView)
@@ -463,16 +460,17 @@ WI.TabBrowser = class TabBrowser extends WI.View
             return;
 
         this._ignoreSidebarEvents = true;
+        using resetIgnoreSidebarEvents = new ScopeExit(() => {
+            this._ignoreSidebarEvents = false;
+        });
 
         for (var i = this._detailsSidebar.sidebarPanels.length - 1; i >= 0; --i)
             this._detailsSidebar.removeSidebarPanel(i);
 
         console.assert(!this._detailsSidebar.sidebarPanels.length);
 
-        if (!tabContentView) {
-            this._ignoreSidebarEvents = false;
+        if (!tabContentView)
             return;
-        }
 
         for (let sidebar of this._detailsSidebar.sidebars) {
             let identifier = sidebar === this._detailsSidebar.primarySidebar ? WI.TabBrowser.SidebarWidthSettingPrimarySidebarIdentifier : (sidebar.sidebarPanels[0]?.identifier || null);
@@ -484,14 +482,12 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
         if (tabContentView.managesDetailsSidebarPanels) {
             tabContentView.showDetailsSidebarPanels();
-            this._ignoreSidebarEvents = false;
             return;
         }
 
         var detailsSidebarPanels = tabContentView.detailsSidebarPanels;
         if (!detailsSidebarPanels) {
             this._detailsSidebar.collapsed = true;
-            this._ignoreSidebarEvents = false;
             return;
         }
 
@@ -501,8 +497,6 @@ WI.TabBrowser = class TabBrowser extends WI.View
         this._detailsSidebar.selectedSidebarPanel = tabContentView.detailsSidebarSelectedPanelSetting.value || detailsSidebarPanels[0];
 
         this._detailsSidebar.collapsed = tabContentView.detailsSidebarCollapsedSetting.value || !detailsSidebarPanels.length;
-
-        this._ignoreSidebarEvents = false;
     }
 
     _showPreviousTab(event)
