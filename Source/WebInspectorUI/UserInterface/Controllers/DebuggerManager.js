@@ -517,6 +517,42 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return this.dataForTarget(target).scriptForIdentifier(id);
     }
 
+    // A stack trace can name scripts that the target delivering it does not own. A JS stack walk
+    // crosses frame boundaries while script ownership does not: each frame target's debugger reports
+    // only its own frame's scripts, so a synchronous same-origin call leaves the caller's script on a
+    // stack trace delivered on the callee's target. Domains that still report on the page target,
+    // which owns no scripts under Site Isolation, are the other source of this and the more common
+    // one today -- but the cross-frame case remains once they have all migrated.
+    //
+    // Widening is safe only within a process: a script identifier is a JSC SourceID drawn from a
+    // process-global counter, so it names one script inside a process and collides freely across
+    // them. Crossing a process would resolve a frame to an unrelated script, which is worse than
+    // resolving it to nothing.
+    //
+    // Prefer `scriptForIdentifier` wherever the caller knows the target owns the identifier.
+    scriptForIdentifierInSameProcess(id, target)
+    {
+        let script = this.scriptForIdentifier(id, target);
+        if (script)
+            return script;
+
+        if (!target.processId)
+            return null;
+
+        // Iterate the map rather than `WI.targets` so that no `WI.DebuggerData` is created as a side
+        // effect for a target that has never reported a script.
+        for (let [otherTarget, targetData] of this._targetDebuggerDataMap) {
+            if (otherTarget === target || otherTarget.processId !== target.processId)
+                continue;
+
+            script = targetData.scriptForIdentifier(id);
+            if (script)
+                return script;
+        }
+
+        return null;
+    }
+
     scriptsForURL(url, target)
     {
         if (target instanceof WI.ImportedTarget)

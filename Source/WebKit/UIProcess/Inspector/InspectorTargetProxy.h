@@ -26,7 +26,9 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorTarget.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -40,6 +42,10 @@ public:
     String identifier() const final { return m_identifier; }
 
     virtual void didCommitProvisionalTarget() = 0;
+
+    // Single encoding of a process identity for `Inspector::InspectorTarget::processId()`, so every
+    // target type tags itself the same way and the frontend can compare the values for equality.
+    static String toProcessID(WebCore::ProcessIdentifier);
 
 protected:
     InspectorTargetProxy(const String& targetId, Inspector::InspectorTargetType);

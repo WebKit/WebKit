@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: cross-frame
+Test that targets report which process hosts them, and that script lookup widens only within a process.
+
+
+
+== Running test suite: SiteIsolation.Target.ProcessId
+-- Running test case: SiteIsolation.Target.ProcessId.SharedWithinAProcess
+PASS: Should find the main frame's target.
+PASS: Should find the same-origin iframe's target.
+PASS: Should find the cross-origin iframe's target.
+PASS: Page target should have a process identifier.
+PASS: Main frame target should have a process identifier.
+PASS: Cross-origin frame target should have a process identifier.
+PASS: Page target and main frame target should share a process.
+PASS: Same-origin frame target should share the main frame's process.
+PASS: Cross-origin frame target should be in its own process.
+
+-- Running test case: SiteIsolation.Target.ProcessId.ResolvesScriptOwnedByAnotherTargetInTheSameProcess
+PASS: Main frame target should have at least one parsed script.
+PASS: Page target should own no scripts of its own.
+PASS: Widening the search to the page target's process should find the script.
+
+-- Running test case: SiteIsolation.Target.ProcessId.NeverResolvesScriptFromAnotherProcess
+PASS: Cross-origin frame target should have the debugger-frame-script.js script.
+PASS: Lookup from the page target should not reach a script in the cross-origin iframe's process.
+
+-- Running test case: SiteIsolation.Target.ProcessId.ResolvesScriptAcrossFrameTargetsInOneProcess
+PASS: Console message should be delivered on the same-origin frame's target.
+PASS: Stack trace should contain the parent's eval'd function.
+PASS: The parent's frame should resolve to a source location rather than native code.
+PASS: The parent's frame should have a source location.
+PASS: The parent's script should have no URL, so only its identifier can resolve it.
+PASS: The parent's script should be owned by the main frame's target.
+PASS: The same-origin frame target should not own the parent's script.
+PASS: Widening the search within the process should find the parent's script.
+
