@@ -40,23 +40,59 @@ function test()
     WI.reportInternalError = (e) => { };
     let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.ServiceWorker");
 
-    function addTestCase({name, description, setup, expression, statusCode, responseSource}) {
+    function addTestCase({name, description, setup, expression, statusCode, responseSource, expectedMIMEType}) {
         suite.addTestCase({
             name, description, setup,
             test(resolve, reject) {
+                let resource = null;
+                let urlDidChangeCount = 0;
+                let urlDidChangeListener = null;
+                let mimeTypeDidChangeCount = 0;
+                let mimeTypeDidChangeListener = null;
+
+                function removeEventListeners() {
+                    if (!resource || !urlDidChangeListener)
+                        return;
+
+                    resource.removeEventListener(WI.Resource.Event.URLDidChange, urlDidChangeListener);
+                    resource.removeEventListener(WI.Resource.Event.MIMETypeDidChange, mimeTypeDidChangeListener);
+                }
+
+                let resourceWasAddedPromise = new Promise((resolve) => {
+                    WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                        resource = event.data.resource;
+                        let data = {url: resource.url, mimeType: resource.mimeType};
+
+                        if (expectedMIMEType) {
+                            urlDidChangeListener = resource.addEventListener(WI.Resource.Event.URLDidChange, () => { ++urlDidChangeCount; });
+                            mimeTypeDidChangeListener = resource.addEventListener(WI.Resource.Event.MIMETypeDidChange, () => { ++mimeTypeDidChangeCount; });
+                        }
+
+                        resolve(data);
+                    });
+                });
+                let responseReceivedPromise = WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+                let loadCompletePromise = InspectorTest.awaitEvent("LoadComplete");
+
                 InspectorTest.evaluateInPage(expression);
                 Promise.all([
-                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
-                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
-                    InspectorTest.awaitEvent("LoadComplete"),
-                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
-                    let resource = resourceWasAddedEvent.data.resource;
+                    resourceWasAddedPromise,
+                    responseReceivedPromise,
+                    loadCompletePromise,
+                ]).then(([resourceWasAddedData, responseReceivedEvent, loadCompleteEvent]) => {
                     InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
                     InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
                     if (responseSource)
                         InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                    if (expectedMIMEType) {
+                        InspectorTest.expectEqual(resource.url, resourceWasAddedData.url, "Resource URL should not change when the response does not provide a URL.");
+                        InspectorTest.expectEqual(urlDidChangeCount, 0, "Resource should not dispatch URLDidChange when its URL does not change.");
+                        InspectorTest.expectThat(resource.mimeType !== resourceWasAddedData.mimeType, "Resource MIME type should change after receiving the response.");
+                        InspectorTest.expectEqual(resource.mimeType, expectedMIMEType, `Resource MIME type should be ${expectedMIMEType}.`);
+                        InspectorTest.expectEqual(mimeTypeDidChangeCount, 1, "Resource should dispatch MIMETypeDidChange when its MIME type changes.");
+                    }
                     InspectorTest.log("RESPONSE: " + resource.statusCode + " " + resource.statusText);
-                }).then(resolve, reject);
+                }).finally(removeEventListeners).then(resolve, reject);
             }
         });
     }
@@ -66,6 +102,7 @@ function test()
         setup(resolve) { InspectorTest.evaluateInPage(`startServiceWorker()`); InspectorTest.awaitEvent("SetupComplete").then(resolve); },
         expression: `triggerServiceWorkerLoad("test-200")`,
         responseSource: WI.Resource.ResponseSource.ServiceWorker,
+        expectedMIMEType: "text/plain",
     });
 
     addTestCase({
