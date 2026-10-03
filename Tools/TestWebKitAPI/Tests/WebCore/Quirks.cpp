@@ -42,6 +42,10 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace TestWebKitAPI {
 
 using namespace WebCore::QuirkSelectors;
@@ -1018,6 +1022,23 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideHSBC)
     EXPECT_EQ(customUserAgentFor("https://security.us.hsbc.com/"_s), String { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"_s });
     EXPECT_FALSE(customUserAgentFor("https://us.hsbc.com/"_s).has_value());
 }
+
+#if PLATFORM(MAC)
+TEST_F(QuirksTest, NeedsCustomUserAgentOverrideInstacartSafariWebApp)
+{
+    setApplicationBundleIdentifierOverride("com.apple.Safari.WebApp"_s);
+    auto agent = customUserAgentFor("https://www.instacart.com/"_s);
+    clearApplicationBundleIdentifierTestingOverride();
+
+    ASSERT_TRUE(agent.has_value());
+    EXPECT_TRUE(agent->contains("Chrome/152.0.0.0"_s));
+}
+
+TEST_F(QuirksTest, NeedsCustomUserAgentOverrideInstacartOutsideSafariWebApp)
+{
+    EXPECT_FALSE(customUserAgentFor("https://www.instacart.com/"_s).has_value());
+}
+#endif
 
 #if PLATFORM(IOS)
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideAmazonPrimeVideo)

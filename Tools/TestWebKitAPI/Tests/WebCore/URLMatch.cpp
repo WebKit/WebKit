@@ -262,6 +262,7 @@ TEST(URLMatchTest, EnvironmentIsANDedWithTheSiteMatch)
     EXPECT_FALSE(WebCore::evaluateURLEnvironment(URLEnvironment::SmallScreen));
     EXPECT_FALSE(WebCore::evaluateURLEnvironment(URLEnvironment::TubularApp));
     EXPECT_FALSE(WebCore::evaluateURLEnvironment(URLEnvironment::LensApp));
+    EXPECT_FALSE(WebCore::evaluateURLEnvironment(URLEnvironment::SafariWebApp));
 
     EXPECT_FALSE(matchesURL(smallScreenOnly, "https://www.youtube.com/"_s));
 #endif

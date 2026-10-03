@@ -483,6 +483,12 @@ bool MacApplication::isSafariTechnologyPreview()
     return isSafari;
 }
 
+bool MacApplication::isSafariWebApp()
+{
+    static bool isSafariWebApp = applicationBundleIsEqualTo("com.apple.Safari.WebApp"_s);
+    return isSafariWebApp;
+}
+
 bool MacApplication::isAppleMail()
 {
     static bool isAppleMail = applicationBundleIsEqualTo("com.apple.mail"_s);

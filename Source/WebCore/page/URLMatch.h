@@ -66,6 +66,7 @@ enum class URLEnvironment : uint8_t {
     SmallScreen,
     TubularApp,
     LensApp,
+    SafariWebApp,
 };
 
 WEBCORE_EXPORT bool evaluateURLEnvironment(URLEnvironment);
@@ -237,6 +238,11 @@ constexpr EnvironmentIs tubularApp()
 constexpr EnvironmentIs lensApp()
 {
     return { URLEnvironment::LensApp };
+}
+
+constexpr EnvironmentIs safariWebApp()
+{
+    return { URLEnvironment::SafariWebApp };
 }
 
 } // namespace URLRefinement

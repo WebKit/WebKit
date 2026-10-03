@@ -557,6 +557,9 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::host("www.indiatimes.com"_s),
         .behaviors = { needsIPadMiniUserAgentQuirk } },
 
+    { .match = URLMatch::domain("instacart.com"_s).when(safariWebApp()),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent152)) } },
+
     { .match = URLMatch::domain("instagram.com"_s),
         .behaviors = {
             // rdar://166400170
