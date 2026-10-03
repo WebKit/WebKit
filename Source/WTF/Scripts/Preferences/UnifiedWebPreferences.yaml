@@ -845,10 +845,10 @@ CSSCalcMixEnabled:
 CSSCalcSizeFunctionEnabled:
   type: bool
   category: css
-  status: testable
+  status: stable
   humanReadableName: "CSS calc-size()"
   humanReadableDescription: "Enable support for CSS calc-size()"
-  defaultValue: false
+  defaultValue: true
 
 CSSClassPrefixSelectorEnabled:
   type: bool
