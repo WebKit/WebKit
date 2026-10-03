@@ -198,13 +198,13 @@ private:
     const CheckedRef<const RenderBox> m_flexItem;
 };
 
-// Marks a box as being laid out solely to measure its intrinsic block-axis size, so its
-// own cyclic-percentage min/max block-size resolves per CSS Sizing 3 section 5.1.
-// See RenderBox::computeIntrinsicLogicalHeight and RenderBox::computeLogicalHeight.
-class IntrinsicLogicalHeightComputationScope {
+// Marks an orthogonal box that is being laid out only to supply its container's intrinsic inline-size contribution
+// (its own block size), so its own percentage min/max-height follows CSS Sizing 3 "Intrinsic Contributions of
+// Percentage-Sized Boxes". See RenderBox::computeIntrinsicLogicalHeight and RenderBox::computeLogicalHeight.
+class OrthogonalIntrinsicContributionLayoutScope {
 public:
-    IntrinsicLogicalHeightComputationScope(LocalFrameViewLayoutContext&, const RenderBox&);
-    ~IntrinsicLogicalHeightComputationScope();
+    OrthogonalIntrinsicContributionLayoutScope(LocalFrameViewLayoutContext&, const RenderBox&);
+    ~OrthogonalIntrinsicContributionLayoutScope();
 
 private:
     const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;

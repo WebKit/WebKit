@@ -3442,7 +3442,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
         // contribution (e.g. an orthogonal child probed by its block container),
         // its own min/max block-size must resolve per the intrinsic-size rules of
         // CSS Sizing 3 section 5.1 rather than against the not-yet-known container.
-        auto isComputingIntrinsicSize = view().frameView().layoutContext().isComputingIntrinsicLogicalHeightFor(*this) ? IsComputingIntrinsicSize::Yes : IsComputingIntrinsicSize::No;
+        auto isComputingIntrinsicSize = view().frameView().layoutContext().isInOrthogonalIntrinsicContributionLayout(*this) ? IsComputingIntrinsicSize::Yes : IsComputingIntrinsicSize::No;
         if (auto heightFromFormattingContext = usedLogicalHeightFromContext())
             return *heightFromFormattingContext;
 
@@ -3525,7 +3525,7 @@ LayoutUnit RenderBox::computeIntrinsicLogicalHeight()
 {
     // Mark the box as being measured for its intrinsic size so its own cyclic-percentage min/max block-size
     // resolves per CSS Sizing 3 section 5.1 (as none/zero) instead of against the not-yet-known container.
-    auto intrinsicSizeScope = IntrinsicLogicalHeightComputationScope { view().frameView().layoutContext(), *this };
+    auto orthogonalIntrinsicContributionLayoutScope = OrthogonalIntrinsicContributionLayoutScope { view().frameView().layoutContext(), *this };
 
     // The block-axis size of an already-laid-out box is simply its logical height.
     if (!needsLayout())
