@@ -96,6 +96,18 @@ private:
     bool m_bindingChanged { false };
 };
 
+class ScopedReadBuffer {
+    WTF_MAKE_NONCOPYABLE(ScopedReadBuffer);
+
+public:
+    ScopedReadBuffer(GCGLenum mode, bool condition = true);
+    ~ScopedReadBuffer();
+
+private:
+    GCGLenum m_mode { 0 };
+    bool m_changed { false };
+};
+
 class ScopedPixelStorageMode {
     WTF_MAKE_NONCOPYABLE(ScopedPixelStorageMode);
 
