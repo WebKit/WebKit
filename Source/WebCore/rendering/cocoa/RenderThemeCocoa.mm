@@ -3419,7 +3419,13 @@ bool RenderThemeCocoa::paintMenuListButtonDecorationsForVectorBasedControls(cons
     Path glyphPath;
     FloatSize glyphSize;
 
-    if (box.isRenderMenuList() && downcast<HTMLSelectElement>(element)->multiple()) {
+#if PLATFORM(IOS_FAMILY)
+    bool paintsEllipsis = box.isRenderMenuList() && downcast<HTMLSelectElement>(element)->multiple();
+#else
+    bool paintsEllipsis = false;
+#endif
+
+    if (paintsEllipsis) {
         constexpr int length = 18;
         constexpr int count = 3;
         constexpr int padding = 12;

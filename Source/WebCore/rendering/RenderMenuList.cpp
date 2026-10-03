@@ -33,6 +33,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
 #include "PlatformRenderTheme.h"
 #include "RenderBoxInlines.h"
@@ -79,8 +80,9 @@ void RenderMenuList::styleDidChange(Style::Difference diff, const Style::Compute
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    Ref protectedSelect = selectElement();
-    const auto& listItems = protectedSelect->listItems();
+    float widthWithoutOptions = 0;
+    Ref select = selectElement();
+    const auto& listItems = select->listItems();
     int size = listItems.size();
 
     for (int i = 0; i < size; ++i) {
@@ -97,11 +99,27 @@ void RenderMenuList::updateOptionsWidth()
         }
     }
 
+    // https://html.spec.whatwg.org/#width-of-the-select's-labels
+    if (select->multiple()) {
+        CheckedRef font = style().fontCascade();
+        auto countTextWidth = [&](unsigned count) {
+            return font->width(RenderBlock::constructTextRun(applyTextTransform(style(), htmlSelectMultipleItems(count)), style()));
+        };
+        widthWithoutOptions = countTextWidth(0);
+        maxOptionWidth = std::max(maxOptionWidth, widthWithoutOptions);
+        // One selected option shows its own label, and with proportional digits any other count can be the widest.
+        unsigned optionCount = select->length();
+        for (unsigned count = 2; count <= optionCount; ++count)
+            maxOptionWidth = std::max(maxOptionWidth, countTextWidth(count));
+    }
+
     int width = static_cast<int>(ceilf(maxOptionWidth));
-    if (m_optionsWidth == width)
+    int roundedWidthWithoutOptions = static_cast<int>(ceilf(widthWithoutOptions));
+    if (m_optionsWidth == width && m_widthWithoutOptions == roundedWidthWithoutOptions)
         return;
 
     m_optionsWidth = width;
+    m_widthWithoutOptions = roundedWidthWithoutOptions;
     if (parent())
         setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
@@ -150,7 +168,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderMenuList::computeIntrinsicLogicalWidths(
         return RenderFlexibleBox::computeIntrinsicLogicalWidths();
 
     auto minimumSize = LayoutUnit { theme().minimumMenuListSize(style()) };
-    auto maxLogicalWidth = shouldApplySizeContainment() ? minimumSize : std::max(LayoutUnit { m_optionsWidth }, minimumSize);
+    auto maxLogicalWidth = std::max(LayoutUnit { shouldApplySizeContainment() ? m_widthWithoutOptions : m_optionsWidth }, minimumSize);
 
     auto internalPadding = theme().popupInternalPaddingBox(style());
     if (auto start = internalPadding.start(writingMode()).tryFixed())
@@ -205,8 +223,8 @@ void RenderMenuList::computeIntrinsicLogicalWidthContributions()
 
 void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
 {
-    Ref protectedSelect = selectElement();
-    const auto& listItems = protectedSelect->listItems();
+    Ref select = selectElement();
+    const auto& listItems = select->listItems();
     if (listIndex >= listItems.size()) {
         itemBackgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
         itemHasCustomBackgroundColor = false;

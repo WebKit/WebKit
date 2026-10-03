@@ -159,7 +159,7 @@ public:
     bool itemIsSeparator(unsigned listIndex) const override;
     bool itemIsLabel(unsigned listIndex) const override;
     bool itemIsSelected(unsigned listIndex) const override;
-    bool shouldPopOver() const override { return !POPUP_MENU_PULLS_DOWN; }
+    bool shouldPopOver() const override { return !POPUP_MENU_PULLS_DOWN && !m_multiple; }
 #if !PLATFORM(COCOA)
     void setTextFromItem(unsigned listIndex) override;
 #endif

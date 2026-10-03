@@ -1,0 +1,24 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true HTMLEnhancedSelectMultipleDropdownBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<select multiple size="1" id="two"><option>a</option><option>b</option></select>
+<select id="noneSelected"><option>0 Items</option></select>
+<select id="twoSelected"><option>2 Items</option></select>
+<select multiple size="1" id="eleven"><option>a</option><option>b</option><option>c</option><option>d</option><option>e</option><option>f</option><option>g</option><option>h</option><option>i</option><option>j</option><option>k</option></select>
+<select id="tenSelected"><option>10 Items</option></select>
+<select id="elevenSelected"><option>11 Items</option></select>
+<script>
+description("Tests that a select element with the multiple attribute and a size of 1 is wide enough for the count it shows when no or several options are selected.");
+
+shouldBeTrue("two.offsetWidth >= noneSelected.offsetWidth");
+shouldBeTrue("two.offsetWidth >= twoSelected.offsetWidth");
+
+debug("\nWith proportional digits, 10 can be wider than 11.");
+shouldBeTrue("eleven.offsetWidth >= tenSelected.offsetWidth");
+shouldBeTrue("eleven.offsetWidth >= elevenSelected.offsetWidth");
+</script>
+</body>
+</html>

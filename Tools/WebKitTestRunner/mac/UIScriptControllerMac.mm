@@ -277,6 +277,43 @@ void UIScriptControllerMac::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
     });
 }
 
+static NSPopUpButtonCell *popUpButtonCellForMenu(NSMenu *menu)
+{
+    if (auto *cell = dynamic_objc_cast<NSPopUpButtonCell>(menu.delegate))
+        return cell;
+    for (NSMenuItem *item in menu.itemArray) {
+        if (auto *cell = dynamic_objc_cast<NSPopUpButtonCell>(item.target))
+            return cell;
+    }
+    return nil;
+}
+
+void UIScriptControllerMac::dismissFormAccessoryView()
+{
+    RetainPtr menu = [webView() _activeMenu];
+    if (popUpButtonCellForMenu(menu.get()))
+        [menu cancelTracking];
+}
+
+void UIScriptControllerMac::selectFormAccessoryPickerRow(long rowIndex)
+{
+    RetainPtr menu = [webView() _activeMenu];
+    RetainPtr cell = popUpButtonCellForMenu(menu.get());
+    if (!cell)
+        return;
+
+    [cell selectItemAtIndex:rowIndex];
+    [menu cancelTracking];
+}
+
+bool UIScriptControllerMac::selectFormAccessoryHasCheckedItemAtRow(long rowIndex) const
+{
+    RetainPtr menu = [webView() _activeMenu];
+    if (!popUpButtonCellForMenu(menu.get()) || rowIndex < 0 || rowIndex >= [menu numberOfItems])
+        return false;
+    return [menu itemAtIndex:rowIndex].state == NSControlStateValueOn;
+}
+
 void UIScriptControllerMac::beginBackSwipe(JSValueRef callback)
 {
     RefPtr context = m_context.get();

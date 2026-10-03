@@ -412,10 +412,14 @@ bool HTMLSelectElement::valueMissing() const
 
 bool HTMLSelectElement::usesMenuList() const
 {
-#if !PLATFORM(IOS_FAMILY)
-    return !m_multiple && m_size <= 1;
-#else
+#if PLATFORM(IOS_FAMILY)
     return true;
+#elif PLATFORM(MAC)
+    if (m_multiple)
+        return m_size == 1 && document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled() && document().settings().htmlEnhancedSelectMultipleDropdownBoxEnabled();
+    return m_size <= 1;
+#else
+    return !m_multiple && m_size <= 1;
 #endif
 }
 
@@ -2463,7 +2467,7 @@ void HTMLSelectElement::showPopup()
     IntRect absBounds = renderer->absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
 
-    protect(m_popup)->show(absBounds, *frameView, optionToListIndex(selectedIndex())); // May run JS.
+    protect(m_popup)->show(absBounds, *frameView, m_multiple ? -1 : optionToListIndex(selectedIndex())); // May run JS.
 }
 
 void HTMLSelectElement::hidePopup()
@@ -2745,7 +2749,7 @@ void HTMLSelectElement::valueChanged(unsigned listIndex, bool fireOnChange)
     if (!frame || &document() != frame->document())
         return;
 
-    optionSelectedByUser(listToOptionIndex(listIndex), fireOnChange);
+    optionSelectedByUser(listToOptionIndex(listIndex), fireOnChange, m_multiple);
 }
 
 String HTMLSelectElement::itemText(unsigned listIndex) const

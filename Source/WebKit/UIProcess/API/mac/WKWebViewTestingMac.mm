@@ -34,6 +34,7 @@
 #import "WKWebViewMac.h"
 #import "WebColorPicker.h"
 #import "WebPageProxy.h"
+#import "WebPopupMenuProxyMac.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
@@ -110,6 +111,8 @@
         return contextMenu.autorelease();
     if (RetainPtr domPasteMenu = _impl->domPasteMenu())
         return domPasteMenu.autorelease();
+    if (RefPtr popupMenu = dynamicDowncast<WebKit::WebPopupMenuProxyMac>(_page->activePopupMenu()); popupMenu && popupMenu->isVisible())
+        return [protect(popupMenu->popup()) menu];
     return nil;
 }
 
