@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that history.go(-1) from a cross-origin iframe works correctly via the UIProcess path.");
+jsTestIsAsync = true;
+
+var reportCount = 0;
+var iframeUrl = "";
+
+onmessage = (event) => {
+    iframeUrl = event.data;
+    reportCount++;
+
+    if (reportCount === 1) {
+        // Initial load (page A). Navigate iframe to page B.
+        document.getElementById("frame").src =
+            "http://localhost:8000/site-isolation/history/resources/report-url-on-request.html?id=frame&page=b";
+    } else if (reportCount === 2) {
+        // Page B loaded. Tell iframe to go back via history.go(-1).
+        document.getElementById("frame").contentWindow.postMessage("go-back", "*");
+    } else if (reportCount === 3) {
+        // Should be back at page A.
+        shouldBeTrue("iframeUrl.includes('page=a')");
+        shouldBeFalse("iframeUrl.includes('page=b')");
+        finishJSTest();
+    }
+};
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/history/resources/report-url-on-request.html?id=frame&page=a"></iframe>

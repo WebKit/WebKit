@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that pushState entries in a cross-origin iframe are preserved across back navigation.");
+jsTestIsAsync = true;
+
+var reportCount = 0;
+var iframeUrl = "";
+
+onmessage = (event) => {
+    iframeUrl = event.data;
+    reportCount++;
+
+    if (sessionStorage.verifyPhase) {
+        // After back, iframe should be at the pushState URL.
+        shouldBeTrue("iframeUrl.includes('state=2')");
+        delete sessionStorage.verifyPhase;
+        finishJSTest();
+        return;
+    }
+
+    if (reportCount === 1) {
+        // Initial load. Tell iframe to do pushState to URLs that map to real resources.
+        var iframe = document.getElementById("frame");
+        iframe.contentWindow.postMessage("pushstate:/site-isolation/history/resources/report-url-on-request.html?state=1", "*");
+        iframe.contentWindow.postMessage("pushstate:/site-isolation/history/resources/report-url-on-request.html?state=2", "*");
+        iframe.contentWindow.postMessage("report", "*");
+    } else if (reportCount === 2) {
+        // pushState done. Navigate main frame away.
+        sessionStorage.verifyPhase = "true";
+        location.href = "/site-isolation/history/resources/go-back.html";
+    }
+};
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/history/resources/report-url-on-request.html"></iframe>

@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that a cross-origin iframe that was navigated via client-side redirect is correctly restored after back navigation.");
+jsTestIsAsync = true;
+
+var reportCount = 0;
+var iframeUrl = "";
+
+onmessage = (event) => {
+    iframeUrl = event.data;
+    reportCount++;
+
+    if (sessionStorage.verifyPhase) {
+        // After back, iframe should be at the redirect target, not the redirect source.
+        shouldBeTrue("iframeUrl.includes('id=redirected')");
+        shouldBeFalse("iframeUrl.includes('redirect-to')");
+        delete sessionStorage.verifyPhase;
+        finishJSTest();
+        return;
+    }
+
+    if (reportCount === 1) {
+        // Initial load. Navigate iframe to a page that redirects.
+        document.getElementById("frame").src =
+            "http://localhost:8000/site-isolation/history/resources/redirect-to.html?url=" +
+            encodeURIComponent("/site-isolation/history/resources/report-url.html?id=redirected");
+    } else if (reportCount === 2) {
+        // Redirect completed, final page loaded. Navigate main frame away.
+        sessionStorage.verifyPhase = "true";
+        location.href = "/site-isolation/history/resources/go-back.html";
+    }
+};
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/history/resources/report-url.html?id=initial"></iframe>

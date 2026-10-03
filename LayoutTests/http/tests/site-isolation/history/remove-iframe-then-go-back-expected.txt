@@ -1,0 +1,11 @@
+Verifies that back navigation restores iframes correctly after one iframe was removed from DOM.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframeAUrl is "http://localhost:8000/site-isolation/history/resources/report-url.html?id=a"
+PASS iframeBUrl is "http://localhost:8000/site-isolation/history/resources/report-url.html?id=b&navigated=true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
