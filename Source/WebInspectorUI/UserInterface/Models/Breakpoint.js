@@ -283,15 +283,16 @@ WI.Breakpoint = class Breakpoint extends WI.Object
                 if (!tokens)
                     return false;
 
-                let templateLiteral = tokens.reduce((text, token) => {
-                    if (token.type === WI.BreakpointLogMessageLexer.TokenType.PlainText)
-                        return text + token.data.escapeCharacters("`\\");
-                    if (token.type === WI.BreakpointLogMessageLexer.TokenType.Expression)
-                        return text + "${" + token.data + "}";
-                    return text;
-                }, "");
+                let args = [];
+                for (let token of tokens) {
+                    if (token.type === WI.BreakpointLogMessageLexer.TokenType.PlainText) {
+                        if (token.data)
+                            args.push("`" + token.data.escapeCharacters("`\\") + "`");
+                    } else if (token.type === WI.BreakpointLogMessageLexer.TokenType.Expression)
+                        args.push("(" + token.data + ")");
+                }
 
-                action.data = "console.log(`" + templateLiteral + "`)";
+                action.data = "console.log(" + args.join(", ") + ")";
                 action.type = WI.BreakpointAction.Type.Evaluate;
                 return true;
             });
