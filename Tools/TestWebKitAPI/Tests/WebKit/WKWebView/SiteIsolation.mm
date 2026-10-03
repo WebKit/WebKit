@@ -99,6 +99,7 @@
 
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 
 @interface NSApplication ()
@@ -16771,6 +16772,37 @@ TEST(SiteIsolation, ContextMenuCopyInUnfocusedCrossOriginFrame)
         return [[NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString] isEqualToString:@"hello"];
     }));
     EXPECT_WK_STREQ("input", [webView stringByEvaluatingJavaScript:@"document.activeElement.id"]);
+}
+
+TEST(SiteIsolation, ContextMenuStartSpeakingInCrossOriginFrame)
+{
+    HTTPServer server({
+        { "/example"_s, { "<body style='margin: 0'><iframe src='https://webkit.org/iframe' style='display: block; width: 300px; height: 150px; border: none'></iframe>main frame text <input id='input'></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0; font-size: 60px' onmousedown='event.preventDefault()'>subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    __block bool didSpeak = false;
+    __block RetainPtr<NSString> spokenString;
+    InstanceMethodSwizzler speakStringSwizzler {
+        NSApplication.class,
+        @selector(speakString:),
+        imp_implementationWithBlock(^(id, NSString *string) {
+            spokenString = string;
+            didSpeak = true;
+        })
+    };
+
+    auto [webView, delegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 400));
+    [webView loadURL:[NSURL URLWithString:@"https://example.com/example"]];
+    [delegate waitForDidFinishNavigation];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('input').focus()"];
+
+    [webView rightClick:NSMakePoint(50, 350) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.title isEqualToString:@"Start Speaking"];
+    }];
+
+    EXPECT_TRUE(Util::runFor(&didSpeak, 5_s));
+    EXPECT_WK_STREQ("subframe", spokenString.get());
 }
 #endif
 

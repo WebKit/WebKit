@@ -1816,6 +1816,7 @@ public:
     void getResourceDataFromFrame(WebFrameProxy&, API::URL*, CompletionHandler<void(API::Data*)>&&);
     void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
     void getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&&);
+    void getSelectionOrContentsAsString(WebCore::FrameIdentifier, CompletionHandler<void(const String&)>&&);
     void getSourceForFrame(WebFrameProxy*, CompletionHandler<void(const String&)>&&);
 #if PLATFORM(COCOA)
     void getWebArchiveData(CompletionHandler<void(API::Data*)>&&);
@@ -2675,6 +2676,7 @@ public:
 
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
+    void createAppHighlightInSelectedRange(WebCore::FrameIdentifier, WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void restoreAppHighlightsAndScrollToIndex(const Vector<Ref<WebCore::SharedMemory>>& highlights, const std::optional<unsigned> index);
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
     bool appHighlightsVisibility();

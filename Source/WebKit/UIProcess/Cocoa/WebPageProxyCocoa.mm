@@ -943,6 +943,12 @@ void WebPageProxy::getTextFragmentRanges(CompletionHandler<void(const Vector<Edi
 #if ENABLE(APP_HIGHLIGHTS)
 void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup, WebCore::HighlightRequestOriginatedInApp requestOriginatedInApp)
 {
+    if (RefPtr frame = focusedOrMainFrame())
+        createAppHighlightInSelectedRange(frame->frameID(), createNewGroup, requestOriginatedInApp);
+}
+
+void WebPageProxy::createAppHighlightInSelectedRange(WebCore::FrameIdentifier frameID, WebCore::CreateNewGroupForHighlight createNewGroup, WebCore::HighlightRequestOriginatedInApp requestOriginatedInApp)
+{
     if (!hasRunningProcess())
         return;
 
@@ -956,7 +962,7 @@ void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForH
         if (RefPtr pageClient = this->pageClient())
             pageClient->storeAppHighlight(highlight);
     };
-    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup, requestOriginatedInApp), Messages::WebPage::CreateAppHighlightInSelectedRange::Reply { WTF::move(completionHandler) });
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::CreateAppHighlightInSelectedRange(frameID, createNewGroup, requestOriginatedInApp), Messages::WebPage::CreateAppHighlightInSelectedRange::Reply { WTF::move(completionHandler) });
 }
 
 void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedMemory>>& highlights, const std::optional<unsigned> index)
