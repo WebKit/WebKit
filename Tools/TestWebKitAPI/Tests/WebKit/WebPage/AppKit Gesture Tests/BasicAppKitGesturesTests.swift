@@ -38,7 +38,7 @@ extension AppKitGesturesTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
     final class Basic: AppKitGestureTestSuite {
-        static let text = "Here's to the crazy ones."
+        static var text = "Here's to the crazy ones."
 
         let recap = Recap.shared
 
@@ -2291,18 +2291,21 @@ extension AppKitGesturesTests.Basic {
         .bug("rdar://176317069", "REGRESSION(312023@main): Text cannot be selected with press + drag gesture")
     )
     func pressDragOnExistingSelectionDoesNotExtendSelection() async throws {
+        let originalText = exchange(&Self.text, with: "This is an extra long sentence; here's to the crazy ones.")
+        defer { Self.text = originalText }
+
         try await loadHTML(contentEditable: false)
 
-        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let thisRange = try #require(Self.text.utf16Range(of: "This"))
         let onesRange = try #require(Self.text.utf16Range(of: "ones"))
-        let crazySelection = JavaScriptSelection.range(
-            base: .init(in: "div", at: crazyRange.lowerBound),
-            extent: .init(in: "div", at: crazyRange.upperBound)
+        let thisSelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: thisRange.lowerBound),
+            extent: .init(in: "div", at: thisRange.upperBound)
         )
-        try await page.callJavaScript(JavaScriptMessages.SetSelection(crazySelection))
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(thisSelection))
         await page.waitForNextPresentationUpdate()
 
-        let crazyBounds = try await screenBoundsOfText("crazy")
+        let thisBounds = try await screenBoundsOfText("This")
         let onesBounds = try await screenBoundsOfText("ones")
 
         let dragInitiated = Future()
@@ -2319,10 +2322,10 @@ extension AppKitGesturesTests.Basic {
         ) {
             await recap.play { composer in
                 composer._wk_drag(
-                    withStart: crazyBounds.center,
+                    withStart: thisBounds.center,
                     end: onesBounds.center,
                     duration: .seconds(1.5),
-                    pressAndWait: .seconds(1.0)
+                    pressAndWait: .seconds(1.5)
                 )
             }
 
@@ -2336,7 +2339,7 @@ extension AppKitGesturesTests.Basic {
         #expect(
             selection
                 != .range(
-                    base: .init(in: "div", at: crazyRange.lowerBound),
+                    base: .init(in: "div", at: thisRange.lowerBound),
                     extent: .init(in: "div", at: onesRange.upperBound)
                 )
         )
