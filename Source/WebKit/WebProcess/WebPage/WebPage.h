@@ -879,7 +879,7 @@ public:
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, const String& newChildFrameName, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&&);
 
     Awaitable<std::optional<FrameTreeNodeData>> getFrameTree();
-    Awaitable<std::optional<FrameTreeNodeData>> getFrameTreeForBackForwardCacheEntry(WebCore::BackForwardFrameItemIdentifier);
+    Awaitable<URL> getBackForwardCacheEntryTopDocumentURL(WebCore::BackForwardFrameItemIdentifier);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
     void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
 

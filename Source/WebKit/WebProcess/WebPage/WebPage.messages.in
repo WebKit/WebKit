@@ -222,7 +222,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, String frameName, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
     GetFrameTree() -> (struct std::optional<WebKit::FrameTreeNodeData> data)
-    GetFrameTreeForBackForwardCacheEntry(WebCore::BackForwardFrameItemIdentifier frameItemID) -> (struct std::optional<WebKit::FrameTreeNodeData> data)
+    GetBackForwardCacheEntryTopDocumentURL(WebCore::BackForwardFrameItemIdentifier frameItemID) -> (URL topDocumentURL)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID) -> ()
 

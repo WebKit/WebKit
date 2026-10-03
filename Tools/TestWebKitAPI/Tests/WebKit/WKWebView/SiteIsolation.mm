@@ -575,16 +575,18 @@ static RetainPtr<NSSet> frameTrees(WKWebView *webView)
     return result;
 }
 
-static RetainPtr<NSSet> frameTreesInBackForwardCacheAtIndex(WKWebView *webView, NSInteger relativeIndex)
+static void checkTopDocumentURLsInBackForwardCacheAtIndex(WKWebView *webView, NSInteger relativeIndex, NSUInteger expectedProcessCount, NSString *expectedTopDocumentURL)
 {
     __block bool done = false;
-    __block RetainPtr<NSSet> result;
-    [webView _frameTreesInBackForwardCacheAtIndex:relativeIndex completionHandler:^(NSSet<_WKFrameTreeNode *> *frameTrees) {
-        result = frameTrees;
+    __block RetainPtr<NSArray<NSURL *>> result;
+    [webView _topDocumentURLsInBackForwardCacheAtIndexForTesting:relativeIndex completionHandler:^(NSArray<NSURL *> *topDocumentURLs) {
+        result = topDocumentURLs;
         done = true;
     }];
     Util::run(&done);
-    return result;
+    EXPECT_EQ([result count], expectedProcessCount);
+    for (NSURL *url in result.get())
+        EXPECT_WK_STREQ(expectedTopDocumentURL, url.absoluteString);
 }
 
 static void checkProcessesTopDocumentURL(NSSet<_WKFrameTreeNode *> *trees, NSString *mainFrameTopDocumentURL, NSString *subframeTopDocumentURL)
@@ -6654,7 +6656,7 @@ TEST(SiteIsolation, BFCacheSameSitePageChangesTopDocumentURL)
         { RemoteFrame, { } },
     });
 
-    checkProcessesTopDocumentURL(frameTreesInBackForwardCacheAtIndex(webView.get(), -1).get(), @"https://a.com/text", @"https://a.com/text");
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 2, @"https://a.com/text");
 }
 
 TEST(SiteIsolation, BFCacheCrossSitePageKeepsTopDocumentURL)
@@ -6675,7 +6677,7 @@ TEST(SiteIsolation, BFCacheCrossSitePageKeepsTopDocumentURL)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://c.com/text"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    checkProcessesTopDocumentURL(frameTreesInBackForwardCacheAtIndex(webView.get(), -1).get(), @"https://a.com/withframe", @"https://a.com/withframe");
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 2, @"https://a.com/withframe");
 }
 
 TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)

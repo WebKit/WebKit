@@ -1341,35 +1341,12 @@ Awaitable<std::optional<FrameTreeNodeData>> WebPage::getFrameTree()
     co_return data;
 }
 
-Awaitable<std::optional<FrameTreeNodeData>> WebPage::getFrameTreeForBackForwardCacheEntry(WebCore::BackForwardFrameItemIdentifier frameItemID)
+Awaitable<URL> WebPage::getBackForwardCacheEntryTopDocumentURL(WebCore::BackForwardFrameItemIdentifier frameItemID)
 {
     CheckedPtr cachedPage = WebCore::BackForwardCache::singleton().get(frameItemID);
     if (!cachedPage)
-        co_return std::nullopt;
-    Ref page = cachedPage->page();
-    RefPtr topDocument = page->localTopDocument();
-    Ref mainFrame = page->mainFrame();
-    RefPtr mainFrameOrigin = mainFrame->frameDocumentSecurityOrigin();
-    auto mainFrameOriginData = mainFrameOrigin ? SecurityOriginData { mainFrameOrigin->data() } : WebCore::SecurityOriginData::createOpaque();
-    FrameInfoData data {
-        mainFrame->frameType() == Frame::FrameType::Local ? FrameType::Local : FrameType::Remote,
-        ResourceRequest { URL { page->mainFrameURL() } },
-        mainFrameOriginData,
-        mainFrameOriginData,
-        mainFrame->tree().specifiedName().string(),
-        mainFrame->frameID(),
-        std::nullopt,
-        topDocument ? std::optional { topDocument->identifier() } : std::nullopt,
-        getCurrentProcessID(),
-        false,
-        false,
-        WebFrameMetrics { }
-    };
-    co_return FrameTreeNodeData {
-        WTF::move(data),
-        { }, // FIXME: Also return children data.
-        { page->mainFrameURL() }
-    };
+        co_return URL { };
+    co_return URL { protect(cachedPage->page())->mainFrameURL() };
 }
 
 void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)

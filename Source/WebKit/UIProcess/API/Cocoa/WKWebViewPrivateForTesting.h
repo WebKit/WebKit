@@ -245,6 +245,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_lastPageLoadNetworkActivityCompletionCodeForTesting:(void(^)(NSNumber * _Nullable completionCode))completionHandler;
 
+- (void)_topDocumentURLsInBackForwardCacheAtIndexForTesting:(NSInteger)relativeIndex completionHandler:(void(^)(NSArray<NSURL *> *topDocumentURLs))completionHandler;
+
 #if TARGET_OS_IPHONE
 + (void)_setVisibilityEndowmentForTesting:(BOOL)isVisible;
 #endif

@@ -4491,16 +4491,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     });
 }
 
-- (void)_frameTreesInBackForwardCacheAtIndex:(NSInteger)relativeIndex completionHandler:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler
-{
-    _page->getFrameTreesForBackForwardItem(static_cast<int>(relativeIndex), [completionHandler = makeBlockPtr(completionHandler), page = protect(*_page)] (Vector<WebKit::FrameTreeNodeData>&& vector) {
-        RetainPtr set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
-        for (auto& data : vector)
-            [set addObject:wrapper(API::FrameTreeNode::create(WTF::move(data), page.get())).get()];
-        completionHandler(set.get());
-    });
-}
-
 - (void)_frameInfoFromHandle:(_WKFrameHandle *)handle completionHandler:(void (^)(WKFrameInfo *))completionHandler
 {
     auto frameID = handle->_frameHandle->frameID();

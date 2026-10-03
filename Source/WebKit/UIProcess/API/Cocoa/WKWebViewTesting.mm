@@ -1575,6 +1575,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_topDocumentURLsInBackForwardCacheAtIndexForTesting:(NSInteger)relativeIndex completionHandler:(void(^)(NSArray<NSURL *> *))completionHandler
+{
+    _page->getBackForwardCacheEntryTopDocumentURLsForTesting(static_cast<int>(relativeIndex), [completionHandler = makeBlockPtr(completionHandler)] (Vector<URL>&& topDocumentURLs) {
+        completionHandler(createNSArray(topDocumentURLs, [] (auto& url) {
+            return url.createNSURL();
+        }).get());
+    });
+}
+
 - (STWebpageController *)_screenTimeWebpageController
 {
 #if ENABLE(SCREEN_TIME)

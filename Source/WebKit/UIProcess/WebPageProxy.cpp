@@ -8017,18 +8017,18 @@ void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeD
     });
 }
 
-void WebPageProxy::getFrameTreesForBackForwardItem(int relativeIndex, CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&& completionHandler)
+void WebPageProxy::getBackForwardCacheEntryTopDocumentURLsForTesting(int relativeIndex, CompletionHandler<void(Vector<URL>&&)>&& completionHandler)
 {
-    class FrameTreeCallbackAggregator : public RefCounted<FrameTreeCallbackAggregator> {
+    class CallbackAggregator : public RefCounted<CallbackAggregator> {
     public:
-        static Ref<FrameTreeCallbackAggregator> create(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&& completionHandler) { return adoptRef(*new FrameTreeCallbackAggregator(WTF::move(completionHandler))); }
-        void addFrameTree(FrameTreeNodeData&& data) { m_data.append(WTF::move(data)); }
-        ~FrameTreeCallbackAggregator() { m_completionHandler(WTF::move(m_data)); }
+        static Ref<CallbackAggregator> create(CompletionHandler<void(Vector<URL>&&)>&& completionHandler) { return adoptRef(*new CallbackAggregator(WTF::move(completionHandler))); }
+        void addURL(URL&& url) { m_urls.append(WTF::move(url)); }
+        ~CallbackAggregator() { m_completionHandler(WTF::move(m_urls)); }
     private:
-        FrameTreeCallbackAggregator(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&& completionHandler)
+        CallbackAggregator(CompletionHandler<void(Vector<URL>&&)>&& completionHandler)
             : m_completionHandler(WTF::move(completionHandler)) { }
-        CompletionHandler<void(Vector<FrameTreeNodeData>&&)> m_completionHandler;
-        Vector<FrameTreeNodeData> m_data;
+        CompletionHandler<void(Vector<URL>&&)> m_completionHandler;
+        Vector<URL> m_urls;
     };
 
     RefPtr item = backForwardListWrapper().itemAtDeltaFromCurrentIndex(relativeIndex);
@@ -8037,7 +8037,7 @@ void WebPageProxy::getFrameTreesForBackForwardItem(int relativeIndex, Completion
         return completionHandler({ });
 
     auto mainFrameItemID = item->mainFrameItem().identifier();
-    Ref aggregator = FrameTreeCallbackAggregator::create(WTF::move(completionHandler));
+    Ref aggregator = CallbackAggregator::create(WTF::move(completionHandler));
 
     // The cached page is looked up per process (BackForwardCache is a process-global singleton keyed by
     // the main frame item id), so each process need only be queried once regardless of its page id.
@@ -8045,9 +8045,8 @@ void WebPageProxy::getFrameTreesForBackForwardItem(int relativeIndex, Completion
     auto query = [&] (WebProcessProxy& process, WebCore::PageIdentifier pageID) {
         if (!visitedProcesses.add(process.coreProcessIdentifier()).isNewEntry)
             return;
-        process.sendWithAsyncReply(Messages::WebPage::GetFrameTreeForBackForwardCacheEntry(mainFrameItemID), [aggregator] (std::optional<FrameTreeNodeData>&& data) {
-            if (data)
-                aggregator->addFrameTree(WTF::move(*data));
+        process.sendWithAsyncReply(Messages::WebPage::GetBackForwardCacheEntryTopDocumentURL(mainFrameItemID), [aggregator] (URL&& topDocumentURL) {
+            aggregator->addURL(WTF::move(topDocumentURL));
         }, pageID);
     };
 
