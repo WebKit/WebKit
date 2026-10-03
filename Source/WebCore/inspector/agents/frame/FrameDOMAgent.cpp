@@ -833,7 +833,11 @@ void FrameDOMAgent::frameDocumentUpdated(LocalFrame& frame)
     if (!inspectedFrame || &frame != inspectedFrame.get())
         return;
 
+    // FrameLoader::clear() sets a null document just before the new one. Only report the new one.
     RefPtr document = frame.document();
+    if (!document)
+        return;
+
     setDocument(document.get());
 }
 

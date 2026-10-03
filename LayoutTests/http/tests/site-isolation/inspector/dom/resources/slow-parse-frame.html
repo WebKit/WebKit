@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slow Parse Frame</title>
+    <!-- Parser-blocking, so the document is still being parsed when the frontend requests it. -->
+    <script src="/resources/slow-script.pl?delay=500"></script>
+</head>
+<body>
+    <div id="parsed-after-stall">Parsed after the parser-blocking script.</div>
+    <script>
+    function addNestedFrame() {
+        let iframe = document.createElement("iframe");
+        iframe.id = "nested-frame";
+        iframe.src = "slow-parse-frame.html?nested&" + Math.random();
+        document.body.appendChild(iframe);
+    }
+    </script>
+</body>
+</html>
