@@ -83,34 +83,8 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
         if (this.hidden)
             return;
 
-        let secondsPerPixel = this.timelineOverview.secondsPerPixel;
-        let recordBarIndex = 0;
-
-        let createBar = (element, recordBars, records, renderMode) => {
-            let timelineRecordBar = recordBars[recordBarIndex];
-            if (!timelineRecordBar)
-                timelineRecordBar = recordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
-            else {
-                timelineRecordBar.renderMode = renderMode;
-                timelineRecordBar.records = records;
-            }
-            timelineRecordBar.refresh(this);
-            if (!timelineRecordBar.element.parentNode)
-                element.appendChild(timelineRecordBar.element);
-            ++recordBarIndex;
-        };
-
-        for (let {records, recordBars, element} of this._timelineRecordGridRows) {
-            recordBarIndex = 0;
-
-            WI.TimelineRecordBar.createCombinedBars(records, secondsPerPixel, this, createBar.bind(this, element, recordBars));
-
-            // Remove the remaining unused `WI.TimelineRecordBar`.
-            for (; recordBarIndex < recordBars.length; ++recordBarIndex) {
-                recordBars[recordBarIndex].records = null;
-                recordBars[recordBarIndex].element.remove();
-            }
-        }
+        for (let {records, recordBars, element} of this._timelineRecordGridRows)
+            this.layoutRecordBars(element, recordBars, records);
     }
 
     updateSelectedRecord()

@@ -73,38 +73,8 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
         if (this.hidden)
             return;
 
-        let secondsPerPixel = this.timelineOverview.secondsPerPixel;
-        let recordBarIndex = 0;
-
-        function createBar(rowElement, rowRecordBars, records, renderMode)
-        {
-            let timelineRecordBar = rowRecordBars[recordBarIndex];
-            if (!timelineRecordBar)
-                timelineRecordBar = rowRecordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
-            else {
-                timelineRecordBar.renderMode = renderMode;
-                timelineRecordBar.records = records;
-            }
-            timelineRecordBar.refresh(this);
-            if (!timelineRecordBar.element.parentNode)
-                rowElement.appendChild(timelineRecordBar.element);
-            ++recordBarIndex;
-        }
-
-        for (let rowRecords of this._timelineRecordGridRows) {
-            let rowElement = rowRecords.__element;
-            let rowRecordBars = rowRecords.__recordBars;
-
-            recordBarIndex = 0;
-
-            WI.TimelineRecordBar.createCombinedBars(rowRecords, secondsPerPixel, this, createBar.bind(this, rowElement, rowRecordBars));
-
-            // Remove the remaining unused TimelineRecordBars.
-            for (; recordBarIndex < rowRecordBars.length; ++recordBarIndex) {
-                rowRecordBars[recordBarIndex].records = null;
-                rowRecordBars[recordBarIndex].element.remove();
-            }
-        }
+        for (let rowRecords of this._timelineRecordGridRows)
+            this.layoutRecordBars(rowRecords.__element, rowRecords.__recordBars, rowRecords);
     }
 
     // Private
