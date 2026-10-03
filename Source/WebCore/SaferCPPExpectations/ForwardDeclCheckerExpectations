@@ -10,7 +10,6 @@ css/values/primitives/CSSPrimitiveData.h
 dom/CustomElementReactionQueue.h
 dom/ElementInlinesLight.h
 html/HTMLMediaElement.cpp
-[ iOS ] html/canvas/PlaceholderRenderingContext.cpp
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h

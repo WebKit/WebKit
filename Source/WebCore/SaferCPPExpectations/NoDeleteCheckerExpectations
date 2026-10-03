@@ -5,6 +5,7 @@ layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 page/EventHandler.cpp
+page/Quirks.cpp
 rendering/GridLanesLayout.cpp
 rendering/RenderGeometryMap.cpp
 rendering/StyledMarkedText.cpp
