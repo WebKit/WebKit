@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>shape-outside: path() with huge coordinates must not hang layout</title>
+<style>
+#floater {
+    float: left;
+    width: 100px;
+    height: 100px;
+    /* The long edges of this triangle have a length near 1e30. Flattening the
+       path and sampling one point per unit of edge length (as the shape-margin
+       code used to) casts ceil(1e30) to unsigned, which saturates and spins the
+       layout for billions of iterations per line box. Laying this out must stay
+       bounded regardless of the coordinate magnitude. */
+    shape-outside: path("M 0 0 L 1000000000000000000000000000000 0 L 0 50 Z");
+    shape-margin: 1px;
+}
+#content { line-height: 20px; }
+</style>
+</head>
+<body>
+<div id="floater"></div>
+<div id="content">
+    Several lines of text so that layout performs many getExcludedInterval()
+    queries, one per line box. Lorem ipsum dolor sit amet, consectetur
+    adipiscing elit. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
+    consectetur adipiscing elit. Lorem ipsum dolor sit amet.
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+// Force layout of the shaped float; this is what used to hang.
+document.getElementById("content").offsetHeight;
+// Reduce the output to a single deterministic line now that layout completed.
+document.body.textContent = "PASS: laid out shape-outside path() with huge coordinates without hanging.";
+</script>
+</body>
+</html>
