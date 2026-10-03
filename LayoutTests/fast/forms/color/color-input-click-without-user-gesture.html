@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input id="colorInput" type="color">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener("load", () => {
+    const input = document.getElementById("colorInput");
+    input.offsetHeight;
+
+    // Clicking without a user gesture should not show the picker and should log a warning.
+    input.click();
+
+    // Clicking with a user gesture should show the picker without logging a warning.
+    if (window.internals)
+        internals.withUserGesture(() => { input.click(); });
+});
+</script>
+</body>
+</html>
