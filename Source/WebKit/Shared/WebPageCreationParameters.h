@@ -153,6 +153,7 @@ struct WebPageCreationParameters {
     double gapBetweenPages { 0 };
     
     String userAgent { };
+    bool hasCustomUserAgent { false };
 
     VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel { false };

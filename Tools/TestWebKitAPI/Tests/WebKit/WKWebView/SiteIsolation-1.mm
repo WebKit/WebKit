@@ -613,6 +613,27 @@ TEST(SiteIsolation, PauseAllAnimationsAfterCrossOriginIframeLoads)
 
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
+// Page-wide state set before load must reach every web content process through the page's creation parameters.
+
+TEST(SiteIsolation, UserAgentDataUsesCustomUserAgentInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"NavigatorUserAgentDataJavaScriptAPIEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    webView.get().customUserAgent = @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    NSString *chromeBrandVersion = @"navigator.userAgentData.brands.find(b => b.brand == 'Google Chrome')?.version ?? ''";
+    EXPECT_WK_STREQ("120.0.0.0", [webView stringByEvaluatingJavaScript:chromeBrandVersion]);
+    EXPECT_WK_STREQ("120.0.0.0", [webView stringByEvaluatingJavaScript:chromeBrandVersion inFrame:[webView firstChildFrame]]);
+}
+
 TEST(SiteIsolation, FontAttributesDelegateSetAfterFocusingCrossOriginIframe)
 {
     HTTPServer server({
