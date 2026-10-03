@@ -1300,8 +1300,14 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         this._startedProvisionalLoad = false;
 
-        for (let provisionalMessage of this._provisionalMessages)
+        for (let provisionalMessage of this._provisionalMessages) {
+            let scope = this._scopeFromMessageLevel(provisionalMessage.level);
+            this._scopesWithMessages.add(scope);
+
             this._logViewController.appendConsoleMessage(provisionalMessage);
+        }
+
+        this._showOrHideConditionallyVisibleScopeBarItemsAsNeeded();
 
         this._provisionalMessages = [];
     }
