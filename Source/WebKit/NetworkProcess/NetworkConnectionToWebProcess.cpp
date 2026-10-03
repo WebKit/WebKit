@@ -747,6 +747,23 @@ void NetworkConnectionToWebProcess::browsingContextRemoved(WebPageProxyIdentifie
             cache->browsingContextRemoved(webPageProxyID, webPageID, webFrameID);
     }
     m_lastRootActivityCompletionCodesForTesting.remove(webPageID);
+    m_localNetworkAccessFrameRecords.remove(webFrameID);
+}
+
+void NetworkConnectionToWebProcess::recordLocalNetworkAccessFrame(FrameIdentifier frameID, LocalNetworkAccessFrameRecord&& record)
+{
+    m_localNetworkAccessFrameRecords.set(frameID, WTF::move(record));
+}
+
+auto NetworkConnectionToWebProcess::localNetworkAccessFrameRecord(FrameIdentifier frameID, std::optional<FrameIdentifier> parentFrameID) const -> std::optional<LocalNetworkAccessFrameRecord>
+{
+    if (auto iterator = m_localNetworkAccessFrameRecords.find(frameID); iterator != m_localNetworkAccessFrameRecords.end())
+        return iterator->value;
+    if (!parentFrameID)
+        return std::nullopt;
+    if (auto iterator = m_localNetworkAccessFrameRecords.find(*parentFrameID); iterator != m_localNetworkAccessFrameRecords.end())
+        return iterator->value;
+    return std::nullopt;
 }
 
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)

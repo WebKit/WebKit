@@ -8650,6 +8650,11 @@ static inline bool isDocumentSecure(const Document& document)
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-settings-object-contextually-secure
+void Document::setLoadSourceOriginOverrideForTesting(RefPtr<SecurityOrigin>&& origin)
+{
+    m_loadSourceOriginOverrideForTesting = WTF::move(origin);
+}
+
 bool Document::isSecureContext() const
 {
     if (!m_frame)

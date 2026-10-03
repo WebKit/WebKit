@@ -6425,6 +6425,26 @@ String Internals::documentIPAddressSpace() const
     return "unknown"_s;
 }
 
+void Internals::setDocumentIPAddressSpace(const String& addressSpace)
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return;
+
+    if (addressSpace == "public"_s)
+        document->setIPAddressSpace(IPAddressSpace::Public);
+    else if (addressSpace == "local"_s)
+        document->setIPAddressSpace(IPAddressSpace::Local);
+    else if (addressSpace == "loopback"_s)
+        document->setIPAddressSpace(IPAddressSpace::Loopback);
+}
+
+void Internals::setLoadSourceOriginOverride(const String& origin)
+{
+    if (RefPtr document = contextDocument())
+        document->setLoadSourceOriginOverrideForTesting(SecurityOrigin::createFromString(origin));
+}
+
 void Internals::queueMicroTask(int testNumber)
 {
     RefPtr document = contextDocument();
