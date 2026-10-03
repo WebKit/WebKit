@@ -1,0 +1,91 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/dom/resources/InspectorDOMListener.js"></script>
+<script>
+function test()
+{
+    let dom = createDOMListener();
+    let output = [];
+    let searchRootId;
+
+    let queries = [
+        // Tag name followed by an attribute name (spanning the start tag).
+        "section data-role",
+        "span data-role",
+
+        // Attribute name followed by its value.
+        "data-role=\"widget",
+
+        // Tag name and attribute name alone should still match.
+        "section",
+        "data-role",
+    ];
+
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(message) {
+        InspectorProtocol.checkForError(message);
+        dom.collectNode(message.result.root);
+        InspectorProtocol.sendCommand("DOM.querySelector", {nodeId: message.result.root.nodeId, selector: "#search-root"}, onGotSearchRoot);
+    }
+
+    function onGotSearchRoot(message) {
+        InspectorProtocol.checkForError(message);
+        searchRootId = message.result.nodeId;
+        performSearches(queries, testFinished);
+    }
+
+    function performSearches(list, callback)
+    {
+        function next() {
+            if (list.length)
+                search(list.shift(), next);
+            else
+                callback();
+        }
+        next();
+    }
+
+    function search(query, callback)
+    {
+        output.push("=== Query: " + JSON.stringify(query) + " ===");
+        InspectorProtocol.sendCommand("DOM.performSearch", {query: query, nodeIds: [searchRootId]}, function(message) {
+            InspectorProtocol.checkForError(message);
+            printSearchResults(message.result, callback);
+        });
+    }
+
+    function printSearchResults(results, callback)
+    {
+        output.push("Count: " + results.resultCount);
+        if (!results.resultCount)
+            return callback();
+
+        let options = {"searchId": results.searchId, "fromIndex": 0, "toIndex": results.resultCount};
+        InspectorProtocol.sendCommand("DOM.getSearchResults", options, function onResultsReceived(message) {
+            let identifiers = message.result.nodeIds.map((nodeId) => dom.getNodeIdentifier(nodeId));
+            identifiers.sort();
+            for (let identifier of identifiers)
+                output.push(identifier);
+            callback();
+        });
+    }
+
+    function testFinished()
+    {
+        ProtocolTest.log(output.join("\n"));
+        ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing DOM.performSearch matches a query that spans an element's tag name and attributes.</p>
+    <div id="search-root">
+        <section data-role="widget" id="target">
+            <span data-role="label"></span>
+        </section>
+    </div>
+</body>
+</html>

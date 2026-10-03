@@ -41,6 +41,7 @@
 #include "NodeTraversal.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -151,12 +152,15 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
     if (!element.hasAttributes())
         return false;
 
+    StringBuilder openTagMarkup;
+    openTagMarkup.append(nodeName);
     for (auto& attribute : element.attributes()) {
         if (matchesAttribute(attribute))
             return true;
+        openTagMarkup.append(' ', attribute.name().toString(), "=\""_s, attribute.value(), '"');
     }
 
-    return false;
+    return checkContains(openTagMarkup.toString(), m_query);
 }
 
 void InspectorNodeFinder::searchUsingXPath(Node& parentNode)
