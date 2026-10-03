@@ -1072,6 +1072,22 @@ size_t LineLayout::lineCount() const
     return lines.last().hasContentfulInFlowBox() ? lines.size() : lines.size() - 1;
 }
 
+std::pair<size_t, bool> LineLayout::lineCountForHeight(LayoutUnit logicalHeight) const
+{
+    if (!m_inlineContent)
+        return { };
+
+    size_t lineCount = 0;
+    for (auto& line : m_inlineContent->displayContent().lines) {
+        if (!line.hasContentfulInlineLevelBox())
+            continue;
+        if (LayoutUnit { line.lineBoxLogicalRect().maxY() } > logicalHeight)
+            return { lineCount, true };
+        ++lineCount;
+    }
+    return { lineCount, false };
+}
+
 bool LineLayout::hasInkOverflow() const
 {
     return m_inlineContent && m_inlineContent->hasInkOverflow();

@@ -41,6 +41,7 @@ public:
     ~LineClampUpdater();
 
     bool isLineClampRoot() const { return m_isLineClampRoot; }
+    void setMaximumLines(size_t);
     void resetLineClamp();
 
 private:
@@ -125,6 +126,15 @@ inline LineClampUpdater::~LineClampUpdater()
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
         lineCount = blockFlow->lineCount();
     layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow });
+}
+
+inline void LineClampUpdater::setMaximumLines(size_t maximumLines)
+{
+    auto* layoutState = m_blockContainer->view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return;
+    m_isLineClampRoot = true;
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, m_blockContainer->style().overflowContinue() == OverflowContinue::Discard });
 }
 
 inline void LineClampUpdater::resetLineClamp()

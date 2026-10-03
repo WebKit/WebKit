@@ -894,6 +894,48 @@ LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogicalHeig
     return space;
 }
 
+static std::optional<size_t> maximumLinesForAutoClampPoint(const RenderBlockFlow& lineClampContainer)
+{
+    // line-clamp: auto (or just a block-ellipsis value) leaves max-lines at auto on a line-clamp container.
+    auto& style = lineClampContainer.style();
+    if (!style.maxLines().isAuto() || style.overflowContinue() != OverflowContinue::Discard || lineClampContainer.multiColumnFlow())
+        return { };
+    // "the block size the box would have if its automatic block size were infinite"
+    auto maximumContentHeight = lineClampContainer.constrainContentBoxLogicalHeightByMinMax(lineClampContainer.computeContentLogicalHeight(style.logicalHeight(), std::nullopt).value_or(LayoutUnit::max()), std::nullopt);
+    if (maximumContentHeight == LayoutUnit::max())
+        return { };
+    auto blockSizeLimit = lineClampContainer.borderAndPaddingBefore() + maximumContentHeight;
+
+    // "The auto clamp point will be set to the last possible clamp point such that, for it and all previous possible clamp points,
+    // the line-clamp container's automatic block size (as determined below) is not greater than the block size the box would have
+    // if its automatic block size were infinite."
+    // https://drafts.csswg.org/css-overflow-4/#line-clamp-containers
+    // Lines only go down in the block formatting context, so the lines that fit are the ones before the auto clamp point.
+    size_t inlineLineCount = 0;
+    auto hasLineAfterClampPoint = false;
+    for (CheckedPtr<const RenderObject> descendant = &lineClampContainer; descendant;) {
+        CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
+        auto isSkippedOver = descendant != &lineClampContainer && (descendant->isFloatingOrOutOfFlowPositioned() || (blockFlow && (blockFlow->establishesIndependentFormattingContext() || blockFlow->style().display() == Style::DisplayType::RubyText)));
+        if (isSkippedOver) {
+            descendant = descendant->nextInPreOrderAfterChildren(&lineClampContainer);
+            continue;
+        }
+        if (blockFlow && blockFlow->inlineLayout()) {
+            // The line-clamp container's block size limit in this block's coordinates, less the border and padding (of the block and its ancestors) still following its lines.
+            auto availableHeightForLines = blockSizeLimit;
+            for (CheckedPtr<const RenderBlock> ancestor = blockFlow; ancestor && ancestor != &lineClampContainer; ancestor = ancestor->containingBlock())
+                availableHeightForLines -= ancestor->logicalTop() + ancestor->borderAndPaddingAfter();
+            auto [lineCount, hasLineAfter] = blockFlow->inlineLayout()->lineCountForHeight(availableHeightForLines);
+            inlineLineCount += lineCount;
+            hasLineAfterClampPoint = hasLineAfterClampPoint || hasLineAfter;
+        }
+        descendant = descendant->nextInPreOrder(&lineClampContainer);
+    }
+    if (!hasLineAfterClampPoint)
+        return { };
+    return inlineLineCount;
+}
+
 static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContainer)
 {
     // The block ellipsis goes on the last formatted line of the block with the clamped line.
@@ -955,16 +997,22 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         };
         layoutChildren(relayoutChildren);
 
-        if (lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
-            // "If fewer than N line boxes exist, or if there are no possible clamp points after the Nth descendant in-flow line box, then that line-clamp container has no line-based clamp point."
-            // https://drafts.csswg.org/css-overflow-4/#max-lines
+        auto autoClampMaximumLines = maximumLinesForAutoClampPoint(*this);
+        auto ellipsisIsOnLastLine = lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this);
+        if (autoClampMaximumLines)
+            lineClampUpdater.setMaximumLines(*autoClampMaximumLines);
+        else if (ellipsisIsOnLastLine)
             lineClampUpdater.resetLineClamp();
+
+        auto contentNeedsRelayout = autoClampMaximumLines || ellipsisIsOnLastLine;
+        if (contentNeedsRelayout) {
             rebuildFloatingObjectSetFromIntrudingFloats();
             for (CheckedRef descendant : descendantsOfType<RenderBox>(*this))
                 descendant->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
             layoutChildren(RelayoutChildren::Yes);
         }
     }
+
     {
         auto applyTextBoxTrimEndIfNeeded = [&] {
             // With block children and blocks-inside-inline, there's no way to tell what the last formatted line is until after we finished laying out the subtree.

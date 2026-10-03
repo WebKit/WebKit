@@ -116,6 +116,8 @@ public:
     bool NODELETE isPaginated() const;
     size_t NODELETE lineCount() const;
     size_t NODELETE lineCountIgnoringBlockLevelBoxes() const;
+    // Lines with contentful inline content (block-in-inline and empty lines don't count) ending within logicalHeight from the border box top, and whether any ends past it.
+    std::pair<size_t, bool> NODELETE lineCountForHeight(LayoutUnit logicalHeight) const;
     bool hasContent() const { return !!m_inlineContent; }
     bool NODELETE hasContentfulInlineOrBlockLine() const;
     bool NODELETE hasContentfulInlineLine() const;
