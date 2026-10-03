@@ -240,6 +240,8 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
     opacity: 0.55; /* Assumes black glyphs. */
 
     -webkit-user-drag: none;
+
+    filter: var(--tab-bar-icon-filter-override, var(--tab-bar-icon-filter-default));
 }
 
 .tab-bar > .tabs > .item.pinned > .icon {
@@ -381,7 +383,7 @@ body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disable
     }
 
     .tab-bar > .tabs > .item > .icon {
-        filter: var(--filter-invert);
+        --tab-bar-icon-filter-default: var(--filter-invert);
     }
 
     .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover > .icon {
