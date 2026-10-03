@@ -40,6 +40,7 @@
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/Element.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FocusOptions.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameTreeSyncData.h>
@@ -2836,6 +2837,7 @@ private:
     void performAccessibilitySearchInRemoteFrame(WebCore::FrameIdentifier, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
     void continueAccessibilitySearchInParentFrame(WebCore::FrameIdentifier childFrameID, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
 #endif
+    void requestFixedContainerEdgeColorForSampling(WebCore::FrameIdentifier, WebCore::IntRect, CompletionHandler<void(std::optional<WebCore::FixedContainerEdge>&&)>&&);
 
     void requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&&);
 

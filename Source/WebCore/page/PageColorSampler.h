@@ -31,9 +31,18 @@
 namespace WebCore {
 
 class LayoutRect;
+class LocalFrame;
 class Page;
+class RemoteFrame;
+class IntRect;
 
 enum class PredominantColorType : uint8_t;
+
+struct FixedContainerEdgeSamplingContext {
+    bool sawIndeterminateRemoteFrame { false };
+    bool sawAwaitingRemoteFrame { false };
+    Vector<std::pair<Ref<RemoteFrame>, IntRect>> pendingRequests;
+};
 
 class PageColorSampler {
 public:
@@ -41,7 +50,9 @@ public:
     WEBCORE_EXPORT static bool colorsAreSimilar(const Color&, const Color&);
 
     static constexpr auto nearlyTransparentAlphaThreshold = 0.1;
-    static Variant<PredominantColorType, Color> predominantColor(Page&, const LayoutRect&);
+    static constexpr int maximumFixedContainerEdgeSamplingRectThickness = 16;
+    WEBCORE_EXPORT static std::optional<Variant<PredominantColorType, Color>> predominantColor(LocalFrame&, const LayoutRect&);
+    static FixedContainerEdgeSamplingContext* fixedContainerEdgeSamplingContext();
 };
 
 } // namespace WebCore

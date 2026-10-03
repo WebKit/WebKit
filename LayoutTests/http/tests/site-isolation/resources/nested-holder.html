@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Paints nothing and loads ?src=URL in a frame that fills it. -->
+<style>html, body { margin: 0; width: 100%; height: 100%; background: transparent; }
+iframe { border: 0; display: block; width: 100%; height: 100%; }</style>
+</head>
+<body>
+<script>
+const frame = document.createElement("iframe");
+frame.src = new URLSearchParams(location.search).get("src");
+document.body.appendChild(frame);
+</script>
+</body>
+</html>

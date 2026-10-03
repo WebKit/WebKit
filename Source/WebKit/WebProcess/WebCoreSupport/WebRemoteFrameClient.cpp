@@ -92,6 +92,16 @@ void WebRemoteFrameClient::paintContents(GraphicsContext& context, const IntRect
     page->paintRemoteFrameContents(m_frame->frameID(), rect, context);
 }
 
+void WebRemoteFrameClient::requestFixedContainerEdgeColorForSampling(const IntRect& rect, CompletionHandler<void(std::optional<FixedContainerEdge>&&)>&& completionHandler)
+{
+    RefPtr page = m_frame->page();
+    if (!page) {
+        completionHandler(std::nullopt);
+        return;
+    }
+    page->sendWithAsyncReply(Messages::WebPageProxy::RequestFixedContainerEdgeColorForSampling(m_frame->frameID(), rect), WTF::move(completionHandler));
+}
+
 void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const SecurityOriginData& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts& message, const std::optional<WebCore::UserGestureTokenData>& userGestureToken)
 {
     for (auto& port : message.transferredPorts)

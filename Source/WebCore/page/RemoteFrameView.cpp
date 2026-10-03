@@ -32,6 +32,7 @@
 #include "DocumentPage.h"
 #include "GraphicsContext.h"
 #include "Page.h"
+#include "PageColorSampler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -162,6 +163,24 @@ IntRect RemoteFrameView::windowClipRect() const
 
 void RemoteFrameView::paintContents(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy, RegionContext*)
 {
+    if (auto* samplingContext = PageColorSampler::fixedContainerEdgeSamplingContext()) {
+        auto viewportRect = rect;
+        if (!paintsEntireContents())
+            viewportRect.move(-scrollPosition().x(), -scrollPosition().y());
+
+        if (auto answer = m_frame->cachedFixedContainerEdgeAnswer(viewportRect)) {
+            if (auto* color = std::get_if<Color>(&*answer))
+                context.fillRect(rect, *color);
+            else if (std::get<PredominantColorType>(*answer) == PredominantColorType::Multiple)
+                samplingContext->sawIndeterminateRemoteFrame = true;
+            return;
+        }
+
+        samplingContext->sawAwaitingRemoteFrame = true;
+        samplingContext->pendingRequests.append({ m_frame.copyRef(), viewportRect });
+        return;
+    }
+
     m_frame->client().paintContents(context, rect);
 }
 

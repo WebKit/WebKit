@@ -50,6 +50,7 @@
 #include "Page.h"
 #include "PixelBuffer.h"
 #include "RegistrableDomain.h"
+#include "RemoteFrame.h"
 #include "RenderImage.h"
 #include "RenderObjectInlines.h"
 #include "Settings.h"
@@ -61,6 +62,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SetForScope.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -296,17 +298,20 @@ bool PageColorSampler::colorsAreSimilar(const Color& a, const Color& b)
     return distance <= maxDistanceSquaredForSimilarColors;
 }
 
-Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteRect)
-{
-    RefPtr frame = page.localMainFrame();
-    if (!frame)
-        return PredominantColorType::None;
+static FixedContainerEdgeSamplingContext* currentFixedContainerEdgeSamplingContext;
 
-    RefPtr view = frame->view();
+FixedContainerEdgeSamplingContext* PageColorSampler::fixedContainerEdgeSamplingContext()
+{
+    return currentFixedContainerEdgeSamplingContext;
+}
+
+std::optional<Variant<PredominantColorType, Color>> PageColorSampler::predominantColor(LocalFrame& frame, const LayoutRect& absoluteRect)
+{
+    RefPtr view = frame.view();
     if (!view)
         return PredominantColorType::None;
 
-    RefPtr document = frame->document();
+    RefPtr document = frame.document();
     if (!document)
         return PredominantColorType::None;
 
@@ -319,9 +324,21 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     };
 
     auto colorSpace = ColorSpace::SRGB();
-    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
+    FixedContainerEdgeSamplingContext context;
+    RefPtr<ImageBuffer> snapshot;
+    {
+        SetForScope scope { currentFixedContainerEdgeSamplingContext, &context };
+        snapshot = snapshotFrameRect(frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
+    }
+
+    for (auto& [remoteFrame, rect] : context.pendingRequests)
+        remoteFrame->requestFixedContainerEdgeColorIfNeeded(rect);
+
     if (!snapshot)
         return PredominantColorType::None;
+
+    if (context.sawAwaitingRemoteFrame)
+        return std::nullopt;
 
     auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
     if (!pixelBuffer)
@@ -352,7 +369,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     }
 
     if (colorDistribution.isEmpty())
-        return PredominantColorType::None;
+        return context.sawIndeterminateRemoteFrame ? PredominantColorType::Multiple : PredominantColorType::None;
 
     for (auto& [color, count] : colorDistribution) {
         if (count > minimumSampleCountForPredominantColor) {

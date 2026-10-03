@@ -582,6 +582,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     PerformAccessibilitySearchInRemoteFrame(WebCore::FrameIdentifier frameID, struct WebCore::AccessibilitySearchCriteriaIPC criteria) -> (Vector<WebCore::AccessibilityRemoteToken> results)
     ContinueAccessibilitySearchInParentFrame(WebCore::FrameIdentifier childFrameID, struct WebCore::AccessibilitySearchCriteriaIPC criteria) -> (Vector<WebCore::AccessibilityRemoteToken> results)
 #endif
+    RequestFixedContainerEdgeColorForSampling(WebCore::FrameIdentifier frameID, WebCore::IntRect rect) -> (std::optional<WebCore::FixedContainerEdge> answer)
 
 #if PLATFORM(MAC)
     GetAccessibilityWebProcessDebugInfo() -> (struct WebCore::AXDebugInfo result) Synchronous

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Paints ?color=RRGGBB. ?border=RRGGBB adds a 3px strip at the top. ?changeColorAfter=MS starts transparent and
+     switches to ?color that many milliseconds after load. ?delay=MS holds the load event open that long without
+     repainting. -->
+<style>html, body { margin: 0; width: 100%; height: 100%; }</style>
+<script>
+const parameters = new URLSearchParams(location.search);
+const color = parameters.get("color") || "ffffff";
+const changeColorAfter = parameters.get("changeColorAfter");
+if (changeColorAfter) {
+    document.documentElement.style.backgroundColor = "transparent";
+    setTimeout(() => { document.documentElement.style.backgroundColor = "#" + color; }, parseInt(changeColorAfter, 10));
+} else
+    document.documentElement.style.backgroundColor = "#" + color;
+
+if (parameters.get("border")) {
+    document.addEventListener("DOMContentLoaded", () => {
+        const border = document.createElement("div");
+        border.style.cssText = "position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #" + parameters.get("border");
+        document.body.appendChild(border);
+    });
+}
+
+if (parameters.get("delay")) {
+    const script = document.createElement("script");
+    script.src = "/resources/slow-script.pl?delay=" + parameters.get("delay") + "&rand=" + Math.random();
+    document.head.appendChild(script);
+}
+</script>
+</head>
+<body></body>
+</html>

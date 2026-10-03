@@ -291,6 +291,7 @@
 #include <WebCore/NotificationController.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageColorSampler.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PageInspectorController.h>
@@ -1446,6 +1447,11 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
         updateRemoteIntersectionObservers();
         break;
 
+    case FrameTreeSyncDataType::SampledFixedContainerEdgeChangeNotice:
+        if (RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(coreFrame.get()))
+            remoteFrame->invalidateSampledFixedContainerEdges();
+        break;
+
     default:
         break;
     }
@@ -1479,6 +1485,9 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
     if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(WTF::move(data));
         updateChildFrameVisibleRectsFromParent(*coreFrame);
+
+        if (RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(coreFrame.get()))
+            remoteFrame->invalidateSampledFixedContainerEdges();
     }
 
     // UIProcess sends this message when the frame associated with frameID navigates or is newly
@@ -1493,6 +1502,67 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
     });
 
     page->scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
+}
+
+void WebPage::requestFixedContainerEdgeColorForSampling(FrameIdentifier frameID, WebCore::IntRect rect, CompletionHandler<void(std::optional<WebCore::FixedContainerEdge>&&)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr coreFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    if (!coreFrame || !coreFrame->isRootFrame() || coreFrame->isMainFrame() || !coreFrame->view() || !m_page || !m_page->settings().contentInsetBackgroundFillEnabled()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    WeakPtr weakFrame { *coreFrame };
+    auto reply = [weakFrame, completionHandler = WTF::move(completionHandler)](std::optional<WebCore::FixedContainerEdge>&& answer) mutable {
+        if (RefPtr frame = weakFrame.get()) {
+            if (RefPtr frameView = frame->view())
+                frameView->setNeedsSampledFixedContainerEdgeChangeBroadcast();
+        }
+        completionHandler(WTF::move(answer));
+    };
+
+    auto now = MonotonicTime::now();
+    auto answerTime = std::max(now, webFrame->nextFixedContainerEdgeSamplingAnswerTime());
+
+    static constexpr auto fixedContainerEdgeSamplingAnswerInterval = 50_ms;
+    static constexpr auto maximumFixedContainerEdgeSamplingBacklog = 1_s;
+    auto delay = answerTime - now;
+    if (delay > maximumFixedContainerEdgeSamplingBacklog) {
+        reply(WebCore::FixedContainerEdge { WebCore::PredominantColorType::None });
+        return;
+    }
+
+    webFrame->setNextFixedContainerEdgeSamplingAnswerTime(answerTime + fixedContainerEdgeSamplingAnswerInterval);
+
+    RunLoop::mainSingleton().dispatchAfter(delay, [weakFrame, rect, reply = WTF::move(reply)]() mutable {
+        RefPtr frame = weakFrame.get();
+        RefPtr frameView = frame ? frame->view() : nullptr;
+        if (!frameView) {
+            reply(std::nullopt);
+            return;
+        }
+
+        auto clampedRect = rect;
+        clampedRect.intersect(WebCore::IntRect({ }, frameView->size()));
+
+        bool isHorizontalRect = clampedRect.width() >= clampedRect.height();
+        auto frameExtentAlongRect = isHorizontalRect ? frameView->size().width() : frameView->size().height();
+        auto requestedLength = std::max(clampedRect.width(), clampedRect.height());
+        auto requestedThickness = std::min(clampedRect.width(), clampedRect.height());
+
+        static constexpr int minimumFixedContainerEdgeSamplingRectLength = 30;
+        if (requestedThickness <= 0 || requestedThickness > WebCore::PageColorSampler::maximumFixedContainerEdgeSamplingRectThickness
+            || requestedLength < std::min(minimumFixedContainerEdgeSamplingRectLength, frameExtentAlongRect)) {
+            reply(WebCore::FixedContainerEdge { WebCore::PredominantColorType::None });
+            return;
+        }
+
+        auto documentRect = clampedRect;
+        documentRect.moveBy(frameView->scrollPosition());
+
+        reply(WebCore::PageColorSampler::predominantColor(*frame, LayoutRect { documentRect }));
+    });
 }
 
 void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreFrame)
