@@ -314,7 +314,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         auto start = inlineTextItem->start();
         auto length = inlineTextItem->length();
         CheckedRef inlineTextBox = inlineTextItem->inlineTextBox();
-        auto content = inlineTextBox->content().substring(start, length);
+        auto content = StringView { inlineTextBox->content() }.substring(start, length);
         if (!processInlineBoxBoundary || !lastCharacterFromPreviousRun) {
             lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
             lastCharacterDepth = currentCharacterDepth;
