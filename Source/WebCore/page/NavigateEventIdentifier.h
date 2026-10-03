@@ -25,26 +25,11 @@
 
 #pragma once
 
-#include <WebCore/NavigateEventIdentifier.h>
-#include <wtf/Markable.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-struct NavigateEventDispatchResult {
-    enum class State : uint8_t { Completed, Aborted, Intercepted, DeferredCommit };
+struct NavigateEventIdentifierType;
+using NavigateEventIdentifier = ObjectIdentifier<NavigateEventIdentifierType>;
 
-    static NavigateEventDispatchResult completed(Markable<NavigateEventIdentifier> navigateEventIdentifier = { }) { return { State::Completed, navigateEventIdentifier }; }
-    static NavigateEventDispatchResult aborted() { return { State::Aborted, { } }; }
-    static NavigateEventDispatchResult intercepted() { return { State::Intercepted, { } }; }
-    static NavigateEventDispatchResult deferredCommit() { return { State::DeferredCommit, { } }; }
-
-    bool isCompleted() const { return state == State::Completed; }
-    bool isNotCompleted() const { return !isCompleted(); }
-    bool isAborted() const { return state == State::Aborted; }
-    bool isDeferredCommit() const { return state == State::DeferredCommit; }
-
-    const State state;
-    const Markable<NavigateEventIdentifier> navigateEventIdentifier;
-};
-
-} // namespace WebCore
+}

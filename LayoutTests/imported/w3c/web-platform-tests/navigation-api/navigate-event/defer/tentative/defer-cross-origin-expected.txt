@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigateEvent.deferPageSwap: deferring is not allowed for cross-origin navigations Test timed out
+PASS navigateEvent.deferPageSwap: deferring is not allowed for cross-origin navigations
 

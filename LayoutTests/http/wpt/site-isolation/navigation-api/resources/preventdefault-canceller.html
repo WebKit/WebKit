@@ -18,6 +18,12 @@ navigation.onnavigate = e => {
 // Self-initiated: a parent-initiated cross-site navigation is not same-origin with this frame and
 // would dispatch no navigate event here.
 addEventListener("load", () => {
+  if (new URLSearchParams(location.search).get("mode") === "navigate") {
+    const result = navigation.navigate(remote);
+    result.committed.catch(() => {});
+    result.finished.catch(() => {});
+    return;
+  }
   const a = document.createElement("a");
   a.href = remote;
   document.body.appendChild(a);

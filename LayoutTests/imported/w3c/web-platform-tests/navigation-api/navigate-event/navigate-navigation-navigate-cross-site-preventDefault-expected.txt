@@ -1,0 +1,4 @@
+
+
+PASS preventDefault() cancels a cross-site navigation.navigate()
+

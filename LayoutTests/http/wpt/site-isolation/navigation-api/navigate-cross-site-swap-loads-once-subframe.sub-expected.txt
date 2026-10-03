@@ -1,0 +1,4 @@
+
+
+PASS A cross-site subframe navigation.navigate() loads the destination once, outside the embedder's process (Site Isolation)
+

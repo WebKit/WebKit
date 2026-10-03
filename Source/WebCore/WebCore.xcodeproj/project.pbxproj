@@ -5135,6 +5135,7 @@
 		BA4E976A2E3A52290033CC0D /* SpeculationRules.h in Headers */ = {isa = PBXBuildFile; fileRef = BA4E97682E3A52200033CC0D /* SpeculationRules.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BA56E3312E7A11C000D10C01 /* PendingNavigateEventIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BA56E3392E7A11C000D10C01 /* NavigateEventDispatchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BA56E3382E7A11C000D10C01 /* NavigateEventDispatchResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BA56E3352E7A11C000D10C01 /* NavigateEventIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BA56E3342E7A11C000D10C01 /* NavigateEventIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BA6920702E0E93A80014E98A /* SpeculationRulesMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BA69206E2E0E939C0014E98A /* SpeculationRulesMatcher.h */; };
 		BA96836B2E8FDAA30035D494 /* LoadableSpeculationRules.h in Headers */ = {isa = PBXBuildFile; fileRef = BA9683692E8FDA9A0035D494 /* LoadableSpeculationRules.h */; };
 		BC000BE72C6011020033AA75 /* CSSCalcTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BC000BDB2C5A9D4F0033AA75 /* CSSCalcTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19269,6 +19270,7 @@
 		BA4E97692E3A52200033CC0D /* SpeculationRules.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpeculationRules.cpp; sourceTree = "<group>"; };
 		BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingNavigateEventIdentifier.h; sourceTree = "<group>"; };
 		BA56E3382E7A11C000D10C01 /* NavigateEventDispatchResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigateEventDispatchResult.h; sourceTree = "<group>"; };
+		BA56E3342E7A11C000D10C01 /* NavigateEventIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigateEventIdentifier.h; sourceTree = "<group>"; };
 		BA5AA8182DDF59100038722C /* IntegrityPolicyViolationReportBody.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrityPolicyViolationReportBody.h; sourceTree = "<group>"; };
 		BA5AA8192DDF59100038722C /* IntegrityPolicyViolationReportBody.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntegrityPolicyViolationReportBody.cpp; sourceTree = "<group>"; };
 		BA5AA81A2DDF59100038722C /* IntegrityPolicyViolationReportBody.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IntegrityPolicyViolationReportBody.idl; sourceTree = "<group>"; };
@@ -31673,6 +31675,7 @@
 				A9C6E65D0D74C694006442E9 /* NavigateEvent.h */,
 				BC63ADDF2F158517007B62C4 /* NavigateEvent.idl */,
 				BA56E3382E7A11C000D10C01 /* NavigateEventDispatchResult.h */,
+				BA56E3342E7A11C000D10C01 /* NavigateEventIdentifier.h */,
 				A9C6E65D0D74E694006442E9 /* Navigation.cpp */,
 				A9C6E65D0D740F940A6442E9 /* Navigation.h */,
 				A9C6E65D0D7400D4006442E9 /* Navigation.idl */,
@@ -48291,6 +48294,7 @@
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				9AEBF919AAC54D083C5923A8 /* NaturalDimensions.h in Headers */,
 				BA56E3392E7A11C000D10C01 /* NavigateEventDispatchResult.h in Headers */,
+				BA56E3352E7A11C000D10C01 /* NavigateEventIdentifier.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				EE1A93AA2F2AE00A0054FAE4 /* NavigationActivation.h in Headers */,
 				AE01B20C0D0E0F1011121401 /* NavigationHistoryBehavior.h in Headers */,

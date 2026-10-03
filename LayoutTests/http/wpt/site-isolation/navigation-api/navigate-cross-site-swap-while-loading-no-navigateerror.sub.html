@@ -1,0 +1,12 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: a document whose cross-site main frame navigation.navigate() committed in another process gets no navigateerror when it is torn down while loading (Site Isolation)</title>
+<script src="/common/utils.js"></script>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+const TOKEN = token();
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/navigation-api/resources/report-recorded-events.html?token=" + TOKEN;
+onload = () => location.href = "resources/navigate-while-loading.html?token=" + TOKEN + "&remote=" + encodeURIComponent(REMOTE);
+</script>

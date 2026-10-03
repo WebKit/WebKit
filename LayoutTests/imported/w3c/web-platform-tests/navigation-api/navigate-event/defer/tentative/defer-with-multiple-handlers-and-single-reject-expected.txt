@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT
+FAIL
   navigateEvent.deferPageSwap: rejecting a single handler resumes navigation and ignores
   other handlers
- Test timed out
+ assert_array_equals: lengths differ, expected array ["navigate", "handler1", "handler2", "reject1", "pagehide"] length 5, got ["navigate", "pagehide"] length 2
 

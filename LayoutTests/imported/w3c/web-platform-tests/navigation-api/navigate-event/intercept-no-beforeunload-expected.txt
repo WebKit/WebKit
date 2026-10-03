@@ -1,0 +1,4 @@
+
+
+PASS navigate() whose navigate event is intercepted does not fire beforeunload
+

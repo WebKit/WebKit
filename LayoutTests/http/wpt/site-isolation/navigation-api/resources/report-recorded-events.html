@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Cross-site destination that reports the events the previous document recorded</title>
+<body>
+<script>
+// Leave time for the previous document to be torn down and report its events.
+setTimeout(async () => {
+    const token = new URLSearchParams(location.search).get("token");
+    const events = await (await fetch("record-event.py?token=" + token)).text();
+    document.body.textContent = "Events in the previous document: " + (events.split(",").filter(event => event).sort().join(", ") || "none");
+    testRunner.notifyDone();
+}, 1000);
+</script>
+</body>

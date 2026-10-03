@@ -70,6 +70,7 @@
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FormState.h"
@@ -2051,7 +2052,9 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         return;
     }
 
-    auto policyDecisionMode = loader->triggeringAction().isFromNavigationAPI() ? PolicyDecisionMode::Synchronous : PolicyDecisionMode::Asynchronous;
+    if (loader->triggeringAction().isFromNavigationAPI() && !shouldCheckNavigationPolicyAfterDispatchingEvents(*loader))
+        return;
+
     RELEASE_ASSERT(!isBackForwardLoadType(policyChecker().loadType()) || history().provisionalItem());
     policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTF::move(formSubmission), [
         this,
@@ -2071,7 +2074,44 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
         continueLoadAfterNavigationPolicy(request, RefPtr { weakFormSubmission.get() }.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
         completionHandler();
-    }, IsSameDocumentNavigation::No, policyDecisionMode, determineNavigationType(type, historyHandling));
+    }, IsSameDocumentNavigation::No, PolicyDecisionMode::Asynchronous, determineNavigationType(type, historyHandling));
+}
+
+// navigate() must fire these before it returns, but its policy check must stay asynchronous: the UI process may
+// continue the load in another process, and this process must not start loading it first.
+bool FrameLoader::shouldCheckNavigationPolicyAfterDispatchingEvents(DocumentLoader& loader)
+{
+    Ref frame = m_frame.get();
+    Ref protectedLoader { loader };
+
+    // Starting this navigation stops the one it replaces, even if the navigate event then cancels this one.
+    clearProvisionalLoadForPolicyCheck();
+
+    Markable<NavigateEventIdentifier> navigateEventIdentifier;
+    if (auto dispatchNavigateEvent = loader.triggeringAction().takePendingDispatchNavigateEvent()) {
+        auto result = dispatchNavigateEvent();
+        if (m_policyDocumentLoader != &loader || !frame->page())
+            return false;
+        if (result.isNotCompleted()) {
+            setPolicyDocumentLoader(nullptr);
+            return false;
+        }
+        navigateEventIdentifier = result.navigateEventIdentifier;
+    }
+
+    if (!shouldClose()) {
+        if (RefPtr window = navigateEventIdentifier ? protect(frame->document())->window() : nullptr)
+            protect(window->navigation())->abortOngoingNavigationIfStartedBy(*navigateEventIdentifier);
+        if (m_policyDocumentLoader == &loader)
+            setPolicyDocumentLoader(nullptr);
+        return false;
+    }
+
+    if (m_policyDocumentLoader != &loader || !frame->page())
+        return false;
+
+    loader.triggeringAction().setDispatchedEventsBeforeNavigationPolicy(navigateEventIdentifier);
+    return true;
 }
 
 void FrameLoader::clearProvisionalLoadForPolicyCheck()
@@ -3492,6 +3532,8 @@ void FrameLoader::detachFromParent()
         // stopAllLoaders() needs to be called after detachChildren() if the document is not in the back/forward cache,
         // because detachedChildren() will trigger the unload event handlers of any child frames, and those event
         // handlers might start a new subresource load in this frame.
+        // closeURL() already unloaded the document, so stopping what it still loads does not abort its navigation.
+        SetForScope doNotAbortNavigationAPI { m_doNotAbortNavigationAPI, true };
         stopAllLoaders(ClearProvisionalItem::Yes, StopLoadingPolicy::AlwaysStopLoading);
     }
 
@@ -4250,6 +4292,9 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
 
     bool urlIsDisallowed = allowNavigationToInvalidURL == AllowNavigationToInvalidURL::No && !request.url().isValid();
 
+    RefPtr policyDocumentLoader = m_policyDocumentLoader;
+    bool dispatchedEventsBeforeNavigationPolicy = policyDocumentLoader && policyDocumentLoader->triggeringAction().dispatchedEventsBeforeNavigationPolicy();
+
     // For Navigation API traversal navigation, dispatch navigate event AFTER beforeunload.
     bool navigateEventAborted = false;
     bool shouldCloseResult = true;
@@ -4269,7 +4314,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         }
     } else {
         // For non-Navigation API traversals, use original behavior with short-circuit evaluation
-        shouldCloseResult = (navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && !urlIsDisallowed) ? shouldClose() : false;
+        shouldCloseResult = (navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && !urlIsDisallowed) ? (dispatchedEventsBeforeNavigationPolicy || shouldClose()) : false;
     }
 
     bool canContinue = navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && shouldCloseResult && !navigateEventAborted && !urlIsDisallowed;
@@ -4290,9 +4335,19 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             dispatchDidFailProvisionalLoad(*policyDocumentLoader, cancelledError(policyDocumentLoader->request()), WillInternallyHandleFailure::No);
 
         if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess) {
+            // The navigation goes on in the other process, so the navigate event it already dispatched here is not aborted.
+            SetForScope doNotAbortNavigationAPI { m_doNotAbortNavigationAPI, dispatchedEventsBeforeNavigationPolicy };
             stopAllLoaders();
             m_checkTimer.stop();
             m_crossOriginParentSyntheticSameDocLoadEventTimer.stop();
+        } else if (auto navigateEventIdentifier = policyDocumentLoader ? policyDocumentLoader->triggeringAction().navigateEventDispatchedBeforeNavigationPolicy() : Markable<NavigateEventIdentifier> { }) {
+            // Queued because a newer navigation cancels this one's policy check while it starts, and aborts this one itself when it dispatches its own navigate event.
+            RefPtr document = frame->document();
+            if (RefPtr window = document->window()) {
+                protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [navigation = Ref { window->navigation() }, navigateEventIdentifier = *navigateEventIdentifier] {
+                    navigation->abortOngoingNavigationIfStartedBy(navigateEventIdentifier);
+                });
+            }
         }
 
         setPolicyDocumentLoader(nullptr, navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess ? LoadWillContinueInAnotherProcess::Yes : LoadWillContinueInAnotherProcess::No);

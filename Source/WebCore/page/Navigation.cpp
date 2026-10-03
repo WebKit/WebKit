@@ -1566,7 +1566,7 @@ NavigateEventDispatchResult Navigation::innerDispatchNavigateEvent(NavigationNav
 
     // FIXME: Step 35 Clean up after running script
 
-    return event->wasIntercepted() ? NavigateEventDispatchResult::intercepted() : NavigateEventDispatchResult::completed();
+    return event->wasIntercepted() ? NavigateEventDispatchResult::intercepted() : NavigateEventDispatchResult::completed(event->identifier());
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-traverse-navigate-event
@@ -1619,6 +1619,12 @@ void Navigation::abortOngoingNavigationIfNeeded()
         if (m_ongoingNavigateEvent == ongoingNavigateEvent)
             break;
     }
+}
+
+void Navigation::abortOngoingNavigationIfStartedBy(NavigateEventIdentifier navigateEventIdentifier)
+{
+    if (RefPtr ongoingNavigateEvent = m_ongoingNavigateEvent; ongoingNavigateEvent && ongoingNavigateEvent->identifier() == navigateEventIdentifier)
+        abortOngoingNavigation(*ongoingNavigateEvent);
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inform-the-navigation-api-about-child-navigable-destruction

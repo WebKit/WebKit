@@ -36,6 +36,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/NavigateEventDispatchResult.h>
+#include <WebCore/NavigateEventIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/PendingNavigateEventIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -156,6 +157,15 @@ public:
         return pendingDispatchNavigateEvent ? WTF::move(pendingDispatchNavigateEvent->dispatch) : nullptr;
     }
 
+    // Set when the navigate and beforeunload events ran ahead of the policy check; the identifier is null if the navigation had no navigate event to dispatch.
+    bool dispatchedEventsBeforeNavigationPolicy() const { return m_dispatchedEventsBeforeNavigationPolicy; }
+    Markable<NavigateEventIdentifier> navigateEventDispatchedBeforeNavigationPolicy() const { return m_navigateEventDispatchedBeforeNavigationPolicy; }
+    void setDispatchedEventsBeforeNavigationPolicy(Markable<NavigateEventIdentifier> navigateEventIdentifier)
+    {
+        m_dispatchedEventsBeforeNavigationPolicy = true;
+        m_navigateEventDispatchedBeforeNavigationPolicy = navigateEventIdentifier;
+    }
+
     // Whether UIProcess has already made the policy decision for this navigation.
     PolicyAlreadyDecided policyAlreadyDecided() const { return m_policyAlreadyDecided; }
     void setPolicyAlreadyDecided(PolicyAlreadyDecided value) { m_policyAlreadyDecided = value; }
@@ -176,12 +186,14 @@ private:
         DispatchNavigateEventFunction dispatch;
     };
     std::optional<PendingNavigateEvent> m_pendingDispatchNavigateEvent;
+    Markable<NavigateEventIdentifier> m_navigateEventDispatchedBeforeNavigationPolicy;
 
     NavigationType m_type { NavigationType::Other };
     std::optional<NavigationNavigationType> m_navigationAPIType;
 
     bool m_hasOpenedFrames { false };
     bool m_openedByDOMWithOpener { false };
+    bool m_dispatchedEventsBeforeNavigationPolicy { false };
     PolicyAlreadyDecided m_policyAlreadyDecided { PolicyAlreadyDecided::No };
 };
 

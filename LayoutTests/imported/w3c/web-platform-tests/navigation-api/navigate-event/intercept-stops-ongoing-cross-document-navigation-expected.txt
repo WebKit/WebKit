@@ -1,0 +1,4 @@
+
+
+PASS navigate() whose navigate event is intercepted stops the cross-document navigation it replaces
+
