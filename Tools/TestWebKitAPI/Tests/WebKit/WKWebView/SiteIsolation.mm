@@ -6929,6 +6929,115 @@ TEST(SiteIsolation, GoBackToNestedCrossSiteIframeAfterPersistedSessionRestore)
     EXPECT_WK_STREQ("destination", [newWebView _test_waitForAlert]);
 }
 
+#if ENABLE(IPC_TESTING_API)
+// Returns which of the secrets appear in an IPC message buffer, whether the strings were encoded as 8-bit or 16-bit.
+static constexpr auto findSecretsInIPCBufferScript = "function findSecrets(buffer, secrets) {"
+    "    const bytes = new Uint8Array(buffer);"
+    "    const texts = [new TextDecoder('latin1').decode(bytes), new TextDecoder('utf-16le').decode(bytes), new TextDecoder('utf-16le').decode(bytes.subarray(1))];"
+    "    return secrets.filter(secret => texts.some(text => text.includes(secret))).join(' ');"
+    "}";
+
+// Returns the secrets found in the BackForwardAllItems reply and in the BackForwardItemAtIndexForWebContent reply, separated by '|'.
+static NSString *frameStateSecretsInBackForwardReplies(TestWKWebView *webView, WKFrameInfo *frame, NSString *requestedFrameID)
+{
+    NSString *script = [NSString stringWithFormat:@"(() => { %s"
+        "    const frameID = { type: 'FrameID', value: [BigInt('%@')] };"
+        "    const replies = ["
+        "        IPC.sendSyncMessage('UI', IPC.pageID, IPC.messages.WebBackForwardList_BackForwardAllItems.name, 1000, [frameID]),"
+        "        IPC.sendSyncMessage('UI', IPC.pageID, IPC.messages.WebBackForwardList_BackForwardItemAtIndexForWebContent.name, 1000, [{ type: 'int32_t', value: 0 }, frameID]),"
+        "    ];"
+        "    return replies.map(reply => findSecrets(reply.buffer, ['main-frame-secret', 'iframe-secret', 'grandchild-secret'])).join('|');"
+        "})()", findSecretsInIPCBufferScript, requestedFrameID];
+    return [webView objectByEvaluatingJavaScript:script inFrame:frame];
+}
+
+TEST(SiteIsolation, BackForwardFrameStateOnlyIncludesFramesHostedByRequestingProcess)
+{
+    HTTPServer server({
+        { "/main-frame-secret"_s, { "<iframe src='https://webkit.org/iframe-secret'></iframe>"_s } },
+        { "/iframe-secret"_s, { "<iframe src='https://example.com/grandchild-secret'></iframe>"_s } },
+        { "/grandchild-secret"_s, { "grandchild"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main-frame-secret"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr mainFrame = [webView mainFrame];
+    RetainPtr<_WKFrameTreeNode> iframeNode = [mainFrame childFrames].firstObject;
+    RetainPtr<WKFrameInfo> iframe = [iframeNode info];
+    EXPECT_NE([mainFrame info]._processIdentifier, [iframe _processIdentifier]);
+    EXPECT_EQ([mainFrame info]._processIdentifier, [iframeNode childFrames].firstObject.info._processIdentifier);
+
+    NSString *mainFrameID = [webView stringByEvaluatingJavaScript:@"String(IPC.frameID)"];
+    NSString *iframeID = [webView stringByEvaluatingJavaScript:@"String(IPC.frameID)" inFrame:iframe.get()];
+
+    // Each process gets the state of the frames it hosts, and only the identifiers of the frames in between.
+    EXPECT_WK_STREQ("iframe-secret|iframe-secret", frameStateSecretsInBackForwardReplies(webView.get(), iframe.get(), mainFrameID));
+    EXPECT_WK_STREQ("main-frame-secret grandchild-secret|main-frame-secret grandchild-secret", frameStateSecretsInBackForwardReplies(webView.get(), nil, mainFrameID));
+    EXPECT_WK_STREQ("grandchild-secret|grandchild-secret", frameStateSecretsInBackForwardReplies(webView.get(), nil, iframeID));
+}
+
+TEST(SiteIsolation, ReattachedHistoryItemOnlyIncludesFramesHostedByNewProcess)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<iframe src='https://webkit.org/webkit-iframe-secret'></iframe><iframe src='https://apple.com/apple-iframe-secret'></iframe>"_s } },
+        { "/webkit-iframe-secret"_s, { "webkit"_s } },
+        { "/apple-iframe-secret"_s, { "apple"_s } },
+        { "/opened"_s, { "opened"_s } },
+        { "/destination"_s, { "destination"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    // With the shared process, both iframes and then the opened window and the new main frame would all
+    // share one process, so the apple.com iframe would be hosted by the receiving process.
+    disableSharedProcess(configuration.get());
+    auto [opener, openerNavigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    opener.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedNavigationDelegate allowAnyTLSCertificate];
+    __block RetainPtr<TestWKWebView> opened;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = openedNavigationDelegate.get();
+        return opened.get();
+    };
+    [opener setUIDelegate:uiDelegate.get()];
+
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/opener"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    RetainPtr<NSArray<_WKFrameTreeNode *>> openerIframes = [opener mainFrame].childFrames;
+    ASSERT_EQ([openerIframes count], 2u);
+    EXPECT_NE([openerIframes firstObject].info._processIdentifier, [openerIframes lastObject].info._processIdentifier);
+
+    // The opened window shares a process with the webkit.org iframe, so it sees what the UI process sends
+    // that process when the opener's main frame swaps into it.
+    [opener evaluateJavaScript:@"window.open('https://webkit.org/opened')" completionHandler:nil];
+    while (!opened)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opened _webProcessIdentifier], [[opener mainFrame].childFrames.firstObject.info _processIdentifier]);
+
+    [opened objectByEvaluatingJavaScript:[NSString stringWithFormat:@"%s;"
+        "reattachSecrets = 'none';"
+        "IPC.addIncomingMessageListener('UI', message => {"
+        "    if (message.name == IPC.messages.WebPage_SetCurrentHistoryItemForReattach.name)"
+        "        reattachSecrets = findSecrets(message.buffer, ['webkit-iframe-secret', 'apple-iframe-secret']);"
+        "});"
+        "true", findSecretsInIPCBufferScript]];
+
+    [opener evaluateJavaScript:@"location.replace('https://webkit.org/destination')" completionHandler:nil];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([opener _webProcessIdentifier], [opened _webProcessIdentifier]);
+
+    EXPECT_WK_STREQ("webkit-iframe-secret", [opened stringByEvaluatingJavaScript:@"reattachSecrets"]);
+}
+#endif
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
