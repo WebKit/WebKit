@@ -44,6 +44,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         this._ongoingCompletionRequests = 0;
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this.clearCachedPropertyNames, this);
+        WI.runtimeManager.addEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this.clearCachedPropertyNames, this);
     }
 
     // Static
@@ -160,7 +161,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         this._lastBase = base;
         this._lastPropertyNames = null;
 
-        var activeCallFrame = WI.debuggerManager.activeCallFrame;
+        let activeCallFrame = WI.runtimeManager.useActiveCallFrame ? WI.debuggerManager.activeCallFrame : null;
         if (!base && activeCallFrame && !this._alwaysEvaluateInWindowContext)
             activeCallFrame.collectScopeChainVariableNames(receivedPropertyNames.bind(this));
         else {
