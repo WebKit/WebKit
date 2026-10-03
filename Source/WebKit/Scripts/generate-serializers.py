@@ -2142,7 +2142,7 @@ def generate_webkit_secure_coding_header(serialized_types):
 
 
 def main(argv):
-    parser = argparse.ArgumentParser(description='Generate serializers from input files')
+    parser = argparse.ArgumentParser(description='Generate serializers from input files', fromfile_prefix_chars='@')
     parser.add_argument('file_extension', help='File extension for output files')
     parser.add_argument('input_files', nargs='+', help='Input files to process')
     parser.add_argument('--output-dir', help='Directory for output files')
