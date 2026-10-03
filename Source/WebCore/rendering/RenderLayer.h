@@ -1191,6 +1191,9 @@ private:
         HasChangedAncestor                      = 1 << 3,
     };
     void recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayerPositionsAfterScrollFlag> = { });
+#if ASSERT_ENABLED || ENABLE(CONJECTURE_ASSERT)
+    void verifySkippedLayerPositionsAfterDocumentScroll();
+#endif
 
     RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;
 

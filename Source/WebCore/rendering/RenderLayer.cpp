@@ -1608,6 +1608,15 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayer
     if (!m_hasVisibleDescendant && !m_hasVisibleContent)
         return;
 
+    // A document scroll moves only fixed and sticky layers and their descendants, so skip subtrees
+    // that contain none of these layers.
+    if (!flags.containsAny({ IsOverflowScroll, HasSeenViewportConstrainedAncestor }) && !isViewportConstrained() && !m_hasViewportConstrainedDescendant) {
+#if LAYER_POSITIONS_ASSERT_ENABLED
+        verifySkippedLayerPositionsAfterDocumentScroll();
+#endif
+        return;
+    }
+
     bool positionChanged = updateLayerPosition();
     if (positionChanged)
         flags.add(HasChangedAncestor);
@@ -1636,6 +1645,23 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayer
     if (m_scrollableArea)
         m_scrollableArea->updateMarqueePosition();
 }
+
+#if LAYER_POSITIONS_ASSERT_ENABLED
+void RenderLayer::verifySkippedLayerPositionsAfterDocumentScroll()
+{
+    LAYER_POSITIONS_ASSERT(!isViewportConstrained());
+    LAYER_POSITIONS_ASSERT(!m_hasViewportConstrainedDescendantStatusDirty);
+
+    // recursiveUpdateLayerPositionsAfterScroll() also skips invisible subtrees.
+    if (!m_hasVisibleDescendant && !m_hasVisibleContent)
+        return;
+
+    updateLayerPosition(nullptr, Verify);
+
+    for (auto* child = firstChild(); child; child = child->nextSibling())
+        child->verifySkippedLayerPositionsAfterDocumentScroll();
+}
+#endif
 
 void RenderLayer::updateBlendMode()
 {
