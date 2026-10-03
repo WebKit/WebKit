@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Same-Origin Middle Frame</title>
+    <style>
+    body { margin: 0; }
+    #middle-target { width: 260px; height: 40px; background: papayawhip; }
+    iframe { display: block; border: 0; }
+    </style>
+</head>
+<body>
+    <div id="middle-target">middle frame node</div>
+    <script>
+    // Same origin as the main frame, so this frame's FrameDOMAgent is in-process; the inner frame is
+    // cross-origin, so hovering into it crosses a process boundary.
+    let innerHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "hover-inner-frame";
+    iframe.width = 260;
+    iframe.height = 80;
+    iframe.src = `http://${innerHost}:8000/site-isolation/inspector/dom/resources/hover-inner-frame.html`;
+    document.body.appendChild(iframe);
+    </script>
+</body>
+</html>

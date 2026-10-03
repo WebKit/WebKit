@@ -99,6 +99,9 @@ WI.DOMManager = class DOMManager extends WI.Object
         let data = {document: null, target: target, attributeLoadNodeIds: {}, loadNodeAttributesTimeout: 0};
         this._frameTargetDOMData.set(target, data);
 
+        if (this._inspectModeEnabled && target.hasCommand("DOM.setInspectModeEnabled"))
+            this._setInspectModeEnabledForTarget(target, true, WI.DOMManager.buildHighlightConfigs());
+
         target.DOMAgent.getDocument((error, root) => {
             if (error) {
                 console.warn("FrameDOMAgent.getDocument failed:", error);
@@ -1051,8 +1054,40 @@ WI.DOMManager = class DOMManager extends WI.Object
         let initiatorHint = options.initiatorHint || WI.TabBrowser.TabNavigationInitiator.Inspect;
         this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node, initiatorHint});
 
+        this._didInspectNodeInTarget(WI.assumingMainTarget());
+    }
+
+    inspectElementInFrameTarget(target, nodeId)
+    {
+        let node = this.nodeForIdInFrameTarget(nodeId, target);
+        console.assert(node, "Missing node for inspected frame target node id", nodeId);
+        if (node)
+            this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node, initiatorHint: WI.TabBrowser.TabNavigationInitiator.Inspect});
+
+        this._didInspectNodeInTarget(target);
+    }
+
+    _didInspectNodeInTarget(inspectingTarget)
+    {
+        // Only the target that consumed the click left selection mode on its own.
+        if (this._inspectModeEnabled) {
+            for (let target of WI.targets) {
+                if (target !== inspectingTarget && target.hasCommand("DOM.setInspectModeEnabled"))
+                    this._setInspectModeEnabledForTarget(target, false);
+            }
+        }
+
         this._inspectModeEnabled = false;
         this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
+    }
+
+    _setInspectModeEnabledForTarget(target, enabled, configs = {})
+    {
+        return target.DOMAgent.setInspectModeEnabled.invoke({enabled, ...configs}).catch((error) => {
+            // A frame target can go away (navigation, process exit) while this is in flight.
+            if (WI.targets.includes(target))
+                WI.reportInternalError(error);
+        });
     }
 
     inspectNodeObject(remoteObject)
@@ -1081,33 +1116,40 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     highlightDOMNodeList(nodes, mode)
     {
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
+        this.cancelPendingHighlightHide();
 
-        let nodeIds = [];
+        // A single highlightNodeList carries IDs for one target only, so group by owning target and
+        // send one command each. Frame-target nodes need their raw backend ID, not the scoped one.
+        let nodeIdsByTarget = new Map();
         for (let node of nodes) {
             console.assert(node instanceof WI.DOMNode, node);
             console.assert(!node.destroyed, node);
             if (node.destroyed)
                 continue;
-            nodeIds.push(node.id);
+
+            let target = node.owningTarget || WI.assumingMainTarget();
+            let nodeIds = nodeIdsByTarget.get(target);
+            if (!nodeIds) {
+                nodeIds = [];
+                nodeIdsByTarget.set(target, nodeIds);
+            }
+            nodeIds.push(node.backendNodeId);
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.highlightNodeList.invoke({
-            nodeIds,
-            ...WI.DOMManager.buildHighlightConfigs(mode),
-        });
+        // Clear targets not receiving a list, so a stale highlight elsewhere does not draw alongside.
+        this.hideDOMNodeHighlight({excludedTargets: new Set(nodeIdsByTarget.keys())});
+
+        for (let [target, nodeIds] of nodeIdsByTarget) {
+            target.DOMAgent.highlightNodeList.invoke({
+                nodeIds,
+                ...WI.DOMManager.buildHighlightConfigs(mode),
+            });
+        }
     }
 
     highlightSelector(selectorString, frameId, mode)
     {
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
+        this.cancelPendingHighlightHide();
 
         let target = WI.assumingMainTarget();
         target.DOMAgent.highlightSelector.invoke({
@@ -1131,25 +1173,35 @@ WI.DOMManager = class DOMManager extends WI.Object
         });
     }
 
-    hideDOMNodeHighlight()
+    cancelPendingHighlightHide()
+    {
+        if (!this._hideDOMNodeHighlightTimeout)
+            return;
+
+        clearTimeout(this._hideDOMNodeHighlightTimeout);
+        this._hideDOMNodeHighlightTimeout = undefined;
+    }
+
+    hideDOMNodeHighlight({excludedTargets} = {})
     {
         for (let target of WI.targets) {
-            if (target instanceof WI.FrameTarget)
+            if (excludedTargets && excludedTargets.has(target))
                 continue;
             if (target.hasCommand("DOM.hideHighlight"))
                 target.DOMAgent.hideHighlight();
         }
     }
 
-    highlightDOMNodeForTwoSeconds(nodeId)
+    highlightDOMNodeForTwoSeconds(node)
     {
-        let node = this._idToDOMNode[nodeId];
-        if (!node)
+        console.assert(!node || node instanceof WI.DOMNode, node);
+        if (!node || node.destroyed)
             return;
 
         node.highlight();
 
-        this._hideDOMNodeHighlightTimeout = setTimeout(this.hideDOMNodeHighlight.bind(this), 2000);
+        // Bind an empty options object: setTimeout would otherwise pass the timer id as the first argument.
+        this._hideDOMNodeHighlightTimeout = setTimeout(this.hideDOMNodeHighlight.bind(this, {}), 2000);
     }
 
     get inspectModeEnabled()
@@ -1162,17 +1214,16 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (enabled === this._inspectModeEnabled)
             return;
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.setInspectModeEnabled.invoke({
-            enabled,
-            ...WI.DOMManager.buildHighlightConfigs(),
-        }, (error) => {
-            if (error) {
-                WI.reportInternalError(error);
-                return;
-            }
+        // Each target's DOM agent selects nodes only in the frames it owns, so enable every target.
+        let targets = WI.targets.filter((target) => target.hasCommand("DOM.setInspectModeEnabled"));
+        if (!targets.length)
+            return;
 
-            this._inspectModeEnabled = enabled;
+        // Update the state now, so a second toggle before the commands resolve sees it.
+        this._inspectModeEnabled = enabled;
+
+        let configs = WI.DOMManager.buildHighlightConfigs();
+        Promise.all(targets.map((target) => this._setInspectModeEnabledForTarget(target, enabled, configs))).then(() => {
             this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
         });
     }

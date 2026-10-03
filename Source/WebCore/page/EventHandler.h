@@ -239,6 +239,7 @@ public:
 
     WEBCORE_EXPORT HandleUserInputEventResult mouseMoved(const PlatformMouseEvent&);
     WEBCORE_EXPORT bool passMouseMovedEventToScrollbars(const PlatformMouseEvent&);
+    WEBCORE_EXPORT void mouseDidLeaveLocalRoot();
 
     WEBCORE_EXPORT void lostMouseCapture();
 

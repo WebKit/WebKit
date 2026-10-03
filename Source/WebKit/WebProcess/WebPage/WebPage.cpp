@@ -4262,6 +4262,13 @@ void WebPage::mouseEvent(FrameIdentifier frameID, Ref<WebMouseEvent>&& mouseEven
 #endif
 }
 
+void WebPage::mouseDidLeaveLocalRoot(FrameIdentifier frameID)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (RefPtr localFrame = frame ? frame->coreLocalFrame() : nullptr)
+        localFrame->eventHandler().mouseDidLeaveLocalRoot();
+}
+
 void WebPage::setLastKnownMousePosition(WebCore::FrameIdentifier frameID, const DoublePoint& eventPoint, const DoublePoint& globalPoint, std::optional<WebCore::LastKnownMousePositionSource>&& source)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);

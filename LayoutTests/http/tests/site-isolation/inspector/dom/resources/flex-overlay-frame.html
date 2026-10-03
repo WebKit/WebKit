@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Flex Overlay Frame</title>
+    <style>
+        body { margin: 0; }
+        #spacer { height: 400px; }
+        /* Narrow and wrapping, so FlexFormattingContext reports line-wrap positions to the frame
+           agent's cache -- that is what the line-separator part of the overlay reads. */
+        #target {
+            display: flex;
+            flex-wrap: wrap;
+            width: 180px;
+            gap: 10px;
+        }
+        #target > div { width: 80px; height: 30px; }
+        #not-flex { width: 100px; height: 20px; }
+        #tail { height: 400px; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="spacer"></div>
+        <div id="target">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div id="not-flex">Not a flex container</div>
+        <div id="tail"></div>
+    </div>
+</body>
+</html>

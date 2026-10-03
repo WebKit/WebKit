@@ -166,8 +166,10 @@ public:
     static void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
 
     static void mouseDidMoveOverElement(Page&, const HitTestResult&, OptionSet<PlatformEventModifier>);
+    static void mouseDidMoveOverRemoteFrame(LocalFrame&);
+    static void mouseDidLeaveLocalRoot(LocalFrame&);
     static bool handleMousePress(LocalFrame&);
-    static bool handleTouchEvent(LocalFrame&, Node&);
+    static bool handleTouchEvent(Node&);
     static bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
@@ -412,8 +414,10 @@ private:
     static void didUnregisterNamedFlowContentElementImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&, Node& contentElement);
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, OptionSet<PlatformEventModifier>);
+    static void mouseDidMoveOverRemoteFrameImpl(InstrumentingAgents&, LocalFrame&);
+    static void mouseDidLeaveLocalRootImpl(LocalFrame&);
     static bool handleMousePressImpl(InstrumentingAgents&);
-    static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
+    static bool handleTouchEventImpl(Node&);
     static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClass);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
@@ -825,10 +829,22 @@ inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const 
     mouseDidMoveOverElementImpl(protect(instrumentingAgents(page)), result, modifiers);
 }
 
-inline bool InspectorInstrumentation::handleTouchEvent(LocalFrame& frame, Node& node)
+inline void InspectorInstrumentation::mouseDidMoveOverRemoteFrame(LocalFrame& frame)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    mouseDidMoveOverRemoteFrameImpl(protect(instrumentingAgents(frame)), frame);
+}
+
+inline void InspectorInstrumentation::mouseDidLeaveLocalRoot(LocalFrame& localRoot)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    mouseDidLeaveLocalRootImpl(localRoot);
+}
+
+inline bool InspectorInstrumentation::handleTouchEvent(Node& node)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    return handleTouchEventImpl(protect(instrumentingAgents(frame)), node);
+    return handleTouchEventImpl(node);
 }
 
 inline bool InspectorInstrumentation::handleMousePress(LocalFrame& frame)

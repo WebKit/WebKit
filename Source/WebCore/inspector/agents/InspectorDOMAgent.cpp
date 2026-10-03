@@ -66,7 +66,9 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FrameDOMAgent.h"
 #include "FrameInlines.h"
+#include "FrameInspectorController.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -83,6 +85,7 @@
 #include "InspectorHistory.h"
 #include "InspectorIdentifierRegistry.h"
 #include "InspectorNodeFinder.h"
+#include "InspectorOverlayConfigParser.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
@@ -155,52 +158,6 @@ using namespace HTMLNames;
 
 static const size_t maxTextSize = 10000;
 static const char16_t horizontalEllipsisUTF16[] = { horizontalEllipsis, 0 };
-
-static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
-{
-    if (!colorObject)
-        return std::nullopt;
-
-    auto r = colorObject->getInteger("r"_s);
-    auto g = colorObject->getInteger("g"_s);
-    auto b = colorObject->getInteger("b"_s);
-    if (!r || !g || !b)
-        return std::nullopt;
-
-    auto a = colorObject->getDouble("a"_s);
-    if (!a)
-        return { makeFromComponentsClamping<SRGBA<uint8_t>>(*r, *g, *b) };
-    return { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(*r, *g, *b, convertFloatAlphaTo<uint8_t>(*a)) };
-}
-
-static std::optional<Color> parseRequiredConfigColor(const String& fieldName, JSON::Object& configObject)
-{
-    return parseColor(configObject.getObject(fieldName));
-}
-
-static Color parseOptionalConfigColor(const String& fieldName, JSON::Object& configObject)
-{
-    return parseRequiredConfigColor(fieldName, configObject).value_or(Color::transparentBlack);
-}
-
-static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
-{
-    std::array<double, 8> coordinates;
-    if (quadArray->length() != coordinates.size())
-        return false;
-    for (size_t i = 0; i < coordinates.size(); ++i) {
-        auto coordinate = quadArray->get(i)->asDouble();
-        if (!coordinate)
-            return false;
-        coordinates[i] = *coordinate;
-    }
-    quad->setP1(FloatPoint(coordinates[0], coordinates[1]));
-    quad->setP2(FloatPoint(coordinates[2], coordinates[3]));
-    quad->setP3(FloatPoint(coordinates[4], coordinates[5]));
-    quad->setP4(FloatPoint(coordinates[6], coordinates[7]));
-
-    return true;
-}
 
 class RevalidateStyleAttributeTask final : public CanMakeCheckedPtr<RevalidateStyleAttributeTask> {
     WTF_MAKE_TZONE_ALLOCATED(RevalidateStyleAttributeTask);
@@ -1259,12 +1216,44 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::discardSearchResults
     return { };
 }
 
+static bool frameOwnsElementSelection(const LocalFrame* frame)
+{
+    if (!frame)
+        return false;
+    CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent();
+    return frameDOMAgent && frameDOMAgent->ownsElementSelection();
+}
+
+static bool frameOwnerNodeOwnsElementSelection(Node& node)
+{
+    RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node);
+    if (!frameOwner)
+        return false;
+
+    RefPtr contentFrame = frameOwner->contentFrame();
+    if (!contentFrame)
+        return false;
+
+    // FIXME: A remote frame's agent can't be asked whether it is searching. If it isn't, the click
+    // reaches page content while the picker is on.
+    RefPtr localContentFrame = dynamicDowncast<LocalFrame>(*contentFrame);
+    if (!localContentFrame)
+        return true;
+
+    return frameOwnsElementSelection(localContentFrame.get());
+}
+
 bool InspectorDOMAgent::handleMousePress()
 {
     if (!m_searchingForNode)
         return false;
 
     if (RefPtr node = overlay().highlightedNode()) {
+        // Let the event reach the subframe so its agent selects the node under the cursor, not the
+        // owner element.
+        if (frameOwnerNodeOwnsElementSelection(*node))
+            return false;
+
         inspect(node.get());
         return true;
     }
@@ -1323,12 +1312,29 @@ void InspectorDOMAgent::focusNode()
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier>)
 {
+    if (RefPtr frame = result.innerNodeFrame(); frameOwnsElementSelection(frame.get())) {
+        if (std::exchange(m_mousedOverNode, nullptr) && m_searchingForNode)
+            std::ignore = hideHighlight();
+        return;
+    }
+
     m_mousedOverNode = result.innerNode();
 
     if (!m_searchingForNode)
         return;
 
     highlightMousedOverNode();
+}
+
+void InspectorDOMAgent::mouseDidMoveOverRemoteFrame()
+{
+    // No further hover arrives while the cursor is over an out-of-process frame.
+    m_mousedOverNode = nullptr;
+
+    if (!m_searchingForNode)
+        return;
+
+    std::ignore = hideHighlight();
 }
 
 void InspectorDOMAgent::highlightMousedOverNode()
@@ -1339,8 +1345,10 @@ void InspectorDOMAgent::highlightMousedOverNode()
     if (!node)
         return;
 
-    if (m_inspectModeHighlightConfig)
-        protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
+    if (!m_inspectModeHighlightConfig)
+        return;
+
+    protect(overlay())->highlightNode(node.get(), *m_inspectModeHighlightConfig, m_inspectModeGridOverlayConfig, m_inspectModeFlexOverlayConfig, m_inspectModeShowRulers);
 }
 
 void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& errorString, bool enabled, RefPtr<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, bool showRulers)
@@ -1375,61 +1383,6 @@ void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& er
 
     if (InspectorBackendClient* client = m_inspectedPage->inspectorController().inspectorBackendClient())
         client->elementSelectionChanged(m_searchingForNode);
-}
-
-std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highlightConfigFromInspectorObject(Inspector::Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)
-{
-    if (!highlightInspectorObject) {
-        errorString = "Internal error: highlight configuration parameter is missing"_s;
-        return nullptr;
-    }
-
-    auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->showInfo = highlightInspectorObject->getBoolean("showInfo"_s).value_or(false);
-    highlightConfig->content = parseOptionalConfigColor("contentColor"_s, *highlightInspectorObject);
-    highlightConfig->padding = parseOptionalConfigColor("paddingColor"_s, *highlightInspectorObject);
-    highlightConfig->border = parseOptionalConfigColor("borderColor"_s, *highlightInspectorObject);
-    highlightConfig->margin = parseOptionalConfigColor("marginColor"_s, *highlightInspectorObject);
-    return highlightConfig;
-}
-
-std::optional<InspectorOverlay::Grid::Config> InspectorDOMAgent::gridOverlayConfigFromInspectorObject(Inspector::Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& gridOverlayInspectorObject)
-{
-    if (!gridOverlayInspectorObject)
-        return std::nullopt;
-
-    auto gridColor = parseRequiredConfigColor("gridColor"_s, *gridOverlayInspectorObject);
-    if (!gridColor) {
-        errorString = "Internal error: grid color property of grid overlay configuration parameter is missing"_s;
-        return std::nullopt;
-    }
-
-    InspectorOverlay::Grid::Config gridOverlayConfig;
-    gridOverlayConfig.gridColor = *gridColor;
-    gridOverlayConfig.showLineNames = gridOverlayInspectorObject->getBoolean("showLineNames"_s).value_or(false);
-    gridOverlayConfig.showLineNumbers = gridOverlayInspectorObject->getBoolean("showLineNumbers"_s).value_or(false);
-    gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean("showExtendedGridLines"_s).value_or(false);
-    gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean("showTrackSizes"_s).value_or(false);
-    gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean("showAreaNames"_s).value_or(false);
-    gridOverlayConfig.showOrderNumbers = gridOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
-    return gridOverlayConfig;
-}
-
-std::optional<InspectorOverlay::Flex::Config> InspectorDOMAgent::flexOverlayConfigFromInspectorObject(Inspector::Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
-{
-    if (!flexOverlayInspectorObject)
-        return std::nullopt;
-
-    auto flexColor = parseRequiredConfigColor("flexColor"_s, *flexOverlayInspectorObject);
-    if (!flexColor) {
-        errorString = "Internal error: flex color property of flex overlay configuration parameter is missing"_s;
-        return std::nullopt;
-    }
-
-    InspectorOverlay::Flex::Config flexOverlayConfig;
-    flexOverlayConfig.flexColor = *flexColor;
-    flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
-    return flexOverlayConfig;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1469,7 +1422,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x,
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&& quadObject, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto quad = makeUnique<FloatQuad>();
-    if (!parseQuad(WTF::move(quadObject), quad.get()))
+    if (!parseInspectorQuad(WTF::move(quadObject), quad.get()))
         return makeUnexpected("Unexpected invalid quad"_s);
 
     innerHighlightQuad(WTF::move(quad), WTF::move(color), WTF::move(outlineColor), WTF::move(usePageCoordinates));
@@ -1480,8 +1433,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JS
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseColor(WTF::move(color)).value_or(Color::transparentBlack);
-    highlightConfig->contentOutline = parseColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
+    highlightConfig->content = parseInspectorColor(WTF::move(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseInspectorColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     protect(overlay())->highlightQuad(WTF::move(quad), *highlightConfig);
 }
@@ -1694,8 +1647,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
     if (RefPtr ownerElement = frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(WTF::move(color)).value_or(Color::transparentBlack);
-        highlightConfig->contentOutline = parseColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
+        highlightConfig->content = parseInspectorColor(WTF::move(color)).value_or(Color::transparentBlack);
+        highlightConfig->contentOutline = parseInspectorColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
         protect(overlay())->highlightNode(ownerElement.get(), *highlightConfig);
     }
 
@@ -3002,7 +2955,7 @@ void InspectorDOMAgent::flexibleBoxRendererWrappedToNextLine(const RenderObject&
     }).iterator->value.append(lineStartItemIndex);
 }
 
-Vector<size_t> InspectorDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject& renderer)
+Vector<size_t> InspectorDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject& renderer) const
 {
     return m_flexibleBoxRendererCachedItemsAtStartOfLine.get(renderer);
 }
