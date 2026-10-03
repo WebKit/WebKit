@@ -55,16 +55,16 @@ template<unsigned ways>
 void JSONCache::NameTable<size>::insert(unsigned set, Structure* from, Structure* to, PropertyOffset offset, const NameText& text, unsigned textLength)
 {
     for (unsigned way = ways - 1; way; --way) {
-        entries[set + way] = entries[set + way - 1];
-        texts[set + way] = texts[set + way - 1];
+        m_entries[set + way] = m_entries[set + way - 1];
+        m_texts[set + way] = m_texts[set + way - 1];
     }
-    auto& entry = entries[set];
+    auto& entry = m_entries[set];
     entry.from.setWithoutWriteBarrier(from);
     entry.to.setWithoutWriteBarrier(to);
     entry.offset = offset;
     entry.textLength = textLength;
     entry.toNameIndex = nameIndex(StructureID::encode(to));
-    texts[set] = text;
+    m_texts[set] = text;
 }
 
 unsigned JSONCache::makeText(NameText& text, std::span<const Latin1Character> name)
@@ -97,7 +97,7 @@ void JSONCache::addPrefixedName(Structure* from, Structure* to, PropertyOffset o
     StructureID toID = StructureID::encode(to);
     unsigned set = prefixedNameIndex(StructureID::encode(from), prefix);
     for (unsigned way = 0; way < prefixedNameWays; ++way) {
-        if (m_prefixedNames.entries[set + way].to.value() == toID)
+        if (m_prefixedNames.m_entries[set + way].to.value() == toID)
             return;
     }
     auto name = recordableName(from, to, offset);
@@ -113,7 +113,7 @@ void JSONCache::addName(Structure* from, Structure* to, PropertyOffset offset)
 {
     StructureID fromID = StructureID::encode(from);
     unsigned set = nameIndex(fromID);
-    if (m_names.entries[set].from.value() == fromID)
+    if (m_names.m_entries[set].from.value() == fromID)
         return;
     auto name = recordableName(from, to, offset);
     if (name.empty())

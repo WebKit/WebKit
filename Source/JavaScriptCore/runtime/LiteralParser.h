@@ -229,6 +229,7 @@ private:
             ASSERT(length <= static_cast<size_t>(m_end - m_ptr));
             m_ptr += length;
         }
+        void cacheString(JSONCache&, JSString*, std::span<const CharType> source);
 
 #if !ASSERT_ENABLED
         using LiteralParserTokenPtr = const LiteralParserToken<CharType>*;

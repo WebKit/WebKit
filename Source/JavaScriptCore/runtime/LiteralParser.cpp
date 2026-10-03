@@ -1006,6 +1006,19 @@ ALWAYS_INLINE bool LiteralParser<CharType, reviverMode>::Lexer::tryConsumeString
     return true;
 }
 
+template<typename CharType, JSONReviverMode reviverMode>
+ALWAYS_INLINE void LiteralParser<CharType, reviverMode>::Lexer::cacheString(JSONCache& cache, JSString* string, std::span<const CharType> source)
+{
+    if constexpr (sizeof(CharType) == 1) {
+        // The token only points into the source when the string had no escapes, and then the source text
+        // from the opening quote to the closing one is exactly what a later match compares against.
+        if (m_currentToken.stringStart8 != source.data() + 1)
+            return;
+        cache.addString(source, m_ptr - source.data(), string);
+    } else
+        UNUSED_PARAM(cache), UNUSED_PARAM(string), UNUSED_PARAM(source);
+}
+
 template <>
 ALWAYS_INLINE void setParserTokenString<Latin1Character>(LiteralParserToken<Latin1Character>& token, const Latin1Character* string)
 {
@@ -1767,13 +1780,24 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
             // parsePrimitiveValue would otherwise repeat on the token type.
             auto parseValue = [&, &vm = vm] ALWAYS_INLINE_LAMBDA -> JSValue {
                 switch (m_lexer.peek()) {
-                case '"':
+                case '"': {
+                    if constexpr (parserMode == StrictJSON && sizeof(CharType) == 1) {
+                        if (auto* entry = jsonCache.findString(m_lexer.remaining())) {
+                            m_lexer.advance(entry->textLength);
+                            m_lexer.nextAfterValue();
+                            return entry->string;
+                        }
+                    }
+                    auto source = m_lexer.remaining();
                     if (m_lexer.nextString() == TokString) [[likely]] {
                         JSString* result = makeJSString(vm, jsonCache, m_lexer.currentToken());
+                        if constexpr (parserMode == StrictJSON && sizeof(CharType) == 1)
+                            m_lexer.cacheString(jsonCache, result, source);
                         m_lexer.nextAfterValue();
                         return result;
                     }
                     return parsePrimitiveValue(vm);
+                }
                 case '-':
                 case '0': case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8': case '9':

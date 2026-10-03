@@ -38,6 +38,75 @@
 
 namespace JSC {
 
+ALWAYS_INLINE uint64_t JSONCache::atomStringKey(char16_t firstCharacter, char16_t lastCharacter, unsigned length)
+{
+    return length | (static_cast<uint64_t>(firstCharacter) << 8) | (static_cast<uint64_t>(lastCharacter) << 24);
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE uint64_t JSONCache::atomStringKey(std::span<const CharacterType> characters)
+{
+    return atomStringKey(characters.front(), characters.back(), characters.size());
+}
+
+ALWAYS_INLINE unsigned JSONCache::primaryAtomStringIndex(uint64_t key)
+{
+    return (key * 0x9E3779B97F4A7C15ULL) >> (64 - WTF::fastLog2(primaryStringCapacity));
+}
+
+ALWAYS_INLINE unsigned JSONCache::secondaryAtomStringIndex(uint64_t key)
+{
+    return primaryStringCapacity + ((key * 0xC2B2AE3D27D4EB4FULL) >> (64 - WTF::fastLog2(secondaryStringCapacity)));
+}
+static_assert(hasOneBitSet(JSONCache::primaryStringCapacity) && hasOneBitSet(JSONCache::secondaryStringCapacity));
+
+template<typename CharacterType>
+ALWAYS_INLINE bool JSONCache::atomStringMatches(unsigned index, std::span<const CharacterType> characters) const
+{
+    auto& slot = m_atomStrings[index];
+    return slot.m_length == characters.size() && equal(slot.m_buffer, characters);
+}
+
+template<typename CharacterType>
+inline unsigned JSONCache::findAtomString(uint64_t key, std::span<const CharacterType> characters) const
+{
+    unsigned index = primaryAtomStringIndex(key);
+    if (atomStringMatches(index, characters))
+        return index;
+    index = secondaryAtomStringIndex(key);
+    if (atomStringMatches(index, characters))
+        return index;
+    return stringCapacity;
+}
+
+template<typename CharacterType>
+inline unsigned JSONCache::addAtomString(uint64_t key, std::span<const CharacterType> characters, Ref<AtomStringImpl>&& impl)
+{
+    unsigned index = primaryAtomStringIndex(key);
+    auto& slot = m_atomStrings[index];
+    if (slot.m_length) {
+        unsigned evictedIndex = secondaryAtomStringIndex(atomStringKey(std::span<const char16_t> { slot.m_buffer }.first(slot.m_length)));
+        m_atomStrings[evictedIndex] = WTF::move(slot);
+        m_jsStrings[evictedIndex] = m_jsStrings[index];
+    }
+    slot.m_impl = WTF::move(impl);
+    slot.m_length = characters.size();
+    WTF::copyElements(std::span<char16_t> { slot.m_buffer }, characters);
+    m_jsStrings[index] = nullptr;
+    return index;
+}
+
+template<typename CharacterType>
+NEVER_INLINE Ref<AtomStringImpl> JSONCache::makeIdentifierSlow(uint64_t key, std::span<const CharacterType> characters)
+{
+    unsigned index = findAtomString(key, characters);
+    if (index != stringCapacity)
+        return *m_atomStrings[index].m_impl;
+    Ref result = AtomStringImpl::add(characters).releaseNonNull();
+    addAtomString(key, characters, result.copyRef());
+    return result;
+}
+
 template<typename CharacterType>
 ALWAYS_INLINE Ref<AtomStringImpl> JSONCache::makeIdentifier(VM& vm, std::span<const CharacterType> characters)
 {
@@ -51,19 +120,20 @@ ALWAYS_INLINE Ref<AtomStringImpl> JSONCache::makeIdentifier(VM& vm, std::span<co
     } else if (characters.size() > maxStringLengthForCache) [[unlikely]]
         return AtomStringImpl::add(characters).releaseNonNull();
 
-    auto lastCharacter = characters.back();
-    unsigned index = atomStringIndex(firstCharacter, lastCharacter, characters.size());
-    auto& slot = m_atomStrings[index];
-    if (slot.m_length != characters.size() || !equal(slot.m_buffer, characters)) [[unlikely]] {
-        auto result = AtomStringImpl::add(characters);
-        slot.m_impl = result;
-        slot.m_length = characters.size();
-        WTF::copyElements(std::span<char16_t> { slot.m_buffer }, characters);
-        m_jsStrings[index] = nullptr;
-        return result.releaseNonNull();
-    }
+    uint64_t key = atomStringKey(characters);
+    unsigned index = primaryAtomStringIndex(key);
+    if (!atomStringMatches(index, characters)) [[unlikely]]
+        return makeIdentifierSlow(key, characters);
+    return *m_atomStrings[index].m_impl;
+}
 
-    return *slot.m_impl;
+template<typename CharacterType>
+NEVER_INLINE AtomStringImpl* JSONCache::existingIdentifierSlow(uint64_t key, std::span<const CharacterType> characters)
+{
+    unsigned index = secondaryAtomStringIndex(key);
+    if (!atomStringMatches(index, characters))
+        return nullptr;
+    return m_atomStrings[index].m_impl.get();
 }
 
 template<typename CharacterType>
@@ -79,12 +149,29 @@ ALWAYS_INLINE AtomStringImpl* JSONCache::existingIdentifier(VM& vm, std::span<co
     } else if (characters.size() > maxStringLengthForCache) [[unlikely]]
         return nullptr;
 
-    auto lastCharacter = characters.back();
-    auto& slot = atomStringSlot(firstCharacter, lastCharacter, characters.size());
-    if (slot.m_length != characters.size() || !equal(slot.m_buffer, characters)) [[unlikely]]
-        return nullptr;
+    uint64_t key = atomStringKey(characters);
+    unsigned index = primaryAtomStringIndex(key);
+    if (!atomStringMatches(index, characters)) [[unlikely]]
+        return existingIdentifierSlow(key, characters);
+    return m_atomStrings[index].m_impl.get();
+}
 
-    return slot.m_impl.get();
+template<typename CharacterType>
+NEVER_INLINE JSString* JSONCache::makeJSStringSlow(VM& vm, uint64_t key, std::span<const CharacterType> characters)
+{
+    unsigned index = findAtomString(key, characters);
+    if (index != stringCapacity) {
+        if (JSString* cached = m_jsStrings[index])
+            return cached;
+        JSString* result = jsString(vm, String { m_atomStrings[index].m_impl.get() });
+        m_jsStrings[index] = result;
+        return result;
+    }
+
+    Ref impl = AtomStringImpl::add(characters).releaseNonNull();
+    JSString* result = jsString(vm, String { impl.copyRef() });
+    m_jsStrings[addAtomString(key, characters, WTF::move(impl))] = result;
+    return result;
 }
 
 template<typename CharacterType>
@@ -101,24 +188,13 @@ ALWAYS_INLINE JSString* JSONCache::makeJSString(VM& vm, std::span<const Characte
     } else if (characters.size() > maxAtomizeStringLength)
         return makeLongJSString(vm, characters);
 
-    auto lastCharacter = characters.back();
-    unsigned index = atomStringIndex(firstCharacter, lastCharacter, characters.size());
-    auto& slot = m_atomStrings[index];
-    if (slot.m_length == characters.size() && equal(slot.m_buffer, characters)) [[likely]] {
-        if (JSString* cached = m_jsStrings[index])
+    uint64_t key = atomStringKey(characters);
+    unsigned index = primaryAtomStringIndex(key);
+    if (atomStringMatches(index, characters)) [[likely]] {
+        if (JSString* cached = m_jsStrings[index]) [[likely]]
             return cached;
-        JSString* result = jsString(vm, String { slot.m_impl.get() });
-        m_jsStrings[index] = result;
-        return result;
     }
-
-    auto impl = AtomStringImpl::add(characters);
-    slot.m_impl = impl;
-    slot.m_length = characters.size();
-    WTF::copyElements(std::span<char16_t> { slot.m_buffer }, characters);
-    JSString* result = jsString(vm, String { WTF::move(impl) });
-    m_jsStrings[index] = result;
-    return result;
+    return makeJSStringSlow(vm, key, characters);
 }
 
 // Long values such as URLs and type names repeat heavily in real JSON, so they are shared without
@@ -274,10 +350,10 @@ ALWAYS_INLINE bool JSONCache::textMatches(const NameText& text, unsigned length,
 template<unsigned size>
 ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::NameTable<size>::match(unsigned index, StructureID from, std::span<const Latin1Character> source) const
 {
-    auto& entry = entries[index];
+    auto& entry = m_entries[index];
     if (entry.from.value() != from || source.size() < maxNameTextLength)
         return nullptr;
-    if (!textMatches(texts[index], entry.textLength, source.first<maxNameTextLength>()))
+    if (!textMatches(m_texts[index], entry.textLength, source.first<maxNameTextLength>()))
         return nullptr;
     return &entry;
 }
@@ -297,16 +373,62 @@ ALWAYS_INLINE const JSONCache::NameEntry* JSONCache::findName(StructureID from, 
     return nullptr;
 }
 
+ALWAYS_INLINE unsigned JSONCache::stringIndex(std::span<const Latin1Character> source)
+{
+    static_assert(hasOneBitSet(stringEntrySize) && hasOneBitSet(stringWays));
+    uint64_t prefix = WTF::unalignedLoad<uint64_t>(source.data());
+    return ((prefix * 0x9E3779B97F4A7C15ULL) >> (64 - WTF::fastLog2(stringEntrySize))) & ~(stringWays - 1);
+}
+
+ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::StringTable::match(unsigned index, std::span<const Latin1Character> source) const
+{
+    auto& entry = m_entries[index];
+    if (!entry.string || source.size() < maxNameTextLength)
+        return nullptr;
+    if (!textMatches(m_texts[index], entry.textLength, source.first<maxNameTextLength>()))
+        return nullptr;
+    return &entry;
+}
+
+ALWAYS_INLINE void JSONCache::StringTable::insert(unsigned set, JSString* string, std::span<const Latin1Character> source, unsigned textLength)
+{
+    for (unsigned way = stringWays - 1; way; --way) {
+        m_entries[set + way] = m_entries[set + way - 1];
+        m_texts[set + way] = m_texts[set + way - 1];
+    }
+    m_entries[set] = { string, textLength };
+    WTF::copyElements(std::span<Latin1Character> { m_texts[set] }, source.first(maxNameTextLength));
+}
+
+ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::findString(std::span<const Latin1Character> source) const
+{
+    if (source.size() < sizeof(uint64_t))
+        return nullptr;
+    unsigned set = stringIndex(source);
+    for (unsigned way = 0; way < stringWays; ++way) {
+        if (auto* entry = m_strings.match(set + way, source))
+            return entry;
+    }
+    return nullptr;
+}
+
+ALWAYS_INLINE void JSONCache::addString(std::span<const Latin1Character> source, unsigned textLength, JSString* string)
+{
+    if (textLength > maxNameTextLength || source.size() < maxNameTextLength)
+        return;
+    m_strings.insert(stringIndex(source), string, source, textLength);
+}
+
 template<typename Visitor>
 void JSONCache::visitAggregate(Visitor& visitor)
 {
     if (!m_isParsing)
         return;
-    for (auto& entry : m_names.entries) {
+    for (auto& entry : m_names.m_entries) {
         visitor.append(entry.from);
         visitor.append(entry.to);
     }
-    for (auto& entry : m_prefixedNames.entries) {
+    for (auto& entry : m_prefixedNames.m_entries) {
         visitor.append(entry.from);
         visitor.append(entry.to);
     }
