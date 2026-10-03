@@ -456,6 +456,24 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string='compiled')
         return self.run_step()
 
+    def test_success_cmake_mac(self):
+        self.setup_step(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('architecture', 'x86_64 arm64')
+        self.setProperty('additionalArguments', ['--cmake'])
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=3600,
+                log_environ=True,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --debug --cmake --architecture "x86_64 arm64" WK_VALIDATE_DEPENDENCIES=YES WK_ENABLE_SLOW_BUILD_VERIFICATION=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+            ).exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='compiled')
+        return self.run_step()
+
     def test_bigsur_timeout(self):
         self.setup_step(CompileWebKit())
         self.setProperty('fullPlatform', 'mac-sonoma')
