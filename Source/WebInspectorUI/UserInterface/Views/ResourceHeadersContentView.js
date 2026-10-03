@@ -46,8 +46,6 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._searchIndex = -1;
         this._automaticallyRevealFirstSearchResult = false;
         this._bouncyHighlightElement = null;
-        this._popover = null;
-        this._popoverCallStackIconElement = null;
 
         this._redirectDetailsSections = [];
 
@@ -272,47 +270,14 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         let initiatorLocation = this._resource.initiatorSourceCodeLocation;
         if (initiatorLocation) {
-
-            let fragment = document.createDocumentFragment();
-
             const options = {
                 dontFloat: true,
                 ignoreSearchTab: true,
                 ignoreNetworkTab: true,
+                stackTrace: this._resource.initiatorStackTrace,
             };
-            let link = WI.createSourceCodeLocationLink(initiatorLocation, options);
-            fragment.appendChild(link);
-
-            if (this._resource.initiatorStackTrace) {
-                this._popoverCallStackIconElement = document.createElement("img");
-                this._popoverCallStackIconElement.className = "call-stack";
-                fragment.appendChild(this._popoverCallStackIconElement);
-
-                this._popoverCallStackIconElement.addEventListener("click", (event) => {
-                    if (!this._popover) {
-                        this._popover = new WI.Popover(this);
-                        this._popover.windowResizeHandler = () => { this._presentPopoverBelowCallStackElement(); };
-                    }
-
-                    const selectable = false;
-                    let callFramesTreeOutline = new WI.TreeOutline(selectable);
-                    callFramesTreeOutline.disclosureButtons = false;
-                    let callFrameTreeController = new WI.StackTraceTreeController(callFramesTreeOutline);
-                    callFrameTreeController.stackTrace = this._resource.initiatorStackTrace;
-
-                    let popoverContent = document.createElement("div");
-                    popoverContent.appendChild(callFrameTreeController.treeOutline.element);
-                    this._popover.content = popoverContent;
-
-                    this._presentPopoverBelowCallStackElement();
-                });
-            }
-
-            let pair = this._summarySection.appendKeyValuePair(WI.UIString("Initiator"), fragment);
+            let pair = this._summarySection.appendKeyValuePair(WI.UIString("Initiator"), WI.createSourceCodeLocationLink(initiatorLocation, options));
             pair.classList.add("initiator");
-
-            if (this._popover && this._popover.visible)
-                this._presentPopoverBelowCallStackElement();
         }
     }
 
@@ -546,12 +511,6 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._bouncyHighlightElement.style.fontWeight = computedStyles.fontWeight;
 
         this.element.appendChild(this._bouncyHighlightElement);
-    }
-
-    _presentPopoverBelowCallStackElement()
-    {
-        let bounds = WI.Rect.rectFromClientRect(this._popoverCallStackIconElement.getBoundingClientRect());
-        this._popover.present(bounds.pad(2), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
     }
 
     _resourceMetricsDidChange(event)
