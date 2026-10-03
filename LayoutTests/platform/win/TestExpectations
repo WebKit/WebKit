@@ -109,6 +109,7 @@ imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 # WEB_CODECS is disabled
 fast/webcodecs/audio-data-copy-to-crash.html [ Skip ]
 fast/webcodecs/audio-data-copy-to-zero-frames-crash.html [ Skip ]
+fast/webcodecs/audio-data-copy-to-planar-frame-offset.html [ Skip ]
 
 # WebGPU is disabled
 http/tests/webgpu [ Skip ]
@@ -171,6 +172,7 @@ compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 http/tests/navigation/page-cache-video.html [ Skip ] # Timeout
+http/wpt/media/media-vp9-yuv422p8.html [ Skip ] # Timeout
 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Skip ]
@@ -1968,6 +1970,11 @@ streams/readable-stream-byob-request-worker.html [ Skip ]
 imported/w3c/web-platform-tests/cookiestore [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
 http/tests/cookies/cookie-store-set-secure.https.html [ Skip ]
+http/tests/cookies/cookie-store-change-event-with-unicode-characters.https.html [ Skip ] # Timeout
+http/tests/cookies/cookie-store-delete-with-unicode-name.https.html [ Skip ] # Timeout
+http/tests/cookies/cookie-store-document-cookie-interop-with-unicode-characters.https.html [ Skip ] # Timeout
+http/tests/cookies/cookie-store-get-set-with-unicode-characters.https.html [ Skip ] # Timeout
+http/tests/cookies/cookie-store-set-size-limit-with-unicode-characters.https.html [ Skip ] # Timeout
 cookies/cookie-store-start-listening-for-change-with-null-url-crash.html [ Skip ] # crash
 http/tests/navigation/ping-attribute/anchor-cookie.html [ Skip ]
 http/tests/navigation/ping-attribute/cross-site-url-anchor-cookie-preexisting-cookie.html [ Skip ]
@@ -4933,3 +4940,59 @@ css3/filters/backdrop/effect-hw.html [ Pass ImageOnlyFailure ]
 css3/filters/effect-blur-hw.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-nested.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Pass Failure ]
+
+# Pre-existing failures on Win-Tests-EWS, 2026-10-03
+
+# Consistent text failures, in every run
+fast/forms/select/listbox-multiple-shift-click-with-optgroup.html [ Failure ]
+
+# Consistent image failures, in every run
+compositing/filters/filter-source-outside-viewport.html [ ImageOnlyFailure ]
+
+# Flaky crashes
+webkit.org/b/326177 workers/weblock-manager-query-crash.html [ Skip ] # Flaky Crash
+
+# Flaky
+fast/css/highlight-pseudo-fill-applies-color-filter.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/animated/observe-non-animated-image.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/expanded-image.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/image-inside-svg.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/image-removed-before-load.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/image-src-change.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/multiple-image-same-src.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/observe-css-generated-image.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/placeholder-image.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/redirects-tao-star.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/same-origin-redirects.html [ Pass Failure ]
+imported/w3c/web-platform-tests/largest-contentful-paint/video-poster.html [ Pass Failure ]
+webgl/2.0.y/conformance/rendering/triangle.html [ Pass Failure ]
+
+# GPU process crashes in WebGL tests. A webgl directory entry here overrides
+# the webgl entries of LayoutTests/TestExpectations, so these are restated below with Crash.
+webkit.org/b/326176 webgl [ Pass Crash ]
+webgl/2.0.y/deqp [ Skip ]
+webgl/1.0.x/conformance/glsl [ Pass Crash Slow ]
+webgl/1.0.x/conformance/uniforms [ Pass Crash Slow ]
+webgl/1.0.x/conformance/textures/misc [ Pass Crash Slow ]
+webgl/2.0.y/conformance/glsl [ Pass Crash Slow ]
+webgl/2.0.y/conformance/uniforms [ Pass Crash Slow ]
+webgl/2.0.y/conformance/textures/misc [ Pass Crash Slow ]
+webgl/2.0.y/conformance2/glsl3 [ Pass Crash Slow ]
+webkit.org/b/254730 [ Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html [ Pass Crash Slow ]
+webgl/2.0.y/conformance2/textures/misc/immutable-tex-render-feedback.html [ Failure Crash ]
+webkit.org/b/251514 webgl/1.0.x/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+webkit.org/b/251514 webgl/2.0.y/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+webkit.org/b/313392 webgl/2.0.y/conformance2/textures/misc/tex-image-10bpc.html [ Skip ]
+webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure Crash ]
+webkit.org/b/292182 webgl/1.0.x/conformance/textures/misc/copytexsubimage2d-large-partial-copy-corruption.html [ Failure Pass Crash ]
+webkit.org/b/292182 webgl/1.0.x/conformance/textures/misc/texture-video-transparent.html [ Failure Pass Crash ]
+webkit.org/b/292182 webgl/2.0.y/conformance/textures/misc/copytexsubimage2d-large-partial-copy-corruption.html [ Failure Pass Crash ]
+webkit.org/b/292182 webgl/2.0.y/conformance/textures/misc/texture-srgb-upload.html [ Failure Crash ]
+webkit.org/b/292182 webgl/2.0.y/conformance/textures/misc/texture-video-transparent.html [ Failure Pass Crash ]
+webkit.org/b/292182 webgl/2.0.y/conformance2/rendering/clipping-wide-points.html [ Failure Pass Crash ]
+webkit.org/b/320901 webgl/1.0.x/conformance/glsl/misc/shader-with-double-underscore.html [ Failure Crash ]
+webkit.org/b/320901 webgl/1.0.x/conformance/textures/misc/tex-image-svg-image-no-natural-width-and-height.html [ Failure Crash ]
+webkit.org/b/320901 webgl/2.0.y/conformance/glsl/misc/shader-with-double-underscore.html [ Failure Crash ]
+webkit.org/b/320901 webgl/2.0.y/conformance/textures/misc/tex-image-svg-image-no-natural-width-and-height.html [ Failure Crash ]
+webkit.org/b/320901 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html [ Failure Crash ]

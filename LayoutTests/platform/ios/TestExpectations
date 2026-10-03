@@ -10291,8 +10291,6 @@ imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-t
 # The layer next to a backdrop filter snaps its antialiased edge to the pixel grid.
 webkit.org/b/325197 css3/filters/backdrop/backdrop-filter-fractional-translation-edge.html [ ImageOnlyFailure ]
 
-webkit.org/b/325521 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Pass Failure ]
-
 [ Release ] imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-mixed-srl-016.xht [ Pass ImageOnlyFailure ]
 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/cross-shadow-boundary-selection-splittext-crash.html [ Pass Timeout ]
 [ Debug ] imported/w3c/web-platform-tests/web-locks/acquire.https.any.sharedworker.html [ Pass Failure ]

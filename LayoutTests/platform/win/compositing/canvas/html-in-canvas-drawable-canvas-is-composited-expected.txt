@@ -1,0 +1,32 @@
+Tests that a small canvas with content="drawable" gets its own composited layer, with or without a 2D context. The last canvas is not drawable and should not be composited.
+
+Hello
+
+Hello
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (usingTiledLayer 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 68.00)
+          (bounds 20.00 20.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 32.00 68.00)
+          (bounds 20.00 20.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
