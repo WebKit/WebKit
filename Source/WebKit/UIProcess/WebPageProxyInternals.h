@@ -60,6 +60,7 @@
 #include <WebCore/IntPointHash.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
 #include <pal/HysteresisActivity.h>
@@ -434,6 +435,7 @@ public:
 
 #if PLATFORM(MAC)
     WebCore::FloatPoint scrollPositionDuringLastEditorStateUpdate;
+    std::optional<WebCore::RemoteUserInputEventData> acceptsFirstMouseRemoteUserInputEventData;
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)

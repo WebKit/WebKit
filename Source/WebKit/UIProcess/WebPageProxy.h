@@ -3547,7 +3547,7 @@ private:
 
     void setFocusedElementInputType(InputType);
 
-    void NODELETE handleAcceptsFirstMouse(bool);
+    void handleAcceptsFirstMouse(Variant<bool, WebCore::RemoteUserInputEventData>&&);
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)

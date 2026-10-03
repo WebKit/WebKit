@@ -1407,7 +1407,7 @@ public:
     void readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&&);
     void getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&&);
     void getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
-    void shouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent>&&, CompletionHandler<void(bool)>&&);
+    void shouldDelayWindowOrderingEvent(std::optional<WebCore::FrameIdentifier>, Ref<WebKit::WebMouseEvent>&&, CompletionHandler<void(Variant<bool, WebCore::RemoteUserInputEventData>&&)>&&);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -1426,7 +1426,7 @@ public:
     void setCaretAnimatorType(WebCore::CaretAnimatorType);
     void setCaretBlinkingSuspended(bool);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
-    void requestAcceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent>&&);
+    void requestAcceptsFirstMouse(std::optional<WebCore::FrameIdentifier>, int eventNumber, Ref<WebKit::WebMouseEvent>&&);
 #endif
 
 #if PLATFORM(COCOA)
