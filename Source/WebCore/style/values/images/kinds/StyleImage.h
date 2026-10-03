@@ -109,12 +109,14 @@ public:
     virtual void setContainerSizeForRenderer(const RenderElement&, const FloatSize&) { }
     virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&) const { return { }; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
+    virtual bool canDraw(const RenderElement&) const { return true; }
     virtual bool canDrawAtSize(const RenderElement&, const FloatSize& size) const { return !size.isEmpty(); }
+    virtual bool drawsSVGImage() const { return false; }
 
     // Drawing
-    ImageDrawResult draw(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
-    ImageDrawResult drawTiled(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
-    ImageDrawResult drawNinePiece(GraphicsContext&, WebCore::Image&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions = { }, const WebCore::ImageDrawingExtras* = nullptr) const;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }, bool isForFirstLine = false) const;
+    ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, bool isForFirstLine = false) const;
+    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const NinePieceGeometry&, ImagePaintingOptions = { }) const;
 
     // Drawing options
     virtual DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const { return DecodingMode::Synchronous; }

@@ -771,11 +771,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         return ImageDrawResult::DidNothing;
 
     RefPtr styleImage = imageResource().styleImage();
-    if (!styleImage || !styleImage->canDrawAtSize(*this, flooredIntSize(rect.size())))
-        return ImageDrawResult::DidNothing;
-
-    RefPtr img = imageResource().image(flooredIntSize(rect.size()));
-    if (!img || img->isNull())
+    if (!styleImage || !styleImage->canDrawAtSize(*this, rect.size()))
         return ImageDrawResult::DidNothing;
 
     ImagePaintingOptions options = {
@@ -786,7 +782,8 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        AXCustomColorModeController::shouldInvertContentImage(*this, *img, rect.size()) ? InvertContent::Yes : InvertContent::No,
+        // FIXME: Remove the Image::nullImage() parameter once AXCustomColorModeController::shouldInvertContentImage() is updated.
+        (styleImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(*this)) || AXCustomColorModeController::shouldInvertContentImage(*this, Image::nullImage(), rect.size()) ? InvertContent::Yes : InvertContent::No,
 #endif
 #if USE(SKIA)
         StrictImageClamping::No,
@@ -798,20 +795,13 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 
     auto drawResult = ImageDrawResult::DidNothing;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (isMultiRepresentationHEIC())
-        drawResult = paintInfo.context().drawMultiRepresentationHEIC(*img, style().fontCascade().primaryFont(), rect, options);
+    if (RefPtr cachedImage = this->cachedImage(); cachedImage && isMultiRepresentationHEIC())
+        drawResult = paintInfo.context().drawMultiRepresentationHEIC(*protect(cachedImage->image()), style().fontCascade().primaryFont(), rect, options);
 #endif
 
     if (drawResult == ImageDrawResult::DidNothing) {
-        auto usedZoom = style().usedZoom();
         auto containerSize = FloatSize(imageContainerSize());
-        auto drawsSVG = img->drawsSVGImage();
-        auto concreteObjectSize = drawsSVG
-            ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
-            : ConcreteObjectSize::fixed(img->size());
-        auto sourceRect = drawsSVG ? FloatRect { { }, containerSize } : FloatRect { { }, img->size(options.orientation()) };
-        auto extras = imageResource().drawingExtras();
-        drawResult = styleImage->draw(paintInfo.context(), *img, concreteObjectSize, rect, sourceRect, options, &extras);
+        drawResult = styleImage->draw(paintInfo.context(), *this, ConcreteObjectSize::fixed(containerSize), rect, FloatRect { { }, containerSize }, options);
     }
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
@@ -819,8 +809,8 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 
 #if USE(SYSTEM_PREVIEW)
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
-    if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && imageElement->document().settings().systemPreviewEnabled())
-        theme().paintSystemPreviewBadge(*img, paintInfo, rect);
+    if (RefPtr cachedImage = this->cachedImage(); cachedImage && imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && imageElement->document().settings().systemPreviewEnabled())
+        theme().paintSystemPreviewBadge(*protect(cachedImage->image()), paintInfo, rect);
 #endif
 
     if (drawResult != ImageDrawResult::DidNothing && element() && !paintInfo.context().paintingDisabled())

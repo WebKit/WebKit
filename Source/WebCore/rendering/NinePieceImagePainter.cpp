@@ -34,7 +34,6 @@
 #include "RenderStyleConstants.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImage.h"
-#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
@@ -229,22 +228,13 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     if (!styleImage->canDrawAtSize(renderer, source))
         return;
 
-    RefPtr image = styleImage->image(&renderer, source, graphicsContext);
-    if (!image)
-        return;
-
     InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
 
-    auto usedZoom = style.usedZoom();
-    auto concreteObjectSize = image->drawsSVGImage()
-        ? ConcreteObjectSize::fixed(FloatSize(source) / usedZoom, usedZoom)
-        : ConcreteObjectSize::fixed(image->size());
-    auto extras = styleImage->drawingExtrasForRenderer(renderer);
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    options = { options, image->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(renderer) ? InvertContent::Yes : InvertContent::No };
+    options = { options, styleImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(renderer) ? InvertContent::Yes : InvertContent::No };
 #endif
 
-    styleImage->drawNinePiece(graphicsContext, *image, concreteObjectSize, geometry, options, &extras);
+    styleImage->drawNinePiece(graphicsContext, renderer, ConcreteObjectSize::fixed(FloatSize(source)), geometry, options);
 }
 
 // MARK: - Painter entry point

@@ -38,7 +38,6 @@
 #include "ReplacedElementIntrinsicSizing.h"
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StyleImageDrawingExtras.h"
 #include "StyleInvalidImage.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -155,13 +154,6 @@ bool RenderImageResource::currentFrameIsComplete() const
     if (!m_styleImage)
         return false;
     return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
-}
-
-Style::ImageDrawingExtras RenderImageResource::drawingExtras() const
-{
-    if (!m_styleImage || !m_renderer)
-        return { };
-    return protect(m_styleImage)->drawingExtrasForRenderer(*m_renderer);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const

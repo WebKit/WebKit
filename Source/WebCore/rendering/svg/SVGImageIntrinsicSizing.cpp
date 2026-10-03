@@ -22,10 +22,12 @@
 
 #include "CachedImage.h"
 #include "Image.h"
+#include "RenderElement.h"
 #include "SVGImageElement.h"
 #include "SVGImageElementSizing.h"
 #include "SVGLengthContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImage.h"
 
 namespace WebCore {
 
@@ -95,6 +97,25 @@ FloatRect calculateSVGImageObjectBoundingBox(const SVGImageElement& imageElement
         concreteHeight = sizing.size.height();
 
     return { imageElement.x().value(lengthContext), imageElement.y().value(lengthContext), concreteWidth, concreteHeight };
+}
+
+NaturalDimensions svgImageNaturalDimensions(const Style::Image& styleImage, const RenderElement& renderer)
+{
+    if (styleImage.errorOccurred()) {
+        if (RefPtr cachedImage = styleImage.cachedImage()) {
+            if (RefPtr image = cachedImage->image())
+                return image->naturalDimensions(renderer.imageOrientation());
+        }
+    }
+    return styleImage.naturalDimensions(renderer, SVGImageElementSizing { });
+}
+
+FloatSize svgImageRenderingSize(const Style::Image& styleImage, const RenderElement& renderer, FloatSize containerSize)
+{
+    if (styleImage.drawsSVGImage())
+        return containerSize;
+    auto naturalDimensions = svgImageNaturalDimensions(styleImage, renderer);
+    return { naturalDimensions.width.value_or(0), naturalDimensions.height.value_or(0) };
 }
 
 } // namespace WebCore

@@ -147,17 +147,13 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintForeground(paintInfo, flooredLayoutPoint(objectBoundingBox().location()));
 }
 
-ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect, const FloatRect& sourceRect)
+ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect, const FloatRect& sourceRect, FloatSize imageRenderingSize)
 {
     if (!imageResource().cachedImage() || rect.width() <= 0 || rect.height() <= 0)
         return ImageDrawResult::DidNothing;
 
     RefPtr styleImage = imageResource().styleImage();
     if (!styleImage || !styleImage->canDrawAtSize(*this, rect.size()))
-        return ImageDrawResult::DidNothing;
-
-    RefPtr image = imageResource().image();
-    if (!image || image->isNull())
         return ImageDrawResult::DidNothing;
 
     ImagePaintingOptions options {
@@ -167,7 +163,8 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         styleImage->interpolationQualityForImageDraw(paintInfo.context(), *this, styleImage.get(), LayoutSize(rect.size())),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        AXCustomColorModeController::shouldInvertContentImage(*this, *image, rect.size()) ? InvertContent::Yes : InvertContent::No,
+        // FIXME: Remove the Image::nullImage() parameter once AXCustomColorModeController::shouldInvertContentImage() is updated.
+        (styleImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(*this)) || AXCustomColorModeController::shouldInvertContentImage(*this, Image::nullImage(), rect.size()) ? InvertContent::Yes : InvertContent::No,
 #endif
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
         settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
@@ -175,13 +172,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
     };
 
-    auto usedZoom = style().usedZoom();
-    auto containerSize = FloatSize { imageContainerSize() };
-    auto concreteObjectSize = image->drawsSVGImage()
-        ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
-        : ConcreteObjectSize::fixed(image->size());
-    auto extras = imageResource().drawingExtras();
-    auto drawResult = styleImage->draw(paintInfo.context(), *image, concreteObjectSize, rect, sourceRect, options, &extras);
+    auto drawResult = styleImage->draw(paintInfo.context(), *this, ConcreteObjectSize::fixed(imageRenderingSize), rect, sourceRect, options);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 
@@ -202,19 +193,20 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
         return;
     }
 
-    RefPtr<Image> image = imageResource().image();
-    if (!image || image->isNull()) {
+    RefPtr styleImage = imageResource().styleImage();
+    if (!styleImage || !styleImage->canDraw(*this)) {
         protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
+    auto imageRenderingSize = svgImageRenderingSize(*styleImage, *this, FloatSize { imageContainerSize() });
     FloatRect contentBoxRect = borderBoxRectEquivalent();
-    FloatRect replacedContentRect { { }, image->drawsSVGImage() ? FloatSize { imageContainerSize() } : image->size() };
+    FloatRect replacedContentRect { { }, imageRenderingSize };
     imageElement().preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
 
     contentBoxRect.moveBy(paintOffset);
 
-    ImageDrawResult result = paintIntoRect(paintInfo, contentBoxRect, replacedContentRect);
+    ImageDrawResult result = paintIntoRect(paintInfo, contentBoxRect, replacedContentRect, imageRenderingSize);
 
     if (cachedImage() && !context.paintingDisabled()) {
         // For now, count images as unpainted if they are still progressively loading. We may want

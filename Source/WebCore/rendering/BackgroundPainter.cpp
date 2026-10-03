@@ -551,9 +551,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         bgImage->setContainerSizeForRenderer(clientForBackgroundImage, geometry.tileSizeWithoutPixelSnapping);
 
         geometry.clip(LayoutRect(pixelSnappedRect));
-        RefPtr<Image> image;
         bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox()->isFirst();
-        if (!geometry.destinationRect.isEmpty() && bgImage->canDrawAtSize(clientForBackgroundImage, geometry.tileSize) && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize, context, isFirstLine))) {
+        if (!geometry.destinationRect.isEmpty() && bgImage->canDrawAtSize(clientForBackgroundImage, geometry.tileSize)) {
             // image-orientation does not apply to mask images (https://drafts.csswg.org/css-images-3/#propdef-image-orientation).
             auto orientation = [&] {
                 if constexpr (std::is_same_v<Layer, Style::MaskLayer>)
@@ -571,7 +570,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 layer.layer.maskMode() == Style::MaskMode::Luminance ? DrawLuminanceMask::Yes : DrawLuminanceMask::No,
                 document().settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-                image->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(clientForBackgroundImage) ? InvertContent::Yes : InvertContent::No,
+                bgImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(clientForBackgroundImage) ? InvertContent::Yes : InvertContent::No,
 #endif
                 document().settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
                 document().settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
@@ -579,12 +578,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto usedZoom = m_renderer.style().usedZoom();
-            auto concreteObjectSize = image->drawsSVGImage()
-                ? ConcreteObjectSize::fixed(geometry.tileSizeWithoutPixelSnapping / usedZoom, usedZoom)
-                : ConcreteObjectSize::fixed(image->size());
-            auto extras = bgImage->drawingExtrasForRenderer(clientForBackgroundImage);
-            auto drawResult = bgImage->drawTiled(context, *image, concreteObjectSize, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options, &extras);
+            auto drawResult = bgImage->drawTiled(context, clientForBackgroundImage, ConcreteObjectSize::fixed(geometry.tileSizeWithoutPixelSnapping), geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options, isFirstLine);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());

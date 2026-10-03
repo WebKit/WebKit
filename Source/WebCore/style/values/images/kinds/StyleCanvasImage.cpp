@@ -102,11 +102,16 @@ bool CanvasImage::knownToBeOpaque(const RenderElement&) const
     return false;
 }
 
-bool CanvasImage::canDrawAtSize(const RenderElement& renderer, const FloatSize&) const
+bool CanvasImage::canDraw(const RenderElement& renderer) const
 {
     RefPtr element = this->element(protect(renderer.document()));
     RefPtr image = element ? element->copiedImage() : nullptr;
     return image && !image->isNull();
+}
+
+bool CanvasImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
+{
+    return !size.isEmpty() && canDraw(renderer);
 }
 
 InterpolationQuality CanvasImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, const void* layer, const LayoutSize& size) const

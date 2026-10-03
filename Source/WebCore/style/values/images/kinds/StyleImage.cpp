@@ -29,9 +29,19 @@
 #include "GraphicsContext.h"
 #include "ImagePaintingOptions.h"
 #include "NinePieceGeometry.h"
+#include "RenderElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Style {
+
+static ConcreteObjectSize concreteObjectSizeToDrawAt(const WebCore::Image& image, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize)
+{
+    if (!image.drawsSVGImage())
+        return ConcreteObjectSize::fixed(image.size());
+    auto zoom = renderer.style().usedZoom();
+    return ConcreteObjectSize::fixed(concreteObjectSize.size() * concreteObjectSize.zoom() / zoom, zoom);
+}
 
 static ImageDrawResult drawTiledImage(GraphicsContext& ctxt, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options, const WebCore::ImageDrawingExtras* extras)
 {
@@ -213,23 +223,54 @@ static ImageDrawResult drawTiledImage(GraphicsContext& ctxt, WebCore::Image& ima
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult Image::draw(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const WebCore::ImageDrawingExtras* extras) const
+ImageDrawResult Image::draw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, bool isForFirstLine) const
 {
-    return context.drawImage(image, concreteObjectSize, destination, source, options, extras);
-}
-
-ImageDrawResult Image::drawTiled(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, const WebCore::ImageDrawingExtras* extras) const
-{
-    if (context.paintingDisabled())
+    if (isPending())
         return ImageDrawResult::DidNothing;
 
-    return drawTiledImage(context, image, concreteObjectSize, destination, phase, tileSize, spacing, options, extras);
+    RefPtr image = this->image(&renderer, flooredIntSize(destination.size()), context, isForFirstLine);
+    if (!image || image->isNull())
+        return ImageDrawResult::DidNothing;
+
+    auto imageSource = source;
+    if (!image->drawsSVGImage()) {
+        auto imageSize = image->size(options.orientation());
+        auto box = concreteObjectSize.size() * concreteObjectSize.zoom();
+        if (box.isEmpty())
+            imageSource = { { }, imageSize };
+        else {
+            auto mapX = [&](auto x) { return narrowPrecisionToFloat(static_cast<double>(x) * imageSize.width() / box.width()); };
+            auto mapY = [&](auto y) { return narrowPrecisionToFloat(static_cast<double>(y) * imageSize.height() / box.height()); };
+            auto minX = mapX(source.x());
+            auto minY = mapY(source.y());
+            imageSource = { minX, minY, mapX(source.maxX()) - minX, mapY(source.maxY()) - minY };
+        }
+    }
+
+    auto imageConcreteObjectSize = concreteObjectSizeToDrawAt(*image, renderer, concreteObjectSize);
+    auto extras = drawingExtrasForRenderer(renderer);
+    return context.drawImage(*image, imageConcreteObjectSize, destination, imageSource, options, &extras);
 }
 
-ImageDrawResult Image::drawNinePiece(GraphicsContext& context, WebCore::Image& image, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImagePaintingOptions options, const WebCore::ImageDrawingExtras* extras) const
+ImageDrawResult Image::drawTiled(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, bool isForFirstLine) const
 {
-    if (context.paintingDisabled())
+    RefPtr image = this->image(&renderer, tileSize, context, isForFirstLine);
+    if (!image || context.paintingDisabled())
         return ImageDrawResult::DidNothing;
+
+    auto imageConcreteObjectSize = concreteObjectSizeToDrawAt(*image, renderer, concreteObjectSize);
+    auto extras = drawingExtrasForRenderer(renderer);
+    return drawTiledImage(context, *image, imageConcreteObjectSize, destination, phase, tileSize, spacing, options, &extras);
+}
+
+ImageDrawResult Image::drawNinePiece(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry, ImagePaintingOptions options) const
+{
+    RefPtr image = this->image(&renderer, concreteObjectSize.size() * concreteObjectSize.zoom(), context);
+    if (!image || context.paintingDisabled())
+        return ImageDrawResult::DidNothing;
+
+    auto imageConcreteObjectSize = concreteObjectSizeToDrawAt(*image, renderer, concreteObjectSize);
+    auto extras = drawingExtrasForRenderer(renderer);
 
     auto result = ImageDrawResult::DidNothing;
     auto updateResult = [&](auto pieceResult) {
@@ -244,7 +285,7 @@ ImageDrawResult Image::drawNinePiece(GraphicsContext& context, WebCore::Image& i
             continue;
 
         if (isCornerPiece(piece)) {
-            updateResult(context.drawImage(image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], options, extras));
+            updateResult(context.drawImage(*image, imageConcreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], options, &extras));
             continue;
         }
 
@@ -257,11 +298,11 @@ ImageDrawResult Image::drawNinePiece(GraphicsContext& context, WebCore::Image& i
             : WebCore::Image::StretchTile;
 
         if (hRule == WebCore::Image::StretchTile && vRule == WebCore::Image::StretchTile) {
-            updateResult(context.drawImage(image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], options, extras));
+            updateResult(context.drawImage(*image, imageConcreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], options, &extras));
             continue;
         }
 
-        updateResult(drawTiledImage(context, image, concreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, { options.compositeOperator(), options.interpolationQuality() }, extras));
+        updateResult(drawTiledImage(context, *image, imageConcreteObjectSize, geometry.destinationRects[piece], geometry.sourceRects[piece], geometry.tileScales[piece], hRule, vRule, { options.compositeOperator(), options.interpolationQuality() }, &extras));
     }
 
     return result;
