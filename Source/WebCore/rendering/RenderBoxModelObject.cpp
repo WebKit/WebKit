@@ -742,16 +742,6 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
     return adjustedPositionRelativeToOffsetParent(firstFragmentBorderBoxRect().location()).y();
 }
 
-InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size) const
-{
-    return view().imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject*>(this), image, layer, size);
-}
-
-InterpolationQuality RenderBoxModelObject::chooseInterpolationQualityForBitmapOfSize(GraphicsContext& context, const IntSize& imageSize, const void* layer, const LayoutSize& size) const
-{
-    return view().imageQualityController().chooseInterpolationQualityForBitmapOfSize(context, const_cast<RenderBoxModelObject*>(this), imageSize, layer, size);
-}
-
 void RenderBoxModelObject::paintMaskForTextFillBox(GraphicsContext& context, const FloatRect& paintRect, const InlineIterator::InlineBoxIterator& inlineBox, const LayoutRect& scrolledPaintRect)
 {
     // Now add the text to the clip. We do this by painting using a special paint phase that signals to

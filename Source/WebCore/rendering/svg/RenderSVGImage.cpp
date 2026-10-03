@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
-#include "ImageQualityController.h"
 #include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
 #include "RenderElementStyleInlines.h"
@@ -165,7 +164,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         CompositeOperator::SourceOver,
         DecodingMode::Synchronous,
         imageOrientation(),
-        ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image),
+        styleImage->interpolationQualityForImageDraw(paintInfo.context(), *this, styleImage.get(), LayoutSize(rect.size())),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         AXCustomColorModeController::shouldInvertContentImage(*this, *image, rect.size()) ? InvertContent::Yes : InvertContent::No,
@@ -182,7 +181,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
         : ConcreteObjectSize::fixed(image->size());
     auto extras = imageResource().drawingExtras();
-    auto drawResult = protect(imageResource().styleImage())->draw(paintInfo.context(), *image, concreteObjectSize, rect, sourceRect, options, &extras);
+    auto drawResult = styleImage->draw(paintInfo.context(), *image, concreteObjectSize, rect, sourceRect, options, &extras);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 

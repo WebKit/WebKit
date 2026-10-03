@@ -36,7 +36,7 @@
 #include "CrossfadeGeneratedImage.h"
 #include "DeprecatedCSSOMValue.h"
 #include "Document.h"
-#include "RenderBoxModelObject.h"
+#include "ImageQualityController.h"
 #include "RenderElement.h"
 #include "RenderObjectDocument.h"
 #include "SVGImage.h"
@@ -246,9 +246,9 @@ FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
     return fromImageSize * inverseProgress + toImageSize * progress;
 }
 
-InterpolationQuality CrossfadeImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+InterpolationQuality CrossfadeImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, const void* layer, const LayoutSize& size) const
 {
-    return renderer.chooseInterpolationQualityForBitmapOfSize(context, expandedIntSize(fixedSize(renderer)), layer, size);
+    return ImageQualityController::chooseInterpolationQualityForBitmapOfSize(context, renderer, expandedIntSize(fixedSize(renderer)), layer, size);
 }
 
 NaturalDimensions CrossfadeImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext&) const

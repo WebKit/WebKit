@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
+#include "ImageQualityController.h"
 #include "ReferencedSVGResources.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
@@ -415,11 +416,11 @@ DecodingMode CachedImage::decodingModeForImageDraw(const RenderBoxModelObject& r
     return renderer.decodingModeForImageDraw(*protect(protect(m_cachedImage)->image()), paintInfo);
 }
 
-InterpolationQuality CachedImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+InterpolationQuality CachedImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, const void* layer, const LayoutSize& size) const
 {
     if (!m_cachedImage || renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))
         return Image::interpolationQualityForImageDraw(context, renderer, layer, size);
-    return renderer.chooseInterpolationQuality(context, *protect(protect(m_cachedImage)->image()), layer, size);
+    return ImageQualityController::chooseInterpolationQuality(context, renderer, *protect(protect(m_cachedImage)->image()), layer, size);
 }
 
 bool CachedImage::usesDataProtocol() const

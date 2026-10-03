@@ -30,7 +30,6 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "ImageQualityController.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
 #include "PointerEventsHitRules.h"
@@ -208,7 +207,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 
     ImagePaintingOptions options = {
         imageOrientation(),
-        ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image),
+        styleImage->interpolationQualityForImageDraw(paintInfo.context(), *this, styleImage.get(), LayoutSize(destRect.size())),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         AXCustomColorModeController::shouldInvertContentImage(*this, *image, destRect.size()) ? InvertContent::Yes : InvertContent::No,
@@ -226,7 +225,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         ? ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom)
         : ConcreteObjectSize::fixed(image->size());
     auto extras = imageResource().drawingExtras();
-    protect(imageResource().styleImage())->draw(context, *image, concreteObjectSize, destRect, srcRect, options, &extras);
+    styleImage->draw(context, *image, concreteObjectSize, destRect, srcRect, options, &extras);
 
     RefPtr cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())

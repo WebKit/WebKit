@@ -118,7 +118,7 @@ public:
 
     // Drawing options
     virtual DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const { return DecodingMode::Synchronous; }
-    virtual InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderBoxModelObject&, const void*, const LayoutSize&) const { return InterpolationQuality::Default; }
+    virtual InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, const void*, const LayoutSize&) const { return InterpolationQuality::Default; }
 
     // Derived type.
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }

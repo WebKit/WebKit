@@ -37,6 +37,7 @@
 #include "DeprecatedCSSOMValue.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
+#include "ImageQualityController.h"
 #include "NullGraphicsContext.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
@@ -187,9 +188,9 @@ DecodingMode FilterImage::decodingModeForImageDraw(const RenderBoxModelObject& r
     return protect(m_image)->decodingModeForImageDraw(renderer, paintInfo);
 }
 
-InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderBoxModelObject& renderer, const void* layer, const LayoutSize& size) const
+InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, const void* layer, const LayoutSize& size) const
 {
-    return renderer.chooseInterpolationQualityForBitmapOfSize(context, calculateImageBufferBackendSize(size, 1), layer, size);
+    return ImageQualityController::chooseInterpolationQualityForBitmapOfSize(context, renderer, calculateImageBufferBackendSize(size, 1), layer, size);
 }
 
 FloatSize FilterImage::fixedSize(const RenderElement& renderer) const
