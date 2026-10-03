@@ -30,20 +30,21 @@
 
 #import <Quartz/Quartz.h>
 #import <WebKitLegacy/WebDocumentInternal.h>
+#import <wtf/RetainPtr.h>
 
 @class WebDataSource;
 
 @interface WebPDFView : NSView <PDFViewDelegate, WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, WebDocumentPDF, _WebDocumentViewState, _WebDocumentZooming>
 {
-    PDFView *PDFSubview;
-    NSString *path;
+    RetainPtr<PDFView> PDFSubview;
+    RetainPtr<NSString> path;
     BOOL firstResponderIsPDFDocumentView;
     BOOL written;
     BOOL _ignoreScaleAndDisplayModeAndPageNotifications;
     BOOL _willUpdatePreferencesSoon;
-    PDFView *PDFSubviewProxy;
-    WebDataSource *dataSource;
-    NSArray *textMatches;
+    RetainPtr<PDFView> PDFSubviewProxy;
+    RetainPtr<WebDataSource> dataSource;
+    RetainPtr<NSArray> textMatches;
     NSPoint lastScrollPosition;
 }
 

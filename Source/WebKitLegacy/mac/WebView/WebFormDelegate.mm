@@ -28,22 +28,22 @@
 
 #import "WebFormDelegatePrivate.h"
 
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+
 // FIXME: This could become an informal protocol; we switched all the API
 // delegates to be informal.
 
 @implementation WebFormDelegate
 
-static WebFormDelegate *sharedDelegate = nil;
-
 // Return a object with NOP implementations of the protocol's methods
 // Note this feature relies on our default delegate being stateless
 + (WebFormDelegate *)_sharedWebFormDelegate
 {
-    if (!sharedDelegate)
-        sharedDelegate = [[WebFormDelegate alloc] init];
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebFormDelegate>> sharedDelegate = adoptNS([[WebFormDelegate alloc] init]);
+    return sharedDelegate.get();
 }
-    
+
 - (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame
 {
 }
@@ -69,7 +69,7 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
-#if !PLATFORM(IOS_FAMILY)    
+#if !PLATFORM(IOS_FAMILY)
 - (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
 {
     return NO;
@@ -77,7 +77,7 @@ static WebFormDelegate *sharedDelegate = nil;
 #endif
 
 - (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form
-    withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
+    withValues:(NSDictionary *)values submissionListener:(id<WebFormSubmissionListener>)listener
 {
     [listener continue];
 }

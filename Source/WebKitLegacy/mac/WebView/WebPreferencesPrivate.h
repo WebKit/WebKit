@@ -73,10 +73,10 @@ typedef enum {
     WebKitPitchCorrectionAlgorithmBestForSpeech,
 } WebKitPitchCorrectionAlgorithm;
 
-extern NSString *WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebPreferencesRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebPreferencesChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_5, 10_14);
+extern NSString * const WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebPreferencesRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebPreferencesChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_5, 10_14);
 
 @interface WebPreferences (WebPrivate)
 

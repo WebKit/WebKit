@@ -54,8 +54,8 @@ public:
     LegacyTileCache(WAKWindow *);
     ~LegacyTileCache();
 
-    void ref() const;
-    void deref() const;
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
 
     CGFloat screenScale() const;
 

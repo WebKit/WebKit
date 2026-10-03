@@ -36,7 +36,7 @@
     @const WebArchivePboardType
     @abstract The pasteboard type constant used when adding or accessing a WebArchive on the pasteboard.
 */
-extern NSString *WebArchivePboardType WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebArchivePboardType WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @class WebArchive

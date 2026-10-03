@@ -4,9 +4,3 @@ mac/DOM/DOM.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
 [ iOS ] mac/DOM/WebDOMOperations.mm
 [ iOS ] mac/Plugins/WebPluginController.mm
-mac/WebView/WebFrame.mm
-mac/WebView/WebFrameView.mm
-mac/WebView/WebHTMLRepresentation.mm
-[ iOS ] mac/WebView/WebHTMLView.mm
-[ Mac ] mac/WebView/WebImmediateActionController.mm
-mac/WebView/WebView.mm

@@ -57,8 +57,7 @@ static RetainPtr<NSString> toNSString(JSC::SourceProvider* sourceProvider)
 
 static WebFrame *toWebFrame(JSC::JSGlobalObject* globalObject)
 {
-    auto* window = static_cast<WebCore::JSDOMWindow*>(globalObject);
-    return kit(protect(dynamicDowncast<WebCore::LocalFrame>(window->wrapped().frame())));
+    return kit(protect(dynamicDowncast<WebCore::LocalFrame>(downcast<WebCore::JSDOMWindow>(globalObject)->wrapped().frame())));
 }
 
 WebScriptDebugger::WebScriptDebugger(JSC::JSGlobalObject* globalObject)
@@ -132,7 +131,7 @@ void WebScriptDebugger::handlePause(JSC::JSGlobalObject* globalObject)
     Ref debuggerCallFrame = currentDebuggerCallFrame();
     JSC::JSValue exceptionValue = currentException();
     String functionName = debuggerCallFrame->functionName(vm);
-    RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:protect(core(webFrame.get())->script().windowScriptObject()) functionName:functionName exceptionValue:exceptionValue]);
+    RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:protect(protect(core(webFrame.get())->script())->windowScriptObject()) functionName:functionName exceptionValue:exceptionValue]);
 
     WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);
     if (cache->exceptionWasRaisedFunc) {

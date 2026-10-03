@@ -162,7 +162,7 @@
 		7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB81173435C900C5D807 /* PopupMenuMac.h */; };
 		7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */; };
 		7C023214251B925C00BA7BB6 /* WebFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023212251B925C00BA7BB6 /* WebFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C023215251B925C00BA7BB6 /* WebFeature.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C023213251B925C00BA7BB6 /* WebFeature.m */; };
+		7C023215251B925C00BA7BB6 /* WebFeature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023213251B925C00BA7BB6 /* WebFeature.mm */; };
 		7C02321A251B988200BA7BB6 /* WebFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023219251B988200BA7BB6 /* WebFeatureInternal.h */; };
 		7C023A06251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C023A05251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm */; };
 		7C023A07251BA19600BA7BB6 /* UnifiedSource3-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C0239F2251BA01A00BA7BB6 /* UnifiedSource3-nonARC.mm */; };
@@ -319,7 +319,7 @@
 		939810F10824BF01008DF038 /* WebDynamicScrollBarsView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3944606C020F50ED0ECA1767 /* WebDynamicScrollBarsView.mm */; };
 		939810F30824BF01008DF038 /* WebHTMLRepresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 35081D9302B6D4D80ACA2ACA /* WebHTMLRepresentation.mm */; };
 		939810F80824BF01008DF038 /* WebPreferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5AEBB3D024A527601C1A526 /* WebPreferences.mm */; };
-		939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */; };
+		939810FC0824BF01008DF038 /* WebFormDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D81DAB303EB0B2D00A80166 /* WebFormDelegate.mm */; };
 		939811030824BF01008DF038 /* WebKitErrors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83730F9803FB1E660004736E /* WebKitErrors.mm */; };
 		939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */; };
 		9398110A0824BF01008DF038 /* WebDefaultUIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.mm */; };
@@ -780,7 +780,7 @@
 		2D25396518CE85C200270222 /* WebSharingServicePickerController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSharingServicePickerController.mm; sourceTree = "<group>"; };
 		2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFormDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFormDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		2D81DAB303EB0B2D00A80166 /* WebFormDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFormDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSelectionServiceController.h; sourceTree = "<group>"; };
 		2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSelectionServiceController.mm; sourceTree = "<group>"; };
 		312E2FE314E48182007CCA18 /* WebNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotification.h; sourceTree = "<group>"; };
@@ -914,7 +914,7 @@
 		7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenuMac.h; sourceTree = "<group>"; };
 		7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchPopupMenuMac.mm; sourceTree = "<group>"; };
 		7C023212251B925C00BA7BB6 /* WebFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFeature.h; sourceTree = "<group>"; };
-		7C023213251B925C00BA7BB6 /* WebFeature.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebFeature.m; sourceTree = "<group>"; };
+		7C023213251B925C00BA7BB6 /* WebFeature.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFeature.mm; sourceTree = "<group>"; };
 		7C023216251B96E400BA7BB6 /* WebPreferencesExperimentalFeatures.mm.erb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPreferencesExperimentalFeatures.mm.erb; sourceTree = "<group>"; };
 		7C023219251B988200BA7BB6 /* WebFeatureInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFeatureInternal.h; sourceTree = "<group>"; };
 		7C0239EB251BA01A00BA7BB6 /* UnifiedSource2-nonARC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-nonARC.mm"; sourceTree = "<group>"; };
@@ -1998,10 +1998,10 @@
 				BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */,
 				1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */,
 				7C023212251B925C00BA7BB6 /* WebFeature.h */,
-				7C023213251B925C00BA7BB6 /* WebFeature.m */,
+				7C023213251B925C00BA7BB6 /* WebFeature.mm */,
 				7C023219251B988200BA7BB6 /* WebFeatureInternal.h */,
 				2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */,
-				2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */,
+				2D81DAB303EB0B2D00A80166 /* WebFormDelegate.mm */,
 				2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */,
 				39446074020F50ED0ECA1767 /* WebFrame.h */,
 				F5143A370221DCCE01A80181 /* WebFrame.mm */,
@@ -3572,9 +3572,9 @@
 				939810F10824BF01008DF038 /* WebDynamicScrollBarsView.mm in Sources */,
 				4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */,
 				DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */,
-				7C023215251B925C00BA7BB6 /* WebFeature.m in Sources */,
+				7C023215251B925C00BA7BB6 /* WebFeature.mm in Sources */,
 				A10C1D691820300E0036883A /* WebFixedPositionContent.mm in Sources */,
-				939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */,
+				939810FC0824BF01008DF038 /* WebFormDelegate.mm in Sources */,
 				A10C1D6C1820300E0036883A /* WebFrameIOS.mm in Sources */,
 				9391F276121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,
 				A10C1D7F1820303D0036883A /* WebFrameViewWAKCompatibility.m in Sources */,

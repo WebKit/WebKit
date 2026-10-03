@@ -35,6 +35,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 
 #ifndef __OBJC2__
@@ -184,10 +185,11 @@ static Class customScrollerClass;
 static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
 {
     NSView *documentView = [view documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]])
+    RetainPtr htmlView = dynamic_objc_cast<WebHTMLView>(documentView);
+    if (!htmlView)
         return NO;
 
-    RefPtr frame = core([(WebHTMLView *)documentView _frame]);
+    RefPtr frame = core([htmlView _frame]);
     if (!frame)
         return NO;
     
@@ -281,9 +283,9 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     // If we came in here with the view already needing a layout, then do that first.
     // (This will be the common case, e.g., when the page changes due to window resizing for example).
     // This layout will not re-enter updateScrollers and does not count towards our max layout pass total.
-    if (!_private->suppressLayout && !_private->suppressScrollers && [documentView isKindOfClass:[WebHTMLView class]]) {
-        RetainPtr htmlView = (WebHTMLView*)documentView;
-        if ([htmlView.get() _needsLayout]) {
+    RetainPtr htmlView = dynamic_objc_cast<WebHTMLView>(documentView);
+    if (!_private->suppressLayout && !_private->suppressScrollers && htmlView) {
+        if ([htmlView _needsLayout]) {
             _private->inUpdateScrollers = YES;
             [(id <WebDocumentView>)documentView layout];
             _private->inUpdateScrollers = NO;
@@ -365,9 +367,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     _private->horizontalScrollingAllowedButScrollerHidden = newHasHorizontalScroller && _private->alwaysHideHorizontalScroller;
     _private->verticalScrollingAllowedButScrollerHidden = newHasVerticalScroller && _private->alwaysHideVerticalScroller;
 
-    if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        RetainPtr htmlView = (WebHTMLView*)documentView;
-        WebCore::ScrollbarWidth scrollbarWidthStyle = [htmlView.get() _scrollbarWidthStyle];
+    if (RetainPtr htmlView = dynamic_objc_cast<WebHTMLView>(documentView)) {
+        WebCore::ScrollbarWidth scrollbarWidthStyle = [htmlView _scrollbarWidthStyle];
         if (scrollbarWidthStyle == WebCore::ScrollbarWidth::None) {
             _private->horizontalScrollingAllowedButScrollerHidden = true;
             _private->verticalScrollingAllowedButScrollerHidden = true;

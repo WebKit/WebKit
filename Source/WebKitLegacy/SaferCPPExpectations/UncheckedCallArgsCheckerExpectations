@@ -6,14 +6,3 @@ mac/DOM/DOMHTMLInputElement.mm
 mac/DOM/DOMHTMLObjectElement.mm
 mac/DOM/DOMInternal.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
-mac/WebView/WebDeviceOrientationProviderMock.mm
-mac/WebView/WebFrame.mm
-[ Mac ] mac/WebView/WebFullScreenController.mm
-mac/WebView/WebHTMLRepresentation.mm
-mac/WebView/WebHTMLView.mm
-[ Mac ] mac/WebView/WebImmediateActionController.mm
-[ Mac ] mac/WebView/WebPDFView.mm
-mac/WebView/WebPreferences.mm
-mac/WebView/WebScriptDebugger.mm
-[ Mac ] mac/WebView/WebVideoFullscreenController.mm
-mac/WebView/WebView.mm

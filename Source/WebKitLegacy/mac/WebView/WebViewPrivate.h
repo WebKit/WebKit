@@ -85,7 +85,7 @@ extern NSString * const WebElementLinkIsLiveKey; // NSNumber of BOOL indicating 
 extern NSString * const WebElementIsInScrollBarKey;
 
 // One of the subviews of the WebView entered compositing mode.
-extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
+extern NSString * const _WebViewDidStartAcceleratedCompositingNotification;
 
 #if TARGET_OS_IPHONE
 extern NSString *WebQuickLookFileNameKey;

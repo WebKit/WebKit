@@ -86,9 +86,6 @@ public:
         : loader(WTF::move(loader))
         , representationFinishedLoading(NO)
         , includedInWebKitStatistics(NO)
-#if PLATFORM(IOS_FAMILY)
-        , _dataSourceDelegate(nil)
-#endif
     {
     }
     ~WebDataSourcePrivate()
@@ -106,9 +103,6 @@ public:
     RetainPtr<id<WebDocumentRepresentation> > representation;
     BOOL representationFinishedLoading;
     BOOL includedInWebKitStatistics;
-#if PLATFORM(IOS_FAMILY)
-    NSObject<WebDataSourcePrivateDelegate> *_dataSourceDelegate;
-#endif
 #if USE(QUICK_LOOK)
     RetainPtr<NSDictionary> _quickLookContent;
     RefPtr<WebCore::LegacyPreviewLoaderClient> _quickLookPreviewLoaderClient;

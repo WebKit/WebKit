@@ -302,7 +302,7 @@
         if (WTF::protocolIsInHTTPFamily(absoluteURLString)) {
             _type = WebImmediateActionLinkPreview;
 
-            auto linkRange = makeRangeSelectingNodeContents(*_hitTestResult.URLElement());
+            auto linkRange = makeRangeSelectingNodeContents(*protect(_hitTestResult.URLElement()));
             auto indicator = WebCore::TextIndicator::createWithRange(linkRange, { WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, WebCore::TextIndicatorPresentationTransition::FadeIn);
             if (indicator)
                 [protect(_webView) _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorLifetime::Permanent];
@@ -400,7 +400,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!view)
         return { };
 
-    auto* renderer = node->renderer();
+    CheckedPtr renderer = node->renderer();
     if (!renderer)
         return { };
 
@@ -449,7 +449,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
             detectedItem = { {
                 (WKDDActionContext *)actionContext.get(),
                 { }, // FIXME: Seems like an empty rect isn't really OK.
-                makeSimpleRange(*core(customDataDetectorsRange))
+                makeSimpleRange(*protect(core(customDataDetectorsRange)))
             } };
         }
     }
@@ -499,7 +499,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     [actionContext setAltMode:YES];
     [actionContext setImmediate:YES];
 
-    auto linkRange = makeRangeSelectingNodeContents(*_hitTestResult.URLElement());
+    auto linkRange = makeRangeSelectingNodeContents(*protect(_hitTestResult.URLElement()));
     auto indicator = WebCore::TextIndicator::createWithRange(linkRange, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:webView altMode:YES interactionStartedHandler:^() {
@@ -510,7 +510,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         [webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
     }];
 
-    [_currentActionContext setHighlightFrame:[[webView window] convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())]];
+    [_currentActionContext setHighlightFrame:[[webView window] convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(protect(_hitTestResult.URLElement()))]];
 
     RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL().string().createNSString().get() actionContext:_currentActionContext.get()];
     if ([menuItems.get() count] != 1)
@@ -534,7 +534,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         return popupInfo;
     }
 
-    auto style = range.start.container->renderStyle();
+    CheckedPtr style = range.start.container->renderStyle();
     float scaledDescent = style ? style->metricsOfPrimaryFont().intDescent() * frame->page()->pageScaleFactor() : 0;
 
     auto quads = WebCore::RenderObject::absoluteTextQuads(range);
@@ -543,7 +543,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         return popupInfo;
     }
 
-    auto rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    auto rangeRect = protect(frame->view())->contentsToWindow(quads[0].enclosingBoundingBox());
 
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + scaledDescent);
 
