@@ -65,10 +65,14 @@ messages -> GPUProcess : AuxiliaryProcess {
 #endif
 
 #if PLATFORM(COCOA)
-    SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result)
+    SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result) ReplyCanDispatchOutOfOrder
 #endif
-    SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
+    SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
     ReleaseSnapshot(WebKit::RemoteSnapshotIdentifier identifier)
+    AbandonSnapshotFrame(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier frameIdentifier)
+    SnapshotFrameWillBeDrawnByProcess(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier frameIdentifier, WebCore::ProcessIdentifier processIdentifier)
+    AbandonSnapshotFramesOwnedBy(WebCore::ProcessIdentifier processIdentifier)
+    WaitForSnapshot(WebKit::RemoteSnapshotIdentifier identifier) -> () Synchronous
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)

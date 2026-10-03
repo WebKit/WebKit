@@ -3609,20 +3609,21 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& 
     return bitmap;
 }
 
-void WebPage::takeRemoteSnapshot(IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(std::optional<IntSize>)>&& completionHandler)
+void WebPage::takeRemoteSnapshot(IntRect snapshotRect, IntSize bitmapSize, SnapshotOptions snapshotOptions, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT(m_page->settings().remoteSnapshottingEnabled());
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
 
     RefPtr coreFrame = m_mainFrame->coreLocalFrame();
     if (!coreFrame) {
-        completionHandler(std::nullopt);
+        completionHandler(false);
         return;
     }
 
     RefPtr frameView = coreFrame->view();
     if (!frameView) {
-        completionHandler(std::nullopt);
+        completionHandler(false);
         return;
     }
 
@@ -3635,24 +3636,14 @@ void WebPage::takeRemoteSnapshot(IntRect snapshotRect, IntSize bitmapSize, Snaps
 
     if (bitmapSize.isEmpty()) {
         postSnapshotTakedown(originalPaintBehavior, paintBehavior, originalLayoutViewportOverrideRect, *frameView);
-        completionHandler(std::nullopt);
+        completionHandler(false);
         return;
     }
 
-    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
-    m_remoteSnapshotState = {
-        .identifier = snapshotIdentifier,
-        .recorder = remoteRenderingBackend->createSnapshotRecorder(snapshotRect, snapshotIdentifier, RenderingMode::DisplayList),
-        .callback = MainRunLoopSuccessCallbackAggregator::create([completionHandler = WTF::move(completionHandler), bitmapSize] (bool success) mutable {
-            completionHandler(success ? std::optional<IntSize>(bitmapSize) : std::nullopt);
-        })
-    };
-
-    paintSnapshotAtSize(snapshotRect, bitmapSize, snapshotOptions, *coreFrame, *frameView, m_remoteSnapshotState->recorder);
+    recordRemoteSnapshot(snapshotIdentifier, coreFrame->frameID(), RemoteSnapshotRole::Root, RenderingMode::DisplayList, snapshotRect, bitmapSize, MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+        paintSnapshotAtSize(snapshotRect, bitmapSize, snapshotOptions, *coreFrame, *frameView, context);
+    });
     postSnapshotTakedown(originalPaintBehavior, paintBehavior, originalLayoutViewportOverrideRect, *frameView);
-
-    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), coreFrame->frameID(), Ref { m_remoteSnapshotState->callback }->chain());
-    m_remoteSnapshotState = std::nullopt;
 
 #else
     UNUSED_PARAM(snapshotRect);
@@ -7325,7 +7316,10 @@ void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& r
     // Painting remote frames supported only for snapshot purposes.
     if (!m_remoteSnapshotState || m_remoteSnapshotState->recorder.ptr() != &context)
         return;
-    sendWithAsyncReply(Messages::WebPageProxy::DrawFrameToSnapshot(frameID, rect, m_remoteSnapshotState->identifier, context.renderingMode()), Ref { m_remoteSnapshotState->callback }->chain());
+    // Not waited for: the GPU process knows the snapshot is complete once every placeholder has been
+    // resolved. Dispatched even while the UI process is blocked waiting for the snapshot, since that
+    // process is the one that asks the frame's process to record it.
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::DrawFrameToSnapshot(frameID, rect, m_remoteSnapshotState->identifier, context.renderingMode()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     m_remoteSnapshotState->recorder->drawSnapshotFrame(frameID);
 #else
     UNUSED_PARAM(frameID);
@@ -7334,35 +7328,60 @@ void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& r
 #endif
 }
 
-void WebPage::drawToSnapshot(const std::optional<FloatRect>& rect, bool allowTransparentBackground, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(std::optional<IntSize>)>&& completionHandler)
+#if ENABLE(GPU_PROCESS)
+
+bool WebPage::recordRemoteSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, RemoteSnapshotRole role, RenderingMode renderingMode, const FloatRect& initialClip, const FloatSize& rootSize, Ref<MainRunLoopSuccessCallbackAggregator>&& callback, NOESCAPE const Function<void(GraphicsContext&)>& paint)
+{
+    // paintRemoteFrameContents() recognises the active recording by its context.
+    if (m_remoteSnapshotState) {
+        callback->failed();
+        return false;
+    }
+
+    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
+
+    // Only the root creates the snapshot, so a frame recording into one that has been released
+    // cannot bring it back.
+    if (role == RemoteSnapshotRole::Root)
+        remoteRenderingBackend->createSnapshot(snapshotIdentifier, frameIdentifier, rootSize);
+
+    m_remoteSnapshotState = { snapshotIdentifier, remoteRenderingBackend->createSnapshotRecorder(initialClip, snapshotIdentifier, renderingMode), WTF::move(callback) };
+    paint(m_remoteSnapshotState->recorder);
+    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameIdentifier, Ref { m_remoteSnapshotState->callback }->chain());
+    m_remoteSnapshotState = std::nullopt;
+    return true;
+}
+
+CompletionHandler<void(bool)> WebPage::failRemoteSnapshotIfRootFails(RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    return [snapshotIdentifier, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        if (!success)
+            WebProcess::singleton().failSnapshot(snapshotIdentifier);
+        completionHandler(success);
+    };
+}
+
+#endif // ENABLE(GPU_PROCESS)
+
+void WebPage::drawToSnapshot(const std::optional<FloatRect>& rect, bool allowTransparentBackground, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT(m_page->settings().remoteSnapshottingEnabled());
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
 
     RefPtr localMainFrame = this->localMainFrame();
 
     if (!localMainFrame) {
-        completionHandler(std::nullopt);
+        completionHandler(false);
         return;
     }
 
     Ref frameView = *localMainFrame->view();
     auto snapshotRect = IntRect { rect.value_or(FloatRect { { }, frameView->contentsSize() }) };
-    auto snapshotSize = snapshotRect.size();
 
-    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
-    m_remoteSnapshotState = {
-        .identifier = snapshotIdentifier,
-        .recorder = remoteRenderingBackend->createSnapshotRecorder(snapshotRect, snapshotIdentifier, RenderingMode::PDFDocument),
-        .callback = MainRunLoopSuccessCallbackAggregator::create([completionHandler = WTF::move(completionHandler), snapshotSize] (bool success) mutable {
-            completionHandler(success ? std::optional<IntSize>(snapshotSize) : std::nullopt);
-        })
-    };
-
-    drawMainFrameToPDF(*localMainFrame, m_remoteSnapshotState->recorder, snapshotRect, allowTransparentBackground);
-
-    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), localMainFrame->frameID(), Ref { m_remoteSnapshotState->callback }->chain());
-    m_remoteSnapshotState = std::nullopt;
+    recordRemoteSnapshot(snapshotIdentifier, localMainFrame->frameID(), RemoteSnapshotRole::Root, RenderingMode::PDFDocument, snapshotRect, snapshotRect.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+        drawMainFrameToPDF(*localMainFrame, context, snapshotRect, allowTransparentBackground);
+    });
 #else
     UNUSED_PARAM(rect);
     UNUSED_PARAM(allowTransparentBackground);
@@ -7371,54 +7390,37 @@ void WebPage::drawToSnapshot(const std::optional<FloatRect>& rect, bool allowTra
 #endif
 }
 
-void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode)
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT(m_page->settings().siteIsolationEnabled());
 
-    // FIXME: Error handling, so that the GPUP doesn't wait for something not coming.
-
-    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
-    if (!webFrame) {
-        ASSERT_NOT_REACHED();
-        completionHandler(false);
-        return;
-    }
-
-    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
-    if (!coreLocalFrame) {
-        ASSERT_NOT_REACHED();
-        completionHandler(false);
-        return;
-    }
-
-    RefPtr frameView = coreLocalFrame->view();
-    if (!frameView) {
-        completionHandler(false);
-        return;
-    }
-
-    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
-    m_remoteSnapshotState = {
-        .identifier = snapshotIdentifier,
-        .recorder = remoteRenderingBackend->createSnapshotRecorder(rect, snapshotIdentifier, renderingMode),
-        .callback = MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler))
+    // Nothing waits for a reply, so a frame that cannot be recorded has to be abandoned, or the
+    // snapshot would wait for it forever.
+    auto abandon = [&] {
+        WebProcess::singleton().abandonSnapshotFrame(snapshotIdentifier, frameID);
     };
 
-    LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
-    LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr coreLocalFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    RefPtr frameView = coreLocalFrame ? coreLocalFrame->view() : nullptr;
+    if (!frameView) {
+        abandon();
+        return;
+    }
 
-    frameView->paintContentsForSnapshot(m_remoteSnapshotState->recorder, rect, nullptr, shouldPaintSelection, coordinateSpace);
+    bool recorded = recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Frame, renderingMode, rect, { }, MainRunLoopSuccessCallbackAggregator::create([](bool) { }), [&](GraphicsContext& context) {
+        LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
+        LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
 
-    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameID, Ref { m_remoteSnapshotState->callback }->chain());
-
-    m_remoteSnapshotState = std::nullopt;
+        frameView->paintContentsForSnapshot(context, rect, nullptr, shouldPaintSelection, coordinateSpace);
+    });
+    if (!recorded)
+        abandon();
 #else
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(rect);
     UNUSED_PARAM(snapshotIdentifier);
-    UNUSED_PARAM(renderingMode);
-    UNUSED_PARAM(completionHandler);
 #endif
 }
 

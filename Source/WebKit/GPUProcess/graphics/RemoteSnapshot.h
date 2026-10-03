@@ -30,8 +30,10 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -44,22 +46,44 @@ namespace WebKit {
 // RemoteSnapshot represents a web page rendering. Solves the problem of generating the rendering from various different WebContent processes that
 // should not have any access to data of each other.
 // Each display list receives a placeholder for their subframe display lists. The placeholders are resolved through applyFrame().
-// The snapshot starts with the root frame pending as if the frame reference was added with it.
+// The snapshot is complete once every placeholder has been resolved, either with a display list or by the frame being
+// abandoned, in which case it draws nothing. The root is unresolved from the start, and a frame's placeholders are
+// recorded before its own display list is sunk, so nothing left unresolved means nothing is still to come.
 class RemoteSnapshot final : public ThreadSafeRefCounted<RemoteSnapshot> {
     WTF_MAKE_NONCOPYABLE(RemoteSnapshot);
     WTF_MAKE_TZONE_ALLOCATED(RemoteSnapshot);
 public:
-    static Ref<RemoteSnapshot> create();
+    // Without a root, for a recorder whose snapshot no longer exists. It records into nothing.
+    static Ref<RemoteSnapshot> create(std::optional<WebCore::FrameIdentifier> rootFrameIdentifier);
     ~RemoteSnapshot();
+    std::optional<WebCore::FrameIdentifier> rootFrameIdentifier() const { return m_rootFrameIdentifier; }
+    // The size the root was recorded at, which is what the snapshot is drawn at.
+    WebCore::FloatSize size() const;
+    void setSize(const WebCore::FloatSize&);
     [[nodiscard]] bool addFrameReference(WebCore::FrameIdentifier);
     [[nodiscard]] bool setFrame(WebCore::FrameIdentifier, Ref<const WebCore::DisplayList::DisplayList>&&, SerialFunctionDispatcher&);
+    // Resolves a frame that will not be recorded, so that the snapshot does not wait for it.
+    void abandonFrame(WebCore::FrameIdentifier);
+    // Notes which process was asked to record a frame, so that the frame can be abandoned if that process goes away.
+    void setFrameOwner(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    void abandonFramesOwnedBy(WebCore::ProcessIdentifier);
+    // Gives up on every frame still to come, so that the snapshot completes without them.
+    void abandonUnresolvedFrames();
+    // Completes every waiter unsuccessfully, for a snapshot that has been released before it completed.
+    void fail();
     bool isComplete() const;
+    // Whether it completed without its root, which leaves nothing to draw.
+    bool hasFailed() const;
+    // Called on the main thread, in order, once the snapshot is complete or has failed.
+    void whenComplete(CompletionHandler<void(bool success)>&&);
+    // Whether anything is waiting for it to complete.
+    bool isAwaited() const;
     std::optional<RefPtr<WebCore::SharedBuffer>> drawToPDF(const WebCore::FloatSize&, WebCore::FrameIdentifier rootFrameIdentifier);
     std::optional<WebCore::ShareableBitmap::Handle> drawToBitmap(const WebCore::FloatSize&, WebCore::FrameIdentifier rootFrameIdentifier);
     [[nodiscard]] bool applyFrame(WebCore::FrameIdentifier, WebCore::GraphicsContext&) const;
 
 private:
-    RemoteSnapshot();
+    explicit RemoteSnapshot(std::optional<WebCore::FrameIdentifier> rootFrameIdentifier);
 
     // DisplayList isn't generally threadsafe, but should be fine to replay on a different
     // thread in the GPU (where Font objects don't get mutated). Make sure we manually
@@ -78,11 +102,27 @@ private:
         Ref<SerialFunctionDispatcher> m_dispatcher;
     };
 
+    struct Frame {
+        std::optional<DisplayListAndReleaseDispatcher> displayList;
+        bool isAbandoned { false };
+        bool isResolved() const { return displayList || isAbandoned; }
+    };
+
+    bool isCompleteWithLockHeld() const WTF_REQUIRES_LOCK(m_lock) { return m_hasFailed || !m_unresolvedFrames; }
+    bool hasFailedWithLockHeld() const WTF_REQUIRES_LOCK(m_lock);
+    void resolveFrameWithLockHeld(Frame&) WTF_REQUIRES_LOCK(m_lock);
+    void dispatchCompletionHandlersIfComplete() WTF_REQUIRES_LOCK(m_lock);
+
+    const std::optional<WebCore::FrameIdentifier> m_rootFrameIdentifier;
     mutable Lock m_lock;
-    // The map stores std::nullopt for the "referenced" and a value when the final value comes in.
-    HashMap<WebCore::FrameIdentifier, std::optional<DisplayListAndReleaseDispatcher>> m_frameDisplayLists WTF_GUARDED_BY_LOCK(m_lock);
-    size_t m_referencedFrames WTF_GUARDED_BY_LOCK(m_lock) { 1 }; // 1 means at least root is pending.
-    size_t m_completedFrames WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    WebCore::FloatSize m_size WTF_GUARDED_BY_LOCK(m_lock);
+    // A frame is added unresolved when it is referenced, and resolved when its display list comes in or it is
+    // abandoned. A frame can also come in before it is referenced.
+    HashMap<WebCore::FrameIdentifier, Frame> m_frames WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier> m_frameOwners WTF_GUARDED_BY_LOCK(m_lock);
+    size_t m_unresolvedFrames WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    bool m_hasFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
+    Vector<CompletionHandler<void(bool)>> m_completionHandlers WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 }

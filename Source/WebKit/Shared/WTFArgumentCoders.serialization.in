@@ -59,6 +59,9 @@ header: <wtf/text/AtomString.h>
     uint64_t low();
 }
 
+header: "RemoteSnapshotIdentifier.h"
+using WebKit::RemoteSnapshotIdentifier = WTF::UUID;
+
 header: <wtf/JSONValues.h>
 [RefCounted, CustomHeader, CreateUsing=optionalParseJSON] class WTF::JSONImpl::Value {
     String toJSONString();
@@ -230,7 +233,6 @@ template: struct WebKit::RemoteMediaResourceIdentifierType
 template: struct WebKit::RemotePathImplIdentifierType
 template: struct WebKit::RemoteRenderingBackendIdentifierType
 template: struct WebKit::RemoteSerializedImageBufferIdentifierType
-template: struct WebKit::RemoteSnapshotIdentifierType
 template: struct WebKit::RemoteSnapshotRecorderIdentifierType
 template: struct WebKit::RemoteVideoFrameIdentifierType
 template: struct WebKit::VideoDecoderIdentifierType

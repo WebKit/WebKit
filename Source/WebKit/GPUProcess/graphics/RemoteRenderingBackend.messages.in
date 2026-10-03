@@ -72,6 +72,7 @@ messages -> RemoteRenderingBackend Stream {
     MoveSerializedBufferToTransferHeap(WebKit::RemoteSerializedImageBufferIdentifier serializedIdentifier) -> (std::optional<WebCore::ImageBufferTransferIdentifier> transferIdentifier) Synchronous
     TakeTransferredBuffer(struct WebCore::ImageBufferTransferHandle handle, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebKit::RemoteGraphicsContextIdentifier contextIdentifier)
 
+    CreateSnapshot(WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, WebCore::FloatSize size) -> () Synchronous
     CreateSnapshotRecorder(WebKit::RemoteSnapshotRecorderIdentifier identifier, WebKit::RemoteSnapshotIdentifier snapshotIdentifier)
     SinkSnapshotRecorderIntoSnapshotFrame(WebKit::RemoteSnapshotRecorderIdentifier identifier, WebCore::FrameIdentifier frameIdentifer) -> (bool success)
 

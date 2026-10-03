@@ -29,6 +29,7 @@
 #include "RemoteSnapshot.h"
 
 #include "WebImage.h"
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -36,40 +37,178 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSnapshot);
 
-Ref<RemoteSnapshot> RemoteSnapshot::create()
+Ref<RemoteSnapshot> RemoteSnapshot::create(std::optional<FrameIdentifier> rootFrameIdentifier)
 {
-    return adoptRef(*new RemoteSnapshot);
+    return adoptRef(*new RemoteSnapshot(rootFrameIdentifier));
 }
 
-RemoteSnapshot::RemoteSnapshot() = default;
+RemoteSnapshot::RemoteSnapshot(std::optional<FrameIdentifier> rootFrameIdentifier)
+    : m_rootFrameIdentifier(rootFrameIdentifier)
+{
+    if (!rootFrameIdentifier)
+        return;
+    Locker locker(m_lock);
+    m_frames.add(*rootFrameIdentifier, Frame { });
+    m_unresolvedFrames = 1;
+}
 
 RemoteSnapshot::~RemoteSnapshot() = default;
 
 bool RemoteSnapshot::addFrameReference(FrameIdentifier frameIdentifier)
 {
     Locker locker(m_lock);
-    m_referencedFrames++;
-    auto result = m_frameDisplayLists.add(frameIdentifier, std::nullopt);
-    if (result.isNewEntry)
+    auto result = m_frames.add(frameIdentifier, Frame { });
+    if (result.isNewEntry) {
+        m_unresolvedFrames++;
         return true;
-    // It is ok to setFrame win the race. It is not ok to have two addFrameReferences.
-    return !result.iterator->value;
+    }
+    // It is ok to setFrame or abandonFrame to win the race. It is not ok to have two addFrameReferences.
+    return result.iterator->value.isResolved();
+}
+
+void RemoteSnapshot::resolveFrameWithLockHeld(Frame& frame)
+{
+    ASSERT(frame.isResolved());
+    ASSERT(m_unresolvedFrames);
+    m_unresolvedFrames--;
+    dispatchCompletionHandlersIfComplete();
 }
 
 bool RemoteSnapshot::setFrame(FrameIdentifier frameIdentifier, Ref<const DisplayList::DisplayList>&& displayList, SerialFunctionDispatcher& releaseDispatcher)
 {
     Locker locker(m_lock);
-    m_completedFrames++;
-    auto iterator = m_frameDisplayLists.find(frameIdentifier);
-    if (iterator == m_frameDisplayLists.end()) {
-        m_frameDisplayLists.add(frameIdentifier, DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher });
+    auto result = m_frames.add(frameIdentifier, Frame { });
+    auto& frame = result.iterator->value;
+    if (result.isNewEntry) {
+        // Came in before it was referenced, so it was never counted as unresolved.
+        frame.displayList = DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher };
         return true;
     }
+    // Abandoned because the process recording it went away after recording it. Either outcome is fine.
+    if (frame.isAbandoned)
+        return true;
     // It is ok to addFrameReference to win the race. It's not ok to have two setFrames.
-    if (iterator->value)
+    if (frame.displayList)
         return false;
-    iterator->value = DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher };
+    frame.displayList = DisplayListAndReleaseDispatcher { WTF::move(displayList), releaseDispatcher };
+    resolveFrameWithLockHeld(frame);
     return true;
+}
+
+void RemoteSnapshot::abandonFrame(FrameIdentifier frameIdentifier)
+{
+    Locker locker(m_lock);
+    auto result = m_frames.add(frameIdentifier, Frame { .displayList = std::nullopt, .isAbandoned = true });
+    if (result.isNewEntry)
+        return;
+    auto& frame = result.iterator->value;
+    if (frame.isResolved())
+        return;
+    frame.isAbandoned = true;
+    resolveFrameWithLockHeld(frame);
+}
+
+void RemoteSnapshot::setFrameOwner(FrameIdentifier frameIdentifier, ProcessIdentifier processIdentifier)
+{
+    Locker locker(m_lock);
+    m_frameOwners.set(frameIdentifier, processIdentifier);
+}
+
+void RemoteSnapshot::abandonFramesOwnedBy(ProcessIdentifier processIdentifier)
+{
+    Vector<FrameIdentifier> frames;
+    {
+        Locker locker(m_lock);
+        m_frameOwners.removeIf([&](auto& entry) {
+            if (entry.value != processIdentifier)
+                return false;
+            frames.append(entry.key);
+            return true;
+        });
+    }
+    for (auto frameIdentifier : frames)
+        abandonFrame(frameIdentifier);
+}
+
+void RemoteSnapshot::abandonUnresolvedFrames()
+{
+    Vector<FrameIdentifier> frames;
+    {
+        Locker locker(m_lock);
+        for (auto& [frameIdentifier, frame] : m_frames) {
+            if (!frame.isResolved())
+                frames.append(frameIdentifier);
+        }
+    }
+    for (auto frameIdentifier : frames)
+        abandonFrame(frameIdentifier);
+}
+
+FloatSize RemoteSnapshot::size() const
+{
+    Locker locker(m_lock);
+    return m_size;
+}
+
+void RemoteSnapshot::setSize(const FloatSize& size)
+{
+    Locker locker(m_lock);
+    m_size = size;
+}
+
+bool RemoteSnapshot::hasFailed() const
+{
+    Locker locker(m_lock);
+    return hasFailedWithLockHeld();
+}
+
+bool RemoteSnapshot::hasFailedWithLockHeld() const
+{
+    if (m_hasFailed)
+        return true;
+    if (!m_rootFrameIdentifier)
+        return false;
+    auto iterator = m_frames.find(*m_rootFrameIdentifier);
+    return iterator == m_frames.end() || iterator->value.isAbandoned;
+}
+
+void RemoteSnapshot::fail()
+{
+    Locker locker(m_lock);
+    m_hasFailed = true;
+    dispatchCompletionHandlersIfComplete();
+}
+
+bool RemoteSnapshot::isComplete() const
+{
+    Locker locker(m_lock);
+    return isCompleteWithLockHeld();
+}
+
+void RemoteSnapshot::whenComplete(CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    Locker locker(m_lock);
+    m_completionHandlers.append(WTF::move(completionHandler));
+    dispatchCompletionHandlersIfComplete();
+}
+
+bool RemoteSnapshot::isAwaited() const
+{
+    Locker locker(m_lock);
+    return !m_completionHandlers.isEmpty();
+}
+
+void RemoteSnapshot::dispatchCompletionHandlersIfComplete()
+{
+    if (!isCompleteWithLockHeld() || m_completionHandlers.isEmpty())
+        return;
+    // Frames are resolved on the rendering backends' work queues. Dispatching even from the main thread keeps
+    // the handlers in the order they were added.
+    RunLoop::mainSingleton().dispatch([completionHandlers = std::exchange(m_completionHandlers, { }), success = !hasFailedWithLockHeld()] mutable {
+        for (auto& completionHandler : completionHandlers)
+            completionHandler(success);
+    });
 }
 
 bool RemoteSnapshot::applyFrame(FrameIdentifier frameIdentifier, GraphicsContext& context) const
@@ -77,20 +216,18 @@ bool RemoteSnapshot::applyFrame(FrameIdentifier frameIdentifier, GraphicsContext
     RefPtr<const DisplayList::DisplayList> displayList;
     {
         Locker locker(m_lock);
-        auto iterator = m_frameDisplayLists.find(frameIdentifier);
-        if (iterator != m_frameDisplayLists.end())
-            displayList = iterator->value->displayList();
+        auto iterator = m_frames.find(frameIdentifier);
+        if (iterator == m_frames.end())
+            return false;
+        if (iterator->value.isAbandoned)
+            return true;
+        if (iterator->value.displayList)
+            displayList = iterator->value.displayList->displayList();
     }
     if (!displayList)
         return false;
     context.drawDisplayList(*displayList);
     return true;
-}
-
-bool RemoteSnapshot::isComplete() const
-{
-    Locker locker(m_lock);
-    return m_completedFrames == m_referencedFrames; // Duplicates are handled when the values are updated.
 }
 
 RemoteSnapshot::DisplayListAndReleaseDispatcher::DisplayListAndReleaseDispatcher(Ref<const WebCore::DisplayList::DisplayList>&& displayList, SerialFunctionDispatcher& dispatcher)

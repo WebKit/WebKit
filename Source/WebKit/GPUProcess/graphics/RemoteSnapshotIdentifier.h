@@ -25,11 +25,18 @@
 
 #pragma once
 
-#include <wtf/ObjectIdentifier.h>
+#include <wtf/UUID.h>
 
 namespace WebKit {
 
-struct RemoteSnapshotIdentifierType;
-using RemoteSnapshotIdentifier = AtomicObjectIdentifier<RemoteSnapshotIdentifierType>;
+// Names a snapshot to every process that records into it or draws it. Unguessable, since holding one
+// is all it takes to record into the snapshot, or to abandon or fail it.
+using RemoteSnapshotIdentifier = WTF::UUID;
+
+// Cryptographically random, unlike WTF::UUID::createVersion4Weak().
+inline RemoteSnapshotIdentifier generateRemoteSnapshotIdentifier()
+{
+    return WTF::UUID::createVersion4();
+}
 
 }

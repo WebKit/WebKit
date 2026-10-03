@@ -35,6 +35,7 @@
 #include "DownloadProxyMap.h"
 #include "DrawingAreaProxy.h"
 #include "GPUProcessConnectionParameters.h"
+#include "GPUProcessProxy.h"
 #include "GoToBackForwardItemParameters.h"
 #include "JavaScriptEvaluationResult.h"
 #include "LoadParameters.h"
@@ -984,6 +985,12 @@ void WebProcessProxy::shutDown()
     for (Ref page : mainPages())
         page->disconnectFramesFromPage();
 
+#if ENABLE(GPU_PROCESS)
+    // Any frame this process was asked to record into a snapshot will not be recorded now.
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->abandonSnapshotFramesOwnedBy(coreProcessIdentifier());
+#endif
+
     m_userInitiatedActionMap.clear();
 
     if (RefPtr webLockRegistry = m_webLockRegistry.get())
@@ -1525,6 +1532,49 @@ void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnec
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessConnectionDidBecomeUnresponsive");
     if (RefPtr process = processPool().gpuProcess())
         process->childConnectionDidBecomeUnresponsive();
+}
+
+// A frame hosted in another process was painted into a snapshot here. Received by the process rather
+// than a page, because the frame may be going away along with the last of this process's frames in
+// the page, and a request that reached nothing would leave the snapshot waiting for it.
+void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+{
+    MESSAGE_CHECK(renderingMode == WebCore::RenderingMode::DisplayList || renderingMode == WebCore::RenderingMode::PDFDocument);
+
+    // Nothing can be waiting for a snapshot the GPU process does not have.
+    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+    if (!gpuProcess)
+        return;
+
+    // Gone since it was painted, so it draws nothing.
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    RefPtr parentFrame = frame ? frame->parentFrame() : nullptr;
+    if (!parentFrame) {
+        gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+        return;
+    }
+
+    // Only the process that painted the frame's parent can have painted the frame. The parent may also
+    // have moved to another process since it was painted, so the frame draws nothing either way.
+    if (&parentFrame->process() != this) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "drawFrameToSnapshot: asked for a frame whose parent is hosted elsewhere");
+        gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+        return;
+    }
+
+    Ref frameProcess = frame->process();
+    if (!frameProcess->canSendMessage()) {
+        gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameID);
+        return;
+    }
+
+    // Told before the frame's process is asked, so that the frame is abandoned if that process goes
+    // away first: either by the GPU process, if it had connected there, or by shutDown(), on this same
+    // connection so that it cannot overtake this.
+    gpuProcess->snapshotFrameWillBeDrawnByProcess(snapshotIdentifier, frameID, frameProcess->coreProcessIdentifier());
+    // Also while the frame's process is waiting on this one, as it does for alert(), since this
+    // process may itself be blocked waiting for the snapshot.
+    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
 }
 
 void WebProcessProxy::gpuProcessDidFinishLaunching()

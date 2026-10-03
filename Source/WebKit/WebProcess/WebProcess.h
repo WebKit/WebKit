@@ -30,6 +30,7 @@
 #include "EventDispatcher.h"
 #include "IdentifierTypes.h"
 #include "NetworkProcessConnection.h"
+#include "RemoteSnapshotIdentifier.h"
 #include "ScriptTrackingPrivacyFilter.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "StorageAreaMapIdentifier.h"
@@ -50,6 +51,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/RenderingMode.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/ThirdPartyCookieBlockingMode.h>
 #include <WebCore/Timer.h>
@@ -311,6 +313,10 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
+    // Resolves a frame of a snapshot that will not be recorded, so that the snapshot does not wait for it.
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    // Fails a snapshot whose root will not be recorded, so that nothing waits for it.
+    void failSnapshot(RemoteSnapshotIdentifier);
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
     // Returns timeout duration for GPU process connections. Thread-safe.
     Seconds NODELETE gpuProcessTimeoutDuration() const;
@@ -622,6 +628,10 @@ private:
     void setEnhancedAccessibility(bool);
     void setAccessibilityMode(WebCore::AccessibilityMode);
     void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
+
+#if ENABLE(GPU_PROCESS)
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+#endif
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();

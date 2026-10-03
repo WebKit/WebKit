@@ -35,6 +35,7 @@
 #include "RemoteGPU.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteRenderingBackendIdentifier.h"
+#include "RemoteSnapshotIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "WebGPUIdentifier.h"
@@ -324,6 +325,8 @@ private:
     void releaseGPU(WebGPUIdentifier);
 
     void setNowPlayingInfoForPage(WebCore::NowPlayingInfo&&, std::optional<WebCore::PageIdentifier>);
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void failSnapshot(RemoteSnapshotIdentifier);
     void setNowPlayingCandidateState(WebCore::NowPlayingCandidateState&&);
     void nowPlayingClientDidClose();
     void isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);

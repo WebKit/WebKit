@@ -414,6 +414,13 @@ RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::takeTransferredBuffe
     return result;
 }
 
+void RemoteRenderingBackendProxy::createSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize& size)
+{
+    // Waited for, so that the snapshot exists before any frame hosted elsewhere is asked to record
+    // into it.
+    sendSync(Messages::RemoteRenderingBackend::CreateSnapshot(snapshotIdentifier, rootFrameIdentifier, size));
+}
+
 UniqueRef<RemoteSnapshotRecorderProxy> RemoteRenderingBackendProxy::createSnapshotRecorder(const FloatRect& initialClip, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode)
 {
     auto recorder = makeUniqueRef<RemoteSnapshotRecorderProxy>(initialClip, renderingMode, *this);

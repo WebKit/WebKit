@@ -82,6 +82,10 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetAccessibilityMode(enum:uint8_t WebCore::AccessibilityMode mode)
     BindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data);
 
+#if ENABLE(GPU_PROCESS)
+    DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+#endif
+
     GarbageCollectJavaScriptObjects()
     GetStorageAreaMapCountForTesting() -> (uint64_t storageAreaMapCount)
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)

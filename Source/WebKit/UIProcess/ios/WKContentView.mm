@@ -38,6 +38,7 @@
 #import "ModelProcessProxy.h"
 #import "PDFDisplayMode.h"
 #import "PageClientImplIOS.h"
+#import "PendingSnapshotDrawing.h"
 #import "PickerDismissalReason.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeCommitBundle.h"
@@ -1368,7 +1369,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (!callbackID)
             return;
 
-        protect(protect(_page)->legacyMainFrameProcess().connection())->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(*callbackID, Seconds::infinity());
+        WebKit::PendingSnapshotDrawing::wait(*callbackID);
         return;
     }
 
@@ -1412,7 +1413,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (!callbackID)
             return;
 
-        protect(protect(_page)->legacyMainFrameProcess().connection())->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(*callbackID, Seconds::infinity());
+        WebKit::PendingSnapshotDrawing::wait(*callbackID);
         return;
     }
 

@@ -156,6 +156,7 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
     m_webProcessConnections.remove(connection.webProcessIdentifier());
 
     removeTransferredImageBuffersForProcess(connection.webProcessIdentifier());
+    abandonSnapshotFramesOwnedBy(connection.webProcessIdentifier());
 
     recomputeNowPlayingOwner();
 
@@ -609,72 +610,178 @@ void GPUProcess::removeTransferredImageBuffersForProcess(WebCore::ProcessIdentif
     });
 }
 
-Ref<RemoteSnapshot> GPUProcess::getOrCreateSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+// Long enough for any frame whose process is responsive. One whose process is not, or went away
+// before connecting here, draws nothing rather than holding up whoever is waiting for the snapshot.
+static constexpr Seconds snapshotDeadline = 10_s;
+
+Ref<RemoteSnapshot> GPUProcess::ensureSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, std::optional<FrameIdentifier> rootFrameIdentifier)
+{
+    RefPtr<RemoteSnapshot> snapshot;
+    bool isNewEntry = false;
+    {
+        Locker locker(m_globalResourceLocker);
+        auto result = m_snapshots.ensure(snapshotIdentifier, [&] {
+            return RemoteSnapshot::create(rootFrameIdentifier);
+        });
+        snapshot = result.iterator->value.ptr();
+        isNewEntry = result.isNewEntry;
+    }
+    // Only one frame can be the root.
+    if (snapshot->rootFrameIdentifier() != rootFrameIdentifier)
+        snapshot->fail();
+    if (isNewEntry) {
+        // Identifiers are never reused, so finding one when the deadline comes means it is this snapshot.
+        callOnMainRunLoop([snapshotIdentifier] {
+            RunLoop::mainSingleton().dispatchAfter(snapshotDeadline, [snapshotIdentifier] {
+                GPUProcess::singleton().snapshotDeadlineExpired(snapshotIdentifier);
+            });
+        });
+    }
+    return snapshot.releaseNonNull();
+}
+
+void GPUProcess::snapshotDeadlineExpired(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    RefPtr snapshot = this->snapshot(snapshotIdentifier);
+    if (!snapshot)
+        return;
+    bool isAwaited = snapshot->isAwaited();
+    snapshot->abandonUnresolvedFrames();
+    // Whoever is waiting takes it now. Anything else is not coming for it, such as a root whose
+    // process went away after the snapshot was released, or a GPU process that was relaunched under
+    // whoever asked for it.
+    if (!isAwaited || snapshot->hasFailed())
+        releaseSnapshot(snapshotIdentifier);
+}
+
+void GPUProcess::createSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier rootFrameIdentifier, const FloatSize& size, ProcessIdentifier rootProcessIdentifier)
+{
+    // May already exist, if whoever draws it asked first.
+    Ref snapshot = ensureSnapshot(snapshotIdentifier, rootFrameIdentifier);
+    snapshot->setSize(size);
+    snapshot->setFrameOwner(rootFrameIdentifier, rootProcessIdentifier);
+}
+
+void GPUProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    // Created failed if it does not exist yet, so that whoever asks to draw it afterwards does not
+    // wait for it.
+    ensureSnapshot(snapshotIdentifier, std::nullopt)->fail();
+}
+
+Ref<RemoteSnapshot> GPUProcess::snapshotForRecorder(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    if (RefPtr snapshot = this->snapshot(snapshotIdentifier))
+        return snapshot.releaseNonNull();
+    // Already released, so let the recorder fill a snapshot that is dropped with it.
+    return RemoteSnapshot::create(std::nullopt);
+}
+
+RefPtr<RemoteSnapshot> GPUProcess::snapshot(RemoteSnapshotIdentifier snapshotIdentifier)
 {
     Locker locker(m_globalResourceLocker);
-    auto addResult = m_snapshots.ensure(snapshotIdentifier, [&] {
-        return RemoteSnapshot::create();
+    return m_snapshots.get(snapshotIdentifier);
+}
+
+void GPUProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier)
+{
+    if (RefPtr snapshot = this->snapshot(snapshotIdentifier))
+        snapshot->abandonFrame(frameIdentifier);
+}
+
+void GPUProcess::snapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, ProcessIdentifier processIdentifier)
+{
+    // A process that has not connected yet may still do so to record the frame, so only its
+    // going away abandons the frame. The UI process says so if it has not connected by then.
+    if (RefPtr snapshot = this->snapshot(snapshotIdentifier))
+        snapshot->setFrameOwner(frameIdentifier, processIdentifier);
+}
+
+void GPUProcess::abandonSnapshotFramesOwnedBy(ProcessIdentifier processIdentifier)
+{
+    Vector<Ref<RemoteSnapshot>> snapshots;
+    {
+        Locker locker(m_globalResourceLocker);
+        snapshots = copyToVector(m_snapshots.values());
+    }
+    for (Ref snapshot : snapshots)
+        snapshot->abandonFramesOwnedBy(processIdentifier);
+}
+
+void GPUProcess::takeSnapshotWhenComplete(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<RemoteSnapshot>&&)>&& completionHandler)
+{
+    // May be asked for before its root has created it, since the UI process asks as soon as it
+    // has asked for the root. Anything that went wrong since is reported as failure.
+    Ref snapshot = ensureSnapshot(identifier, rootFrameIdentifier);
+    snapshot->whenComplete([identifier, snapshot, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        {
+            Ref gpuProcess = GPUProcess::singleton();
+            Locker locker(gpuProcess->m_globalResourceLocker);
+            auto iterator = gpuProcess->m_snapshots.find(identifier);
+            if (iterator != gpuProcess->m_snapshots.end() && iterator->value.ptr() == snapshot.ptr())
+                gpuProcess->m_snapshots.remove(iterator);
+        }
+        completionHandler(success ? RefPtr { WTF::move(snapshot) } : nullptr);
     });
-    return addResult.iterator->value;
 }
 
 #if PLATFORM(COCOA)
 
-void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FloatSize size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    RefPtr<RemoteSnapshot> snapshot;
-    {
-        Locker locker(m_globalResourceLocker);
-        snapshot = m_snapshots.take(identifier);
-    }
-    if (!snapshot) {
-        // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-        completionHandler({ });
-        return;
-    }
-    if (!snapshot->isComplete()) {
-        // Currently the callbacks ensure the completeness.
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
-    }
-    auto result = snapshot->drawToPDF(size, rootFrameIdentifier);
-    if (!result) {
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
-    }
-    completionHandler(WTF::move(*result));
+    takeSnapshotWhenComplete(identifier, rootFrameIdentifier, [rootFrameIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
+        if (!snapshot) {
+            completionHandler({ });
+            return;
+        }
+        auto result = snapshot->drawToPDF(snapshot->size(), rootFrameIdentifier);
+        if (!result) {
+            ASSERT_NOT_REACHED();
+            completionHandler({ });
+            return;
+        }
+        completionHandler(WTF::move(*result));
+    });
 }
 
 #endif
 
-void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const FloatSize& size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
-    RefPtr<RemoteSnapshot> snapshot;
-    {
-        Locker locker(m_globalResourceLocker);
-        snapshot = m_snapshots.take(identifier);
-    }
-    if (!snapshot) {
-        // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-        completionHandler({ });
-        return;
-    }
-    if (!snapshot->isComplete()) {
-        // Currently the callbacks ensure the completeness.
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
-    }
-    completionHandler(snapshot->drawToBitmap(size, rootFrameIdentifier));
+    takeSnapshotWhenComplete(identifier, rootFrameIdentifier, [rootFrameIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
+        if (!snapshot) {
+            completionHandler({ });
+            return;
+        }
+        completionHandler(snapshot->drawToBitmap(snapshot->size(), rootFrameIdentifier));
+    });
 }
 
 void GPUProcess::releaseSnapshot(RemoteSnapshotIdentifier identifier)
 {
     // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-    Locker locker(m_globalResourceLocker);
-    m_snapshots.remove(identifier);
+    RefPtr<RemoteSnapshot> snapshot;
+    {
+        Locker locker(m_globalResourceLocker);
+        snapshot = m_snapshots.take(identifier);
+    }
+    // Anything still waiting for it would otherwise wait for frames that will never be asked for.
+    if (snapshot)
+        snapshot->fail();
+}
+
+void GPUProcess::waitForSnapshot(RemoteSnapshotIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    // Sent after the sink, keeping its order, so a snapshot that is not here has already been drawn.
+    RefPtr snapshot = this->snapshot(identifier);
+    if (!snapshot) {
+        completionHandler();
+        return;
+    }
+    // After the sink waiting for it, so that its reply is sent first.
+    snapshot->whenComplete([completionHandler = WTF::move(completionHandler)](bool) mutable {
+        completionHandler();
+    });
 }
 
 #if ENABLE(MEDIA_STREAM)

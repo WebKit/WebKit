@@ -272,11 +272,17 @@ void RemoteRenderingBackend::takeTransferredBuffer(const ImageBufferTransferHand
     MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffer");
 }
 
+void RemoteRenderingBackend::createSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier rootFrameIdentifier, const FloatSize& size, CompletionHandler<void()>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    GPUProcess::singleton().createSnapshot(snapshotIdentifier, rootFrameIdentifier, size, m_gpuConnectionToWebProcess->webProcessIdentifier());
+    completionHandler();
+}
+
 void RemoteRenderingBackend::createSnapshotRecorder(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshotIdentifier snapshotIdentifier)
 {
     assertIsCurrent(workQueue());
-    // FIXME: using global identifiers (snapshotIdentifier) is not secure. Do not follow this pattern.
-    Ref snapshot = GPUProcess::singleton().getOrCreateSnapshot(snapshotIdentifier);
+    Ref snapshot = GPUProcess::singleton().snapshotForRecorder(snapshotIdentifier);
     auto result = m_remoteSnapshotRecorders.add(identifier, RemoteSnapshotRecorder::create(identifier, snapshot, *this));
     MESSAGE_CHECK(result.isNewEntry, "Recorder already created");
 }
@@ -290,10 +296,6 @@ void RemoteRenderingBackend::sinkSnapshotRecorderIntoSnapshotFrame(RemoteSnapsho
     // FIXME: using global identifiers (frameIdentifier) is not secure. Do not follow this pattern.
     bool success = snapshot->setFrame(frameIdentifier, recorder->takeDisplayList(), workQueue());
     MESSAGE_CHECK(success, "Frame already present");
-
-    // Note:
-    // Success completion handlers are used to ensure that getOrCreateSnapshot does not vivify already released snapshot identifier into a leaked object. Caller is expected to wait
-    // until completion of *all* handlers, failing or not, before consuming the snapshot, otherwise leaks occur.
     completionHandler(true);
 }
 

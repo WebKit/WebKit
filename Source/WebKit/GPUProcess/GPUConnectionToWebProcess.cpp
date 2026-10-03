@@ -842,6 +842,17 @@ void GPUConnectionToWebProcess::setNowPlayingCandidateState(NowPlayingCandidateS
     gpuProcess().recomputeNowPlayingOwner();
 }
 
+void GPUConnectionToWebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameIdentifier)
+{
+    // FIXME: using global identifiers (frameIdentifier) is not secure. Do not follow this pattern.
+    m_gpuProcess->abandonSnapshotFrame(snapshotIdentifier, frameIdentifier);
+}
+
+void GPUConnectionToWebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    m_gpuProcess->failSnapshot(snapshotIdentifier);
+}
+
 void GPUConnectionToWebProcess::setNowPlayingInfoForPage(NowPlayingInfo&& nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)
 {
     if (!pageIdentifier)

@@ -1825,6 +1825,34 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::s
 
 #endif
 
+#if ENABLE(GPU_PROCESS)
+
+// Received by the process rather than a page, because the frame's page may have gone here since the
+// frame was painted, and a request that reached nothing would leave the snapshot waiting for it.
+void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+{
+    RefPtr frame = webFrame(frameID);
+    RefPtr page = frame ? frame->page() : nullptr;
+    if (!page) {
+        abandonSnapshotFrame(snapshotIdentifier, frameID);
+        return;
+    }
+    page->drawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode);
+}
+
+void WebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID)
+{
+    // Not through a page's rendering backend, since there may be no page left to have one.
+    protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::AbandonSnapshotFrame(snapshotIdentifier, frameID), 0);
+}
+
+void WebProcess::failSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)
+{
+    protect(ensureGPUProcessConnection().connection())->send(Messages::GPUConnectionToWebProcess::FailSnapshot(snapshotIdentifier), 0);
+}
+
+#endif
+
 void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::ActivityState> changed)
 {
     if (changed & WebCore::ActivityState::IsVisible) {

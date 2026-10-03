@@ -185,10 +185,21 @@ public:
 #if PLATFORM(COCOA)
     void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
 
-    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    // Draws the snapshot at the size its root was recorded at, once it is complete. May be sent as soon
+    // as the root has been asked for.
+    std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
-    void sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void releaseSnapshot(RemoteSnapshotIdentifier);
+    void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
+    void snapshotFrameWillBeDrawnByProcess(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    void abandonSnapshotFramesOwnedBy(WebCore::ProcessIdentifier);
+    // For the reply of the process asked to record a snapshot's root. Only failure matters: nothing more
+    // is coming for the snapshot then. Sent after the sink, so that the sink is not left waiting.
+    CompletionHandler<void(bool)> releaseSnapshotIfRootFails(RemoteSnapshotIdentifier);
+    // Blocks until a snapshot already sent to be drawn has been drawn, or has failed. Messages that ask
+    // frames hosted in other processes to record into it are dispatched meanwhile. False on timeout.
+    bool waitForSnapshot(RemoteSnapshotIdentifier, Seconds timeout);
 
 private:
     explicit GPUProcessProxy();

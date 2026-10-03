@@ -117,6 +117,7 @@
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
 #include "PendingPostMessages.h"
+#include "PendingSnapshotDrawing.h"
 #include "PlatformPopupMenuData.h"
 #include "PlatformXRSystem.h"
 #include "PolicyDecision.h"
@@ -623,6 +624,10 @@ private:
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageRequests);
+
+#if ENABLE(GPU_PROCESS)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingSnapshotDrawing);
+#endif
 
 StorageRequests& NODELETE StorageRequests::singleton()
 {
@@ -16593,21 +16598,10 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFr
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImage(frameID, printInfo, rect, imageSize), WTF::move(callback));
     }
 
-    auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
+    auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID, imageSize](bool success) mutable {
-        RefPtr gpuProcess = weakGPUProcess.get();
-        if (!gpuProcess || !gpuProcess->hasConnection()) {
-            callback({ });
-            return;
-        }
-        if (!success) {
-            gpuProcess->releaseSnapshot(snapshotIdentifier);
-            callback({ });
-            return;
-        }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, imageSize, rootFrameIdentifier, WTF::move(callback));
-    };
+    gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, frameID, WTF::move(callback));
+    auto snapshotCallback = gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier);
 
     if (m_isPerformingDOMPrintOperation)
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingRectToSnapshotDuringDOMPrintOperation(snapshotIdentifier, frameID, printInfo, rect, imageSize), WTF::move(snapshotCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
@@ -16625,26 +16619,20 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDF(frameID, printInfo, first, count),  toAPIDataSharedBufferCallback(WTF::move(callback)));
     }
 
-    auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
+    auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID](std::optional<FloatSize> result) mutable {
-        RefPtr gpuProcess = weakGPUProcess.get();
-        if (!gpuProcess || !gpuProcess->hasConnection()) {
-            callback(nullptr);
-            return;
-        }
-        if (!result) {
-            gpuProcess->releaseSnapshot(snapshotIdentifier);
-            callback(nullptr);
-            return;
-        }
-        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, toAPIDataSharedBufferCallback(WTF::move(callback)));
-    };
+    Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
+    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(toAPIDataSharedBufferCallback(WTF::move(callback))));
+    auto snapshotCallback = gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier);
 
     if (m_isPerformingDOMPrintOperation)
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotDuringDOMPrintOperation(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-    return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback));
+    auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback));
+    if (replyID)
+        drawing->setReply<Messages::GPUProcess::SinkCompletedSnapshotToPDF>(gpuProcess.get(), sinkReplyID, *replyID);
+    return replyID;
 }
+
 #elif PLATFORM(GTK)
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy& frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
@@ -16671,22 +16659,10 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
         return;
     }
 
-    auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
+    auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier),
-        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID()](std::optional<IntSize> result) mutable {
-        RefPtr gpuProcess = weakGPUProcess.get();
-        if (!gpuProcess || !gpuProcess->hasConnection()) {
-            callback({ });
-            return;
-        }
-        if (!result) {
-            gpuProcess->releaseSnapshot(snapshotIdentifier);
-            callback({ });
-            return;
-        }
-        gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, *result, rootFrameIdentifier, WTF::move(callback));
-    });
+    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), WTF::move(callback));
+    sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
 }
 
 #endif // PLATFORM(COCOA)
@@ -17233,31 +17209,19 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
         return;
     }
 
-    auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
+    auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    sendWithAsyncReply(Messages::WebPage::TakeRemoteSnapshot(rect, bitmapSize, options, snapshotIdentifier),
-        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID()](std::optional<WebCore::IntSize> resolvedSize) mutable {
-        RefPtr gpuProcess = weakGPUProcess.get();
-        if (!gpuProcess || !gpuProcess->hasConnection()) {
+    gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, mainFrame->frameID(), [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
+        if (!handle) {
             callback(nullptr);
             return;
         }
-        if (!resolvedSize) {
-            gpuProcess->releaseSnapshot(snapshotIdentifier);
-            callback(nullptr);
-            return;
-        }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *resolvedSize, rootFrameIdentifier, [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
-            if (!handle) {
-                callback(nullptr);
-                return;
-            }
-            RetainPtr<CGImageRef> image;
-            if (RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(*handle), WebCore::SharedMemory::Protection::ReadOnly))
-                image = bitmap->createPlatformImage(DontCopyBackingStore);
-            callback(image.get());
-        });
+        RetainPtr<CGImageRef> image;
+        if (RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(*handle), WebCore::SharedMemory::Protection::ReadOnly))
+            image = bitmap->createPlatformImage(DontCopyBackingStore);
+        callback(image.get());
     });
+    sendWithAsyncReply(Messages::WebPage::TakeRemoteSnapshot(rect, bitmapSize, options, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
 
 }
 #endif
@@ -20310,12 +20274,6 @@ void WebPageProxy::reportMixedContentViolation(FrameIdentifier frameID, bool blo
     auto message = MixedContentChecker::mixedContentViolationMessage(protect(preferences())->iPAddressAndLocalhostMixedContentUpgradeTestingEnabled(), blocked, frame->url(), target);
 
     addConsoleMessage(frameID, MessageSource::Security, MessageLevel::Warning, message);
-}
-
-void WebPageProxy::drawFrameToSnapshot(IPC::Connection& connection, FrameIdentifier frameID, const IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode, CompletionHandler<void(bool)>&& completionHandler)
-{
-    MESSAGE_CHECK_COMPLETION(WebProcessProxy::fromConnection(connection), renderingMode == RenderingMode::DisplayList || renderingMode == RenderingMode::PDFDocument, completionHandler(false));
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawFrameToSnapshot(frameID, rect, snapshotIdentifier, renderingMode), WTF::move(completionHandler));
 }
 
 Vector<Ref<WebProcessProxy>> WebPageProxy::activeRemoteFrameProcesses() const

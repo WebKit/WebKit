@@ -3856,31 +3856,33 @@ void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& pri
     endPrinting();
 }
 
-void WebPage::drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::FloatSize>)>&& completionHandler)
+void WebPage::drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(bool)>&& completionHandler)
 {
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
+
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
-        completionHandler({ });
+        completionHandler(false);
         endPrinting();
         return;
     }
 
     RefPtr coreFrame = frame->coreLocalFrame();
     if (!coreFrame) {
-        completionHandler({ });
+        completionHandler(false);
         endPrinting();
         return;
     }
 
     if (pdfDocumentForPrintingFrame(coreFrame.get())) {
         // Can't do this remotely.
-        completionHandler({ });
+        completionHandler(false);
         endPrinting();
         return;
     }
 
     if (!m_printContext) {
-        completionHandler({ });
+        completionHandler(false);
         endPrinting();
         return;
     }
@@ -3913,35 +3915,23 @@ void WebPage::drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentif
 
     int imageHeight;
     if (!WTF::safeMultiply(pageHeight.value<size_t>(), pageCount, imageHeight)) {
-        completionHandler({ });
+        completionHandler(false);
         endPrinting();
         return;
     }
 
     auto mediaBox = IntRect { 0, 0, pageWidth, imageHeight };
 
-    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
-    m_remoteSnapshotState = {
-        .identifier = snapshotIdentifier,
-        .recorder = remoteRenderingBackend->createSnapshotRecorder(mediaBox, snapshotIdentifier, RenderingMode::DisplayList),
-        .callback = MainRunLoopSuccessCallbackAggregator::create([completionHandler = WTF::move(completionHandler), snapshotSize = mediaBox.size()] (bool success) mutable {
-            completionHandler(success ? std::optional<FloatSize>(snapshotSize) : std::nullopt);
-        })
-    };
-
-    GraphicsContext& context = m_remoteSnapshotState->recorder.get();
-
-    for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
-        if (pageIndex >= m_printContext->pageCount())
-            break;
-        context.save();
-        context.translate(0, pageHeight * static_cast<int>(pageIndex));
-        protect(m_printContext)->spoolPage(context, pageIndex, pageWidth);
-        context.restore();
-    }
-
-    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameID, protect(m_remoteSnapshotState->callback)->chain());
-    m_remoteSnapshotState = std::nullopt;
+    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+        for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+            if (pageIndex >= m_printContext->pageCount())
+                break;
+            context.save();
+            context.translate(0, pageHeight * static_cast<int>(pageIndex));
+            protect(m_printContext)->spoolPage(context, pageIndex, pageWidth);
+            context.restore();
+        }
+    });
 }
 
 void WebPage::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, uint64_t pageCount, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& reply)
@@ -3975,28 +3965,30 @@ void WebPage::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, 
     endPrinting();
 }
 
-void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, uint64_t pageCount, CompletionHandler<void(std::optional<WebCore::FloatSize>)>&& completionHandler)
+void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, uint64_t pageCount, CompletionHandler<void(bool)>&& completionHandler)
 {
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
+
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
-        completionHandler({ });
+        completionHandler(false);
         return;
     }
 
     RefPtr coreFrame = frame->coreLocalFrame();
     if (!coreFrame) {
-        completionHandler({ });
+        completionHandler(false);
         return;
     }
 
     if (pdfDocumentForPrintingFrame(coreFrame.get())) {
         // Can't do this remotely.
-        completionHandler({ });
+        completionHandler(false);
         return;
     }
 
     if (!m_printContext) {
-        completionHandler({ });
+        completionHandler(false);
         return;
     }
 
@@ -4007,30 +3999,18 @@ void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotId
     if (!printInfo.snapshotFirstPage && m_printContext && m_printContext->pageCount())
         mediaBox = m_printContext->pageRect(0);
 
-    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
-    m_remoteSnapshotState = {
-        .identifier = snapshotIdentifier,
-        .recorder = remoteRenderingBackend->createSnapshotRecorder(mediaBox, snapshotIdentifier, RenderingMode::PDFDocument),
-        .callback = MainRunLoopSuccessCallbackAggregator::create([completionHandler = WTF::move(completionHandler), snapshotSize = mediaBox.size()] (bool success) mutable {
-            completionHandler(success ? std::optional<FloatSize>(snapshotSize) : std::nullopt);
-        })
-    };
+    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+        if (printInfo.snapshotFirstPage) {
+            Ref frameView = *coreFrame->view();
+            auto originalLayoutViewportOverrideRect = frameView->layoutViewportOverrideRect();
+            frameView->setLayoutViewportOverrideRect(LayoutRect(mediaBox));
 
-    GraphicsContext& context = m_remoteSnapshotState->recorder.get();
+            pdfSnapshotAtSize(*coreFrame, context, IntRect { mediaBox }, { });
 
-    if (printInfo.snapshotFirstPage) {
-        Ref frameView = *coreFrame->view();
-        auto originalLayoutViewportOverrideRect = frameView->layoutViewportOverrideRect();
-        frameView->setLayoutViewportOverrideRect(LayoutRect(mediaBox));
-
-        pdfSnapshotAtSize(*coreFrame, context, IntRect { mediaBox }, { });
-
-        frameView->setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
-    } else
-        drawPrintContextPagesToGraphicsContext(context, mediaBox, 0, pageCount);
-
-    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameID, protect(m_remoteSnapshotState->callback)->chain());
-    m_remoteSnapshotState = std::nullopt;
+            frameView->setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
+        } else
+            drawPrintContextPagesToGraphicsContext(context, mediaBox, 0, pageCount);
+    });
 }
 
 void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)

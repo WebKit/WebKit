@@ -37,6 +37,8 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
     [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
     void ClearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier> pageIdentifier)
+    void AbandonSnapshotFrame(WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameIdentifier)
+    void FailSnapshot(WebKit::RemoteSnapshotIdentifier snapshotIdentifier)
     void SetNowPlayingInfoForPage(struct WebCore::NowPlayingInfo nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)
     void SetNowPlayingCandidateState(struct WebCore::NowPlayingCandidateState candidate)
     [EnabledBy=AllowTestOnlyIPC] IsActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier identifier) -> (bool isActive)
