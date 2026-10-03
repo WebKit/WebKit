@@ -1,0 +1,42 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSSOM View Test: scrolling to the fragment of a same-origin embedded HTML document scrolls the parent document</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#scroll-a-target-into-view">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#scroll-to-the-fragment-identifier">
+<meta name="assert" content="Scroll a target into view continues through same-origin ancestor viewports, so a fragment scroll in a same-origin embedded HTML document also scrolls the parent document to the embedding element.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin:0">
+<div style="height:3000px"></div>
+<div id="container"></div>
+<div style="height:3000px"></div>
+<script>
+async function loadEmbeddedHTML(tagName) {
+  window.scrollTo(0, 0);
+  const element = document.createElement(tagName);
+  element.width = 394;
+  element.height = 322;
+  const loaded = new Promise(resolve => element.addEventListener("load", resolve, { once: true }));
+  const url = "support/scroll-to-fragment-target.html#t";
+  if (tagName == "object") {
+    element.type = "text/html";
+    element.data = url;
+  } else
+    element.src = url;
+  document.getElementById("container").append(element);
+  await loaded;
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await new Promise(resolve => step_timeout(resolve, 100));
+  assert_not_equals(element.contentDocument, null, "embedded document loaded");
+  assert_not_equals(element.contentDocument.getElementById("t"), null, "fragment target exists in the embedded document");
+  return element;
+}
+
+for (const tagName of ["object", "iframe"]) {
+  promise_test(async t => {
+    const element = await loadEmbeddedHTML(tagName);
+    t.add_cleanup(() => { element.remove(); window.scrollTo(0, 0); });
+    assert_approx_equals(window.scrollY, element.offsetTop, 5, "parent document scroll position");
+  }, `Scrolling to the fragment of an HTML document in an <${tagName}> scrolls the parent document to the <${tagName}>`);
+}
+</script>

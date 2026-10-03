@@ -3309,6 +3309,9 @@ bool LocalFrameView::scrollToAnchorFragment(StringView fragmentIdentifier)
             // If the fragment addressed no SVG view and anchorElement is null, no other scrolling will be possible.
             if (!anchorElement)
                 return false;
+            // Match Chrome: a fragment never scrolls an SVG document in a subframe, so it doesn't scroll the embedding document either.
+            if (!m_frame->isMainFrame())
+                return true;
         }
     } else if (!anchorElement && !(fragmentIdentifier.isEmpty() || equalLettersIgnoringASCIICase(fragmentIdentifier, "top"_s))) {
         // Implement the rule that "" and "top" both mean top of page as in other browsers.
