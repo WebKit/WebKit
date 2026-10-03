@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+<mtext><video xmlns="http://www.w3.org/1999/xhtml" id="video" controls="controls" width="640" height="360"></video></mtext>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript"><![CDATA[
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const HTMLNamespace = "http://www.w3.org/1999/xhtml";
+
+function log(message)
+{
+    console.log(message);
+}
+
+function shouldBe(description, actual, expected)
+{
+    if (actual === expected)
+        log(`PASS: ${description} is ${expected}.`);
+    else
+        log(`FAIL: ${description} is ${actual}, expected ${expected}.`);
+}
+
+function shouldBeTrue(description, actual)
+{
+    log(`${actual === true ? "PASS" : "FAIL"}: ${description}.`);
+}
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+    log("Checking the media controls of a <video> element in a MathML document.");
+
+    // The document is not an HTML or XHTML document, so document.createElement() creates
+    // elements in the null namespace. The controls must not rely on it.
+    shouldBe("document.createElement(\"div\").namespaceURI", document.createElement("div").namespaceURI, null);
+
+    const shadowRoot = internals.shadowRoot(document.getElementById("video"));
+
+    const styleElement = shadowRoot.firstElementChild;
+    shouldBe("the first shadow root child", styleElement.localName, "style");
+    shouldBe("the stylesheet namespace", styleElement.namespaceURI, HTMLNamespace);
+    shouldBeTrue("the stylesheet is applied", styleElement.sheet !== null);
+
+    const container = shadowRoot.lastElementChild;
+    shouldBe("the controls container element", container.localName, "div");
+    shouldBe("the controls container namespace", container.namespaceURI, HTMLNamespace);
+    shouldBeTrue("the controls container is an HTMLElement", container instanceof HTMLElement);
+    shouldBe("typeof the controls container offsetWidth", typeof container.offsetWidth, "number");
+    shouldBe("typeof the controls container offsetHeight", typeof container.offsetHeight, "number");
+
+    const descendants = Array.from(container.querySelectorAll("*"));
+    shouldBeTrue("the controls container has descendants", descendants.length > 0);
+    shouldBe("the number of controls elements outside of the HTML namespace", descendants.filter(element => element.namespaceURI !== HTMLNamespace).length, 0);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}));
+]]></script>
+</math>
