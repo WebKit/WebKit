@@ -68,6 +68,7 @@
 
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
+#import "Helpers/mac/LocalEventMonitorSwizzler.h"
 #import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/_WKHitTestResult.h>
@@ -85,6 +86,18 @@
     RetainPtr convertedAttributes = adoptNS([attributes mutableCopy]);
     [convertedAttributes setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
     return convertedAttributes.autorelease();
+}
+@end
+
+@interface SiteIsolationMouseMoveOverElementDelegate : NSObject <WKUIDelegatePrivate>
+@property (nonatomic, copy) void (^mouseDidMoveOverElement)(_WKHitTestResult *, NSEventModifierFlags);
+@end
+
+@implementation SiteIsolationMouseMoveOverElementDelegate
+- (void)_webView:(WKWebView *)webView mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(NSEventModifierFlags)flags userInfo:(id<NSSecureCoding>)userInfo
+{
+    if (_mouseDidMoveOverElement)
+        _mouseDidMoveOverElement(hitTestResult, flags);
 }
 @end
 #endif // PLATFORM(MAC)
@@ -1746,5 +1759,59 @@ TEST(SiteIsolation, CrossSiteIFrameReceivesOrientationChangeEvent)
 }
 
 #endif // ENABLE(ORIENTATION_EVENTS) && PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+
+// Pressing or releasing a modifier key while the mouse is still re-runs the hover hit test. Over a cross-origin
+// iframe, it must report what's under the mouse in the iframe, not the main frame's <iframe> element.
+TEST(SiteIsolation, ModifierKeyChangeOverLinkInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframeAtTopLeft } },
+        { "/iframe"_s, { "<body style='margin: 0'><a href='https://webkit.org/destination' style='display: block; width: 400px; height: 300px;'>link label</a></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto linkLocation = NSMakePoint(200, 150);
+    LocalEventMonitorSwizzler localMonitorSwizzler;
+    // The flags-changed monitor takes the mouse location from the window, which a test can't move.
+    InstanceMethodSwizzler mouseLocationSwizzler {
+        NSWindow.class,
+        @selector(mouseLocationOutsideOfEventStream),
+        imp_implementationWithBlock(^{
+            return linkLocation;
+        })
+    };
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 300));
+    struct {
+        RetainPtr<_WKHitTestResult> hitTestResult;
+        NSEventModifierFlags flags { 0 };
+    } lastHover;
+    auto* lastHoverPointer = &lastHover;
+    RetainPtr uiDelegate = adoptNS([SiteIsolationMouseMoveOverElementDelegate new]);
+    [uiDelegate setMouseDidMoveOverElement:^(_WKHitTestResult *hitTestResult, NSEventModifierFlags flags) {
+        lastHoverPointer->hitTestResult = hitTestResult;
+        lastHoverPointer->flags = flags;
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView _createFlagsChangedEventMonitorForTesting];
+
+    [webView mouseMoveToPoint:linkLocation withFlags:0];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[lastHover.hitTestResult absoluteLinkURL].absoluteString isEqualToString:@"https://webkit.org/destination"];
+    }));
+
+    lastHover.hitTestResult = nil;
+    localMonitorSwizzler.sendEventToMonitor([NSEvent mouseEventWithType:NSEventTypeMouseMoved location:linkLocation modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:[[webView hostWindow] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0]);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return lastHover.hitTestResult && (lastHover.flags & NSEventModifierFlagCommand);
+    }));
+    EXPECT_WK_STREQ("https://webkit.org/destination", [lastHover.hitTestResult absoluteLinkURL].absoluteString);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

@@ -63,6 +63,7 @@ Helpers/cocoa/PDFTestHelpers.mm @nonARC
 Helpers/cocoa/SiteIsolationTestUtilities.mm @nonARC
 Helpers/cocoa/SiteIsolationUtilities.mm @nonARC
 Helpers/ios/IOSMouseEventTestHarness.mm @nonARC
+Helpers/mac/LocalEventMonitorSwizzler.mm @nonARC
 Helpers/mac/WKWebViewForTestingImmediateActions.mm @nonARC
 
 Resources/cocoa/MessagePortSecurity.mm @nonARC
