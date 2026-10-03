@@ -1538,6 +1538,7 @@ LayoutUnit RenderBox::minContentLogicalWidthContribution() const
 {
     if (hasInvalidContentLogicalWidths()) {
         SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
         const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
     }
     return m_minContentLogicalWidthContribution;
@@ -1547,6 +1548,7 @@ LayoutUnit RenderBox::maxContentLogicalWidthContribution() const
 {
     if (hasInvalidContentLogicalWidths()) {
         SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
         const_cast<RenderBox&>(*this).computeIntrinsicLogicalWidthContributions();
     }
     return m_maxContentLogicalWidthContribution;
@@ -3043,8 +3045,12 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
         return adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()));
     }
 
-    if (logicalWidth.isIntrinsicOrStretch() || logicalWidth.isMinIntrinsic())
+    if (logicalWidth.isStretch())
         return computeSizingKeywordLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth());
+    if (logicalWidth.isIntrinsic() || logicalWidth.isMinIntrinsic()) {
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
+        return computeSizingKeywordLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth());
+    }
 
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
@@ -4420,6 +4426,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         auto availableSpace = inlineConstraints.containingSize();
         availableSpace -= inlineConstraints.insetBeforeValue();
         availableSpace -= inlineConstraints.insetAfterValue();
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
         return std::max(0_lu, computeSizingKeywordLogicalWidthUsing(keyword, availableSpace, inlineConstraints.bordersPlusPadding()) - inlineConstraints.bordersPlusPadding());
     };
 
@@ -5472,13 +5479,16 @@ std::pair<LayoutUnit, LayoutUnit> RenderBox::computeMinMaxLogicalWidthFromAspect
     if (!aspectRatio)
         return { transferredMinSize, transferredMaxSize };
 
-    if (style().logicalMinHeight().isSpecified() || style().logicalMinHeight().isStretch()) {
-        if (LayoutUnit blockMinSize = constrainLogicalHeightByMinMax(LayoutUnit(), std::nullopt); blockMinSize > LayoutUnit())
-            transferredMinSize = inlineSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), *aspectRatio, style().boxSizingForAspectRatio(), blockMinSize, style().aspectRatio(), isRenderReplaced());
-    }
-    if (style().logicalMaxHeight().isSpecified() || style().logicalMaxHeight().isStretch()) {
-        if (LayoutUnit blockMaxSize = constrainLogicalHeightByMinMax(LayoutUnit::max(), std::nullopt); blockMaxSize != LayoutUnit::max())
-            transferredMaxSize = inlineSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), *aspectRatio, style().boxSizingForAspectRatio(), blockMaxSize, style().aspectRatio(), isRenderReplaced());
+    // Transfer the block axis's own min/max-height only (css-sizing-4 aspect-ratio-size-transfers). constrainLogicalHeightByMinMax()
+    // would also apply the min/max-width already transferred to the block axis, sending it back to the inline axis it came from.
+    auto& minHeight = style().logicalMinHeight();
+    auto& maxHeight = style().logicalMaxHeight();
+    auto blockMinSize = minHeight.isSpecified() || minHeight.isStretch() ? computeLogicalHeightUsing(minHeight, { }).value_or(0_lu) : 0_lu;
+    if (blockMinSize)
+        transferredMinSize = inlineSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), *aspectRatio, style().boxSizingForAspectRatio(), blockMinSize, style().aspectRatio(), isRenderReplaced());
+    if (maxHeight.isSpecified() || maxHeight.isStretch()) {
+        if (auto blockMaxSize = computeLogicalHeightUsing(maxHeight, { }))
+            transferredMaxSize = inlineSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), *aspectRatio, style().boxSizingForAspectRatio(), std::max(*blockMaxSize, blockMinSize), style().aspectRatio(), isRenderReplaced());
     }
     // Spec says the transferred max size should be floored by the transferred min size
     transferredMaxSize = std::max(transferredMinSize, transferredMaxSize);
