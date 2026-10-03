@@ -71,7 +71,7 @@ private:
     template<typename X> friend class InlineWeakPtr;
 
     T* m_ptr;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 template<typename T>
 T* InlineWeakPtr<T>::get() const LIFETIME_BOUND

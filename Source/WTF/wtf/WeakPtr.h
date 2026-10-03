@@ -232,7 +232,7 @@ private:
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     bool m_shouldEnableAssertions { true };
 #endif
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 template<typename T, typename U, typename WeakPtrImpl> inline WeakPtrImpl* weak_ptr_impl_cast(WeakPtrImpl* impl)
 {

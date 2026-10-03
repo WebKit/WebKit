@@ -82,7 +82,7 @@ private:
     [[nodiscard]] T& leakWeak();
 
     T* m_ptr;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 template<typename T>
 T& InlineWeakRef<T>::get() const LIFETIME_BOUND

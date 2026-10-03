@@ -206,7 +206,7 @@ private:
     
     VectorType m_ranges;
     bool m_isCompact { true };
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 } // namespace WTF
 

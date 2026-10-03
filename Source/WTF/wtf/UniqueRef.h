@@ -66,7 +66,7 @@ UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T>&& ptr)
 }
 
 template<typename T>
-class SWIFT_ESCAPABLE UniqueRef {
+class SWIFT_SELF_CONTAINED UniqueRef {
 public:
     template <typename U>
     UniqueRef(UniqueRef<U>&& other)

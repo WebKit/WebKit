@@ -76,7 +76,7 @@ using VectorUInt8 = Vector<uint8_t>;
 // the majority of Swift APIs.)
 // Meanwhile, users need to ensure that the actual data in the span or vector
 // does not change during a period when Swift has access.
-class SWIFT_ESCAPABLE EscapableByteSpan {
+class SWIFT_SELF_CONTAINED EscapableByteSpan {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     explicit EscapableByteSpan(SpanUInt8 bytes LIFETIME_BOUND)

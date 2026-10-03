@@ -115,7 +115,7 @@ private:
     int m_pageNumber { 0 };
 
     mutable std::optional<IntRect> m_cachedEnclosingRect;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const SelectionGeometry&);
 

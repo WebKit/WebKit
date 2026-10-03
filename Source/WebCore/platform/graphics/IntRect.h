@@ -228,7 +228,7 @@ public:
 private:
     IntPoint m_location;
     IntSize m_size;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 inline IntRect intersection(const IntRect& a, const IntRect& b)
 {

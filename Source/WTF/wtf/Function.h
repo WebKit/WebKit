@@ -142,7 +142,7 @@ private:
     friend Function adopt<Out, In...>(Impl*);
 
     std::unique_ptr<Impl> m_callableWrapper;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 template<typename Out, typename... In> Function<Out(In...)> adopt(Detail::CallableWrapperBase<Out, In...>* impl)
 {

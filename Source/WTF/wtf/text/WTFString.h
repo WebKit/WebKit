@@ -336,7 +336,7 @@ private:
     WTF_EXPORT_PRIVATE explicit String(std::span<const char> characters);
 
     RefPtr<StringImpl> m_impl;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 static_assert(sizeof(String) == sizeof(void*), "String should effectively be a pointer to a StringImpl, and efficient to pass by value");
 

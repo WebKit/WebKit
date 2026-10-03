@@ -156,7 +156,7 @@ private:
     RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
 
     typename PtrTraits::StorageType m_ptr;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 // Template deduction guide.
 template<typename X, typename Y> RefPtr(Ref<X, Y>&&) -> RefPtr<X, Y, DefaultRefDerefTraits<X>>;

@@ -155,13 +155,13 @@ private:
     Vector<AtomString> m_documentState;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refFrameState, derefFrameState);
 
-// FIXME(rdar://171785683): see if this SWIFT_ESCAPABLE can be avoided
+// FIXME(rdar://171785683): see if this SWIFT_SELF_CONTAINED can be avoided
 struct BackForwardListItemState {
     Ref<FrameState> frameState;
     std::optional<WebCore::FrameIdentifier> navigatedFrameID;
 
     bool isEqualForTesting(const BackForwardListItemState&) const;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 using VectorBackForwardListItemState = Vector<BackForwardListItemState>;
 

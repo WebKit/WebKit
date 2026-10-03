@@ -565,7 +565,7 @@ private:
     template<typename> friend class ThreadSafeWeakHashSet;
 
     ThreadSafeWeakPtrStorage m_storage;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 template<class T> ThreadSafeWeakPtr(const T&) -> ThreadSafeWeakPtr<T>;
 template<class T> ThreadSafeWeakPtr(const T*) -> ThreadSafeWeakPtr<T>;
@@ -648,7 +648,7 @@ private:
     template<typename> friend class ThreadSafeWeakHashSet;
 
     ThreadSafeWeakPtrStorage m_storage;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 template<class T> ThreadSafeWeakRef(const T&) -> ThreadSafeWeakRef<T>;
 

@@ -130,7 +130,7 @@ private:
     void copyBufferIfNeeded();
     void init(std::span<const char>);
     RefPtr<CStringBuffer> m_buffer;
-} SWIFT_ESCAPABLE;
+} SWIFT_SELF_CONTAINED;
 
 // An ASCII literal is valid in every encoding. Two CStringBases cannot be compared: both would have been
 // sliced from typed strings, and comparing them would ignore their encodings.

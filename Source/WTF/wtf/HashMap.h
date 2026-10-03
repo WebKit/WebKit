@@ -263,7 +263,7 @@ private:
     }
 
     HashTableType m_impl;
-} SWIFT_ESCAPABLE_IF(KeyArg, MappedArg) SWIFT_COPYABLE_IF(KeyArg, MappedArg);
+} SWIFT_SELF_CONTAINED_IF(KeyArg, MappedArg) SWIFT_COPYABLE_IF(KeyArg, MappedArg);
 
 template<typename ValueTraits, typename HashFunctions>
 struct HashMapTranslator {

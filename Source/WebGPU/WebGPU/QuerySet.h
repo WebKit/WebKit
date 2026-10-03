@@ -54,7 +54,7 @@ public:
     struct CounterSampleBuffer {
         id<MTLCounterSampleBuffer> buffer { nil }; // Safety: ARC retains this pointer
         uint32_t offset { 0 };
-    } SWIFT_ESCAPABLE;
+    } SWIFT_SELF_CONTAINED;
 
     static Ref<QuerySet> create(id<MTLBuffer> visibilityBuffer, uint32_t count, WGPUQueryType type, Device& device)
     {

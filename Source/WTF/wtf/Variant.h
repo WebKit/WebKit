@@ -2026,7 +2026,7 @@ IGNORE_GCC_WARNINGS_END
 
     friend struct detail::access::variant;
     friend struct detail::visitation::variant;
-  } SWIFT_ESCAPABLE_IF(Ts) SWIFT_COPYABLE_IF(Ts);
+  } SWIFT_SELF_CONTAINED_IF(Ts) SWIFT_COPYABLE_IF(Ts);
 
   template <std::size_t I, typename... Ts>
   [[nodiscard]] inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {
