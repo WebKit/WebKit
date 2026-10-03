@@ -568,7 +568,7 @@ RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef de
     });
 }
 
-RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef description)
+RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef description, std::optional<uint8_t> reorderQueueMaxSize)
 {
     // This method currently only works for compressed content.
     auto mediaType = PAL::CMFormatDescriptionGetMediaType(description);
@@ -606,6 +606,7 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
             .fieldCount = fieldCountFromFormatDescription(description),
             .fieldDetail = fieldDetailFromFormatDescription(description),
             .extensionAtoms = WTF::move(extensionAtoms),
+            .reorderQueueMaxSize = reorderQueueMaxSize,
 #if PLATFORM(VISION)
             .immersiveVideoMetadata = immersiveVideoMetadataFromFormatDescription(description)
 #endif

@@ -718,6 +718,26 @@ Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfig
     return createVideoInfoFromVPCodecConfigurationRecord(record, size, size, colorSpaceOverride);
 }
 
+RefPtr<VideoInfo> createVideoInfoFromVP9Stream(std::span<const uint8_t> data, uint16_t width, uint16_t height)
+{
+    auto parsedRecord = vpCodecConfigurationRecordFromVPXByteStream(VPXCodec::Vp9, data);
+    if (!parsedRecord)
+        return { };
+
+    if (width)
+        parsedRecord->frameWidth = width;
+    if (height)
+        parsedRecord->frameHeight = height;
+
+    if (parsedRecord->colorPrimaries == VPConfigurationColorPrimaries::Unspecified && parsedRecord->transferCharacteristics == VPConfigurationTransferCharacteristics::Unspecified && parsedRecord->matrixCoefficients == VPConfigurationMatrixCoefficients::Unspecified) {
+        parsedRecord->colorPrimaries = VPConfigurationColorPrimaries::BT_709_6;
+        parsedRecord->transferCharacteristics = VPConfigurationTransferCharacteristics::BT_709_6;
+        parsedRecord->matrixCoefficients = VPConfigurationMatrixCoefficients::BT_709_6;
+    }
+
+    return createVideoInfoFromVPCodecConfigurationRecord(*parsedRecord);
+}
+
 }
 
 #endif // PLATFORM(COCOA)

@@ -28,10 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
-#import "GPUVideoDecoderVTBAV1.h"
-#import "GPUVideoDecoderVTBH264.h"
-#import "GPUVideoDecoderVTBH265.h"
-#import "GPUVideoDecoderVTBVP9.h"
+#import "GPUVideoDecoderVTB.h"
 #import <WebCore/CMUtilities.h>
 #import <WebCore/LibWebRTCMacros.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -60,8 +57,8 @@ public:
 
 private:
     void flush() final { webrtc::flushLocalDecoder(m_decoder); }
-    void setFormat(std::span<const uint8_t> data, uint16_t width, uint16_t height) final { webrtc::setDecodingFormat(m_decoder, data.data(), data.size(), width, height); }
-    int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t> data) final { return webrtc::decodeFrame(m_decoder, timeStamp, data.data(), data.size()); }
+    void setFormat(std::span<const uint8_t> data, uint16_t width, uint16_t height, RefPtr<VideoInfo>&&) final { webrtc::setDecodingFormat(m_decoder, data.data(), data.size(), width, height); }
+    int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t> data, RefPtr<VideoInfo>&&) final { return webrtc::decodeFrame(m_decoder, timeStamp, data.data(), data.size()); }
     void setFrameSize(uint16_t width, uint16_t height) final { webrtc::setDecoderFrameSize(m_decoder, width, height); }
 
     webrtc::LocalDecoder m_decoder;
@@ -81,18 +78,7 @@ std::unique_ptr<GPUVideoDecoder> GPUVideoDecoder::create(VideoCodecType decoderT
         }
     }
 
-    switch (decoderType) {
-    case VideoCodecType::H264:
-        return makeUnique<GPUVideoDecoderVTBH264>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
-    case VideoCodecType::H265:
-        return makeUnique<GPUVideoDecoderVTBH265>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
-    case VideoCodecType::VP9:
-        return makeUnique<GPUVideoDecoderVTBVP9>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
-    case VideoCodecType::AV1:
-        return makeUnique<GPUVideoDecoderVTBAV1>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return makeUnique<GPUVideoDecoderVTB>(callback, WTF::move(queue), WTF::move(colorSpaceOverride));
 }
 
 void GPUVideoDecoder::setColorSpaceOverride(std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)

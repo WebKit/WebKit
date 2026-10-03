@@ -29,6 +29,7 @@
 
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoCodecType.h>
+#include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
 
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
@@ -40,6 +41,8 @@ using LocalDecoder = void*;
 
 namespace WebCore {
 
+class VideoInfo;
+
 class GPUVideoDecoder {
 public:
     virtual ~GPUVideoDecoder() = default;
@@ -47,8 +50,8 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<GPUVideoDecoder> create(VideoCodecType, bool useWebCoreDecoder, GPUVideoDecoderCallback, Ref<WorkQueue>&&, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
 
     virtual void flush() = 0;
-    virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) = 0;
-    virtual int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t>) = 0;
+    virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height, RefPtr<VideoInfo>&&) = 0;
+    virtual int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t>, RefPtr<VideoInfo>&&) = 0;
     virtual void setFrameSize(uint16_t width, uint16_t height) = 0;
 
     WEBCORE_EXPORT void setColorSpaceOverride(std::optional<PlatformVideoColorSpace>&&);
