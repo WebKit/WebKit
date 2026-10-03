@@ -222,6 +222,10 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::slider-thumb");
         case CSSManager.PseudoSelectorNames.SliderTrack:
             return WI.unlocalizedString("::slider-track");
+        case CSSManager.PseudoSelectorNames.Placeholder:
+            return WI.unlocalizedString("::placeholder");
+        case CSSManager.PseudoSelectorNames.FileSelectorButton:
+            return WI.unlocalizedString("::file-selector-button");
         case CSSManager.PseudoSelectorNames.ViewTransition:
             return WI.unlocalizedString("::view-transition");
         case CSSManager.PseudoSelectorNames.ViewTransitionGroup:
@@ -900,12 +904,14 @@ WI.CSSManager.PseudoSelectorNames = {
     Before: "before",
     Backdrop: "backdrop",
     Checkmark: "checkmark",
+    FileSelectorButton: "file-selector-button",
     FirstLetter: "first-letter",
     FirstLine: "first-line",
     Highlight: "highlight",
     GrammarError: "grammar-error",
     Marker: "marker",
     PickerIcon: "picker-icon",
+    Placeholder: "placeholder",
     Selection: "selection",
     SpellingError: "spelling-error",
     TargetText: "target-text",
