@@ -90,7 +90,8 @@ WI.FileUtilities = class FileUtilities {
         }
 
         let isFileVariantsMode = saveMode === WI.FileUtilities.SaveMode.FileVariants;
-        if (isFileVariantsMode)
+        let isMultipleFilesMode = saveMode === WI.FileUtilities.SaveMode.MultipleFiles;
+        if (isFileVariantsMode || isMultipleFilesMode)
             forceSaveAs = true;
 
         if (typeof fileVariants.customSaveHandler === "function") {
@@ -98,7 +99,7 @@ WI.FileUtilities = class FileUtilities {
             return;
         }
 
-        if (!isFileVariantsMode && !Array.isArray(fileVariants))
+        if (!isFileVariantsMode && !isMultipleFilesMode && !Array.isArray(fileVariants))
             fileVariants = [fileVariants];
 
         console.assert(Array.isArray(fileVariants), fileVariants);
@@ -163,9 +164,10 @@ WI.FileUtilities = class FileUtilities {
 
         let saveDatas = await Promise.all(promises);
 
-        console.assert(isFileVariantsMode || saveDatas.length === 1, saveDatas);
+        console.assert(isFileVariantsMode || isMultipleFilesMode || saveDatas.length === 1, saveDatas);
         console.assert(!isFileVariantsMode || new Set(saveDatas.map((saveData) => saveData.displayType)).size === saveDatas.length, saveDatas);
         console.assert(!isFileVariantsMode || new Set(saveDatas.map((saveData) => WI.urlWithoutExtension(saveData.url))).size === 1, saveDatas);
+        console.assert(!isMultipleFilesMode || new Set(saveDatas.map((saveData) => WI.urlWithoutExtension(saveData.url))).size === saveDatas.length, saveDatas);
 
         InspectorFrontendHost.save(saveDatas, !!forceSaveAs);
     }
@@ -298,4 +300,5 @@ WI.FileUtilities = class FileUtilities {
 WI.FileUtilities.SaveMode = {
     SingleFile: "single-file",
     FileVariants: "file-variants",
+    MultipleFiles: "multiple-files",
 };

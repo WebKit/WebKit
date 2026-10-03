@@ -40,6 +40,7 @@ bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
         return true;
 
     case InspectorFrontendClient::SaveMode::FileVariants:
+    case InspectorFrontendClient::SaveMode::MultipleFiles:
         return false;
     }
 
