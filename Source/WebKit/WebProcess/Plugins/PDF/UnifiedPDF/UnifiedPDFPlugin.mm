@@ -3491,7 +3491,8 @@ void UnifiedPDFPlugin::continueAutoscroll()
 #if PLATFORM(MAC)
     if (RefPtr page = this->page()) {
         auto frame = toUserSpaceForPrimaryScreen(screenRectForDisplay(page->chrome().displayID()));
-        auto screenPoint = toUserSpaceForPrimaryScreen(page->chrome().rootViewToScreen(convertFromPluginToRootView(lastKnownMousePositionInPluginSpace)));
+        auto mousePositionInMainFrameView = convertFromRootViewToMainFrameView(FloatPoint { convertFromPluginToRootView(lastKnownMousePositionInPluginSpace) });
+        auto screenPoint = toUserSpaceForPrimaryScreen(page->chrome().rootViewToScreen(roundedIntPoint(mousePositionInMainFrameView)));
         auto scrollAdjustmentBasedOnScreenBoundaries = EventHandler::autoscrollAdjustmentFactorForScreenBoundaries(screenPoint, frame);
         scrollDelta += scrollAdjustmentBasedOnScreenBoundaries;
     }
@@ -4022,10 +4023,11 @@ IntPoint UnifiedPDFPlugin::convertFromPluginToScreenForAccessibility(const IntPo
     Ref protectedThis { *this };
     return WebCore::Accessibility::retrieveValueFromMainThread<IntPoint>([&protectedThis, pointInPluginCoordinate] () -> IntPoint {
         auto pointInRootView = protectedThis->convertFromPluginToRootView(pointInPluginCoordinate);
+        auto pointInMainFrameView = protectedThis->convertFromRootViewToMainFrameView(FloatPoint { pointInRootView });
         RefPtr page = protectedThis->page();
         if (!page)
             return { };
-        return page->chrome().rootViewToScreen(IntPoint(pointInRootView));
+        return page->chrome().rootViewToScreen(roundedIntPoint(pointInMainFrameView));
     });
 }
 
@@ -4035,11 +4037,11 @@ FloatRect UnifiedPDFPlugin::convertFromPDFPageToScreenForAccessibility(const Flo
 {
     Ref protectedThis { *this };
     return WebCore::Accessibility::retrieveValueFromMainThread<FloatRect>([&protectedThis, rectInPageCoordinates, pageIndex] -> FloatRect {
-        auto rectInPluginCoordinates = protectedThis->pageToRootView(rectInPageCoordinates, pageIndex);
+        auto rectInMainFrameView = protectedThis->convertFromRootViewToMainFrameView(protectedThis->pageToRootView(rectInPageCoordinates, pageIndex));
         RefPtr page = protectedThis->page();
         if (!page)
             return { };
-        return page->chrome().rootViewToScreen(enclosingIntRect(rectInPluginCoordinates));
+        return page->chrome().rootViewToScreen(enclosingIntRect(rectInMainFrameView));
     });
 }
 
@@ -4064,7 +4066,8 @@ id UnifiedPDFPlugin::accessibilityHitTestInPageForIOS(WebCore::FloatPoint point)
     if (!corePage)
         return nil;
 
-    auto [page, pointInPage] = rootViewToPage(corePage->chrome().screenToRootView(WebCore::IntPoint(point)));
+    auto pointInMainFrameView = corePage->chrome().screenToRootView(WebCore::IntPoint(point));
+    auto [page, pointInPage] = rootViewToPage(convertFromMainFrameViewToRootView(pointInMainFrameView));
     if ([page respondsToSelector:@selector(accessibilityHitTest:withPlugin:)])
         return [page accessibilityHitTest:point withPlugin:m_accessibilityDocumentObject.get()];
     return nil;

@@ -1579,6 +1579,7 @@ enum ContentsFormat {
     undefined unlockPDFDocumentForTesting(Element element, DOMString password);
     boolean sendEditingCommandToPDFForTesting(Element element, DOMString commandName, optional DOMString argument = "");
     sequence<DOMString> pdfContextMenuItemTitlesForTesting(Element element, long x, long y);
+    DOMRect pdfBoundsOnScreenForTesting(Element element);
 
     readonly attribute DOMString defaultSpatialTrackingLabel;
 

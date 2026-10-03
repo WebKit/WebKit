@@ -747,6 +747,15 @@ FloatRect PDFPluginBase::convertFromRootViewToMainFrameView(FloatRect rect) cons
     return rootView->convertToRootViewAcrossIsolatedFrames(rect);
 }
 
+FloatPoint PDFPluginBase::convertFromMainFrameViewToRootView(FloatPoint point) const
+{
+    RefPtr view = rootFrameView();
+    if (!view)
+        return point;
+
+    return view->convertFromRootViewAcrossIsolatedFrames(point);
+}
+
 #if ENABLE(PDF_HUD)
 bool PDFPluginBase::shouldShowHUD() const
 {
@@ -809,7 +818,7 @@ IntRect PDFPluginBase::boundsOnScreen() const
         RefPtr page = protectedThis->page();
         if (!page)
             return { };
-        return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));
+        return page->chrome().rootViewToScreen(enclosingIntRect(protectedThis->convertFromRootViewToMainFrameView(rectInRootViewCoordinates)));
     });
 }
 

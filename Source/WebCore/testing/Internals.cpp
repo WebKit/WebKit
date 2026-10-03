@@ -8827,6 +8827,19 @@ Vector<String> Internals::pdfContextMenuItemTitlesForTesting(Element& element, i
     return pluginViewBase->pdfContextMenuItemTitlesForTesting({ x, y });
 }
 
+Ref<DOMRect> Internals::pdfBoundsOnScreenForTesting(Element& element) const
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return DOMRect::create();
+
+    RefPtr pluginViewBase = pluginElement->pluginWidget();
+    if (!pluginViewBase)
+        return DOMRect::create();
+
+    return DOMRect::create(pluginViewBase->pdfBoundsOnScreenForTesting());
+}
+
 Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Element& element) const
 {
     Vector<PDFAnnotationRect> annotationRects;

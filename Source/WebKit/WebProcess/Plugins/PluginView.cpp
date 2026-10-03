@@ -1163,6 +1163,11 @@ Vector<String> PluginView::pdfContextMenuItemTitlesForTesting(const WebCore::Int
     return m_plugin->contextMenuItemTitlesForTesting(pointInRootView);
 }
 
+WebCore::IntRect PluginView::pdfBoundsOnScreenForTesting() const
+{
+    return m_plugin->boundsOnScreen();
+}
+
 void PluginView::registerPDFTestCallback(RefPtr<VoidCallback>&& callback)
 {
     m_plugin->registerPDFTest(WTF::move(callback));
