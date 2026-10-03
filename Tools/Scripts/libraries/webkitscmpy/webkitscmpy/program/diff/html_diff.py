@@ -164,6 +164,97 @@ pre, .text {
     }
 }
 
+body.moves-on .line.moved {
+    cursor: pointer;
+}
+body.moves-on .line.moved.add,
+body.moves-on .line.moved .text.add {
+    background-color: #dbeafe;
+}
+body.moves-on .line.moved.remove,
+body.moves-on .line.moved .text.remove {
+    background-color: #ede9fe;
+}
+body.moves-on .line.moved .text.add {
+    box-shadow: inset 3px 0 0 #3b82f6;
+}
+body.moves-on .line.moved .text.remove {
+    box-shadow: inset 3px 0 0 #8b5cf6;
+}
+body.moves-on .line.moved .text[data-move-label]::after {
+    color: #57606a;
+    content: '  ' attr(data-move-label);
+    font-style: italic;
+}
+@media (prefers-color-scheme: dark) {
+    body.moves-on .line.moved.add,
+    body.moves-on .line.moved .text.add {
+        background-color: #16304d;
+    }
+    body.moves-on .line.moved.remove,
+    body.moves-on .line.moved .text.remove {
+        background-color: #2c2350;
+    }
+    body.moves-on .line.moved .text[data-move-label]::after {
+        color: #848d97;
+    }
+}
+
+@keyframes move-flash {
+    from { background-color: #ffd54a; }
+    to { background-color: transparent; }
+}
+.line.move-flash .text {
+    animation: move-flash 1.2s ease-out;
+}
+
+body.whitespace-hidden .line.whitespace-change.remove {
+    display: none;
+}
+body.whitespace-hidden .line.whitespace-change.add,
+body.whitespace-hidden .line.whitespace-change .text.add {
+    background-color: transparent;
+}
+
+#diff-controls {
+    align-items: center;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12px;
+    gap: 1.5em;
+    margin: 0.5em 0;
+    padding: 0.5em 0.75em;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+#diff-controls .group {
+    align-items: center;
+    display: flex;
+    gap: 0.5em;
+}
+#diff-controls .group[hidden] {
+    display: none;
+}
+#diff-controls[hidden] {
+    display: none;
+}
+#diff-controls button {
+    font: inherit;
+}
+#diff-controls .summary {
+    color: #57606a;
+}
+@media (prefers-color-scheme: dark) {
+    #diff-controls .summary {
+        color: #848d97;
+    }
+}
+
 .context {
     border-right: none;
     color: #57606a;
@@ -202,8 +293,255 @@ pre, .text {
 </style>
 </head>
 <body>
+<div id="diff-controls" hidden>
+    <span class="group" id="move-group" hidden>
+        <label><input type="checkbox" id="move-toggle" checked> Highlight moved lines</label>
+        <span class="summary" id="move-summary"></span>
+        <button type="button" id="move-previous" title="Jump to the previous moved block">&#x2191;</button>
+        <button type="button" id="move-next" title="Jump to the next moved block">&#x2193;</button>
+    </span>
+    <span class="group" id="whitespace-group" hidden>
+        <label><input type="checkbox" id="whitespace-toggle"> Hide whitespace-only changes</label>
+        <span class="summary" id="whitespace-summary"></span>
+    </span>
+</div>
 '''
-    TAIL = '</body>\n</html>\n'
+    # Moved-line and whitespace-only-change detection run in the browser because the document is
+    # streamed out as the diff is parsed, but neither can be identified from a single line.
+    SCRIPT = '''<script>
+(function() {
+    'use strict';
+
+    // A run of lines is only called "moved" if it is at least this many lines long and contains a
+    // line which is long enough, and rare enough in the diff, to be distinctive. Boilerplate like
+    // license headers and test harness scaffolding repeats all over a large diff, and matching it
+    // says nothing about where code went.
+    var MINIMUM_BLOCK_SIZE = 3;
+    var MINIMUM_SUBSTANTIVE_LENGTH = 8;
+    var MAXIMUM_REPETITIONS = 2;
+    // Bounds the work spent on lines which are repeated many times in a diff.
+    var MAXIMUM_CANDIDATES = 64;
+
+    var added = [];
+    var removed = [];
+    document.querySelectorAll('.line.add, .line.remove').forEach(function(element) {
+        var text = element.querySelector('.text');
+        var gutter = element.querySelector('[data-line]');
+        if (!text || !gutter)
+            return;
+        // Indentation is ignored so that code moved into or out of a scope still matches.
+        (element.classList.contains('add') ? added : removed).push({
+            element: element,
+            text: text,
+            key: text.textContent.trim(),
+            section: element.closest('.section'),
+            position: parseInt(gutter.getAttribute('data-line'), 10),
+        });
+    });
+
+    var candidatesByKey = new Map();
+    added.forEach(function(candidate, index) {
+        if (!candidate.key)
+            return;
+        var candidates = candidatesByKey.get(candidate.key);
+        if (!candidates)
+            candidatesByKey.set(candidate.key, candidates = []);
+        candidates.push(index);
+    });
+
+    // Neighbors in these lists are only part of the same run if they were also neighbors in the
+    // file they came from: lines from other hunks, other files or across a context line are not.
+    function follows(lines, index) {
+        return lines[index].section === lines[index - 1].section && lines[index].position === lines[index - 1].position + 1;
+    }
+
+    // A block deleted and re-added at the lines it already occupied was edited in place (its
+    // indentation changed, say), not moved.
+    function overlaps(source, destination, size) {
+        if (source.section !== destination.section)
+            return false;
+        return source.position < destination.position + size && destination.position < source.position + size;
+    }
+
+    function describe(element) {
+        var file = element.closest('.file');
+        var heading = file ? file.querySelector('h1') : null;
+        var gutter = element.querySelector('[data-line]');
+        var name = heading ? heading.textContent.trim() : null;
+        var number = gutter ? gutter.getAttribute('data-line') : null;
+        if (name && number)
+            return name + ':' + number;
+        return name || (number ? 'line ' + number : 'elsewhere');
+    }
+
+    var claimed = added.map(function() { return false; });
+    var blocks = [];
+
+    for (var index = 0; index < removed.length;) {
+        var candidates = candidatesByKey.get(removed[index].key) || [];
+        var bestStart = -1;
+        var bestSize = 0;
+
+        for (var candidate = 0; candidate < candidates.length && candidate < MAXIMUM_CANDIDATES; ++candidate) {
+            var start = candidates[candidate];
+            var size = 0;
+            while (index + size < removed.length && start + size < added.length
+                && !claimed[start + size]
+                && removed[index + size].key === added[start + size].key
+                && (!size || (follows(removed, index + size) && follows(added, start + size))))
+                ++size;
+            if (size > bestSize) {
+                bestSize = size;
+                bestStart = start;
+            }
+        }
+
+        var distinctive = false;
+        for (var offset = 0; offset < bestSize; ++offset) {
+            var key = removed[index + offset].key;
+            distinctive = distinctive || (key.length >= MINIMUM_SUBSTANTIVE_LENGTH && candidatesByKey.get(key).length <= MAXIMUM_REPETITIONS);
+        }
+        if (bestSize < MINIMUM_BLOCK_SIZE || !distinctive || overlaps(removed[index], added[bestStart], bestSize)) {
+            ++index;
+            continue;
+        }
+
+        var block = {removed: [], added: []};
+        for (var offset = 0; offset < bestSize; ++offset) {
+            var source = removed[index + offset].element;
+            var destination = added[bestStart + offset].element;
+            claimed[bestStart + offset] = true;
+
+            source.classList.add('moved');
+            destination.classList.add('moved');
+            source.moveCounterpart = destination;
+            destination.moveCounterpart = source;
+
+            block.removed.push(source);
+            block.added.push(destination);
+        }
+        removed[index].text.setAttribute('data-move-label', 'moved to ' + describe(block.added[0]));
+        added[bestStart].text.setAttribute('data-move-label', 'moved from ' + describe(block.removed[0]));
+        blocks.push(block);
+
+        index += bestSize;
+    }
+
+    // Lines which git paired up inside a hunk and which differ only in whitespace. Moved lines are
+    // left alone: their counterpart is elsewhere, so the pairing here would be a coincidence.
+    var whitespace = [];
+
+    function pair(sources, destinations) {
+        for (var offset = 0; offset < sources.length && offset < destinations.length; ++offset) {
+            var source = sources[offset];
+            var destination = destinations[offset];
+            if (source.element.classList.contains('moved') || destination.element.classList.contains('moved'))
+                continue;
+            if (source.key.replace(/\\s/g, '') !== destination.key.replace(/\\s/g, ''))
+                continue;
+            source.element.classList.add('whitespace-change');
+            destination.element.classList.add('whitespace-change');
+            whitespace.push({element: destination.element, position: source.position});
+        }
+        sources.length = 0;
+        destinations.length = 0;
+    }
+
+    document.querySelectorAll('.section').forEach(function(section) {
+        var sources = [];
+        var destinations = [];
+        Array.prototype.forEach.call(section.children, function(child) {
+            var text = child.querySelector('.text');
+            var gutter = child.querySelector('[data-line]');
+            var line = text && gutter ? {element: child, key: text.textContent, position: gutter.getAttribute('data-line')} : null;
+
+            if (line && child.classList.contains('remove')) {
+                // A removal after an addition begins a new group of changed lines.
+                if (destinations.length)
+                    pair(sources, destinations);
+                sources.push(line);
+            } else if (line && child.classList.contains('add')) {
+                destinations.push(line);
+            } else {
+                pair(sources, destinations);
+            }
+        });
+        pair(sources, destinations);
+    });
+
+    if (!blocks.length && !whitespace.length)
+        return;
+
+    var anchors = [];
+    blocks.forEach(function(block) {
+        anchors.push(block.removed[0], block.added[0]);
+    });
+    anchors.sort(function(a, b) {
+        return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+    });
+    var anchor = -1;
+
+    function reveal(element) {
+        element.scrollIntoView({block: 'center', behavior: 'smooth'});
+        element.classList.remove('move-flash');
+        void element.offsetWidth;
+        element.classList.add('move-flash');
+    }
+
+    function step(delta) {
+        anchor = (anchor + delta + anchors.length) % anchors.length;
+        reveal(anchors[anchor]);
+    }
+
+    document.addEventListener('click', function(event) {
+        if (!document.body.classList.contains('moves-on') || !event.target.closest)
+            return;
+        var line = event.target.closest('.line.moved');
+        if (!line)
+            return;
+        // Don't jump out from under someone who was only selecting text.
+        var selection = window.getSelection();
+        if (selection && !selection.isCollapsed)
+            return;
+        anchor = anchors.indexOf(line.moveCounterpart);
+        reveal(line.moveCounterpart);
+    });
+
+    if (blocks.length) {
+        var moveToggle = document.getElementById('move-toggle');
+        moveToggle.addEventListener('change', function() {
+            document.body.classList.toggle('moves-on', moveToggle.checked);
+        });
+        document.getElementById('move-previous').addEventListener('click', function() { step(-1); });
+        document.getElementById('move-next').addEventListener('click', function() { step(1); });
+        document.getElementById('move-summary').textContent = blocks.length + (blocks.length == 1 ? ' moved block' : ' moved blocks');
+        document.getElementById('move-group').hidden = false;
+        document.body.classList.add('moves-on');
+    }
+
+    if (whitespace.length) {
+        var whitespaceToggle = document.getElementById('whitespace-toggle');
+        whitespaceToggle.addEventListener('change', function() {
+            document.body.classList.toggle('whitespace-hidden', whitespaceToggle.checked);
+            whitespace.forEach(function(change) {
+                // With its removed half hidden, an added line reads as context, so give it the
+                // line number it had in the original file too.
+                var gutter = change.element.querySelector('.original');
+                if (whitespaceToggle.checked)
+                    gutter.setAttribute('data-line', change.position);
+                else
+                    gutter.removeAttribute('data-line');
+            });
+        });
+        document.getElementById('whitespace-summary').textContent = whitespace.length + (whitespace.length == 1 ? ' whitespace-only change' : ' whitespace-only changes');
+        document.getElementById('whitespace-group').hidden = false;
+    }
+
+    document.getElementById('diff-controls').hidden = false;
+})();
+</script>
+'''
+    TAIL = SCRIPT + '</body>\n</html>\n'
     INDENT = 4 * ' '
     FILES_CHANGED_RE = re.compile(r'^ (\d+ files? changed)?(create mode\s+)?')
     name = 'html'
