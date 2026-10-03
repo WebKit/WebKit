@@ -1143,7 +1143,7 @@ LayoutUnit RenderTable::borderSpacingInRowDirection() const
 
     unsigned collapsedColumnCount = 0;
     for (unsigned i = 0; i < effectiveColumnCount; ++i) {
-        if (auto* col = colElement(i); col && col->style().visibility() == Visibility::Collapse)
+        if (auto* col = colElement(effColToCol(i)); col && col->style().visibility() == Visibility::Collapse)
             ++collapsedColumnCount;
     }
 
