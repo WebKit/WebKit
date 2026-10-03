@@ -1,0 +1,17 @@
+;; Tools/Scripts/run-jsc -e "'load(\"JSTests/wasm/gc/wast.js\"); writeFile(\"JSTests/wasm/stress/type-index-abstract-heap-types-globals-and-tables.wasm\", WebAssemblyText.encode(read(\"JSTests/wasm/stress/type-index-abstract-heap-types-globals-and-tables.wat\")))'"
+(module
+  (global $g (mut anyref) (ref.null any))
+  (global $gf (export "gf") funcref (ref.null func))
+  (table $t 2 anyref)
+  (func (export "setGlobal") (param anyref)
+    (global.set $g (local.get 0)))
+  (func (export "getGlobal") (result anyref)
+    (global.get $g))
+  (func (export "setTable") (param i32 anyref)
+    (table.set $t (local.get 0) (local.get 1)))
+  (func (export "getTable") (param i32) (result anyref)
+    (table.get $t (local.get 0)))
+  (func (export "nullInTable") (result i32)
+    (table.set $t (i32.const 0) (ref.null none))
+    (ref.is_null (table.get $t (i32.const 0))))
+)
