@@ -18820,8 +18820,18 @@ void WebPageProxy::webViewDidMoveToWindow()
 
 void WebPageProxy::setCanShowPlaceholder(const WebCore::ElementContext& context, bool canShowPlaceholder)
 {
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetCanShowPlaceholder(context, canShowPlaceholder));
+    if (!hasRunningProcess())
+        return;
+
+    RefPtr process = WebProcessProxy::processForIdentifier(context.documentIdentifier->processIdentifier());
+    if (!process)
+        return;
+
+    auto webPageID = webPageIDInProcess(*process);
+    if (!hasWebPageInProcess(*process, webPageID))
+        return;
+
+    process->send(Messages::WebPage::SetCanShowPlaceholder(context, canShowPlaceholder), webPageID);
 }
 
 Logger& WebPageProxy::logger()
