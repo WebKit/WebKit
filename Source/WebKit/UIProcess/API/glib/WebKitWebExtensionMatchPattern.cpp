@@ -23,9 +23,12 @@
 #include "WebExtensionMatchPattern.h"
 #include "WebKitError.h"
 #include "WebKitPrivate.h"
+#include "WebKitWebExtensionMatchPatternPrivate.h"
 
 #include <wtf/URLParser.h>
 #include <wtf/glib/GLibExtras.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 
@@ -117,9 +120,14 @@ WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(const RefPt
 
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(Ref<WebExtensionMatchPattern>& matchPattern)
 {
-    RefPtr<WebExtensionMatchPattern> apiMatchPattern = adoptRef(matchPattern.get());
+    RefPtr<WebExtensionMatchPattern> apiMatchPattern = matchPattern.ptr();
 
     return webkitWebExtensionMatchPatternCreate(apiMatchPattern);
+}
+
+RefPtr<WebKit::WebExtensionMatchPattern> webkitWebExtensionMatchPatternToImpl(WebKitWebExtensionMatchPattern* matchPattern)
+{
+    return matchPattern->matchPattern;
 }
 
 /**
@@ -484,3 +492,7 @@ gboolean webkit_web_extension_match_pattern_matches_pattern(WebKitWebExtensionMa
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
+
+namespace WTF {
+WTF_DEFINE_GREF_TRAITS(WebKitWebExtensionMatchPattern, webkit_web_extension_match_pattern_ref, webkit_web_extension_match_pattern_unref)
+}
