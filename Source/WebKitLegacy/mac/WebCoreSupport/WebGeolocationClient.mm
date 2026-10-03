@@ -89,14 +89,12 @@ void WebGeolocationClient::startUpdating(const String& authorizationToken, bool 
     UNUSED_PARAM(enableHighAccuracy);
 #endif
 
-    RetainPtr webView = m_webView;
-    [[webView _geolocationProvider] registerWebView:webView];
+    [protect(m_webView) _registerWithGeolocationProvider];
 }
 
 void WebGeolocationClient::stopUpdating()
 {
-    RetainPtr webView = m_webView;
-    [[webView _geolocationProvider] unregisterWebView:webView];
+    [protect(m_webView) _unregisterFromGeolocationProvider];
 }
 
 #if PLATFORM(IOS_FAMILY)

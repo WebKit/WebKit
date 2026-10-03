@@ -5456,10 +5456,14 @@ static bool needsWebViewInitThreadWorkaround()
     // carried out before we are dealloc'd.
     @autoreleasepool {
 
+        if (_private) {
 #if PLATFORM(IOS_FAMILY)
-        if (_private)
             [_private->_geolocationProvider stopTrackingWebView:self];
 #endif
+#if ENABLE(GEOLOCATION)
+            [self _unregisterFromGeolocationProvider];
+#endif
+        }
 
         [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -9709,6 +9713,21 @@ static NSTextAlignment NODELETE nsTextAlignmentFromRenderStyle(const WebCore::St
     if (_private)
         return _private->_geolocationProvider;
     return nil;
+}
+
+- (void)_registerWithGeolocationProvider
+{
+    if (!_private || !_private->_geolocationProvider)
+        return;
+    _private->_isRegisteredWithGeolocationProvider = YES;
+    [protect(_private->_geolocationProvider) registerWebView:self];
+}
+
+- (void)_unregisterFromGeolocationProvider
+{
+    if (!_private || !std::exchange(_private->_isRegisteredWithGeolocationProvider, NO))
+        return;
+    [protect(_private->_geolocationProvider) unregisterWebView:self];
 }
 
 - (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position

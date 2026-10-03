@@ -374,6 +374,9 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)showFormValidationMessage:(NSString *)message withAnchorRect:(NSRect)anchorRect;
 - (void)hideFormValidationMessage;
 
+- (void)_registerWithGeolocationProvider;
+- (void)_unregisterFromGeolocationProvider;
+
 #if !PLATFORM(IOS_FAMILY)
 - (void)_setMainFrameIcon:(NSImage *)icon;
 #endif

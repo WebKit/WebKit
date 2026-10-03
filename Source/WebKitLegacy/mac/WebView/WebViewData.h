@@ -304,6 +304,7 @@ class WebSelectionServiceController;
 #endif
 
     id<WebGeolocationProvider> _geolocationProvider;
+    BOOL _isRegisteredWithGeolocationProvider;
     id<WebDeviceOrientationProvider> m_deviceOrientationProvider;
     id<WebNotificationProvider> _notificationProvider;
 

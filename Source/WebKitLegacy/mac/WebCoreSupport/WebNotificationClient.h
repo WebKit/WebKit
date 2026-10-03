@@ -38,6 +38,7 @@
 @class WebNotification;
 @class WebNotificationPolicyListener;
 @class WebView;
+@protocol WebNotificationProvider;
 
 class WebNotificationClient final : public WebCore::NotificationClient {
     WTF_MAKE_TZONE_ALLOCATED(WebNotificationClient);
@@ -57,6 +58,7 @@ private:
     void requestPermission(WebCore::ScriptExecutionContext&, WebNotificationPolicyListener *);
 
     __weak WebView *m_webView;
+    __weak id<WebNotificationProvider> m_notificationProvider;
     HashMap<WTF::UUID, RetainPtr<WebNotification>> m_notificationMap;
     HashSet<WebCore::SecurityOriginData> m_notificationPermissionRequesters;
 

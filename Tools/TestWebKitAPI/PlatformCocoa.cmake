@@ -256,6 +256,7 @@ list(APPEND TestWebKitLegacy_SOURCES
     Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme.mm
     Tests/WebKitLegacy/mac/CustomProtocolsTest.mm
     Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm
+    Tests/WebKitLegacy/mac/DeallocWebViewProviders.mm
     Tests/WebKitLegacy/mac/DownloadThread.mm
     Tests/WebKitLegacy/mac/EarlyKVOCrash.mm
     Tests/WebKitLegacy/mac/EmbeddedPrintPagination.mm
