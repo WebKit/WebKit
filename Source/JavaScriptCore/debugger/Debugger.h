@@ -158,6 +158,7 @@ public:
     void exception(JSGlobalObject*, CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);
     void atExpression(CallFrame*);
+    void willReadProperty(JSGlobalObject*, JSValue);
     void willAwait(CallFrame*, JSValue generator);
     void didAwait(CallFrame*, JSValue generator);
     void callEvent(CallFrame*);
@@ -222,6 +223,8 @@ public:
         virtual void willCallInternalFunction(InternalFunction&) { }
 
         virtual void willEnter(CallFrame*) { }
+
+        virtual void willReadProperty(const String&) { }
 
         virtual void didQueueMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
         virtual void willRunMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
