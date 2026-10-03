@@ -1,13 +1,13 @@
 
-FAIL name assert_implements: WebAssembly.Function is not implemented undefined
-FAIL length assert_implements: WebAssembly.Function is not implemented undefined
-FAIL Too few arguments assert_implements: WebAssembly.Function is not implemented undefined
-FAIL Calling assert_implements: WebAssembly.Function is not implemented undefined
-FAIL construct with JS function assert_implements: WebAssembly.Function is not implemented undefined
-FAIL fail with missing results assert_implements: WebAssembly.Function is not implemented undefined
-FAIL fail with missing parameters assert_implements: WebAssembly.Function is not implemented undefined
-FAIL fail with non-string parameters & results assert_implements: WebAssembly.Function is not implemented undefined
-FAIL fail with non-existent parameter and result type assert_implements: WebAssembly.Function is not implemented undefined
-FAIL fail with non-function object assert_implements: WebAssembly.Function is not implemented undefined
-FAIL fail to construct with non-callable object assert_implements: WebAssembly.Function is not implemented undefined
+PASS name
+PASS length
+PASS Too few arguments
+PASS Calling
+PASS construct with JS function
+PASS fail with missing results
+PASS fail with missing parameters
+PASS fail with non-string parameters & results
+PASS fail with non-existent parameter and result type
+PASS fail with non-function object
+PASS fail to construct with non-callable object
 

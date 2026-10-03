@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Sergey Rubanov <chi187@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -25,46 +25,32 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
-
 #if ENABLE(WEBASSEMBLY)
 
-#include <JavaScriptCore/WebAssemblyFunctionBase.h>
+#include "JSObject.h"
 
 namespace JSC {
 
-class WebAssemblyWrapperFunction final : public WebAssemblyFunctionBase {
+class WebAssemblyJSFunctionPrototype final : public JSNonFinalObject {
 public:
-    using Base = WebAssemblyFunctionBase;
-
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
-    static void destroy(JSCell*);
-
-    template<typename CellType, SubspaceAccess mode>
+    template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.webAssemblyWrapperFunctionSpace<mode>();
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyJSFunctionPrototype, Base);
+        return &vm.plainObjectSpace();
     }
+
+    static WebAssemblyJSFunctionPrototype* create(VM&, JSGlobalObject*, Structure*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    DECLARE_VISIT_CHILDREN;
-
-    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Ref<const Wasm::RTT>&&);
-    static WebAssemblyWrapperFunction* createFromJSFunction(VM&, JSGlobalObject*, Structure*, JSObject*, Ref<const Wasm::RTT>&&);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    JSObject* function() LIFETIME_BOUND { return m_function.get(); }
-    void clearJSCallICs(VM&);
-
 private:
-    WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* function, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);
-
-    WriteBarrier<JSObject> m_function;
-    std::unique_ptr<Wasm::WasmOrJSImportableFunctionCallLinkInfo> m_ownedCallLinkInfo;
-    RefPtr<const Wasm::RTT> m_ownedRTT;
+    WebAssemblyJSFunctionPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC
