@@ -72,7 +72,7 @@ LocaleComponents parseLocale(const String& localeIdentifier)
 bool canMinimizeLanguages()
 {
     static const bool result = []() -> bool {
-        return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MinimizesLanguages) && [NSLocale respondsToSelector:@selector(minimizedLanguagesFromLanguages:)];
+        return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MinimizesLanguages);
     }();
     return result;
 }
