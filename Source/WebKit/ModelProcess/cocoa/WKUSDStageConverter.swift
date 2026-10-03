@@ -30,8 +30,7 @@ import WebKit_Internal
 
 #if canImport(_USDKit_RealityKit)
 
-// FIXME: radar://141774327
-@_weakLinked @_spi(Eryx) import _USDKit_RealityKit
+import USDKit_SPI
 
 extension os.Logger {
     fileprivate static let usdStageConverter = Logger(subsystem: "com.apple.WebKit", category: "USDStageConverter")
