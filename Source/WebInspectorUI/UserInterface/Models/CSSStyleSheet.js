@@ -94,7 +94,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
             return WI.UIString("Inspector Style Sheet");
 
         if (this._url)
-            return WI.displayNameForURL(this._url, this.urlComponents);
+            return this.displayNameWithAffix();
 
         // Assign a unique number to the StyleSheet object so it will stay the same.
         if (!this._uniqueDisplayNameNumber)
