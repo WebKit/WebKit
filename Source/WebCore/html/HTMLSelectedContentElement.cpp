@@ -87,6 +87,15 @@ void HTMLSelectedContentElement::removingSteps(RemovalType removalType, Containe
     }
 }
 
+void HTMLSelectedContentElement::childrenChanged(const ChildChange& change)
+{
+    HTMLElement::childrenChanged(change);
+
+    // The contents reflect into the first child button's text, which the select may render.
+    if (RefPtr select = m_owningSelect)
+        select->buttonElementChildrenChanged();
+}
+
 void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
 {
     HTMLElement::movingSteps(movingType, oldParent);

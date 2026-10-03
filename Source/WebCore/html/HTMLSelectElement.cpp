@@ -67,12 +67,14 @@
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "NodeRareData.h"
+#include "NodeTraversal.h"
 #include "PlatformRenderTheme.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptElement.h"
 #include "ScrollIntoViewOptions.h"
 #include "SelectFallbackButtonElement.h"
 #include "SelectPopoverElement.h"
@@ -82,6 +84,7 @@
 #include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDisplay.h"
+#include "Text.h"
 #include "UnicodeBidi.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -214,9 +217,14 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     buttonSlot->setAttributeWithoutSynchronization(inertAttr, emptyAtom());
     buttonSlot->setAttributeWithoutSynchronization(nameAttr, buttonSlotName());
     buttonSlot->setAttributeWithoutSynchronization(styleAttr, "text-overflow:inherit"_s);
-    buttonSlot->appendChild(SelectFallbackButtonElement::create(document));
     root.appendChild(buttonSlot);
     m_buttonSlot = WTF::move(buttonSlot);
+
+    Ref fallbackButton = SelectFallbackButtonElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope fallbackButtonScope { fallbackButton };
+    fallbackButton->setAttributeWithoutSynchronization(inertAttr, emptyAtom());
+    root.appendChild(fallbackButton);
+    m_fallbackButton = WTF::move(fallbackButton);
 
     if (!document->settings().htmlEnhancedSelectEnabled()) {
         root.appendChild(HTMLSlotElement::create(slotTag, document));
@@ -273,12 +281,10 @@ void HTMLSelectElement::didRecalcStyle(OptionSet<Style::Change> styleChange)
     setOptionsChangedOnRenderer();
 
     // When the select's style changes, invalidate the fallback button's style since it depends on
-    // the host's usedAppearance() to compute the padding.
+    // the host's usedAppearance() to compute the padding and whether it is rendered at all.
     if (styleChange.contains(Style::Change::NonInherited)) {
-        if (RefPtr buttonSlot = m_buttonSlot.get()) {
-            if (RefPtr fallbackButton = dynamicDowncast<SelectFallbackButtonElement>(buttonSlot->firstChild()))
-                fallbackButton->invalidateStyle();
-        }
+        if (RefPtr fallbackButton = m_fallbackButton)
+            fallbackButton->invalidateStyle();
     }
 
     bool newIsBaseAppearance = hasBaseAppearance(existingComputedStyle());
@@ -506,6 +512,42 @@ bool HTMLSelectElement::consumePickerOpeningPress(const MouseEvent& event)
     auto dx = event.absoluteLocation().x() - location->x();
     auto dy = event.absoluteLocation().y() - location->y();
     return dx * dx + dy * dy <= pickerOpeningPressMovementThreshold * pickerOpeningPressMovementThreshold;
+}
+
+Element* HTMLSelectElement::buttonElement() const
+{
+    auto* first = firstElementChild();
+    return is<HTMLButtonElement>(first) ? first : nullptr;
+}
+
+String HTMLSelectElement::buttonLabelText(StringView selectedContentText) const
+{
+    RefPtr button = buttonElement();
+    if (!button)
+        return { };
+
+    StringBuilder text;
+    for (RefPtr node = button->firstChild(); node;) {
+        if (!selectedContentText.isNull() && is<HTMLSelectedContentElement>(*node)) {
+            text.append(selectedContentText);
+            node = NodeTraversal::nextSkippingChildren(*node, button.get());
+            continue;
+        }
+        if (isScriptElement(*node)) {
+            node = NodeTraversal::nextSkippingChildren(*node, button.get());
+            continue;
+        }
+        if (RefPtr textNode = dynamicDowncast<Text>(*node))
+            text.append(textNode->data());
+        node = NodeTraversal::next(*node, button.get());
+    }
+    return text.toString().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+}
+
+void HTMLSelectElement::buttonElementChildrenChanged()
+{
+    setOptionsChangedOnRenderer();
+    invalidateButtonText();
 }
 
 void HTMLSelectElement::hidePickerPopoverElement()
@@ -808,7 +850,7 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
     if (!HTMLFormControlElement::childShouldCreateRenderer(child))
         return false;
     if (isBaseListBox())
-        return &child != m_buttonSlot.get();
+        return &child != m_buttonSlot && &child != m_fallbackButton;
     if (boxType() == BoxType::ListBox)
         return isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(child) || validationMessageShadowTreeContains(child);
     if (&child == m_listBoxSlot.get())
@@ -986,7 +1028,7 @@ void HTMLSelectElement::updateButtonText(HTMLOptionElement* selectedOption, int 
         m_buttonTextNeedsUpdate = false;
         protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
     }
-    protect(downcast<SelectFallbackButtonElement>(*m_buttonSlot->firstChild()))->updateText(selectedOption, optionIndex);
+    protect(*m_fallbackButton)->updateText(selectedOption, optionIndex);
 }
 
 void HTMLSelectElement::invalidateButtonText()
