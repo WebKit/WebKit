@@ -2083,6 +2083,19 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
+static HTMLSelectElement* listBoxSelectElementForGeometry(const Element& element)
+{
+    if (element.renderer())
+        return nullptr;
+
+    auto* selectElement = owningSelectElement(element);
+    if (!selectElement)
+        return nullptr;
+
+    auto* renderer = selectElement->renderer();
+    return !renderer || is<RenderListBox>(*renderer) ? selectElement : nullptr;
+}
+
 static std::optional<std::pair<CheckedRef<RenderListBox>, LayoutRect>> listBoxElementBoundingBox(const Element& element)
 {
     RefPtr selectElement = owningSelectElement(element);
@@ -2159,7 +2172,8 @@ std::optional<std::pair<CheckedPtr<RenderElement>, FloatRect>> Element::bounding
 FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
-    document->updateLayoutIfDimensionsOutOfDate(*this, { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow }, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets });
+    RefPtr listBoxSelectElement = listBoxSelectElementForGeometry(*this);
+    document->updateLayoutIfDimensionsOutOfDate(listBoxSelectElement ? *listBoxSelectElement : *this, { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow }, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets });
     LocalFrameView::AutoPreventLayerAccess preventAccess(document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
