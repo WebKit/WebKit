@@ -6,6 +6,7 @@ Test for `Resource.ResponseSource.DiskCache`.
 -- Running test case: PossibleNetworkLoad
 PASS: Resource should be created.
 PASS: Resource should receive a Response.
+PASS: Response headers should retain the content type.
 PASS: Response `body` should not be empty.
 PASS: Response should be base64 encoded.
 
@@ -14,6 +15,7 @@ PASS: Resource should be created.
 PASS: Resource should receive a Response.
 PASS: statusCode should be 200
 PASS: responseSource should be Symbol(disk-cache)
+PASS: Response headers should retain the content type.
 PASS: Response `body` should not be empty.
 PASS: Response should be base64 encoded.
 

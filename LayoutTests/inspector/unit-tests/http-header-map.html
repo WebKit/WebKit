@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("HTTPHeaderMap");
+
+    suite.addTestCase({
+        name: "HTTPHeaderMap.CommonAndUncommonHeaders",
+        test() {
+            let headers = new WI.HTTPHeaderMap([
+                {name: "x-custom", value: "first"},
+                {name: "set-cookie", value: "first=1"},
+                {name: "SeT-CoOkIe", value: "second=2"},
+                {name: "content-type", value: "text/plain"},
+                {name: "X-Custom", value: "second"},
+            ]);
+            InspectorTest.expectEqual(headers.size, 5, "Size should include both common and uncommon fields.");
+            InspectorTest.expectEqual(headers.getAll(WI.HTTPHeader.SetCookie).length, 2, "Capitalized constants should find both cookie fields.");
+            InspectorTest.expectEqual(headers.get(WI.HTTPHeader.ContentType), "text/plain", "Common fields should be classified without regard to input casing.");
+            InspectorTest.expectEqual(JSON.stringify(Array.from(headers.keys())), '["Set-Cookie","Set-Cookie","Content-Type","x-custom","X-Custom"]', "Iteration should capitalize common names and preserve uncommon names.");
+            InspectorTest.expectEqual(headers.combined().get("x-custom"), "first, second", "Combined iteration should include uncommon fields.");
+            let copy = headers.copy();
+            headers.add(WI.HTTPHeader.SetCookie, "third=3");
+            InspectorTest.expectEqual(copy.getAll(WI.HTTPHeader.SetCookie).length, 2, "Copies should not share mutable common storage.");
+            InspectorTest.expectEqual(copy.getOriginalUncommonHeaderValuesForTesting("X-Custom").length, 2, "Copies should preserve uncommon fields.");
+            InspectorTest.expectEqual(copy.getCombinedUncommonHeaderValueForTesting("X-Custom"), "first, second", "The testing accessor should combine uncommon values.");
+            InspectorTest.expectTrue(headers.delete(WI.HTTPHeader.SetCookie), "Deleting a common name should remove all of its fields.");
+            InspectorTest.expectFalse(headers.has(WI.HTTPHeader.SetCookie), "Deleted common names should no longer be present.");
+            InspectorTest.expectEqual(JSON.stringify(headers), '[{"name":"Content-Type","value":"text/plain"},{"name":"x-custom","value":"first"},{"name":"X-Custom","value":"second"}]', "Serialization should include both stores with their stored casing.");
+            headers.clear();
+            InspectorTest.expectEqual(headers.size, 0, "Clear should empty both stores.");
+            InspectorTest.expectEqual(copy.size, 5, "Clearing a map should not change its copy.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests common and uncommon header storage.</p>
+</body>
+</html>

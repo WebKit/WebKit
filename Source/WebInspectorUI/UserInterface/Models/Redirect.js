@@ -43,10 +43,10 @@ WI.Redirect = class Redirect
         this._url = url;
         this._urlComponents = null;
         this._requestMethod = requestMethod;
-        this._requestHeaders = requestHeaders;
+        this._requestHeaders = new WI.HTTPHeaderMap(requestHeaders);
         this._responseStatusCode = responseStatusCode;
         this._responseStatusText = responseStatusText;
-        this._responseHeaders = responseHeaders;
+        this._responseHeaders = new WI.HTTPHeaderMap(responseHeaders);
         this._timestamp = timestamp;
     }
 

@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/CachedResource.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -49,6 +50,8 @@ class InstrumentingAgents;
 class LocalFrame;
 class NetworkLoadMetrics;
 class Page;
+class ResourceRequest;
+class ResourceResponse;
 class ScriptExecutionContext;
 class TextResourceDecoder;
 }
@@ -164,6 +167,10 @@ struct InitiatorData {
 
 namespace ResourceUtilities {
 
+WEBCORE_EXPORT Ref<JSON::ArrayOf<Protocol::Network::Header>> buildArrayForHeaders(const WebCore::HTTPHeaderMap&);
+WEBCORE_EXPORT Protocol::ErrorStringOr<WebCore::HTTPHeaderMap> httpHeaderMapFromPayload(const JSON::Array&);
+WEBCORE_EXPORT void addExtraHTTPHeaderFields(WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&);
+
 WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
 WEBCORE_EXPORT Vector<WebCore::CachedResource*> cachedResourcesForFrame(WebCore::LocalFrame*);
 WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObjectsForFrame(WebCore::LocalFrame&);
@@ -186,8 +193,6 @@ WEBCORE_EXPORT bool shouldTreatAsText(const String& mimeType);
 WEBCORE_EXPORT Ref<WebCore::TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
 WEBCORE_EXPORT std::optional<String> textContentForCachedResource(WebCore::CachedResource&);
 WEBCORE_EXPORT bool cachedResourceContent(WebCore::CachedResource&, String* result, bool* base64Encoded);
-
-WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const WebCore::HTTPHeaderMap&);
 
 // Timebase-independent: every field is either a plain scalar or relative to the load itself.
 WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const WebCore::NetworkLoadMetrics&);

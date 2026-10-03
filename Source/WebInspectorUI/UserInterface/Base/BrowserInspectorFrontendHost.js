@@ -90,11 +90,11 @@ if (!window.InspectorFrontendHost) {
         connect()
         {
             const queryParams = parseQueryString(window.location.search.substring(1));
-            let url = "ws" in queryParams ? "ws://" + queryParams.ws : null;
+            let url = queryParams.find((item) => item.name === "ws")?.value;
             if (!url)
                 return;
 
-            const socket = new WebSocket(url);
+            const socket = new WebSocket("ws://" + url);
             socket.addEventListener("message", message => InspectorBackend.dispatch(message.data));
             socket.addEventListener("error", console.error);
             socket.addEventListener("open", () => { this._socket = socket; });

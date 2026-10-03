@@ -1,0 +1,13 @@
+Tests original WebSocket response fields and legacy compatibility.
+
+
+== Running test suite: WebSocket.ResponseHeaderEntries
+-- Running test case: WebSocket.ResponseHeaderEntries.Handshake
+PASS: The handshake should create a WebSocket resource.
+PASS: The handshake should succeed.
+PASS: Legacy handshake fields should remain combined.
+PASS: Handshake headers should use HTTPHeaderMap.
+x-example: ["one,two","three"]
+www-authenticate: ["Digest realm=\"one,two\", nonce=\"three,four\"","Basic realm=\"five,six\""]
+PASS: Handshake entries should not bypass cookie sanitization.
+

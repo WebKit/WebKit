@@ -29,13 +29,21 @@ WI.ResourceUtilities = class ResourceUtilities
     {
         console.assert(resource instanceof WI.Resource || resource instanceof WI.Redirect, resource);
 
-        let options = {};
+        let options = "";
 
-        if (resource.requestData)
-            options.body = resource.requestData;
+        function addOption(name, value) {
+            if (!value)
+                return;
 
-        options.cache = "default";
-        options.credentials = (resource.requestCookies.length || resource.requestHeaders.valueForCaseInsensitiveKey("Authorization")) ? "include" : "omit";
+            if (options)
+                options += ",\n";
+
+            options += WI.indentString() + JSON.stringify(name) + ": " + JSON.stringify(value);
+        }
+
+        addOption("body", resource.requestData);
+        addOption("cache", "default");
+        addOption("credentials", (resource.requestCookies.length || resource.requestHeaders.get(WI.HTTPHeader.Authorization)) ? "include" : "omit");
 
         // https://fetch.spec.whatwg.org/#forbidden-header-name
         const forbiddenHeaders = new Set([
@@ -60,40 +68,32 @@ WI.ResourceUtilities = class ResourceUtilities
             "upgrade",
             "via",
         ]);
-        let headers = Object.entries(resource.requestHeaders)
-            .filter((header) => {
-                let key = header[0].toLowerCase();
+        let headers = Array.from(resource.requestHeaders)
+            .filter(([name]) => {
+                let key = name.toLowerCase();
                 if (forbiddenHeaders.has(key))
                     return false;
                 if (key.startsWith("proxy-") || key.startsWith("sec-"))
                     return false;
                 return true;
             })
-            .sort((a, b) => a[0].extendedLocaleCompare(b[0]))
-            .reduce((accumulator, current) => {
-                accumulator[current[0]] = current[1];
-                return accumulator;
-            }, {});
-        if (!isEmptyObject(headers))
-            options.headers = headers;
+            .sort((a, b) => a[0].toLowerCase().extendedLocaleCompare(b[0].toLowerCase()));
+        if (headers.length) {
+            if (options)
+                options += ",\n";
+            options += WI.indentString() + "\"headers\": [\n";
+            options += headers.map(([name, value]) => WI.indentString().repeat(2) + "[" + JSON.stringify(name) + ", " + JSON.stringify(value) + "]").join(",\n");
+            options += "\n" + WI.indentString() + "]";
+        }
 
-        if (resource._integrity)
-            options.integrity = resource._integrity;
+        addOption("integrity", resource._integrity);
+        addOption("method", resource.requestMethod);
+        addOption("mode", "cors");
+        addOption("redirect", "follow");
+        addOption("referrer", resource.requestHeaders.get(WI.HTTPHeader.Referer));
+        addOption("referrerPolicy", resource._referrerPolicy);
 
-        if (resource.requestMethod)
-            options.method = resource.requestMethod;
-
-        options.mode = "cors";
-        options.redirect = "follow";
-
-        let referrer = resource.requestHeaders.valueForCaseInsensitiveKey("Referer");
-        if (referrer)
-            options.referrer = referrer;
-
-        if (resource._referrerPolicy)
-            options.referrerPolicy = resource._referrerPolicy;
-
-        return `fetch(${JSON.stringify(resource.url)}, ${JSON.stringify(options, null, WI.indentString())})`;
+        return `fetch(${JSON.stringify(resource.url)}, {\n${options}\n})`;
     }
 
     static generateCURLCommand(resource)
@@ -126,8 +126,8 @@ WI.ResourceUtilities = class ResourceUtilities
         let command = ["curl " + escapeStringPosix(resource.url).replace(/[[{}\]]/g, "\\$&")];
         command.push("-X " + escapeStringPosix(resource.requestMethod));
 
-        for (let key in resource.requestHeaders)
-            command.push("-H " + escapeStringPosix(`${key}: ${resource.requestHeaders[key]}`));
+        for (let [name, value] of resource.requestHeaders)
+            command.push("-H " + escapeStringPosix(`${name}: ${value}`));
 
         if (resource.requestDataContentType && resource.requestMethod !== WI.HTTPUtilities.RequestMethod.GET && resource.requestData) {
             if (resource.requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
@@ -159,8 +159,8 @@ WI.ResourceUtilities = class ResourceUtilities
             lines.push(`${resource.requestMethod} ${resource.urlComponents.path}${protocol ? " " + protocol.toUpperCase() : ""}`);
         }
 
-        for (let key in resource.requestHeaders)
-            lines.push(`${key}: ${resource.requestHeaders[key]}`);
+        for (let [name, value] of resource.requestHeaders)
+            lines.push(`${name}: ${value}`);
 
         return lines.join("\n") + "\n";
     }
@@ -186,8 +186,8 @@ WI.ResourceUtilities = class ResourceUtilities
             lines.push(`${protocol ? protocol.toUpperCase() + " " : ""}${statusCode} ${statusText}`);
         }
 
-        for (let key in resource.responseHeaders)
-            lines.push(`${key}: ${resource.responseHeaders[key]}`);
+        for (let [name, value] of resource.responseHeaders)
+            lines.push(`${name}: ${value}`);
 
         return lines.join("\n") + "\n";
     }
