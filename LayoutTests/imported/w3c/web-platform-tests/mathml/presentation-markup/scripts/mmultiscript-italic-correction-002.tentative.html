@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>mmultiscripts inline size with italic correction</title>
+<link rel="help" href="https://w3c.github.io/mathml-core/#base-with-prescripts-and-postscripts">
+<meta name="assert" content="The inline size of mmultiscripts ends SpaceAfterScript after the inline-end edge of its postscripts, as placed with the italic correction.">
+<!-- Tentative: the inline size algorithm of the specification adds LargeOpItalicCorrection to the
+     subscript and subtracts ItalicCorrection from the superscript, the opposite of how the scripts
+     are placed. This test follows the placement. It also expects SpaceAfterScript after the last
+     postscript pair, consistently with subsup-parameters-1.html. -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/feature-detection.js"></script>
+<script src="/mathml/support/fonts.js"></script>
+<style>
+  math, mspace {
+    font-size: 10px;
+  }
+  math {
+    font-family: largeop-displayoperatorminheight2000-2AFF-italiccorrection3000;
+  }
+  @font-face {
+    font-family: largeop-displayoperatorminheight2000-2AFF-italiccorrection3000;
+    src: url("/fonts/math/largeop-displayoperatorminheight2000-2AFF-italiccorrection3000.woff");
+  }
+</style>
+<script>
+  function getBox(aId) {
+    return document.getElementById(aId).getBoundingClientRect();
+  }
+
+  setup({ explicit_done: true });
+  window.addEventListener("load", () => { loadAllFonts().then(runTests); });
+
+  var epsilon = 1;
+  function runTests() {
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+
+      // In the second mmultiscripts, the first superscript is the widest script of its pair and the
+      // italic correction plays no role, so the gap between the two superscripts is SpaceAfterScript.
+      var space = getBox("sup012").left - getBox("sup011").right;
+
+      var postscriptsEnd = Math.max(getBox("sub002").right, getBox("sup002").right);
+      assert_approx_equals(getBox("ref001").left - postscriptsEnd, space, epsilon, "space after the last postscript pair");
+    }, "Inline size of mmultiscripts with italic correction");
+
+    done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+  <p>
+    <math displaystyle="true">
+      <mmultiscripts>
+        <mo lspace="0px" rspace="0px">&#x2AFF;</mo>
+        <mspace id="sub001" height="1em" width="4em" style="background: blue"/>
+        <mspace id="sup001" height="1em" width="1em" style="background: green"/>
+        <mspace id="sub002" height="1em" width="1em" style="background: magenta"/>
+        <mspace id="sup002" height="1em" width="1em" style="background: cyan"/>
+      </mmultiscripts>
+      <mspace id="ref001" height="1em" width="1em" style="background: black"/>
+    </math>
+  </p>
+  <p>
+    <math displaystyle="true">
+      <mmultiscripts>
+        <mo lspace="0px" rspace="0px">&#x2AFF;</mo>
+        <mspace id="sub011" height="1em" width="1em" style="background: blue"/>
+        <mspace id="sup011" height="1em" width="4em" style="background: green"/>
+        <mspace id="sub012" height="1em" width="1em" style="background: magenta"/>
+        <mspace id="sup012" height="1em" width="1em" style="background: cyan"/>
+      </mmultiscripts>
+    </math>
+  </p>
+</body>
+</html>

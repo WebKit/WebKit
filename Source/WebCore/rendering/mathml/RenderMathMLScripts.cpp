@@ -225,12 +225,16 @@ void RenderMathMLScripts::computeIntrinsicLogicalWidthContributions()
             subScript = supScript->nextInFlowSiblingBox();
         }
         m_maxContentLogicalWidthContribution += reference.base->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*reference.base);
+        // Postscript pairs are advanced by their full width, but the italic correction only reduces the extent of each pair.
+        LayoutUnit postScriptOffset = m_maxContentLogicalWidthContribution;
         subScript = reference.firstPostScript;
         while (subScript && subScript != reference.prescriptDelimiter) {
             auto supScript = subScript->nextInFlowSiblingBox();
             ASSERT(supScript);
-            LayoutUnit subSupPairWidth = std::max(std::max(0_lu, subScript->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*subScript) - baseItalicCorrection), supScript->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*supScript));
-            m_maxContentLogicalWidthContribution += subSupPairWidth + space;
+            LayoutUnit subWidth = subScript->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*subScript);
+            LayoutUnit supWidth = supScript->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*supScript);
+            m_maxContentLogicalWidthContribution = std::max(m_maxContentLogicalWidthContribution, postScriptOffset + std::max(std::max(0_lu, subWidth - baseItalicCorrection), supWidth) + space);
+            postScriptOffset += std::max(subWidth, supWidth) + space;
             subScript = supScript->nextInFlowSiblingBox();
         }
     }
@@ -447,12 +451,16 @@ void RenderMathMLScripts::layoutBlock(RelayoutChildren relayoutChildren, LayoutU
             subScript = supScript->nextInFlowSiblingBox();
         }
         logicalWidth += reference.base->logicalWidth() + reference.base->marginLogicalWidth();
+        // Postscript pairs are advanced by their full width, but the italic correction only reduces the extent of each pair.
+        LayoutUnit postScriptOffset = logicalWidth;
         subScript = reference.firstPostScript;
         while (subScript && subScript != reference.prescriptDelimiter) {
             auto supScript = subScript->nextInFlowSiblingBox();
             ASSERT(supScript);
-            LayoutUnit subSupPairWidth = std::max(std::max(0_lu, subScript->logicalWidth() + subScript->marginLogicalWidth() - baseItalicCorrection), supScript->logicalWidth() + supScript->marginLogicalWidth());
-            logicalWidth += subSupPairWidth + space;
+            LayoutUnit subWidth = subScript->logicalWidth() + subScript->marginLogicalWidth();
+            LayoutUnit supWidth = supScript->logicalWidth() + supScript->marginLogicalWidth();
+            logicalWidth = std::max(logicalWidth, postScriptOffset + std::max(std::max(0_lu, subWidth - baseItalicCorrection), supWidth) + space);
+            postScriptOffset += std::max(subWidth, supWidth) + space;
             subScript = supScript->nextInFlowSiblingBox();
         }
         setLogicalWidth(logicalWidth);
