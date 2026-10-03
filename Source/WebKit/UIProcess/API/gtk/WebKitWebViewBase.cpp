@@ -1716,6 +1716,31 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
     else if (y >= height && y < height + 1)
         y = height + 1;
 
+    // On Wayland, leave events carry no position: GDK fills them with the last known pointer position, which is still
+    // inside the view when the pointer leaves quickly, so WebCore would keep hovering the element under it. Like
+    // webkitWebViewBaseLeave() does for GTK4, use a point just outside the edge closest to the last known position.
+    if (crossingEvent->type == GDK_LEAVE_NOTIFY && crossingEvent->mode == GDK_CROSSING_NORMAL && crossingEvent->detail != GDK_NOTIFY_INFERIOR
+        && x >= 0 && x < width && y >= 0 && y < height) {
+        FloatPoint previous = priv->lastMotionEvent ? priv->lastMotionEvent->position : FloatPoint(xEvent, yEvent);
+        int previousX = std::round(previous.x());
+        int previousY = std::round(previous.y());
+        int xDistanceFromRightEdge = allocation.width - previousX;
+        int yDistanceFromBottomEdge = allocation.height - previousY;
+        if (previousX <= xDistanceFromRightEdge && previousX <= previousY && previousX <= yDistanceFromBottomEdge) {
+            x = -1;
+            y = previousY;
+        } else if (xDistanceFromRightEdge <= previousX && xDistanceFromRightEdge <= previousY && xDistanceFromRightEdge <= yDistanceFromBottomEdge) {
+            x = allocation.width;
+            y = previousY;
+        } else if (previousY <= previousX && previousY <= xDistanceFromRightEdge && previousY <= yDistanceFromBottomEdge) {
+            x = previousX;
+            y = -1;
+        } else {
+            x = previousX;
+            y = allocation.height;
+        }
+    }
+
     GdkEvent* event = reinterpret_cast<GdkEvent*>(crossingEvent);
     GUniquePtr<GdkEvent> copiedEvent;
     if (x != xEvent || y != yEvent) {
