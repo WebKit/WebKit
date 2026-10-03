@@ -468,6 +468,10 @@ static bool couldHoldMessage(Element& element)
     if (is<HTMLFormControlElement>(element) || element.isLink())
         return false;
 
+    // A field's own text, and text in an editor the page built, is not a message.
+    if (element.isInUserAgentShadowTree() || element.hasEditableStyle())
+        return false;
+
     // Text inside a label names a control, not an error message.
     if (is<HTMLLabelElement>(element) || ancestorsOfType<HTMLLabelElement>(element).first())
         return false;
