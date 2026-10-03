@@ -107,4 +107,9 @@ const SVGLengthValue& RenderSVGTextPath::startOffset() const
     return textPathElement().startOffset();
 }
 
+bool RenderSVGTextPath::isLayoutPathReversed() const
+{
+    return protect(textPathElement())->side() == SVGTextPathSideRight;
+}
+
 }
