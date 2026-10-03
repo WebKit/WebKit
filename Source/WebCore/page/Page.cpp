@@ -5542,9 +5542,10 @@ void Page::forceRepaintAllFrames()
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::updatePlayStateForAllAnimations()
 {
-    RefPtr localMainFrame = this->localMainFrame();
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
-        view->updatePlayStateForAllAnimationsIncludingSubframes();
+    for (auto& rootFrame : m_rootFrames) {
+        if (RefPtr view = rootFrame->view())
+            view->updatePlayStateForAllAnimationsIncludingSubframes();
+    }
 }
 
 void Page::addIndividuallyPlayingAnimationElement(HTMLImageElement& element)

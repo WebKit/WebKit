@@ -35,6 +35,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestResourceLoadDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
@@ -49,6 +50,7 @@
 #import <WebKit/_WKAppHighlightDelegate.h>
 #import <WebKit/_WKAttachment.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKResourceLoadInfo.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -470,6 +472,133 @@ TEST(SiteIsolation, SetEditableAfterCrossOriginIframeLoads)
         return !mainFrameIsEditable() && !childFrameIsEditable();
     }));
 }
+
+TEST(SiteIsolation, SetMediaTypeAfterCrossOriginIframeLoads)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto mainFrameMatchesPrint = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"matchMedia('print').matches"] boolValue];
+    };
+    auto childFrameMatchesPrint = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"matchMedia('print').matches" inFrame:childFrame.get()] boolValue];
+    };
+    EXPECT_FALSE(mainFrameMatchesPrint());
+    EXPECT_FALSE(childFrameMatchesPrint());
+
+    webView.get().mediaType = @"print";
+    EXPECT_TRUE(Util::waitFor([&] {
+        return mainFrameMatchesPrint();
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return childFrameMatchesPrint();
+    }));
+
+    webView.get().mediaType = nil;
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !mainFrameMatchesPrint() && !childFrameMatchesPrint();
+    }));
+}
+
+TEST(SiteIsolation, SetResourceLoadDelegateAfterCrossOriginIframeLoads)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } },
+        { "/subresource"_s, { "subresource"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    // The subresource load below happens after the cross-origin iframe's process already exists, so the
+    // delegate reaches it only if setResourceLoadClient() is sent to every content process, not just the
+    // main frame's.
+    RetainPtr resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
+    __block bool sawSubresourceRequest = false;
+    [resourceLoadDelegate setDidSendRequest:^(WKWebView *, _WKResourceLoadInfo *, NSURLRequest *request) {
+        if ([request.URL.path isEqualToString:@"/subresource"])
+            sawSubresourceRequest = true;
+    }];
+    webView.get()._resourceLoadDelegate = resourceLoadDelegate.get();
+
+    [webView objectByEvaluatingJavaScript:@"fetch('/subresource'); true" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::runFor(&sawSubresourceRequest, 5_s));
+
+    webView.get()._resourceLoadDelegate = nil;
+}
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
+TEST(SiteIsolation, PauseAllAnimationsAfterCrossOriginIframeLoads)
+{
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"test-mse" ofType:@"mp4"] options:0 error:NULL];
+    HTTPResponse videoResponse { videoData.get() };
+    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body><img id='img' src='/test-mse.mp4'></body>"_s } },
+        { "/test-mse.mp4"_s, videoResponse }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // Use the internals-enabled plug-in to observe image animation state inside the cross-origin iframe, and
+    // point the data store at the test HTTPS proxy, since _test_configurationWithTestPlugInClassName: doesn't set one up.
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto childFrameImageIsAnimating = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.internals.isImageAnimating(document.getElementById('img'))" inFrame:childFrame.get()] boolValue];
+    };
+    EXPECT_TRUE(Util::waitFor([&] {
+        return childFrameImageIsAnimating();
+    }));
+
+    // Pausing only takes effect when the system allows animation controls, so turn that on in the iframe's process.
+    [webView objectByEvaluatingJavaScript:@"window.internals.setImageAnimationEnabled(false); true" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !childFrameImageIsAnimating();
+    }));
+
+    __block bool done = false;
+    [webView _playAllAnimationsWithCompletionHandler:^{
+        done = true;
+    }];
+    EXPECT_TRUE(Util::runFor(&done, 5_s));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return childFrameImageIsAnimating();
+    }));
+
+    done = false;
+    [webView _pauseAllAnimationsWithCompletionHandler:^{
+        done = true;
+    }];
+    EXPECT_TRUE(Util::runFor(&done, 5_s));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !childFrameImageIsAnimating();
+    }));
+}
+
+
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 TEST(SiteIsolation, FontAttributesDelegateSetAfterFocusingCrossOriginIframe)
 {

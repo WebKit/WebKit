@@ -1435,8 +1435,12 @@ void WebPageProxy::setResourceLoadClient(std::unique_ptr<API::ResourceLoadClient
     bool hadResourceLoadClient = !!m_resourceLoadClient;
     m_resourceLoadClient = WTF::move(client);
     bool hasResourceLoadClient = !!m_resourceLoadClient;
-    if (hadResourceLoadClient != hasResourceLoadClient)
-        send(Messages::WebPage::SetHasResourceLoadClient(hasResourceLoadClient));
+    if (hadResourceLoadClient == hasResourceLoadClient)
+        return;
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetHasResourceLoadClient(hasResourceLoadClient), pageID);
+    });
 }
 
 void WebPageProxy::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
@@ -3276,7 +3280,9 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetControlledByAutomation(controlled));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetControlledByAutomation(controlled), pageID);
+    });
     protect(protect(websiteDataStore())->networkProcess())->send(Messages::NetworkProcess::SetSessionIsControlledByAutomation(m_websiteDataStore->sessionID(), m_controlledByAutomation), 0);
 }
 
@@ -12548,7 +12554,9 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), pageID);
+    });
 }
 
 void WebPageProxy::resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
@@ -18957,7 +18965,9 @@ void WebPageProxy::sendCORSDisablingPatternsToNetworkProcessIfNecessary()
 void WebPageProxy::setOverriddenMediaType(const String& mediaType)
 {
     m_overriddenMediaType = mediaType;
-    send(Messages::WebPage::SetOverriddenMediaType(mediaType));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetOverriddenMediaType(mediaType), pageID);
+    });
 }
 
 void WebPageProxy::setIsTakingSnapshotsForApplicationSuspension(bool isTakingSnapshotsForApplicationSuspension)
@@ -19508,7 +19518,10 @@ void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHand
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::PauseAllAnimations(), WTF::move(completionHandler));
+    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::PauseAllAnimations(), [aggregator] { }, pageID);
+    });
 }
 
 void WebPageProxy::playAllAnimations(CompletionHandler<void()>&& completionHandler)
@@ -19518,7 +19531,10 @@ void WebPageProxy::playAllAnimations(CompletionHandler<void()>&& completionHandl
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::PlayAllAnimations(), WTF::move(completionHandler));
+    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::PlayAllAnimations(), [aggregator] { }, pageID);
+    });
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
