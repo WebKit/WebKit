@@ -45,7 +45,6 @@ public:
 
     void scheduleDisplayRefreshCallbacksForMonotonicAnimations();
     void pauseDisplayRefreshCallbacksForMonotonicAnimations();
-    void highImpactMonotonicAnimationsWereRemoved();
 
     void startForcedDisplayRefreshWindow(Seconds interval, Seconds duration);
 

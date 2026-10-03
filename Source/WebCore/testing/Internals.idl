@@ -347,7 +347,6 @@ enum AV1ConfigurationRange {
     required DOMString property;
     required double speed;
     required boolean isThreaded;
-    required boolean hasHighImpact;
 };
 
 [
