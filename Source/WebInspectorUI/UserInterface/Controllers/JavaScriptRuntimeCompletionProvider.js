@@ -227,6 +227,8 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                     object = new Boolean(false);
                 else if (primitiveType === "symbol")
                     object = Symbol();
+                else if (primitiveType === "bigint")
+                    object = Object(BigInt(0));
                 else
                     object = this;
 
@@ -246,7 +248,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 result.callFunctionJSON(inspectedPage_evalResult_getArrayCompletions, undefined, receivedArrayPropertyNames.bind(this));
             else if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(inspectedPage_evalResult_getCompletions, undefined, receivedObjectPropertyNames.bind(this));
-            else if (result.type === "string" || result.type === "number" || result.type === "boolean" || result.type === "symbol") {
+            else if (result.type === "string" || result.type === "number" || result.type === "boolean" || result.type === "symbol" || result.type === "bigint") {
                 let options = {objectGroup: "completion", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: true, generatePreview: false, saveResult: false};
                 WI.runtimeManager.evaluateInInspectedWindow("(" + inspectedPage_evalResult_getCompletions + ")(\"" + result.type + "\")", options, receivedPropertyNamesFromEvaluate.bind(this));
             } else
