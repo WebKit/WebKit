@@ -476,6 +476,8 @@ static void bindOpenGL(Vector<UTF8CString>& args)
         // Adreno
         "--dev-bind-try"_s, "/dev/kgsl-3d0"_s, "/dev/kgsl-3d0"_s,
         "--dev-bind-try"_s, "/dev/ion"_s, "/dev/ion"_s,
+        // WSL2 (Mesa d3d12)
+        "--dev-bind-try"_s, "/dev/dxg"_s, "/dev/dxg"_s,
 #if PLATFORM(WPE)
         "--dev-bind-try"_s, "/dev/fb0"_s, "/dev/fb0"_s,
         "--dev-bind-try"_s, "/dev/fb1"_s, "/dev/fb1"_s,
