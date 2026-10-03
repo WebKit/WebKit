@@ -1,0 +1,16 @@
+This tests that what the user types into a text area, or into an editor the page built, is not taken for an error message while a failed submission is being watched.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: errorMessageText(axElement('message')) === 'no error messages'
+PASS: errorMessageText(axElement('notes')) === 'no error messages'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Message
+Please call after five.
+
+Send

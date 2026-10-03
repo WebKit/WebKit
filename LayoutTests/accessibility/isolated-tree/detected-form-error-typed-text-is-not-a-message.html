@@ -1,0 +1,64 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <div><label for="name">Name</label><input id="name" type="text" required></div>
+  <div id="name-error"></div>
+  <div><label for="message">Message</label><textarea id="message" required></textarea></div>
+  <div id="notes" contenteditable="true" role="textbox" aria-label="Notes"><p><br></p></div>
+  <button id="send" type="submit">Send</button>
+</form>
+
+<script>
+var output = "This tests that what the user types into a text area, or into an editor the page built, is not taken for an error message while a failed submission is being watched.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    // The page writes its own message for the name, in place of the browser's bubbles.
+    document.getElementById("form").addEventListener("invalid", (event) => event.preventDefault(), true);
+    document.getElementById("name").addEventListener("invalid", () => {
+        document.getElementById("name-error").textContent = "Enter your name.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function typeInto(id, text) {
+        document.getElementById(id).focus();
+        document.execCommand("insertText", false, text);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('name').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("send").click();
+        // The user fills in the rest while the attempt is still being watched.
+        typeInto("message", "I would like to book a cleaning.");
+        typeInto("notes", "Please call after five.");
+
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter your name.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += expect("errorMessageText(axElement('message'))", "'no error messages'");
+        output += expect("errorMessageText(axElement('notes'))", "'no error messages'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
