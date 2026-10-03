@@ -191,17 +191,47 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
     _tryApplyAwaitConvenience(originalExpression)
     {
-        let esprimaSyntaxTree;
+        function containsTopLevelAwait(node) {
+            if (!node)
+                return false;
 
-        // Do not transform if the original code parses just fine.
+            switch (node.type) {
+            case "AssignmentExpression":
+            case "BinaryExpression":
+                return containsTopLevelAwait(node.left)
+                    || containsTopLevelAwait(node.right);
+            case "CallExpression":
+                return (node.callee.type === "Identifier" && node.callee.name === "await")
+                    || containsTopLevelAwait(node.callee)
+                    || node.arguments.some(containsTopLevelAwait);
+            case "ExpressionStatement":
+                return containsTopLevelAwait(node.expression);
+            case "VariableDeclaration":
+                if (node.declarations.length === 1) {
+                    let declaration = node.declarations[0];
+                    return declaration.id.type === "Identifier"
+                        && declaration.init?.type === "CallExpression"
+                        && declaration.init.callee.type === "Identifier"
+                        && declaration.init.callee.name === "await";
+                }
+                break;
+            }
+            return false;
+        }
+
+        let esprimaSyntaxTree = null;
+
+        // Do not transform if the original code parses just fine, unless `await(<expr>)` was parsed as a call to an identifier.
         try {
-            esprima.parse(originalExpression);
-            return originalExpression;
+            esprimaSyntaxTree = esprima.parse(originalExpression).body[0];
         } catch { }
+        if (esprimaSyntaxTree && !containsTopLevelAwait(esprimaSyntaxTree))
+            return originalExpression;
 
         // Do not transform if the async function version does not parse.
+        let wrappedExpression = `(async function(){${originalExpression}})`;
         try {
-            esprimaSyntaxTree = esprima.parse("(async function(){" + originalExpression + "})");
+            esprimaSyntaxTree = esprima.parse(wrappedExpression, {range: true});
         } catch {
             return originalExpression;
         }
@@ -219,59 +249,74 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         if (asyncFunctionBlock.body.length !== 1)
             return originalExpression;
 
-        // Extract the variable name for transformation.
-        let variableName;
-        let anonymous = false;
-        let declarationKind = "var";
-        let awaitPortion;
         let statement = asyncFunctionBlock.body[0];
-        if (statement.type === "ExpressionStatement"
-            && statement.expression.type === "AwaitExpression") {
-            // await <expr>
-            anonymous = true;
-        } else if (statement.type === "ExpressionStatement"
-            && statement.expression.type === "AssignmentExpression"
-            && statement.expression.right.type === "AwaitExpression"
-            && statement.expression.left.type === "Identifier") {
-            // x = await <expr>
-            variableName = statement.expression.left.name;
-            awaitPortion = originalExpression.substring(originalExpression.indexOf("await"));
-        } else if (statement.type === "VariableDeclaration"
-            && statement.declarations.length === 1
-            && statement.declarations[0].init.type === "AwaitExpression"
-            && statement.declarations[0].id.type === "Identifier") {
-            // var x = await <expr>
-            variableName = statement.declarations[0].id.name;
-            declarationKind = statement.kind;
-            awaitPortion = originalExpression.substring(originalExpression.indexOf("await"));
-        } else {
-            // Do not transform if this was not one of the simple supported syntaxes.
+
+        function getTopLevelAwait(node) {
+            if (!node)
+                return null;
+
+            switch (node.type) {
+            case "AssignmentExpression":
+                if (node.operator === "="
+                    && node.left.type === "Identifier"
+                    && node.right.type === "AwaitExpression")
+                    return {
+                        variable: node.left.name,
+                        declaration: "var",
+                        expression: node.right,
+                    };
+                if (getTopLevelAwait(node.left) || getTopLevelAwait(node.right))
+                    return {};
+                break;
+            case "BinaryExpression":
+                if (getTopLevelAwait(node.left) || getTopLevelAwait(node.right))
+                    return {};
+                break;
+            case "AwaitExpression":
+                return {};
+            case "CallExpression":
+                if (getTopLevelAwait(node.callee) || node.arguments.some(getTopLevelAwait))
+                    return {};
+                break;
+            case "ExpressionStatement":
+                return getTopLevelAwait(node.expression);
+            case "VariableDeclaration":
+                if (node.declarations.length === 1) {
+                    let declaration = node.declarations[0];
+                    if (declaration.init
+                        && declaration.init.type === "AwaitExpression"
+                        && declaration.id.type === "Identifier") {
+                        return {
+                            variable: declaration.id.name,
+                            declaration: node.kind === "const" ? "let" : node.kind,
+                            expression: declaration.init,
+                        };
+                    }
+                }
+                break;
+            }
+            return null;
+        }
+        let found = getTopLevelAwait(statement);
+        if (!found)
             return originalExpression;
-        }
 
-        if (anonymous) {
-            return `
-(async function() {
-    try {
-        let result = ${originalExpression};
-        console.info("%o", result);
-    } catch (e) {
-        console.error(e);
-    }
-})();
-undefined`;
-        }
+        let expressionNode = found.expression || statement.expression;
+        let expressionText = wrappedExpression.substring(expressionNode.range[0], expressionNode.range[1]);
 
-        return `${declarationKind} ${variableName};
-(async function() {
-    try {
-        ${variableName} = ${awaitPortion};
-        console.info("%o", ${variableName});
-    } catch (e) {
-        console.error(e);
-    }
-})();
-undefined;`;
+        let external = "";
+        let internal = "";
+        if (found.variable) {
+            console.assert(found.declaration);
+            external = `${found.declaration} ${found.variable}; `;
+            internal = `${found.variable} = ${expressionText}; console.info("%o", ${found.variable})`;
+        } else {
+            // Nothing to do externally as it's an anonymous expression.
+            // Preserve evaluation order without introducing a binding.
+            internal = `(function(result){ console.info("%o", result); })(${expressionText})`;
+        }
+        console.assert(internal);
+        return `${external}(async function() { try { ${internal}; } catch (e) { console.error(e); } })(); undefined`;
     }
 };
 
