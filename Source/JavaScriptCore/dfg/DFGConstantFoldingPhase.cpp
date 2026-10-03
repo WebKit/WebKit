@@ -1710,6 +1710,46 @@ private:
                 break;
             }
 
+            case ObjectIsExtensible: {
+                AbstractValue& child = m_state.forNode(node->child1());
+                if (!child.couldBeType(SpecObject)) {
+                    m_interpreter.execute(indexInBlock);
+                    alreadyHandled = true;
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    m_graph.convertToConstant(node, jsBoolean(false));
+                    changed = true;
+                    break;
+                }
+                if (!child.couldBeType(SpecProxyObject | SpecGlobalProxy)
+                    && child.m_structure.isFinite() && !child.m_structure.isClear()) {
+                    bool allExtensible = true;
+                    bool allNonExtensible = true;
+                    child.m_structure.forEach([&](RegisteredStructure structure) {
+                        if (structure->isStructureExtensible())
+                            allNonExtensible = false;
+                        else
+                            allExtensible = false;
+                    });
+                    if (allNonExtensible) {
+                        m_interpreter.execute(indexInBlock);
+                        alreadyHandled = true;
+                        m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                        m_graph.convertToConstant(node, jsBoolean(false));
+                        changed = true;
+                        break;
+                    }
+                    if (allExtensible) {
+                        m_interpreter.execute(indexInBlock);
+                        alreadyHandled = true;
+                        m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                        m_graph.convertToConstant(node, jsBoolean(true));
+                        changed = true;
+                        break;
+                    }
+                }
+                break;
+            }
+
             case GetScope: {
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
                     if (JSFunction* function = dynamicDowncast<JSFunction>(base)) {
