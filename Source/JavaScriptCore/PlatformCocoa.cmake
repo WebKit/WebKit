@@ -273,6 +273,8 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/framework.sb COPYONLY)
     configure_file(${JAVASCRIPTCORE_DIR}/JavaScriptCore.modulemap ${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.modulemap COPYONLY)
     configure_file("${JAVASCRIPTCORE_DIR}/JavaScriptCore_Private.modulemap" ${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.private.modulemap COPYONLY)
+elseif (WEBKIT_SDK_IS_MACOS)
+    configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/Versions/A/Resources/framework.sb COPYONLY)
 endif ()
 
 list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
