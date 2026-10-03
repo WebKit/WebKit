@@ -79,7 +79,7 @@ private:
 
     static void* NODELETE retainSocketStreamHandle(void*);
     static void releaseSocketStreamHandle(void*);
-    static CFStringRef copyCFStreamDescription(void*);
+    static CFStringRef copyCFStreamDescription(void*) CF_RETURNS_RETAINED;
     static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void*);
     static void writeStreamCallback(CFWriteStreamRef, CFStreamEventType, void*);
     void readStreamCallback(CFStreamEventType);

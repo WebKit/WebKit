@@ -59,7 +59,7 @@ static void LoadWebLocalizedStringsTimerCallback(CFRunLoopTimerRef timer, void *
 static void LoadWebLocalizedStrings()
 {
     auto timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent(), 0, 0, 0, &LoadWebLocalizedStringsTimerCallback, NULL));
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddTimer(protect(CFRunLoopGetCurrent()), timer.get(), kCFRunLoopCommonModes);
 }
 
 void WebKitInitialize(void)
@@ -147,7 +147,7 @@ CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radiu
         rects.append(cgRect);
     }
 
-    return CGPathRetain(PathUtilities::pathWithShrinkWrappedRects(rects, radius).platformPath());
+    return CGPathRetain(protect(PathUtilities::pathWithShrinkWrappedRects(rects, radius).platformPath()));
 }
 
 #endif // PLATFORM(IOS_FAMILY)

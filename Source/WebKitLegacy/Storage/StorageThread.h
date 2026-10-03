@@ -37,7 +37,7 @@ namespace WebCore {
 class StorageAreaSync;
 class StorageTask;
 
-class StorageThread final : public CanMakeCheckedPtr<StorageThread> {
+class StorageThread final : public CanMakeThreadSafeCheckedPtr<StorageThread> {
     WTF_MAKE_NONCOPYABLE(StorageThread);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StorageThread);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StorageThread);

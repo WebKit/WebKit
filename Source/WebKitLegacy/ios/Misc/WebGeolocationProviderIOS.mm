@@ -39,6 +39,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebCore;
 
@@ -190,7 +191,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     _pendingInitialPositionWebView.add(webView);
     if (!_sendLastPositionAsynchronouslyTimer) {
         _sendLastPositionAsynchronouslyTimer = [NSTimer timerWithTimeInterval:0 target:self selector:@selector(_handlePendingInitialPosition:) userInfo:nil repeats:NO];
-        [WebThreadNSRunLoop() addTimer:_sendLastPositionAsynchronouslyTimer.get() forMode:NSDefaultRunLoopMode];
+        [protect(WebThreadNSRunLoop()) addTimer:_sendLastPositionAsynchronouslyTimer.get() forMode:NSDefaultRunLoopMode];
     }
 }
 
@@ -320,7 +321,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 
 #pragma mark - _WebCoreLocationUpdateThreadingProxy implementation.
 @implementation _WebCoreLocationUpdateThreadingProxy {
-    WebGeolocationProviderIOS* _provider;
+    WeakObjCPtr<WebGeolocationProviderIOS> _provider;
 }
 
 - (id)initWithProvider:(WebGeolocationProviderIOS*)provider
@@ -334,14 +335,14 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 - (void)geolocationAuthorizationGranted
 {
     WebThreadRun(^{
-        [_provider geolocationAuthorizationGranted];
+        [protect(_provider) geolocationAuthorizationGranted];
     });
 }
 
 - (void)geolocationAuthorizationDenied
 {
     WebThreadRun(^{
-        [_provider geolocationAuthorizationDenied];
+        [protect(_provider) geolocationAuthorizationDenied];
     });
 }
 
@@ -349,21 +350,21 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 {
     RetainPtr<WebGeolocationPosition> webPosition = adoptNS([[WebGeolocationPosition alloc] initWithGeolocationPosition:WTF::move(position)]);
     WebThreadRun(^{
-        [_provider positionChanged:webPosition.get()];
+        [protect(_provider) positionChanged:webPosition.get()];
     });
 }
 
 - (void)errorOccurred:(NSString *)errorMessage
 {
     WebThreadRun(^{
-        [_provider errorOccurred:errorMessage];
+        [protect(_provider) errorOccurred:errorMessage];
     });
 }
 
 - (void)resetGeolocation
 {
     WebThreadRun(^{
-        [_provider resetGeolocation];
+        [protect(_provider) resetGeolocation];
     });
 }
 @end

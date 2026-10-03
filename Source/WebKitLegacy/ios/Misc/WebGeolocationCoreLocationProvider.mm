@@ -89,7 +89,7 @@ using namespace WebCore;
 - (void)requestGeolocationAuthorization
 {
     if (![getCLLocationManagerClassSingleton() locationServicesEnabled]) {
-        [_positionListener geolocationAuthorizationDenied];
+        [protect(_positionListener) geolocationAuthorizationDenied];
         return;
     }
 
@@ -103,12 +103,12 @@ using namespace WebCore;
     }
     case kCLAuthorizationStatusAuthorizedAlways:
     case kCLAuthorizationStatusAuthorizedWhenInUse: {
-        [_positionListener geolocationAuthorizationGranted];
+        [protect(_positionListener) geolocationAuthorizationGranted];
         break;
     }
     case kCLAuthorizationStatusRestricted:
     case kCLAuthorizationStatusDenied:
-        [_positionListener geolocationAuthorizationDenied];
+        [protect(_positionListener) geolocationAuthorizationDenied];
         break;
     }
 }
@@ -123,7 +123,7 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
     if (![getCLLocationManagerClassSingleton() locationServicesEnabled]
         || !isAuthorizationGranted([getCLLocationManagerClassSingleton() authorizationStatus])) {
         [_locationManager stopUpdatingLocation];
-        [_positionListener resetGeolocation];
+        [protect(_positionListener) resetGeolocation];
         return;
     }
 
@@ -147,18 +147,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
             _isWaitingForAuthorization = NO;
-            [_positionListener geolocationAuthorizationDenied];
+            [protect(_positionListener) geolocationAuthorizationDenied];
             break;
         case kCLAuthorizationStatusAuthorizedAlways:
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             _isWaitingForAuthorization = NO;
-            [_positionListener geolocationAuthorizationGranted];
+            [protect(_positionListener) geolocationAuthorizationGranted];
             break;
         }
     } else {
         if (!(isAuthorizationGranted(_lastAuthorizationStatus) && isAuthorizationGranted(status))) {
             [_locationManager stopUpdatingLocation];
-            [_positionListener resetGeolocation];
+            [protect(_positionListener) resetGeolocation];
         }
     }
     _lastAuthorizationStatus = status;
@@ -166,7 +166,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)sendLocation:(CLLocation *)newLocation
 {
-    [_positionListener positionChanged:GeolocationPositionData { newLocation }];
+    [protect(_positionListener) positionChanged:GeolocationPositionData { newLocation }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
@@ -188,7 +188,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     NSString *errorMessage = [error localizedDescription];
-    [_positionListener errorOccurred:errorMessage];
+    [protect(_positionListener) errorOccurred:errorMessage];
 }
 
 - (void)setEnableHighAccuracy:(BOOL)flag

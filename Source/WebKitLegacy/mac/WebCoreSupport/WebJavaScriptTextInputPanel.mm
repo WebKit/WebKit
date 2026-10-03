@@ -30,14 +30,13 @@
 
 #import "WebJavaScriptTextInputPanel.h"
 
-#import <wtf/Assertions.h>
-
 #import <WebKitLegacy/WebNSControlExtras.h>
 #import <WebKitLegacy/WebNSWindowExtras.h>
+#import <wtf/Assertions.h>
 
 @implementation WebJavaScriptTextInputPanel {
-    IBOutlet NSTextField *prompt;
-    IBOutlet NSTextField *textInput;
+    IBOutlet __weak NSTextField *prompt;
+    IBOutlet __weak NSTextField *textInput;
 }
 
 - (id)initWithPrompt:(NSString *)p text:(NSString *)t
@@ -46,23 +45,24 @@
     if (!self)
         return nil;
     NSWindow *window = [self window];
-    
+
     // This must be done after the call to [self window], because
     // until then, prompt and textInput will be nil.
     ASSERT(prompt);
     ASSERT(textInput);
-    [prompt setStringValue:p];
-    [textInput setStringValue:t];
+    RetainPtr promptField = prompt;
+    [promptField setStringValue:p];
+    [protect(textInput) setStringValue:t];
 
-    [prompt sizeToFitAndAdjustWindowHeight];
+    [promptField sizeToFitAndAdjustWindowHeight];
     [window centerOverMainWindow];
-    
+
     return self;
 }
 
 - (NSString *)text
 {
-    return [textInput stringValue];
+    return [protect(textInput) stringValue];
 }
 
 - (IBAction)pressedCancel:(id)sender

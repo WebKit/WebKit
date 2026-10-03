@@ -156,14 +156,6 @@ CFStringRef SocketStreamHandleImpl::copyPACExecutionDescription(void*)
     return CFSTR("WebSocket proxy PAC file execution");
 }
 
-struct MainThreadPACCallbackInfo {
-    MainThreadPACCallbackInfo(SocketStreamHandle* handle, CFArrayRef proxyList)
-        : handle(handle), proxyList(proxyList)
-    { }
-    RefPtr<SocketStreamHandle> handle;
-    CFArrayRef proxyList;
-};
-
 void SocketStreamHandleImpl::pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef)
 {
     SocketStreamHandleImpl* handle = static_cast<SocketStreamHandleImpl*>(client);
@@ -311,8 +303,9 @@ void SocketStreamHandleImpl::createStreams()
         CFWriteStreamSetProperty(writeStream, kCFStreamPropertySourceApplication, m_auditData.sourceApplicationAuditData.get());
     }
 
-    m_readStream = adoptCF(readStream);
-    m_writeStream = adoptCF(writeStream);
+    // CFStreamCreatePairWithSocketToHost() returns both streams +1 through its out-parameters.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_readStream = adoptCF(readStream);
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_writeStream = adoptCF(writeStream);
 
     switch (m_connectionType) {
     case Unknown:
@@ -358,7 +351,7 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
 
     // Try system credential storage first, matching HTTP behavior (CFNetwork only asks the client for password if it couldn't find it in Keychain).
     Credential storedCredential;
-    if (auto* storageSession = m_storageSessionProvider ? m_storageSessionProvider->storageSession() : nullptr) {
+    if (CheckedPtr storageSession = m_storageSessionProvider ? m_storageSessionProvider->storageSession() : nullptr) {
         storedCredential = CredentialStorage::getFromPersistentStorage(protectionSpace);
         if (storedCredential.isEmpty())
             storedCredential = storageSession->credentialStorage().get(m_credentialPartition, protectionSpace);

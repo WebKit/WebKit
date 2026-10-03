@@ -46,13 +46,13 @@
 typedef int64_t WebHistoryDateKey;
 typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray>> DateToEntriesMap;
 
-NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
-NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
-NSString *WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
-NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
-NSString *WebHistoryItemsDiscardedWhileLoadingNotification = @"WebHistoryItemsDiscardedWhileLoadingNotification";
-NSString *WebHistorySavedNotification = @"WebHistorySavedNotification";
-NSString *WebHistoryItemsKey = @"WebHistoryItems";
+NSString * const WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
+NSString * const WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
+NSString * const WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
+NSString * const WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
+NSString * const WebHistoryItemsDiscardedWhileLoadingNotification = @"WebHistoryItemsDiscardedWhileLoadingNotification";
+NSString * const WebHistorySavedNotification = @"WebHistorySavedNotification";
+NSString * const WebHistoryItemsKey = @"WebHistoryItems";
 
 static RetainPtr<WebHistory>& NODELETE sharedHistory()
 {
@@ -60,8 +60,8 @@ static RetainPtr<WebHistory>& NODELETE sharedHistory()
     return _sharedHistory;
 }
 
-NSString *FileVersionKey = @"WebHistoryFileVersion";
-NSString *DatesArrayKey = @"WebHistoryDates";
+NSString * const FileVersionKey = @"WebHistoryFileVersion";
+NSString * const DatesArrayKey = @"WebHistoryDates";
 
 #define currentFileVersion 1
 
@@ -615,8 +615,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSData *)data
 {
     if (_entriesByDate->isEmpty()) {
-        static NSData *emptyHistoryData = [[NSData alloc] init];
-        return emptyHistoryData;
+        static NeverDestroyed<RetainPtr<NSData>> emptyHistoryData = adoptNS([[NSData alloc] init]);
+        return emptyHistoryData.get();
     }
 
     // Ignores the date and item count limits; these are respected when loading instead of when saving, so

@@ -56,13 +56,13 @@ void StorageThread::start()
     ASSERT(isMainThread());
     if (!m_thread) {
         if (m_type == Type::LocalStorage) {
-            m_thread = Thread::create("LocalStorage"_s, [this] {
-                threadEntryPoint();
+            m_thread = Thread::create("LocalStorage"_s, [checkedThis = CheckedPtr { this }] {
+                checkedThis->threadEntryPoint();
             });
         } else {
             ASSERT(m_type == Type::IndexedDB);
-            m_thread = Thread::create("IndexedDB"_s, [this] {
-                threadEntryPoint();
+            m_thread = Thread::create("IndexedDB"_s, [checkedThis = CheckedPtr { this }] {
+                checkedThis->threadEntryPoint();
             });
         }
     }
@@ -95,8 +95,8 @@ void StorageThread::terminate()
     if (!m_thread)
         return;
 
-    m_queue.append(makeUnique<Function<void ()>>([this] {
-        performTerminate();
+    m_queue.append(makeUnique<Function<void ()>>([checkedThis = CheckedPtr { this }] {
+        checkedThis->performTerminate();
     }));
     protect(m_thread)->waitForCompletion();
     ASSERT(m_queue.killed());

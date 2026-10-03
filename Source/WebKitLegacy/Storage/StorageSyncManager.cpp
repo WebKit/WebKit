@@ -44,7 +44,7 @@ StorageSyncManager::StorageSyncManager(const String& path)
 {
     ASSERT(isMainThread());
     ASSERT(!m_path.isEmpty());
-    m_thread->start();
+    protect(m_thread)->start();
 }
 
 StorageSyncManager::~StorageSyncManager()
@@ -69,18 +69,17 @@ void StorageSyncManager::dispatch(Function<void ()>&& function)
     ASSERT(isMainThread());
     ASSERT(m_thread);
 
-    if (m_thread)
-        m_thread->dispatch(WTF::move(function));
+    if (CheckedPtr thread = m_thread.get())
+        thread->dispatch(WTF::move(function));
 }
 
 void StorageSyncManager::close()
 {
     ASSERT(isMainThread());
 
-    if (m_thread) {
-        m_thread->terminate();
-        m_thread = nullptr;
-    }
+    if (CheckedPtr thread = m_thread.get())
+        thread->terminate();
+    m_thread = nullptr;
 }
 
 } // namespace WebCore

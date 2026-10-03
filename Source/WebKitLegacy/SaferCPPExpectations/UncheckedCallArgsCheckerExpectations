@@ -1,6 +1,3 @@
-Storage/InProcessIDBServer.cpp
-Storage/StorageSyncManager.cpp
-WebCoreSupport/SocketStreamHandleImpl.cpp
 mac/DOM/DOM.mm
 mac/DOM/DOMHTMLInputElement.mm
 mac/DOM/DOMHTMLObjectElement.mm

@@ -69,7 +69,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 
 @implementation WebPDFView {
     BOOL dataSourceHasBeenSet;
-    CGPDFDocumentRef _PDFDocument;
+    RetainPtr<CGPDFDocumentRef> _PDFDocument;
     RetainPtr<NSString> _title;
     CGRect *_pageRects;
 }
@@ -107,21 +107,19 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 
 - (void)dealloc
 {
-    if (_PDFDocument != NULL)
-        CGPDFDocumentRelease(_PDFDocument);
     free(_pageRects);
     [super dealloc];
 }
 
 - (void)drawPage:(CGPDFPageRef)aPage
 {
-    CGContextRef context = WKGetCurrentGraphicsContext();
+    RetainPtr context = WKGetCurrentGraphicsContext();
     size_t pageNumber = CGPDFPageGetPageNumber(aPage);
     CGRect pageRect = _pageRects[pageNumber-1];
     
     // Draw page.
     CGContextSaveGState(context);
-    CGContextSetShadowWithColor(context, CGSizeMake(0.0f, 2.0f), 3.0f, [[self class] shadowColor]);
+    CGContextSetShadowWithColor(context, CGSizeMake(0.0f, 2.0f), 3.0f, protect([[self class] shadowColor]));
     CGContextSetFillColorWithColor(context, cachedCGColor(Color::white).get());
     CGContextFillRect(context, pageRect);
     CGContextRestoreGState(context);    
@@ -148,7 +146,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
     CGRect *firstFoundRect = (CGRect *)bsearch(&rect, _pageRects, pageCount, sizeof(CGRect), comparePageRects);
     if (firstFoundRect != NULL) {
         size_t firstFoundIndex = firstFoundRect - _pageRects;
-        id page = (id)CGPDFDocumentGetPage(_PDFDocument, firstFoundIndex+1);
+        RetainPtr<id> page = (id)CGPDFDocumentGetPage(_PDFDocument, firstFoundIndex+1);
         ASSERT(page);
         if (!page)
             return pages;
@@ -156,7 +154,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
         size_t i;
         for (i = firstFoundIndex - 1; i < pageCount; i--) {
             if (CGRectIntersectsRect(CGRectInset(_pageRects[i], 0.0, - PAGE_HEIGHT_INSET * 2), rect)) {
-                id page = (id)CGPDFDocumentGetPage(_PDFDocument, i + 1);
+                RetainPtr<id> page = (id)CGPDFDocumentGetPage(_PDFDocument, i + 1);
                 ASSERT(page);
                 if (page)
                     [pages addObject:page];
@@ -165,7 +163,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
         }
         for (i = firstFoundIndex + 1; i < pageCount; i++) {
             if (CGRectIntersectsRect(CGRectInset(_pageRects[i], 0.0, - PAGE_HEIGHT_INSET * 2), rect)) {
-                id page = (id)CGPDFDocumentGetPage(_PDFDocument, i + 1);
+                RetainPtr<id> page = (id)CGPDFDocumentGetPage(_PDFDocument, i + 1);
                 ASSERT(page);
                 if (page)
                     [pages addObject:page];
@@ -178,11 +176,11 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 
 - (void)drawRect:(CGRect)aRect
 {
-    CGContextRef context = WKGetCurrentGraphicsContext();
+    RetainPtr context = WKGetCurrentGraphicsContext();
 
     // Draw Background.
     CGContextSaveGState(context);
-    CGContextSetFillColorWithColor(context, [[self class] backgroundColor]);
+    CGContextSetFillColorWithColor(context, protect([[self class] backgroundColor]));
     CGContextFillRect(context, aRect);
     CGContextRestoreGState(context);
 
@@ -260,7 +258,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
     size_t i;
     for (i = 1; i <= pageCount; i++) {
         
-        CGPDFPageRef page = CGPDFDocumentGetPage(_PDFDocument, i);
+        RetainPtr page = CGPDFDocumentGetPage(_PDFDocument, i);
         CGRect boxRect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
         CGFloat rotation = CGPDFPageGetRotationAngle(page) * (std::numbers::pi / 180);
         if (rotation != 0) {
@@ -307,7 +305,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
     if (!provider) 
         return;
     
-    _PDFDocument = CGPDFDocumentCreateWithProvider(provider.get());
+    _PDFDocument = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
     if (!_PDFDocument)
         return;
     

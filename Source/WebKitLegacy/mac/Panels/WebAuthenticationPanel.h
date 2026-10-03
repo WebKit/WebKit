@@ -45,9 +45,7 @@
     IBOutlet NSTextField *separateRealmLabel;
     BOOL nibLoaded;
     BOOL usingSheet;
-    id callback;
     SEL selector;
-    NSURLAuthenticationChallenge *challenge;
 }
 
 -(id)initWithCallback:(id)cb selector:(SEL)sel;

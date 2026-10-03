@@ -32,12 +32,14 @@
 #import <WebKitLegacy/WAKView.h>
 #endif
 
+#import <wtf/RetainPtr.h>
+
 @class WebNodeHighlight;
 
 @interface WebNodeHighlightView : NSView {
-    WebNodeHighlight *_webNodeHighlight;
+    RetainPtr<WebNodeHighlight> _webNodeHighlight;
 #if PLATFORM(IOS_FAMILY)
-    NSMutableArray *_layers; // CAShapeLayers.
+    RetainPtr<NSMutableArray> _layers; // CAShapeLayers.
 #endif
 }
 - (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight;

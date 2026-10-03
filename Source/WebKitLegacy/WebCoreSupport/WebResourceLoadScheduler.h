@@ -40,7 +40,7 @@
 
 class WebResourceLoadScheduler;
 
-WebResourceLoadScheduler& webResourceLoadScheduler();
+CheckedRef<WebResourceLoadScheduler> webResourceLoadScheduler();
 
 class WebResourceLoadScheduler final : public WebCore::LoaderStrategy {
     WTF_MAKE_TZONE_ALLOCATED(WebResourceLoadScheduler);
@@ -150,3 +150,7 @@ private:
     unsigned m_suspendPendingRequestsCount;
     bool m_isSerialLoadingEnabled;
 };
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebResourceLoadScheduler)
+    static bool isType(const WebCore::LoaderStrategy&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

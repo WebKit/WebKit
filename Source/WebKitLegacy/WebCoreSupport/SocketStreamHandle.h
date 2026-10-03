@@ -31,13 +31,13 @@
 
 #pragma once
 
+#include "SocketStreamHandleClient.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
 struct CookieRequestHeaderFieldProxy;
-class SocketStreamHandleClient;
 
 struct SourceApplicationAuditToken {
 #if PLATFORM(COCOA)
