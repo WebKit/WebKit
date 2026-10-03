@@ -477,7 +477,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _handleTargetRemoved(event)
     {
         let {target} = event.data;
-        if (target !== WI.runtimeManager.activeExecutionContext) {
+        if (target !== WI.runtimeManager.activeExecutionContext?.target) {
             this._updateActiveExecutionContextDisplay();
             return;
         }

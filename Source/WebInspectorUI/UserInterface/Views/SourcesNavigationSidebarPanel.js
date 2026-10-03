@@ -2904,6 +2904,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         let {target} = event.data;
 
+        if (this.contentBrowser) {
+            let contentViewContainer = this.contentBrowser.contentViewContainer;
+            let contentViews = new Set(contentViewContainer.backForwardList.map((entry) => entry.contentView));
+            for (let contentView of contentViews) {
+                let sourceCode = contentView.representedObject;
+                if (sourceCode instanceof WI.SourceMapResource)
+                    sourceCode = sourceCode.sourceMap.originalSourceCode;
+                if ((sourceCode instanceof WI.Script || sourceCode instanceof WI.Resource) && sourceCode.target === target)
+                    contentViewContainer.closeContentView(contentView);
+            }
+        }
+
         let workerTreeElement = this._workerTargetTreeElementMap.take(target);
         if (workerTreeElement)
             workerTreeElement.parent.removeChild(workerTreeElement);
