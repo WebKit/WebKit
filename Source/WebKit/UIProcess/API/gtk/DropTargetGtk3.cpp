@@ -34,7 +34,9 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/DragData.h>
 #include <WebCore/PasteboardCustomData.h>
+#include <WebCore/TextResourceDecoder.h>
 #include <gtk/gtk.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {
@@ -184,12 +186,8 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         gint length;
         const auto* markupData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0) {
-            const auto span = unsafeMakeSpan(markupData, length);
-            // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
-            if (length >= 2 && reinterpret_cast<const char16_t*>(markupData)[0] == 0xFEFF)
-                m_selectionData->setMarkup(String(spanReinterpretCast<const char16_t>(span).subspan(1)));
-            else
-                m_selectionData->setMarkup(String(span));
+            // A byte order mark selects UTF-16 or UTF-8, otherwise the data is UTF-8. Decode as plain text to skip charset sniffing.
+            m_selectionData->setMarkup(TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding())->decodeAndFlush(unsafeMakeSpan(markupData, length)));
         }
         break;
     }
@@ -197,14 +195,14 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         gint length;
         const auto* uriListData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0)
-            m_selectionData->setURIList(String(unsafeMakeSpan(uriListData, length)));
+            m_selectionData->setURIList(String::fromUTF8(unsafeMakeSpan(uriListData, length)));
         break;
     }
     case DropTargetType::NetscapeURL: {
         gint length;
         const auto* urlData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0) {
-            Vector<String> tokens = String(unsafeMakeSpan(urlData, length)).split('\n');
+            Vector<String> tokens = String::fromUTF8(unsafeMakeSpan(urlData, length)).split('\n');
             URL url({ }, tokens[0]);
             if (url.isValid())
                 m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
