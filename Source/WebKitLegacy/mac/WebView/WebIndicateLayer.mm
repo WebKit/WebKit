@@ -46,7 +46,7 @@
     _webView = webView;
 
     self.canDrawConcurrently = NO;
-    self.contentsScale = [[_webView window] screenScale];
+    self.contentsScale = [[protect(_webView) window] screenScale];
 
     // Blue highlight color.
     constexpr auto highlightColor = WebCore::SRGBA<uint8_t> { 111, 168, 220, 168 };
@@ -57,9 +57,9 @@
 
 - (void)layoutSublayers
 {
-    CGFloat documentScale = [[[_webView mainFrame] documentView] scale];
+    CGFloat documentScale = [[[protect(_webView) mainFrame] documentView] scale];
     [self setTransform:CATransform3DMakeScale(documentScale, documentScale, 1.0)];
-    [self setFrame:[_webView frame]];
+    [self setFrame:[protect(_webView) frame]];
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key

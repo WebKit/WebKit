@@ -98,7 +98,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector)
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
 
     id returnValue;
@@ -131,7 +131,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
 
@@ -165,7 +165,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect r
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&rect atIndex:3];
 
@@ -199,7 +199,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -234,7 +234,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&boolean atIndex:4];
@@ -269,7 +269,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -305,7 +305,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&integer atIndex:4];
@@ -340,7 +340,7 @@ static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL s
     if (!delegate || ![delegate respondsToSelector:selector])
         return 0.0f;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
 
     float returnValue = 0.0f;
@@ -370,7 +370,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
 
     BOOL returnValue;
@@ -400,7 +400,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
 
@@ -431,7 +431,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&boolean atIndex:4];
@@ -475,7 +475,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -498,7 +498,7 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
     
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -531,7 +531,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
 
     id returnValue;
@@ -564,7 +564,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&integer atIndex:3];
 
@@ -598,7 +598,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
 
@@ -683,7 +683,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -709,7 +709,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object atIndex:3];
     [invocation setArgument:&double1 atIndex:4];
@@ -744,7 +744,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -780,7 +780,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -817,7 +817,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&integer atIndex:4];
@@ -881,7 +881,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&object2 atIndex:4];
@@ -975,7 +975,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&object1 atIndex:3];
     [invocation setArgument:&interval atIndex:4];
@@ -1253,32 +1253,32 @@ id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id 
 #if PLATFORM(IOS_FAMILY)
 id CallResourceLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
-    return CallDelegateInWebThread(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2);
 }
 
 id CallResourceLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
-    return CallDelegateInWebThread(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, object3);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2, object3);
 }
 
 id CallResourceLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3, id object4)
 {
-    return CallDelegateInWebThread(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, object3, object4);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2, object3, object4);
 }
 
 id CallResourceLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer, id object2)
 {
-    return CallDelegateInWebThread(implementation, self, self->_private->resourceProgressDelegate, selector, object1, integer, object2);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, integer, object2);
 }
 
 id CallResourceLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selector, id object1, id object2, NSInteger integer, id object3)
 {
-    return CallDelegateInWebThread(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, integer, object3);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->resourceProgressDelegate), selector, object1, object2, integer, object3);
 }
 
 id CallFrameLoadDelegateInWebThread(IMP implementation, WebView *self, SEL selector, NSUInteger integer)
 {
-    return CallDelegateInWebThread(implementation, self, self->_private->frameLoadDelegate, selector, integer);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->frameLoadDelegate), selector, integer);
 }
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -1317,7 +1317,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 #if !PLATFORM(IOS_FAMILY)
     return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, object2, integer, object3);
 #else
-    return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, object2, integer, object3);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, object2, integer, object3);
 #endif
 }
 
@@ -1326,7 +1326,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 #if !PLATFORM(IOS_FAMILY)
     return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer1, object2, integer2, object3);
 #else
-    return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, object2, integer2, object3);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer1, object2, integer2, object3);
 #endif
 }
 
@@ -1335,7 +1335,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 #if !PLATFORM(IOS_FAMILY)
     return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer, object2, object3, object4);
 #else
-    return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer, object2, object3, object4);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer, object2, object3, object4);
 #endif
 }
 
@@ -1344,7 +1344,7 @@ id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id o
 #if !PLATFORM(IOS_FAMILY)
     return CallDelegate(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer1, integer2, object2);
 #else
-    return CallDelegateInWebThread(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, integer2, object2);
+    return CallDelegateInWebThread(implementation, self, protect(self->_private->scriptDebugDelegate), selector, object1, integer1, integer2, object2);
 #endif
 }
 
@@ -1387,7 +1387,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&object1 atIndex:2];
     [invocation setArgument:&object2 atIndex:3];
 
@@ -1423,7 +1423,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&object1 atIndex:2];
     [invocation setArgument:&object2 atIndex:3];
     [invocation setArgument:&object3 atIndex:4];
@@ -1460,7 +1460,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     if (!delegate)
         return nil;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&object1 atIndex:2];
     [invocation setArgument:&object2 atIndex:3];
     [invocation setArgument:&object3 atIndex:4];
@@ -1499,7 +1499,7 @@ BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, 
     if (!delegate)
         return result;
 
-    NSInvocation *invocation = WebThreadMakeNSInvocation(delegate, selector);
+    RetainPtr invocation = WebThreadMakeNSInvocation(delegate, selector);
     [invocation setArgument:&object1 atIndex:2];
     [invocation setArgument:&selectorArg atIndex:3];
     [invocation setArgument:&object2 atIndex:4];

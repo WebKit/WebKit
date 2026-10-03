@@ -16,12 +16,5 @@ mac/Storage/WebDatabaseProvider.mm
 [ Mac ] mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
 [ iOS ] mac/WebInspector/WebNodeHighlight.mm
 [ iOS ] mac/WebInspector/WebNodeHighlightView.mm
-[ iOS ] mac/WebView/WebDelegateImplementationCaching.mm
-mac/WebView/WebFeature.m
-mac/WebView/WebFrame.mm
-[ iOS ] mac/WebView/WebFrameView.mm
-mac/WebView/WebHTMLView.mm
-[ iOS ] mac/WebView/WebIndicateLayer.mm
+[ iOS ] mac/WebView/WebHTMLView.mm
 [ Mac ] mac/WebView/WebPDFView.mm
-mac/WebView/WebPreferences.mm
-mac/WebView/WebView.mm

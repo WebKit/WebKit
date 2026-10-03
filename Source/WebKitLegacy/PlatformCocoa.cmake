@@ -75,8 +75,8 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebNSDictionaryExtras.m
     mac/Misc/WebNSURLRequestExtras.m
 
-    mac/WebView/WebFeature.m
-    mac/WebView/WebFormDelegate.m
+    mac/WebView/WebFeature.mm
+    mac/WebView/WebFormDelegate.mm
 )
 
 # Preferences codegen.

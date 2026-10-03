@@ -63,4 +63,8 @@ private:
     bool m_everRequestedPermission { false };
 };
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebNotificationClient)
+    static bool isType(const WebCore::NotificationClient&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

@@ -29,7 +29,7 @@
 @interface WebWindowScaleAnimation : NSAnimation {
 @private
     NSRect _initialFrame, _finalFrame, _realFrame;
-    NSWindow *_window; // (assign)
+    __weak NSWindow *_window;
     RetainPtr<NSAnimation> _subAnimation;
     NSTimeInterval _hintedDuration;
 }
@@ -47,7 +47,7 @@
 @interface WebWindowFadeAnimation : NSAnimation {
 @private
     CGFloat _initialAlpha, _finalAlpha;
-    NSWindow *_window; // (assign)
+    __weak NSWindow *_window;
     BOOL _isStopped;
     
 }

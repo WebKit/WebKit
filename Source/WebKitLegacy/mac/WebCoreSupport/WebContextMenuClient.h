@@ -89,5 +89,9 @@ private:
 #endif
 };
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebContextMenuClient)
+    static bool isType(const WebCore::ContextMenuClient&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // ENABLE(CONTEXT_MENUS)
 

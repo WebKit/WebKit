@@ -66,7 +66,7 @@ typedef NS_ENUM(NSUInteger, WebCacheModel) {
 
 typedef struct WebPreferencesPrivate WebPreferencesPrivate;
 
-extern NSString *WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @class WebPreferences

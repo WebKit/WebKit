@@ -44,7 +44,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 
-NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
+NSString * const WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
 static NSString * const WebMainResourceKey = @"WebMainResource";
 static NSString * const WebSubresourcesKey = @"WebSubresources";

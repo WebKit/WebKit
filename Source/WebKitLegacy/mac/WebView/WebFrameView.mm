@@ -68,6 +68,7 @@
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 #import <wtf/Assertions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebFrameInternal.h"
@@ -113,7 +114,7 @@ enum {
 
 @interface WebFrameViewPrivate : NSObject {
 @public
-    WebFrame *webFrame;
+    __weak WebFrame *webFrame;
     RetainPtr<WebDynamicScrollBarsView> frameScrollView;
     BOOL includedInWebKitStatistics;
 }
@@ -161,7 +162,7 @@ enum {
     // a convenience and so that we don't leave the window pointing to a view that's no longer in it.
     NSWindow *window = [sv window];
     NSResponder *firstResponder = [window firstResponder];
-    bool makeNewViewFirstResponder = [firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:[sv documentView]];
+    bool makeNewViewFirstResponder = [dynamic_objc_cast<NSView>(firstResponder) isDescendantOf:[sv documentView]];
 
     // Suppress the resetting of drag margins since we know we can't affect them.
     BOOL resetDragMargins = [window _needsToResetDragMargins];
@@ -177,7 +178,7 @@ enum {
 #else
     ASSERT(_private->webFrame);
 
-    auto* frame = core(_private->webFrame);
+    RefPtr frame = core(_private->webFrame);
 
     ASSERT(frame);
     ASSERT(frame->page());
@@ -399,7 +400,7 @@ enum {
 - (BOOL)scrollView:(WAKScrollView *)scrollView shouldScrollToPoint:(CGPoint)point
 {
     WebView *webView = [self _webView];
-    return [[webView _UIKitDelegateForwarder] webView:webView shouldScrollToPoint:point forFrame:_private->webFrame];
+    return [[webView _UIKitDelegateForwarder] webView:webView shouldScrollToPoint:point forFrame:protect(_private->webFrame)];
 }
 #endif
 
@@ -493,7 +494,7 @@ enum {
             [[[self _webView] backgroundColor] set];
             NSRectFill(rect);
 #else
-            CGContextRef cgContext = WKGetCurrentGraphicsContext();
+            RetainPtr cgContext = WKGetCurrentGraphicsContext();
             CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::white).get());
             WKRectFill(cgContext, rect);
 #endif
@@ -505,7 +506,7 @@ enum {
             [[NSColor cyanColor] set];
             NSRectFill(rect);
 #else
-            CGContextRef cgContext = WKGetCurrentGraphicsContext();
+            RetainPtr cgContext = WKGetCurrentGraphicsContext();
             CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::cyan).get());
             WKRectFill(cgContext, rect);
 #endif
@@ -610,7 +611,7 @@ enum {
     RefPtr document = coreFrame->document();
     if (!document)
         return YES;
-    auto* renderView = document->renderView();
+    CheckedPtr renderView = document->renderView();
     if (!renderView)
         return YES;
     return renderView->writingMode().isHorizontal();
@@ -624,7 +625,7 @@ enum {
     RefPtr document = coreFrame->document();
     if (!document)
         return NO;
-    auto* renderView = document->renderView();
+    CheckedPtr renderView = document->renderView();
     if (!renderView)
         return NO;
     return renderView->writingMode().isBlockFlipped();
@@ -887,7 +888,7 @@ enum {
     int index, count;
     BOOL callSuper = YES;
     auto coreFrame = [self _web_frame];
-    BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList&>(coreFrame->page()->backForward().client()).enabled() ? YES : NO;
+    BOOL maintainsBackForwardList = coreFrame && downcast<BackForwardList>(coreFrame->page()->backForward().client()).enabled() ? YES : NO;
 
     count = [characters length];
     for (index = 0; index < count; ++index) {

@@ -25,31 +25,49 @@
 
 #import "WebFeatureInternal.h"
 
-@implementation WebFeature
+#import <wtf/RetainPtr.h>
+
+@implementation WebFeature {
+    RetainPtr<NSString> _key;
+    RetainPtr<NSString> _preferenceKey;
+    RetainPtr<NSString> _name;
+    RetainPtr<NSString> _details;
+}
 
 - (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name status:(WebFeatureStatus)status category:(WebFeatureCategory)category details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden
 {
     if (!(self = [super init]))
         return nil;
 
-    _key = [key copy];
-    _preferenceKey = [preferenceKey copy];
-    _name = [name copy];
+    _key = adoptNS([key copy]);
+    _preferenceKey = adoptNS([preferenceKey copy]);
+    _name = adoptNS([name copy]);
     _status = status;
     _category = category;
-    _details = [details copy];
+    _details = adoptNS([details copy]);
     _defaultValue = defaultValue;
     _hidden = hidden;
     return self;
 }
 
-- (void)dealloc
+- (NSString *)key
 {
-    [_key release];
-    [_preferenceKey release];
-    [_name release];
-    [_details release];
-    [super dealloc];
+    return _key.get();
+}
+
+- (NSString *)preferenceKey
+{
+    return _preferenceKey.get();
+}
+
+- (NSString *)name
+{
+    return _name.get();
+}
+
+- (NSString *)details
+{
+    return _details.get();
 }
 
 - (NSString *)description

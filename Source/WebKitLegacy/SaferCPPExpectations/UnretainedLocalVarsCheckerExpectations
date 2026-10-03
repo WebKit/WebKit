@@ -6,8 +6,4 @@
 [ iOS ] mac/Storage/WebDatabaseManager.mm
 [ iOS ] mac/Storage/WebDatabaseManagerClient.mm
 [ iOS ] mac/WebInspector/WebNodeHighlighter.mm
-[ iOS ] mac/WebView/WebFrame.mm
-[ iOS ] mac/WebView/WebFrameView.mm
-[ iOS ] mac/WebView/WebDelegateImplementationCaching.mm
-mac/WebView/WebHTMLView.mm
-[ iOS ] mac/WebView/WebView.mm
+[ macOS ] mac/WebView/WebHTMLView.mm

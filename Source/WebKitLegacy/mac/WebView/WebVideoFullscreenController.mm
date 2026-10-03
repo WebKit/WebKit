@@ -102,7 +102,7 @@ static void WebAVPlayerView_exitFullScreen(id aSelf, SEL, id sender)
     [playerView.webDelegate playerViewRequestExitFullscreen:playerView];
 }
 
-static WebAVPlayerView *allocWebAVPlayerViewInstance()
+static WebAVPlayerView *allocWebAVPlayerViewInstance() NS_RETURNS_RETAINED
 {
     static NeverDestroyed<RetainPtr<Class>> theClass = [] {
         RELEASE_ASSERT(PAL::getAVPlayerViewClassSingleton());
@@ -145,7 +145,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     if (!self)
         return nil;
     _playbackModel = WebCore::PlaybackSessionModelMediaElement::create();
-    _playbackInterface = WebCore::PlaybackSessionInterfaceAVKitLegacy::create(*_playbackModel);
+    _playbackInterface = WebCore::PlaybackSessionInterfaceAVKitLegacy::create(*protect(_playbackModel));
     _contentOverlay = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
     _contentOverlay.get().layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
     _contentOverlay.get().layer = adoptNS([[WebVideoFullscreenOverlayLayer alloc] init]).get();
@@ -157,8 +157,6 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 }
 - (void)dealloc
 {
-    ASSERT(!_backgroundFullscreenWindow);
-    ASSERT(!_fadeAnimation);
     _playerView.get().webDelegate = nil;
     _playbackModel = nil;
     [super dealloc];
@@ -208,8 +206,9 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     if (![self isWindowLoaded])
         return;
 
-    _playbackModel->setMediaElement(videoElement);
-    self.playerView.playerController = RetainPtr { (AVPlayerController*)_playbackInterface->playerController() };
+    protect(_playbackModel)->setMediaElement(protect(videoElement.get()));
+    // WebAVPlayerController mimics AVPlayerController without subclassing it.
+    SUPPRESS_MEMORY_UNSAFE_CAST self.playerView.playerController = RetainPtr { (AVPlayerController*)protect(_playbackInterface)->playerController() };
 }
 
 - (void)enterFullscreen:(NSScreen *)screen
@@ -217,10 +216,10 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     if (!_videoElement)
         return;
     [NSAnimationContext beginGrouping];
-    _videoElement->setVideoFullscreenLayer(_contentOverlay.get().layer, [self, protectedSelf = retainPtr(self)] {
-        [self.fullscreenWindow setFrame:self.videoElementRect display:YES];
-        [self.fullscreenWindow makeKeyAndOrderFront:self];
-        [self.fullscreenWindow enterFullScreenMode:self];
+    protect(_videoElement)->setVideoFullscreenLayer(_contentOverlay.get().layer, [strongSelf = protect(self)] {
+        [[strongSelf fullscreenWindow] setFrame:[strongSelf videoElementRect] display:YES];
+        [[strongSelf fullscreenWindow] makeKeyAndOrderFront:strongSelf];
+        [[strongSelf fullscreenWindow] enterFullScreenMode:strongSelf];
         [NSAnimationContext endGrouping];
     });
 }
@@ -232,7 +231,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 
 - (NSRect)videoElementRect
 {
-    return _videoElement->screenRect();
+    return protect(_videoElement)->screenRect();
 }
 
 - (void)applicationDidResignActive:(NSNotification*)notification
@@ -255,8 +254,8 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 
 - (void)_requestEnter
 {
-    if (_videoElement)
-        _videoElement->enterFullscreen();
+    if (RefPtr videoElement = _videoElement)
+        videoElement->enterFullscreen();
 }
 
 - (void)cancelOperation:(id)sender
@@ -313,8 +312,8 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     [_playerView willChangeValueForKey:@"isFullScreen"];
     _isFullScreen = YES;
     [_playerView didChangeValueForKey:@"isFullScreen"];
-    if (_videoElement)
-        _videoElement->didBecomeFullscreenElement();
+    if (RefPtr videoElement = _videoElement)
+        videoElement->didBecomeFullscreenElement();
 }
 
 - (void)windowWillExitFullScreen:(NSNotification *)notification
@@ -334,13 +333,13 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     }
 
     [NSAnimationContext beginGrouping];
-    _videoElement->setVideoFullscreenLayer(nil, [self, protectedSelf = retainPtr(self)] {
-        [self.fullscreenWindow close];
+    protect(_videoElement)->setVideoFullscreenLayer(nil, [strongSelf = protect(self)] {
+        [[strongSelf fullscreenWindow] close];
         [NSAnimationContext endGrouping];
     });
 
-    if (_videoElement->isFullscreen())
-        _videoElement->exitFullscreen();
+    if (protect(_videoElement)->isFullscreen())
+        protect(_videoElement)->exitFullscreen();
 }
 
 @end

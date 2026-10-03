@@ -254,3 +254,7 @@ private:
 
     __weak WebView *m_webView;
 };
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebChromeClient)
+    static bool isType(const WebCore::ChromeClient& client) { return !client.isEmptyChromeClient(); }
+SPECIALIZE_TYPE_TRAITS_END()

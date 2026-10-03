@@ -257,5 +257,9 @@ private:
     WeakObjCPtr<WebFramePolicyListener> m_policyListener;
 };
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebFrameLoaderClient)
+    static bool isType(const WebCore::LocalFrameLoaderClient& client) { return !client.isEmptyFrameLoaderClient(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 WebDataSource *NODELETE dataSource(WebCore::DocumentLoader*);
 void addTypesFromClass(NSMutableDictionary *, Class, NSArray *);

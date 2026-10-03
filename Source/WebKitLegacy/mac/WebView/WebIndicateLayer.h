@@ -31,7 +31,7 @@
 
 @interface WebIndicateLayer : CALayer
 {
-    WebView *_webView;
+    __weak WebView *_webView;
 }
 
 - (id)initWithWebView:(WebView *)webView;
