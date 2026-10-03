@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<meta charset="utf-8">
+<title>A select with the multiple attribute renders the clones of its selected options in its button</title>
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+<select multiple size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>

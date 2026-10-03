@@ -194,6 +194,13 @@ void HTMLOptionElement::postConnectionSteps()
     if (!select || !select->hasSelectedContentDescendants())
         return;
 
+    if (select->multiple()) {
+        // The select clones its options once it finishes parsing them.
+        if (select->isFinishedParsingChildren())
+            select->queueSelectedContentUpdate();
+        return;
+    }
+
     bool isSelected = select->isFinishedParsingChildren() ? selected() : selectedWithoutUpdate();
     if (isSelected)
         select->updateSelectedContent(this);
@@ -217,7 +224,7 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     if (RefPtr select = std::exchange(m_ownerSelect, nullptr).get()) {
         select->setRecalcListItems();
         select->invalidateButtonText();
-        if (m_isSelected)
+        if (m_isSelected || select->multiple())
             select->queueSelectedContentUpdate();
         invalidateShadowTree();
     }
@@ -236,6 +243,8 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
         if (newSelect) {
             newSelect->setRecalcListItems();
             newSelect->invalidateButtonText();
+            if (newSelect->multiple() && oldParent.isInclusiveDescendantOf(*newSelect))
+                newSelect->queueSelectedContentUpdate();
         }
         return;
     }
@@ -245,14 +254,14 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
     if (oldSelect) {
         oldSelect->setRecalcListItems();
         oldSelect->invalidateButtonText();
-        if (m_isSelected)
+        if (m_isSelected || oldSelect->multiple())
             oldSelect->queueSelectedContentUpdate();
     }
 
     if (newSelect) {
         newSelect->setRecalcListItems();
         newSelect->invalidateButtonText();
-        if (m_isSelected)
+        if (m_isSelected || newSelect->multiple())
             newSelect->queueSelectedContentUpdate();
     }
 
@@ -273,7 +282,7 @@ void HTMLOptionElement::finishParsingChildren()
         return;
 
     RefPtr select = m_ownerSelect;
-    if (!select)
+    if (!select || select->multiple())
         return;
 
     // When the owning <select> is still being parsed, use selectedWithoutUpdate()
@@ -670,6 +679,16 @@ void HTMLOptionElement::cloneIntoSelectedContent(HTMLSelectedContentElement& sel
     for (RefPtr child = firstChild(); child; child = child->nextSibling())
         newChildren.append(child->cloneNode(true));
     selectedContent.replaceChildrenWithoutValidityCheck(WTF::move(newChildren));
+}
+
+Ref<HTMLOptionElement> HTMLOptionElement::cloneForSelectedContent()
+{
+    ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
+
+    Ref clone = downcast<HTMLOptionElement>(cloneNode(true));
+    clone->m_selectedContentSource = *this;
+    clone->m_isSelected = selected();
+    return clone;
 }
 
 } // namespace

@@ -38,6 +38,7 @@ public:
     static Ref<HTMLSelectedContentElement> create(const QualifiedName&, Document&);
 
     bool isDisabled() const { return m_isDisabled; }
+    void updateClonedOptionSelectedStates();
 
 private:
     HTMLSelectedContentElement(const QualifiedName&, Document&);

@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<meta charset="utf-8">
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+span {
+  overflow: clip;
+  text-overflow: inherit;
+  min-inline-size: 0;
+  flex: 1;
+}
+datalist {
+  display: contents;
+}
+</style>
+<!-- The options in the datalist are styled like the clones, but are not options of the select. -->
+<select multiple size="1">
+  <button><span><datalist><option>One</option><option>Three</option></datalist></span></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>

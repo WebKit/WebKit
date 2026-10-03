@@ -12486,6 +12486,7 @@
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* LegacyDisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyDisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
 		49B34A467D95111C120F93C7 /* selectMultipleAndListBox.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = selectMultipleAndListBox.css; sourceTree = "<group>"; };
+		49B476966FAE0D229F699998 /* selectMultipleSelectedContent.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = selectMultipleSelectedContent.css; sourceTree = "<group>"; };
 		49B53D402B1AA58A0056A172 /* RenderTreeUpdaterViewTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterViewTransition.h; sourceTree = "<group>"; };
 		49B53D412B1AA58A0056A172 /* RenderTreeUpdaterViewTransition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterViewTransition.cpp; sourceTree = "<group>"; };
 		49BB8233299A53ED009143CB /* PopoverData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopoverData.h; sourceTree = "<group>"; };
@@ -42737,6 +42738,7 @@
 				BC2388902D8C816C00698102 /* PropertySetCSSDescriptors.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
 				49B34A467D95111C120F93C7 /* selectMultipleAndListBox.css */,
+				49B476966FAE0D229F699998 /* selectMultipleSelectedContent.css */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */,

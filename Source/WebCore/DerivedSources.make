@@ -2237,6 +2237,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/selectMultipleAndListBox.css \
+    $(WebCore)/css/selectMultipleSelectedContent.css \
     $(WebCore)/css/svg.css \
     $(WebCore)/css/viewTransitions.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \

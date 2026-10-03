@@ -1,0 +1,146 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true ] -->
+<meta charset="utf-8">
+<title>selectedcontent in a select with the multiple attribute is cloned again after the list of options changes</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<div hidden id="container"></div>
+<script>
+const container = document.getElementById("container");
+
+function createSelect(t, optionCount = 3) {
+  const select = document.createElement("select");
+  select.multiple = true;
+  const selectedcontent = select.appendChild(document.createElement("button")).appendChild(document.createElement("selectedcontent"));
+  for (let i = 0; i < optionCount; ++i)
+    select.append(new Option(`Option ${i}`, i, false, i == 1));
+  container.append(select);
+  t.add_cleanup(() => select.remove());
+  return { select, selectedcontent };
+}
+
+function assertClonesMatchOptions(select, selectedcontent) {
+  assert_equals(selectedcontent.innerHTML, [...select.options].map(option => option.outerHTML).join(""));
+  for (const [i, option] of [...select.options].entries())
+    assert_equals(selectedcontent.children[i].matches(":checked"), option.selected, `clone ${i} :checked`);
+}
+
+function microtask() {
+  return new Promise(resolve => queueMicrotask(resolve));
+}
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  assertClonesMatchOptions(select, selectedcontent);
+  const oldInnerHTML = selectedcontent.innerHTML;
+
+  select.append(new Option("Appended", "appended", false, true));
+  assert_equals(selectedcontent.innerHTML, oldInnerHTML, "Not cloned again synchronously");
+  await microtask();
+  assertClonesMatchOptions(select, selectedcontent);
+}, "Appending an option clones the options again in a microtask");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  select.options[1].remove();
+  await microtask();
+  assertClonesMatchOptions(select, selectedcontent);
+}, "Removing an option clones the options again in a microtask");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  select.insertBefore(select.options[2], select.options[0]);
+  await microtask();
+  assertClonesMatchOptions(select, selectedcontent);
+  assert_equals(selectedcontent.firstChild.value, "2");
+}, "Reordering options with insertBefore() clones the options again in a microtask");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  select.moveBefore(select.options[2], select.options[0]);
+  await microtask();
+  assertClonesMatchOptions(select, selectedcontent);
+  assert_equals(selectedcontent.firstChild.value, "2");
+}, "Reordering options with moveBefore() clones the options again in a microtask");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t, 0);
+  await microtask();
+  const records = [];
+  const observer = new MutationObserver(newRecords => records.push(...newRecords));
+  observer.observe(selectedcontent, { childList: true });
+  for (let i = 0; i < 100; ++i)
+    select.append(new Option(i));
+  await microtask();
+  records.push(...observer.takeRecords());
+  assert_equals(records.length, 1);
+  assert_equals(selectedcontent.children.length, 100);
+}, "Appending many options clones them once");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  const option = new Option("Appended", "appended");
+  select.append(option);
+  option.selected = true;
+  select.options[1].selected = false;
+  assert_false(selectedcontent.children[1].matches(":checked"), "Existing clones follow selectedness right away");
+  await microtask();
+  assertClonesMatchOptions(select, selectedcontent);
+}, "Selectedness changes while the options are about to be cloned again");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  const notAnOption = new Option("Not an option", "", true, true);
+  selectedcontent.append(notAnOption);
+  assert_equals(select.length, 3);
+  assert_false([...select.options].includes(notAnOption));
+  assert_false([...select.selectedOptions].includes(notAnOption));
+
+  select.append(new Option("Appended"));
+  await microtask();
+  assert_false(selectedcontent.contains(notAnOption));
+  assertClonesMatchOptions(select, selectedcontent);
+}, "An option inserted into selectedcontent is not an option of the select");
+
+promise_test(async t => {
+  const select = document.createElement("select");
+  const selectedcontent = select.appendChild(document.createElement("button")).appendChild(document.createElement("selectedcontent"));
+  select.append(new Option("One", "one"), new Option("Two", "two", false, true));
+  container.append(select);
+  t.add_cleanup(() => select.remove());
+  selectedcontent.append(new Option("Not an option", "not-an-option", true, true));
+  assert_equals(select.length, 2);
+  assert_equals(select.value, "two");
+}, "An option inserted into selectedcontent is not an option of a select without the multiple attribute either");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  select.multiple = false;
+  assert_equals(selectedcontent.innerHTML, "Option 1");
+  select.multiple = true;
+  assertClonesMatchOptions(select, selectedcontent);
+}, "Toggling the multiple attribute switches between cloning the selected option's children and cloning every option");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  await microtask();
+  const other = document.createElement("selectedcontent");
+  selectedcontent.after(other);
+  assertClonesMatchOptions(select, other);
+}, "Inserting a selectedcontent element clones the options right away");
+
+promise_test(async t => {
+  const { select, selectedcontent } = createSelect(t);
+  const { select: otherSelect, selectedcontent: otherSelectedcontent } = createSelect(t, 1);
+  await microtask();
+  otherSelectedcontent.parentNode.moveBefore(selectedcontent, null);
+  await microtask();
+  assertClonesMatchOptions(otherSelect, selectedcontent);
+}, "Moving a selectedcontent element to another select clones that select's options in a microtask");
+</script>

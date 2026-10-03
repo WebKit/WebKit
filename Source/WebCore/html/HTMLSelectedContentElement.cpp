@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventLoop.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -71,7 +72,7 @@ auto HTMLSelectedContentElement::insertionSteps(InsertionType insertionType, Con
 void HTMLSelectedContentElement::postConnectionSteps()
 {
     RefPtr select = recalculateDisabledness();
-    if (m_isDisabled || !select || select->multiple())
+    if (m_isDisabled || !select || !select->updatesSelectedContent())
         return;
 
     select->updateSelectedContent(*this);
@@ -92,7 +93,7 @@ void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNod
     HTMLElement::movingSteps(movingType, oldParent);
 
     RefPtr select = recalculateDisabledness();
-    if (m_isDisabled || !select || select->multiple())
+    if (m_isDisabled || !select || !select->updatesSelectedContent())
         return;
 
     Ref document = this->document();
@@ -102,6 +103,16 @@ void HTMLSelectedContentElement::movingSteps(MovingType movingType, ContainerNod
         if (selectedContent && select)
             select->updateSelectedContent(*selectedContent);
     });
+}
+
+void HTMLSelectedContentElement::updateClonedOptionSelectedStates()
+{
+    ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
+
+    for (Ref clone : childrenOfType<HTMLOptionElement>(*this)) {
+        if (RefPtr option = clone->selectedContentSource())
+            clone->setSelectedState(option->selected());
+    }
 }
 
 // https://html.spec.whatwg.org/#recalculate-a-selectedcontent-element's-disabledness
