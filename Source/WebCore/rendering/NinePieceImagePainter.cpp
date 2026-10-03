@@ -238,7 +238,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
         : ConcreteObjectSize::fixed(image->size());
     auto extras = styleImage->drawingExtrasForRenderer(renderer);
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    options = { options, AXCustomColorModeController::shouldInvertSVGImage(renderer) ? InvertContent::Yes : InvertContent::No };
+    options = { options, image->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(renderer) ? InvertContent::Yes : InvertContent::No };
 #endif
 
     styleImage->drawNinePiece(graphicsContext, *image, concreteObjectSize, geometry, options, &extras);

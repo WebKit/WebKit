@@ -207,7 +207,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         ImageQualityController::chooseInterpolationQualityForSVG(paintInfo.context(), *this, *image),
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        AXCustomColorModeController::shouldInvertSVGImage(*this) ? InvertContent::Yes : InvertContent::No,
+        AXCustomColorModeController::shouldInvertContentImage(*this, *image, destRect.size()) ? InvertContent::Yes : InvertContent::No,
 #endif
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
         settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,

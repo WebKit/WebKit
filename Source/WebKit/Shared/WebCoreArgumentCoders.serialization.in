@@ -3508,6 +3508,14 @@ header: <WebCore/ImageTypes.h>
     float headroom;
 };
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::InvertContent : uint8_t {
+    FromResource,
+    No,
+    Yes
+};
+#endif
+
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
     WebCore::CompositeOperator compositeOperator();
     WebCore::BlendMode blendMode();
@@ -3515,6 +3523,9 @@ header: <WebCore/ImageTypes.h>
     WebCore::ImageOrientation::Orientation orientation().orientation();
     WebCore::InterpolationQuality interpolationQuality();
     WebCore::DrawsHDRContent drawsHDRContent();
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    WebCore::InvertContent invertContent();
+#endif
     WebCore::Headroom headroom();
     WebCore::PlatformDynamicRangeLimit dynamicRangeLimit();
 };

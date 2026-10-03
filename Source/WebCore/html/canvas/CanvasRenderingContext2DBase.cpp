@@ -84,6 +84,7 @@
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
+#include "SVGImage.h"
 #include "SVGImageElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptTrackingPrivacyCategory.h"
@@ -1863,6 +1864,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Im
         orientation,
         document.settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         document.settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        ,
+        InvertContent::No
+#endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         ,
         (isHDR() && image->hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No,

@@ -98,6 +98,12 @@ enum class InvertContent : uint8_t {
     No,
     Yes
 };
+
+enum class ImagePaintTimeTransformation : uint8_t {
+    Unchanged,
+    SimpleInvert,
+    ColorPreservingInvert
+};
 #endif
 
 enum class ShowDebugBackground : bool {

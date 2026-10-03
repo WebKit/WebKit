@@ -52,6 +52,10 @@
 #include <wtf/ZippedRange.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 #include <pal/cg/CoreGraphicsSoftLink.h>
 
 namespace WebCore {
@@ -285,6 +289,21 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
     auto image = nativeImage.platformImage();
     if (!image)
         return;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE) && HAVE(CGSTYLE_COLORMATRIX_BLUR)
+    if (options.invertContent() == InvertContent::Yes) {
+        if (auto colorMatrix = AXCustomColorModeController::colorMatrixForImageInversion(nativeImage.paintTimeTransformation())) {
+            GraphicsContextStateSaver stateSaver(*this);
+            clip(normalizeRect(destRect));
+            setStyle(*colorMatrix);
+            setCompositeOperation(options.compositeOperator(), options.blendMode());
+            beginTransparencyLayer(options.compositeOperator(), options.blendMode());
+            drawNativeImage(nativeImage, destRect, srcRect, { options, InvertContent::No, CompositeOperator::SourceOver, BlendMode::Normal });
+            endTransparencyLayer();
+            return;
+        }
+    }
+#endif
     auto imageSize = nativeImage.size();
     if (options.orientation().usesWidthAsHeight())
         imageSize = imageSize.transposedSize();

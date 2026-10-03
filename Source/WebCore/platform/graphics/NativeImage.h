@@ -103,6 +103,10 @@ public:
 
     RefPtr<NativeImage> rotatedImage(ImageOrientation);
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE) && USE(CG)
+    ImagePaintTimeTransformation paintTimeTransformation() const;
+#endif
+
     void clearSubimages();
 
     WEBCORE_EXPORT void replacePlatformImage(PlatformImagePtr&&) const;
@@ -141,6 +145,9 @@ protected:
     mutable Headroom m_baseImageHeadroom { Headroom::None };
     mutable Headroom m_headroom { Headroom::None };
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
+#if ENABLE(AX_CUSTOM_COLOR_MODE) && USE(CG)
+    mutable std::optional<ImagePaintTimeTransformation> m_paintTimeTransformation WTF_GUARDED_BY_LOCK(m_lock);
+#endif
     RenderingResourceIdentifier m_renderingResourceIdentifier { RenderingResourceIdentifier::generate() };
 #if USE(SKIA)
     GrDirectContext* m_grContext { nullptr };
