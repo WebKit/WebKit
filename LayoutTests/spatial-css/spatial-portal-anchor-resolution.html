@@ -106,6 +106,51 @@ promise_test(async t => {
     assert_equals(parentOfElement(entities, "#last")?.element, "#middle", "last's entity is under middle's");
 }, `a chain of anchors resolves at every step`);
 
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const first = appendModel(portal, asset);
+    first.id = "first";
+    first.style.anchorName = "--host";
+
+    const second = appendModel(portal, asset);
+    second.id = "second";
+    second.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.id = "child";
+    child.style.positionAnchor = "--host";
+    child.style.positionContext = "anchor";
+
+    await Promise.all([first.ready, second.ready, child.ready]);
+
+    await settledAnchor(child, second, "the child resolves to the last host in tree order");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#second", "the child's entity is under the last host's");
+
+    portal.insertBefore(second, first);
+    await settledAnchor(child, first, "the child follows the hosts' new tree order");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#first", "the child's entity moves under the new last host's");
+}, `the last <model> in tree order wins when several declare the same anchor-name`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const host = appendModel(portal, asset);
+    host.id = "host";
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.id = "child";
+    child.style.anchorName = "--host";
+    child.style.positionAnchor = "--host";
+    child.style.positionContext = "anchor";
+
+    await Promise.all([host.ready, child.ready]);
+
+    await settledAnchor(child, host, "the child skips itself and resolves to the host");
+    assert_equals(parentOfElement(await modelSceneGraph(portal), "#child")?.element, "#host", "the child's entity is under the host's");
+}, `a <model> anchored to an anchor-name it also declares resolves to the previous <model> with that name`);
+
 </script>
 </body>
 </html>

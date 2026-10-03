@@ -990,21 +990,17 @@ HTMLModelElement* SpatialPortalController::anchorModelForChild(NodeIdentifier no
     return hostedModelElement(*it->value.anchorNode);
 }
 
-auto SpatialPortalController::collectAnchorNames() const -> AnchorsByName
+auto SpatialPortalController::collectAnchorNames(const Vector<Ref<HTMLModelElement>>& modelsInTreeOrder) -> AnchorsByName
 {
     AnchorsByName anchorsByName;
 
-    for (auto& [candidateID, hostedModel] : m_hostedModels) {
-        RefPtr candidate = hostedModel.element.get();
-        if (!candidate)
-            continue;
-
+    for (Ref candidate : modelsInTreeOrder) {
         CheckedPtr candidateStyle = candidate->computedStyle();
         if (!candidateStyle)
             continue;
 
         for (auto& scopedName : candidateStyle->anchorNamesOutOfLine())
-            anchorsByName.add(Style::ResolvedScopedName::createFromScopedName(*candidate, scopedName), candidateID);
+            anchorsByName.add(Style::ResolvedScopedName::createFromScopedName(candidate, scopedName), Vector<NodeIdentifier> { }).iterator->value.append(candidate->nodeIdentifier());
     }
 
     return anchorsByName;
@@ -1013,10 +1009,15 @@ auto SpatialPortalController::collectAnchorNames() const -> AnchorsByName
 std::optional<NodeIdentifier> SpatialPortalController::anchorNodeForName(const HTMLModelElement& model, const Style::ScopedName& anchorName, const AnchorsByName& anchorsByName)
 {
     auto it = anchorsByName.find(Style::ResolvedScopedName::createFromScopedName(model, anchorName));
-    if (it == anchorsByName.end() || it->value == model.nodeIdentifier())
+    if (it == anchorsByName.end())
         return std::nullopt;
 
-    return it->value;
+    for (auto candidateID : it->value | std::views::reverse) {
+        if (candidateID != model.nodeIdentifier())
+            return candidateID;
+    }
+
+    return std::nullopt;
 }
 
 bool SpatialPortalController::anchorChainReaches(NodeIdentifier startNode, NodeIdentifier targetNode, const AnchorsByName& anchorsByName) const
@@ -1103,26 +1104,19 @@ void SpatialPortalController::updateAnchors()
     if (!m_modelPlayer || m_hostedModels.isEmpty())
         return;
 
-    auto anchorsByName = collectAnchorNames();
+    auto models = hostedModelsInTreeOrder();
+    auto anchorsByName = collectAnchorNames(models);
 
-    // Sorted so that any console warning the pass emits is ordered by registration, not by hash order.
-    auto nodeIDs = copyToVector(m_hostedModels.keys());
-    std::ranges::sort(nodeIDs);
-
-    for (auto nodeID : nodeIDs) {
-        auto it = m_hostedModels.find(nodeID);
+    for (Ref model : models) {
+        auto it = m_hostedModels.find(model->nodeIdentifier());
         if (it == m_hostedModels.end())
             continue;
 
-        RefPtr element = it->value.element.get();
-        if (!element)
-            continue;
-
-        CheckedPtr style = element->computedStyle();
+        CheckedPtr style = model->computedStyle();
         if (!style)
             continue;
 
-        updateAnchorForChild(*element, it->value, *style, anchorsByName);
+        updateAnchorForChild(model, it->value, *style, anchorsByName);
     }
 }
 

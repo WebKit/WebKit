@@ -149,7 +149,7 @@ private:
         String warning;
     };
 
-    using AnchorsByName = HashMap<Style::ResolvedScopedName, NodeIdentifier>;
+    using AnchorsByName = HashMap<Style::ResolvedScopedName, Vector<NodeIdentifier>>;
 
     void modelDidFinishLoading(ModelPlayer&, NodeIdentifier);
     void modelDidFailLoading(ModelPlayer&, NodeIdentifier, const ResourceError&);
@@ -172,7 +172,7 @@ private:
     HTMLModelElement* hostedModelElement(NodeIdentifier) const;
     Vector<Ref<HTMLModelElement>> hostedModelsInTreeOrder() const;
     void updateAnchors();
-    AnchorsByName collectAnchorNames() const;
+    static AnchorsByName collectAnchorNames(const Vector<Ref<HTMLModelElement>>& modelsInTreeOrder);
     AnchorResolution resolvedAnchorNode(const HTMLModelElement&, const Style::ComputedStyle&, const AnchorsByName&) const;
     void updateAnchorForChild(const HTMLModelElement&, HostedModel&, const Style::ComputedStyle&, const AnchorsByName&);
     static std::optional<NodeIdentifier> anchorNodeForName(const HTMLModelElement&, const Style::ScopedName&, const AnchorsByName&);
