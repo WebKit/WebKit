@@ -192,7 +192,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
         zeroSpan(values);
 
         if (m_parameters) {
-            auto argumentsSpan = unsafeMakeSpan(arguments, parameterCount);
+            auto argumentsSpan = unsafeMakeSpan(arguments, argumentCount);
             for (size_t i = 0; i < parameterCount && !*exception; ++i)
                 jscContextJSValueToGValue(context.get(), i < argumentCount ? argumentsSpan[i] : JSValueMakeUndefined(jsContext), m_parameters.value()[i], &values[i], exception);
         } else {
