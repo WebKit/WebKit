@@ -677,7 +677,7 @@ public:
 
         if (a.background != b.background || a.backgroundColor != b.backgroundColor)
             return false;
-        if (currentColorDiffers && a.backgroundColor.containsCurrentColor())
+        if (currentColorDiffers && a.backgroundContainsCurrentColor())
             return false;
         if (!a.outline.isVisible() && !b.outline.isVisible())
             return true;

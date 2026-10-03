@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; }
+.box {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+}
+#gradient {
+    background-image: linear-gradient(green, blue);
+}
+#color-mix-gradient {
+    background-image: radial-gradient(color-mix(in srgb, green, blue), blue);
+}
+#color-image {
+    background-image: image(green);
+}
+#cross-fade {
+    background-image: cross-fade(linear-gradient(green, blue) 50%, linear-gradient(blue, blue));
+}
+#fixed-outline-color {
+    background-image: linear-gradient(green, blue);
+    outline-color: black;
+}
+</style>
+<div class="box" id="gradient"></div>
+<div class="box" id="color-mix-gradient"></div>
+<div class="box" id="color-image"></div>
+<div class="box" id="cross-fade"></div>
+<div class="box" id="fixed-outline-color"></div>

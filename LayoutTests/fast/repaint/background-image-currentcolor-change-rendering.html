@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body { margin: 0; }
+.box {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    color: red;
+}
+#gradient {
+    background-image: linear-gradient(currentColor, blue);
+}
+#color-mix-gradient {
+    background-image: radial-gradient(color-mix(in srgb, currentColor, blue), blue);
+}
+#color-image {
+    background-image: image(currentColor);
+}
+#cross-fade {
+    background-image: cross-fade(linear-gradient(currentColor, blue) 50%, linear-gradient(blue, blue));
+}
+#fixed-outline-color {
+    background-image: linear-gradient(currentColor, blue);
+    outline-color: black;
+}
+</style>
+<div class="box" id="gradient"></div>
+<div class="box" id="color-mix-gradient"></div>
+<div class="box" id="color-image"></div>
+<div class="box" id="cross-fade"></div>
+<div class="box" id="fixed-outline-color"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+window.addEventListener('load', async () => {
+    await UIHelper.renderingUpdate();
+
+    for (const box of document.querySelectorAll(".box"))
+        box.style.color = "green";
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

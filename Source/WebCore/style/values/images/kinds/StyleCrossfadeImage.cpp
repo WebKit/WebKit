@@ -222,6 +222,12 @@ bool CrossfadeImage::knownToBeOpaque(const RenderElement& renderer) const
     return true;
 }
 
+bool CrossfadeImage::containsCurrentColor() const
+{
+    return (m_from && protect(m_from)->containsCurrentColor())
+        || (m_to && protect(m_to)->containsCurrentColor());
+}
+
 bool CrossfadeImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
 {
     return !size.isEmpty() && m_from && m_to && protect(m_from)->canDrawAtSize(renderer, size) && protect(m_to)->canDrawAtSize(renderer, size);

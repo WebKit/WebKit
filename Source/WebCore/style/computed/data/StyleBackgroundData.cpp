@@ -25,6 +25,7 @@
 
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include "StyleImage.h"
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -61,8 +62,19 @@ bool BackgroundData::operator==(const BackgroundData& other) const
 
 bool BackgroundData::containsCurrentColor() const
 {
-    return backgroundColor.containsCurrentColor()
+    return backgroundContainsCurrentColor()
         || outline.outlineColor.containsCurrentColor();
+}
+
+bool BackgroundData::backgroundContainsCurrentColor() const
+{
+    if (backgroundColor.containsCurrentColor())
+        return true;
+
+    return std::ranges::any_of(background.usedValues(), [](auto& layer) {
+        RefPtr image = layer.image().tryStyleImage();
+        return image && image->containsCurrentColor();
+    });
 }
 
 void BackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const

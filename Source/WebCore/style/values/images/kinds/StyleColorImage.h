@@ -53,6 +53,7 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext&, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
+    bool containsCurrentColor() const final;
     FloatSize fixedSize(const RenderElement&) const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
