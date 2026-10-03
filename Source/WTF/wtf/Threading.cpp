@@ -405,6 +405,10 @@ void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
 void Thread::setCurrentThreadQOS(QOS qos)
 {
     Thread& thread = currentSingleton();
+#if OS(LINUX)
+    // Only secondary helper threads can run with non-default priority.
+    qos = defaultQOS;
+#endif
     thread.m_qos = qos;
     thread.initializeSchedulingAttributes();
 }
