@@ -56,6 +56,9 @@ WEBKIT_DECLARE_FINAL_TYPE (WebKitWindowProperties, webkit_window_properties, WEB
 WEBKIT_API void
 webkit_window_properties_get_geometry            (WebKitWindowProperties *window_properties,
                                                   GdkRectangle           *geometry);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_has_custom_geometry (WebKitWindowProperties *window_properties);
 #endif
 
 WEBKIT_API gboolean
@@ -78,6 +81,9 @@ webkit_window_properties_get_resizable           (WebKitWindowProperties *window
 
 WEBKIT_API gboolean
 webkit_window_properties_get_fullscreen          (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_is_popup            (WebKitWindowProperties *window_properties);
 
 G_END_DECLS
 

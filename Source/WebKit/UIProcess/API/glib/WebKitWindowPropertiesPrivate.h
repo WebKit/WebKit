@@ -33,6 +33,7 @@ WebKitWindowProperties* webkitWindowPropertiesCreate();
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, const WebCore::WindowFeatures&);
 #if PLATFORM(GTK)
 void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, GdkRectangle*);
+void webkitWindowPropertiesSetHasCustomGeometry(WebKitWindowProperties*, bool);
 #endif
 void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties*, bool toolbarsVisible);
 void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties*, bool menuBarVisible);
@@ -40,3 +41,4 @@ void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties*, bool sta
 void webkitWindowPropertiesSetScrollbarsVisible(WebKitWindowProperties*, bool scrollBarsVisible);
 void webkitWindowPropertiesSetResizable(WebKitWindowProperties*, bool resizable);
 void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties*, bool fullscreen);
+void webkitWindowPropertiesSetIsPopup(WebKitWindowProperties*, bool isPopup);
