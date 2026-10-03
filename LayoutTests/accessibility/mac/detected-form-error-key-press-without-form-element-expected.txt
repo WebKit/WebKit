@@ -1,0 +1,46 @@
+This tests that errors are found when the user submits from the keyboard, which can leave no click to watch for. Enter in a text field submits the fields around it, reaching past a row of fields to the whole group holding the button it stands in for. Space on a control the page built itself is handled by the page's own key listener. Enter in a form's field is a submission even when the form has no submit button to submit it with, so the message it brings counts whatever its color.
+
+PASS: invalidStatus('username') === 'false'
+pressEnterIn('password');
+PASS: isWatching() === true
+PASS: notifications === 1
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your username.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: errorMessageText(axElement('username')) === 'Enter your username.'
+pressEnterIn('first');
+PASS: isWatching() === true
+PASS: notifications === 2
+PASS: payload === 'AXFormValidationUnannouncedText: Enter a valid email address.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: invalidStatus('email') === 'true'
+PASS: invalidStatus('first') === 'false'
+pressSpaceOn('continue');
+PASS: isWatching() === true
+PASS: notifications === 3
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your street address. | Enter your city.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: invalidStatus('address') === 'true'
+PASS: invalidStatus('city') === 'true'
+pressEnterIn('new-username');
+PASS: isWatching() === true
+PASS: notifications === 4
+PASS: payload === 'AXFormValidationUnannouncedText: Choose a username.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: invalidStatus('new-username') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Username
+Enter your username.
+Password
+Sign in
+First name Last name
+Email
+Enter a valid email address.
+Place order
+Street address
+Enter your street address.
+City
+Enter your city.
+Continue
+Username
+Choose a username.
+Password
+Create account

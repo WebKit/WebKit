@@ -80,12 +80,14 @@
 #include "FrameLoader.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAreaElement.h"
+#include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
@@ -105,13 +107,16 @@
 #include "HTMLTablePartElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
+#include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "HitTestSource.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineRunAndOffset.h"
+#include "KeyboardEvent.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MathMLElement.h"
+#include "NodeInlines.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "Range.h"
@@ -2074,6 +2079,14 @@ void AXObjectCache::childrenChanged(RenderObject& renderer, RenderObject* change
 
     if (changedChild)
         deferElementAddedOrRemoved(protect(dynamicDowncast<Element>(changedChild->node())));
+
+#if PLATFORM(COCOA)
+    if (RefPtr text = changedChild ? dynamicDowncast<Text>(changedChild->node()) : nullptr; text && m_formActivityMonitor) {
+        // The children-changed above is dropped when the text's element has no accessibility object yet, as in any part of the page nothing has asked about.
+        if (RefPtr element = text->parentOrShadowHostElement())
+            m_formActivityMonitor->onChangedContent(*element);
+    }
+#endif
 }
 
 void AXObjectCache::childrenChanged(AccessibilityObject* object)
@@ -3327,7 +3340,346 @@ void AXObjectCache::onFormSubmissionWillNavigate(HTMLFormElement&)
     if (m_formActivityMonitor)
         m_formActivityMonitor->cancel();
 }
+
+bool AXObjectCache::isWatchingForFormErrors() const
+{
+    return m_formActivityMonitor && m_formActivityMonitor->isWatching();
+}
+
+// How far up in the DOM hierarchy from what was clicked to look for the control, since a click often lands on text or an icon inside it.
+static constexpr unsigned maximumClickedControlDepth = 8;
+
+// How far up from the control to look for the fields it submits, and how much of the page that search may visit.
+static constexpr unsigned maximumFieldsContainerDepth = 12;
+static constexpr unsigned maximumNodesVisitedForFieldsContainer = 3000;
+
+// Two text fields together read as a form. A single one is as often a search box or a coupon code.
+static constexpr unsigned minimumTextFieldsForFormLikeContainer = 2;
+
+using SubmissionAttempt = AXFormActivityMonitor::Attempt;
+
+struct SubmitCandidate {
+    Ref<Element> control;
+    SubmissionAttempt attempt;
+};
+
+// Whether activating this control toggles, selects, expands or opens something, rather than submitting what is around it.
+static bool opensOrTogglesSomething(Element& control)
+{
+    auto isSpecified = [&control] (const QualifiedName& attribute) {
+        const auto& value = control.attributeWithDefaultARIA(attribute);
+        return !value.isEmpty() && !equalLettersIgnoringASCIICase(value, "undefined"_s);
+    };
+    if (isSpecified(aria_pressedAttr) || isSpecified(aria_expandedAttr) || isSpecified(aria_selectedAttr) || isSpecified(aria_checkedAttr))
+        return true;
+
+    const auto& popup = control.attributeWithDefaultARIA(aria_haspopupAttr);
+    if (!popup.isEmpty() && !equalLettersIgnoringASCIICase(popup, "false"_s))
+        return true;
+
+    return control.hasAttributeWithoutSynchronization(popovertargetAttr) || control.hasAttributeWithoutSynchronization(commandforAttr);
+}
+
+static AccessibilityRole explicitRole(Element& element)
+{
+    const auto& role = element.attributeWithDefaultARIA(roleAttr);
+    return role.isEmpty() ? AccessibilityRole::Unknown : AccessibilityObject::ariaRoleToWebCoreRole(role);
+}
+
+static bool isButtonThatMaySubmit(HTMLFormControlElement& formControl)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(formControl);
+    bool isButton = is<HTMLButtonElement>(formControl) || (input && (input->isTextButton() || input->isImageButton()));
+    if (!isButton || formControl.type() == resetAtom() || formControl.isDisabledFormControl() || opensOrTogglesSomething(formControl))
+        return false;
+
+    // A native button the page has made into some other control, such as a tab or a switch, is that control instead.
+    auto role = explicitRole(formControl);
+    return role == AccessibilityRole::Unknown || role == AccessibilityRole::Button;
+}
+
+static bool isButtonThePageBuilt(Element& element)
+{
+    return !is<HTMLFormControlElement>(element) && explicitRole(element) == AccessibilityRole::Button && !opensOrTogglesSomething(element);
+}
+
+// Pressing a form's own submit button is unmistakable, however the page then handles the attempt.
+static SubmitCandidate candidateForButton(HTMLFormControlElement& button)
+{
+    bool submitsForm = button.isSubmitButton() && button.form();
+    return { button, submitsForm ? SubmissionAttempt::Submission : SubmissionAttempt::PossibleSubmission };
+}
+
+static std::optional<SubmitCandidate> clickedControlThatMaySubmit(Node& target)
+{
+    RefPtr element = dynamicDowncast<Element>(target);
+    if (!element)
+        element = target.parentElementInComposedTree();
+
+    for (unsigned depth = 0; element && depth < maximumClickedControlDepth; ++depth, element = element->parentElementInComposedTree()) {
+        if (RefPtr formControl = dynamicDowncast<HTMLFormControlElement>(*element)) {
+            if (!isButtonThatMaySubmit(*formControl))
+                return std::nullopt;
+            return candidateForButton(*formControl);
+        }
+
+        if (explicitRole(*element) == AccessibilityRole::Button) {
+            if (opensOrTogglesSomething(*element))
+                return std::nullopt;
+            return SubmitCandidate { element.releaseNonNull(), SubmissionAttempt::PossibleSubmission };
+        }
+
+        if (element->isLink())
+            return std::nullopt;
+    }
+    return std::nullopt;
+}
+
+static bool isSearchField(HTMLInputElement& input)
+{
+    return input.isSearchField() || explicitRole(input) == AccessibilityRole::SearchField;
+}
+
+// Enter in a field that offers suggestions picks one, rather than submitting anything.
+static bool offersSuggestions(HTMLInputElement& input)
+{
+    if (explicitRole(input) == AccessibilityRole::ComboBox || input.hasAttributeWithoutSynchronization(listAttr) || opensOrTogglesSomething(input))
+        return true;
+
+    const auto& autocomplete = input.attributeWithDefaultARIA(aria_autocompleteAttr);
+    return equalLettersIgnoringASCIICase(autocomplete, "inline"_s) || equalLettersIgnoringASCIICase(autocomplete, "list"_s) || equalLettersIgnoringASCIICase(autocomplete, "both"_s);
+}
+
+// Buttons, native or not, may act on Enter and Space themselves with no click to follow. Enter in a text field is how a
+// form is submitted, and how a page without one stands in for it.
+static std::optional<SubmitCandidate> keyedControlThatMaySubmit(Node& target, KeyboardEvent& event)
+{
+    RefPtr element = dynamicDowncast<Element>(target);
+    if (!element)
+        return std::nullopt;
+
+    if (RefPtr formControl = dynamicDowncast<HTMLFormControlElement>(*element); formControl && isButtonThatMaySubmit(*formControl))
+        return candidateForButton(*formControl);
+
+    if (isButtonThePageBuilt(*element))
+        return SubmitCandidate { element.releaseNonNull(), SubmissionAttempt::PossibleSubmission };
+
+    RefPtr input = dynamicDowncast<HTMLInputElement>(*element);
+    if (event.key() != "Enter"_s || !input || !input->isTextField() || isSearchField(*input) || offersSuggestions(*input))
+        return std::nullopt;
+
+    return SubmitCandidate { *input, input->form() ? SubmissionAttempt::Submission : SubmissionAttempt::PossibleSubmission };
+}
+
+class FormLikeContent {
+public:
+    void add(Node&);
+    void addSubtree(Node&, unsigned& nodesLeftToVisit);
+
+    unsigned textFieldCount() const { return m_textFieldCount; }
+    bool hasButton() const { return m_hasButton; }
+    // Enough that every ancestor qualifies whatever else it holds, so counting can stop.
+    bool hasEnough() const { return m_textFieldCount >= minimumTextFieldsForFormLikeContainer && m_hasButton; }
+
+private:
+    unsigned m_textFieldCount { 0 };
+    bool m_hasButton { false };
+};
+
+// Search boxes, number inputs (like those that sit on a checkout page and are not form members), fields that are not rendered,
+// and fields that belong to another form should all not count towards considering a general container to be a <form> stand-in.
+static bool countsTowardFormLikeContainer(HTMLElement& element)
+{
+    if (!element.renderer())
+        return false;
+
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element))
+        return input->isTextField() && !input->isNumberField() && !isSearchField(*input) && !input->form();
+
+    RefPtr textArea = dynamicDowncast<HTMLTextAreaElement>(element);
+    return textArea && !textArea->form();
+}
+
+void FormLikeContent::add(Node& node)
+{
+    RefPtr element = dynamicDowncast<HTMLElement>(node);
+    if (!element || element->isInUserAgentShadowTree()) {
+        // Don't count browser-rendered controls.
+        return;
+    }
+
+    if (countsTowardFormLikeContainer(*element)) {
+        ++m_textFieldCount;
+        return;
+    }
+
+    if (m_hasButton)
+        return;
+
+    if (RefPtr formControl = dynamicDowncast<HTMLFormControlElement>(*element))
+        m_hasButton = isButtonThatMaySubmit(*formControl);
+    else
+        m_hasButton = isButtonThePageBuilt(*element);
+}
+
+void FormLikeContent::addSubtree(Node& root, unsigned& nodesLeftToVisit)
+{
+    if (!nodesLeftToVisit || hasEnough())
+        return;
+
+    --nodesLeftToVisit;
+    add(root);
+
+    RefPtr container = dynamicDowncast<ContainerNode>(root);
+    if (!container)
+        return;
+
+    for (Ref node : composedTreeDescendants(*container)) {
+        if (!nodesLeftToVisit || hasEnough())
+            return;
+
+        --nodesLeftToVisit;
+        add(node);
+    }
+}
+
+static bool isInSectioningContent(Element& element)
+{
+    for (Ref ancestor : ancestorsOfType<HTMLElement>(element)) {
+        switch (ancestor->elementName()) {
+        case ElementName::HTML_article:
+        case ElementName::HTML_aside:
+        case ElementName::HTML_main:
+        case ElementName::HTML_nav:
+        case ElementName::HTML_section:
+            return true;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+// A part of the page a form does not reach beyond, such as the page header, the navigation, a sidebar or a dialog.
+static bool isPageRegionBoundary(Element& element)
+{
+    switch (element.elementName()) {
+    case ElementName::HTML_aside:
+    case ElementName::HTML_dialog:
+    case ElementName::HTML_main:
+    case ElementName::HTML_nav:
+    case ElementName::HTML_search:
+        return true;
+    case ElementName::HTML_header:
+    case ElementName::HTML_footer:
+        // Only the page's own header and footer, rather than one inside an article or a section.
+        return !isInSectioningContent(element);
+    default:
+        break;
+    }
+
+    switch (explicitRole(element)) {
+    case AccessibilityRole::ApplicationAlertDialog:
+    case AccessibilityRole::ApplicationDialog:
+    case AccessibilityRole::LandmarkBanner:
+    case AccessibilityRole::LandmarkComplementary:
+    case AccessibilityRole::LandmarkContentInfo:
+    case AccessibilityRole::LandmarkMain:
+    case AccessibilityRole::LandmarkNavigation:
+    case AccessibilityRole::LandmarkSearch:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// A control's own form if it has one, or else the nearest ancestor holding enough text fields to be a form in all but name,
+// within the part of the page the control is in. Enter in a field stands in for a submit button, so there the ancestor has
+// to hold a button too.
+static RefPtr<Element> fieldsContainerForControl(Element& control)
+{
+    if (RefPtr listedElement = control.asFormListedElement()) {
+        if (RefPtr form = listedElement->form())
+            return form;
+    }
+
+    RefPtr input = dynamicDowncast<HTMLInputElement>(control);
+    bool needsButton = input && input->isTextField();
+
+    FormLikeContent content;
+    unsigned nodesLeftToVisit = maximumNodesVisitedForFieldsContainer;
+    content.addSubtree(control, nodesLeftToVisit);
+
+    Ref<Element> counted = control;
+    RefPtr ancestor = control.parentElementInComposedTree();
+    for (unsigned depth = 0; ancestor && depth < maximumFieldsContainerDepth; ++depth) {
+        if (is<HTMLFormElement>(*ancestor))
+            return ancestor;
+
+        // However many fields the whole page holds, it is not one form.
+        if (is<HTMLBodyElement>(*ancestor) || is<HTMLHtmlElement>(*ancestor))
+            return nullptr;
+
+        // Only what this ancestor adds to the one below it, which was counted already.
+        for (Ref child : composedTreeChildren(*ancestor)) {
+            if (child.ptr() != counted.ptr())
+                content.addSubtree(child, nodesLeftToVisit);
+        }
+
+        unsigned enough = explicitRole(*ancestor) == AccessibilityRole::Form ? 1 : minimumTextFieldsForFormLikeContainer;
+        if (content.textFieldCount() >= enough && (!needsButton || content.hasButton()))
+            return ancestor;
+
+        if (!nodesLeftToVisit || isPageRegionBoundary(*ancestor))
+            return nullptr;
+
+        counted = *ancestor;
+        ancestor = ancestor->parentElementInComposedTree();
+    }
+    return nullptr;
+}
 #endif // PLATFORM(COCOA)
+
+void AXObjectCache::onTrustedUserInputWillDispatch(Node& target, Event& event)
+{
+#if PLATFORM(COCOA)
+    RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
+    if (keyboardEvent) {
+        if (keyboardEvent->key() != "Enter"_s && keyboardEvent->key() != " "_s)
+            return;
+
+        // An input method took this key press, such as to confirm a conversion, so the page never acts on it.
+        if (keyboardEvent->isComposing() || keyboardEvent->handledByInputMethod() || keyboardEvent->isDefaultEventHandlerIgnored())
+            return;
+    }
+
+    // Only the page's own controls count, not the ones the browser builds inside a field or a media element.
+    if (target.isInUserAgentShadowTree())
+        return;
+
+    RefPtr document = m_document.get();
+    if (!document || !document->settings().accessibilityFormErrorDetectionEnabled())
+        return;
+
+    auto candidate = keyboardEvent ? keyedControlThatMaySubmit(target, *keyboardEvent) : clickedControlThatMaySubmit(target);
+    if (!candidate)
+        return;
+
+    RefPtr container = fieldsContainerForControl(candidate->control);
+    if (!container) {
+        AXFORMLOG("Not watching for form errors after a "_s, keyboardEvent ? "key press"_s : "click"_s,
+            " on a control that may submit, since nothing around it holds enough fields to stand in for a form."_s);
+        return;
+    }
+
+    if (!m_formActivityMonitor)
+        lazyInitialize(m_formActivityMonitor, makeUnique<AXFormActivityMonitor>(*this));
+    m_formActivityMonitor->didAttemptSubmissionWithoutNavigation(*container, candidate->control.ptr(), candidate->attempt);
+#else
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(event);
+#endif // PLATFORM(COCOA)
+}
 
 void AXObjectCache::onTextCompositionChange(Node& node, CompositionState compositionState, bool valueChanged, const String& text, size_t position, bool handlingAcceptedCandidate)
 {
@@ -7397,6 +7749,12 @@ static bool isFormFieldForAccessibility(FormListedElement& listedElement)
     return !input || (!input->isTextButton() && !input->isImageButton());
 }
 
+// A field the page built itself, like a dropdown made from a <div> around a hidden text input, is known only by its role.
+static bool hasFieldRole(Element& element)
+{
+    return hasAnyRole(element, { "checkbox"_s, "combobox"_s, "listbox"_s, "searchbox"_s, "spinbutton"_s, "switch"_s, "textbox"_s });
+}
+
 RefPtr<AccessibilityObject> AXObjectCache::formOwnerObject(Element* element)
 {
     if (!element)
@@ -7414,14 +7772,38 @@ RefPtr<AccessibilityObject> AXObjectCache::formOwnerObject(Element* element)
     return formObject && !formObject->isIgnored() ? formObject : nullptr;
 }
 
-Vector<Ref<Element>> AXObjectCache::formFieldsForErrorPairing(HTMLFormElement& form)
+Vector<Ref<Element>> AXObjectCache::fieldsForErrorPairing(Element& container)
 {
     Vector<Ref<Element>> fields;
-    for (Ref listedElement : form.copyListedElementsVector()) {
-        if (!isFormFieldForAccessibility(listedElement.get()))
-            continue;
+    auto appendIfField = [&fields] (FormListedElement& listedElement) {
+        Ref element = listedElement.asHTMLElement();
+        if (isFormFieldForAccessibility(listedElement) || hasFieldRole(element.get()))
+            fields.append(WTF::move(element));
+    };
 
-        fields.append(protect(listedElement->asHTMLElement()));
+    // A form's listed elements include the controls associated with it by form="id" from outside it.
+    if (RefPtr form = dynamicDowncast<HTMLFormElement>(container)) {
+        for (Ref listedElement : form->copyListedElementsVector())
+            appendIfField(listedElement.get());
+        // Fields the page built itself are not listed elements, so they belong to the form only by sitting inside it.
+        for (Ref node : composedTreeDescendants(*form)) {
+            RefPtr element = dynamicDowncast<HTMLElement>(node.get());
+            if (element && !element->isInUserAgentShadowTree() && !element->asFormListedElement() && hasFieldRole(*element))
+                fields.append(element.releaseNonNull());
+        }
+        return fields;
+    }
+
+    // Fields inside components' shadow trees count as well, while fields that belong to some other form do not.
+    for (Ref node : composedTreeDescendants(container)) {
+        RefPtr element = dynamicDowncast<HTMLElement>(node.get());
+        if (!element || element->isInUserAgentShadowTree())
+            continue;
+        if (RefPtr listedElement = element->asFormListedElement()) {
+            if (!listedElement->form())
+                appendIfField(*listedElement);
+        } else if (hasFieldRole(*element))
+            fields.append(element.releaseNonNull());
     }
     return fields;
 }
@@ -7510,17 +7892,12 @@ void AXObjectCache::updateDetectedFormErrors()
         postNotification(protect(get(field.ptr())), AXNotification::InvalidStatusChanged);
 }
 
-void AXObjectCache::clearDetectedErrorsForForm(HTMLFormElement& form)
+void AXObjectCache::clearDetectedErrorsForContainer(Element& container)
 {
-    Vector<Ref<Element>> fieldsToClear;
-    for (auto entry : m_detectedFormErrors) {
-        Ref field = entry.key;
-        RefPtr formControl = dynamicDowncast<HTMLFormControlElement>(field.get());
-        if (formControl && formControl->form() == &form)
-            fieldsToClear.append(field);
-    }
+    if (m_detectedFormErrors.isEmptyIgnoringNullReferences())
+        return;
 
-    for (Ref field : fieldsToClear)
+    for (Ref field : fieldsForErrorPairing(container))
         clearDetectedErrorsForField(field);
 }
 

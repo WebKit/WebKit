@@ -1,0 +1,15 @@
+This tests that the messages a page never announced are read in the order their fields come on the page, even when a later field's message sits closer to its field than an earlier one's.
+
+PASS: axElement('first-name').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your first name. | Enter your last name.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: errorMessageText(axElement('first-name')) === 'Enter your first name.'
+PASS: errorMessageText(axElement('last-name')) === 'Enter your last name.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Enter your first name.
+
+Enter your last name.
+Sign up

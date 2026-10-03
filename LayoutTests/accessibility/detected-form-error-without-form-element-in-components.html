@@ -1,0 +1,69 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="checkout">
+  <text-field id="name-field" field-id="name" label="Name"></text-field>
+  <text-field id="email-field" field-id="email" label="Email"></text-field>
+  <div id="place-order" role="button" tabindex="0">Place order</div>
+</div>
+
+<script>
+customElements.define("text-field", class extends HTMLElement {
+    constructor() {
+        super();
+        var fieldId = this.getAttribute("field-id");
+        this.attachShadow({ mode: "open" }).innerHTML = `<style>.error { color: #c62828; }</style>`
+            + `<label for="${fieldId}">${this.getAttribute("label")}</label><input id="${fieldId}" type="text">`
+            + `<div class="error"></div>`;
+    }
+
+    set error(text) {
+        this.shadowRoot.querySelector(".error").textContent = text;
+    }
+});
+
+var output = "This tests that errors are found on a page without a form element that is built from components, each keeping its field and its message in its own shadow tree. The fields have to be found inside those shadow trees for the page to read as a form at all.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("place-order").addEventListener("click", () => {
+        document.getElementById("name-field").error = "Enter your name.";
+        document.getElementById("email-field").error = "Enter a valid email address.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('name').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("place-order").press();
+
+        output += await expectAsync("axElement('name').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('name'))", "'Enter your name.'");
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

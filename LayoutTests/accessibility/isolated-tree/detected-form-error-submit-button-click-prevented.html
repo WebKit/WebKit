@@ -1,0 +1,50 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="name">Name</label><input id="name" type="text">
+  <div id="name-error"></div>
+  <button id="submit" type="submit">Sign up</button>
+</form>
+
+<script>
+var output = "This tests that errors are found when a page stops its own submit button's click from submitting the form and checks the fields itself. The form never sees a submission, but pressing its submit button is plainly an attempt at one, so the message counts whatever its color.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var submissions = 0;
+    document.getElementById("form").addEventListener("submit", () => ++submissions);
+
+    document.getElementById("submit").addEventListener("click", (event) => {
+        event.preventDefault();
+        document.getElementById("name-error").textContent = "Enter your name.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('name').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("submit").press();
+
+        output += await expectAsync("axElement('name').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('name'))", "'Enter your name.'");
+        output += expect("submissions", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+This tests that after activating a control that only may have been meant to submit the fields around it, a message in no error color still counts when it appears right under a field the user left empty or wrong. A status line under a field the user filled in, text above a field rather than under it, and a hint under a field the page only just revealed are not errors.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('name')) === 'Enter your name.'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+PASS: axElement('phone').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('phone')) === 'no error messages'
+PASS: errorMessageText(axElement('code')) === 'no error messages'
+PASS: errorMessageText(axElement('gift-message')) === 'no error messages'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Email
+Enter a valid email address.
+Phone
+We sent a code to your phone.
+Code
+Gift message
+Up to 200 characters.
+Continue

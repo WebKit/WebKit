@@ -1,0 +1,105 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.sale-price { color: #b12704; }
+.field-error { color: #c62828; }
+</style>
+</head>
+<body>
+
+<div id="cart">
+  <div>
+    <label for="shoes-quantity">Running shoes</label><input id="shoes-quantity" type="number" value="1">
+    <button id="add-shoes" type="button">+</button>
+    <div id="shoes-price" class="sale-price">$80.00</div>
+  </div>
+  <div>
+    <label for="socks-quantity">Wool socks</label><input id="socks-quantity" type="number" value="1">
+    <button id="add-socks" type="button">+</button>
+    <div id="socks-price" class="sale-price">$12.00</div>
+  </div>
+</div>
+
+<div id="shipping">
+  <div><label for="name">Name</label><input id="name" type="text"></div>
+  <div><label for="postcode">Postcode</label><input id="postcode" type="text"></div>
+  <div id="postcode-error" class="field-error"></div>
+  <button id="continue" type="button">Continue</button>
+</div>
+
+<script>
+var output = "This tests that the quantity boxes in a shopping cart do not make it read as a form, so clicking the button that adds one more of an item starts no watch for errors, even though the click redraws the item's sale price in red. The shipping fields beside the cart still find their error afterwards.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var notifications = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        ++notifications;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    var handledClicks = 0;
+    function addOne(item, unitPrice) {
+        ++handledClicks;
+        var quantity = document.getElementById(`${item}-quantity`);
+        quantity.value = Number(quantity.value) + 1;
+        document.getElementById(`${item}-price`).textContent = `$${(quantity.value * unitPrice).toFixed(2)}`;
+    }
+
+    document.getElementById("add-shoes").addEventListener("click", () => addOne("shoes", 80));
+    document.getElementById("add-socks").addEventListener("click", () => addOne("socks", 12));
+    document.getElementById("continue").addEventListener("click", () => {
+        document.getElementById("postcode-error").textContent = "Enter a postcode.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidStatus(id) {
+        return axElement(id).stringAttributeValue("AXInvalid");
+    }
+
+    function isWatching() {
+        return internals.isWatchingForAccessibilityFormErrors();
+    }
+
+    // Detection decides whether to watch before the page's own listener runs, so once that listener has, it has decided.
+    async function press(id) {
+        var handled = handledClicks;
+        axElement(id).press();
+        await waitFor(() => handledClicks > handled);
+        return `axElement('${id}').press();\n`;
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("invalidStatus('shoes-quantity')", "'false'");
+
+        output += await press("add-shoes");
+        output += expect("isWatching()", "false");
+        output += await press("add-socks");
+        output += expect("isWatching()", "false");
+
+        output += evalAndReturn("axElement('continue').press();");
+        output += await expectAsync("notifications", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter a postcode.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += await expectAsync("invalidStatus('postcode')", "'true'");
+        output += expect("invalidStatus('shoes-quantity')", "'false'");
+        output += expect("invalidStatus('socks-quantity')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -69,6 +69,7 @@ class AccessibilityObject;
 class AccessibilityRenderObject;
 class AccessibilitySpinButton;
 class Document;
+class Event;
 class HTMLAreaElement;
 class HTMLCanvasElement;
 class HTMLDetailsElement;
@@ -482,16 +483,16 @@ public:
     void onTitleChange(Document&);
     void onValidityChange(Element&);
 
-    // Fields a form-error detection pass paired with a message the author never associated (i.e. via
-    // aria-errormessage).
-    Vector<Ref<Element>> formFieldsForErrorPairing(HTMLFormElement&);
+    // The fields a form-error detection pass may pair with a message the author never associated (i.e. via
+    // aria-errormessage). That is a form's listed elements, or the fields inside an element standing in for a form.
+    Vector<Ref<Element>> fieldsForErrorPairing(Element& container);
     struct DetectedFormErrorPairing {
         Ref<Element> field;
         Ref<Element> message;
     };
     void addDetectedFormErrors(Vector<DetectedFormErrorPairing>&&);
     void clearDetectedErrorsForField(Element&);
-    void clearDetectedErrorsForForm(HTMLFormElement&);
+    void clearDetectedErrorsForContainer(Element&);
     void updateDetectedFormErrors();
     bool fieldHasDetectedError(const Element&) const;
 
@@ -503,7 +504,12 @@ public:
 #if PLATFORM(COCOA)
     void onFormSubmissionAttemptWithoutNavigation(HTMLFormElement&, HTMLFormControlElement* submitter);
     void onFormSubmissionWillNavigate(HTMLFormElement&);
+    WEBCORE_EXPORT bool isWatchingForFormErrors() const;
 #endif
+    // Called synchronously for each trusted (user-generated) click or keydown, just before the event is dispatched to the
+    // page's listeners. It must run first, because pages that validate without a real form submission typically write
+    // their error messages from inside those same listeners.
+    void onTrustedUserInputWillDispatch(Node&, Event&);
 
     void onTextCompositionChange(Node&, CompositionState, bool, const String&, size_t, bool);
     void onWidgetVisibilityChanged(RenderWidget&);

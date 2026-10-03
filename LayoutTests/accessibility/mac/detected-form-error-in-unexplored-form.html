@@ -1,0 +1,56 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAriaLiveRegionManagementEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="intro">Create an account to continue.</p>
+
+<form id="account">
+  <label for="username">Username</label><input id="username" type="text">
+  <div id="username-error"></div>
+  <button id="submit" type="submit">Create account</button>
+</form>
+
+<script>
+var output = "This tests that an error message is found when the page writes it into a part of the page no assistive technology has explored yet, where nothing has an accessibility object.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("account").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("username-error").textContent = "Choose a username.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Only read what comes before the form, so nothing inside it has an accessibility object yet. Managing live
+        // regions would make every object up front, so the header turns it off.
+        output += expect("!!axElement('intro')", "true");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Choose a username.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += expect("axElement('username').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('username'))", "'Choose a username.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

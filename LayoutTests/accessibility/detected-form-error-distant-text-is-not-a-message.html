@@ -13,6 +13,7 @@
 <form id="form">
   <label for="email">Email</label>
   <input id="email" type="text">
+  <div id="email-error"></div>
   <button id="submit" type="submit">Sign in</button>
 </form>
 
@@ -26,14 +27,20 @@ if (window.accessibilityController && window.internals) {
     internals.setAccessibilityFormErrorSettleDelay(0.1);
 
     var formValidationErrors = 0;
+    var payload = "";
     accessibilityController.addNotificationListener(function(element, notification, userInfo) {
-        if (notification == "AXPossibleFormValidationError")
+        if (notification == "AXPossibleFormValidationError") {
             formValidationErrors++;
+            payload = formatFormValidationUserInfo(userInfo);
+        }
     });
 
+    var submissions = 0;
     document.getElementById("form").addEventListener("submit", (event) => {
         event.preventDefault();
         document.getElementById("distant").textContent = "Save 10 percent when you book today.";
+        if (++submissions == 2)
+            document.getElementById("email-error").textContent = "Enter a valid email address.";
     });
 
     function axElement(id) {
@@ -44,12 +51,17 @@ if (window.accessibilityController && window.internals) {
         output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
 
         document.getElementById("submit").click();
-        await sleep(500);
+        output += await expectAsync("internals.isWatchingForAccessibilityFormErrors()", "false");
 
         // Short enough to be a message and lined up with the field, but too far away to be about it.
         output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
         output += expect("errorMessageCount(axElement('email'))", "0");
         output += expect("formValidationErrors", "0");
+
+        // A second attempt also brings a real message, so the one report it posts shows the first posted none.
+        output += evalAndReturn("document.getElementById('submit').click();");
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter a valid email address.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += expect("formValidationErrors", "1");
 
         debug(output);
         finishJSTest();

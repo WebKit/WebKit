@@ -4937,6 +4937,17 @@ void Internals::setAccessibilityFormErrorSettleDelay(double seconds)
 #endif
 }
 
+bool Internals::isWatchingForAccessibilityFormErrors() const
+{
+#if PLATFORM(COCOA)
+    if (RefPtr document = contextDocument()) {
+        if (CheckedPtr cache = document->axObjectCache())
+            return cache->isWatchingForFormErrors();
+    }
+#endif
+    return false;
+}
+
 unsigned Internals::liveRegionSnapshotBuildCount() const
 {
     if (RefPtr document = contextDocument()) {

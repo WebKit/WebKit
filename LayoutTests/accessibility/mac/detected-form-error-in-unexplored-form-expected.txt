@@ -1,0 +1,15 @@
+This tests that an error message is found when the page writes it into a part of the page no assistive technology has explored yet, where nothing has an accessibility object.
+
+PASS: !!axElement('intro') === true
+PASS: payload === 'AXFormValidationUnannouncedText: Choose a username.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: axElement('username').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('username')) === 'Choose a username.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Create an account to continue.
+
+Username
+Choose a username.
+Create account

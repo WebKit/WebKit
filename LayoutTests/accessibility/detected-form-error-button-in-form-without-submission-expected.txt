@@ -1,0 +1,13 @@
+This tests that errors are found when a control in a form checks the fields without submitting them, as the Next button of a form split into steps does. The form is never submitted, so activating the control is what starts the watch.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('name')) === 'Enter your name.'
+PASS: submissions === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Next

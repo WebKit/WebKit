@@ -812,6 +812,7 @@ public:
     void forceAXObjectCacheUpdate() const;
     void setAccessibilityAnnouncementTranslationTimeout(double seconds);
     void setAccessibilityFormErrorSettleDelay(double seconds);
+    bool isWatchingForAccessibilityFormErrors() const;
     unsigned liveRegionSnapshotBuildCount() const;
     void resetLiveRegionSnapshotBuildCount() const;
     void setShouldMockParentSearchResultsForTesting(bool);

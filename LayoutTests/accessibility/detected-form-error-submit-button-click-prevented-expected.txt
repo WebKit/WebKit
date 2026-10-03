@@ -1,0 +1,13 @@
+This tests that errors are found when a page stops its own submit button's click from submitting the form and checks the fields itself. The form never sees a submission, but pressing its submit button is plainly an attempt at one, so the message counts whatever its color.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('name')) === 'Enter your name.'
+PASS: submissions === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Sign up

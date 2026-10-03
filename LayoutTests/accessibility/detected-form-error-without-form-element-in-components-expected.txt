@@ -1,0 +1,13 @@
+This tests that errors are found on a page without a form element that is built from components, each keeping its field and its message in its own shadow tree. The fields have to be found inside those shadow trees for the page to read as a form at all.
+
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('name')) === 'Enter your name.'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Place order
