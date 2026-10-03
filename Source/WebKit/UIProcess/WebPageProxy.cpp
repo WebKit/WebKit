@@ -16034,12 +16034,13 @@ void WebPageProxy::computeHasVisualSearchResults(const URL& imageURL, ShareableB
 
 void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
 {
-    if (!hasRunningProcess()) {
+    RefPtr process = processForElementContext(context);
+    if (!hasRunningProcess() || !process) {
         completionHandler(TextRecognitionUpdateResult::NoText);
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTF::move(results), context, location), WTF::move(completionHandler));
+    process->sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTF::move(results), context, location), WTF::move(completionHandler), *context.webPageIdentifier);
 }
 
 void WebPageProxy::startVisualTranslation(const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
@@ -16085,12 +16086,13 @@ void WebPageProxy::translateAccessibilityAnnouncementStrings(Vector<String>&& st
 
 void WebPageProxy::requestImageBitmap(const ElementContext& elementContext, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&, const String&)>&& completion)
 {
-    if (!hasRunningProcess()) {
+    RefPtr process = processForElementContext(elementContext);
+    if (!hasRunningProcess() || !process) {
         completion({ }, { });
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::RequestImageBitmap(elementContext), WTF::move(completion));
+    process->sendWithAsyncReply(Messages::WebPage::RequestImageBitmap(elementContext), WTF::move(completion), *elementContext.webPageIdentifier);
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -18820,8 +18822,9 @@ void WebPageProxy::webViewDidMoveToWindow()
 
 void WebPageProxy::setCanShowPlaceholder(const WebCore::ElementContext& context, bool canShowPlaceholder)
 {
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetCanShowPlaceholder(context, canShowPlaceholder));
+    RefPtr process = processForElementContext(context);
+    if (hasRunningProcess() && process)
+        process->send(Messages::WebPage::SetCanShowPlaceholder(context, canShowPlaceholder), *context.webPageIdentifier);
 }
 
 Logger& WebPageProxy::logger()
@@ -19371,7 +19374,11 @@ void WebPageProxy::cancelTextRecognitionForVideoInElementFullScreen()
 
 void WebPageProxy::shouldAllowRemoveBackground(const ElementContext& context, CompletionHandler<void(bool)>&& completion)
 {
-    sendWithAsyncReply(Messages::WebPage::ShouldAllowRemoveBackground(context), WTF::move(completion));
+    RefPtr process = processForElementContext(context);
+    if (!process)
+        return completion(false);
+
+    process->sendWithAsyncReply(Messages::WebPage::ShouldAllowRemoveBackground(context), WTF::move(completion), *context.webPageIdentifier);
 }
 
 #endif
@@ -19592,6 +19599,18 @@ bool WebPageProxy::hasWebPageInProcess(const WebProcessProxy& process, WebCore::
             found = true;
     });
     return found;
+}
+
+RefPtr<WebProcessProxy> WebPageProxy::processForElementContext(const ElementContext& context)
+{
+    if (!context.documentIdentifier || !context.webPageIdentifier)
+        return nullptr;
+
+    RefPtr process = WebProcessProxy::processForIdentifier(context.documentIdentifier->processIdentifier());
+    if (!process || !hasWebPageInProcess(*process, *context.webPageIdentifier))
+        return nullptr;
+
+    return process;
 }
 
 WebPopupMenuProxyClient& WebPageProxy::popupMenuClient()

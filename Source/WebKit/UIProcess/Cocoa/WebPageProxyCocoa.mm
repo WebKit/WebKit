@@ -1214,7 +1214,8 @@ void WebPageProxy::setCocoaView(WKWebView *view)
 
 void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, std::span<const uint8_t> data)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::ReplaceImageForRemoveBackground(elementContext, types, data), webPageIDInMainFrameProcess());
+    if (RefPtr process = processForElementContext(elementContext))
+        process->send(Messages::WebPage::ReplaceImageForRemoveBackground(elementContext, types, data), *elementContext.webPageIdentifier);
 }
 
 #endif
