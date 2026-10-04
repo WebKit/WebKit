@@ -2051,6 +2051,7 @@ inspector/agents/frame/FrameCSSAgent.cpp @header:RenderStyleGetters
 inspector/agents/frame/FrameConsoleAgent.cpp
 inspector/agents/frame/FrameDOMAgent.cpp
 inspector/agents/frame/FrameDOMAgentStubs.cpp
+inspector/agents/frame/FrameDOMDebuggerAgent.cpp
 inspector/agents/frame/FrameDOMStorageAgent.cpp
 inspector/agents/frame/FrameDebuggerAgent.cpp
 inspector/agents/frame/FrameWorkerAgent.cpp
