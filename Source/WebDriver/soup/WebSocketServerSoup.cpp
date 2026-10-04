@@ -201,12 +201,19 @@ void WebSocketServer::disconnect()
 
 void WebSocketServer::disconnectSession(const String& sessionId)
 {
-    auto connection = this->connection(sessionId);
-    if (!connection || !connection->get())
-        return;
+    Vector<WebSocketMessageHandler::Connection> connections;
+    for (const auto& pair : m_connectionToSession) {
+        if (pair.value == sessionId)
+            connections.append(pair.key);
+    }
 
-    soup_websocket_connection_close(connection->get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
-    g_signal_handlers_disconnect_by_data(connection->get(), this);
+    for (const auto& connection : connections) {
+        if (connection) {
+            soup_websocket_connection_close(connection.get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
+            g_signal_handlers_disconnect_by_data(connection.get(), this);
+        }
+        m_connectionToSession.remove(connection);
+    }
 }
 
 } // namespace WebDriver
