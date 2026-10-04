@@ -48,6 +48,7 @@ public:
     struct LineClamp {
         size_t maximumLines { 0 };
         bool shouldDiscardOverflow { false };
+        bool isLegacy { true };
     };
 
     struct LegacyLineClamp {

@@ -188,7 +188,7 @@ static inline void NODELETE updateRenderTreeLineClampBeforeLayout(auto& inlineLa
     }
 
     if (auto renderTreeLineClamp = renderTreeLayoutState.lineClamp())
-        renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { remainingLinesForLineClamp(inlineLayoutState), renderTreeLineClamp->shouldDiscardOverflow });
+        renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { remainingLinesForLineClamp(inlineLayoutState), renderTreeLineClamp->shouldDiscardOverflow, renderTreeLineClamp->isLegacy });
 }
 
 static inline void NODELETE updateIFCLineClampAfterLayout(auto& inlineLayoutState, auto& renderTreeLayoutState)
