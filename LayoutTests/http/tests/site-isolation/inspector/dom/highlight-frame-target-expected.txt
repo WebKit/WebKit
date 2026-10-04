@@ -1,0 +1,66 @@
+Tests that a cross-origin iframe's FrameDOMAgent accepts the DOM highlight commands.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameHighlight
+-- Running test case: HighlightNode
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Should get a nodeId for '#target'.
+PASS: DOM.highlightNode should be accepted by the frame target.
+PASS: DOM.hideHighlight should be accepted by the frame target.
+
+-- Running test case: HighlightNodeScrolled
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.highlightNode should be accepted while the frame is scrolled.
+
+-- Running test case: HighlightNodeRTL
+PASS: Should find the frame target for highlight-rtl-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.highlightNode should be accepted in an RTL frame.
+
+-- Running test case: HighlightNodeVerticalWritingMode
+PASS: Should find the frame target for highlight-vertical-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.highlightNode should be accepted in a vertical-rl frame.
+
+-- Running test case: HighlightNodeList
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Should get a nodeId for '#target'.
+PASS: Should get a nodeId for '#tail'.
+PASS: DOM.highlightNodeList should be accepted by the frame target.
+
+-- Running test case: HighlightRectAndQuad
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.highlightRect should be accepted by the frame target.
+PASS: DOM.highlightQuad should be accepted by the frame target.
+
+-- Running test case: HighlightQuadRejectsMalformedQuad
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: DOM.highlightQuad should reject a three-element quad.
+
+-- Running test case: HighlightSelectorNotDispatchable
+PASS: Should find the frame target for highlight-frame.html.
+PASS: Frame target should have a document.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Frame target should not expose DOM.highlightSelector.
+
