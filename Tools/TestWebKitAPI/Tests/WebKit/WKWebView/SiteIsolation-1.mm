@@ -67,6 +67,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "ClassMethodSwizzler.h"
 #import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/mac/LocalEventMonitorSwizzler.h"
 #import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
@@ -1040,6 +1041,64 @@ TEST(SiteIsolation, DeviceScaleFactorChangeUpdatesCrossOriginIframeCompositingSc
     EXPECT_TRUE(Util::waitFor([&] {
         return [[webView stringByEvaluatingJavaScript:layerTreeScript inFrame:childFrame.get()] containsString:@"(contentsScale 1.00)"];
     }));
+}
+
+static NSScrollerStyle siteIsolationScrollerStyle;
+
+static NSScrollerStyle siteIsolationPreferredScrollerStyle(id, SEL)
+{
+    return siteIsolationScrollerStyle;
+}
+
+TEST(SiteIsolation, ScrollerStyleChangeUpdatesCrossOriginIframe)
+{
+    static constexpr auto scrollerHTML = "<div id='scroller' style='width: 200px; height: 200px; overflow: scroll'><div id='content' style='height: 1000px'></div></div>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "<iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s) } },
+        { "/iframe"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "</body>"_s) } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    {
+        // Web processes take their initial scroller style from the UI process, so they all start with legacy scroll bars.
+        siteIsolationScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(siteIsolationPreferredScrollerStyle));
+
+        RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+        RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+        [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        RetainPtr childFrame = [webView firstChildFrame];
+
+        // AppKit restyles scrollers that aren't scrolled asynchronously by itself, so wait until both are.
+        NSString *controllerTypeScript = @"internals.scrollbarsControllerTypeForNode(document.getElementById('scroller'))";
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView stringByEvaluatingJavaScript:controllerTypeScript] isEqualToString:@"RemoteScrollbarsController"]
+                && [[webView stringByEvaluatingJavaScript:controllerTypeScript inFrame:childFrame.get()] isEqualToString:@"RemoteScrollbarsController"];
+        }));
+
+        // The content only gets the vertical scroll bar's space back once its scroller is laid out again for the new style.
+        NSString *contentWidthScript = @"document.getElementById('content').offsetWidth";
+        EXPECT_LT([webView stringByEvaluatingJavaScript:contentWidthScript].intValue, 200);
+        EXPECT_LT([webView stringByEvaluatingJavaScript:contentWidthScript inFrame:childFrame.get()].intValue, 200);
+
+        siteIsolationScrollerStyle = NSScrollerStyleOverlay;
+        [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+
+        // The main frame checks that the new style reaches web processes at all, so a failure below is specific to the iframe.
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [webView stringByEvaluatingJavaScript:contentWidthScript].intValue == 200;
+        }));
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [webView stringByEvaluatingJavaScript:contentWidthScript inFrame:childFrame.get()].intValue == 200;
+        }));
+    }
+
+    // Put anything that observed the swizzled style back on the real one.
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
 }
 
 #endif // PLATFORM(MAC)
