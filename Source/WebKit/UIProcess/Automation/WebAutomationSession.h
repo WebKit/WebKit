@@ -192,8 +192,7 @@ public:
     void didCreatePage(WebPageProxy&);
     void navigationStartedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationCommittedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
-    void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
-    void navigationAbortedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
+    void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, const String& url = { });
     void fragmentNavigatedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void emitContextCreatedEvent(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
@@ -264,6 +263,11 @@ public:
     void goForwardInBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void traverseHistoryInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, int delta, Inspector::CommandCallback<void>&&);
     void reloadBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
+#if ENABLE(WEBDRIVER_BIDI)
+    // Like navigateBrowsingContext/reloadBrowsingContext, but resolves with the real navigation id so BiDi callers can report it.
+    void navigateBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& url, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
+    void reloadBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
+#endif
     void waitForNavigationToComplete(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&) override;
     void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
@@ -448,6 +452,46 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
+
+    // BiDi navigation bookkeeping, so that navigationAborted can be reported for a navigation that is
+    // superseded before it finishes loading, or that ends when its frame or page closes. The state
+    // machine reconciles two event sources: command dispatch, handled synchronously in the UI process,
+    // and WebCore's callbacks on the ordered page IPC stream. A command may pre-track a navigation
+    // before WebCore reports it started, and navigation ids are allocated by a single monotonic
+    // UI-process counter, so a larger id is a newer navigation. A navigation is in flight until it
+    // finishes loading or, for a same-document navigation, until fragmentNavigated is reported. A
+    // command-dispatched navigation aborted before WebCore reported it started gets its
+    // navigationStarted synthesized right before the terminal, so a client never receives a terminal
+    // for a navigation whose start it has not seen.
+    struct BidiFrameNavigationState {
+        std::optional<WebCore::NavigationIdentifier> navigationID;
+        String url;
+        bool loaded { false };
+        bool started { false }; // False while only pre-tracked by a command; true once WebCore reports it started.
+        bool requestedByCommand { false }; // Dispatched by browsingContext.navigate or reload, as opposed to reported by WebCore only.
+    };
+    HashMap<WebCore::FrameIdentifier, BidiFrameNavigationState> m_lastNavigationPerFrame;
+    // The highest navigation id that has produced a terminal event in each frame. Navigation ids are
+    // allocated by one monotonic counter, so an id-bearing callback for an id at or below this mark is
+    // about a navigation that has already terminated, or an older one, and is dropped: a terminal is
+    // a duplicate, a start, commit, DOMContentLoaded or load would come after the terminal. Callbacks
+    // without an id cannot be classified this way and are not dropped. Nothing is ever forgotten here.
+    HashMap<WebCore::FrameIdentifier, WebCore::NavigationIdentifier> m_highestTerminatedNavigationPerFrame;
+
+    enum class BidiNavigationTerminalType : bool { Failed, Aborted };
+    // Which of the two event sources is reporting a navigation: a command dispatching it, or WebCore reporting it started.
+    enum class BidiNavigationSource : bool { Command, WebCore };
+    // Whether a reconciled start/dispatch is now the tracked navigation (NewlyTracked), an existing one
+    // advancing dispatched -> started (Advanced), or a stale report whose events must be suppressed.
+    enum class BidiNavigationTrackingResult { NewlyTracked, Advanced, Ignored };
+    BidiNavigationTrackingResult trackBidiNavigationForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, const String& url, BidiNavigationSource);
+    std::optional<WebCore::NavigationIdentifier> resolveBidiTerminalNavigationID(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
+    bool markBidiNavigationTerminated(WebCore::FrameIdentifier, WebCore::NavigationIdentifier);
+    bool isBidiNavigationTerminated(WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>) const;
+    void emitBidiNavigationTerminal(const WebFrameProxy&, BidiNavigationTerminalType, std::optional<WebCore::NavigationIdentifier>, const String& url);
+    // Reports the frame's tracked navigation aborted if it is still in flight; the initial empty or
+    // about:blank document is not a client navigation and is exempt unless a command requested it.
+    void emitBidiNavigationAbortedIfInFlight(const WebFrameProxy&);
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;
