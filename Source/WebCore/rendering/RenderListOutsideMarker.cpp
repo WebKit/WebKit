@@ -253,7 +253,7 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                 if (element)
                     element->invalidateStyleAndRenderersForSubtree();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
-            } else if (borderBoxSize() != LayoutSize(image->imageSize(this, style().usedZoom()))) {
+            } else if (borderBoxSize() != markerImageSize(*image)) {
                 updateInlineMarginsAndContent();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
             } else
@@ -269,6 +269,13 @@ void RenderListOutsideMarker::updateInlineMarginsAndContent()
     updateInlineMargins();
 }
 
+LayoutSize RenderListOutsideMarker::markerImageSize(const Style::Image& image) const
+{
+    // FIXME: The spec says this should be 1em - https://drafts.csswg.org/css-lists-3/#valdef-list-style-image-image
+    LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
+    return calculateImageIntrinsicDimensions(image, Style::ListStyleImageSizing { bulletWidth }, ScaleByUsedZoom::Yes);
+}
+
 void RenderListOutsideMarker::updateContent()
 {
     if (hasContentProperty()) {
@@ -278,9 +285,7 @@ void RenderListOutsideMarker::updateContent()
     }
 
     if (RefPtr image = listMarkerImage(style())) {
-        // FIXME: The spec says this should be 1em - https://drafts.csswg.org/css-lists-3/#valdef-list-style-image-image
-        LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
-        setContentContainerImageSize(calculateImageIntrinsicDimensions(*image, Style::ListStyleImageSizing { bulletWidth }, ScaleByUsedZoom::Yes));
+        setContentContainerImageSize(markerImageSize(*image));
         return;
     }
 
