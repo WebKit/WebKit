@@ -457,6 +457,39 @@ public:
         return m_mouseTargetHitTestResult.get();
     }
 
+#if PLATFORM(GTK) && !USE(GTK4)
+    // Sends a leave event with the given position, like GDK does on Wayland, where it fills leave events with the last
+    // known pointer position. Gives up after a second if the mouse target doesn't change.
+    WebKitHitTestResult* leaveAndWaitUntilMouseTargetChanged(int x, int y)
+    {
+        GtkWidget* viewWidget = GTK_WIDGET(m_webView.get());
+        GdkEvent* event = gdk_event_new(GDK_LEAVE_NOTIFY);
+        event->crossing.window = GDK_WINDOW(g_object_ref(gtk_widget_get_window(viewWidget)));
+        event->crossing.send_event = TRUE;
+        event->crossing.time = GDK_CURRENT_TIME;
+        event->crossing.x = x;
+        event->crossing.y = y;
+        event->crossing.mode = GDK_CROSSING_NORMAL;
+        event->crossing.detail = GDK_NOTIFY_NONLINEAR;
+        gdk_event_set_device(event, gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget))));
+
+        GRefPtr<GSource> timeout = adoptGRef(g_timeout_source_new(1000));
+        g_source_set_callback(timeout.get(), [](gpointer mainLoop) -> gboolean {
+            g_main_loop_quit(static_cast<GMainLoop*>(mainLoop));
+            return G_SOURCE_REMOVE;
+        }, m_mainLoop, nullptr);
+        g_source_attach(timeout.get(), nullptr);
+
+        m_waitingForMouseTargetChange = true;
+        gtk_widget_event(viewWidget, event);
+        gdk_event_free(event);
+        g_main_loop_run(m_mainLoop);
+        m_waitingForMouseTargetChange = false;
+        g_source_destroy(timeout.get());
+        return m_mouseTargetHitTestResult.get();
+    }
+#endif
+
     void simulateUserInteraction()
     {
         runJavaScriptAndWaitUntilFinished("document.getElementById('testInput').focus()", nullptr);
@@ -952,6 +985,33 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert_true(webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert_cmpuint(test->m_mouseTargetModifiers, ==, 0);
 }
+
+#if !USE(GTK4)
+static void testWebViewMouseLeaveWithPositionInside(UIClientTest* test, gconstpointer)
+{
+    test->showInWindow();
+
+    const char* html =
+        "<html><body style='margin:0'>"
+        " <a id='link' href='http://www.webkitgtk.org' style='display:block; height:100px'>WebKitGTK</a>"
+        " <script>"
+        "   var didLeave = false;"
+        "   document.getElementById('link').addEventListener('mouseleave', () => { didLeave = true; });"
+        " </script>"
+        "</body></html>";
+    test->loadHtml(html, "file:///");
+    test->waitUntilLoadFinished();
+
+    WebKitHitTestResult* hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(20, 20);
+    g_assert_true(webkit_hit_test_result_context_is_link(hitTestResult));
+
+    // The leave event still has the last position inside the link, which is what GDK sends on Wayland.
+    hitTestResult = test->leaveAndWaitUntilMouseTargetChanged(20, 20);
+    g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert_true(WebViewTest::javascriptResultToBoolean(test->runJavaScriptAndWaitUntilFinished("didLeave", nullptr)));
+    g_assert_false(WebViewTest::javascriptResultToBoolean(test->runJavaScriptAndWaitUntilFinished("document.getElementById('link').matches(':hover')", nullptr)));
+}
+#endif
 #endif // PLATFORM(GTK)
 
 static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstpointer)
@@ -1733,6 +1793,9 @@ void beforeAll()
     // FIXME: Implement mouse move in WPE.
 #if PLATFORM(GTK)
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
+#if !USE(GTK4)
+    UIClientTest::add("WebKitWebView", "mouse-leave-with-position-inside", testWebViewMouseLeaveWithPositionInside);
+#endif
 #endif
     UIClientTest::add("WebKitWebView", "geolocation-permission-requests", testWebViewGeolocationPermissionRequests);
 #if ENABLE(ENCRYPTED_MEDIA)
