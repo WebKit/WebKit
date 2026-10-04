@@ -597,6 +597,12 @@ class ResultsDBReportMixin(abc.ABC):
             configuration['style'] = style
         if (flavor := self.getProperty('flavor', None)) in ('wk1', 'wk2', 'site-isolation'):
             configuration['flavor'] = flavor
+        # GTK and WPE post-commit bots run on more than one architecture, and pooling their history
+        # can excuse a failure on this architecture with failures seen only on another one.
+        if platform and platform.lower() in ('gtk', 'wpe'):
+            architecture = self.getProperty('machine_architecture', None) or self.getProperty('architecture', None)
+            if architecture and ' ' not in architecture:
+                configuration['architecture'] = architecture
         return configuration
 
     def results_db_configuration(self):

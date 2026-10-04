@@ -8,6 +8,8 @@ include(platform/Soup.cmake)
 if (USE_OPENSSL_BACKEND)
     include(platform/OpenSSL.cmake)
     list(APPEND WebCore_LIBRARIES OpenSSL::Crypto)
+    # The OpenSSL backend uses APIs deprecated in OpenSSL 3, see bug 245146.
+    list(APPEND WebCore_PRIVATE_DEFINITIONS OPENSSL_API_COMPAT=0x10100000L)
 else ()
     include(platform/GCrypt.cmake)
 endif ()

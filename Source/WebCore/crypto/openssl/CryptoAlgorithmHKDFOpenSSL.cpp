@@ -58,13 +58,18 @@ int HKDF(unsigned char* output, size_t outSize, const evp_md_st* algorithm,
         return ret;
     }
 
-    ret = EVP_PKEY_CTX_set1_hkdf_salt(kctx, inSalt, inSaltSize);
-    if (ret <= 0) {
-        EVP_PKEY_CTX_free(kctx);
-        return ret;
+    // OpenSSL rejects a null pointer even with a zero length. An unset salt
+    // already defaults to HashLen zero bytes, as RFC 5869 specifies.
+    if (inSaltSize) {
+        ret = EVP_PKEY_CTX_set1_hkdf_salt(kctx, inSalt, inSaltSize);
+        if (ret <= 0) {
+            EVP_PKEY_CTX_free(kctx);
+            return ret;
+        }
     }
 
-    ret = EVP_PKEY_CTX_set1_hkdf_key(kctx, inKey, inKeySize);
+    static const unsigned char emptyKey[1] = { };
+    ret = EVP_PKEY_CTX_set1_hkdf_key(kctx, inKeySize ? inKey : emptyKey, inKeySize);
     if (ret <= 0) {
         EVP_PKEY_CTX_free(kctx);
         return ret;

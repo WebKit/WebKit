@@ -3982,6 +3982,49 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
             {'platform': 'mac', 'style': 'release', 'flavor': 'wk2'},
         )
 
+    def test_glib_queries_include_the_architecture(self):
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('architecture', 'x86_64')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'WPE', 'style': 'release', 'flavor': 'wk2', 'architecture': 'x86_64'},
+        )
+
+    def test_glib_queries_prefer_the_machine_architecture(self):
+        # Queues without architectures in config.json only know it from the worker.
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('machine_architecture', 'arm64')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'GTK', 'style': 'release', 'architecture': 'arm64'},
+        )
+
+    def test_glib_queries_skip_a_multi_architecture_value(self):
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64 arm64')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'WPE', 'style': 'release'},
+        )
+
+    def test_mac_queries_pool_architectures(self):
+        self.setup_step(RunWebKitTests())
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('flavor', 'wk2')
+        self.setProperty('machine_architecture', 'arm64')
+        self.assertEqual(
+            self.get_nth_step(0).results_db_query_configuration(),
+            {'platform': 'mac', 'style': 'release', 'flavor': 'wk2'},
+        )
+
     def test_site_isolation_queries_keep_their_platform(self) -> None:
         # mac has its own site-isolation post-commit queue, so dropping the platform here would
         # fold another platform's history for the same test into the verdict.
