@@ -39,6 +39,7 @@
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/DictionaryPopupInfo.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKWebView (WKTestingMac)
 
@@ -97,6 +98,22 @@
     if (!_page->editorState().postLayoutData)
         return NSZeroRect;
     return _page->editorState().postLayoutData->selectionBoundingRect;
+}
+
+- (NSRect)_caretRectForTesting
+{
+    if (!_page->editorState().visualData)
+        return NSZeroRect;
+    return _page->editorState().visualData->caretRectAtStart;
+}
+
+- (NSArray<NSValue *> *)_selectionRectsForTesting
+{
+    if (!_page->editorState().visualData)
+        return @[ ];
+    return createNSArray(_page->editorState().visualData->selectionGeometries, [](auto& geometry) {
+        return [NSValue valueWithRect:geometry.rect()];
+    }).autorelease();
 }
 
 - (NSSet<NSView *> *)_pdfHUDs

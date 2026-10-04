@@ -49,6 +49,9 @@
 - (void)_insertText:(id)string replacementRange:(NSRange)replacementRange;
 - (NSRect)_candidateRect;
 
+@property (nonatomic, readonly) NSRect _caretRectForTesting;
+@property (nonatomic, readonly) NSArray<NSValue *> *_selectionRectsForTesting;
+
 - (NSSet<NSView *> *)_pdfHUDs;
 
 - (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;

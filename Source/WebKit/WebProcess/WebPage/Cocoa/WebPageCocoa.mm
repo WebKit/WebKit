@@ -932,10 +932,10 @@ static bool selectionIsTransparentOrFullyClipped(const VisibleSelection& selecti
     return startRenderer == endRenderer || rendererIsTransparentOrFullyClipped(*endRenderer);
 }
 
-static void convertContentToRootView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
+static void convertContentToMainFrameView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
 {
     for (auto& geometry : geometries)
-        geometry.setQuad(view.contentsToRootView(geometry.quad()));
+        geometry.setQuad(view.contentsToMainFrameView(geometry.quad()));
 }
 
 void WebPage::getPlatformEditorStateCommon(LocalFrame& frame, EditorState& result) const
@@ -1037,17 +1037,17 @@ void WebPage::getPlatformEditorStateCommon(LocalFrame& frame, EditorState& resul
     bool endNodeIsInsideFixedPosition = false;
 
     if (selection.isCaret()) {
-        visualData.caretRectAtStart = view->contentsToRootView(WTF::protect(frame.selection())->absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        visualData.caretRectAtStart = view->contentsToMainFrameView(WTF::protect(frame.selection())->absoluteCaretBounds(&startNodeIsInsideFixedPosition));
         endNodeIsInsideFixedPosition = startNodeIsInsideFixedPosition;
         visualData.caretRectAtEnd = visualData.caretRectAtStart;
     } else if (selection.isRange()) {
-        visualData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
-        visualData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
+        visualData.caretRectAtStart = view->contentsToMainFrameView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        visualData.caretRectAtEnd = view->contentsToMainFrameView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
 
         auto selectedRange = selection.toNormalizedRange();
         if (selectedRange) {
             auto [selectionGeometries, intersectingLayerIDs] = RenderObject::collectSelectionGeometries(*selectedRange);
-            convertContentToRootView(view, selectionGeometries);
+            convertContentToMainFrameView(view, selectionGeometries);
 
             visualData.selectionGeometries = WTF::move(selectionGeometries);
             visualData.intersectingLayerIDs = WTF::move(intersectingLayerIDs);

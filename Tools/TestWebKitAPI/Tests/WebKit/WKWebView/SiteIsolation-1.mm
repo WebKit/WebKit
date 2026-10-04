@@ -323,6 +323,57 @@ TEST(SiteIsolation, AttributedSubstringInCrossOriginIframe)
     EXPECT_WK_STREQ("subframe", substring.get());
 }
 
+TEST(SiteIsolation, SelectionGeometryInCrossOriginIframeUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='position: absolute; left: 100px; top: 150px; width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body contenteditable style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+
+    // The iframe is at (100, 150) in the main frame, so rects left relative to the iframe would be near the origin.
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().setPosition(document.body.firstChild, 0)", _WKSelectionAttributeIsCaret);
+    NSRect caretRect = NSZeroRect;
+    EXPECT_TRUE(Util::waitFor([&] {
+        caretRect = [webView _caretRectForTesting];
+        return !NSIsEmptyRect(caretRect);
+    }));
+    EXPECT_NEAR(NSMinX(caretRect), 100, 2);
+    EXPECT_NEAR(NSMinY(caretRect), 150, 2);
+
+    auto selectTextAndWaitForSelectionBounds = [&] {
+        [webView objectByEvaluatingJavaScript:@"getSelection().removeAllRanges()" inFrame:childFrame.get()];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return ![webView _selectionRectsForTesting].count;
+        }));
+        [webView objectByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)" inFrame:childFrame.get()];
+        NSRect bounds = NSZeroRect;
+        EXPECT_TRUE(Util::waitFor([&] {
+            bounds = NSZeroRect;
+            RetainPtr<NSArray<NSValue *>> rects = [webView _selectionRectsForTesting];
+            for (NSValue *rect in rects.get())
+                bounds = NSUnionRect(bounds, rect.rectValue);
+            return !NSIsEmptyRect(bounds);
+        }));
+        return bounds;
+    };
+
+    auto selectionBounds = selectTextAndWaitForSelectionBounds();
+    EXPECT_NEAR(NSMinX(selectionBounds), 100, 2);
+    EXPECT_NEAR(NSMinY(selectionBounds), 150, 2);
+
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 100)"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 100;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    selectionBounds = selectTextAndWaitForSelectionBounds();
+    EXPECT_NEAR(NSMinX(selectionBounds), 100, 2);
+    EXPECT_NEAR(NSMinY(selectionBounds), 50, 2);
+}
+
 TEST(SiteIsolation, ChangeSpellingInCrossOriginIframe)
 {
     HTTPServer server({

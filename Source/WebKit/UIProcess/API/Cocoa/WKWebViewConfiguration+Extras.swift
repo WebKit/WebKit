@@ -25,6 +25,7 @@
 
 import Foundation
 import WebKit_Private
+import WebKit_Private.WKPreferencesPrivate
 
 extension WKWebViewConfiguration {
     convenience init(_ wrapped: WebPage.Configuration) {
@@ -89,6 +90,10 @@ extension WKWebViewConfiguration {
         #endif
 
         self._backgroundTextExtractionEnabled = wrapped.backgroundTextExtractionEnabled
+
+        if wrapped.siteIsolationEnabled {
+            self.preferences._siteIsolationEnabled = true
+        }
     }
 }
 

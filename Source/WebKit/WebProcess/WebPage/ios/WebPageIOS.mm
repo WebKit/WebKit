@@ -510,13 +510,10 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
             for (auto& geometry : geometries)
                 geometry.setQuad(localRootView->convertToRootViewAcrossIsolatedFrames(geometry.quad()));
         };
-        convertRect(visualData.caretRectAtStart);
-        convertRect(visualData.caretRectAtEnd);
         convertRect(visualData.selectionClipRect);
         convertRect(visualData.editableRootBounds);
         convertRect(visualData.markedTextCaretRectAtStart);
         convertRect(visualData.markedTextCaretRectAtEnd);
-        convertGeometries(visualData.selectionGeometries);
         convertGeometries(visualData.markedTextRects);
     }
 }
