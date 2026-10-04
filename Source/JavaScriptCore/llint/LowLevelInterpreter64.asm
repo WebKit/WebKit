@@ -534,10 +534,9 @@ macro cagePrimitive(basePtr, mask, ptr, scratch)
     end
 end
 
-macro cagedPrimitive(ptr, length, scratch, scratch2)
-    const source = ptr
+macro cagedPrimitive(ptr, scratch)
     if GIGACAGE_ENABLED
-        cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
+        cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, ptr, scratch)
     end
 end
 
@@ -2025,7 +2024,7 @@ llintOpWithMetadata(op_check_private_brand, OpCheckPrivateBrand, macro (size, ge
     dispatch()
 end)
 
-macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
+macro putByValOp(opcodeName, opcodeStruct, osrExitPoint, typedArrayPutByVal)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         macro contiguousPutByVal(storeCallback)
             biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .outOfBounds
@@ -2042,6 +2041,12 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
             addi 1, t3, t2
             storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
             jmp .storeResult
+        end
+
+        macro setLargeTypedArray(scratch)
+            loadi %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5], scratch
+            ori constexpr ArrayProfileFlag::MayBeLargeTypedArray, scratch
+            storei scratch, %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5]
         end
 
         get(m_base, t0)
@@ -2093,7 +2098,7 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
             end)
 
     .opPutByValNotContiguous:
-        bineq t2, ArrayStorageShape, .opPutByValSlow
+        bineq t2, ArrayStorageShape, .opPutByValNotArrayStorage
         biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
         btqz ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty
     .opPutByValArrayStorageStoreResult:
@@ -2113,6 +2118,9 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         storei t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
         jmp .opPutByValArrayStorageStoreResult
 
+    .opPutByValNotArrayStorage:
+        typedArrayPutByVal(size, get, dispatch, setLargeTypedArray, .opPutByValSlow)
+
     .opPutByValOutOfBounds:
         loadi %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5], t2
         ori constexpr ArrayProfileFlag::OutOfBounds , t2
@@ -2126,16 +2134,49 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
     end)
 end
 
+# Stores an int32 into an in-bounds element of an integer typed array. Expects the base cell in t1
+# and the sign-extended index in t3.
+macro putByValIntegerTypedArray(size, get, dispatch, setLargeTypedArray, slowPath)
+    loadTypedArrayVector(t1, t3, Uint32ArrayType - FirstTypedArrayType + 1, setLargeTypedArray, t0, slowPath)
+
+    get(m_value, t1)
+    loadConstantOrVariableInt32(size, t1, t6, slowPath)
+
+    bia t2, Uint8ClampedArrayType - FirstTypedArrayType, .aboveUint8ClampedArray
+    bineq t2, Uint8ClampedArrayType - FirstTypedArrayType, .store8
+    bibeq t6, 255, .store8
+    bilt t6, 0, .clampToZero
+    move 255, t6
+    jmp .store8
+.clampToZero:
+    move 0, t6
+.store8:
+    storeb t6, [t0, t3]
+    dispatch()
+
+.aboveUint8ClampedArray:
+    bia t2, Uint16ArrayType - FirstTypedArrayType, .store32
+    storeh t6, [t0, t3, 2]
+    dispatch()
+
+.store32:
+    storei t6, [t0, t3, 4]
+    dispatch()
+end
+
 putByValOp(put_by_val, OpPutByVal, macro (size, dispatch)
 .osrReturnPoint:
     getterSetterOSRExitReturnPoint(op_put_by_val, size)
     dispatch()
-end)
+end, putByValIntegerTypedArray)
 
+# Defining an indexed property of a typed array has different semantics, so leave it to the slow path.
 putByValOp(put_by_val_direct, OpPutByValDirect, macro (size, dispatch)
 .osrReturnPoint:
     getterSetterOSRExitReturnPoint(op_put_by_val_direct, size)
     dispatch()
+end, macro (size, get, dispatch, setLargeTypedArray, slowPath)
+    jmp slowPath
 end)
 
 macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, miscConditionOp, truthyCellConditionOp)
