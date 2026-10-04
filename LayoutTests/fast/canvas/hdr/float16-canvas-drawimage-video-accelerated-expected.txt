@@ -1,0 +1,24 @@
+Tests that drawImage() of an HDR video element preserves its HDR values in a float16 canvas and clamps them in an SDR one, and that createImageBitmap() of the video behaves the same way.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: srgb
+canvas.dataset.renderingMode: Accelerated
+HDR video transfer function: hlg
+
+- drawImage() of a video element
+PASS HDR video -> float16: peaks within the expected HDR range
+PASS HDR video -> unorm8: is within the SDR range
+PASS SDR video -> float16: is within the SDR range
+PASS SDR video -> unorm8: is within the SDR range
+
+- drawImage() of an ImageBitmap made from a video element
+PASS HDR ImageBitmap -> float16: peaks within the expected HDR range
+PASS HDR ImageBitmap -> unorm8: is within the SDR range
+PASS SDR ImageBitmap -> float16: is within the SDR range
+PASS SDR ImageBitmap -> unorm8: is within the SDR range
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
