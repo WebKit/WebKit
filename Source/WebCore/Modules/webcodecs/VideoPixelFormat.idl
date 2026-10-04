@@ -28,12 +28,24 @@
 ] enum VideoPixelFormat {
   // 4:2:0 Y, U, V
   "I420",
+  // 4:2:0 Y, U, V, 10 bits per sample
+  "I420P10",
+  // 4:2:0 Y, U, V, 12 bits per sample
+  "I420P12",
   // 4:2:0 Y, U, V, A
   "I420A",
   // 4:2:2 Y, U, V
   "I422",
+  // 4:2:2 Y, U, V, 10 bits per sample
+  "I422P10",
+  // 4:2:2 Y, U, V, 12 bits per sample
+  "I422P12",
   // 4:4:4 Y, U, V
   "I444",
+  // 4:4:4 Y, U, V, 10 bits per sample
+  "I444P10",
+  // 4:4:4 Y, U, V, 12 bits per sample
+  "I444P12",
   // 4:2:0 Y, UV
   "NV12",
   // 32bpp RGBA

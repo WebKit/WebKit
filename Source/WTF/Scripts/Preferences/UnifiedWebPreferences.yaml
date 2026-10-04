@@ -7067,6 +7067,15 @@ WebCodecsHEVCEnabled:
     default: false
     WebKitLegacy: false
 
+WebCodecsHighBitDepthEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "WebCodecs high bit depth video"
+  humanReadableDescription: "Enable WebCodecs 10 and 12 bit video pixel formats"
+  condition: ENABLE(WEB_CODECS)
+  defaultValue: false
+
 WebCodecsImageEnabled:
   type: bool
   status: stable

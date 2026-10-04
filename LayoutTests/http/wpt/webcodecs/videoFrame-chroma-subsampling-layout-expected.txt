@@ -1,0 +1,10 @@
+
+PASS I420 allocationSize
+PASS I420 copyTo layout
+FAIL I422 allocationSize VideoPixelFormat is not supported
+FAIL I422 copyTo layout promise_test: Unhandled rejection with value: object "NotSupportedError: VideoPixelFormat is not supported"
+FAIL I444 allocationSize VideoPixelFormat is not supported
+FAIL I444 copyTo layout promise_test: Unhandled rejection with value: object "NotSupportedError: VideoPixelFormat is not supported"
+FAIL I422 allows an odd rect.y and rejects an odd rect.x VideoPixelFormat is not supported
+FAIL I444 allows an odd rect offset VideoPixelFormat is not supported
+

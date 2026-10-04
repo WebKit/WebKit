@@ -51,6 +51,7 @@
 #include "PixelBuffer.h"
 #include "SVGImageElement.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "VideoColorSpace.h"
 #include "VideoFrameImageSizing.h"
 #include "WebCodecsBufferTransfer.h"
@@ -284,6 +285,9 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     ASSERT(init.format);
     auto pixelFormat = init.format.value_or(VideoPixelFormat::I420);
 
+    if (isHighBitDepthVideoPixelFormat(pixelFormat) && !context.settingsValues().webCodecsHighBitDepthEnabled)
+        return Exception { ExceptionCode::TypeError, "VideoPixelFormat is not valid"_s };
+
     WebCodecsTransferList transferList { WTF::move(init.transfer) };
     if (auto result = transferList.validate(); result.hasException())
         return result.releaseException();
@@ -380,9 +384,15 @@ static VideoPixelFormat NODELETE computeVideoPixelFormat(VideoPixelFormat baseFo
         return baseFormat;
     switch (baseFormat) {
     case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
     case VideoPixelFormat::NV12:
     case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRX:
         return baseFormat;

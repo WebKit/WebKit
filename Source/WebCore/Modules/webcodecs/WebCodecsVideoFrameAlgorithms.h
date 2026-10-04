@@ -35,8 +35,9 @@ bool NODELETE isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&
 bool NODELETE verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
 ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit&, const std::optional<DOMRectInit>&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
 size_t NODELETE videoPixelFormatToPlaneCount(VideoPixelFormat);
-size_t NODELETE videoPixelFormatToSampleByteSizePerPlane();
-size_t NODELETE videoPixelFormatToSubSampling(VideoPixelFormat, size_t);
+size_t NODELETE videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat);
+size_t NODELETE videoPixelFormatToHorizontalSubSampling(VideoPixelFormat, size_t);
+size_t NODELETE videoPixelFormatToVerticalSubSampling(VideoPixelFormat, size_t);
 
 struct CombinedPlaneLayout {
     size_t allocationSize { 0 };

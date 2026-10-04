@@ -32,9 +32,15 @@ namespace WebCore {
 
 enum class VideoPixelFormat {
     I420,
+    I420P10,
+    I420P12,
     I420A,
     I422,
+    I422P10,
+    I422P12,
     I444,
+    I444P10,
+    I444P12,
     NV12,
     RGBA,
     RGBX,
@@ -47,6 +53,13 @@ std::optional<VideoPixelFormat> NODELETE convertVideoFramePixelFormat(uint32_t, 
 inline bool isRGBVideoPixelFormat(VideoPixelFormat format)
 {
     return format == VideoPixelFormat::RGBA || format == VideoPixelFormat::RGBX || format == VideoPixelFormat::BGRA || format == VideoPixelFormat::BGRX;
+}
+
+inline bool isHighBitDepthVideoPixelFormat(VideoPixelFormat format)
+{
+    return format == VideoPixelFormat::I420P10 || format == VideoPixelFormat::I420P12
+        || format == VideoPixelFormat::I422P10 || format == VideoPixelFormat::I422P12
+        || format == VideoPixelFormat::I444P10 || format == VideoPixelFormat::I444P12;
 }
 
 WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
