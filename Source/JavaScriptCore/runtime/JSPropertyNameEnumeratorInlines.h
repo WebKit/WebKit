@@ -68,10 +68,8 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     bool successfullyNormalizedChain = normalizePrototypeChain(globalObject, base, sawPolyProto) != InvalidPrototypeChain;
 
     Structure* structureAfterGettingPropertyNames = base->structure();
-    if (!structureAfterGettingPropertyNames->canAccessPropertiesQuicklyForEnumeration()) {
-        indexedLength = 0;
+    if (!structureAfterGettingPropertyNames->canAccessPropertiesQuicklyForEnumeration())
         numberStructureProperties = 0;
-    }
 
     JSPropertyNameEnumerator* enumerator = nullptr;
     if (!indexedLength && !propertyNames.size())
