@@ -62,6 +62,7 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
+    // [<span style="white-space: pre">&Tab;</span> ] neither, preserved whitespace takes up space.
     ASSERT(!continuousContent.runs().isEmpty());
     auto hasWhitespace = false;
     for (auto& run : continuousContent.runs()) {
@@ -70,7 +71,7 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
             continue;
         auto isWhitespace = [&] {
             auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
-            return textItem && textItem->isWhitespace();
+            return textItem && textItem->isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(*textItem);
         }();
         if (!isWhitespace)
             return false;
