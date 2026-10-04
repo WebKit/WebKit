@@ -333,6 +333,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionNotification.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionOffscreenDocumentParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionSidebarParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionStorage.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
@@ -580,9 +581,9 @@ $(PROJECT_DIR)/UIProcess/Extensions/WebExtension.serialization.in
 $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionContext.messages.in
 $(PROJECT_DIR)/UIProcess/Extensions/WebExtensionController.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
-$(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/Agents/ProxyingNetworkAgent.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/Agents/ProxyingPageAgent.messages.in
+$(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorBackendProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIProxy.messages.in
