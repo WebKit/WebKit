@@ -891,9 +891,6 @@ webkit.org/b/140589 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/137098 svg/text/text-hkern.svg [ Failure ]
 webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
 
-# Sometimes has an extra space at the end
-fast/forms/focus-selection-textarea.html [ Pass Failure ]
-
 # See also: rdar://problem/27356144
 webkit.org/b/142726 fast/images/animated-png.html [ Skip ]
 
@@ -1266,8 +1263,6 @@ webkit.org/b/181830 [ Debug ] media/video-main-content-allow-then-deny.html [ Pa
 webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html [ Pass Failure ]
 
 webkit.org/b/181969 fast/events/message-port.html [ Skip ]
-
-webkit.org/b/181831 fast/forms/searchfield-heights.html [ Pass Failure ]
 
 webkit.org/b/183490 media/modern-media-controls/start-support/start-support-fullscreen.html [ Failure ]
 
@@ -2326,7 +2321,6 @@ fast/forms/number/number-min-max-spinbutton-appearance-none-percentage-width.htm
 fast/multicol/flexbox-rows.html [ Pass ImageOnlyFailure ] # rdar://162550431
 fast/forms/hidpi-textarea-on-subpixel-position.html [ Pass ImageOnlyFailure ] # rdar://162550431
 platform/mac/fast/forms/switch-repaint-size-vertical.html [ Pass Failure ] # rdar://162533896
-fast/forms/color/color-input-set-attribute-value.html [ Pass ImageOnlyFailure ] # rdar://162491388
 fast/css/accent-color/select.html [ Pass ImageOnlyFailure ] # rdar://162403341
 pdf/images/jpeg2000-embed-pdf.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/transparent-accent-color-002.html [ Pass ImageOnlyFailure ] # rdar://162396985
@@ -2338,11 +2332,6 @@ inspector/timeline/timeline-event-CancelAnimationFrame.html [ Pass Crash ]
 
 webkit.org/b/300994 fast/animation/request-animation-frame-throttling-aggressiveThermalMitigation.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=300996 [ macOS Tahoe ] 4 fast/forms tests (layout-tests) are constant image failures
-[ Tahoe ] fast/forms/switch/pointer-tracking.html [ ImageOnlyFailure ]
-[ Tahoe ] fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
-[ Tahoe ] fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
-[ Tahoe ] fast/forms/switch/click-animation-redundant-checked.html  [ ImageOnlyFailure ]
 # thumbHeightForLogicalTrackHeight uses non-linear interpolation on macOS, making zoom and transform produce different thumb sizes.
 [ Tahoe ] fast/forms/switch/zoom-approximates-transform.html [ Skip ]
 [ Tahoe ] fast/forms/switch/zoom-approximates-transform-rtl.html [ Skip ]
