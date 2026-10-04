@@ -138,11 +138,7 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
         return nullptr;
 
     RefPtr styleImage = m_image;
-    if (!styleImage)
-        return &WebCore::Image::nullImage();
-
-    auto image = styleImage->image(renderer, size, destinationContext, isForFirstLine);
-    if (!image || image->isNull())
+    if (!styleImage || !styleImage->canDrawAtSize(*renderer, size))
         return &WebCore::Image::nullImage();
 
     auto preferredFilterRenderingModes = protect(renderer->page())->preferredFilterRenderingModes(destinationContext);
@@ -164,7 +160,7 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
         return &WebCore::Image::nullImage();
 
     auto filteredImage = sourceImage->filteredNativeImage(*cssFilter, [&](GraphicsContext& context) {
-        context.drawImage(*image, ConcreteObjectSize::fixed(image->size()), sourceImageRect);
+        styleImage->draw(context, *renderer, ConcreteObjectSize::fixed(size), sourceImageRect, sourceImageRect, { }, isForFirstLine);
     });
     if (!filteredImage)
         return &WebCore::Image::nullImage();
