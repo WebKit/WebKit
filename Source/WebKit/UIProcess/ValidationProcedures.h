@@ -36,6 +36,7 @@
 namespace WebKit {
 
 enum class ShouldCheckWithoutSiteIsolation : bool { No, Yes };
+enum class ShouldIgnoreWithoutRegistrableDomain : bool { No, Yes };
 
 // Without site isolation, WebProcessProxy records only the main frame's site while the process hosts
 // every site the page pulls in, so no first-party question has a useful answer.
@@ -70,16 +71,17 @@ inline std::optional<IPC::ValidationFailure> checkFirstPartyAccess(const WebProc
 class ProcessSpeaksForDomain : public IPC::CanValidateUntrusted<ProcessSpeaksForDomain> {
 public:
     // Callers that answered the question before this validation existed, and so must keep answering
-    // it everywhere, pass ShouldCheckWithoutSiteIsolation::Yes.
-    explicit ProcessSpeaksForDomain(const WebProcessProxy& process, ShouldCheckWithoutSiteIsolation shouldCheckWithoutSiteIsolation = ShouldCheckWithoutSiteIsolation::No)
+    // it as they did, pass Yes for both.
+    explicit ProcessSpeaksForDomain(const WebProcessProxy& process, ShouldCheckWithoutSiteIsolation shouldCheckWithoutSiteIsolation = ShouldCheckWithoutSiteIsolation::No, ShouldIgnoreWithoutRegistrableDomain shouldIgnoreWithoutRegistrableDomain = ShouldIgnoreWithoutRegistrableDomain::No)
         : m_process(process)
         , m_shouldCheckWithoutSiteIsolation(shouldCheckWithoutSiteIsolation)
+        , m_shouldIgnoreWithoutRegistrableDomain(shouldIgnoreWithoutRegistrableDomain)
     {
     }
 
     // For the common case where the process being asked is the one that sent the message.
-    explicit ProcessSpeaksForDomain(const IPC::Connection& connection, ShouldCheckWithoutSiteIsolation shouldCheckWithoutSiteIsolation = ShouldCheckWithoutSiteIsolation::No)
-        : ProcessSpeaksForDomain(WebProcessProxy::fromConnection(connection), shouldCheckWithoutSiteIsolation)
+    explicit ProcessSpeaksForDomain(const IPC::Connection& connection, ShouldCheckWithoutSiteIsolation shouldCheckWithoutSiteIsolation = ShouldCheckWithoutSiteIsolation::No, ShouldIgnoreWithoutRegistrableDomain shouldIgnoreWithoutRegistrableDomain = ShouldIgnoreWithoutRegistrableDomain::No)
+        : ProcessSpeaksForDomain(WebProcessProxy::fromConnection(connection), shouldCheckWithoutSiteIsolation, shouldIgnoreWithoutRegistrableDomain)
     {
     }
 
@@ -117,6 +119,9 @@ private:
         if (m_shouldCheckWithoutSiteIsolation == ShouldCheckWithoutSiteIsolation::No && !firstPartyAccessIsAnswerable(*process))
             return std::nullopt;
 
+        if (m_shouldIgnoreWithoutRegistrableDomain == ShouldIgnoreWithoutRegistrableDomain::No && process->hasNoRegistrableDomain())
+            return std::nullopt;
+
         // An opaque origin has no host and so no registrable domain to compare
         auto&& derivedDomain = domain();
         if (derivedDomain.isEmpty())
@@ -129,6 +134,7 @@ private:
     // outlives its process drops the message rather than crashing.
     WeakPtr<const WebProcessProxy> m_process;
     ShouldCheckWithoutSiteIsolation m_shouldCheckWithoutSiteIsolation;
+    ShouldIgnoreWithoutRegistrableDomain m_shouldIgnoreWithoutRegistrableDomain;
 };
 
 // Use for a value naming the top-level site of a page rather than something the sending process

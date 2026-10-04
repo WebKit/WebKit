@@ -3292,8 +3292,8 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
 #if ENABLE(WEBDRIVER_BIDI)
 void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    // Not security sensitive because it labels a realm for the automation client which already has full control of the browser.
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;

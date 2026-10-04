@@ -62,6 +62,7 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
+#include "ValidationProcedures.h"
 #include "WebAutomationSession.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardListFrameItem.h"
@@ -178,6 +179,9 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    EXTRACT_WITH_MESSAGE_CHECK_BASE(connection(), name, untrusted, (void)0, __VA_ARGS__)
 
 #define WEBPROCESSPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(this), processID(), ##__VA_ARGS__)
 #define WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(channel, thisPtr, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(WTF::getPtr(thisPtr)), thisPtr->processID(), ##__VA_ARGS__)
@@ -1243,7 +1247,10 @@ WebProcessProxy::FirstPartyAccessResult WebProcessProxy::participatesInPageWithF
         if (!mainFrame)
             return false;
         askedAnyPage = true;
-        switch (protect(mainFrame->process())->allowsFirstPartyAccess(site.domain())) {
+        Ref mainFrameProcess = mainFrame->process();
+        if (mainFrameProcess->hasNoRegistrableDomain())
+            return true;
+        switch (mainFrameProcess->allowsFirstPartyAccess(site.domain())) {
         case FirstPartyAccessResult::Pass:
             return true;
         case FirstPartyAccessResult::SilentFailure:
@@ -2727,16 +2734,14 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
 
 void WebProcessProxy::didCollectPrewarmInformation(IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, const WebCore::PrewarmInformation& prewarmInformation)
 {
-    auto domain = WTF::move(untrustedDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK(domain, untrustedDomain, ProcessSpeaksForDomain { *this });
     MESSAGE_CHECK(!domain.isEmpty());
     protect(processPool())->didCollectPrewarmInformation(domain, prewarmInformation);
 }
 
 void WebProcessProxy::didCompleteAutofill(IPC::Untrusted<WebCore::Site>&& untrustedSite)
 {
-    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK(site, untrustedSite, ProcessSpeaksForDomain { *this });
     MESSAGE_CHECK(!site.isEmpty());
     if (RefPtr dataStore = websiteDataStore())
         protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::Autofill);
@@ -2744,8 +2749,7 @@ void WebProcessProxy::didCompleteAutofill(IPC::Untrusted<WebCore::Site>&& untrus
 
 void WebProcessProxy::didObserveFirstPartyUserGesture(IPC::Untrusted<WebCore::Site>&& untrustedSite)
 {
-    auto site = WTF::move(untrustedSite).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK(site, untrustedSite, ProcessParticipatesInPageWithSite { *this });
     MESSAGE_CHECK(!site.isEmpty());
     if (RefPtr dataStore = websiteDataStore())
         protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::FirstPartyUserGesture);
@@ -2801,7 +2805,7 @@ void WebProcessProxy::didCommitMainFrameLoad(const URL& url)
 void WebProcessProxy::updateSiteForMainFrameNavigation(const URL& url)
 {
     // This process has been used for several registrable domains already.
-    if (!m_site && m_site.error() == SiteState::MultipleSites)
+    if (!m_site && (m_site.error() == SiteState::MultipleSites || m_site.error() == SiteState::NoRegistrableDomain))
         return;
 
     if (url.protocolIsAbout())
@@ -2810,7 +2814,7 @@ void WebProcessProxy::updateSiteForMainFrameNavigation(const URL& url)
     if (!url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
         // Unless the processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol flag is set, we don't process swap on navigations withing the same
         // non HTTP(s) protocol. For this reason, we ignore the registrable domain and processes are not eligible for the process cache.
-        m_site = makeUnexpected(SiteState::MultipleSites);
+        m_site = makeUnexpected(SiteState::NoRegistrableDomain);
         return;
     }
 
@@ -2844,7 +2848,7 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
         m_sharedProcessMainFrameSite = mainFrameSite;
         return;
     }
-    ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
+    ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites || m_site.error() == SiteState::NoRegistrableDomain));
     m_committedSites.add(*site);
     m_site = *site;
 }
@@ -3461,6 +3465,7 @@ WebProcessProxy::FirstPartyAccessResult WebProcessProxy::allowsFirstPartyAccess(
     case SiteState::NotYetSpecified:
         return FirstPartyAccessResult::Pass;
     case SiteState::MultipleSites:
+    case SiteState::NoRegistrableDomain:
         // A web process under the MultipleSites categorization should not be doing things like
         // sending badge updates.
         // This is expected sometimes, like right as a new load is starting, so we can silently ignore.
@@ -3474,9 +3479,7 @@ WebProcessProxy::FirstPartyAccessResult WebProcessProxy::allowsFirstPartyAccess(
 
 void WebProcessProxy::setAppBadgeFromWorker(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, std::optional<uint64_t> badge)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    MESSAGE_CHECK(allowsFirstPartyAccess(WebCore::RegistrableDomain { origin }) == FirstPartyAccessResult::Pass);
+    EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, ProcessSpeaksForDomain { *this, ShouldCheckWithoutSiteIsolation::Yes, ShouldIgnoreWithoutRegistrableDomain::Yes });
     if (RefPtr dataStore = websiteDataStore())
         dataStore->workerUpdatedAppBadge(origin, badge);
 }
@@ -4112,6 +4115,7 @@ void WebProcessProxy::commitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlace
 
 } // namespace WebKit
 
+#undef EXTRACT_WITH_MESSAGE_CHECK
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK_COMPLETION
