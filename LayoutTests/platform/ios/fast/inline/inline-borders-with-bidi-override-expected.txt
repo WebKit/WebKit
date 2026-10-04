@@ -61,11 +61,11 @@ layer at (14,442) size 191x20
   RenderInline (relative positioned) {SPAN} at (444,6) size 191x20 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
     RenderText {#text} at (464,7) size 136x18
       text run at (464,7) width 136 RTL: "sit amet, consectetur "
-layer at (14,490) size 766x84
-  RenderInline (relative positioned) {SPAN} at (6,38) size 766x84 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-    RenderText {#text} at (6,39) size 766x82
+layer at (14,490) size 767x84
+  RenderInline (relative positioned) {SPAN} at (5,38) size 767x84 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+    RenderText {#text} at (5,39) size 767x82
       text run at (45,39) width 242 RTL: "laboris nisi ut aliquip ex ea commodo"
-      text run at (6,71) width 435 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
+      text run at (5,71) width 436 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
       text run at (441,71) width 331 RTL: "consequat. Duis aute irure dolor in reprehenderit in "
       text run at (142,103) width 482 RTL: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. "
       text run at (623,103) width 149 RTL: "sint occaecat cupidatat "

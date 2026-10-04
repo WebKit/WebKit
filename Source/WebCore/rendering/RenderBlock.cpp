@@ -90,6 +90,7 @@
 #include "StyleContainmentCheckerInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include "TextUtil.h"
 #include "TransformState.h"
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -3029,7 +3030,13 @@ TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, u
 {
     unsigned stop = offset + length;
     ASSERT(stop <= text.text().length());
-    return constructTextRun(text.stringView(offset, stop), style, expansion);
+    auto run = constructTextRun(text.stringView(offset, stop), style, expansion);
+    // Measure with the same direction and override as inline layout, see Layout::TextUtil::width().
+    if (auto direction = Layout::TextUtil::overridingDirection(text)) {
+        run.setDirection(*direction);
+        run.setDirectionalOverride(true);
+    }
+    return run;
 }
 
 TextRun RenderBlock::constructTextRun(std::span<const Latin1Character> characters, const Style::ComputedStyle& style, ExpansionBehavior expansion)

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<canvas id="canvas"></canvas>
+<script>
+description("Tests that the text width cache keeps widths measured in different directions apart.");
+
+const context = document.getElementById("canvas").getContext("2d");
+
+// The width cache only stores widths after about 20 lookups, so measure 100 times. Word spacing skips the cache.
+function measure(direction, wordSpacing = "0px")
+{
+    context.direction = direction;
+    context.wordSpacing = wordSpacing;
+    let width;
+    for (let i = 0; i < 100; ++i)
+        width = context.measureText("To").width;
+    return width;
+}
+
+context.font = "40px serif";
+measure("ltr");
+shouldBe("measure('rtl')", "measure('rtl', '1px')");
+
+context.font = "50px serif";
+measure("rtl");
+shouldBe("measure('ltr')", "measure('ltr', '1px')");
+</script>

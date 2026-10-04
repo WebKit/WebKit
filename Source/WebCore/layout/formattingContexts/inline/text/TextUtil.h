@@ -47,6 +47,7 @@ struct SpacingState;
 
 struct GlyphOverflow;
 class FontCascade;
+class RenderText;
 class TextRun;
 
 namespace Layout {
@@ -106,6 +107,9 @@ public:
 
     static bool isStrongDirectionalityCharacter(char32_t);
     static bool containsStrongDirectionalityText(StringView);
+
+    static std::optional<TextDirection> overridingDirection(const InlineTextBox&);
+    static std::optional<TextDirection> overridingDirection(const RenderText&);
 
     static AtomString ellipsisTextInInlineDirection(bool isHorizontal = true);
 
