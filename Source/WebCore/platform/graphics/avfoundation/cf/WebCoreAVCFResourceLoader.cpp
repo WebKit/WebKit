@@ -71,6 +71,7 @@ void WebCoreAVCFResourceLoader::startLoading()
 
     ResourceRequest resourceRequest(urlRequest.get());
     resourceRequest.setPriority(ResourceLoadPriority::Low);
+    resourceRequest.setInitialPriority(ResourceLoadPriority::Low);
 
     // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
     CachedResourceRequest request(WTF::move(resourceRequest), ResourceLoaderOptions(

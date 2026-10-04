@@ -616,7 +616,11 @@ void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timesta
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics));
+
+    // Normally only needed for API call
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+
+    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics, resourceRequestType));
 }
 
 void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp, const String& errorText, bool canceled)

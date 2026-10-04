@@ -100,6 +100,8 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     ASSERT(m_sessionID.isValid());
 
     setLoadPriority(request.priority(), request.fetchPriority());
+    if (request.initialPriority().has_value())
+        m_resourceRequest.setInitialPriority(request.initialPriority().value());
 
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == Type::MainResource || m_options.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch);
@@ -857,6 +859,12 @@ void CachedResource::setLoadPriority(const std::optional<ResourceLoadPriority>& 
             ++priority;
     }
     m_loadPriority = priority;
+}
+
+void CachedResource::setInitialPriority(std::optional<ResourceLoadPriority> priority)
+{
+    if (priority.has_value())
+        m_initialPriority = *priority;
 }
 
 CachedResource::ResponseData::ResponseData(CachedResource& resource)
