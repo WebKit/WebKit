@@ -27,6 +27,7 @@
 #import "FrameTreeChecks.h"
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/TestNotificationProvider.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
@@ -17354,6 +17355,42 @@ TEST(SiteIsolation, PushAndNotificationAPIPolicyInheritedByCrossSiteIframe)
     NSString *check = @"String('PushManager' in window || 'Notification' in window)";
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check], "false");
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check inFrame:childFrame.get()], "false");
+}
+
+TEST(SiteIsolation, NotificationFromCrossSiteIframeIsShown)
+{
+    HTTPServer server(mainAndSubframeResponses(), HTTPServer::Protocol::HttpsProxy);
+
+    // Notification permission is never granted in an ephemeral session, so this needs a persistent data store.
+    RetainPtr storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    [[configuration preferences] _setNotificationsEnabled:YES];
+    setFeatureEnabled(configuration.get(), @"BuiltInNotificationsEnabled", false);
+
+    TestNotificationProvider provider({ [[configuration processPool] _notificationManagerForTesting] });
+    provider.setPermission("https://b.com"_s, true);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    RetainPtr childFrame = loadAndWaitForCrossSiteChildFrame(webView.get(), navigationDelegate.get(), @"https://a.com/mainframe", @"b.com");
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [childFrame _processIdentifier]);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"Notification.permission" inFrame:childFrame.get()], "granted");
+    EXPECT_FALSE(provider.hasReceivedShowNotification());
+
+    [webView objectByEvaluatingJavaScript:@"window.notificationEvent = 'none';"
+        "window.notification = new Notification('From iframe');"
+        "notification.onshow = () => { notificationEvent = 'show' };"
+        "notification.onerror = () => { notificationEvent = 'error' };"
+        "true" inFrame:childFrame.get()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return provider.hasReceivedShowNotification();
+    }));
+    // The provider's reply goes back to the sending process, so this also confirms the notification came from the iframe.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"notificationEvent" inFrame:childFrame.get()] isEqualToString:@"show"];
+    }));
 }
 
 TEST(SiteIsolation, ColorSchemePreferenceInheritedByCrossSiteIframe)

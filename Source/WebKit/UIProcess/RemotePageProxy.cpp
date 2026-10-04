@@ -33,6 +33,7 @@
 #include "HandleMessage.h"
 #include "NativeWebMouseEvent.h"
 #include "NavigationActionData.h"
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
 #include "ProvisionalFrameProxy.h"
 #include "RemoteMediaSessionManagerProxy.h"
@@ -47,6 +48,7 @@
 #include "WebBackForwardList.h"
 #include "WebBackForwardListMessages.h"
 #include "WebFrameProxy.h"
+#include "WebNotificationManagerMessageHandler.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -108,6 +110,7 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
         m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this, backForwardListReceiver);
     else
         m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, backForwardListReceiver);
+    m_process->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID, protect(page.notificationManagerMessageHandler()));
 }
 
 void RemotePageProxy::initializeAfterAdoption()
@@ -161,6 +164,7 @@ void RemotePageProxy::disconnect()
 #endif
     m_visitedLinkStoreRegistration = nullptr;
     m_messageReceiverRegistration.stopReceivingMessages();
+    m_process->removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID);
     m_screenOrientationManager = nullptr;
 #if ENABLE(WEB_AUTHN)
     m_webAuthenticatorCoordinator = nullptr;
