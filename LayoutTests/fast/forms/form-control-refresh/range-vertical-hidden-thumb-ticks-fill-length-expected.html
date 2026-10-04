@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            div {
+                width: 450px;
+                height: 90px;
+                transform-origin: 0 0;
+                transform: translateX(90px) rotate(90deg);
+            }
+
+            input {
+                display: block;
+                margin: 0;
+                zoom: 3;
+                width: 150px;
+                height: 30px;
+            }
+
+            input::-webkit-slider-thumb {
+                visibility: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <input type="range" min="0" max="4" step="1" value="2" list="datalist">
+        </div>
+        <datalist id="datalist">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </datalist>
+    </body>
+</html>

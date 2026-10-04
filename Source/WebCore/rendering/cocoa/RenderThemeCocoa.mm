@@ -4081,7 +4081,7 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
         float height = trackClip.height();
         float newHeight = height * valueRatio;
         if (needsAdditionalLength)
-            newHeight += tickLength * additionalLength;
+            newHeight += additionalLength;
 
         if (box.writingMode().isHorizontal() || box.writingMode().isInlineFlipped())
             trackClip.setY(trackClip.y() + height - newHeight);
