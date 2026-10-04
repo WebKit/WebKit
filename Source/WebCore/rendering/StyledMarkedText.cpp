@@ -38,6 +38,7 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <algorithm>
 
 namespace WebCore {
 
@@ -274,18 +275,19 @@ static void orderHighlights(const OrderedHashSet<AtomString>& markedTextsNames, 
         index++;
     }
 
-    index = 0;
-    while (index < static_cast<int>(markedTexts.size() - 1)) {
-        // If two adjacent highlights with same ranges are not in correct priority order, swap them and move on.
-        if (!markedTexts[index].highlightName.isNull()
-            && !markedTexts[index + 1].highlightName.isNull()
-            && markedTextsNamesPriority.get(markedTexts[index].highlightName) > markedTextsNamesPriority.get(markedTexts[index + 1].highlightName)
-            && markedTexts[index].startOffset == markedTexts[index + 1].startOffset
-            && markedTexts[index].endOffset == markedTexts[index + 1].endOffset) {
-            std::swap(markedTexts[index], markedTexts[index + 1]);
-        }
-        ++index;
-    }
+    auto highlightOrder = [&](const MarkedText& markedText) {
+        return markedText.highlightName.isNull() ? -1 : markedTextsNamesPriority.get(markedText.highlightName);
+    };
+
+    // MarkedText::subdivide() sorts by (startOffset, type) with an unstable sort, so highlights sharing a range
+    // may be in any order. Re-sort, breaking ties by highlight insertion order.
+    std::ranges::stable_sort(markedTexts, [&](const MarkedText& a, const MarkedText& b) {
+        if (a.startOffset != b.startOffset)
+            return a.startOffset < b.startOffset;
+        if (a.type != b.type)
+            return a.type < b.type;
+        return highlightOrder(a) < highlightOrder(b);
+    });
 }
 
 Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<MarkedText>& textsToSubdivide, const RenderText& renderer, bool isFirstLine, const PaintInfo& paintInfo)
