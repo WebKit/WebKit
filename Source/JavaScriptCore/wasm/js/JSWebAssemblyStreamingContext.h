@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+class JSGlobalObject;
 class JSPromise;
 
 class JSWebAssemblyStreamingContext final : public JSCell {
@@ -53,20 +54,22 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSWebAssemblyStreamingContext* create(VM&, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&);
+    static JSWebAssemblyStreamingContext* create(VM&, JSPromise*, JSObject* importObject, JSGlobalObject* incumbent, std::optional<WebAssemblyCompileOptions>&&);
 
     JSPromise* promise() const { return m_promise.get(); }
     JSObject* importObject() const { return m_importObject.get(); }
+    JSGlobalObject* incumbentGlobalObject() const { return m_incumbentGlobalObject.get(); }
     std::optional<WebAssemblyCompileOptions> takeCompileOptions() { return std::exchange(m_compileOptions, std::nullopt); }
 
     ~JSWebAssemblyStreamingContext();
 
 private:
-    JSWebAssemblyStreamingContext(VM&, Structure*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&);
+    JSWebAssemblyStreamingContext(VM&, Structure*, JSPromise*, JSObject* importObject, JSGlobalObject* incumbent, std::optional<WebAssemblyCompileOptions>&&);
     static void NODELETE destroy(JSCell*);
 
     WriteBarrier<JSPromise> m_promise;
     WriteBarrier<JSObject> m_importObject;
+    WriteBarrier<JSGlobalObject> m_incumbentGlobalObject;
     std::optional<WebAssemblyCompileOptions> m_compileOptions;
 };
 
