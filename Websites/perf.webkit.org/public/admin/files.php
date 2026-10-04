@@ -5,36 +5,8 @@ include('../include/uploaded-file-helpers.php');
 
 if ($db) {
 
-    if ($action == 'prune-zombie-files') {
-        $uploaded_file_rows = $db->select_rows('uploaded_files', 'file', array('deleted_at' => NULL));
-        $file_by_id = array();
-        foreach ($uploaded_file_rows as &$row)
-            $file_by_id[$row['file_id']] = &$row;
-
-        $file_name_list = scandir(config_path('uploadDirectory', ''));
-        foreach ($file_name_list as $file_name) {
-            if ($file_name == '.' || $file_name == '..')
-                continue;
-            if (!preg_match('/^(\d+)((\.[A-Za-z0-9]{1,5}){1,2})$/', $file_name, $matches)) {
-                echo 'Unknown file: ' . htmlspecialchars($file_name) . '<br>';
-                continue;
-            }
-            $file_name = $matches[0];
-            $file_path = config_path('uploadDirectory', $file_name);
-            $file_id = $matches[1];
-            if (!array_key_exists($file_id, $file_by_id)) {
-                echo "Deleting a zombie file: $file_name...";
-                if (file_exists($file_path) && !unlink($file_path))
-                    echo "Failed";
-                else
-                    echo "Deleted";
-                echo "<br>";
-            }
-        }
-    }
-
     $files_per_user = $db->query_and_fetch_all('SELECT file_author AS "author", SUM(file_size) AS "usage", COUNT(file_id) AS "count"
-        FROM uploaded_files GROUP BY file_author');
+        FROM uploaded_files WHERE file_deleted_at IS NULL GROUP BY file_author');
 
     echo <<< END
 <table>
@@ -73,8 +45,34 @@ END;
     echo <<< END
     </tbody>
 </table>
-<form method="POST"><button name="action" value="prune-zombie-files" type="submit">Prune zombie files (slow)</button></form>
+<form method="POST"><button name="action" value="cleanup-uploaded-files" type="submit">Cleanup uploaded files</button></form>
 END;
+
+    if ($action == 'cleanup-uploaded-files') {
+        set_time_limit(300);
+
+        $old_files = prune_files_older_than_months($db);
+        $orphaned_disk_files = cleanup_zombie_files($db);
+        $orphaned_db_records = cleanup_ghost_records($db);
+
+        $total_files_cleaned = $old_files['deleted_count'] + $orphaned_disk_files['files_deleted'] + $orphaned_db_records['db_records_cleaned'];
+        $total_disk_space_freed_mb = $old_files['space_freed_mb'] + $orphaned_disk_files['disk_space_freed_mb'];
+        $total_quota_freed_mb = $old_files['space_freed_mb'] + $orphaned_db_records['quota_freed_mb'];
+        $total_failures = $old_files['failed_count'] + $orphaned_disk_files['files_failed'];
+
+        echo '<h3>Cleanup Results:</h3>';
+        echo '<p>Files cleaned: ' . $total_files_cleaned . '</p>';
+        echo '<p>Disk space freed: ' . $total_disk_space_freed_mb . ' MB</p>';
+        echo '<p>Quota freed: ' . $total_quota_freed_mb . ' MB</p>';
+        if ($old_files['deleted_count'] > 0)
+            echo '<p>Old files (&gt;' . config('uploadFileCleanupMonths', 4) . ' months): ' . $old_files['deleted_count'] . ' deleted</p>';
+        if ($orphaned_disk_files['files_deleted'] > 0)
+            echo '<p>Zombie files: ' . $orphaned_disk_files['files_deleted'] . ' deleted</p>';
+        if ($orphaned_db_records['db_records_cleaned'] > 0)
+            echo '<p>Ghost records: ' . $orphaned_db_records['db_records_cleaned'] . ' cleaned</p>';
+        if ($total_failures > 0)
+            echo '<p style="color: red;">Failures: ' . $total_failures . '</p>';
+    }
 
 }
 
