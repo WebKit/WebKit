@@ -3672,6 +3672,57 @@ std::optional<char16_t> CharacterClass::hasSharedLeadSurrogate() const
     return commonLeadSurrogate;
 }
 
+CharacterClassBitTable::CharacterClassBitTable(const CharacterClass& characterClass)
+{
+    constexpr unsigned bitsPerWord = 1 << wordShift;
+    static_assert(!(maxLimit % bitsPerWord));
+    static_assert((maxLimit >> wordShift) <= std::numeric_limits<uint16_t>::max());
+
+    Vector<uint64_t> bits(FillWith { }, maxLimit >> wordShift, 0);
+    auto addRange = [&](char32_t begin, char32_t end) {
+        if (begin >= maxLimit)
+            return;
+        end = std::min<char32_t>(end, maxLimit - 1);
+        unsigned firstWord = begin >> wordShift;
+        unsigned lastWord = end >> wordShift;
+        for (unsigned word = firstWord; word <= lastWord; ++word) {
+            uint64_t mask = ~0ULL;
+            if (word == firstWord)
+                mask &= ~0ULL << (begin % bitsPerWord);
+            if (word == lastWord)
+                mask &= ~0ULL >> (bitsPerWord - 1 - end % bitsPerWord);
+            bits[word] |= mask;
+        }
+    };
+    for (auto character : characterClass.m_matches8)
+        addRange(character, character);
+    for (auto range : characterClass.m_ranges8)
+        addRange(range.begin, range.end);
+    for (auto character : characterClass.m_matches32)
+        addRange(character, character);
+    for (auto range : characterClass.m_ranges32)
+        addRange(range.begin, range.end);
+    while (!bits.isEmpty() && !bits.last())
+        bits.removeLast();
+
+    Vector<uint64_t> uniqueWords;
+    uniqueWords.reserveInitialCapacity(bits.size());
+    for (size_t i = 0; i < bits.size(); ++i) {
+        if (!i || bits[i] != bits[i - 1])
+            uniqueWords.append(bits[i]);
+    }
+    std::ranges::sort(uniqueWords);
+    removeRepeatedElements(uniqueWords);
+
+    uint16_t wordIndex = 0;
+    m_wordIndices = FixedVector<uint16_t>::createWithSizeFromGenerator(bits.size(), [&](size_t i) {
+        if (!i || bits[i] != bits[i - 1])
+            wordIndex = std::ranges::lower_bound(uniqueWords, bits[i]) - uniqueWords.begin();
+        return wordIndex;
+    });
+    m_words = FixedVector<uint64_t>(WTF::move(uniqueWords));
+}
+
 class FirstCharacterBitmapBuilder {
 public:
     explicit FirstCharacterBitmapBuilder(WTF::BitSet<256>& bitmap)

@@ -34,6 +34,7 @@
 #include <limits>
 #include <wtf/BitSet.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/PrintStream.h>
@@ -172,6 +173,27 @@ public:
     bool m_tableInverted : 1;
     bool m_anyCharacter : 1;
     bool m_inCanonicalForm : 1;
+};
+
+// A code point c < limit() is in the class iff bit (c & 63) of words()[wordIndices()[c >> 6]] is set.
+class CharacterClassBitTable final {
+    WTF_MAKE_TZONE_ALLOCATED(CharacterClassBitTable);
+    WTF_MAKE_NONCOPYABLE(CharacterClassBitTable);
+public:
+    static constexpr unsigned wordShift = 6;
+    static constexpr char32_t maxLimit = 0x20000;
+
+    explicit CharacterClassBitTable(const CharacterClass&);
+
+    char32_t limit() const { return m_wordIndices.size() << wordShift; }
+    std::span<const uint16_t> wordIndices() const LIFETIME_BOUND { return m_wordIndices.span(); }
+    std::span<const uint64_t> words() const LIFETIME_BOUND { return m_words.span(); }
+
+    friend bool operator==(const CharacterClassBitTable&, const CharacterClassBitTable&) = default;
+
+private:
+    FixedVector<uint16_t> m_wordIndices;
+    FixedVector<uint64_t> m_words;
 };
 
 struct ClassSet : public CharacterClass {
