@@ -4209,7 +4209,6 @@ webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis
 # Tests that failed on the 2026-02-02 import of css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/clip-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/column-style-change-triggers-relayout.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-015.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-030.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/continue-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/discard/discard-multicol-001.html [ ImageOnlyFailure ]
