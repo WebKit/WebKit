@@ -3447,7 +3447,15 @@ static bool offersSuggestions(HTMLInputElement& input)
         return true;
 
     const auto& autocomplete = input.attributeWithDefaultARIA(aria_autocompleteAttr);
-    return equalLettersIgnoringASCIICase(autocomplete, "inline"_s) || equalLettersIgnoringASCIICase(autocomplete, "list"_s) || equalLettersIgnoringASCIICase(autocomplete, "both"_s);
+    if (equalLettersIgnoringASCIICase(autocomplete, "inline"_s) || equalLettersIgnoringASCIICase(autocomplete, "list"_s) || equalLettersIgnoringASCIICase(autocomplete, "both"_s))
+        return true;
+
+    // A dropdown a page builds itself often puts its search box inside the element with the combobox role.
+    for (RefPtr ancestor = input.parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        if (explicitRole(*ancestor) == AccessibilityRole::ComboBox)
+            return true;
+    }
+    return false;
 }
 
 // Buttons, native or not, may act on Enter and Space themselves with no click to follow. Enter in a text field is how a

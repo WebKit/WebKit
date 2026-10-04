@@ -20,11 +20,12 @@
   <label for="city">City</label><input id="city" type="text" aria-autocomplete="list">
   <label for="state">State</label><input id="state" type="text" list="states">
   <datalist id="states"><option value="California"></option></datalist>
+  <div role="combobox" aria-expanded="false"><input id="day-search" type="text" aria-label="Day"><span>Select a day</span></div>
   <div id="continue" role="button" tabindex="0">Continue</div>
 </div>
 
 <script>
-var output = "This tests that pressing Enter in a field only starts a watch for errors when the field is one a page submits from. Enter in a search field runs a search, and Enter in a field that offers suggestions picks one, so none of them starts a watch, while Enter in a plain text field beside them still does.\n\n";
+var output = "This tests that pressing Enter in a field only starts a watch for errors when the field is one a page submits from. Enter in a search field runs a search, and Enter in a field that offers suggestions, or in the search box of a dropdown a page built itself, picks one, so none of them starts a watch, while Enter in a plain text field beside them still does.\n\n";
 
 if (window.accessibilityController && window.eventSender) {
     window.jsTestIsAsync = true;
@@ -50,7 +51,7 @@ if (window.accessibilityController && window.eventSender) {
         });
     }
 
-    for (var fieldId of ["search", "site-search", "country", "city", "state", "email"])
+    for (var fieldId of ["search", "site-search", "country", "city", "state", "day-search", "email"])
         writeMessagesOnEnter(fieldId);
 
     function axElement(id) {
@@ -78,7 +79,7 @@ if (window.accessibilityController && window.eventSender) {
         // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
         output += expect("invalidStatus('name')", "'false'");
 
-        for (var fieldId of ["search", "site-search", "country", "city", "state"]) {
+        for (var fieldId of ["search", "site-search", "country", "city", "state", "day-search"]) {
             output += await pressEnterIn(fieldId);
             output += expect("isWatching()", "false");
         }

@@ -1,4 +1,4 @@
-This tests that pressing Enter in a field only starts a watch for errors when the field is one a page submits from. Enter in a search field runs a search, and Enter in a field that offers suggestions picks one, so none of them starts a watch, while Enter in a plain text field beside them still does.
+This tests that pressing Enter in a field only starts a watch for errors when the field is one a page submits from. Enter in a search field runs a search, and Enter in a field that offers suggestions, or in the search box of a dropdown a page built itself, picks one, so none of them starts a watch, while Enter in a plain text field beside them still does.
 
 PASS: invalidStatus('name') === 'false'
 pressEnterIn('search');
@@ -10,6 +10,8 @@ PASS: isWatching() === false
 pressEnterIn('city');
 PASS: isWatching() === false
 pressEnterIn('state');
+PASS: isWatching() === false
+pressEnterIn('day-search');
 PASS: isWatching() === false
 PASS: notifications === 0
 PASS: invalidStatus('name') === 'false'
@@ -28,4 +30,5 @@ Enter your name.
 Email
 Enter a valid email address.
 Search the store Search the site Country City State
+Select a day
 Continue
