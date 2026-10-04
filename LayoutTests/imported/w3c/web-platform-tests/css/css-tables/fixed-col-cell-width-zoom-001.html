@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#width-distribution">
+<link rel="help" href="https://drafts.csswg.org/css-viewport/#zoom-property">
+<meta name="assert" content="A fixed-width column whose width comes from a zoomed <col> or a cell is zoomed exactly once.">
+<style>
+  table { width: 400px; border-spacing: 0; }
+  td { padding: 0; height: 10px; }
+  .content { width: 10px; height: 10px; background: green; }
+</style>
+<table title="Cell without a width takes its width from the zoomed col">
+  <col style="width: 50px; zoom: 3">
+  <tr>
+    <td data-expected-width="150"></td>
+    <td data-expected-width="250"><div class="content"></div></td>
+  </tr>
+</table>
+<table title="Cell width smaller than the zoomed col width: the col width wins">
+  <col style="width: 50px; zoom: 3">
+  <tr>
+    <td style="width: 100px" data-expected-width="150"></td>
+    <td data-expected-width="250"><div class="content"></div></td>
+  </tr>
+</table>
+<table title="Cell width larger than the zoomed col width: the cell width wins">
+  <col style="width: 50px; zoom: 3">
+  <tr>
+    <td style="width: 200px" data-expected-width="200"></td>
+    <td data-expected-width="200"><div class="content"></div></td>
+  </tr>
+</table>
+<table title="Zoomed cell width larger than the zoomed col width: the cell width wins">
+  <col style="width: 50px; zoom: 3">
+  <tr>
+    <td style="width: 100px; zoom: 2"></td>
+    <td data-expected-width="200"><div class="content"></div></td>
+  </tr>
+</table>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<script>
+  checkLayout('table');
+</script>
