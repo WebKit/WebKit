@@ -102,4 +102,8 @@ void LocalFrameLoaderClient::broadcastFrameViewportInfoToOtherProcessesIfNeeded(
 {
 }
 
+void LocalFrameLoaderClient::dispatchDidBlockNavigationByContentPolicy(const URL&)
+{
+}
+
 } // namespace WebCore
