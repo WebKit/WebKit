@@ -8874,8 +8874,12 @@ void WebPage::setScrollbarOverlayStyle(std::optional<WebCore::ScrollbarOverlaySt
 {
     m_scrollbarOverlayStyle = scrollbarStyle;
 
-    if (RefPtr localMainFrame = this->localMainFrame())
-        protect(localMainFrame->view())->recalculateScrollbarOverlayStyle();
+    if (RefPtr page = corePage()) {
+        page->forEachLocalFrame([](LocalFrame& frame) {
+            if (RefPtr view = frame.view())
+                view->recalculateScrollbarOverlayStyle();
+        });
+    }
 }
 
 Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceRequest&& request, SubstituteData&& substituteData, ResourceRequest&& originalRequest)
