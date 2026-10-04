@@ -41,6 +41,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "WebAssemblyModuleRecord.h"
 #include "JSWebAssemblyStreamingContextInlines.h"
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
@@ -338,6 +339,70 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
             }
         });
     }));
+}
+
+JSValue JSWebAssembly::compileForModuleLoader(JSGlobalObject* globalObject, JSPromise* promise, RefPtr<SourceProvider>&& sourceProvider, const Identifier& moduleKey, JSValue argument)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!globalObject->webAssemblyEnabled()) [[unlikely]] {
+        throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage()));
+        promise->rejectWithCaughtException(vm, scope);
+        return promise;
+    }
+
+    Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, argument);
+    if (scope.exception()) [[unlikely]] {
+        promise->rejectWithCaughtException(vm, scope);
+        return promise;
+    }
+
+    std::optional<WebAssemblyCompileOptions> compileOptions;
+    if (Options::useWasmJSStringBuiltins())
+        compileOptions = WebAssemblyCompileOptions::esmIntegrationDefaults();
+
+    auto weakTicket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, promise, { });
+    Wasm::Name sourceURL;
+    if (sourceProvider) {
+        auto sourceURLString = sourceProvider->sourceOrigin().url().string();
+        sourceURL = Wasm::Name(sourceURLString.utf8().span());
+    }
+    Wasm::Module::validateAsync(vm, WTF::move(source), WTF::move(sourceURL), createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), compileOptions = WTF::move(compileOptions), sourceProvider = WTF::move(sourceProvider), moduleKey, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+        vm.deferredWorkTimer->scheduleWorkSoonIfActive(weakTicket, [result = WTF::move(result), compileOptions = WTF::move(compileOptions), sourceProvider = WTF::move(sourceProvider), moduleKey, &vm](DeferredWorkTimer::Ticket& ticket) mutable {
+            auto* promise = uncheckedDowncast<JSPromise>(ticket.target());
+            auto* globalObject = promise->realm();
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
+            if (!result.has_value()) [[unlikely]] {
+                throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
+                promise->rejectWithCaughtException(vm, scope);
+                return;
+            }
+            if (compileOptions) {
+                auto errorMessage = compileOptions->validateBuiltinsAndImportedStrings(result.value());
+                if (errorMessage.has_value()) {
+                    throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, errorMessage.value()));
+                    promise->rejectWithCaughtException(vm, scope);
+                    return;
+                }
+                result.value()->applyCompileOptions(compileOptions.value());
+            }
+
+            JSWebAssemblyModule* jsModule = JSWebAssemblyModule::create(vm, globalObject->webAssemblyModuleStructure(), WTF::move(result.value()));
+
+            auto* moduleRecord = WebAssemblyModuleRecord::create(globalObject, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, jsModule->moduleInformation());
+            if (scope.exception()) [[unlikely]] {
+                promise->rejectWithCaughtException(vm, scope);
+                return;
+            }
+            moduleRecord->setJSModule(vm, jsModule);
+            if (sourceProvider)
+                moduleRecord->setSourceProvider(WTF::move(sourceProvider));
+            promise->fulfill(vm, moduleRecord);
+        });
+    }));
+    return promise;
 }
 
 JSValue JSWebAssembly::instantiate(JSGlobalObject* globalObject, JSPromise* promise, RefPtr<SourceProvider>&& sourceProvider, const Identifier& moduleKey, JSValue argument)

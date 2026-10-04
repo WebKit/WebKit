@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Importing a WebAssembly module should be guarded by script-src CSP.
+PASS Importing a WebAssembly module should be guarded by script-src CSP.
 

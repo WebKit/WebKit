@@ -1,4 +1,5 @@
 
-Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'source'. "import." can only be followed with meta or defer.
-
+PASS String builtins should be supported in source phase imports
+FAIL Source phase import should properly expose string builtin exports promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.Module.exports unable to produce export descriptors for the given module"
+PASS Source phase import should handle string builtin import reflection correctly
 

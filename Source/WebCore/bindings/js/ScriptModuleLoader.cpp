@@ -345,7 +345,7 @@ static JSC::JSPromise* rejectPromise(ScriptExecutionContext& context, JSDOMGloba
     return jsPromise;
 }
 
-JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, RefPtr<JSC::ScriptFetchParameters> fetchParameters, const JSC::SourceOrigin& sourceOrigin, bool deferred)
+JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, RefPtr<JSC::ScriptFetchParameters> fetchParameters, const JSC::SourceOrigin& sourceOrigin, JSC::AbstractModuleRecord::ModulePhase phase)
 {
     JSC::VM& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -439,7 +439,7 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
     ASSERT(parameters);
 
     RETURN_IF_EXCEPTION(scope, reject(scope));
-    RELEASE_AND_RETURN(scope, JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, specifier), JSC::Identifier::fromString(vm, baseURL.string()), WTF::move(parameters), WTF::move(scriptFetcher), deferred));
+    RELEASE_AND_RETURN(scope, JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, specifier), JSC::Identifier::fromString(vm, baseURL.string()), WTF::move(parameters), WTF::move(scriptFetcher), phase));
 }
 
 JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSModuleRecord*, RefPtr<JSC::ScriptFetcher>)

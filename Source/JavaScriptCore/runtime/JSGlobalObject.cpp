@@ -187,6 +187,7 @@
 #include "JSSetInlines.h"
 #include "JSSetIteratorInlines.h"
 #include "JSStringIteratorInlines.h"
+#include "JSAbstractModuleSource.h"
 #include "JSTypedArrayConstructors.h"
 #include "JSTypedArrayPrototypes.h"
 #include "JSTypedArrayViewConstructor.h"
@@ -2172,6 +2173,16 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     if (Options::useDollarVM()) [[unlikely]]
         exposeDollarVM(vm);
 
+    m_abstractModuleSourcePrototype.initLater(
+        [] (const Initializer<JSAbstractModuleSourcePrototype>& init) {
+            init.set(JSAbstractModuleSourcePrototype::create(init.vm, init.owner, JSAbstractModuleSourcePrototype::createStructure(init.vm, init.owner, init.owner->objectPrototype())));
+        });
+    m_abstractModuleSourceConstructor.initLater(
+        [] (const Initializer<JSAbstractModuleSourceConstructor>& init) {
+            auto* prototype = uncheckedDowncast<JSAbstractModuleSourcePrototype>(init.owner->abstractModuleSourcePrototype());
+            init.set(JSAbstractModuleSourceConstructor::create(init.vm, JSAbstractModuleSourceConstructor::createStructure(init.vm, init.owner, init.owner->functionPrototype()), prototype));
+        });
+
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::isSupported()) {
         m_webAssemblyModuleRecordStructure.initLater(
@@ -2197,9 +2208,14 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     if (featureFlag) {\
         m_ ## properName ## Structure.initLater(\
             [] (LazyClassStructure::Initializer& init) { \
-                init.setPrototype(capitalName##Prototype::create(init.vm, init.global, capitalName##Prototype::createStructure(init.vm, init.global, init.global->prototypeBase ## Prototype()))); \
+                JSValue prototypeBaseValue = init.global->prototypeBase ## Prototype(); \
+                JSValue constructorPrototype = ASCIILiteral::fromLiteralUnsafe(#prototypeBase) == "error"_s ? init.global->m_errorStructure.constructor(init.global) : init.global->functionPrototype(); \
+                if (ASCIILiteral::fromLiteralUnsafe(#jsName) == "Module"_s && Options::useSourcePhaseImports()) { \
+                    prototypeBaseValue = init.global->abstractModuleSourcePrototype(); \
+                    constructorPrototype = init.global->abstractModuleSourceConstructor(); \
+                } \
+                init.setPrototype(capitalName##Prototype::create(init.vm, init.global, capitalName##Prototype::createStructure(init.vm, init.global, prototypeBaseValue))); \
                 init.setStructure(instanceType::createStructure(init.vm, init.global, init.prototype)); \
-                auto* constructorPrototype = strcmp(#prototypeBase, "error") == 0 ? init.global->m_errorStructure.constructor(init.global) : init.global->functionPrototype(); \
                 init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, constructorPrototype), uncheckedDowncast<capitalName ## Prototype>(init.prototype))); \
             }); \
     }
@@ -2326,6 +2342,16 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     if (Options::alwaysHaveABadTime()) [[unlikely]]
         this->haveABadTime(vm);
+}
+
+JSObject* JSGlobalObject::abstractModuleSourceConstructor()
+{
+    return m_abstractModuleSourceConstructor.get(this);
+}
+
+JSObject* JSGlobalObject::abstractModuleSourcePrototype()
+{
+    return m_abstractModuleSourcePrototype.get(this);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -3116,6 +3142,9 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         thisObject->m_ ## properName ## Structure.visit(visitor);
 
     FOR_EACH_LAZY_BUILTIN_TYPE(VISIT_LAZY_TYPE)
+
+    thisObject->m_abstractModuleSourceConstructor.visit(visitor);
+    thisObject->m_abstractModuleSourcePrototype.visit(visitor);
 
 #if ENABLE(WEBASSEMBLY)
     thisObject->m_webAssemblyModuleRecordStructure.visit(visitor);

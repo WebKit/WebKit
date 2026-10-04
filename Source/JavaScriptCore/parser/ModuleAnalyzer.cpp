@@ -93,6 +93,12 @@ void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const 
         return;
     }
 
+    if (importEntry.phase == AbstractModuleRecord::ModulePhase::Source) {
+        for (auto& exportName : moduleProgramNode.moduleScopeData().exportedBindings().get(localName.get()))
+            moduleRecord()->addExportEntry(JSModuleRecord::ExportEntry::createLocal(Identifier::fromUid(m_vm, exportName.get()), Identifier::fromUid(m_vm, localName.get())));
+        return;
+    }
+
     // Indirectly exported binding.
     // import a from "mod"
     // export { a }

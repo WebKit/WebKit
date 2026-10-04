@@ -233,16 +233,17 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 RegisterID* ImportNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> importModule = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::importModule);
-    unsigned argumentCount = m_deferred ? 3 : (m_option ? 2 : 1);
+    bool needsPhaseArg = m_phase != ImportCallPhase::Evaluation;
+    unsigned argumentCount = needsPhaseArg ? 3 : (m_option ? 2 : 1);
     CallArguments arguments(generator, nullptr, argumentCount);
     generator.emitLoad(arguments.thisRegister(), jsUndefined());
     generator.emitNode(arguments.argumentRegister(0), m_expr);
     if (m_option)
         generator.emitNode(arguments.argumentRegister(1), m_option);
-    else if (m_deferred)
+    else if (needsPhaseArg)
         generator.emitLoad(arguments.argumentRegister(1), jsUndefined());
-    if (m_deferred)
-        generator.emitLoad(arguments.argumentRegister(2), jsBoolean(true));
+    if (needsPhaseArg)
+        generator.emitLoad(arguments.argumentRegister(2), jsNumber(static_cast<int32_t>(m_phase)));
     return generator.emitCall(generator.finalDestination(dst, importModule.get()), importModule.get(), NoExpectedFunction, arguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
 }
 
