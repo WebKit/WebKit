@@ -40,7 +40,8 @@ function test() {
                         new Promise((resolve) => setTimeout(resolve, 100)),
                     ]);
                 }
-                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
+                // WI.networkManager.frames also lists a frame whose load has not committed yet.
+                child = Array.from(WI.networkManager.mainFrame?.childFrameCollection || []).find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
                 if (child)
                     break;
                 await new Promise((resolve) => setTimeout(resolve, 20));

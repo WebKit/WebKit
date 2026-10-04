@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function addSrcdocIFrame() {
+    let iframe = document.createElement("iframe");
+    iframe.name = "srcdoc-frame";
+    iframe.srcdoc = "<p>srcdoc-frame-marker</p>";
+    document.body.appendChild(iframe);
+}
+
+function addSameOriginIFrame(token) {
+    let iframe = document.createElement("iframe");
+    iframe.src = `resources/iframe-with-script.html?same-origin-${token}`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.DynamicSameProcessIFrameRows");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.DynamicSameProcessIFrameRows.Srcdoc",
+        description: "A srcdoc iframe added to the page should list its document once, finished.",
+        async test() {
+            let recorder = new FrameLoadRowRecorder;
+
+            InspectorTest.evaluateInPage(`addSrcdocIFrame()`);
+
+            let frame = await awaitChildFrame((frame) => frame.mainResource.url === "about:srcdoc");
+            InspectorTest.expectThat(!!frame, "Child frame should be attached to the main frame.");
+            if (frame)
+                await expectSingleFinishedDocument(recorder, frame, "srcdoc document");
+            expectNoAboutBlankRow(recorder);
+
+            recorder.stop();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.DynamicSameProcessIFrameRows.SameOriginSource",
+        description: "A same-origin iframe added to the page should list its document and script once each, finished.",
+        async test() {
+            // Unique per run, so repeated runs in one process don't hit the memory cache.
+            let token = String(Math.random()).slice(2);
+            let recorder = new FrameLoadRowRecorder;
+
+            InspectorTest.evaluateInPage(`addSameOriginIFrame("${token}")`);
+
+            let frame = await awaitChildFrame((frame) => frame.mainResource.url.includes(`?same-origin-${token}`));
+            InspectorTest.expectThat(!!frame, "Child frame should be attached to the main frame.");
+            if (frame) {
+                await expectSingleFinishedDocument(recorder, frame, "Same-origin document");
+                await expectSingleFinishedSubresource(recorder, frame, `iframe-script.js?same-origin-${token}`, "Script");
+            }
+            expectNoAboutBlankRow(recorder);
+
+            recorder.stop();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that dynamically added srcdoc and same-origin iframes list their documents and subresources once each, finished, under Site Isolation.</p>
+</body>

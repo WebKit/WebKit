@@ -1,0 +1,16 @@
+Tests that a dynamically added cross-origin iframe lists its document and subresources once each, finished, under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.DynamicCrossOriginIFrameRows
+-- Running test case: SiteIsolation.Network.DynamicCrossOriginIFrameRows.SameSiteAsExistingFrame
+PASS: Child frame should be attached to the main frame.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+PASS: No about:blank placeholder row should be listed.
+

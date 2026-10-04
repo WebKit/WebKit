@@ -1,0 +1,23 @@
+Tests that dynamically added srcdoc and same-origin iframes list their documents and subresources once each, finished, under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.DynamicSameProcessIFrameRows
+-- Running test case: SiteIsolation.Network.DynamicSameProcessIFrameRows.Srcdoc
+PASS: Child frame should be attached to the main frame.
+PASS: srcdoc document should be listed once.
+PASS: srcdoc document should finish loading.
+PASS: srcdoc document should carry the request identifier of its load.
+PASS: srcdoc document should have a response.
+PASS: No about:blank placeholder row should be listed.
+
+-- Running test case: SiteIsolation.Network.DynamicSameProcessIFrameRows.SameOriginSource
+PASS: Child frame should be attached to the main frame.
+PASS: Same-origin document should be listed once.
+PASS: Same-origin document should finish loading.
+PASS: Same-origin document should carry the request identifier of its load.
+PASS: Same-origin document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+PASS: No about:blank placeholder row should be listed.
+

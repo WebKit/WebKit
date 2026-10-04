@@ -1,0 +1,8 @@
+<p>Iframe that loads a script.</p>
+
+<script>
+// Reuse the query so the script's URL is as unique as the document's and isn't served from the memory cache.
+let script = document.createElement("script");
+script.src = "iframe-script.js" + location.search;
+document.body.appendChild(script);
+</script>
