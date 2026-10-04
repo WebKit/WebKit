@@ -321,6 +321,7 @@ private:
     void decrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void handleVMExit(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void enterStopTheWorldParticipation(VM&, StopTheWorldEvent);
+    bool notifyDebuggerOfVMResuming(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     bool allActiveVMsHaveReachedStoppingPoint() const WTF_REQUIRES_LOCK(m_worldLock)
     {
         return (m_numberOfStoppedVMs + m_numberOfBlockedVMs) == m_numberOfActiveVMs;
@@ -365,9 +366,8 @@ private:
     // Only notifyVMStop() may modify m_currentStopReason.
     StopReason m_currentStopReason { StopReason::None };
 
-    // Flags whether WasmDebugger post-resume callback is pending. Set when servicing WasmDebugger
-    // stop, atomically read-and-cleared by last VM exiting notifyVMStop().
-    Atomic<bool> m_needsWasmDebuggerOnResume { false };
+    // Flags whether WasmDebugger post-resume callback is pending. Set when servicing WasmDebugger stop.
+    Atomic<bool> m_wasmDebuggerResumePending { false };
 
     // Indicates the VM that will service the StopTheWorld request (i.e. drive the
     // enterStopTheWorldParticipation loop and invoke the callback), or the VM that may

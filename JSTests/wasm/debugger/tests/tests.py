@@ -477,12 +477,13 @@ class SwiftWasmGlobalTestCase:
         self.session.cmd("n", patterns=["-> 8   \t    globalCounter3 = 3"])
         self.session.cmd("n", patterns=["-> 9   \t}"])
 
-        self.session.cmd("p globalCounter2", patterns=["(Int32) 2"])
-        self.session.cmd("p globalCounter3", patterns=["(Int32) 3"])
+        # LLDB regression rdar://188716706
+        # self.session.cmd("p globalCounter2", patterns=["(Int32) 2"])
+        # self.session.cmd("p globalCounter3", patterns=["(Int32) 3"])
 
-        self.session.cmd("up", patterns=["-> 14  \t    helper()"])
+        # self.session.cmd("up", patterns=["-> 14  \t    helper()"])
 
-        self.session.cmd("p globalCounter1", patterns=["(Int32) 1"])
+        # self.session.cmd("p globalCounter1", patterns=["(Int32) 1"])
 
         self.session.cmd("br del -f", patterns=["All breakpoints removed."])
 
@@ -1776,6 +1777,41 @@ class MultiVMSameModuleDifferentFunctionsTestCase:
         )
 
 
+class MultiVMStepFollowsContinueThreadTestCase:
+    test_file = "resources/c-wasm/two-vm-arg/main.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        self.session.cmd("b compute", patterns=["Breakpoint 1: 2 locations"])
+        for _ in range(10):
+            self.session.cmd("br dis 1.2", patterns=["1 breakpoints disabled"])
+            self.session.cmd("c", patterns=["stop reason = breakpoint 1.1", "two-vm-arg.c:13"])
+            self.session.cmd("br en 1.2", patterns=["1 breakpoints enabled"])
+
+            self.session.cmd("thread select 1", patterns=["* thread #1"])
+            self.session.cmd("n", patterns=["two-vm-arg.c:14"])
+            self.session.cmd("thread select 1", patterns=["* thread #1"])
+            self.session.cmd("n", patterns=["two-vm-arg.c:15"])
+            self.session.cmd("thread select 1", patterns=["* thread #1"])
+            self.session.cmd("s", patterns=["two-vm-arg.wasm@0`add("])
+
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class ThreadContinueRunsOneVMTestCase:
+    test_file = "resources/c-wasm/two-vm-arg/main.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        self.session.cmd("b add", patterns=["Breakpoint 1: 2 locations"])
+        self.session.cmd("br dis 1.2", patterns=["1 breakpoints disabled"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint 1.1", "two-vm-arg.c"])
+        self.session.cmd("br en 1.2", patterns=["1 breakpoints enabled"])
+        for _ in range(5):
+            self.session.cmd("thread continue 1", patterns=["* thread #1", "stop reason = breakpoint 1.1"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
 class MemoryAtomicWaitTestCase:
     test_file = "resources/wasm/memory-atomic-wait.js"
     extra_jsc_options = ["--useDollarVM=1"]
@@ -2799,6 +2835,8 @@ ALL_TESTS = [
     SystemCallTestCase,
     MultiVMSameModuleSameFunctionTestCase,
     MultiVMSameModuleDifferentFunctionsTestCase,
+    MultiVMStepFollowsContinueThreadTestCase,
+    ThreadContinueRunsOneVMTestCase,
     MemoryAtomicWaitTestCase,
     MemoryAtomicWaitNoTimeoutTestCase,
     ThreadStopInfoUnknownThreadTestCase,

@@ -65,6 +65,7 @@ void setupTestEnvironment(DebugServer*&, ExecutionHandler*&);
 void workerThreadTask(const String&);
 
 inline unsigned getReplyCount() { return replyCount.load(); }
+String lastReply();
 
 } // namespace ExecutionHandlerTestSupport
 

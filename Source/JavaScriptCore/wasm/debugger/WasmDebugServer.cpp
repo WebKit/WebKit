@@ -417,18 +417,24 @@ void DebugServer::handleThreadManagement(StringView packet)
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Hc (set continue thread): ", threadSpec);
 
         if (threadSpec == "-1" || threadSpec == "0") {
-            // -1 = all threads, 0 = any thread, 1 = thread 1
-            // All are valid for our single-threaded WebAssembly context
+            // -1 = all threads, 0 = any thread: 's' steps the debuggee, 'c' resumes every VM.
+            execution().setContinueDebuggeeOnly(false);
             sendReplyOK();
         } else if (auto threadId = parseHexStrict(threadSpec)) {
-            execution().switchTarget(*threadId);
-            sendReplyOK();
+            // Switch the debuggee to this VM, and run only it on the next 'c', until the next Hc.
+            if (execution().switchTarget(*threadId)) {
+                execution().setContinueDebuggeeOnly(true);
+                sendReplyOK();
+            } else
+                sendErrorReply(ProtocolError::InvalidPacket);
         } else
             sendErrorReply(ProtocolError::InvalidPacket);
         break;
     }
     case 'g': {
-        // Hg<thread-id>: Set thread for other operations (register access, etc.)
+        // Hg<thread-id>: set the thread for register/memory/variable reads.
+        // FIXME: support this in a follow-up — route the reads to the named VM so a non-current
+        // thread's variables can be read; E02 makes LLDB fall back to the debuggee (wrong thread).
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Hg (set general thread): ", threadSpec);
         sendErrorReply(ProtocolError::InvalidAddress);
         break;
