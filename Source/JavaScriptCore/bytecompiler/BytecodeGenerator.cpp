@@ -539,11 +539,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (!shouldCaptureSomeOfTheThings)
             return false;
         if (m_needsArguments && uid == propertyNames().arguments.impl()) {
-            // Actually, we only need to capture the arguments object when we "need full activation"
-            // because of name scopes. But historically we did it this way, so for now we just preserve
-            // the old behavior.
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=143072
-            return true;
+            // A scope slot is required when a lookup outside this frame can see the binding.
+            if (functionNode->captures(uid) || isArgumentsUsedInInnerArrowFunction() || (functionNode->features() & WithFeature))
+                return true;
+            // The separate generator or async body resolves the wrapper's arguments.
+            // An async function with no await is inlined into the wrapper and does not.
+            if (isGeneratorOrAsyncFunctionWrapperParseMode(parseMode) && !(isAsyncFunctionWrapperParseMode(parseMode) && functionNode->isAsyncFunctionWithoutAwait()))
+                return true;
+            return false;
         }
         return functionNode->captures(uid);
     };
