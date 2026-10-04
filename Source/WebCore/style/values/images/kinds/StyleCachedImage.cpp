@@ -420,6 +420,34 @@ bool CachedImage::drawsSVGImage() const
     return image && image->drawsSVGImage();
 }
 
+WTF::String CachedImage::accessibilityDescription() const
+{
+    return decodedImage()->accessibilityDescription();
+}
+
+bool CachedImage::isAnimated() const
+{
+    return decodedImage()->isAnimated();
+}
+
+void CachedImage::stopAnimation()
+{
+    decodedImage()->stopAnimation();
+}
+
+void CachedImage::resetAnimation()
+{
+    decodedImage()->resetAnimation();
+}
+
+Ref<WebCore::Image> CachedImage::decodedImage() const
+{
+    RefPtr image = m_cachedImage ? protect(m_cachedImage)->image() : nullptr;
+    if (!image)
+        return WebCore::Image::nullImage();
+    return image.releaseNonNull();
+}
+
 DecodingMode CachedImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_cachedImage || renderSVGResource(&renderer) || legacyRenderSVGResource(&renderer))

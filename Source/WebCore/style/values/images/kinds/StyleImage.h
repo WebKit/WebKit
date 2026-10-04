@@ -112,6 +112,10 @@ public:
     virtual bool canDraw(const RenderElement&) const { return true; }
     virtual bool canDrawAtSize(const RenderElement&, const FloatSize& size) const { return !size.isEmpty(); }
     virtual bool drawsSVGImage() const { return false; }
+    virtual WTF::String accessibilityDescription() const { return { }; }
+    virtual bool isAnimated() const { return false; }
+    virtual void stopAnimation() { }
+    virtual void resetAnimation() { }
 
     // Drawing
     ImageDrawResult draw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }, bool isForFirstLine = false) const;

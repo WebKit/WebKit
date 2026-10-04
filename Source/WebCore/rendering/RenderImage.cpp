@@ -447,6 +447,14 @@ bool RenderImage::hasNaturalAspectRatio() const
     return imageResource().naturalDimensions().hasUsableAspectRatio();
 }
 
+String RenderImage::accessibilityDescription() const
+{
+    RefPtr styleImage = imageResource().styleImage();
+    if (!styleImage)
+        return { };
+    return styleImage->accessibilityDescription();
+}
+
 bool RenderImage::shouldDisplayBrokenImageIcon() const
 {
     return imageResource().errorOccurred();
@@ -540,10 +548,11 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     // the outline rect so the error image/alt text doesn't draw on it.
     LayoutSize usableSize = contentSize - LayoutSize(2 * missingImageBorderWidth, 2 * missingImageBorderWidth);
 
-    RefPtr image = imageResource().image();
+    RefPtr cachedImage = this->cachedImage();
+    RefPtr image = cachedImage ? cachedImage->image() : nullptr;
     auto& context = paintInfo.context();
 
-    if (shouldDisplayBrokenImageIcon() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
+    if (shouldDisplayBrokenImageIcon() && image && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
         // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
         auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(deviceScaleFactor);
         RefPtr brokenImage = brokenImageAndImageScaleFactor.first.get();
@@ -655,8 +664,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     bool showBorderForIncompleteImage = settings().incompleteImageBorderEnabled();
 
-    RefPtr<Image> img = imageResource().image(flooredIntSize(contentBoxRect.size()));
-    if (!img || img->isNull()) {
+    RefPtr styleImage = imageResource().styleImage();
+    if (!styleImage || !styleImage->canDrawAtSize(*this, FloatSize { contentBoxRect.size() })) {
         if (showBorderForIncompleteImage)
             paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 

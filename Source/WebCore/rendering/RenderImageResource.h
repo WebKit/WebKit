@@ -57,7 +57,6 @@ public:
 
     void resetAnimation();
 
-    Ref<Image> image(const IntSize& size = { }) const;
     bool currentFrameIsComplete() const;
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
     bool hasDecodedImage() const;

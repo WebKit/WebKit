@@ -31,7 +31,6 @@
 #include "CachedImage.h"
 #include "Font.h"
 #include "FontCascadeInlines.h"
-#include "NullGraphicsContext.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderObjectDocument.h"
@@ -70,11 +69,11 @@ void RenderImageResource::initialize(RenderElement& renderer)
 void RenderImageResource::willBeDestroyed()
 {
     RefPtr cachedImage = this->cachedImage();
-    Ref image = this->image();
-    if (m_styleImage && m_renderer)
-        protect(m_styleImage)->removeClient(*m_renderer);
-    if (image->isAnimated() && cachedImage && !cachedImage->hasRendererClients())
-        image->stopAnimation();
+    RefPtr styleImage = m_styleImage;
+    if (styleImage && m_renderer)
+        styleImage->removeClient(*m_renderer);
+    if (styleImage && styleImage->isAnimated() && cachedImage && !cachedImage->hasRendererClients())
+        styleImage->stopAnimation();
 }
 
 void RenderImageResource::clearCachedImage()
@@ -126,27 +125,10 @@ void RenderImageResource::resetAnimation()
     if (!m_styleImage)
         return;
 
-    image()->resetAnimation();
+    protect(m_styleImage)->resetAnimation();
 
     if (m_renderer && !m_renderer->needsLayout())
         m_renderer->repaint();
-}
-
-Ref<Image> RenderImageResource::image(const IntSize& size) const
-{
-    // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
-    if (!m_styleImage)
-        return Image::nullImage();
-
-    Ref styleImage = *m_styleImage;
-    if (styleImage->isPending())
-        return Image::nullImage();
-
-    RefPtr image = styleImage->image(m_renderer.get(), size, NullGraphicsContext());
-    if (!image)
-        return Image::nullImage();
-
-    return image.releaseNonNull();
 }
 
 bool RenderImageResource::currentFrameIsComplete() const

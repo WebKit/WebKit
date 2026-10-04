@@ -230,6 +230,30 @@ bool MultiImage::drawsSVGImage() const
     return m_selectedImage && protect(m_selectedImage)->drawsSVGImage();
 }
 
+WTF::String MultiImage::accessibilityDescription() const
+{
+    if (!m_selectedImage)
+        return { };
+    return protect(m_selectedImage)->accessibilityDescription();
+}
+
+bool MultiImage::isAnimated() const
+{
+    return m_selectedImage && protect(m_selectedImage)->isAnimated();
+}
+
+void MultiImage::stopAnimation()
+{
+    if (m_selectedImage)
+        protect(m_selectedImage)->stopAnimation();
+}
+
+void MultiImage::resetAnimation()
+{
+    if (m_selectedImage)
+        protect(m_selectedImage)->resetAnimation();
+}
+
 DecodingMode MultiImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_selectedImage)

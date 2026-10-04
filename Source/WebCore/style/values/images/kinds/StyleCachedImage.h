@@ -94,6 +94,10 @@ public:
     bool canDraw(const RenderElement&) const final;
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     bool drawsSVGImage() const final;
+    WTF::String accessibilityDescription() const final;
+    bool isAnimated() const final;
+    void stopAnimation() final;
+    void resetAnimation() final;
     DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const final;
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, const void* layer, const LayoutSize&) const final;
     bool usesDataProtocol() const final;
@@ -101,6 +105,8 @@ public:
     URL url() const final;
 
 private:
+    Ref<WebCore::Image> decodedImage() const;
+
     CachedImage(URL&&, Ref<CSSImageValue>&&, float);
     CachedImage(URL&&, Ref<CSSImageValue>&&, float, OptionSet<SVGReferencingMode>);
 

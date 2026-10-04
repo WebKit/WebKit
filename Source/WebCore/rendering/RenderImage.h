@@ -81,7 +81,7 @@ public:
     bool shouldRespectZeroIntrinsicWidth() const final;
     bool shouldRespectZeroIntrinsicHeight() const final;
 
-    String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
+    String accessibilityDescription() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     bool isMultiRepresentationHEIC() const;
