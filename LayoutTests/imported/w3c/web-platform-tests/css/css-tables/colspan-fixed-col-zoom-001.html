@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#width-distribution">
+<link rel="help" href="https://drafts.csswg.org/css-viewport/#zoom-property">
+<meta name="assert" content="A colspan cell's min-content width is distributed across fixed-width columns using each column's own zoomed width.">
+<style>
+  table { border-spacing: 0; }
+  td { padding: 0; height: 10px; }
+  .wrapper { width: 0; }
+  .content { width: 400px; height: 10px; background: green; }
+</style>
+<div class="wrapper">
+  <table>
+    <col style="width: 50px">
+    <col style="width: 50px; zoom: 3">
+    <tr>
+      <td colspan="2" data-expected-width="400"><div class="content"></div></td>
+    </tr>
+    <tr>
+      <td data-expected-width="100"></td>
+      <td data-expected-width="300"></td>
+    </tr>
+  </table>
+</div>
+<div class="wrapper">
+  <table>
+    <col style="width: 50px; zoom: 3">
+    <col style="width: 50px">
+    <tr>
+      <td colspan="2" data-expected-width="400"><div class="content"></div></td>
+    </tr>
+    <tr>
+      <td data-expected-width="300"></td>
+      <td data-expected-width="100"></td>
+    </tr>
+  </table>
+</div>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<script>
+  checkLayout('td');
+</script>
