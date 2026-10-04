@@ -902,8 +902,8 @@ void AXFormActivityMonitor::report()
 
     unsigned errorFieldCount = 0;
     for (auto& field : fields) {
-        RefPtr fieldObject = CheckedRef { m_cache }->get(field.ptr());
-        if (fieldObject && fieldObject->invalidStatusIncludingInferred() != "false"_s)
+        RefPtr fieldObject = CheckedRef { m_cache }->getOrCreate(field.get());
+        if (fieldObject && !fieldObject->isIgnored() && fieldObject->invalidStatusIncludingInferred() != "false"_s)
             ++errorFieldCount;
     }
 

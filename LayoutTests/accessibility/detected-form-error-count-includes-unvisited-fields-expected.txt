@@ -1,0 +1,16 @@
+This tests that the number of fields needing attention counts every field the page marked invalid, including fields no assistive technology has visited yet.
+
+PASS: !!axElement('intro') === true
+PASS: payload === 'AXFormValidationUnannouncedText: Please fix the 4 fields below.\nAXFormValidationErrorFieldCount: 4\n'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Checkout
+
+Please fix the 4 fields below.
+
+
+
+
+Place order
