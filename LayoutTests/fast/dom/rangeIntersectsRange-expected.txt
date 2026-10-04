@@ -36,6 +36,12 @@ PASS internals.rangeIntersectsRange(contentsRange(body), contentsRange(f), 'Comp
 PASS internals.rangeIntersectsRange(contentsRange(f), contentsRange(body), 'ComposedTree') is false
 PASS internals.rangeIntersectsRange(contentsRange(body), contentsRange(h), 'ComposedTree') is true
 PASS internals.rangeIntersectsRange(contentsRange(h), contentsRange(body), 'ComposedTree') is true
+PASS internals.rangeIntersectsRange(contentsRange(body), contentsRange(c), 'ComposedTreeIncludingPseudoElements') is true
+PASS internals.rangeIntersectsRange(contentsRange(c), contentsRange(body), 'ComposedTreeIncludingPseudoElements') is true
+PASS internals.rangeIntersectsRange(contentsRange(body), contentsRange(h), 'ComposedTreeIncludingPseudoElements') is true
+PASS internals.rangeIntersectsRange(contentsRange(h), contentsRange(body), 'ComposedTreeIncludingPseudoElements') is true
+PASS internals.rangeIntersectsRange(contentsRange(a), contentsRange(b), 'ComposedTreeIncludingPseudoElements') is false
+PASS internals.rangeIntersectsRange(contentsRange(b), contentsRange(a), 'ComposedTreeIncludingPseudoElements') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

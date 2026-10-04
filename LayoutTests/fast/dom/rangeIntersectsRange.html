@@ -19,21 +19,24 @@ function contentsRange(node)
     return range(node, 0, node, node.childNodes.length)
 }
 
-function shouldIntersectSelf(a)
+function shouldIntersectSelf(a, treeType)
 {
-    shouldBeTrue("internals.rangeIntersectsRange(" + a + ", " + a + ", 'ComposedTree')")
+    treeType = treeType || 'ComposedTree'
+    shouldBeTrue("internals.rangeIntersectsRange(" + a + ", " + a + ", '" + treeType + "')")
 }
 
-function shouldIntersect(a, b)
+function shouldIntersect(a, b, treeType)
 {
-    shouldBeTrue("internals.rangeIntersectsRange(" + a + ", " + b + ", 'ComposedTree')")
-    shouldBeTrue("internals.rangeIntersectsRange(" + b + ", " + a + ", 'ComposedTree')")
+    treeType = treeType || 'ComposedTree'
+    shouldBeTrue("internals.rangeIntersectsRange(" + a + ", " + b + ", '" + treeType + "')")
+    shouldBeTrue("internals.rangeIntersectsRange(" + b + ", " + a + ", '" + treeType + "')")
 }
 
-function shouldNotIntersect(a, b)
+function shouldNotIntersect(a, b, treeType)
 {
-    shouldBeFalse("internals.rangeIntersectsRange(" + a + ", " + b + ", 'ComposedTree')")
-    shouldBeFalse("internals.rangeIntersectsRange(" + b + ", " + a + ", 'ComposedTree')")
+    treeType = treeType || 'ComposedTree'
+    shouldBeFalse("internals.rangeIntersectsRange(" + a + ", " + b + ", '" + treeType + "')")
+    shouldBeFalse("internals.rangeIntersectsRange(" + b + ", " + a + ", '" + treeType + "')")
 }
 
 let documentElement = document.documentElement;
@@ -84,6 +87,10 @@ let g = document.createElement("textarea");
 c.appendChild(g)
 let h = internals.ensureUserAgentShadowRoot(g).firstChild
 shouldIntersect("contentsRange(body)", "contentsRange(h)")
+
+shouldIntersect("contentsRange(body)", "contentsRange(c)", "ComposedTreeIncludingPseudoElements")
+shouldIntersect("contentsRange(body)", "contentsRange(h)", "ComposedTreeIncludingPseudoElements")
+shouldNotIntersect("contentsRange(a)", "contentsRange(b)", "ComposedTreeIncludingPseudoElements")
 
 </script>
 </body></html>
