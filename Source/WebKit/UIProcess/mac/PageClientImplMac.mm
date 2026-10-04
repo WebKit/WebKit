@@ -1085,11 +1085,6 @@ CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *laye
     return [windowContentLayer convertRect:layer.bounds fromLayer:layer];
 }
 
-void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, API::Object* userData)
-{
-    protect(m_impl)->didPerformImmediateActionHitTest(result, contentPreventsDefault, userData);
-}
-
 NSObject *PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
 {
     return protect(m_impl)->immediateActionAnimationControllerForHitTestResult(hitTestResult.get(), type, userData.get());

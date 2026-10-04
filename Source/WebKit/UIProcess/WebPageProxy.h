@@ -2228,8 +2228,9 @@ public:
 
 #if PLATFORM(MAC)
     API::HitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
-    void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
     std::optional<WebCore::FrameIdentifier> immediateActionHitTestFrameID() const { return m_immediateActionHitTestFrameID; }
+    void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint, CompletionHandler<void(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*)>&&);
+    std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> takeOutstandingImmediateActionHitTestReply();
 
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
@@ -3624,10 +3625,6 @@ private:
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
 
-#if PLATFORM(MAC)
-    void didPerformImmediateActionHitTest(IPC::Connection&, Variant<WebHitTestResultData, WebCore::RemoteUserInputEventData>&&, bool contentPreventsDefault, const UserData&);
-#endif
-
     void useFixedLayoutDidChange(bool useFixedLayout) { m_useFixedLayout = useFixedLayout; }
     void NODELETE fixedLayoutSizeDidChange(WebCore::IntSize);
 
@@ -4052,6 +4049,7 @@ private:
 #if PLATFORM(MAC)
     RefPtr<API::HitTestResult> m_lastMouseMoveHitTestResult;
     std::optional<WebCore::FrameIdentifier> m_immediateActionHitTestFrameID;
+    std::optional<std::pair<IPC::AsyncReplyID, WeakPtr<WebProcessProxy>>> m_outstandingImmediateActionHitTestReply;
 #endif
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;

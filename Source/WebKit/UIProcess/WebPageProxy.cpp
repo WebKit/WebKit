@@ -17606,10 +17606,39 @@ void WebPageProxy::setCaretBlinkingSuspended(bool suspended)
     sendToFocusedOrMainFrameProcess(Messages::WebPage::SetCaretBlinkingSuspended(suspended));
 }
 
-void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, FloatPoint point)
+void WebPageProxy::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, FloatPoint point, CompletionHandler<void(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*)>&& completionHandler)
 {
     m_immediateActionHitTestFrameID = frameID;
-    sendToProcessContainingFrame(frameID, Messages::WebPage::PerformImmediateActionHitTestAtLocation(frameID, point));
+    Ref process = processContainingFrame(frameID);
+    auto replyID = process->sendWithAsyncReply(Messages::WebPage::PerformImmediateActionHitTestAtLocation(frameID, point), [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, completionHandler = WTF::move(completionHandler)] (Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, bool contentPreventsDefault, UserData&& userData) mutable {
+        RefPtr protectedThis = weakThis.get();
+        RefPtr process = weakProcess.get();
+        if (!protectedThis || !process)
+            return completionHandler({ }, false, nullptr);
+
+        protectedThis->m_outstandingImmediateActionHitTestReply = std::nullopt;
+
+        WTF::switchOn(WTF::move(resultOrRemoteData), [&] (WebHitTestResultData&& result) {
+            completionHandler(result, contentPreventsDefault, process->transformHandlesToObjects(protect(userData.object()).get()).get());
+        }, [&] (RemoteUserInputEventData&& remoteUserInputEventData) {
+            // The hit test landed on a cross-origin frame; re-dispatch it into that frame's process.
+            protectedThis->performImmediateActionHitTestAtLocation(remoteUserInputEventData.targetFrameID, FloatPoint(remoteUserInputEventData.transformedPoint), WTF::move(completionHandler));
+        });
+    }, webPageIDInProcessForFrame(frameID));
+
+    if (replyID)
+        m_outstandingImmediateActionHitTestReply = { { *replyID, process } };
+}
+
+std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> WebPageProxy::takeOutstandingImmediateActionHitTestReply()
+{
+    auto outstandingReply = std::exchange(m_outstandingImmediateActionHitTestReply, std::nullopt);
+    if (!outstandingReply)
+        return std::nullopt;
+    RefPtr process = outstandingReply->second.get();
+    if (!process || !process->hasConnection())
+        return std::nullopt;
+    return { { outstandingReply->first, process->connection() } };
 }
 
 void WebPageProxy::immediateActionDidUpdate()
@@ -17625,16 +17654,6 @@ void WebPageProxy::immediateActionDidCancel()
 void WebPageProxy::immediateActionDidComplete()
 {
     send(Messages::WebPage::ImmediateActionDidComplete());
-}
-
-void WebPageProxy::didPerformImmediateActionHitTest(IPC::Connection& connection, Variant<WebHitTestResultData, RemoteUserInputEventData>&& resultOrRemoteData, bool contentPreventsDefault, const UserData& userData)
-{
-    WTF::switchOn(WTF::move(resultOrRemoteData), [&] (WebHitTestResultData&& result) {
-        if (RefPtr pageClient = this->pageClient())
-            pageClient->didPerformImmediateActionHitTest(result, contentPreventsDefault, WebProcessProxy::fromConnection(connection)->transformHandlesToObjects(protect(userData.object()).get()).get());
-    }, [&] (RemoteUserInputEventData&& remoteUserInputEventData) {
-        performImmediateActionHitTestAtLocation(remoteUserInputEventData.targetFrameID, FloatPoint(remoteUserInputEventData.transformedPoint));
-    });
 }
 
 NSObject *WebPageProxy::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)

@@ -495,9 +495,6 @@ messages -> WebPageProxy {
     IsPlayingMediaDidChange(OptionSet<WebCore::MediaProducerMediaState> state)
     HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
-#if PLATFORM(MAC)
-    DidPerformImmediateActionHitTest(Variant<WebKit::WebHitTestResultData, WebCore::RemoteUserInputEventData> result, bool contentPreventsDefault, WebKit::UserData userData) CanDispatchOutOfOrder
-#endif
     HandleMessage(String messageName, WebKit::UserData messageBody) AllowedWhenWaitingForSyncReply
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous
 
