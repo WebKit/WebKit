@@ -40,6 +40,6 @@ PASS Error.message: getter is ignored when cloning
 PASS Error.message: undefined property is stringified
 PASS DOMException objects can be cloned
 PASS DOMException objects created by the UA can be cloned
-FAIL QuotaExceededError objects can be cloned assert_equals: Checking prototype expected [stringifying object threw TypeError: The DOMException.name getter can only be used on instances of DOMException with type object] but got [stringifying object threw TypeError: The DOMException.name getter can only be used on instances of DOMException with type object]
-FAIL QuotaExceededError objects with empty quota/requested can be cloned assert_equals: Checking prototype expected [stringifying object threw TypeError: The DOMException.name getter can only be used on instances of DOMException with type object] but got [stringifying object threw TypeError: The DOMException.name getter can only be used on instances of DOMException with type object]
+PASS QuotaExceededError objects can be cloned
+PASS QuotaExceededError objects with empty quota/requested can be cloned
 
