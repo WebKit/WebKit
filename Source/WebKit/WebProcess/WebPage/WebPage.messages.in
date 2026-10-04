@@ -667,13 +667,13 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
 #if PLATFORM(MAC)
     PerformImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, WebCore::FloatPoint location)
-    ImmediateActionDidUpdate()
-    ImmediateActionDidCancel()
-    ImmediateActionDidComplete()
+    ImmediateActionDidUpdate(WebCore::FrameIdentifier frameID)
+    ImmediateActionDidCancel(WebCore::FrameIdentifier frameID)
+    ImmediateActionDidComplete(WebCore::FrameIdentifier frameID)
 
     DataDetectorsDidPresentUI(uint64_t pageOverlay)
     DataDetectorsDidChangeUI(uint64_t pageOverlay)
-    DataDetectorsDidHideUI(uint64_t pageOverlay)
+    DataDetectorsDidHideUI(WebCore::FrameIdentifier frameID, uint64_t pageOverlay)
 
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
 
