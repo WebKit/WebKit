@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <array>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
 namespace BidiEventNames {
 namespace BrowsingContext {
+static constexpr auto moduleName = "browsingContext"_s;
 static constexpr auto ContextCreated = "browsingContext.contextCreated"_s;
 static constexpr auto ContextDestroyed = "browsingContext.contextDestroyed"_s;
 static constexpr auto DomContentLoaded = "browsingContext.domContentLoaded"_s;
@@ -41,15 +43,20 @@ static constexpr auto NavigationFailed = "browsingContext.navigationFailed"_s;
 static constexpr auto NavigationStarted = "browsingContext.navigationStarted"_s;
 static constexpr auto UserPromptClosed = "browsingContext.userPromptClosed"_s;
 static constexpr auto UserPromptOpened = "browsingContext.userPromptOpened"_s;
+static constexpr std::array allEventNames { ContextCreated, ContextDestroyed, DomContentLoaded, FragmentNavigated, Load, NavigationAborted, NavigationCommitted, NavigationFailed, NavigationStarted, UserPromptClosed, UserPromptOpened };
 } // namespace BrowsingContext
 
 namespace Log {
+static constexpr auto moduleName = "log"_s;
 static constexpr auto EntryAdded = "log.entryAdded"_s;
+static constexpr std::array allEventNames { EntryAdded };
 } // namespace Log
 
 namespace Script {
+static constexpr auto moduleName = "script"_s;
 static constexpr auto RealmCreated = "script.realmCreated"_s;
 static constexpr auto RealmDestroyed = "script.realmDestroyed"_s;
+static constexpr std::array allEventNames { RealmCreated, RealmDestroyed };
 } // namespace Script
 
 } // namespace BidiEventNames
