@@ -160,6 +160,11 @@ static bool shouldEnableGlobalPrivacyControl(const std::string& pathOrURL)
     return pathContains(pathOrURL, "/gpc/");
 }
 
+static bool shouldEnableLocalNetworkAccess(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "/local-network-access/");
+}
+
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
 {
     TestFeatures features;
@@ -195,6 +200,8 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolWebPreferenceFeatures.insert({ "AlwaysUseTouchEventRegions", true });
     if (shouldEnableGlobalPrivacyControl(command.pathOrURL))
         features.boolTestRunnerFeatures.insert({ "globalPrivacyControl", true });
+    if (shouldEnableLocalNetworkAccess(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "LocalNetworkAccessEnabled", true });
 
     return features;
 }

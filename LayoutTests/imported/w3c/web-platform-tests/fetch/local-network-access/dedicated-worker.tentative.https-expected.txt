@@ -1,10 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT LNA Dedicated Worker Public to Loopback Fetch with permission Test timed out
-NOTRUN LNA Dedicated Worker Public to Loopback Fetch without permission
-NOTRUN LNA Dedicated Worker Public to Loopback WebTransport with permission
-NOTRUN LNA Dedicated Worker Public to Loopback WebTransport without permission
-NOTRUN LNA Dedicated Worker Public to Loopback WebSocket with permission
-NOTRUN LNA Dedicated Worker Public to Loopback WebSocket without permission
+PASS LNA Dedicated Worker Public to Loopback Fetch with permission
+PASS LNA Dedicated Worker Public to Loopback Fetch without permission
+PASS LNA Dedicated Worker Public to Loopback WebTransport with permission
+FAIL LNA Dedicated Worker Public to Loopback WebTransport without permission assert_equals: expected "error" but got "open"
+PASS LNA Dedicated Worker Public to Loopback WebSocket with permission
+FAIL LNA Dedicated Worker Public to Loopback WebSocket without permission assert_equals: expected "close: code 1006" but got "open"
 

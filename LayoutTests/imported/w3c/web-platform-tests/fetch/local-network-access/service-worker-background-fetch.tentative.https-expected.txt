@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT LNA Service Worker Public to Loopback Background Fetch with permission Test timed out
-NOTRUN LNA Service Worker Public to Loopback Background Fetch without permission
+PASS LNA Service Worker Public to Loopback Background Fetch with permission
+FAIL LNA Service Worker Public to Loopback Background Fetch without permission assert_true: expected an error but got none expected true got false
 

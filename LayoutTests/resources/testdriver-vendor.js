@@ -635,6 +635,12 @@ window.test_driver_internal.set_permission = async function(permission_params)
     case "screen-wake-lock":
         testRunner.setScreenWakeLockPermission(permission_params.state == "granted");
         break;
+    case "local-network":
+        await testRunner.setLocalNetworkAccessPermission(permission_params.state === "granted", false);
+        break;
+    case "loopback-network":
+        await testRunner.setLocalNetworkAccessPermission(permission_params.state === "granted", true);
+        break;
     case "storage-access":
         await testRunner.setStorageAccessPermission(permission_params.state === "granted", location.href);
         break;
