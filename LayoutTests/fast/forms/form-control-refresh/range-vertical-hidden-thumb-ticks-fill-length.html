@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            input {
+                display: block;
+                margin: 0;
+                zoom: 3;
+                writing-mode: vertical-lr;
+                width: 30px;
+                height: 150px;
+            }
+
+            input::-webkit-slider-thumb {
+                visibility: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- The fill of a vertical slider with ticks and a hidden thumb should extend past the current value by the same amount as a horizontal slider. -->
+        <input type="range" min="0" max="4" step="1" value="2" list="datalist">
+        <datalist id="datalist">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </datalist>
+    </body>
+</html>
