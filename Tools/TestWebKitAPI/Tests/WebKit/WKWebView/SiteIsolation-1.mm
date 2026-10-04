@@ -729,6 +729,36 @@ TEST(SiteIsolation, ReadSelectionFromPasteboardInCrossOriginIframe)
 
 #endif // PLATFORM(MAC)
 
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, WindowFrameChangeUpdatesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body>iframe</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 320, 240));
+    [[webView hostWindow] setFrame:NSMakeRect(0, 0, 500, 400) display:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_EQ(500, [[webView objectByEvaluatingJavaScript:@"outerWidth" inFrame:childFrame.get()] intValue]);
+
+    [[webView hostWindow] setFrame:NSMakeRect(50, 50, 600, 400) display:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"outerWidth"] intValue] == 600;
+    }));
+
+    // The iframe's process caches the window frame it was created with and doesn't ask for it again.
+    EXPECT_EQ(600, [[webView objectByEvaluatingJavaScript:@"outerWidth" inFrame:childFrame.get()] intValue]);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"screenX"] intValue], [[webView objectByEvaluatingJavaScript:@"screenX" inFrame:childFrame.get()] intValue]);
+}
+
+#endif // PLATFORM(MAC)
+
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
 TEST(SiteIsolation, InsertAdaptiveImageGlyphInCrossOriginIframe)
