@@ -3698,6 +3698,7 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
 
 #if HAVE(AVPLAYER_RESOURCE_CONSERVATION_LEVEL)
     bool isMovingFromResourcesPurgeableBufferPolicy = m_bufferingPolicy == MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
+    bool isMovingFromPurgeResourcesBufferingPolicy = m_bufferingPolicy == MediaPlayer::BufferingPolicy::PurgeResources;
 #endif
 
     m_bufferingPolicy = policy;
@@ -3712,6 +3713,13 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
     static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::PurgeResources) == AVPlayerResourceConservationLevelRecycleBuffer, "MediaPlayer::BufferingPolicy::PurgeResources is not AVPlayerResourceConservationLevelRecycleBuffer as expected");
 
     m_avPlayer.get().resourceConservationLevelWhilePaused = static_cast<AVPlayerResourceConservationLevel>(policy);
+
+    // Reattach the player item when moving out of the resource-purging policy to
+    // ensure playback resumes correctly.
+    if (isMovingFromPurgeResourcesBufferingPolicy && policy == MediaPlayer::BufferingPolicy::Default) {
+        setAVPlayerItem(nil);
+        setAVPlayerItem(m_avPlayerItem.get());
+    }
 
     // FIXME: Remove this workaround once rdar://123901202 is fixed.
     if (isMovingFromResourcesPurgeableBufferPolicy) {
