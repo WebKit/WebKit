@@ -128,7 +128,7 @@ bool AESKey::setKey(const Vector<uint8_t>& key, int enc)
 
 AESKey::~AESKey()
 {
-    memset(&m_key, 0, sizeof m_key);
+    secureZeroBytes(m_key);
 }
 
 } // namespace WebCore
