@@ -40,6 +40,7 @@
 #include "RasterLayoutShape.h"
 #include "RectangleLayoutShape.h"
 #include "StyleBasicShape.h"
+#include "StyleImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
@@ -197,6 +198,21 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
 
 Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode writingMode, float logicalMargin, ConcreteObjectSize concreteObjectSize, FloatSize sourceSize)
 {
+    return createRasterShapeImpl(threshold, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, [&](auto& context, const auto& physicalImageSize) {
+        if (image)
+            context.drawImage(*image, concreteObjectSize, IntRect({ }, physicalImageSize), FloatRect { { }, sourceSize });
+    });
+}
+
+Ref<const LayoutShape> LayoutShape::createRasterShape(const Style::Image& styleImage, const RenderElement& renderer, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode writingMode, float logicalMargin, ConcreteObjectSize concreteObjectSize)
+{
+    return createRasterShapeImpl(threshold, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, [&](auto& context, auto& physicalImageSize) {
+        styleImage.draw(context, renderer, concreteObjectSize, FloatRect { { }, physicalImageSize }, FloatRect { { }, concreteObjectSize.size() });
+    });
+}
+
+Ref<const LayoutShape> LayoutShape::createRasterShapeImpl(float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode writingMode, float logicalMargin, NOESCAPE auto&& rasterize)
+{
     ASSERT(logicalMarginRect.height() >= 0);
 
     auto snappedLogicalImageRect = snappedIntRect(logicalImageRect);
@@ -216,9 +232,7 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
     if (!imageBuffer)
         return createShape();
 
-    GraphicsContext& graphicsContext = imageBuffer->context();
-    if (image)
-        graphicsContext.drawImage(*image, concreteObjectSize, IntRect({ }, snappedPhysicalImageSize), FloatRect { { }, sourceSize });
+    rasterize(imageBuffer->context(), snappedPhysicalImageSize);
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, snappedPhysicalImageSize });

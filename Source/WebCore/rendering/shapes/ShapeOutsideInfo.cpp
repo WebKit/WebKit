@@ -34,7 +34,6 @@
 #include "DocumentPage.h"
 #include "FloatingObjects.h"
 #include "LocalFrameViewInlines.h"
-#include "NullGraphicsContext.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -281,15 +280,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             ASSERT(!styleImage->isPending());
             auto physicalImageSize = writingMode.isHorizontal() ? logicalImageSize : logicalImageSize.transposedSize();
 
-            RefPtr image = styleImage->image(const_cast<RenderBox*>(&renderer), physicalImageSize, NullGraphicsContext());
-
-            auto usedZoom = style.usedZoom();
-            auto drawsSVG = image && image->drawsSVGImage();
-            auto sourceSize = drawsSVG ? FloatSize(roundedIntSize(logicalImageSize)) : (image ? image->size() : FloatSize { });
-            auto concreteObjectSize = drawsSVG
-                ? ConcreteObjectSize::fixed(FloatSize(logicalImageSize) / usedZoom, usedZoom)
-                : ConcreteObjectSize::fixed(sourceSize);
-            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, concreteObjectSize, sourceSize);
+            return LayoutShape::createRasterShape(styleImage, renderer, shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, ConcreteObjectSize::fixed(FloatSize(physicalImageSize)));
         },
         [&](const Style::ShapeOutside::ShapeBox&) {
             auto geometry = computeGeometryForBoxShape(shapeOutside.effectiveCSSBox(), renderer);
