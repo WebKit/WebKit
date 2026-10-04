@@ -10573,7 +10573,9 @@ void SpeculativeJIT::emitStructureCheck(Node* node, GPRReg cellGPR, GPRReg tempG
         
         JumpList done;
         
-        for (size_t i = 0; i < node->structureSet().size() - 1; ++i) {
+        // Structure sets usually list structures in the order they were observed. Objects tend to
+        // transition away from older structures, so test the most recently observed ones first.
+        for (size_t i = node->structureSet().size(); --i;) {
             done.append(
                 branchWeakStructure(Equal, structureGPR, node->structureSet()[i]));
         }
@@ -10581,7 +10583,7 @@ void SpeculativeJIT::emitStructureCheck(Node* node, GPRReg cellGPR, GPRReg tempG
         speculationCheck(
             BadCache, JSValueSource(cellGPR), nullptr,
             branchWeakStructure(
-                NotEqual, structureGPR, node->structureSet().last()));
+                NotEqual, structureGPR, node->structureSet()[0]));
         
         done.link(this);
     }
