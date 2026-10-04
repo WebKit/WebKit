@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    document.body.offsetTop;
+    const inner = document.getElementById("inner");
+    // Grow the nested frameset's grid without letting layout run.
+    inner.cols = "*,*,*,*,*,*,*,*";
+    inner.rows = "*,*,*,*,*,*,*,*";
+    // Synchronously recomputes the outer frameset's edge info, which queries the nested frameset.
+    document.getElementById("sibling").noResize = true;
+    document.body.offsetTop;
+    document.documentElement.appendChild(document.createTextNode("PASS if no crash."));
+    testRunner?.notifyDone();
+};
+</script>
+<frameset id="outer" cols="50%,50%">
+    <frame id="sibling" src="about:blank">
+    <frameset id="inner" cols="*" rows="*">
+        <frame src="about:blank">
+    </frameset>
+</frameset>
+</html>
