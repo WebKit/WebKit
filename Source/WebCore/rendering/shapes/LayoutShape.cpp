@@ -252,23 +252,28 @@ Ref<const LayoutShape> LayoutShape::createRasterShapeImpl(float threshold, const
         int maxBufferY = std::min(snappedLogicalImageRect.height(), snappedLogicalMarginRect.maxY() - snappedLogicalImageRect.y());
 
         for (int y = minBufferY; y < maxBufferY; ++y) {
+            // We're creating "end-point exclusive" intervals here. The value of an interval's x1 is
+            // the first index of an above-threshold pixel for y, and the value of x2 is 1+ the index
+            // of the last above-threshold pixel.
+            auto addInterval = [&](int startX, int endX) {
+                intervals->intervalAt(y + snappedLogicalImageRect.y()).unite(IntShapeInterval(startX + snappedLogicalImageRect.x(), endX + snappedLogicalImageRect.x()));
+            };
+
             int startX = -1;
             for (int x = 0; x < snappedLogicalImageRect.width(); ++x) {
                 size_t pixelPosition = writingMode.isHorizontal() ? snappedLogicalImageRect.width() * y + x : snappedLogicalImageRect.height() * (x + 1) - (y + 1);
                 uint8_t alpha = pixelBuffer->item(pixelPosition * pixelArraySize + alphaBitOffset);
 
                 bool alphaAboveThreshold = alpha > alphaPixelThreshold;
-                if (startX == -1 && alphaAboveThreshold) {
+                if (startX == -1 && alphaAboveThreshold)
                     startX = x;
-                } else if (startX != -1 && (!alphaAboveThreshold || x == snappedLogicalImageRect.width() - 1)) {
-                    // We're creating "end-point exclusive" intervals here. The value of an interval's x1 is
-                    // the first index of an above-threshold pixel for y, and the value of x2 is 1+ the index
-                    // of the last above-threshold pixel.
-                    int endX = alphaAboveThreshold ? x + 1 : x;
-                    intervals->intervalAt(y + snappedLogicalImageRect.y()).unite(IntShapeInterval(startX + snappedLogicalImageRect.x(), endX + snappedLogicalImageRect.x()));
+                else if (startX != -1 && !alphaAboveThreshold) {
+                    addInterval(startX, x);
                     startX = -1;
                 }
             }
+            if (startX != -1)
+                addInterval(startX, snappedLogicalImageRect.width());
         }
     }
 
