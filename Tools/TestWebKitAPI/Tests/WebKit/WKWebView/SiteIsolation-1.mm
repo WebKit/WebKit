@@ -116,6 +116,24 @@
 @end
 #endif
 
+#if PLATFORM(IOS) || PLATFORM(VISION)
+static NSString *siteIsolationContentSizeCategoryOverride;
+
+@interface WKWebView (SiteIsolationContentSizeCategory)
+- (NSString *)_contentSizeCategory;
+@end
+
+@interface SiteIsolationContentSizeCategoryWebView : TestWKWebView
+@end
+
+@implementation SiteIsolationContentSizeCategoryWebView
+- (NSString *)_contentSizeCategory
+{
+    return siteIsolationContentSizeCategoryOverride ?: [super _contentSizeCategory];
+}
+@end
+#endif
+
 @interface SiteIsolationFontAttributesListener : NSObject <WKUIDelegatePrivate>
 - (NSDictionary<NSString *, id> *)lastFontAttributes;
 @end
@@ -1906,5 +1924,88 @@ TEST(SiteIsolation, ModifierKeyChangeOverLinkInCrossOriginIframe)
 }
 
 #endif // PLATFORM(MAC)
+
+TEST(SiteIsolation, AccessibilitySettingsChangeReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<style>p { color: black } @media (prefers-reduced-motion: reduce) { p { color: green } }</style><p id='target'>main frame text</p><iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<style>p { color: black } @media (prefers-reduced-motion: reduce) { p { color: green } }</style><p id='target'>subframe text</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = configurationWithInternals(server);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto targetColorInFrame = [&](WKFrameInfo *frame) {
+        return [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.getElementById('target')).color" inFrame:frame];
+    };
+    EXPECT_WK_STREQ("rgb(0, 0, 0)", targetColorInFrame(nil));
+    EXPECT_WK_STREQ("rgb(0, 0, 0)", targetColorInFrame(childFrame.get()));
+
+    // The forced value only takes effect once the settings change notification re-evaluates media queries.
+    [webView objectByEvaluatingJavaScript:@"internals.settings.forcedPrefersReducedMotionAccessibilityValue = 'on'"];
+    [webView objectByEvaluatingJavaScript:@"internals.settings.forcedPrefersReducedMotionAccessibilityValue = 'on'" inFrame:childFrame.get()];
+
+#if PLATFORM(MAC)
+    [[[NSWorkspace sharedWorkspace] notificationCenter] postNotificationName:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil];
+#else
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
+#endif
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [targetColorInFrame(nil) isEqualToString:@"rgb(0, 128, 0)"];
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [targetColorInFrame(childFrame.get()) isEqualToString:@"rgb(0, 128, 0)"];
+    }));
+}
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
+
+TEST(SiteIsolation, ContentSizeCategoryChangeReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p id='target' style='-webkit-text-size-adjust: none; font: -apple-system-body'>main frame text</p><iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<p id='target' style='-webkit-text-size-adjust: none; font: -apple-system-body'>subframe text</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<WKWebViewConfiguration> configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    RetainPtr webView = adoptNS([[SiteIsolationContentSizeCategoryWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    auto targetFontSizeInFrame = [&](WKFrameInfo *frame) {
+        return [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.getElementById('target')).fontSize" inFrame:frame];
+    };
+    RetainPtr<NSString> originalMainFrameFontSize = targetFontSizeInFrame(nil);
+    RetainPtr<NSString> originalChildFrameFontSize = targetFontSizeInFrame(childFrame.get());
+
+    auto setContentSizeCategory = [](NSString *contentSizeCategory) {
+        siteIsolationContentSizeCategoryOverride = contentSizeCategory;
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIContentSizeCategoryDidChangeNotification object:nil];
+    };
+
+    setContentSizeCategory(UIContentSizeCategoryAccessibilityExtraExtraExtraLarge);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return ![targetFontSizeInFrame(nil) isEqualToString:originalMainFrameFontSize.get()];
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [targetFontSizeInFrame(childFrame.get()) isEqualToString:targetFontSizeInFrame(nil)];
+    }));
+
+    setContentSizeCategory(nil);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [targetFontSizeInFrame(nil) isEqualToString:originalMainFrameFontSize.get()] && [targetFontSizeInFrame(childFrame.get()) isEqualToString:originalChildFrameFontSize.get()];
+    }));
+}
+
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 } // namespace TestWebKitAPI

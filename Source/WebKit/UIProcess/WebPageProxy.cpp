@@ -7272,7 +7272,9 @@ void WebPageProxy::accessibilitySettingsDidChange()
     // Also update screen properties which encodes invert colors.
     protect(legacyMainFrameProcess().processPool())->screenPropertiesChanged();
 #endif
-    send(Messages::WebPage::AccessibilitySettingsDidChange());
+    forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(Messages::WebPage::AccessibilitySettingsDidChange(), pageID);
+    });
 }
 
 void WebPageProxy::setUseFixedLayout(bool fixed)
