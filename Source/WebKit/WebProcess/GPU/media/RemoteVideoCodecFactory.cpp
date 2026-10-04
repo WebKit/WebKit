@@ -67,7 +67,7 @@ public:
 private:
     RemoteVideoDecoder(LibWebRTCCodecs::Decoder&, Ref<RemoteVideoDecoderCallbacks>&&);
 
-    Ref<DecodePromise> decode(VideoEncodedData&&) final;
+    Ref<DecodePromise> decode(WebCore::VideoEncodedData&&) final;
     Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
@@ -206,7 +206,7 @@ RemoteVideoDecoder::~RemoteVideoDecoder()
     protect(WebProcess::singleton().libWebRTCCodecs())->releaseDecoder(m_internalDecoder);
 }
 
-Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(VideoEncodedData&& frame)
+Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(WebCore::VideoEncodedData&& frame)
 {
     if (frame.duration)
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
