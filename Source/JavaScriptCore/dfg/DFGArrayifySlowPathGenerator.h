@@ -60,7 +60,7 @@ public:
             case Array::Int32:
             case Array::Double:
             case Array::Contiguous:
-                m_badPropertyJump = jit->speculationCheck(Uncountable, JSValueSource(), nullptr);
+                m_badPropertyJump = jit->speculationCheck(SparseIndex, JSValueSource(), nullptr);
                 break;
             default:
                 break;

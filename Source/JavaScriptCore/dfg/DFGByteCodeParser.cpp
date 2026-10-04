@@ -12608,9 +12608,15 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
             Node* iteratedObject = getIteratedObject();
-            Node* butterfly = addToGraph(GetButterfly, iteratedObject);
-            Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iteratedObject), Edge(butterfly, KnownStorageUse));
-            // GetArrayLength is pessimized prior to fixup.
+            Node* length = nullptr;
+            if (arrayMode.type() == Array::Generic) {
+                auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(m_vm->propertyNames->length.impl()), CacheType::GetByIdSelf });
+                length = addToGraph(GetById, OpInfo(data), OpInfo(SpecInt32Only), iteratedObject);
+            } else {
+                Node* butterfly = addToGraph(GetButterfly, iteratedObject);
+                length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iteratedObject), Edge(butterfly, KnownStorageUse));
+            }
+            // GetById clobbers the world, and GetArrayLength is pessimized prior to fixup.
             emitExitOK();
             Node* isOutOfBounds = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
 

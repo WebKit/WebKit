@@ -127,8 +127,12 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock)
 {
     if (auto structureID = std::exchange(m_lastSeenStructureID, StructureID()))
         computeUpdatedPrediction(codeBlock, structureID.decode());
-    if (auto structureID = std::exchange(m_speculationFailureStructureID, StructureID()))
-        computeUpdatedPrediction(codeBlock, structureID.decode());
+    if (auto structureID = std::exchange(m_speculationFailureStructureID, StructureID())) {
+        Structure* structure = structureID.decode();
+        if (hasArrayStorage(structure->indexingType()))
+            m_arrayProfileFlags.add(ArrayProfileFlag::SpeculationFailedOnArrayStorage);
+        computeUpdatedPrediction(codeBlock, structure);
+    }
 }
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* lastSeenStructure)
