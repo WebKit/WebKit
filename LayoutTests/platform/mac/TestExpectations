@@ -1527,8 +1527,6 @@ webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failur
 
 fast/text/text-styles/-apple-system [ Pass ]
 
-webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]
-
 # Skipping `setSinkId` tests due to lack of implementation.
 webkit.org/b/280303  imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-constructor.https.html [ Skip ]
 webkit.org/b/280303  imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]

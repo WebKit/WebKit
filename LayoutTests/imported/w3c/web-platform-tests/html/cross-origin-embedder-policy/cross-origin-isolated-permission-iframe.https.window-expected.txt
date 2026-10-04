@@ -1,0 +1,10 @@
+
+PASS iframe (origin: https://web-platform.test:9443) cross origin isolated (undefined) permission test
+PASS iframe (origin: https://web-platform.test:9443) cross origin isolated (*) permission test
+PASS iframe (origin: https://web-platform.test:9443) cross origin isolated (self) permission test
+FAIL iframe (origin: https://web-platform.test:9443) cross origin isolated (()) permission test assert_equals: expected false but got true
+FAIL iframe (origin: https://www1.web-platform.test:9443) cross origin isolated (undefined) permission test assert_equals: expected false but got true
+FAIL iframe (origin: https://www1.web-platform.test:9443) cross origin isolated (*) permission test assert_equals: expected false but got true
+FAIL iframe (origin: https://www1.web-platform.test:9443) cross origin isolated (self) permission test assert_equals: expected false but got true
+FAIL iframe (origin: https://www1.web-platform.test:9443) cross origin isolated (()) permission test assert_equals: expected false but got true
+

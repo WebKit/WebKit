@@ -615,7 +615,6 @@ fullscreen/fullscreen-document-gc-crash.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-propagate.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/webauthn/public-key-credential-create-failure.https.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/webauthn/public-key-credential-get-failure.https.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1033,9 +1032,8 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 # Cross-Origin-Embedder-Policy: credentialless is not supported.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless
 
-# This test makes the assumption that get_host_info().REMOTE_ORIGIN is same-site, which is not true for
-# our layout tests. We maintain our own version of this test in http/wpt.
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp.https.html [ Skip ]
+# Times out.
+webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Skip ]
 
 # Newly imported WPT tests that are flaky.
 webkit.org/b/227649 imported/w3c/web-platform-tests/beacon/beacon-basic.https.window.html [ Failure Pass ]
@@ -1121,7 +1119,6 @@ imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-
 imported/w3c/web-platform-tests/user-timing/clearMarks.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/mark.html [ Failure Pass ]
 imported/w3c/web-platform-tests/user-timing/measure_associated_with_navigation_timing.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/sharedworker-partitioning.tentative.https.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing-extended.https.html [ Failure Pass ]
 
 webkit.org/b/222750 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ Pass Failure Crash ]
@@ -6459,8 +6456,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/capability-delegation/delegation-consumes-activation.https.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/capability-delegation/delegation-sender-checks.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.tentative.https.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.tentative.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/reporting-observer.html [ Skip ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-unblocks-rendering.optional.html [ Skip ]
