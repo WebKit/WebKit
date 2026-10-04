@@ -5379,9 +5379,6 @@ imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-l
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-rl-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-rl-rtl-001.html [ ImageOnlyFailure ]
 
-# text-overflow should take in account unicode-bidi to determine ellipsis position.
-imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-008.html
-
 webkit.org/b/214387 imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html [ Pass Failure ]
 
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html [ ImageOnlyFailure ]
