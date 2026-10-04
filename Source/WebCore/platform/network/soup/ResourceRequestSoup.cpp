@@ -31,6 +31,7 @@
 #include "SharedBuffer.h"
 #include "URLSoup.h"
 #include "WebKitFormDataInputStream.h"
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -103,7 +104,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     auto& elements = formData->elements();
     if (elements.size() == 1 && !formData->alwaysStream()) {
         if (auto* vector = std::get_if<Vector<uint8_t>>(&elements[0].data)) {
-            GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(vector->span().data(), vector->size()));
+            GRefPtr bytes = gBytesNewStatic(vector->span());
             soup_message_set_request_body_from_bytes(soupMessage, nullptr, bytes.get());
             return;
         }

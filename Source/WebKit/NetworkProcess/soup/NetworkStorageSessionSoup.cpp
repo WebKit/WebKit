@@ -330,7 +330,8 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
 
     g_hash_table_insert(attributes.get(), g_strdup("user"), gStrdup(credential.user().utf8()));
     auto utf8Password = credential.password().utf8();
-    GRefPtr<SecretValue> newSecretValue = adoptGRef(secret_value_new(utf8Password.legacyCStringPointer(), utf8Password.length(), "text/plain"));
+    auto passwordCharacters = byteCast<char>(utf8Password.span());
+    GRefPtr newSecretValue = adoptGRef(secret_value_new(passwordCharacters.data(), passwordCharacters.size(), "text/plain"));
     secret_service_store(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(), SECRET_COLLECTION_DEFAULT, _("WebKitGTK password"),
         newSecretValue.get(), nullptr, nullptr, nullptr);
 #else

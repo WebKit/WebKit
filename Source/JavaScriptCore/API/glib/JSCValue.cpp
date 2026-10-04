@@ -36,6 +36,7 @@
 #include "TypedArrayType.h"
 #include <array>
 #include <gobject/gvaluecollector.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -449,7 +450,7 @@ GBytes* jsc_value_to_string_as_bytes(JSCValue* value)
 
     size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString.get());
     if (maxSize == 1)
-        return g_bytes_new_static("", 0);
+        return gBytesNewStatic(""_span).leakRef();
 
     auto* string = static_cast<char*>(fastMalloc(maxSize));
     auto stringSize = JSStringGetUTF8CString(jsString.get(), string, maxSize);

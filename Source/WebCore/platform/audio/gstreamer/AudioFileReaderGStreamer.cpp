@@ -36,6 +36,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
 
@@ -413,7 +414,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     }, this, nullptr);
 
     auto* source = makeGStreamerElement("giostreamsrc"_s);
-    GRefPtr memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data.data(), m_data.size(), nullptr));
+    GRefPtr memoryStream = gMemoryInputStreamNewFromData(m_data);
     g_object_set(source, "stream", memoryStream.get(), nullptr);
 
     m_decodebin = makeGStreamerElement("decodebin"_s, "decodebin"_s);

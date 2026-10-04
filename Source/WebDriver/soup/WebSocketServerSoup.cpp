@@ -96,7 +96,7 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
     if (messageType != SOUP_WEBSOCKET_DATA_TEXT) {
         RELEASE_LOG(WebDriverBiDi, "websocket message handler received non-text message. error return");
         auto errorReply = WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, { "Non-text message received"_s });
-        GRefPtr<GBytes> rawMessage = adoptGRef(g_bytes_new(errorReply.payload.data(), errorReply.payload.length()));
+        GRefPtr rawMessage = gBytesNew(errorReply.payload.span());
         soup_websocket_connection_send_message(connection, SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
         return;
     }
@@ -110,7 +110,7 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
             RELEASE_LOG(WebDriverBiDi, "No connection found when trying to send message: %s", message.payload);
             return;
         }
-        GRefPtr<GBytes> rawMessage = adoptGRef(g_bytes_new(message.payload.data(), message.payload.length()));
+        GRefPtr rawMessage = gBytesNew(message.payload.span());
         // Using send_message to avoid dealing with null chars in the middle of the message
         soup_websocket_connection_send_message(message.connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
     });
@@ -180,7 +180,7 @@ void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection
 {
     ASSERT(connection);
     RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
-    GRefPtr<GBytes> rawMessage = adoptGRef(g_bytes_new(message.utf8().legacyCStringPointer(), message.utf8().length()));
+    GRefPtr rawMessage = gBytesNew(message.utf8().span());
     soup_websocket_connection_send_message(connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
 }
 

@@ -186,7 +186,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     // the dictionary itself only if the server answers with dcb or dcz.
     if (m_compressionDictionary && m_compressionDictionary->match) {
         auto& match = *m_compressionDictionary->match;
-        GRefPtr<GBytes> hash = adoptGRef(g_bytes_new(match.hash.data(), match.hash.size()));
+        GRefPtr hash = gBytesNew(std::span { match.hash });
         soup_message_set_compression_dictionary_hash(m_soupMessage.get(), hash.get());
         auto dictionaryID = match.id.utf8();
         soup_message_set_compression_dictionary_id(m_soupMessage.get(), match.id.isEmpty() ? nullptr : dictionaryID.legacyCStringPointer());

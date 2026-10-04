@@ -3294,6 +3294,8 @@ _GLIB_STRING_WRAPPERS = {
     'g_dbus_connection_emit_signal': 'gDBusConnectionEmitSignal',
     'g_error_new': 'SAFE_G_ERROR_NEW',
     'g_file_new_for_path': 'gFileNewForPath',
+    'g_key_file_load_from_data': 'gKeyFileLoadFromData',
+    'g_markup_escape_text': 'gMarkupEscapeText',
     'g_object_new': 'gObjectNew',
     'g_quark_from_string': 'gQuarkFromString',
     'g_set_error': 'SAFE_G_SET_ERROR',
@@ -3431,6 +3433,39 @@ def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
     """
 
     _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, '<wtf/posix/POSIXExtras.h>', 'runtime/posix_string_wrappers', {})
+
+
+_STRING_EXPRESSION = r'((?:[A-Za-z_]\w*(?:\(\s*\))?\s*(?:\.|->)\s*)*[A-Za-z_]\w*(?:\(\s*\))?)'
+_LEGACY_CSTRING_POINTER_WITH_LENGTH_PATTERN = re.compile(
+    r'\b' + _STRING_EXPRESSION + r'\s*\.\s*legacyCStringPointer\s*\(\s*\)\s*,\s*' + _STRING_EXPRESSION + r'\s*\.\s*(?:length|size)\s*\(\s*\)')
+
+
+def check_legacy_cstring_pointer_with_length(clean_lines, line_number, file_state, error):
+    """Looks for legacyCStringPointer() passed along with the length of the same string, which does not need a null terminator.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    if 'legacyCStringPointer' not in line:
+        return
+
+    for match in _LEGACY_CSTRING_POINTER_WITH_LENGTH_PATTERN.finditer(line):
+        if re.sub(r'\s', '', match.group(1)) != re.sub(r'\s', '', match.group(2)):
+            continue
+        error(line_number, 'runtime/legacy_cstring_pointer_with_length', 4,
+              "Store '%s.span()', or 'byteCast<char>(%s.span())' for a const char* parameter, in a local and pass its data() and size() "
+              "instead of calling legacyCStringPointer(), since the length is passed too. Use 'gBytesNew()' or 'gBytesNewStatic()' from "
+              "<wtf/glib/GLibExtras.h> instead of 'g_bytes_new()' or 'g_bytes_new_static()'."
+              % (match.group(1), match.group(1)))
 
 
 # printf-style logging and assertion macros that convert typed string arguments themselves.
@@ -4412,6 +4447,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error)
     check_glib_string_wrappers(clean_lines, line_number, file_state, error)
     check_posix_string_wrappers(clean_lines, line_number, file_state, error)
+    check_legacy_cstring_pointer_with_length(clean_lines, line_number, file_state, error)
     check_log_string_conversions(clean_lines, line_number, file_state, error)
     check_auto_with_adopt(clean_lines, line_number, file_state, error)
     check_adopt_of_dynamic_cast(clean_lines, line_number, file_state, error)
@@ -5714,6 +5750,7 @@ class CppChecker(object):
         'runtime/invalid_increment',
         'runtime/ismainthread',
         'runtime/leaky_pattern',
+        'runtime/legacy_cstring_pointer_with_length',
         'runtime/lock_guard',
         'runtime/log',
         'runtime/log_string_conversion',

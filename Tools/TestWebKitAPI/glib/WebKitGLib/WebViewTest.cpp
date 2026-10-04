@@ -23,6 +23,7 @@
 
 #include <WebKitWebViewInternal.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GLibExtras.h>
 
 bool WebViewTest::shouldInitializeWebViewInConstructor = true;
 bool WebViewTest::shouldCreateEphemeralWebView = false;
@@ -485,7 +486,7 @@ bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName,
         static const char* emptyHTML = "<html><body></body></html>";
         loadHtml(contents ? contents : emptyHTML, "webprocess://test");
     } else {
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(contents, strlen(contents)));
+        GRefPtr bytes = gBytesNewStatic(unsafeSpan(contents));
         loadBytes(bytes.get(), contentType, nullptr, "webprocess://test");
     }
     waitUntilLoadFinished();

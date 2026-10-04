@@ -30,6 +30,7 @@
 #include <WebCore/platform/graphics/Icon.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
@@ -43,7 +44,7 @@ std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(
         return makeUnexpected(dataResult.error());
 
     Ref imageData = dataResult.value();
-    auto gimageBytes = adoptGRef(g_bytes_new(imageData->span().data(), imageData->size()));
+    GRefPtr gimageBytes = gBytesNew(imageData->span());
 
     // FIXME: We don't have a way to scale the image on WPE, as that would require being able to
     // have some sort of pixel buffer that allows for  scaling an image

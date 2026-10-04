@@ -71,13 +71,12 @@ static GBytes* webkitDirectoryInputStreamCreateHeader(WebKitDirectoryInputStream
     return g_bytes_new_with_free_func(header, strlen(header), g_free, header);
 }
 
-static GBytes* webkitDirectoryInputStreamCreateFooter(WebKitDirectoryInputStream *stream)
+static GRefPtr<GBytes> webkitDirectoryInputStreamCreateFooter(WebKitDirectoryInputStream *stream)
 {
-    static const char* footer = "</table></body></html>";
-    return g_bytes_new_static(footer, strlen(footer));
+    return gBytesNewStatic("</table></body></html>"_span);
 }
 
-static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *stream, GFileInfo* info)
+static GRefPtr<GBytes> webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *stream, GFileInfo* info)
 {
     if (!g_file_info_get_name(info))
         return nullptr;
@@ -89,7 +88,7 @@ static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *s
             return nullptr;
     }
 
-    GUniquePtr<char> markupName(g_markup_escape_text(name, -1));
+    auto markupName = gMarkupEscapeText(UTF8CStringView::unsafeFromUTF8(name));
     GUniquePtr<char> escapedName(g_uri_escape_string(name, nullptr, FALSE));
     auto path = gBuildFilename(stream->priv->uri, escapedName.get());
     GUniquePtr<char> formattedSize(g_file_info_get_file_type(info) == G_FILE_TYPE_REGULAR ? g_format_size(g_file_info_get_size(info)) : nullptr);
@@ -104,15 +103,15 @@ static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *s
         "<td align=\"right\" sortable-data=\"%" G_GOFFSET_FORMAT "\">%s</td>"
         "<td align=\"right\" sortable-data=\"%" G_GINT64_FORMAT "\">%s&ensp;%s</td>\n"
         "</tr>",
-        formattedName.get(), path.utf8(), markupName.get(), g_file_info_get_size(info),
+        formattedName.get(), path.utf8(), markupName.utf8(), g_file_info_get_size(info),
         formattedSize ? formattedSize.get() : "", g_date_time_to_unix(modificationTime.get()), formattedTime.get(), formattedDate.get());
-    return g_bytes_new_with_free_func(row, strlen(row), g_free, row);
+    return adoptGRef(g_bytes_new_with_free_func(row, strlen(row), g_free, row));
 }
 IGNORE_CLANG_WARNINGS_END
 
-static GBytes* webkitDirectoryInputStreamReadNextFile(WebKitDirectoryInputStream* stream, GCancellable* cancellable, GError** error)
+static GRefPtr<GBytes> webkitDirectoryInputStreamReadNextFile(WebKitDirectoryInputStream* stream, GCancellable* cancellable, GError** error)
 {
-    GBytes* buffer = nullptr;
+    GRefPtr<GBytes> buffer;
     do {
         GError* fileError = nullptr;
         GRefPtr<GFileInfo> info = adoptGRef(g_file_enumerator_next_file(stream->priv->enumerator.get(), cancellable, &fileError));
@@ -142,7 +141,7 @@ static gssize webkitDirectoryInputStreamRead(GInputStream* input, void* buffer, 
     auto destinationSpan = unsafeMakeSpan(static_cast<uint8_t*>(buffer), count);
     while (totalBytesRead < count) {
         if (!stream->priv->buffer) {
-            stream->priv->buffer = adoptGRef(webkitDirectoryInputStreamReadNextFile(stream, cancellable, error));
+            stream->priv->buffer = webkitDirectoryInputStreamReadNextFile(stream, cancellable, error);
             if (!stream->priv->buffer) {
                 if (totalBytesRead)
                     g_clear_error(error);

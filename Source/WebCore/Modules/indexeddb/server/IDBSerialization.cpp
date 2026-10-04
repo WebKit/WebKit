@@ -34,6 +34,7 @@
 
 #if USE(GLIB)
 #include <glib.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -110,7 +111,7 @@ static bool NODELETE isLegacySerializedIDBKeyData(std::span<const uint8_t> data)
         return true;
 #elif USE(GLIB)
     // KeyedEncoderGLib uses a GVariant dictionary, so check if the given data is a valid GVariant dictionary.
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
+    GRefPtr bytes = gBytesNew(data);
     GRefPtr<GVariant> variant = g_variant_new_from_bytes(G_VARIANT_TYPE("a{sv}"), bytes.get(), FALSE);
     return g_variant_is_normal_form(variant.get());
 #else

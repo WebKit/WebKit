@@ -258,7 +258,8 @@ void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPos
     auto selectionPositionUTF8 = cursorPositionUTF8;
     if (cursorPosition != selectionPosition)
         selectionPositionUTF8 = selectionPosition != text.length() ? StringView(text).left(selectionPosition).utf8().length() : textUTF8.length();
-    webkit_input_method_context_notify_surrounding(m_context.get(), textUTF8.legacyCStringPointer(), textUTF8.length(), cursorPositionUTF8, selectionPositionUTF8);
+    auto textCharacters = byteCast<char>(textUTF8.span());
+    webkit_input_method_context_notify_surrounding(m_context.get(), textCharacters.data(), textCharacters.size(), cursorPositionUTF8, selectionPositionUTF8);
 }
 
 void InputMethodFilter::preeditStarted()

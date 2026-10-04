@@ -22,6 +22,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <cstdarg>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -614,7 +615,7 @@ static WebKitUserContentFilter* getUserContentFilter(WebViewTest* test)
     };
     Data data { test->m_mainLoop, nullptr, };
 
-    GRefPtr<GBytes> source = adoptGRef(g_bytes_new_static(kJSONFilter, strlen(kJSONFilter)));
+    GRefPtr source = gBytesNewStatic(unsafeSpan(kJSONFilter));
     webkit_user_content_filter_store_save(store, "TestFilter", source.get(), nullptr, [](GObject* sourceObject, GAsyncResult* result, void* userData) {
         auto* data = static_cast<Data*>(userData);
         GUniqueOutPtr<GError> error;

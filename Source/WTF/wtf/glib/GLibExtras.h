@@ -27,6 +27,7 @@
 
 #include <gio/gio.h>
 #include <glib-object.h>
+#include <span>
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
@@ -55,6 +56,61 @@ inline const char* glibVariadicType(const GMallocString& string LIFETIME_BOUND) 
 [[nodiscard]] inline char* gStrdup(UTF8CStringView string)
 {
     return g_strdup(string.utf8());
+}
+
+template<typename T, size_t Extent>
+    requires std::is_trivially_copyable_v<T>
+GRefPtr<GBytes> gBytesNew(std::span<T, Extent> data)
+{
+    return adoptGRef(g_bytes_new(data.data(), data.size_bytes()));
+}
+
+// The data is not copied, so it must outlive the GBytes.
+template<typename T, size_t Extent>
+    requires std::is_trivially_copyable_v<T>
+GRefPtr<GBytes> gBytesNewStatic(std::span<T, Extent> data)
+{
+    return adoptGRef(g_bytes_new_static(data.data(), data.size_bytes()));
+}
+
+inline gboolean gKeyFileLoadFromData(GKeyFile* keyFile, UTF8CStringView data, GKeyFileFlags flags, GError** error)
+{
+    auto characters = byteCast<char>(data.span());
+    return g_key_file_load_from_data(keyFile, characters.empty() ? "" : characters.data(), characters.size(), flags, error);
+}
+
+inline GMallocString gMarkupEscapeText(UTF8CStringView text)
+{
+    auto characters = byteCast<char>(text.span());
+    return GMallocString::unsafeAdoptFromUTF8(g_markup_escape_text(characters.empty() ? "" : characters.data(), characters.size()));
+}
+
+// The data is not copied, so it must outlive the stream.
+template<typename T, size_t Extent>
+    requires std::is_trivially_copyable_v<T>
+void gMemoryInputStreamAddData(GMemoryInputStream* stream, std::span<T, Extent> data)
+{
+    g_memory_input_stream_add_data(stream, data.data(), data.size_bytes(), nullptr);
+}
+
+inline void gMemoryInputStreamAddData(GMemoryInputStream* stream, GMallocString&& string)
+{
+    auto length = string.lengthInBytes();
+    g_memory_input_stream_add_data(stream, string.leakUTF8(), length, g_free);
+}
+
+// The data is not copied, so it must outlive the stream.
+template<typename T, size_t Extent>
+    requires std::is_trivially_copyable_v<T>
+GRefPtr<GInputStream> gMemoryInputStreamNewFromData(std::span<T, Extent> data)
+{
+    return adoptGRef(g_memory_input_stream_new_from_data(data.data(), data.size_bytes(), nullptr));
+}
+
+inline GRefPtr<GInputStream> gMemoryInputStreamNewFromData(GMallocString&& string)
+{
+    auto length = string.lengthInBytes();
+    return adoptGRef(g_memory_input_stream_new_from_data(string.leakUTF8(), length, g_free));
 }
 
 inline GQuark gQuarkFromString(UTF8CStringView string)
@@ -119,8 +175,14 @@ GMallocString gBuildFilename(Elements&&... elements)
 } // namespace WTF
 
 using WTF::gBuildFilename;
+using WTF::gBytesNew;
+using WTF::gBytesNewStatic;
 using WTF::gDBusConnectionEmitSignal;
 using WTF::gFileNewForPath;
+using WTF::gKeyFileLoadFromData;
+using WTF::gMarkupEscapeText;
+using WTF::gMemoryInputStreamAddData;
+using WTF::gMemoryInputStreamNewFromData;
 using WTF::gObjectNew;
 using WTF::gQuarkFromString;
 using WTF::gSignalEmit;

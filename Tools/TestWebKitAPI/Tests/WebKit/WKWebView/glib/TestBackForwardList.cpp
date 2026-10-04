@@ -332,8 +332,7 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
     BackForwardListTest::checkItem(webkit_back_forward_list_get_current_item(bfList), "Page2", uriPage2, uriPage2);
     BackForwardListTest::checkItem(webkit_back_forward_list_get_nth_item(bfList, 1), "Page3", uriPage3, uriPage3);
 
-    static const char* invalidSessionData = "invalid session data";
-    data = adoptGRef(g_bytes_new_static(invalidSessionData, strlen(invalidSessionData)));
+    data = gBytesNewStatic("invalid session data"_span);
     g_assert_null(webkit_web_view_session_state_new(data.get()));
 }
 

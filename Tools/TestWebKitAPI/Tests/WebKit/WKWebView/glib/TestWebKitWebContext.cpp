@@ -162,7 +162,7 @@ public:
                 webkit_uri_scheme_request_finish(request, G_INPUT_STREAM(inputStream.get()), handler.replyLength, handler.mimeType.legacyCStringPointer());
                 webkit_uri_scheme_request_finish_error(request, error.get());
             } else if (!g_strcmp0(requestPath, "after-first-chunk")) {
-                g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.legacyCStringPointer(), handler.reply.length(), 0);
+                gMemoryInputStreamAddData(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.span());
                 webkit_uri_scheme_request_finish(request, inputStream.get(), handler.replyLength, handler.mimeType.legacyCStringPointer());
                 // We need to wait until we reach the load-committed state before calling webkit_uri_scheme_request_finish_error(),
                 // so we rely on the test using finishOnCommittedAndWaitUntilLoadFinished() to actually call it from loadCommitted().
@@ -174,12 +174,12 @@ public:
         }
 
         if (!g_strcmp0(scheme, "echo")) {
-            char* replyHTML = g_strdup_printf(handler.reply.legacyCStringPointer(), requestPath);
-            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), replyHTML, strlen(replyHTML), g_free);
+            auto replyHTML = GMallocString::unsafeAdoptFromUTF8(g_strdup_printf(handler.reply.legacyCStringPointer(), requestPath));
+            gMemoryInputStreamAddData(G_MEMORY_INPUT_STREAM(inputStream.get()), WTF::move(replyHTML));
         } else if (!g_strcmp0(scheme, "closed"))
             g_input_stream_close(inputStream.get(), 0, 0);
         else if (!handler.reply.isNull())
-            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.legacyCStringPointer(), handler.reply.length(), 0);
+            gMemoryInputStreamAddData(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.span());
 
         auto response = adoptGRef(webkit_uri_scheme_response_new(inputStream.get(), handler.replyLength));
         webkit_uri_scheme_response_set_status(response.get(), handler.statusCode, nullptr);

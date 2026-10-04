@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KeyedDecoderGlib.h"
 
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/CString.h>
 
@@ -38,7 +39,7 @@ std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> dat
 
 KeyedDecoderGlib::KeyedDecoderGlib(std::span<const uint8_t> data)
 {
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
+    GRefPtr bytes = gBytesNew(data);
     GRefPtr<GVariant> variant = g_variant_new_from_bytes(G_VARIANT_TYPE("a{sv}"), bytes.get(), TRUE);
     m_dictionaryStack.append(dictionaryFromGVariant(variant.get()));
 }

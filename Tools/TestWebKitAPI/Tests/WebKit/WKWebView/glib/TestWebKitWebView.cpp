@@ -2289,9 +2289,9 @@ static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
     webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
         [](WebKitURISchemeRequest* request, gpointer userData) {
             GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
-            const char* data = "<p>foobar!</p>";
-            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), data, strlen(data), nullptr);
-            webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(data), "text/html");
+            auto data = "<p>foobar!</p>"_span;
+            gMemoryInputStreamAddData(G_MEMORY_INPUT_STREAM(inputStream.get()), data);
+            webkit_uri_scheme_request_finish(request, inputStream.get(), data.size(), "text/html");
         }, nullptr, nullptr);
 
     char html[] = "<html><script>let foo = 0; fetch('foo://bar/baz').then(response => { foo = response.status; }).catch(err => { foo = -1; });</script></html>";
@@ -2405,9 +2405,9 @@ static void testWebViewDisableWebSecurity(WebViewTest* test, gconstpointer)
     webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
         [](WebKitURISchemeRequest* request, gpointer userData) {
             GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
-            const char* data = "<p>foobar!</p>";
-            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), data, strlen(data), nullptr);
-            webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(data), "text/html");
+            auto data = "<p>foobar!</p>"_span;
+            gMemoryInputStreamAddData(G_MEMORY_INPUT_STREAM(inputStream.get()), data);
+            webkit_uri_scheme_request_finish(request, inputStream.get(), data.size(), "text/html");
         }, nullptr, nullptr);
 
     char html[] = "<html><script>let foo = 0; fetch('foo://bar/baz').then(response => { foo = response.status; }).catch(err => { foo = -1; });</script></html>";

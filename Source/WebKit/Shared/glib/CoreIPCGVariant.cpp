@@ -29,6 +29,7 @@
 #if USE(GLIB)
 
 #include <glib.h>
+#include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -41,7 +42,7 @@ CoreIPCGVariant::CoreIPCGVariant(const GRefPtr<GVariant>& variant)
 
 CoreIPCGVariant::CoreIPCGVariant(UTF8CString&& typeString, std::span<const uint8_t> data)
     : m_typeString(WTF::move(typeString))
-    , m_data(adoptGRef(g_bytes_new(data.data(), data.size())))
+    , m_data(gBytesNew(data))
 {
 }
 
