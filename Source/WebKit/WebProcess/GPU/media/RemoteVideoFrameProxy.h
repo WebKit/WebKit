@@ -82,6 +82,11 @@ private:
     RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy&);
 
     Ref<VideoFrame> clone() final;
+#if PLATFORM(COCOA)
+    Ref<PixelBufferPromise> getPixelBuffer() const final;
+    using PixelBufferCallback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
+    void waitForPixelBuffer(PixelBufferCallback&&) const;
+#endif
 
     static inline Seconds defaultTimeout = 10_s;
 
@@ -94,7 +99,9 @@ private:
     mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #if PLATFORM(COCOA)
     mutable Lock m_pixelBufferLock;
-    mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer WTF_GUARDED_BY_LOCK(m_pixelBufferLock);
+    mutable PixelBufferCallback m_pixelBufferCallback WTF_GUARDED_BY_LOCK(m_pixelBufferLock);
+    mutable RefPtr<PixelBufferPromise> m_pixelBufferPromise WTF_GUARDED_BY_LOCK(m_pixelBufferLock);
 #endif
 };
 

@@ -113,35 +113,104 @@ uint32_t RemoteVideoFrameProxy::pixelFormat() const
 }
 
 #if PLATFORM(COCOA)
+Ref<VideoFrame::PixelBufferPromise> RemoteVideoFrameProxy::getPixelBuffer() const
+{
+    auto [promise, producer] = [&]() -> std::pair<Ref<PixelBufferPromise>, std::unique_ptr<PixelBufferPromise::Producer>> {
+        Locker lock(m_pixelBufferLock);
+        if (m_pixelBufferPromise)
+            return { *m_pixelBufferPromise, { } };
+
+        auto producer = makeUnique<PixelBufferPromise::Producer>();
+        Ref promise = producer->promise();
+        m_pixelBufferPromise = promise.get();
+        return { WTF::move(promise), WTF::move(producer) };
+    }();
+
+    if (producer) {
+        waitForPixelBuffer([producer = WTF::move(producer)](auto&& result) mutable {
+            producer->resolve(WTF::move(result));
+        });
+    }
+
+    return promise;
+}
+
+void RemoteVideoFrameProxy::waitForPixelBuffer(PixelBufferCallback&& pixelBufferCallback) const
+{
+    if (m_baseVideoFrame)
+        return m_baseVideoFrame->waitForPixelBuffer(WTF::move(pixelBufferCallback));
+
+    auto videoFrameObjectHeapProxy = [&] -> RefPtr<RemoteVideoFrameObjectHeapProxy> {
+        Locker lock(m_pixelBufferLock);
+        if (m_pixelBufferCallback) {
+            m_pixelBufferCallback = [newCallback = WTF::move(pixelBufferCallback), oldCallback = std::exchange(m_pixelBufferCallback, { })](auto&& result) {
+                auto copy = result;
+                oldCallback(WTF::move(result));
+                newCallback(WTF::move(copy));
+            };
+            return nullptr;
+        }
+
+        if (m_pixelBuffer)
+            return nullptr;
+
+        if (!m_videoFrameObjectHeapProxy)
+            return nullptr;
+
+        m_pixelBufferCallback = WTF::move(pixelBufferCallback);
+        return std::exchange(m_videoFrameObjectHeapProxy, nullptr);
+    }();
+
+    if (!videoFrameObjectHeapProxy) {
+        if (pixelBufferCallback) {
+            RetainPtr<CVPixelBufferRef> result = [&] {
+                Locker lock(m_pixelBufferLock);
+                // FIXME: Some code paths do not like empty pixel buffers.
+                if (!m_pixelBuffer)
+                    m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
+                return m_pixelBuffer;
+            }();
+            pixelBufferCallback(WTF::move(result));
+        }
+        return;
+    }
+
+    bool canUseIOSurface = !WebProcess::singleton().shouldUseRemoteRenderingForWebGL();
+    videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [protectedThis = Ref { *this }](auto pixelBuffer) {
+        PixelBufferCallback callback;
+        {
+            Locker lock(protectedThis->m_pixelBufferLock);
+            protectedThis->m_pixelBuffer = WTF::move(pixelBuffer);
+            callback = std::exchange(protectedThis->m_pixelBufferCallback, { });
+        }
+        if (callback)
+            callback(protectedThis->pixelBuffer());
+    });
+}
+
 CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 {
     if (m_baseVideoFrame)
         return m_baseVideoFrame->pixelBuffer();
 
-    Locker lock(m_pixelBufferLock);
-    if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
-        auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
-
-        bool canSendSync = isMainRunLoop(); // FIXME: we should be able to sendSync from other threads too.
-        bool canUseIOSurface = !WebProcess::singleton().shouldUseRemoteRenderingForWebGL();
-        if (!canUseIOSurface || !canSendSync) {
-            Ref protectedThis { *this };
-            BinarySemaphore semaphore;
-            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
-                protectedThis->m_pixelBuffer = WTF::move(pixelBuffer);
-                semaphore.signal();
-            });
-            semaphore.wait();
-        } else {
-            auto sendResult = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), 0, defaultTimeout);
-            if (sendResult.succeeded())
-                std::tie(m_pixelBuffer) = sendResult.takeReply();
-        }
+    {
+        Locker lock(m_pixelBufferLock);
+        if (m_pixelBuffer)
+            return m_pixelBuffer;
     }
+
+    // FIXME: We should try to never hit that code path once libwebrtc does not directly implement some encoders.
+    BinarySemaphore semaphore;
+    waitForPixelBuffer([&semaphore](auto&&) {
+        semaphore.signal();
+    });
+    semaphore.wait();
+
+    Locker lock(m_pixelBufferLock);
     // FIXME: Some code paths do not like empty pixel buffers.
     if (!m_pixelBuffer)
         m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
-    return m_pixelBuffer.get();
+    return m_pixelBuffer;
 }
 #endif
 
