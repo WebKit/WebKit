@@ -11,7 +11,7 @@ description("A select with text-align pointing toward the chevron should still h
 
 function getButtonComputedStyle(select) {
     const shadow = internals.shadowRoot(select);
-    const button = shadow.querySelector("slot[name=buttonSlot]").firstElementChild;
+    const button = shadow.querySelector("slot[name=buttonSlot] + div");
     return window.getComputedStyle(button);
 }
 

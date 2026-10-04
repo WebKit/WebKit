@@ -32,8 +32,10 @@
 #include "ElementInlines.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSelectedContentElement.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "PlatformRenderTheme.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -76,24 +78,41 @@ void RenderMenuList::styleDidChange(Style::Difference diff, const Style::Compute
     }
 }
 
+static bool hasSelectedContent(ContainerNode& button)
+{
+    for (RefPtr<Node> node = button.firstChild(); node; node = NodeTraversal::next(*node, &button)) {
+        if (is<HTMLSelectedContentElement>(*node))
+            return true;
+    }
+    return false;
+}
+
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    Ref protectedSelect = selectElement();
-    const auto& listItems = protectedSelect->listItems();
-    int size = listItems.size();
+    Ref select = selectElement();
 
-    for (int i = 0; i < size; ++i) {
-        RefPtr option = dynamicDowncast<HTMLOptionElement>(listItems[i].get());
-        if (!option)
-            continue;
+    auto measure = [&](const String& text) {
+        auto transformed = applyTextTransform(style(), text);
+        if (transformed.isEmpty())
+            return;
+        CheckedRef font = style().fontCascade();
+        auto run = RenderBlock::constructTextRun(transformed, style());
+        maxOptionWidth = std::max(maxOptionWidth, font->width(run));
+    };
 
-        String text = option->textIndentedToRespectGroupLabel();
-        text = applyTextTransform(style(), text);
-        if (!text.isEmpty()) {
-            CheckedRef font = style().fontCascade();
-            TextRun run = RenderBlock::constructTextRun(text, style());
-            maxOptionWidth = std::max(maxOptionWidth, font->width(run));
+    if (RefPtr button = select->buttonElement()) {
+        measure(select->buttonLabelText(""_s));
+        if (hasSelectedContent(*button)) {
+            for (auto& item : select->listItems()) {
+                if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get()))
+                    measure(select->buttonLabelText(option->textIndentedToRespectGroupLabel()));
+            }
+        }
+    } else {
+        for (auto& item : select->listItems()) {
+            if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get()))
+                measure(option->textIndentedToRespectGroupLabel());
         }
     }
 
