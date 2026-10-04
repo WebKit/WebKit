@@ -40,7 +40,7 @@ PrimitiveData::PrimitiveData(uint8_t opaqueType, UnevaluatedCalculationBase&& va
     : m_opaqueType { opaqueType }
     , m_kind { PrimitiveDataKind::Calculation }
 {
-    m_calculationValueHandle = ValueHandleMap<Calculation::Value>::singleton().insert(value.leakRef());
+    m_calculationValueHandle = ValueHandleMap<Calculation::Value>::singleton().insert(adoptRef(value.leakRef()));
 }
 
 PrimitiveData::PrimitiveData(uint8_t opaqueType, const UnevaluatedCalculationBase& value)
@@ -54,7 +54,7 @@ PrimitiveData::PrimitiveData(uint8_t opaqueType, UnevaluatedCalcSize&& value)
     : m_opaqueType { opaqueType }
     , m_kind { PrimitiveDataKind::CalcSize }
 {
-    m_calculationValueHandle = ValueHandleMap<CalcSizeValue>::singleton().insert(value.leakRef());
+    m_calculationValueHandle = ValueHandleMap<CalcSizeValue>::singleton().insert(adoptRef(value.leakRef()));
 }
 
 PrimitiveData::PrimitiveData(uint8_t opaqueType, const UnevaluatedCalcSize& value)
