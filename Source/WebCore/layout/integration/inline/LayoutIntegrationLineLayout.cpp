@@ -630,7 +630,8 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
 
-    auto didDiscardContent = layoutResult && layoutResult->lineClamp.didDiscardContent;
+    // No layout result with the line-clamp budget used up means all the inline content was discarded.
+    auto didDiscardContent = layoutResult ? layoutResult->lineClamp.didDiscardContent : inlineFormattingContext.formattingUtils().shouldDiscardRemainingContentInBlockDirection();
     auto repaintRect = constructContent(inlineFormattingContext.layoutState(), WTF::move(layoutResult));
 
     setExcludedMarkerPositions(excludedMarkers);
