@@ -131,6 +131,10 @@ class CIContext(UploadCallbackContext):
             if 'link' in details:
                 urls['build'] = details['link']
 
+            if details:
+                # Cast to a list to keep the upload's order since jsonify() sorts keys by name
+                urls['details'] = list(details.items())
+
             for key in details.keys():
                 if details[key] is None:
                     del details[key]

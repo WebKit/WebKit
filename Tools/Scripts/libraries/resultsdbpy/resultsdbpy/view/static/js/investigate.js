@@ -24,13 +24,14 @@
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {DOM, REF} from '/library/js/Ref.js';
 import {CommitBank} from '/assets/js/commit.js';
-import {queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} from '/assets/js/common.js';
+import {deepCompare, escapeHTML, queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js'
 import {Expectations} from '/assets/js/expectations.js';
 import {Failures} from '/assets/js/failures.js';
 import {TypeForSuite} from '/assets/js/suites.js';
 
 function commitsForUuid(uuid) {
+    const branch = queryToParams(document.URL.split('?')[1]).branch;
     return `Commits: ${CommitBank.commitsDuring(uuid).map((commit) => {
             const params = {
                 branch: commit.branch ? [commit.branch] : branch,
@@ -56,12 +57,64 @@ function parametersForInstance(suite, data)
     return paramsToQuery(buildParams);
 }
 
+// Kept off the run: a test's run carries every key uploaded for that test, so an upload could preset them
+const linksForRun = new WeakMap();
+const linksRequestedFor = new WeakSet();
+
+function isLinkKey(key)
+{
+    return key.trim().toLowerCase().endsWith('link');
+}
+
+function isLegacyBuildLinkKey(key)
+{
+    return key.trim().toLowerCase() === 'link';
+}
+
+function labelForLinkKey(key)
+{
+    const words = key.trim().replace(/link$/i, '').split(/[\s_]+/).filter(word => word);
+    return words.map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
+function isWebURL(value)
+{
+    return typeof value === 'string' && (value.startsWith('https://') || value.startsWith('http://'));
+}
+
+function linksInDetails(details)
+{
+    const linkPairs = details.filter(([key]) => isLinkKey(key));
+    const links = linkPairs.length === 1
+        ? linkPairs.map(([, url]) => ({label: 'Build', url}))
+        : linkPairs.filter(([key]) => !isLegacyBuildLinkKey(key)).map(([key, url]) => ({label: labelForLinkKey(key), url}));
+    return links.filter(link => link.label && isWebURL(link.url));
+}
+
+function linksAllRowsAgreeOn(urlsByConfiguration)
+{
+    const rows = urlsByConfiguration.flatMap(pair => pair.urls);
+    const linksPerRow = rows.map(row => linksInDetails(row.details || [])).filter(links => links.length);
+    if (!linksPerRow.length || !linksPerRow.every(links => deepCompare(links, linksPerRow[0])))
+        return [];
+    return linksPerRow[0];
+}
+
+function anchorFor(link)
+{
+    return `<a href="${escapeHTML(link.url)}" target="_blank">${escapeHTML(link.label)}</a>`;
+}
+
 function testRunLink(suite, data)
 {
     if (!data.start_time)
         return '';
+    const startTime = new Date(data.start_time * 1000).toLocaleString();
+    const [firstLink, ...otherLinks] = linksForRun.get(data) || [];
+    if (firstLink)
+        return [`${anchorFor(firstLink)} @ ${startTime}`, ...otherLinks.map(anchorFor)].join('<br>');
     const typ = TypeForSuite(suite);
-    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">${typ.runDescription}</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
+    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">${typ.runDescription}</a> @ ${startTime}`;
 }
 
 function archiveLink(suite, data)
@@ -386,6 +439,21 @@ class _InvestigateDrawer {
             this.select(this.selected);
         });
     }
+    fetchLinks(datum) {
+        if (!datum.start_time || linksRequestedFor.has(datum))
+            return;
+        linksRequestedFor.add(datum);
+        fetch(`api/urls?${parametersForInstance(this.suite, datum)}`)
+            .then(response => response.json())
+            .then(linksAllRowsAgreeOn)
+            .catch(() => [])
+            .then(links => {
+                if (!links.length)
+                    return;
+                linksForRun.set(datum, links);
+                this.select(this.selected);
+            });
+    }
     collapse() {
         if (!this.isRendered())
             return;
@@ -426,12 +494,11 @@ class _InvestigateDrawer {
 
         if (this.agregate && this.data.length > 1 && !this.selected)
             this.content.setState(contentForAgregateData(this.suite, this.agregate, this.data, this.willFilterExpected));
-        else
-            this.content.setState(contentForData(
-                this.suite,
-                this.data[this.agregate && this.data.length > 1 ? this.selected - 1 : this.selected],
-                this.willFilterExpected,
-            ));
+        else {
+            const datum = this.data[this.agregate && this.data.length > 1 ? this.selected - 1 : this.selected];
+            this.fetchLinks(datum);
+            this.content.setState(contentForData(this.suite, datum, this.willFilterExpected));
+        }
     }
 }
 

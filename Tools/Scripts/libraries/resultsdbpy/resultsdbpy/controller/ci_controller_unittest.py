@@ -113,6 +113,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual(response.json()[0]['urls'][0]['build'], 'https://build.webkit.org/#/builders/5/builds/3')
         self.assertEqual(response.json()[0]['urls'][0]['queue'], 'https://build.webkit.org/#/builders/5')
         self.assertEqual(response.json()[0]['urls'][0]['worker'], 'https://build.webkit.org/#/workers/4')
+        self.assertEqual([key for key, _ in response.json()[0]['urls'][0]['details']], ['buildbot-master', 'builder-name', 'build-number', 'buildbot-worker'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
