@@ -6670,6 +6670,11 @@ webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-two-shapes-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-outline-double.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-video-overflow.html [ ImageOnlyFailure Pass ]
+
+# This test still uses the superseded slash-separated corner shorthand grammar. The
+# rewrite in https://chromium-review.googlesource.com/c/chromium/src/+/8498274 has not
+# been exported to web-platform-tests yet.
+webkit.org/b/326108 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shorthand-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-clips-background.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-collapsed-shape-clips-background.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-geometry-box.html [ ImageOnlyFailure ]

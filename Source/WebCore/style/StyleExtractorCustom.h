@@ -1743,9 +1743,9 @@ inline void extractCoalescingQuadShorthandSerialization(ExtractorState& state, S
 
 // MARK: - Corner / corner-* shorthand extractors
 //
-// Each "corner" output is `<border-radius-corner> <corner-shape>` (or `normal`
-// when the radius is 0px and the shape is round), per drafts.csswg.org/css-borders-4.
-// Pair and quad shorthands emit slash-separated corners with 4->1 / 2->1 collapsing.
+// The corner shorthands compose the border-radius and corner-shape
+// serializations, omitting a component that is at its initial value.
+// https://drafts.csswg.org/css-borders-4/#corner-shorthands
 
 inline bool isRoundCornerShapeValue(const CSSValue& shape)
 {
@@ -1760,97 +1760,113 @@ inline bool isRoundCornerShapeValue(const CSSValue& shape)
     return parameter && parameter->isNumber() && parameter->isOne().value_or(false);
 }
 
-inline bool isCornerNormalValue(const CSSValue* radius, const CSSValue* shape)
+// Only a zero length is the initial radius. A zero percentage is kept in the
+// computed value and must still be serialized.
+inline bool isZeroCornerRadiusValue(const CSSValue& radius)
 {
     RefPtr pair = dynamicDowncast<CSSValuePair>(radius);
-    if (!pair || !shape)
+    if (!pair)
         return false;
-    auto isZero = [](const CSSValue& value) {
+    auto isZeroLength = [](const CSSValue& value) {
         RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value);
-        return primitive && (primitive->isLength() || primitive->isPercentage()) && primitive->isZero().value_or(false);
+        return primitive && primitive->isLength() && primitive->isZero().value_or(false);
     };
-    if (!isZero(pair->first()) || !isZero(pair->second()))
-        return false;
-    return isRoundCornerShapeValue(*shape);
+    return isZeroLength(pair->first()) && isZeroLength(pair->second());
 }
 
-inline RefPtr<CSSValue> buildCornerValue(RefPtr<CSSValue> radius, RefPtr<CSSValue> shape)
+// Drops trailing values that the corner copy rules would reconstruct.
+inline unsigned lastCornerIndexToSerialize(std::span<const RefPtr<CSSValue>> values)
 {
-    if (!radius || !shape)
-        return nullptr;
-    if (isCornerNormalValue(radius.get(), shape.get()))
-        return CSSKeywordValue::create(CSSValueNormal);
-    return CSSValuePair::create(radius.releaseNonNull(), shape.releaseNonNull());
+    unsigned lastIndex = values.size() - 1;
+    while (lastIndex && compareCSSValuePtr(values[lastIndex], values[lastIndex == 3 ? 1 : 0]))
+        --lastIndex;
+    return lastIndex;
 }
 
-inline RefPtr<CSSValue> extractCornerSingleShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
+inline RefPtr<CSSValue> cornerRadiiValue(std::span<const RefPtr<CSSValue>> radii)
 {
-    auto longhands = shorthand.properties();
-    auto radius = ExtractorGenerated::extractValue(state, longhands[0]);
-    auto shape = ExtractorGenerated::extractValue(state, longhands[1]);
-    return buildCornerValue(WTF::move(radius), WTF::move(shape));
-}
+    if (radii.size() == 1)
+        return radii[0];
 
-inline void extractCornerSingleShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
-{
-    if (auto value = extractCornerSingleShorthand(state, shorthand))
-        builder.append(value->cssText(context));
-}
-
-inline RefPtr<CSSValue> extractCornerPairShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
-{
-    auto longhands = shorthand.properties();
-    ASSERT(longhands.size() == 4);
-    auto first = buildCornerValue(ExtractorGenerated::extractValue(state, longhands[0]), ExtractorGenerated::extractValue(state, longhands[1]));
-    auto second = buildCornerValue(ExtractorGenerated::extractValue(state, longhands[2]), ExtractorGenerated::extractValue(state, longhands[3]));
-    if (!first || !second)
-        return nullptr;
-
-    CSSValueListBuilder list;
-    bool collapse = compareCSSValuePtr(first, second);
-    list.append(first.releaseNonNull());
-    if (!collapse)
-        list.append(second.releaseNonNull());
-    return CSSValueList::createSlashSeparated(WTF::move(list));
-}
-
-inline void extractCornerPairShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
-{
-    if (auto value = extractCornerPairShorthand(state, shorthand))
-        builder.append(value->cssText(context));
-}
-
-inline RefPtr<CSSValue> extractCornerQuadShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
-{
-    auto longhands = shorthand.properties();
-    ASSERT(longhands.size() == 8);
-    std::array<RefPtr<CSSValue>, 4> corners;
-    for (size_t i = 0; i < 4; ++i) {
-        corners[i] = buildCornerValue(ExtractorGenerated::extractValue(state, longhands[i * 2]), ExtractorGenerated::extractValue(state, longhands[i * 2 + 1]));
-        if (!corners[i])
+    CSSValueListBuilder horizontal;
+    CSSValueListBuilder vertical;
+    Vector<RefPtr<CSSValue>> horizontalValues;
+    Vector<RefPtr<CSSValue>> verticalValues;
+    bool serializeVertical = false;
+    for (auto& radius : radii) {
+        RefPtr pair = dynamicDowncast<CSSValuePair>(radius.get());
+        if (!pair)
             return nullptr;
+        RefPtr first = &pair->first();
+        RefPtr second = &pair->second();
+        if (!compareCSSValuePtr(first, second))
+            serializeVertical = true;
+        horizontalValues.append(WTF::move(first));
+        verticalValues.append(WTF::move(second));
     }
 
-    // Mirror Chromium logic: collapse 4 -> 3 -> 2 -> 1.
-    // corners are [TL, TR, BR, BL].
-    bool showBL = !compareCSSValuePtr(corners[1], corners[3]);
-    bool showBR = showBL || !compareCSSValuePtr(corners[0], corners[2]);
-    bool showTR = showBR || !compareCSSValuePtr(corners[0], corners[1]);
-
-    CSSValueListBuilder list;
-    list.append(corners[0].releaseNonNull());
-    if (showTR)
-        list.append(corners[1].releaseNonNull());
-    if (showBR)
-        list.append(corners[2].releaseNonNull());
-    if (showBL)
-        list.append(corners[3].releaseNonNull());
-    return CSSValueList::createSlashSeparated(WTF::move(list));
+    auto appendAxis = [&](CSSValueListBuilder& list, const Vector<RefPtr<CSSValue>>& values) {
+        auto lastIndex = lastCornerIndexToSerialize(values.span());
+        for (unsigned i = 0; i <= lastIndex; ++i)
+            list.append(*values[i]);
+    };
+    appendAxis(horizontal, horizontalValues);
+    if (!serializeVertical)
+        return CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(horizontal)));
+    appendAxis(vertical, verticalValues);
+    return CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(horizontal)), CSSValueList::createSpaceSeparated(WTF::move(vertical)));
 }
 
-inline void extractCornerQuadShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
+inline RefPtr<CSSValue> cornerShapesValue(std::span<const RefPtr<CSSValue>> shapes)
 {
-    if (auto value = extractCornerQuadShorthand(state, shorthand))
+    if (shapes.size() == 1)
+        return shapes[0];
+
+    CSSValueListBuilder list;
+    auto lastIndex = lastCornerIndexToSerialize(shapes);
+    for (unsigned i = 0; i <= lastIndex; ++i)
+        list.append(*shapes[i]);
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
+}
+
+inline RefPtr<CSSValue> extractCornerRadiusAndShapeShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
+{
+    auto longhands = shorthand.properties();
+    ASSERT(!(longhands.size() % 2));
+    auto count = longhands.size() / 2;
+
+    Vector<RefPtr<CSSValue>> radii;
+    Vector<RefPtr<CSSValue>> shapes;
+    bool radiusIsInitial = true;
+    bool shapeIsInitial = true;
+    for (size_t i = 0; i < count; ++i) {
+        auto radius = ExtractorGenerated::extractValue(state, longhands[i]);
+        auto shape = ExtractorGenerated::extractValue(state, longhands[count + i]);
+        if (!radius || !shape)
+            return nullptr;
+        if (!isZeroCornerRadiusValue(*radius))
+            radiusIsInitial = false;
+        if (!isRoundCornerShapeValue(*shape))
+            shapeIsInitial = false;
+        radii.append(WTF::move(radius));
+        shapes.append(WTF::move(shape));
+    }
+
+    auto radiusValue = cornerRadiiValue(radii.span());
+    auto shapeValue = cornerShapesValue(shapes.span());
+    if (!radiusValue || !shapeValue)
+        return nullptr;
+
+    if (shapeIsInitial)
+        return radiusValue;
+    if (radiusIsInitial)
+        return shapeValue;
+    return CSSValueList::createSpaceSeparated(radiusValue.releaseNonNull(), shapeValue.releaseNonNull());
+}
+
+inline void extractCornerRadiusAndShapeShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
+{
+    if (auto value = extractCornerRadiusAndShapeShorthand(state, shorthand))
         builder.append(value->cssText(context));
 }
 

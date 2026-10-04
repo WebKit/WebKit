@@ -1,5 +1,5 @@
 
-PASS corner-block-start in horizontal-tb ltr
-PASS corner-block-start in horizontal-tb rtl
-PASS corner-block-start in vertical-rl ltr
+FAIL corner-block-start in horizontal-tb ltr assert_equals: expected "10px round / 20px bevel" but got ""
+FAIL corner-block-start in horizontal-tb rtl assert_equals: expected "10px round / 20px bevel" but got ""
+FAIL corner-block-start in vertical-rl ltr assert_equals: expected "10px round / 20px bevel" but got ""
 

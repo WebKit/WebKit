@@ -4742,15 +4742,15 @@
                     "border-top-left-radius",
                     "corner-top-left-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-top-left-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-top-right": {
@@ -4759,15 +4759,15 @@
                     "border-top-right-radius",
                     "corner-top-right-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-top-right-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-bottom-right": {
@@ -4776,15 +4776,15 @@
                     "border-bottom-right-radius",
                     "corner-bottom-right-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-bottom-right-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-bottom-left": {
@@ -4793,15 +4793,15 @@
                     "border-bottom-left-radius",
                     "corner-bottom-left-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-bottom-left-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-start-start": {
@@ -4810,15 +4810,15 @@
                     "border-start-start-radius",
                     "corner-start-start-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-start-start-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-start-end": {
@@ -4827,15 +4827,15 @@
                     "border-start-end-radius",
                     "corner-start-end-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-start-end-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-end-start": {
@@ -4844,15 +4844,15 @@
                     "border-end-start-radius",
                     "corner-end-start-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-end-start-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-end-end": {
@@ -4861,170 +4861,190 @@
                     "border-end-end-radius",
                     "corner-end-end-shape"
                 ],
-                "parser-function": "consumeCornerSingleShorthand",
-                "shorthand-style-extractor-pattern": "CornerSingle",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "normal | [ <'border-end-end-radius'> ]",
+                "parser-grammar-unused": "<'border-top-left-radius'> || <'corner-top-left-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-top": {
             "codegen-properties": {
                 "longhands": [
-                    "border-top-left-radius", "corner-top-left-shape",
-                    "border-top-right-radius", "corner-top-right-shape"
+                    "border-top-left-radius",
+                    "border-top-right-radius",
+                    "corner-top-left-shape",
+                    "corner-top-right-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-right": {
             "codegen-properties": {
                 "longhands": [
-                    "border-top-right-radius", "corner-top-right-shape",
-                    "border-bottom-right-radius", "corner-bottom-right-shape"
+                    "border-top-right-radius",
+                    "border-bottom-right-radius",
+                    "corner-top-right-shape",
+                    "corner-bottom-right-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-bottom": {
             "codegen-properties": {
                 "longhands": [
-                    "border-bottom-left-radius", "corner-bottom-left-shape",
-                    "border-bottom-right-radius", "corner-bottom-right-shape"
+                    "border-bottom-left-radius",
+                    "border-bottom-right-radius",
+                    "corner-bottom-left-shape",
+                    "corner-bottom-right-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-left": {
             "codegen-properties": {
                 "longhands": [
-                    "border-top-left-radius", "corner-top-left-shape",
-                    "border-bottom-left-radius", "corner-bottom-left-shape"
+                    "border-top-left-radius",
+                    "border-bottom-left-radius",
+                    "corner-top-left-shape",
+                    "corner-bottom-left-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-block-start": {
             "codegen-properties": {
                 "longhands": [
-                    "border-start-start-radius", "corner-start-start-shape",
-                    "border-start-end-radius", "corner-start-end-shape"
+                    "border-start-start-radius",
+                    "border-start-end-radius",
+                    "corner-start-start-shape",
+                    "corner-start-end-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-block-end": {
             "codegen-properties": {
                 "longhands": [
-                    "border-end-start-radius", "corner-end-start-shape",
-                    "border-end-end-radius", "corner-end-end-shape"
+                    "border-end-start-radius",
+                    "border-end-end-radius",
+                    "corner-end-start-shape",
+                    "corner-end-end-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-inline-start": {
             "codegen-properties": {
                 "longhands": [
-                    "border-start-start-radius", "corner-start-start-shape",
-                    "border-end-start-radius", "corner-end-start-shape"
+                    "border-start-start-radius",
+                    "border-end-start-radius",
+                    "corner-start-start-shape",
+                    "corner-end-start-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner-inline-end": {
             "codegen-properties": {
                 "longhands": [
-                    "border-start-end-radius", "corner-start-end-shape",
-                    "border-end-end-radius", "corner-end-end-shape"
+                    "border-start-end-radius",
+                    "border-end-end-radius",
+                    "corner-start-end-shape",
+                    "corner-end-end-shape"
                 ],
-                "parser-function": "consumeCornerPairShorthand",
-                "shorthand-style-extractor-pattern": "CornerPair",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-top-radius'> || <'corner-top-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "corner": {
             "codegen-properties": {
                 "longhands": [
-                    "border-top-left-radius", "corner-top-left-shape",
-                    "border-top-right-radius", "corner-top-right-shape",
-                    "border-bottom-right-radius", "corner-bottom-right-shape",
-                    "border-bottom-left-radius", "corner-bottom-left-shape"
+                    "border-top-left-radius",
+                    "border-top-right-radius",
+                    "border-bottom-right-radius",
+                    "border-bottom-left-radius",
+                    "corner-top-left-shape",
+                    "corner-top-right-shape",
+                    "corner-bottom-right-shape",
+                    "corner-bottom-left-shape"
                 ],
-                "parser-function": "consumeCornerQuadShorthand",
-                "shorthand-style-extractor-pattern": "CornerQuad",
+                "parser-function": "consumeCornerShorthand",
+                "shorthand-style-extractor-pattern": "CornerRadiusAndShape",
                 "settings-flag": "cssCornersShorthandEnabled",
-                "parser-grammar-unused": "[ normal | <length-percentage [0,inf]> ]#",
+                "parser-grammar-unused": "<'border-radius'> || <'corner-shape'>",
                 "parser-grammar-unused-reason": "Needs support for hand-written shorthand grammars."
             },
             "specification": {
                 "category": "css-borders",
-                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shorthands"
             }
         },
         "counter-increment": {
