@@ -43,8 +43,19 @@
 #define BCOMPILER_HAS_CLANG_FEATURE(x) 0
 #endif
 
+/* Also check the __SANITIZE_*__ macros, which the build defines for the Swift Clang
+   importer since it does not receive -fsanitize=. Keep in sync with WTF's Compiler.h. */
+#ifdef __SANITIZE_ADDRESS__
+#define BASAN_ENABLED 1
+#else
 #define BASAN_ENABLED BCOMPILER_HAS_CLANG_FEATURE(address_sanitizer)
+#endif
+
+#ifdef __SANITIZE_THREAD__
+#define BTSAN_ENABLED 1
+#else
 #define BTSAN_ENABLED BCOMPILER_HAS_CLANG_FEATURE(thread_sanitizer)
+#endif
 
 /* BCOMPILER_HAS_CLANG_DECLSPEC() - whether the compiler supports a Microsoft style __declspec attribute. */
 /* https://clang.llvm.org/docs/LanguageExtensions.html#has-declspec-attribute */

@@ -64,8 +64,19 @@
 #define PAS_COMPILER_HAS_CLANG_FEATURE(x) 0
 #endif
 
+/* Also check the __SANITIZE_*__ macros, which the build defines for the Swift Clang
+   importer since it does not receive -fsanitize=. Keep in sync with BCompiler.h. */
+#ifdef __SANITIZE_ADDRESS__
+#define PAS_ASAN_ENABLED 1
+#else
 #define PAS_ASAN_ENABLED PAS_COMPILER_HAS_CLANG_FEATURE(address_sanitizer)
+#endif
+
+#ifdef __SANITIZE_THREAD__
+#define PAS_TSAN_ENABLED 1
+#else
 #define PAS_TSAN_ENABLED PAS_COMPILER_HAS_CLANG_FEATURE(thread_sanitizer)
+#endif
 
 /* PAS_IGNORE_WARNINGS */
 
