@@ -67,7 +67,7 @@ list(APPEND WebKitLegacy_SOURCES
 
     cf/WebCoreSupport/WebInspectorClientCF.cpp
 
-    mac/DefaultDelegates/WebDefaultEditingDelegate.m
+    mac/DefaultDelegates/WebDefaultEditingDelegate.mm
 
     mac/Misc/WebKitErrors.mm
     mac/Misc/WebKitLogging.m
@@ -121,19 +121,19 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebNSViewExtras.mm
     mac/Misc/WebNSWindowExtras.m
 
-    mac/Panels/WebAuthenticationPanel.m
-    mac/Panels/WebPanelAuthenticationHandler.m
+    mac/Panels/WebAuthenticationPanel.mm
+    mac/Panels/WebPanelAuthenticationHandler.mm
 
-    mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
+    mac/WebCoreSupport/WebJavaScriptTextInputPanel.mm
 )
 endif ()
 
 if (WEBKIT_SDK_IS_IOS_FAMILY)
 list(APPEND WebKitLegacy_SOURCES
-    ios/DefaultDelegates/WebDefaultFormDelegate.m
-    ios/DefaultDelegates/WebDefaultFrameLoadDelegate.m
-    ios/DefaultDelegates/WebDefaultResourceLoadDelegate.m
-    ios/DefaultDelegates/WebDefaultUIKitDelegate.m
+    ios/DefaultDelegates/WebDefaultFormDelegate.mm
+    ios/DefaultDelegates/WebDefaultFrameLoadDelegate.mm
+    ios/DefaultDelegates/WebDefaultResourceLoadDelegate.mm
+    ios/DefaultDelegates/WebDefaultUIKitDelegate.mm
 
     ios/Misc/WebGeolocationCoreLocationProvider.mm
     ios/Misc/WebGeolocationProviderIOS.mm

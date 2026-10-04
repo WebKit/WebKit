@@ -26,23 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/WebDefaultEditingDelegate.h>
+#import "WebDefaultEditingDelegate.h"
 
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/WebEditingDelegate.h>
 #import <WebKitLegacy/WebEditingDelegatePrivate.h>
 #import <WebKitLegacy/WebView.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 @implementation WebDefaultEditingDelegate
 
-static WebDefaultEditingDelegate *sharedDelegate = nil;
-
 + (WebDefaultEditingDelegate *)sharedEditingDelegate
 {
-    if (!sharedDelegate) {
-        sharedDelegate = [[WebDefaultEditingDelegate alloc] init];
-    }
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultEditingDelegate>> sharedDelegate = adoptNS([[WebDefaultEditingDelegate alloc] init]);
+    return sharedDelegate.get();
 }
 
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range

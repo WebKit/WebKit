@@ -32,6 +32,7 @@
 #import <WebKitLegacy/WAKView.h>
 #endif
 #import <wtf/NakedPtr.h>
+#import <wtf/RetainPtr.h>
 
 @class WebNodeHighlightView;
 #if PLATFORM(IOS_FAMILY)
@@ -52,11 +53,11 @@ class PageInspectorController;
 #endif
 
 @interface WebNodeHighlight : NSObject {
-    NSView *_targetView;
+    RetainPtr<NSView> _targetView;
 #if !PLATFORM(IOS_FAMILY)
-    NSWindow *_highlightWindow;
+    RetainPtr<NSWindow> _highlightWindow;
 #else
-    WebHighlightLayer *_highlightLayer;
+    RetainPtr<WebHighlightLayer> _highlightLayer;
 #endif
     WebNodeHighlightView *_highlightView;
     NakedPtr<WebCore::PageInspectorController> _inspectorController;

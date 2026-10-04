@@ -156,30 +156,30 @@ constexpr auto WebBackForwardListDictionaryCurrentKey = @"current";
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    auto& list = *core(self);
-    auto entries = createNSArray(list.entries(), [] (auto& item) {
-        return [kit(protect(const_cast<WebCore::HistoryItem*>(item.ptr()))) dictionaryRepresentationIncludingChildren:NO];
+    Ref list = *core(self);
+    auto entries = createNSArray(list->entries(), [] (auto& item) {
+        return [protect(kit(protect(const_cast<WebCore::HistoryItem*>(item.ptr())))) dictionaryRepresentationIncludingChildren:NO];
     });
     return @{
         WebBackForwardListDictionaryEntriesKey: entries.get(),
-        WebBackForwardListDictionaryCurrentKey: @(list.current()),
-        WebBackForwardListDictionaryCapacityKey: @(list.capacity()),
+        WebBackForwardListDictionaryCurrentKey: @(list->current()),
+        WebBackForwardListDictionaryCapacityKey: @(list->capacity()),
     };
 }
 
 - (void)setToMatchDictionaryRepresentation:(NSDictionary *)dictionary
 {
-    auto& list = *core(self);
+    Ref list = *core(self);
 
-    list.setCapacity([[dictionary objectForKey:WebBackForwardListDictionaryCapacityKey] unsignedIntValue]);
+    list->setCapacity([[dictionary objectForKey:WebBackForwardListDictionaryCapacityKey] unsignedIntValue]);
     for (NSDictionary *itemDictionary in [dictionary objectForKey:WebBackForwardListDictionaryEntriesKey])
-        list.addItem(*core(adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:itemDictionary]).get()));
+        list->addItem(*core(adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:itemDictionary]).get()));
 
     unsigned currentIndex = [[dictionary objectForKey:WebBackForwardListDictionaryCurrentKey] unsignedIntValue];
-    size_t listSize = list.entries().size();
+    size_t listSize = list->entries().size();
     if (currentIndex >= listSize)
         currentIndex = listSize - 1;
-    list.setCurrent(currentIndex);
+    list->setCurrent(currentIndex);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

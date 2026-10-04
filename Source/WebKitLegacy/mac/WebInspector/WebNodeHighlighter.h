@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/RetainPtr.h>
+
 @class DOMNode;
 @class WebView;
 @class WebNodeHighlight;
@@ -33,7 +35,7 @@
 @interface WebNodeHighlighter : NSObject {
 @private
     WebView *_inspectedWebView;
-    WebNodeHighlight *_currentHighlight;
+    RetainPtr<WebNodeHighlight> _currentHighlight;
 }
 - (id)initWithInspectedWebView:(WebView *)webView;
 - (void)highlight;

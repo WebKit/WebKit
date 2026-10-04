@@ -1,14 +1,9 @@
-WebCoreSupport/SocketStreamHandleImplCFNet.cpp
-[ iOS ] ios/Misc/WebGeolocationProviderIOS.mm
 [ iOS ] ios/WebCoreSupport/WebGeolocationPrivate.h
-[ iOS ] ios/WebView/WebPDFViewIOS.mm
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.h
 mac/History/BackForwardList.h
 mac/History/WebBackForwardList.h
 mac/History/WebHistory.h
 mac/History/WebHistoryItem.h
 [ Mac ] mac/Panels/WebAuthenticationPanel.h
-[ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
 mac/Plugins/WebBasePluginPackage.h
 mac/Plugins/WebPluginContainerCheck.h
 mac/Plugins/WebPluginController.h
@@ -16,10 +11,8 @@ mac/Plugins/WebPluginDatabase.h
 mac/Plugins/WebPluginDatabase.mm
 mac/Plugins/WebPluginPackage.h
 mac/Storage/WebDatabaseQuotaManager.h
-[ Mac ] mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
 mac/WebInspector/WebInspector.h
 mac/WebInspector/WebNodeHighlight.h
-mac/WebInspector/WebNodeHighlightView.h
 mac/WebInspector/WebNodeHighlighter.h
 mac/WebView/WebArchive.h
 [ iOS ] mac/WebView/WebDataSource.mm

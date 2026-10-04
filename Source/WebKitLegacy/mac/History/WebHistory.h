@@ -45,13 +45,13 @@
     @constant WebHistoryAllItemsRemovedNotification Posted from removeAllItems
     @constant WebHistoryLoadedNotification Posted from loadFromURL:error:.
 */
-extern NSString *WebHistoryItemsAddedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebHistoryItemsRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebHistoryAllItemsRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebHistoryLoadedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
-extern NSString *WebHistorySavedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistoryItemsAddedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistoryItemsRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistoryAllItemsRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistoryLoadedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistorySavedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
-extern NSString *WebHistoryItemsKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistoryItemsKey WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @class WebHistory

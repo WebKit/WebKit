@@ -29,17 +29,15 @@
 
 #import "DOMRange.h"
 #import "WebUIDelegate.h"
-
-static WebDefaultUIKitDelegate *sharedDelegate = nil;
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 @implementation WebDefaultUIKitDelegate
 
 + (WebDefaultUIKitDelegate *)sharedUIKitDelegate
 {
-    if (!sharedDelegate) {
-        sharedDelegate = [[WebDefaultUIKitDelegate alloc] init];
-    }
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultUIKitDelegate>> sharedDelegate = adoptNS([[WebDefaultUIKitDelegate alloc] init]);
+    return sharedDelegate.get();
 }
 
 - (CGPoint)contentsPointForWebView:(WebView *)aWebView
@@ -59,7 +57,7 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame
 {
-    
+
 }
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
@@ -69,12 +67,12 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)webView saveStateToHistoryItem:(WebHistoryItem *)item forFrame:(WebFrame *)frame
 {
-    
+
 }
 
 - (void)webView:(WebView *)webView restoreStateFromHistoryItem:(WebHistoryItem *)item forFrame:(WebFrame *)frame force:(BOOL)force
 {
-    
+
 }
 
 - (void)webView:(WebView *)aWebView didReceiveViewportArguments:(NSDictionary *)arguments
@@ -84,12 +82,12 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)aWebView needsScrollNotifications:(NSNumber *)aNumber forFrame:(WebFrame *)aFrame
 {
-    
+
 }
 
 - (void)webView:(WebView *)aWebView didObserveDeferredContentChange:(WKContentChange)aChange forFrame:(WebFrame *)frame
 {
-    
+
 }
 
 - (void)webViewDidPreventDefaultForEvent:(WebView *)webView
@@ -103,12 +101,12 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)webView willCloseFrame:(WebFrame *)frame
 {
-    
+
 }
 
 - (void)webView:(WebView *)webView didFinishDocumentLoadForFrame:(WebFrame *)frame
 {
-    
+
 }
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -121,7 +119,7 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)webView didFirstLayoutInFrame:(WebFrame *)frame
 {
-    
+
 }
 
 - (void)webView:(WebView *)webView didFirstVisuallyNonEmptyLayoutInFrame:(WebFrame *)frame
@@ -142,7 +140,7 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 
 - (void)webViewDidReceiveMobileDocType:(WebView *)webView
 {
-    
+
 }
 
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package
@@ -242,10 +240,10 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
     return 0;
 }
 
-- (NSArray*)supportedPasteboardTypesForCurrentSelection 
-{ 
-    return nil; 
-} 
+- (NSArray*)supportedPasteboardTypesForCurrentSelection
+{
+    return nil;
+}
 
 - (CGPoint)interactionLocation
 {

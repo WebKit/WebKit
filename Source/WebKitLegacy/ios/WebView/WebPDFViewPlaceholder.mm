@@ -103,7 +103,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     NSString *_title;
     NSArray *_pageRects;
     NSArray *_pageYOrigins;
-    CGPDFDocumentRef _document;
+    RetainPtr<CGPDFDocumentRef> _document;
     __weak WebDataSource *_dataSource; // Weak to prevent cycles.
     
     __weak NSObject<WebPDFViewPlaceholderDelegate> *_delegate;
@@ -116,7 +116,6 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 @synthesize delegate = _delegate;
 @synthesize pageRects = _pageRects;
 @synthesize pageYOrigins = _pageYOrigins;
-@synthesize document = _document;
 @synthesize title = _title;
 @synthesize containerSize = _containerSize;
 
@@ -136,8 +135,6 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 - (void)setDocument:(CGPDFDocumentRef)document
 {
     @synchronized(self) {
-        CGPDFDocumentRetain(document);
-        CGPDFDocumentRelease(_document);
         _document = document;
     }
 }
@@ -154,7 +151,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 - (NSUInteger)totalPages
 {
-    return CGPDFDocumentGetNumberOfPages([self document]);
+    return CGPDFDocumentGetNumberOfPages(protect([self document]));
 }
 
 + (void)setAsPDFDocRepAndView
@@ -280,7 +277,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     if (!provider)
         return;
 
-    _document = CGPDFDocumentCreateWithProvider(provider.get());
+    _document = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
 
     [self _doPostLoadOrUnlockTasks];
 }
@@ -305,7 +302,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     if (!pdfDocumentContainsPrintScript(pdfDocument))
         return;
 
-    RetainPtr frame = [_dataSource webFrame];
+    RetainPtr frame = [protect(_dataSource) webFrame];
     CallUIDelegate([frame webView], @selector(webView:printFrameView:), [frame frameView]);
 }
 
@@ -387,7 +384,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
     // CG uses page numbers instead of page indices, so 1 based.
     for (size_t i = 1; i <= pageCount; i++) {
-        CGPDFPageRef page = CGPDFDocumentGetPage(pdfDocument, i);
+        RetainPtr page = CGPDFDocumentGetPage(pdfDocument, i);
         if (!page) {
             // So if there is a missing page, then effectively the document ends here.
             // See <rdar://problem/10428152> iOS Mail crashes when opening a PDF
@@ -449,10 +446,10 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 - (CGRect)rectForPageNumber:(NSUInteger)pageNumber
 {
     // Page number is 1-based, not 0 based.
-    if ((!pageNumber) || (pageNumber > [_pageRects count]))
+    if ((!pageNumber) || (pageNumber > [protect(_pageRects) count]))
         return CGRectNull;
 
-    return [[_pageRects objectAtIndex:pageNumber - 1] _web_CGRectValue];
+    return [[protect(_pageRects) objectAtIndex:pageNumber - 1] _web_CGRectValue];
 }
 
 - (void)simulateClickOnLinkToURL:(NSURL *)URL
@@ -485,7 +482,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     );
 
     // Call to the frame loader because this is where our security checks are made.
-    auto* frame = core([_dataSource webFrame]);
+    RefPtr frame = core([protect(_dataSource) webFrame]);
     FrameLoadRequest frameLoadRequest { *frame->document(), protect(frame->document())->securityOrigin(), { URL }, { }, InitiatedByMainFrame::Unknown };
     frameLoadRequest.setReferrerPolicy(ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTF::move(frameLoadRequest), event.ptr(), nullptr);

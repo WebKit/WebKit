@@ -28,15 +28,15 @@
 #import "WebDefaultResourceLoadDelegate.h"
 
 #import <WebKitLegacy/WebResourceLoadDelegate.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 @implementation WebDefaultResourceLoadDelegate
 
 + (WebDefaultResourceLoadDelegate *)sharedResourceLoadDelegate
 {
-    static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
-    if (!sharedDelegate)
-        sharedDelegate = [[WebDefaultResourceLoadDelegate alloc] init];
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultResourceLoadDelegate>> sharedDelegate = adoptNS([[WebDefaultResourceLoadDelegate alloc] init]);
+    return sharedDelegate.get();
 }
 
 - (id)webView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource

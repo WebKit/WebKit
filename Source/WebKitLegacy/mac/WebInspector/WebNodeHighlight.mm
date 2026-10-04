@@ -32,6 +32,7 @@
 
 #import <WebCore/PageInspectorController.h>
 #import <wtf/Assertions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebFramePrivate.h"
@@ -64,10 +65,10 @@
 
 - (void)layoutSublayers
 {
-    CGFloat documentScale = [[[_webView mainFrame] documentView] scale];
+    CGFloat documentScale = [[[protect(_webView) mainFrame] documentView] scale];
     [self setTransform:CATransform3DMakeScale(documentScale, documentScale, 1.0)];
 
-    [_view layoutSublayers:self];
+    [protect(_view) layoutSublayers:self];
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key
@@ -86,13 +87,13 @@
     if (!self)
         return nil;
 
-    _targetView = [targetView retain];
+    _targetView = targetView;
     _inspectorController = inspectorController;
 
 #if !PLATFORM(IOS_FAMILY)
     int styleMask = NSWindowStyleMaskBorderless;
     NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
-    _highlightWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+    _highlightWindow = adoptNS([[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO]);
     RetainPtr highlightWindow = _highlightWindow;
     [highlightWindow setBackgroundColor:[NSColor clearColor]];
     [highlightWindow setOpaque:NO];
@@ -105,10 +106,10 @@
     [highlightView release];
 #else
     ASSERT([_targetView isKindOfClass:[WebView class]]);
-    WebView *webView = (WebView *)targetView;
+    WebView *webView = checked_objc_cast<WebView>(targetView);
 
     _highlightView = [[WebNodeHighlightView alloc] initWithWebNodeHighlight:self];
-    _highlightLayer = [[WebHighlightLayer alloc] initWithHighlightView:_highlightView webView:webView];
+    _highlightLayer = adoptNS([[WebHighlightLayer alloc] initWithHighlightView:protect(_highlightView) webView:webView]);
     [_highlightLayer setContentsScale:[[_targetView window] screenScale]]; // HiDPI.
     [_highlightLayer setCanDrawConcurrently:NO];
 #endif
@@ -155,7 +156,7 @@
 #else
     ASSERT(_highlightLayer);
 
-    WAKWindow *window = [_targetView window];
+    RetainPtr window = [_targetView window];
     [[window hostLayer] addSublayer:_highlightLayer];
     [self setNeedsDisplay];
 #endif
@@ -194,16 +195,12 @@
     [[highlightWindow parentWindow] removeChildWindow:highlightWindow];
     [highlightWindow close];
 
-    [highlightWindow release];
     _highlightWindow = nil;
 #else
     [_highlightLayer removeFromSuperlayer];
-    [_highlightLayer release];
     _highlightLayer = nil;
 #endif
 
-    // Retaining the member just to release it would be pointless.
-    SUPPRESS_UNRETAINED_ARG [_targetView release];
     _targetView = nil;
 
     // We didn't retain _highlightView, but we do need to tell it to forget about us, so it doesn't

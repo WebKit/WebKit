@@ -27,17 +27,17 @@
 
 #import "WebDefaultFrameLoadDelegate.h"
 
-#import <WebKitLegacy/WebFrameLoadDelegatePrivate.h>
 #import "WebViewPrivate.h"
+#import <WebKitLegacy/WebFrameLoadDelegatePrivate.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 @implementation WebDefaultFrameLoadDelegate
 
 + (WebDefaultFrameLoadDelegate *)sharedFrameLoadDelegate
 {
-    static WebDefaultFrameLoadDelegate *sharedDelegate = nil;
-    if (!sharedDelegate)
-        sharedDelegate = [[WebDefaultFrameLoadDelegate alloc] init];
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultFrameLoadDelegate>> sharedDelegate = adoptNS([[WebDefaultFrameLoadDelegate alloc] init]);
+    return sharedDelegate.get();
 }
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame

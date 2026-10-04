@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-NSString *WebLocalizedStringInternal(const char* key) NS_FORMAT_ARGUMENT(1);
+NSString *WebLocalizedStringInternal(const char* key) NS_FORMAT_ARGUMENT(1) NS_RETURNS_NOT_RETAINED;
 
 #ifdef __cplusplus
 }

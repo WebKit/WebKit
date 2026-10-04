@@ -34,7 +34,7 @@
     items discarded due to the date limit or item limit. The key for the array is WebHistoryItemsKey.
 */
 // FIXME: This notification should become public API.
-extern NSString *WebHistoryItemsDiscardedWhileLoadingNotification;
+extern NSString * const WebHistoryItemsDiscardedWhileLoadingNotification;
 
 @interface WebHistory (WebPrivate)
 

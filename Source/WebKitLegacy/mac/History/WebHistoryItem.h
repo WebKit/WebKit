@@ -42,7 +42,7 @@
     either the item's title, alternate title, url strings, or last visited interval
     changes.  The userInfo will be nil.
 */
-extern NSString *WebHistoryItemChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebHistoryItemChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 /*!
     @class WebHistoryItem

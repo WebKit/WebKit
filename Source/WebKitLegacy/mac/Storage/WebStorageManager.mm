@@ -32,6 +32,7 @@
 #import "WebStorageTrackerClient.h"
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 
@@ -42,8 +43,8 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 + (WebStorageManager *)sharedWebStorageManager
 {
-    static WebStorageManager *sharedManager = [[WebStorageManager alloc] init];
-    return sharedManager;
+    static NeverDestroyed<RetainPtr<WebStorageManager>> sharedManager = adoptNS([[WebStorageManager alloc] init]);
+    return sharedManager.get();
 }
 
 - (id)init

@@ -1350,7 +1350,7 @@ static RetainPtr<CFMutableSetRef>& NODELETE allWebViewsSet()
 
 - (void)_dispatchPendingLoadRequests
 {
-    webResourceLoadScheduler().servePendingRequests();
+    webResourceLoadScheduler()->servePendingRequests();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2359,9 +2359,9 @@ static NSMutableSet *knownPluginMIMETypes()
 - (void)_setResourceLoadSchedulerSuspended:(BOOL)suspend
 {
     if (suspend)
-        webResourceLoadScheduler().suspendPendingRequests();
+        webResourceLoadScheduler()->suspendPendingRequests();
     else
-        webResourceLoadScheduler().resumePendingRequests();
+        webResourceLoadScheduler()->resumePendingRequests();
 }
 
 + (BOOL)_isUnderMemoryPressure
@@ -4719,7 +4719,7 @@ IGNORE_WARNINGS_END
 
     WebPlatformStrategies::initializeIfNecessary();
 
-    webResourceLoadScheduler().setSerialLoadingEnabled(serialize);
+    webResourceLoadScheduler()->setSerialLoadingEnabled(serialize);
 }
 
 + (BOOL)_HTTPPipeliningEnabled

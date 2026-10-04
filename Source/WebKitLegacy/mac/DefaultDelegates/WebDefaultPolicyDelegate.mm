@@ -37,19 +37,16 @@
 #import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 #import <wtf/EnumTraits.h>
+#import <wtf/NeverDestroyed.h>
 
 @implementation WebDefaultPolicyDelegate
-
-static WebDefaultPolicyDelegate *sharedDelegate = nil;
 
 // Return a object with vanilla implementations of the protocol's methods
 // Note this feature relies on our default delegate being stateless
 + (WebDefaultPolicyDelegate *)sharedPolicyDelegate
 {
-    if (!sharedDelegate) {
-        sharedDelegate = [[WebDefaultPolicyDelegate alloc] init];
-    }
-    return sharedDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultPolicyDelegate>> sharedDelegate = adoptNS([[WebDefaultPolicyDelegate alloc] init]);
+    return sharedDelegate.get();
 }
 
 - (void)webView: (WebView *)wv unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame

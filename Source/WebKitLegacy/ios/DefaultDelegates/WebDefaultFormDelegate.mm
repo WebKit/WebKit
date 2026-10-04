@@ -27,14 +27,15 @@
 
 #import "WebDefaultFormDelegate.h"
 
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+
 @implementation WebDefaultFormDelegate
 
 + (WebDefaultFormDelegate *)sharedFormDelegate
 {
-    static WebDefaultFormDelegate * WebSharedDefaultFormDelegate = nil;
-    
-    if (!WebSharedDefaultFormDelegate) WebSharedDefaultFormDelegate = [[WebDefaultFormDelegate alloc] init];
-    return WebSharedDefaultFormDelegate;
+    static NeverDestroyed<RetainPtr<WebDefaultFormDelegate>> sharedDelegate = adoptNS([[WebDefaultFormDelegate alloc] init]);
+    return sharedDelegate.get();
 }
 
 - (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame
@@ -69,7 +70,7 @@
 }
 #endif
 
-- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
+- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id<WebFormSubmissionListener>)listener
 {
     [listener continue];
 }

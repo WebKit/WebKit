@@ -81,7 +81,7 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& d
         m_server = makeUnique<IDBServer::IDBServer>(directory, [](const ClientOrigin&, uint64_t) {
             return true;
         });
-        m_server->registerConnection(connectionToClient);
+        protect(m_server)->registerConnection(connectionToClient);
     });
 }
 
@@ -106,7 +106,7 @@ void InProcessIDBServer::deleteDatabase(const WebCore::IDBOpenRequestData& reque
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->deleteDatabase(requestData);
+        protect(m_server)->deleteDatabase(requestData);
     });
 }
 
@@ -121,7 +121,7 @@ void InProcessIDBServer::openDatabase(const WebCore::IDBOpenRequestData& request
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->openDatabase(requestData);
+        protect(m_server)->openDatabase(requestData);
     });
 }
 
@@ -248,7 +248,7 @@ void InProcessIDBServer::abortTransaction(const WebCore::IDBResourceIdentifier& 
 {
     dispatchTask([this, protectedThis = Ref { *this }, resourceIdentifier = resourceIdentifier.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->abortTransaction(resourceIdentifier);
+        protect(m_server)->abortTransaction(resourceIdentifier);
     });
 }
 
@@ -256,7 +256,7 @@ void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier&
 {
     dispatchTask([this, protectedThis = Ref { *this }, resourceIdentifier = resourceIdentifier.isolatedCopy(), pendingCountRequest] {
         assertIsCurrent(m_queue.get());
-        m_server->commitTransaction(resourceIdentifier, pendingCountRequest);
+        protect(m_server)->commitTransaction(resourceIdentifier, pendingCountRequest);
     });
 }
 
@@ -264,7 +264,7 @@ void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseCo
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = transactionIdentifier.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
+        protect(m_server)->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
 
@@ -272,7 +272,7 @@ void InProcessIDBServer::createObjectStore(const WebCore::IDBRequestData& result
 {
     dispatchTask([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy(), info = info.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->createObjectStore(resultData, info);
+        protect(m_server)->createObjectStore(resultData, info);
     });
 }
 
@@ -280,7 +280,7 @@ void InProcessIDBServer::deleteObjectStore(const WebCore::IDBRequestData& reques
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreName = objectStoreName.isolatedCopy()] () mutable {
         assertIsCurrent(m_queue.get());
-        m_server->deleteObjectStore(requestData, objectStoreName);
+        protect(m_server)->deleteObjectStore(requestData, objectStoreName);
     });
 }
 
@@ -288,7 +288,7 @@ void InProcessIDBServer::renameObjectStore(const WebCore::IDBRequestData& reques
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, newName = newName.isolatedCopy()] () mutable {
         assertIsCurrent(m_queue.get());
-        m_server->renameObjectStore(requestData, objectStoreIdentifier, newName);
+        protect(m_server)->renameObjectStore(requestData, objectStoreIdentifier, newName);
     });
 }
 
@@ -296,7 +296,7 @@ void InProcessIDBServer::clearObjectStore(const WebCore::IDBRequestData& request
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier] {
         assertIsCurrent(m_queue.get());
-        m_server->clearObjectStore(requestData, objectStoreIdentifier);
+        protect(m_server)->clearObjectStore(requestData, objectStoreIdentifier);
     });
 }
 
@@ -304,7 +304,7 @@ void InProcessIDBServer::createIndex(const WebCore::IDBRequestData& requestData,
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->createIndex(requestData, info);
+        protect(m_server)->createIndex(requestData, info);
     });
 }
 
@@ -312,7 +312,7 @@ void InProcessIDBServer::deleteIndex(const WebCore::IDBRequestData& requestData,
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexName = indexName.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->deleteIndex(requestData, objectStoreIdentifier, indexName);
+        protect(m_server)->deleteIndex(requestData, objectStoreIdentifier, indexName);
     });
 }
 
@@ -320,7 +320,7 @@ void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData,
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
+        protect(m_server)->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
     });
 }
 
@@ -328,7 +328,7 @@ void InProcessIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, co
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyData = keyData.isolatedCopy(), value = value.isolatedCopy(), indexKeys = crossThreadCopy(indexKeys), overwriteMode] {
         assertIsCurrent(m_queue.get());
-        m_server->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
+        protect(m_server)->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
     });
 }
 
@@ -336,7 +336,7 @@ void InProcessIDBServer::getRecord(const WebCore::IDBRequestData& requestData, c
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), getRecordData = getRecordData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->getRecord(requestData, getRecordData);
+        protect(m_server)->getRecord(requestData, getRecordData);
     });
 }
 
@@ -344,7 +344,7 @@ void InProcessIDBServer::getAllRecords(const WebCore::IDBRequestData& requestDat
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), getAllRecordsData = getAllRecordsData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->getAllRecords(requestData, getAllRecordsData);
+        protect(m_server)->getAllRecords(requestData, getAllRecordsData);
     });
 }
 
@@ -352,7 +352,7 @@ void InProcessIDBServer::getCount(const WebCore::IDBRequestData& requestData, co
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyRangeData = keyRangeData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->getCount(requestData, keyRangeData);
+        protect(m_server)->getCount(requestData, keyRangeData);
     });
 }
 
@@ -360,7 +360,7 @@ void InProcessIDBServer::deleteRecord(const WebCore::IDBRequestData& requestData
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyRangeData = keyRangeData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->deleteRecord(requestData, keyRangeData);
+        protect(m_server)->deleteRecord(requestData, keyRangeData);
     });
 }
 
@@ -368,7 +368,7 @@ void InProcessIDBServer::openCursor(const WebCore::IDBRequestData& requestData, 
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] () mutable {
         assertIsCurrent(m_queue.get());
-        m_server->openCursor(requestData, info);
+        protect(m_server)->openCursor(requestData, info);
     });
 }
 
@@ -376,7 +376,7 @@ void InProcessIDBServer::iterateCursor(const WebCore::IDBRequestData& requestDat
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), data = data.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->iterateCursor(requestData, data);
+        protect(m_server)->iterateCursor(requestData, data);
     });
 }
 
@@ -384,7 +384,7 @@ void InProcessIDBServer::establishTransaction(IDBDatabaseConnectionIdentifier da
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, info = info.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->establishTransaction(databaseConnectionIdentifier, info);
+        protect(m_server)->establishTransaction(databaseConnectionIdentifier, info);
     });
 }
 
@@ -427,7 +427,7 @@ void InProcessIDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIde
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier] {
         assertIsCurrent(m_queue.get());
-        m_server->databaseConnectionPendingClose(databaseConnectionIdentifier);
+        protect(m_server)->databaseConnectionPendingClose(databaseConnectionIdentifier);
     });
 }
 
@@ -435,7 +435,7 @@ void InProcessIDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifie
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier] {
         assertIsCurrent(m_queue.get());
-        m_server->databaseConnectionClosed(databaseConnectionIdentifier);
+        protect(m_server)->databaseConnectionClosed(databaseConnectionIdentifier);
     });
 }
 
@@ -446,7 +446,7 @@ void InProcessIDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifi
         transactionIdentifierCopy = transactionIdentifier->isolatedCopy();
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = WTF::move(transactionIdentifierCopy)] {
         assertIsCurrent(m_queue.get());
-        m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
+        protect(m_server)->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
 
@@ -454,7 +454,7 @@ void InProcessIDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifi
 {
     dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, requestIdentifier = crossThreadCopy(requestIdentifier), connectionClosed] {
         assertIsCurrent(m_queue.get());
-        m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
+        protect(m_server)->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
     });
 }
 
@@ -462,7 +462,7 @@ void InProcessIDBServer::didGenerateIndexKeyForRecord(const IDBResourceIdentifie
 {
     dispatchTask([this, protectedThis = Ref { *this }, transactionIdentifier = crossThreadCopy(transactionIdentifier), requestIdentifier = crossThreadCopy(requestIdentifier), indexInfo = crossThreadCopy(indexInfo), key = crossThreadCopy(key), indexKey = crossThreadCopy(indexKey), recordID] {
         assertIsCurrent(m_queue.get());
-        m_server->didGenerateIndexKeyForRecord(transactionIdentifier, requestIdentifier, indexInfo, key, indexKey, recordID);
+        protect(m_server)->didGenerateIndexKeyForRecord(transactionIdentifier, requestIdentifier, indexInfo, key, indexKey, recordID);
     });
 }
 
@@ -470,7 +470,7 @@ void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBOpenRequestDat
 {
     dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->openDBRequestCancelled(requestData);
+        protect(m_server)->openDBRequestCancelled(requestData);
     });
 }
 
@@ -478,7 +478,7 @@ void InProcessIDBServer::getAllDatabaseNamesAndVersions(const WebCore::IDBResour
 {
     dispatchTask([this, protectedThis = Ref { *this }, identifier = m_connectionToServer->identifier(), requestIdentifier, origin = origin.isolatedCopy()] {
         assertIsCurrent(m_queue.get());
-        m_server->getAllDatabaseNamesAndVersions(identifier, requestIdentifier, origin);
+        protect(m_server)->getAllDatabaseNamesAndVersions(identifier, requestIdentifier, origin);
     });
 }
 
@@ -493,7 +493,7 @@ void InProcessIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificat
 {
     dispatchTask([this, protectedThis = Ref { *this }, modificationTime] {
         assertIsCurrent(m_queue.get());
-        m_server->closeAndDeleteDatabasesModifiedSince(modificationTime);
+        protect(m_server)->closeAndDeleteDatabasesModifiedSince(modificationTime);
     });
 }
 

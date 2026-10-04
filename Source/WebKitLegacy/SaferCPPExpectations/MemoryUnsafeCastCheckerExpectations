@@ -1,5 +1,3 @@
-Storage/WebStorageNamespaceProvider.cpp
-WebCoreSupport/WebResourceLoadScheduler.cpp
 [ iOS ] mac/DOM/DOM.mm
 mac/DOM/DOMAttr.mm
 mac/DOM/DOMCSSImportRule.mm
@@ -81,7 +79,6 @@ mac/DOM/DOMWheelEvent.mm
 mac/DOM/ObjCEventListener.h
 mac/DOM/WebDOMOperations.mm
 mac/WebCoreSupport/WebSecurityOrigin.mm
-[ iOS ] mac/WebInspector/WebNodeHighlight.mm
 [ Mac ] mac/WebView/WebDynamicScrollBarsView.mm
 mac/WebView/WebFrame.mm
 mac/WebView/WebFrameView.mm

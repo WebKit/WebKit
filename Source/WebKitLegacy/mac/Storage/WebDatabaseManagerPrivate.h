@@ -28,7 +28,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString *WebDatabaseDirectoryDefaultsKey;
+extern NSString * const WebDatabaseDirectoryDefaultsKey;
 
 extern NSString *WebDatabaseDisplayNameKey;
 extern NSString *WebDatabaseExpectedSizeKey;
@@ -36,19 +36,19 @@ extern NSString *WebDatabaseUsageKey;
 
 // Posted with an origin is created from scratch, gets a new database, has a database deleted, has a quota change, etc
 // The notification object will be a WebSecurityOrigin object corresponding to the origin.
-extern NSString *WebDatabaseDidModifyOriginNotification;
+extern NSString * const WebDatabaseDidModifyOriginNotification;
 
 // Posted when a database is created, its size increases, its display name changes, or its estimated size changes, or the database is removed
 // The notification object will be a WebSecurityOrigin object corresponding to the origin.
 // The notification userInfo will have a WebDatabaseNameKey whose value is the database name.
-extern NSString *WebDatabaseDidModifyDatabaseNotification;
-extern NSString *WebDatabaseIdentifierKey;
+extern NSString * const WebDatabaseDidModifyDatabaseNotification;
+extern NSString * const WebDatabaseIdentifierKey;
 
 #if TARGET_OS_IPHONE
 #import <WebKitLegacy/WebUIKitSupport.h>
 
 // Posted when origins have changed.
-extern CFStringRef WebDatabaseOriginsDidChangeNotification;
+extern const CFStringRef WebDatabaseOriginsDidChangeNotification;
 #endif
 
 @class WebSecurityOrigin;

@@ -28,81 +28,69 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
-#import <WebKitLegacy/WebPanelAuthenticationHandler.h>
+#import "WebPanelAuthenticationHandler.h"
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <WebKitLegacy/WebAuthenticationPanel.h>
 #import <wtf/Assertions.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
-static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
+static NSString * const WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 @implementation WebPanelAuthenticationHandler {
-    NSMapTable *windowToPanel;
-    NSMapTable *challengeToWindow;
-    NSMapTable *windowToChallengeQueue;
+    RetainPtr<NSMapTable> windowToPanel;
+    RetainPtr<NSMapTable> challengeToWindow;
+    RetainPtr<NSMapTable> windowToChallengeQueue;
 }
-
-WebPanelAuthenticationHandler *sharedHandler;
 
 + (id)sharedHandler
 {
-    if (sharedHandler == nil)
-        sharedHandler = [[self alloc] init];
-    return sharedHandler;
+    static NeverDestroyed<RetainPtr<WebPanelAuthenticationHandler>> sharedHandler = adoptNS([[self alloc] init]);
+    return sharedHandler.get();
 }
 
 -(id)init
 {
     self = [super init];
     if (self != nil) {
-        windowToPanel = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
-        challengeToWindow = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
-        windowToChallengeQueue = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+        windowToPanel = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0]);
+        challengeToWindow = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0]);
+        windowToChallengeQueue = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0]);
     }
 
     return self;
 }
 
--(void)dealloc
-{
-    [windowToPanel release];
-    [challengeToWindow release];    
-    [windowToChallengeQueue release];    
-    [super dealloc];
-}
-
 -(void)enqueueChallenge:(NSURLAuthenticationChallenge *)challenge forWindow:(id)window
 {
-    NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
+    RetainPtr<NSMutableArray> queue = [windowToChallengeQueue objectForKey:window];
     if (!queue) {
-        queue = [[NSMutableArray alloc] init];
+        queue = adoptNS([[NSMutableArray alloc] init]);
         [windowToChallengeQueue setObject:queue forKey:window];
-        [queue release];
     }
     [queue addObject:challenge];
 }
 
 -(void)tryNextChallengeForWindow:(id)window
 {
-    NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
+    RetainPtr<NSMutableArray> queue = [windowToChallengeQueue objectForKey:window];
     if (!queue)
         return;
 
-    NSURLAuthenticationChallenge *challenge = [[queue objectAtIndex:0] retain];
+    RetainPtr<NSURLAuthenticationChallenge> challenge = [queue objectAtIndex:0];
     [queue removeObjectAtIndex:0];
     if (![queue count])
         [windowToChallengeQueue removeObjectForKey:window];
 
-    NSURLCredential *latestCredential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[challenge protectionSpace]];
+    RetainPtr latestCredential = [protect([NSURLCredentialStorage sharedCredentialStorage]) defaultCredentialForProtectionSpace:protect([challenge protectionSpace])];
 
     if ([latestCredential hasPassword]) {
-        [[challenge sender] useCredential:latestCredential forAuthenticationChallenge:challenge];
-        [challenge release];
+        [protect([challenge sender]) useCredential:latestCredential forAuthenticationChallenge:challenge];
         return;
     }
-                                                                    
+
     [self startAuthentication:challenge window:(window == WebModalDialogPretendWindow ? nil : window)];
-    [challenge release];
 }
 
 
@@ -121,15 +109,14 @@ WebPanelAuthenticationHandler *sharedHandler;
     // unlikely (how would you be loading a page if you had an error
     // sheet up?)
     if ([w attachedSheet] != nil) {
-        [[challenge sender] cancelAuthenticationChallenge:challenge];
+        [protect([challenge sender]) cancelAuthenticationChallenge:challenge];
         return;
     }
 
-    WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithChallenge:result:)];
+    RetainPtr panel = adoptNS([[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithChallenge:result:)]);
     [challengeToWindow setObject:window forKey:challenge];
     [windowToPanel setObject:panel forKey:window];
-    [panel release];
-    
+
     if (window == WebModalDialogPretendWindow)
         [panel runAsModalDialogWithChallenge:challenge];
     else
@@ -138,31 +125,27 @@ WebPanelAuthenticationHandler *sharedHandler;
 
 -(void)cancelAuthentication:(NSURLAuthenticationChallenge *)challenge
 {
-    id window = [challengeToWindow objectForKey:challenge];
+    RetainPtr<id> window = [challengeToWindow objectForKey:challenge];
     if (!window)
         return;
 
-    WebAuthenticationPanel *panel = [windowToPanel objectForKey:window];
-    [panel cancel:self];
+    [protect([windowToPanel objectForKey:window]) cancel:self];
 }
 
 -(void)_authenticationDoneWithChallenge:(NSURLAuthenticationChallenge *)challenge result:(NSURLCredential *)credential
 {
-    id window = [challengeToWindow objectForKey:challenge];
-    [window retain];
-    if (window != nil) {
+    RetainPtr<id> window = [challengeToWindow objectForKey:challenge];
+    if (window) {
         [windowToPanel removeObjectForKey:window];
         [challengeToWindow removeObjectForKey:challenge];
     }
 
-    if (credential == nil) {
-        [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
-    } else {
-        [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
-    }
+    if (credential == nil)
+        [protect([challenge sender]) continueWithoutCredentialForAuthenticationChallenge:challenge];
+    else
+        [protect([challenge sender]) useCredential:credential forAuthenticationChallenge:challenge];
 
     [self tryNextChallengeForWindow:window];
-    [window release];
 }
 
 @end

@@ -157,19 +157,19 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)plugInsAreRunning
 {
-    NSUInteger pluginViewCount = [_views count];
+    NSUInteger pluginViewCount = [protect(_views) count];
     return _started && pluginViewCount;
 }
 
 - (CALayer *)superlayerForPluginView:(NSView *)view
 {
-    auto* coreFrame = core([self webFrame]);
-    auto* coreView = coreFrame ? coreFrame->view() : nullptr;
+    RefPtr coreFrame = core([self webFrame]);
+    RefPtr coreView = coreFrame ? coreFrame->view() : nullptr;
     if (!coreView)
         return nil;
 
     // Get a GraphicsLayer;
-    WebCore::GraphicsLayer* layerForWidget = coreView->graphicsLayerForPlatformWidget(view);
+    RefPtr layerForWidget = coreView->graphicsLayerForPlatformWidget(view);
     if (!layerForWidget)
         return nil;
     
@@ -256,26 +256,28 @@ static RetainPtr<NSMutableSet>& NODELETE pluginViews()
     if (!_started)
         return;
 
-    NSUInteger viewsCount = [_views count];
+    RetainPtr views = _views;
+    NSUInteger viewsCount = [views count];
     if (viewsCount > 0)
-        LOG(Plugins, "stopping WebKit plugins for PageCache: %@", [_views description]);
+        LOG(Plugins, "stopping WebKit plugins for PageCache: %@", [views description]);
 
     for (NSUInteger i = 0; i < viewsCount; ++i)
-        [self stopOnePluginForPageCache:[_views objectAtIndex:i]];
+        [self stopOnePluginForPageCache:[views objectAtIndex:i]];
 
     _started = NO;
 }
 
 - (void)restorePluginsFromCache
 {
-    WebView *webView = [_documentView _webView];
+    RetainPtr webView = [protect(_documentView) _webView];
 
-    NSUInteger viewsCount = [_views count];
+    RetainPtr views = _views;
+    NSUInteger viewsCount = [views count];
     if (viewsCount > 0)
-        LOG(Plugins, "restoring WebKit plugins from PageCache: %@", [_views description]);
+        LOG(Plugins, "restoring WebKit plugins from PageCache: %@", [views description]);
 
     for (NSUInteger i = 0; i < viewsCount; ++i)
-        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:[_views objectAtIndex:i]];
+        [[webView _UIKitDelegateForwarder] webView:webView.get() willAddPlugInView:[views objectAtIndex:i]];
 }
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -396,7 +398,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 #if !PLATFORM(IOS_FAMILY)
     [views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
 #else
-    [_views makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [protect(_views) makeObjectsPerformSelector:@selector(removeFromSuperview)];
 #endif
     [views release];
     _views = nil;
@@ -460,14 +462,14 @@ static void cancelOutstandingCheck(const void *item, void *context)
 #if PLATFORM(IOS_FAMILY)
 - (void)webPlugInContainerWillShowFullScreenForView:(id)plugInView
 {
-    WebView *webView = [_dataSource _webView];
-    [[webView _UIKitDelegateForwarder] webView:webView willShowFullScreenForPlugInView:plugInView];
+    RetainPtr webView = [protect(_dataSource) _webView];
+    [[webView _UIKitDelegateForwarder] webView:webView.get() willShowFullScreenForPlugInView:plugInView];
 }
 
 - (void)webPlugInContainerDidHideFullScreenForView:(id)plugInView
 {
-    WebView *webView = [_dataSource _webView];
-    [[webView _UIKitDelegateForwarder] webView:webView didHideFullScreenForPlugInView:plugInView];
+    RetainPtr webView = [protect(_dataSource) _webView];
+    [[webView _UIKitDelegateForwarder] webView:webView.get() didHideFullScreenForPlugInView:plugInView];
 }
 #endif
 

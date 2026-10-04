@@ -83,3 +83,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::StorageNamespaceImpl)
+    static bool isType(const WebCore::StorageNamespace&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

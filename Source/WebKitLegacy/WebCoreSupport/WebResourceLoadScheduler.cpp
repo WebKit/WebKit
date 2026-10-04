@@ -59,9 +59,9 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
 
 using namespace WebCore;
 
-WebResourceLoadScheduler& webResourceLoadScheduler()
+CheckedRef<WebResourceLoadScheduler> webResourceLoadScheduler()
 {
-    return static_cast<WebResourceLoadScheduler&>(*platformStrategies()->loaderStrategy().unsafeGet());
+    return downcast<WebResourceLoadScheduler>(*platformStrategies()->loaderStrategy());
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebResourceLoadScheduler);
@@ -95,7 +95,7 @@ WebResourceLoadScheduler::~WebResourceLoadScheduler() = default;
 
 void WebResourceLoadScheduler::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&& completionHandler)
 {
-    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::SubresourceLoader>&& loader) mutable {
+    SubresourceLoader::create(frame, resource, WTF::move(request), options, [this, protectedThis = CheckedPtr { this }, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::SubresourceLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(loader.get());
 #if PLATFORM(IOS_FAMILY)
@@ -129,7 +129,7 @@ void WebResourceLoadScheduler::browsingContextRemoved(LocalFrame&)
 
 void WebResourceLoadScheduler::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, FetchOptions::Destination destination, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), destination, [this, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
+    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), destination, [this, protectedThis = CheckedPtr { this }, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(loader.get());
         completionHandler(WTF::move(loader));
@@ -396,7 +396,7 @@ bool WebResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriori
 {
     if (priority == ResourceLoadPriority::VeryLow && !m_requestsLoading.isEmpty())
         return true;
-    return m_requestsLoading.size() >= (webResourceLoadScheduler().isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
+    return m_requestsLoading.size() >= (webResourceLoadScheduler()->isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 
 bool WebResourceLoadScheduler::startKeepAliveLoadForWebKitLegacy(FrameLoader& frameLoader, const ResourceRequest& request, const ResourceLoaderOptions& options, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
