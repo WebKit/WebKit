@@ -1,15 +1,31 @@
-Check that non-cookie website data does not get removed for sites with user interaction.
+Check that script-writeable website data does not get removed for sites with user interaction.
 
+Opening http://localhost:8000 popup.
+Opened cross-origin http://localhost:8000 popup
 Before deletion: Client-side cookie exists.
 Before deletion: HttpOnly cookie exists.
 Before deletion: Regular server-side cookie exists.
 Before deletion: LocalStorage entry does exist.
-Before deletion: IDB entry does exist.
+Before deletion: (onsuccess) IDB entry does exist.
+Before deletion: http://localhost:8000 has local storage
+Before deletion: iframe LocalStorage entry does exist.
+Before deletion: iframe SessionStorage entry does exist.
+Before deletion: iframe indexedDB entry does exist.
+Before deletion: popup LocalStorage entry does exist.
+Before deletion: popup SessionStorage entry does exist.
+Before deletion: popup indexedDB entry does exist.
 
 After deletion: HttpOnly cookie exists.
 After deletion: Client-side cookie exists.
 After deletion: Regular server-side cookie exists.
 After deletion: LocalStorage entry does exist.
-After deletion: IDB entry checks does exist.
+After deletion: (onsuccess) IDB entry does exist.
+After deletion: http://localhost:8000 has local storage
+After deletion: iframe LocalStorage entry does exist.
+After deletion: iframe SessionStorage entry does exist.
+After deletion: iframe indexedDB entry does exist.
+After deletion: popup LocalStorage entry does exist.
+After deletion: popup SessionStorage entry does exist.
+After deletion: popup indexedDB entry does exist.
 
 
