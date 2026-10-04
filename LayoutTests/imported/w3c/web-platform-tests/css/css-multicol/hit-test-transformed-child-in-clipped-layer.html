@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-multicol/">
+<link rel="help" href="https://drafts.csswg.org/css-transforms/">
+<meta name="assert" content="A transformed element inside a clipping container that spans several columns of an offset multicol container is hit in every column.">
+<style>
+  body {
+      margin: 0;
+  }
+</style>
+<div style="position:absolute; left:100px; top:100px; columns:2; column-gap:0; column-fill:auto; width:400px; height:100px;">
+  <div style="position:relative; overflow:hidden; width:200px; height:200px;">
+    <div id="target" style="transform:translateX(0); width:200px; height:200px; background:green;"></div>
+  </div>
+</div>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+  test(()=> {
+      assert_equals(document.elementFromPoint(100, 100), target);
+      assert_equals(document.elementFromPoint(150, 150), target);
+      assert_equals(document.elementFromPoint(299, 199), target);
+  }, "first column");
+
+  test(()=> {
+      assert_equals(document.elementFromPoint(300, 100), target);
+      assert_equals(document.elementFromPoint(350, 150), target);
+      assert_equals(document.elementFromPoint(499, 199), target);
+  }, "second column");
+
+  test(()=> {
+      assert_not_equals(document.elementFromPoint(99, 150), target);
+      assert_not_equals(document.elementFromPoint(150, 99), target);
+      assert_not_equals(document.elementFromPoint(500, 150), target);
+      assert_not_equals(document.elementFromPoint(350, 200), target);
+  }, "outside");
+</script>
