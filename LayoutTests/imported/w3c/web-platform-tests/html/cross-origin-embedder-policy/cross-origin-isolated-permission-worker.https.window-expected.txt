@@ -1,0 +1,17 @@
+
+PASS shared_worker (withCoopCoep: false) cross origin isolated permission test
+PASS shared_worker (withCoopCoep: true) cross origin isolated permission test
+PASS dedicated_worker (scheme: https) cross origin isolated (undefined) permission test
+PASS dedicated_worker (scheme: https) cross origin isolated (*) permission test
+PASS dedicated_worker (scheme: https) cross origin isolated (self) permission test
+FAIL dedicated_worker (scheme: https) cross origin isolated (()) permission test assert_equals: expected false but got true
+PASS dedicated_worker (scheme: data) cross origin isolated (undefined) permission test
+PASS dedicated_worker (scheme: data) cross origin isolated (*) permission test
+PASS dedicated_worker (scheme: data) cross origin isolated (self) permission test
+PASS dedicated_worker (scheme: blob) cross origin isolated (undefined) permission test
+PASS dedicated_worker (scheme: blob) cross origin isolated (*) permission test
+PASS dedicated_worker (scheme: blob) cross origin isolated (self) permission test
+FAIL dedicated_worker (scheme: blob) cross origin isolated (()) permission test assert_equals: expected false but got true
+PASS service_worker (withCoopCoep: false) cross origin isolated permission test
+PASS service_worker (withCoopCoep: true) cross origin isolated permission test
+

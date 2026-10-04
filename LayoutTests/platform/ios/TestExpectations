@@ -3847,8 +3847,6 @@ imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flex
 
 fast/text/text-styles/-apple-system [ Pass ]
 
-webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Timeout Failure ]
-
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vlr-005.xht [ ImageOnlyFailure ]
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html [ ImageOnlyFailure ]
@@ -8938,7 +8936,6 @@ imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-smooth.html [ Pass
 imported/w3c/web-platform-tests/custom-elements/reactions/Document.html [ Pass Crash ] # rdar://178158852
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/cross-origin-top-navigation-with-user-activation-in-parent.window.html [ Pass Failure ] # rdar://178214939
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-origin.sub.html [ Failure ] # rdar://178012093
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Pass Crash Timeout ] # rdar://178158581
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-height-constrained-by-max-width.html [ Crash ] # rdar://178169483
 imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html [ Pass Failure ] # rdar://178546346
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Failure ] # rdar://178018070
@@ -9747,7 +9744,6 @@ imported/w3c/web-platform-tests/fetch/security/dangling-markup/dangling-markup-m
 
 imported/w3c/web-platform-tests/FileAPI/blob/Blob-newobject.any.sharedworker.html [ Pass Failure ] # rdar://178172757
 
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html [ Pass Failure ] # rdar://178172476
 
 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Pass Failure ] # rdar://178172937
 

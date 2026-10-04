@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/blob-url-factory.html
@@ -19,9 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cache-storage-reporting.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/coep-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/coep-frame.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/corp-image.py
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cross-origin-isolated-frame.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cross-origin-isolated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/dedicated-worker-supporting-revalidation.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/dedicated-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/empty-coep.py
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/fetch-and-create-url.html
@@ -34,8 +32,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp.sub.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-cross-origin-corp.txt
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-cross-origin-corp.txt.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-cross-origin-corp.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-cross-origin-corp.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/postmessage-ready.html

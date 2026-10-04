@@ -1,6 +1,0 @@
-
-PASS Set/Get cookie via JS API
-PASS Get Cookie via subresource requests
-PASS Set Cookie via subresource requests
-PASS Set Cookie via navigation requests
-

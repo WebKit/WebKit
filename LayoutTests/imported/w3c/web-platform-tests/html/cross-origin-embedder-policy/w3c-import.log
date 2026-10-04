@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/META.yml
@@ -27,8 +25,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/coep-frame-javascript.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission-iframe.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission-iframe.https.window.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission-worker.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission-worker.https.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/data.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/data.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker-cache-storage.https.html
@@ -75,6 +75,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-require-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-require-corp.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-worker-script-revalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html

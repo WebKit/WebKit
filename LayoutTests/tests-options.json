@@ -3209,9 +3209,6 @@
     "imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.uncovered.fill.destination-in.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/anonymous-iframe-popup.tentative.https.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-dedicated-worker.https.html": [
         "slow"
     ],
@@ -3219,30 +3216,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache-storage.tentative.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.tentative.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe.tentative.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/redirect.tentative.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-navigation.tentative.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.tentative.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.tentative.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.tentative.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https.html": [
