@@ -709,7 +709,7 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     if (hitTestAction != HitTestAction::Foreground)
         return false;
 
-    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, style().pointerEvents());
+    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
     if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (!style().stroke().isNone() || !hitRules.requireStroke))
         || (hitRules.canHitFill && (!style().fill().isNone() || !hitRules.requireFill))) {
