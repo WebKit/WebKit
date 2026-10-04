@@ -40,6 +40,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "Logging.h"
 #include "RenderText.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -230,6 +231,8 @@ static String messageText(AXCoreObject& object)
 static bool isEmptyOrInvalid(AccessibilityObject& field)
 {
     if (field.isTextControl() && field.stringValue().isEmpty())
+        return true;
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(field.element()); select && select->value().isEmpty())
         return true;
     return field.invalidStatusIncludingInferred() != "false"_s;
 }
