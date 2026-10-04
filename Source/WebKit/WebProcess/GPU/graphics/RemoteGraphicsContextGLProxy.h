@@ -86,6 +86,7 @@ public:
     GCGLint maxCubeMapTextureSize() final { return m_maxCubeMapTextureSize; }
     GCGLint maxRenderbufferSize() final { return m_maxRenderbufferSize; }
     std::array<GCGLint, 2> maxViewportDims() final { return m_maxViewportDims; }
+    std::array<GCGLint, 2> maxDrawingBufferSize() final { return m_maxDrawingBufferSize; }
     GCGLint maxSamples() final { return m_maxSamples; }
     GCGLint maxTransformFeedbackSeparateAttribs() final { return m_maxTransformFeedbackSeparateAttribs; }
     GCGLint maxUniformBufferBindings() final { return m_maxUniformBufferBindings; }
@@ -440,6 +441,7 @@ private:
     GCGLint m_maxCubeMapTextureSize { 0 };
     GCGLint m_maxRenderbufferSize { 0 };
     std::array<GCGLint, 2> m_maxViewportDims { 0, 0 };
+    std::array<GCGLint, 2> m_maxDrawingBufferSize { 0, 0 };
     GCGLint m_maxSamples { 0 };
     GCGLint m_maxTransformFeedbackSeparateAttribs { 0 };
     GCGLint m_maxUniformBufferBindings { 0 };

@@ -10,6 +10,7 @@ if (self.testRunner) {
 }
 
 var description, debug, didFailSomeTests, successfullyParsed;
+var startBufferingOutput, stopBufferingOutput, flushBufferedOutput, appendBufferedOutputText;
 
 didFailSomeTests = false;
 
@@ -90,9 +91,73 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
         else
             description.appendChild(span);
     };
+    // If test has a lot of output, it makes sense to call startBufferingOutput().
+    var bufferedOutput = null;
+
+    startBufferingOutput = function startBufferingOutput()
+    {
+        if (isWorker() || bufferedOutput)
+            return;
+        bufferedOutput = [];
+        var flushOnEachFrame = function() {
+            if (!bufferedOutput)
+                return;
+            flushBufferedOutput();
+            requestAnimationFrame(flushOnEachFrame);
+        };
+        requestAnimationFrame(flushOnEachFrame);
+    };
+
+    stopBufferingOutput = function stopBufferingOutput()
+    {
+        flushBufferedOutput();
+        bufferedOutput = null;
+    };
+
+    flushBufferedOutput = function flushBufferedOutput()
+    {
+        if (!bufferedOutput || !bufferedOutput.length)
+            return;
+        var block = createHTMLElement("div");
+        var lines = [];
+        function appendLines()
+        {
+            if (!lines.length)
+                return;
+            block.appendChild(document.createTextNode(lines.join("\n") + "\n"));
+            lines = [];
+        }
+        for (var entry of bufferedOutput) {
+            if (entry.text !== undefined) {
+                lines.push(entry.text);
+                continue;
+            }
+            appendLines();
+            var span = createHTMLElement("span");
+            span.innerHTML = entry.html + '<br />';
+            block.appendChild(span);
+        }
+        appendLines();
+        getOrCreate("console", "div").appendChild(block);
+        bufferedOutput = [];
+    };
+
+    // Buffers the results of testPassed() and testFailed() as text, without the markup, so that they
+    // are added faster. Returns false if the output is not buffered.
+    appendBufferedOutputText = function appendBufferedOutputText(text)
+    {
+        if (!bufferedOutput)
+            return false;
+        bufferedOutput.push({ text: text });
+        return true;
+    };
 
     debug = function debug(msg)
     {
+        if (bufferedOutput) {
+            bufferedOutput.push({ html: msg });
+            return;
+        }
         var span = createHTMLElement("span");
         span.innerHTML = msg + '<br />';
         getOrCreate("console", "div").appendChild(span);
@@ -180,12 +245,18 @@ function escapeHTML(text)
 
 function testPassed(msg)
 {
+    if (appendBufferedOutputText("PASS " + msg))
+        return;
     debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function testFailed(msg)
 {
     didFailSomeTests = true;
+    if (appendBufferedOutputText("FAIL " + msg)) {
+        flushBufferedOutput();
+        return;
+    }
     debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
 }
 
@@ -915,6 +986,7 @@ function finishJSTest()
     wasFinishJSTestCalled = true;
     if (!self.wasPostTestScriptParsed)
         return;
+    stopBufferingOutput();
     isSuccessfullyParsed();
     moveForeignObjectToTopIfNeeded();
     if (self.jsTestIsAsync && self.testRunner)

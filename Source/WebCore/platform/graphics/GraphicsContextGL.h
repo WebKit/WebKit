@@ -1655,6 +1655,9 @@ public:
     virtual GCGLint maxCubeMapTextureSize() = 0;
     virtual GCGLint maxRenderbufferSize() = 0;
     virtual std::array<GCGLint, 2> maxViewportDims() = 0;
+    // The largest drawing buffer that can be displayed. This is at most the GL limits above, and
+    // it also takes into account the limits of the compositor buffers.
+    virtual std::array<GCGLint, 2> maxDrawingBufferSize() = 0;
     virtual GCGLint maxSamples() = 0;
     virtual GCGLint maxTransformFeedbackSeparateAttribs() = 0;
     virtual GCGLint maxUniformBufferBindings() = 0;

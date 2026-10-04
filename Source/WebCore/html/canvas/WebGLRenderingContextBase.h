@@ -184,6 +184,8 @@ public:
     WebGLCanvas canvas();
 
     int NODELETE drawingBufferWidth() const;
+    // For testing.
+    WEBCORE_EXPORT IntSize defaultFramebufferAllocatedSize() const;
     int NODELETE drawingBufferHeight() const;
 
     PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }
@@ -698,6 +700,7 @@ protected:
     GCGLint m_maxCubeMapTextureSize;
     GCGLint m_maxRenderbufferSize;
     std::array<GCGLint, 2> m_maxViewportDims { 0, 0 };
+    std::array<GCGLint, 2> m_maxDrawingBufferSize { 0, 0 };
     GCGLint m_maxTextureLevel;
     GCGLint m_maxCubeMapTextureLevel;
     GCGLint m_maxSamples { 0 };
@@ -833,6 +836,9 @@ protected:
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
     bool clearIfComposited(CallerType, GCGLbitfield clearMask = 0);
+    // Applies a pending resize of the default framebuffer. Must be called before the default
+    // framebuffer storage is used. Returns false if the context is lost.
+    bool ensureDefaultFramebufferSize();
 
     enum class TexImageFunctionType {
         TexImage,
