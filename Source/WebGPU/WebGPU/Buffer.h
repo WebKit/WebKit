@@ -163,10 +163,17 @@ private:
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
     uint64_t m_drawIndexedCacheInvalidationCount { 0 };
+#ifdef RC_REMOVE_SEC_ACCEL_3
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
     uint32_t m_maxValidatedUnsignedIndex { 0 };
     uint16_t m_maxValidatedUshortIndex { 0 };
+#else
+    // The smallest vertex count that any entry currently in m_drawIndexedCache was proven against by
+    // the clamp shader, or 0 if any of them used a negative baseVertex. Only meaningful while
+    // m_drawIndexedCache is non-empty.
+    uint32_t m_minValidatedVertexCount { UINT32_MAX };
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     struct IndirectArgsCache {
         uint64_t indirectOffset { UINT64_MAX };

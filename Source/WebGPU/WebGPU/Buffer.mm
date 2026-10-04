@@ -425,7 +425,9 @@ void Buffer::unmap()
         return;
 
     decrementBufferMapCount();
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_maxUnsignedIndex = m_maxUshortIndex = 0;
+#endif // RC_REMOVE_SEC_ACCEL_3
     indirectBufferInvalidated();
 
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
@@ -497,15 +499,23 @@ void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t
         return;
 
     constexpr auto maxCacheSize = 1000000;
-    if (m_drawIndexedCache.size() > maxCacheSize)
+    if (m_drawIndexedCache.size() > maxCacheSize) {
         m_drawIndexedCache.clear();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        m_minValidatedVertexCount = UINT32_MAX;
+#endif // RC_REMOVE_SEC_ACCEL_3
+    }
 
     m_drawIndexedCache.set(makeKey(firstIndex, indexCount, baseVertex, indexType, primitiveOffset, icb), vertexCount);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     // Update the validated high-water marks so future writeBuffer calls
     // with indices at or below these values don't need to invalidate.
     m_maxValidatedUnsignedIndex = std::max(m_maxValidatedUnsignedIndex, m_maxUnsignedIndex);
     m_maxValidatedUshortIndex = std::max(m_maxValidatedUshortIndex, m_maxUshortIndex);
+#else
+    m_minValidatedVertexCount = baseVertex < 0 ? 0u : std::min(m_minValidatedVertexCount, vertexCount);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 template <typename T>
@@ -739,7 +749,9 @@ void Buffer::indirectIndexedBufferRecomputed(MTLIndexType indexType, NSUInteger 
 
 void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_maxUnsignedIndex = m_maxUshortIndex = 0;
+#endif // RC_REMOVE_SEC_ACCEL_3
     indirectBufferInvalidated();
 
     commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = WeakPtr { commandEncoder }](CommandBuffer&, CommandEncoder&) {
@@ -747,7 +759,9 @@ void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
             return true;
 
         RefPtr protectedThis = weakThis.get();
+#ifdef RC_REMOVE_SEC_ACCEL_3
         protectedThis->m_maxUnsignedIndex = protectedThis->m_maxUshortIndex = 0;
+#endif // RC_REMOVE_SEC_ACCEL_3
         RefPtr commandEncoder = weakCommandEncoder.get();
         protectedThis->indirectBufferInvalidated(commandEncoder.get());
         return true;
@@ -764,6 +778,7 @@ static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::Unsigned
 
 bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortIndex)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const bool needsUpdate = maxUnsignedIndex > m_maxValidatedUnsignedIndex || maxUshortIndex > m_maxValidatedUshortIndex;
     // Track the current write's max so we can update the validated
     // threshold after a successful clamp-shader pass.
@@ -771,6 +786,20 @@ bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortI
     m_maxUshortIndex = maxUshortIndex;
 
     return needsUpdate;
+#else
+    // Nothing has been validated since the last invalidation, so there is no cached verdict whose
+    // assumptions a write could break.
+    if (m_drawIndexedCache.isEmpty())
+        return true;
+
+    // Every live cache entry was proven against a vertex count of at least m_minValidatedVertexCount,
+    // and the clamp shader accepts an index only if it is below the vertex count it was proven
+    // against. A write whose largest value stays below that bound therefore cannot make any cached
+    // draw fetch out of bounds no matter where in the buffer it lands, so the cached verdicts may be
+    // kept. Both interpretations are checked because the cache is shared across index types.
+    // Anything else has to be revalidated.
+    return maxUnsignedIndex >= m_minValidatedVertexCount || maxUshortIndex >= m_minValidatedVertexCount;
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
@@ -787,8 +816,12 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
     m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
     ++m_drawIndexedCacheInvalidationCount;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     m_maxValidatedUnsignedIndex = 0;
     m_maxValidatedUshortIndex = 0;
+#else
+    m_minValidatedVertexCount = UINT32_MAX;
+#endif // RC_REMOVE_SEC_ACCEL_3
     m_indirectCache = {
         .indirectOffset = UINT64_MAX,
         .indexBufferOffsetInBytes = UINT64_MAX,
