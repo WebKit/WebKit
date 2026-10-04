@@ -796,6 +796,14 @@ void AcceleratedBackingStore::frame(uint64_t bufferID, Rects&& damageRects, WTF:
     }
 
     m_pendingBuffer = buffer;
+#if !USE(GTK4)
+    // GTK 3 only paints a window with GL if the window already has a GL context when the frame starts. Creating the
+    // context while painting this buffer would switch the window to GL in the middle of a frame: GDK creates the
+    // EGL window surface but still commits that frame from shared memory, which the compositor rejects when the EGL
+    // surface uses explicit sync (NVIDIA). Create it now, before the frame that paints the buffer.
+    if (buffer->type() == Buffer::Type::EglImage)
+        ensureGLContext();
+#endif
     m_pendingDamageRects = WTF::move(damageRects);
     m_fenceMonitor.addFileDescriptor(WTF::move(renderingFenceFD));
 }
