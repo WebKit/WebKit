@@ -696,7 +696,12 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
     if (ellipsisText.isEmpty())
         return { };
     // The ellipsis is not part of ::first-line, and it is painted with the root style too (see EllipsisBoxPainter).
-    return BlockOverflowEllipsis { ellipsisText, std::max(0.f, root->style().fontCascade().width(ellipsisText.string())) };
+    // "The ellipsis is subject to the effects of the 'hanging punctuation' property."
+    // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+    auto& rootStyle = root->style();
+    auto logicalWidth = std::max(0.f, rootStyle.fontCascade().width(ellipsisText.string()));
+    auto hangingWidth = TextUtil::hangablePunctuationEndWidth(ellipsisText.string(), rootStyle);
+    return BlockOverflowEllipsis { ellipsisText, logicalWidth - hangingWidth, hangingWidth };
 }
 
 }

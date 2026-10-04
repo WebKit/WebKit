@@ -498,7 +498,7 @@ static InlineDisplay::Line::Ellipsis trailingBlockEllipsis(const BlockOverflowEl
 {
     ASSERT(rootInlineBox.isRootInlineBox());
     // Being an isolate at the paragraph embedding level that follows the content, it always ends up at the visual end of the line in the paragraph direction.
-    auto ellipsisWidth = blockEllipsis.logicalWidth;
+    auto ellipsisWidth = blockEllipsis.logicalWidth + blockEllipsis.hangingWidth;
     auto lineBoxVisualLeft = displayLine.isHorizontal() ? displayLine.left() : displayLine.top();
     auto ellipsisStart = displayLine.isLeftToRightInlineDirection() ? lineBoxVisualLeft + displayLine.contentLogicalLeft() + displayLine.contentLogicalWidth() : lineBoxVisualLeft + displayLine.contentLogicalLeftIgnoringInlineDirection() - ellipsisWidth;
     auto visualRect = displayLine.isHorizontal() ? FloatRect { ellipsisStart, rootInlineBox.top(), ellipsisWidth, rootInlineBox.height() } : FloatRect { rootInlineBox.left(), ellipsisStart, rootInlineBox.width(), ellipsisWidth };

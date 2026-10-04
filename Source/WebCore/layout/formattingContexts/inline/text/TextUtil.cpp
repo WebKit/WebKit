@@ -730,6 +730,15 @@ float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem
     return width(inlineTextItem, protect(style.fontCascade()), trailingPosition, trailingPosition + 1, { });
 }
 
+float TextUtil::hangablePunctuationEndWidth(const String& text, const Style::ComputedStyle& style)
+{
+    if (text.isEmpty() || !style.hangingPunctuation().contains(Style::HangingPunctuationValue::Last))
+        return { };
+    if (!isHangableClosePunctuation(text[text.length() - 1]))
+        return { };
+    return style.fontCascade().width(text.right(1));
+}
+
 bool TextUtil::hasHangableStopOrCommaEnd(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style)
 {
     if (!inlineTextItem.length() || !style.hangingPunctuation().containsAny({ Style::HangingPunctuationValue::AllowEnd, Style::HangingPunctuationValue::ForceEnd }))

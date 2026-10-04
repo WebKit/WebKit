@@ -120,6 +120,7 @@ public:
 
     static bool hasHangablePunctuationEnd(const InlineTextItem&, const Style::ComputedStyle&);
     static float hangablePunctuationEndWidth(const InlineTextItem&, const Style::ComputedStyle&);
+    static float hangablePunctuationEndWidth(const String&, const Style::ComputedStyle&);
 
     static bool hasHangableStopOrCommaEnd(const InlineTextItem&, const Style::ComputedStyle&);
     static float hangableStopOrCommaEndWidth(const InlineTextItem&, const Style::ComputedStyle&);
