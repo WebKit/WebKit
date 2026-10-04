@@ -51,6 +51,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"WebKit2UseRemoteLayerTreeDrawingArea": @NO,
 #endif
         @"ForceDefaultAccessibilitySettings": @YES,
+        @"ReduceMotionAutoplayAnimatedImagesEnabled": @YES,
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
