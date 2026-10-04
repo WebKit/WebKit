@@ -4380,7 +4380,7 @@ public:
     {
         if (src == ARM64Registers::zr && dest != ARM64Registers::sp)
             m_assembler.movz<32>(dest, 0);
-        else
+        else if (src != dest || !m_assembler.lastInstructionZeroExtendsRegister(dest))
             m_assembler.mov<32>(dest, src);
     }
 

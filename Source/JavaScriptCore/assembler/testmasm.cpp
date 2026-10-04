@@ -7141,6 +7141,206 @@ static void testCachedTempRegisterImm32Normalization()
         CHECK_EQ(invoke<int>(test), 1);
     }
 }
+
+static void testZeroExtend32ToWordAfterZeroExtendingWrite()
+{
+    // zeroExtend32ToWord(r, r) emits nothing when the previous instruction already wrote r as a
+    // W register and no label was bound in between; every other shape still emits the mov.
+    size_t emitted = 0;
+    auto zeroExtendMeasured = [&] (CCallHelpers& jit, GPRReg src, GPRReg dest) {
+        size_t before = jit.m_assembler.buffer().codeSize();
+        jit.zeroExtend32ToWord(src, dest);
+        emitted = jit.m_assembler.buffer().codeSize() - before;
+    };
+    constexpr size_t instructionSize = 4;
+    constexpr uint64_t dirty = 0xffffffff00000000ull;
+
+    // add32 writes W: the mov is dropped and the result is still clean.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.add32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+            zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, 0u);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 1, dirty | 2), 3ull);
+    }
+
+    // add64 writes X: the mov stays.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.add64(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+            zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 1, 2), 3ull);
+    }
+
+    // A label between the two means control can arrive without the add: the mov stays.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.add32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+            (void)jit.label();
+            zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 1, dirty | 2), 3ull);
+    }
+
+    // Linking a jump binds a label too; the path that skips the add arrives with a dirty upper half.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            auto skip = jit.branchTest32(CCallHelpers::NonZero, GPRInfo::argumentGPR1);
+            jit.add32(CCallHelpers::TrustedImm32(1), GPRInfo::argumentGPR0);
+            skip.link(&jit);
+            zeroExtendMeasured(jit, GPRInfo::argumentGPR0, GPRInfo::argumentGPR0);
+            jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 5, 1), 5ull);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 5, 0), 6ull);
+    }
+
+    // A 32-bit load zero-extends; a 64-bit load does not.
+    {
+        uint64_t memory = 0xffffffffffffffffull;
+        auto test32 = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.load32(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::returnValueGPR);
+            zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, 0u);
+        CHECK_EQ(invoke<uint64_t>(test32, &memory), 0xffffffffull);
+
+        auto test64 = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.load64(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::returnValueGPR);
+            zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test64, &memory), 0xffffffffull);
+    }
+
+    // Immediates: a W move, a one-instruction X movz and a low-half bitmask leave the upper half
+    // clear; a movk or a bitmask reaching into bits 63:32 keeps the mov.
+    {
+        auto check = [&] (auto immediate, size_t expectedEmitted, uint64_t expectedResult) {
+            auto test = compile([&] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move(immediate, GPRInfo::returnValueGPR);
+                zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            CHECK_EQ(emitted, expectedEmitted);
+            CHECK_EQ(invoke<uint64_t>(test), expectedResult);
+        };
+        check(CCallHelpers::TrustedImm32(7), 0u, 7ull);
+        check(CCallHelpers::TrustedImm32(-100), 0u, 0xffffff9cull);
+        check(CCallHelpers::TrustedImm64(5), 0u, 5ull);
+        check(CCallHelpers::TrustedImm64(0x12345), instructionSize, 0x12345ull);
+        check(CCallHelpers::TrustedImm64(0x100000001ll), instructionSize, 1ull);
+        check(CCallHelpers::TrustedImm64(0x100000000ll), instructionSize, 0ull);
+    }
+
+    // 64-bit results that provably fit in 32 bits: a right shift by 32 or more, a bitmask AND
+    // confined to the low half, and a bitmask move; a shorter shift or a wider mask keeps the mov.
+    {
+        auto check = [&] (auto emit, size_t expectedEmitted, uint64_t expectedResult) {
+            auto test = compile([&] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                emit(jit);
+                zeroExtendMeasured(jit, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            CHECK_EQ(emitted, expectedEmitted);
+            CHECK_EQ(invoke<uint64_t>(test, dirty | 5), expectedResult);
+        };
+        check([] (CCallHelpers& jit) {
+            jit.urshift64(CCallHelpers::TrustedImm32(32), GPRInfo::returnValueGPR);
+        }, 0u, 0xffffffffull);
+        check([] (CCallHelpers& jit) {
+            jit.urshift64(CCallHelpers::TrustedImm32(16), GPRInfo::returnValueGPR);
+        }, instructionSize, 0xffff0000ull);
+        check([] (CCallHelpers& jit) {
+            jit.and64(CCallHelpers::TrustedImm64(0xffffffffll), GPRInfo::returnValueGPR);
+        }, 0u, 5ull);
+        check([] (CCallHelpers& jit) {
+            jit.and64(CCallHelpers::TrustedImm64(0x7ffffff0ll), GPRInfo::returnValueGPR);
+        }, 0u, 0ull);
+        check([] (CCallHelpers& jit) {
+            jit.and64(CCallHelpers::TrustedImm64(0xffffffff00000000ll), GPRInfo::returnValueGPR);
+        }, instructionSize, 0ull);
+        check([] (CCallHelpers& jit) {
+            jit.and64(CCallHelpers::TrustedImm64(0x1ffffffffll), GPRInfo::returnValueGPR);
+        }, instructionSize, 5ull);
+        check([] (CCallHelpers& jit) {
+            jit.move(CCallHelpers::TrustedImm64(0x10), GPRInfo::returnValueGPR);
+        }, 0u, 0x10ull);
+        check([] (CCallHelpers& jit) {
+            jit.move(CCallHelpers::TrustedImm64(0x1000000000ll), GPRInfo::returnValueGPR);
+        }, instructionSize, 0ull);
+    }
+
+    // Only the register the previous instruction wrote is known to be clean.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.add32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR1);
+            zeroExtendMeasured(jit, GPRInfo::argumentGPR0, GPRInfo::argumentGPR0);
+            jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 5, 1), 5ull);
+    }
+
+    // A move between different registers is never dropped.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.add32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR1);
+            zeroExtendMeasured(jit, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 5, dirty | 1), 6ull);
+    }
+
+    // moveConditionally32 compares 32 bits but selects with a 64-bit csel, so the mov stays.
+    {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR1);
+            jit.moveConditionally32(CCallHelpers::LessThan, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR1, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+            zeroExtendMeasured(jit, GPRInfo::argumentGPR1, GPRInfo::argumentGPR1);
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        CHECK_EQ(emitted, instructionSize);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 5), 5ull);
+        CHECK_EQ(invoke<uint64_t>(test, dirty | 0x80000000ull), 0ull);
+    }
+}
 #endif
 
 #if CPU(X86_64)
@@ -8766,6 +8966,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testMove16ToFloat16Comprehensive());
     RUN(testFMovHalfPrecisionEncoding());
     RUN(testCachedTempRegisterImm32Normalization());
+    RUN(testZeroExtend32ToWordAfterZeroExtendingWrite());
 #endif
 
     RUN(testGPRInfoConsistency());
