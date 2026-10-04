@@ -41,6 +41,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/WasmHandlerInfo.h>
 #include <JavaScriptCore/WasmIPIntGenerator.h>
 #include <JavaScriptCore/WasmIPIntTierUpCounter.h>
+#include <array>
+#include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedFixedVector.h>
 #include <wtf/TZoneMalloc.h>
@@ -93,6 +95,37 @@ public:
         m_callTargets[callProfileIndex] = target;
     }
 
+    static constexpr unsigned numTrackedHotLocals = 6;
+    using HotLocals = std::array<uint32_t, numTrackedHotLocals>;
+    static constexpr uint32_t noHotLocal = std::numeric_limits<uint32_t>::max();
+
+    static constexpr uint32_t minimumHotLocalUses = 4;
+
+    // A read of a local that has a register is free, but an assignment to one still stores, since
+    // everything that unwinds or reconstructs a frame reads locals from their slots. So a register is
+    // worth the reads it saves less the stores it costs.
+    void recordLocalRead(uint32_t index) { adjustLocalScore(index, 1); }
+    void recordLocalWrite(uint32_t index) { adjustLocalScore(index, -1); }
+
+    void enterLoop() { ++m_loopDepth; }
+    void exitLoop()
+    {
+        ASSERT(m_loopDepth);
+        --m_loopDepth;
+    }
+    unsigned loopDepth() const { return m_loopDepth; }
+
+    void adjustLocalScore(uint32_t index, int32_t delta)
+    {
+        if (!m_loopDepth)
+            return;
+        if (index >= m_localUseCounts.size())
+            m_localUseCounts.insertFill(m_localUseCounts.size(), 0, index + 1 - m_localUseCounts.size());
+        m_localUseCounts[index] += delta;
+    }
+
+    HotLocals hotLocals() const;
+
 private:
     struct MetadataBufferMalloc final : public FastMalloc {
         static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
@@ -136,6 +169,8 @@ private:
     unsigned m_nonArgLocalOffset { 0 };
     Vector<FunctionSpaceIndex> m_callTargets { };
     Vector<uint8_t, 8> m_localInitBytecode { };
+    Vector<int32_t, 8> m_localUseCounts { };
+    unsigned m_loopDepth { 0 };
 
     UncheckedKeyHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;

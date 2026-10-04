@@ -985,24 +985,28 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::getLocal(uint32_t, ExpressionType&)
+[[nodiscard]] PartialResult IPIntGenerator::getLocal(uint32_t index, ExpressionType&)
 {
     // Local indices are usually very small, so we decode them on the fly
     // instead of generating metadata.
+    m_metadata->recordLocalRead(index);
     changeStackSize(1);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::setLocal(uint32_t, ExpressionType)
+[[nodiscard]] PartialResult IPIntGenerator::setLocal(uint32_t index, ExpressionType)
 {
     // Local indices are usually very small, so we decode them on the fly
     // instead of generating metadata.
+    m_metadata->recordLocalWrite(index);
     changeStackSize(-1);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::teeLocal(uint32_t, ExpressionType, ExpressionType&)
+[[nodiscard]] PartialResult IPIntGenerator::teeLocal(uint32_t index, ExpressionType, ExpressionType&)
 {
+    m_metadata->recordLocalRead(index);
+    m_metadata->recordLocalWrite(index);
     return { };
 }
 
@@ -2227,6 +2231,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
 [[nodiscard]] PartialResult IPIntGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block, uint32_t loopIndex)
 {
     block = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::Loop);
+    m_metadata->enterLoop();
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
     block.m_pendingOffset = std::nullopt; // no need to update!
     block.m_pc = curPC();
@@ -2739,6 +2744,9 @@ void IPIntGenerator::endTryTable(const ControlType& data)
     m_stackSize = block.stackSize();
     changeStackSize(returnCount);
 
+    if (ControlType::isLoop(block))
+        m_metadata->exitLoop();
+
     if (ControlType::isTry(block) || ControlType::isAnyCatch(block)) {
         --m_tryDepth;
         m_exitHandlersAwaitingCoalescing.appendVector(block.m_catchesAwaitingFixup);
@@ -2976,6 +2984,8 @@ void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& ca
 
 std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
 {
+    ASSERT(!m_metadata->loopDepth());
+
     if (m_usesRethrow)
         m_metadata->m_numAlignedRethrowSlots = roundUpToMultipleOf<2>(m_maxTryDepth);
 

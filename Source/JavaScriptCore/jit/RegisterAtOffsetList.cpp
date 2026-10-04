@@ -120,15 +120,6 @@ const RegisterAtOffsetList& RegisterAtOffsetList::ipintCalleeSaveRegisters()
     return result.get();
 }
 
-const RegisterAtOffsetList& RegisterAtOffsetList::bbqCalleeSaveRegisters()
-{
-    static std::once_flag onceKey;
-    static LazyNeverDestroyed<RegisterAtOffsetList> result;
-    std::call_once(onceKey, [] {
-        result.construct(RegisterSet::bbqCalleeSaveRegisters());
-    });
-    return result.get();
-}
 #endif
 
 } // namespace JSC

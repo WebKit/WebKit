@@ -48,6 +48,7 @@
 #include "WasmBBQDisassembler.h"
 #include "WasmBaselineData.h"
 #include "WasmCallProfile.h"
+#include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
@@ -621,11 +622,6 @@ const MacroAssembler::Label& ControlData::loopLabel() const
     return m_loopLabel;
 }
 
-void ControlData::touch(LocalOrTempIndex local)
-{
-    m_touchedLocals.add(local);
-}
-
 void ControlData::fillLabels(CCallHelpers::Label label)
 {
     for (auto& box : m_labels)
@@ -687,8 +683,11 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
-    // Allocate callee save register spaces.
-    for (size_t i = 0, size = RegisterAtOffsetList::bbqCalleeSaveRegisters().registerCount(); i < size; ++i)
+    // The frame is laid out before local types are known, so this reserves room for the most
+    // pinned locals assignPinnedLocals() could later choose.
+    m_calleeSaves = RegisterAtOffsetList(RegisterSet::bbqCalleeSaveRegisters());
+    size_t calleeSaveSlots = m_calleeSaves.registerCount() + maxPinnedLocals();
+    for (size_t i = 0; i < calleeSaveSlots; ++i)
         allocateStack(Value::fromPointer(nullptr));
 
     ASSERT(callInfo.params.size() == m_functionSignature->argumentCount());
@@ -705,7 +704,7 @@ BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Mod
     m_localAndCalleeSaveStorage = m_frameSizeForValidation; // All stack slots allocated so far are locals.
 
     unsigned ipintFrameBytes = m_profiledCallee.maxFrameSizeInV128() * sizeof(v128_t);
-    unsigned bbqCalleeSaveBytes = RegisterAtOffsetList::bbqCalleeSaveRegisters().registerCount() * sizeof(UCPURegister);
+    unsigned bbqCalleeSaveBytes = calleeSaveSlots * sizeof(UCPURegister);
     unsigned calleeStackBytes = std::max<unsigned>(m_profiledCallee.maxCalleeStackSize(), WTF::roundUpToMultipleOf<stackAlignmentBytes()>(WasmCallingConvention::headerSizeInBytes));
     unsigned scratchSpillBytes = (gprSetBuilder.numberOfSetRegisters() + fprSetBuilder.numberOfSetRegisters()) * tempSlotSize;
     m_frameSize = alignedFrameSize(bbqCalleeSaveBytes + ipintFrameBytes + calleeStackBytes + scratchSpillBytes);
@@ -986,24 +985,35 @@ void BBQJIT::emitZeroExtendAddressOperand(bool is64Bit, Value operand)
 
 [[nodiscard]] PartialResult BBQJIT::getLocal(uint32_t localIndex, Value& result)
 {
-    // Currently, we load locals as temps, which basically prevents register allocation of locals.
-    // This is probably not ideal, we have infrastructure to support binding locals to registers, but
-    // we currently can't track local versioning (meaning we can get SSA-style issues where assigning
-    // to a local also updates all previous uses).
-    result = topValue(m_parser->typeOfLocal(localIndex).kind());
-    Location resultLocation = allocate(result);
-    emitLoad(Value::fromLocal(m_parser->typeOfLocal(localIndex).kind(), localIndex), resultLocation);
+    TypeKind type = m_parser->typeOfLocal(localIndex).kind();
+    result = Value::fromLocal(type, localIndex);
+    m_localsOnExpressionStack.set(localIndex);
     LOG_INSTRUCTION("GetLocal", localIndex, RESULT(result));
     return { };
 }
 
+void BBQJIT::assignToLocal(Value local, Value value)
+{
+    Location destination = locationOf(local);
+
+    Location source = value.isTemp() ? locationOf(value) : Location::none();
+    if (source.isRegister() && source != destination && !isPinnedLocalRegister(destination)) {
+        unbind(value, source);
+        if (destination.isRegister())
+            unbind(local, destination);
+        destination = bind(local, source);
+    } else
+        emitMove(value, destination);
+
+    if (destination.isRegister())
+        emitStore(local.type(), destination, canonicalSlot(local));
+}
+
 [[nodiscard]] PartialResult BBQJIT::setLocal(uint32_t localIndex, Value value)
 {
-    if (!value.isConst())
-        loadIfNecessary(value);
+    evacuateLocal(localIndex);
     Value local = Value::fromLocal(m_parser->typeOfLocal(localIndex).kind(), localIndex);
-    Location localLocation = locationOf(local);
-    emitStore(value, localLocation);
+    assignToLocal(local, value);
     consume(value);
     LOG_INSTRUCTION("SetLocal", localIndex, value);
     return { };
@@ -1011,24 +1021,8 @@ void BBQJIT::emitZeroExtendAddressOperand(bool is64Bit, Value operand)
 
 [[nodiscard]] PartialResult BBQJIT::teeLocal(uint32_t localIndex, Value value, Value& result)
 {
-    auto type = m_parser->typeOfLocal(localIndex);
-    Value local = Value::fromLocal(type.kind(), localIndex);
-    if (value.isConst()) {
-        Location localLocation = locationOf(local);
-        emitStore(value, localLocation);
-        consume(value);
-        result = topValue(type.kind());
-        Location resultLocation = allocate(result);
-        emitMoveConst(value, resultLocation);
-    } else {
-        Location srcLocation = loadIfNecessary(value);
-        Location localLocation = locationOf(local);
-        emitStore(value, localLocation);
-        consume(value);
-        result = topValue(type.kind());
-        Location resultLocation = allocate(result);
-        emitMove(type.kind(), srcLocation, resultLocation);
-    }
+    WASM_FAIL_IF_HELPER_FAILS(setLocal(localIndex, value));
+    WASM_FAIL_IF_HELPER_FAILS(getLocal(localIndex, result));
     LOG_INSTRUCTION("TeeLocal", localIndex, value, RESULT(result));
     return { };
 }
@@ -3364,8 +3358,14 @@ void BBQJIT::emitEntryTierUpCheck()
     m_jit.add32(TrustedImm32(1), CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineData::offsetOfTotalCount()));
 
     LocalOrTempIndex i = 0;
-    for (; i < m_arguments.size(); ++i)
-        flushValue(Value::fromLocal(m_parser->typeOfLocal(i).kind(), i));
+    for (; i < m_arguments.size(); ++i) {
+        Value local = Value::fromLocal(m_parser->typeOfLocal(i).kind(), i);
+        Location incoming = locationOf(local);
+        Location slot = canonicalSlot(local);
+        emitMove(local, slot);
+        unbind(local, incoming);
+        bind(local, slot);
+    }
 
     // Zero all locals that aren't initialized by arguments.
     enum class ClearMode { Zero, JSNull };
@@ -3468,8 +3468,7 @@ void BBQJIT::emitEntryTierUpCheck()
     flushZeroClear();
     JIT_COMMENT(m_jit, "initialize locals done");
 
-    for (size_t i = 0; i < m_functionSignature->argumentCount(); i ++)
-        m_topLevel.touch(i); // Ensure arguments are flushed to persistent locations when this block ends.
+    loadPinnedLocals();
 
     emitEntryTierUpCheck();
 
@@ -3518,6 +3517,11 @@ MacroAssembler::Label BBQJIT::addLoopOSREntrypoint()
     // it returns the address of the loop we're jumping to in wasmScratchGPR (so we don't interfere with
     // anything we just loaded from the scratch buffer into a register)
     m_jit.probe(tagCFunction<JITProbePtrTag>(operationWasmLoopOSREnterBBQJIT), nullptr);
+
+    for (const PinnedLocal& pinned : m_pinnedLocals) {
+        Value local = Value::fromLocal(m_localTypes[pinned.index], pinned.index);
+        emitStore(local.type(), pinned.location, canonicalSlot(local));
+    }
 
     // We expect the loop address to be populated by the probe operation.
     static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
@@ -3618,13 +3622,18 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, std::span<const TypedExpr
             ASSERT(!entry.controlData.implicitSlots());
     }
 
+    auto repFor = [&](const TypedExpression& expr) ALWAYS_INLINE_LAMBDA {
+        ASSERT(!expr.value().isLocal());
+        return OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind()));
+    };
+
     for (size_t i = 0; i < m_parser->controlStack().size(); ++i) {
         for (const TypedExpression& expr : m_parser->enclosedSliceOf(i))
-            stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind()));
+            stackMap[stackMapIndex++] = repFor(expr);
     }
 
     for (const TypedExpression& expr : enclosingStack)
-        stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(locationOf(expr.value())), toB3Type(expr.type().kind()));
+        stackMap[stackMapIndex++] = repFor(expr);
     for (unsigned i = 0; i < data.argumentLocations().size(); i++)
         stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind()));
 
@@ -3973,7 +3982,7 @@ void BBQJIT::prepareForExceptions()
     }
 }
 
-[[nodiscard]] PartialResult BBQJIT::addReturn(const ControlData& data, std::span<const TypedExpression> returnValues)
+[[nodiscard]] PartialResult BBQJIT::addReturn(const ControlData&, std::span<const TypedExpression> returnValues)
 {
     // Use the function signature from the parser
     ASSERT(m_parser);
@@ -3998,15 +4007,7 @@ void BBQJIT::prepareForExceptions()
     for (const auto& value : returnValues)
         consume(value);
 
-    const ControlData& enclosingBlock = !m_parser->controlStack().size() ? data : currentControlData();
-    for (LocalOrTempIndex localIndex : enclosingBlock.m_touchedLocals) {
-        Value local = Value::fromLocal(m_localTypes[localIndex], localIndex);
-        if (locationOf(local).isRegister()) {
-            // Flush all locals without emitting stores (since we're leaving anyway)
-            unbind(local, locationOf(local));
-            bind(local, canonicalSlot(local));
-        }
-    }
+    unbindAllLocals();
 
     emitRestoreCalleeSaves();
     m_jit.emitFunctionEpilogue();
@@ -4270,7 +4271,12 @@ void BBQJIT::flushValue(Value value)
     Location currentLocation = locationOf(value);
     Location slot = canonicalSlot(value);
 
-    emitMove(value, slot);
+    if (!value.isLocal())
+        emitMove(value, slot);
+
+    if (isPinnedLocalRegister(currentLocation))
+        return;
+
     unbind(value, currentLocation);
     bind(value, slot);
 }
@@ -4302,13 +4308,7 @@ void BBQJIT::loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg was
 
 void BBQJIT::flushRegistersForException()
 {
-    // Flush all locals.
-    m_gprAllocator.flushIf(*this, [&](GPRReg, const RegisterBinding& binding) {
-        return binding.toValue().isLocal();
-    });
-    m_fprAllocator.flushIf(*this, [&](FPRReg, const RegisterBinding& binding) {
-        return binding.toValue().isLocal();
-    });
+    flushAllLocals();
 }
 
 void BBQJIT::flushRegisters()
@@ -4497,7 +4497,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
         int32_t topSource = -static_cast<int32_t>(m_frameSize);
         for (unsigned i = 0; i < arguments.size(); i++) {
             if (!arguments[i].value().isConst()) {
-                Location loc = locationOf(arguments[i]);
+                Location loc = tailCallArgumentSource(arguments[i]);
                 if (loc.isStack())
                     topSource = std::max(topSource, loc.asStackOffset() + static_cast<int32_t>(sizeof(Register)));
             }
@@ -4523,13 +4523,13 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
     UNREACHABLE_FOR_PLATFORM();
 #endif
 
-    // We don't need to restore any callee saves because we don't use them with the current register allocator.
-    // If we did we'd want to do that here because we could clobber their stack slots when shuffling the parameters into place below.
+    // Callee saves were restored above, before the shuffle could write over their slots, so a pinned
+    // local's register holds the caller's value by now and the local must come from its slot.
     for (unsigned i = 0; i < arguments.size(); i ++) {
         if (arguments[i].value().isConst())
             resolvedArguments.append(arguments[i].value());
         else
-            resolvedArguments.append(Value::pinned(arguments[i].value().type(), locationOf(arguments[i])));
+            resolvedArguments.append(Value::pinned(arguments[i].value().type(), tailCallArgumentSource(arguments[i])));
 
         consume(arguments[i]);
     }
@@ -4747,11 +4747,21 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 
     emitRestoreCalleeSaves();
 
+#if CPU(ARM64)
+    auto preserved = callingConvention.argumentGPRs();
+    preserved.add(importableFunction, IgnoreVectors);
+    if constexpr (isARM64E())
+        preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
+    ScratchScope<1, 0> scratches(*this, WTF::move(preserved));
+    GPRReg callerFramePointer = scratches.gpr(0);
+    scratches.unbindPreserved();
+#endif
+
     {
         int32_t topSource = -static_cast<int32_t>(m_frameSize);
         for (unsigned i = 0; i < arguments.size(); i++) {
             if (!arguments[i].value().isConst()) {
-                Location loc = locationOf(arguments[i]);
+                Location loc = tailCallArgumentSource(arguments[i]);
                 if (loc.isStack())
                     topSource = std::max(topSource, loc.asStackOffset() + static_cast<int32_t>(sizeof(Register)));
             }
@@ -4788,13 +4798,6 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
 #elif CPU(ARM64)
-    auto preserved = callingConvention.argumentGPRs();
-    preserved.add(importableFunction, IgnoreVectors);
-    if constexpr (isARM64E())
-        preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
-    ScratchScope<1, 0> scratches(*this, WTF::move(preserved));
-    GPRReg callerFramePointer = scratches.gpr(0);
-    scratches.unbindPreserved();
     m_jit.loadPairPtr(MacroAssembler::framePointerRegister, callerFramePointer, MacroAssembler::linkRegister);
 #else
     UNREACHABLE_FOR_PLATFORM();
@@ -4804,7 +4807,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         if (arguments[i].value().isConst())
             resolvedArguments.append(arguments[i].value());
         else
-            resolvedArguments.append(Value::pinned(arguments[i].value().type(), locationOf(arguments[i])));
+            resolvedArguments.append(Value::pinned(arguments[i].value().type(), tailCallArgumentSource(arguments[i])));
 
         // This isn't really needed but it's nice to have good book keeping.
         consume(arguments[i]);
@@ -4861,6 +4864,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 
     for (const auto& value : m_parser->expressionStack())
         consume(value);
+    unbindAllLocals();
 }
 
 [[nodiscard]] PartialResult BBQJIT::addCallIndirect(unsigned callProfileIndex, unsigned tableIndex, const RTT& signature, ArgumentList& args, ResultList& results, CallType callType)
@@ -4930,8 +4934,8 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 #if CPU(ARM64)
                 m_jit.addLeftShift64(callableFunctionBuffer, calleeIndexLocation.asGPR(), TrustedImm32(getLSBSet(sizeof(FuncRefTable::Function))), importableFunction);
 #else
-                m_jit.lshiftPtr(TrustedImm32(getLSBSet(sizeof(FuncRefTable::Function))), calleeIndexLocation.asGPR());
-                m_jit.addPtr(callableFunctionBuffer, calleeIndexLocation.asGPR(), importableFunction);
+                m_jit.lshiftPtr(calleeIndexLocation.asGPR(), TrustedImm32(getLSBSet(sizeof(FuncRefTable::Function))), importableFunction);
+                m_jit.addPtr(callableFunctionBuffer, importableFunction);
 #endif
             } else {
                 m_jit.move(TrustedImmPtr(sizeof(FuncRefTable::Function)), importableFunction);
@@ -5038,6 +5042,11 @@ ALWAYS_INLINE void BBQJIT::willParseOpcode()
     m_fprAllocator.assertAllValidRegistersAreUnlocked();
 
 #if ASSERT_ENABLED
+    for (size_t i = 0; i < m_parser->controlStack().size(); ++i) {
+        for (const TypedExpression& expr : m_parser->enclosedSliceOf(i))
+            ASSERT(!expr.value().isLocal());
+    }
+
     if (shouldFuseBranchCompare && isCompareOpType(m_prevOpcode)
         && (m_parser->currentOpcode() == OpType::BrIf || m_parser->currentOpcode() == OpType::If)) {
         m_prevOpcode = m_parser->currentOpcode();
@@ -5047,7 +5056,6 @@ ALWAYS_INLINE void BBQJIT::willParseOpcode()
         // Temps should have been consumed, we should have removed them from this list.
         ASSERT_WITH_MESSAGE(!value.isTemp(), "Temp(%u) was not consumed by the instruction that popped it!", value.asTemp());
 
-        ASSERT(!value.isLocal()); // Change this if/when we start register-allocating locals.
     }
     m_prevOpcode = m_parser->currentOpcode();
     m_justPoppedStack.clear();
@@ -5443,7 +5451,11 @@ bool BBQJIT::usesSIMD()
 }
 
 void BBQJIT::dump(const ControlStack&, const Stack*) { }
-void BBQJIT::didFinishParsingLocals() { }
+
+void BBQJIT::didFinishParsingLocals()
+{
+    assignPinnedLocals();
+}
 
 void BBQJIT::didPopValueFromStack(Value value, ASCIILiteral)
 {
@@ -5556,17 +5568,13 @@ void BBQJIT::emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Lo
     ASSERT(srcVector.size() == dstVector.size());
 
 #if ASSERT_ENABLED
+    // Destinations must not overlap: one move would otherwise overwrite another's result, and
+    // disjoint destinations are also what limit the moves to the single cycle emitShuffleMove can
+    // break with one scratch register: https://xavierleroy.org/publi/parallel-move.pdf
+    // Sources may repeat. Two moves that only read the same place need no ordering between them.
     for (size_t i = 0; i < dstVector.size(); ++i) {
         for (size_t j = i + 1; j < dstVector.size(); ++j)
             ASSERT(!Location::rangesOverlap(dstVector[i], srcVector[i].size(), dstVector[j], srcVector[j].size()));
-    }
-
-    // This algorithm assumes at most one cycle: https://xavierleroy.org/publi/parallel-move.pdf
-    for (size_t i = 0; i < srcVector.size(); ++i) {
-        for (size_t j = i + 1; j < srcVector.size(); ++j) {
-            ASSERT(srcVector[i].isConst() || srcVector[j].isConst()
-                || locationOf(srcVector[i]) != locationOf(srcVector[j]));
-        }
     }
 #endif
 
@@ -5620,8 +5628,6 @@ Location BBQJIT::allocateWithHint(Value value, Location hint)
     else
         result = Location::fromGPR(m_gprAllocator.allocate(*this, RegisterBinding::fromValue(value), nextLRUKey(), hint.isGPR() ? hint.asGPR() : InvalidGPRReg));
 
-    if (value.isLocal())
-        currentControlData().touch(value.asLocal());
     if (Options::verboseBBQJITAllocation()) [[unlikely]]
         dataLogLn("BBQ\tAllocated ", value, " with type ", makeString(value.type()), " to ", result);
     return bind(value, result);
@@ -5666,10 +5672,8 @@ Location BBQJIT::loadIfNecessary(Value value)
             dataLogLn("BBQ\tLoading local ", value, " to ", loc);
         Location dst = allocate(value); // Find a register to store this value. Might spill older values if we run out.
         emitLoad(value.type(), loc, dst); // Generate the load instructions to move the value into the register.
-        if (value.isLocal())
-            currentControlData().touch(value.asLocal());
         loc = dst;
-    } else
+    } else if (ownsRegister(loc))
         increaseLRUKey(loc);
     ASSERT(loc.isRegister());
     return loc;
@@ -5708,7 +5712,9 @@ Location BBQJIT::bind(Value value, Location loc)
 
     // Some callers have already updated the allocator to bind value to loc. But if not, we should do that bookkeeping now.
     if (loc.isRegister()) {
-        if (value.isFloat()) {
+        if (!ownsRegister(loc)) {
+            ASSERT(value.isLocal() && isPinnedLocalRegister(loc));
+        } else if (value.isFloat()) {
             if (m_fprAllocator.freeRegisters().contains(loc.asFPR(), Width::Width128))
                 m_fprAllocator.bind(loc.asFPR(), RegisterBinding::fromValue(value), std::nullopt);
             ASSERT(bindingFor(loc.asFPR()) == RegisterBinding::fromValue(value));
@@ -5736,10 +5742,13 @@ void BBQJIT::unbind(Value value, Location loc)
 {
     // Unbind a value from a location. Doesn't touch the LRU, but updates the register set
     // and local/temp tables accordingly.
-    if (loc.isFPR())
-        m_fprAllocator.unbind(loc.asFPR());
-    else if (loc.isGPR())
-        m_gprAllocator.unbind(loc.asGPR());
+    if (ownsRegister(loc)) {
+        if (loc.isFPR())
+            m_fprAllocator.unbind(loc.asFPR());
+        else
+            m_gprAllocator.unbind(loc.asGPR());
+    } else
+        ASSERT_IMPLIES(loc.isRegister(), !m_pinnedLocalRegisters.contains(loc.asReg(), IgnoreVectors));
     if (value.isLocal())
         m_locals[value.asLocal()] = m_localSlots[value.asLocal()];
     else if (value.isTemp())
@@ -5766,6 +5775,149 @@ void BBQJIT::unbindAllRegisters()
 
     for (auto reg : m_fprAllocator.validRegisters())
         doUnbind(reg);
+}
+
+void BBQJIT::flushAllLocals()
+{
+    m_gprAllocator.flushIf(*this, [](GPRReg, const RegisterBinding& binding) {
+        return binding.toValue().isLocal();
+    });
+    m_fprAllocator.flushIf(*this, [](FPRReg, const RegisterBinding& binding) {
+        return binding.toValue().isLocal();
+    });
+}
+
+void BBQJIT::assignPinnedLocals()
+{
+    unsigned budget = maxPinnedLocals();
+    if (!budget)
+        return;
+
+    const auto& hotLocals = m_profiledCallee.hotLocals();
+
+    // Candidates come from the callee-save bank, so a call preserves a pinned local for free.
+    //
+    // The JSValue tag registers are deliberately left in, though specialRegisters() withholds them
+    // from every other allocator: JIT'd JavaScript expects them across a call, but wasm never reads
+    // them. Taking them is safe only because they land in this function's callee-save list, so the
+    // prologue, the epilogue and an unwind past this frame all recover the caller's values.
+    RegisterSet candidates = RegisterSet::vmCalleeSaveRegisters();
+    candidates.exclude(RegisterSet::stackRegisters());
+    candidates.exclude(RegisterSet::reservedHardwareRegisters());
+    candidates.exclude(RegisterSet::wasmPinnedRegisters());
+    candidates.exclude(RegisterSet::bbqCalleeSaveRegisters());
+
+    for (uint32_t localIndex : hotLocals) {
+        if (m_pinnedLocals.size() >= budget)
+            break;
+        if (localIndex == FunctionIPIntMetadataGenerator::noHotLocal)
+            break;
+        if (localIndex >= m_localTypes.size())
+            continue;
+
+        TypeKind type = m_localTypes[localIndex];
+        // A callee-save FPR keeps only its low 64 bits across a call, which loses half a vector.
+        if (type == TypeKind::V128)
+            continue;
+
+        bool wantFloat = isFloatingPointType(type);
+        Reg reg;
+        for (Reg candidate : candidates) {
+            if (candidate.isFPR() == wantFloat) {
+                reg = candidate;
+                break;
+            }
+        }
+        if (!reg)
+            continue;
+
+        candidates.remove(reg);
+        m_pinnedLocalRegisters.add(reg, IgnoreVectors);
+        Location location = reg.isGPR() ? Location::fromGPR(reg.gpr()) : Location::fromFPR(reg.fpr());
+        m_pinnedLocals.append(PinnedLocal { localIndex, location });
+
+        if (Options::verboseBBQJITAllocation()) [[unlikely]]
+            dataLogLn("BBQ\tPinned local ", localIndex, " to ", location);
+    }
+
+    if (m_pinnedLocals.isEmpty())
+        return;
+
+    RegisterSet saves = RegisterSet::bbqCalleeSaveRegisters();
+    saves.merge(m_pinnedLocalRegisters);
+    m_calleeSaves = RegisterAtOffsetList(saves);
+
+    RELEASE_ASSERT(m_calleeSaves.registerCount() <= RegisterSet::bbqCalleeSaveRegisters().numberOfSetRegisters() + maxPinnedLocals());
+}
+
+void BBQJIT::loadPinnedLocals()
+{
+    for (const PinnedLocal& pinned : m_pinnedLocals) {
+        Value local = Value::fromLocal(m_localTypes[pinned.index], pinned.index);
+        ASSERT(locationOf(local) == canonicalSlot(local) || locationOf(local) == pinned.location);
+        emitLoad(local.type(), canonicalSlot(local), pinned.location);
+        bind(local, pinned.location);
+    }
+}
+
+#if ASSERT_ENABLED
+void BBQJIT::assertPinnedLocalsAreResident()
+{
+    for (const PinnedLocal& pinned : m_pinnedLocals)
+        ASSERT(locationOf(Value::fromLocal(m_localTypes[pinned.index], pinned.index)) == pinned.location);
+}
+#endif
+
+void BBQJIT::unbindAllLocals()
+{
+    auto doUnbind = [&](Reg reg) {
+        Value value = bindingFor(reg).toValue();
+        if (value.isLocal())
+            unbind(value, locationOfWithoutBinding(value));
+    };
+
+    for (auto reg : m_gprAllocator.validRegisters())
+        doUnbind(reg);
+
+    for (auto reg : m_fprAllocator.validRegisters())
+        doUnbind(reg);
+}
+
+Location BBQJIT::tailCallArgumentSource(Value value)
+{
+    Location location = locationOf(value);
+    if (isPinnedLocalRegister(location))
+        return canonicalSlot(value);
+    return location;
+}
+
+void BBQJIT::evacuateLocal(uint32_t localIndex)
+{
+    if (!m_localsOnExpressionStack.get(localIndex))
+        return;
+    m_localsOnExpressionStack.clear(localIndex);
+
+    ControlData& control = currentControlData();
+    auto expressionStack = m_parser->expressionStack();
+
+    Value source = Value::fromLocal(m_localTypes[localIndex], localIndex);
+    for (unsigned i = 0; i < expressionStack.size(); ++i) {
+        Value& value = expressionStack[i].value();
+        if (!value.isLocal() || value.asLocal() != localIndex)
+            continue;
+
+        Value evacuated = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(control.enclosedHeight() + control.implicitSlots() + i));
+        Location sourceLocation = locationOf(source);
+        // Nothing reads the old value after this loop, so the first entry takes the register over.
+        // A pinned register stays put: the write that follows lands directly in it.
+        if (source.isLocal() && sourceLocation.isRegister() && !isPinnedLocalRegister(sourceLocation)) {
+            unbind(source, sourceLocation);
+            bind(evacuated, sourceLocation);
+        } else
+            emitMove(source, allocate(evacuated));
+        value = evacuated;
+        source = evacuated;
+    }
 }
 
 Location BBQJIT::canonicalSlot(Value value)
@@ -5895,6 +6047,7 @@ std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Comp
 
     result->exceptionHandlers = irGenerator.takeExceptionHandlers();
     result->outgoingJITDirectCallees = irGenerator.takeDirectCallees();
+    result->entrypoint.calleeSaveRegisters = irGenerator.calleeSaveRegisters();
     compilationContext.catchEntrypoints = irGenerator.takeCatchEntrypoints();
     compilationContext.pcToCodeOriginMapBuilder = irGenerator.takePCToCodeOriginMapBuilder();
     compilationContext.bbqDisassembler = irGenerator.takeDisassembler();
@@ -5904,19 +6057,19 @@ std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Comp
 
 void BBQJIT::emitPushCalleeSaves()
 {
-    size_t stackSizeForCalleeSaves = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(RegisterAtOffsetList::bbqCalleeSaveRegisters().registerCount() * sizeof(UCPURegister));
+    size_t stackSizeForCalleeSaves = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(m_calleeSaves.registerCount() * sizeof(UCPURegister));
 #if CPU(X86_64) || CPU(ARM64)
     m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(stackSizeForCalleeSaves), MacroAssembler::stackPointerRegister);
 #else
     m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(stackSizeForCalleeSaves), wasmScratchGPR);
     m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
 #endif
-    m_jit.emitSaveCalleeSavesFor(&RegisterAtOffsetList::bbqCalleeSaveRegisters());
+    m_jit.emitSaveCalleeSavesFor(&m_calleeSaves);
 }
 
 void BBQJIT::emitRestoreCalleeSaves()
 {
-    m_jit.emitRestoreCalleeSavesFor(&RegisterAtOffsetList::bbqCalleeSaveRegisters());
+    m_jit.emitRestoreCalleeSavesFor(&m_calleeSaves);
 }
 
 } } // namespace JSC::Wasm
