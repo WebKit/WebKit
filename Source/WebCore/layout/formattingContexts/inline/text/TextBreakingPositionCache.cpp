@@ -120,7 +120,7 @@ void TextBreakingPositionCache::evict()
         auto entrySize = approximateEntrySizeBytes(std::get<0>(evictedEntry->key), *evictedEntry->value);
         ASSERT(m_cachedContentSize >= entrySize);
         m_cachedContentSize -= entrySize;
-        m_breakingPositionMap.remove(evictedEntry->key);
+        m_breakingPositionMap.remove(evictedEntry);
     }
 }
 
