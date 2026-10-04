@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<style>
+.container {
+    font-family: Ahem;
+    font-size: 20px;
+    line-height: 1;
+}
+.tall {
+    display: inline-block;
+    width: 10px;
+    height: 100px;
+}
+.deep {
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    vertical-align: -80px;
+}
+</style>
+<!-- The top/bottom aligned box is the last child of its parent inline box. The content following the parent inline box must not be treated as part of its aligned subtree. -->
+<div class=container id=topContainer><span><span id=topTarget style="vertical-align: top">X</span></span><span class=tall></span></div>
+<div class=container id=bottomContainer><span><span id=bottomTarget style="vertical-align: bottom">X</span></span><span class=deep></span></div>
+<pre id=log></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function check(description, actual, expected) {
+    log.textContent += (actual == expected ? "PASS" : "FAIL") + ": " + description + " is " + actual + (actual == expected ? "" : " (expected " + expected + ")") + "\n";
+}
+
+const topContainerRect = topContainer.getBoundingClientRect();
+check("top aligned box offset from line top", topTarget.getBoundingClientRect().top - topContainerRect.top, 0);
+
+const bottomContainerRect = bottomContainer.getBoundingClientRect();
+check("bottom aligned box offset from line bottom", bottomContainerRect.bottom - bottomTarget.getBoundingClientRect().bottom, 0);
+</script>
