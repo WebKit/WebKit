@@ -3959,6 +3959,7 @@ private:
     String m_applicationNameForUserAgent;
     String m_applicationNameForDesktopUserAgent;
     String m_customUserAgent;
+    bool m_hasCustomUserAgent { false };
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;
     String m_openedMainFrameName;

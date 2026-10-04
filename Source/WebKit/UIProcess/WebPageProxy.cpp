@@ -6844,6 +6844,7 @@ void WebPageProxy::setUserAgent(String&& userAgent, IsCustomUserAgent isCustomUs
     if (m_userAgent == userAgent)
         return;
     m_userAgent = WTF::move(userAgent);
+    m_hasCustomUserAgent = isCustomUserAgent == IsCustomUserAgent::Yes;
 
     // We update the service worker there at the moment to be sure we use values used by actual web pages.
     // FIXME: Refactor this when we have a better User-Agent story.
@@ -6853,7 +6854,7 @@ void WebPageProxy::setUserAgent(String&& userAgent, IsCustomUserAgent isCustomUs
         return;
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::SetUserAgent(m_userAgent), pageID);
-        webProcess.send(Messages::WebPage::SetHasCustomUserAgent(isCustomUserAgent == IsCustomUserAgent::Yes), pageID);
+        webProcess.send(Messages::WebPage::SetHasCustomUserAgent(m_hasCustomUserAgent), pageID);
     });
 }
 
@@ -14962,6 +14963,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.pageLength = m_pageLength;
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
+    parameters.hasCustomUserAgent = m_hasCustomUserAgent;
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();

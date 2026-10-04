@@ -648,6 +648,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_mainFrame(WebFrame::create(*this, parameters.mainFrameIdentifier))
     , m_pageGroup(WebProcess::singleton().webPageGroup(WTF::move(parameters.pageGroupData)))
     , m_userAgent(WTF::move(parameters.userAgent))
+    , m_hasCustomUserAgent(parameters.hasCustomUserAgent)
 #if ENABLE(TILED_CA_DRAWING_AREA)
     , m_drawingAreaType(parameters.drawingAreaType)
 #endif
