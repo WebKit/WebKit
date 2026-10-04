@@ -620,6 +620,7 @@ UIProcess/Extensions/WebExtensionStorageSQLiteStore.cpp
 
 UIProcess/Extensions/API/WebExtensionContextAPIAlarms.cpp
 UIProcess/Extensions/API/WebExtensionContextAPIDeclarativeNetRequest.cpp
+UIProcess/Extensions/API/WebExtensionContextAPIPermissions.cpp
 UIProcess/Extensions/API/WebExtensionContextAPIStorage.cpp @cost:3
 
 UIProcess/Gamepad/UIGamepad.cpp
