@@ -20440,8 +20440,10 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock continuation = m_out.newBlock();
 
+        // Structure sets usually list structures in the order they were observed. Objects tend to
+        // transition away from older structures, so test the most recently observed ones first.
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
-        for (unsigned i = 0; i < set.size() - 1; ++i) {
+        for (unsigned i = set.size(); --i;) {
             LBasicBlock nextStructure = m_out.newBlock();
             m_out.branch(
                 m_out.equal(structureDiscriminant, weakStructureDiscriminant(set[i])),
@@ -20451,7 +20453,7 @@ IGNORE_CLANG_WARNINGS_END
 
         speculate(
             exitKind, formattedValue, nullptr,
-            m_out.notEqual(structureDiscriminant, weakStructureDiscriminant(set.last())));
+            m_out.notEqual(structureDiscriminant, weakStructureDiscriminant(set[0])));
 
         m_out.jump(continuation);
         m_out.appendTo(continuation, lastNext);
