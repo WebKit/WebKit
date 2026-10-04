@@ -91,7 +91,7 @@ static Protocol::Page::ResourceType toProtocolResourceType(ResourceType type)
     return Protocol::Page::ResourceType::Other;
 }
 
-static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
+static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request, const RequestExtras& requestExtras)
 {
     auto requestObject = Protocol::Network::Request::create()
         .setUrl(request.url().string())
@@ -99,12 +99,14 @@ static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const Resou
         .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
         .release();
 
-    if (RefPtr body = request.httpBody()) {
-        if (!body->isEmpty()) {
-            auto bytes = body->flatten();
-            requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.span()));
-        }
-    }
+    if (!requestExtras.postData.isNull())
+        requestObject->setPostData(requestExtras.postData);
+
+    if (requestExtras.referrerPolicy)
+        requestObject->setReferrerPolicy(ResourceUtilities::referrerPolicyToProtocol(*requestExtras.referrerPolicy));
+
+    if (!requestExtras.integrity.isEmpty())
+        requestObject->setIntegrity(requestExtras.integrity);
 
     return requestObject;
 }
@@ -571,14 +573,14 @@ CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<in
 
 // IPC message handlers from WebProcess FrameNetworkAgentProxy.
 
-void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& targetID, const String& documentURL, const ResourceRequest& request, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
+void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& targetID, const String& documentURL, const ResourceRequest& request, const RequestExtras& requestExtras, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
     auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
-    auto requestObject = buildObjectForResourceRequest(request);
+    auto requestObject = buildObjectForResourceRequest(request, requestExtras);
     auto initiatorObject = ResourceUtilities::buildInitiatorObject(initiator);
 
     RefPtr<Protocol::Network::Response> redirectResponseObject;

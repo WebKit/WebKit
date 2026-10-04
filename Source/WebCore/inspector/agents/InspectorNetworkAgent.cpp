@@ -145,33 +145,6 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
     });
 }
 
-static Inspector::Protocol::Network::ReferrerPolicy NODELETE toProtocol(ReferrerPolicy referrerPolicy)
-{
-    switch (referrerPolicy) {
-    case ReferrerPolicy::EmptyString:
-        return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
-    case ReferrerPolicy::NoReferrer:
-        return Inspector::Protocol::Network::ReferrerPolicy::NoReferrer;
-    case ReferrerPolicy::NoReferrerWhenDowngrade:
-        return Inspector::Protocol::Network::ReferrerPolicy::NoReferrerWhenDowngrade;
-    case ReferrerPolicy::SameOrigin:
-        return Inspector::Protocol::Network::ReferrerPolicy::SameOrigin;
-    case ReferrerPolicy::Origin:
-        return Inspector::Protocol::Network::ReferrerPolicy::Origin;
-    case ReferrerPolicy::StrictOrigin:
-        return Inspector::Protocol::Network::ReferrerPolicy::StrictOrigin;
-    case ReferrerPolicy::OriginWhenCrossOrigin:
-        return Inspector::Protocol::Network::ReferrerPolicy::OriginWhenCrossOrigin;
-    case ReferrerPolicy::StrictOriginWhenCrossOrigin:
-        return Inspector::Protocol::Network::ReferrerPolicy::StrictOriginWhenCrossOrigin;
-    case ReferrerPolicy::UnsafeUrl:
-        return Inspector::Protocol::Network::ReferrerPolicy::UnsafeUrl;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
-}
-
 static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request, ResourceLoader* resourceLoader)
 {
     auto requestObject = Inspector::Protocol::Network::Request::create()
@@ -186,7 +159,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     }
 
     if (resourceLoader) {
-        requestObject->setReferrerPolicy(toProtocol(resourceLoader->options().referrerPolicy));
+        requestObject->setReferrerPolicy(ResourceUtilities::referrerPolicyToProtocol(resourceLoader->options().referrerPolicy));
 
         if (auto integrity = resourceLoader->options().integrity; !integrity.isEmpty())
             requestObject->setIntegrity(integrity);

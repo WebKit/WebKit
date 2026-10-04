@@ -29,6 +29,7 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorResourceType.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <cstdint>
@@ -162,6 +163,13 @@ struct InitiatorData {
     bool isAttributed() const { return type != InitiatorType::Other || nodeId.has_value(); }
 };
 
+// Request fields that ResourceRequest's IPC encoding doesn't carry.
+struct RequestExtras {
+    String postData;
+    std::optional<WebCore::ReferrerPolicy> referrerPolicy;
+    String integrity;
+};
+
 namespace ResourceUtilities {
 
 WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
@@ -179,6 +187,7 @@ Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(const WebCore::Cach
 
 Inspector::Protocol::Page::ResourceType NODELETE resourceTypeToProtocol(Inspector::ResourceType);
 Inspector::Protocol::Page::ResourceType cachedResourceTypeToProtocol(const WebCore::CachedResource&);
+WEBCORE_EXPORT Inspector::Protocol::Network::ReferrerPolicy NODELETE referrerPolicyToProtocol(WebCore::ReferrerPolicy);
 WebCore::LocalFrame* findFrameWithSecurityOrigin(WebCore::Page&, const String& originRawString);
 WebCore::DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*);
 
