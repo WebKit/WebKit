@@ -105,14 +105,27 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     soup_message_body_append(responseBody, SOUP_MEMORY_COPY, errorResponse.data.data(), errorResponse.data.length());
 }
 
+static void sendTextMessage(SoupWebsocketConnection* connection, std::span<const uint8_t> payload)
+{
+    // A reply can complete after session cleanup or the peer started closing the connection, and
+    // libsoup rejects sends on a connection that is no longer open.
+    if (soup_websocket_connection_get_state(connection) != SOUP_WEBSOCKET_STATE_OPEN) {
+        RELEASE_LOG(WebDriverBiDi, "Dropping message for a WebSocket connection that is not open");
+        return;
+    }
+
+    GRefPtr rawMessage = gBytesNew(payload);
+    // Using send_message to avoid dealing with null chars in the middle of the message
+    soup_websocket_connection_send_message(connection, SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
+}
+
 static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebsocketDataType messageType, GBytes* message, gpointer userData)
 {
     // https://w3c.github.io/webdriver-bidi/#handle-an-incoming-message
     if (messageType != SOUP_WEBSOCKET_DATA_TEXT) {
         RELEASE_LOG(WebDriverBiDi, "websocket message handler received non-text message. error return");
         auto errorReply = WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, { "Non-text message received"_s });
-        GRefPtr rawMessage = gBytesNew(errorReply.payload.span());
-        soup_websocket_connection_send_message(connection, SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
+        sendTextMessage(connection, asBytes(errorReply.payload.span()));
         return;
     }
     auto webSocketServer = static_cast<WebSocketServer*>(userData);
@@ -125,9 +138,7 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
             RELEASE_LOG(WebDriverBiDi, "No connection found when trying to send message: %s", message.payload);
             return;
         }
-        GRefPtr rawMessage = gBytesNew(message.payload.span());
-        // Using send_message to avoid dealing with null chars in the middle of the message
-        soup_websocket_connection_send_message(message.connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
+        sendTextMessage(message.connection.get(), asBytes(message.payload.span()));
     });
 }
 
@@ -195,8 +206,7 @@ void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection
 {
     ASSERT(connection);
     RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
-    GRefPtr rawMessage = gBytesNew(message.utf8().span());
-    soup_websocket_connection_send_message(connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
+    sendTextMessage(connection.get(), asBytes(message.utf8().span()));
 }
 
 void WebSocketServer::disconnect()
@@ -216,12 +226,26 @@ void WebSocketServer::disconnect()
 
 void WebSocketServer::disconnectSession(const String& sessionId)
 {
-    auto connection = this->connection(sessionId);
-    if (!connection || !connection->get())
-        return;
+    Vector<WebSocketMessageHandler::Connection> connections;
+    for (const auto& pair : m_connectionToSession) {
+        if (pair.value == sessionId)
+            connections.append(pair.key);
+    }
 
-    soup_websocket_connection_close(connection->get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
-    g_signal_handlers_disconnect_by_data(connection->get(), this);
+    // Stop dispatching commands, but keep each connection mapped until its "closed" handler
+    // removes it. Dropping the last reference while closing makes libsoup abort the connection
+    // instead of completing the close handshake.
+    for (const auto& connection : connections) {
+        if (!connection) {
+            m_connectionToSession.remove(connection);
+            continue;
+        }
+
+        g_signal_handlers_disconnect_by_func(connection.get(), reinterpret_cast<gpointer>(handleWebSocketMessage), this);
+        // The peer may already have started closing, and libsoup rejects a second close.
+        if (soup_websocket_connection_get_state(connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
+            soup_websocket_connection_close(connection.get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
+    }
 }
 
 } // namespace WebDriver
