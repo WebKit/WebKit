@@ -32,8 +32,9 @@ namespace TestWebKitAPI {
 
 static constexpr double Infinity = std::numeric_limits<double>::infinity();
 static constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
+static constexpr double MAX_VALUE = std::numeric_limits<double>::max();
 
-static const std::array<std::pair<std::vector<double>, double>, 38> TEST_CASES = { {
+static const std::array<std::pair<std::vector<double>, double>, 40> TEST_CASES = { {
     { { 1, 2, 3 }, 6 },
     { { 1e308 }, 1e308 },
     { { 1e308, -1e308 }, 0 },
@@ -69,6 +70,8 @@ static const std::array<std::pair<std::vector<double>, double>, 38> TEST_CASES =
     { { Infinity, Infinity }, Infinity },
     { { -Infinity }, -Infinity },
     { { -Infinity, -Infinity }, -Infinity },
+    { { MAX_VALUE }, MAX_VALUE },
+    { { -MAX_VALUE }, -MAX_VALUE },
 
     { { }, -0 },
     { { 0 }, 0 },
