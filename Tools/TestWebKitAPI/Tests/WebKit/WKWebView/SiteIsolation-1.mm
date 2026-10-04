@@ -36,6 +36,7 @@
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestResourceLoadDelegate.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
@@ -51,6 +52,7 @@
 #import <WebKit/_WKAttachment.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKResourceLoadInfo.h>
+#import <WebKit/_WKSessionState.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -1906,5 +1908,42 @@ TEST(SiteIsolation, ModifierKeyChangeOverLinkInCrossOriginIframe)
 }
 
 #endif // PLATFORM(MAC)
+
+TEST(SiteIsolation, SaveCrossSiteIframeFormStateWhenViewIsHidden)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/source'></iframe>"_s } },
+        { "/source"_s, { "<script> alert('source'); </script>"_s } },
+        { "/destination"_s, { "<input id='input'><script> alert('destination:' + input.value); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+#if PLATFORM(MAC)
+    [webView _setWindowOcclusionDetectionEnabled:NO];
+#endif
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ("source", [webView _test_waitForAlert]);
+
+    // Navigate the iframe so that the current back/forward item comes from the iframe's process.
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/destination'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ("destination:", [webView _test_waitForAlert]);
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"document.readyState" inFrame:childFrame.get()] isEqualToString:@"complete"];
+    }));
+    EXPECT_WK_STREQ("visible", [webView stringByEvaluatingJavaScript:@"document.visibilityState" inFrame:childFrame.get()]);
+    [webView objectByEvaluatingJavaScript:@"input.value = 'typed'" inFrame:childFrame.get()];
+
+    [webView removeFromTestWindow];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"document.visibilityState" inFrame:childFrame.get()] isEqualToString:@"hidden"];
+    }));
+
+    RetainPtr<_WKSessionState> sessionState = [webView _sessionState];
+    auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [newWebView _restoreSessionState:sessionState.get() andNavigate:YES];
+    EXPECT_WK_STREQ("destination:typed", [newWebView _test_waitForAlert]);
+}
 
 } // namespace TestWebKitAPI
