@@ -1,0 +1,7 @@
+
+PASS a pointerMove with the "pointer" origin is rejected
+PASS a scroll with the "pointer" origin is rejected
+PASS a pointerMove with an origin that is neither a keyword nor an element is rejected
+PASS a pointerMove with a non-element node as origin is rejected
+PASS a pointerMove with the "viewport" origin is still accepted
+

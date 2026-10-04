@@ -8,6 +8,8 @@
 <div id="log"></div>
 <iframe id="frame" style="position: absolute; left: 200px; top: 200px; width: 150px; height: 150px; border: none"
     srcdoc="<body style='margin: 0'><div id='target' style='width: 100px; height: 100px; background: green'></div>"></iframe>
+<iframe id="clippedFrame" style="position: absolute; left: 400px; top: 200px; width: 150px; height: 150px; border: none"
+    srcdoc="<body style='margin: 0; height: 1000px'><div id='target' style='position: absolute; top: 120px; width: 100px; height: 100px; background: green'></div>"></iframe>
 <script>
 promise_test(async () => {
     const frame = document.getElementById("frame");
@@ -28,4 +30,28 @@ promise_test(async () => {
 
     assert_equals(clickedTarget, target, "click landed on the element used as the action origin");
 }, "an element origin inside a subframe is shifted into root-view coordinates");
+
+promise_test(async () => {
+    const frame = document.getElementById("clippedFrame");
+    if (frame.contentDocument.readyState !== "complete" || !frame.contentDocument.getElementById("target"))
+        await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    const target = frame.contentDocument.getElementById("target");
+
+    let click = null;
+    frame.contentWindow.addEventListener("click", event => click = event, true);
+
+    // The origin spans y = 120 to 220 in a frame whose viewport is 150px tall. The center of its
+    // bounding box, y = 170, is outside the <iframe>; its in-view center point, clipped to the
+    // frame's viewport rather than the top window's, is y = 135.
+    await new test_driver.Actions()
+        .pointerMove(0, 0, { origin: target })
+        .pointerDown()
+        .pointerUp()
+        .send();
+
+    assert_not_equals(click, null, "a click was dispatched in the subframe");
+    assert_equals(click.target, target, "click landed on the element used as the action origin");
+    assert_equals(click.clientX, 50, "clientX");
+    assert_equals(click.clientY, 135, "clientY");
+}, "an element origin inside a subframe is clipped to the subframe's viewport");
 </script>

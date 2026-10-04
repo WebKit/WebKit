@@ -1,0 +1,7 @@
+
+
+PASS an element origin extending past the bottom of the viewport is clipped to the viewport
+PASS an element origin extending past the left of the viewport is clipped to the viewport
+PASS an element origin that wraps across lines uses its first client rect
+PASS an element origin with no client rects is rejected
+
