@@ -1308,8 +1308,8 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* source)
         popoverData->setPreviouslyFocusedElement(nullptr);
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::PopoverOpen, true);
-    if (auto* popoverData = this->popoverData())
-        popoverData->setVisibilityState(PopoverVisibilityState::Showing);
+    if (popoverData())
+        setPopoverVisibilityState(PopoverVisibilityState::Showing);
 
     runPopoverFocusingSteps(*this);
 
@@ -1409,8 +1409,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (parentNode())
         styleInvalidation.emplace(*this, CSSSelector::PseudoClass::PopoverOpen, false);
-    popoverWasHidden();
-    popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
+    setPopoverVisibilityState(PopoverVisibilityState::Hidden);
     popoverData()->setShowingAsHint(false);
     popoverData()->setHintStackParent(nullptr);
 
@@ -1438,7 +1437,14 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         }
     }
 
+    popoverWasHidden();
+
     return { };
+}
+
+void HTMLElement::setPopoverVisibilityState(PopoverVisibilityState visibilityState)
+{
+    popoverData()->setVisibilityState(visibilityState);
 }
 
 ExceptionOr<void> HTMLElement::hidePopover()

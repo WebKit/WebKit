@@ -1,0 +1,7 @@
+This tests opening the popup of a select whose :open rule changes its display, which rebuilds its renderer. WebKit should show the popup instead of crashing.
+
+
+PASS - popup opened
+PASS - the :open rule applies
+PASS - popup closed by blur
+

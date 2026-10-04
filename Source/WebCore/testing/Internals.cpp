@@ -5253,7 +5253,7 @@ bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
     protect(element.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
 #if !PLATFORM(IOS_FAMILY)
-    return element.popupIsVisible();
+    return element.isOpen();
 #else
     return false;
 #endif

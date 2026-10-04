@@ -9327,7 +9327,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-windo
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-click-drag-option.optional.html [ Failure ] # rdar://178006874
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-mousedown-slot-mutation.optional.html [ Failure ] # rdar://178006874
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-focus-visible-with-mouse.html [ Failure ] # rdar://178006874
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/picker-icon-animation.html [ Failure ] # rdar://178006874
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-inside-top-layer.html [ Failure ] # rdar://178006874
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-interactive-element-focus.optional.html [ Failure ] # rdar://178006874
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-pseudo-light-dismiss-invalidation.html [ Failure ] # rdar://178006874
@@ -9400,8 +9399,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-pseudo-highlight.html [ ImageOnlyFailure ] # rdar://178008583
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-pseudo-before-after.html [ ImageOnlyFailure ] # rdar://178008583
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-pseudo-backdrop.html [ ImageOnlyFailure ] # rdar://178008583
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-pseudo-selection.html [ ImageOnlyFailure ] # rdar://178008583
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/option-label-in-shadow-tree.html [ ImageOnlyFailure ] # rdar://178008583
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-only-picker-opt-in.html [ ImageOnlyFailure ] # rdar://178008583
 
 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ] # rdar://178008630

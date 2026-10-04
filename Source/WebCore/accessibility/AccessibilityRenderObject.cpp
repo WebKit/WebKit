@@ -1917,7 +1917,7 @@ bool AccessibilityRenderObject::press()
                 cache->postNotification(selectElement.get(), AXNotification::PressDidFail);
             return false;
         }
-        if (selectElement->popupIsVisible())
+        if (selectElement->isOpen())
             selectElement->hidePickerPopoverElement();
         else
             selectElement->openPickerForUserInteraction();

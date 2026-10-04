@@ -3971,7 +3971,7 @@ bool AccessibilityObject::isExpanded() const
 
     if (supportsExpanded()) {
         if (RefPtr select = dynamicDowncast<HTMLSelectElement>(node()); select && select->usesMenuList())
-            return select->popupIsVisible();
+            return select->isOpen();
         if (RefPtr commandForElement = this->commandForElement())
             return commandForElement->isPopoverShowing();
         if (RefPtr popoverTargetElement = this->popoverTargetElement())
