@@ -1066,7 +1066,6 @@
 		378E1A40181EDA010031007A /* WKObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 378E1A3F181EDA010031007A /* WKObject.h */; };
 		378E1A4A18208CD60031007A /* WKNSString.h in Headers */ = {isa = PBXBuildFile; fileRef = 378E1A4818208CD60031007A /* WKNSString.h */; };
 		378E1A4E18208D700031007A /* WKNSURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 378E1A4C18208D700031007A /* WKNSURL.h */; };
-		3795789C18AD4F1900B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 379A873518BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h */; };
 		379A873A18BBFE0F00588AF2 /* _WKElementAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 379A873818BBFE0F00588AF2 /* _WKElementAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		379A873C18BBFF0700588AF2 /* _WKElementActionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 379A873B18BBFF0700588AF2 /* _WKElementActionInternal.h */; };
@@ -5570,7 +5569,6 @@
 		378E1A4818208CD60031007A /* WKNSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSString.h; sourceTree = "<group>"; };
 		378E1A4B18208D700031007A /* WKNSURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURL.mm; sourceTree = "<group>"; };
 		378E1A4C18208D700031007A /* WKNSURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURL.h; sourceTree = "<group>"; };
-		3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFormDelegatePrivate.h; sourceTree = "<group>"; };
 		379A873518BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKActivatedElementInfoInternal.h; sourceTree = "<group>"; };
 		379A873718BBFE0F00588AF2 /* _WKElementAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKElementAction.mm; sourceTree = "<group>"; };
 		379A873818BBFE0F00588AF2 /* _WKElementAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKElementAction.h; sourceTree = "<group>"; };
@@ -11963,7 +11961,6 @@
 				952BC09F2797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.mm */,
 				952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */,
 				3775122E1DF0DC8B008A351C /* WKWebProcessPlugInEditingDelegate.h */,
-				3795789B18AD4F1100B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h */,
 				1F0181691858DC1500F92884 /* WKWebProcessPlugInFrame.h */,
 				1F01816A1858DC1500F92884 /* WKWebProcessPlugInFrame.mm */,
 				1F01816B1858DC1500F92884 /* WKWebProcessPlugInFrameInternal.h */,
@@ -20020,7 +20017,6 @@
 				952BC0A32797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h in Headers */,
 				952BC0A12797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h in Headers */,
 				3775122F1DF0DC8B008A351C /* WKWebProcessPlugInEditingDelegate.h in Headers */,
-				3795789C18AD4F1900B9ED2E /* WKWebProcessPlugInFormDelegatePrivate.h in Headers */,
 				1F7506B11859163700EC0FF7 /* WKWebProcessPlugInFrame.h in Headers */,
 				1F7506B81859165D00EC0FF7 /* WKWebProcessPlugInFrameInternal.h in Headers */,
 				373D122D18A4B6EB0066D9CC /* WKWebProcessPlugInFramePrivate.h in Headers */,

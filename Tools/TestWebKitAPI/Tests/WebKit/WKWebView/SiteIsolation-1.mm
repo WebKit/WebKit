@@ -34,6 +34,7 @@
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestResourceLoadDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
