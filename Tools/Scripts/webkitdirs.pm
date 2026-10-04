@@ -3857,8 +3857,7 @@ sub relaunchIOSSimulator($)
     my $deviceHubPath = File::Spec->catfile($developerDirectory, "..", "Applications", "DeviceHub.app");
     if (-d $deviceHubPath) {
         exitStatus(system("xcrun", "simctl", "boot", $simulatedDevice->{UDID})) == 0 or die "Failed to boot simulator $simulatedDevice->{UDID}";
-        # FIXME: Select the booted device once DeviceHub.app supports that. rdar://189068127
-        exitStatus(system("open", "-a", $deviceHubPath)) == 0 or die "Failed to open $deviceHubPath";
+        exitStatus(system("open", "-a", $deviceHubPath, "devices://device/open?id=$simulatedDevice->{UDID}")) == 0 or die "Failed to open $deviceHubPath";
     } else {
         my $iosSimulatorPath = File::Spec->catfile($developerDirectory, "Applications", "Simulator.app");
         # Simulator.app needs to be running before the simulator is booted to have it visible.
