@@ -28,7 +28,6 @@
 #if PLATFORM(COCOA)
 
 #include "AXCoreObject.h"
-#include "Color.h"
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
@@ -110,7 +109,6 @@ private:
     struct CandidateErrorMessage {
         String text;
         WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
-        std::optional<Color> textColor;
     };
 
     Seconds settleDelay() const;

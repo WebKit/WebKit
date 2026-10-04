@@ -32,6 +32,7 @@
 #include "AXUtilities.h"
 #include "AXObjectCacheInlines.h"
 #include "AccessibilityObject.h"
+#include "Color.h"
 #include "ColorSerialization.h"
 #include "ComposedTreeIterator.h"
 #include "ElementAncestorIteratorInlines.h"
@@ -582,8 +583,7 @@ void AXFormActivityMonitor::collectErrorMessagesFrom(AccessibilityObject& object
     if (m_candidateErrorMessages.containsIf([&] (const CandidateErrorMessage& candidate) { return candidate.text == text; }))
         return;
 
-    std::optional textColor = element ? renderedTextColor(*element) : std::nullopt;
-    m_candidateErrorMessages.append(CandidateErrorMessage { WTF::move(text), element, WTF::move(textColor) });
+    m_candidateErrorMessages.append(CandidateErrorMessage { WTF::move(text), element });
 }
 
 void AXFormActivityMonitor::onAnnouncedText(const String& text)
@@ -750,18 +750,27 @@ void AXFormActivityMonitor::report()
         size_t candidateIndex;
         IntRect rect;
         bool isInsideForm;
+        std::optional<Color> textColor;
         bool isErrorColored;
     };
 
     Vector<MessageInfo> messageInfo;
     messageInfo.reserveInitialCapacity(candidates.size());
     for (size_t candidateIndex = 0; candidateIndex < candidates.size(); ++candidateIndex) {
-        const auto& candidate = candidates[candidateIndex];
+        auto& candidate = candidates[candidateIndex];
         RefPtr errorElement = candidate.element.get();
         if (!errorElement || !errorElement->isConnected())
             continue;
-        bool isErrorColored = candidate.textColor && isErrorColor(*candidate.textColor);
-        messageInfo.append(MessageInfo { candidateIndex, boundsForMessage(*errorElement), container->isShadowIncludingInclusiveAncestorOf(*errorElement), isErrorColored });
+
+        // A page may reuse one element for a status and then an error, so take what the message says now.
+        if (RefPtr errorObject = CheckedRef { m_cache }->get(*errorElement)) {
+            auto currentText = messageText(*errorObject).simplifyWhiteSpace(isASCIIWhitespace);
+            if (isWorthAnnouncing(currentText) && !currentText.contains(candidate.text))
+                candidate.text = WTF::move(currentText);
+        }
+        auto textColor = renderedTextColor(*errorElement);
+        bool isErrorColored = textColor && isErrorColor(*textColor);
+        messageInfo.append(MessageInfo { candidateIndex, boundsForMessage(*errorElement), container->isShadowIncludingInclusiveAncestorOf(*errorElement), textColor, isErrorColored });
     }
 
     AXFORMLOG("Considering "_s, messageInfo.size(), " of "_s, candidates.size(), " candidate messages."_s);
@@ -771,7 +780,7 @@ void AXFormActivityMonitor::report()
             AXFORMLOG("  candidate "_s, message.candidateIndex, " length "_s, candidate.text.length(),
                 " insideForm "_s, message.isInsideForm, " bounds "_s, message.rect.x(), ","_s, message.rect.y(),
                 " "_s, message.rect.width(), "x"_s, message.rect.height(),
-                " color "_s, candidate.textColor ? serializationForCSS(*candidate.textColor) : String { "none"_s },
+                " color "_s, message.textColor ? serializationForCSS(*message.textColor) : String { "none"_s },
                 message.isErrorColored ? ", an error color"_s : ", not an error color"_s);
         }
     }

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="login">
+  <div><label for="email">Email</label><input id="email" type="text" value="kim@example.com"></div>
+  <div><label for="password">Password</label><input id="password" type="password" value="hunter2"></div>
+  <div id="login-status"></div>
+  <button id="sign-in" type="submit">Sign in</button>
+</form>
+
+<div id="signup">
+  <div><label for="username">Username</label><input id="username" type="text" value="kim"></div>
+  <div id="username-status"></div>
+  <div><label for="new-password">Password</label><input id="new-password" type="password" value="hunter2"></div>
+  <div id="create-account" role="button" tabindex="0">Create account</div>
+</div>
+
+<script>
+var output = "This tests that a message the page rewrites in place, like a status that becomes an error, is reported with the wording and color it has once the page settles.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Long enough that the page answering after a moment is still inside the watch.
+    internals.setAccessibilityFormErrorSettleDelay(1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("login").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const status = document.getElementById("login-status");
+        status.textContent = "Signing in";
+        setTimeout(() => { status.textContent = "Incorrect password."; }, 100);
+    });
+
+    document.getElementById("create-account").addEventListener("click", () => {
+        const status = document.getElementById("username-status");
+        status.textContent = "Checking availability";
+        setTimeout(() => {
+            status.style.color = "rgb(200, 0, 0)";
+            status.textContent = "That username is taken.";
+        }, 100);
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the fields first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('password').stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("axElement('username').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("sign-in").click();
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Incorrect password.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += expect("errorMessageText(axElement('password'))", "'Incorrect password.'");
+
+        // Text in no error color under a filled field doesn't count after a possible submission, so only the red it ends up in finds this.
+        payload = "";
+        axElement("create-account").press();
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: That username is taken.\\nAXFormValidationErrorFieldCount: 1\\n'");
+        output += expect("axElement('username').stringAttributeValue('AXInvalid')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
