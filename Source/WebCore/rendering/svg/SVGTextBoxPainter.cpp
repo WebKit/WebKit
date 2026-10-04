@@ -493,7 +493,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintDecorationWithStyle(Style::TextDecorat
     // The initial y value refers to overline position.
     float thickness = thicknessForDecoration(decoration, scaledFont);
 
-    if (fragment.width <= 0 && thickness <= 0)
+    if (fragment.width <= 0 || thickness <= 0)
         return;
 
     FloatPoint decorationOrigin(fragment.x, fragment.y);
