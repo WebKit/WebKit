@@ -74,6 +74,8 @@ class SurfaceMtl : public SurfaceImpl
 
     const mtl::TextureRef &getColorTexture() { return mColorTexture; }
     const mtl::Format &getColorFormat() const { return mColorFormat; }
+    // True if this surface wraps a multiplanar YUV IOSurface (see IOSurfaceSurfaceMtl).
+    virtual bool isYUV() const { return false; }
     int getSamples() const { return mSamples; }
     bool hasDepthStencil() const { return mDepthTexture || mStencilTexture; }
 
@@ -206,7 +208,7 @@ class OffscreenSurfaceMtl : public SurfaceMtl
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
   protected:
-    angle::Result ensureTexturesSizeCorrect(const gl::Context *context);
+    virtual angle::Result ensureTexturesSizeCorrect(const gl::Context *context);
 
     gl::Extents mSize;
 };

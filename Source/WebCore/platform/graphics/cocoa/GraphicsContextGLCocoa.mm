@@ -53,9 +53,11 @@
 #endif
 
 #if ENABLE(VIDEO)
-#import "GraphicsContextGLCVCocoa.h"
 #import "MediaPlayerPrivate.h"
+#import "PixelBufferConformerCV.h"
 #import "VideoFrameCV.h"
+#import <pal/spi/cf/CoreVideoSPI.h>
+#import <wtf/cf/TypeCastsCF.h>
 #endif
 
 #import "CoreVideoSoftLink.h"
@@ -800,15 +802,6 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
 }
 
 
-#if ENABLE(VIDEO)
-GraphicsContextGLCV* GraphicsContextGLCocoa::cvContext()
-{
-    if (!m_cv)
-        lazyInitialize(m_cv, GraphicsContextGLCVCocoa::create(*this));
-    return m_cv.get();
-}
-#endif
-
 RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 {
     auto& buffer = displayBuffer();
@@ -872,8 +865,11 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLCocoa::layerConten
 
 void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
 {
-    if (m_cv)
-        m_cv->invalidateKnownTextureContent(texture);
+#if ENABLE(VIDEO)
+    m_knownVideoTextureContent.remove(texture);
+#else
+    UNUSED_PARAM(texture);
+#endif
 }
 
 // Says how the alpha of the contents of the surface buffers is to be interpreted.
@@ -928,21 +924,195 @@ void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signa
 }
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY)
+static std::optional<EGLint> yuvSampleRangeHint(OSType pixelFormat)
 {
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
-    auto* contextCV = cvContext();
-    if (!contextCV) {
-        ASSERT(contextCV);
-        return false;
+    switch (pixelFormat) {
+    case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
+    case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange:
+#endif
+        return EGL_YUV_NARROW_RANGE_EXT;
+    case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
+    case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange:
+#endif
+        return EGL_YUV_FULL_RANGE_EXT;
+    default:
+        return std::nullopt;
     }
+}
+
+static EGLint yuvColorSpaceHint(CFStringRef matrix)
+{
+    if (matrix && CFEqual(matrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
+        return EGL_ITU_REC709_EXT;
+    if (matrix && CFEqual(matrix, kCVImageBufferYCbCrMatrix_ITU_R_2020))
+        return EGL_ITU_REC2020_EXT;
+    if (matrix && CFEqual(matrix, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
+        return EGL_SMPTE_240M_ANGLE;
+    // Assume unknown matrices are ITU R.601.
+    return EGL_ITU_REC601_EXT;
+}
+
+// Returns the EGL_IOSURFACE_ORIENTATION_ANGLE bits that undo the `orientation`, e.g. that move
+// the origin to top left.
+static EGLint iosurfaceOrientation(ImageOrientation::Orientation orientation)
+{
+    // The pbuffer texture image is the surface transformed by: invert y, invert x, swap x and y.
+    // `InvertX` switches between Left and Right. `InvertY` switches between Top and Bottom.
+    // `SwapXY` switches LeftTop to TopLeft. Even number of operations means a rotation, odd
+    // number of operations means a rotation and a flip.
+    constexpr EGLint invertX = EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE;
+    constexpr EGLint invertY = EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE;
+    constexpr EGLint swapXY = EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE;
+    switch (orientation) {
+    case ImageOrientation::Orientation::FromImage:
+    case ImageOrientation::Orientation::OriginTopLeft:
+        return 0;
+    case ImageOrientation::Orientation::OriginTopRight:
+        return invertX;
+    case ImageOrientation::Orientation::OriginBottomRight:
+        // Rotated 180 degrees.
+        return invertY | invertX;
+    case ImageOrientation::Orientation::OriginBottomLeft:
+        // Mirrored along the x-axis.
+        return invertY;
+    case ImageOrientation::Orientation::OriginLeftTop:
+        // Mirrored along x-axis and rotated 270 degrees clock-wise.
+        return swapXY;
+    case ImageOrientation::Orientation::OriginRightTop:
+        // Rotated 90 degrees clock-wise.
+        return invertX | swapXY;
+    case ImageOrientation::Orientation::OriginRightBottom:
+        // Mirror along x-axis and rotated 90 degrees clockwise.
+        return invertY | invertX | swapXY;
+    case ImageOrientation::Orientation::OriginLeftBottom:
+        // Rotated 270 degrees clock-wise.
+        return invertY | swapXY;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+namespace {
+
+// A video frame prepared to be bound as a GL_G8_B8R8_2PLANE_420_UNORM_ANGLE pbuffer.
+struct YUVVideoFrameSource {
+    RetainPtr<IOSurfaceRef> surface;
+    EGLint orientation { 0 };
+    EGLint colorSpaceHint { EGL_ITU_REC601_EXT };
+    EGLint sampleRangeHint { EGL_YUV_NARROW_RANGE_EXT };
+};
+
+}
+
+static std::optional<YUVVideoFrameSource> yuvVideoFrameSource(VideoFrame& videoFrame)
+{
     RefPtr videoFrameCV = videoFrame.asVideoFrameCV();
     if (!videoFrameCV) {
         ASSERT_NOT_REACHED(); // Programming error.
+        return std::nullopt;
+    }
+    RetainPtr pixelBuffer = videoFrameCV->pixelBuffer();
+    auto sampleRangeHint = yuvSampleRangeHint(CVPixelBufferGetPixelFormatType(pixelBuffer.get()));
+    if (!sampleRangeHint) {
+        // FIXME: Support more pixel formats without conversion.
+        auto conformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) });
+        pixelBuffer = conformer->convert(pixelBuffer.get());
+        if (!pixelBuffer)
+            return std::nullopt;
+        ASSERT(CVPixelBufferGetPixelFormatType(pixelBuffer.get()) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
+        sampleRangeHint = EGL_YUV_FULL_RANGE_EXT;
+    }
+    RetainPtr surface = CVPixelBufferGetIOSurface(pixelBuffer.get());
+    if (!surface)
+        return std::nullopt;
+    return YUVVideoFrameSource {
+        WTF::move(surface),
+        iosurfaceOrientation(videoFrameCV->orientation().orientation()),
+        yuvColorSpaceHint(protect(dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(pixelBuffer.get(), kCVImageBufferYCbCrMatrixKey, nil))).get()),
+        *sampleRangeHint
+    };
+}
+
+// Binds `source` as an oriented YUV pbuffer to a temporary TEXTURE_2D texture and calls `copy` with the texture.
+// The GL errors of the copy are not WebGL errors, rather they cause the function to return false. The caller
+// must have moved the pending errors aside.
+template<typename CopyFunction>
+static bool copyFromYUVVideoFrameSource(EGLDisplay display, EGLConfig config, const YUVVideoFrameSource& source, CopyFunction&& copy)
+{
+    ScopedTexture sourceTexture;
+    ScopedRestoreTextureBinding restoreBinding(GL::TEXTURE_BINDING_2D, GL::TEXTURE_2D);
+    GL_BindTexture(GL::TEXTURE_2D, sourceTexture);
+
+    // The pbuffer has the size of the oriented image.
+    auto width = static_cast<EGLint>(IOSurfaceGetWidth(source.surface.get()));
+    auto height = static_cast<EGLint>(IOSurfaceGetHeight(source.surface.get()));
+    if (source.orientation & EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE)
+        std::swap(width, height);
+    const EGLint surfaceAttributes[] = {
+        EGL_WIDTH, width,
+        EGL_HEIGHT, height,
+        EGL_IOSURFACE_PLANE_ANGLE, 0,
+        EGL_TEXTURE_TARGET, EGL_TEXTURE_2D,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+        EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
+        EGL_YUV_COLOR_SPACE_HINT_EXT, source.colorSpaceHint,
+        EGL_SAMPLE_RANGE_HINT_EXT, source.sampleRangeHint,
+        EGL_IOSURFACE_ORIENTATION_ANGLE, source.orientation,
+        // Only has an effect on the iOS Simulator.
+        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_READ_HINT_ANGLE,
+        EGL_NONE, EGL_NONE
+    };
+    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, source.surface.get(), config, surfaceAttributes);
+    if (!pbuffer)
+        return false;
+    auto pbufferCleanup = makeScopeExit([display, pbuffer] {
+        EGL_DestroySurface(display, pbuffer);
+    });
+    if (!EGL_BindTexImage(display, pbuffer, EGL_BACK_BUFFER))
+        return false;
+
+    copy(static_cast<GCGLuint>(sourceTexture));
+
+    EGL_ReleaseTexImage(display, pbuffer, EGL_BACK_BUFFER);
+    if (GL_GetError() != GL_NO_ERROR) {
+        // Drain the rest of the errors, with an arbitrary limit in case of a driver bug.
+        for (unsigned i = 0; i < 100 && GL_GetError() != GL_NO_ERROR; ++i) { }
         return false;
     }
-    return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
+    return true;
+}
+
+bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha)
+{
+    // Video frames are opaque, so premultiplication is a no-op.
+    UNUSED_PARAM(unpackPremultiplyAlpha);
+    auto source = yuvVideoFrameSource(videoFrame);
+    if (!source)
+        return false;
+
+    VideoTextureContent content { source->surface, IOSurfaceGetID(source->surface.get()), IOSurfaceGetSeed(source->surface.get()), target, level, internalFormat, type, source->orientation, unpackFlipY };
+    auto it = m_knownVideoTextureContent.find(texture);
+    if (it != m_knownVideoTextureContent.end() && it->value == content) {
+        // If the texture hasn't been modified since the last time we copied to it, and the
+        // image hasn't been modified since the last time it was copied, this is a no-op.
+        return true;
+    }
+
+    if (!makeContextCurrent())
+        return false;
+    if (!isExtensionEnabledImpl("GL_CHROMIUM_copy_texture"_s))
+        return false;
+    // Move the pending errors aside so that the copy errors can be identified.
+    updateErrors();
+    bool success = copyFromYUVVideoFrameSource(platformDisplay(), platformConfig(), *source, [&](GCGLuint sourceTexture) {
+        GL_CopyTextureCHROMIUM(sourceTexture, 0, target, texture, level, internalFormat, type, unpackFlipY, GL_FALSE, GL_FALSE);
+    });
+    if (success)
+        m_knownVideoTextureContent.set(texture, WTF::move(content));
+    return success;
 }
 #endif
 

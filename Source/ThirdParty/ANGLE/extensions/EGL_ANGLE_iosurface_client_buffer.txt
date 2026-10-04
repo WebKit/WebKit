@@ -22,7 +22,7 @@ Status
     Draft
 
 Version
-    Version 6, Aug 25, 2020
+    Version 8, Sep 30, 2026
 
 Number
 
@@ -32,6 +32,9 @@ Dependencies
 
     This extension is written against the wording of the EGL 1.4
     Specification.
+
+    EXT_yuv_surface and ANGLE_yuv_internal_format affect the definition
+    of this extension.
 
 Overview
 
@@ -55,6 +58,18 @@ New Tokens
         EGL_TEXTURE_TYPE_ANGLE         0x345C
         EGL_TEXTURE_INTERNAL_FORMAT_ANGLE 0x345D
         EGL_IOSURFACE_USAGE_HINT_ANGLE 0x348A
+        EGL_IOSURFACE_ORIENTATION_ANGLE 0x34E1
+
+    Accepted as bits in the value of EGL_IOSURFACE_ORIENTATION_ANGLE:
+
+        EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE 0x0001
+        EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE 0x0002
+        EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE  0x0004
+
+    Accepted as the value of EGL_YUV_COLOR_SPACE_HINT_EXT in the
+    <attrib_list> parameter of eglCreatePbufferFromClientBuffer:
+
+        EGL_SMPTE_240M_ANGLE           0x34E2
 
     Accepted in the <attribute> parameter of
     eglGetConfigAttrib:
@@ -125,6 +140,44 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     ---------------------------------------------------------------------------
 
     Append to the end of Section 3.5.3.
+    "When <buftype> is EGL_IOSURFACE_ANGLE, EGL_TEXTURE_TYPE_ANGLE is
+    GL_UNSIGNED_BYTE and EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is
+    GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, <buffer> must have at least two planes,
+    the first holding 8-bit Y samples and the second holding 8-bit Cb and Cr
+    samples at half the width and height. EGL_IOSURFACE_PLANE_ANGLE is
+    ignored. The pbuffer covers the whole <buffer>: EGL_WIDTH and EGL_HEIGHT
+    must be equal to the width and height of the first plane, swapped if
+    EGL_IOSURFACE_ORIENTATION_ANGLE contains
+    EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE, otherwise EGL_BAD_ATTRIBUTE is
+    generated.
+
+    The attributes EGL_YUV_COLOR_SPACE_HINT_EXT and EGL_SAMPLE_RANGE_HINT_EXT
+    may optionally be specified to select the YCbCr to RGB conversion.
+    EGL_YUV_COLOR_SPACE_HINT_EXT is one of EGL_ITU_REC601_EXT,
+    EGL_ITU_REC709_EXT, EGL_ITU_REC2020_EXT or EGL_SMPTE_240M_ANGLE, and
+    defaults to EGL_ITU_REC601_EXT. EGL_SAMPLE_RANGE_HINT_EXT is one of
+    EGL_YUV_NARROW_RANGE_EXT or EGL_YUV_FULL_RANGE_EXT, and defaults to
+    EGL_YUV_NARROW_RANGE_EXT. Other values generate EGL_BAD_ATTRIBUTE.
+
+    The attribute EGL_IOSURFACE_ORIENTATION_ANGLE may optionally be specified
+    as a combination of the bits EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE,
+    EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE and
+    EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE, and defaults to 0. Other bits
+    generate EGL_BAD_ATTRIBUTE. A non-zero value for other internal formats
+    generates EGL_BAD_ATTRIBUTE. The attribute describes how <buffer> maps to
+    the texture image of the pbuffer: the texel at normalized coordinates
+    (s, t) of the texture image is the RGB conversion of <buffer> sampled at
+    normalized coordinates computed by the following steps:
+      - If EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE is set, t becomes 1 - t.
+      - If EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE is set, s becomes 1 - s.
+      - If EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE is set, (s, t) becomes
+        (t, s).
+
+    A texture bound to such a pbuffer can only be used as the source of
+    glCopyTextureCHROMIUM and glCopySubTextureCHROMIUM, which copy the texture
+    image defined above."
+
+    Append to the end of Section 3.5.3.
     "When a pbuffer is created with type EGL_IOSURFACE_ANGLE, the contents
     of the associcated IOSurface object are undefined while the pbuffer is
     bound to a client texture."
@@ -156,3 +209,5 @@ Revision History
     Version 5, 2020/06/30 - Allow RGB10_A2 internal formats
     Version 6, 2020/08/25 - Allow R16 and RG16 formats for P010 surfaces
     Version 7, 2023/09/19 - Allow RGBA/RGBX surfaces
+    Version 8, 2026/09/30 - Allow G8_B8R8_2PLANE_420_UNORM_ANGLE surfaces
+                            with YUV hints and orientation

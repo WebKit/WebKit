@@ -13,8 +13,129 @@
 
 #include "test_utils/gl_raii.h"
 
+#if defined(ANGLE_PLATFORM_APPLE)
+#    include <CoreFoundation/CoreFoundation.h>
+#    if TARGET_OS_OSX
+#        include <IOSurface/IOSurface.h>
+#    else
+#        include <IOSurface/IOSurfaceRef.h>
+#    endif
+#endif
+
 namespace angle
 {
+#if defined(ANGLE_PLATFORM_APPLE)
+namespace
+{
+void AddIOSurfaceIntegerValue(CFMutableDictionaryRef dictionary, const CFStringRef key, int32_t v)
+{
+    CFNumberRef number = CFNumberCreate(nullptr, kCFNumberSInt32Type, &v);
+    CFDictionaryAddValue(dictionary, key, number);
+    CFRelease(number);
+}
+
+// Creates an NV12 (2-plane 4:2:0) IOSurface of the given fourcc ('420v' or '420f') and size.  The
+// size must be even.  Returns a +1 retained reference; the caller is responsible for CFRelease.
+IOSurfaceRef CreateNV12IOSurface(int32_t fourcc, int width, int height)
+{
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(
+        kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    AddIOSurfaceIntegerValue(dict, kIOSurfaceWidth, width);
+    AddIOSurfaceIntegerValue(dict, kIOSurfaceHeight, height);
+    AddIOSurfaceIntegerValue(dict, kIOSurfacePixelFormat, fourcc);
+
+    // Plane 0: full size luma (1 byte/element).  Plane 1: half size chroma (2 bytes/element, Cb
+    // then Cr).
+    CFMutableArrayRef planes = CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks);
+    const int planeInfo[2][3] = {{width, height, 1}, {width / 2, height / 2, 2}};
+    for (const auto &p : planeInfo)
+    {
+        CFMutableDictionaryRef planeDict =
+            CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+                                      &kCFTypeDictionaryValueCallBacks);
+        AddIOSurfaceIntegerValue(planeDict, kIOSurfacePlaneWidth, p[0]);
+        AddIOSurfaceIntegerValue(planeDict, kIOSurfacePlaneHeight, p[1]);
+        AddIOSurfaceIntegerValue(planeDict, kIOSurfacePlaneBytesPerElement, p[2]);
+        CFArrayAppendValue(planes, planeDict);
+        CFRelease(planeDict);
+    }
+    CFDictionaryAddValue(dict, kIOSurfacePlaneInfo, planes);
+    CFRelease(planes);
+
+    IOSurfaceRef ioSurface = IOSurfaceCreate(dict);
+    CFRelease(dict);
+    return ioSurface;
+}
+
+struct YCbCr
+{
+    uint8_t y, cb, cr;
+};
+
+// Fills an NV12 IOSurface.  `sample(x, y)` returns the value of the 2x2 luma block whose top-left
+// luma sample is at (x, y), row 0 being the first row of the surface.
+template <typename SampleFunction>
+void FillNV12IOSurface(IOSurfaceRef ioSurface, SampleFunction sample)
+{
+    const size_t width  = IOSurfaceGetWidthOfPlane(ioSurface, 0);
+    const size_t height = IOSurfaceGetHeightOfPlane(ioSurface, 0);
+    IOSurfaceLock(ioSurface, 0, nullptr);
+    uint8_t *yPlane = static_cast<uint8_t *>(IOSurfaceGetBaseAddressOfPlane(ioSurface, 0));
+    size_t yStride  = IOSurfaceGetBytesPerRowOfPlane(ioSurface, 0);
+    uint8_t *cPlane = static_cast<uint8_t *>(IOSurfaceGetBaseAddressOfPlane(ioSurface, 1));
+    size_t cStride  = IOSurfaceGetBytesPerRowOfPlane(ioSurface, 1);
+    for (size_t y = 0; y < height; y += 2)
+    {
+        for (size_t x = 0; x < width; x += 2)
+        {
+            const YCbCr value                 = sample(static_cast<int>(x), static_cast<int>(y));
+            yPlane[y * yStride + x]           = value.y;
+            yPlane[y * yStride + x + 1]       = value.y;
+            yPlane[(y + 1) * yStride + x]     = value.y;
+            yPlane[(y + 1) * yStride + x + 1] = value.y;
+            cPlane[(y / 2) * cStride + x]     = value.cb;
+            cPlane[(y / 2) * cStride + x + 1] = value.cr;
+        }
+    }
+    IOSurfaceUnlock(ioSurface, 0, nullptr);
+}
+
+// Imports an NV12 IOSurface as a GL_TEXTURE_2D pbuffer with a YUV internal format, colorspace
+// hints and orientation.  The pbuffer covers the whole surface, with the size swapped if the
+// orientation swaps the axes.  Returns EGL_NO_SURFACE on failure.
+EGLSurface CreateNV12Pbuffer(EGLDisplay display,
+                             EGLConfig config,
+                             IOSurfaceRef ioSurface,
+                             EGLint colorSpace,
+                             EGLint range,
+                             EGLint orientation)
+{
+    EGLint width  = static_cast<EGLint>(IOSurfaceGetWidthOfPlane(ioSurface, 0));
+    EGLint height = static_cast<EGLint>(IOSurfaceGetHeightOfPlane(ioSurface, 0));
+    if (orientation & EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE)
+    {
+        std::swap(width, height);
+    }
+    // clang-format off
+    const EGLint attribs[] = {
+        EGL_WIDTH,                         width,
+        EGL_HEIGHT,                        height,
+        EGL_IOSURFACE_PLANE_ANGLE,         0,
+        EGL_TEXTURE_TARGET,                EGL_TEXTURE_2D,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+        EGL_TEXTURE_TYPE_ANGLE,            GL_UNSIGNED_BYTE,
+        EGL_TEXTURE_FORMAT,                EGL_TEXTURE_RGBA,
+        EGL_YUV_COLOR_SPACE_HINT_EXT,      colorSpace,
+        EGL_SAMPLE_RANGE_HINT_EXT,         range,
+        EGL_IOSURFACE_ORIENTATION_ANGLE,   orientation,
+        EGL_NONE,                          EGL_NONE,
+    };
+    // clang-format on
+    return eglCreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, ioSurface, config,
+                                            attribs);
+}
+}  // namespace
+#endif  // defined(ANGLE_PLATFORM_APPLE)
 
 class CopyTextureTest : public ANGLETest<>
 {
@@ -203,8 +324,43 @@ class CopyTextureTest : public ANGLETest<>
     GLuint mFramebuffer = 0;
 };
 
+// YUV source variations for GL_CHROMIUM_copy_texture.  The YUV memory layout is identified by a
+// synthetic value carried in the source-format slot of the params tuple (outside any real source
+// GLenum), while the colorspace + range is a separate tuple axis (CopyTexCS).
+enum : GLenum
+{
+    kCopyTexSrcNV12 = 0x6000,  // 8-bit 2-plane 4:2:0, IOSurface '420v' (video) / '420f' (full)
+};
+
+enum class CopyTexCS
+{
+    None,
+    BT601Video,
+    BT601Full,
+    BT709Video,
+    BT709Full,
+    BT2020Video,
+    BT2020Full,
+    SMPTE240MVideo,
+    SMPTE240MFull,
+};
+
+inline bool IsYUVSrcFormat(GLenum format)
+{
+    return format == kCopyTexSrcNV12;
+}
+
+// One reference conversion: a constant (Y, Cb, Cr) fill and its expected RGB result.  Values are
+// the BT.601/709/2020 and SMPTE 240M reference vectors for the primary colors, so this is an
+// independent oracle rather than a re-derivation of ANGLE's matrix.
+struct CopyTexYUVRef
+{
+    uint8_t y, cb, cr;
+    GLColor rgb;
+};
+
 using CopyTextureVariationsTestParams =
-    std::tuple<angle::PlatformParameters, GLenum, GLenum, bool, bool, bool, GLint>;
+    std::tuple<angle::PlatformParameters, GLenum, GLenum, bool, bool, bool, GLint, CopyTexCS>;
 
 std::string CopyTextureVariationsTestPrint(
     const ::testing::TestParamInfo<CopyTextureVariationsTestParams> &paramsInfo)
@@ -236,6 +392,9 @@ std::string CopyTextureVariationsTestPrint(
             break;
         case GL_SRGB_ALPHA_EXT:
             out << "SRGBA";
+            break;
+        case kCopyTexSrcNV12:
+            out << "NV12";
             break;
         default:
             out << "UPDATE_THIS_SWITCH";
@@ -276,6 +435,36 @@ std::string CopyTextureVariationsTestPrint(
     if (std::get<6>(params))
     {
         out << "MesaYFlip";
+    }
+
+    switch (std::get<7>(params))
+    {
+        case CopyTexCS::None:
+            break;
+        case CopyTexCS::BT601Video:
+            out << "_BT601Video";
+            break;
+        case CopyTexCS::BT601Full:
+            out << "_BT601Full";
+            break;
+        case CopyTexCS::BT709Video:
+            out << "_BT709Video";
+            break;
+        case CopyTexCS::BT709Full:
+            out << "_BT709Full";
+            break;
+        case CopyTexCS::BT2020Video:
+            out << "_BT2020Video";
+            break;
+        case CopyTexCS::BT2020Full:
+            out << "_BT2020Full";
+            break;
+        case CopyTexCS::SMPTE240MVideo:
+            out << "_SMPTE240MVideo";
+            break;
+        case CopyTexCS::SMPTE240MFull:
+            out << "_SMPTE240MFull";
+            break;
     }
 
     return out.str();
@@ -713,6 +902,177 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
             EXPECT_GL_NO_ERROR();
         }
     }
+
+    // Reference (Y, Cb, Cr) -> RGB vectors for a given colorspace/range.  Theoretical full-range
+    // component values of 256 are clamped to 255 for the 8-bit source.
+    static std::vector<CopyTexYUVRef> getYUVReferences(CopyTexCS cs)
+    {
+        switch (cs)
+        {
+            case CopyTexCS::BT601Video:
+                return {{16, 128, 128, GLColor::black},
+                        {235, 128, 128, GLColor::white},
+                        {81, 90, 240, GLColor::red},
+                        {145, 54, 34, GLColor::green},
+                        {41, 240, 110, GLColor::blue}};
+            case CopyTexCS::BT601Full:
+                return {{0, 128, 128, GLColor::black},
+                        {255, 128, 128, GLColor::white},
+                        {76, 85, 255, GLColor::red},
+                        {150, 44, 21, GLColor::green},
+                        {29, 255, 107, GLColor::blue}};
+            case CopyTexCS::BT709Video:
+                return {{16, 128, 128, GLColor::black},
+                        {235, 128, 128, GLColor::white},
+                        {63, 102, 240, GLColor::red},
+                        {173, 42, 26, GLColor::green},
+                        {32, 240, 118, GLColor::blue}};
+            case CopyTexCS::BT709Full:
+                return {{0, 128, 128, GLColor::black},
+                        {255, 128, 128, GLColor::white},
+                        {54, 99, 255, GLColor::red},
+                        {182, 30, 12, GLColor::green},
+                        {18, 255, 116, GLColor::blue}};
+            case CopyTexCS::BT2020Video:
+                return {{16, 128, 128, GLColor::black},
+                        {235, 128, 128, GLColor::white},
+                        {74, 97, 240, GLColor::red},
+                        {164, 47, 25, GLColor::green},
+                        {29, 240, 119, GLColor::blue}};
+            case CopyTexCS::BT2020Full:
+                return {{0, 128, 128, GLColor::black},
+                        {255, 128, 128, GLColor::white},
+                        {67, 92, 255, GLColor::red},
+                        {173, 36, 11, GLColor::green},
+                        {15, 255, 118, GLColor::blue}};
+            case CopyTexCS::SMPTE240MVideo:
+                return {{16, 128, 128, GLColor::black},
+                        {235, 128, 128, GLColor::white},
+                        {62, 102, 240, GLColor::red},
+                        {170, 42, 28, GLColor::green},
+                        {35, 240, 116, GLColor::blue}};
+            case CopyTexCS::SMPTE240MFull:
+                return {{0, 128, 128, GLColor::black},
+                        {255, 128, 128, GLColor::white},
+                        {54, 98, 255, GLColor::red},
+                        {179, 30, 15, GLColor::green},
+                        {22, 255, 114, GLColor::blue}};
+            case CopyTexCS::None:
+                break;
+        }
+        return {};
+    }
+
+#if defined(ANGLE_PLATFORM_APPLE)
+    static void getYUVEGLHints(CopyTexCS cs, EGLint *colorSpace, EGLint *range, int32_t *fourcc)
+    {
+        switch (cs)
+        {
+            case CopyTexCS::BT709Video:
+            case CopyTexCS::BT709Full:
+                *colorSpace = EGL_ITU_REC709_EXT;
+                break;
+            case CopyTexCS::BT2020Video:
+            case CopyTexCS::BT2020Full:
+                *colorSpace = EGL_ITU_REC2020_EXT;
+                break;
+            case CopyTexCS::SMPTE240MVideo:
+            case CopyTexCS::SMPTE240MFull:
+                *colorSpace = EGL_SMPTE_240M_ANGLE;
+                break;
+            default:
+                *colorSpace = EGL_ITU_REC601_EXT;
+                break;
+        }
+        const bool full = cs == CopyTexCS::BT601Full || cs == CopyTexCS::BT709Full ||
+                          cs == CopyTexCS::BT2020Full || cs == CopyTexCS::SMPTE240MFull;
+        *range  = full ? EGL_YUV_FULL_RANGE_EXT : EGL_YUV_NARROW_RANGE_EXT;
+        *fourcc = full ? '420f' : '420v';
+    }
+
+    // Creates a uniform-color NV12 IOSurface, imports it as a single GL_TEXTURE_2D with a YUV
+    // internal format + colorspace hints, and binds it to mTextures[0].  Returns the pbuffer
+    // (caller releases) or EGL_NO_SURFACE on failure.
+    EGLSurface createYUVSource(CopyTexCS cs, const YCbCr &value)
+    {
+        EGLDisplay display = getEGLWindow()->getDisplay();
+        EGLConfig config   = getEGLWindow()->getConfig();
+
+        EGLint colorSpace, range;
+        int32_t fourcc;
+        getYUVEGLHints(cs, &colorSpace, &range, &fourcc);
+
+        IOSurfaceRef ioSurface = CreateNV12IOSurface(fourcc, kYUVSourceWidth, kYUVSourceHeight);
+        if (ioSurface == nullptr)
+        {
+            return EGL_NO_SURFACE;
+        }
+        FillNV12IOSurface(ioSurface, [&value](int, int) { return value; });
+
+        EGLSurface pbuffer = CreateNV12Pbuffer(display, config, ioSurface, colorSpace, range, 0);
+        // The pbuffer retains the IOSurface; drop our reference either way.
+        CFRelease(ioSurface);
+        if (pbuffer == EGL_NO_SURFACE)
+        {
+            return EGL_NO_SURFACE;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+        if (eglBindTexImage(display, pbuffer, EGL_BACK_BUFFER) != EGL_TRUE)
+        {
+            eglDestroySurface(display, pbuffer);
+            return EGL_NO_SURFACE;
+        }
+        return pbuffer;
+    }
+#endif  // defined(ANGLE_PLATFORM_APPLE)
+
+    void testCopyTextureYUV(CopyTexCS cs, bool flipY, bool useSubImage)
+    {
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+#if defined(ANGLE_PLATFORM_APPLE)
+        constexpr int w    = kYUVSourceWidth;
+        constexpr int h    = kYUVSourceHeight;
+        EGLDisplay display = getEGLWindow()->getDisplay();
+        for (const CopyTexYUVRef &ref : getYUVReferences(cs))
+        {
+            EGLSurface pbuffer = createYUVSource(cs, {ref.y, ref.cb, ref.cr});
+            ASSERT_NE(EGL_NO_SURFACE, pbuffer);
+
+            glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+            if (useSubImage)
+            {
+                glCopySubTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, 0, 0, 0,
+                                         0, w, h, flipY, false, false);
+            }
+            else
+            {
+                glCopyTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, GL_RGBA,
+                                      GL_UNSIGNED_BYTE, flipY, false, false);
+            }
+            EXPECT_GL_NO_ERROR();
+            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+            // The source is a uniform color, so flipY does not change the expected result.
+            EXPECT_PIXEL_COLOR_NEAR(0, 0, ref.rgb, 2);
+            EXPECT_PIXEL_COLOR_NEAR(w - 1, 0, ref.rgb, 2);
+            EXPECT_PIXEL_COLOR_NEAR(0, h - 1, ref.rgb, 2);
+            EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, ref.rgb, 2);
+            EXPECT_PIXEL_COLOR_NEAR(w / 2, h / 2, ref.rgb, 2);
+
+            eglReleaseTexImage(display, pbuffer, EGL_BACK_BUFFER);
+            eglDestroySurface(display, pbuffer);
+        }
+#else
+        FAIL() << "YUV copy-texture variations are only implemented for Apple platforms.";
+#endif
+    }
+
+    // Non-square so that transposes are observable.
+    static constexpr int kYUVSourceWidth  = 20;
+    static constexpr int kYUVSourceHeight = 30;
 
     GLuint mTextures[2] = {
         0,
@@ -1237,10 +1597,17 @@ constexpr GLenum kCopyTextureVariationsSrcFormats[] = {
 constexpr GLenum kCopyTextureVariationsDstFormats[] = {GL_RGB, GL_RGBA, GL_BGRA_EXT,
                                                        GL_SRGB_ALPHA_EXT};
 constexpr GLint kMesaYFlips[]                       = {0, 1};
+constexpr GLenum kCopyTextureVariationsYUVSrcFormats[] = {kCopyTexSrcNV12};
 }  // anonymous namespace
 
 TEST_P(CopyTextureVariationsTest, CopyTexture)
 {
+    if (IsYUVSrcFormat(std::get<1>(GetParam())))
+    {
+        testCopyTextureYUV(std::get<7>(GetParam()), std::get<3>(GetParam()), false);
+        return;
+    }
+
     // http://anglebug.com/42264260
     ANGLE_SKIP_TEST_IF(IsOzone());
     // http://anglebug.com/42263799
@@ -1262,6 +1629,12 @@ TEST_P(CopyTextureVariationsTest, CopyTexture)
 
 TEST_P(CopyTextureVariationsTest, CopySubTexture)
 {
+    if (IsYUVSrcFormat(std::get<1>(GetParam())))
+    {
+        testCopyTextureYUV(std::get<7>(GetParam()), std::get<3>(GetParam()), true);
+        return;
+    }
+
     // http://anglebug.com/42264260
     ANGLE_SKIP_TEST_IF(IsOzone());
 
@@ -1275,7 +1648,12 @@ TEST_P(CopyTextureVariationsTest, CopySubTexture)
                        std::get<6>(GetParam()));
 }
 
-TEST_P(CopyTextureVariationsTest, CopyTextureRectangle)
+// Rectangle-target variations live in their own fixture so that the YUV variant (which imports as
+// GL_TEXTURE_2D) is never combined with a rectangle target.
+class CopyTextureRectangleVariationsTest : public CopyTextureVariationsTest
+{};
+
+TEST_P(CopyTextureRectangleVariationsTest, CopyTextureRectangle)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_texture_rectangle"));
 
@@ -1289,7 +1667,7 @@ TEST_P(CopyTextureVariationsTest, CopyTextureRectangle)
                     std::get<6>(GetParam()));
 }
 
-TEST_P(CopyTextureVariationsTest, CopySubTextureRectangle)
+TEST_P(CopyTextureRectangleVariationsTest, CopySubTextureRectangle)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_texture_rectangle"));
 
@@ -4032,8 +4410,290 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests copying from NV12 IOSurface pbuffers created with EGL_IOSURFACE_ORIENTATION_ANGLE.  The
+// source is a non-square BT.601 video range surface with differently colored quadrants, so that
+// every orientation produces a distinct result.
+class CopyTextureYUVOrientationTest : public CopyTextureTest
+{
+  protected:
+    static constexpr int kSourceWidth  = 20;
+    static constexpr int kSourceHeight = 30;
+    // The quadrants are split at (kSplitX, kSplitY), off the vertical center so that inverting y
+    // is observable also with the sub-rectangle copies.
+    static constexpr int kSplitX = 10;
+    static constexpr int kSplitY = 14;
+
+    static constexpr EGLint kAllOrientations[] = {
+        0,
+        EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE,
+        EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE,
+        EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE | EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE,
+        EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE,
+        EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE | EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE,
+        EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE | EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE,
+        EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE | EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE |
+            EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE,
+    };
+
+    static bool swapsXY(EGLint orientation)
+    {
+        return (orientation & EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE) != 0;
+    }
+
+    // Size of the oriented texture image.
+    static int orientedWidth(EGLint orientation)
+    {
+        return swapsXY(orientation) ? kSourceHeight : kSourceWidth;
+    }
+    static int orientedHeight(EGLint orientation)
+    {
+        return swapsXY(orientation) ? kSourceWidth : kSourceHeight;
+    }
+
+    // Quadrant colors of the surface, row 0 being the first row of the surface.
+    static bool isLeft(float x) { return x < kSplitX; }
+    static bool isTop(float y) { return y < kSplitY; }
+    static GLColor sourceColor(float x, float y)
+    {
+        if (isTop(y))
+        {
+            return isLeft(x) ? GLColor::red : GLColor::green;
+        }
+        return isLeft(x) ? GLColor::blue : GLColor::white;
+    }
+    static YCbCr sourceSample(int x, int y)
+    {
+        // BT.601 video range.
+        if (isTop(y))
+        {
+            return isLeft(x) ? YCbCr{81, 90, 240} : YCbCr{145, 54, 34};
+        }
+        return isLeft(x) ? YCbCr{41, 240, 110} : YCbCr{235, 128, 128};
+    }
+
+    // The expected color of the texel (x, y) of the oriented texture image, as specified by
+    // EGL_ANGLE_iosurface_client_buffer.
+    static GLColor orientedColor(int x, int y, EGLint orientation)
+    {
+        float s = (x + 0.5f) / orientedWidth(orientation);
+        float t = (y + 0.5f) / orientedHeight(orientation);
+        if (orientation & EGL_IOSURFACE_ORIENTATION_INVERT_Y_ANGLE)
+        {
+            t = 1.0f - t;
+        }
+        if (orientation & EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE)
+        {
+            s = 1.0f - s;
+        }
+        if (swapsXY(orientation))
+        {
+            std::swap(s, t);
+        }
+        return sourceColor(s * kSourceWidth, t * kSourceHeight);
+    }
+
+#if defined(ANGLE_PLATFORM_APPLE)
+    // Creates the source surface and binds it to mTextures[0] with the given orientation.  Returns
+    // the pbuffer (caller releases) or EGL_NO_SURFACE on failure.
+    EGLSurface createOrientedSource(EGLint orientation)
+    {
+        EGLDisplay display     = getEGLWindow()->getDisplay();
+        IOSurfaceRef ioSurface = CreateNV12IOSurface('420v', kSourceWidth, kSourceHeight);
+        if (ioSurface == nullptr)
+        {
+            return EGL_NO_SURFACE;
+        }
+        FillNV12IOSurface(ioSurface, sourceSample);
+        EGLSurface pbuffer =
+            CreateNV12Pbuffer(display, getEGLWindow()->getConfig(), ioSurface, EGL_ITU_REC601_EXT,
+                              EGL_YUV_NARROW_RANGE_EXT, orientation);
+        CFRelease(ioSurface);
+        if (pbuffer == EGL_NO_SURFACE)
+        {
+            return EGL_NO_SURFACE;
+        }
+        glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+        if (eglBindTexImage(display, pbuffer, EGL_BACK_BUFFER) != EGL_TRUE)
+        {
+            eglDestroySurface(display, pbuffer);
+            return EGL_NO_SURFACE;
+        }
+        return pbuffer;
+    }
+
+    void releaseOrientedSource(EGLSurface pbuffer)
+    {
+        EGLDisplay display = getEGLWindow()->getDisplay();
+        eglReleaseTexImage(display, pbuffer, EGL_BACK_BUFFER);
+        eglDestroySurface(display, pbuffer);
+    }
+#endif  // defined(ANGLE_PLATFORM_APPLE)
+
+    // Copies the whole oriented image and checks the center of each destination quadrant.
+    void testCopyOriented(bool useSubImage)
+    {
+        ANGLE_SKIP_TEST_IF(!checkExtensions());
+#if defined(ANGLE_PLATFORM_APPLE)
+        for (EGLint orientation : kAllOrientations)
+        {
+            for (bool flipY : {false, true})
+            {
+                SCOPED_TRACE(::testing::Message()
+                             << "orientation " << orientation << " flipY " << flipY);
+                EGLSurface pbuffer = createOrientedSource(orientation);
+                ASSERT_NE(EGL_NO_SURFACE, pbuffer);
+
+                const int w = orientedWidth(orientation);
+                const int h = orientedHeight(orientation);
+                glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+                if (useSubImage)
+                {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 nullptr);
+                    glCopySubTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, 0, 0,
+                                             0, 0, w, h, flipY, false, false);
+                }
+                else
+                {
+                    glCopyTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, GL_RGBA,
+                                          GL_UNSIGNED_BYTE, flipY, false, false);
+                }
+                EXPECT_GL_NO_ERROR();
+                EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+                for (int y : {h / 4, 3 * h / 4})
+                {
+                    for (int x : {w / 4, 3 * w / 4})
+                    {
+                        const int sourceY = flipY ? h - 1 - y : y;
+                        EXPECT_PIXEL_COLOR_NEAR(x, y, orientedColor(x, sourceY, orientation), 2);
+                    }
+                }
+                releaseOrientedSource(pbuffer);
+            }
+        }
+#else
+        FAIL() << "YUV copy-texture tests are only implemented for Apple platforms.";
+#endif
+    }
+};
+
+// Tests glCopyTextureCHROMIUM from an oriented YUV source.  The destination has the oriented size.
+TEST_P(CopyTextureYUVOrientationTest, CopyTexture)
+{
+    testCopyOriented(false);
+}
+
+// Tests glCopySubTextureCHROMIUM of the whole oriented YUV source.
+TEST_P(CopyTextureYUVOrientationTest, CopySubTexture)
+{
+    testCopyOriented(true);
+}
+
+// Tests glCopySubTextureCHROMIUM of a sub-rectangle of an oriented YUV source.  The source
+// rectangle is in the coordinates of the oriented image.
+TEST_P(CopyTextureYUVOrientationTest, CopySubTextureSubRectangle)
+{
+    ANGLE_SKIP_TEST_IF(!checkExtensions());
+#if defined(ANGLE_PLATFORM_APPLE)
+    for (EGLint orientation : kAllOrientations)
+    {
+        for (bool flipY : {false, true})
+        {
+            SCOPED_TRACE(::testing::Message()
+                         << "orientation " << orientation << " flipY " << flipY);
+            EGLSurface pbuffer = createOrientedSource(orientation);
+            ASSERT_NE(EGL_NO_SURFACE, pbuffer);
+
+            // Copy the bottom-right quadrant of the oriented image.
+            const int sourceX = orientedWidth(orientation) / 2;
+            const int sourceY = orientedHeight(orientation) / 2;
+            const int w       = orientedWidth(orientation) - sourceX;
+            const int h       = orientedHeight(orientation) - sourceY;
+            glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+            glCopySubTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, 0, 0, sourceX,
+                                     sourceY, w, h, flipY, false, false);
+            EXPECT_GL_NO_ERROR();
+
+            for (int y : {h / 4, 3 * h / 4})
+            {
+                for (int x : {w / 4, 3 * w / 4})
+                {
+                    const int rowInRect = flipY ? h - 1 - y : y;
+                    EXPECT_PIXEL_COLOR_NEAR(
+                        x, y, orientedColor(sourceX + x, sourceY + rowInRect, orientation), 2);
+                }
+            }
+            releaseOrientedSource(pbuffer);
+        }
+    }
+#else
+    FAIL() << "YUV copy-texture tests are only implemented for Apple platforms.";
+#endif
+}
+
+// Tests the validation of EGL_IOSURFACE_ORIENTATION_ANGLE.
+TEST_P(CopyTextureYUVOrientationTest, Validation)
+{
+#if defined(ANGLE_PLATFORM_APPLE)
+    EGLDisplay display     = getEGLWindow()->getDisplay();
+    EGLConfig config       = getEGLWindow()->getConfig();
+    IOSurfaceRef ioSurface = CreateNV12IOSurface('420v', kSourceWidth, kSourceHeight);
+    ASSERT_NE(nullptr, ioSurface);
+
+    auto createPbuffer = [&](EGLint width, EGLint height, EGLint internalFormat,
+                             EGLint orientation) {
+        // clang-format off
+        const EGLint attribs[] = {
+            EGL_WIDTH,                         width,
+            EGL_HEIGHT,                        height,
+            EGL_IOSURFACE_PLANE_ANGLE,         0,
+            EGL_TEXTURE_TARGET,                EGL_TEXTURE_2D,
+            EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, internalFormat,
+            EGL_TEXTURE_TYPE_ANGLE,            GL_UNSIGNED_BYTE,
+            EGL_TEXTURE_FORMAT,                EGL_TEXTURE_RGBA,
+            EGL_IOSURFACE_ORIENTATION_ANGLE,   orientation,
+            EGL_NONE,                          EGL_NONE,
+        };
+        // clang-format on
+        return eglCreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, ioSurface, config,
+                                                attribs);
+    };
+
+    // Unknown orientation bits are rejected.
+    EXPECT_EQ(EGL_NO_SURFACE,
+              createPbuffer(kSourceWidth, kSourceHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, 0x8));
+    EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+
+    // Swapping the axes requires the swapped size.
+    EXPECT_EQ(EGL_NO_SURFACE,
+              createPbuffer(kSourceWidth, kSourceHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                            EGL_IOSURFACE_ORIENTATION_SWAP_XY_ANGLE));
+    EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+
+    // Orientation is supported only for YUV internal formats.
+    EXPECT_EQ(EGL_NO_SURFACE, createPbuffer(kSourceWidth, kSourceHeight, GL_RED,
+                                            EGL_IOSURFACE_ORIENTATION_INVERT_X_ANGLE));
+    EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+
+    // Valid orientations.
+    for (EGLint orientation : kAllOrientations)
+    {
+        EGLSurface pbuffer = createPbuffer(orientedWidth(orientation), orientedHeight(orientation),
+                                           GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, orientation);
+        EXPECT_NE(EGL_NO_SURFACE, pbuffer);
+        EXPECT_EGL_SUCCESS();
+        eglDestroySurface(display, pbuffer);
+    }
+    CFRelease(ioSurface);
+#else
+    FAIL() << "YUV copy-texture tests are only implemented for Apple platforms.";
+#endif
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
-ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
+ANGLE_INSTANTIATE_TEST_COMBINE_7(CopyTextureVariationsTest,
                                  CopyTextureVariationsTestPrint,
                                  testing::ValuesIn(kCopyTextureVariationsSrcFormats),
                                  testing::ValuesIn(kCopyTextureVariationsDstFormats),
@@ -4041,6 +4701,45 @@ ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
                                  testing::Bool(),  // premultiplyAlpha
                                  testing::Bool(),  // unmultiplyAlpha
                                  testing::ValuesIn(kMesaYFlips),
+                                 testing::Values(CopyTexCS::None),  // colorspace (N/A for non-YUV)
+                                 ES2_D3D11(),
+                                 ES2_OPENGL(),
+                                 ES2_OPENGLES(),
+                                 ES2_VULKAN(),
+                                 ES2_METAL(),
+                                 ES2_WEBGPU());
+
+// YUV-source variant: Metal-only, RGBA destination, alpha ops off, all colorspaces.  Platform and
+// parameter restrictions are expressed by the instantiation lists rather than runtime skips.
+ANGLE_INSTANTIATE_TEST_VARIANTS_COMBINE_7(
+    YUV,
+    CopyTextureVariationsTest,
+    CopyTextureVariationsTestPrint,
+    testing::ValuesIn(kCopyTextureVariationsYUVSrcFormats),
+    testing::Values(static_cast<GLenum>(GL_RGBA)),
+    testing::Bool(),                         // flipY
+    testing::Values(false),                  // premultiplyAlpha (YUV has no alpha)
+    testing::Values(false),                  // unmultiplyAlpha
+    testing::Values(static_cast<GLint>(0)),  // mesaYFlip
+    testing::Values(CopyTexCS::BT601Video,
+                    CopyTexCS::BT601Full,
+                    CopyTexCS::BT709Video,
+                    CopyTexCS::BT709Full,
+                    CopyTexCS::BT2020Video,
+                    CopyTexCS::BT2020Full,
+                    CopyTexCS::SMPTE240MVideo,
+                    CopyTexCS::SMPTE240MFull),
+    ES2_METAL());
+
+ANGLE_INSTANTIATE_TEST_COMBINE_7(CopyTextureRectangleVariationsTest,
+                                 CopyTextureVariationsTestPrint,
+                                 testing::ValuesIn(kCopyTextureVariationsSrcFormats),
+                                 testing::ValuesIn(kCopyTextureVariationsDstFormats),
+                                 testing::Bool(),  // flipY
+                                 testing::Bool(),  // premultiplyAlpha
+                                 testing::Bool(),  // unmultiplyAlpha
+                                 testing::ValuesIn(kMesaYFlips),
+                                 testing::Values(CopyTexCS::None),  // colorspace (N/A for non-YUV)
                                  ES2_D3D11(),
                                  ES2_OPENGL(),
                                  ES2_OPENGLES(),
@@ -4054,6 +4753,9 @@ ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
                        ES2_OPENGLES(),
                        ES2_VULKAN(),
                        ES2_METAL());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureYUVOrientationTest);
+ANGLE_INSTANTIATE_TEST(CopyTextureYUVOrientationTest, ES2_METAL());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(CopyTextureTestES3);

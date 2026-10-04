@@ -39,7 +39,6 @@
 
 #if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeap.h"
-#include <WebCore/GraphicsContextGLCV.h>
 #include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/VideoFrameCV.h>
 #endif
@@ -47,7 +46,7 @@
 namespace WebKit {
 
 #if ENABLE(VIDEO)
-void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame&& frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame&& frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t type, bool unpackFlipY, bool unpackPremultiplyAlpha, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     RefPtr videoFrame = m_sharedVideoFrameReader.read(WTF::move(frame));
@@ -58,10 +57,11 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame
     }
     if (!m_objectNames.isValidKey(texture)) {
         ASSERT_IS_TESTING_IPC();
+        completionHandler(false);
         return;
     }
     texture = m_objectNames.get(texture);
-    bool result = protect(m_context)->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    bool result = protect(m_context)->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, type, unpackFlipY, unpackPremultiplyAlpha);
     completionHandler(result);
 }
 

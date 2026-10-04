@@ -99,7 +99,7 @@ public:
 #endif
     GCGLErrorCodeSet getErrors() final;
 #if ENABLE(VIDEO)
-    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
+    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha) final;
     RefPtr<WebCore::NativeImage> videoFrameToNativeImage(WebCore::VideoFrame&) final;
 #endif
 

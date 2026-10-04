@@ -238,7 +238,7 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
 #endif
 
 #if ENABLE(VIDEO)
-bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha)
 {
 #if PLATFORM(COCOA)
     if (isContextLost())
@@ -256,7 +256,7 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
     if (!sharedVideoFrame || isContextLost())
         return false;
 
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(WTF::move(*sharedVideoFrame), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(WTF::move(*sharedVideoFrame), texture, target, level, internalFormat, type, unpackFlipY, unpackPremultiplyAlpha));
     if (!sendResult.succeeded()) {
         markContextLost();
         return false;
