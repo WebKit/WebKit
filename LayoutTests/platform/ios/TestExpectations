@@ -9058,6 +9058,13 @@ imported/w3c/web-platform-tests/css/CSS2/css1/c62-percent-000.xht [ ImageOnlyFai
 # so an action sequence with a key source resolves without dispatching anything on iOS.
 imported/w3c/web-platform-tests/infrastructure/testdriver/key-source-pause.html [ Skip ]
 
+# originOffset() shifts a subframe action origin by boundingBoxInRootViewCoordinates(), i.e. in
+# root-view space, which matches eventSender on macOS. On iOS these actions are re-dispatched as a
+# touch stream tagged coordinateSpace "content", so every coordinate is reinterpreted as main-frame
+# content coordinates. The two spaces diverge whenever the top page is not at scale 1 (a test with
+# no <meta viewport> is laid out at 980px and scaled to fit), so the shifted tap misses the target.
+webkit.org/b/321140 http/wpt/testdriver/subframe-element-origin.html [ Skip ]
+
 # scheduleResizeEventIfNeeded() suppresses resize events on iOS while the document is still loading,
 # since Safari on iOS resizes the window while setting up its viewport.
 imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]
