@@ -14690,6 +14690,9 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
 
+        bool argumentsIsCellButterfly = jsArguments && m_graph.isContiguousCellButterfly(abstractValue(node->child3()));
+        bool argumentsIsLikelyArray = jsArguments && m_graph.isLikelyArray(node->child3(), abstractValue(node->child3()));
+        bool argumentsIsProvenArray = argumentsIsLikelyArray && abstractValue(node->child3()).isType(SpecArray);
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
 
@@ -14820,7 +14823,8 @@ IGNORE_CLANG_WARNINGS_END
                 ScratchRegisterAllocator allocator(usedRegisters);
                 GPRReg scratchGPR1 = allocator.allocateScratchGPR();
                 GPRReg scratchGPR2 = allocator.allocateScratchGPR();
-                GPRReg scratchGPR3 = forwarding ? allocator.allocateScratchGPR() : InvalidGPRReg;
+                GPRReg scratchGPR3 = forwarding || argumentsIsCellButterfly || argumentsIsLikelyArray ? allocator.allocateScratchGPR() : InvalidGPRReg;
+                GPRReg scratchGPR4 = argumentsIsLikelyArray ? allocator.allocateScratchGPR() : InvalidGPRReg;
                 RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
                 auto callWithExceptionCheck = [&] (void(*callee)()) {
@@ -14848,6 +14852,23 @@ IGNORE_CLANG_WARNINGS_END
 
                     done.link(&jit);
                 } else {
+                    CCallHelpers::JumpList done;
+                    if (argumentsIsCellButterfly || argumentsIsLikelyArray) {
+                        CCallHelpers::JumpList slowCase;
+                        jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR2);
+                        if (argumentsIsCellButterfly)
+                            emitSetupVarargsFrameFromCellButterfly(*vm, jit, argumentsGPR, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, data->firstVarArgOffset, slowCase);
+                        else {
+                            if (!argumentsIsProvenArray) {
+                                slowCase.append(jit.branchIfNotCell(argumentsGPR));
+                                slowCase.append(jit.branchIfNotType(argumentsGPR, ArrayType));
+                            }
+                            emitSetupVarargsFrameFromArray(*vm, jit, argumentsGPR, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, scratchGPR4, FPRInfo::fpRegT0, data->firstVarArgOffset, slowCase);
+                        }
+                        done.append(jit.jump());
+                        slowCase.link(&jit);
+                    }
+
                     jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
                     jit.setupArguments<decltype(operationSizeFrameForVarargs)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
                     jit.prepareCallOperation(jit.vm());
@@ -14869,6 +14890,8 @@ IGNORE_CLANG_WARNINGS_END
                     // This may not emit code if thisGPR got a callee-save. Also, we're guaranteed
                     // that thisGPR != GPRInfo::regT0 (BaselineJITRegisters::Call::calleeGPR) because regT0 interferes with it.
                     thisLateRep.emitRestore(jit, thisGPR);
+
+                    done.link(&jit);
                 }
 
                 jit.store64(BaselineJITRegisters::Call::calleeGPR, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
@@ -15271,11 +15294,44 @@ IGNORE_CLANG_WARNINGS_END
         LoadVarargsData* data = m_node->loadVarargsData();
         LValue jsArguments = lowJSValue(m_node->argumentsChild());
 
-        LValue length = vmCall(Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments, m_out.constInt32(data->offset));
+        LValue length;
+        if (m_graph.isContiguousCellButterfly(abstractValue(m_node->argumentsChild()))) {
+            length = m_out.load32NonNegative(toButterfly(jsArguments), m_heaps.Butterfly_publicLength);
+            speculate(VarargsOverflow, noValue(), nullptr, m_out.above(length, m_out.constInt32(maxArguments)));
+            length = varargsLengthWithoutOffset(length, data->offset);
+        } else if (m_graph.isLikelyArray(m_node->argumentsChild(), abstractValue(m_node->argumentsChild()))) {
+            LBasicBlock fastCase = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            checkVarargsArrayAndLoadIndexingShape(m_node->argumentsChild(), jsArguments, slowCase);
+            LValue arrayLength = m_out.load32NonNegative(m_out.loadPtr(jsArguments, m_heaps.JSObject_butterfly), m_heaps.Butterfly_publicLength);
+            m_out.branch(m_out.above(arrayLength, m_out.constInt32(maxArguments)), rarely(slowCase), usually(fastCase));
+
+            LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
+            ValueFromBlock fastResult = m_out.anchor(varargsLengthWithoutOffset(arrayLength, data->offset));
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments, m_out.constInt32(data->offset)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            length = m_out.phi(Int32, fastResult, slowResult);
+        } else
+            length = vmCall(Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments, m_out.constInt32(data->offset));
 
         LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
 
         setInt32(lengthIncludingThis);
+    }
+
+    LValue varargsLengthWithoutOffset(LValue length, unsigned offset)
+    {
+        if (!offset)
+            return length;
+        LValue lengthWithoutOffset = m_out.sub(length, m_out.constInt32(offset));
+        return m_out.select(m_out.greaterThanOrEqual(lengthWithoutOffset, m_out.int32Zero), lengthWithoutOffset, m_out.int32Zero, SelectPredictability::Predictable);
     }
 
     void compileLoadVarargs()
@@ -15291,6 +15347,16 @@ IGNORE_CLANG_WARNINGS_END
         case UntypedUse: {
             speculate(VarargsOverflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit))));
             m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
+            if (m_graph.isContiguousCellButterfly(abstractValue(m_node->argumentsChild()))) {
+                LValue sourceStart = m_out.add(toButterfly(jsArguments), m_out.constIntPtr(data->offset * sizeof(EncodedJSValue)));
+                emitFillUndefinedForMissingVarargs(lengthIncludingThis);
+                emitLoadVarargsFromContiguousStorage(m_heaps.indexedContiguousProperties, sourceStart, lengthIncludingThis);
+                break;
+            }
+            if (m_graph.isLikelyArray(m_node->argumentsChild(), abstractValue(m_node->argumentsChild()))) {
+                emitLoadVarargsFromArray(jsArguments, lengthIncludingThis);
+                break;
+            }
             // FIXME: This computation is rather silly. If operationLoadVarargs just took a pointer instead
             // of a VirtualRegister, we wouldn't have to do this.
             // https://bugs.webkit.org/show_bug.cgi?id=141660
@@ -15337,28 +15403,55 @@ IGNORE_CLANG_WARNINGS_END
         unsigned numberOfArgumentsToSkip = data->offset;
         LValue lengthIncludingThis = lowInt32(m_node->child1());
 
-        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
         speculate(
             VarargsOverflow, noValue(), nullptr,
             m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
 
         m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
 
-        LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
+        emitFillUndefinedForMissingVarargs(lengthIncludingThis);
+        emitLoadVarargsFromContiguousStorage(m_heaps.variables, getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip), lengthIncludingThis);
+    }
+
+    LValue checkVarargsArrayAndLoadIndexingShape(Edge edge, LValue jsArguments, LBasicBlock slowCase)
+    {
+        if (!abstractValue(edge).isType(SpecArray)) {
+            LBasicBlock isCellCase = m_out.newBlock();
+            LBasicBlock isArrayCase = m_out.newBlock();
+
+            m_out.branch(isCell(jsArguments, provenType(edge)), usually(isCellCase), rarely(slowCase));
+
+            m_out.appendTo(isCellCase);
+            m_out.branch(isType(jsArguments, ArrayType), usually(isArrayCase), rarely(slowCase));
+
+            m_out.appendTo(isArrayCase);
+        }
+
+        LBasicBlock continuation = m_out.newBlock();
+        static_assert(UndecidedShape < Int32Shape && Int32Shape < DoubleShape && DoubleShape < ContiguousShape);
+        LValue indexingShape = m_out.bitAnd(m_out.load8ZeroExt32(jsArguments, m_heaps.JSCell_indexingTypeAndMisc), m_out.constInt32(IndexingShapeMask));
+        m_out.branch(m_out.belowOrEqual(m_out.sub(indexingShape, m_out.constInt32(UndecidedShape)), m_out.constInt32(ContiguousShape - UndecidedShape)), usually(continuation), rarely(slowCase));
+
+        m_out.appendTo(continuation);
+        return indexingShape;
+    }
+
+    void emitFillUndefinedForMissingVarargs(LValue lengthIncludingThis)
+    {
+        LoadVarargsData* data = m_node->loadVarargsData();
+        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
         LValue targetStart = addressFor(data->machineStart).value();
 
         LBasicBlock undefinedLoop = m_out.newBlock();
-        LBasicBlock mainLoopEntry = m_out.newBlock();
-        LBasicBlock mainLoop = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LValue lengthAsPtr = m_out.zeroExtPtr(length);
         LValue loopBoundValue = m_out.constIntPtr(data->mandatoryMinimum);
         ValueFromBlock loopBound = m_out.anchor(loopBoundValue);
         m_out.branch(
-            m_out.above(loopBoundValue, lengthAsPtr), unsure(undefinedLoop), unsure(mainLoopEntry));
+            m_out.above(loopBoundValue, lengthAsPtr), unsure(undefinedLoop), unsure(continuation));
 
-        LBasicBlock lastNext = m_out.appendTo(undefinedLoop, mainLoopEntry);
+        LBasicBlock lastNext = m_out.appendTo(undefinedLoop, continuation);
         LValue previousIndex = m_out.phi(pointerType(), loopBound);
         LValue currentIndex = m_out.sub(previousIndex, m_out.intPtrOne);
         m_out.store64(
@@ -15367,20 +15460,100 @@ IGNORE_CLANG_WARNINGS_END
         ValueFromBlock nextIndex = m_out.anchor(currentIndex);
         m_out.addIncomingToPhi(previousIndex, nextIndex);
         m_out.branch(
-            m_out.above(currentIndex, lengthAsPtr), unsure(undefinedLoop), unsure(mainLoopEntry));
+            m_out.above(currentIndex, lengthAsPtr), unsure(undefinedLoop), unsure(continuation));
 
-        m_out.appendTo(mainLoopEntry, mainLoop);
-        loopBound = m_out.anchor(lengthAsPtr);
+        m_out.appendTo(continuation, lastNext);
+    }
+
+    void emitLoadVarargsFromArray(LValue jsArguments, LValue lengthIncludingThis)
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LoadVarargsData* data = m_node->loadVarargsData();
+
+        LBasicBlock fastCase = m_out.newBlock();
+        LBasicBlock hasElements = m_out.newBlock();
+        LBasicBlock isNotDouble = m_out.newBlock();
+        LBasicBlock contiguousLoop = m_out.newBlock();
+        LBasicBlock contiguousLoopStore = m_out.newBlock();
+        LBasicBlock doubleLoop = m_out.newBlock();
+        LBasicBlock doubleLoopStore = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue targetStart = addressFor(data->machineStart).value();
+        LValue indexingShape = checkVarargsArrayAndLoadIndexingShape(m_node->argumentsChild(), jsArguments, slowCase);
+        LValue butterfly = m_out.loadPtr(jsArguments, m_heaps.JSObject_butterfly);
+        LValue arrayLength = m_out.load32NonNegative(butterfly, m_heaps.Butterfly_publicLength);
+        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
+        m_out.branch(m_out.below(arrayLength, m_out.add(length, m_out.constInt32(data->offset))), rarely(slowCase), usually(fastCase));
+
+        LBasicBlock lastNext = m_out.appendTo(fastCase, hasElements);
+        emitFillUndefinedForMissingVarargs(lengthIncludingThis);
+        LValue sourceStart = m_out.add(butterfly, m_out.constIntPtr(data->offset * sizeof(EncodedJSValue)));
+        ValueFromBlock startIndexForContiguous = m_out.anchor(m_out.zeroExtPtr(length));
+        ValueFromBlock startIndexForDouble = m_out.anchor(m_out.zeroExtPtr(length));
+        m_out.branch(m_out.isZero32(length), unsure(continuation), unsure(hasElements));
+
+        m_out.appendTo(hasElements, isNotDouble);
+        m_out.branch(m_out.equal(indexingShape, m_out.constInt32(DoubleShape)), unsure(doubleLoop), unsure(isNotDouble));
+
+        m_out.appendTo(isNotDouble, contiguousLoop);
+        m_out.branch(m_out.equal(indexingShape, m_out.constInt32(UndecidedShape)), rarely(slowCase), usually(contiguousLoop));
+
+        {
+            m_out.appendTo(contiguousLoop, contiguousLoopStore);
+            LValue previousIndex = m_out.phi(pointerType(), startIndexForContiguous);
+            LValue index = m_out.sub(previousIndex, m_out.intPtrOne);
+            LValue value = m_out.load64(m_out.baseIndex(m_heaps.root, sourceStart, index, ScaleEight));
+            m_out.branch(m_out.isZero64(value), rarely(slowCase), usually(contiguousLoopStore));
+
+            m_out.appendTo(contiguousLoopStore, doubleLoop);
+            m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, index));
+            m_out.addIncomingToPhi(previousIndex, m_out.anchor(index));
+            m_out.branch(m_out.isNull(index), unsure(continuation), unsure(contiguousLoop));
+        }
+
+        {
+            m_out.appendTo(doubleLoop, doubleLoopStore);
+            LValue previousIndex = m_out.phi(pointerType(), startIndexForDouble);
+            LValue index = m_out.sub(previousIndex, m_out.intPtrOne);
+            LValue value = m_out.loadDouble(m_out.baseIndex(m_heaps.indexedDoubleProperties, sourceStart, index));
+            m_out.branch(m_out.doubleNotEqualOrUnordered(value, value), rarely(slowCase), usually(doubleLoopStore));
+
+            m_out.appendTo(doubleLoopStore, slowCase);
+            m_out.store64(boxDouble(value), m_out.baseIndex(m_heaps.variables, targetStart, index));
+            m_out.addIncomingToPhi(previousIndex, m_out.anchor(index));
+            m_out.branch(m_out.isNull(index), unsure(continuation), unsure(doubleLoop));
+        }
+
+        m_out.appendTo(slowCase, continuation);
+        LValue machineStart = m_out.lShr(m_out.sub(targetStart, m_callFrame), m_out.constIntPtr(3));
+        vmCall(Void, operationLoadVarargs, weakPointer(globalObject), m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+    }
+
+    void emitLoadVarargsFromContiguousStorage(IndexedAbstractHeap& sourceHeap, LValue sourceStart, LValue lengthIncludingThis)
+    {
+        LoadVarargsData* data = m_node->loadVarargsData();
+        LValue length = m_out.sub(lengthIncludingThis, m_out.int32One);
+        LValue targetStart = addressFor(data->machineStart).value();
+
+        LBasicBlock mainLoop = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue lengthAsPtr = m_out.zeroExtPtr(length);
+        ValueFromBlock loopBound = m_out.anchor(lengthAsPtr);
         m_out.branch(m_out.notNull(lengthAsPtr), unsure(mainLoop), unsure(continuation));
 
-        m_out.appendTo(mainLoop, continuation);
-        previousIndex = m_out.phi(pointerType(), loopBound);
-        currentIndex = m_out.sub(previousIndex, m_out.intPtrOne);
+        LBasicBlock lastNext = m_out.appendTo(mainLoop, continuation);
+        LValue previousIndex = m_out.phi(pointerType(), loopBound);
+        LValue currentIndex = m_out.sub(previousIndex, m_out.intPtrOne);
         LValue value = m_out.load64(
-            m_out.baseIndex(m_heaps.variables, sourceStart, currentIndex));
+            m_out.baseIndex(sourceHeap, sourceStart, currentIndex));
         m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, currentIndex));
-        nextIndex = m_out.anchor(currentIndex);
-        m_out.addIncomingToPhi(previousIndex, nextIndex);
+        m_out.addIncomingToPhi(previousIndex, m_out.anchor(currentIndex));
         m_out.branch(m_out.isNull(currentIndex), unsure(continuation), unsure(mainLoop));
 
         m_out.appendTo(continuation, lastNext);
