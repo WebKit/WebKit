@@ -7683,6 +7683,64 @@ TEST(SiteIsolation, NavigateFrameWithSiblingsBackForward)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "c");
 }
 
+TEST(SiteIsolation, NavigateFrameWithSiblingsBackForwardWhenSiblingCommitsLate)
+{
+    std::optional<Connection> connectionForA;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/a'></iframe> <iframe src='https://webkit.org/b'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/a"_s) {
+                connectionForA = connection;
+                continue;
+            }
+            if (path == "/b"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script> alert('b'); </script>"_s).serialize());
+                continue;
+            }
+            if (path == "/c"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script> alert('c'); </script>"_s).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    bool aCommitted { false };
+    navigationDelegate.get().didCommitLoadWithRequestInFrame = makeBlockPtr([&](WKWebView *, NSURLRequest *, WKFrameInfo *frameInfo) {
+        if ([frameInfo.request.URL.path isEqualToString:@"/a"])
+            aCommitted = true;
+    }).get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+
+    RetainPtr<_WKFrameTreeNode> frameB;
+    for (_WKFrameTreeNode *child in [webView mainFrame].childFrames) {
+        if ([child.info.request.URL.path isEqualToString:@"/b"])
+            frameB = child;
+    }
+    ASSERT_TRUE(frameB);
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/c'" inFrame:[frameB info] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "c");
+
+    EXPECT_FALSE(aCommitted);
+    while (!connectionForA)
+        Util::spinRunLoop();
+    connectionForA->send(HTTPResponse(""_s).serialize());
+    Util::run(&aCommitted);
+
+    [webView goBack];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+    [webView goForward];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "c");
+}
+
 TEST(SiteIsolation, IntentionalAboutBlankIframeBackForwardNotSkipped)
 {
     // Regression test for the URL-heuristic gap in isStaleInitialAboutBlankIframeTarget

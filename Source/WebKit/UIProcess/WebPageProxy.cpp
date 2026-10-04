@@ -3039,6 +3039,36 @@ static bool isStaleInitialAboutBlankIframeTarget(WebBackForwardListFrameItem& to
     return toLiveFrame && !toLiveFrame->isMainFrame();
 }
 
+static Vector<RefPtr<WebBackForwardListFrameItem>> matchFromChildItems(WebBackForwardListFrameItem& fromFrame, WebBackForwardListFrameItem& toFrame)
+{
+    auto& toChildren = toFrame.children();
+    Vector<RefPtr<WebBackForwardListFrameItem>> fromChildren(toChildren.size());
+    // A from child must not be matched twice; otherwise its frame gets two
+    // traversals and the second clobbers the first.
+    HashSet<WebCore::BackForwardFrameItemIdentifier> pairedFromChildren;
+
+    // Match all children by frameID first, so the positional fallback cannot
+    // take a from child that a later sibling matches by frameID.
+    for (size_t i = 0; i < toChildren.size(); ++i) {
+        auto childFrameID = toChildren[i]->frameID();
+        RefPtr fromChild = childFrameID ? fromFrame.childItemForFrameID(*childFrameID) : nullptr;
+        if (fromChild && pairedFromChildren.add(fromChild->identifier()).isNewEntry)
+            fromChildren[i] = WTF::move(fromChild);
+    }
+
+    // Stored frameIDs can disagree across entries, or be entirely unset after
+    // a persisted session restore. Fall back to position match, which is
+    // stable across history.
+    for (size_t i = 0; i < toChildren.size(); ++i) {
+        if (fromChildren[i])
+            continue;
+        RefPtr fromChild = fromFrame.childItemAtIndex(i);
+        if (fromChild && pairedFromChildren.add(fromChild->identifier()).isNewEntry)
+            fromChildren[i] = WTF::move(fromChild);
+    }
+    return fromChildren;
+}
+
 bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromFrame, WebBackForwardListFrameItem& toFrame, NavigationIdentifier navigationID, FrameLoadType frameLoadType, ShouldRestoreFromBackForwardCache shouldRestore, const WebCore::PublicSuffix& publicSuffix)
 {
     bool anySent = false;
@@ -3051,19 +3081,12 @@ bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromF
         return anySent;
 
     auto& toChildren = toFrame.children();
-    HashSet<WebCore::BackForwardFrameItemIdentifier> pairedFromChildren;
+    auto fromChildren = matchFromChildItems(fromFrame, toFrame);
     for (size_t i = 0; i < toChildren.size(); ++i) {
         Ref toChild = toChildren[i];
+        RefPtr fromChild = fromChildren[i];
         auto childFrameID = toChild->frameID();
-        // Stored frameIDs can disagree across entries, or be entirely unset after a persisted session restore
-        // Fall back to position, which is stable across history, whenever ID-based lookup isn't possible or doesn't find a match.
-        RefPtr fromChild = childFrameID ? fromFrame.childItemForFrameID(*childFrameID) : nullptr;
-        // A duplicated frameID in the to tree can resolve two siblings to the same from child; pairing both
-        // would dispatch a second traversal to the same live frame and clobber the intended navigation. Fall
-        // back to position when the resolved from child is already paired.
-        if (!fromChild || pairedFromChildren.contains(fromChild->identifier()))
-            fromChild = fromFrame.childItemAtIndex(i);
-        if (!fromChild || !pairedFromChildren.add(fromChild->identifier()).isNewEntry)
+        if (!fromChild)
             continue;
 
         if (toChild->frameState().wasRestoredFromSession && !childFrameID) {
