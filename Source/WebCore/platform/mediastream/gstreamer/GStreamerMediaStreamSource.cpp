@@ -672,7 +672,6 @@ private:
     Condition m_eosCondition;
     Lock m_eosLock;
     bool m_eosPending WTF_GUARDED_BY_LOCK(m_eosLock) { false };
-    std::optional<int> m_webrtcSourceClientId;
     bool m_consumerIsVideoPlayer { false };
     bool m_isIncomingVideoSource { false };
     GRefPtr<GstStream> m_stream;
@@ -947,6 +946,10 @@ static void webkitMediaStreamSrcDispose(GObject* object)
     auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(object);
 
     GST_DEBUG_OBJECT(self, "Disposing");
+
+    // This can be called from a thread with malloc restrictions and callOnMainThread implies a
+    // malloc when creating the Function parameter.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     callOnMainThreadAndWait([self] {
         auto priv = self->priv;
 
