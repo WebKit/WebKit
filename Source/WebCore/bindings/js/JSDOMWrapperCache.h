@@ -27,6 +27,7 @@
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -218,11 +219,13 @@ template<typename DOMClass> inline void setSubclassStructureIfNeeded(JSC::JSGlob
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSC::JSValue prototype = newTarget->get(lexicalGlobalObject, vm.propertyNames->prototype);
+    RETURN_IF_EXCEPTION(scope, void());
     auto* functionGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, void());
     auto* newTargetGlobalObject = uncheckedDowncast<JSDOMGlobalObject>(functionGlobalObject);
     auto* baseStructure = getDOMStructure<WrapperClass>(vm, *newTargetGlobalObject);
-    auto* subclassStructure = JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
+    auto* subclassStructure = JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure, prototype);
     RETURN_IF_EXCEPTION(scope, void());
     jsObject->setStructure(vm, subclassStructure);
 }

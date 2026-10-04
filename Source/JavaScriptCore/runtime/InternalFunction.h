@@ -55,6 +55,9 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE static Structure* createSubclassStructure(JSGlobalObject*, JSObject* newTarget, Structure*);
+    JS_EXPORT_PRIVATE static Structure* createSubclassStructure(JSGlobalObject*, JSObject* newTarget, Structure*, JSValue prototype);
+    JS_EXPORT_PRIVATE static bool canUseSubclassAllocationProfile(JSObject*);
+    JS_EXPORT_PRIVATE static Structure* cachedSubclassStructure(JSObject* newTarget, Structure* baseClass);
     JS_EXPORT_PRIVATE static InternalFunction* createFunctionThatMasqueradesAsUndefined(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction);
 
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
@@ -113,9 +116,21 @@ JS_EXPORT_PRIVATE JSGlobalObject* getFunctionRealm(JSGlobalObject*, JSObject*);
         ? globalObject->structureMemberFunctionName() \
         : ([&]() -> Structure* { \
             auto scope = DECLARE_THROW_SCOPE((vm)); \
-            auto* functionGlobalObject = getFunctionRealm(globalObject, (newTarget)); \
+            JSObject* derivedTarget = (newTarget); \
+            if (InternalFunction::canUseSubclassAllocationProfile(derivedTarget)) { \
+                JSGlobalObject* functionGlobalObject = derivedTarget->realm(); \
+                Structure* baseStructure = functionGlobalObject->structureMemberFunctionName(); \
+                if (Structure* cachedStructure = InternalFunction::cachedSubclassStructure(derivedTarget, baseStructure)) \
+                    return cachedStructure; \
+                JSValue prototype = derivedTarget->get(globalObject, (vm).propertyNames->prototype); \
+                RETURN_IF_EXCEPTION(scope, nullptr); \
+                RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, derivedTarget, baseStructure, prototype)); \
+            } \
+            JSValue prototype = derivedTarget->get(globalObject, (vm).propertyNames->prototype); \
             RETURN_IF_EXCEPTION(scope, nullptr); \
-            RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, (newTarget), functionGlobalObject->structureMemberFunctionName())); \
+            auto* functionGlobalObject = getFunctionRealm(globalObject, derivedTarget); \
+            RETURN_IF_EXCEPTION(scope, nullptr); \
+            RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, derivedTarget, functionGlobalObject->structureMemberFunctionName(), prototype)); \
         }()))
 
 } // namespace JSC
