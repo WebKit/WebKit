@@ -627,9 +627,6 @@ crypto/subtle/ecdh-generate-export-key-pkcs8-p521.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-spki-p256.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-spki-p384.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-spki-p521.html [ Failure Pass ]
-crypto/subtle/ecdh-generate-export-jwk-key-p256.html [ Failure Pass ]
-crypto/subtle/ecdh-generate-export-jwk-key-p384.html [ Failure Pass ]
-crypto/subtle/ecdh-generate-export-jwk-key-p521.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-raw-p256.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-raw-p384.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-raw-p521.html [ Failure Pass ]
@@ -638,6 +635,7 @@ webkit.org/b/264144 crypto/subtle/ecdsa-generate-export-key-pkcs8.html [ Failure
 webkit.org/b/264144 crypto/subtle/ecdsa-generate-export-jwk-key.html [ Failure Pass ]
 
 # Tests explicitly enabled.
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass ]
 crypto/subtle/derive-bits-malformed-parameters.html [ Pass ]
 crypto/subtle/derive-key-malformed-parameters.html [ Pass ]
 crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
