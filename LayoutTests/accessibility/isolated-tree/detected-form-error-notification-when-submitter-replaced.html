@@ -25,9 +25,12 @@ if (window.accessibilityController) {
     internals.setAccessibilityFormErrorSettleDelay(0.1);
 
     var payload = "";
+    var targetIsSubmitter;
     accessibilityController.addNotificationListener((element, notification, userInfo) => {
-        if (notification == "AXPossibleFormValidationError")
+        if (notification == "AXPossibleFormValidationError") {
             payload = formatFormValidationUserInfo(userInfo);
+            targetIsSubmitter = userInfo["AXFormValidationTargetIsSubmitter"];
+        }
     });
 
     var placeOrder = document.getElementById("place-order");
@@ -50,6 +53,7 @@ if (window.accessibilityController) {
         axElement("place-order").press();
 
         output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += expect("targetIsSubmitter", "false");
         output += expect("placeOrder.isConnected", "false");
         output += await expectAsync("axElement('name').stringAttributeValue('AXInvalid')", "'true'");
         output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");

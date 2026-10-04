@@ -38,6 +38,7 @@
 #include "ElementInlines.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFormControlElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
@@ -918,8 +919,12 @@ void AXFormActivityMonitor::report()
     if (!target)
         return;
 
-    AXFORMLOG("Posting PossibleFormValidationError with errorFieldCount "_s, errorFieldCount, "."_s);
-    CheckedRef { m_cache }->postPossibleFormValidationErrorNotification(*target, WTF::move(unannouncedText), errorFieldCount);
+    // Pressing Enter in a text field is an attempt too, but that field is not a button to come back to.
+    RefPtr submitterInput = dynamicDowncast<HTMLInputElement>(submitter.get());
+    bool targetIsSubmitter = submitter && submitter == target->element() && !(submitterInput && submitterInput->isTextField());
+
+    AXFORMLOG("Posting PossibleFormValidationError with errorFieldCount "_s, errorFieldCount, targetIsSubmitter ? ", on the button the user pressed."_s : "."_s);
+    CheckedRef { m_cache }->postPossibleFormValidationErrorNotification(*target, WTF::move(unannouncedText), errorFieldCount, targetIsSubmitter);
 }
 
 } // namespace WebCore

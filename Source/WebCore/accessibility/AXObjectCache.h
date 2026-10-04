@@ -207,11 +207,14 @@ struct PossibleFormValidationErrorData {
     Vector<String> unannouncedText;
     // How many of the form's fields are wrong.
     unsigned errorFieldCount { 0 };
+    // Whether the notification is posted on the button the user pressed to submit, rather than on the form or a field,
+    // so an assistive technology can offer that button alongside the fields.
+    bool targetIsSubmitter { false };
 
     String debugDescription() const
     {
         return makeString("PossibleFormValidationErrorData { unannouncedText: ["_s, makeStringByJoining(unannouncedText, ", "_s),
-            "], errorFieldCount: "_s, errorFieldCount, " }"_s);
+            "], errorFieldCount: "_s, errorFieldCount, ", targetIsSubmitter: "_s, targetIsSubmitter, " }"_s);
     }
 };
 #endif // PLATFORM(COCOA)
@@ -746,7 +749,7 @@ public:
     void postARIANotifyNotification(Node&, const String&, const AriaNotifyOptions&);
 #if PLATFORM(COCOA)
     void postLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
-    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount);
+    void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter);
     // Records text an announcement carried, so the form-activity monitor does not report it as unannounced.
     void onAnnouncedText(const String&);
 #else

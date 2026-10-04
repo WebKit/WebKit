@@ -197,6 +197,7 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
     NSDictionary *userInfo = @{
         NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
         NSAccessibilityFormValidationErrorFieldCountKey: @(formData.errorFieldCount),
+        NSAccessibilityFormValidationTargetIsSubmitterKey: @(formData.targetIsSubmitter),
     };
 
     NSError *error = nil;

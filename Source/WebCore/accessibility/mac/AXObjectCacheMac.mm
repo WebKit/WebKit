@@ -440,6 +440,7 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
     NSDictionary *userInfo = @{
         NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
         NSAccessibilityFormValidationErrorFieldCountKey: @(formData.errorFieldCount),
+        NSAccessibilityFormValidationTargetIsSubmitterKey: @(formData.targetIsSubmitter),
     };
 
     RetainPtr wrapper = object.wrapper();

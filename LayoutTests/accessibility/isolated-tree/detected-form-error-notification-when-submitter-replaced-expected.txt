@@ -2,6 +2,7 @@ This tests that the user still receives the errors when the page replaces the co
 
 PASS: axElement('name').stringAttributeValue('AXInvalid') === 'false'
 PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: targetIsSubmitter === false
 PASS: placeOrder.isConnected === false
 PASS: axElement('name').stringAttributeValue('AXInvalid') === 'true'
 PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
