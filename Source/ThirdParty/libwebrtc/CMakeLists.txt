@@ -9,6 +9,15 @@ add_definitions(-DLIBYUV_DISABLE_SME)
 add_definitions(-DLIBYUV_DISABLE_SVE)
 add_definitions(-DWEBRTC_WEBKIT_BUILD=1)
 
+# BoringSSL is built into the static webrtc library under its public symbol
+# names, which WebKit code using the system OpenSSL in the same binary would
+# otherwise bind to. Prefix them where the library is static. The renaming
+# must use BoringSSL's macro form: the #pragma redefine_extname form is lost
+# when the compiler is fed preprocessed source, as icecc and distcc do.
+if (NOT APPLE)
+    set(BORINGSSL_PREFIX libwebrtc)
+endif ()
+
 # Suppress all warnings for third-party libwebrtc code.
 add_compile_options(-w)
 
@@ -2558,6 +2567,11 @@ target_compile_definitions(webrtc PRIVATE __cpp_lib_bind_front=0)
 set_target_properties(webrtc PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(webrtc PROPERTIES C_VISIBILITY_PRESET hidden)
 
+if (BORINGSSL_PREFIX)
+    target_compile_definitions(webrtc PRIVATE BORINGSSL_PREFIX=${BORINGSSL_PREFIX})
+    target_compile_options(webrtc PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:-U__PRAGMA_REDEFINE_EXTNAME>")
+endif ()
+
 target_compile_definitions(webrtc PRIVATE
   DYNAMIC_ANNOTATIONS_ENABLED=1
   EXPAT_RELATIVE_PATH
@@ -2797,6 +2811,11 @@ target_compile_definitions(libsrtp PRIVATE
     PACKAGE_STRING="libsrtp2 2.1.0-pre"
     PACKAGE_VERSION="2.1.0-pre"
 )
+
+if (BORINGSSL_PREFIX)
+    target_compile_definitions(libsrtp PRIVATE BORINGSSL_PREFIX=${BORINGSSL_PREFIX})
+    target_compile_options(libsrtp PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:-U__PRAGMA_REDEFINE_EXTNAME>")
+endif ()
 
 target_include_directories(libsrtp PRIVATE
     Source/third_party/boringssl/src/include
