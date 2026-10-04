@@ -139,6 +139,7 @@ private:
     bool runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     NSString* errorValidatingDraw() const;
     NSString* errorValidatingDrawIndexed() const;
+    NSString* errorValidatingStripIndexFormat() const;
     uint32_t NODELETE maxVertexBufferIndex() const;
     uint32_t NODELETE maxBindGroupIndex() const;
     void recordCommand(WTF::Function<bool(void)>&&);

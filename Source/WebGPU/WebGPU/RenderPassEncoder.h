@@ -103,12 +103,20 @@ public:
 
     Device& device() const { return m_device; }
 
-    bool isValid() const final { return m_renderCommandEncoder; }
+    bool isValid() const final { return m_renderCommandEncoder || m_deferredDescriptor; }
     // A pass begun while its command encoder was not open never took the encoder over, so it can
     // never be ended. https://gpuweb.github.io/gpuweb/#dom-gpurenderpassencoder-end
     void markEncoderStateWasNotOpen() { m_encoderStateWasNotOpen = true; }
     NSString* errorValidatingColorDepthStencilTargets(const RenderPipeline&) const;
-    id<MTLRenderCommandEncoder> NODELETE renderCommandEncoder() const;
+    id<MTLRenderCommandEncoder> renderCommandEncoder() const;
+
+    // A render pass whose attachments all load and store and which has no occlusion query cannot
+    // change anything unless it encodes a command, so CommandEncoder hands the descriptor over here
+    // instead of creating the MTLRenderCommandEncoder up front. The encoder is created the first time
+    // this pass actually needs one; if nothing ever does, the pass costs nothing. See
+    // CommandEncoder::canDeferRenderCommandEncoder.
+    void deferRenderCommandEncoder(MTLRenderPassDescriptor* descriptor) { m_deferredDescriptor = descriptor; }
+    id<MTLRenderCommandEncoder> materializeRenderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
     CommandEncoder& parentEncoder() const { return m_parentEncoder; }
 
@@ -153,6 +161,7 @@ private:
 
     NSString* errorValidatingAndBindingBuffers();
     NSString* errorValidatingDrawIndexed() const;
+    NSString* errorValidatingStripIndexFormat() const;
     uint32_t NODELETE maxVertexBufferIndex() const;
     uint32_t NODELETE maxBindGroupIndex() const;
     bool NODELETE issuedDrawCall() const;
@@ -169,7 +178,10 @@ private:
 
     void setVertexBytes(id<MTLRenderCommandEncoder>, std::span<const uint8_t>, uint32_t bufferIndex);
     void setFragmentBytes(id<MTLRenderCommandEncoder>, std::span<const uint8_t>, uint32_t bufferIndex);
-    id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
+    mutable id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
+    // Non-nil only while this pass is deferred: cleared when the encoder is materialized, when the
+    // pass ends, and when the pass is invalidated.
+    mutable MTLRenderPassDescriptor* m_deferredDescriptor { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
 

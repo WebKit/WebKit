@@ -789,6 +789,7 @@ WGPUBufferUsage ConvertToBackingContext::convertBufferUsageFlagsToBacking(Buffer
     static_assert(compare(BufferUsage::Storage, WGPUBufferUsage_Storage), "BufferUsageFlags mismatch");
     static_assert(compare(BufferUsage::Indirect, WGPUBufferUsage_Indirect), "BufferUsageFlags mismatch");
     static_assert(compare(BufferUsage::QueryResolve, WGPUBufferUsage_QueryResolve), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::Invalid, WGPUBufferUsage_Invalid), "BufferUsageFlags mismatch");
 
     return static_cast<WGPUBufferUsage>(bufferUsageFlags);
 }

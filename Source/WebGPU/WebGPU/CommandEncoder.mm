@@ -180,11 +180,100 @@ void CommandEncoder::retainTimestampsForOneUpdateLoop()
 CommandEncoder::~CommandEncoder()
 {
     finalizeBlitCommandEncoder();
+    releasePriorCommandBuffers();
     m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
     retainTimestampsForOneUpdateLoop();
     m_commandBuffer = nil; // Do not remove, this is needed to workaround rdar://143905417
     clearTracking();
     m_device->removeCommandEncoder(m_uniqueId);
+}
+
+void CommandEncoder::releasePriorCommandBuffers()
+{
+    auto priorCommandBuffers = WTF::move(m_priorCommandBuffers);
+    m_priorCommandBuffers.clear();
+    Ref queue = m_device->getQueue();
+    for (auto& commandBuffer : priorCommandBuffers)
+        queue->removeMTLCommandBuffer(commandBuffer.get());
+}
+
+void CommandEncoder::rotateCommandBufferIfNeeded()
+{
+    constexpr uint32_t maxRenderCommandEncodersPerCommandBuffer = 4096;
+    if (m_renderCommandEncoderCount < maxRenderCommandEncodersPerCommandBuffer)
+        return;
+
+    // The blit encoder belongs to the buffer being retired, so it has to be ended before the swap:
+    // afterwards finalizeBlitCommandEncoder() would look it up against the new buffer and find
+    // nothing, leaving the retired buffer with an open encoder.
+    finalizeBlitCommandEncoder();
+
+    if (!m_commandBuffer || m_existingCommandEncoder || m_commandBuffer.status >= MTLCommandBufferStatusEnqueued)
+        return;
+
+    id<MTLCommandBuffer> nextCommandBuffer = m_device->getQueue()->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!nextCommandBuffer)
+        return;
+
+    nextCommandBuffer.label = m_commandBuffer.label;
+    m_priorCommandBuffers.append(m_commandBuffer);
+    m_commandBuffer = nextCommandBuffer;
+    m_renderCommandEncoderCount = 0;
+}
+
+id<MTLRenderCommandEncoder> CommandEncoder::makeRenderCommandEncoder(MTLRenderPassDescriptor* descriptor)
+{
+    ASSERT(!m_existingCommandEncoder);
+    id<MTLRenderCommandEncoder> renderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:descriptor];
+    if (!renderCommandEncoder)
+        return nil;
+
+    setExistingEncoder(renderCommandEncoder);
+    didCreateRenderCommandEncoder();
+    return renderCommandEncoder;
+}
+
+bool CommandEncoder::canDeferRenderCommandEncoder(MTLRenderPassDescriptor* descriptor) const
+{
+    if (m_device->enableEncoderTimestamps())
+        return false;
+
+    if (descriptor.visibilityResultBuffer || descriptor.rasterizationRateMap)
+        return false;
+
+    for (NSUInteger i = 0; i < 8; ++i) {
+        // MTLRenderPassColorAttachmentDescriptorArray is bounds-checked internally.
+        MTLRenderPassColorAttachmentDescriptor *attachment = descriptor.colorAttachments[i];
+        if (!attachment.texture)
+            continue;
+        if (attachment.loadAction != MTLLoadActionLoad || attachment.storeAction != MTLStoreActionStore || attachment.resolveTexture)
+            return false;
+    }
+
+    if (descriptor.depthAttachment.texture && (descriptor.depthAttachment.loadAction != MTLLoadActionLoad || descriptor.depthAttachment.storeAction != MTLStoreActionStore))
+        return false;
+
+    if (descriptor.stencilAttachment.texture && (descriptor.stencilAttachment.loadAction != MTLLoadActionLoad || descriptor.stencilAttachment.storeAction != MTLStoreActionStore))
+        return false;
+
+    return true;
+}
+
+void CommandEncoder::encodeDeferredRenderPassTimestamps(MTLRenderPassDescriptor* descriptor)
+{
+    id<MTLCounterSampleBuffer> sampleBuffer = descriptor.sampleBufferAttachments[0].sampleBuffer;
+    if (!sampleBuffer || !m_commandBuffer || m_existingCommandEncoder || m_commandBuffer.status >= MTLCommandBufferStatusEnqueued)
+        return;
+
+    MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
+    computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
+    computePassDescriptor.sampleBufferAttachments[0].sampleBuffer = sampleBuffer;
+    computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = descriptor.sampleBufferAttachments[0].startOfVertexSampleIndex;
+    computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = descriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex;
+
+    id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
+    setExistingEncoder(computeCommandEncoder);
+    endEncoding(computeCommandEncoder);
 }
 
 id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
@@ -319,6 +408,8 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 
 void CommandEncoder::discardCommandBuffer()
 {
+    releasePriorCommandBuffers();
+
     if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted) {
         retainTimestampsForOneUpdateLoop();
         m_commandBuffer = nil;
@@ -514,6 +605,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         }
         clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
         setExistingEncoder(clearRenderCommandEncoder);
+        didCreateRenderCommandEncoder();
     }
 
     auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear, device);
@@ -553,6 +645,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     if (m_commandBuffer.status >= MTLCommandBufferStatusEnqueued)
         return RenderPassEncoder::createInvalid(*this, m_device, @"command buffer has already been committed");
+
+    // Before anything in this pass is attached to m_commandBuffer, including the timestamps buffer
+    // tracked below.
+    rotateCommandBufferIfNeeded();
 
     MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor new];
     QuerySet::CounterSampleBuffer counterSampleBuffer;
@@ -835,9 +931,18 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (!m_device->isValid())
         return RenderPassEncoder::createInvalid(*this, m_device, @"GPUDevice was invalid, this will be an error submitting the command buffer");
 
-    auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
-    ASSERT(!m_existingCommandEncoder);
-    setExistingEncoder(mtlRenderCommandEncoder);
+    return createRenderPassEncoder(descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, visibilityResultBuffer, maxDrawCount, mtlDescriptor);
+}
+
+Ref<RenderPassEncoder> CommandEncoder::createRenderPassEncoder(const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, MTLRenderPassDescriptor* mtlDescriptor)
+{
+    if (canDeferRenderCommandEncoder(mtlDescriptor)) {
+        Ref renderPassEncoder = RenderPassEncoder::create(nil, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, visibilityResultBuffer, maxDrawCount, m_device, mtlDescriptor);
+        renderPassEncoder->deferRenderCommandEncoder(mtlDescriptor);
+        return renderPassEncoder;
+    }
+
+    auto mtlRenderCommandEncoder = makeRenderCommandEncoder(mtlDescriptor);
     return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, visibilityResultBuffer, maxDrawCount, m_device, mtlDescriptor);
 }
 
@@ -1492,6 +1597,7 @@ void CommandEncoder::makeInvalid(NSString* errorString)
     endEncoding(m_existingCommandEncoder);
     m_blitCommandEncoder = nil;
     m_existingCommandEncoder = nil;
+    releasePriorCommandBuffers();
     m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
 
     m_commandBuffer = nil;
@@ -2178,6 +2284,8 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     m_existingCommandEncoder = nil;
 
     commandBuffer.label = descriptor.label.createNSString().get();
+    for (auto& priorCommandBuffer : m_priorCommandBuffers)
+        [priorCommandBuffer.get() setLabel:commandBuffer.label];
 
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -2193,6 +2301,10 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 #endif
 
     auto result = CommandBuffer::create(commandBuffer, m_device, m_sharedEvent, m_sharedEventSignalValue, WTF::move(m_onCommitHandlers), *this);
+    // The buffers this encoder filled up and rolled over from have to be committed before the one
+    // above, so they travel with it.
+    result->setPriorCommandBuffers(WTF::move(m_priorCommandBuffers));
+    m_priorCommandBuffers.clear();
     m_sharedEvent = nil;
     m_cachedCommandBuffer = result.ptr();
     result->setBufferMapCount(m_bufferMapCount);

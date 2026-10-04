@@ -320,6 +320,7 @@ enum class WebCore::WebGPU::BufferUsage : uint16_t {
     Storage,
     Indirect,
     QueryResolve,
+    Invalid,
 };
 
 header: <WebCore/WebGPUTextureUsage.h>

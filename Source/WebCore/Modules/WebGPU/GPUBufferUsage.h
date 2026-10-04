@@ -65,7 +65,17 @@ inline WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageF
     static_assert(compare(GPUBufferUsage::STORAGE, WebGPU::BufferUsage::Storage), "GPUBufferUsageFlags does not match BufferUsageFlags");
     static_assert(compare(GPUBufferUsage::INDIRECT, WebGPU::BufferUsage::Indirect), "GPUBufferUsageFlags does not match BufferUsageFlags");
     static_assert(compare(GPUBufferUsage::QUERY_RESOLVE, WebGPU::BufferUsage::QueryResolve), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    return static_cast<WebGPU::BufferUsageFlags>(bufferUsageFlags);
+
+    constexpr GPUBufferUsageFlags allKnownUsages = GPUBufferUsage::MAP_READ | GPUBufferUsage::MAP_WRITE | GPUBufferUsage::COPY_SRC | GPUBufferUsage::COPY_DST | GPUBufferUsage::INDEX | GPUBufferUsage::VERTEX | GPUBufferUsage::UNIFORM | GPUBufferUsage::STORAGE | GPUBufferUsage::INDIRECT | GPUBufferUsage::QUERY_RESOLVE;
+
+    // The flags are 1:1 (see the static_asserts above), but GPUBufferUsageFlags is 32 bits wide and
+    // BufferUsageFlags is only 16, so a plain cast would drop the high half. Mask first and record
+    // that a bit was lost, rather than truncating it away and creating the buffer as if the caller
+    // had only asked for the bits we recognize.
+    unsigned result = bufferUsageFlags & allKnownUsages;
+    if (bufferUsageFlags & ~allKnownUsages)
+        result |= static_cast<unsigned>(WebGPU::BufferUsage::Invalid);
+    return static_cast<WebGPU::BufferUsageFlags>(result);
 }
 
 }

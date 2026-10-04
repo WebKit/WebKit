@@ -578,6 +578,7 @@ extension WebGPU.Metal.CommandEncoder {
             }
             clearRenderCommandEncoder = m_commandBuffer?.makeRenderCommandEncoder(descriptor: clearDescriptor)
             setExistingEncoder(clearRenderCommandEncoder)
+            didCreateRenderCommandEncoder()
         }
 
         let (pso, depthStencil) = createSimplePso(
@@ -1080,6 +1081,10 @@ extension WebGPU.Metal.CommandEncoder {
             return WebGPU.Metal.RenderPassEncoder.createInvalid(self, m_device.ptr(), "command buffer has already been committed")
         }
 
+        // Before anything in this pass is attached to m_commandBuffer, including the timestamps buffer
+        // tracked below.
+        rotateCommandBufferIfNeeded()
+
         let mtlDescriptor = MTLRenderPassDescriptor()
         var counterSampleBuffer = WebGPU.Metal.QuerySet.CounterSampleBuffer()
         if let wgpuTimestampWrites = wgpuGetRenderPassDescriptorTimestampWrites(descriptorSpan)?[0] {
@@ -1528,21 +1533,15 @@ extension WebGPU.Metal.CommandEncoder {
             )
         }
 
-        let mtlRenderCommandEncoder = m_commandBuffer?.makeRenderCommandEncoder(descriptor: mtlDescriptor)
-        if m_existingCommandEncoder != nil {
-            assertionFailure("!m_existingCommandEncoder")
-        }
-        setExistingEncoder(mtlRenderCommandEncoder)
-        return WebGPU.Metal.RenderPassEncoder.create(
-            mtlRenderCommandEncoder,
+        // Creates the MTLRenderCommandEncoder, or defers it if the pass cannot change anything without
+        // encoding a command.
+        return createRenderPassEncoder(
             descriptor,
             visibilityResultBufferSize,
             depthReadOnly,
             stencilReadOnly,
-            self,
             visibilityResultBuffer,
             maxDrawCount,
-            m_device.ptr(),
             mtlDescriptor
         )
     }

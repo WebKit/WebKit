@@ -59,9 +59,30 @@ void CommandBuffer::retainTimestampsForOneUpdateLoop()
 CommandBuffer::~CommandBuffer()
 {
     retainTimestampsForOneUpdateLoop();
+    releasePriorCommandBuffers();
     m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
     m_cachedCommandBuffer = nil;
+}
+
+void CommandBuffer::setPriorCommandBuffers(Vector<RetainPtr<id<MTLCommandBuffer>>>&& commandBuffers)
+{
+    m_priorCommandBuffers = WTF::move(commandBuffers);
+}
+
+Vector<RetainPtr<id<MTLCommandBuffer>>> CommandBuffer::takePriorCommandBuffers()
+{
+    auto commandBuffers = WTF::move(m_priorCommandBuffers);
+    m_priorCommandBuffers.clear();
+    return commandBuffers;
+}
+
+void CommandBuffer::releasePriorCommandBuffers()
+{
+    auto commandBuffers = takePriorCommandBuffers();
+    Ref queue = m_device->getQueue();
+    for (auto& commandBuffer : commandBuffers)
+        queue->removeMTLCommandBuffer(commandBuffer.get());
 }
 
 void CommandBuffer::setLabel(String&& label)
@@ -77,6 +98,7 @@ void CommandBuffer::makeInvalid(NSString* lastError)
     m_lastErrorString = lastError;
     m_device->getQueue()->removeMTLCommandBuffer(m_commandBuffer);
     retainTimestampsForOneUpdateLoop();
+    releasePriorCommandBuffers();
     m_commandBuffer = nil;
     m_cachedCommandBuffer = nil;
     if (RefPtr commandEncoder = m_commandEncoder)

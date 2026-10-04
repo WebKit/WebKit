@@ -114,6 +114,7 @@ private:
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
     const Global* readVariable(AST::IdentifierExpression&);
+    void recordTypeReads(const Type*);
     void insertBeforeCurrentStatement(AST::Statement&);
     AST::Expression& bufferLengthType();
     AST::Expression& bufferLengthReferenceType();
@@ -372,12 +373,14 @@ void RewriteGlobalVariables::visit(AST::Parameter& parameter)
 {
     def(parameter.name(), nullptr);
     AST::Visitor::visit(parameter);
+    recordTypeReads(parameter.typeName().inferredType());
 }
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
 {
     def(variable.name(), &variable);
     AST::Visitor::visit(variable);
+    recordTypeReads(variable.storeType());
 }
 
 void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
@@ -2848,9 +2851,36 @@ auto RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier)
             visit(*type);
         if (auto* initializer = global.declaration->maybeInitializer())
             visit(*initializer);
+        recordTypeReads(global.declaration->storeType());
     }
 
     return &global;
+}
+
+// An override may only ever be named from within a type, e.g. `array<vec4f, N>`, and the type may
+// in turn only be named through an alias, in which case visiting the type expression above never
+// reaches the override. It would then be missing from the entry point's specialization constants,
+// the pipeline would drop the value supplied for it, and the emitted Metal would refer to an
+// undeclared constant. Walk the resolved type so those overrides are recorded as reads too.
+void RewriteGlobalVariables::recordTypeReads(const Type* type)
+{
+    if (!type)
+        return;
+
+    if (auto* array = std::get_if<Types::Array>(type)) {
+        if (auto* size = std::get_if<AST::Expression*>(&array->size))
+            visit(**size);
+        recordTypeReads(array->element);
+        return;
+    }
+
+    // Only the element of these can be an override-sized array; a struct member may not be one.
+    if (auto* reference = std::get_if<Types::Reference>(type))
+        recordTypeReads(reference->element);
+    else if (auto* pointer = std::get_if<Types::Pointer>(type))
+        recordTypeReads(pointer->element);
+    else if (auto* atomic = std::get_if<Types::Atomic>(type))
+        recordTypeReads(atomic->element);
 }
 
 void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)

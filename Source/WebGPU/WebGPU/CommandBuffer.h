@@ -30,9 +30,11 @@
 #import <atomic>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
+#import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/threads/BinarySemaphore.h>
 
@@ -65,6 +67,12 @@ public:
 
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
+    // A single MTLCommandBuffer can only hold so many MTLRenderCommandEncoders before IOGPU runs out
+    // of memory for it, so CommandEncoder rolls over to a fresh MTLCommandBuffer and hands the filled
+    // ones here. The queue commits them, in order, immediately before commandBuffer().
+    void setPriorCommandBuffers(Vector<RetainPtr<id<MTLCommandBuffer>>>&&);
+    Vector<RetainPtr<id<MTLCommandBuffer>>> takePriorCommandBuffers();
+
     Device& device() const { return m_device; }
     void makeInvalid(NSString*);
     void makeInvalidDueToCommit(NSString*);
@@ -83,9 +91,11 @@ private:
     CommandBuffer(id<MTLCommandBuffer>, Device&, id<MTLSharedEvent>, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&&, CommandEncoder&);
     CommandBuffer(Device&);
     void retainTimestampsForOneUpdateLoop();
+    void releasePriorCommandBuffers();
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLCommandBuffer> m_cachedCommandBuffer { nil };
+    Vector<RetainPtr<id<MTLCommandBuffer>>> m_priorCommandBuffers;
     int m_bufferMapCount { 0 };
 
     const Ref<Device> m_device;
