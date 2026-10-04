@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<title>testdriver-vendor.js: the "pointer" origin and invalid origins are rejected</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<div id="log"></div>
+<script>
+// The "pointer" origin is relative to the pointer's current position, which testdriver-vendor.js
+// does not track. Rejecting it is better than silently treating it as "viewport".
+promise_test(async t => {
+    await promise_rejects_js(t, Error, new test_driver.Actions()
+        .pointerMove(10, 10, { origin: "pointer" })
+        .send());
+}, 'a pointerMove with the "pointer" origin is rejected');
+
+promise_test(async t => {
+    await promise_rejects_js(t, Error, new test_driver.Actions()
+        .scroll(10, 10, 0, 10, { origin: "pointer" })
+        .send());
+}, 'a scroll with the "pointer" origin is rejected');
+
+promise_test(async t => {
+    await promise_rejects_js(t, Error, new test_driver.Actions()
+        .pointerMove(10, 10, { origin: "bogus" })
+        .send());
+}, "a pointerMove with an origin that is neither a keyword nor an element is rejected");
+
+promise_test(async t => {
+    await promise_rejects_js(t, Error, new test_driver.Actions()
+        .pointerMove(10, 10, { origin: document.createTextNode("text") })
+        .send());
+}, "a pointerMove with a non-element node as origin is rejected");
+
+promise_test(async () => {
+    let move = null;
+    document.addEventListener("mousemove", event => move = event, { once: true });
+    await new test_driver.Actions()
+        .pointerMove(10, 20, { origin: "viewport" })
+        .send();
+    assert_not_equals(move, null, "a mousemove was dispatched");
+    assert_equals(move.clientX, 10, "clientX");
+    assert_equals(move.clientY, 20, "clientY");
+}, 'a pointerMove with the "viewport" origin is still accepted');
+</script>
