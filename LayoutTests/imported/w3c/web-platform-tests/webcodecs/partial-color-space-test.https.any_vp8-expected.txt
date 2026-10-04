@@ -1,0 +1,12 @@
+
+PASS Partial color space preserved through decoderConfig - primaries only 1
+PASS Partial color space preserved through decoderConfig - primaries only 2
+PASS Partial color space preserved through decoderConfig - transfer only1
+PASS Partial color space preserved through decoderConfig - transfer only 2
+PASS Partial color space preserved through decoderConfig - matrix only 1
+PASS Partial color space preserved through decoderConfig - matrix only 2
+PASS Partial color space preserved through decoderConfig - primaries and transfer
+PASS Partial color space preserved through decoderConfig - primaries and matrix
+PASS Partial color space preserved through decoderConfig - transfer and matrix
+PASS Partial color space preserved through decoderConfig - all fields set
+

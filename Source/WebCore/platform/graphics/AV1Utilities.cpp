@@ -1288,7 +1288,8 @@ static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1Co
     memcpySpan(av1CBytes.mutableSpan().subspan(4), fullOBUHeader);
 
     auto colorSpace = createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(record);
-    overrideVideoColorSpaceAsNeeded(colorSpace, colorSpaceOverride);
+    if (colorSpaceOverride)
+        colorSpace = *colorSpaceOverride;
 
     return VideoInfo::create({
         {
