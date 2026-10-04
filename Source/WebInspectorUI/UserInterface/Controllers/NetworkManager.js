@@ -291,6 +291,14 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         return Array.from(this._frameIdentifierMap.values());
     }
 
+    get resourceSearchTarget()
+    {
+        // Under Site Isolation, only the WebPage target can search frames in every process.
+        if (this._enabledPageForSiteIsolation && WI.backendTarget)
+            return WI.backendTarget;
+        return WI.assumingMainTarget();
+    }
+
     get interceptionEnabled()
     {
         return this._interceptionEnabled;

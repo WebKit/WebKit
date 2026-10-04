@@ -155,6 +155,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         }
 
         let target = WI.assumingMainTarget();
+        let resourceSearchTarget = WI.networkManager.resourceSearchTarget;
 
         let promiseCount = 0;
         let countPromise = async (promise, callback) => {
@@ -162,9 +163,14 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             if (promiseCount === 1)
                 createSearchingPlaceholder();
 
-            let value = await promise;
+            let value = null;
+            try {
+                value = await promise;
+            } catch {
+                // The target may have gone away mid-search.
+            }
 
-            if (callback)
+            if (callback && value)
                 callback(value);
 
             --promiseCount;
@@ -233,7 +239,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                     continue;
                 preventDuplicates.add(key);
 
-                countPromise(target.PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, searchResult.requestId), resourceCallback.bind(this, searchResult.frameId, searchResult.url));
+                countPromise(resourceSearchTarget.PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, searchResult.requestId), resourceCallback.bind(this, searchResult.frameId, searchResult.url));
             }
 
             let promises = [
@@ -263,85 +269,63 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             this._createSearchResultsPlaceholderTreeElementIfNeeded(scriptTreeElement, remainingSearchResults);
         };
 
-        let domCallback = ({searchId, resultCount}) => {
-            if (!resultCount)
+        let domSearchResultsCallback = (domNodes) => {
+            // A newer search replaced this one.
+            if (!domNodes)
                 return;
 
-            console.assert(searchId);
+            let resourceTreeElements = new Set;
 
-            this._domSearchIdentifier = searchId;
+            for (let domNode of domNodes) {
+                if (!domNode.ownerDocument)
+                    continue;
 
-            let domSearchResultsCallback = ({nodeIds}) => {
-                // If someone started a new search, then return early and stop showing search results from the old query.
-                if (this._domSearchIdentifier !== searchId)
-                    return;
+                // We do not display the document node when the search query is "/". We don't have anything to display in the content view for it.
+                if (domNode.nodeType() === Node.DOCUMENT_NODE)
+                    continue;
 
-                let resourceTreeElements = new Set;
+                // FIXME: This should use a frame to do resourceForURL, but DOMAgent does not provide a frameId.
+                let resource = WI.networkManager.resourcesForURL(domNode.ownerDocument.documentURL).firstValue;
+                if (!resource)
+                    continue;
 
-                for (let nodeId of nodeIds) {
-                    let domNode = WI.domManager.nodeForId(nodeId);
-                    if (!domNode || !domNode.ownerDocument)
-                        continue;
+                let resourceTreeElement = this._searchTreeElementForResource(resource);
+                let domNodeTitle = WI.DOMSearchMatchObject.titleForDOMNode(domNode);
+                let searchMatchObjects = this._pendingSearchMatchObjectsForResourceTreeElement.get(resourceTreeElement) || [];
 
-                    // We do not display the document node when the search query is "/". We don't have anything to display in the content view for it.
-                    if (domNode.nodeType() === Node.DOCUMENT_NODE)
-                        continue;
+                // Textual matches.
+                var didFindTextualMatch = false;
+                forEachMatch(domNodeTitle, (lineMatch, lastIndex) => {
+                    searchMatchObjects.push(new WI.DOMSearchMatchObject(resource, domNode, domNodeTitle, searchQuery, new WI.TextRange(0, lineMatch.index, 0, lastIndex)));
+                    didFindTextualMatch = true;
+                });
 
-                    // FIXME: This should use a frame to do resourceForURL, but DOMAgent does not provide a frameId.
-                    let resource = WI.networkManager.resourcesForURL(domNode.ownerDocument.documentURL).firstValue;
-                    if (!resource)
-                        continue;
+                // Non-textual matches are CSS Selector or XPath matches. In such cases, display the node entirely highlighted.
+                if (!didFindTextualMatch)
+                    searchMatchObjects.push(new WI.DOMSearchMatchObject(resource, domNode, domNodeTitle, domNodeTitle, new WI.TextRange(0, 0, 0, domNodeTitle.length)));
 
-                    let resourceTreeElement = this._searchTreeElementForResource(resource);
-                    let domNodeTitle = WI.DOMSearchMatchObject.titleForDOMNode(domNode);
-                    let searchMatchObjects = this._pendingSearchMatchObjectsForResourceTreeElement.get(resourceTreeElement) || [];
-
-                    // Textual matches.
-                    var didFindTextualMatch = false;
-                    forEachMatch(domNodeTitle, (lineMatch, lastIndex) => {
-                        searchMatchObjects.push(new WI.DOMSearchMatchObject(resource, domNode, domNodeTitle, searchQuery, new WI.TextRange(0, lineMatch.index, 0, lastIndex)));
-                        didFindTextualMatch = true;
-                    });
-
-                    // Non-textual matches are CSS Selector or XPath matches. In such cases, display the node entirely highlighted.
-                    if (!didFindTextualMatch)
-                        searchMatchObjects.push(new WI.DOMSearchMatchObject(resource, domNode, domNodeTitle, domNodeTitle, new WI.TextRange(0, 0, 0, domNodeTitle.length)));
-
-                    if (searchMatchObjects.length) {
-                        this._pendingSearchMatchObjectsForResourceTreeElement.set(resourceTreeElement, searchMatchObjects);
-                        resourceTreeElements.add(resourceTreeElement);
-                    }
+                if (searchMatchObjects.length) {
+                    this._pendingSearchMatchObjectsForResourceTreeElement.set(resourceTreeElement, searchMatchObjects);
+                    resourceTreeElements.add(resourceTreeElement);
                 }
+            }
 
-                for (let resourceTreeElement of resourceTreeElements) {
-                    let remainingResults = this._renderResultsForSourceCodeTreeElement(resourceTreeElement, WI.SearchSidebarPanel._resultsIncrementCount);
-                    this._createSearchResultsPlaceholderTreeElementIfNeeded(resourceTreeElement, remainingResults);
-                }
-            };
-
-            countPromise(target.DOMAgent.getSearchResults(searchId, 0, resultCount), domSearchResultsCallback);
+            for (let resourceTreeElement of resourceTreeElements) {
+                let remainingResults = this._renderResultsForSourceCodeTreeElement(resourceTreeElement, WI.SearchSidebarPanel._resultsIncrementCount);
+                this._createSearchResultsPlaceholderTreeElementIfNeeded(resourceTreeElement, remainingResults);
+            }
         };
 
         WI.domManager.ensureDocument();
 
-        if (target.hasCommand("Page.searchInResources"))
-            countPromise(target.PageAgent.searchInResources(searchQuery, isCaseSensitive, isRegex), resourcesCallback);
+        if (resourceSearchTarget.hasCommand("Page.searchInResources"))
+            countPromise(resourceSearchTarget.PageAgent.searchInResources(searchQuery, isCaseSensitive, isRegex), resourcesCallback);
 
         for (let script of WI.debuggerManager.searchableScripts)
             countPromise(script.target.DebuggerAgent.searchInContent(script.id, searchQuery, isCaseSensitive, isRegex), scriptCallback.bind(this, script));
 
-        if (target.hasDomain("DOM")) {
-            if (this._domSearchIdentifier) {
-                target.DOMAgent.discardSearchResults(this._domSearchIdentifier);
-                this._domSearchIdentifier = undefined;
-            }
-
-            let commandArguments = {
-                query: searchQuery,
-                caseSensitive: isCaseSensitive,
-            };
-            countPromise(target.DOMAgent.performSearch.invoke(commandArguments), domCallback);
-        }
+        if (target.hasDomain("DOM"))
+            countPromise(WI.domManager.performSearch(searchQuery, {caseSensitive: isCaseSensitive}), domSearchResultsCallback);
 
         // FIXME: Resource search should work with Local Overrides if enabled.
 

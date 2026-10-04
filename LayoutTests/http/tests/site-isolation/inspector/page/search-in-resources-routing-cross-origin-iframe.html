@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SearchInResourcesRouting");
+
+    // Built from fragments because searchInResources also scans the main document's source.
+    // Never log it either: test output is appended to this page's DOM.
+    const needle = ["global", "search", "resource", "needle"].join("-");
+
+    async function crossOriginFrameWhenReady() {
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            let frame = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/search-in-resources-routing-frame.html"));
+            if (frame && frame.mainResource)
+                return frame;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResourcesRouting.TargetSelection",
+        description: "Under site isolation, resource search should be sent to the WebPage target.",
+        async test() {
+            InspectorTest.expectNotNull(await frameTargetForURLContaining("search-in-resources-routing-frame.html"), "Should find the cross-origin frame target.");
+            InspectorTest.expectNotNull(await crossOriginFrameWhenReady(), "Cross-origin frame should be in the frame model.");
+            InspectorTest.expectEqual(WI.networkManager.resourceSearchTarget, WI.backendTarget, "Resource search should go to the WebPage target.");
+            InspectorTest.expectThat(WI.networkManager.resourceSearchTarget.hasCommand("Page.searchInResources"), "WebPage target should support Page.searchInResources.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResourcesRouting.FindsMatchesInCrossOriginFrame",
+        description: "Hits in the cross-origin frame should resolve to its WI.Frame and resources, as SearchSidebarPanel does.",
+        async test() {
+            let crossOriginFrame = await crossOriginFrameWhenReady();
+            let target = WI.networkManager.resourceSearchTarget;
+            let {result} = await target.PageAgent.searchInResources(needle, false, false);
+
+            for (let suffix of ["/search-in-resources-routing-frame.html", "/search-in-resources-routing-frame.css"]) {
+                let name = suffix.substring(1);
+                let hit = result.find((entry) => entry.url.endsWith(suffix));
+                InspectorTest.expectNotNull(hit, `Should find a hit in ${name}.`);
+                if (!hit)
+                    continue;
+
+                let frame = WI.networkManager.frameForIdentifier(hit.frameId);
+                InspectorTest.expectEqual(frame, crossOriginFrame, `${name} hit should resolve to the cross-origin frame.`);
+                if (!frame)
+                    continue;
+
+                let resource = frame.url === hit.url ? frame.mainResource : frame.resourcesForURL(hit.url).firstValue;
+                InspectorTest.expectEqual(resource?.url, hit.url, `${name} hit should resolve to a resource with the hit's URL.`);
+
+                let {result: matches} = await target.PageAgent.searchInResource(hit.frameId, hit.url, needle, false, false, hit.requestId);
+                InspectorTest.expectThat(matches.length >= 1, `searchInResource should find a match in ${name}.`);
+                InspectorTest.expectThat(matches.every((match) => match.lineContent.includes(needle)), `Each match in ${name} should include the needle.`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResourcesRouting.PageTargetMissesCrossOriginFrame",
+        description: "Documents why routing matters: the page target's Page agent does not see the cross-origin frame.",
+        async test() {
+            let {result} = await WI.assumingMainTarget().PageAgent.searchInResources(needle, false, false);
+            InspectorTest.expectThat(!result.some((entry) => entry.url.endsWith("/search-in-resources-routing-frame.html")), "Page target should not find the cross-origin frame's document.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that resource search is routed to the WebPage target under site isolation, so matches inside a cross-origin iframe are found.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/search-in-resources-routing-frame.html"></iframe>
+</body>
