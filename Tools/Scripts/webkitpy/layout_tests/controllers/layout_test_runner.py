@@ -33,6 +33,7 @@ import time
 
 from webkitcorepy.string_utils import pluralize
 from webkitcorepy import TaskPool
+from webkitcorepy import Timeout
 
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
@@ -368,7 +369,7 @@ class Worker(object):
             test_input.test_name,
         ))
 
-        result = self._run_test_with_or_without_timeout(test_input, test_timeout_sec, stop_when_done)
+        result = self._run_test_with_timeout(test_input, test_timeout_sec, stop_when_done)
         result.shard_name = shard_name
         result.worker_name = TaskPool.Process.name
         result.total_run_time = time.time() - start
@@ -422,10 +423,13 @@ class Worker(object):
             _log.debug('killing driver')
             driver.stop()
 
-    def _run_test_with_or_without_timeout(self, test_input, timeout, stop_when_done):
-        if self._port.get_option('run_singly'):
-            return self._run_test_in_another_thread(test_input, timeout, stop_when_done)
-        return self._run_test_in_this_thread(test_input, stop_when_done)
+    def _run_test_with_timeout(self, test_input, timeout, stop_when_done):
+        with Timeout(timeout):
+            if self._driver and (self._driver.has_crashed() or self._port.get_option('run_singly')):
+                self._kill_driver()
+            if not self._driver:
+                self._driver = self._port.create_driver(int((TaskPool.Process.name).split('/')[-1]), self._port.get_option('no_timeout'))
+            return self._run_single_test(self._driver, test_input, stop_when_done)
 
     def _clean_up_after_test(self, test_input, result):
         test_name = test_input.test_name
@@ -445,73 +449,6 @@ class Worker(object):
             _log.debug('{} skipped'.format(test_name))
         else:
             _log.debug("{} passed".format(test_name))
-
-    def _run_test_in_another_thread(self, test_input, thread_timeout_sec, stop_when_done):
-        """Run a test in a separate thread, enforcing a hard time limit.
-
-        Since we can only detect the termination of a thread, not any internal
-        state or progress, we can only run per-test timeouts when running test
-        files singly.
-
-        Args:
-          test_input: Object containing the test filename and timeout
-          thread_timeout_sec: time to wait before killing the driver process.
-        Returns:
-          A TestResult
-        """
-        worker = self
-
-        driver = self._port.create_driver(int((TaskPool.Process.name).split('/')[-1]), self._port.get_option('no_timeout'))
-
-        class SingleTestThread(threading.Thread):
-            def __init__(self):
-                threading.Thread.__init__(self)
-                self.result = None
-
-            def run(self):
-                self.result = worker._run_single_test(driver, test_input, stop_when_done)
-
-        thread = SingleTestThread()
-        thread.start()
-        thread.join(thread_timeout_sec)
-        result = thread.result
-        failures = []
-        if thread.is_alive():
-            # If join() returned with the thread still running, the
-            # DumpRenderTree is completely hung and there's nothing
-            # more we can do with it.  We have to kill all the
-            # DumpRenderTrees to free it up. If we're running more than
-            # one DumpRenderTree thread, we'll end up killing the other
-            # DumpRenderTrees too, introducing spurious crashes. We accept
-            # that tradeoff in order to avoid losing the rest of this
-            # thread's results.
-            _log.error('Test thread hung: killing all DumpRenderTrees')
-            failures = [test_failures.FailureTimeout()]
-        else:
-            failure_results = self._do_post_tests_work(driver)
-            for failure_result in failure_results:
-                if failure_result.test_name == result.test_name:
-                    result.convert_to_failure(failure_result)
-
-        driver.stop()
-
-        if not result:
-            result = test_results.TestResult(test_input, failures=failures, test_run_time=0)
-        return result
-
-    def _run_test_in_this_thread(self, test_input, stop_when_done):
-        """Run a single test file using a shared DumpRenderTree process.
-
-        Args:
-          test_input: Object containing the test filename, uri and timeout
-
-        Returns: a TestResult object.
-        """
-        if self._driver and self._driver.has_crashed():
-            self._kill_driver()
-        if not self._driver:
-            self._driver = self._port.create_driver(int((TaskPool.Process.name).split('/')[-1]), self._port.get_option('no_timeout'))
-        return self._run_single_test(self._driver, test_input, stop_when_done)
 
     def _run_single_test(self, driver, test_input, stop_when_done):
         return single_test_runner.run_single_test(
