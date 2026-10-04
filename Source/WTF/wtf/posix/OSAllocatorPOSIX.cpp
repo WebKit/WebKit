@@ -284,6 +284,13 @@ void OSAllocator::hintMemoryNotNeededSoon(void* address, size_t bytes)
 #endif
 }
 
+#if OS(LINUX)
+void OSAllocator::excludeFromCoreDump(void* address, size_t bytes)
+{
+    madvise(address, bytes, MADV_DONTDUMP);
+}
+#endif
+
 void OSAllocator::releaseDecommitted(void* address, size_t bytes, unsigned numberOfGuardPagesOnEachEnd = 0)
 {
     void* base = address;
