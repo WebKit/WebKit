@@ -26,73 +26,49 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
-#include <openssl/sha.h>
-
-namespace {
-struct SHA1Functions {
-    static constexpr auto init = SHA1_Init;
-    static constexpr auto update = SHA1_Update;
-    static constexpr auto final = SHA1_Final;
-    static constexpr size_t digestLength = SHA_DIGEST_LENGTH;
-};
-struct SHA256Functions {
-    static constexpr auto init = SHA256_Init;
-    static constexpr auto update = SHA256_Update;
-    static constexpr auto final = SHA256_Final;
-    static constexpr size_t digestLength = SHA256_DIGEST_LENGTH;
-};
-
-struct SHA384Functions {
-    static constexpr auto init = SHA384_Init;
-    static constexpr auto update = SHA384_Update;
-    static constexpr auto final = SHA384_Final;
-    static constexpr size_t digestLength = SHA384_DIGEST_LENGTH;
-};
-
-struct SHA512Functions {
-    static constexpr auto init = SHA512_Init;
-    static constexpr auto update = SHA512_Update;
-    static constexpr auto final = SHA512_Final;
-    static constexpr size_t digestLength = SHA512_DIGEST_LENGTH;
-};
-}
+#include <openssl/evp.h>
 
 namespace PAL::Crypto {
 
 struct CryptoDigestContext {
-    virtual ~CryptoDigestContext() = default;
-    virtual void addBytes(std::span<const uint8_t> input) = 0;
-    virtual Vector<uint8_t> computeHash() = 0;
-};
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CryptoDigestContext);
 
-template <typename SHAContext, typename SHAFunctions>
-struct CryptoDigestContextImpl : public CryptoDigestContext {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CryptoDigestContextImpl);
-
-    static std::unique_ptr<CryptoDigestContext> create()
+    static std::unique_ptr<CryptoDigestContext> create(const EVP_MD* algorithm)
     {
-        return makeUnique<CryptoDigestContextImpl>();
+        auto context = makeUnique<CryptoDigestContext>();
+        if (!EVP_DigestInit_ex(context->m_context, algorithm, nullptr))
+            return nullptr;
+        return context;
     }
 
-    CryptoDigestContextImpl()
+    CryptoDigestContext()
+        : m_context(EVP_MD_CTX_new())
     {
-        SHAFunctions::init(&m_context);
     }
 
-    void addBytes(std::span<const uint8_t> input) override
+    ~CryptoDigestContext()
     {
-        SHAFunctions::update(&m_context, static_cast<const void*>(input.data()), input.size());
+        EVP_MD_CTX_free(m_context);
     }
 
-    Vector<uint8_t> computeHash() override
+    void addBytes(std::span<const uint8_t> input)
     {
-        Vector<uint8_t> result(SHAFunctions::digestLength);
-        SHAFunctions::final(result.mutableSpan().data(), &m_context);
+        auto succeeded = EVP_DigestUpdate(m_context, input.data(), input.size());
+        ASSERT_UNUSED(succeeded, succeeded);
+    }
+
+    Vector<uint8_t> computeHash()
+    {
+        Vector<uint8_t> result(EVP_MD_CTX_size(m_context));
+        unsigned length = 0;
+        auto succeeded = EVP_DigestFinal_ex(m_context, result.mutableSpan().data(), &length);
+        ASSERT_UNUSED(succeeded, succeeded);
+        ASSERT_UNUSED(length, length == result.size());
         return result;
     }
 
 private:
-    SHAContext m_context;
+    EVP_MD_CTX* m_context;
 };
 
 CryptoDigest::CryptoDigest() = default;
@@ -103,24 +79,28 @@ static std::unique_ptr<CryptoDigestContext> createCryptoDigest(CryptoDigest::Alg
 {
     switch (algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
-        return CryptoDigestContextImpl<SHA_CTX, SHA1Functions>::create();
+        return CryptoDigestContext::create(EVP_sha1());
     case CryptoDigest::Algorithm::DEPRECATED_SHA_224:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
-        return CryptoDigestContextImpl<SHA256_CTX, SHA256Functions>::create();
+        return CryptoDigestContext::create(EVP_sha224());
     case CryptoDigest::Algorithm::SHA_256:
-        return CryptoDigestContextImpl<SHA256_CTX, SHA256Functions>::create();
+        return CryptoDigestContext::create(EVP_sha256());
     case CryptoDigest::Algorithm::SHA_384:
-        return CryptoDigestContextImpl<SHA512_CTX, SHA384Functions>::create();
+        return CryptoDigestContext::create(EVP_sha384());
     case CryptoDigest::Algorithm::SHA_512:
-        return CryptoDigestContextImpl<SHA512_CTX, SHA512Functions>::create();
+        return CryptoDigestContext::create(EVP_sha512());
     }
     return nullptr;
 }
 
 std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algorithm)
 {
+    auto context = createCryptoDigest(algorithm);
+    if (!context)
+        return nullptr;
+
     std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
-    digest->m_context = createCryptoDigest(algorithm);
+    digest->m_context = WTF::move(context);
     return digest;
 }
 
