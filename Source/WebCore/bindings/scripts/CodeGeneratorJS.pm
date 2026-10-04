@@ -7949,6 +7949,20 @@ sub IsAnnotatedType
     return 1 if $type->extendedAttributes->{AllowShared};
 }
 
+# https://webidl.spec.whatwg.org/#idl-annotated-types
+sub AssertValidTypeExtendedAttributes
+{
+    my ($type) = @_;
+
+    die "[Clamp] and [EnforceRange] cannot both be used on the same type.\n" if $type->extendedAttributes->{Clamp} && $type->extendedAttributes->{EnforceRange};
+
+    foreach my $extendedAttributeName (sort keys %{$type->extendedAttributes}) {
+        next if $codeGenerator->IsTypeAllowedForExtendedAttribute($type, $extendedAttributeName);
+        my $typesAllowed = join(" and ", @{$codeGenerator->GetTypesAllowedForExtendedAttribute($extendedAttributeName)});
+        die "[${extendedAttributeName}] can only be used on ${typesAllowed}, not on '" . GetTypeNameForDisplayInException($type) . ($type->isNullable ? "?" : "") . "'.\n";
+    }
+}
+
 sub GetAnnotatedIDLType
 {
     my ($type) = @_;
@@ -8056,6 +8070,8 @@ sub GetBaseIDLType
 sub GetIDLTypeExcludingNullability
 {
     my ($interface, $type) = @_;
+
+    AssertValidTypeExtendedAttributes($type);
 
     my $baseIDLType = GetBaseIDLType($interface, $type);
     $baseIDLType = GetAnnotatedIDLType($type) . "<" . $baseIDLType . ">" if IsAnnotatedType($type);

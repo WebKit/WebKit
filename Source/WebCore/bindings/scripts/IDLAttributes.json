@@ -23,6 +23,10 @@
         },
         "AllowShared": {
             "contextsAllowed": ["type"],
+            "typesAllowed": ["buffer source types"],
+            "supportsNullableTypes": true,
+            "supportsUnionTypes": true,
+            "notes": "FIXME: Only buffer view types should be allowed, and not union types. Until SharedArrayBuffer is a type of its own, [AllowShared] on ArrayBuffer stands in for it, including on the AllowSharedBufferSource union.",
             "standard": {
                 "url": "https://webidl.spec.whatwg.org/#AllowShared"
             }
@@ -75,6 +79,8 @@
         },
         "Clamp": {
             "contextsAllowed": ["type"],
+            "typesAllowed": ["integer types"],
+            "supportsNullableTypes": true,
             "standard": {
                 "url": "https://webidl.spec.whatwg.org/#Clamp"
             }
@@ -220,6 +226,8 @@
         },
         "EnforceRange": {
             "contextsAllowed": ["type"],
+            "typesAllowed": ["integer types"],
+            "supportsNullableTypes": true,
             "standard": {
                 "url": "https://webidl.spec.whatwg.org/#EnforceRange"
             }
@@ -400,6 +408,7 @@
         },
         "LegacyNullToEmptyString": {
             "contextsAllowed": ["type"],
+            "typesAllowed": ["DOMString", "USVString"],
             "standard": {
                 "url": "https://webidl.spec.whatwg.org/#LegacyNullToEmptyString"
             }

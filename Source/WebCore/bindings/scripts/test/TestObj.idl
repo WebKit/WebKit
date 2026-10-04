@@ -88,7 +88,6 @@ enum TestConfidence { "high", "kinda-low" };
     [ReturnsPromisePair] PromisePair returnsPromisePair();
     attribute [LegacyNullToEmptyString] DOMString stringAttrTreatingNullAsEmptyString;
     attribute [LegacyNullToEmptyString] USVString usvstringAttrTreatingNullAsEmptyString;
-    attribute [LegacyNullToEmptyString] ByteString byteStringAttrTreatingNullAsEmptyString;
     attribute record<DOMString, long> stringLongRecordAttr;
     attribute record<USVString, long> usvstringLongRecordAttr;
     attribute record<ByteString, long> usvstringLongRecordAttr;
@@ -207,7 +206,6 @@ enum TestConfidence { "high", "kinda-low" };
 
     undefined methodWithByteStringArg(ByteString str);
     undefined methodWithNullableByteStringArg(ByteString? str);
-    undefined methodWithByteStringArgTreatingNullAsEmptyString([LegacyNullToEmptyString] ByteString str);
 
     undefined serializedValue(SerializedScriptValue serializedArg);
 

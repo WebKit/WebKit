@@ -1049,6 +1049,44 @@ sub IsBufferSourceType
     return 0;
 }
 
+sub GetTypesAllowedForExtendedAttribute
+{
+    my ($object, $extendedAttributeName) = @_;
+
+    return exists $idlAttributes->{$extendedAttributeName} ? $idlAttributes->{$extendedAttributeName}->{"typesAllowed"} : undef;
+}
+
+# Whether the type matches the "typesAllowed", "supportsNullableTypes", and "supportsUnionTypes" entries
+# of the extended attribute in IDLAttributes.json. Extended attributes without "typesAllowed" allow any type.
+sub IsTypeAllowedForExtendedAttribute
+{
+    my ($object, $type, $extendedAttributeName) = @_;
+
+    assert("Not a type") if ref($type) ne "IDLType";
+
+    my $typesAllowed = $object->GetTypesAllowedForExtendedAttribute($extendedAttributeName);
+    return 1 unless $typesAllowed;
+
+    my $idlAttribute = $idlAttributes->{$extendedAttributeName};
+    return 0 if $type->isNullable && !$idlAttribute->{"supportsNullableTypes"};
+
+    if ($type->isUnion) {
+        return 0 unless $idlAttribute->{"supportsUnionTypes"};
+        foreach my $memberType (@{$type->subtypes}) {
+            return 0 unless $object->IsTypeAllowedForExtendedAttribute($memberType, $extendedAttributeName);
+        }
+        return 1;
+    }
+
+    foreach my $typeAllowed (@{$typesAllowed}) {
+        return 1 if $typeAllowed eq $type->name;
+        return 1 if $typeAllowed eq "integer types" && $object->IsIntegerType($type);
+        return 1 if $typeAllowed eq "buffer source types" && $object->IsBufferSourceType($type);
+    }
+
+    return 0;
+}
+
 sub IsPromiseType
 {
     my ($object, $type) = @_;
