@@ -44,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-06.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-07.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-08.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-empty-name-dynamic-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-added-cached-list.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-added.html
@@ -51,4 +52,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-names.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-no-shadowing.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-supported-property-names-order.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-tree-order.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-tree-transitions.html

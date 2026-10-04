@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/WEB_FEATURES.yml
@@ -72,6 +70,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-unblocks-rendering.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/remove-pending-async-render-blocking-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/render-blocking-during-update-the-rendering-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-inline-module-with-import.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-module-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/render-blocking/script-inserted-script.html

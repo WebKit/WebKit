@@ -1,0 +1,5 @@
+
+
+PASS A named-property collection follows same-document moves.
+PASS Named properties follow moves into and out of a shadow tree.
+

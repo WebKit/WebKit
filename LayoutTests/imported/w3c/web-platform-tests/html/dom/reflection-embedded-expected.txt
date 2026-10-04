@@ -261,6 +261,45 @@ PASS picture.hidden: IDL set to -Infinity
 PASS picture.hidden: IDL set to "\0"
 PASS picture.hidden: IDL set to object "test-toString"
 PASS picture.hidden: IDL set to object "test-valueOf"
+PASS picture.inert: typeof IDL attribute
+PASS picture.inert: IDL get with DOM attribute unset
+PASS picture.inert: setAttribute() to ""
+PASS picture.inert: setAttribute() to " foo "
+PASS picture.inert: setAttribute() to undefined
+PASS picture.inert: setAttribute() to null
+PASS picture.inert: setAttribute() to 7
+PASS picture.inert: setAttribute() to 1.5
+PASS picture.inert: setAttribute() to "5%"
+PASS picture.inert: setAttribute() to "+100"
+PASS picture.inert: setAttribute() to ".5"
+PASS picture.inert: setAttribute() to true
+PASS picture.inert: setAttribute() to false
+PASS picture.inert: setAttribute() to object "[object Object]"
+PASS picture.inert: setAttribute() to NaN
+PASS picture.inert: setAttribute() to Infinity
+PASS picture.inert: setAttribute() to -Infinity
+PASS picture.inert: setAttribute() to "\0"
+PASS picture.inert: setAttribute() to object "test-toString"
+PASS picture.inert: setAttribute() to object "test-valueOf"
+PASS picture.inert: setAttribute() to "inert"
+PASS picture.inert: IDL set to ""
+PASS picture.inert: IDL set to " foo "
+PASS picture.inert: IDL set to undefined
+PASS picture.inert: IDL set to null
+PASS picture.inert: IDL set to 7
+PASS picture.inert: IDL set to 1.5
+PASS picture.inert: IDL set to "5%"
+PASS picture.inert: IDL set to "+100"
+PASS picture.inert: IDL set to ".5"
+PASS picture.inert: IDL set to true
+PASS picture.inert: IDL set to false
+PASS picture.inert: IDL set to object "[object Object]"
+PASS picture.inert: IDL set to NaN
+PASS picture.inert: IDL set to Infinity
+PASS picture.inert: IDL set to -Infinity
+PASS picture.inert: IDL set to "\0"
+PASS picture.inert: IDL set to object "test-toString"
+PASS picture.inert: IDL set to object "test-valueOf"
 PASS picture.accessKey: typeof IDL attribute
 PASS picture.accessKey: IDL get with DOM attribute unset
 PASS picture.accessKey: setAttribute() to ""
@@ -587,6 +626,45 @@ PASS img.hidden: IDL set to -Infinity
 PASS img.hidden: IDL set to "\0"
 PASS img.hidden: IDL set to object "test-toString"
 PASS img.hidden: IDL set to object "test-valueOf"
+PASS img.inert: typeof IDL attribute
+PASS img.inert: IDL get with DOM attribute unset
+PASS img.inert: setAttribute() to ""
+PASS img.inert: setAttribute() to " foo "
+PASS img.inert: setAttribute() to undefined
+PASS img.inert: setAttribute() to null
+PASS img.inert: setAttribute() to 7
+PASS img.inert: setAttribute() to 1.5
+PASS img.inert: setAttribute() to "5%"
+PASS img.inert: setAttribute() to "+100"
+PASS img.inert: setAttribute() to ".5"
+PASS img.inert: setAttribute() to true
+PASS img.inert: setAttribute() to false
+PASS img.inert: setAttribute() to object "[object Object]"
+PASS img.inert: setAttribute() to NaN
+PASS img.inert: setAttribute() to Infinity
+PASS img.inert: setAttribute() to -Infinity
+PASS img.inert: setAttribute() to "\0"
+PASS img.inert: setAttribute() to object "test-toString"
+PASS img.inert: setAttribute() to object "test-valueOf"
+PASS img.inert: setAttribute() to "inert"
+PASS img.inert: IDL set to ""
+PASS img.inert: IDL set to " foo "
+PASS img.inert: IDL set to undefined
+PASS img.inert: IDL set to null
+PASS img.inert: IDL set to 7
+PASS img.inert: IDL set to 1.5
+PASS img.inert: IDL set to "5%"
+PASS img.inert: IDL set to "+100"
+PASS img.inert: IDL set to ".5"
+PASS img.inert: IDL set to true
+PASS img.inert: IDL set to false
+PASS img.inert: IDL set to object "[object Object]"
+PASS img.inert: IDL set to NaN
+PASS img.inert: IDL set to Infinity
+PASS img.inert: IDL set to -Infinity
+PASS img.inert: IDL set to "\0"
+PASS img.inert: IDL set to object "test-toString"
+PASS img.inert: IDL set to object "test-valueOf"
 PASS img.accessKey: typeof IDL attribute
 PASS img.accessKey: IDL get with DOM attribute unset
 PASS img.accessKey: setAttribute() to ""
@@ -1734,6 +1812,45 @@ PASS iframe.hidden: IDL set to -Infinity
 PASS iframe.hidden: IDL set to "\0"
 PASS iframe.hidden: IDL set to object "test-toString"
 PASS iframe.hidden: IDL set to object "test-valueOf"
+PASS iframe.inert: typeof IDL attribute
+PASS iframe.inert: IDL get with DOM attribute unset
+PASS iframe.inert: setAttribute() to ""
+PASS iframe.inert: setAttribute() to " foo "
+PASS iframe.inert: setAttribute() to undefined
+PASS iframe.inert: setAttribute() to null
+PASS iframe.inert: setAttribute() to 7
+PASS iframe.inert: setAttribute() to 1.5
+PASS iframe.inert: setAttribute() to "5%"
+PASS iframe.inert: setAttribute() to "+100"
+PASS iframe.inert: setAttribute() to ".5"
+PASS iframe.inert: setAttribute() to true
+PASS iframe.inert: setAttribute() to false
+PASS iframe.inert: setAttribute() to object "[object Object]"
+PASS iframe.inert: setAttribute() to NaN
+PASS iframe.inert: setAttribute() to Infinity
+PASS iframe.inert: setAttribute() to -Infinity
+PASS iframe.inert: setAttribute() to "\0"
+PASS iframe.inert: setAttribute() to object "test-toString"
+PASS iframe.inert: setAttribute() to object "test-valueOf"
+PASS iframe.inert: setAttribute() to "inert"
+PASS iframe.inert: IDL set to ""
+PASS iframe.inert: IDL set to " foo "
+PASS iframe.inert: IDL set to undefined
+PASS iframe.inert: IDL set to null
+PASS iframe.inert: IDL set to 7
+PASS iframe.inert: IDL set to 1.5
+PASS iframe.inert: IDL set to "5%"
+PASS iframe.inert: IDL set to "+100"
+PASS iframe.inert: IDL set to ".5"
+PASS iframe.inert: IDL set to true
+PASS iframe.inert: IDL set to false
+PASS iframe.inert: IDL set to object "[object Object]"
+PASS iframe.inert: IDL set to NaN
+PASS iframe.inert: IDL set to Infinity
+PASS iframe.inert: IDL set to -Infinity
+PASS iframe.inert: IDL set to "\0"
+PASS iframe.inert: IDL set to object "test-toString"
+PASS iframe.inert: IDL set to object "test-valueOf"
 PASS iframe.accessKey: typeof IDL attribute
 PASS iframe.accessKey: IDL get with DOM attribute unset
 PASS iframe.accessKey: setAttribute() to ""
@@ -1959,45 +2076,6 @@ PASS iframe.allowFullscreen: IDL set to -Infinity
 PASS iframe.allowFullscreen: IDL set to "\0"
 PASS iframe.allowFullscreen: IDL set to object "test-toString"
 PASS iframe.allowFullscreen: IDL set to object "test-valueOf"
-FAIL iframe.allowUserMedia: typeof IDL attribute assert_equals: expected "boolean" but got "undefined"
-FAIL iframe.allowUserMedia: IDL get with DOM attribute unset assert_equals: expected (boolean) false but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to "" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to " foo " assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to undefined assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to null assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to 7 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to 1.5 assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to "5%" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to "+100" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to ".5" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to true assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to false assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to NaN assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to -Infinity assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to "\0" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to object "test-toString" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: setAttribute() to "allowUserMedia" assert_equals: IDL get expected (boolean) true but got (undefined) undefined
-FAIL iframe.allowUserMedia: IDL set to "" assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowUserMedia: IDL set to " foo " assert_equals: IDL get expected (boolean) true but got (string) " foo "
-FAIL iframe.allowUserMedia: IDL set to undefined assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowUserMedia: IDL set to null assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowUserMedia: IDL set to 7 assert_equals: IDL get expected (boolean) true but got (number) 7
-FAIL iframe.allowUserMedia: IDL set to 1.5 assert_equals: IDL get expected (boolean) true but got (number) 1.5
-FAIL iframe.allowUserMedia: IDL set to "5%" assert_equals: IDL get expected (boolean) true but got (string) "5%"
-FAIL iframe.allowUserMedia: IDL set to "+100" assert_equals: IDL get expected (boolean) true but got (string) "+100"
-FAIL iframe.allowUserMedia: IDL set to ".5" assert_equals: IDL get expected (boolean) true but got (string) ".5"
-PASS iframe.allowUserMedia: IDL set to true
-FAIL iframe.allowUserMedia: IDL set to false assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowUserMedia: IDL set to object "[object Object]" assert_equals: IDL get expected (boolean) true but got (object) object "[object Object]"
-FAIL iframe.allowUserMedia: IDL set to NaN assert_equals: hasAttribute() expected false but got true
-FAIL iframe.allowUserMedia: IDL set to Infinity assert_equals: IDL get expected (boolean) true but got (number) Infinity
-FAIL iframe.allowUserMedia: IDL set to -Infinity assert_equals: IDL get expected (boolean) true but got (number) -Infinity
-FAIL iframe.allowUserMedia: IDL set to "\0" assert_equals: IDL get expected (boolean) true but got (string) "\0"
-FAIL iframe.allowUserMedia: IDL set to object "test-toString" assert_equals: IDL get expected (boolean) true but got (object) object "test-toString"
-FAIL iframe.allowUserMedia: IDL set to object "test-valueOf" assert_equals: IDL get expected (boolean) true but got (object) object "test-valueOf"
 PASS iframe.width: typeof IDL attribute
 PASS iframe.width: IDL get with DOM attribute unset
 PASS iframe.width: setAttribute() to ""
@@ -2202,39 +2280,6 @@ PASS iframe.referrerPolicy: IDL set to "unsafe-url\0"
 PASS iframe.referrerPolicy: IDL set to "nsafe-url"
 PASS iframe.referrerPolicy: IDL set to "UNSAFE-URL"
 PASS iframe.referrerPolicy: IDL set to "unſafe-url"
-FAIL iframe.delegateStickyUserActivation: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL iframe.delegateStickyUserActivation: setAttribute() to "vibration" assert_equals: IDL get expected (string) "vibration" but got (undefined) undefined
-FAIL iframe.delegateStickyUserActivation: setAttribute() to "VIBRATION" assert_equals: IDL get expected (string) "vibration" but got (undefined) undefined
-FAIL iframe.delegateStickyUserActivation: setAttribute() to "media" assert_equals: IDL get expected (string) "media" but got (undefined) undefined
-FAIL iframe.delegateStickyUserActivation: setAttribute() to "MEDIA" assert_equals: IDL get expected (string) "media" but got (undefined) undefined
-FAIL iframe.delegateStickyUserActivation: IDL set to "" assert_equals: getAttribute() expected "" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to 7 assert_equals: getAttribute() expected "7" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to true assert_equals: getAttribute() expected "true" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to false assert_equals: getAttribute() expected "false" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "MEDIA"
-PASS iframe.delegateStickyUserActivation: IDL set to null
-FAIL iframe.delegateStickyUserActivation: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "vibration" assert_equals: getAttribute() expected "vibration" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "xvibration" assert_equals: getAttribute() expected "xvibration" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "vibration\0" assert_equals: getAttribute() expected "vibration\0" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "ibration" assert_equals: getAttribute() expected "ibration" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "VIBRATION" assert_equals: getAttribute() expected "VIBRATION" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "media" assert_equals: getAttribute() expected "media" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "xmedia" assert_equals: getAttribute() expected "xmedia" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "media\0" assert_equals: getAttribute() expected "media\0" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "edia" assert_equals: getAttribute() expected "edia" but got "MEDIA"
-FAIL iframe.delegateStickyUserActivation: IDL set to "MEDIA" assert_equals: IDL get expected "media" but got "MEDIA"
 PASS iframe.align: typeof IDL attribute
 PASS iframe.align: IDL get with DOM attribute unset
 PASS iframe.align: setAttribute() to ""
@@ -2729,6 +2774,45 @@ PASS embed.hidden: IDL set to -Infinity
 PASS embed.hidden: IDL set to "\0"
 PASS embed.hidden: IDL set to object "test-toString"
 PASS embed.hidden: IDL set to object "test-valueOf"
+PASS embed.inert: typeof IDL attribute
+PASS embed.inert: IDL get with DOM attribute unset
+PASS embed.inert: setAttribute() to ""
+PASS embed.inert: setAttribute() to " foo "
+PASS embed.inert: setAttribute() to undefined
+PASS embed.inert: setAttribute() to null
+PASS embed.inert: setAttribute() to 7
+PASS embed.inert: setAttribute() to 1.5
+PASS embed.inert: setAttribute() to "5%"
+PASS embed.inert: setAttribute() to "+100"
+PASS embed.inert: setAttribute() to ".5"
+PASS embed.inert: setAttribute() to true
+PASS embed.inert: setAttribute() to false
+PASS embed.inert: setAttribute() to object "[object Object]"
+PASS embed.inert: setAttribute() to NaN
+PASS embed.inert: setAttribute() to Infinity
+PASS embed.inert: setAttribute() to -Infinity
+PASS embed.inert: setAttribute() to "\0"
+PASS embed.inert: setAttribute() to object "test-toString"
+PASS embed.inert: setAttribute() to object "test-valueOf"
+PASS embed.inert: setAttribute() to "inert"
+PASS embed.inert: IDL set to ""
+PASS embed.inert: IDL set to " foo "
+PASS embed.inert: IDL set to undefined
+PASS embed.inert: IDL set to null
+PASS embed.inert: IDL set to 7
+PASS embed.inert: IDL set to 1.5
+PASS embed.inert: IDL set to "5%"
+PASS embed.inert: IDL set to "+100"
+PASS embed.inert: IDL set to ".5"
+PASS embed.inert: IDL set to true
+PASS embed.inert: IDL set to false
+PASS embed.inert: IDL set to object "[object Object]"
+PASS embed.inert: IDL set to NaN
+PASS embed.inert: IDL set to Infinity
+PASS embed.inert: IDL set to -Infinity
+PASS embed.inert: IDL set to "\0"
+PASS embed.inert: IDL set to object "test-toString"
+PASS embed.inert: IDL set to object "test-valueOf"
 PASS embed.accessKey: typeof IDL attribute
 PASS embed.accessKey: IDL get with DOM attribute unset
 PASS embed.accessKey: setAttribute() to ""
@@ -3289,6 +3373,45 @@ PASS object.hidden: IDL set to -Infinity
 PASS object.hidden: IDL set to "\0"
 PASS object.hidden: IDL set to object "test-toString"
 PASS object.hidden: IDL set to object "test-valueOf"
+PASS object.inert: typeof IDL attribute
+PASS object.inert: IDL get with DOM attribute unset
+PASS object.inert: setAttribute() to ""
+PASS object.inert: setAttribute() to " foo "
+PASS object.inert: setAttribute() to undefined
+PASS object.inert: setAttribute() to null
+PASS object.inert: setAttribute() to 7
+PASS object.inert: setAttribute() to 1.5
+PASS object.inert: setAttribute() to "5%"
+PASS object.inert: setAttribute() to "+100"
+PASS object.inert: setAttribute() to ".5"
+PASS object.inert: setAttribute() to true
+PASS object.inert: setAttribute() to false
+PASS object.inert: setAttribute() to object "[object Object]"
+PASS object.inert: setAttribute() to NaN
+PASS object.inert: setAttribute() to Infinity
+PASS object.inert: setAttribute() to -Infinity
+PASS object.inert: setAttribute() to "\0"
+PASS object.inert: setAttribute() to object "test-toString"
+PASS object.inert: setAttribute() to object "test-valueOf"
+PASS object.inert: setAttribute() to "inert"
+PASS object.inert: IDL set to ""
+PASS object.inert: IDL set to " foo "
+PASS object.inert: IDL set to undefined
+PASS object.inert: IDL set to null
+PASS object.inert: IDL set to 7
+PASS object.inert: IDL set to 1.5
+PASS object.inert: IDL set to "5%"
+PASS object.inert: IDL set to "+100"
+PASS object.inert: IDL set to ".5"
+PASS object.inert: IDL set to true
+PASS object.inert: IDL set to false
+PASS object.inert: IDL set to object "[object Object]"
+PASS object.inert: IDL set to NaN
+PASS object.inert: IDL set to Infinity
+PASS object.inert: IDL set to -Infinity
+PASS object.inert: IDL set to "\0"
+PASS object.inert: IDL set to object "test-toString"
+PASS object.inert: IDL set to object "test-valueOf"
 PASS object.accessKey: typeof IDL attribute
 PASS object.accessKey: IDL get with DOM attribute unset
 PASS object.accessKey: setAttribute() to ""
@@ -4306,6 +4429,45 @@ PASS param.hidden: IDL set to -Infinity
 PASS param.hidden: IDL set to "\0"
 PASS param.hidden: IDL set to object "test-toString"
 PASS param.hidden: IDL set to object "test-valueOf"
+PASS param.inert: typeof IDL attribute
+PASS param.inert: IDL get with DOM attribute unset
+PASS param.inert: setAttribute() to ""
+PASS param.inert: setAttribute() to " foo "
+PASS param.inert: setAttribute() to undefined
+PASS param.inert: setAttribute() to null
+PASS param.inert: setAttribute() to 7
+PASS param.inert: setAttribute() to 1.5
+PASS param.inert: setAttribute() to "5%"
+PASS param.inert: setAttribute() to "+100"
+PASS param.inert: setAttribute() to ".5"
+PASS param.inert: setAttribute() to true
+PASS param.inert: setAttribute() to false
+PASS param.inert: setAttribute() to object "[object Object]"
+PASS param.inert: setAttribute() to NaN
+PASS param.inert: setAttribute() to Infinity
+PASS param.inert: setAttribute() to -Infinity
+PASS param.inert: setAttribute() to "\0"
+PASS param.inert: setAttribute() to object "test-toString"
+PASS param.inert: setAttribute() to object "test-valueOf"
+PASS param.inert: setAttribute() to "inert"
+PASS param.inert: IDL set to ""
+PASS param.inert: IDL set to " foo "
+PASS param.inert: IDL set to undefined
+PASS param.inert: IDL set to null
+PASS param.inert: IDL set to 7
+PASS param.inert: IDL set to 1.5
+PASS param.inert: IDL set to "5%"
+PASS param.inert: IDL set to "+100"
+PASS param.inert: IDL set to ".5"
+PASS param.inert: IDL set to true
+PASS param.inert: IDL set to false
+PASS param.inert: IDL set to object "[object Object]"
+PASS param.inert: IDL set to NaN
+PASS param.inert: IDL set to Infinity
+PASS param.inert: IDL set to -Infinity
+PASS param.inert: IDL set to "\0"
+PASS param.inert: IDL set to object "test-toString"
+PASS param.inert: IDL set to object "test-valueOf"
 PASS param.accessKey: typeof IDL attribute
 PASS param.accessKey: IDL get with DOM attribute unset
 PASS param.accessKey: setAttribute() to ""
@@ -4784,6 +4946,45 @@ PASS video.hidden: IDL set to -Infinity
 PASS video.hidden: IDL set to "\0"
 PASS video.hidden: IDL set to object "test-toString"
 PASS video.hidden: IDL set to object "test-valueOf"
+PASS video.inert: typeof IDL attribute
+PASS video.inert: IDL get with DOM attribute unset
+PASS video.inert: setAttribute() to ""
+PASS video.inert: setAttribute() to " foo "
+PASS video.inert: setAttribute() to undefined
+PASS video.inert: setAttribute() to null
+PASS video.inert: setAttribute() to 7
+PASS video.inert: setAttribute() to 1.5
+PASS video.inert: setAttribute() to "5%"
+PASS video.inert: setAttribute() to "+100"
+PASS video.inert: setAttribute() to ".5"
+PASS video.inert: setAttribute() to true
+PASS video.inert: setAttribute() to false
+PASS video.inert: setAttribute() to object "[object Object]"
+PASS video.inert: setAttribute() to NaN
+PASS video.inert: setAttribute() to Infinity
+PASS video.inert: setAttribute() to -Infinity
+PASS video.inert: setAttribute() to "\0"
+PASS video.inert: setAttribute() to object "test-toString"
+PASS video.inert: setAttribute() to object "test-valueOf"
+PASS video.inert: setAttribute() to "inert"
+PASS video.inert: IDL set to ""
+PASS video.inert: IDL set to " foo "
+PASS video.inert: IDL set to undefined
+PASS video.inert: IDL set to null
+PASS video.inert: IDL set to 7
+PASS video.inert: IDL set to 1.5
+PASS video.inert: IDL set to "5%"
+PASS video.inert: IDL set to "+100"
+PASS video.inert: IDL set to ".5"
+PASS video.inert: IDL set to true
+PASS video.inert: IDL set to false
+PASS video.inert: IDL set to object "[object Object]"
+PASS video.inert: IDL set to NaN
+PASS video.inert: IDL set to Infinity
+PASS video.inert: IDL set to -Infinity
+PASS video.inert: IDL set to "\0"
+PASS video.inert: IDL set to object "test-toString"
+PASS video.inert: IDL set to object "test-valueOf"
 PASS video.accessKey: typeof IDL attribute
 PASS video.accessKey: IDL get with DOM attribute unset
 PASS video.accessKey: setAttribute() to ""
@@ -4957,11 +5158,39 @@ PASS video.crossOrigin: IDL set to "se-credentials"
 PASS video.crossOrigin: IDL set to "USE-CREDENTIALS"
 PASS video.crossOrigin: IDL set to "uſe-credentialſ"
 PASS video.preload: typeof IDL attribute
+PASS video.preload: IDL get with DOM attribute unset
+PASS video.preload: setAttribute() to ""
+PASS video.preload: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS video.preload: setAttribute() to undefined
+PASS video.preload: setAttribute() to 7
+PASS video.preload: setAttribute() to 1.5
+PASS video.preload: setAttribute() to "5%"
+PASS video.preload: setAttribute() to "+100"
+PASS video.preload: setAttribute() to ".5"
+PASS video.preload: setAttribute() to true
+PASS video.preload: setAttribute() to false
+PASS video.preload: setAttribute() to object "[object Object]"
+PASS video.preload: setAttribute() to NaN
+PASS video.preload: setAttribute() to Infinity
+PASS video.preload: setAttribute() to -Infinity
+PASS video.preload: setAttribute() to "\0"
+PASS video.preload: setAttribute() to null
+PASS video.preload: setAttribute() to object "test-toString"
+PASS video.preload: setAttribute() to object "test-valueOf"
 PASS video.preload: setAttribute() to "none"
+PASS video.preload: setAttribute() to "xnone"
+PASS video.preload: setAttribute() to "none\0"
+PASS video.preload: setAttribute() to "one"
 PASS video.preload: setAttribute() to "NONE"
 PASS video.preload: setAttribute() to "metadata"
+PASS video.preload: setAttribute() to "xmetadata"
+PASS video.preload: setAttribute() to "metadata\0"
+PASS video.preload: setAttribute() to "etadata"
 PASS video.preload: setAttribute() to "METADATA"
 PASS video.preload: setAttribute() to "auto"
+PASS video.preload: setAttribute() to "xauto"
+PASS video.preload: setAttribute() to "auto\0"
+PASS video.preload: setAttribute() to "uto"
 PASS video.preload: setAttribute() to "AUTO"
 PASS video.preload: IDL set to ""
 PASS video.preload: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
@@ -5152,6 +5381,64 @@ PASS video.defaultMuted (<video muted>): IDL set to -Infinity
 PASS video.defaultMuted (<video muted>): IDL set to "\0"
 PASS video.defaultMuted (<video muted>): IDL set to object "test-toString"
 PASS video.defaultMuted (<video muted>): IDL set to object "test-valueOf"
+FAIL video.loading: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL video.loading: IDL get with DOM attribute unset assert_equals: expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to undefined assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to 7 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to 1.5 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "5%" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "+100" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to ".5" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to true assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to false assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to NaN assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to -Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to null assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "lazy" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "xlazy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "lazy\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "azy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "LAZY" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "eager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "xeager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "eager\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "ager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: setAttribute() to "EAGER" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL video.loading: IDL set to "" assert_equals: getAttribute() expected "" but got "EAGER"
+FAIL video.loading: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "EAGER"
+FAIL video.loading: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "EAGER"
+FAIL video.loading: IDL set to 7 assert_equals: getAttribute() expected "7" but got "EAGER"
+FAIL video.loading: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "EAGER"
+FAIL video.loading: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "EAGER"
+FAIL video.loading: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "EAGER"
+FAIL video.loading: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "EAGER"
+FAIL video.loading: IDL set to true assert_equals: getAttribute() expected "true" but got "EAGER"
+FAIL video.loading: IDL set to false assert_equals: getAttribute() expected "false" but got "EAGER"
+FAIL video.loading: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "EAGER"
+FAIL video.loading: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "EAGER"
+FAIL video.loading: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "EAGER"
+FAIL video.loading: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "EAGER"
+FAIL video.loading: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "EAGER"
+FAIL video.loading: IDL set to null assert_equals: IDL get expected (string) "eager" but got (object) null
+FAIL video.loading: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "EAGER"
+FAIL video.loading: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "EAGER"
+FAIL video.loading: IDL set to "lazy" assert_equals: getAttribute() expected "lazy" but got "EAGER"
+FAIL video.loading: IDL set to "xlazy" assert_equals: getAttribute() expected "xlazy" but got "EAGER"
+FAIL video.loading: IDL set to "lazy\0" assert_equals: getAttribute() expected "lazy\0" but got "EAGER"
+FAIL video.loading: IDL set to "azy" assert_equals: getAttribute() expected "azy" but got "EAGER"
+FAIL video.loading: IDL set to "LAZY" assert_equals: getAttribute() expected "LAZY" but got "EAGER"
+FAIL video.loading: IDL set to "eager" assert_equals: getAttribute() expected "eager" but got "EAGER"
+FAIL video.loading: IDL set to "xeager" assert_equals: getAttribute() expected "xeager" but got "EAGER"
+FAIL video.loading: IDL set to "eager\0" assert_equals: getAttribute() expected "eager\0" but got "EAGER"
+FAIL video.loading: IDL set to "ager" assert_equals: getAttribute() expected "ager" but got "EAGER"
+FAIL video.loading: IDL set to "EAGER" assert_equals: IDL get expected "eager" but got "EAGER"
 PASS video.width: typeof IDL attribute
 PASS video.width: IDL get with DOM attribute unset
 PASS video.width: setAttribute() to -2147483649
@@ -5641,6 +5928,45 @@ PASS audio.hidden: IDL set to -Infinity
 PASS audio.hidden: IDL set to "\0"
 PASS audio.hidden: IDL set to object "test-toString"
 PASS audio.hidden: IDL set to object "test-valueOf"
+PASS audio.inert: typeof IDL attribute
+PASS audio.inert: IDL get with DOM attribute unset
+PASS audio.inert: setAttribute() to ""
+PASS audio.inert: setAttribute() to " foo "
+PASS audio.inert: setAttribute() to undefined
+PASS audio.inert: setAttribute() to null
+PASS audio.inert: setAttribute() to 7
+PASS audio.inert: setAttribute() to 1.5
+PASS audio.inert: setAttribute() to "5%"
+PASS audio.inert: setAttribute() to "+100"
+PASS audio.inert: setAttribute() to ".5"
+PASS audio.inert: setAttribute() to true
+PASS audio.inert: setAttribute() to false
+PASS audio.inert: setAttribute() to object "[object Object]"
+PASS audio.inert: setAttribute() to NaN
+PASS audio.inert: setAttribute() to Infinity
+PASS audio.inert: setAttribute() to -Infinity
+PASS audio.inert: setAttribute() to "\0"
+PASS audio.inert: setAttribute() to object "test-toString"
+PASS audio.inert: setAttribute() to object "test-valueOf"
+PASS audio.inert: setAttribute() to "inert"
+PASS audio.inert: IDL set to ""
+PASS audio.inert: IDL set to " foo "
+PASS audio.inert: IDL set to undefined
+PASS audio.inert: IDL set to null
+PASS audio.inert: IDL set to 7
+PASS audio.inert: IDL set to 1.5
+PASS audio.inert: IDL set to "5%"
+PASS audio.inert: IDL set to "+100"
+PASS audio.inert: IDL set to ".5"
+PASS audio.inert: IDL set to true
+PASS audio.inert: IDL set to false
+PASS audio.inert: IDL set to object "[object Object]"
+PASS audio.inert: IDL set to NaN
+PASS audio.inert: IDL set to Infinity
+PASS audio.inert: IDL set to -Infinity
+PASS audio.inert: IDL set to "\0"
+PASS audio.inert: IDL set to object "test-toString"
+PASS audio.inert: IDL set to object "test-valueOf"
 PASS audio.accessKey: typeof IDL attribute
 PASS audio.accessKey: IDL get with DOM attribute unset
 PASS audio.accessKey: setAttribute() to ""
@@ -5814,11 +6140,39 @@ PASS audio.crossOrigin: IDL set to "se-credentials"
 PASS audio.crossOrigin: IDL set to "USE-CREDENTIALS"
 PASS audio.crossOrigin: IDL set to "uſe-credentialſ"
 PASS audio.preload: typeof IDL attribute
+PASS audio.preload: IDL get with DOM attribute unset
+PASS audio.preload: setAttribute() to ""
+PASS audio.preload: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS audio.preload: setAttribute() to undefined
+PASS audio.preload: setAttribute() to 7
+PASS audio.preload: setAttribute() to 1.5
+PASS audio.preload: setAttribute() to "5%"
+PASS audio.preload: setAttribute() to "+100"
+PASS audio.preload: setAttribute() to ".5"
+PASS audio.preload: setAttribute() to true
+PASS audio.preload: setAttribute() to false
+PASS audio.preload: setAttribute() to object "[object Object]"
+PASS audio.preload: setAttribute() to NaN
+PASS audio.preload: setAttribute() to Infinity
+PASS audio.preload: setAttribute() to -Infinity
+PASS audio.preload: setAttribute() to "\0"
+PASS audio.preload: setAttribute() to null
+PASS audio.preload: setAttribute() to object "test-toString"
+PASS audio.preload: setAttribute() to object "test-valueOf"
 PASS audio.preload: setAttribute() to "none"
+PASS audio.preload: setAttribute() to "xnone"
+PASS audio.preload: setAttribute() to "none\0"
+PASS audio.preload: setAttribute() to "one"
 PASS audio.preload: setAttribute() to "NONE"
 PASS audio.preload: setAttribute() to "metadata"
+PASS audio.preload: setAttribute() to "xmetadata"
+PASS audio.preload: setAttribute() to "metadata\0"
+PASS audio.preload: setAttribute() to "etadata"
 PASS audio.preload: setAttribute() to "METADATA"
 PASS audio.preload: setAttribute() to "auto"
+PASS audio.preload: setAttribute() to "xauto"
+PASS audio.preload: setAttribute() to "auto\0"
+PASS audio.preload: setAttribute() to "uto"
 PASS audio.preload: setAttribute() to "AUTO"
 PASS audio.preload: IDL set to ""
 PASS audio.preload: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
@@ -6009,6 +6363,64 @@ PASS audio.defaultMuted (<audio muted>): IDL set to -Infinity
 PASS audio.defaultMuted (<audio muted>): IDL set to "\0"
 PASS audio.defaultMuted (<audio muted>): IDL set to object "test-toString"
 PASS audio.defaultMuted (<audio muted>): IDL set to object "test-valueOf"
+FAIL audio.loading: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL audio.loading: IDL get with DOM attribute unset assert_equals: expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to undefined assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to 7 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to 1.5 assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "5%" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "+100" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to ".5" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to true assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to false assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to NaN assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to -Infinity assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to null assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "lazy" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "xlazy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "lazy\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "azy" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "LAZY" assert_equals: IDL get expected (string) "lazy" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "eager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "xeager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "eager\0" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "ager" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: setAttribute() to "EAGER" assert_equals: IDL get expected (string) "eager" but got (undefined) undefined
+FAIL audio.loading: IDL set to "" assert_equals: getAttribute() expected "" but got "EAGER"
+FAIL audio.loading: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "EAGER"
+FAIL audio.loading: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "EAGER"
+FAIL audio.loading: IDL set to 7 assert_equals: getAttribute() expected "7" but got "EAGER"
+FAIL audio.loading: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "EAGER"
+FAIL audio.loading: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "EAGER"
+FAIL audio.loading: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "EAGER"
+FAIL audio.loading: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "EAGER"
+FAIL audio.loading: IDL set to true assert_equals: getAttribute() expected "true" but got "EAGER"
+FAIL audio.loading: IDL set to false assert_equals: getAttribute() expected "false" but got "EAGER"
+FAIL audio.loading: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "EAGER"
+FAIL audio.loading: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "EAGER"
+FAIL audio.loading: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "EAGER"
+FAIL audio.loading: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "EAGER"
+FAIL audio.loading: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "EAGER"
+FAIL audio.loading: IDL set to null assert_equals: IDL get expected (string) "eager" but got (object) null
+FAIL audio.loading: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "EAGER"
+FAIL audio.loading: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "EAGER"
+FAIL audio.loading: IDL set to "lazy" assert_equals: getAttribute() expected "lazy" but got "EAGER"
+FAIL audio.loading: IDL set to "xlazy" assert_equals: getAttribute() expected "xlazy" but got "EAGER"
+FAIL audio.loading: IDL set to "lazy\0" assert_equals: getAttribute() expected "lazy\0" but got "EAGER"
+FAIL audio.loading: IDL set to "azy" assert_equals: getAttribute() expected "azy" but got "EAGER"
+FAIL audio.loading: IDL set to "LAZY" assert_equals: getAttribute() expected "LAZY" but got "EAGER"
+FAIL audio.loading: IDL set to "eager" assert_equals: getAttribute() expected "eager" but got "EAGER"
+FAIL audio.loading: IDL set to "xeager" assert_equals: getAttribute() expected "xeager" but got "EAGER"
+FAIL audio.loading: IDL set to "eager\0" assert_equals: getAttribute() expected "eager\0" but got "EAGER"
+FAIL audio.loading: IDL set to "ager" assert_equals: getAttribute() expected "ager" but got "EAGER"
+FAIL audio.loading: IDL set to "EAGER" assert_equals: IDL get expected "eager" but got "EAGER"
 PASS source.title: typeof IDL attribute
 PASS source.title: IDL get with DOM attribute unset
 PASS source.title: setAttribute() to ""
@@ -6269,6 +6681,45 @@ PASS source.hidden: IDL set to -Infinity
 PASS source.hidden: IDL set to "\0"
 PASS source.hidden: IDL set to object "test-toString"
 PASS source.hidden: IDL set to object "test-valueOf"
+PASS source.inert: typeof IDL attribute
+PASS source.inert: IDL get with DOM attribute unset
+PASS source.inert: setAttribute() to ""
+PASS source.inert: setAttribute() to " foo "
+PASS source.inert: setAttribute() to undefined
+PASS source.inert: setAttribute() to null
+PASS source.inert: setAttribute() to 7
+PASS source.inert: setAttribute() to 1.5
+PASS source.inert: setAttribute() to "5%"
+PASS source.inert: setAttribute() to "+100"
+PASS source.inert: setAttribute() to ".5"
+PASS source.inert: setAttribute() to true
+PASS source.inert: setAttribute() to false
+PASS source.inert: setAttribute() to object "[object Object]"
+PASS source.inert: setAttribute() to NaN
+PASS source.inert: setAttribute() to Infinity
+PASS source.inert: setAttribute() to -Infinity
+PASS source.inert: setAttribute() to "\0"
+PASS source.inert: setAttribute() to object "test-toString"
+PASS source.inert: setAttribute() to object "test-valueOf"
+PASS source.inert: setAttribute() to "inert"
+PASS source.inert: IDL set to ""
+PASS source.inert: IDL set to " foo "
+PASS source.inert: IDL set to undefined
+PASS source.inert: IDL set to null
+PASS source.inert: IDL set to 7
+PASS source.inert: IDL set to 1.5
+PASS source.inert: IDL set to "5%"
+PASS source.inert: IDL set to "+100"
+PASS source.inert: IDL set to ".5"
+PASS source.inert: IDL set to true
+PASS source.inert: IDL set to false
+PASS source.inert: IDL set to object "[object Object]"
+PASS source.inert: IDL set to NaN
+PASS source.inert: IDL set to Infinity
+PASS source.inert: IDL set to -Infinity
+PASS source.inert: IDL set to "\0"
+PASS source.inert: IDL set to object "test-toString"
+PASS source.inert: IDL set to object "test-valueOf"
 PASS source.accessKey: typeof IDL attribute
 PASS source.accessKey: IDL get with DOM attribute unset
 PASS source.accessKey: setAttribute() to ""
@@ -6791,6 +7242,45 @@ PASS track.hidden: IDL set to -Infinity
 PASS track.hidden: IDL set to "\0"
 PASS track.hidden: IDL set to object "test-toString"
 PASS track.hidden: IDL set to object "test-valueOf"
+PASS track.inert: typeof IDL attribute
+PASS track.inert: IDL get with DOM attribute unset
+PASS track.inert: setAttribute() to ""
+PASS track.inert: setAttribute() to " foo "
+PASS track.inert: setAttribute() to undefined
+PASS track.inert: setAttribute() to null
+PASS track.inert: setAttribute() to 7
+PASS track.inert: setAttribute() to 1.5
+PASS track.inert: setAttribute() to "5%"
+PASS track.inert: setAttribute() to "+100"
+PASS track.inert: setAttribute() to ".5"
+PASS track.inert: setAttribute() to true
+PASS track.inert: setAttribute() to false
+PASS track.inert: setAttribute() to object "[object Object]"
+PASS track.inert: setAttribute() to NaN
+PASS track.inert: setAttribute() to Infinity
+PASS track.inert: setAttribute() to -Infinity
+PASS track.inert: setAttribute() to "\0"
+PASS track.inert: setAttribute() to object "test-toString"
+PASS track.inert: setAttribute() to object "test-valueOf"
+PASS track.inert: setAttribute() to "inert"
+PASS track.inert: IDL set to ""
+PASS track.inert: IDL set to " foo "
+PASS track.inert: IDL set to undefined
+PASS track.inert: IDL set to null
+PASS track.inert: IDL set to 7
+PASS track.inert: IDL set to 1.5
+PASS track.inert: IDL set to "5%"
+PASS track.inert: IDL set to "+100"
+PASS track.inert: IDL set to ".5"
+PASS track.inert: IDL set to true
+PASS track.inert: IDL set to false
+PASS track.inert: IDL set to object "[object Object]"
+PASS track.inert: IDL set to NaN
+PASS track.inert: IDL set to Infinity
+PASS track.inert: IDL set to -Infinity
+PASS track.inert: IDL set to "\0"
+PASS track.inert: IDL set to object "test-toString"
+PASS track.inert: IDL set to object "test-valueOf"
 PASS track.accessKey: typeof IDL attribute
 PASS track.accessKey: IDL get with DOM attribute unset
 PASS track.accessKey: setAttribute() to ""
@@ -7372,6 +7862,45 @@ PASS canvas.hidden: IDL set to -Infinity
 PASS canvas.hidden: IDL set to "\0"
 PASS canvas.hidden: IDL set to object "test-toString"
 PASS canvas.hidden: IDL set to object "test-valueOf"
+PASS canvas.inert: typeof IDL attribute
+PASS canvas.inert: IDL get with DOM attribute unset
+PASS canvas.inert: setAttribute() to ""
+PASS canvas.inert: setAttribute() to " foo "
+PASS canvas.inert: setAttribute() to undefined
+PASS canvas.inert: setAttribute() to null
+PASS canvas.inert: setAttribute() to 7
+PASS canvas.inert: setAttribute() to 1.5
+PASS canvas.inert: setAttribute() to "5%"
+PASS canvas.inert: setAttribute() to "+100"
+PASS canvas.inert: setAttribute() to ".5"
+PASS canvas.inert: setAttribute() to true
+PASS canvas.inert: setAttribute() to false
+PASS canvas.inert: setAttribute() to object "[object Object]"
+PASS canvas.inert: setAttribute() to NaN
+PASS canvas.inert: setAttribute() to Infinity
+PASS canvas.inert: setAttribute() to -Infinity
+PASS canvas.inert: setAttribute() to "\0"
+PASS canvas.inert: setAttribute() to object "test-toString"
+PASS canvas.inert: setAttribute() to object "test-valueOf"
+PASS canvas.inert: setAttribute() to "inert"
+PASS canvas.inert: IDL set to ""
+PASS canvas.inert: IDL set to " foo "
+PASS canvas.inert: IDL set to undefined
+PASS canvas.inert: IDL set to null
+PASS canvas.inert: IDL set to 7
+PASS canvas.inert: IDL set to 1.5
+PASS canvas.inert: IDL set to "5%"
+PASS canvas.inert: IDL set to "+100"
+PASS canvas.inert: IDL set to ".5"
+PASS canvas.inert: IDL set to true
+PASS canvas.inert: IDL set to false
+PASS canvas.inert: IDL set to object "[object Object]"
+PASS canvas.inert: IDL set to NaN
+PASS canvas.inert: IDL set to Infinity
+PASS canvas.inert: IDL set to -Infinity
+PASS canvas.inert: IDL set to "\0"
+PASS canvas.inert: IDL set to object "test-toString"
+PASS canvas.inert: IDL set to object "test-valueOf"
 PASS canvas.accessKey: typeof IDL attribute
 PASS canvas.accessKey: IDL get with DOM attribute unset
 PASS canvas.accessKey: setAttribute() to ""
@@ -7840,6 +8369,45 @@ PASS map.hidden: IDL set to -Infinity
 PASS map.hidden: IDL set to "\0"
 PASS map.hidden: IDL set to object "test-toString"
 PASS map.hidden: IDL set to object "test-valueOf"
+PASS map.inert: typeof IDL attribute
+PASS map.inert: IDL get with DOM attribute unset
+PASS map.inert: setAttribute() to ""
+PASS map.inert: setAttribute() to " foo "
+PASS map.inert: setAttribute() to undefined
+PASS map.inert: setAttribute() to null
+PASS map.inert: setAttribute() to 7
+PASS map.inert: setAttribute() to 1.5
+PASS map.inert: setAttribute() to "5%"
+PASS map.inert: setAttribute() to "+100"
+PASS map.inert: setAttribute() to ".5"
+PASS map.inert: setAttribute() to true
+PASS map.inert: setAttribute() to false
+PASS map.inert: setAttribute() to object "[object Object]"
+PASS map.inert: setAttribute() to NaN
+PASS map.inert: setAttribute() to Infinity
+PASS map.inert: setAttribute() to -Infinity
+PASS map.inert: setAttribute() to "\0"
+PASS map.inert: setAttribute() to object "test-toString"
+PASS map.inert: setAttribute() to object "test-valueOf"
+PASS map.inert: setAttribute() to "inert"
+PASS map.inert: IDL set to ""
+PASS map.inert: IDL set to " foo "
+PASS map.inert: IDL set to undefined
+PASS map.inert: IDL set to null
+PASS map.inert: IDL set to 7
+PASS map.inert: IDL set to 1.5
+PASS map.inert: IDL set to "5%"
+PASS map.inert: IDL set to "+100"
+PASS map.inert: IDL set to ".5"
+PASS map.inert: IDL set to true
+PASS map.inert: IDL set to false
+PASS map.inert: IDL set to object "[object Object]"
+PASS map.inert: IDL set to NaN
+PASS map.inert: IDL set to Infinity
+PASS map.inert: IDL set to -Infinity
+PASS map.inert: IDL set to "\0"
+PASS map.inert: IDL set to object "test-toString"
+PASS map.inert: IDL set to object "test-valueOf"
 PASS map.accessKey: typeof IDL attribute
 PASS map.accessKey: IDL get with DOM attribute unset
 PASS map.accessKey: setAttribute() to ""
@@ -8204,6 +8772,45 @@ PASS area.hidden: IDL set to -Infinity
 PASS area.hidden: IDL set to "\0"
 PASS area.hidden: IDL set to object "test-toString"
 PASS area.hidden: IDL set to object "test-valueOf"
+PASS area.inert: typeof IDL attribute
+PASS area.inert: IDL get with DOM attribute unset
+PASS area.inert: setAttribute() to ""
+PASS area.inert: setAttribute() to " foo "
+PASS area.inert: setAttribute() to undefined
+PASS area.inert: setAttribute() to null
+PASS area.inert: setAttribute() to 7
+PASS area.inert: setAttribute() to 1.5
+PASS area.inert: setAttribute() to "5%"
+PASS area.inert: setAttribute() to "+100"
+PASS area.inert: setAttribute() to ".5"
+PASS area.inert: setAttribute() to true
+PASS area.inert: setAttribute() to false
+PASS area.inert: setAttribute() to object "[object Object]"
+PASS area.inert: setAttribute() to NaN
+PASS area.inert: setAttribute() to Infinity
+PASS area.inert: setAttribute() to -Infinity
+PASS area.inert: setAttribute() to "\0"
+PASS area.inert: setAttribute() to object "test-toString"
+PASS area.inert: setAttribute() to object "test-valueOf"
+PASS area.inert: setAttribute() to "inert"
+PASS area.inert: IDL set to ""
+PASS area.inert: IDL set to " foo "
+PASS area.inert: IDL set to undefined
+PASS area.inert: IDL set to null
+PASS area.inert: IDL set to 7
+PASS area.inert: IDL set to 1.5
+PASS area.inert: IDL set to "5%"
+PASS area.inert: IDL set to "+100"
+PASS area.inert: IDL set to ".5"
+PASS area.inert: IDL set to true
+PASS area.inert: IDL set to false
+PASS area.inert: IDL set to object "[object Object]"
+PASS area.inert: IDL set to NaN
+PASS area.inert: IDL set to Infinity
+PASS area.inert: IDL set to -Infinity
+PASS area.inert: IDL set to "\0"
+PASS area.inert: IDL set to object "test-toString"
+PASS area.inert: IDL set to object "test-valueOf"
 PASS area.accessKey: typeof IDL attribute
 PASS area.accessKey: IDL get with DOM attribute unset
 PASS area.accessKey: setAttribute() to ""
@@ -8664,6 +9271,82 @@ PASS area.referrerPolicy: IDL set to "unsafe-url\0"
 PASS area.referrerPolicy: IDL set to "nsafe-url"
 PASS area.referrerPolicy: IDL set to "UNSAFE-URL"
 PASS area.referrerPolicy: IDL set to "unſafe-url"
+FAIL area.hreflang: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL area.hreflang: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to undefined assert_equals: IDL get expected (string) "undefined" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to 7 assert_equals: IDL get expected (string) "7" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to 1.5 assert_equals: IDL get expected (string) "1.5" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to "5%" assert_equals: IDL get expected (string) "5%" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to "+100" assert_equals: IDL get expected (string) "+100" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to ".5" assert_equals: IDL get expected (string) ".5" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to true assert_equals: IDL get expected (string) "true" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to false assert_equals: IDL get expected (string) "false" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "[object Object]" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to NaN assert_equals: IDL get expected (string) "NaN" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to Infinity assert_equals: IDL get expected (string) "Infinity" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to -Infinity assert_equals: IDL get expected (string) "-Infinity" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to "\0" assert_equals: IDL get expected (string) "\0" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to null assert_equals: IDL get expected (string) "null" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "test-toString" but got (undefined) undefined
+FAIL area.hreflang: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (undefined) undefined
+FAIL area.hreflang: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
+FAIL area.hreflang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
+FAIL area.hreflang: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
+FAIL area.hreflang: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
+FAIL area.hreflang: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
+FAIL area.hreflang: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "test-valueOf"
+FAIL area.hreflang: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "test-valueOf"
+FAIL area.hreflang: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "test-valueOf"
+FAIL area.hreflang: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
+FAIL area.hreflang: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
+FAIL area.hreflang: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
+FAIL area.hreflang: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
+FAIL area.hreflang: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
+FAIL area.hreflang: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
+FAIL area.hreflang: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
+FAIL area.hreflang: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
+FAIL area.hreflang: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
+FAIL area.hreflang: IDL set to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (object) object "test-valueOf"
+FAIL area.type: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL area.type: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+FAIL area.type: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL area.type: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
+FAIL area.type: setAttribute() to undefined assert_equals: IDL get expected (string) "undefined" but got (undefined) undefined
+FAIL area.type: setAttribute() to 7 assert_equals: IDL get expected (string) "7" but got (undefined) undefined
+FAIL area.type: setAttribute() to 1.5 assert_equals: IDL get expected (string) "1.5" but got (undefined) undefined
+FAIL area.type: setAttribute() to "5%" assert_equals: IDL get expected (string) "5%" but got (undefined) undefined
+FAIL area.type: setAttribute() to "+100" assert_equals: IDL get expected (string) "+100" but got (undefined) undefined
+FAIL area.type: setAttribute() to ".5" assert_equals: IDL get expected (string) ".5" but got (undefined) undefined
+FAIL area.type: setAttribute() to true assert_equals: IDL get expected (string) "true" but got (undefined) undefined
+FAIL area.type: setAttribute() to false assert_equals: IDL get expected (string) "false" but got (undefined) undefined
+FAIL area.type: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "[object Object]" but got (undefined) undefined
+FAIL area.type: setAttribute() to NaN assert_equals: IDL get expected (string) "NaN" but got (undefined) undefined
+FAIL area.type: setAttribute() to Infinity assert_equals: IDL get expected (string) "Infinity" but got (undefined) undefined
+FAIL area.type: setAttribute() to -Infinity assert_equals: IDL get expected (string) "-Infinity" but got (undefined) undefined
+FAIL area.type: setAttribute() to "\0" assert_equals: IDL get expected (string) "\0" but got (undefined) undefined
+FAIL area.type: setAttribute() to null assert_equals: IDL get expected (string) "null" but got (undefined) undefined
+FAIL area.type: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "test-toString" but got (undefined) undefined
+FAIL area.type: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (undefined) undefined
+FAIL area.type: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
+FAIL area.type: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
+FAIL area.type: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
+FAIL area.type: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
+FAIL area.type: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
+FAIL area.type: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "test-valueOf"
+FAIL area.type: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "test-valueOf"
+FAIL area.type: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "test-valueOf"
+FAIL area.type: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
+FAIL area.type: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
+FAIL area.type: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
+FAIL area.type: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
+FAIL area.type: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
+FAIL area.type: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
+FAIL area.type: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
+FAIL area.type: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
+FAIL area.type: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
+FAIL area.type: IDL set to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (object) object "test-valueOf"
 PASS area.href: typeof IDL attribute
 PASS area.href: IDL get with DOM attribute unset
 PASS area.href: setAttribute() to ""
