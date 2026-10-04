@@ -6,10 +6,10 @@ assert.eq(return42(), 42);
 import { getFromJSGlobal, g } from "./wasm-js-cycle/entry-global.wasm"
 import { globalFromJS, incrementGlobal } from "./wasm-js-cycle/global.js"
 
-assert.instanceof(g, WebAssembly.Global);
-assert.eq(g.valueOf(), 42);
+assert.isNumber(g);
+assert.eq(g, 42);
 incrementGlobal();
-assert.eq(g.valueOf(), 43);
+assert.eq(g, 43);
 
 assert.isFunction(getFromJSGlobal);
 assert.eq(getFromJSGlobal(), globalFromJS.valueOf());
