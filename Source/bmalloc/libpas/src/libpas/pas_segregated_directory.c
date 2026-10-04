@@ -33,7 +33,9 @@
 #include "pas_heap_lock.h"
 #include "pas_log.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_scavenger.h"
 #include "pas_segregated_directory_inlines.h"
+#include "pas_segregated_exclusive_view.h"
 #include "pas_segregated_page.h"
 
 PAS_API void pas_segregated_directory_construct(
@@ -124,6 +126,10 @@ uint64_t pas_segregated_directory_get_use_epoch(pas_segregated_directory* direct
                    7. num_non_empty_words = 0 and use_epoch = 0.
                    In this case, let's ignore. This is already allocated page. */
                 use_epoch = emptiness.use_epoch;
+                if (use_epoch
+                    && pas_segregated_view_is_some_exclusive(view)
+                    && pas_segregated_view_get_exclusive(view)->recommitted_soon_after_decommit)
+                    use_epoch += pas_scavenger_recommit_retention_epoch_delta;
             }
             pas_segregated_view_unlock_ownership_lock(view);
             if (use_epoch) {

@@ -611,6 +611,17 @@ take_last_empty_should_consider_view_parallel(
     return segment.empty_bits;
 }
 
+static void
+did_decommit_exclusive_view(pas_segregated_directory* directory,
+                            size_t index,
+                            pas_segregated_exclusive_view* view)
+{
+    /* Set decommit_epoch before marking the view eligible, so a mutator that recommits the page right
+       away does not read the decommit_epoch left over from the page's earlier decommit. */
+    pas_segregated_exclusive_view_note_decommit(view);
+    pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
+}
+
 static bool
 take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
 {
@@ -741,7 +752,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
             my_page_config.base.heap_config_ptr->page_flags);
         decommit_log->total += my_page_config.base.page_size;
         my_page_config.base.destroy_page_header(&page->base, pas_lock_is_held);
-        pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
+        did_decommit_exclusive_view(directory, index, view);
         pas_lock_switch(&held_lock, NULL);
         data->result = pas_page_sharing_pool_take_success;
         return true;
@@ -816,7 +827,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         }
         my_page_config.base.destroy_page_header(&page->base, heap_lock_hold_mode);
 
-        pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
+        did_decommit_exclusive_view(directory, index, view);
     }
 
     data->result = pas_page_sharing_pool_take_success;
