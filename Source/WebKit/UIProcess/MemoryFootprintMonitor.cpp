@@ -44,6 +44,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <pal/system/ios/Device.h>
+#include <sys/sysctl.h>
 #endif
 
 namespace WebKit {
@@ -51,23 +52,46 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryFootprintMonitor);
 static constexpr Seconds defaultPollInterval { 30_s };
 
+#if PLATFORM(IOS_FAMILY)
+static MemoryFootprintMonitor::Configuration configurationWithLimit(size_t limit)
+{
+    return { defaultPollInterval, limit, limit, limit };
+}
+
+static MemoryFootprintMonitor::Configuration jetsamLimitedConfiguration()
+{
+#if PLATFORM(WATCHOS)
+    return configurationWithLimit(120 * MB);
+#elif PLATFORM(APPLETV)
+    return configurationWithLimit(840 * MB);
+#else
+    // On iOS, the jetsam limit can be 1.5GB (soft), 2GB (hard), or global Mach task limit based on
+    // device. Default to 2GB here to be safe. See didDetectWebProcessWithoutPerProcessJetsamLimit
+    // for how we relax this limit to the task limit if necessary.
+    return configurationWithLimit(2 * GB);
+#endif
+}
+
+static MemoryFootprintMonitor::Configuration taskLimitedConfiguration()
+{
+    int maxTaskFootprintMB = 0;
+    size_t size = sizeof(maxTaskFootprintMB);
+    if (!sysctlbyname("kern.max_task_pmem", &maxTaskFootprintMB, &size, nullptr, 0) && maxTaskFootprintMB > 0)
+        return configurationWithLimit(static_cast<size_t>(maxTaskFootprintMB) * MB);
+    return configurationWithLimit(WTF::ramSizeDisregardingJetsamLimit());
+}
+#endif
+
 MemoryFootprintMonitor::Configuration MemoryFootprintMonitor::defaultConfiguration()
 {
-    // Chosen to match per-process jetsam limits, except on iPadOS and visionOS (which run with no
-    // limit other than the global Mach per-task limit).
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(VISION)
-    size_t perProcessJetsamLimit = 2 * GB;
-
-#if PLATFORM(WATCHOS)
-    perProcessJetsamLimit = 120 * MB;
-#elif PLATFORM(APPLETV)
-    perProcessJetsamLimit = 840 * MB;
-#endif
-
-    if (!PAL::deviceClassIsDesktop())
-        return { defaultPollInterval, perProcessJetsamLimit, perProcessJetsamLimit, perProcessJetsamLimit };
-#endif
-
+#if PLATFORM(IOS_FAMILY)
+    // Desktop class devices (e.g. iPads) don't impose a per-process jetsam limit on WebContent.
+    // Check this up front rather than relying on didDetectWebProcessWithoutPerProcessJetsamLimit,
+    // since the task limit on low-RAM iPads may not be large enough to trigger it.
+    if (PAL::deviceClassIsDesktop())
+        return taskLimitedConfiguration();
+    return jetsamLimitedConfiguration();
+#else
     // Chosen to match MemoryPressureMonitor defaults.
     auto ramSize = WTF::ramSize();
     return {
@@ -76,6 +100,7 @@ MemoryFootprintMonitor::Configuration MemoryFootprintMonitor::defaultConfigurati
         std::min<size_t>(4 * GB, truncateDoubleToUint64(ramSize * 0.9)),
         std::min<size_t>(4 * GB, truncateDoubleToUint64(ramSize * 0.9)),
     };
+#endif
 }
 
 MemoryFootprintMonitor& MemoryFootprintMonitor::singleton()
@@ -134,12 +159,31 @@ void MemoryFootprintMonitor::setConfiguration(Configuration&& configuration)
 {
     ASSERT(isMainRunLoop());
     m_configuration = WTF::move(configuration);
+    RELEASE_LOG(MemoryMeasurement, "MemoryFootprintMonitor: setting configuration pollInterval: %.1f s, foregroundPageMemoryLimit: %zu MB, backgroundPageMemoryLimit: %zu MB, webProcessMemoryLimit: %zu MB", m_configuration.pollInterval.seconds(), m_configuration.foregroundPageMemoryLimit / MB, m_configuration.backgroundPageMemoryLimit / MB, m_configuration.webProcessMemoryLimit / MB);
 
     if (m_state == State::WaitingToMeasure) {
         m_measurementTimer.stop();
         m_measurementTimer.startOneShot(m_configuration.pollInterval);
     }
 }
+
+void MemoryFootprintMonitor::setConfigurationForTesting(Configuration&& configuration)
+{
+    m_configurationSetForTesting = true;
+    setConfiguration(WTF::move(configuration));
+}
+
+#if PLATFORM(IOS_FAMILY)
+void MemoryFootprintMonitor::didDetectWebProcessWithoutPerProcessJetsamLimit()
+{
+    ASSERT(isMainRunLoop());
+    if (m_didDetectWebProcessWithoutPerProcessJetsamLimit || m_configurationSetForTesting)
+        return;
+    m_didDetectWebProcessWithoutPerProcessJetsamLimit = true;
+
+    setConfiguration(taskLimitedConfiguration());
+}
+#endif
 
 static ProcessThrottleState processThrottleState(const WebProcessProxy& process)
 {

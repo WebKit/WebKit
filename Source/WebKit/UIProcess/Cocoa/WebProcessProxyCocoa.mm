@@ -32,6 +32,7 @@
 #import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
 #import "Logging.h"
+#import "MemoryFootprintMonitor.h"
 #import "SandboxUtilities.h"
 #import "SharedBufferReference.h"
 #import "WKAPICast.h"
@@ -154,6 +155,16 @@ void WebProcessProxy::setTaskNamePort(MachSendRight&& taskNamePort)
 
     m_taskNamePort = WTF::move(taskNamePort);
 }
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)
+void WebProcessProxy::didComputeAvailableMemory(uint64_t availableMemory)
+{
+    // Since availableMemory is clamped to the jetsam limit, a value this large likely means that
+    // the device doesn't impose a per-process jetsam limit on WebContent.
+    if (availableMemory > 3 * GB)
+        MemoryFootprintMonitor::singleton().didDetectWebProcessWithoutPerProcessJetsamLimit();
+}
+#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
 bool WebProcessProxy::shouldEnableRemoteInspector()

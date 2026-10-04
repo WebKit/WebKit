@@ -117,6 +117,7 @@
 #import <pal/spi/cocoa/pthreadSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
+#import <wtf/AvailableMemory.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
@@ -402,6 +403,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (mach_port_t taskNamePort = MACH_PORT_NULL; task_name_for_pid(mach_task_self(), getpid(), &taskNamePort) == KERN_SUCCESS)
         parentProcessConnection()->send(Messages::WebProcessProxy::SetTaskNamePort(MachSendRight::adopt(taskNamePort)), 0);
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidComputeAvailableMemory(WTF::availableMemory()), 0);
+#endif
 
 #if USE(EXTENSIONKIT)
     // Workaround for crash seen when running tests. See rdar://118186487.
