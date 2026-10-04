@@ -28,11 +28,11 @@
 
 #include "WPEDisplayQtQuick.h"
 
+#include <epoxy/egl.h>
+
 class QHoverEvent;
 class QKeyEvent;
 class QMouseEvent;
-class QSGTexture;
-class QSize;
 class QTouchEvent;
 class QWheelEvent;
 class WPEQtView;
@@ -45,9 +45,12 @@ G_DECLARE_FINAL_TYPE (WPEViewQtQuick, wpe_view_qtquick, WPE, VIEW_QTQUICK, WPEVi
 WPEView *wpe_view_qtquick_new                              (WPEDisplayQtQuick *display);
 gboolean         wpe_view_qtquick_initialize_rendering     (WPEViewQtQuick    *view, WPEQtView   *wpeQtView, GError **error);
 
+WPEBuffer*       wpe_view_qtquick_acquire_frame            (WPEViewQtQuick *view, EGLImage *outImage, gboolean *didPromote, GError **error);
+void             wpe_view_qtquick_set_frame_release_fence  (WPEViewQtQuick *view, int fd);
+void             wpe_view_qtquick_rollback_frame           (WPEViewQtQuick *view);
+void             wpe_view_qtquick_did_update_scene         (WPEViewQtQuick *view);
+
 void             wpe_view_qtquick_invalidate_rendering     (WPEViewQtQuick    *view);
-QSGTexture*      wpe_view_qtquick_render_buffer_to_texture (WPEViewQtQuick    *view, QSize             size, GError **error);
-void             wpe_view_qtquick_did_update_scene         (WPEViewQtQuick    *view);
 
 void             wpe_view_dispatch_mouse_press_event       (WPEViewQtQuick    *view, QMouseEvent *);
 void             wpe_view_dispatch_mouse_move_event        (WPEViewQtQuick    *view, QMouseEvent *);
