@@ -1537,6 +1537,9 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 # Not relevant for iOS.
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
 
+# eventSender mouse events are no-ops on iOS, so :active cannot be held.
+css3/color-filters/color-filter-ignore-semantic-active-link.html [ Skip ]
+
 # WebCryptoAPI features that enabled only for iOS 11/High Sierra+
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
