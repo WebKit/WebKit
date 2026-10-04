@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsAV1Enabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const configs = [
+    { codec: "av01.0.04M.08", supported: true },
+    { codec: "av01.0.04M.08.0.110.01.01.01.0", supported: true },
+    { codec: "av01.0.04M.10", supported: false },
+    { codec: "av01.0.04M.12", supported: false },
+    { codec: "av01.0.04M.08.1", supported: false },
+    { codec: "av01.0.04M.08.0.000", supported: false },
+    { codec: "av01.0.04M.08.0.100", supported: false },
+];
+
+for (const { codec, supported } of configs) {
+    promise_test(async () => {
+        const support = await VideoEncoder.isConfigSupported({ codec, width: 320, height: 240 });
+        assert_equals(support.supported, supported);
+    }, `VideoEncoder.isConfigSupported ${codec}`);
+}
+</script>
