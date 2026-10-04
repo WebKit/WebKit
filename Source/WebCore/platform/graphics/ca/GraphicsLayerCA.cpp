@@ -1688,7 +1688,7 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
         return true;
 
     if (rects.coverageRect != m_coverageRect) {
-        if (TiledBacking* tiledBacking = this->tiledBacking()) {
+        if (CheckedPtr tiledBacking = this->tiledBacking()) {
             if (tiledBacking->tilesWouldChangeForCoverageRect(rects.coverageRect))
                 return true;
         }
@@ -1886,11 +1886,11 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
 
     switch (type()) {
     case Type::PageTiledBacking:
-        coverageRect = tiledBacking()->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
+        coverageRect = protect(tiledBacking())->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
         break;
     case Type::ScrolledContents:
         if (m_layer->usesTiledBackingLayer())
-            coverageRect = tiledBacking()->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
+            coverageRect = protect(tiledBacking())->adjustTileCoverageRectForScrolling(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
         else {
             // Even if we don't have tiled backing, we want to expand coverage so that contained layers get attached backing store.
             coverageRect = adjustCoverageRectForMovement(coverageRect, oldVisibleRect, rects.visibleRect);
@@ -1899,7 +1899,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     case Type::Normal:
     case Type::TiledBacking:
         if (m_layer->usesTiledBackingLayer())
-            coverageRect = tiledBacking()->adjustTileCoverageRect(coverageRect, oldVisibleRect, rects.visibleRect, size() != m_sizeAtLastCoverageRectUpdate);
+            coverageRect = protect(tiledBacking())->adjustTileCoverageRect(coverageRect, oldVisibleRect, rects.visibleRect, size() != m_sizeAtLastCoverageRectUpdate);
         break;
     default:
         break;
@@ -3075,7 +3075,7 @@ void GraphicsLayerCA::updateDrawsContent()
 void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
 {
     // FIXME: Need to set coverage on clone layers too.
-    if (TiledBacking* backing = tiledBacking()) {
+    if (CheckedPtr backing = tiledBacking()) {
         backing->setVisibleRect(m_visibleRect);
         backing->setCoverageRect(m_coverageRect);
     }
@@ -3188,7 +3188,7 @@ void GraphicsLayerCA::updateTiles()
     if (!m_layer->usesTiledBackingLayer())
         return;
 
-    tiledBacking()->revalidateTiles();
+    protect(tiledBacking())->revalidateTiles();
 }
 
 void GraphicsLayerCA::updateBackgroundColor()
@@ -3226,7 +3226,7 @@ void GraphicsLayerCA::updateContentsImage()
                 if (m_pendingContentsImageBuffer)
                     setLayerContentsToImageBuffer(layer, m_pendingContentsImageBuffer.get());
                 else
-                    layer->setContents(contentsLayer->contents());
+                    layer->setContents(protect(contentsLayer->contents()));
             }
         }
 
@@ -3418,7 +3418,7 @@ void GraphicsLayerCA::updateEventRegion()
 #if ENABLE(SCROLLING_THREAD)
 void GraphicsLayerCA::updateScrollingNode()
 {
-    m_layer->setScrollingNodeID(scrollingNodeID());
+    protect(m_layer)->setScrollingNodeID(scrollingNodeID());
 }
 #endif
 
@@ -4455,7 +4455,7 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 
     if (isPageTiledBackingLayer() && tiledBacking()) {
         float zoomedOutScale = client().zoomedOutPageScaleFactor() * deviceScaleFactor();
-        tiledBacking()->setZoomedOutContentsScale(zoomedOutScale);
+        protect(tiledBacking())->setZoomedOutContentsScale(zoomedOutScale);
     }
 
     if (auto customScale = client().customContentsScale(*this))
@@ -4584,7 +4584,7 @@ String GraphicsLayerCA::replayDisplayListAsText(OptionSet<DisplayList::AsTextFla
         
         TextStream::GroupScope scope(stream);
         stream.dumpProperty("clip"_s, it->value.first);
-        stream << it->value.second->asText(flags);
+        stream << protect(it->value.second)->asText(flags);
         return stream.release();
         
     }
@@ -4847,20 +4847,20 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
             textStream << indent << "(contentsScale limiting factor " << m_contentsScaleLimitingFactor << ")\n";
     }
 
-    if (tiledBacking() && (options & LayerTreeAsTextOptions::IncludeTileCaches)) {
+    if (CheckedPtr tiledBacking = this->tiledBacking(); tiledBacking && (options & LayerTreeAsTextOptions::IncludeTileCaches)) {
         if (options & LayerTreeAsTextOptions::Debug)
-            textStream << indent << "(tiled backing " << tiledBacking() << ")\n";
+            textStream << indent << "(tiled backing " << tiledBacking.get() << ")\n";
 
-        IntRect tileCoverageRect = tiledBacking()->tileCoverageRect();
+        IntRect tileCoverageRect = tiledBacking->tileCoverageRect();
         textStream << indent << "(tile cache coverage " << tileCoverageRect.x() << ", " << tileCoverageRect.y() << " " << tileCoverageRect.width() << " x " << tileCoverageRect.height() << ")\n";
 
-        IntSize tileSize = tiledBacking()->tileSize();
+        IntSize tileSize = tiledBacking->tileSize();
         textStream << indent << "(tile size " << tileSize.width() << " x " << tileSize.height() << ")\n";
         
-        IntRect gridExtent = tiledBacking()->tileGridExtent();
+        IntRect gridExtent = tiledBacking->tileGridExtent();
         textStream << indent << "(top left tile " << gridExtent.x() << ", " << gridExtent.y() << " tiles grid " << gridExtent.width() << " x " << gridExtent.height() << ")\n";
 
-        textStream << indent << "(in window " << tiledBacking()->isInWindow() << ")\n";
+        textStream << indent << "(in window " << tiledBacking->isInWindow() << ")\n";
     }
 
     if (options & LayerTreeAsTextOptions::IncludeDeviceScale)
@@ -4955,7 +4955,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
     Ref newLayer = createPlatformCALayer(newLayerType, this);
     m_layer = newLayer.copyRef();
 
-    if (auto* backing = tiledBacking())
+    if (CheckedPtr backing = tiledBacking())
         backing->setTileCoverage(m_tileCoverage);
 
     newLayer->adoptSublayers(*oldLayer);
@@ -5377,7 +5377,7 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     // contentsLayer is given to us, so we don't really know anything about its contents.
     // FIXME: ignores layer clones.
     
-    if (TiledBacking* tiledBacking = this->tiledBacking())
+    if (CheckedPtr tiledBacking = this->tiledBacking())
         return tiledBacking->retainedTileBackingStoreMemory();
 
     if (!backingStoreAttached())

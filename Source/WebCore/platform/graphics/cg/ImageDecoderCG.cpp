@@ -113,7 +113,7 @@ static void appendImageSourceOption(CFMutableDictionaryRef options, SubsamplingL
 
     subsamplingLevel = std::min(SubsamplingLevel::Last, std::max(SubsamplingLevel::First, subsamplingLevel));
     int subsampleInt = 1 << static_cast<int>(subsamplingLevel); // [0..3] => [1, 2, 4, 8]
-    auto subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
+    RetainPtr subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
     CFDictionarySetValue(options, kCGImageSourceSubsampleFactor, subsampleNumber.get());
 }
 
@@ -137,23 +137,21 @@ static void appendImageSourceOption(CFMutableDictionaryRef options, DecodingDest
 
 static RetainPtr<CFMutableDictionaryRef> imageSourceMetadataOptions()
 {
-    static CFMutableDictionaryRef options;
-    static std::once_flag initializeOptionsOnce;
-    std::call_once(initializeOptionsOnce, [] {
-        options = createImageSourceOptions().leakRef();
-        CFDictionarySetValue(options, kCGImageSourceSkipMetadata, kCFBooleanFalse);
-    });
-
-    return options;
+    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = [] {
+        RetainPtr options = createImageSourceOptions();
+        CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanFalse);
+        return options;
+    }();
+    return options.get();
 }
 
 static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default, DecodingDestination decodingDestination = DecodingDestination::Base)
 {
-    static const auto options = createImageSourceOptions().leakRef();
+    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = createImageSourceOptions();
     if (subsamplingLevel == SubsamplingLevel::Default && decodingDestination == DecodingDestination::Base)
-        return options;
+        return options.get();
 
-    auto extendedOptions = adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options));
+    RetainPtr extendedOptions = adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options.get()));
     appendImageSourceOption(extendedOptions.get(), subsamplingLevel);
     appendImageSourceOption(extendedOptions.get(), decodingDestination);
     return extendedOptions;
@@ -161,13 +159,9 @@ static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplin
 
 static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing, DecodingDestination decodingDestination = DecodingDestination::Base)
 {
-    static CFMutableDictionaryRef options;
-    static std::once_flag initializeOptionsOnce;
-    std::call_once(initializeOptionsOnce, [] {
-        options = createImageSourceThumbnailOptions().leakRef();
-    });
+    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = createImageSourceThumbnailOptions();
 
-    auto extendedOptions = adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options));
+    RetainPtr extendedOptions = adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options.get()));
     appendImageSourceOption(extendedOptions.get(), subsamplingLevel);
     appendImageSourceOption(extendedOptions.get(), sizeForDrawing);
     appendImageSourceOption(extendedOptions.get(), decodingDestination);
@@ -181,7 +175,7 @@ static IntSize frameSizeFromProperties(CFDictionaryRef properties)
 
     auto dimension = [&](const void *key) -> int {
         int value = 0;
-        if (auto num = (CFNumberRef)CFDictionaryGetValue(properties, key))
+        if (RetainPtr num = (CFNumberRef)CFDictionaryGetValue(properties, key))
             CFNumberGetValue(num, kCFNumberIntType, &value);
         return value;
     };
@@ -220,11 +214,11 @@ static CFDictionaryRef animationPropertiesFromProperties(CFDictionaryRef propert
     //      LoopCount = 0;
     //      ...
     //  };
-    auto animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, animationDictionaryName);
+    RetainPtr animationProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, animationDictionaryName);
     if (!animationProperties)
         return nullptr;
 
-    auto frameInfoArray = (CFArrayRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyFrameInfoArray);
+    RetainPtr frameInfoArray = (CFArrayRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyFrameInfoArray);
     if (!frameInfoArray)
         return nullptr;
 
@@ -234,7 +228,7 @@ static CFDictionaryRef animationPropertiesFromProperties(CFDictionaryRef propert
 static ImageOrientation orientationFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
-    CFNumberRef orientationProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyOrientation);
+    RetainPtr orientationProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyOrientation);
     if (!orientationProperty)
         return ImageOrientation::Orientation::None;
     
@@ -246,8 +240,8 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
 static FloatSize frameDensityFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
-    auto resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIWidth);
-    auto resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIHeight);
+    RetainPtr resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIWidth);
+    RetainPtr resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIHeight);
     if (!resolutionXProperty || !resolutionYProperty)
         return { ImageResolution::DefaultResolution, ImageResolution::DefaultResolution };
 
@@ -268,19 +262,19 @@ static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
 static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
-    auto exifDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyExifDictionary);
-    auto tiffDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyTIFFDictionary);
+    RetainPtr exifDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyExifDictionary);
+    RetainPtr tiffDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyTIFFDictionary);
 
     if (!exifDictionary || !tiffDictionary)
         return std::nullopt;
 
-    auto widthProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
-    auto heightProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
-    auto preferredWidthProperty = (CFNumberRef)CFDictionaryGetValue(exifDictionary, kCGImagePropertyExifPixelXDimension);
-    auto preferredHeightProperty = (CFNumberRef)CFDictionaryGetValue(exifDictionary, kCGImagePropertyExifPixelYDimension);
-    auto resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIWidth);
-    auto resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIHeight);
-    auto resolutionUnitProperty = (CFNumberRef)CFDictionaryGetValue(tiffDictionary, kCGImagePropertyTIFFResolutionUnit);
+    RetainPtr widthProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
+    RetainPtr heightProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
+    RetainPtr preferredWidthProperty = (CFNumberRef)CFDictionaryGetValue(exifDictionary, kCGImagePropertyExifPixelXDimension);
+    RetainPtr preferredHeightProperty = (CFNumberRef)CFDictionaryGetValue(exifDictionary, kCGImagePropertyExifPixelYDimension);
+    RetainPtr resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIWidth);
+    RetainPtr resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIHeight);
+    RetainPtr resolutionUnitProperty = (CFNumberRef)CFDictionaryGetValue(tiffDictionary, kCGImagePropertyTIFFResolutionUnit);
 
     if (!preferredWidthProperty || !preferredHeightProperty || !resolutionXProperty || !resolutionYProperty || !resolutionUnitProperty)
         return std::nullopt;
@@ -313,7 +307,7 @@ ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaA
     if (utiHint) {
         const void* key = kCGImageSourceTypeIdentifierHint;
         const void* value = utiHint.get();
-        auto options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         lazyInitialize(m_nativeDecoder, adoptCF(CGImageSourceCreateIncremental(options.get())));
     } else
         lazyInitialize(m_nativeDecoder, adoptCF(CGImageSourceCreateIncremental(nullptr)));
@@ -340,7 +334,7 @@ String ImageDecoderCG::accessibilityDescription() const
     if (!MediaAccessibilityLibrary() || !canLoad_MediaAccessibility_MAImageCaptioningCopyCaptionWithSource())
         return { };
     
-    auto description = adoptCF(MAImageCaptioningCopyCaptionWithSource(m_nativeDecoder.get(), nullptr));
+    RetainPtr description = adoptCF(MAImageCaptioningCopyCaptionWithSource(m_nativeDecoder.get(), nullptr));
     if (!description)
         return { };
     return description.get();
@@ -401,7 +395,7 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
 bool ImageDecoderCG::hasHDRGainMap() const
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    auto properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceMetadataOptions().get()));
+    RetainPtr properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceMetadataOptions().get()));
     if (!properties)
         return false;
 
@@ -417,29 +411,29 @@ bool ImageDecoderCG::hasHDRGainMap() const
     //                      PixelFormat = 875836518;
     //                      Width = 1000;
     //              } );
-    auto fileContentsProperties = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(properties.get(), kCGImagePropertyFileContentsDictionary));
+    RetainPtr fileContentsProperties = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(properties.get(), kCGImagePropertyFileContentsDictionary));
     if (!fileContentsProperties)
         return false;
 
-    auto imagesInfoArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(fileContentsProperties, kCGImagePropertyImages));
+    RetainPtr imagesInfoArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(fileContentsProperties, kCGImagePropertyImages));
     if (!imagesInfoArray || !CFArrayGetCount(imagesInfoArray))
         return false;
 
-    auto imageInfo = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(imagesInfoArray, 0));
+    RetainPtr imageInfo = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(imagesInfoArray, 0));
     if (!imageInfo)
         return false;
 
-    auto auxiliaryDataArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(imageInfo, kCGImagePropertyAuxiliaryData));
+    RetainPtr auxiliaryDataArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(imageInfo, kCGImagePropertyAuxiliaryData));
     if (!auxiliaryDataArray)
         return false;
 
     CFIndex count = CFArrayGetCount(auxiliaryDataArray);
     for (CFIndex index = 0; index < count; ++index) {
-        auto auxiliaryData = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(auxiliaryDataArray, index));
+        RetainPtr auxiliaryData = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(auxiliaryDataArray, index));
         if (!auxiliaryData)
             continue;
 
-        auto type = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(auxiliaryData, kCGImagePropertyAuxiliaryDataType));
+        RetainPtr type = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(auxiliaryData, kCGImagePropertyAuxiliaryDataType));
         if (!type)
             continue;
 
@@ -463,13 +457,13 @@ size_t ImageDecoderCG::primaryFrameIndex() const
 RepetitionCount ImageDecoderCG::repetitionCount() const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceOptions().get()));
-    CFDictionaryRef animationProperties = animationPropertiesFromProperties(properties.get());
+    RetainPtr animationProperties = animationPropertiesFromProperties(properties.get());
 
     // Turns out we're not an animated image after all, so we don't animate.
     if (!animationProperties)
         return RepetitionCountNone;
 
-    CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyLoopCount);
+    RetainPtr num = (CFNumberRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyLoopCount);
 
     // No property means loop once.
     if (!num)
@@ -487,12 +481,12 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
 
 std::optional<IntPoint> ImageDecoderCG::hotSpot() const
 {
-    auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
         return std::nullopt;
     
     int x = -1, y = -1;
-    CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotX"));
+    RetainPtr num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotX"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &x))
         return std::nullopt;
     
@@ -523,7 +517,7 @@ bool ImageDecoderCG::hasAlpha() const
 
 IntSize ImageDecoderCG::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
-    auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
     return frameSizeFromProperties(properties.get());
 }
 
@@ -547,7 +541,7 @@ bool ImageDecoderCG::frameIsCompleteAtIndex(size_t index) const
 
 ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
 {
-    auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
         return ImageOrientation::Orientation::None;
 
@@ -556,14 +550,14 @@ ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
 
 std::optional<IntSize> ImageDecoderCG::frameDensityCorrectedSizeAtIndex(size_t index) const
 {
-    auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
         return std::nullopt;
 
     if (!mayHaveDensityCorrectedSize(properties.get()))
         return std::nullopt;
 
-    auto propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceMetadataOptions().get()));
+    RetainPtr propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceMetadataOptions().get()));
     if (!propertiesWithMetadata)
         return std::nullopt;
     
@@ -574,7 +568,7 @@ Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
 {
     RetainPtr<CFDictionaryRef> properties = nullptr;
     RetainPtr<CFDictionaryRef> frameProperties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
-    CFDictionaryRef animationProperties = animationPropertiesFromProperties(frameProperties.get());
+    RetainPtr animationProperties = animationPropertiesFromProperties(frameProperties.get());
 
     if (frameProperties && !animationProperties) {
         properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceOptions().get()));
@@ -586,9 +580,9 @@ Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
     // Use the unclamped frame delay if it exists. Otherwise use the clamped frame delay.
     float value = 0;
     if (animationProperties) {
-        if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyUnclampedDelayTime))
+        if (RetainPtr num = (CFNumberRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyUnclampedDelayTime))
             CFNumberGetValue(num, kCFNumberFloatType, &value);
-        else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyDelayTime))
+        else if (RetainPtr num = (CFNumberRef)CFDictionaryGetValue(animationProperties, WebCoreCGImagePropertyDelayTime))
             CFNumberGetValue(num, kCFNumberFloatType, &value);
     }
 
@@ -610,7 +604,7 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
 
 bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options, ImageFrame& frame) const
 {
-    auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
     if (!properties)
         return false;
 
@@ -625,7 +619,7 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
 
     if (!mayHaveDensityCorrectedSize(properties.get()))
         frame.m_densityCorrectedSize = std::nullopt;
-    else if (auto propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceMetadataOptions().get())))
+    else if (RetainPtr propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceMetadataOptions().get())))
         frame.m_densityCorrectedSize = densityCorrectedSizeFromProperties(propertiesWithMetadata.get());
     else
         frame.m_densityCorrectedSize = std::nullopt;

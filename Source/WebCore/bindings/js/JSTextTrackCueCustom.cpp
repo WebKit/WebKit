@@ -66,7 +66,8 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
 template<typename Visitor>
 void JSTextTrackCue::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().visitAdditionalChildrenInGCThread(visitor);
+    // Do not ref `wrapped()` here since this function may get called on a GC thread.
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSTextTrackCue);

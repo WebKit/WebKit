@@ -19,7 +19,6 @@ layout/layouttree/LayoutChildIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutDescendantIterator.h
 layout/layouttree/LayoutIterator.h
-platform/graphics/TextRunIterator.h
 rendering/BackgroundPainter.h
 rendering/GlyphDisplayListCache.cpp
 rendering/GridTrackSizingAlgorithm.h

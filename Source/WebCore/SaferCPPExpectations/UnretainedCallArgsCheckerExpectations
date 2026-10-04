@@ -1,30 +1,6 @@
 bridge/objc/WebScriptObject.mm
-platform/cocoa/UserAgentCocoa.mm
-platform/cocoa/WebAVPlayerLayer.mm
-platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
-platform/graphics/ca/GraphicsLayerCA.cpp
-platform/graphics/ca/TileCoverageMap.cpp
-platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm
-[ Mac ] platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
-platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
-platform/graphics/cg/GradientCG.cpp
-platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
-platform/graphics/cg/GraphicsContextGLCG.cpp
-platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
-platform/graphics/cg/ImageBufferCGPDFDocumentBackend.cpp
-platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
-[ iOS ] platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
-platform/graphics/cocoa/CMUtilities.mm
-platform/graphics/cocoa/GraphicsContextCocoa.mm
-platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
-platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
-platform/graphics/cocoa/VideoMediaSampleRenderer.mm
-platform/graphics/cocoa/WebCoreCALayerExtras.mm
-[ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
-[ iOS ] platform/ios/WebEvent.mm
 [ iOS ] platform/ios/wak/WKView.mm
-[ Mac ] platform/mediastream/cocoa/ScreenCaptureKitCaptureSource.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm

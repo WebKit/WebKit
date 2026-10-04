@@ -398,7 +398,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     const bool haveBuiltin = sandboxProfile->builtin;
     int32_t libsandboxVersion = NSVersionOfRunTimeLibrary("sandbox");
     RELEASE_ASSERT(libsandboxVersion > 0);
-    String osVersion = systemMarketingVersion();
+    String osVersion = systemMarketingVersionSingleton();
 
     CachedSandboxHeader cachedHeader {
         CachedSandboxVersionNumber,
@@ -452,7 +452,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     memcpySpan(asMutableByteSpan(cachedSandboxHeader), cachedSandboxContents.span().first(sizeof(CachedSandboxHeader)));
     int32_t libsandboxVersion = NSVersionOfRunTimeLibrary("sandbox");
     RELEASE_ASSERT(libsandboxVersion > 0);
-    String osVersion = systemMarketingVersion();
+    String osVersion = systemMarketingVersionSingleton();
 
     if (cachedSandboxHeader.versionNumber != CachedSandboxVersionNumber)
         return false;

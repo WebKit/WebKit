@@ -31,8 +31,8 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ class DisplayAnimationClient;
 class DisplayRefreshMonitorClient;
 class DisplayRefreshMonitorFactory;
 
-class DisplayRefreshMonitor : public ThreadSafeRefCounted<DisplayRefreshMonitor> {
+class DisplayRefreshMonitor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayRefreshMonitor> {
     friend class DisplayRefreshMonitorManager;
 public:
     static RefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorFactory*, PlatformDisplayID);

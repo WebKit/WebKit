@@ -90,7 +90,7 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
 
     verifyImageBufferIsBigEnough(data.span());
 
-    RetainPtr cgContext = adoptCF(CGBitmapContextCreate(data.mutableSpan().data(), backendSize.width(), backendSize.height(), PixelBuffer::bytesPerPixelComponent(pixelFormat) * 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), bitmapInfoForPixelFormat(pixelFormat)));
+    RetainPtr cgContext = adoptCF(CGBitmapContextCreate(data.mutableSpan().data(), backendSize.width(), backendSize.height(), PixelBuffer::bytesPerPixelComponent(pixelFormat) * 8, bytesPerRow, protect(parameters.colorSpace.platformColorSpace()), bitmapInfoForPixelFormat(pixelFormat)));
     if (!cgContext)
         return nullptr;
 
@@ -133,7 +133,7 @@ bool ImageBufferCGBitmapBackend::canMapBackingStore() const
 
 RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage()
 {
-    return NativeImage::create(adoptCF(CGBitmapContextCreateImage(context().platformContext())));
+    return NativeImage::create(adoptCF(CGBitmapContextCreateImage(protect(context().platformContext()))));
 }
 
 RefPtr<NativeImage> ImageBufferCGBitmapBackend::createNativeImageReference()
@@ -142,7 +142,7 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::createNativeImageReference()
     auto pixelFormat = this->pixelFormat();
     return NativeImage::create(adoptCF(CGImageCreate(
         backendSize.width(), backendSize.height(), PixelBuffer::bytesPerPixelComponent(pixelFormat) * 8, PixelBuffer::bytesPerPixel(pixelFormat) * 8, bytesPerRow(),
-        colorSpace().platformColorSpace(), bitmapInfoForPixelFormat(pixelFormat), m_dataProvider.get(),
+        protect(colorSpace().platformColorSpace()), bitmapInfoForPixelFormat(pixelFormat), m_dataProvider.get(),
         0, true, kCGRenderingIntentDefault)));
 }
 

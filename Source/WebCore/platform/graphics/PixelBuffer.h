@@ -72,7 +72,7 @@ public:
     virtual Type type() const = 0;
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
-    bool setRange(std::span<const uint8_t> data, size_t byteOffset);
+    bool NODELETE setRange(std::span<const uint8_t> data, size_t byteOffset);
     WEBCORE_EXPORT bool zeroRange(size_t byteOffset, size_t rangeByteLength);
     void zeroFill() { zeroRange(0, bytes().size()); }
 

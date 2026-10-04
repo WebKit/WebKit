@@ -36,7 +36,7 @@ static RetainPtr<NSString> createSystemMarketingVersion()
     return adoptNS([(__bridge NSString *)productVersion.get() copy]);
 }
 
-NSString *systemMarketingVersion()
+NSString *systemMarketingVersionSingleton()
 {
     static NeverDestroyed<RetainPtr<NSString>> version = createSystemMarketingVersion();
     return version.get().get();

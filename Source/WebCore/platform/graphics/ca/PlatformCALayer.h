@@ -29,6 +29,7 @@
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/PlatformCALayerClient.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/ScrollingNodeID.h>
@@ -51,7 +52,6 @@ class GraphicsContext;
 class GraphicsLayer;
 class PlatformCALayer;
 class PlatformCAAnimation;
-class PlatformCALayerClient;
 class TiledBacking;
 
 struct AppleVisualEffectData;

@@ -50,7 +50,9 @@ static void patternCallback(void* info, CGContextRef context)
 
 static void patternReleaseCallback(void* info)
 {
-    callOnMainThread([image = adoptCF(static_cast<CGImageRef>(info))] { });
+    callOnMainThread([info] {
+        CFRelease(info);
+    });
 }
 
 RetainPtr<CGPatternRef> Pattern::createPlatformPattern(const AffineTransform& userSpaceTransform) const
@@ -91,10 +93,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     // The pattern will release the CGImageRef when it's done rendering in patternReleaseCallback
-    CGImageRef image = platformImage.leakRef();
+    CFRetain(platformImage.get());
 
     const CGPatternCallbacks patternCallbacks = { 0, patternCallback, patternReleaseCallback };
-    return adoptCF(CGPatternCreate(image, tileRect, patternTransform, xStep, yStep, kCGPatternTilingConstantSpacing, TRUE, &patternCallbacks));
+    return adoptCF(CGPatternCreate(platformImage.get(), tileRect, patternTransform, xStep, yStep, kCGPatternTilingConstantSpacing, TRUE, &patternCallbacks));
 }
 
 }

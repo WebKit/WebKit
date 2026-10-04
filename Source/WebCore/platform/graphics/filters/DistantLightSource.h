@@ -44,7 +44,7 @@ public:
     bool setElevation(float) override;
 
     void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
-    ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
+    ComputedLightingData NODELETE computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 

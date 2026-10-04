@@ -13,11 +13,6 @@ html/HTMLMediaElement.cpp
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h
-platform/PODRedBlackTree.h
-platform/cocoa/TelephoneNumberDetectorCocoa.cpp
-platform/graphics/ca/PlatformCALayer.h
-platform/graphics/ca/TileController.cpp
-platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderTextLineBoxes.h

@@ -30,6 +30,7 @@
 
 #if CACHE_SUBIMAGES
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
@@ -37,23 +38,29 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CGSubimageCacheWithTimer);
 
-CGSubimageCacheWithTimer* CGSubimageCacheWithTimer::s_cache;
+static Lock subimageCacheLock;
+
+static std::unique_ptr<CGSubimageCacheWithTimer>& subimageCacheStorage() WTF_REQUIRES_LOCK(subimageCacheLock)
+{
+    static NeverDestroyed<std::unique_ptr<CGSubimageCacheWithTimer>> cache;
+    return cache.get();
+}
 
 RetainPtr<CGImageRef> CGSubimageCacheWithTimer::getSubimage(CGImageRef image, const FloatRect& rect)
 {
-    return subimageCache().subimage(image, rect);
+    return subimageCacheSingleton().subimage(image, rect);
 }
 
 void CGSubimageCacheWithTimer::clearImage(CGImageRef image)
 {
     if (subimageCacheExists())
-        subimageCache().clearImageAndSubimages(image);
+        subimageCacheSingleton().clearImageAndSubimages(image);
 }
 
 void CGSubimageCacheWithTimer::clear()
 {
     if (subimageCacheExists())
-        subimageCache().clearAll();
+        subimageCacheSingleton().clearAll();
 }
 
 struct CGSubimageRequest {
@@ -149,18 +156,19 @@ void CGSubimageCacheWithTimer::clearAll()
     m_cache.clear();
 }
 
-CGSubimageCacheWithTimer& CGSubimageCacheWithTimer::subimageCache()
+CGSubimageCacheWithTimer& CGSubimageCacheWithTimer::subimageCacheSingleton()
 {
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        s_cache = new CGSubimageCacheWithTimer;
-    });
-    return *s_cache;
+    Locker locker { subimageCacheLock };
+    auto& cache = subimageCacheStorage();
+    if (!cache)
+        cache = std::unique_ptr<CGSubimageCacheWithTimer>(new CGSubimageCacheWithTimer);
+    return *cache;
 }
 
 bool CGSubimageCacheWithTimer::subimageCacheExists()
 {
-    return !!s_cache;
+    Locker locker { subimageCacheLock };
+    return !!subimageCacheStorage();
 }
 
 } // namespace WebCore

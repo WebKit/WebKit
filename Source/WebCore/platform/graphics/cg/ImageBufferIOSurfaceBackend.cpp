@@ -129,7 +129,7 @@ void ImageBufferIOSurfaceBackend::flushContext()
 void ImageBufferIOSurfaceBackend::submitDrawingCommands()
 {
     if (PAL::canLoad_CoreGraphics_CGIOSurfaceContextFlushQueue())
-        PAL::softLink_CoreGraphics_CGIOSurfaceContextFlushQueue(ensurePlatformContext());
+        PAL::softLink_CoreGraphics_CGIOSurfaceContextFlushQueue(protect(ensurePlatformContext()));
     else {
         // Creating a snapshot image forces the rendering to commence
         createImage();
@@ -142,7 +142,7 @@ bool ImageBufferIOSurfaceBackend::flushContextDraws()
     if (!contextNeedsFlush && !m_needsFirstFlush)
         return false;
     m_needsFirstFlush = false;
-    CGContextFlush(ensurePlatformContext());
+    CGContextFlush(protect(ensurePlatformContext()));
     return true;
 }
 
@@ -175,11 +175,11 @@ bool ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
     // current state of the IOSurface.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
     if (PAL::canLoad_CoreGraphics_CGIOSurfaceContextInvalidateSurface()) {
-        PAL::softLink_CoreGraphics_CGIOSurfaceContextInvalidateSurface(ensurePlatformContext());
+        PAL::softLink_CoreGraphics_CGIOSurfaceContextInvalidateSurface(protect(ensurePlatformContext()));
         return false;
     }
 
-    CGContextFillRect(ensurePlatformContext(), CGRect { });
+    CGContextFillRect(protect(ensurePlatformContext()), CGRect { });
     return true;
 }
 
@@ -315,21 +315,21 @@ void ImageBufferIOSurfaceBackend::prepareForExternalWrite()
     if (flushContextDraws())
         needFlush = false;
     if (needFlush)
-        CGContextFlush(ensurePlatformContext());
+        CGContextFlush(protect(ensurePlatformContext()));
 }
 
 RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::createImage()
 {
     // Consumers may hold on to the image, so mark external writes needing the invalidation marker.
     m_mayHaveOutstandingBackingStoreReferences = true;
-    return m_surface->createImage(ensurePlatformContext());
+    return m_surface->createImage(protect(ensurePlatformContext()));
 }
 
 RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::createImageReference()
 {
     // The reference is used only in synchronized manner, so after the use ends, we can update
     // externally without invalidation marker. Thus we do not set m_mayHaveOutstandingBackingStoreReferences.
-    auto image = adoptCF(CGIOSurfaceContextCreateImageReference(ensurePlatformContext()));
+    RetainPtr image = adoptCF(CGIOSurfaceContextCreateImageReference(protect(ensurePlatformContext())));
     // CG has internal caches for some operations related to software bitmap draw.
     // One of these caches are per-image color matching cache. Since these will not get any hits
     // from an image that is recreated every time, mark the image transient to skip these caches.

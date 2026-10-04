@@ -442,7 +442,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     if (rangeStart.isInvalid())
         return;
 
-    MediaTime currentTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_avPlayerItem timebase]));
+    MediaTime currentTime = PAL::toMediaTime(PAL::CMTimebaseGetTime(protect([m_avPlayerItem timebase])));
     if (currentTime.isInvalid())
         return;
 

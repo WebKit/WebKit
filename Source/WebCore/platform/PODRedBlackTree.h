@@ -63,6 +63,43 @@
 
 namespace WebCore {
 
+enum class PODRedBlackTreeNodeColor : bool { Red, Black };
+
+template<typename T> class PODRedBlackTreeNode {
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(PODRedBlackTreeNode);
+    WTF_MAKE_NONCOPYABLE(PODRedBlackTreeNode);
+public:
+    using Color = PODRedBlackTreeNodeColor;
+
+    explicit PODRedBlackTreeNode(T&& data)
+        : m_data(WTF::move(data))
+    {
+    }
+
+    Color color() const { return m_color; }
+    void setColor(Color color) { m_color = color; }
+
+    T& data() LIFETIME_BOUND { return m_data; }
+
+    void moveDataFrom(PODRedBlackTreeNode& src) { m_data = WTF::move(src.m_data); }
+
+    PODRedBlackTreeNode* left() const { return m_left; }
+    void setLeft(PODRedBlackTreeNode* node) { m_left = node; }
+
+    PODRedBlackTreeNode* right() const { return m_right; }
+    void setRight(PODRedBlackTreeNode* node) { m_right = node; }
+
+    PODRedBlackTreeNode* parent() const { return m_parent; }
+    void setParent(PODRedBlackTreeNode* node) { m_parent = node; }
+
+private:
+    PODRedBlackTreeNode* m_left { nullptr };
+    PODRedBlackTreeNode* m_right { nullptr };
+    PODRedBlackTreeNode* m_parent { nullptr };
+    Color m_color { Color::Red };
+    T m_data;
+};
+
 template<typename T, typename NodeUpdaterType> class PODRedBlackTree {
     WTF_MAKE_NONCOPYABLE(PODRedBlackTree);
 public:
@@ -141,40 +178,9 @@ public:
 #endif
 
 protected:
-    enum Color { Red, Black };
-
-    class Node {
-        WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Node);
-        WTF_MAKE_NONCOPYABLE(Node);
-    public:
-        explicit Node(T&& data)
-            : m_data(WTF::move(data))
-        {
-        }
-
-        Color color() const { return m_color; }
-        void setColor(Color color) { m_color = color; }
-
-        T& data() LIFETIME_BOUND { return m_data; }
-
-        void moveDataFrom(Node& src) { m_data = WTF::move(src.m_data); }
-
-        Node* left() const { return m_left; }
-        void setLeft(Node* node) { m_left = node; }
-
-        Node* right() const { return m_right; }
-        void setRight(Node* node) { m_right = node; }
-
-        Node* parent() const { return m_parent; }
-        void setParent(Node* node) { m_parent = node; }
-
-    private:
-        Node* m_left { nullptr };
-        Node* m_right { nullptr };
-        Node* m_parent { nullptr };
-        Color m_color { Red };
-        T m_data;
-    };
+    using Color = PODRedBlackTreeNodeColor;
+    using enum PODRedBlackTreeNodeColor;
+    using Node = PODRedBlackTreeNode<T>;
 
     // Returns the root of the tree, which is needed by some subclasses.
     Node* root() const { return m_root; }
@@ -632,12 +638,6 @@ private:
 #endif
 };
 
-#define TZONE_TEMPLATE_PARAMS template<typename T, typename NodeUpdaterType>
-#define TZONE_TYPE PODRedBlackTree<T, NodeUpdaterType>::Node
-
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
-
-#undef TZONE_TEMPLATE_PARAMS
-#undef TZONE_TYPE
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, PODRedBlackTreeNode<T>);
 
 } // namespace WebCore

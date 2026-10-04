@@ -273,7 +273,7 @@ struct LogArgument<URL> {
 
 namespace WebCore {
 
-typedef PODIntervalTree<MediaTime, TextTrackCue*> TextTrackCueIntervalTree;
+using TextTrackCueIntervalTree = PODIntervalTree<MediaTime, CheckedPtr<TextTrackCue>>;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLMediaElement);
 
@@ -2243,7 +2243,7 @@ static bool eventTimeCueCompare(const std::pair<MediaTime, RefPtr<TextTrackCue>>
 
 static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
 {
-    return RefPtr { one.data() }->isOrderedBefore(RefPtr { two.data() }.get());
+    return protect(one.data())->isOrderedBefore(protect(two.data()));
 }
 
 static bool compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)

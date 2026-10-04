@@ -49,6 +49,12 @@ using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
 
 @implementation WebEvent {
+    RetainPtr<NSString> _characters;
+    RetainPtr<NSString> _charactersIgnoringModifiers;
+    RetainPtr<NSString> _inputManagerHint;
+    RetainPtr<NSArray> _touchLocations;
+    RetainPtr<NSArray> _touchIdentifiers;
+    RetainPtr<NSArray> _touchPhases;
 #if USE(BROWSERENGINEKIT)
     RetainPtr<BEKeyEntry> _originalKeyEntry;
 #endif
@@ -119,9 +125,9 @@ using WebCore::windowsKeyCodeForCharCode;
     // FIXME: <rdar://problem/7185284> TouchEvents may be in more than one window some day.
     _locationInWindow = point;
     _touchCount = touchCount;
-    _touchLocations = [touchLocations copy];
-    _touchIdentifiers = [touchIdentifiers copy];
-    _touchPhases = [touchPhases copy];
+    _touchLocations = adoptNS([touchLocations copy]);
+    _touchIdentifiers = adoptNS([touchIdentifiers copy]);
+    _touchPhases = adoptNS([touchPhases copy]);
     _isGesture = isGesture;
     _gestureScale = gestureScale;
     _gestureRotation = gestureRotation;
@@ -196,7 +202,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     _timestamp = timeStamp;
     _modifierFlags = modifiers;
     _keyboardFlags = flags;
-    _inputManagerHint = [hint retain];
+    _inputManagerHint = hint;
 
     BOOL flagsChanged = _keyboardFlags & WebEventKeyboardInputModifierFlagsChanged;
     if (!flagsChanged) {
@@ -216,26 +222,13 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     }
 
     if (!flagsChanged) {
-        _characters = [normalizedStringWithAppKitCompatibilityMapping(characters, keyCode) retain];
-        _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode) retain];
+        _characters = normalizedStringWithAppKitCompatibilityMapping(characters, keyCode);
+        _charactersIgnoringModifiers = normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode);
         _tabKey = tabKey;
         _keyRepeating = repeating;
     }
 
     return self;
-}
-
-- (void)dealloc
-{
-    [_characters release];
-    [_charactersIgnoringModifiers release];
-    [_inputManagerHint release];
-
-    [_touchLocations release];
-    [_touchIdentifiers release];
-    [_touchPhases release];
-    
-    [super dealloc];
 }
 
 - (NSString *)_typeDescription
@@ -312,7 +305,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     BOOL shouldAddComma = NO;
     NSMutableString *description = [NSMutableString string];
-    for (NSNumber *identifier in _touchIdentifiers) {
+    for (NSNumber *identifier in _touchIdentifiers.get()) {
         [description appendFormat:@"%@%u", (shouldAddComma ? @", " : @""), [identifier unsignedIntValue]];
         shouldAddComma = YES;
     }
@@ -342,7 +335,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     BOOL shouldAddComma = NO;
     NSMutableString *description = [NSMutableString string];
-    for (NSNumber *phase in _touchPhases) {
+    for (NSNumber *phase in _touchPhases.get()) {
         [description appendFormat:@"%@%@", (shouldAddComma ? @", " : @""), [self _touchPhaseDescription:static_cast<WebEventTouchPhaseType>([phase unsignedIntValue])]];
         shouldAddComma = YES;
     }
@@ -362,7 +355,7 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     case WebEventKeyUp:
         if (_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
             return [NSString stringWithFormat:@"flags: %d keyboardFlags: %lu keyCode %d", _modifierFlags, static_cast<unsigned long>(_keyboardFlags), _keyCode];
-        return [NSString stringWithFormat:@"chars: %@ charsNoModifiers: %@ flags: %d repeating: %d keyboardFlags: %lu keyCode %d, isTab: %d", _characters, _charactersIgnoringModifiers, _modifierFlags, _keyRepeating, static_cast<unsigned long>(_keyboardFlags), _keyCode, _tabKey];
+        return [NSString stringWithFormat:@"chars: %@ charsNoModifiers: %@ flags: %d repeating: %d keyboardFlags: %lu keyCode %d, isTab: %d", _characters.get(), _charactersIgnoringModifiers.get(), _modifierFlags, _keyRepeating, static_cast<unsigned long>(_keyboardFlags), _keyCode, _tabKey];
     case WebEventTouchBegin:
     case WebEventTouchChange:
     case WebEventTouchEnd:
@@ -392,19 +385,19 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, _type == WebEventKeyDown || _type == WebEventKeyUp);
     ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, !(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
-    return retainPtr(_characters).autorelease();
+    return RetainPtr { _characters }.autorelease();
 }
 
 - (NSString *)charactersIgnoringModifiers
 {
     ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, _type == WebEventKeyDown || _type == WebEventKeyUp);
     ASSERT_IMPLIES(_shouldAssertWhenAccessingCharactersForKey, !(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged));
-    return retainPtr(_charactersIgnoringModifiers).autorelease();
+    return RetainPtr { _charactersIgnoringModifiers }.autorelease();
 }
 
 - (NSString *)inputManagerHint
 {
-    return retainPtr(_inputManagerHint).autorelease();
+    return RetainPtr { _inputManagerHint }.autorelease();
 }
 
 - (WebEventFlags)modifierFlags
@@ -566,8 +559,8 @@ static inline bool isChangingKeyModifiers(BEKeyEntry *event)
     auto keyInfo = event.key;
     _modifierFlags = webEventModifierFlags(keyInfo.modifierFlags);
     _keyCode = static_cast<uint16_t>(keyInfo.keyCode);
-    _characters = [keyInfo.characters retain];
-    _charactersIgnoringModifiers = [keyInfo.charactersIgnoringModifiers retain];
+    _characters = keyInfo.characters;
+    _charactersIgnoringModifiers = keyInfo.charactersIgnoringModifiers;
     _tabKey = NO; // FIXME: Populate this field appropriately.
     _keyRepeating = event.keyRepeating;
     _originalKeyEntry = event;

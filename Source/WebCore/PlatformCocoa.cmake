@@ -424,7 +424,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/GraphicsLayerCA.cpp
     platform/graphics/ca/PlatformCAAnimation.cpp
     platform/graphics/ca/PlatformCALayer.mm
-    platform/graphics/ca/TileController.cpp
+    platform/graphics/ca/TileController.mm
     platform/graphics/ca/TileCoverageMap.cpp
     platform/graphics/ca/TileGrid.cpp
     platform/graphics/ca/TransformationMatrixCA.cpp

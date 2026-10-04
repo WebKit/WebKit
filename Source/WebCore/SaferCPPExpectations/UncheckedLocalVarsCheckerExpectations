@@ -12,8 +12,6 @@ layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
-platform/graphics/ca/GraphicsLayerCA.cpp
-platform/graphics/cg/CGSubimageCacheWithTimer.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/CounterNode.cpp

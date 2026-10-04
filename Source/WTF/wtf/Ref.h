@@ -67,7 +67,7 @@ template<typename T> struct DefaultRefDerefTraits {
 };
 
 template<typename T>
-concept CanUseDefaultRefDerefTraits = HasRefPtrMemberFunctions<T> || !DefaultRefDerefTraits<T>::isDefaultImplementation;
+concept CanUseDefaultRefDerefTraits = !std::is_void_v<T> && (HasRefPtrMemberFunctions<T> || !DefaultRefDerefTraits<T>::isDefaultImplementation);
 
 template<typename T, typename PtrTraits, typename RefDerefTraits> class Ref;
 template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> Ref<T, PtrTraits, RefDerefTraits> adoptRef(T&);

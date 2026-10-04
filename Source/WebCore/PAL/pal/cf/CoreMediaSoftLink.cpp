@@ -48,6 +48,8 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMVideoFormatDescripti
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMVideoFormatDescriptionGetH264ParameterSetAtIndex, OSStatus, (CMFormatDescriptionRef videoDesc, size_t parameterSetIndex, const uint8_t** parameterSetPointerOut, size_t* parameterSetSizeOut, size_t* parameterSetCountOut, int* nalUnitHeaderLengthOut), (videoDesc, parameterSetIndex, parameterSetPointerOut, parameterSetSizeOut, parameterSetCountOut, nalUnitHeaderLengthOut), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMSampleBufferGetTypeID, CFTypeID, (void), (), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMFormatDescriptionGetTypeID, CFTypeID, (void), (), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMTimebaseGetTypeID, CFTypeID, (void), (), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, (CMSampleBufferRef sbuf), (sbuf), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMSampleBufferGetAudioStreamPacketDescriptions, OSStatus, (CMSampleBufferRef sbuf, size_t packetDescriptionsSize, AudioStreamPacketDescription* packetDescriptionsOut, size_t* packetDescriptionsSizeNeededOut), (sbuf, packetDescriptionsSize, packetDescriptionsOut, packetDescriptionsSizeNeededOut), PAL_EXPORT)

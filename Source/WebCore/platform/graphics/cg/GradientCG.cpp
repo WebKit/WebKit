@@ -66,7 +66,7 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 
 void Gradient::paint(GraphicsContext& context)
 {
-    paint(context.platformContext(), nonLinearColorSpace(context.colorSpace()));
+    paint(protect(context.platformContext()), nonLinearColorSpace(context.colorSpace()));
 }
 
 void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace)

@@ -140,7 +140,7 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
             const Ref dropShadowOperation = downcast<DropShadowFilterOperation>(initialFilterOperation);
             auto size = CGSizeMake(dropShadowOperation->x(), dropShadowOperation->y());
             presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowOffset" initialValue:[NSValue value:&size withObjCType:@encode(CGSize)] additive:NO group:group.get()]) });
-            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowColor" initialValue:(id) cachedCGColor(dropShadowOperation->color()).autorelease() additive:NO group:group.get()]) });
+            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowColor" initialValue:bridge_id_cast(cachedCGColor(dropShadowOperation->color())) additive:NO group:group.get()]) });
             presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"shadowRadius" initialValue:@(dropShadowOperation->stdDeviation()) additive:NO group:group.get()]) });
             continue;
         }
@@ -185,7 +185,7 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
             const Ref dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
             auto size = CGSizeMake(dropShadowOperation->x(), dropShadowOperation->y());
             [presentationModifiers[i].second.get() setValue:[NSValue value:&size withObjCType:@encode(CGSize)]];
-            [presentationModifiers[i + 1].second.get() setValue:(id) cachedCGColor(dropShadowOperation->color()).autorelease()];
+            [presentationModifiers[i + 1].second.get() setValue:bridge_id_cast(cachedCGColor(dropShadowOperation->color()))];
             [presentationModifiers[i + 2].second.get() setValue:@(dropShadowOperation->stdDeviation())];
             i += 2;
             continue;

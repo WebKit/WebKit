@@ -48,7 +48,7 @@ public:
     friend bool operator==(const TextRunIterator&, const TextRunIterator&) = default;
 
 private:
-    const TextRun* m_textRun { nullptr };
+    CheckedPtr<const TextRun> m_textRun;
     unsigned m_offset { 0 };
 };
 

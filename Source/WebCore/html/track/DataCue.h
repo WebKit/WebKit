@@ -45,6 +45,7 @@ class ScriptExecutionContext;
 
 class DataCue final : public TextTrackCue {
     WTF_MAKE_TZONE_ALLOCATED(DataCue);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DataCue);
 public:
     static Ref<DataCue> create(Document&, double start, double end, ArrayBuffer& data);
     static Ref<DataCue> create(Document&, double start, double end, JSC::JSValue, const String& type);

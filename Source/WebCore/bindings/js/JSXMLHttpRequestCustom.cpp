@@ -45,7 +45,8 @@ using namespace JSC;
 template<typename Visitor>
 void JSXMLHttpRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().visitAdditionalChildrenInGCThread(visitor);
+    // Do not ref `wrapped()` here since this function may get called on a GC thread.
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSXMLHttpRequest);

@@ -74,8 +74,9 @@ private:
     WeakPtr<TextTrackCue, WeakPtrImplWithEventTargetData> m_cue;
 };
 
-class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget, public ActiveDOMObject {
+class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget, public ActiveDOMObject, public CanMakeCheckedPtr<TextTrackCue> {
     WTF_MAKE_TZONE_ALLOCATED(TextTrackCue);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCue);
 public:
     static ExceptionOr<Ref<TextTrackCue>> create(Document&, double start, double end, DocumentFragment&);
     ~TextTrackCue();

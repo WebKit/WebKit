@@ -16,12 +16,9 @@ dom/Node.cpp
 dom/Node.h
 dom/TreeScope.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
-platform/PODInterval.h
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
 platform/graphics/filters/software/FELightingSoftwareApplier.h
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.h
-[ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
-[ iOS ] platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h

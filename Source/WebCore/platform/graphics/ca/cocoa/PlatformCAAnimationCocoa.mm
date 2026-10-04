@@ -217,7 +217,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::copy() const
     animation->copyTimingFunctionFrom(*this);
     animation->setValueFunction(valueFunction());
 
-    setHasExplicitBeginTime(downcast<PlatformCAAnimationCocoa>(animation.get()).platformAnimation(), hasExplicitBeginTime(platformAnimation()));
+    setHasExplicitBeginTime(protect(downcast<PlatformCAAnimationCocoa>(animation.get()).platformAnimation()), hasExplicitBeginTime(protect(platformAnimation())));
     
     // Copy the specific Basic or Keyframe values.
     if (animationType() == AnimationType::Keyframe) {

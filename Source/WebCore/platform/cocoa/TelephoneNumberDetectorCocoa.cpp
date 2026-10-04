@@ -28,19 +28,13 @@
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
+#include <pal/spi/cocoa/DataDetectorsCoreDFASPI.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/darwin/DispatchExtras.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <DataDetectorsCore/DDDFAScanner.h>
-#else
-typedef struct __DDDFAScanner DDDFAScanner, * DDDFAScannerRef;
-struct __DDDFACache;
-#endif
-
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
-SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, struct __DDDFACache*, (), ())
-SOFT_LINK(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (struct __DDDFACache* cache), (cache))
+SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, DDDFACacheRef, (), ())
+SOFT_LINK(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (DDDFACacheRef cache), (cache))
 SOFT_LINK(DataDetectorsCore, DDDFAScannerFirstResultInUnicharArray, Boolean, (DDDFAScannerRef scanner, const UniChar* str, unsigned length, int* startPos, int* endPos), (scanner, str, length, startPos, endPos))
 
 namespace WebCore {
@@ -52,7 +46,7 @@ static DDDFAScannerRef phoneNumbersScanner()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         if (DataDetectorsCoreLibrary()) {
-            if (auto cache = adoptCF(DDDFACacheCreateFromFramework()))
+            if (RetainPtr cache = adoptCF(DDDFACacheCreateFromFramework()))
                 scanner.get() = adoptCF(DDDFAScannerCreateFromCache(cache.get()));
         }
     });

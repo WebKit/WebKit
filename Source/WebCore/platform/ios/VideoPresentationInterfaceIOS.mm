@@ -50,6 +50,7 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -393,8 +394,8 @@ void VideoPresentationInterfaceIOS::videoDimensionsChanged(const FloatSize& vide
     [playerLayerView setNeedsLayout];
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-    RetainPtr pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView pictureInPicturePlayerLayerView];
-    WebAVPlayerLayer *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
+    RetainPtr pipView = [playerLayerView pictureInPicturePlayerLayerView];
+    WebAVPlayerLayer *pipPlayerLayer = checked_objc_cast<WebAVPlayerLayer>([pipView layer]);
     [pipPlayerLayer setVideoDimensions:[playerLayer videoDimensions]];
     [pipView setNeedsLayout];
 #endif
@@ -494,8 +495,8 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
     FloatSize size;
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     if (m_currentMode.hasPictureInPicture()) {
-        RetainPtr pipView = (WebAVPictureInPicturePlayerLayerView *)[protect(playerLayerView()) pictureInPicturePlayerLayerView];
-        auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
+        RetainPtr pipView = [protect(playerLayerView()) pictureInPicturePlayerLayerView];
+        auto *pipPlayerLayer = checked_objc_cast<WebAVPlayerLayer>([pipView layer]);
         auto videoFrame = [pipPlayerLayer calculateTargetVideoFrame];
         size = FloatSize(videoFrame.size());
     }

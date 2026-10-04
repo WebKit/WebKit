@@ -35,6 +35,7 @@
 #import <wtf/LoggerHelper.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -65,7 +66,7 @@ static Class WebAVPlayerLayerView_layerClass(id, SEL)
 
 static WebAVPlayerLayer *WebAVPlayerLayerView_webPlayerLayer(WebAVPlayerLayerView *self, SEL)
 {
-    return (WebAVPlayerLayer *)[self playerLayer];
+    return checked_objc_cast<WebAVPlayerLayer>([self playerLayer]);
 }
 
 static void WebAVPlayerLayerView_transferVideoViewTo(WebAVPlayerLayerView *self, SEL, WebAVPlayerLayerView *targetPlayerLayerView)
@@ -104,7 +105,8 @@ static AVPlayerLayer *WebAVPlayerLayerView_playerLayer(WebAVPlayerLayerView *sel
         return superClassMethod(&superClass, sel);
     }
 
-    return (AVPlayerLayer *)[self layer];
+    // The backing layer is a WebAVPlayerLayer (see layerClass), which mimics AVPlayerLayer without subclassing it.
+    SUPPRESS_MEMORY_UNSAFE_CAST return (AVPlayerLayer *)[self layer];
 }
 
 static UIView *WebAVPlayerLayerView_videoView(WebAVPlayerLayerView *self, SEL)
@@ -128,10 +130,10 @@ static void WebAVPlayerLayerView_setVideoView(WebAVPlayerLayerView *self, SEL, U
 static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView(WebAVPlayerLayerView *self, SEL)
 {
     OBJC_ALWAYS_LOG(C_OBJC_LOGIDENTIFIER);
-    auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[self pictureInPicturePlayerLayerView];
+    auto *pipView = [self pictureInPicturePlayerLayerView];
 
     auto *playerLayer = [self webPlayerLayer];
-    auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
+    auto *pipPlayerLayer = checked_objc_cast<WebAVPlayerLayer>([pipView layer]);
     [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [pipPlayerLayer setPresentationModel:playerLayer.presentationModel];
     [pipPlayerLayer setVideoSublayer:playerLayer.videoSublayer];
@@ -146,10 +148,10 @@ static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerV
 static void WebAVPlayerLayerView_stopRoutingVideoToPictureInPicturePlayerLayerView(WebAVPlayerLayerView *self, SEL)
 {
     OBJC_ALWAYS_LOG(C_OBJC_LOGIDENTIFIER);
-    auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[self pictureInPicturePlayerLayerView];
+    auto *pipView = [self pictureInPicturePlayerLayerView];
 
     auto *playerLayer = [self webPlayerLayer];
-    auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
+    auto *pipPlayerLayer = checked_objc_cast<WebAVPlayerLayer>([pipView layer]);
     [self addSubview:self.videoView];
     [playerLayer setCaptionsLayer:pipPlayerLayer.captionsLayer];
     [playerLayer layoutSublayers];

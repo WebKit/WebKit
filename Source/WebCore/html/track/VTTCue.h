@@ -114,6 +114,7 @@ class VTTCue
 #endif
 {
     WTF_MAKE_TZONE_ALLOCATED(VTTCue);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VTTCue);
 public:
     static ExceptionOr<Ref<VTTCue>> create(Document&, double start, double end, String&& content);
     static Ref<VTTCue> create(Document&, Ref<WebVTTCueData>&&);

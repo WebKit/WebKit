@@ -11126,6 +11126,7 @@
 		410AED862FDC32840090C073 /* LibWebRTCVideoFrameUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCVideoFrameUtilities.cpp; path = libwebrtc/LibWebRTCVideoFrameUtilities.cpp; sourceTree = "<group>"; };
 		410B38EC292BECFE0003E515 /* LibWebRTCDav1dDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCDav1dDecoder.cpp; path = libwebrtc/LibWebRTCDav1dDecoder.cpp; sourceTree = "<group>"; };
 		410B38ED292BECFF0003E515 /* LibWebRTCDav1dDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCDav1dDecoder.h; path = libwebrtc/LibWebRTCDav1dDecoder.h; sourceTree = "<group>"; };
+		6231BE248F6F0BC13EE7CB63 /* Dav1dSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Dav1dSPI.h; path = libwebrtc/Dav1dSPI.h; sourceTree = "<group>"; };
 		410B3937292F6E890003E515 /* ReadableStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStream.cpp; sourceTree = "<group>"; };
 		410B3938292F6E8A0003E515 /* ReadableStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReadableStream.h; sourceTree = "<group>"; };
 		410B3939292F70D50003E515 /* InternalReadableStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InternalReadableStream.cpp; sourceTree = "<group>"; };
@@ -15088,7 +15089,7 @@
 		7A929CA21C598378004DF226 /* ResourceLoadStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatistics.h; sourceTree = "<group>"; };
 		7A93868218DCC14500B8263D /* VTTScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTScanner.cpp; sourceTree = "<group>"; };
 		7A93868318DCC14500B8263D /* VTTScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTTScanner.h; sourceTree = "<group>"; };
-		7AA3A695194A64E7001CBD24 /* TileController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileController.cpp; sourceTree = "<group>"; };
+		7AA3A695194A64E7001CBD24 /* TileController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TileController.mm; sourceTree = "<group>"; };
 		7AA3A696194A64E7001CBD24 /* TileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileController.h; sourceTree = "<group>"; };
 		7AA3A697194A64E7001CBD24 /* TileGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileGrid.cpp; sourceTree = "<group>"; };
 		7AA3A698194A64E7001CBD24 /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileGrid.h; sourceTree = "<group>"; };
@@ -27724,6 +27725,7 @@
 		415747421E38698000E914D8 /* libwebrtc */ = {
 			isa = PBXGroup;
 			children = (
+				6231BE248F6F0BC13EE7CB63 /* Dav1dSPI.h */,
 				41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */,
 				415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */,
 				415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */,
@@ -29091,8 +29093,8 @@
 				2D70BA1418074F850001908A /* PlatformCALayer.mm */,
 				493E5E0812D6420500020081 /* PlatformCALayerClient.h */,
 				7B434D1329DB0FD00062E8D1 /* PlatformCALayerDelegatedContents.h */,
-				7AA3A695194A64E7001CBD24 /* TileController.cpp */,
 				7AA3A696194A64E7001CBD24 /* TileController.h */,
+				7AA3A695194A64E7001CBD24 /* TileController.mm */,
 				7AA3A6A1194B5C22001CBD24 /* TileCoverageMap.cpp */,
 				7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */,
 				7AA3A697194A64E7001CBD24 /* TileGrid.cpp */,

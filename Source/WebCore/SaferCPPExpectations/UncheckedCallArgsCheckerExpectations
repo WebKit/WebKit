@@ -121,13 +121,6 @@ layout/layouttree/FormattingContextBoxIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
 page/IntersectionObserver.cpp
-platform/graphics/ca/FrameProcessIndicators.cpp
-platform/graphics/ca/GraphicsLayerCA.cpp
-platform/graphics/ca/TileController.cpp
-platform/graphics/ca/TileCoverageMap.cpp
-platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
-platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AttachmentLayout.mm
 rendering/AutoTableLayout.cpp

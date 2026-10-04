@@ -36,6 +36,7 @@ namespace WebCore {
 // A "generic" cue is a non-WebVTT cue, so it is not positioned/sized with the WebVTT logic.
 class TextTrackCueGeneric final : public VTTCue {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextTrackCueGeneric, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGeneric);
 public:
     WEBCORE_EXPORT static Ref<TextTrackCueGeneric> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
 

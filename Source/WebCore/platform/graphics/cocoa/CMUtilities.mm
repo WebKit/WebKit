@@ -118,8 +118,8 @@ static Vector<std::pair<FourCC, Ref<SharedBuffer>>> parseExtensionAtomsDictionar
     // of CFData (multiple atoms of the same FourCC). Expand arrays into multiple
     // entries sharing a FourCC.
     for (CFIndex index = indexStart; index < extensionCount; ++index) {
-        auto fourCC = cfStringToFourCC(checked_cf_cast<CFStringRef>(keys[index]));
-        CFTypeRef value = static_cast<CFTypeRef>(values[index]);
+        auto fourCC = cfStringToFourCC(protect(checked_cf_cast<CFStringRef>(keys[index])));
+        RetainPtr value = static_cast<CFTypeRef>(values[index]);
         if (RetainPtr data = dynamic_cf_cast<CFDataRef>(value))
             result.append({ fourCC, SharedBuffer::create(data.get()) });
         else if (RetainPtr array = dynamic_cf_cast<CFArrayRef>(value)) {
@@ -660,13 +660,13 @@ std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const
         return makeUnexpected("CMSampleBufferCreateReady failed: OOM"_s);
 
     if (samples.isVideo() && samples.size()) {
-        auto attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(rawSampleBuffer, true);
+        RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(rawSampleBuffer, true);
         ASSERT(attachmentsArray);
         if (!attachmentsArray)
             return makeUnexpected("No sample attachment found"_s);
         ASSERT(size_t(CFArrayGetCount(attachmentsArray)) == samples.size());
         for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
-            CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+            RetainPtr attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
             if (!(samples[i].flags & MediaSample::SampleFlags::IsSync))
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
 
@@ -733,19 +733,20 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
 
     auto mediaSampleItemForSample = [](auto&& sample) {
         MediaTime duration = sample->duration();
-        RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(sample->sampleBuffer());
+        RetainPtr sampleBuffer = sample->sampleBuffer();
+        RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
         auto trimDurationAtStart = MediaTime::zeroTime();
-        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sample->sampleBuffer(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart, nullptr)))
+        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sampleBuffer, PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart, nullptr)))
             trimDurationAtStart = PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict.get()));
         auto trimDurationAtEnd = MediaTime::zeroTime();
-        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sample->sampleBuffer(), PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd, nullptr)))
+        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sampleBuffer, PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd, nullptr)))
             trimDurationAtEnd = PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict.get()));
 #if ENABLE(ENCRYPTED_MEDIA)
         SInt32 bytesOfClearDataCount = 0;
         RefPtr<SharedBuffer> cryptorIV;
         RefPtr<SharedBuffer> cryptorSubsampleAuxiliaryData;
 
-        RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sample->sampleBuffer(), false);
+        RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
         if (attachmentsArray && CFArrayGetCount(attachmentsArray.get()) > 0) {
             if (RetainPtr attachmentsDictionary = dynamic_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), 0))) {
                 if (RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(attachmentsDictionary.get(), CFSTR("BytesOfClearDataCount") /* PAL::kCMSampleAttachmentKey_BytesOfClearDataCount */)))
@@ -794,16 +795,16 @@ void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CV
 
     CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferCGColorSpaceKey);
     if (colorSpace.primaries)
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferColorPrimariesKey, convertToCMColorPrimaries(*colorSpace.primaries), kCVAttachmentMode_ShouldPropagate);
+        CVBufferSetAttachment(pixelBuffer, kCVImageBufferColorPrimariesKey, protect(convertToCMColorPrimaries(*colorSpace.primaries)), kCVAttachmentMode_ShouldPropagate);
     if (colorSpace.transfer) {
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, convertToCMTransferFunction(*colorSpace.transfer), kCVAttachmentMode_ShouldPropagate);
+        CVBufferSetAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, protect(convertToCMTransferFunction(*colorSpace.transfer)), kCVAttachmentMode_ShouldPropagate);
         if (*colorSpace.transfer == PlatformVideoTransferCharacteristics::Gamma22curve)
             CVBufferSetAttachment(pixelBuffer, kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.2), kCVAttachmentMode_ShouldPropagate);
         else if (*colorSpace.transfer == PlatformVideoTransferCharacteristics::Gamma28curve)
             CVBufferSetAttachment(pixelBuffer, kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.8), kCVAttachmentMode_ShouldPropagate);
     }
     if (colorSpace.matrix)
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, convertToCMYCbCRMatrix(*colorSpace.matrix), kCVAttachmentMode_ShouldPropagate);
+        CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, protect(convertToCMYCbCRMatrix(*colorSpace.matrix)), kCVAttachmentMode_ShouldPropagate);
     if (colorSpace.chromaLocation) {
         if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*colorSpace.chromaLocation)) {
             CVBufferSetAttachment(pixelBuffer, kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get(), kCVAttachmentMode_ShouldPropagate);

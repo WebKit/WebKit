@@ -116,7 +116,7 @@ LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(cons
     if (1.0f == m_specularExponent)
         lightStrength = -cosineOfAngle; // -cosineOfAngle ^ 1 == -cosineOfAngle
     else
-        lightStrength = powf(-cosineOfAngle, m_specularExponent);
+        lightStrength = std::pow(-cosineOfAngle, m_specularExponent);
 
     if (cosineOfAngle > paintingData.coneFullLight)
         lightStrength *= (paintingData.coneCutOffLimit - cosineOfAngle) / (paintingData.coneCutOffLimit - paintingData.coneFullLight);

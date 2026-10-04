@@ -611,7 +611,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
         updateStreamConfiguration();
     }
 
-    auto intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
+    auto intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(protect(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get())), true, true));
 
     if (!contentRect.size().isEmpty() && !intrinsicSize.isEmpty()) {
         if (!areSizesRoughlyEqual(contentRect.size(), intrinsicSize)) {
@@ -621,7 +621,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
             m_transferSession->setCroppingRectangle(contentRect, intrinsicSize);
             if (auto newFrame = m_transferSession->convertCMSampleBuffer(m_currentFrame.get(), IntSize { contentRect.size() })) {
                 m_currentFrame = WTF::move(newFrame);
-                intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
+                intrinsicSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(protect(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get())), true, true));
             }
         }
     }

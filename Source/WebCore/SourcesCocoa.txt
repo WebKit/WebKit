@@ -405,7 +405,7 @@ platform/graphics/ca/FrameProcessIndicators.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/PlatformCAAnimation.cpp
 platform/graphics/ca/PlatformCALayer.mm @nonARC
-platform/graphics/ca/TileController.cpp
+platform/graphics/ca/TileController.mm @nonARC
 platform/graphics/ca/TileCoverageMap.cpp
 platform/graphics/ca/TileGrid.cpp
 platform/graphics/ca/TransformationMatrixCA.cpp

@@ -47,7 +47,7 @@ class TextTrack;
 class TextTrackCue;
 class VTTCue;
 
-using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
+using CueInterval = PODInterval<MediaTime, CheckedPtr<TextTrackCue>>;
 using CueList = Vector<CueInterval>;
 
 class MediaControlTextTrackContainerElement final

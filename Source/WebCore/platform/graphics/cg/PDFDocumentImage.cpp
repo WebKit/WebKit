@@ -235,7 +235,7 @@ void PDFDocumentImage::createPDFDocument()
 void PDFDocumentImage::computeBoundsForCurrentPage()
 {
     ASSERT(pageCount() > 0);
-    CGPDFPageRef cgPage = CGPDFDocumentGetPage(m_document.get(), 1);
+    RetainPtr cgPage = CGPDFDocumentGetPage(m_document.get(), 1);
     CGRect mediaBox = CGPDFPageGetBoxRect(cgPage, kCGPDFMediaBox);
 
     // Get crop box (not always there). If not, use media box.
@@ -272,7 +272,8 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
     context.translate(-m_cropBox.location());
 
     // CGPDF pages are indexed from 1.
-    CGContextDrawPDFPageWithAnnotations(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1), nullptr);
+    RetainPtr page = CGPDFDocumentGetPage(m_document.get(), 1);
+    CGContextDrawPDFPageWithAnnotations(protect(context.platformContext()), page, nullptr);
 }
 
 #endif // !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)

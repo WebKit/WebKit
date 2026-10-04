@@ -331,8 +331,7 @@ bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultipl
     // so, re-render it into an RGB color space. The image re-packing
     // code requires color data, not color table indices, for the
     // image data.
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(decodedImage->platformImage().get());
-    CGColorSpaceModel model = CGColorSpaceGetModel(colorSpace);
+    CGColorSpaceModel model = CGColorSpaceGetModel(protect(CGImageGetColorSpace(decodedImage->platformImage().get())));
     if (model == kCGColorSpaceModelIndexed) {
         RetainPtr<CGContextRef> bitmapContext;
         // FIXME: we should probably manually convert the image by indexing into
@@ -445,7 +444,7 @@ bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultipl
     if (m_imageSourceFormat == DataFormat::NumFormats)
         return false;
 
-    m_pixelData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(decodedImage->platformImage().get())));
+    m_pixelData = adoptCF(CGDataProviderCopyData(protect(CGImageGetDataProvider(decodedImage->platformImage().get()))));
     if (!m_pixelData)
         return false;
 

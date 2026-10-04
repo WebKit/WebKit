@@ -444,7 +444,7 @@ OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* n
     *numOutputPacketsPtr = 0;
 
     while (!PAL::CMBufferQueueIsEmpty(m_inputBufferQueue.get())) {
-        RetainPtr sampleBuffer = adoptCF((CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueDequeueAndRetain(m_inputBufferQueue.get()))));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr sampleBuffer = adoptCF((CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueDequeueAndRetain(m_inputBufferQueue.get()))));
         size_t listSize = 0;
         if (auto result = PAL::CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer.get(), &listSize, nullptr, 0, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, nullptr))
             return result;
@@ -644,7 +644,7 @@ CMSampleBufferRef AudioSampleBufferConverter::getOutputSampleBuffer() const
 
 RetainPtr<CMSampleBufferRef> AudioSampleBufferConverter::takeOutputSampleBuffer()
 {
-    return adoptCF((CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueDequeueAndRetain(m_outputBufferQueue.get()))));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptCF((CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueDequeueAndRetain(m_outputBufferQueue.get()))));
 }
 
 unsigned AudioSampleBufferConverter::bitRate() const

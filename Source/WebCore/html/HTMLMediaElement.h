@@ -134,7 +134,7 @@ template<typename, typename> class PODInterval;
 class RemotePlayback;
 #endif
 
-using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
+using CueInterval = PODInterval<MediaTime, CheckedPtr<TextTrackCue>>;
 using CueList = Vector<CueInterval>;
 using PlatformDisplayID = uint32_t;
 

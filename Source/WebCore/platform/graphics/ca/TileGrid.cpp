@@ -77,7 +77,7 @@ TileGrid::~TileGrid()
     ASSERT(isMainThread());
 
     for (auto& tile : m_tiles.values())
-        tile.layer->setOwner(nullptr);
+        protect(tile.layer)->setOwner(nullptr);
 }
 
 FloatRect TileGrid::rectForTile(TileIndex tileIndex) const
@@ -106,7 +106,7 @@ void TileGrid::setScale(float scale)
     m_containerLayer.get().setContentsScale(m_controller->deviceScaleFactor());
 
     for (auto& tile : m_tiles.values())
-        tile.layer->setContentsScale(m_controller->deviceScaleFactor());
+        protect(tile.layer)->setContentsScale(m_controller->deviceScaleFactor());
 
     m_controller->willRepaintAllTiles(*this);
 }
@@ -116,7 +116,7 @@ bool TileGrid::setNeedsDisplayIfEDRHeadroomExceeds(float headroom)
 {
     bool changed = false;
     for (auto& entry : m_tiles)
-        changed |= entry.value.layer->setNeedsDisplayIfEDRHeadroomExceeds(headroom);
+        changed |= protect(entry.value.layer)->setNeedsDisplayIfEDRHeadroomExceeds(headroom);
     return changed;
 }
 #endif
@@ -128,8 +128,9 @@ void TileGrid::setNeedsDisplay()
         TileInfo& tileInfo = entry.value;
         IntRect tileRect = rectForTileIndex(tileIndex);
 
-        if (tileRect.intersects(m_primaryTileCoverageRect) && tileInfo.layer->superlayer()) {
-            tileInfo.layer->setNeedsDisplay();
+        RefPtr layer = tileInfo.layer;
+        if (tileRect.intersects(m_primaryTileCoverageRect) && layer->superlayer()) {
+            layer->setNeedsDisplay();
             m_controller->willRepaintTile(*this, tileIndex, tileRect, tileRect);
         } else
             tileInfo.hasStaleContent = true;
@@ -225,13 +226,14 @@ void TileGrid::updateTileLayerProperties()
     bool tonemappingEnabled = m_controller->tonemappingEnabled();
 #endif
     for (auto& tileInfo : m_tiles.values()) {
-        tileInfo.layer->setAcceleratesDrawing(acceleratesDrawing);
-        tileInfo.layer->setContentsFormat(contentsFormat);
-        tileInfo.layer->setOpaque(opaque);
-        tileInfo.layer->setBorderColor(tileDebugBorderColor);
-        tileInfo.layer->setBorderWidth(tileDebugBorderWidth);
+        RefPtr layer = tileInfo.layer;
+        layer->setAcceleratesDrawing(acceleratesDrawing);
+        layer->setContentsFormat(contentsFormat);
+        layer->setOpaque(opaque);
+        layer->setBorderColor(tileDebugBorderColor);
+        layer->setBorderWidth(tileDebugBorderWidth);
 #if HAVE(SUPPORT_HDR_DISPLAY)
-        tileInfo.layer->setTonemappingEnabled(tonemappingEnabled);
+        layer->setTonemappingEnabled(tonemappingEnabled);
 #endif
     }
 }
@@ -314,7 +316,7 @@ unsigned TileGrid::blankPixelCount() const
 {
     PlatformLayerList tiles(m_tiles.size());
     for (auto& tile : m_tiles.values()) {
-        if (auto layer = tile.layer->platformLayer())
+        if (auto layer = protect(tile.layer)->platformLayer())
             tiles.append(layer);
     }
     return TileController::blankPixelCountForTiles(tiles, m_controller->visibleRect(), IntPoint(0, 0));
@@ -325,7 +327,7 @@ void TileGrid::removeTiles(const Vector<TileIndex>& toRemove)
     for (size_t i = 0; i < toRemove.size(); ++i) {
         auto tileIndex = toRemove[i];
         TileInfo tileInfo = m_tiles.take(tileIndex);
-        tileInfo.layer->removeFromSuperlayer();
+        protect(tileInfo.layer)->removeFromSuperlayer();
         m_tileRepaintCounts.removeAll(tileInfo.layer.get());
         m_controller->willRemoveTile(*this, tileIndex);
     }
@@ -470,7 +472,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     if (validationPolicy & UnparentAllTiles) {
         for (auto& entry : m_tiles) {
             m_controller->willRemoveTile(*this, entry.key);
-            entry.value.layer->removeFromSuperlayer();
+            protect(entry.value.layer)->removeFromSuperlayer();
         }
     }
 
@@ -632,13 +634,14 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, HashSet<TileIndex>& 
                 ASSERT(!m_tileRepaintCounts.contains(tileInfo.layer.get()));
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
-                FloatSize tileLayerSize(tileInfo.layer->bounds().size());
+                RefPtr layer = tileInfo.layer;
+                FloatSize tileLayerSize(layer->bounds().size());
                 shouldChangeTileLayerFrame = tileLayerSize != FloatSize(tileRect.size());
 
                 if (shouldChangeTileLayerFrame) {
-                    tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
-                    tileInfo.layer->setPosition(tileRect.location());
-                    tileInfo.layer->setNeedsDisplay();
+                    layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
+                    layer->setPosition(tileRect.location());
+                    layer->setNeedsDisplay();
                 }
             }
 
@@ -647,11 +650,12 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, HashSet<TileIndex>& 
                 ++tilesInCohort;
             }
 
-            if (tileInfo.layer->needsDisplay())
+            Ref layer = *tileInfo.layer;
+            if (layer->needsDisplay())
                 tilesNeedingDisplay.add(tileIndex);
 
-            if (!tileInfo.layer->superlayer())
-                m_containerLayer.get().appendSublayer(protect(*tileInfo.layer));
+            if (!layer->superlayer())
+                m_containerLayer.get().appendSublayer(layer);
         }
     }
 
@@ -677,9 +681,10 @@ double TileGrid::retainedTileBackingStoreMemory() const
 {
     double totalBytes = 0;
     for (auto& tileInfo : m_tiles.values()) {
-        if (tileInfo.layer->superlayer()) {
-            FloatRect bounds = tileInfo.layer->bounds();
-            double contentsScale = tileInfo.layer->contentsScale();
+        RefPtr layer = tileInfo.layer;
+        if (layer->superlayer()) {
+            FloatRect bounds = layer->bounds();
+            double contentsScale = layer->contentsScale();
             totalBytes += 4 * bounds.width() * contentsScale * bounds.height() * contentsScale;
         }
     }

@@ -100,7 +100,7 @@
     CGPoint pointInMask = [self.mask convertPoint:point fromLayer:self];
     if (RetainPtr shapeMask = dynamic_objc_cast<CAShapeLayer>(self.mask)) {
         bool isEvenOddFill = [shapeMask.get().fillRule isEqualToString:kCAFillRuleEvenOdd];
-        return CGPathContainsPoint(shapeMask.get().path, nullptr, pointInMask, isEvenOddFill);
+        return CGPathContainsPoint(protect(shapeMask.get().path), nullptr, pointInMask, isEvenOddFill);
     }
 
     return [self.mask containsPoint:pointInMask];
@@ -113,7 +113,7 @@
 
     CGRect rectInMask = [self.mask convertRect:rect fromLayer:self];
     if (RetainPtr shapeMask = dynamic_objc_cast<CAShapeLayer>(self.mask)) {
-        CGRect pathBounds = CGPathGetPathBoundingBox(shapeMask.get().path);
+        CGRect pathBounds = CGPathGetPathBoundingBox(protect(shapeMask.get().path));
         return CGRectIntersectsRect(pathBounds, rectInMask);
     }
 

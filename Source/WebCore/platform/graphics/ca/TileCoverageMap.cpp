@@ -166,7 +166,7 @@ PlatformLayerIdentifier TileCoverageMap::platformCALayerIdentifier() const
 void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
 {
     ASSERT_UNUSED(platformCALayer, platformCALayer == m_layer.ptr());
-    m_controller->tileGrid().drawTileMapContents(context.platformContext(), m_layer.get().bounds());
+    protect(m_controller->tileGrid())->drawTileMapContents(protect(context.platformContext()), m_layer.get().bounds());
 }
 
 float TileCoverageMap::platformCALayerDeviceScaleFactor() const

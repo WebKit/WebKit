@@ -38,7 +38,7 @@
 using namespace WebCore;
 
 @interface WebCoreAudioCaptureSourceIOSListener : NSObject {
-    CoreAudioCaptureSourceFactoryIOS* _callback;
+    WeakPtr<CoreAudioCaptureSourceFactoryIOS> _callback;
 }
 
 - (void)invalidate;

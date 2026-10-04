@@ -76,7 +76,7 @@ public:
     // z is a float number, since it is the alpha value scaled by a user
     // specified "surfaceScale" constant, which type is <number> in the SVG standard.
     // x and y are in the coordinates of the FilterEffect's buffer.
-    virtual ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const = 0;
+    virtual ComputedLightingData NODELETE computePixelLightingData(const PaintingData&, int x, int y, float z) const = 0;
 
     virtual bool setAzimuth(float) { return false; }
     virtual bool setElevation(float) { return false; }

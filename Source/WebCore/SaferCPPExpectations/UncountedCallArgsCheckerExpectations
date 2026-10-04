@@ -23,11 +23,9 @@ bindings/js/JSRangeCustom.cpp
 bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
 bindings/js/JSStylePropertyMapReadOnlyCustom.cpp
-bindings/js/JSTextTrackCueCustom.cpp
 bindings/js/JSTrustedTypePolicyFactoryCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
-bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/ScriptBufferSourceProvider.h
 bindings/js/ScriptController.cpp
 bindings/js/ScriptModuleLoader.cpp
@@ -74,12 +72,6 @@ html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
 page/IntersectionObserver.cpp
-platform/graphics/ca/FrameProcessIndicators.cpp
-platform/graphics/ca/GraphicsLayerCA.cpp
-platform/graphics/ca/TileGrid.cpp
-[ Mac ] platform/graphics/cocoa/ImageAdapterCocoa.mm
-platform/graphics/filters/software/FELightingSoftwareApplier.cpp
-platform/graphics/transforms/TransformOperationsSharedPrimitivesPrefix.h
 [ macOS ] rendering/AttachmentLayout.mm
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp

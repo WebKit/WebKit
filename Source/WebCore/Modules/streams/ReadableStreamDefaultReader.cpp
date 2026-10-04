@@ -446,7 +446,7 @@ template<typename Visitor>
 void JSReadableStreamDefaultReader::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     // Do not ref `wrapped()` here since this function may get called on a GC thread.
-    wrapped().visitAdditionalChildrenInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSReadableStreamDefaultReader);

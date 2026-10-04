@@ -76,12 +76,12 @@
 {
     [super setBounds:bounds];
 
-    _tileController->tileCacheLayerBoundsChanged();
+    protect(_tileController)->tileCacheLayerBoundsChanged();
 }
 
 - (void)setOpaque:(BOOL)opaque
 {
-    _tileController->setTilesOpaque(opaque);
+    protect(_tileController)->setTilesOpaque(opaque);
 }
 
 - (BOOL)isOpaque
@@ -91,17 +91,17 @@
 
 - (void)setNeedsDisplay
 {
-    _tileController->setNeedsDisplay();
+    protect(_tileController)->setNeedsDisplay();
 }
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
-    _tileController->setNeedsDisplayInRect(WebCore::enclosingIntRect(rect));
+    protect(_tileController)->setNeedsDisplayInRect(WebCore::enclosingIntRect(rect));
 }
 
 - (void)setDrawsAsynchronously:(BOOL)acceleratesDrawing
 {
-    _tileController->setAcceleratesDrawing(acceleratesDrawing);
+    protect(_tileController)->setAcceleratesDrawing(acceleratesDrawing);
 }
 
 - (BOOL)drawsAsynchronously
@@ -111,7 +111,7 @@
 
 - (void)setContentsFormat:(WebCore::ContentsFormat)contentsFormat
 {
-    _tileController->setContentsFormat(contentsFormat);
+    protect(_tileController)->setContentsFormat(contentsFormat);
 }
 
 - (WebCore::ContentsFormat)contentsFormat
@@ -122,7 +122,7 @@
 - (void)setContentsScale:(CGFloat)contentsScale
 {
     [super setContentsScale:contentsScale];
-    _tileController->setContentsScale(contentsScale);
+    protect(_tileController)->setContentsScale(contentsScale);
 }
 
 - (CGFloat)contentsScale
@@ -144,13 +144,13 @@
 
 - (void)setBorderColor:(CGColorRef)borderColor
 {
-    _tileController->setTileDebugBorderColor(WebCore::roundAndClampToSRGBALossy(borderColor));
+    protect(_tileController)->setTileDebugBorderColor(WebCore::roundAndClampToSRGBALossy(borderColor));
 }
 
 - (void)setBorderWidth:(CGFloat)borderWidth
 {
     // Tiles adjoin, so halve the border width.
-    _tileController->setTileDebugBorderWidth(borderWidth / 2);
+    protect(_tileController)->setTileDebugBorderWidth(borderWidth / 2);
 }
 
 @end

@@ -1,5 +1,3 @@
 bridge/objc/WebScriptObject.h
-[ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
-[ iOS ] platform/ios/WebEvent.h
 [ iOS ] platform/ios/wak/WKView.h
 [ iOS ] platform/ios/wak/WebCoreThread.h

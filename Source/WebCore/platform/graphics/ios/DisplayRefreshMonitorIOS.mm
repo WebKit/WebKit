@@ -33,6 +33,7 @@
 #import "WebCoreThread.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <wtf/MainThread.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/TextStream.h>
 
 using WebCore::DisplayRefreshMonitorIOS;
@@ -41,8 +42,8 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 
 @interface WebDisplayLinkHandler : NSObject
 {
-    DisplayRefreshMonitorIOS* m_monitor;
-    CADisplayLink *m_displayLink;
+    ThreadSafeWeakPtr<DisplayRefreshMonitorIOS> m_monitor;
+    WeakObjCPtr<CADisplayLink> m_displayLink;
 }
 
 - (id)initWithMonitor:(DisplayRefreshMonitorIOS*)monitor;
@@ -61,10 +62,11 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // FIXME: CoreAnimation version deprecated rdar://164090713
         // Note that CADisplayLink retains its target (self), so a call to -invalidate is needed on teardown.
-        m_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
+        RetainPtr displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
     ALLOW_DEPRECATED_DECLARATIONS_END
-        [m_displayLink addToRunLoop:protect(WebThreadNSRunLoop()) forMode:NSDefaultRunLoopMode];
-        m_displayLink.preferredFramesPerSecond = DisplayLinkFramesPerSecond;
+        [displayLink addToRunLoop:protect(WebThreadNSRunLoop()) forMode:NSDefaultRunLoopMode];
+        [displayLink setPreferredFramesPerSecond:DisplayLinkFramesPerSecond];
+        m_displayLink = displayLink.get();
     }
     return self;
 }
@@ -80,18 +82,19 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
     UNUSED_PARAM(sender);
     ASSERT(isMainThread());
     
-    protect(m_monitor)->displayLinkCallbackFired();
+    if (RefPtr monitor = m_monitor)
+        monitor->displayLinkCallbackFired();
 }
 
 - (void)setPaused:(BOOL)paused
 {
-    [m_displayLink setPaused:paused];
+    [protect(m_displayLink) setPaused:paused];
 }
 
 - (void)invalidate
 {
-    [m_displayLink invalidate];
-    m_displayLink = nullptr;
+    [protect(m_displayLink) invalidate];
+    m_displayLink = nil;
 }
 
 @end

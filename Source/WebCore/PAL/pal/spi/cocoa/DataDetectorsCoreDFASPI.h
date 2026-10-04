@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "UserAgent.h"
+#pragma once
 
-#import "SystemVersion.h"
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
 
-namespace WebCore {
+DECLARE_SYSTEM_HEADER
 
-String systemMarketingVersionForUserAgentString()
-{
-    // Use underscores instead of dots because when we first added the macOS version to the user agent string
-    // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
-    // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [systemMarketingVersionSingleton() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-}
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
-} // namespace WebCore
+#if USE(APPLE_INTERNAL_SDK)
+#include <DataDetectorsCore/DDDFACache.h>
+#include <DataDetectorsCore/DDDFAScanner.h>
+#else
+typedef struct __DDDFAScanner DDDFAScanner, * DDDFAScannerRef;
+typedef struct __DDDFACache DDDFACache, * DDDFACacheRef;
+#endif
+
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION)

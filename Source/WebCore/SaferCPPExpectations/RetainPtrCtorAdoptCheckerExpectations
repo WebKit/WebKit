@@ -1,7 +1,3 @@
-platform/audio/cocoa/AudioSampleBufferConverter.mm
-platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
-platform/graphics/cg/ImageDecoderCG.cpp
-platform/graphics/cg/PatternCG.cpp
 [ iOS ] platform/ios/wak/WKView.mm
 [ iOS ] platform/ios/wak/WebCoreThread.mm

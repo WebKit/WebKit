@@ -69,6 +69,16 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetTypeID, CFTypeID,
 template <> struct WTF::CFTypeTrait<CMSampleBufferRef> {
     static inline CFTypeID typeID() { return PAL::CMSampleBufferGetTypeID(); }
 };
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetTypeID, CFTypeID, (void), ())
+#define CMFormatDescriptionGetTypeID softLink_CoreMedia_CMFormatDescriptionGetTypeID
+template <> struct WTF::CFTypeTrait<CMFormatDescriptionRef> {
+    static inline CFTypeID typeID() { return PAL::CMFormatDescriptionGetTypeID(); }
+};
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimebaseGetTypeID, CFTypeID, (void), ())
+#define CMTimebaseGetTypeID softLink_CoreMedia_CMTimebaseGetTypeID
+template <> struct WTF::CFTypeTrait<CMTimebaseRef> {
+    static inline CFTypeID typeID() { return PAL::CMTimebaseGetTypeID(); }
+};
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, (CMSampleBufferRef sbuf), (sbuf))
 #define CMSampleBufferGetDataBuffer softLink_CoreMedia_CMSampleBufferGetDataBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))

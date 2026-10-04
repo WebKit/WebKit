@@ -1,14 +1,5 @@
 bindings/js/ScriptControllerMac.mm
-[ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
-platform/graphics/cg/GradientRendererCG.cpp
 platform/graphics/cg/GraphicsContextCG.cpp
-platform/graphics/cg/GraphicsContextGLCG.cpp
-platform/graphics/cg/ImageDecoderCG.cpp
-[ iOS ] platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
-platform/graphics/cocoa/CMUtilities.mm
-platform/graphics/cocoa/GraphicsContextCocoa.mm
-[ Mac ] platform/graphics/cocoa/ImageAdapterCocoa.mm
-platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm

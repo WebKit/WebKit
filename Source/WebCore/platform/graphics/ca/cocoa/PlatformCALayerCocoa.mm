@@ -375,7 +375,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->setAnchorPoint(anchorPoint());
     newLayer->setTransform(transform());
     newLayer->setSublayerTransform(sublayerTransform());
-    newLayer->setContents(contents());
+    newLayer->setContents(protect(contents()));
     newLayer->setMasksToBounds(masksToBounds());
     newLayer->setDoubleSided(isDoubleSided());
     newLayer->setOpaque(isOpaque());
@@ -846,7 +846,7 @@ void PlatformCALayerCocoa::setContents(CFTypeRef value)
 void PlatformCALayerCocoa::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
     if (!contents.finishedFence || protect(contents.finishedFence)->waitFor(delegatedContentsFinishedTimeout))
-        setContents(contents.surface.asLayerContents());
+        setContents(protect(contents.surface.asLayerContents()));
 }
 
 void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)
@@ -859,20 +859,20 @@ void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)
 void PlatformCALayerCocoa::setMinificationFilter(FilterType value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setMinificationFilter:toCAFilterType(value)];
+    [m_layer setMinificationFilter:protect(toCAFilterType(value))];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void PlatformCALayerCocoa::setMagnificationFilter(FilterType value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setMagnificationFilter:toCAFilterType(value)];
+    [m_layer setMagnificationFilter:protect(toCAFilterType(value))];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 Color PlatformCALayerCocoa::backgroundColor() const
 {
-    return roundAndClampToSRGBALossy([m_layer backgroundColor]);
+    return roundAndClampToSRGBALossy(protect([m_layer backgroundColor]));
 }
 
 void PlatformCALayerCocoa::setBackgroundColor(const Color& value)
@@ -916,13 +916,13 @@ void PlatformCALayerCocoa::setOpacity(float value)
 
 void PlatformCALayerCocoa::setFilters(const FilterOperations& filters)
 {
-    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters, m_backdropRootIsOpaque);
+    PlatformCAFilters::setFiltersOnLayer(protect(platformLayer()), filters, m_backdropRootIsOpaque);
 }
 
 void PlatformCALayerCocoa::copyFiltersFrom(const PlatformCALayer& sourceLayer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setFilters:[sourceLayer.platformLayer() filters]];
+    [m_layer setFilters:[protect(sourceLayer.platformLayer()) filters]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -950,7 +950,7 @@ bool PlatformCALayerCocoa::filtersCanBeComposited(const FilterOperations& filter
 
 void PlatformCALayerCocoa::setBlendMode(BlendMode blendMode)
 {
-    PlatformCAFilters::setBlendingFiltersOnLayer(platformLayer(), blendMode);
+    PlatformCAFilters::setBlendingFiltersOnLayer(protect(platformLayer()), blendMode);
 }
 
 void PlatformCALayerCocoa::setName(const String& value)
@@ -1007,14 +1007,14 @@ void PlatformCALayerCocoa::setCornerRadius(float value)
 Path PlatformCALayerCocoa::shadowPath() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return { PathCG::create(adoptCF(CGPathCreateMutableCopy([m_layer shadowPath]))) };
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy(protect([m_layer shadowPath])))) };
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void PlatformCALayerCocoa::setShadowPath(const Path& path)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setShadowPath:path.platformPath()];
+    [m_layer setShadowPath:protect(path.platformPath())];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -1059,7 +1059,7 @@ void PlatformCALayerCocoa::setShapeRoundedRect(const FloatRoundedRect& roundedRe
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     Path shapePath;
     shapePath.addRoundedRect(roundedRect);
-    [(CAShapeLayer *)m_layer setPath:shapePath.platformPath()];
+    [(CAShapeLayer *)m_layer setPath:protect(shapePath.platformPath())];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -1093,7 +1093,7 @@ Path PlatformCALayerCocoa::shapePath() const
     ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return { PathCG::create(adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path]))) };
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy(protect([(CAShapeLayer *)m_layer path])))) };
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -1102,7 +1102,7 @@ void PlatformCALayerCocoa::setShapePath(const Path& path)
     ASSERT(m_layerType == PlatformCALayer::LayerType::LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [(CAShapeLayer *)m_layer setPath:path.platformPath()];
+    [(CAShapeLayer *)m_layer setPath:protect(path.platformPath())];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -1121,10 +1121,10 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
 #if HAVE(RUBBER_BANDING)
     switch (appearance) {
     case GraphicsLayer::CustomAppearance::None:
-        ScrollbarThemeMac::removeOverhangAreaShadow(platformLayer());
+        ScrollbarThemeMac::removeOverhangAreaShadow(protect(platformLayer()));
         break;
     case GraphicsLayer::CustomAppearance::ScrollingShadow:
-        ScrollbarThemeMac::setUpOverhangAreaShadow(platformLayer());
+        ScrollbarThemeMac::setUpOverhangAreaShadow(protect(platformLayer()));
         break;
     }
 #endif
@@ -1304,9 +1304,9 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
         if (graphicsContext.hasPlatformContext()) {
             platformContextSaver.emplace(graphicsContext);
 #if PLATFORM(IOS_FAMILY)
-            CGContextRef context = graphicsContext.platformContext();
+            RetainPtr context = graphicsContext.platformContext();
             WKSetCurrentGraphicsContext(context);
-            fontAntialiasingState.emplace(context, !![platformCALayer->platformLayer() isOpaque]);
+            fontAntialiasingState.emplace(context, !![protect(platformCALayer->platformLayer()) isOpaque]);
             fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
 #endif
         }
@@ -1381,7 +1381,7 @@ AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
     if (layerType() != PlatformCALayer::LayerType::LayerTypeAVPlayerLayer)
         return nil;
 
-    if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClassSingleton()])
+    if ([protect(platformLayer()) isKindOfClass:PAL::getAVPlayerLayerClassSingleton()])
         return static_cast<AVPlayerLayer *>(platformLayer());
 
     if (RetainPtr layer = dynamic_objc_cast<WebVideoContainerLayer>(platformLayer()))
