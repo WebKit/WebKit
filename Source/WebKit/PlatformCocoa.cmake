@@ -61,12 +61,14 @@ set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 # bundle. Xcode's $(PLATFORM_NAME) is the lowercase SDK name, and its
 # $(IOS_DEPLOYMENT_TARGET) is only set for the embedded SDKs.
 set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
-set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
+set(SHORT_VERSION_STRING "${MACOSX_FRAMEWORK_SHORT_VERSION_STRING}")
 set(PRODUCT_NAME "WebKit")
 set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKit")
 set(PLATFORM_NAME "${WEBKIT_SDK_NAME}")
 # Xcode only fills this in for iOS (hence the platform-specific variable).
-set(IOS_DEPLOYMENT_TARGET "${CMAKE_OSX_DEPLOYMENT_TARGET}")
+if (WEBKIT_SDK_IS_IOS_FAMILY)
+    set(IOS_DEPLOYMENT_TARGET "${CMAKE_OSX_DEPLOYMENT_TARGET}")
+endif ()
 set_target_properties(WebKit PROPERTIES
     MACOSX_FRAMEWORK_INFO_PLIST ${WEBKIT_DIR}/Info.plist)
 
@@ -1009,7 +1011,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     set(_default_sim_entitlements "${WEBKIT_DIR}/Resources/ios/XPCService-embedded-simulator.entitlements")
 
     function(WEBKIT_XPC_SERVICE _target)
-        cmake_parse_arguments(_svc ""
+        cmake_parse_arguments(_svc "NO_RESTRICTED_ENTITLEMENTS"
             "BUNDLE_IDENTIFIER;ENTRY_POINT;EXECUTABLE_NAME" "" ${ARGN})
         set(_bundle_dir ${WebKit_XPC_SERVICE_DIR}/${_svc_BUNDLE_IDENTIFIER}.xpc)
         if (WEBKIT_SDK_IS_MACOS)
@@ -1022,27 +1024,38 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         endif ()
         file(MAKE_DIRECTORY ${_exe_dir})
 
-        if (WEBKIT_SDK_IS_MACOS)
-            # FIXME: These version strings don't match Xcode's.
-            set(BUNDLE_VERSION ${WEBKIT_VERSION})
-            set(SHORT_VERSION_STRING ${WEBKIT_VERSION_MAJOR})
-        else ()
-            set(BUNDLE_VERSION ${MACOSX_FRAMEWORK_BUNDLE_VERSION})
-            set(SHORT_VERSION_STRING ${WEBKIT_MAC_VERSION})
-        endif ()
+        set(BUNDLE_VERSION ${MACOSX_FRAMEWORK_BUNDLE_VERSION})
+        set(SHORT_VERSION_STRING ${MACOSX_FRAMEWORK_SHORT_VERSION_STRING})
         set(PRODUCT_BUNDLE_IDENTIFIER ${_svc_BUNDLE_IDENTIFIER})
         set(EXECUTABLE_NAME ${_svc_EXECUTABLE_NAME})
         set(PRODUCT_NAME ${_svc_BUNDLE_IDENTIFIER})
-        configure_file(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist
-            ${_contents_dir}/Info.plist)
-
-        if (NOT WEBKIT_SDK_IS_MACOS)
-            # FIXME: These may be applicable to add for macOS too (with
-            # different UIDeviceFamily).
+        # Processed outside the bundle and copied in only when it changes: the
+        # service has to relink, and so re-sign, whenever its Info.plist does.
+        set(_info_plist ${CMAKE_CURRENT_BINARY_DIR}/${_svc_BUNDLE_IDENTIFIER}-Info.plist)
+        configure_file(${_svc_ENTRY_POINT}/Info-${_info_plist_variant}.plist ${_info_plist})
+        if (WEBKIT_SDK_IS_MACOS)
+            execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_info_plist})
+            execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_info_plist})
+            execute_process(COMMAND plutil -insert LSMinimumSystemVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_info_plist})
+        else ()
             # No XPC service target sets TARGETED_DEVICE_FAMILY.
             WEBKIT_GET_DEVICE_FAMILY(_device_family)
-            WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_contents_dir}/Info.plist ${_device_family})
+            WEBKIT_ADD_EMBEDDED_BUNDLE_PLIST_KEYS(${_info_plist} ${_device_family})
+        endif ()
+        if (USE_RESTRICTED_ENTITLEMENTS AND NOT _svc_NO_RESTRICTED_ENTITLEMENTS)
+            # Matches Scripts/update-info-plist-for-runningboard.sh.
+            if (USE_APPLE_INTERNAL_SDK AND WEBKIT_SDK_IS_MACOS)
+                execute_process(COMMAND plutil -insert LSDoNotSetTaskPolicyAutomatically -bool YES ${_info_plist})
+                execute_process(COMMAND plutil -insert XPCService._AdditionalProperties -json "{\"RunningBoard\":{\"Managed\":true,\"Reported\":true}}" ${_info_plist})
+            endif ()
+        else ()
+            # As in Xcode, services without restricted entitlements are signed ad hoc.
+            set_target_properties(${_target} PROPERTIES CODE_SIGN_IDENTITY "-")
+        endif ()
+        file(COPY_FILE ${_info_plist} ${_contents_dir}/Info.plist ONLY_IF_DIFFERENT)
+        set_property(TARGET ${_target} APPEND PROPERTY LINK_DEPENDS ${_contents_dir}/Info.plist)
 
+        if (NOT WEBKIT_SDK_IS_MACOS)
             target_link_options(${_target} PRIVATE
                 "LINKER:-rpath,@executable_path/.."
                 "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/.."
@@ -1123,11 +1136,13 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             USING Scripts/process-entitlements.sh
             DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
             BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant}
-            VARIANT ${_variant})
+            VARIANT ${_variant}
+            ${ARGN})
         WEBKIT_XPC_SERVICE(${_target}
             BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant}
             ENTRY_POINT ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService
-            EXECUTABLE_NAME ${_exec_name})
+            EXECUTABLE_NAME ${_exec_name}
+            ${ARGN})
         WEBKIT_EXECUTABLE(${_target})
         WEBKIT_REUSE_PREFIX_HEADER(${_target} WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
         target_compile_options(${_target} PRIVATE -Wno-unused-parameter)
@@ -1136,7 +1151,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     WEBKIT_WEBCONTENT_VARIANT(CaptivePortal)
     if (WEBKIT_SDK_IS_MACOS)
         # Local builds use this bundle (see logic in ProcessLaunchrCocoa.mm).
-        WEBKIT_WEBCONTENT_VARIANT(Development)
+        WEBKIT_WEBCONTENT_VARIANT(Development NO_RESTRICTED_ENTITLEMENTS)
     endif ()
 endfunction()
 

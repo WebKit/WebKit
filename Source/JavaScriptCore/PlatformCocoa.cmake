@@ -182,6 +182,18 @@ if (JavaScriptCore_INSTALL_NAME_DIR)
     )
 endif ()
 
+# Used to substitute placeholders in Info.plist.
+set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
+set(SHORT_VERSION_STRING "${MACOSX_FRAMEWORK_SHORT_VERSION_STRING}")
+set(PRODUCT_NAME "JavaScriptCore")
+set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.JavaScriptCore")
+set(PLATFORM_NAME "${WEBKIT_SDK_NAME}")
+
+if (WEBKIT_SDK_IS_MACOS)
+    set_target_properties(JavaScriptCore PROPERTIES
+        MACOSX_FRAMEWORK_INFO_PLIST ${JAVASCRIPTCORE_DIR}/Info.plist)
+endif ()
+
 # iOS-family framework packaging (identity, versioning, Info.plist, and the
 # private headers / module maps / sandbox profile the iOS framework ships).
 if (WEBKIT_SDK_IS_IOS_FAMILY)
@@ -199,10 +211,6 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
 
     target_compile_definitions(JavaScriptCore PRIVATE PAS_BMALLOC_HIDDEN=1)
 
-    set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
-    set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
-    set(PRODUCT_NAME "JavaScriptCore")
-    set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.JavaScriptCore")
     configure_file(${JAVASCRIPTCORE_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist)
     set(JavaScriptCore_POST_BUILD_COMMAND
         ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore-Info.plist
