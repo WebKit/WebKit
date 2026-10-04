@@ -35,7 +35,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLHeadElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL downcast<WebCore::HTMLHeadElement>(reinterpret_cast<WebCore::Node*>(_internal))
 
 @implementation DOMHTMLHeadElement
 

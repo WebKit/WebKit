@@ -49,7 +49,7 @@
 static inline WebCore::Element& rawUnwrap(DOMElement& wrapper)
 {
     ASSERT(wrapper._internal);
-    return downcast<WebCore::Element>(reinterpret_cast<WebCore::Node&>(*wrapper._internal));
+    return downcast<WebCore::Element>(*reinterpret_cast<WebCore::Node*>(wrapper._internal));
 }
 
 static inline Ref<WebCore::Element> unwrap(DOMElement& wrapper)

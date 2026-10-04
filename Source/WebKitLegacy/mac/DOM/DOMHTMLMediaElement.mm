@@ -44,7 +44,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL RefPtr { static_cast<WebCore::HTMLMediaElement*>(reinterpret_cast<WebCore::Node*>(_internal)) }
+#define IMPL RefPtr { downcast<WebCore::HTMLMediaElement>(reinterpret_cast<WebCore::Node*>(_internal)) }
 
 @implementation DOMHTMLMediaElement
 

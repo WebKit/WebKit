@@ -40,7 +40,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::Attr*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::Attr>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMAttr
 

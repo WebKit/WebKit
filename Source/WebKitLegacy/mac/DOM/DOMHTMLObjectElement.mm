@@ -43,7 +43,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::HTMLObjectElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::HTMLObjectElement>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLObjectElement
 
@@ -254,7 +254,8 @@
 - (NSURL *)absoluteImageURL
 {
     WebCore::JSMainThreadNullState state;
-    if (!IMPL->renderer() || !IMPL->renderer()->isImage())
+    CheckedPtr renderer = IMPL->renderer();
+    if (!renderer || !renderer->isImage())
         return nil;
     return [self _getURLAttribute:@"data"];
 }

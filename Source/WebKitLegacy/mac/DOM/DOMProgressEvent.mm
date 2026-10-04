@@ -34,7 +34,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::ProgressEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
+#define IMPL downcast<WebCore::ProgressEvent>(reinterpret_cast<WebCore::Event*>(_internal))
 
 @implementation DOMProgressEvent
 

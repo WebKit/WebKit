@@ -36,7 +36,7 @@
 #import <WebCore/NodeList.h>
 #import <WebCore/ThreadCheck.h>
 
-#define IMPL protect(static_cast<WebCore::DocumentFragment*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::DocumentFragment>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMDocumentFragment
 

@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::DeprecatedCSSOMPrimitiveValue*>(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal)))
+#define IMPL protect(downcast<WebCore::DeprecatedCSSOMPrimitiveValue>(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal)))
 
 @implementation DOMCSSPrimitiveValue
 

@@ -57,9 +57,13 @@ protected:
     ProgressEvent(enum EventInterfaceType, const AtomString&, const Init&, IsTrusted);
 
 private:
+    bool isProgressEvent() const final { return true; }
+
     bool m_lengthComputable;
     double m_loaded;
     double m_total;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(ProgressEvent)

@@ -38,7 +38,7 @@
 static inline WebCore::HTMLTextAreaElement& rawUnwrap(DOMHTMLTextAreaElement& wrapper)
 {
     ASSERT(wrapper._internal);
-    return downcast<WebCore::HTMLTextAreaElement>(reinterpret_cast<WebCore::Node&>(*wrapper._internal));
+    return downcast<WebCore::HTMLTextAreaElement>(*reinterpret_cast<WebCore::Node*>(wrapper._internal));
 }
 
 static inline Ref<WebCore::HTMLTextAreaElement> unwrap(DOMHTMLTextAreaElement& wrapper)

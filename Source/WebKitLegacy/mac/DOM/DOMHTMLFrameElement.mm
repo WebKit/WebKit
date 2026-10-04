@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::HTMLFrameElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::HTMLFrameElement>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLFrameElement
 

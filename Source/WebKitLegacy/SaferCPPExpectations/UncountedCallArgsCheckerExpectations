@@ -1,4 +1,3 @@
-[ macOS ] mac/DOM/DOM.mm
 [ macOS ] mac/WebView/WebFrame.mm
 [ Mac ] mac/WebView/WebFullScreenController.mm
 [ macOS ] mac/WebView/WebHTMLView.mm

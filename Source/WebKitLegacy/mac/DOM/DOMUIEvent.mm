@@ -38,7 +38,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::UIEvent*>(reinterpret_cast<WebCore::Event*>(_internal)))
+#define IMPL protect(downcast<WebCore::UIEvent>(reinterpret_cast<WebCore::Event*>(_internal)))
 
 @implementation DOMUIEvent
 

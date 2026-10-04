@@ -65,6 +65,7 @@
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WAKAppKitStubs.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 using WebCore::Node;
 using WebCore::Position;
@@ -79,7 +80,7 @@ using WebCore::VisiblePosition;
 
 - (void)move:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
 {
-    auto& range = *core(self);
+    Ref range = *core(self);
 
     auto frameSelection = makeUniqueRef<WebCore::FrameSelection>();
     frameSelection->setSelection(makeSimpleRange(range));
@@ -101,14 +102,14 @@ using WebCore::VisiblePosition;
     Position start = frameSelection->selection().start().parentAnchoredEquivalent();
     Position end = frameSelection->selection().end().parentAnchoredEquivalent();
     if (start.containerNode())
-        range.setStart(*start.containerNode(), start.offsetInContainerNode());
+        range->setStart(*start.containerNode(), start.offsetInContainerNode());
     if (end.containerNode())
-        range.setEnd(*end.containerNode(), end.offsetInContainerNode());
+        range->setEnd(*end.containerNode(), end.offsetInContainerNode());
 }
 
 - (void)extend:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
 {
-    auto& range = *core(self);
+    Ref range = *core(self);
 
     auto frameSelection = makeUniqueRef<WebCore::FrameSelection>();
     frameSelection->setSelection(makeSimpleRange(range));
@@ -119,9 +120,9 @@ using WebCore::VisiblePosition;
     Position start = frameSelection->selection().start().parentAnchoredEquivalent();
     Position end = frameSelection->selection().end().parentAnchoredEquivalent();
     if (start.containerNode())
-        range.setStart(*start.containerNode(), start.offsetInContainerNode());
+        range->setStart(*start.containerNode(), start.offsetInContainerNode());
     if (end.containerNode())
-        range.setEnd(*end.containerNode(), end.offsetInContainerNode());
+        range->setEnd(*end.containerNode(), end.offsetInContainerNode());
 }
 
 // FIXME: Refactor to share code with intersectingNodesWithDeprecatedZeroOffsetStartQuirk.
@@ -155,7 +156,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     if (!NSIsEmptyRect(bounds)) {
         if ([self isKindOfClass:[DOMElement class]]) {
             DOMDocument *document = [self ownerDocument];
-            DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)self pseudoElement:@""];
+            DOMCSSStyleDeclaration *style = [document getComputedStyle:checked_objc_cast<DOMElement>(self) pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 rects = [self lineBoxRects];
         } else if ([self isKindOfClass:[DOMText class]])
@@ -175,7 +176,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     if (!NSIsEmptyRect(bounds)) {
         if ([self isKindOfClass:[DOMElement class]]) {
             DOMDocument *document = [self ownerDocument];
-            DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)self pseudoElement:@""];
+            DOMCSSStyleDeclaration *style = [document getComputedStyle:checked_objc_cast<DOMElement>(self) pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 quads = [self lineBoxQuads];
         } else if ([self isKindOfClass:[DOMText class]])
@@ -190,7 +191,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (NSArray *)borderRadii
 {
-    RenderObject* renderer = core(self)->renderer();
+    CheckedPtr<RenderObject> renderer = core(self)->renderer();
     
     if (is<RenderBox>(renderer)) {
         WebCore::LayoutRoundedRect::Radii radii = downcast<RenderBox>(*renderer).borderRadii();
@@ -205,7 +206,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (BOOL)containsOnlyInlineObjects
 {
-    RenderObject* renderer = core(self)->renderer();
+    CheckedPtr<RenderObject> renderer = core(self)->renderer();
     return renderer
         && renderer->childrenInline()
         && is<RenderBlock>(*renderer)
@@ -214,7 +215,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (BOOL)isSelectableBlock
 {
-    RenderObject* renderer = core(self)->renderer();
+    CheckedPtr<RenderObject> renderer = core(self)->renderer();
     return renderer && (is<WebCore::RenderBlockFlow>(*renderer));
 }
 
@@ -226,20 +227,20 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (CGFloat)textHeight
 {  
-    RenderObject* renderer = core(self)->renderer();
+    CheckedPtr<RenderObject> renderer = core(self)->renderer();
     if (is<RenderText>(renderer))
-        return downcast<RenderText>(*renderer).style().usedLineHeight();
+        return protect(downcast<RenderText>(*renderer).style())->usedLineHeight();
     
     return CGFLOAT_MAX;
 }
 
 - (DOMNode *)findExplodedTextNodeAtPoint:(CGPoint)point
 {
-    auto* renderer = core(self)->renderer();
+    CheckedPtr renderer = core(self)->renderer();
     if (!is<WebCore::RenderBlockFlow>(renderer))
         return nil;
 
-    auto* renderText = downcast<WebCore::RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
+    CheckedPtr renderText = downcast<WebCore::RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
     if (renderText && renderText->textNode())
         return kit(renderText->textNode());
 
@@ -259,7 +260,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 - (int)structuralComplexityContribution
 {
     int result = 0;
-    RenderObject * renderer = core(self)->renderer();
+    CheckedPtr<RenderObject> renderer = core(self)->renderer();
     if (renderer) {
         if (renderer->isFloatingOrOutOfFlowPositioned() ||
             renderer->isRenderWidget()) {
@@ -268,8 +269,8 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
             result = 0;
         } else if (is<WebCore::RenderBlockFlow>(*renderer)) {
             BOOL noCost = NO;
-            if (auto renderBox = dynamicDowncast<RenderBox>(*renderer)) {
-                auto* parentRenderBox = dynamicDowncast<RenderBox>(renderBox->parent());
+            if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer)) {
+                CheckedPtr parentRenderBox = dynamicDowncast<RenderBox>(renderBox->parent());
                 if (parentRenderBox && renderBox->borderBoxWidth() == parentRenderBox->borderBoxWidth())
                     noCost = YES;
             }
@@ -328,13 +329,13 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 - (CGRect)boundingBoxWithOwner:(DOMNode *)owner
 {
     // ignores transforms
-    return owner ? snappedIntRect(protect(core(self))->computeRect(core(owner)->renderer())) : CGRectZero;
+    return owner ? snappedIntRect(protect(core(self))->computeRect(protect(core(owner)->renderer()))) : CGRectZero;
 }
 
 - (WKQuad)absoluteQuadWithOwner:(DOMNode *)owner
 {
     if (owner) {
-        WebCore::IntRect rect = snappedIntRect(protect(core(self))->computeRect(core(owner)->renderer()));
+        WebCore::IntRect rect = snappedIntRect(protect(core(self))->computeRect(protect(core(owner)->renderer())));
         WKQuad quad;
         quad.p1 = CGPointMake(rect.x(), rect.y());
         quad.p2 = CGPointMake(rect.maxX(), rect.y());
@@ -377,13 +378,13 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (NSData *)dataRepresentation:(BOOL)rawImageData
 {
-    auto* cachedImage = core(self)->cachedImage();
+    RefPtr cachedImage = core(self)->cachedImage();
     if (!cachedImage)
         return nil;
-    auto* image = cachedImage->image();
+    RefPtr image = cachedImage->image();
     if (!image)
         return nil;
-    auto* data = rawImageData ? cachedImage->resourceBuffer() : image->data();
+    RefPtr data = rawImageData ? cachedImage->resourceBuffer() : image->data();
     if (!data)
         return nil;
     return data->makeContiguous()->createNSData().autorelease();
@@ -391,7 +392,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (NSString *)mimeType
 {
-    auto* cachedImage = core(self)->cachedImage();
+    RefPtr cachedImage = core(self)->cachedImage();
     if (!cachedImage || !cachedImage->image())
         return nil;
     return cachedImage->response().mimeType().createNSString().autorelease();

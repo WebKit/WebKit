@@ -29,7 +29,7 @@
 #import <WebCore/HTMLFieldSetElement.h>
 #import <WebCore/JSExecState.h>
 
-#define IMPL static_cast<WebCore::HTMLFieldSetElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL downcast<WebCore::HTMLFieldSetElement>(reinterpret_cast<WebCore::Node*>(_internal))
 
 @implementation DOMHTMLFieldSetElement
 

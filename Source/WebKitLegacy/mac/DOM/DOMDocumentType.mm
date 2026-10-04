@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::DocumentType*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::DocumentType>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMDocumentType
 

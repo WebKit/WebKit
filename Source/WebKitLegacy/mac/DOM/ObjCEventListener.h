@@ -41,9 +41,7 @@ namespace WebCore {
 
         static const ObjCEventListener* cast(const EventListener* listener)
         {
-            return listener->type() == ObjCEventListenerType
-                ? static_cast<const ObjCEventListener*>(listener)
-                : nullptr;
+            return dynamicDowncast<ObjCEventListener>(listener);
         }
 
     private:
@@ -58,3 +56,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ObjCEventListener)
+    static bool isType(const WebCore::EventListener& listener) { return listener.type() == WebCore::EventListener::ObjCEventListenerType; }
+SPECIALIZE_TYPE_TRAITS_END()

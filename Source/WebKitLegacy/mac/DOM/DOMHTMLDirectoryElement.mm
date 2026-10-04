@@ -35,7 +35,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL protect(static_cast<WebCore::HTMLDirectoryElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::HTMLDirectoryElement>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLDirectoryElement
 

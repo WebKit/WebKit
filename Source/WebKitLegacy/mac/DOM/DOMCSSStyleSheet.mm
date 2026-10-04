@@ -40,7 +40,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::CSSStyleSheet*>(reinterpret_cast<WebCore::StyleSheet*>(_internal)))
+#define IMPL protect(downcast<WebCore::CSSStyleSheet>(reinterpret_cast<WebCore::StyleSheet*>(_internal)))
 
 @implementation DOMCSSStyleSheet
 

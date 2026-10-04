@@ -33,7 +33,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::OverflowEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
+#define IMPL downcast<WebCore::OverflowEvent>(reinterpret_cast<WebCore::Event*>(_internal))
 
 @implementation DOMOverflowEvent
 

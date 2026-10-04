@@ -37,6 +37,7 @@
 #import <WebCore/ProcessingInstruction.h>
 #import <WebCore/StyleSheet.h>
 #import <WebCore/WebScriptObjectPrivate.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation DOMObject
 
@@ -70,11 +71,11 @@
     RefPtr<WebCore::StyleSheet> styleSheet;
 
     if ([self isKindOfClass:[DOMProcessingInstruction class]])
-        styleSheet = core(static_cast<DOMProcessingInstruction *>(self))->sheet();
+        styleSheet = core(checked_objc_cast<DOMProcessingInstruction>(self))->sheet();
     else if ([self isKindOfClass:[DOMHTMLLinkElement class]])
-        styleSheet = core(static_cast<DOMHTMLLinkElement *>(self))->sheet();
+        styleSheet = core(checked_objc_cast<DOMHTMLLinkElement>(self))->sheet();
     else if ([self isKindOfClass:[DOMHTMLStyleElement class]])
-        styleSheet = core(static_cast<DOMHTMLStyleElement *>(self))->sheet();
+        styleSheet = core(checked_objc_cast<DOMHTMLStyleElement>(self))->sheet();
     else
         return nil;
 

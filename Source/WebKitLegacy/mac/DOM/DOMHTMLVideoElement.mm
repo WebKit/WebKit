@@ -39,7 +39,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL RefPtr { static_cast<WebCore::HTMLVideoElement*>(reinterpret_cast<WebCore::Node*>(_internal)) }
+#define IMPL RefPtr { downcast<WebCore::HTMLVideoElement>(reinterpret_cast<WebCore::Node*>(_internal)) }
 
 @implementation DOMHTMLVideoElement
 

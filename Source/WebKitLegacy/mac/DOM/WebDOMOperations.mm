@@ -106,11 +106,11 @@
 
 - (BOOL)isHorizontalWritingMode
 {
-    WebCore::Node* node = core(self);
+    RefPtr node = core(self);
     if (!node)
         return YES;
     
-    WebCore::RenderObject* renderer = node->renderer();
+    CheckedPtr<WebCore::RenderObject> renderer = node->renderer();
     if (!renderer)
         return YES;
     
@@ -119,13 +119,13 @@
 
 - (void)hidePlaceholder
 {
-    if (auto node = core(self); is<WebCore::HTMLTextFormControlElement>(node))
+    if (RefPtr node = core(self); is<WebCore::HTMLTextFormControlElement>(node))
         downcast<WebCore::HTMLTextFormControlElement>(*node).setCanShowPlaceholder(false);
 }
 
 - (void)showPlaceholderIfNecessary
 {
-    if (auto node = core(self); is<WebCore::HTMLTextFormControlElement>(node))
+    if (RefPtr node = core(self); is<WebCore::HTMLTextFormControlElement>(node))
         downcast<WebCore::HTMLTextFormControlElement>(*node).setCanShowPlaceholder(true);
 }
 
@@ -223,22 +223,22 @@
 
 - (BOOL)_isAutofilled
 {
-    return downcast<WebCore::HTMLInputElement>(core((DOMElement *)self))->autofilled();
+    return downcast<WebCore::HTMLInputElement>(core(self))->autofilled();
 }
 
 - (BOOL)_isAutoFilledAndViewable
 {
-    return downcast<WebCore::HTMLInputElement>(core((DOMElement *)self))->autofilledAndViewable();
+    return downcast<WebCore::HTMLInputElement>(core(self))->autofilledAndViewable();
 }
 
 - (void)_setAutofilled:(BOOL)autofilled
 {
-    protect(downcast<WebCore::HTMLInputElement>(core((DOMElement *)self)))->setAutofilled(autofilled);
+    protect(downcast<WebCore::HTMLInputElement>(core(self)))->setAutofilled(autofilled);
 }
 
 - (void)_setAutoFilledAndViewable:(BOOL)autoFilledAndViewable
 {
-    protect(downcast<WebCore::HTMLInputElement>(core((DOMElement *)self)))->setAutofilledAndViewable(autoFilledAndViewable);
+    protect(downcast<WebCore::HTMLInputElement>(core(self)))->setAutofilledAndViewable(autoFilledAndViewable);
 }
 
 @end

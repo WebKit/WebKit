@@ -33,7 +33,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::CSSUnknownRule*>(reinterpret_cast<WebCore::CSSRule*>(_internal))
+#define IMPL downcast<WebCore::CSSUnknownRule>(reinterpret_cast<WebCore::CSSRule*>(_internal))
 
 @implementation DOMCSSUnknownRule
 

@@ -34,7 +34,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::Text*>(reinterpret_cast<WebCore::Node*>(_internal)))
+#define IMPL protect(downcast<WebCore::Text>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMText
 

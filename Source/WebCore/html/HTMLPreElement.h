@@ -40,3 +40,12 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLPreElement)
+    static bool isType(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::preTag) || element.hasTagName(WebCore::HTMLNames::listingTag) || element.hasTagName(WebCore::HTMLNames::xmpTag); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
+SPECIALIZE_TYPE_TRAITS_END()

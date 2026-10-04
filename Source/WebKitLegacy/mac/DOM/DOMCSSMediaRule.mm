@@ -39,7 +39,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::CSSMediaRule*>(reinterpret_cast<WebCore::CSSRule*>(_internal)))
+#define IMPL protect(downcast<WebCore::CSSMediaRule>(reinterpret_cast<WebCore::CSSRule*>(_internal)))
 
 @implementation DOMCSSMediaRule
 

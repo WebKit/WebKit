@@ -46,7 +46,7 @@
 static inline WebCore::Node& rawUnwrap(DOMNode& wrapper)
 {
     ASSERT(wrapper._internal);
-    return reinterpret_cast<WebCore::Node&>(*wrapper._internal);
+    return *reinterpret_cast<WebCore::Node*>(wrapper._internal);
 }
 
 static inline Ref<WebCore::Node> unwrap(DOMNode& wrapper)

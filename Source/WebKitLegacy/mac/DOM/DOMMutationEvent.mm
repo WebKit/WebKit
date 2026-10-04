@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL protect(static_cast<WebCore::MutationEvent*>(reinterpret_cast<WebCore::Event*>(_internal)))
+#define IMPL protect(downcast<WebCore::MutationEvent>(reinterpret_cast<WebCore::Event*>(_internal)))
 
 @implementation DOMMutationEvent
 

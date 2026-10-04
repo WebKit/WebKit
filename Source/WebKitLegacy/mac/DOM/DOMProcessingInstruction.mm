@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::ProcessingInstruction*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL downcast<WebCore::ProcessingInstruction>(reinterpret_cast<WebCore::Node*>(_internal))
 
 @implementation DOMProcessingInstruction
 

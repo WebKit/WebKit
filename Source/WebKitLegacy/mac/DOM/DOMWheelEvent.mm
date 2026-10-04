@@ -36,7 +36,7 @@
 #import <WebCore/WheelEvent.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::WheelEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
+#define IMPL downcast<WebCore::WheelEvent>(reinterpret_cast<WebCore::Event*>(_internal))
 
 @implementation DOMWheelEvent
 

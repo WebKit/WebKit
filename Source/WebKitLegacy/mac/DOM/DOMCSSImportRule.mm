@@ -39,7 +39,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::CSSImportRule*>(reinterpret_cast<WebCore::CSSRule*>(_internal))
+#define IMPL downcast<WebCore::CSSImportRule>(reinterpret_cast<WebCore::CSSRule*>(_internal))
 
 @implementation DOMCSSImportRule
 

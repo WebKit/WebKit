@@ -37,7 +37,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL protect(static_cast<WebCore::CSSFontFaceRule*>(reinterpret_cast<WebCore::CSSRule*>(_internal)))
+#define IMPL protect(downcast<WebCore::CSSFontFaceRule>(reinterpret_cast<WebCore::CSSRule*>(_internal)))
 
 @implementation DOMCSSFontFaceRule
 
