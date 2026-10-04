@@ -56,9 +56,9 @@ MarginIntervalGenerator::MarginIntervalGenerator(unsigned radius)
     , m_x1(0)
     , m_x2(0)
 {
-    unsigned radiusSquared = radius * radius;
+    uint64_t radiusSquared = static_cast<uint64_t>(radius) * radius;
     for (unsigned y = 0; y <= radius; y++)
-        m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - y * y));
+        m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - static_cast<uint64_t>(y) * y));
 }
 
 void NODELETE MarginIntervalGenerator::set(int y, const IntShapeInterval& interval)
