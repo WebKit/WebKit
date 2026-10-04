@@ -16434,7 +16434,7 @@ void WebPageProxy::exitImmersive(CompletionHandler<void()>&& completion)
 
 void WebPageProxy::copyLinkWithHighlight()
 {
-    send(Messages::WebPage::CopyLinkWithHighlight());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::CopyLinkWithHighlight());
 }
 
 #if !PLATFORM(COCOA)
