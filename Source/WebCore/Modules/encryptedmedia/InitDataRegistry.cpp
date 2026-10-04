@@ -223,7 +223,7 @@ bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
     // The protection data starts with a 10-byte PlayReady version
     // header that needs to be skipped over to avoid XML parsing
     // errors.
-    auto view = StringView::fromLatin1(byteCast<char>(buffer.span().data()));
+    auto view = StringView::fromLatin1(byteCast<Latin1Character>(buffer.span()));
     auto startTag = view.find('<');
     if (startTag == notFound)
         return false;
