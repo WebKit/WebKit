@@ -4238,6 +4238,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (argumentCountIncludingThis != 3)
                 return CallOptimizationResult::DidNothing;
 
+            if (calleeMayBeCrossRealm(variant, m_graph.globalObjectFor(currentNodeOrigin().semantic)))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
 
             // ToObject is idempotent if it succeeds. Plus, it is non-observable except for the case that an exception is thrown. And when the exception is thrown,
