@@ -434,7 +434,7 @@ void AccessibilityAtspi::unregisterObject(AccessibilityObjectAtspi& atspiObject)
 
 String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObject, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&& interfaces)
 {
-    if (!m_connection)
+    if (!isConnected())
         return { };
 
     String path = makeString("/org/a11y/atspi/accessible/"_s, makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
@@ -448,7 +448,7 @@ String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObje
 
 void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
 {
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     // Always emit parentChanged when there are clients because the atspi cache always consumes it.
@@ -465,7 +465,7 @@ void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
 
 void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
 {
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     // Always emit parentChanged when there are clients because the atspi cache always consumes it.
@@ -478,7 +478,7 @@ void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
 
 void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
@@ -492,7 +492,7 @@ void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, 
 
 void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
@@ -510,7 +510,7 @@ void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, con
     notifyStateChanged(atspiObject, name, value);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "StateChanged", name))
@@ -526,7 +526,7 @@ void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, cons
     notifyTextChanged(atspiObject);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "TextChanged", changeType))
@@ -538,7 +538,7 @@ void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, cons
 
 void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiObject)
 {
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "TextAttributesChanged"))
@@ -554,7 +554,7 @@ void AccessibilityAtspi::textCaretMoved(AccessibilityObjectAtspi& atspiObject, u
     notifyTextCaretMoved(atspiObject, caretOffset);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "TextCaretMoved"))
@@ -566,7 +566,7 @@ void AccessibilityAtspi::textCaretMoved(AccessibilityObjectAtspi& atspiObject, u
 
 void AccessibilityAtspi::textSelectionChanged(AccessibilityObjectAtspi& atspiObject)
 {
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "TextSelectionChanged"))
@@ -582,7 +582,7 @@ void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, dou
     notifyValueChanged(atspiObject);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "PropertyChange", "accessible-value"))
@@ -598,7 +598,7 @@ void AccessibilityAtspi::activeDescendantChanged(AccessibilityObjectAtspi& atspi
     notifyActiveDescendantChanged(atspiObject);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "ActiveDescendantChanged"))
@@ -620,7 +620,7 @@ void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
         notifySelectionChanged(atspiObject);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Object", "SelectionChanged"))
@@ -636,7 +636,7 @@ void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, ASCIIL
     notifyLoadEvent(atspiObject, event);
 #endif
 
-    if (!m_connection)
+    if (!isConnected())
         return;
 
     if (!shouldEmitSignal("Document", event.characters()))
