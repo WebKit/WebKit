@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<!-- Cross-site, so its messages to this frame go through the UI process. -->
+<iframe src="http://localhost:8000/site-isolation/resources/post-message-forged-frame-url-iframe.html"></iframe>
+<script>
+// The IPC testing API exists only in debug and ASan builds; this test passes either way.
+const summary = "Tests that a WebContent process that forges its frame's URL cannot postMessage with that URL's origin.";
+
+let forgedOrigins = [];
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data == "forged") {
+        forgedOrigins.push(event.origin);
+        return;
+    }
+
+    if (event.data == "ipc unavailable")
+        finish("PASS");
+    else if (event.data != "done")
+        finish("FAIL: " + event.data);
+    else if (forgedOrigins.length)
+        finish("FAIL: received a forged message from " + forgedOrigins.join() + ".");
+    else
+        finish("PASS");
+});
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>
