@@ -338,7 +338,7 @@ void WebSocketServer::didReceiveMessage(const WebSocketMessageHandler::Connectio
 
 void WebSocketServer::didCloseConnection(const WebSocketMessageHandler::Connection& connection)
 {
-    // Connections that this side closed aren't reported, as with soup.
+    // Session cleanup removes its connections from the open set and the session map.
     if (m_openConnections.remove(connection))
         m_messageHandler.clientDisconnected(connection);
 }
@@ -364,12 +364,15 @@ void WebSocketServer::disconnect()
 
 void WebSocketServer::disconnectSession(const String& sessionId)
 {
-    // Close every connection of the session. As with soup, they aren't reported as closed by the
-    // client.
-    for (auto& [connection, connectionSessionID] : m_connectionToSession) {
-        if (connectionSessionID == sessionId && m_openConnections.remove(connection))
-            closeConnection(connection);
-    }
+    // The completion in closeConnection() retains the connection through the close send.
+    m_connectionToSession.removeIf([&](const auto& entry) {
+        if (entry.value != sessionId)
+            return false;
+
+        if (m_openConnections.remove(entry.key))
+            closeConnection(entry.key);
+        return true;
+    });
 }
 
 } // namespace WebDriver
