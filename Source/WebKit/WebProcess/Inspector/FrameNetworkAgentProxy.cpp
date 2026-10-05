@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
@@ -198,7 +199,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     if (!frameID)
         return;
 
-    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
+    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType, cachedResource->type());
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
@@ -220,7 +221,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType)
+void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType uncachedType)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
@@ -240,9 +241,15 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
     if (!frameID)
         return;
 
+    CachedResource::Type requestType = CachedResource::Type::RawResource;
+    if (uncachedType == UncachedLoadType::Ping)
+        requestType = CachedResource::Type::Ping;
+    else if (uncachedType == UncachedLoadType::Beacon)
+        requestType = CachedResource::Type::Beacon;
+
     // FIXME: Map from UncachedLoadType to a more specific ResourceType.
     // https://webkit.org/b/312828
-    m_resourcesData->resourceCreated(resourceID, *frameID, ResourceType::Other);
+    m_resourcesData->resourceCreated(resourceID, *frameID, ResourceType::Other, requestType);
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
@@ -310,16 +317,16 @@ void FrameNetworkAgentProxy::didReceiveData(ResourceLoaderIdentifier resourceID,
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
+void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
 
+    auto* resourceData = m_resourcesData->data(resourceID);
     RefPtr protectedLoader = loader;
     RefPtr frame = protectedLoader->frame();
     RefPtr document = frame->document();
     if (RefPtr frameLoader = protectedLoader->frameLoader()) {
-        auto* resourceData = m_resourcesData->data(resourceID);
         if (resourceData && resourceData->type() == ResourceType::Document) {
             if (RefPtr documentLoader = frameLoader->documentLoader())
                 m_resourcesData->addResourceSharedBuffer(resourceID, documentLoader->mainResourceData(), document->encoding());
@@ -351,7 +358,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // SourceMap/X-SourceMap response header (captured at response time), then fall back to
     // a "/*# sourceMappingURL=... */" comment in the decoded stylesheet text.
     String sourceMapURL;
-    if (auto* resourceData = m_resourcesData->data(resourceID); resourceData && resourceData->type() == ResourceType::StyleSheet) {
+    if (resourceData && resourceData->type() == ResourceType::StyleSheet) {
         sourceMapURL = resourceData->sourceMapURL();
         if (sourceMapURL.isEmpty() && resourceData->hasContent() && !resourceData->base64Encoded())
             sourceMapURL = ContentSearchUtilities::findStylesheetSourceMapURL(resourceData->content());
@@ -372,6 +379,9 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // Isolation, which is what keeps it out of the way.
     ASSERT(isMainRunLoop());
     auto completeMetrics = networkLoadMetrics.isComplete() ? networkLoadMetrics : platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(resourceID);
+
+    if (resourceData && completeMetrics.additionalNetworkLoadMetricsForWebInspector && !completeMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority.has_value())
+        completeMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = WebCore::DefaultResourceLoadPriority::forResourceType(resourceData->requestResourceType());
 
     // responseEnd is when the load actually completed; now() would charge the bookkeeping above to
     // the resource's load time.
@@ -416,7 +426,7 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     if (!frameID)
         return;
 
-    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
+    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType, cachedResource.type());
 
     // Copy content from the CachedResource now, since the store does not hold
     // CachedResource references and memory-cached resources don't go through

@@ -66,6 +66,11 @@ RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& d
     auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, crossOriginMode);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setCharset(m_charset);
+    if (resourceLoadPriority.has_value()) {
+        // Only async scripts will have a priority at this stage
+        request.setInitialPriority(WTF::move(*resourceLoadPriority));
+    }
+
     request.setPriority(WTF::move(resourceLoadPriority));
     // Only an HTTP(S) fetch appends a Referer header, and CachedResourceLoader applies the referrer
     // policy to the request only for those. Setting it for any other scheme would send the importing
