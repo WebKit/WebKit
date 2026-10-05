@@ -145,6 +145,7 @@ endif ()
 
 set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitApplicationInfo.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitApplicationManifest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAuthenticationRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAutocleanups.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAutomationSession.h.in

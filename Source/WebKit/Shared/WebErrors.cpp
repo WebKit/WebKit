@@ -116,6 +116,11 @@ ResourceError decodeError(const URL&)
 {
     return { };
 }
+
+ResourceError imageDataExceedsMaximumSizeError(const URL& url)
+{
+    return { errorDomainWebKitInternal, 0, url, "Image data exceeds maximum size"_s };
+}
 #endif
 
 ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest& request)

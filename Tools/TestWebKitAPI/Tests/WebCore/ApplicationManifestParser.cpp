@@ -48,6 +48,7 @@ static inline std::ostream& operator<<(std::ostream& os, const ApplicationManife
     case RTL:
         return os << "ApplicationManifest::Direction::RTL";
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static inline std::ostream& operator<<(std::ostream& os, const ApplicationManifest::Display& display)
@@ -62,6 +63,7 @@ static inline std::ostream& operator<<(std::ostream& os, const ApplicationManife
     case ApplicationManifest::Display::Fullscreen:
         return os << "ApplicationManifest::Display::Fullscreen";
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static inline std::ostream& operator<<(std::ostream& os, const ScreenOrientationLockType& orientation)
@@ -84,6 +86,7 @@ static inline std::ostream& operator<<(std::ostream& os, const ScreenOrientation
     case WebCore::ScreenOrientationLockType::PortraitSecondary:
         return os << "WebCore::ScreenOrientationLockType::PortraitSecondary";
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

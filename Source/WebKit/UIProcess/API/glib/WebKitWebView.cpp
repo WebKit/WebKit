@@ -133,6 +133,7 @@
 #endif
 
 #if ENABLE(2022_GLIB_API)
+#include "WebKitApplicationManifestPrivate.h"
 #include "WebKitImagePrivate.h"
 #include "WebKitNetworkSessionPrivate.h"
 #else
@@ -6180,6 +6181,68 @@ WebKitImageList* webkit_web_view_get_page_icons(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     return webView->priv->pageIcons.get();
+}
+
+/**
+ * webkit_web_view_get_application_manifest:
+ * @web_view: a #WebKitWebView
+ * @cancellable: (nullable): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: the data to pass to callback function
+ *
+ * Asynchronously get the application manifest of the currently loaded page.
+ *
+ * The manifest is loaded from the `<link rel="manifest">` element of the main
+ * frame document, so this should be called once the page has finished loading,
+ * for example on [signal@WebView::load-changed] with %WEBKIT_LOAD_FINISHED.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_get_application_manifest_finish() to get the result of the operation.
+ *
+ * Since: 2.56
+ */
+void webkit_web_view_get_application_manifest(WebKitWebView* webView, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+#if ENABLE(APPLICATION_MANIFEST)
+    getPage(webView).getApplicationManifest([task = WTF::move(task)](const std::optional<WebCore::ApplicationManifest>& coreManifest) {
+        if (g_task_return_error_if_cancelled(task.get()))
+            return;
+
+        if (!coreManifest) {
+            g_task_return_pointer(task.get(), nullptr, nullptr);
+            return;
+        }
+
+        auto* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
+        g_task_return_pointer(task.get(), webkitApplicationManifestCreate(webView, *coreManifest), g_object_unref);
+    });
+#else
+    g_task_return_pointer(task.get(), nullptr, nullptr);
+#endif
+}
+
+/**
+ * webkit_web_view_get_application_manifest_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_get_application_manifest().
+ *
+ * Returns: (transfer full) (nullable): the page [class@ApplicationManifest], or %NULL
+ *    if the page does not have a valid manifest or in case of error.
+ *
+ * Since: 2.56
+ */
+WebKitApplicationManifest* webkit_web_view_get_application_manifest_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
+
+    return static_cast<WebKitApplicationManifest*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 #endif
 
