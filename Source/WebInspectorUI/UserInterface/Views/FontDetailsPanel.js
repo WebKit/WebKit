@@ -90,7 +90,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
             if (row instanceof WI.FontVariationDetailsSectionRow) {
                 let fontVariationAxis = fontProperty.variations.values().next().value;
-                row.value = fontVariationAxis.value ? fontVariationAxis.value : WI.FontStyles.fontPropertyValueToAxisValue(fontVariationAxis.tag, fontProperty.value);
+                row.value = fontVariationAxis.value ?? WI.FontStyles.fontPropertyValueToAxisValue(fontVariationAxis.tag, fontProperty.value);
             }
         }
 
