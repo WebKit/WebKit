@@ -455,6 +455,25 @@ void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier reso
     completionHandler(WTF::move(result));
 }
 
+void WebInspectorBackend::resolveWebSocket(uint64_t channelID, const String& objectGroup, CompletionHandler<void(std::expected<String, String>&&)>&& completionHandler)
+{
+    RefPtr page = m_page;
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage) {
+        completionHandler(makeUnexpected("Inspected page is gone"_s));
+        return;
+    }
+
+    auto result = Inspector::ResourceUtilities::resolveWebSocketInFrame(*corePage, channelID, objectGroup);
+    if (!result) {
+        ASSERT(!result.error().isEmpty());
+        completionHandler(makeUnexpected(result.error()));
+        return;
+    }
+
+    completionHandler(result.value()->toJSONString());
+}
+
 void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&& completionHandler)
 {
     // Site Isolation load leg for Network.loadResource: ProxyingNetworkAgent already routed this to

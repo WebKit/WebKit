@@ -105,6 +105,7 @@ public:
     void getResponseBody(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<std::pair<String, bool>, String>&&)>&&);
     void getSerializedCertificate(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(std::expected<String, String>&&)>&&);
     void loadResource(WebCore::FrameIdentifier, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&&);
+    void resolveWebSocket(uint64_t channelID, const String& objectGroup, CompletionHandler<void(std::expected<String, String>&&)>&&);
 
     void setExtraHTTPHeaders(WebCore::HTTPHeaderMap&&);
     void setResourceCachingDisabled(bool);

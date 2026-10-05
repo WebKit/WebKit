@@ -455,9 +455,56 @@ void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameI
         *targetPageID);
 }
 
-CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId&, const String&)
+void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& requestId, const String& objectGroup, Ref<ResolveWebSocketCallback>&& callback)
 {
-    return makeUnexpected("Not yet implemented"_s);
+    // Routed by the process encoded in the requestId. The owning process wraps the socket with its frame's
+    // injected script, so the returned object id is only meaningful on that frame's target; the frontend
+    // pairs it with the frame target, as it does for DOM node ids.
+    auto parsed = IdentifierRegistry::parseProtocolWebSocketRequestId(requestId);
+    if (!parsed) {
+        callback->sendFailure("Missing web socket for given requestId"_s);
+        return;
+    }
+
+    auto [processIdentifier, channelID] = *parsed;
+
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage) {
+        callback->sendFailure("Inspected page is gone"_s);
+        return;
+    }
+
+    RefPtr<WebKit::WebProcessProxy> targetProcess;
+    std::optional<PageIdentifier> targetPageID;
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess.coreProcessIdentifier() == processIdentifier) {
+            targetProcess = &webProcess;
+            targetPageID = pageID;
+        }
+    });
+
+    if (!targetProcess || !targetPageID) {
+        callback->sendFailure("WebProcess not found for requestId"_s);
+        return;
+    }
+
+    targetProcess->sendWithAsyncReply(
+        Messages::WebInspectorBackend::ResolveWebSocket { channelID, objectGroup },
+        [callback = WTF::move(callback)](std::expected<String, String>&& result) mutable {
+            if (!result) {
+                callback->sendFailure(replyFailureString(result.error()));
+                return;
+            }
+
+            RefPtr value = JSON::Value::parseJSON(result.value());
+            if (!value || !value->asObject()) {
+                callback->sendFailure("Internal error: unable to cast WebSocket"_s);
+                return;
+            }
+
+            callback->sendSuccess(Protocol::BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(value.releaseNonNull()));
+        },
+        *targetPageID);
 }
 
 // FIXME: Forward interception to the WebContent processes. https://bugs.webkit.org/show_bug.cgi?id=324383

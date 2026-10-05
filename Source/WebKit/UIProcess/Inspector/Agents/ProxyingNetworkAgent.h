@@ -91,7 +91,7 @@ public:
     CommandResult<void> setClearResourceDataOnNavigate(bool) final;
     void loadResource(const Protocol::Network::FrameId&, const String& url, Ref<LoadResourceCallback>&&) final;
     void getSerializedCertificate(const Protocol::Network::RequestId&, Ref<GetSerializedCertificateCallback>&&) final;
-    CommandResult<Ref<Protocol::Runtime::RemoteObject>> resolveWebSocket(const Protocol::Network::RequestId&, const String& objectGroup) final;
+    void resolveWebSocket(const Protocol::Network::RequestId&, const String& objectGroup, Ref<ResolveWebSocketCallback>&&) final;
     CommandResult<void> setInterceptionEnabled(bool) final;
     CommandResult<void> addInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     CommandResult<void> removeInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;

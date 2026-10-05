@@ -44,6 +44,7 @@
 #include "DocumentThreadableLoader.h"
 #include "DocumentView.h"
 #include "FormData.h"
+#include "FrameInspectorController.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
@@ -60,6 +61,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "PageInspectorController.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "RenderObjectInlines.h"
@@ -74,6 +76,7 @@
 #include "ThreadableWebSocketChannel.h"
 #include "WebConsoleAgent.h"
 #include "WebCorePersistentCoders.h"
+#include "WebInjectedScriptManager.h"
 #include "WebSocket.h"
 #include "WebSocketFrame.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -825,31 +828,89 @@ static JSC::JSValue webSocketAsScriptValue(JSC::JSGlobalObject& state, WebSocket
     return toJS(&state, deprecatedGlobalObjectForPrototype(&state), webSocket);
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorNetworkAgent::resolveWebSocket(const Inspector::Protocol::Network::RequestId& requestId, const String& objectGroup)
+void InspectorNetworkAgent::resolveWebSocket(const Inspector::Protocol::Network::RequestId& requestId, const String& objectGroup, Ref<ResolveWebSocketCallback>&& callback)
 {
     RefPtr webSocket = webSocketForRequestId(requestId);
-    if (!webSocket)
-        return makeUnexpected("Missing web socket for given requestId"_s);
+    if (!webSocket) {
+        callback->sendFailure("Missing web socket for given requestId"_s);
+        return;
+    }
 
     // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
     RefPtr document = dynamicDowncast<Document>(webSocket->scriptExecutionContext());
-    if (!document)
-        return makeUnexpected("Not supported"_s);
+    if (!document) {
+        callback->sendFailure("Not supported"_s);
+        return;
+    }
 
     RefPtr frame = document->frame();
-    if (!frame)
-        return makeUnexpected("Missing frame of web socket for given requestId"_s);
+    if (!frame) {
+        callback->sendFailure("Missing frame of web socket for given requestId"_s);
+        return;
+    }
 
     auto& globalObject = mainWorldGlobalObject(*frame);
     auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
     ASSERT(!injectedScript.hasNoValue());
 
     auto object = injectedScript.wrapObject(webSocketAsScriptValue(globalObject, *webSocket), objectGroup);
+    if (!object) {
+        callback->sendFailure("Internal error: unable to cast WebSocket"_s);
+        return;
+    }
+
+    callback->sendSuccess(object.releaseNonNull());
+}
+
+} // namespace WebCore
+
+namespace Inspector::ResourceUtilities {
+
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveWebSocketInFrame(WebCore::Page& page, uint64_t channelID, const String& objectGroup)
+{
+    RefPtr<WebCore::WebSocket> webSocket;
+    RefPtr<WebCore::Document> document;
+    {
+        Locker locker { WebCore::WebSocket::allActiveWebSocketsLock() };
+        for (CheckedPtr activeWebSocket : WebCore::WebSocket::allActiveWebSockets()) {
+            RefPtr activeDocument = dynamicDowncast<WebCore::Document>(activeWebSocket->scriptExecutionContext());
+            if (!activeDocument || activeDocument->page() != &page)
+                continue;
+
+            RefPtr channel = activeWebSocket->channel();
+            if (!channel || channel->progressIdentifier().toUInt64() != channelID)
+                continue;
+
+            webSocket = activeWebSocket.get();
+            document = WTF::move(activeDocument);
+            break;
+        }
+    }
+    if (!webSocket)
+        return makeUnexpected("Missing web socket for given requestId"_s);
+
+    RefPtr frame = document->frame();
+    if (!frame)
+        return makeUnexpected("Missing frame of web socket for given requestId"_s);
+
+    auto& globalObject = WebCore::mainWorldGlobalObject(*frame);
+    // The main frame's console context belongs to the page target, so a main-frame socket is wrapped
+    // by the page's injected script. Any other frame's socket is wrapped by that frame's own.
+    auto& injectedScriptManager = frame->isMainFrame() ? page.inspectorController().injectedScriptManager() : frame->inspectorController().injectedScriptManager();
+    auto injectedScript = injectedScriptManager.injectedScriptFor(&globalObject);
+    if (injectedScript.hasNoValue())
+        return makeUnexpected("Missing injected script for frame of web socket"_s);
+
+    auto object = injectedScript.wrapObject(WebCore::webSocketAsScriptValue(globalObject, *webSocket), objectGroup);
     if (!object)
         return makeUnexpected("Internal error: unable to cast WebSocket"_s);
 
     return object.releaseNonNull();
 }
+
+} // namespace Inspector::ResourceUtilities
+
+namespace WebCore {
 
 Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionEnabled(bool enabled)
 {
