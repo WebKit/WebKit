@@ -54,8 +54,10 @@ static bool NODELETE isElementForRemoveFormatCommand(const Element* element)
     using namespace ElementNames;
 
     switch (element->elementName()) {
+    case HTML::abbr:
     case HTML::acronym:
     case HTML::b:
+    case HTML::bdi:
     case HTML::bdo:
     case HTML::big:
     case HTML::cite:
@@ -66,6 +68,7 @@ static bool NODELETE isElementForRemoveFormatCommand(const Element* element)
     case HTML::i:
     case HTML::ins:
     case HTML::kbd:
+    case HTML::mark:
     case HTML::nobr:
     case HTML::q:
     case HTML::s:

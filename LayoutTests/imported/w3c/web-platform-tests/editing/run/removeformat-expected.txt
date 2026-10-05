@@ -544,7 +544,7 @@ PASS [["removeformat",""]] "foo<a href=foo>b[a]r</a>baz" queryCommandState("remo
 PASS [["removeformat",""]] "foo<a href=foo>b[a]r</a>baz" queryCommandValue("removeformat") after
 PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]": execCommand("removeformat", false, "") return value
 PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" checks for modifications to non-editable content
-FAIL [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foobarbaz" but got "foo<abbr>bar</abbr>baz"
+PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" compare innerHTML
 PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" queryCommandIndeterm("removeformat") before
 PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" queryCommandState("removeformat") before
 PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" queryCommandValue("removeformat") before
@@ -553,7 +553,7 @@ PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" queryCommandState("removef
 PASS [["removeformat",""]] "[foo<abbr>bar</abbr>baz]" queryCommandValue("removeformat") after
 PASS [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz": execCommand("removeformat", false, "") return value
 PASS [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz" checks for modifications to non-editable content
-FAIL [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<abbr>b</abbr>a<abbr>r</abbr>baz" but got "foo<abbr>bar</abbr>baz"
+PASS [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz" compare innerHTML
 PASS [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz" queryCommandIndeterm("removeformat") before
 PASS [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz" queryCommandState("removeformat") before
 PASS [["removeformat",""]] "foo<abbr>b[a]r</abbr>baz" queryCommandValue("removeformat") before
@@ -580,7 +580,7 @@ PASS [["removeformat",""]] "foo<acronym>b[a]r</acronym>baz" queryCommandState("r
 PASS [["removeformat",""]] "foo<acronym>b[a]r</acronym>baz" queryCommandValue("removeformat") after
 PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]": execCommand("removeformat", false, "") return value
 PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" checks for modifications to non-editable content
-FAIL [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foobarbaz" but got "foo<bdi dir=\"rtl\">bar</bdi>baz"
+PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" compare innerHTML
 PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" queryCommandIndeterm("removeformat") before
 PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" queryCommandState("removeformat") before
 PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" queryCommandValue("removeformat") before
@@ -589,7 +589,7 @@ PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" queryCommandState("r
 PASS [["removeformat",""]] "[foo<bdi dir=rtl>bar</bdi>baz]" queryCommandValue("removeformat") after
 PASS [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz": execCommand("removeformat", false, "") return value
 PASS [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz" checks for modifications to non-editable content
-FAIL [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<bdi dir=\"rtl\">b</bdi>a<bdi dir=\"rtl\">r</bdi>baz" but got "foo<bdi dir=\"rtl\">bar</bdi>baz"
+PASS [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz" compare innerHTML
 PASS [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz" queryCommandIndeterm("removeformat") before
 PASS [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz" queryCommandState("removeformat") before
 PASS [["removeformat",""]] "foo<bdi dir=rtl>b[a]r</bdi>baz" queryCommandValue("removeformat") before
@@ -970,7 +970,7 @@ PASS [["removeformat",""]] "foo<kbd>b[a]r</kbd>baz" queryCommandState("removefor
 PASS [["removeformat",""]] "foo<kbd>b[a]r</kbd>baz" queryCommandValue("removeformat") after
 PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]": execCommand("removeformat", false, "") return value
 PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" checks for modifications to non-editable content
-FAIL [["removeformat",""]] "[foo<mark>bar</mark>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foobarbaz" but got "foo<mark>bar</mark>baz"
+PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" compare innerHTML
 PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" queryCommandIndeterm("removeformat") before
 PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" queryCommandState("removeformat") before
 PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" queryCommandValue("removeformat") before
@@ -979,7 +979,7 @@ PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" queryCommandState("removef
 PASS [["removeformat",""]] "[foo<mark>bar</mark>baz]" queryCommandValue("removeformat") after
 PASS [["removeformat",""]] "foo<mark>b[a]r</mark>baz": execCommand("removeformat", false, "") return value
 PASS [["removeformat",""]] "foo<mark>b[a]r</mark>baz" checks for modifications to non-editable content
-FAIL [["removeformat",""]] "foo<mark>b[a]r</mark>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<mark>b</mark>a<mark>r</mark>baz" but got "foo<mark>bar</mark>baz"
+PASS [["removeformat",""]] "foo<mark>b[a]r</mark>baz" compare innerHTML
 PASS [["removeformat",""]] "foo<mark>b[a]r</mark>baz" queryCommandIndeterm("removeformat") before
 PASS [["removeformat",""]] "foo<mark>b[a]r</mark>baz" queryCommandState("removeformat") before
 PASS [["removeformat",""]] "foo<mark>b[a]r</mark>baz" queryCommandValue("removeformat") before
