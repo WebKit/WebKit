@@ -1126,7 +1126,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
                 auto stretchedSize = !GridLayoutFunctions::isOrthogonalGridItem(*renderGrid(), gridItem) ? gridItem.constrainLogicalHeightByMinMax(rowSize, { }) : gridItem.constrainLogicalWidthByMinMax(rowSize, renderGrid()->contentBoxWidth(), *renderGrid());
                 ScopedOverridingContentSizeForGridItem scope(*renderGrid(), gridItem, stretchedSize, Style::GridTrackSizingDirection::Rows);
                 return gridItem.minContentLogicalWidthContribution();
-            } else if (shouldTreatGridAreaBlockSizeAsIndefinite(gridItem)) {
+            }
+            if (shouldTreatGridAreaBlockSizeAsIndefinite(gridItem)) {
                 ScopedGridAreaContentLogicalHeight scope(gridItem, std::nullopt);
                 return gridItem.minContentLogicalWidthContribution();
             }
@@ -1186,7 +1187,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentContributionForGridItem(R
                     ScopedGridAreaContentLogicalHeight scope(gridItem, rowsEstimate);
                     return gridItem.maxContentLogicalWidthContribution();
                 }
-            } else if (shouldTreatGridAreaBlockSizeAsIndefinite(gridItem)) {
+            }
+            if (shouldTreatGridAreaBlockSizeAsIndefinite(gridItem)) {
                 ScopedGridAreaContentLogicalHeight scope(gridItem, std::nullopt);
                 return gridItem.maxContentLogicalWidthContribution();
             }
@@ -1365,12 +1367,17 @@ void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, S
     }
 }
 
-// The first column pass runs before this layout sizes the rows, so the grid area block size still holds the previous
-// layout's row size. When the spanned rows are not definite, the item has an indefinite block size to resolve
-// against (https://drafts.csswg.org/css-grid-2/#algo-grid-sizing), not the previous row size.
+// The first column pass (both in layout and when computing the grid's intrinsic sizes) runs before the rows are sized, so
+// the grid area block size still holds the previous layout's row size. When the spanned rows are not definite, the item
+// has an indefinite block size to resolve against (https://drafts.csswg.org/css-grid-2/#algo-grid-sizing), not the
+// previous row size. The exception is the grid recomputing its intrinsic sizes once its layout has sized the rows (see
+// RenderGrid::layoutGrid() and updateGridAreaForAspectRatioItems()), as the grid area block size is current then. The
+// grid's own track sizing algorithm only has row tracks from that row sizing until the end of the layout.
 bool GridTrackSizingAlgorithmStrategy::shouldTreatGridAreaBlockSizeAsIndefinite(const RenderBox& gridItem) const
 {
-    if (sizingOperation() != SizingOperation::TrackSizing || sizingState() != GridTrackSizingAlgorithm::SizingState::ColumnSizingFirstIteration)
+    if (sizingState() != GridTrackSizingAlgorithm::SizingState::ColumnSizingFirstIteration)
+        return false;
+    if (sizingOperation() == SizingOperation::IntrinsicSizeComputation && !renderGrid()->m_trackSizingAlgorithm.tracks(Style::GridTrackSizingDirection::Rows).isEmpty())
         return false;
     if (gridItem.parent() != renderGrid() || GridLayoutFunctions::isOrthogonalGridItem(*renderGrid(), gridItem))
         return false;
