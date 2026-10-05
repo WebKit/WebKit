@@ -50,6 +50,8 @@ public:
 
     JS_EXPORT_PRIVATE static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, ArgList, double length, JSString* nameMayBeNull, const SourceCode&);
     JS_EXPORT_PRIVATE static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, ArgList, double length, JSString* nameMayBeNull, SourceTaintedOrigin);
+    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, ArgList, double length, JSString* nameMayBeNull, SourceTaintedOrigin, JSValue alreadyMaterializedPrototype);
+    static JSValue materializeObservablePrototype(JSGlobalObject*, JSObject* targetFunction);
     static JSBoundFunction* createRaw(VM&, JSGlobalObject*, JSFunction* targetFunction, unsigned boundArgsLength, JSValue boundThis, JSValue arg0, JSValue arg1, JSValue arg2, SourceTaintedOrigin);
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
