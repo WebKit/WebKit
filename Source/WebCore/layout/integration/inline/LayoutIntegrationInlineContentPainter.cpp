@@ -39,6 +39,10 @@
 #include "TextBoxPainter.h"
 #include <wtf/Assertions.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 namespace LayoutIntegration {
 
@@ -157,6 +161,12 @@ void InlineContentPainter::paint()
             paintEllipsis(*lastBoxLineIndex);
     };
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    auto isOutlineOrChildOutlinePhase = m_paintInfo.phase == PaintPhase::Outline || m_paintInfo.phase == PaintPhase::ChildOutlines;
+    auto paintsAXCustomColorModeDebugIndicators = isOutlineOrChildOutlinePhase && AXCustomColorModeController::shouldPaintDebugIndicators(root().document());
+    SingleThreadWeakListHashSet<RenderInline> axCustomColorModeDebugIndicatorObjects;
+#endif
+
     for (auto& box : m_inlineContent.boxesForRect(m_damageRect)) {
         if (!box.layoutBox().rendererForIntegration()) {
             // No renderer means damaged content, and we should have bailed out earlier at LineLayout::paint.
@@ -188,6 +198,10 @@ void InlineContentPainter::paint()
         if (includedInPaintScope && shouldPaintBoxForPhase()) {
             paintLineEndingEllipsisIfApplicable(box.lineIndex());
             paintDisplayBox(box);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            if (paintsAXCustomColorModeDebugIndicators && box.isNonRootInlineBox() && box.isVisible())
+                axCustomColorModeDebugIndicatorObjects.add(downcast<RenderInline>(*box.layoutBox().rendererForIntegration()));
+#endif
         }
         lastBoxLineIndex = box.lineIndex();
     }
@@ -196,6 +210,18 @@ void InlineContentPainter::paint()
     OutlinePainter outlinePainter { m_paintInfo };
     for (CheckedRef renderInline : m_outlineObjects)
         outlinePainter.paintOutline(renderInline, m_paintOffset);
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (!paintsAXCustomColorModeDebugIndicators)
+        return;
+
+    for (CheckedRef renderInline : axCustomColorModeDebugIndicatorObjects) {
+        auto borderBoxRect = renderInline->borderBoxRectInContainer();
+        root().flipForWritingMode(borderBoxRect);
+        borderBoxRect.moveBy(m_paintOffset);
+        AXCustomColorModeController::paintDebugIndicators(m_paintInfo.context(), renderInline, borderBoxRect);
+    }
+#endif
 }
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const

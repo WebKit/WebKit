@@ -69,6 +69,10 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -903,7 +907,15 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // Paint outline.
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().usedVisibility() == Visibility::Visible)
+    auto phaseIsRelatedToOwnOutline = paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline;
+    auto shouldPaintDebugIndicatorsForAXCustomColorMode = false;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    shouldPaintDebugIndicatorsForAXCustomColorMode = AXCustomColorModeController::shouldPaintDebugIndicators(document());
+#endif
+    auto hasOutlineOrAXCustomColorIndicators = hasOutline() || shouldPaintDebugIndicatorsForAXCustomColorMode;
+    if (phaseIsRelatedToOwnOutline
+        && hasOutlineOrAXCustomColorIndicators
+        && style().usedVisibility() == Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(paintOffset, borderBoxSize()));
 }
 

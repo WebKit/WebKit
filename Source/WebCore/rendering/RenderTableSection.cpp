@@ -55,6 +55,10 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1384,8 +1388,13 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
         if (phase != PaintPhase::Outline && phase != PaintPhase::SelfOutline)
             return;
 
+        auto shouldPaintDebugIndicatorsForAXCustomColorMode = false;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        shouldPaintDebugIndicatorsForAXCustomColorMode = AXCustomColorModeController::shouldPaintDebugIndicators(document());
+#endif
         auto* row = m_grid[rowIndex].rowRenderer;
-        if (row && !row->hasSelfPaintingLayer() && row->hasOutline())
+        auto hasOutlineOrAXCustomColorIndicators = row->hasOutline() || shouldPaintDebugIndicatorsForAXCustomColorMode;
+        if (row && !row->hasSelfPaintingLayer() && hasOutlineOrAXCustomColorIndicators)
             row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
     };
 
