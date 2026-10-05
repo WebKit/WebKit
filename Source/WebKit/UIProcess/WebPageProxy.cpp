@@ -2892,7 +2892,7 @@ RefPtr<API::Navigation> WebPageProxy::goForward()
     if (!forwardItem)
         return nullptr;
 
-    Ref frameItem = protect(preferences())->useUIProcessForBackForwardItemLoading()
+    Ref frameItem = protect(preferences())->shouldUseUIProcessForBackForwardItemLoading()
         ? forwardItem->mainFrameItem()
         : forwardItem->navigatedFrameItem();
     return goToBackForwardItem(WTF::move(frameItem), FrameLoadType::Forward);
@@ -3004,7 +3004,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
 
     auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(URL(item->url()));
 
-    if (preferences->useUIProcessForBackForwardItemLoading()) {
+    if (preferences->shouldUseUIProcessForBackForwardItemLoading()) {
         bool anySent = false;
         if (RefPtr currentItem = backForwardList().currentItem())
             anySent = dispatchPerFrameTraversals(protect(currentItem->mainFrameItem()), protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
@@ -3110,7 +3110,7 @@ bool WebPageProxy::sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& 
 Ref<WebBackForwardListFrameItem> WebPageProxy::frameItemForLegacyTraversalRouting(WebBackForwardListItem& targetItem, ASCIILiteral logTag)
 {
     Ref frameItem = targetItem.mainFrameItem();
-    if (protect(preferences())->useUIProcessForBackForwardItemLoading())
+    if (protect(preferences())->shouldUseUIProcessForBackForwardItemLoading())
         return frameItem;
     RefPtr currentItem = backForwardList().currentItem();
     if (!currentItem)
@@ -3140,7 +3140,7 @@ Ref<FrameState> WebPageProxy::copyFrameStateForBackForwardNavigation(WebBackForw
     };
 
     Ref targetFrameItem = frameItemForNavigation();
-    return protect(preferences())->useUIProcessForBackForwardItemLoading() ? targetFrameItem->copyFrameState() : targetFrameItem->copyFrameStateWithChildren();
+    return protect(preferences())->shouldUseUIProcessForBackForwardItemLoading() ? targetFrameItem->copyFrameState() : targetFrameItem->copyFrameStateWithChildren();
 }
 
 WebProcessProxy* WebPageProxy::frameProcessForNonCachedBackForwardNavigation(WebBackForwardListFrameItem& frameItem) const
@@ -10176,7 +10176,7 @@ RefPtr<FrameState> WebPageProxy::frameStateForBackForwardChildFrame(WebFrameProx
 void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, NavigationActionData&& navigationActionData, CompletionHandler<void(PolicyDecision&&)>&& originalCompletionHandler)
 {
     RefPtr<FrameState> frameStateForBackForwardNavigation;
-    if (protect(preferences())->useUIProcessForBackForwardItemLoading() && navigationActionData.navigationType == WebCore::NavigationType::BackForward && navigationActionData.targetBackForwardItemIdentifier) {
+    if (protect(preferences())->shouldUseUIProcessForBackForwardItemLoading() && navigationActionData.navigationType == WebCore::NavigationType::BackForward && navigationActionData.targetBackForwardItemIdentifier) {
         if (RefPtr frameState = frameStateForBackForwardChildFrame(frame, *navigationActionData.targetBackForwardItemIdentifier)) {
             WEBPAGEPROXY_RELEASE_LOG(Loading, "frameStateForBackForwardChildFrame: Back/Forward child frame, rewriting URL to %" SENSITIVE_LOG_STRING, frameState->urlString.utf8());
             navigationActionData.request.setURL(URL { frameState->urlString });
