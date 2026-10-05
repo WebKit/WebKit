@@ -31,6 +31,7 @@
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverMarginBox.h"
 #include "ReducedResolutionSeconds.h"
+#include <wtf/Lock.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -90,8 +91,18 @@ public:
     const IntersectionObserverMarginBox& rootMarginBox() const { return m_rootMargin; }
     const IntersectionObserverMarginBox& scrollMarginBox() const { return m_scrollMargin; }
     const Vector<double>& thresholds() const { return m_thresholds; }
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& observationTargets() const { return m_observationTargets; }
-    bool hasObservationTargets() const { return m_observationTargets.size(); }
+#else
+    Vector<Ref<Element>> observationTargets() const;
+#endif
+    bool hasObservationTargets() const
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        return !m_observationTargets.isEmpty();
+    }
     bool isObserving(const Element&) const;
 
     void observe(Element&);
@@ -124,6 +135,27 @@ private:
     bool removeTargetRegistration(Element&);
     void removeAllTargets();
 
+    Vector<GCReachableRef<Element>> takeTargetsWaitingForFirstObservation();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Vector<Ref<Element>> takeAllTargets();
+#endif
+
+    bool hasPendingTargets() const
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        return !m_pendingTargets.isEmpty();
+    }
+
+    bool hasTargetsWaitingForFirstObservation() const
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        return !m_targetsWaitingForFirstObservation.isEmpty();
+    }
+
     struct IntersectionObservationState {
         FloatRect rootBounds;
         std::optional<FloatRect> absoluteIntersectionRect; // Only computed if intersecting.
@@ -145,10 +177,19 @@ private:
     IntersectionObserverMarginBox m_scrollMargin;
     Vector<double> m_thresholds;
     RefPtr<IntersectionObserverCallback> m_callback;
+
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_observationTargets;
     Vector<GCReachableRef<Element>> m_pendingTargets;
-    Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
     Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation;
+#else
+    mutable Lock m_observationTargetsLock;
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_observationTargets WTF_GUARDED_BY_LOCK(m_observationTargetsLock);
+    Vector<GCReachableRef<Element>> m_pendingTargets WTF_GUARDED_BY_LOCK(m_observationTargetsLock);
+    Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation WTF_GUARDED_BY_LOCK(m_observationTargetsLock);
+#endif
+
+    Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
     IncludeObscuredInsets m_includeObscuredInsets { IncludeObscuredInsets::No };
 };
 

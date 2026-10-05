@@ -180,12 +180,19 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
 DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(OptionSet<ContentRelevancy> relevancyToCheck) const
 {
     auto didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::No;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (auto& weakTarget : m_observer->observationTargets()) {
         if (RefPtr target = weakTarget.get()) {
             if (checkRelevancyOfContentVisibilityElement(*target, relevancyToCheck))
                 didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::Yes;
         }
     }
+#else
+    for (Ref target : m_observer->observationTargets()) {
+        if (checkRelevancyOfContentVisibilityElement(target, relevancyToCheck))
+            didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::Yes;
+    }
+#endif
     return didUpdateAnyContentRelevancy;
 }
 
@@ -194,6 +201,7 @@ HadInitialVisibleContentVisibilityDetermination ContentVisibilityDocumentState::
     if (!m_observer)
         return HadInitialVisibleContentVisibilityDetermination::No;
     Vector<Ref<Element>> elementsToCheck;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (auto& weakTarget : m_observer->observationTargets()) {
         if (RefPtr target = weakTarget.get()) {
             bool checkForInitialDetermination = !m_elementViewportProximities.contains(*target) && !target->isRelevantToUser();
@@ -201,6 +209,13 @@ HadInitialVisibleContentVisibilityDetermination ContentVisibilityDocumentState::
                 elementsToCheck.append(target.releaseNonNull());
         }
     }
+#else
+    for (Ref target : m_observer->observationTargets()) {
+        bool checkForInitialDetermination = !m_elementViewportProximities.contains(target) && !target->isRelevantToUser();
+        if (checkForInitialDetermination)
+            elementsToCheck.append(WTF::move(target));
+    }
+#endif
     auto hadInitialVisibleContentVisibilityDetermination = HadInitialVisibleContentVisibilityDetermination::No;
     if (!elementsToCheck.isEmpty()) {
         elementsToCheck.first()->protectedDocument()->updateIntersectionObservations({ m_observer });

@@ -235,9 +235,41 @@ String IntersectionObserver::scrollMargin() const
 
 bool IntersectionObserver::isObserving(const Element& element) const
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_observationTargetsLock };
+#endif
     return m_observationTargets.findIf([&](auto& target) {
         return target.get() == &element;
     }) != notFound;
+}
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+Vector<Ref<Element>> IntersectionObserver::observationTargets() const
+{
+    Locker locker { m_observationTargetsLock };
+    return WTF::compactMap(m_observationTargets, [](auto& target) {
+        return RefPtr { target.get() };
+    });
+}
+
+Vector<Ref<Element>> IntersectionObserver::takeAllTargets()
+{
+    Locker locker { m_observationTargetsLock };
+    auto targets = WTF::compactMap(m_observationTargets, [](auto& target) {
+        return RefPtr { target.get() };
+    });
+    m_observationTargets.clear();
+    m_targetsWaitingForFirstObservation.clear();
+    return targets;
+}
+#endif
+
+Vector<GCReachableRef<Element>> IntersectionObserver::takeTargetsWaitingForFirstObservation()
+{
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_observationTargetsLock };
+#endif
+    return std::exchange(m_targetsWaitingForFirstObservation, { });
 }
 
 void IntersectionObserver::observe(Element& target)
@@ -247,12 +279,17 @@ void IntersectionObserver::observe(Element& target)
 
     target.ensureIntersectionObserverData().registrations.append({ *this, std::nullopt });
     bool hadObservationTargets = hasObservationTargets();
-    m_observationTargets.append(target);
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        m_observationTargets.append(target);
 
-    // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
-    // target alive until this first observation. This, in turn, will keep the IntersectionObserver's JS wrapper alive via
-    // isReachableFromOpaqueRoots(), so the callback stays alive.
-    m_targetsWaitingForFirstObservation.append(target);
+        // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
+        // target alive until this first observation. This, in turn, will keep the IntersectionObserver's JS wrapper alive via
+        // isReachableFromOpaqueRoots(), so the callback stays alive.
+        m_targetsWaitingForFirstObservation.append(target);
+    }
 
     RefPtr document = trackingDocument();
     if (!hadObservationTargets)
@@ -265,9 +302,14 @@ void IntersectionObserver::unobserve(Element& target)
     if (!removeTargetRegistration(target))
         return;
 
-    bool removed = m_observationTargets.removeFirst(&target);
-    ASSERT_UNUSED(removed, removed);
-    m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        bool removed = m_observationTargets.removeFirst(&target);
+        ASSERT_UNUSED(removed, removed);
+        m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+    }
 
     if (!hasObservationTargets()) {
         if (RefPtr document = trackingDocument())
@@ -278,7 +320,7 @@ void IntersectionObserver::unobserve(Element& target)
 void IntersectionObserver::disconnect()
 {
     if (!hasObservationTargets()) {
-        ASSERT(m_targetsWaitingForFirstObservation.isEmpty());
+        ASSERT(!hasTargetsWaitingForFirstObservation());
         return;
     }
 
@@ -289,13 +331,26 @@ void IntersectionObserver::disconnect()
 
 auto IntersectionObserver::takeRecords() -> TakenRecords
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_observationTargetsLock };
+#endif
     return { WTF::move(m_queuedEntries), WTF::move(m_pendingTargets) };
 }
 
 void IntersectionObserver::targetDestroyed(Element& target)
 {
-    m_observationTargets.removeFirst(&target);
-    m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        m_observationTargets.removeFirst(&target);
+#ifdef RC_REMOVE_SEC_ACCEL_3
+        m_targetsWaitingForFirstObservation.removeFirstMatching([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; });
+#else
+        ASSERT(!m_targetsWaitingForFirstObservation.containsIf([&](auto& pendingTarget) { return pendingTarget.ptr() == &target; }));
+#endif
+    }
+
     if (!hasObservationTargets()) {
         if (RefPtr document = trackingDocument())
             document->removeIntersectionObserver(*this);
@@ -316,12 +371,19 @@ bool IntersectionObserver::removeTargetRegistration(Element& target)
 
 void IntersectionObserver::removeAllTargets()
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (auto& target : m_observationTargets) {
         bool removed = removeTargetRegistration(*target);
         ASSERT_UNUSED(removed, removed);
     }
     m_observationTargets.clear();
     m_targetsWaitingForFirstObservation.clear();
+#else
+    for (Ref target : takeAllTargets()) {
+        bool removed = removeTargetRegistration(target);
+        ASSERT_UNUSED(removed, removed);
+    }
+#endif
 }
 
 void IntersectionObserver::rootDestroyed()
@@ -627,7 +689,13 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
 
     auto needNotify = NeedNotify::No;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     for (auto& target : observationTargets()) {
+#else
+    // Iterate on a copy of m_observationTargets, in case something in the loop mutates it.
+    auto observationTargets = this->observationTargets();
+    for (auto& target : observationTargets) {
+#endif
         auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
         auto index = targetRegistrations.findIf([&](auto& registration) {
             return registration.observer.get() == this;
@@ -642,7 +710,11 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
             return false;
         }();
         auto applyRootMargin = isSameOriginObservation ? ApplyRootMargin::Yes : ApplyRootMargin::No;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         auto intersectionState = computeIntersectionState(registration, *hostFrameView, *target, applyRootMargin);
+#else
+        auto intersectionState = computeIntersectionState(registration, *hostFrameView, target.get(), applyRootMargin);
+#endif
 
         if (intersectionState.observationChanged) {
             FloatRect targetBoundingClientRect;
@@ -712,19 +784,24 @@ std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() con
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)
 {
     ASSERT(entry->target());
-    m_pendingTargets.append(*entry->target());
+    {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        Locker locker { m_observationTargetsLock };
+#endif
+        m_pendingTargets.append(*entry->target());
+    }
     m_queuedEntries.append(WTF::move(entry));
 }
 
 void IntersectionObserver::notify()
 {
     if (m_queuedEntries.isEmpty()) {
-        ASSERT(m_pendingTargets.isEmpty());
+        ASSERT(!hasPendingTargets());
         return;
     }
 
     auto takenRecords = takeRecords();
-    auto targetsWaitingForFirstObservation = std::exchange(m_targetsWaitingForFirstObservation, { });
+    auto targetsWaitingForFirstObservation = takeTargetsWaitingForFirstObservation();
 
     // FIXME: The JSIntersectionObserver wrapper should be kept alive as long as the intersection observer can fire events.
     ASSERT(m_callback->hasCallback());
@@ -750,6 +827,10 @@ void IntersectionObserver::notify()
 
 bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_observationTargetsLock };
+#endif
+
     for (auto& target : m_observationTargets) {
         SUPPRESS_UNCOUNTED_LOCAL auto* element = target.get();
         if (containsWebCoreOpaqueRoot(visitor, element))
