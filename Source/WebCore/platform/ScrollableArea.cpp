@@ -64,6 +64,8 @@ struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea
     uint8_t scrollbarOverlayStyle;
     bool currentScrollType;
     uint8_t scrollAnimationStatus;
+    uint8_t scrolledDirections[4];
+    uint8_t currentScrollRelativity;
     bool bytes[4];
     Markable<ScrollingNodeID> scrollingNodeIDForTesting;
 };
@@ -133,6 +135,8 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     RefPtr scrollbar = scrollbarForDirection(direction);
     if (!scrollbar)
         return false;
+
+    setCurrentScrollRelativity(scrollRelativityFor(granularity));
 
     float step = 0;
     switch (granularity) {
@@ -221,6 +225,10 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, Sc
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
 
+    // Scrolling to an offset says where to end up rather than how far to move, so it bears no relation
+    // to the previous position. https://drafts.csswg.org/css-scroll-snap-1/#relative-scroll
+    setCurrentScrollRelativity(ScrollRelativity::Absolute);
+
     auto position = scrollPositionFromOffset(offset, toFloatSize(scrollOrigin()));
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
@@ -275,7 +283,45 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
         if (CheckedPtr controller = scrollAnchoringController())
             controller->scrollPositionDidChange();
 
+        // The clamped position, so pushing further at an end does not count as a scroll in that
+        // direction.
+        if (shouldTrackScrolledDirections())
+            updateScrolledDirections(oldPosition, scrollPosition());
+
         updateAnchorPositionedAfterScroll();
+    }
+}
+
+// scroll-state(scrolled) only tracks relative scrolls; absolute ones leave the state alone.
+// https://drafts.csswg.org/css-conditional-5/#scrolled
+bool ScrollableArea::shouldTrackScrolledDirections() const
+{
+    if (m_currentScrollRelativity != ScrollRelativity::Unclassified)
+        return m_currentScrollRelativity == ScrollRelativity::Relative;
+
+    // Nothing classified this scroll. The paths that reach here without going through an entry point
+    // that does are user input, which is relative; a programmatic scroll is always classified.
+    return currentScrollType() == ScrollType::User;
+}
+
+void ScrollableArea::updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
+{
+    // Scrolling along an axis clears the opposite edge on that axis, but leaves the other axis alone,
+    // so scroll-state(scrolled: top) and (scrolled: left) can hold at the same time.
+    if (newPosition.y() < oldPosition.y()) {
+        m_scrolledDirections.setTop(true);
+        m_scrolledDirections.setBottom(false);
+    } else if (newPosition.y() > oldPosition.y()) {
+        m_scrolledDirections.setBottom(true);
+        m_scrolledDirections.setTop(false);
+    }
+
+    if (newPosition.x() < oldPosition.x()) {
+        m_scrolledDirections.setLeft(true);
+        m_scrolledDirections.setRight(false);
+    } else if (newPosition.x() > oldPosition.x()) {
+        m_scrolledDirections.setRight(true);
+        m_scrolledDirections.setLeft(false);
     }
 }
 
@@ -295,6 +341,8 @@ bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& whee
 {
     if (!isScrollableOrRubberbandable())
         return false;
+
+    setCurrentScrollRelativity(ScrollRelativity::Relative);
 
     bool handledEvent = scrollAnimator().handleWheelEvent(wheelEvent);
     
