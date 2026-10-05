@@ -100,6 +100,9 @@ private:
     bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();
 
+    // For a widget hosting an SVG image document, the object-fit/object-position rect; otherwise the content box.
+    LayoutRect contentBoxRectForWidget() const;
+
     void paintContents(PaintInfo&, const LayoutPoint&);
 
     RefPtr<Widget> m_widget;

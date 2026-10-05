@@ -114,6 +114,8 @@ protected:
     LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const;
     template<typename T> LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(T logicalHeight) const { return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(logicalHeight)); }
 
+    void computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(FloatSize& constrainedSize, FloatSize& intrinsicRatio) const;
+
 private:
     LayoutUnit computeConstrainedLogicalWidth() const;
 
@@ -136,7 +138,6 @@ private:
     bool canBeSelectionLeaf() const override { return true; }
 
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
-    void computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(FloatSize& constrainedSize, FloatSize& intrinsicRatio) const;
 
     virtual bool shouldDrawSelectionTint() const;
     

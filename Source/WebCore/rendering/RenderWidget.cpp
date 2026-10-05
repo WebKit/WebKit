@@ -162,12 +162,39 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     return sizeChanged;
 }
 
+LayoutRect RenderWidget::contentBoxRectForWidget() const
+{
+    if (!embeddedSVGRoot())
+        return contentBoxRect();
+
+    // The cached intrinsic size is stale for an explicitly-sized <object>/<embed>; recompute it
+    // (this also refreshes m_intrinsicSize) to get the SVG's natural size and ratio.
+    FloatSize intrinsicSize;
+    FloatSize intrinsicRatio;
+    computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(intrinsicSize, intrinsicRatio);
+
+    if (intrinsicSize.isEmpty()) {
+        // Ratio-only SVG (viewBox, no width/height): fit the ratio to the content box, like RenderImage.
+        LayoutRect contentRect = contentBoxRect();
+        if (intrinsicRatio.isEmpty())
+            return contentRect;
+        return replacedContentRect(contentRect.size().fitToAspectRatio(LayoutSize { intrinsicRatio }, AspectRatioFit::Shrink));
+    }
+
+    return replacedContentRect();
+}
+
 bool RenderWidget::updateWidgetGeometry()
 {
-    if (!protect(m_widget)->transformsAffectFrameRect())
-        return setWidgetGeometry(absoluteContentBox());
+    LayoutRect contentBox = contentBoxRectForWidget();
 
-    LayoutRect contentBox = contentBoxRect();
+    if (!protect(m_widget)->transformsAffectFrameRect()) {
+        IntRect absoluteContentBox = snappedIntRect(contentBox);
+        FloatPoint absPos = localToAbsolute();
+        absoluteContentBox.move(absPos.x(), absPos.y());
+        return setWidgetGeometry(absoluteContentBox);
+    }
+
     LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
     if (is<FrameView>(m_widget)) {
         contentBox.setLocation(absoluteContentBox.location());
@@ -273,7 +300,7 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
             return;
     }
 
-    auto contentPaintOffset = paintOffset + location() + contentBoxRect().location();
+    auto contentPaintOffset = paintOffset + location() + contentBoxRectForWidget().location();
     auto snappedPaintOffset = roundPointToDevicePixels(contentPaintOffset, protect(document())->deviceScaleFactor());
 
     // Tell the widget to paint now. This is the only time the widget is allowed
@@ -352,6 +379,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
 
+    bool clippedToContentBoxForObjectFit = false;
     if (style().border().hasBorderRadius()) {
         LayoutRect borderRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
 
@@ -361,12 +389,19 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context().save();
         clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, protect(document())->deviceScaleFactor());
+    } else if (embeddedSVGRoot() && style().objectFit() != ObjectFit::Fill) {
+        // cover/none can size the SVG larger than the content box, so clip it.
+        LayoutRect contentBox = contentBoxRect();
+        contentBox.moveBy(adjustedPaintOffset);
+        paintInfo.context().save();
+        paintInfo.context().clip(snappedIntRect(contentBox));
+        clippedToContentBoxForObjectFit = true;
     }
 
     if (m_widget && !isSkippedContentRoot(*this))
         paintContents(paintInfo, paintOffset);
 
-    if (style().border().hasBorderRadius())
+    if (style().border().hasBorderRadius() || clippedToContentBoxForObjectFit)
         paintInfo.context().restore();
 
     if (paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility)
@@ -465,7 +500,7 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
     // Check to see if we are really over the widget itself (and not just in the border/padding area).
     if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == &frameOwnerElement())
-        result.setIsOverWidget(contentBoxRect().contains(result.localPoint()));
+        result.setIsOverWidget(contentBoxRectForWidget().contains(result.localPoint()));
     return inside;
 }
 
