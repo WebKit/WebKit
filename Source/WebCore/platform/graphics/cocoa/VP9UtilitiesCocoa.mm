@@ -554,7 +554,8 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     // with a subclass of ISOFullBox.
 
     auto colorSpace = colorSpaceFromVPCodecConfigurationRecord(record);
-    overrideVideoColorSpaceAsNeeded(colorSpace, colorSpaceOverride);
+    if (colorSpaceOverride)
+        colorSpace = *colorSpaceOverride;
 
     FourCC codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
     return VideoInfo::create({

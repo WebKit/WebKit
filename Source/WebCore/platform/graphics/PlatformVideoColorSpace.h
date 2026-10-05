@@ -59,8 +59,6 @@ inline PlatformVideoColorSpace srgbColorSpace()
     };
 }
 
-void overrideVideoColorSpaceAsNeeded(PlatformVideoColorSpace&, const std::optional<PlatformVideoColorSpace>&);
-
 WEBCORE_EXPORT bool usesITUR2100TF(const PlatformVideoColorSpace&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformVideoColorSpace);

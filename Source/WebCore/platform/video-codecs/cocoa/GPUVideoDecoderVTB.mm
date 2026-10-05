@@ -118,14 +118,46 @@ GPUVideoDecoderVTB::GPUVideoDecoderVTB(GPUVideoDecoderCallback callback, Ref<Wor
 
 GPUVideoDecoderVTB::~GPUVideoDecoderVTB() = default;
 
-static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVideoDecoderCallback callback, RefPtr<GPUVideoDecoderVTBQueue>&& queue, uint8_t reorderSize)
+static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer, PlatformVideoColorSpace colorSpace)
 {
-    return makeBlockPtr([callback = makeBlockPtr(callback), queue = WTF::move(queue), reorderSize](OSStatus, VTDecodeInfoFlags, CVImageBufferRef pixelBuffer, CMTaggedBufferGroupRef, CMTime presentationTime, CMTime) mutable {
+    CVBufferRemoveAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey);
+
+    RetainPtr<CFStringRef> primaries;
+    if (colorSpace.primaries)
+        primaries = convertToCMColorPrimaries(*colorSpace.primaries);
+    if (primaries)
+        CVBufferSetAttachment(imageBuffer, kCVImageBufferColorPrimariesKey, primaries, kCVAttachmentMode_ShouldPropagate);
+    else
+        CVBufferRemoveAttachment(imageBuffer, kCVImageBufferColorPrimariesKey);
+
+    RetainPtr<CFStringRef> transfer;
+    if (colorSpace.transfer)
+        transfer = convertToCMTransferFunction(*colorSpace.transfer);
+    if (transfer)
+        CVBufferSetAttachment(imageBuffer, kCVImageBufferTransferFunctionKey, transfer, kCVAttachmentMode_ShouldPropagate);
+    else
+        CVBufferRemoveAttachment(imageBuffer, kCVImageBufferTransferFunctionKey);
+
+    RetainPtr<CFStringRef> matrix;
+    if (colorSpace.matrix)
+        matrix = convertToCMYCbCRMatrix(*colorSpace.matrix);
+    if (matrix)
+        CVBufferSetAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey, matrix, kCVAttachmentMode_ShouldPropagate);
+    else
+        CVBufferRemoveAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey);
+}
+
+static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVideoDecoderCallback callback, RefPtr<GPUVideoDecoderVTBQueue>&& queue, uint8_t reorderSize, std::optional<PlatformVideoColorSpace> colorSpaceOverride)
+{
+    return makeBlockPtr([callback = makeBlockPtr(callback), queue = WTF::move(queue), reorderSize, colorSpaceOverride](OSStatus, VTDecodeInfoFlags, CVImageBufferRef pixelBuffer, CMTaggedBufferGroupRef, CMTime presentationTime, CMTime) mutable {
         UNUSED_PARAM(reorderSize);
         if (!pixelBuffer) {
             callback(nil, 0, 0, false);
             return;
         }
+
+        if (colorSpaceOverride)
+            overrideColorSpaceAttachments(pixelBuffer, *colorSpaceOverride);
 
         if (!queue) {
             callback((CVPixelBufferRef)pixelBuffer, presentationTime.value, 0, false);
@@ -166,7 +198,7 @@ int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<con
 
     PAL::CMSampleBufferSetOutputPresentationTimeStamp(sample.get(), PAL::CMTimeMake(timeStamp, 1));
     VTDecodeInfoFlags decodeInfoFlags = kVTDecodeFrame_EnableAsynchronousDecompression;
-    protect(m_decoder)->decodeMultiImageFrame(sample.get(), decodeInfoFlags, createMultiImageCallback(m_callback.get(), m_queue.get(), m_reorderSize));
+    protect(m_decoder)->decodeMultiImageFrame(sample.get(), decodeInfoFlags, createMultiImageCallback(m_callback.get(), m_queue.get(), m_reorderSize, colorSpaceOverride() ? colorSpaceOverride() : m_videoInfo->colorSpace()));
     return 0;
 }
 
@@ -200,7 +232,7 @@ void GPUVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
     }
 
     auto data = videoInfo.toVideoInfoData();
-    overrideVideoColorSpaceAsNeeded(data.second.colorSpace, colorSpaceOverride);
+    data.second.colorSpace = *colorSpaceOverride;
     Ref updatedVideoInfo = VideoInfo::create(WTF::move(data));
     m_format = createFormatDescriptionFromTrackInfo(updatedVideoInfo);
 }

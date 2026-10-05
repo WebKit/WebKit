@@ -189,7 +189,7 @@ async function runFullCycleTest(t, options) {
         // Removes the color space provided by the encoder so that color space
         // information in the underlying bitstream is exposed during decode.
         if (options.stripDecoderConfigColorSpace)
-          config.colorSpace = {};
+          config.colorSpace = undefined;
 
         decoder.configure(config);
       }

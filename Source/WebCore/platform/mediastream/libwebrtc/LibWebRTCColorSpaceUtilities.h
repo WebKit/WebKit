@@ -36,11 +36,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-static inline std::optional<webrtc::ColorSpace> toWebRTCColorSpace(const PlatformVideoColorSpace& colorSpace)
+static inline webrtc::ColorSpace toWebRTCColorSpace(const PlatformVideoColorSpace& colorSpace)
 {
-    if (!colorSpace.isValid())
-        return { };
-
     auto primaryID = [](auto primaries) {
         switch (primaries) {
         case PlatformVideoColorPrimaries::Bt709:
