@@ -180,7 +180,7 @@ WI.Recording = class Recording extends WI.Object
             return WI.UIString("WebGPU", "Recording Type Canvas WebGPU", "A type of canvas recording in the Graphics Tab.");
         }
 
-        console.assert(false, "Unknown recording type", recordingType);
+        console.assert(false, recordingType);
         return null;
     }
 
@@ -653,21 +653,17 @@ WI.Recording = class Recording extends WI.Object
         case WI.Recording.Swizzle.GPUTextureView:
             return WI.unlocalizedString("GPUTextureView");
         default:
-            console.error("Unknown swizzle type", swizzleType);
+            console.assert(false, swizzleType);
             return null;
         }
     }
 
     static synthesizeWarning(message)
     {
-        message = WI.UIString("Recording Warning: %s").format(message);
-
-        if (window.InspectorTest) {
-            console.warn(message);
+        if (window.InspectorTest)
             return;
-        }
 
-        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, WI.UIString("Recording Warning: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
@@ -675,14 +671,10 @@ WI.Recording = class Recording extends WI.Object
 
     static synthesizeError(message)
     {
-        message = WI.UIString("Recording Error: %s").format(message);
-
-        if (window.InspectorTest) {
-            console.error(message);
+        if (window.InspectorTest)
             return;
-        }
 
-        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, WI.UIString("Recording Error: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
@@ -1052,7 +1044,7 @@ WI.Recording = class Recording extends WI.Object
             return {context: null, element: null};
         }
 
-        console.error("Unknown recording type", this._type);
+        console.assert(false, this._type);
         return null;
     }
 

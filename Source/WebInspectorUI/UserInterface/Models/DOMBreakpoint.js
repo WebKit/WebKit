@@ -63,7 +63,7 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
             return WI.UIString("Node Removed", "Node Removed @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) before DOM node is removed");
         }
 
-        console.assert(false, "Unknown DOM breakpoint type", type);
+        console.assert(false, type);
         return WI.UIString("DOM");
     }
 

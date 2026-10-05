@@ -83,7 +83,7 @@ WI.TabNavigationDiagnosticEventRecorder = class TabNavigationDiagnosticEventReco
             return "unknown";
         }
 
-        console.error("Unhandled initiator type: " + tabBrowserInitiator);
+        console.assert(false, tabBrowserInitiator);
         return null;
     }
 };

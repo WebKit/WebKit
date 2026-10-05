@@ -42,7 +42,8 @@ WI.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WI.GeneralTreeE
                 break;
             default:
                 title = WI.UIString("(anonymous function)");
-                console.error("Unknown ProfileNode type: " + profileNode.type);
+                console.assert(false, profileNode);
+                break;
             }
         }
 

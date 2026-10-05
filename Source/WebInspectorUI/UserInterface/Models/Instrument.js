@@ -49,7 +49,7 @@ WI.Instrument = class Instrument
         case WI.TimelineRecord.Type.Screenshots:
             return new WI.ScreenshotsInstrument;
         default:
-            console.error("Unknown TimelineRecord.Type: " + type);
+            console.assert(false, type);
             return null;
         }
     }

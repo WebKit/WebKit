@@ -65,7 +65,7 @@ WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.
                 return WI.RenderingFrameTimelineRecord.TaskType.Paint;
             return WI.RenderingFrameTimelineRecord.TaskType.Layout;
         default:
-            console.error("Unsupported timeline record type: " + record.type);
+            console.assert(false, record);
             return null;
         }
     }

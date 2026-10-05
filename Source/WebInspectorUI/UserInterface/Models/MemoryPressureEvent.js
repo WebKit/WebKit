@@ -44,7 +44,7 @@ WI.MemoryPressureEvent = class MemoryPressureEvent
             severity = WI.MemoryPressureEvent.Severity.NonCritical;
             break;
         default:
-            console.error("Unexpected memory pressure severity", protocolSeverity);
+            console.assert(false, protocolSeverity);
             severity = WI.MemoryPressureEvent.Severity.NonCritical;
             break;
         }

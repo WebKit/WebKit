@@ -305,7 +305,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             return this._customResponseTextPathComponent;
         }
 
-        console.error("Unknown contentView", contentView);
+        console.assert(false, contentView);
         return null;
     }
 
@@ -336,7 +336,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             return ResourceClusterContentView.Identifier.ResponseText;
         }
 
-        console.error("Unknown contentView", contentView);
+        console.assert(false, contentView);
         return null;
     }
 

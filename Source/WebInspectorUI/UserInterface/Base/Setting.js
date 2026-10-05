@@ -122,8 +122,8 @@ WI.Setting = class Setting extends WI.Object
                     window.localStorage.removeItem(key);
                 else
                     window.localStorage.setItem(key, JSON.stringify(this._value));
-            } catch {
-                console.error("Error saving setting with name: " + this._name);
+            } catch (error) {
+                WI.reportInternalError(error, {setting: this._name});
             }
         }
 

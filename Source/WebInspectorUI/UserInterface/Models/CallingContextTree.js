@@ -94,7 +94,7 @@ WI.CallingContextTree = class CallingContextTree
             }
             break;
         default:
-            console.assert(false, "This should not be reached.");
+            console.assert(false, this._type);
             break;
         }
     }

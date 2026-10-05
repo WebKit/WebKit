@@ -86,7 +86,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
         case WI.BreakpointAction.Type.Probe:
             return WI.UIString("Probe Expression");
         default:
-            console.assert(false);
+            console.assert(false, type);
             return "";
         }
     }
@@ -204,7 +204,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
             break;
 
         default:
-            console.assert(false);
+            console.assert(false, this._action);
             this._bodyElement.hidden = true;
             break;
         }

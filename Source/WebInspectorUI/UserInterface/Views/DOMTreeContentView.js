@@ -748,7 +748,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             if (target.hasCommand("Page.setShowRulers"))
                 target.PageAgent.setShowRulers(activated).catch((error) => {
                     // FIXME <rdar://105244623> iOS platforms without a matching legacy protocol definition will fall back to the local macOS protocol definition.
-                    console.error(error);
+                    WI.reportInternalError(error);
                 });
         }
     }

@@ -450,7 +450,7 @@ TestHarness = class TestHarness extends WI.Object
         case TestHarness.ExpectationType.GreaterThanOrEqual:
             return "expectGreaterThanOrEqual(%s, %s)";
         default:
-            console.error("Unknown TestHarness.ExpectationType type: " + type);
+            console.assert(false, type);
             return null;
         }
     }

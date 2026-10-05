@@ -255,7 +255,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         if (node)
             return WI.linkifyNodeReference(node);
 
-        console.assert();
+        console.assert(false, this._eventListener);
         return "";
     }
 

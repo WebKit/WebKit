@@ -76,7 +76,7 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
             break;
 
         default:
-            console.error("Unknown DOM node type: ", node.nodeType());
+            console.assert(false, node);
             title = node.nodeNameInCorrectCase();
         }
 
@@ -119,7 +119,7 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
             return WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
         }
 
-        console.error("Unknown DOM node type: ", domNode.nodeType());
+        console.assert(false, domNode.nodeType());
         return WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
     }
 

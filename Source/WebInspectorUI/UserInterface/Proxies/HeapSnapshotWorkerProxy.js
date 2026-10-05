@@ -144,7 +144,7 @@ WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
             return;
         }
 
-        console.error("Unexpected HeapSnapshotWorker message", data);
+        console.assert(false, data);
     }
 };
 

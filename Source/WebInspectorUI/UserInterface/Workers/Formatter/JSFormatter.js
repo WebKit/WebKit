@@ -37,7 +37,7 @@ JSFormatter = class JSFormatter
             try {
                 return esprima.parse(sourceText, {attachComment: true, range: true, tokens: true, sourceType});
             } catch(error) {
-                console.error(`Failed to parse source text of type "${sourceType}".`, error);
+                console.assert(false, sourceType, error);
                 return null;
             }
         })();
@@ -345,7 +345,7 @@ JSFormatter = class JSFormatter
                 builder.appendToken(tokenValue, tokenOffset);
                 return;
             }
-            console.warn("Unexpected BlockStatement or StaticBlock token", token);
+            console.assert(false, token);
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }
@@ -381,7 +381,7 @@ JSFormatter = class JSFormatter
                     builder.appendSpace();
                 return;
             }
-            console.warn("Unexpected " + nodeType + " token", token);
+            console.assert(false, nodeType, token);
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }
@@ -578,7 +578,7 @@ JSFormatter = class JSFormatter
                     builder.appendToken(tokenValue, tokenOffset);
                     return;
                 }
-                console.warn("Unexpected SwitchCase Keyword token", token);
+                console.assert(false, token);
                 builder.appendToken(tokenValue, tokenOffset);
                 return;
             }
@@ -769,7 +769,7 @@ JSFormatter = class JSFormatter
                 builder.appendSpace();
                 return;
             }
-            console.warn("Unexpected TryStatement token", token);
+            console.assert(false, token);
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }
@@ -825,7 +825,7 @@ JSFormatter = class JSFormatter
                 builder.appendNewline();
                 return;
             }
-            console.warn("Unexpected ClassBody token", token);
+            console.assert(false, token);
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }
@@ -894,7 +894,7 @@ JSFormatter = class JSFormatter
         }
 
         // Warn about possible unhandled types.
-        console.warn(nodeType, tokenValue);
+        console.assert(false, nodeType, tokenValue);
 
         // Fallback behavior in case there are unhandled types.
         builder.appendToken(tokenValue, tokenOffset);

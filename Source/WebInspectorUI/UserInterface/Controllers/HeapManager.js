@@ -91,7 +91,7 @@ WI.HeapManager = class HeapManager extends WI.Object
 
         target.HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
             if (error)
-                console.error(error);
+                WI.reportInternalError(error);
             callback(error, timestamp, snapshotStringData);
         });
     }
@@ -103,7 +103,7 @@ WI.HeapManager = class HeapManager extends WI.Object
 
         node.target.HeapAgent.getPreview(node.id, (error, string, functionDetails, preview) => {
             if (error)
-                console.error(error);
+                WI.reportInternalError(error);
             callback(error, string, functionDetails, preview);
         });
     }
@@ -115,7 +115,7 @@ WI.HeapManager = class HeapManager extends WI.Object
 
         node.target.HeapAgent.getRemoteObject(node.id, objectGroup, (error, result) => {
             if (error)
-                console.error(error);
+                WI.reportInternalError(error);
             callback(error, result);
         });
     }

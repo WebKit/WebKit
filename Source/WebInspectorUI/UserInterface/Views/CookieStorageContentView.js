@@ -200,7 +200,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         for (let i = rowIndexes.length - 1; i >= 0; --i) {
             let rowIndex = rowIndexes[i];
             let cookie = this._filteredCookies[rowIndex];
-            console.assert(cookie, "Missing cookie for row " + rowIndex);
+            console.assert(cookie, rowIndex);
             if (!cookie)
                 continue;
 
@@ -242,7 +242,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return;
         }
 
-        console.assert();
+        console.assert(false, popover);
     }
 
     // Protected
@@ -422,7 +422,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             break;
 
         default:
-            console.assert("Unexpected sort column", sortColumnIdentifier);
+            console.assert(false, sortColumnIdentifier);
             return;
         }
 
@@ -459,7 +459,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
                 break;
 
             default:
-                console.assert();
+                console.assert(false, columnIdentifier);
                 break;
             }
         }
@@ -545,7 +545,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             this._updateEmptyFilterResultsMessage();
             this._table.reloadData();
         }).catch((error) => {
-            console.error("Could not fetch cookies: ", error);
+            WI.reportInternalError(error);
         });
     }
 
@@ -667,7 +667,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return cookie.sameSite === WI.Cookie.SameSiteType.None ? missingValue : WI.Cookie.displayNameForSameSiteType(cookie.sameSite);
         }
 
-        console.assert("Unexpected table column " + column.identifier);
+        console.assert(false, column);
         return "";
     }
 };

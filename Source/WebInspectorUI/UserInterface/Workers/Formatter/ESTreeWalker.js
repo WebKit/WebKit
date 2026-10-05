@@ -314,7 +314,7 @@ ESTreeWalker = class ESTreeWalker
             break;
 
         default:
-            console.error("ESTreeWalker unhandled node type", node.type);
+            console.assert(false, node);
             break;
         }
     }

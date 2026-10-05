@@ -173,7 +173,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
             // Since ObjectTreeView populates asynchronously, we want to wait to replace the existing content
             // until after all the pending asynchronous requests are completed. This prevents severe flashing while stepping.
             InspectorBackend.runAfterPendingDispatches(delayedWork.bind(this));
-        }.bind(this)).catch(function(e) { console.error(e); });
+        }.bind(this)).catch(function(e) { WI.reportInternalError(e); });
     }
 
     _generateCallFramesSection()

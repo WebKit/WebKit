@@ -233,7 +233,7 @@ WI.Color = class Color
         // -> HEXAlpha) if an exact match would be lossy.
         switch (suggestedFormat) {
         case WI.Color.Format.Original:
-            console.assert(false, "No color should have a format of 'Original'.");
+            console.assert(false, suggestedFormat);
             break;
 
         case WI.Color.Format.Keyword:
@@ -271,7 +271,7 @@ WI.Color = class Color
             break;
 
         default:
-            console.assert(false, "Should not be reached.", suggestedFormat);
+            console.assert(false, suggestedFormat);
             break;
         }
 
@@ -590,7 +590,7 @@ WI.Color = class Color
             return this.canBeSerializedAsShortHEX() ? WI.Color.Format.ShortHEXAlpha : WI.Color.Format.HEXAlpha;
 
         default:
-            console.error("Unknown color format.");
+            console.assert(false, this.format);
             return null;
         }
     }
@@ -683,7 +683,7 @@ WI.Color = class Color
             return new WI.Color(this.format, this.normalizedRGBA, this._gamut);
         }
 
-        console.error("Invalid color format: " + this.format);
+        console.assert(false, this.format);
     }
 
     toString(format)
@@ -716,7 +716,7 @@ WI.Color = class Color
             return this._toKeywordString();
         }
 
-        console.error("Invalid color format: " + format);
+        console.assert(false, format);
         return "";
     }
 

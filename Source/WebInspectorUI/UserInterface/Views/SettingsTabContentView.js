@@ -92,7 +92,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     addSettingsView(settingsView)
     {
         if (this._settingsViews.includes(settingsView)) {
-            console.assert(false, "SettingsView already exists.", settingsView);
+            console.assert(false, settingsView);
             return;
         }
 
@@ -105,7 +105,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     setSettingsViewVisible(settingsView, visible)
     {
         let navigationItem = this._navigationBar.findNavigationItem(settingsView.identifier);
-        console.assert(navigationItem, "Missing NavigationItem for identifier: " + settingsView.identifier);
+        console.assert(navigationItem, settingsView);
         if (!navigationItem)
             return;
 
@@ -624,7 +624,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             return;
 
         let settingsView = this._settingsViews.find((view) => view.identifier === navigationItem.identifier);
-        console.assert(settingsView, "Missing SettingsView for identifier " + navigationItem.identifier);
+        console.assert(settingsView, navigationItem);
         if (!settingsView)
             return;
 

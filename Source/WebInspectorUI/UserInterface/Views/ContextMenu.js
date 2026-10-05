@@ -119,7 +119,7 @@ WI.ContextSubMenuItem = class ContextSubMenuItem extends WI.ContextMenuItem
     appendHeader(label)
     {
         return this.appendItem(label, () => {
-            console.assert(false, "not reached");
+            console.assert(false, label);
         }, true);
     }
 

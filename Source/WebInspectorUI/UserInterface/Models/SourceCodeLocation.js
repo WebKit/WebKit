@@ -354,7 +354,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
             return prefix + name + lineSuffix;
 
         default:
-            console.error("Unknown nameStyle: " + nameStyle);
+            console.assert(false, nameStyle);
             return prefix + lineString;
         }
     }

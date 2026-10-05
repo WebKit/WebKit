@@ -414,7 +414,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             else if (result.unsupported)
                 message = WI.UIString("The \u201C%s\u201D audit is unsupported");
             else {
-                console.error("Unknown result", result);
+                console.assert(false, result);
                 return;
             }
 

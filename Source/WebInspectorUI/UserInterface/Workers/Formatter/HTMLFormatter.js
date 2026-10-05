@@ -44,7 +44,7 @@ HTMLFormatter = class HTMLFormatter
                 parser.parseDocument(sourceText, treeBuilder, options);
                 return treeBuilder.dom;
             } catch (e) {
-                console.error("Unexpected HTMLFormatter Error", e);
+                console.assert(false, e);
                 return null;
             }
         })();
@@ -120,7 +120,7 @@ HTMLFormatter = class HTMLFormatter
             return false;
         }
 
-        console.assert(false, "Unknown source type", this._sourceType);
+        console.assert(false, this._sourceType);
         return false;
     }
 
@@ -172,7 +172,7 @@ HTMLFormatter = class HTMLFormatter
                 q = `"`;
                 break;
             default:
-                console.assert(false, "Unexpected quote type", quote);
+                console.assert(false, quote);
                 q = ``;
                 break;
             }
@@ -273,7 +273,7 @@ HTMLFormatter = class HTMLFormatter
             return;
         }
 
-        console.assert(false, "Unhandled node type", node.type, node);
+        console.assert(false, node.type, node);
     }
 
     _after(node, parent)
@@ -323,7 +323,7 @@ HTMLFormatter = class HTMLFormatter
         if (node.type === HTMLTreeBuilderFormatter.NodeType.Error)
             return;
 
-        console.assert(false, "Unhandled node type", node.type, node);
+        console.assert(false, node.type, node);
     }
 
     _formatWithNestedFormatter(sourceText, parentNode, textNode, formatterCallback)

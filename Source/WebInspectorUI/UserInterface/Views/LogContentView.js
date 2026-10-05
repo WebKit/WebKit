@@ -420,7 +420,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             return;
         }
 
-        console.assert(false, "not reached", popover);
+        console.assert(false, popover);
     }
 
     // Private
@@ -498,7 +498,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         case WI.ConsoleMessage.MessageLevel.Debug:
             return WI.LogContentView.Scopes.Debugs;
         }
-        console.assert(false, "This should not be reached.");
+        console.assert(false, level);
 
         return undefined;
     }

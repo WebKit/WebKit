@@ -200,9 +200,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         //                                  ^
         //                                  update only happens here
         if (this._updatesInProgressCount > 0 && !options.forceUpdate) {
-            if (WI.settings.debugEnableStyleEditingDebugMode.value && text !== this._text)
-                console.warn("Style modified while editing:", text);
-
+            console.assert(!WI.settings.debugEnableStyleEditingDebugMode.value || text === this._text, text);
             return;
         }
 
@@ -305,7 +303,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         ++this._updatesInProgressCount;
 
         let timeoutId = setTimeout(() => {
-            console.error("Timed out when setting style text:", text);
+            WI.reportInternalError("Timed out when setting style text.", {text});
             styleTextDidChange();
         }, 2000);
 

@@ -66,7 +66,7 @@ WI.TimelineRecord = class TimelineRecord extends WI.Object
         case WI.TimelineRecord.Type.Screenshots:
             return WI.ScreenshotsTimelineRecord.fromJSON(json);
         default:
-            console.error("Unknown TimelineRecord.Type: " + json.type, json);
+            console.assert(false, json);
             return null;
         }
     }

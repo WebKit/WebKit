@@ -72,7 +72,7 @@ WI.ProbeSetDataTable = class ProbeSetDataTable extends WI.Object
             this._previousBatchIdentifier = sample.batchId;
         }
 
-        console.assert(this._openFrame, "Should always have an open frame before adding sample.", this, probe, sample);
+        console.assert(this._openFrame, this, probe, sample);
         this._openFrame.addSampleForProbe(probe, sample);
         if (this._openFrame.count === this._probeSet.probes.length) {
             this.addFrame(this._openFrame);

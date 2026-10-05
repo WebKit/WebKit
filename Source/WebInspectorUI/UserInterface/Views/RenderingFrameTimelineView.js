@@ -104,10 +104,8 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
                 return WI.UIString("Over 1 ms");
             case WI.RenderingFrameTimelineView.DurationFilter.OverFifteenMilliseconds:
                 return WI.UIString("Over 15 ms");
-            default:
-                console.error("Unknown filter type", filter);
         }
-
+        console.assert(false, filter);
         return null;
     }
 

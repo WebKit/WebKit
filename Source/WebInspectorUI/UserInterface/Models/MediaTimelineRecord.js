@@ -159,7 +159,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
             return WI.UIString("Media Element");
         }
 
-        console.error("Unknown media record event type: ", this._eventType, this);
+        console.assert(false, this._eventType, this);
         return WI.UIString("Media Event");
     }
 
