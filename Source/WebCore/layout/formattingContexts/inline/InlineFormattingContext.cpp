@@ -173,9 +173,8 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     auto textWrapStyle = root().style().textWrapStyle();
     if (root().style().textWrapMode() == TextWrapMode::Wrap && (textWrapStyle == TextWrapStyle::Balance || textWrapStyle == TextWrapStyle::Pretty)) {
         auto constrainer = InlineContentConstrainer { *this, inlineItemList, constraints.horizontal() };
-        auto constrainedLineWidths = constrainer.computeParagraphLevelConstraints(textWrapStyle);
-        if (constrainedLineWidths)
-            inlineLayoutState.setAvailableLineWidthOverride({ *constrainedLineWidths });
+        if (auto constrainedLineWidths = constrainer.computeParagraphLevelConstraints(textWrapStyle))
+            inlineLayoutState.setAvailableLineWidthOverride({ WTF::move(*constrainedLineWidths) });
     }
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(inlineItems, inlineLayoutState) && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root())) {
