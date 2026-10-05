@@ -35,9 +35,22 @@ function test()
 </script>
 <style type="text/css">
 
+    /*
+     * ::first-letter no longer accepts transform (typographic pseudo-elements
+     * reject box-level properties), so force the anonymous first-letter layer
+     * to composite with a running accelerated opacity animation instead. Unlike
+     * overlap or will-change compositing, animation-driven compositing is not
+     * suppressed under the Conservative compositing policy, so this stays
+     * deterministic under memory pressure on the stress-test bots.
+     */
+    @keyframes first-letter-fade {
+        from { opacity: 1; }
+        to { opacity: 0.5; }
+    }
+
     #first-letter::first-letter {
         float: left;
-        -webkit-transform: translateZ(0);
+        animation: first-letter-fade 1s infinite alternate;
     }
 
 </style>

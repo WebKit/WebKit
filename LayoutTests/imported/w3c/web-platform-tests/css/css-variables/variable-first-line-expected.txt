@@ -13,7 +13,7 @@ CSS variable referencing another CSS variable that defines 'position' property s
 PASS color
 PASS font-size
 PASS font-weight
-FAIL position assert_equals: expected "absolute" but got "static"
+PASS position
 PASS nested color
-FAIL abspos assert_equals: expected "absolute" but got "static"
+PASS abspos
 

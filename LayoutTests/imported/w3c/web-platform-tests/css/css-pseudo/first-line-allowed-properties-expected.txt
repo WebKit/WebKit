@@ -28,13 +28,22 @@ PASS textTransform should be applied to first-line pseudo elements.
 PASS textUnderlinePosition should be applied to first-line pseudo elements.
 PASS verticalAlign should be applied to first-line pseudo elements.
 PASS wordSpacing should be applied to first-line pseudo elements.
-FAIL border should not be applied to first-line pseudo elements. assert_equals: expected "0px none rgb(0, 0, 0)" but got "40px dotted rgb(10, 20, 30)"
-FAIL borderImage should not be applied to first-line pseudo elements. assert_equals: expected "none" but got "linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255)) 10% / 20 / 30px repeat"
-FAIL borderRadius should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px"
-FAIL margin should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px 30px 40px"
-FAIL padding should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px 30px 40px"
-FAIL position should not be applied to first-line pseudo elements. assert_equals: expected "static" but got "absolute"
-FAIL transition should not be applied to first-line pseudo elements. assert_equals: expected "all" but got "transform 1s"
+PASS animationName should be applied to first-line pseudo elements.
+PASS animationDuration should be applied to first-line pseudo elements.
+PASS animationTimingFunction should be applied to first-line pseudo elements.
+PASS animationDelay should be applied to first-line pseudo elements.
+PASS animationIterationCount should be applied to first-line pseudo elements.
+PASS animationDirection should be applied to first-line pseudo elements.
+PASS animationFillMode should be applied to first-line pseudo elements.
+PASS animationPlayState should be applied to first-line pseudo elements.
+PASS animationComposition should be applied to first-line pseudo elements.
+PASS border should not be applied to first-line pseudo elements.
+PASS borderImage should not be applied to first-line pseudo elements.
+PASS borderRadius should not be applied to first-line pseudo elements.
+PASS margin should not be applied to first-line pseudo elements.
+PASS padding should not be applied to first-line pseudo elements.
+PASS position should not be applied to first-line pseudo elements.
+PASS transition should not be applied to first-line pseudo elements.
 PASS transform should not be applied to first-line pseudo elements.
-FAIL wordBreak should not be applied to first-line pseudo elements. assert_equals: expected "normal" but got "break-all"
+PASS wordBreak should not be applied to first-line pseudo elements.
 

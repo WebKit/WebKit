@@ -31,8 +31,17 @@ PASS textTransform should be applied to first-letter pseudo elements.
 PASS textUnderlinePosition should be applied to first-letter pseudo elements.
 PASS verticalAlign should be applied to first-letter pseudo elements.
 PASS wordSpacing should be applied to first-letter pseudo elements.
-FAIL position should not be applied to first-letter pseudo elements. assert_equals: expected "static" but got "absolute"
-FAIL transition should not be applied to first-letter pseudo elements. assert_equals: expected "all" but got "transform 1s"
+PASS animationName should be applied to first-letter pseudo elements.
+PASS animationDuration should be applied to first-letter pseudo elements.
+PASS animationTimingFunction should be applied to first-letter pseudo elements.
+PASS animationDelay should be applied to first-letter pseudo elements.
+PASS animationIterationCount should be applied to first-letter pseudo elements.
+PASS animationDirection should be applied to first-letter pseudo elements.
+PASS animationFillMode should be applied to first-letter pseudo elements.
+PASS animationPlayState should be applied to first-letter pseudo elements.
+PASS animationComposition should be applied to first-letter pseudo elements.
+PASS position should not be applied to first-letter pseudo elements.
+PASS transition should not be applied to first-letter pseudo elements.
 PASS transform should not be applied to first-letter pseudo elements.
-FAIL wordBreak should not be applied to first-letter pseudo elements. assert_equals: expected "normal" but got "break-all"
+PASS wordBreak should not be applied to first-letter pseudo elements.
 
