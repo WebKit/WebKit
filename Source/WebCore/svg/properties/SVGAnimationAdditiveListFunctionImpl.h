@@ -27,11 +27,13 @@
 
 #include "SVGAnimationAdditiveListFunction.h"
 #include "SVGElement.h"
+#include "SVGLengthContext.h"
 #include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGPointList.h"
 #include "SVGTransformDistance.h"
 #include "SVGTransformList.h"
+#include <cmath>
 
 namespace WebCore {
 
@@ -79,6 +81,25 @@ public:
             value = Base::animate(progress, repeatCount, from, to, toAtEndOfDuration, value);
             animatedItems[i]->value().setValue(lengthContext, value, lengthType, lengthMode);
         }
+    }
+
+    std::optional<float> calculateDistance(SVGElement& targetElement, const String& from, const String& to) const override
+    {
+        auto fromList = SVGLengthList::create(m_from->lengthMode());
+        auto toList = SVGLengthList::create(m_to->lengthMode());
+        if (!fromList->parse(from) || !toList->parse(to))
+            return { };
+
+        auto& fromItems = fromList->items();
+        auto& toItems = toList->items();
+        if (fromItems.isEmpty() || fromItems.size() != toItems.size())
+            return { };
+
+        SVGLengthContext lengthContext(&targetElement);
+        float distance = 0;
+        for (unsigned i = 0; i < fromItems.size(); ++i)
+            distance += std::abs(toItems[i]->value().value(lengthContext) - fromItems[i]->value().value(lengthContext));
+        return distance;
     }
 
 private:
@@ -134,6 +155,24 @@ public:
         }
     }
 
+    std::optional<float> calculateDistance(SVGElement&, const String& from, const String& to) const override
+    {
+        auto fromList = SVGNumberList::create();
+        auto toList = SVGNumberList::create();
+        if (!fromList->parse(from) || !toList->parse(to))
+            return { };
+
+        auto& fromItems = fromList->items();
+        auto& toItems = toList->items();
+        if (fromItems.isEmpty() || fromItems.size() != toItems.size())
+            return { };
+
+        float distance = 0;
+        for (unsigned i = 0; i < fromItems.size(); ++i)
+            distance += std::abs(toItems[i]->value() - fromItems[i]->value());
+        return distance;
+    }
+
 private:
     void addFromAndToValues(SVGElement&) override
     {
@@ -184,6 +223,26 @@ public:
 
             animated = { animatedX, animatedY };
         }
+    }
+
+    std::optional<float> calculateDistance(SVGElement&, const String& from, const String& to) const override
+    {
+        auto fromList = SVGPointList::create();
+        auto toList = SVGPointList::create();
+        if (!fromList->parse(from) || !toList->parse(to))
+            return { };
+
+        auto& fromItems = fromList->items();
+        auto& toItems = toList->items();
+        if (fromItems.isEmpty() || fromItems.size() != toItems.size())
+            return { };
+
+        float distance = 0;
+        for (unsigned i = 0; i < fromItems.size(); ++i) {
+            FloatSize delta = toItems[i]->value() - fromItems[i]->value();
+            distance += delta.diagonalLength();
+        }
+        return distance;
     }
 
 private:
