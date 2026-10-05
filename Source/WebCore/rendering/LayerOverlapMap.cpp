@@ -253,10 +253,8 @@ OverlapMapContainer::ClippingScope* OverlapMapContainer::ensureClippingScopeForL
     for (unsigned i = 1; i < enclosingClippingLayers.size(); ++i) {
         auto& scopeLayerAndBounds = enclosingClippingLayers[i];
         auto* childScope = currScope->childWithLayer(scopeLayerAndBounds.layer.get());
-        if (!childScope) {
-            currScope = currScope->addChildWithLayerAndBounds(scopeLayerAndBounds);
-            break;
-        }
+        if (!childScope)
+            childScope = currScope->addChildWithLayerAndBounds(scopeLayerAndBounds);
 
         currScope = childScope;
     }
