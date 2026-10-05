@@ -75,7 +75,7 @@ public:
 
     int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
 
-    Ref<VideoEncoder::EncodePromise> encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
+    void encode(LibWebRTCVPXVideoEncoder::PendingFrame&);
     void close() { m_isClosed = true; }
     void setRates(uint64_t bitRate, double frameRate);
 
@@ -123,15 +123,76 @@ int LibWebRTCVPXVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, co
     return m_internalEncoder->initialize(type, config);
 }
 
-Ref<VideoEncoder::EncodePromise> LibWebRTCVPXVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame)
+Ref<VideoEncoder::EncodePromise> LibWebRTCVPXVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
-    return invokeAsync(vpxEncoderQueueSingleton(), [frame = WTF::move(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder]() mutable {
-        return encoder->encode(WTF::move(frame), shouldGenerateKeyFrame);
+    auto promiseProducer = WTF::makeUniqueRef<EncodePromise::Producer>();
+    Ref promise = promiseProducer->promise();
+    Ref frame = rawFrame.frame;
+
+    bool shouldEncode = [&] {
+        Locker lock(m_pendingFramesLock);
+        bool hasNoPendingEncoding = m_pendingFrames.isEmpty();
+        m_pendingFrames.append(PendingFrame {
+            .rawFrame = WTF::move(rawFrame),
+            .shouldGenerateKeyFrame = shouldGenerateKeyFrame,
+            .promise = WTF::move(promiseProducer)
+        });
+        return hasNoPendingEncoding;
+    }();
+
+    if (shouldEncode)
+        encodeVideoFrame(frame);
+    return promise;
+}
+
+void LibWebRTCVPXVideoEncoder::encodeVideoFrame(VideoFrame& frame)
+{
+    frame.getPixelBuffer()->whenSettled(vpxEncoderQueueSingleton(), [protectedThis = Ref { *this }](auto&&) mutable {
+        auto [pendingFrame, flushPromises, nextVideoFrame] = [&protectedThis] -> std::tuple<PendingFrame, Vector<UniqueRef<GenericPromise::Producer>>, RefPtr<VideoFrame>> {
+            Locker lock(protectedThis->m_pendingFramesLock);
+
+            auto pendingFrame = std::get<PendingFrame>(protectedThis->m_pendingFrames.takeFirst());
+            Vector<UniqueRef<GenericPromise::Producer>> flushPromises;
+            RefPtr<VideoFrame> nextVideoFrame;
+
+            while (!protectedThis->m_pendingFrames.isEmpty()) {
+                if (auto* nextPendingFrame = std::get_if<PendingFrame>(&protectedThis->m_pendingFrames.first())) {
+                    nextVideoFrame = nextPendingFrame->rawFrame.frame.ptr();
+                    break;
+                }
+
+                auto pendingFlush = protectedThis->m_pendingFrames.takeFirst();
+                ASSERT(std::holds_alternative<PendingFlush>(pendingFlush));
+                flushPromises.append(WTF::move(std::get<PendingFlush>(pendingFlush).promise));
+            }
+
+            return std::make_tuple(WTF::move(pendingFrame), WTF::move(flushPromises), WTF::move(nextVideoFrame));
+        }();
+
+        protectedThis->m_internalEncoder->encode(pendingFrame);
+
+        for (auto& flushPromise : flushPromises)
+            flushPromise->resolve();
+
+        if (nextVideoFrame)
+            protectedThis->encodeVideoFrame(*nextVideoFrame);
     });
 }
 
 Ref<GenericPromise> LibWebRTCVPXVideoEncoder::flush()
 {
+    {
+        Locker lock(m_pendingFramesLock);
+        if (!m_pendingFrames.isEmpty()) {
+            auto promiseProducer = makeUniqueRef<GenericPromise::Producer>();
+            Ref promise = promiseProducer->promise();
+            m_pendingFrames.append(PendingFlush {
+                .promise = WTF::move(promiseProducer)
+            });
+            return promise;
+        }
+    }
+
     return invokeAsync(vpxEncoderQueueSingleton(), [] {
         return GenericPromise::createAndResolve();
     });
@@ -262,20 +323,22 @@ int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type 
     return 0;
 }
 
-Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
+void LibWebRTCVPXInternalVideoEncoder::encode(LibWebRTCVPXVideoEncoder::PendingFrame& pendingFrame)
 {
-    if (!m_isInitialized)
-        return VideoEncoder::EncodePromise::createAndReject("Encoder is not initialized"_s);
+    if (!m_isInitialized) {
+        pendingFrame.promise->reject("Encoder is not initialized"_s);
+        return;
+    }
 
-    if (rawFrame.timestamp + m_timestampOffset <= 0)
-        m_timestampOffset = 1 - rawFrame.timestamp;
-    m_timestamp = rawFrame.timestamp;
-    m_duration = rawFrame.duration;
+    if (pendingFrame.rawFrame.timestamp + m_timestampOffset <= 0)
+        m_timestampOffset = 1 - pendingFrame.rawFrame.timestamp;
+    m_timestamp = pendingFrame.rawFrame.timestamp;
+    m_duration = pendingFrame.rawFrame.duration;
 
-    auto frameType = (shouldGenerateKeyFrame || !m_hasEncoded) ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
+    auto frameType = (pendingFrame.shouldGenerateKeyFrame || !m_hasEncoded) ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
     std::vector<webrtc::VideoFrameType> frameTypes { frameType };
 
-    Ref protectedFrame = rawFrame.frame;
+    Ref protectedFrame = pendingFrame.rawFrame.frame;
     RetainPtr buffer = protectedFrame->pixelBuffer();
     auto colorSpace = protectedFrame->colorSpace();
     if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true)) {
@@ -290,7 +353,7 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
     if (m_config.width != static_cast<size_t>(frameBuffer->width()) || m_config.height != static_cast<size_t>(frameBuffer->height()))
         frameBuffer = frameBuffer->Scale(m_config.width, m_config.height);
 
-    webrtc::VideoFrame frame { frameBuffer, webrtc::kVideoRotation_0, rawFrame.timestamp + m_timestampOffset };
+    webrtc::VideoFrame frame { frameBuffer, webrtc::kVideoRotation_0, pendingFrame.rawFrame.timestamp + m_timestampOffset };
 
     if (m_currentColorSpace != colorSpace) {
         m_shouldCallDescriptionCallback = true;
@@ -307,9 +370,9 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
         m_hasEncoded = !error;
 
     if (error)
-        return VideoEncoder::EncodePromise::createAndReject("Encoder task failed"_s);
-
-    return VideoEncoder::EncodePromise::createAndResolve();
+        pendingFrame.promise->reject("Encoder task failed"_s);
+    else
+        pendingFrame.promise->resolve();
 }
 
 void LibWebRTCVPXInternalVideoEncoder::setRates(uint64_t bitRate, double frameRate)
