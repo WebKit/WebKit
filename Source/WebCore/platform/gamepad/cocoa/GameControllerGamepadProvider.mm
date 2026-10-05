@@ -63,6 +63,8 @@ bool GameControllerGamepadProvider::willHandleVendorAndProduct(uint16_t vendorID
     switch ((static_cast<uint32_t>(vendorID) << 16) | productID) {
     case Dualshock4_1:
     case Dualshock4_2:
+    case DualSense:
+    case DualSenseEdge:
     case GamesirM2:
     case HoripadUltimate:
     case Nimbus1:
@@ -109,8 +111,8 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         if (!serviceInfo.service)
             continue;
 
-        auto cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDVendorIDKey)));
-        auto cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDProductIDKey)));
+        RetainPtr<CFNumberRef> cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDVendorIDKey)));
+        RetainPtr<CFNumberRef> cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDProductIDKey)));
 
         int vendorID, productID;
         CFNumberGetValue(cfVendorID.get(), kCFNumberIntType, &vendorID);
@@ -202,7 +204,7 @@ void GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary()
     init_GameController_GCInputRightTrigger();
     init_GameController_GCInputRightThumbstick();
     init_GameController_GCInputRightThumbstickButton();
-    
+
     prewarmed = true;
 }
 
