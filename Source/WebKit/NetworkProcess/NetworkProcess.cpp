@@ -417,7 +417,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     for (auto& domain : parameters.allowedFirstPartiesForCookies)
         currentDomains.add(domain);
 
-    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
+    auto newConnection = NetworkConnectionToWebProcess::create(identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
     Ref connection = newConnection;
 
     ASSERT(!m_webProcessConnections.contains(identifier));

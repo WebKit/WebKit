@@ -108,7 +108,7 @@ WebSWServerConnection::~WebSWServerConnection()
 
 NetworkProcess* WebSWServerConnection::networkProcess()
 {
-    return m_networkConnectionToWebProcess ? &m_networkConnectionToWebProcess->networkProcess() : nullptr;
+    return m_networkConnectionToWebProcess ? &NetworkProcess::singleton() : nullptr;
 }
 
 std::optional<SharedPreferencesForWebProcess> WebSWServerConnection::sharedPreferencesForWebProcess() const
@@ -1090,7 +1090,7 @@ bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& or
     if (!networkConnectionToWebProcess)
         return false;
 
-    RefPtr networkProcess = networkConnectionToWebProcess->networkProcess();
+    Ref networkProcess = NetworkProcess::singleton();
     MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())) != NetworkProcess::AllowCookieAccess::Terminate, false);
     return true;
 }
