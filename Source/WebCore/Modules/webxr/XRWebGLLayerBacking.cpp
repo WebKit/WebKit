@@ -33,7 +33,6 @@
 #include "PlatformXR.h"
 #include "WebGLOpaqueTexture.h"
 #include "WebGLRenderingContextBase.h"
-#include "WebXROpaqueFramebuffer.h"
 #include "WebXRSession.h"
 #include "WebXRWebGLSwapchain.h"
 #include "XRLayerInit.h"
