@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+var completionContextObject = {mainFrameProperty: true};
+
+function test()
+{
+    const generateJSCompletions = () => new Promise((resolve, reject) => {
+        let mockCompletionController = {
+            mode: WI.CodeMirrorCompletionController.Mode.FullConsoleCommandLineAPI,
+            updateCompletions: resolve,
+        };
+
+        WI.javaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded(mockCompletionController, [], "completionContextObject.", "", "", true);
+    });
+
+    let suite = InspectorTest.createAsyncSuite("console.jsCompletions.ExecutionContext");
+
+    suite.addTestCase({
+        name: "console.jsCompletions.ExecutionContext.Cache",
+        description: "Test that JavaScript completions are cached separately for each execution context.",
+        async test() {
+            let mainFrame = WI.networkManager.mainFrame;
+            let subframes = WI.networkManager.frames.filter((frame) => frame !== mainFrame);
+            InspectorTest.expectEqual(subframes.length, 1, "The test page should have one subframe.");
+
+            WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+            WI.runtimeManager.activeExecutionContext = mainFrame.pageExecutionContext;
+            let mainFrameCompletions = await generateJSCompletions();
+            InspectorTest.expectTrue(mainFrameCompletions.includes("mainFrameProperty"), "Main frame completions should include the main frame property.");
+            InspectorTest.expectFalse(mainFrameCompletions.includes("subframeProperty"), "Main frame completions should not include the subframe property.");
+
+            WI.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
+            let subframeCompletions = await generateJSCompletions();
+            InspectorTest.expectTrue(subframeCompletions.includes("subframeProperty"), "Subframe completions should include the subframe property.");
+            InspectorTest.expectFalse(subframeCompletions.includes("mainFrameProperty"), "Subframe completions should not include the main frame property.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body>
+<iframe src="resources/js-completions-execution-context-subframe.html" onload="runTest()"></iframe>
+<p>Tests that JavaScript code completions are isolated by execution context.</p>
+</body>
+</html>
+
