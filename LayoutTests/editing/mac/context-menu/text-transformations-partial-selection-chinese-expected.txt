@@ -1,0 +1,12 @@
+This test verifies that Chinese text transformations only affect the selected text, leaving unselected text unchanged.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS actualText is "我們买书"
+
+PASS actualText is "我们買书"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
