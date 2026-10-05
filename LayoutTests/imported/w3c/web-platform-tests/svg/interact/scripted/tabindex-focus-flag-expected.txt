@@ -1,5 +1,5 @@
 
-FAIL The document root element should be focusable. assert_equals: expected Element node <svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://w... but got null
+PASS The document root element should be focusable.
 PASS rect should not be focusable.
 PASS svg should not be focusable.
 PASS a should not be focusable.
