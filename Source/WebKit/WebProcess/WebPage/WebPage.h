@@ -181,6 +181,10 @@ class FormDataReference;
 class SharedBufferReference;
 }
 
+namespace Inspector {
+struct NetworkInterception;
+}
+
 namespace WebCore {
 
 class AXIsolatedTree;
@@ -1789,6 +1793,7 @@ public:
 
     bool LEGACY_NODELETE isControlledByAutomation() const;
     void LEGACY_NODELETE setControlledByAutomation(bool);
+    void setNetworkInterception(Inspector::NetworkInterception&&, CompletionHandler<void()>&&);
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();

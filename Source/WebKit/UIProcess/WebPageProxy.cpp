@@ -9822,42 +9822,79 @@ const Inspector::NetworkInterception& WebPageProxy::networkInterception() const
     return internals().networkInterception;
 }
 
-void WebPageProxy::sendNetworkInterceptionToProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
+void WebPageProxy::setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner owner, Vector<Inspector::InterceptPattern>&& patterns, CompletionHandler<void()>&& completionHandler)
 {
-    webProcess.send(Messages::WebInspectorBackend::SetNetworkInterception { internals().networkInterception }, pageID);
+    switch (owner) {
+    case Inspector::NetworkInterceptOwner::Inspector:
+        internals().inspectorInterceptPatterns = WTF::move(patterns);
+        break;
+    case Inspector::NetworkInterceptOwner::Automation:
+        internals().automationInterceptPatterns = WTF::move(patterns);
+        break;
+    }
+    updateNetworkInterception(WTF::move(completionHandler));
 }
 
-void WebPageProxy::setNetworkInterceptionEnabled(bool enabled)
+void WebPageProxy::setInspectorNetworkInterceptionEnabled(bool enabled)
 {
-    if (internals().networkInterception.enabled == enabled)
+    if (internals().inspectorInterceptionEnabled == enabled)
         return;
 
-    internals().networkInterception.enabled = enabled;
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        sendNetworkInterceptionToProcess(webProcess, pageID);
-    });
+    internals().inspectorInterceptionEnabled = enabled;
+    updateNetworkInterception([] { });
 }
 
-void WebPageProxy::addNetworkInterceptPattern(Inspector::InterceptPattern&& pattern)
+void WebPageProxy::addInspectorNetworkInterceptPattern(Inspector::InterceptPattern&& pattern)
 {
-    // Union-additive: re-adding a pattern that is already configured changes nothing,
-    // so there is no need to re-broadcast.
-    if (!internals().networkInterception.add(WTF::move(pattern)))
+    // Union-additive: re-adding a pattern that is already configured changes nothing.
+    pattern.owner = Inspector::NetworkInterceptOwner::Inspector;
+    if (internals().inspectorInterceptPatterns.contains(pattern))
         return;
 
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        sendNetworkInterceptionToProcess(webProcess, pageID);
-    });
+    internals().inspectorInterceptPatterns.append(WTF::move(pattern));
+    updateNetworkInterception([] { });
 }
 
-void WebPageProxy::removeNetworkInterceptPattern(const Inspector::InterceptPattern& pattern)
+void WebPageProxy::removeInspectorNetworkInterceptPattern(const Inspector::InterceptPattern& pattern)
 {
-    if (!internals().networkInterception.remove(pattern))
+    if (!internals().inspectorInterceptPatterns.removeFirst(pattern))
         return;
 
+    updateNetworkInterception([] { });
+}
+
+void WebPageProxy::clearInspectorNetworkInterception()
+{
+    internals().inspectorInterceptionEnabled = false;
+    internals().inspectorInterceptPatterns.clear();
+    updateNetworkInterception([] { });
+}
+
+void WebPageProxy::updateNetworkInterception(CompletionHandler<void()>&& completionHandler)
+{
+    // The configuration of a page is the union of the patterns of every consumer. Web Inspector's
+    // patterns only count while it has interception enabled; it does not gate other consumers.
+    Inspector::NetworkInterception interception;
+    if (internals().inspectorInterceptionEnabled)
+        interception.patterns.appendVector(internals().inspectorInterceptPatterns);
+    interception.patterns.appendVector(internals().automationInterceptPatterns);
+
+    if (interception == internals().networkInterception)
+        return completionHandler();
+
+    internals().networkInterception = WTF::move(interception);
+
+    // A process created later gets the configuration from its creation parameters, before its first load.
+    if (!hasRunningProcess())
+        return completionHandler();
+
+    // Reply once every process hosting a frame of the page has the new configuration.
+    Ref aggregator = CallbackAggregator::create(WTF::move(completionHandler));
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        sendNetworkInterceptionToProcess(webProcess, pageID);
+        webProcess.sendWithAsyncReply(Messages::WebPage::SetNetworkInterception(internals().networkInterception), [aggregator] { }, pageID);
     });
+    if (RefPtr provisionalPage = m_provisionalPage)
+        protect(provisionalPage->process())->sendWithAsyncReply(Messages::WebPage::SetNetworkInterception(internals().networkInterception), [aggregator] { }, provisionalPage->webPageID());
 }
 
 void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
@@ -15732,6 +15769,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         parameters.scrollbarOverlayStyle = std::nullopt;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.controlledByAutomation = m_controlledByAutomation;
+    parameters.networkInterception = internals().networkInterception;
     parameters.isProcessSwap = isProcessSwap;
     parameters.useDarkAppearance = useDarkAppearance();
     parameters.useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel();

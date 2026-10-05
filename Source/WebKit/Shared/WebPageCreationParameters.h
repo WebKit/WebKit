@@ -55,6 +55,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaProducer.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
@@ -197,6 +198,7 @@ struct WebPageCreationParameters {
     Vector<String> mimeTypesWithCustomContentProviders { };
 
     bool controlledByAutomation { false };
+    Inspector::NetworkInterception networkInterception { };
     bool isProcessSwap { false };
 
     bool useDarkAppearance { false };

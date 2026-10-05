@@ -115,6 +115,9 @@ class WebsitePolicies;
 
 namespace Inspector {
 enum class InspectorTargetType : uint8_t;
+enum class NetworkInterceptOwner : uint8_t;
+struct InterceptPattern;
+struct NetworkInterception;
 }
 
 namespace IPC {
@@ -3037,13 +3040,17 @@ public:
     void forEachWebContentProcess(NOESCAPE const Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&);
 
     // Network interception authority. This page owns the one true copy of the interception
-    // configuration; each WebContent process hosting one of its frames holds a replica that
-    // is refreshed on every write here and replayed when a process joins the page later.
+    // configuration: the union of the patterns of every consumer. Each WebContent process hosting
+    // one of its frames holds a replica, refreshed on every write and seeded from the creation
+    // parameters of a process that joins the page later.
     const Inspector::NetworkInterception& networkInterception() const;
-    void setNetworkInterceptionEnabled(bool);
-    void addNetworkInterceptPattern(Inspector::InterceptPattern&&);
-    void removeNetworkInterceptPattern(const Inspector::InterceptPattern&);
-    void sendNetworkInterceptionToProcess(WebProcessProxy&, WebCore::PageIdentifier);
+    // Replaces the patterns of one consumer. The handler runs once every hosting process has the new configuration.
+    void setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner, Vector<Inspector::InterceptPattern>&&, CompletionHandler<void()>&&);
+    void setInspectorNetworkInterceptionEnabled(bool);
+    void addInspectorNetworkInterceptPattern(Inspector::InterceptPattern&&);
+    void removeInspectorNetworkInterceptPattern(const Inspector::InterceptPattern&);
+    void clearInspectorNetworkInterception();
+    void updateNetworkInterception(CompletionHandler<void()>&&);
 
     void hitTestAtPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, API::ContentWorld&, CompletionHandler<void(std::expected<std::optional<JSHandleInfo>, HitTestAtPointError>&&, WebHitTestResultData&&)>&&);
     void convertRectToMainFrameCoordinates(WebCore::FloatRect, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);

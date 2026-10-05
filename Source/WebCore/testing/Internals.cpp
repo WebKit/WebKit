@@ -9063,7 +9063,7 @@ bool Internals::isNetworkInterceptionConfiguredForTesting(const String& url)
     if (!document || !document->page())
         return false;
 
-    return document->page()->networkInterceptionByWebInspector().isConfiguredForURL(url);
+    return document->page()->networkInterception().isConfiguredForURL(URL { url });
 }
 
 ExceptionOr<void> Internals::lowerAllFrameMemoryMonitorLimits()
