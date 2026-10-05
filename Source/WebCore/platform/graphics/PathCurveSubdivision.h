@@ -36,11 +36,14 @@
 
 namespace WebCore {
 
-constexpr float kPathSegmentLengthTolerance = 0.00001f;
-
 inline float NODELETE distanceLine(const FloatPoint& start, const FloatPoint& end)
 {
     return std::hypot(end.x() - start.x(), end.y() - start.y());
+}
+
+inline double dotSelf(const FloatPoint& p)
+{
+    return static_cast<double>(p.x()) * p.x() + static_cast<double>(p.y()) * p.y();
 }
 
 struct QuadraticBezier {
@@ -52,7 +55,15 @@ struct QuadraticBezier {
     {
     }
 
-    friend bool NODELETE operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
+    friend bool NODELETE operator==(const QuadraticBezier& a, const QuadraticBezier& b)
+    {
+        return a.start == b.start && a.control == b.control && a.end == b.end;
+    }
+
+    double magnitudeSquared() const
+    {
+        return (dotSelf(start) + dotSelf(control) + dotSelf(end)) / 9.0;
+    }
 
     float NODELETE approximateDistance() const
     {
@@ -75,6 +86,8 @@ struct QuadraticBezier {
         left.start = start;
         right.end = end;
 
+        left.splitDepth = right.splitDepth = splitDepth + 1;
+
         if (left == *this || right == *this)
             return std::nullopt;
 
@@ -84,6 +97,7 @@ struct QuadraticBezier {
     FloatPoint start;
     FloatPoint control;
     FloatPoint end;
+    uint16_t splitDepth { 0 };
 };
 
 struct CubicBezier {
@@ -96,7 +110,15 @@ struct CubicBezier {
     {
     }
 
-    friend bool NODELETE operator==(const CubicBezier&, const CubicBezier&) = default;
+    friend bool NODELETE operator==(const CubicBezier& a, const CubicBezier& b)
+    {
+        return a.start == b.start && a.control1 == b.control1 && a.control2 == b.control2 && a.end == b.end;
+    }
+
+    double magnitudeSquared() const
+    {
+        return (dotSelf(start) + dotSelf(control1) + dotSelf(control2) + dotSelf(end)) / 16.0;
+    }
 
     float NODELETE approximateDistance() const
     {
@@ -123,6 +145,8 @@ struct CubicBezier {
         left.end = leftControl2ToRightControl1;
         right.start = leftControl2ToRightControl1;
 
+        left.splitDepth = right.splitDepth = splitDepth + 1;
+
         if (left == *this || right == *this)
             return std::nullopt;
 
@@ -133,21 +157,32 @@ struct CubicBezier {
     FloatPoint control1;
     FloatPoint control2;
     FloatPoint end;
+    uint16_t splitDepth { 0 };
 };
 
 template<class CurveType>
 void forEachFlattenedCurveLeaf(const CurveType& originalCurve, NOESCAPE const Invocable<bool(const CurveType&, float, bool)> auto& processLeaf)
 {
-    static constexpr unsigned curveStackDepthLimit = 20;
+    static constexpr uint16_t curveSplitDepthLimit = 20;
+    static constexpr double pathSegmentLengthToleranceSquared = 1.e-16;
 
-    Vector<CurveType, curveStackDepthLimit + 1> curveStack;
+    // Scale the subdivision tolerance to the magnitude of the curve's control points so very small
+    // curves get more resolution and very large curves get less, matching the precision actually
+    // available in floating point. A near-zero magnitude also guards the division below.
+    double curveScaleForToleranceSquared = originalCurve.magnitudeSquared();
+    if (curveScaleForToleranceSquared < pathSegmentLengthToleranceSquared)
+        return;
+
+    Vector<CurveType, curveSplitDepthLimit + 1> curveStack;
     curveStack.append(originalCurve);
 
     while (!curveStack.isEmpty()) {
         auto curve = curveStack.takeLast();
         float length = curve.approximateDistance();
 
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit) {
+        double lengthDiscrepancy = length - distanceLine(curve.start, curve.end);
+        if ((lengthDiscrepancy * lengthDiscrepancy) / curveScaleForToleranceSquared > pathSegmentLengthToleranceSquared
+            && curve.splitDepth < curveSplitDepthLimit) {
             if (auto halves = curve.split()) {
                 curveStack.append(halves->second);
                 curveStack.append(halves->first);
