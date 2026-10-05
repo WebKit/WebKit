@@ -1106,6 +1106,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     page->setControlledByAutomation(parameters.controlledByAutomation);
+    page->setNetworkInterception(Inspector::NetworkInterception { parameters.networkInterception });
     page->setHasResourceLoadClient(parameters.hasResourceLoadClient);
 
     page->setCanStartMedia(false);
@@ -4799,6 +4800,15 @@ bool WebPage::isControlledByAutomation() const
 void WebPage::setControlledByAutomation(bool controlled)
 {
     m_page->setControlledByAutomation(controlled);
+}
+
+void WebPage::setNetworkInterception(Inspector::NetworkInterception&& configuration, CompletionHandler<void()>&& completionHandler)
+{
+    // The UI process is the authority. Every process hosting a frame of the page stores the
+    // configuration on its page, where loading code consults it.
+    if (RefPtr page = m_page)
+        page->setNetworkInterception(WTF::move(configuration));
+    completionHandler();
 }
 
 CheckedRef<PageInspectorTarget> WebPage::ensureInspectorTarget()

@@ -27,27 +27,39 @@
 #include "NetworkInterception.h"
 
 #include <JavaScriptCore/ContentSearchUtilities.h>
+#include <wtf/StdLibExtras.h>
 
 namespace Inspector {
 
-bool InterceptPattern::matches(const String& url) const
+bool InspectorURLPattern::matches(const URL& requestURL) const
 {
-    if (urlPattern.isEmpty())
+    if (url.isEmpty())
         return true;
 
     auto searchType = isRegex ? ContentSearchUtilities::SearchType::Regex : ContentSearchUtilities::SearchType::ExactString;
     auto searchCaseSensitive = caseSensitive ? ContentSearchUtilities::SearchCaseSensitive::Yes : ContentSearchUtilities::SearchCaseSensitive::No;
-    auto searcher = ContentSearchUtilities::createSearcherForString(urlPattern, searchType, searchCaseSensitive);
-    return ContentSearchUtilities::searcherMatchesText(searcher, url);
+    auto searcher = ContentSearchUtilities::createSearcherForString(url, searchType, searchCaseSensitive);
+    return ContentSearchUtilities::searcherMatchesText(searcher, requestURL.string());
 }
 
-bool NetworkInterception::isConfiguredForURL(const String& url) const
+bool InterceptPattern::matches(const URL& url) const
 {
-    if (!enabled)
-        return false;
+    return WTF::switchOn(urlPattern, [&](const auto& pattern) {
+        return pattern.matches(url);
+    });
+}
 
+bool NetworkInterception::isConfiguredForURL(const URL& url) const
+{
     return patterns.containsIf([&](auto& pattern) {
         return pattern.matches(url);
+    });
+}
+
+bool NetworkInterception::matches(const URL& url, NetworkInterceptionPhase phase, NetworkInterceptOwner owner) const
+{
+    return patterns.containsIf([&](auto& pattern) {
+        return pattern.owner == owner && pattern.phase == phase && pattern.matches(url);
     });
 }
 

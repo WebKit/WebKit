@@ -211,9 +211,12 @@ public:
     CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)> testingPendingDigitalCredentialHandler;
 #endif
 
-    // The authoritative network interception configuration for this page; see
-    // WebPageProxy::networkInterception().
+    // The authoritative network interception configuration for this page, the union of the
+    // patterns of every consumer; see WebPageProxy::networkInterception().
     Inspector::NetworkInterception networkInterception;
+    Vector<Inspector::InterceptPattern> inspectorInterceptPatterns;
+    bool inspectorInterceptionEnabled { false };
+    Vector<Inspector::InterceptPattern> automationInterceptPatterns;
 
     uint32_t checkedPtrCount() const { return WebPopupMenuProxy::Client::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const { return WebPopupMenuProxy::Client::checkedPtrCountWithoutThreadCheck(); }
