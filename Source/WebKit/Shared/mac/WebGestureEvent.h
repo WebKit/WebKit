@@ -46,12 +46,13 @@ class WebGestureEvent : public WebEvent {
 public:
     using Phase = WebEventPhase;
 
-    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation, Phase phase)
+    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation, Phase phase, WebEventInputSource inputSource)
         : WebEvent(WTF::move(event))
         , m_position(position)
         , m_gestureScale(gestureScale)
         , m_gestureRotation(gestureRotation)
         , m_phase(phase)
+        , m_inputSource(inputSource)
     {
         ASSERT(isGestureEventType(type()));
     }
@@ -61,6 +62,7 @@ public:
     float gestureScale() const { return m_gestureScale; }
     float gestureRotation() const { return m_gestureRotation; }
     Phase phase() const { return m_phase; }
+    WebEventInputSource inputSource() const { return m_inputSource; }
 
 private:
     bool isGestureEventType(WebEventType) const;
@@ -69,6 +71,7 @@ private:
     float m_gestureScale;
     float m_gestureRotation;
     Phase m_phase;
+    WebEventInputSource m_inputSource { WebEventInputSource::UserDriven };
 };
 
 } // namespace WebKit

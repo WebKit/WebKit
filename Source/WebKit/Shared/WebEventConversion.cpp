@@ -565,6 +565,7 @@ public:
         m_gestureRotation = webEvent.gestureRotation();
         m_position = webEvent.position();
         m_globalPosition = webEvent.position();
+        m_inputSource = platform(webEvent.inputSource());
     }
 };
 

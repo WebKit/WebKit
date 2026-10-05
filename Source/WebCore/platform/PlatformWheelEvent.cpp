@@ -56,6 +56,7 @@ PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEv
 
     // PlatformWheelEvent
     platformWheelEvent.m_hasPreciseScrollingDeltas = true;
+    platformWheelEvent.m_inputSource = platformGestureEvent.inputSource();
 
 #if ENABLE(KINETIC_SCROLLING)
     switch (platformGestureEvent.type()) {

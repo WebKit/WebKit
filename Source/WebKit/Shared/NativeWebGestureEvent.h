@@ -47,6 +47,7 @@ public:
         float gestureRotation { 0 };
         MonotonicTime timestamp;
         bool allowsNativeZoom { true };
+        WebEventInputSource inputSource { WebEventInputSource::UserDriven };
     };
 
     static std::optional<NativeWebGestureEvent> create(NSEvent *, NSView *);

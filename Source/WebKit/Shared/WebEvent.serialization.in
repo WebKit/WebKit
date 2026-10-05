@@ -218,6 +218,7 @@ class WebKit::WebGestureEvent : WebKit::WebEvent {
     float gestureScale();
     float gestureRotation();
     WebKit::WebEventPhase phase();
+    WebKit::WebEventInputSource inputSource();
 };
 #endif
 
