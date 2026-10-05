@@ -10,16 +10,17 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/fullscreen-exit-edges.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-fullscreen-element.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-to-fullscreen-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-to-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/move-to-inactive-document.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-child.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-first-sibling.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-first.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-last-sibling.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-last.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/model/remove-single.html

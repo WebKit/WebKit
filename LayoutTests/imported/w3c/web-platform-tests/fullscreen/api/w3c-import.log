@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-active-document.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested-in-direct-fullscreen-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested.html
@@ -28,6 +27,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-setting-allowfullscreen-timing.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-setting-allowfullscreen.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-keyboard-lock-change.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-keyboard-lock-escape.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-keyboard-lock-multiple-elements.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-keyboard-lock-shadowdom.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-onfullscreenchange.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-onfullscreenerror.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-ready-allowed.html
@@ -54,19 +57,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-options.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-options.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-same-element.html
-/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-same.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-screen-size.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-svg-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-svg-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-svg-text.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-top.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-twice.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-two-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-without-user-activation.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-change-event-shape.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-exit-errors-and-async.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-hides-popovers.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-idl-getters.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-reordering.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-request-preconditions.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/keyboard-lock-cross-origin-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/navigate-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/permission.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/promises-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/promises-resolve.html
