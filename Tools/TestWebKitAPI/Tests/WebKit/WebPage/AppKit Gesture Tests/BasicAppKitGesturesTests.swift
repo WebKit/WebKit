@@ -960,16 +960,45 @@ extension AppKitGesturesTests.Basic {
         }
     }
 
-    @Test
-    func clickAndHoldOnUnselectableContentDoesNotOpenContextMenu() async throws {
+    @Test(arguments: [true, false])
+    func clickAndHoldOnUnselectableImageOpensContextMenu(insideLink: Bool) async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let image = #"<img id="image" src="400x400-green.png" style="display: block">"#
+        let content = insideLink ? #"<a href="https://webkit.org">\#(image)</a>"# : image
+
         let html = """
-            <div id="target" style="width: 100vw; height: 100vh; font-size: 30px; -webkit-user-select: none; user-select: none">Hello world</div>
+            <div style="-webkit-user-select: none; user-select: none">\(content)</div>
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+
+        await page.waitForNextPresentationUpdate()
+
+        let imageBounds = try await screenBounds(ofElementWithID: "image")
+
+        await withMockedImageAnalyzer(response: .success(.init(lines: [])), after: .zero) {
+            await withSwizzledContextMenu {
+                await recap.play { composer in
+                    composer._wk_click(at: imageBounds.center, for: .seconds(2))
+                }
+            }
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func clickAndHoldOnUnselectableContentDoesNotOpenContextMenu(insideLink: Bool) async throws {
+        let target =
+            #"<div id="target" style="width: 100vw; height: 100vh; font-size: 30px; -webkit-user-select: none; user-select: none">Hello world</div>"#
+        let content = insideLink ? #"<a href="https://webkit.org">\#(target)</a>"# : target
+
+        let html = """
+            \(content)
             <script>
                 window.contextMenuEventCount = 0;
                 document.addEventListener("contextmenu", event => {
                     window.contextMenuEventCount++;
                     event.preventDefault();
                 });
+                document.addEventListener("click", event => event.preventDefault());
             </script>
             """
         try await page.load(html: html).wait()
