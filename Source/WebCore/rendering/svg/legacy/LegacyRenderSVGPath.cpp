@@ -260,7 +260,6 @@ void LegacyRenderSVGPath::drawMarkers(PaintInfo& paintInfo)
             auto& context = paintInfo.context();
             GraphicsContextStateSaver stateSaver(context);
 
-            context.setLineDash(DashArray(), 0);
             marker->draw(paintInfo, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth));
         }
     }

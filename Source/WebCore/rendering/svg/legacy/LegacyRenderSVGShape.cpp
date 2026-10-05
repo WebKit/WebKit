@@ -293,12 +293,16 @@ void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 {
     for (auto type : style().paintOrder()) {
         switch (type) {
-        case Style::PaintType::Fill:
+        case Style::PaintType::Fill: {
+            GraphicsContextStateSaver stateSaver(childPaintInfo.context());
             fillShape(style(), childPaintInfo.context());
             break;
-        case Style::PaintType::Stroke:
+        }
+        case Style::PaintType::Stroke: {
+            GraphicsContextStateSaver stateSaver(childPaintInfo.context());
             strokeShape(style(), childPaintInfo.context());
             break;
+        }
         case Style::PaintType::Markers:
             drawMarkers(childPaintInfo);
             break;

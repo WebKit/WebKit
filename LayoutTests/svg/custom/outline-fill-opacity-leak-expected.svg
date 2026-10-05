@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <path d="M20,180 L100,20 L180,180 Z" fill="red" fill-opacity="0.2" stroke="none"/>
+  <path d="M20,180 L100,20 L180,180 Z" fill="none" stroke="none"
+        style="outline: 4px solid green"/>
+</svg>
