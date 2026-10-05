@@ -1,0 +1,5 @@
+X
+X
+PASS: top aligned box offset from line top is 0
+PASS: bottom aligned box offset from line bottom is 0
+

@@ -358,13 +358,19 @@ std::optional<InlineLevelBox::AscentAndDescent> LineBoxVerticalAligner::layoutBo
     auto maximumAscent = std::optional<InlineLayoutUnit> { };
     auto maximumDescent = std::optional<InlineLayoutUnit> { };
     auto& inlineBox = nonRootInlineLevelBoxes[inlineBoxIndex];
-    CheckedRef inlineBoxParent = inlineBox.layoutBox().parent();
+    // Inline level boxes are in tree order. Keep track of the inline boxes we are nested in so that we can tell when we leave the subtree.
+    Vector<CheckedRef<const Box>, 8> ancestorInlineBoxes { inlineBox.layoutBox() };
     for (size_t index = inlineBoxIndex + 1; index < nonRootInlineLevelBoxes.size(); ++index) {
         auto& descendantInlineLevelBox = nonRootInlineLevelBoxes[index];
-        if (&descendantInlineLevelBox.layoutBox().parent() == inlineBoxParent.ptr()) {
+        auto& parentLayoutBox = descendantInlineLevelBox.layoutBox().parent();
+        while (!ancestorInlineBoxes.isEmpty() && ancestorInlineBoxes.last().ptr() != &parentLayoutBox)
+            ancestorInlineBoxes.removeLast();
+        if (ancestorInlineBoxes.isEmpty()) {
             // We are at the end of the descendant list.
             break;
         }
+        if (descendantInlineLevelBox.isInlineBox())
+            ancestorInlineBoxes.append(descendantInlineLevelBox.layoutBox());
         if (!formattingUtils.inlineLevelBoxAffectsLineBox(descendantInlineLevelBox, lineBox) || descendantInlineLevelBox.hasLineBoxRelativeAlignment())
             continue;
 
