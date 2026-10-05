@@ -86,7 +86,9 @@ if (("$ENV{WEBKIT_USE_SCCACHE}" STREQUAL "1") OR DEFINED ENV{SCCACHE_REDIS} OR D
     endif ()
 endif ()
 
-if (APPLE AND CMAKE_GENERATOR STREQUAL "Ninja")
+option(ADAPTIVE_UNIFIED_BUILDS "Compile unified source bundle members separately in small incremental builds. Turn off for reproducible translation units, e.g. when measuring performance." ON)
+
+if (APPLE AND CMAKE_GENERATOR STREQUAL "Ninja" AND ADAPTIVE_UNIFIED_BUILDS)
     set(_clang_wrapper "${CMAKE_SOURCE_DIR}/Source/cmake/clang-wrapper")
     list(INSERT CMAKE_CXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}")
     list(INSERT CMAKE_OBJCXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}")
