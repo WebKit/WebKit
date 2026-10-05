@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>mmultiscripts postscripts with italic correction</title>
+<link rel="help" href="https://w3c.github.io/mathml-core/#base-with-prescripts-and-postscripts">
+<meta name="assert" content="Postscript pairs of mmultiscripts are advanced by their full inline size and remain inside the box when the base has a non-null italic correction.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/feature-detection.js"></script>
+<script src="/mathml/support/fonts.js"></script>
+<style>
+  math, mspace {
+    font-size: 10px;
+  }
+  math {
+    font-family: largeop-displayoperatorminheight2000-2AFF-italiccorrection3000;
+  }
+  @font-face {
+    font-family: largeop-displayoperatorminheight2000-2AFF-italiccorrection3000;
+    src: url("/fonts/math/largeop-displayoperatorminheight2000-2AFF-italiccorrection3000.woff");
+  }
+  .shrink-to-fit {
+    display: inline-block;
+  }
+</style>
+<script>
+  function getBox(aId) {
+    return document.getElementById(aId).getBoundingClientRect();
+  }
+
+  function assertInside(containerId, ids) {
+    var container = getBox(containerId);
+    ids.forEach(id => {
+      assert_greater_than_equal(getBox(id).left, container.left - epsilon, `${id} starts inside ${containerId}`);
+      assert_less_than_equal(getBox(id).right, container.right + epsilon, `${id} ends inside ${containerId}`);
+    });
+  }
+
+  setup({ explicit_done: true });
+  window.addEventListener("load", () => { loadAllFonts().then(runTests); });
+
+  var epsilon = 1;
+  var emToPx = 10 / 1000; // font-size: 10px, font.em = 1000
+  var italicCorrection = 3000 * emToPx;
+  function runTests() {
+    // In the second mmultiscripts, the first superscript is the widest script of its pair and the
+    // italic correction plays no role, so the gap between the two superscripts is SpaceAfterScript.
+    var space = getBox("sup012").left - getBox("sup011").right;
+
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+
+      // The first subscript is wider than the first superscript, so the italic correction reduces
+      // the extent of the first pair.
+      assert_approx_equals(getBox("base001").right - getBox("sub001").left, italicCorrection, epsilon, "first subscript is shifted by the italic correction");
+
+      assertInside("mmultiscripts001", ["base001", "sub001", "sup001", "sub002", "sup002"]);
+      assert_greater_than_equal(getBox("sub002").left, getBox("sub001").right - epsilon, "second subscript does not overlap the first one");
+      assert_greater_than_equal(getBox("sup002").left, getBox("sup001").right - epsilon, "second superscript does not overlap the first one");
+    }, "Postscript pairs fit in the box when the italic correction reduces the first pair width");
+
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+      assertInside("mmultiscripts011", ["sub011", "sup011", "sub012", "sup012"]);
+    }, "Postscript pairs fit in the box when the superscript is wider");
+
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+
+      var pairInlineSize = Math.max(getBox("sub001").width, getBox("sup001").width);
+      assert_approx_equals(getBox("sup002").left - getBox("sup001").left, pairInlineSize + space, epsilon, "superscripts are advanced by the full pair inline size");
+      assert_approx_equals(getBox("sub002").left - getBox("sub001").left, pairInlineSize + space, epsilon, "subscripts are advanced by the full pair inline size");
+    }, "Postscript pairs advance with italic correction");
+
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+      assertInside("shrink021", ["base021", "sub021", "sup021", "sub022", "sup022"]);
+    }, "Postscript pairs fit in a shrink-to-fit container when the italic correction reduces the first pair width");
+
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+
+      assert_approx_equals(getBox("sub031").right - getBox("base031").left, italicCorrection, epsilon, "first subscript is shifted by the italic correction");
+      assertInside("mmultiscripts031", ["base031", "sub031", "sup031", "sub032", "sup032"]);
+      assert_less_than_equal(getBox("sub032").right, getBox("sub031").left + epsilon, "second subscript does not overlap the first one");
+      assert_less_than_equal(getBox("sup032").right, getBox("sup031").left + epsilon, "second superscript does not overlap the first one");
+    }, "Postscript pairs fit in the box when the italic correction reduces the first pair width (RTL)");
+
+    test(function() {
+      assert_true(MathMLFeatureDetection.has_mspace());
+
+      assert_approx_equals(getBox("presub041").right, getBox("presup041").right, epsilon, "prescripts are aligned on their inline-end edge");
+      assert_approx_equals(getBox("base041").left, getBox("presub041").right, epsilon, "base is placed after the prescripts without italic correction");
+      assert_approx_equals(getBox("presub041").left - getBox("mmultiscripts041").left, space, epsilon, "space before the prescript pair");
+      assertInside("mmultiscripts041", ["presub041", "presup041", "base041"]);
+    }, "Prescripts are not affected by the italic correction");
+
+    done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+  <p>
+    <math displaystyle="true">
+      <mmultiscripts id="mmultiscripts001">
+        <mo id="base001" lspace="0px" rspace="0px">&#x2AFF;</mo>
+        <mspace id="sub001" height="1em" width="4em" style="background: blue"/>
+        <mspace id="sup001" height="1em" width="1em" style="background: green"/>
+        <mspace id="sub002" height="1em" width="1em" style="background: magenta"/>
+        <mspace id="sup002" height="1em" width="1em" style="background: cyan"/>
+      </mmultiscripts>
+    </math>
+  </p>
+  <p>
+    <math displaystyle="true">
+      <mmultiscripts id="mmultiscripts011">
+        <mo lspace="0px" rspace="0px">&#x2AFF;</mo>
+        <mspace id="sub011" height="1em" width="1em" style="background: blue"/>
+        <mspace id="sup011" height="1em" width="4em" style="background: green"/>
+        <mspace id="sub012" height="1em" width="1em" style="background: magenta"/>
+        <mspace id="sup012" height="1em" width="1em" style="background: cyan"/>
+      </mmultiscripts>
+    </math>
+  </p>
+  <p>
+    <span id="shrink021" class="shrink-to-fit">
+      <math displaystyle="true">
+        <mmultiscripts>
+          <mo id="base021" lspace="0px" rspace="0px">&#x2AFF;</mo>
+          <mspace id="sub021" height="1em" width="4em" style="background: blue"/>
+          <mspace id="sup021" height="1em" width="1em" style="background: green"/>
+          <mspace id="sub022" height="1em" width="1em" style="background: magenta"/>
+          <mspace id="sup022" height="1em" width="1em" style="background: cyan"/>
+        </mmultiscripts>
+      </math>
+    </span>
+  </p>
+  <p>
+    <math displaystyle="true" dir="rtl">
+      <mmultiscripts id="mmultiscripts031">
+        <mo id="base031" lspace="0px" rspace="0px">&#x2AFF;</mo>
+        <mspace id="sub031" height="1em" width="4em" style="background: blue"/>
+        <mspace id="sup031" height="1em" width="1em" style="background: green"/>
+        <mspace id="sub032" height="1em" width="1em" style="background: magenta"/>
+        <mspace id="sup032" height="1em" width="1em" style="background: cyan"/>
+      </mmultiscripts>
+    </math>
+  </p>
+  <p>
+    <math displaystyle="true">
+      <mmultiscripts id="mmultiscripts041">
+        <mo id="base041" lspace="0px" rspace="0px">&#x2AFF;</mo>
+        <mprescripts/>
+        <mspace id="presub041" height="1em" width="4em" style="background: blue"/>
+        <mspace id="presup041" height="1em" width="1em" style="background: green"/>
+      </mmultiscripts>
+    </math>
+  </p>
+</body>
+</html>
