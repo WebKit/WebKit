@@ -417,6 +417,7 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_TextureFormatsTier1 = 0x00000015,
     WGPUFeatureName_TextureFormatsTier2 = 0x00000016,
     WGPUFeatureName_Subgroups = 0x00000017,
+    WGPUFeatureName_TextureComponentSwizzle = 0x00000018,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 

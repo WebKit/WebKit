@@ -51,4 +51,5 @@
     "texture-formats-tier2",
     "primitive-index",
     "subgroups",
+    "texture-component-swizzle",
 };

@@ -260,6 +260,8 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_PrimitiveIndex;
     case FeatureName::Subgroups:
         return WGPUFeatureName_Subgroups;
+    case FeatureName::TextureComponentSwizzle:
+        return WGPUFeatureName_TextureComponentSwizzle;
     }
 }
 

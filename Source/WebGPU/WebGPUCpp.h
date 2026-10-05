@@ -156,6 +156,19 @@ enum class CompilationMessageType : uint8_t {
     Info,
 };
 
+// https://gpuweb.github.io/gpuweb/#dom-gputextureviewdescriptor-swizzle
+// Each of the 'r', 'g', 'b', 'a', '0' and '1' characters a swizzle string may contain. Unlike
+// WGPUComponentSwizzle there is no Undefined: the C API's per-channel identity is resolved on the
+// way in.
+enum class ComponentSwizzle : uint8_t {
+    Zero,
+    One,
+    R,
+    G,
+    B,
+    A,
+};
+
 enum class CullMode : uint8_t {
     None,
     Front,
@@ -203,6 +216,7 @@ enum class FeatureName : uint8_t {
     TextureFormatsTier2,
     PrimitiveIndex,
     Subgroups,
+    TextureComponentSwizzle,
 };
 
 enum class FilterMode : uint8_t {
@@ -672,6 +686,22 @@ struct TextureDescriptor {
     std::span<const TextureFormat> viewFormats; // Borrowed for the duration of the call.
 } SWIFT_VIEW;
 
+// https://gpuweb.github.io/gpuweb/#dom-gputextureviewdescriptor-swizzle
+// The mapping a shader reads a texture view through, defaulting to the identity.
+struct TextureComponentSwizzle {
+    friend bool operator==(const TextureComponentSwizzle&, const TextureComponentSwizzle&) = default;
+
+    bool isIdentity() const
+    {
+        return r == ComponentSwizzle::R && g == ComponentSwizzle::G && b == ComponentSwizzle::B && a == ComponentSwizzle::A;
+    }
+
+    ComponentSwizzle r { ComponentSwizzle::R };
+    ComponentSwizzle g { ComponentSwizzle::G };
+    ComponentSwizzle b { ComponentSwizzle::B };
+    ComponentSwizzle a { ComponentSwizzle::A };
+};
+
 // https://gpuweb.github.io/gpuweb/#dictdef-gputextureviewdescriptor
 // The std::nullopt members take their values from the texture, as described in
 // https://gpuweb.github.io/gpuweb/#abstract-opdef-resolving-gputextureviewdescriptor-defaults.
@@ -685,6 +715,7 @@ struct TextureViewDescriptor {
     std::optional<uint32_t> arrayLayerCount;
     TextureAspect aspect { TextureAspect::All };
     OptionSet<TextureUsage> usage; // Empty: the usage of the texture.
+    TextureComponentSwizzle swizzle;
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpushadermodulecompilationhint

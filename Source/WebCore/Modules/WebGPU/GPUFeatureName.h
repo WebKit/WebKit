@@ -54,6 +54,7 @@ enum class GPUFeatureName : uint8_t {
     TextureFormatsTier2,
     PrimitiveIndex,
     Subgroups,
+    TextureComponentSwizzle,
 };
 
 inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
@@ -105,6 +106,8 @@ inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return WebGPU::FeatureName::PrimitiveIndex;
     case GPUFeatureName::Subgroups:
         return WebGPU::FeatureName::Subgroups;
+    case GPUFeatureName::TextureComponentSwizzle:
+        return WebGPU::FeatureName::TextureComponentSwizzle;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
