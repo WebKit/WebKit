@@ -49,6 +49,22 @@ namespace WebKit {
 bool GPUProcessProxy::s_enableMetalDebugDeviceInNewGPUProcessesForTesting { false };
 bool GPUProcessProxy::s_enableMetalShaderValidationInNewGPUProcessesForTesting { false };
 
+static int gpuProcessLatencyQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitGPUProcessLatencyQOS"];
+    if (!qos)
+        qos = LATENCY_QOS_TIER_0;
+    return qos;
+}
+
+static int gpuProcessThroughputQOS()
+{
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitGPUProcessThroughputQOS"];
+    if (!qos)
+        qos = THROUGHPUT_QOS_TIER_0;
+    return qos;
+}
+
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
@@ -58,6 +74,8 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTF::move(*launchServicesExtensionHandle);
 #endif
+    parameters.latencyQOS = gpuProcessLatencyQOS();
+    parameters.throughputQOS = gpuProcessThroughputQOS();
     parameters.enableMetalDebugDeviceForTesting = m_isMetalDebugDeviceEnabledForTesting;
     parameters.enableMetalShaderValidationForTesting = m_isMetalShaderValidationEnabledForTesting;
 }

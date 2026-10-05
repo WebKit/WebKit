@@ -59,6 +59,8 @@
 #endif
 
 #if PLATFORM(COCOA)
+    int latencyQOS
+    int throughputQOS
     bool enableMetalDebugDeviceForTesting;
     bool enableMetalShaderValidationForTesting;
 #if ENABLE(VP9)

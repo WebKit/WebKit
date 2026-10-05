@@ -592,6 +592,9 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 {
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
 
+    parameters.latencyQOS = networkProcessLatencyQOS();
+    parameters.throughputQOS = networkProcessThroughputQOS();
+
     RetainPtr defaults = [NSUserDefaults standardUserDefaults];
 
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
@@ -1168,25 +1171,33 @@ void WebProcessPool::clearPermanentCredentialsForProtectionSpace(WebCore::Protec
 
 int networkProcessLatencyQOS()
 {
-    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessLatencyQOS"];
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessLatencyQOS"];
+    if (!qos)
+        qos = LATENCY_QOS_TIER_0;
     return qos;
 }
 
 int networkProcessThroughputQOS()
 {
-    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessThroughputQOS"];
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessThroughputQOS"];
+    if (!qos)
+        qos = THROUGHPUT_QOS_TIER_0;
     return qos;
 }
 
 int webProcessLatencyQOS()
 {
-    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessLatencyQOS"];
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessLatencyQOS"];
+    if (!qos)
+        qos = LATENCY_QOS_TIER_0;
     return qos;
 }
 
 int webProcessThroughputQOS()
 {
-    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessThroughputQOS"];
+    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessThroughputQOS"];
+    if (!qos)
+        qos = THROUGHPUT_QOS_TIER_0;
     return qos;
 }
 

@@ -81,6 +81,8 @@ struct GPUProcessCreationParameters {
 #endif
 
 #if PLATFORM(COCOA)
+    int latencyQOS { 0 };
+    int throughputQOS { 0 };
     bool enableMetalDebugDeviceForTesting { false };
     bool enableMetalShaderValidationForTesting { false };
 #if ENABLE(VP9)
