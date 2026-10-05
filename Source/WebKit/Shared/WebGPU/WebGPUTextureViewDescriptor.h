@@ -32,6 +32,7 @@
 #include <WebCore/WebGPUTextureAspect.h>
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
+#include <WebCore/WebGPUTextureViewDescriptor.h> // NOLINT -- not a self include; the style checker matches on basename alone.
 #include <WebCore/WebGPUTextureViewDimension.h>
 #include <optional>
 
@@ -46,6 +47,7 @@ struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<WebCore::WebGPU::IntegerCoordinate> mipLevelCount;
     WebCore::WebGPU::IntegerCoordinate baseArrayLayer { 0 };
     std::optional<WebCore::WebGPU::IntegerCoordinate> arrayLayerCount;
+    WebCore::WebGPU::TextureComponentSwizzle swizzle;
 };
 
 } // namespace WebKit::WebGPU

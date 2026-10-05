@@ -31,9 +31,35 @@
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
 #include <WebCore/WebGPUTextureViewDimension.h>
+#include <cstdint>
 #include <optional>
 
 namespace WebCore::WebGPU {
+
+// https://gpuweb.github.io/gpuweb/#dom-gputextureviewdescriptor-swizzle
+// Each of the 'r', 'g', 'b', 'a', '0', and '1' characters a swizzle string may contain.
+enum class ComponentSwizzle : uint8_t {
+    Red,
+    Green,
+    Blue,
+    Alpha,
+    Zero,
+    One,
+};
+
+struct TextureComponentSwizzle {
+    friend bool operator==(const TextureComponentSwizzle&, const TextureComponentSwizzle&) = default;
+
+    bool isIdentity() const
+    {
+        return r == ComponentSwizzle::Red && g == ComponentSwizzle::Green && b == ComponentSwizzle::Blue && a == ComponentSwizzle::Alpha;
+    }
+
+    ComponentSwizzle r { ComponentSwizzle::Red };
+    ComponentSwizzle g { ComponentSwizzle::Green };
+    ComponentSwizzle b { ComponentSwizzle::Blue };
+    ComponentSwizzle a { ComponentSwizzle::Alpha };
+};
 
 struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<TextureFormat> format;
@@ -44,6 +70,7 @@ struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<IntegerCoordinate> mipLevelCount;
     IntegerCoordinate baseArrayLayer { 0 };
     std::optional<IntegerCoordinate> arrayLayerCount;
+    TextureComponentSwizzle swizzle;
 };
 
 } // namespace WebCore::WebGPU

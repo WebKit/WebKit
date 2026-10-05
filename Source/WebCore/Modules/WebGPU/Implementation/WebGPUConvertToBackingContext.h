@@ -118,6 +118,8 @@ class RenderPipeline;
 class Sampler;
 enum class SamplerBindingType : uint8_t;
 class ShaderModule;
+enum class ComponentSwizzle : uint8_t;
+struct TextureComponentSwizzle;
 enum class StencilOperation : uint8_t;
 enum class StorageTextureAccess : uint8_t;
 enum class StoreOp : uint8_t;
@@ -163,6 +165,8 @@ public:
     WGPUStencilOperation convertToBacking(StencilOperation);
     WGPUStorageTextureAccess convertToBacking(StorageTextureAccess);
     WGPUStoreOp convertToBacking(StoreOp);
+    WGPUComponentSwizzle convertToBacking(ComponentSwizzle);
+    WGPUTextureComponentSwizzle convertToBacking(const TextureComponentSwizzle&);
     WGPUTextureAspect convertToBacking(TextureAspect);
     WGPUTextureDimension convertToBacking(TextureDimension);
     WGPUTextureFormat convertToBacking(TextureFormat);

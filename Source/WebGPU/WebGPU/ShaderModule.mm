@@ -1231,6 +1231,8 @@ String wgpuAdapterFeatureName(WGPUFeatureName feature)
         return "clip-distances"_s;
     case WGPUFeatureName_PrimitiveIndex:
         return "primitive-index"_s;
+    case WGPUFeatureName_TextureComponentSwizzle:
+        return "texture-component-swizzle"_s;
     case WGPUFeatureName_DualSourceBlending:
         return "dual-source-blending"_s;
     case WGPUFeatureName_Float16Renderable:

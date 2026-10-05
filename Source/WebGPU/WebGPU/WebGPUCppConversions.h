@@ -439,6 +439,8 @@ constexpr std::optional<WebGPU::FeatureName> fromAPI(WGPUFeatureName value)
         return WebGPU::FeatureName::PrimitiveIndex;
     case WGPUFeatureName_Subgroups:
         return WebGPU::FeatureName::Subgroups;
+    case WGPUFeatureName_TextureComponentSwizzle:
+        return WebGPU::FeatureName::TextureComponentSwizzle;
     default:
         return std::nullopt;
     }
@@ -493,6 +495,8 @@ constexpr WGPUFeatureName toAPI(WebGPU::FeatureName value)
         return WGPUFeatureName_PrimitiveIndex;
     case WebGPU::FeatureName::Subgroups:
         return WGPUFeatureName_Subgroups;
+    case WebGPU::FeatureName::TextureComponentSwizzle:
+        return WGPUFeatureName_TextureComponentSwizzle;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

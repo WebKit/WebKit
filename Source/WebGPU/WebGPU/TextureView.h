@@ -41,13 +41,17 @@ class CommandEncoder;
 class Device;
 class Texture;
 
+// Whether the descriptor asked for the "rgba" swizzle, treating WGPUComponentSwizzle_Undefined as
+// the identity for the channel it appears on.
+bool NODELETE isIdentityComponentSwizzle(const WGPUTextureComponentSwizzle&);
+
 // https://gpuweb.github.io/gpuweb/#gputextureview
 class TextureView final : public WebGPU::TextureView, public WGPUTextureViewImpl, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(TextureView);
 public:
-    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
+    static Ref<TextureView> create(id<MTLTexture> texture, id<MTLTexture> sampledTexture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
     {
-        return adoptRef(*new TextureView(texture, descriptor, renderExtent, parentTexture, device));
+        return adoptRef(*new TextureView(texture, sampledTexture, descriptor, renderExtent, parentTexture, device));
     }
     static Ref<TextureView> createInvalid(Texture& texture, Device& device)
     {
@@ -61,7 +65,12 @@ public:
     bool NODELETE isValid() const final;
 
     id<MTLTexture> NODELETE texture() const;
+    // The view as a shader reads it: the same texels seen through the swizzle the descriptor asked
+    // for, which is the plain texture whenever that swizzle is the identity.
+    id<MTLTexture> NODELETE sampledTexture() const;
     id<MTLTexture> NODELETE parentTexture() const;
+    // Reports the swizzle the descriptor asked for, not the one the format imposes on top of it.
+    bool hasIdentitySwizzle() const { return m_hasIdentitySwizzle; }
     const std::optional<WGPUExtent3D>& renderExtent() const LIFETIME_BOUND { return m_renderExtent; }
 
     Device& device() const { return m_device; }
@@ -94,10 +103,11 @@ public:
     id<MTLRasterizationRateMap> NODELETE rasterizationMapForSlice(uint32_t slice) const;
 
 private:
-    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
+    TextureView(id<MTLTexture>, id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
     TextureView(Texture&, Device&);
 
     id<MTLTexture> m_texture { nil };
+    id<MTLTexture> m_sampledTexture { nil };
 
     const WGPUTextureFormat m_format { WGPUTextureFormat_Undefined };
     const WGPUTextureViewDimension m_dimension { WGPUTextureViewDimension_Undefined };
@@ -107,6 +117,7 @@ private:
     const uint32_t m_arrayLayerCount { 0 };
     const WGPUTextureAspect m_aspect { WGPUTextureAspect_All };
     const WGPUTextureUsage m_usage { WGPUTextureUsage_None };
+    const bool m_hasIdentitySwizzle { true };
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;

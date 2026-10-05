@@ -63,6 +63,7 @@ RefPtr<TextureView> TextureImpl::createView(const std::optional<TextureViewDescr
         .arrayLayerCount = descriptor && descriptor->arrayLayerCount ? *descriptor->arrayLayerCount : static_cast<uint32_t>(WGPU_ARRAY_LAYER_COUNT_UNDEFINED),
         .aspect = descriptor ? convertToBackingContext->convertToBacking(descriptor->aspect) : WGPUTextureAspect_All,
         .usage = descriptor ? convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor->usage) : 0,
+        .swizzle = convertToBackingContext->convertToBacking(descriptor ? descriptor->swizzle : TextureComponentSwizzle { }),
     };
 
     return TextureViewImpl::create(adoptWebGPU(wgpuTextureCreateView(m_backing.get(), &backingDescriptor)), convertToBackingContext);

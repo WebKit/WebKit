@@ -3177,6 +3177,9 @@ NSString* Texture::errorValidatingTextureViewCreation(const WGPUTextureViewDescr
     if (descriptor.usage & ~m_usage)
         return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) is not a subset of the texture's usage(%llu)", descriptor.usage, m_usage]);
 
+    if (!isIdentityComponentSwizzle(descriptor.swizzle) && !m_device->hasFeature(WGPUFeatureName_TextureComponentSwizzle))
+        return ERROR_STRING(@"swizzle is not \"rgba\" and the texture-component-swizzle feature is not enabled");
+
     if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !hasStorageBindingCapability(descriptor.format, m_device, WGPUStorageTextureAccess_WriteOnly))
         return ERROR_STRING(@"view usage contains storage binding and the view's format does not support it");
 
@@ -3285,6 +3288,59 @@ static MTLPixelFormat NODELETE resolvedPixelFormat(MTLPixelFormat viewPixelForma
     }
 }
 
+// Resolves one WebGPU component against the base swizzle the format itself imposes, which is the
+// mapping from a logical channel name to what the hardware actually reads for it.
+static MTLTextureSwizzle composeComponentSwizzle(WGPUComponentSwizzle component, const MTLTextureSwizzleChannels& base)
+{
+    switch (component) {
+    case WGPUComponentSwizzle_Red:
+        return base.red;
+    case WGPUComponentSwizzle_Green:
+        return base.green;
+    case WGPUComponentSwizzle_Blue:
+        return base.blue;
+    case WGPUComponentSwizzle_Alpha:
+        return base.alpha;
+    case WGPUComponentSwizzle_Zero:
+        return MTLTextureSwizzleZero;
+    case WGPUComponentSwizzle_One:
+        return MTLTextureSwizzleOne;
+    case WGPUComponentSwizzle_Undefined:
+    case WGPUComponentSwizzle_Force32:
+        ASSERT_NOT_REACHED();
+        return MTLTextureSwizzleZero;
+    }
+}
+
+static WGPUComponentSwizzle NODELETE resolveComponentSwizzle(WGPUComponentSwizzle component, WGPUComponentSwizzle identity)
+{
+    return component == WGPUComponentSwizzle_Undefined ? identity : component;
+}
+
+// Returns the swizzle a shader has to read this view through, or std::nullopt when that is the one
+// Metal applies anyway and no second MTLTexture is needed.
+static std::optional<MTLTextureSwizzleChannels> composedSwizzleChannels(const WGPUTextureViewDescriptor& descriptor, const Device& device)
+{
+    auto base = MTLTextureSwizzleChannelsDefault;
+
+    // https://gpuweb.github.io/gpuweb/#reading-depth-stencil
+    // A depth or stencil aspect has to read as (V, 0, 0, 1) once the feature is enabled. Metal
+    // reads it as (V, V, V, 1) on its own, so the zeroes have to be asked for.
+    if (Texture::isDepthOrStencilFormat(descriptor.format) && device.hasFeature(WGPUFeatureName_TextureComponentSwizzle))
+        base = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleRed, MTLTextureSwizzleZero, MTLTextureSwizzleZero, MTLTextureSwizzleOne);
+
+    auto channels = MTLTextureSwizzleChannelsMake(
+        composeComponentSwizzle(resolveComponentSwizzle(descriptor.swizzle.r, WGPUComponentSwizzle_Red), base),
+        composeComponentSwizzle(resolveComponentSwizzle(descriptor.swizzle.g, WGPUComponentSwizzle_Green), base),
+        composeComponentSwizzle(resolveComponentSwizzle(descriptor.swizzle.b, WGPUComponentSwizzle_Blue), base),
+        composeComponentSwizzle(resolveComponentSwizzle(descriptor.swizzle.a, WGPUComponentSwizzle_Alpha), base));
+
+    if (channels.red == MTLTextureSwizzleRed && channels.green == MTLTextureSwizzleGreen && channels.blue == MTLTextureSwizzleBlue && channels.alpha == MTLTextureSwizzleAlpha)
+        return std::nullopt;
+
+    return channels;
+}
+
 Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
     auto device = m_device;
@@ -3369,11 +3425,26 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     if (!texture.label.length)
         texture.label = m_texture.label;
 
+    // A swizzled MTLTexture loses the render target and shader write usages of the texture it is a
+    // view of, so it cannot stand in for the one above: it is a second view, used only where a
+    // shader reads the texture. A memoryless texture is a render attachment and nothing else, so it
+    // never needs one.
+    id<MTLTexture> sampledTexture = nil;
+    if ((descriptor->usage & WGPUTextureUsage_TextureBinding) && m_texture.storageMode != MTLStorageModeMemoryless) {
+        if (auto swizzle = composedSwizzleChannels(*descriptor, device.get())) {
+            sampledTexture = [m_texture newTextureViewWithPixelFormat:resolvedPixelFormat(pixelFormat, m_texture.pixelFormat) textureType:textureType levels:levels slices:slices swizzle:*swizzle];
+            if (!sampledTexture)
+                return TextureView::createInvalid(*this, device.get());
+
+            sampledTexture.label = texture.label;
+        }
+    }
+
     std::optional<WGPUExtent3D> renderExtent;
     if (m_usage & WGPUTextureUsage_RenderAttachment)
         renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
-    auto result = TextureView::create(texture, *descriptor, renderExtent, *this, device.get());
+    auto result = TextureView::create(texture, sampledTexture, *descriptor, renderExtent, *this, device.get());
     m_textureViews.append(result);
     return result;
 }

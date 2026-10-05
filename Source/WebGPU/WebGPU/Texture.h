@@ -110,6 +110,9 @@ public:
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
 
     id<MTLTexture> texture() const { return m_texture; }
+    // A texture bound directly, rather than through a view, has no swizzle to apply.
+    id<MTLTexture> sampledTexture() const { return m_texture; }
+    bool hasIdentitySwizzle() const { return true; }
 
     uint32_t width() const { return m_width; }
     uint32_t height() const { return m_height; }

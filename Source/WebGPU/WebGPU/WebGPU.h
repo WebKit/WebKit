@@ -406,6 +406,7 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_TextureFormatsTier1 = 0x00000015,
     WGPUFeatureName_TextureFormatsTier2 = 0x00000016,
     WGPUFeatureName_Subgroups = 0x00000017,
+    WGPUFeatureName_TextureComponentSwizzle = 0x00000018,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 
@@ -1143,6 +1144,27 @@ typedef struct WGPUTextureBindingLayout {
     WGPUBool multisampled;
 } WGPUTextureBindingLayout WGPU_STRUCTURE_ATTRIBUTE;
 
+// https://gpuweb.github.io/gpuweb/#dom-gputextureviewdescriptor-swizzle
+// WGPUComponentSwizzle_Undefined means "the identity for this channel", so that a
+// zero-initialized WGPUTextureComponentSwizzle is the identity swizzle.
+typedef enum WGPUComponentSwizzle {
+    WGPUComponentSwizzle_Undefined = 0x00000000,
+    WGPUComponentSwizzle_Red = 0x00000001,
+    WGPUComponentSwizzle_Green = 0x00000002,
+    WGPUComponentSwizzle_Blue = 0x00000003,
+    WGPUComponentSwizzle_Alpha = 0x00000004,
+    WGPUComponentSwizzle_Zero = 0x00000005,
+    WGPUComponentSwizzle_One = 0x00000006,
+    WGPUComponentSwizzle_Force32 = 0x7FFFFFFF
+} WGPUComponentSwizzle WGPU_ENUM_ATTRIBUTE;
+
+typedef struct WGPUTextureComponentSwizzle {
+    WGPUComponentSwizzle r;
+    WGPUComponentSwizzle g;
+    WGPUComponentSwizzle b;
+    WGPUComponentSwizzle a;
+} WGPUTextureComponentSwizzle WGPU_STRUCTURE_ATTRIBUTE;
+
 typedef struct WGPUTextureViewDescriptor {
     WGPUStringView label;
     WGPUTextureFormat format;
@@ -1153,6 +1175,7 @@ typedef struct WGPUTextureViewDescriptor {
     uint32_t arrayLayerCount;
     WGPUTextureAspect aspect;
     WGPUTextureUsage usage;
+    WGPUTextureComponentSwizzle swizzle;
 } WGPUTextureViewDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUVertexAttribute {

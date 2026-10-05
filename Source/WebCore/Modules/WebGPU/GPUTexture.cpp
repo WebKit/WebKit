@@ -111,6 +111,9 @@ ExceptionOr<Ref<GPUTextureView>> GPUTexture::createView(const std::optional<GPUT
         if (auto error = m_device->errorValidatingSupportedFormat(*textureViewDescriptor->format))
             return Exception { ExceptionCode::TypeError, makeString("GPUTexture.createView: Unsupported texture format: "_s, *error) };
     }
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-validate-swizzle-string
+    if (textureViewDescriptor.has_value() && !parseGPUTextureComponentSwizzle(textureViewDescriptor->swizzle))
+        return Exception { ExceptionCode::TypeError, makeString("GPUTexture.createView: Invalid swizzle string: "_s, textureViewDescriptor->swizzle) };
     RefPtr view = m_backing->createView(convertToBacking(textureViewDescriptor));
     if (!view)
         return Exception { ExceptionCode::InvalidStateError, "GPUTexture.createView: Unable to create view."_s };

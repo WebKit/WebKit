@@ -33,6 +33,42 @@
 
 namespace WebCore {
 
+static std::optional<WebGPU::ComponentSwizzle> parseComponentSwizzle(char16_t character)
+{
+    switch (character) {
+    case 'r':
+        return WebGPU::ComponentSwizzle::Red;
+    case 'g':
+        return WebGPU::ComponentSwizzle::Green;
+    case 'b':
+        return WebGPU::ComponentSwizzle::Blue;
+    case 'a':
+        return WebGPU::ComponentSwizzle::Alpha;
+    case '0':
+        return WebGPU::ComponentSwizzle::Zero;
+    case '1':
+        return WebGPU::ComponentSwizzle::One;
+    default:
+        return std::nullopt;
+    }
+}
+
+std::optional<WebGPU::TextureComponentSwizzle> parseGPUTextureComponentSwizzle(const String& swizzle)
+{
+    if (swizzle.length() != 4)
+        return std::nullopt;
+
+    std::array<WebGPU::ComponentSwizzle, 4> components;
+    for (unsigned i = 0; i < components.size(); ++i) {
+        auto component = parseComponentSwizzle(swizzle[i]);
+        if (!component)
+            return std::nullopt;
+        components[i] = *component;
+    }
+
+    return WebGPU::TextureComponentSwizzle { components[0], components[1], components[2], components[3] };
+}
+
 Ref<JSON::Object> GPUTextureViewDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
@@ -48,6 +84,7 @@ Ref<JSON::Object> GPUTextureViewDescriptor::toJSON() const
     json->setDouble("baseArrayLayer"_s, baseArrayLayer);
     if (arrayLayerCount)
         json->setDouble("arrayLayerCount"_s, *arrayLayerCount);
+    json->setString("swizzle"_s, swizzle);
     return json;
 }
 

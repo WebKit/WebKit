@@ -34,8 +34,13 @@
 #include "WebGPUTextureViewDescriptor.h"
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+// https://gpuweb.github.io/gpuweb/#abstract-opdef-validate-swizzle-string
+// Returns std::nullopt if the string does not match the regexp ^[rgba01]{4}$.
+std::optional<WebGPU::TextureComponentSwizzle> parseGPUTextureComponentSwizzle(const String&);
 
 struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
     WebGPU::TextureViewDescriptor convertToBacking() const
@@ -50,6 +55,8 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
             mipLevelCount,
             baseArrayLayer,
             arrayLayerCount,
+            // The caller is required to have rejected a malformed swizzle string already.
+            parseGPUTextureComponentSwizzle(swizzle).value_or(WebGPU::TextureComponentSwizzle { }),
         };
     }
 
@@ -63,6 +70,7 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
     std::optional<GPUIntegerCoordinate> mipLevelCount;
     GPUIntegerCoordinate baseArrayLayer { 0 };
     std::optional<GPUIntegerCoordinate> arrayLayerCount;
+    String swizzle { "rgba"_s };
 };
 
 }

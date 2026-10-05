@@ -91,6 +91,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
         { "rg11b10ufloat-renderable"_s, GPUFeatureName::Rg11b10ufloatRenderable },
         { "shader-f16"_s, GPUFeatureName::ShaderF16 },
         { "subgroups"_s, GPUFeatureName::Subgroups },
+        { "texture-component-swizzle"_s, GPUFeatureName::TextureComponentSwizzle },
         { "texture-compression-astc"_s, GPUFeatureName::TextureCompressionAstc },
         { "texture-compression-astc-sliced-3d"_s, GPUFeatureName::TextureCompressionAstcSliced3d },
         { "texture-compression-bc"_s, GPUFeatureName::TextureCompressionBc },

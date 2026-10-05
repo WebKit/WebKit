@@ -52,6 +52,7 @@
 #include "WebGPUTextureDimension.h"
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureSampleType.h"
+#include "WebGPUTextureViewDescriptor.h"
 #include "WebGPUTextureViewDimension.h"
 #include "WebGPUVertexFormat.h"
 #include "WebGPUVertexStepMode.h"
@@ -242,6 +243,8 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_PrimitiveIndex;
     case FeatureName::Subgroups:
         return WGPUFeatureName_Subgroups;
+    case FeatureName::TextureComponentSwizzle:
+        return WGPUFeatureName_TextureComponentSwizzle;
     }
 }
 
@@ -404,6 +407,34 @@ WGPUStoreOp ConvertToBackingContext::convertToBacking(StoreOp storeOp)
     case StoreOp::Discard:
         return WGPUStoreOp_Discard;
     }
+}
+
+WGPUComponentSwizzle ConvertToBackingContext::convertToBacking(ComponentSwizzle componentSwizzle)
+{
+    switch (componentSwizzle) {
+    case ComponentSwizzle::Red:
+        return WGPUComponentSwizzle_Red;
+    case ComponentSwizzle::Green:
+        return WGPUComponentSwizzle_Green;
+    case ComponentSwizzle::Blue:
+        return WGPUComponentSwizzle_Blue;
+    case ComponentSwizzle::Alpha:
+        return WGPUComponentSwizzle_Alpha;
+    case ComponentSwizzle::Zero:
+        return WGPUComponentSwizzle_Zero;
+    case ComponentSwizzle::One:
+        return WGPUComponentSwizzle_One;
+    }
+}
+
+WGPUTextureComponentSwizzle ConvertToBackingContext::convertToBacking(const TextureComponentSwizzle& swizzle)
+{
+    return {
+        convertToBacking(swizzle.r),
+        convertToBacking(swizzle.g),
+        convertToBacking(swizzle.b),
+        convertToBacking(swizzle.a),
+    };
 }
 
 WGPUTextureAspect ConvertToBackingContext::convertToBacking(TextureAspect textureAspect)

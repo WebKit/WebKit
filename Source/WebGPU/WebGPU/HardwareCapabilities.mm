@@ -140,6 +140,8 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     features.append(WGPUFeatureName_RG11B10UfloatRenderable);
     features.append(WGPUFeatureName_ShaderF16);
     features.append(WGPUFeatureName_BGRA8UnormStorage);
+    features.append(WGPUFeatureName_TextureComponentSwizzle);
+
 #if CPU(ARM64)
     features.append(WGPUFeatureName_TextureFormatsTier1);
     features.append(WGPUFeatureName_TextureFormatsTier2);

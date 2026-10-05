@@ -5378,6 +5378,23 @@ enum class WebCore::WebGPU::TextureAspect : uint8_t {
     DepthOnly,
 };
 
+header: <WebCore/WebGPUTextureViewDescriptor.h>
+enum class WebCore::WebGPU::ComponentSwizzle : uint8_t {
+    Red,
+    Green,
+    Blue,
+    Alpha,
+    Zero,
+    One,
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::WebGPU::TextureComponentSwizzle {
+    WebCore::WebGPU::ComponentSwizzle r;
+    WebCore::WebGPU::ComponentSwizzle g;
+    WebCore::WebGPU::ComponentSwizzle b;
+    WebCore::WebGPU::ComponentSwizzle a;
+}
+
 enum class WebCore::WebGPU::PowerPreference : bool
 
 header: <WebCore/WebGPUPredefinedColorSpace.h>
