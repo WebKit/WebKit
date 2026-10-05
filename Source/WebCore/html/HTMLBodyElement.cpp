@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,10 +70,8 @@ bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& na
     case AttributeNames::backgroundAttr:
     case AttributeNames::marginwidthAttr:
     case AttributeNames::leftmarginAttr:
-    case AttributeNames::rightmarginAttr:
     case AttributeNames::marginheightAttr:
     case AttributeNames::topmarginAttr:
-    case AttributeNames::bottommarginAttr:
     case AttributeNames::bgcolorAttr:
     case AttributeNames::textAttr:
         return true;
@@ -93,19 +91,27 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
         break;
     }
     case AttributeNames::marginwidthAttr:
-    case AttributeNames::leftmarginAttr:
-        addHTMLPixelLengthToStyle(style, CSSPropertyMarginRight, value);
         addHTMLPixelLengthToStyle(style, CSSPropertyMarginLeft, value);
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginRight, value);
         break;
-    case AttributeNames::rightmarginAttr:
+    case AttributeNames::leftmarginAttr:
+        // https://html.spec.whatwg.org/multipage/rendering.html#the-page
+        // marginwidth takes precedence over leftmargin.
+        if (hasAttributeWithoutSynchronization(marginwidthAttr))
+            break;
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginLeft, value);
         addHTMLPixelLengthToStyle(style, CSSPropertyMarginRight, value);
         break;
     case AttributeNames::marginheightAttr:
-    case AttributeNames::topmarginAttr:
-        addHTMLPixelLengthToStyle(style, CSSPropertyMarginBottom, value);
         addHTMLPixelLengthToStyle(style, CSSPropertyMarginTop, value);
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginBottom, value);
         break;
-    case AttributeNames::bottommarginAttr:
+    case AttributeNames::topmarginAttr:
+        // https://html.spec.whatwg.org/multipage/rendering.html#the-page
+        // marginheight takes precedence over topmargin.
+        if (hasAttributeWithoutSynchronization(marginheightAttr))
+            break;
+        addHTMLPixelLengthToStyle(style, CSSPropertyMarginTop, value);
         addHTMLPixelLengthToStyle(style, CSSPropertyMarginBottom, value);
         break;
     case AttributeNames::bgcolorAttr:
@@ -194,16 +200,18 @@ void HTMLBodyElement::postConnectionSteps()
 
     Ref ownerElement = *document->ownerElement();
 
-    // FIXME: It's surprising this is web compatible since it means marginwidth and marginheight attributes
-    // appear or get overwritten on body elements of a document embedded through <iframe> or <frame>.
-    // Better to find a way to do addHTMLLengthToStyle based on the attributes from the frame element,
-    // without modifying the body element's attributes. Could also add code so we can respond to updates
-    // to the frame element attributes.
+    // https://html.spec.whatwg.org/multipage/rendering.html#the-page
+    // The container frame element's marginwidth is only used when the body has
+    // no marginwidth and no leftmargin. Same for marginheight vs topmargin.
     auto marginWidth = ownerElement->attributeWithoutSynchronization(marginwidthAttr);
-    if (!marginWidth.isNull())
+    if (!marginWidth.isNull()
+        && !hasAttributeWithoutSynchronization(marginwidthAttr)
+        && !hasAttributeWithoutSynchronization(leftmarginAttr))
         setAttributeWithoutSynchronization(marginwidthAttr, marginWidth);
     auto marginHeight = ownerElement->attributeWithoutSynchronization(marginheightAttr);
-    if (!marginHeight.isNull())
+    if (!marginHeight.isNull()
+        && !hasAttributeWithoutSynchronization(marginheightAttr)
+        && !hasAttributeWithoutSynchronization(topmarginAttr))
         setAttributeWithoutSynchronization(marginheightAttr, marginHeight);
 }
 

@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Dynamic body margin attribute precedence</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+// Tests that dynamically setting body margin attributes respects the spec
+// precedence rules. Per https://html.spec.whatwg.org/multipage/rendering.html#the-page,
+// margin-left/margin-right come from the first existing of:
+//   marginwidth -> leftmargin -> container frame's marginwidth.
+// margin-top/margin-bottom come from the first existing of:
+//   marginheight -> topmargin -> container frame's marginheight.
+// rightmargin and bottommargin are not in the spec and have no effect.
+
+test(() => {
+    document.body.setAttribute("leftmargin", "10");
+    assert_equals(getComputedStyle(document.body).marginLeft, "10px", "leftmargin alone");
+    document.body.setAttribute("marginwidth", "20");
+    assert_equals(getComputedStyle(document.body).marginLeft, "20px", "marginwidth takes precedence");
+    assert_equals(getComputedStyle(document.body).marginRight, "20px", "marginwidth takes precedence for right");
+    document.body.removeAttribute("marginwidth");
+    document.body.removeAttribute("leftmargin");
+}, "Set leftmargin first, then marginwidth — marginwidth takes precedence");
+
+test(() => {
+    document.body.setAttribute("marginwidth", "20");
+    assert_equals(getComputedStyle(document.body).marginLeft, "20px", "marginwidth alone");
+    document.body.setAttribute("leftmargin", "10");
+    assert_equals(getComputedStyle(document.body).marginLeft, "20px", "marginwidth still takes precedence");
+    assert_equals(getComputedStyle(document.body).marginRight, "20px", "marginwidth still takes precedence for right");
+    document.body.removeAttribute("marginwidth");
+    document.body.removeAttribute("leftmargin");
+}, "Set marginwidth first, then leftmargin — marginwidth still takes precedence");
+
+test(() => {
+    document.body.setAttribute("leftmargin", "10");
+    document.body.setAttribute("marginwidth", "20");
+    assert_equals(getComputedStyle(document.body).marginLeft, "20px", "marginwidth takes precedence");
+    document.body.removeAttribute("marginwidth");
+    assert_equals(getComputedStyle(document.body).marginLeft, "10px", "leftmargin takes effect after marginwidth removed");
+    document.body.removeAttribute("leftmargin");
+}, "Remove marginwidth — leftmargin takes effect again");
+
+test(() => {
+    document.body.setAttribute("topmargin", "10");
+    assert_equals(getComputedStyle(document.body).marginTop, "10px", "topmargin alone");
+    document.body.setAttribute("marginheight", "20");
+    assert_equals(getComputedStyle(document.body).marginTop, "20px", "marginheight takes precedence");
+    assert_equals(getComputedStyle(document.body).marginBottom, "20px", "marginheight takes precedence for bottom");
+    document.body.removeAttribute("marginheight");
+    document.body.removeAttribute("topmargin");
+}, "Set topmargin first, then marginheight — marginheight takes precedence");
+
+test(() => {
+    document.body.setAttribute("marginheight", "20");
+    assert_equals(getComputedStyle(document.body).marginTop, "20px", "marginheight alone");
+    document.body.setAttribute("topmargin", "10");
+    assert_equals(getComputedStyle(document.body).marginTop, "20px", "marginheight still takes precedence");
+    assert_equals(getComputedStyle(document.body).marginBottom, "20px", "marginheight still takes precedence for bottom");
+    document.body.removeAttribute("marginheight");
+    document.body.removeAttribute("topmargin");
+}, "Set marginheight first, then topmargin — marginheight still takes precedence");
+
+test(() => {
+    document.body.setAttribute("topmargin", "10");
+    document.body.setAttribute("marginheight", "20");
+    assert_equals(getComputedStyle(document.body).marginTop, "20px", "marginheight takes precedence");
+    document.body.removeAttribute("marginheight");
+    assert_equals(getComputedStyle(document.body).marginTop, "10px", "topmargin takes effect after marginheight removed");
+    document.body.removeAttribute("topmargin");
+}, "Remove marginheight — topmargin takes effect again");
+
+test(() => {
+    document.body.setAttribute("rightmargin", "100");
+    assert_equals(getComputedStyle(document.body).marginRight, "8px", "rightmargin has no effect on margin-right");
+    assert_equals(getComputedStyle(document.body).marginLeft, "8px", "rightmargin has no effect on margin-left");
+    document.body.removeAttribute("rightmargin");
+}, "rightmargin attribute is ignored (not in spec)");
+
+test(() => {
+    document.body.setAttribute("bottommargin", "100");
+    assert_equals(getComputedStyle(document.body).marginBottom, "8px", "bottommargin has no effect on margin-bottom");
+    assert_equals(getComputedStyle(document.body).marginTop, "8px", "bottommargin has no effect on margin-top");
+    document.body.removeAttribute("bottommargin");
+}, "bottommargin attribute is ignored (not in spec)");
+</script>
+</body>
