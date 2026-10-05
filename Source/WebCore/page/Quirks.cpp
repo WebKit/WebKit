@@ -923,6 +923,18 @@ bool Quirks::needsGoogleMapsEmbedManipulationSurfaceQuirk() const
 #endif
 }
 
+// maps.google.com rdar://185857498
+bool Quirks::needsGoogleMapsMagnificationWheelDeltaScalingQuirk() const
+{
+#if PLATFORM(MAC)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk);
+#else
+    return false;
+#endif
+}
+
 // maps.google.com rdar://67358928
 bool Quirks::needsGoogleMapsScrollingQuirk() const
 {
@@ -3596,6 +3608,10 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
 #if ENABLE(TWO_PHASE_CLICKS)
             // maps.google.com rdar://152194074
             QuirksData::SiteSpecificQuirk::MayNeedToIgnoreContentObservation,
+#endif
+#if PLATFORM(MAC)
+            // maps.google.com rdar://185857498
+            QuirksData::SiteSpecificQuirk::NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk,
 #endif
 #if PLATFORM(IOS_FAMILY)
             // maps.google.com rdar://67358928

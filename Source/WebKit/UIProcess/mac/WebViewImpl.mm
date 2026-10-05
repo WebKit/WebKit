@@ -5765,7 +5765,7 @@ void WebViewImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent
     }
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    if (event.type() == WebEventType::GestureChange && event.kind() == NativeWebGestureEvent::Kind::Magnification)
+    if (event.type() == WebEventType::GestureChange && event.kind() == NativeWebGestureEvent::Kind::Magnification && event.gestureScale())
         [appKitGestureController() transformGestureWasNotHandledByContent];
 #endif
 

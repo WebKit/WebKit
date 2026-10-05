@@ -113,6 +113,7 @@ struct QuirksData {
 #endif
 #if PLATFORM(MAC)
         NeedsGoogleMapsEmbedManipulationSurfaceQuirk,
+        NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk,
 #endif
 #if PLATFORM(IOS) || PLATFORM(VISION)
         NeedsNetflixVolumeSliderQuirk,

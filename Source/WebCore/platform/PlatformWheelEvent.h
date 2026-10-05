@@ -101,7 +101,7 @@ public:
     }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    static PlatformWheelEvent createFromGesture(const PlatformGestureEvent&, double deltaY);
+    static PlatformWheelEvent createFromGesture(const PlatformGestureEvent&, double deltaY, std::optional<double> wheelTicksYOverride = std::nullopt);
 #endif
 
     PlatformWheelEvent copySwappingDirection() const

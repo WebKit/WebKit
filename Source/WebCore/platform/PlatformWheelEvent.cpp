@@ -37,14 +37,14 @@ namespace WebCore {
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 
-PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEvent& platformGestureEvent, double deltaY)
+PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEvent& platformGestureEvent, double deltaY, std::optional<double> wheelTicksYOverride)
 {
     // This tries to match as much of the behavior of `WebKit::WebEventFactory::createWebWheelEvent` as
     // possible assuming `-[NSEvent hasPreciseScrollingDeltas]` and no `-[NSEvent _scrollCount]`.
 
     double deltaX = 0;
     double wheelTicksX = 0;
-    double wheelTicksY = deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
+    double wheelTicksY = wheelTicksYOverride.value_or(deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep()));
     bool shiftKey = platformGestureEvent.modifiers().contains(PlatformEvent::Modifier::ShiftKey);
     bool ctrlKey = true;
     bool altKey = platformGestureEvent.modifiers().contains(PlatformEvent::Modifier::AltKey);
