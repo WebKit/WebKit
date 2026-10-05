@@ -11848,6 +11848,8 @@
         "web-platform-tests/focus/support/iframe-focuses-parent-same-site-outer.html",
         "web-platform-tests/fullscreen/rendering/backdrop-green-ref.html",
         "web-platform-tests/fullscreen/rendering/backdrop-object-ref.html",
+        "web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-hidden-ref.html",
+        "web-platform-tests/fullscreen/rendering/exit-fullscreen-scroll-to-unscrollable-area-overflow-x-hidden-ref.html",
         "web-platform-tests/fullscreen/rendering/fullscreen-root-fills-page-ref.html",
         "web-platform-tests/gamepad/permissions-policy-gamepad.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-1.html",

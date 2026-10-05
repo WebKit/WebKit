@@ -1,0 +1,3 @@
+
+FAIL Requesting and exiting fullscreen with different keyboard lock options in Shadow DOM should work as expected assert_equals: check document.fullscreen expected Element node <div></div> but got null
+
