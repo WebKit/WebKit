@@ -26,29 +26,48 @@ function pause(duration) {
 /**
  * Compute the offset to add to an action's coordinates for the action's origin.
  *
- * For an element origin that is the center of the element's bounding box, in root-view
- * coordinates: events are dispatched from the top window, so an origin inside a subframe must be
- * shifted out of that frame's coordinate space. The shift ignores CSS transforms on an ancestor
- * <iframe> (webkit.org/b/318752). Any other origin ("viewport") contributes no offset.
+ * For an element origin that is the element's in-view center point
+ * (https://w3c.github.io/webdriver/#dfn-center-point): the center of the intersection of
+ * the element's first client rect with its frame's viewport, so an element that is partially
+ * scrolled out of view is targeted at the center of its visible part. Events are dispatched from
+ * the top window, so an origin inside a subframe is then shifted to root-view coordinates. The
+ * shift ignores CSS transforms on an ancestor <iframe> (webkit.org/b/318752).
+ *
+ * The "viewport" origin contributes no offset. The "pointer" origin is not supported yet and any
+ * other value is invalid; both throw rather than being silently treated as "viewport".
  *
  * @param {Element | String | undefined} origin
  * @returns {{ x: Number, y: Number }}
  */
 function originOffset(origin)
 {
-    const originWindow = origin?.ownerDocument?.defaultView;
-    if (!originWindow || !(origin instanceof originWindow.Element))
+    if (origin === undefined || origin === "viewport")
         return { x: 0, y: 0 };
 
-    const bounds = origin.getBoundingClientRect();
-    logDebug(`${origin.id} [${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height}]`);
+    if (origin === "pointer")
+        throw new Error('testdriver-vendor.js for WebKit does not yet support the "pointer" origin');
+
+    const originWindow = origin?.ownerDocument?.defaultView;
+    if (!originWindow || !(origin instanceof originWindow.Element))
+        throw new Error(`Invalid action origin "${origin}".`);
+
+    const rect = origin.getClientRects()[0];
+    if (!rect)
+        throw new Error(`Action origin ${origin.id ? `"${origin.id}" ` : ""}has no client rects, so it has no in-view center point.`);
+    logDebug(`${origin.id} [${rect.x}, ${rect.y}, ${rect.width}, ${rect.height}]`);
+
+    const left = Math.max(0, Math.min(rect.x, rect.x + rect.width));
+    const right = Math.min(originWindow.innerWidth, Math.max(rect.x, rect.x + rect.width));
+    const top = Math.max(0, Math.min(rect.y, rect.y + rect.height));
+    const bottom = Math.min(originWindow.innerHeight, Math.max(rect.y, rect.y + rect.height));
 
     const offset = {
-        x: bounds.left + (bounds.width / 2.0),
-        y: bounds.top + (bounds.height / 2.0),
+        x: Math.floor((left + right) / 2.0),
+        y: Math.floor((top + bottom) / 2.0),
     };
 
     if (originWindow !== originWindow.top && originWindow.internals) {
+        const bounds = origin.getBoundingClientRect();
         const rootViewBounds = originWindow.internals.boundingBoxInRootViewCoordinates(origin);
         offset.x += rootViewBounds.left - bounds.left;
         offset.y += rootViewBounds.top - bounds.top;

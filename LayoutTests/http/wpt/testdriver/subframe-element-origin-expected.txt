@@ -1,3 +1,4 @@
 
 PASS an element origin inside a subframe is shifted into root-view coordinates
+PASS an element origin inside a subframe is clipped to the subframe's viewport
 

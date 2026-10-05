@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>testdriver-vendor.js: an element origin resolves to the element's in-view center point</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<style>
+body { margin: 0; }
+.box { position: fixed; background: green; }
+#belowViewport { left: 100px; top: calc(100% - 40px); width: 100px; height: 200px; }
+#leftOfViewport { left: -60px; top: 100px; width: 100px; height: 100px; }
+#wrapContainer { position: absolute; left: 0; top: 250px; width: 200px; font-size: 16px; line-height: 40px; }
+#wrapContainer i { display: inline-block; height: 20px; background: green; }
+#hidden { display: none; }
+</style>
+<div id="belowViewport" class="box"></div>
+<div id="leftOfViewport" class="box"></div>
+<div id="wrapContainer"><i style="width: 160px"></i><span id="wrapped"><i style="width: 40px"></i><br><i style="width: 40px"></i></span></div>
+<div id="hidden"></div>
+<div id="log"></div>
+<script>
+// https://w3c.github.io/webdriver/#dfn-center-point
+function inViewCenterPoint(element)
+{
+    const rect = element.getClientRects()[0];
+    const left = Math.max(0, Math.min(rect.x, rect.x + rect.width));
+    const right = Math.min(window.innerWidth, Math.max(rect.x, rect.x + rect.width));
+    const top = Math.max(0, Math.min(rect.y, rect.y + rect.height));
+    const bottom = Math.min(window.innerHeight, Math.max(rect.y, rect.y + rect.height));
+    return { x: Math.floor((left + right) / 2), y: Math.floor((top + bottom) / 2) };
+}
+
+function boundingBoxCenter(element)
+{
+    const bounds = element.getBoundingClientRect();
+    return { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+}
+
+async function clickWithOrigin(origin)
+{
+    let click = null;
+    const listener = event => click = event;
+    document.addEventListener("click", listener, { capture: true });
+    await new test_driver.Actions()
+        .pointerMove(0, 0, { origin })
+        .pointerDown()
+        .pointerUp()
+        .send();
+    document.removeEventListener("click", listener, { capture: true });
+    assert_not_equals(click, null, "a click was dispatched");
+    return click;
+}
+
+async function testClickAtInViewCenterPoint(element)
+{
+    const center = boundingBoxCenter(element);
+    const hitAtBoundingBoxCenter = document.elementFromPoint(center.x, center.y);
+    assert_false(!!hitAtBoundingBoxCenter && element.contains(hitAtBoundingBoxCenter), "precondition: the center of the bounding box misses the element");
+
+    const expected = inViewCenterPoint(element);
+    const click = await clickWithOrigin(element);
+    assert_true(element.contains(click.target), `click landed on the origin element, not on ${click.target.id || click.target.localName}`);
+    assert_equals(click.clientX, expected.x, "clientX");
+    assert_equals(click.clientY, expected.y, "clientY");
+}
+
+promise_test(async () => {
+    await testClickAtInViewCenterPoint(document.getElementById("belowViewport"));
+}, "an element origin extending past the bottom of the viewport is clipped to the viewport");
+
+promise_test(async () => {
+    await testClickAtInViewCenterPoint(document.getElementById("leftOfViewport"));
+}, "an element origin extending past the left of the viewport is clipped to the viewport");
+
+promise_test(async () => {
+    const wrapped = document.getElementById("wrapped");
+    assert_equals(wrapped.getClientRects().length, 2, "precondition: the origin wraps onto two lines");
+    await testClickAtInViewCenterPoint(wrapped);
+}, "an element origin that wraps across lines uses its first client rect");
+
+promise_test(async t => {
+    await promise_rejects_js(t, Error, new test_driver.Actions()
+        .pointerMove(0, 0, { origin: document.getElementById("hidden") })
+        .send());
+}, "an element origin with no client rects is rejected");
+</script>
