@@ -109,7 +109,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
         for (auto& serializedJSON : result.value()) {
             NSDictionary *data = parseJSON(serializedJSON.createNSString().get());
             NSDictionary<NSString *, id> *parsedJSON = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
-                return parseJSON(jsonString, JSONOptions::FragmentsAllowed);
+                return toJSValue(callback->globalContext(), deserializeJSONString(callback->globalContext(), jsonString));
             });
 
             deserializedData = mergeDictionaries(parsedJSON, deserializedData);

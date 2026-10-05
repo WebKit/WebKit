@@ -437,6 +437,19 @@ TEST(WKWebExtensionAPIStorage, GetWithDefaultValue)
     Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIStorage, GetDoesNotAliasEmptyArrays)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.storage.local.set({ data: { first: [], second: [] } })",
+        @"const { data } = await browser.storage.local.get('data')",
+        @"browser.test.assertFalse(data.first === data.second)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIStorage, GetKeys)
 {
     auto *backgroundScript = Util::constructScript(@[
