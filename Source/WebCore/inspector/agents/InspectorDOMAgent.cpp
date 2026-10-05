@@ -1432,19 +1432,6 @@ std::optional<InspectorOverlay::Flex::Config> InspectorDOMAgent::flexOverlayConf
     return flexOverlayConfig;
 }
 
-#if PLATFORM(IOS_FAMILY)
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig)
-{
-    Inspector::Protocol::ErrorString errorString;
-
-    setSearchingForNode(errorString, enabled, WTF::move(highlightConfig), WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), false);
-
-    if (!!errorString)
-        return makeUnexpected(errorString);
-
-    return { };
-}
-#else
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -1456,7 +1443,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnable
 
     return { };
 }
-#endif
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
@@ -1485,15 +1471,6 @@ void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefP
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     protect(overlay())->highlightQuad(WTF::move(quad), *highlightConfig);
 }
-
-#if PLATFORM(IOS_FAMILY)
-
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId& frameId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
-{
-    return highlightSelector(selectorString, frameId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
-}
-
-#endif // PLATFORM(IOS_FAMILY)
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId& frameId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
@@ -1589,15 +1566,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
     return { };
 }
 
-#if PLATFORM(IOS_FAMILY)
-
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&& nodeId, const Inspector::Protocol::Runtime::RemoteObjectId& objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
-{
-    return highlightNode(WTF::move(nodeId), objectId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
-}
-
-#endif // PLATFORM(IOS_FAMILY)
-
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&& nodeId, const Inspector::Protocol::Runtime::RemoteObjectId& objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -1632,15 +1600,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::o
 
     return { };
 }
-
-#if PLATFORM(IOS_FAMILY)
-
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
-{
-    return highlightNodeList(WTF::move(nodeIds), WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
-}
-
-#endif // PLATFORM(IOS_FAMILY)
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
 {
