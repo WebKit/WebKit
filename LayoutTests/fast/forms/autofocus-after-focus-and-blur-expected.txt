@@ -1,0 +1,4 @@
+
+
+PASS Focus removed before candidate processing does not suppress autofocus
+

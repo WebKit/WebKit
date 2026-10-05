@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="host"></div>
+<script>
+promise_test(async () => {
+    const root = host.attachShadow({ mode: "closed" });
+    const focused = document.createElement("input");
+    root.append(focused);
+    focused.focus();
+    assert_equals(document.activeElement, host, "Document focus prerequisite");
+    assert_equals(root.activeElement, focused, "Shadow focus prerequisite");
+
+    const candidate = document.createElement("input");
+    candidate.autofocus = true;
+    document.body.append(candidate);
+    await new Promise(requestAnimationFrame);
+    assert_equals(document.activeElement, host, "Autofocus must preserve the focused shadow host");
+    assert_equals(root.activeElement, focused, "Autofocus must preserve the focused shadow input");
+}, "Autofocus preserves focus inside a closed shadow tree");
+</script>
