@@ -240,11 +240,11 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, 
     if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains<HashTranslatorASCIILiteral>("*"_s))
         return filteredResponse;
 
-    filteredResponse.m_httpHeaderFields.uncommonHeaders().removeAllMatching([&](auto& entry) {
-        return !isCrossOriginSafeHeader(entry.key, accessControlExposeHeaderSet);
+    filteredResponse.m_httpHeaderFields.removeAllCommonHeadersMatching([&](HTTPHeaderName name) {
+        return !isCrossOriginSafeHeader(name, accessControlExposeHeaderSet);
     });
-    filteredResponse.m_httpHeaderFields.commonHeaders().removeAllMatching([&](auto& entry) {
-        return !isCrossOriginSafeHeader(entry.key, accessControlExposeHeaderSet);
+    filteredResponse.m_httpHeaderFields.removeAllUncommonHeadersMatching([&](const String& name) {
+        return !isCrossOriginSafeHeader(name, accessControlExposeHeaderSet);
     });
 
     return filteredResponse;
@@ -509,16 +509,22 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
         if (corsSafeHeaderSet.contains<HashTranslatorASCIILiteral>("*"_s))
             return;
 
-        m_httpHeaderFields.commonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) {
-            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(httpHeaderNameString(header.key));
+        m_httpHeaderFields.removeAllCommonHeadersMatching([&corsSafeHeaderSet](HTTPHeaderName name) {
+            return !isSafeCrossOriginResponseHeader(name) && !corsSafeHeaderSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(httpHeaderNameString(name));
         });
-        m_httpHeaderFields.uncommonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) { return !corsSafeHeaderSet.contains(header.key); });
+        m_httpHeaderFields.removeAllUncommonHeadersMatching([&corsSafeHeaderSet](const String& name) {
+            return !corsSafeHeaderSet.contains(name);
+        });
         break;
     }
     case ResourceResponse::Tainting::Opaque:
     case ResourceResponse::Tainting::Opaqueredirect:
-        m_httpHeaderFields.commonHeaders().removeAllMatching([](auto& header) { return !isSafeCrossOriginResponseHeader(header.key); });
-        m_httpHeaderFields.uncommonHeaders().clear();
+        m_httpHeaderFields.removeAllCommonHeadersMatching([](HTTPHeaderName name) {
+            return !isSafeCrossOriginResponseHeader(name);
+        });
+        m_httpHeaderFields.removeAllUncommonHeadersMatching([](const String&) {
+            return true;
+        });
         break;
     }
 }
@@ -534,8 +540,12 @@ void ResourceResponseBase::sanitizeHTTPHeaderFields(SanitizationType type)
     case SanitizationType::RemoveCookies:
         return;
     case SanitizationType::Redirection: {
-        m_httpHeaderFields.commonHeaders().removeAllMatching([](auto& header) { return !isSafeRedirectionResponseHeader(header.key); });
-        m_httpHeaderFields.uncommonHeaders().clear();
+        m_httpHeaderFields.removeAllCommonHeadersMatching([](HTTPHeaderName name) {
+            return !isSafeRedirectionResponseHeader(name);
+        });
+        m_httpHeaderFields.removeAllUncommonHeadersMatching([](const String&) {
+            return true;
+        });
         return;
     }
     case SanitizationType::CrossOriginSafe:

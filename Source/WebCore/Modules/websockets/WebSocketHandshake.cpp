@@ -563,9 +563,9 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
                 }
                 sawSecWebSocketProtocolHeaderField = true;
             }
-
-            m_serverHandshakeResponse.addHTTPHeaderField(headerName, value);
         }
+
+        m_serverHandshakeResponse.addHTTPHeaderField(headerName, value);
     }
     return data;
 }

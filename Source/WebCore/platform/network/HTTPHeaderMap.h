@@ -27,13 +27,19 @@
 #pragma once
 
 #include <WebCore/HTTPHeaderNames.h>
+#include <optional>
+#include <ranges>
+#include <span>
 #include <utility>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-// FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
 class HTTPHeaderMap {
 public:
@@ -59,6 +65,9 @@ public:
 
     typedef Vector<CommonHeader, 0, CrashOnOverflow, 6> CommonHeadersVector;
     typedef Vector<UncommonHeader, 0, CrashOnOverflow, 0> UncommonHeadersVector;
+
+    using OriginalValueOffsets = Vector<unsigned, 0, CrashOnOverflow, 1>;
+    using OriginalValueOffsetsMap = HashMap<String, OriginalValueOffsets, ASCIICaseInsensitiveHash>;
 
     class HTTPHeaderMapConstIterator {
     public:
@@ -137,7 +146,8 @@ public:
     typedef HTTPHeaderMapConstIterator const_iterator;
 
     WEBCORE_EXPORT HTTPHeaderMap();
-    WEBCORE_EXPORT HTTPHeaderMap(CommonHeadersVector&&, UncommonHeadersVector&&);
+    WEBCORE_EXPORT HTTPHeaderMap(CommonHeadersVector&&, UncommonHeadersVector&&, OriginalValueOffsetsMap&&);
+    WEBCORE_EXPORT static std::optional<HTTPHeaderMap> fromIPCData(CommonHeadersVector&&, UncommonHeadersVector&&, OriginalValueOffsetsMap&&);
 
     // Gets a copy of the data suitable for passing to another thread.
     WEBCORE_EXPORT HTTPHeaderMap isolatedCopy() const &;
@@ -150,12 +160,15 @@ public:
     {
         m_commonHeaders.clear();
         m_uncommonHeaders.clear();
+        m_originalValueOffsets.clear();
     }
 
     void shrinkToFit()
     {
         m_commonHeaders.shrinkToFit();
         m_uncommonHeaders.shrinkToFit();
+        for (auto& offsets : m_originalValueOffsets.values())
+            offsets.shrinkToFit();
     }
 
     WEBCORE_EXPORT String get(StringView name) const;
@@ -181,6 +194,9 @@ public:
     WEBCORE_EXPORT bool contains(HTTPHeaderName) const;
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 
+    WEBCORE_EXPORT void removeAllCommonHeadersMatching(NOESCAPE const Function<bool(HTTPHeaderName)>&);
+    WEBCORE_EXPORT void removeAllUncommonHeadersMatching(NOESCAPE const Function<bool(const String&)>&);
+
     // https://fetch.spec.whatwg.org/#request-body-header-name
     // Content-Length is not a request-body-header name per spec, but is included
     // here since in practice the body is always nulled alongside this call.
@@ -199,10 +215,15 @@ public:
     template<size_t length> bool contains(ASCIILiteral) = delete;
     template<size_t length> bool remove(ASCIILiteral) = delete;
 
-    const CommonHeadersVector& commonHeaders() const LIFETIME_BOUND { return m_commonHeaders; }
-    const UncommonHeadersVector& uncommonHeaders() const LIFETIME_BOUND { return m_uncommonHeaders; }
-    CommonHeadersVector& commonHeaders() LIFETIME_BOUND { return m_commonHeaders; }
-    UncommonHeadersVector& uncommonHeaders() LIFETIME_BOUND { return m_uncommonHeaders; }
+    auto commonHeaderKeys() const LIFETIME_BOUND
+    {
+        return m_commonHeaders.span() | std::views::transform(&CommonHeader::key);
+    }
+
+    auto uncommonHeaderKeys() const LIFETIME_BOUND
+    {
+        return m_uncommonHeaders.span() | std::views::transform(&UncommonHeader::key);
+    }
 
     const_iterator begin() const LIFETIME_BOUND { return const_iterator(*this, 0, 0); }
     const_iterator end() const LIFETIME_BOUND { return const_iterator(*this, m_commonHeaders.size(), m_uncommonHeaders.size()); }
@@ -222,11 +243,58 @@ public:
         return true;
     }
 
+    auto getOriginalValuesForInspector(StringView name) const LIFETIME_BOUND
+    {
+        auto values = separateOriginalValues(name);
+        auto count = values ? values->size() : 0;
+        return std::views::iota(size_t { 0 }, count) | std::views::transform(values.value_or(OriginalValueSeparator()));
+    }
+    auto getOriginalValuesForInspector(HTTPHeaderName name) const LIFETIME_BOUND
+    {
+        auto values = separateOriginalValues(name);
+        auto count = values ? values->size() : 0;
+        return std::views::iota(size_t { 0 }, count) | std::views::transform(values.value_or(OriginalValueSeparator()));
+    }
+    template<size_t length> auto getOriginalValuesForInspector(ASCIILiteral) const = delete;
+
 private:
+    friend struct IPC::ArgumentCoder<HTTPHeaderMap>;
+
+    const CommonHeadersVector& commonHeaders() const LIFETIME_BOUND { return m_commonHeaders; }
+    const UncommonHeadersVector& uncommonHeaders() const LIFETIME_BOUND { return m_uncommonHeaders; }
+    const OriginalValueOffsetsMap& originalValueOffsets() const LIFETIME_BOUND { return m_originalValueOffsets; }
+
     WEBCORE_EXPORT String getUncommonHeader(StringView name) const;
+
+    void addRepeatedHeader(StringView name, String& combined, String value);
+
+    class OriginalValueSeparator {
+    public:
+        OriginalValueSeparator()
+            : OriginalValueSeparator(emptyString(), { })
+        {
+        }
+
+        OriginalValueSeparator(const String& combined, std::span<const unsigned> offsets)
+            : m_combined(combined)
+            , m_offsets(offsets)
+        {
+        }
+
+        size_t size() const { return m_offsets.size() + 1; }
+        WEBCORE_EXPORT String operator()(size_t index) const;
+
+    private:
+        const String& m_combined;
+        const std::span<const unsigned> m_offsets;
+    };
+    WEBCORE_EXPORT std::optional<OriginalValueSeparator> separateOriginalValues(StringView) const LIFETIME_BOUND;
+    WEBCORE_EXPORT std::optional<OriginalValueSeparator> separateOriginalValues(HTTPHeaderName) const LIFETIME_BOUND;
+    OriginalValueSeparator separateOriginalValues(StringView name, const String& combined) const LIFETIME_BOUND;
 
     CommonHeadersVector m_commonHeaders;
     UncommonHeadersVector m_uncommonHeaders;
+    OriginalValueOffsetsMap m_originalValueOffsets;
 };
 
 } // namespace WebCore
