@@ -196,6 +196,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EventHandler);
