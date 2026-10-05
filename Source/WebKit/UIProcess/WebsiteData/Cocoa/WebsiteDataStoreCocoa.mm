@@ -255,6 +255,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
     parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
+    parameters.networkSessionParameters.enablePrivateClickMeasurementPrivateRelayEnforcement = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementPrivateRelayEnforcementEnabledKey());
 }
 
 void WebsiteDataStore::platformInitialize()

@@ -101,6 +101,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 - (void)_trustServerForLocalPCMTesting:(SecTrustRef)serverTrust WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_setPrivateClickMeasurementDebugModeEnabled:(BOOL)enabled WK_API_AVAILABLE(macos(14.0), ios(17.0));
+- (void)_setPrivateClickMeasurementPrivateRelayEnforcementEnabled:(BOOL)enabled WK_API_AVAILABLE(macos(27.0), ios(27.0));
 
 - (void)_renameOrigin:(NSURL *)oldName to:(NSURL *)newName forDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(void))completionHandler;
 

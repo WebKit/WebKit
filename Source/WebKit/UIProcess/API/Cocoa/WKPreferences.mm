@@ -1517,6 +1517,16 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
     protect(*_preferences)->setPrivateClickMeasurementDebugModeEnabled(enabled);
 }
 
+- (BOOL)_privateClickMeasurementPrivateRelayEnforcementEnabled
+{
+    return protect(*_preferences)->privateClickMeasurementPrivateRelayEnforcementEnabled();
+}
+
+- (void)_setPrivateClickMeasurementPrivateRelayEnforcementEnabled:(BOOL)enabled
+{
+    protect(*_preferences)->setPrivateClickMeasurementPrivateRelayEnforcementEnabled(enabled);
+}
+
 - (_WKPitchCorrectionAlgorithm)_pitchCorrectionAlgorithm
 {
     return static_cast<_WKPitchCorrectionAlgorithm>(protect(*_preferences)->pitchCorrectionAlgorithm());

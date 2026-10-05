@@ -199,6 +199,7 @@ public:
     void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&) const;
 
     void setPrivateClickMeasurementDebugMode(bool);
+    void setPrivateClickMeasurementPrivateRelayEnforcement(bool);
     void storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement&);
     void simulatePrivateClickMeasurementConversion(int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
 
