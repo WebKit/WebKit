@@ -3602,7 +3602,7 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
 
     auto topDocumentPath = quirksURL.path();
     auto topDocumentHost = quirksURL.host();
-    if (startsWithLettersIgnoringASCIICase(topDocumentPath, "/maps/"_s)) {
+    if (equalLettersIgnoringASCIICase(topDocumentPath, "/maps"_s) || startsWithLettersIgnoringASCIICase(topDocumentPath, "/maps/"_s)) {
         quirksData.isGoogleMaps = true;
         quirksData.enableQuirks({
 #if ENABLE(TWO_PHASE_CLICKS)
