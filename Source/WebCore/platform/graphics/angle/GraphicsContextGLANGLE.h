@@ -119,6 +119,7 @@ public:
     GCGLint maxCubeMapTextureSize() final;
     GCGLint maxRenderbufferSize() final;
     std::array<GCGLint, 2> maxViewportDims() final;
+    std::array<GCGLint, 2> maxDrawingBufferSize() final;
     GCGLint maxSamples() final;
     GCGLint maxTransformFeedbackSeparateAttribs() final;
     GCGLint maxUniformBufferBindings() final;

@@ -47,6 +47,7 @@ struct RemoteGraphicsContextGLInitializationState {
     GCGLint maxCubeMapTextureSize { 0 };
     GCGLint maxRenderbufferSize { 0 };
     std::array<GCGLint, 2> maxViewportDims { { 0, 0 } };
+    std::array<GCGLint, 2> maxDrawingBufferSize { { 0, 0 } };
     GCGLint maxSamples { 0 };
     GCGLint maxTransformFeedbackSeparateAttribs { 0 };
     GCGLint maxUniformBufferBindings { 0 };

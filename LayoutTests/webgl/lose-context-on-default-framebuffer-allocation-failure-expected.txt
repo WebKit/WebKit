@@ -1,28 +1,12 @@
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: bindBuffer: invalid target
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: bindBuffer: invalid target
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: context lost.
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: bindBuffer: invalid target
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: bindBuffer: invalid target
-Checks that failing to allocate the default framebuffer storage during a resize loses the context.
+Checks that failing to allocate the default framebuffer storage after a resize loses the context. The storage is allocated when the default framebuffer is first used after the resize.
 NOTE: This only passes in the test harness because it requires Internals.
 
 
 Test webgl DisplayBufferAllocationFailure {"antialias":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -30,6 +14,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl DisplayBufferAllocationFailure {"antialias":true,"depth":true,"stencil":true}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -37,6 +23,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl RenderbufferAllocationFailure {"antialias":true,"depth":false,"stencil":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -44,6 +32,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl RenderbufferAllocationFailure {"antialias":false,"preserveDrawingBuffer":true,"depth":false,"stencil":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -51,6 +41,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl RenderbufferAllocationFailure {"antialias":false,"depth":true,"stencil":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -58,6 +50,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl RenderbufferAllocationFailure {"antialias":false,"depth":false,"stencil":true}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -65,6 +59,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl RenderbufferAllocationFailure {"antialias":false,"depth":true,"stencil":true}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -90,6 +86,8 @@ PASS Color was 0,255,0,255
 Test webgl2 DisplayBufferAllocationFailure {"antialias":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -97,6 +95,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl2 DisplayBufferAllocationFailure {"antialias":true,"depth":true,"stencil":true}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -104,6 +104,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl2 RenderbufferAllocationFailure {"antialias":true,"depth":false,"stencil":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -111,6 +113,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl2 RenderbufferAllocationFailure {"antialias":false,"preserveDrawingBuffer":true,"depth":false,"stencil":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -118,6 +122,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl2 RenderbufferAllocationFailure {"antialias":false,"depth":true,"stencil":false}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -125,6 +131,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl2 RenderbufferAllocationFailure {"antialias":false,"depth":false,"stencil":true}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
@@ -132,6 +140,8 @@ PASS gl.getError() is gl.NO_ERROR
 Test webgl2 RenderbufferAllocationFailure {"antialias":false,"depth":true,"stencil":true}.
 PASS !!gl is true
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+PASS gl.drawingBufferWidth is 30
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR

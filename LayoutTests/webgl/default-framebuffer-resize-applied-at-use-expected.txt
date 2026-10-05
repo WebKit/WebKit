@@ -1,0 +1,170 @@
+Tests that resizing the canvas updates the drawing buffer size at once, and that the default framebuffer is reallocated and cleared before it is next used, also when the canvas is resized back to the original size or when the default framebuffer is used through blitFramebuffer().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":false}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":false}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: blitFramebuffer() from the default framebuffer after a resize reads the cleared drawing buffer at the new size.
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":false}: blitFramebuffer() to the default framebuffer after a resize writes the drawing buffer at the new size.
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":false}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":false}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: blitFramebuffer() from the default framebuffer after a resize reads the cleared drawing buffer at the new size.
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":false}: blitFramebuffer() to the default framebuffer after a resize writes the drawing buffer at the new size.
+PASS gl.getError() is gl.INVALID_OPERATION
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":true}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":false,"preserveDrawingBuffer":true}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: blitFramebuffer() from the default framebuffer after a resize reads the cleared drawing buffer at the new size.
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":false,"preserveDrawingBuffer":true}: blitFramebuffer() to the default framebuffer after a resize writes the drawing buffer at the new size.
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":true}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 1 {"antialias":true,"preserveDrawingBuffer":true}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: the drawing buffer size follows each of separate width and height assignments.
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 4
+PASS gl.drawingBufferWidth is 8
+PASS gl.drawingBufferHeight is 6
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is false
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: resizing and resizing back without using the default framebuffer clears it.
+PASS pixel is "0,255,0,255"
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: blitFramebuffer() from the default framebuffer after a resize reads the cleared drawing buffer at the new size.
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,0,0"
+PASS pixel is "0,0,0,0"
+PASS gl.getError() is gl.NO_ERROR
+
+WebGL 2 {"antialias":true,"preserveDrawingBuffer":true}: blitFramebuffer() to the default framebuffer after a resize writes the drawing buffer at the new size.
+PASS gl.getError() is gl.INVALID_OPERATION
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

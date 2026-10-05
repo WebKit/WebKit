@@ -7052,6 +7052,21 @@ Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContextBase& conte
     return RequestedGPU::Default;
 
 }
+
+Vector<int> Internals::webglMaxDrawingBufferSize(WebGLRenderingContextBase& context)
+{
+    RefPtr gl = context.graphicsContextGL();
+    if (!gl)
+        return { };
+    auto size = gl->maxDrawingBufferSize();
+    return { size[0], size[1] };
+}
+
+Vector<int> Internals::webglDefaultFramebufferAllocatedSize(WebGLRenderingContextBase& context)
+{
+    auto size = context.defaultFramebufferAllocatedSize();
+    return { size.width(), size.height() };
+}
 #endif
 
 void Internals::setPageVisibility(bool isVisible)
