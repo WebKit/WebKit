@@ -97,6 +97,7 @@ public:
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
+    void stopAnimatedScroll();
     void cancelAnimations();
 
     virtual bool isRubberBandInProgress() const { return false; }

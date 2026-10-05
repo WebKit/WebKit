@@ -131,6 +131,80 @@ TEST(KeyboardEventTests, SmoothKeyboardScrolling)
     EXPECT_EQ([view keyDownCount], 0UL);
 }
 
+static void sendKeyEvent(WKWebView *webView, NSEventType type, unichar character, unsigned short keyCode, BOOL isARepeat)
+{
+    NSString *characters = [NSString stringWithCharacters:&character length:1];
+    NSEvent *event = [NSEvent keyEventWithType:type location:NSMakePoint(5, 5) modifierFlags:NSEventModifierFlagFunction timestamp:[[NSDate date] timeIntervalSince1970] windowNumber:[[webView window] windowNumber] context:nil characters:characters charactersIgnoringModifiers:characters isARepeat:isARepeat keyCode:keyCode];
+
+    if (type == NSEventTypeKeyDown)
+        [webView keyDown:event];
+    else
+        [webView keyUp:event];
+}
+
+static RetainPtr<TestWKWebView> tallWebViewInKeyWindow(RetainPtr<NSWindow>& window)
+{
+    window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+    [window makeFirstResponder:webView.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; height: 100000px'></body>"];
+    [webView waitForNextPresentationUpdate];
+    return webView;
+}
+
+static double scrollY(TestWKWebView *webView)
+{
+    return [[webView objectByEvaluatingJavaScript:@"scrollY"] doubleValue];
+}
+
+// The first Page Down press animates for up to 200ms. With a short "Delay until repeat" setting the
+// first key repeat arrives during that animation, and holding the key must still scroll continuously.
+TEST(KeyboardEventTests, HeldPageDownScrollsWhenFirstRepeatArrivesDuringPageAnimation)
+{
+    RetainPtr<NSWindow> window;
+    RetainPtr webView = tallWebViewInKeyWindow(window);
+    double pageHeight = [[webView objectByEvaluatingJavaScript:@"innerHeight"] doubleValue];
+
+    sendKeyEvent(webView.get(), NSEventTypeKeyDown, NSPageDownFunctionKey, 0x79, NO);
+    Util::runFor(100_ms);
+    for (unsigned i = 0; i < 30; ++i) {
+        sendKeyEvent(webView.get(), NSEventTypeKeyDown, NSPageDownFunctionKey, 0x79, YES);
+        Util::runFor(33_ms);
+    }
+
+    // Before the fix, the scroll stopped after exactly one page step for the rest of the hold.
+    EXPECT_GT(scrollY(webView.get()), 3 * pageHeight);
+
+    sendKeyEvent(webView.get(), NSEventTypeKeyUp, NSPageDownFunctionKey, 0x79, NO);
+}
+
+// Holding an arrow key that is pressed while a Page Down animation is still running must scroll.
+TEST(KeyboardEventTests, HeldArrowKeyScrollsWhenPressedDuringPageAnimation)
+{
+    RetainPtr<NSWindow> window;
+    RetainPtr webView = tallWebViewInKeyWindow(window);
+    double pageHeight = [[webView objectByEvaluatingJavaScript:@"innerHeight"] doubleValue];
+
+    sendKeyEvent(webView.get(), NSEventTypeKeyDown, NSPageDownFunctionKey, 0x79, NO);
+    sendKeyEvent(webView.get(), NSEventTypeKeyUp, NSPageDownFunctionKey, 0x79, NO);
+    Util::runFor(50_ms);
+
+    sendKeyEvent(webView.get(), NSEventTypeKeyDown, NSDownArrowFunctionKey, 0x7D, NO);
+    Util::runFor(300_ms);
+    for (unsigned i = 0; i < 30; ++i) {
+        sendKeyEvent(webView.get(), NSEventTypeKeyDown, NSDownArrowFunctionKey, 0x7D, YES);
+        Util::runFor(33_ms);
+    }
+
+    // Before the fix, the arrow key never scrolled past the end of the Page Down step.
+    EXPECT_GT(scrollY(webView.get()), 1.5 * pageHeight);
+
+    sendKeyEvent(webView.get(), NSEventTypeKeyUp, NSDownArrowFunctionKey, 0x7D, NO);
+}
+
 TEST(KeyboardEventTests, TerminateWebContentProcessDuringKeyEventHandling)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

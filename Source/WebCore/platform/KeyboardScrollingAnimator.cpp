@@ -233,6 +233,11 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
 
     m_scrollTriggeringKeyIsPressed = true;
 
+    // A Page or Document press above animates in this process, and every frame of that animation
+    // sends a scroll position request that stops the keyboard scroll animation started below.
+    // Stop it so a key repeat that arrives before it finishes can take over.
+    scrollableArea->scrollAnimator().stopAnimatedScroll();
+
     scrollableArea->beginKeyboardScroll(*scroll);
 
     return true;
