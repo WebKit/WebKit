@@ -29,10 +29,8 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKWebsiteDataStore.h>
 
 @interface WK2WebDocumentController () <WKUIDelegate, NSTextFinderBarContainer>
 @property (nonatomic, strong) WKWebView *webView;
@@ -50,7 +48,7 @@ static WKWebViewConfiguration *defaultConfiguration()
 
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.preferences._fullScreenEnabled = YES;
+        configuration.preferences.elementFullscreenEnabled = YES;
         configuration.preferences._developerExtrasEnabled = YES;
     }
 

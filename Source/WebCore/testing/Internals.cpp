@@ -5478,6 +5478,12 @@ void Internals::setSelectionFromNone()
         protect(localFrame->selection())->setSelectionFromNone();
 }
 
+bool Internals::executeEditingCommand(const String& command, const String& argument)
+{
+    RefPtr frame = this->frame();
+    return frame && frame->editor().command(command).execute(argument);
+}
+
 #if ENABLE(MEDIA_SOURCE)
 
 void Internals::initializeMockMediaSource()
