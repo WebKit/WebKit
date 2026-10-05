@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +35,8 @@ public:
 
 private:
     SVGAnimateMotionElement(const QualifiedName&, Document&);
+
+    Path buildAnimationPath();
 
     bool hasValidAttributeType() const override;
     bool hasValidAttributeName() const override;
