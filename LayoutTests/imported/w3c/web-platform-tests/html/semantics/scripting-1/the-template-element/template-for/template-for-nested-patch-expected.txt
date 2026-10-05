@@ -1,6 +1,6 @@
 
 
-FAIL Nested <template for> patches via the shared target (iframe) assert_equals: expected "beforePATCHEDafter" but got "old"
-FAIL Nested <template for> patches via the shared target (innerHTML) assert_equals: expected "beforePATCHEDafter" but got "old"
+FAIL Nested <template for> patches via the shared target (iframe) assert_equals: both the outer and inner markers should be removed expected 0 but got 2
+FAIL Nested <template for> patches via the shared target (innerHTML) assert_equals: both the outer and inner markers should be removed expected 0 but got 2
 FAIL Nested <template for> patches via the shared target (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
 

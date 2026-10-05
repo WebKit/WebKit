@@ -1,5 +1,5 @@
 
-FAIL Processing instruction in main parser assert_equals: expected 7 but got 8
+FAIL Processing instruction in main parser pi.getAttribute is not a function. (In 'pi.getAttribute("a")', 'pi.getAttribute' is undefined)
 FAIL Processing instruction attribute parsing rejects unquoted attributes from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
 FAIL Processing instruction attribute mutation from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
 FAIL Processing instruction attribute parsing allows _ in attribute names from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
@@ -68,9 +68,9 @@ FAIL Distinct attribute name (source: html-dom): abC and abc pi.setAttribute is 
 FAIL Distinct attribute name (source: html-dom): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
 FAIL Processing instruction attributes with xml-stylesheet from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
 FAIL Processing instruction attribute parsing rejects unquoted attributes from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute mutation from html-parser assert_equals: expected 7 but got 8
+FAIL Processing instruction attribute mutation from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
 FAIL Processing instruction attribute parsing allows _ in attribute names from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction toggleAttribute from html-parser assert_equals: expected 7 but got 8
+FAIL Processing instruction toggleAttribute from html-parser pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
 FAIL check attribute value: "=" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
 FAIL check attribute value: "axx"" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
 FAIL check attribute value: "axx>" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)

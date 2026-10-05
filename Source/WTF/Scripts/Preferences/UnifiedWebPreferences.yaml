@@ -2698,6 +2698,14 @@ HTMLInCanvasEnabled:
   humanReadableDescription: "Enable HTML-in-Canvas"
   defaultValue: false
 
+HTMLProcessingInstructionEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "HTML processing instructions"
+  humanReadableDescription: "Enable processing instructions in HTML"
+  defaultValue: false
+
 HTTPEquivEnabled:
   type: bool
   status: mature

@@ -1,0 +1,39 @@
+Tests the HTML processing instruction parser setting. It ships off, but test runners turn testable settings on, so this starts by turning it off explicitly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+With the setting off, the input is a bogus comment, as it was before processing instructions were parsed.
+PASS node.nodeType is Node.COMMENT_NODE
+PASS node.data is "?target data?"
+
+With the setting on, it is a processing instruction.
+PASS node.nodeType is Node.PROCESSING_INSTRUCTION_NODE
+PASS node.target is "target"
+PASS node.data is "data"
+
+Whitespace ends the target, the rest is data.
+PASS node.nodeType is Node.PROCESSING_INSTRUCTION_NODE
+PASS node.target is "tar"
+PASS node.data is "get"
+
+A character that cannot appear in a target makes it a bogus comment again, keeping the characters already consumed.
+PASS node.nodeType is Node.COMMENT_NODE
+PASS node.data is "?ta=rget?"
+
+The xml and xml-stylesheet targets stay bogus comments.
+PASS node.nodeType is Node.COMMENT_NODE
+PASS node.data is "?xml version=\"1.0\"?"
+PASS node.nodeType is Node.COMMENT_NODE
+PASS node.data is "?xml-stylesheet href=\"style.css\"?"
+
+Data is optional, and a null character in the data is replaced.
+PASS node.nodeType is Node.PROCESSING_INSTRUCTION_NODE
+PASS node.target is "target"
+PASS node.data is ""
+PASS node.nodeType is Node.PROCESSING_INSTRUCTION_NODE
+PASS node.data is "a�b"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
