@@ -52,7 +52,7 @@ class TimeControl extends LayoutItem
 
         this.activityIndicator = new LayoutNode(`<div class="activity-indicator"></div>`);
         for (let segmentClassName of ["n", "ne", "e", "se", "s", "sw", "w", "nw"])
-            this.activityIndicator.element.appendChild(document.createElement("div")).className = segmentClassName;
+            this.activityIndicator.element.appendChild(createHTMLElement("div")).className = segmentClassName;
 
         this._duration = 0;
         this._currentTime = 0;
