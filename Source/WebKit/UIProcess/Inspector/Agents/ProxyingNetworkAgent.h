@@ -116,6 +116,14 @@ private:
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
     void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&&);
 
+    void webSocketCreated(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, FrameID, const String& loaderId, const String& requestURL);
+    void webSocketWillSendHandshakeRequest(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, double walltime, const WebCore::HTTPHeaderMap&);
+    void webSocketHandshakeResponseReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int statusCode, const String& statusText, const WebCore::HTTPHeaderMap&);
+    void webSocketFrameReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength);
+    void webSocketFrameSent(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength);
+    void webSocketFrameError(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, const String& errorMessage);
+    void webSocketClosed(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp);
+
     void removeAllRegisteredReceivers();
 
     const UniqueRef<NetworkFrontendDispatcher> m_frontendDispatcher;

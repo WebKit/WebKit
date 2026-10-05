@@ -257,7 +257,7 @@
         {
             "name": "resolveWebSocket",
             "description": "Resolves JavaScript WebSocket object for given request id.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier of the WebSocket resource to resolve." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
@@ -459,7 +459,7 @@
         {
             "name": "webSocketWillSendHandshakeRequest",
             "description": "Fired when WebSocket is about to initiate handshake.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp" },
@@ -470,7 +470,7 @@
         {
             "name": "webSocketHandshakeResponseReceived",
             "description": "Fired when WebSocket handshake response becomes available.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp" },
@@ -480,16 +480,18 @@
         {
             "name": "webSocketCreated",
             "description": "Fired upon WebSocket creation.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                { "name": "url", "type": "string", "description": "WebSocket request URL." }
+                { "name": "url", "type": "string", "description": "WebSocket request URL." },
+                { "name": "frameId", "$ref": "FrameId", "optional": true, "description": "Identifier of the frame whose document created the WebSocket." },
+                { "name": "loaderId", "$ref": "LoaderId", "optional": true, "description": "Loader identifier of the document that created the WebSocket." }
             ]
         },
         {
             "name": "webSocketClosed",
             "description": "Fired when WebSocket is closed.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
@@ -498,7 +500,7 @@
         {
             "name": "webSocketFrameReceived",
             "description": "Fired when WebSocket frame is received.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -508,7 +510,7 @@
         {
             "name": "webSocketFrameError",
             "description": "Fired when WebSocket frame error occurs.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -518,7 +520,7 @@
         {
             "name": "webSocketFrameSent",
             "description": "Fired when WebSocket frame is sent.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },

@@ -602,6 +602,7 @@ private:
     static InstrumentingAgents* LEGACY_NODELETE instrumentingAgents(Document&);
     static InstrumentingAgents* instrumentingAgents(Document*);
     static InstrumentingAgents* instrumentingAgents(WorkerOrWorkletGlobalScope*);
+    static InstrumentingAgents* instrumentingAgentsForWebSocket(Document*);
 };
 
 inline void InspectorInstrumentation::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
@@ -1442,56 +1443,56 @@ inline void InspectorInstrumentation::workerTerminated(WorkerInspectorProxy& pro
 inline void InspectorInstrumentation::didCreateWebSocket(Document* document, WebSocketChannelIdentifier identifier, const URL& requestURL)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didCreateWebSocketImpl(*agents, identifier, requestURL);
 }
 
 inline void InspectorInstrumentation::willSendWebSocketHandshakeRequest(Document* document, WebSocketChannelIdentifier identifier, ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         willSendWebSocketHandshakeRequestImpl(*agents, identifier, request);
 }
 
 inline void InspectorInstrumentation::didSendWebSocketHandshakeRequest(Document* document, WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didSendWebSocketHandshakeRequestImpl(*agents, identifier, request);
 }
 
 inline void InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(Document* document, WebSocketChannelIdentifier identifier, const ResourceResponse& response)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didReceiveWebSocketHandshakeResponseImpl(*agents, identifier, response);
 }
 
 inline void InspectorInstrumentation::didCloseWebSocket(Document* document, WebSocketChannelIdentifier identifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didCloseWebSocketImpl(*agents, identifier);
 }
 
 inline void InspectorInstrumentation::didReceiveWebSocketFrame(Document* document, WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didReceiveWebSocketFrameImpl(*agents, identifier, frame);
 }
 
 inline void InspectorInstrumentation::didReceiveWebSocketFrameError(Document* document, WebSocketChannelIdentifier identifier, const String& errorMessage)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didReceiveWebSocketFrameErrorImpl(*agents, identifier, errorMessage);
 }
 
 inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(document))
+    if (RefPtr agents = instrumentingAgentsForWebSocket(document))
         didSendWebSocketFrameImpl(*agents, identifier, frame);
 }
 

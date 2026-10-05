@@ -37,4 +37,20 @@ messages -> Inspector::ProxyingNetworkAgent {
     LoadingFailed(WebCore::ScopedResourceLoaderIdentifier resourceID, double timestamp, String errorText, bool canceled)
 
     RequestServedFromMemoryCache(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, String loaderId, String documentURL, WebCore::ResourceResponse response, Inspector::ResourceType resourceType, String sourceMapURL, uint64_t bodySize, double timestamp, Inspector::InitiatorData initiator)
+
+    # WebSocket lifecycle. A socket is keyed by the reporting process and its channel's progress identifier,
+    # which the agent turns into a "websocket-<process>.<channel>" requestId.
+    WebSocketCreated(WebCore::ProcessIdentifier processID, uint64_t channelID, WebCore::FrameIdentifier frameID, String loaderId, String requestURL)
+
+    WebSocketWillSendHandshakeRequest(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, double walltime, WebCore::HTTPHeaderMap headers)
+
+    WebSocketHandshakeResponseReceived(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int statusCode, String statusText, WebCore::HTTPHeaderMap headers)
+
+    WebSocketFrameReceived(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int opcode, bool mask, String payloadData, uint64_t payloadLength)
+
+    WebSocketFrameSent(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int opcode, bool mask, String payloadData, uint64_t payloadLength)
+
+    WebSocketFrameError(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, String errorMessage)
+
+    WebSocketClosed(WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp)
 }

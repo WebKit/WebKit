@@ -33,6 +33,7 @@
 #include "FrameNetworkAgentProxy.h"
 
 #include "ProxyingNetworkAgentMessages.h"
+#include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
@@ -58,6 +59,7 @@
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/WebSocketFrame.h>
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -66,6 +68,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/Base64.h>
 
 namespace WebKit {
 
@@ -79,9 +82,10 @@ static ScopedResourceLoaderIdentifier qualifyResourceID(ResourceLoaderIdentifier
     return { resourceID, Process::identifier() };
 }
 
-FrameNetworkAgentProxy::FrameNetworkAgentProxy(WebAgentContext& context, WebPage& page, BackendResourceDataStore& store, const HTTPHeaderMap& extraRequestHeaders)
+FrameNetworkAgentProxy::FrameNetworkAgentProxy(WebAgentContext& context, WebPage& page, FrameIdentifier frameID, BackendResourceDataStore& store, const HTTPHeaderMap& extraRequestHeaders)
     : NetworkAgentInstrumentation(context)
     , m_page(page)
+    , m_frameID(frameID)
     , m_resourcesData(store)
     , m_extraRequestHeaders(extraRequestHeaders)
 {
@@ -445,6 +449,118 @@ void FrameNetworkAgentProxy::setInitialScriptContent(ResourceLoaderIdentifier re
 void FrameNetworkAgentProxy::mainFrameNavigated(DocumentLoader&)
 {
     m_resourcesData->clear();
+}
+
+// WebSocket hooks. Each forwards to ProxyingNetworkAgent keyed by this process and the channel's progress
+// identifier; the agent mints the "websocket-<process>.<channel>" requestId from the pair. Unlike the
+// InspectorNetworkAgent path, these use raw monotonic seconds, like the load events above, so that sockets
+// from every process share one epoch with the rest of the waterfall.
+
+static double currentMonotonicSeconds()
+{
+    return MonotonicTime::now().secondsSinceEpoch().value();
+}
+
+static String webSocketPayloadData(const WebSocketFrame& frame)
+{
+    if (frame.opCode == WebSocketFrame::OpCodeText)
+        return String::fromUTF8WithLatin1Fallback(frame.payload);
+    return base64EncodeToString(frame.payload);
+}
+
+void FrameNetworkAgentProxy::didCreateWebSocket(WebSocketChannelIdentifier identifier, const URL& requestURL)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    // The socket belongs to the document committed in this proxy's frame, so report that document's loader.
+    String loaderId;
+    if (RefPtr webFrame = WebProcess::singleton().webFrame(m_frameID)) {
+        if (RefPtr localFrame = webFrame->coreLocalFrame()) {
+            RefPtr documentLoader = localFrame->loader().documentLoader();
+            loaderId = loaderIdForLoader(*page, documentLoader.get());
+        }
+    }
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketCreated(Process::identifier(), identifier.toUInt64(), m_frameID, loaderId, requestURL.string()),
+        page->identifier());
+}
+
+void FrameNetworkAgentProxy::willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier, ResourceRequest& request)
+{
+    // Like InspectorNetworkAgent::willSendWebSocketHandshakeRequest, the inspector's extra headers
+    // apply to the opening handshake.
+    for (auto& header : m_extraRequestHeaders)
+        request.setHTTPHeaderField(header.key, header.value);
+}
+
+void FrameNetworkAgentProxy::didSendWebSocketHandshakeRequest(WebSocketChannelIdentifier identifier, const ResourceRequest& request)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    auto walltime = WallTime::now().secondsSinceEpoch().value();
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketWillSendHandshakeRequest(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), walltime, request.httpHeaderFields()),
+        page->identifier());
+}
+
+void FrameNetworkAgentProxy::didReceiveWebSocketHandshakeResponse(WebSocketChannelIdentifier identifier, const ResourceResponse& response)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketHandshakeResponseReceived(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), response.httpStatusCode(), response.httpStatusText(), response.httpHeaderFields()),
+        page->identifier());
+}
+
+void FrameNetworkAgentProxy::didCloseWebSocket(WebSocketChannelIdentifier identifier)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketClosed(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds()),
+        page->identifier());
+}
+
+void FrameNetworkAgentProxy::didReceiveWebSocketFrame(WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketFrameReceived(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), frame.opCode, frame.masked, webSocketPayloadData(frame), frame.payload.size()),
+        page->identifier());
+}
+
+void FrameNetworkAgentProxy::didSendWebSocketFrame(WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketFrameSent(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), frame.opCode, frame.masked, webSocketPayloadData(frame), frame.payload.size()),
+        page->identifier());
+}
+
+void FrameNetworkAgentProxy::didReceiveWebSocketFrameError(WebSocketChannelIdentifier identifier, const String& errorMessage)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(
+        Messages::ProxyingNetworkAgent::WebSocketFrameError(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), errorMessage),
+        page->identifier());
 }
 
 bool FrameNetworkAgentProxy::willIntercept(const ResourceRequest&)

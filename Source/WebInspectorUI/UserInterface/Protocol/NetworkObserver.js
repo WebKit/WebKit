@@ -57,9 +57,9 @@ WI.NetworkObserver = class NetworkObserver extends InspectorBackend.Dispatcher
         WI.networkManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
     }
 
-    webSocketCreated(requestId, url)
+    webSocketCreated(requestId, url, frameId, loaderId)
     {
-        WI.networkManager.webSocketCreated(requestId, url);
+        WI.networkManager.webSocketCreated(requestId, url, frameId, loaderId);
     }
 
     webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request)

@@ -369,7 +369,7 @@ void WebInspectorBackend::ensureNetworkInstrumentationForFrame(LocalFrame& frame
     };
 
     CheckedRef resourceDataStore = m_resourceDataStore.get();
-    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, resourceDataStore.get(), m_extraRequestHeaders);
+    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, frameID, resourceDataStore.get(), m_extraRequestHeaders);
     std::ignore = proxy->enable();
     m_frameNetworkAgentProxies.add(frameID, WTF::move(proxy));
 }

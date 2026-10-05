@@ -555,7 +555,7 @@ Ref<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiat
 
 void InspectorNetworkAgent::didCreateWebSocket(WebSocketChannelIdentifier identifier, const URL& requestURL)
 {
-    m_frontendDispatcher->webSocketCreated(IdentifiersFactory::requestId(identifier.toUInt64()), requestURL.string());
+    m_frontendDispatcher->webSocketCreated(IdentifiersFactory::requestId(identifier.toUInt64()), requestURL.string(), { }, { });
 }
 
 void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier, ResourceRequest& request)
