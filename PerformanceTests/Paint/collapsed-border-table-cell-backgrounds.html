@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<script src="../resources/runner.js"></script>
+<title>Tracking the performance of painting cell backgrounds in a collapsed-border table</title>
+<style>
+    html, body {
+        margin: 0;
+    }
+    /* Clips the scaled-down table and keeps the whole thing on-screen so every
+       row actually paints (no viewport culling of off-screen rows). */
+    #viewport {
+        width: 1000px;
+        height: 900px;
+        overflow: hidden;
+    }
+    table {
+        border-collapse: collapse;
+        border: 1px solid red;
+        transform-origin: top left;
+    }
+    td {
+        width: 6px;
+        height: 1px;
+        line-height: 1px;
+        font-size: 1px;
+        background-color: #eeeeee;
+        border: 1px solid blue;
+    }
+    /* Toggled each frame to force every cell to repaint its background. */
+    table.alt td {
+        background-color: #dddddd;
+    }
+</style>
+</head>
+
+<body>
+    <pre id="log"></pre>
+
+    <div id="viewport"></div>
+
+    <script>
+        // The regressed code path runs for every cell in the first and last
+        // effective column, and each such cell walked the whole column, so the
+        // old cost is O(rows^2) per paint. To expose that (rather than just the
+        // handful of edge cells that happen to be on-screen), the table is
+        // scaled down so that ALL rows fit in a fixed box and therefore all
+        // paint. Varying the edge cells' border widths makes the per-column
+        // maximum differ from individual cells, so the background fill rect is
+        // actually inset (the expensive branch).
+        const ROWS = 2500;
+        const COLUMNS = 3;
+        const EDGE_BORDER_WIDTHS = [1, 4, 8, 12];
+
+        let table = null;
+        function setupTest() {
+            const viewport = document.getElementById("viewport");
+            table = document.createElement("table");
+            for (let y = 0; y < ROWS; ++y) {
+                const tr = document.createElement("tr");
+                for (let x = 0; x < COLUMNS; ++x) {
+                    const td = document.createElement("td");
+                    const width = EDGE_BORDER_WIDTHS[y % EDGE_BORDER_WIDTHS.length];
+                    if (x === 0)
+                        td.style.borderLeftWidth = width + "px";
+                    else if (x === COLUMNS - 1)
+                        td.style.borderRightWidth = width + "px";
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+            viewport.appendChild(table);
+
+            // Scale the table so its full height fits the box: every row paints.
+            const scale = viewport.clientHeight / table.offsetHeight;
+            table.style.transform = "scale(" + scale + ")";
+
+            window.requestAnimationFrame(runTest);
+        }
+
+        let isDone = false;
+        PerfTestRunner.prepareToMeasureValuesAsync({ done: done, unit: 'ms' });
+        function done() {
+            isDone = true;
+            table.remove();
+        }
+
+        let startTime;
+        let alt = false;
+        function runTest() {
+            if (startTime)
+                PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+
+            if (!isDone) {
+                startTime = PerfTestRunner.now();
+                alt = !alt;
+                table.classList.toggle("alt", alt);
+                window.requestAnimationFrame(runTest);
+            }
+        }
+
+        onload = setupTest;
+    </script>
+</body>
+</html>
