@@ -580,9 +580,6 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
     ASSERT(m_heap.m_mutatorMarkStack->isEmpty());
     ASSERT(m_raceMarkStack->isEmpty());
 
-    // Executing CodeBlocks keep writing their profiles without barriers after this collection. Remembering
-    // them makes the next collection reconcile those profiles even if it is an Eden collection.
-    m_heap.rememberExecutingAndCompilingCodeBlocks(*m_collectorSlotVisitor);
     endMarking();
 
     m_heap.verifyMarking();

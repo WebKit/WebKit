@@ -862,15 +862,6 @@ void Heap::removeDeadHeapSnapshotNodes(HeapProfiler& heapProfiler)
     }
 }
 
-void Heap::rememberExecutingAndCompilingCodeBlocks(SlotVisitor& visitor)
-{
-    ASSERT(isInPhase(CollectorPhase::End));
-    iterateExecutingAndCompilingCodeBlocks(visitor,
-        [&] (CodeBlock* codeBlock) {
-            writeBarrier(codeBlock);
-        });
-}
-
 void Heap::recordBytesVisited(size_t bytesVisited)
 {
     if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
@@ -936,6 +927,8 @@ void Heap::pruneDeadReferences()
     removeDeadCompilerWorklistEntries();
     deleteUnmarkedCompiledCode();
 
+    // Executing CodeBlocks keep writing their profiles without barriers after this collection. Remembering
+    // them makes the next collection reconcile those profiles even if it is an Eden collection.
     m_codeBlocks->iterateCurrentlyExecuting(
         [&] (CodeBlock* codeBlock) {
             writeBarrier(codeBlock);
