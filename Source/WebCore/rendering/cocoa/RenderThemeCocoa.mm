@@ -1001,7 +1001,7 @@ static const String& macOSInlineMediaControlsStyleSheet()
         "    padding-inline: 8px;"
         "    box-sizing: border-box;"
         "    border-radius: var(--inline-controls-border-radius);"
-        "    transform: translateY(calc(var(--inline-controls-inside-margin) + 2));"
+        "    transform: translateY(calc(var(--inline-controls-inside-margin) + 2px));"
         "}"
         ".media-controls.mac.inline:not(.audio)"
         ":not(.uses-ltr-user-interface-layout-direction) .volume-slider-container {"

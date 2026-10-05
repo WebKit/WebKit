@@ -1,0 +1,11 @@
+Testing that the hidden volume slider container is offset by the inside margin plus 2px.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!volumeSliderContainer() became true
+PASS getComputedStyle(volumeSliderContainer()).transform is "matrix(1, 0, 0, 1, 0, 8)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
