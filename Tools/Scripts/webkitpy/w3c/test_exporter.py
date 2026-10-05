@@ -355,7 +355,7 @@ class WebPlatformTestExporter(object):
             _log.error('Cannot create a WPT PR since it contains webkit test runner specific changes')
             return
 
-        title = self._bug.title.replace("[", "\\[").replace("]", "\\]")
+        title = self._bug.title.replace("\\", "\\\\").replace("[", "\\[").replace("]", "\\]").replace("<", "\\<")
         # wpt-pr-bot identifies WebKit exports by pr_title: https://github.com/web-platform-tests/wpt-pr-bot/blob/main/lib/metadata/webkit.js
         pr_title = f'WebKit export of {self._bug.link}'
         description = f'WebKit export from bug: [{title}]({self._bug.link})\n\n<pre>\n{PullRequest.escape_html(self._commit_message)}\n</pre>'
