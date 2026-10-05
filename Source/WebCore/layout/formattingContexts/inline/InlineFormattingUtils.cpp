@@ -616,7 +616,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
-LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful)
+LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful, bool isLastLineWithInlineContent)
 {
     if (numberOfVisibleLinesAllowed) {
         if (!currentLineIsContentful) {
@@ -625,7 +625,11 @@ LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(con
         }
         if (numberOfContentfulLines >= *numberOfVisibleLinesAllowed) {
             // The clamped line's block ellipsis replaces the text-overflow ellipsis, while the lines below it are not visible at all.
-            return numberOfContentfulLines == *numberOfVisibleLinesAllowed ? LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection : LineEndingTruncationPolicy::NoTruncation;
+            if (numberOfContentfulLines == *numberOfVisibleLinesAllowed) {
+                if (!isLastLineWithInlineContent)
+                    return LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
+            } else
+                return LineEndingTruncationPolicy::NoTruncation;
         }
         // Lines above the clamp point are not affected by clamping, so text-overflow is what may truncate them.
     }
