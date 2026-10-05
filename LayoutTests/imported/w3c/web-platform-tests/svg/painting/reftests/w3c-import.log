@@ -20,6 +20,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/fallback-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/fallback-002-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/fallback-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/fill-local-url-with-base-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/fill-local-url-with-base-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/fill-local-url-with-base-001.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/gradient-external-reference.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/green-100x100.svg

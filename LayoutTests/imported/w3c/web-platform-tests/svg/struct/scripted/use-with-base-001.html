@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>use: a fragment-only href finds the element in this document when a base element points elsewhere</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-absolute">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/struct.html#HTMLMetadataElements">
+<meta name="assert" content="With an HTML base element pointing at another site, a use element whose href is a fragment-only URL still references the element in the current document.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<!-- After the harness scripts: a base element resolves every URL parsed after it, including script src. -->
+<base href="http://www.example.com/elsewhere/">
+<svg width="200" height="100">
+  <defs>
+    <path id="p" d="M0,0 H40 V30 H0 Z" fill="green"/>
+  </defs>
+  <use id="markup" href="#p" x="10" y="10"/>
+  <use id="scripted" x="100" y="10"/>
+</svg>
+<script>
+test(() => {
+  assert_equals(document.baseURI, "http://www.example.com/elsewhere/");
+}, "The base element changes the document base URL");
+
+test(() => {
+  const box = document.getElementById("markup").getBBox();
+  assert_array_equals([box.x, box.y, box.width, box.height], [10, 10, 40, 30]);
+}, "use with a fragment-only href in markup references the element in this document");
+
+test(() => {
+  const use = document.getElementById("scripted");
+  use.setAttribute("href", "#p");
+  const box = use.getBBox();
+  assert_array_equals([box.x, box.y, box.width, box.height], [100, 10, 40, 30]);
+}, "use with a fragment-only href set from script references the element in this document");
+</script>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Hit-test of a clip-path presentation attribute with a fragment-only URL when a base element points elsewhere</title>
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#the-clip-path">
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#local-urls">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-absolute">
+<meta name="assert" content="With an HTML base element pointing at another site, clip-path=&quot;url(#c)&quot; as an SVG presentation attribute still references the clipPath in the current document, so points outside the clip miss the element. If the reference did not resolve, no clipping would be applied and those points would hit it.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<!-- After the harness scripts: a base element resolves every URL parsed after it, including script src. -->
+<base href="http://www.example.com/elsewhere/">
+<style>
+body {
+  margin: 0;
+}
+svg {
+  display: block;
+}
+</style>
+<svg width="300" height="100">
+  <clipPath id="c">
+    <rect width="50" height="100"/>
+  </clipPath>
+  <rect id="clipped" width="100" height="100" fill="green" clip-path="url(#c)"/>
+  <rect id="control" x="200" width="100" height="100" fill="green"/>
+</svg>
+<script>
+function assert_element_at(element, pointlist) {
+  for (let point of pointlist) {
+    let result = document.elementFromPoint(point[0], point[1]);
+    assert_equals(result, element, point.join(','));
+  }
+}
+
+test(() => {
+  assert_equals(document.baseURI, "http://www.example.com/elsewhere/");
+}, "The base element changes the document base URL");
+
+test(() => {
+  assert_element_at(document.getElementById("control"), [[250, 50], [210, 10], [290, 90]]);
+}, "An unclipped rect is hit where it is drawn (control)");
+
+test(() => {
+  const clipped = document.getElementById("clipped");
+  const root = document.querySelector("svg");
+
+  // Points inside the clip.
+  assert_element_at(clipped, [[25, 50], [10, 10], [40, 90]]);
+
+  // Points outside the clip but inside the rect.
+  assert_element_at(root, [[75, 50], [60, 10], [90, 90]]);
+}, "clip-path presentation attribute with a fragment-only URL references the clipPath in this document");
+</script>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>fill: a fragment-only url() finds the paint server in this document when a base element points elsewhere</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/painting.html#SpecifyingPaint">
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#local-urls">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/struct.html#HTMLMetadataElements">
+<link rel="match" href="fill-local-url-with-base-001-ref.html">
+<meta name="assert" content="With an HTML base element pointing at another site, fill=&quot;url(#g) red&quot; as a presentation attribute and fill: url(#g) red in a style attribute both use the gradient in the current document, not the red fallback.">
+<!-- After the match link: a base element resolves every URL parsed after it. -->
+<base href="http://www.example.com/elsewhere/">
+<p>Test passes if there are two green squares and no red.</p>
+<svg width="220" height="100">
+  <linearGradient id="g">
+    <stop offset="0" stop-color="green"/>
+    <stop offset="1" stop-color="green"/>
+  </linearGradient>
+  <rect width="100" height="100" fill="url(#g) red"/>
+  <rect x="120" width="100" height="100" style="fill: url(#g) red"/>
+</svg>

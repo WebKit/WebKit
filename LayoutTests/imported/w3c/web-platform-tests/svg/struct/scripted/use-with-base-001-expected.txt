@@ -1,0 +1,5 @@
+
+PASS The base element changes the document base URL
+PASS use with a fragment-only href in markup references the element in this document
+PASS use with a fragment-only href set from script references the element in this document
+

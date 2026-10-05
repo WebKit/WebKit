@@ -1,0 +1,4 @@
+
+PASS The base element changes the document base URL
+PASS animateMotion: mpath with a fragment-only href finds the path in this document when a base element points elsewhere
+

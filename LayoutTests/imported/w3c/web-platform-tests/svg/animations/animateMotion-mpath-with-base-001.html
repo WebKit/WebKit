@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<title>animateMotion: mpath with a fragment-only href finds the path in this document when a base element points elsewhere</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#MPathElementHrefAttribute">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-absolute">
+<meta name="assert" content="With an HTML base element pointing at another site, an mpath whose href is a fragment-only URL still references the path in the current document. The target is a path element, so the test does not depend on support for shape elements as motion paths.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/SVGAnimationTestCase-testharness.js"></script>
+<!-- After the harness scripts: a base element resolves every URL parsed after it, including script src. -->
+<base href="http://www.example.com/elsewhere/">
+
+<svg xmlns="http://www.w3.org/2000/svg">
+  <path id="motion" d="M0,0 H100" display="none"/>
+  <rect width="50" height="50" x="0" y="0" fill="green">
+    <animateMotion id="anim" begin="0s" dur="4s" fill="freeze">
+      <mpath href="#motion"/>
+    </animateMotion>
+  </rect>
+</svg>
+
+<script>
+var rootSVGElement = document.querySelector("svg");
+var epsilon = 1.0;
+
+test(() => {
+    assert_equals(document.baseURI, "http://www.example.com/elsewhere/");
+}, "The base element changes the document base URL");
+
+function sample1() {
+    assert_approx_equals(rootSVGElement.getBBox().x, 0, epsilon);
+}
+
+function sample2() {
+    assert_approx_equals(rootSVGElement.getBBox().x, 50, epsilon);
+}
+
+function sample3() {
+    assert_approx_equals(rootSVGElement.getBBox().x, 100, epsilon);
+}
+
+smil_async_test((t) => {
+    const expectedValues = [
+        // [animationId, time, sampleCallback]
+        ["anim", 0.0,   sample1],
+        ["anim", 2.0,   sample2],
+        ["anim", 4.0,   sample3]
+    ];
+
+    runAnimationTest(t, expectedValues);
+});
+
+window.animationStartsImmediately = true;
+
+</script>

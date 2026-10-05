@@ -1,0 +1,4 @@
+
+PASS HTML a with a fragment-only href navigates to the base URL (control)
+PASS SVG a with a fragment-only href navigates to the base URL, like an HTML link
+
