@@ -785,6 +785,18 @@
    },
    {
       "emails" : [
+         "amartinez55@apple.com",
+         "amart89531@gmail.com",
+         "AndrJMart@gmail.com"
+      ],
+      "github" : "AndrewJMart",
+      "name" : "Andrew Martinez",
+      "nicks" : [
+         "andrewmartinez"
+      ]
+   },
+   {
+      "emails" : [
          "scherkus@chromium.org"
       ],
       "name" : "Andrew Scherkus",
