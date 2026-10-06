@@ -182,6 +182,13 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
         completionHandler(std::nullopt);
 }
 
+void SessionHost::cancelSessionCreation()
+{
+    Ref protectedThis { *this };
+    if (m_clientID)
+        Inspector::RemoteInspectorSocketEndpoint::singleton().disconnect(*m_clientID);
+}
+
 bool SessionHost::isConnected() const
 {
     return m_clientID.has_value();
@@ -257,7 +264,7 @@ void SessionHost::receivedStartAutomationSessionReturn(const struct Event&)
     m_capabilities.browserVersion = String::fromUTF8("TODO/browserVersion");
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(StartAutomationSessionCompletionHandler&& completionHandler)
 {
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTF::move(completionHandler);
@@ -288,10 +295,6 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
         // Disconnected from backend
         m_clientID = std::nullopt;
         inspectorDisconnected();
-        if (m_startSessionCompletionHandler) {
-            auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-            startSessionCompletionHandler(true, "received empty target list"_s);
-        }
         return;
     }
 
@@ -314,8 +317,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     sendEvent->setInteger("targetID"_s, m_target.id);
     sendWebInspectorEvent(sendEvent->toJSONString());
 
-    auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    startSessionCompletionHandler(true, std::nullopt);
+    completeStartAutomationSession(true, std::nullopt);
 }
 
 void SessionHost::sendMessageToBackend(const String& message)

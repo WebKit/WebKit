@@ -43,9 +43,20 @@ static WeakHashSet<SessionHost::BrowserTerminatedObserver>& browserTerminatedObs
 }
 #endif
 
+void SessionHost::completeStartAutomationSession(bool capabilitiesDidMatch, std::optional<String> error)
+{
+    if (!m_startSessionCompletionHandler)
+        return;
+
+    Ref protectedThis { *this };
+    m_startSessionCompletionHandler(capabilitiesDidMatch, WTF::move(error));
+}
+
 void SessionHost::inspectorDisconnected()
 {
     Ref<SessionHost> protectedThis(*this);
+
+    completeStartAutomationSession(false, "Browser disconnected while starting automation session"_s);
 
     auto pendingRequestCount = m_commandRequests.size();
     if (pendingRequestCount)

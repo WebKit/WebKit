@@ -50,9 +50,21 @@ void WebSocketServer::addStaticConnection(WebSocketMessageHandler::Connection&& 
     m_staticConnections.push_back(WTF::move(connection));
 }
 
-void WebSocketServer::addConnection(WebSocketMessageHandler::Connection&& connection, const String& sessionId)
+bool WebSocketServer::addConnection(WebSocketMessageHandler::Connection&& connection, const String& sessionId)
 {
+    if (!m_listener)
+        return false;
+
+    // The session may end after its handshake is accepted but before the connection callback runs.
+    auto resourceName = getResourceName(sessionId);
+    if (std::ranges::find(m_listener->resources, resourceName) == m_listener->resources.end())
+        return false;
+
+    if (m_connectionToSession.contains(connection) || this->connection(sessionId))
+        return false;
+
     m_connectionToSession.add(WTF::move(connection), sessionId);
+    return true;
 }
 
 bool WebSocketServer::isStaticConnection(const WebSocketMessageHandler::Connection& connection)
@@ -63,6 +75,18 @@ bool WebSocketServer::isStaticConnection(const WebSocketMessageHandler::Connecti
 void WebSocketServer::removeStaticConnection(const WebSocketMessageHandler::Connection& connection)
 {
     m_staticConnections.erase(std::ranges::find(m_staticConnections, connection));
+}
+
+bool WebSocketServer::associateConnectionWithSession(const WebSocketMessageHandler::Connection& connection, const String& sessionId)
+{
+    auto staticConnection = std::ranges::find(m_staticConnections, connection);
+    if (staticConnection == m_staticConnections.end() || m_connectionToSession.contains(connection))
+        return false;
+
+    auto protectedConnection = *staticConnection;
+    m_staticConnections.erase(staticConnection);
+    m_connectionToSession.add(WTF::move(protectedConnection), sessionId);
+    return true;
 }
 
 void WebSocketServer::removeConnection(const WebSocketMessageHandler::Connection& connection)
@@ -113,7 +137,8 @@ RefPtr<WebSocketListener> WebSocketServer::startListening(const String& sessionI
     // https://w3c.github.io/webdriver-bidi/#start-listening-for-a-websocket-connection
     // FIXME Add more listeners when start supporting multiple sessions
     auto resourceName = getResourceName(sessionId);
-    m_listener->resources.push_back(resourceName);
+    if (std::ranges::find(m_listener->resources, resourceName) == m_listener->resources.end())
+        m_listener->resources.push_back(resourceName);
     return m_listener;
 }
 

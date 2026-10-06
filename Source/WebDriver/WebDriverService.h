@@ -32,6 +32,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
@@ -66,7 +67,11 @@ public:
 
 private:
     enum class HTTPMethod { Get, Post, Delete };
+    enum class SessionCreationMode : bool { Classic, BiDi };
+
     typedef void (WebDriverService::*CommandHandler)(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    using SessionCreationCompletionHandler = CompletionHandler<void(RefPtr<Session>&&, CommandResult&&)>;
+
     struct Command {
         HTTPMethod method;
         const char* uriTemplate;
@@ -141,7 +146,8 @@ private:
     void takeElementScreenshot(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    void bidiSessionNew(unsigned id, RefPtr<JSON::Object>&&, WebSocketMessageHandler::Connection, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    void bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, WebSocketMessageHandler::Connection, Function<void (WebSocketMessageHandler::Message&&)>&&);
 #endif
 
     static Capabilities platformCapabilities();
@@ -155,8 +161,12 @@ private:
     bool platformSupportBidi() const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
-    void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);
-    void createSession(Vector<Capabilities>&&, Ref<SessionHost>&&, Function<void (CommandResult&&)>&&);
+    void connectToBrowser(SessionCreationMode, Vector<Capabilities>&&, SessionCreationCompletionHandler&&);
+    void createSession(SessionCreationMode, Vector<Capabilities>&&, Ref<SessionHost>&&, SessionCreationCompletionHandler&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    static void buildBidiSessionResult(RefPtr<Session>&&, SessionCreationCompletionHandler&&);
+#endif
+    RefPtr<Session> takeSession();
     bool findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
@@ -166,13 +176,14 @@ private:
     void flushRequestQueueWithResult(CommandResult&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    bool acceptHandshake(HTTPRequestHandler::Request&&) override;
+    WebSocketHandshakeResult acceptHandshake(WebSocketHandshakeRequest&&) override;
+    bool isHostAllowed(const String&) const;
     void handleMessage(WebSocketMessageHandler::Message&&, Function<void (WebSocketMessageHandler::Message&&)>&& replyHandler) override;
     void clientDisconnected(const WebSocketMessageHandler::Connection&) override;
 
     void onBrowserTerminated(const String& sessionId);
 
-    typedef void (WebDriverService::*StaticBidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    typedef void (WebDriverService::*StaticBidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, WebSocketMessageHandler::Connection, Function<void (WebSocketMessageHandler::Message&&)>&&);
     struct StaticBidiCommand {
         String method;
         StaticBidiCommandHandler handler;
@@ -185,8 +196,13 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     const Ref<WebSocketServer> m_bidiServer;
     const Ref<SessionHost::BrowserTerminatedObserver> m_browserTerminatedObserver;
+    HashSet<String> m_allowedOrigins;
+    HashSet<String> m_allowedOriginHosts;
+    WebSocketMessageHandler::Connection m_sessionCreationConnection;
 #endif
     RefPtr<Session> m_session;
+    RefPtr<SessionHost> m_sessionHostBeingCreated;
+    bool m_sessionCreationInProgress { false };
 
     Deque<CompletionHandler<void(std::optional<CommandResult>)>> m_pendingRequests;
     bool m_hasRunningRequest { false };

@@ -447,7 +447,8 @@
             ],
             "returns": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "An opaque handle for the newly created browsing context." },
-                { "name": "presentation", "$ref": "BrowsingContextPresentation", "description": "How the browser presented the new browsing context (new tab or new window)." }
+                { "name": "presentation", "$ref": "BrowsingContextPresentation", "description": "How the browser presented the new browsing context (new tab or new window)." },
+                { "name": "userAgent", "type": "string", "description": "The user agent applied to the newly created browsing context." }
             ],
             "async": true
         },
