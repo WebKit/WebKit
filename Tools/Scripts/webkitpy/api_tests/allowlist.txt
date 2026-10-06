@@ -4101,8 +4101,11 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.CaptionPreferenceTests.AVKitMenuControllerIntegration
 [ ios ] TestWebKitAPI.CaptionPreferenceTests.MenuRebuildingWithAVKit
 [ ios ] TestWebKitAPI.CaptionPreferenceTests.ProfileIDSavingAndRestoration
-[ ios ] TestWebKitAPI.Challenge.BasicPersistentCredential
-[ ios ] TestWebKitAPI.Challenge.DeallocateDuringChallenge
+[ ios ] TestWebKitAPI.ChallengeTests/basicPersistentCredential()
+[ ios ] TestWebKitAPI.ChallengeTests/deallocateDuringChallenge()
+[ ios ] TestWebKitAPI.ChallengeTests/errorSecureCoding()
+[ ios ] TestWebKitAPI.ChallengeTests/fastServerTrust()
+[ ios ] TestWebKitAPI.ChallengeTests/serverTrust()
 [ ios ] TestWebKitAPI.ClipboardTests.ConvertTIFFToPNGWhenPasting
 [ ios ] TestWebKitAPI.ClipboardTests.EphemeralSessionClipboardHasExpirationJavaScript
 [ ios ] TestWebKitAPI.ClipboardTests.EphemeralSessionClipboardHasExpirationWebView
@@ -5761,13 +5764,11 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.DrawsBackgroundAfterLoadingWebContentYesToNo
 [ ios ] TestWebKitAPI.WebKit.DuplicateCompletionHandlerCalls
 [ ios ] TestWebKitAPI.WebKit.EnableAccessibilityCrash
-[ ios ] TestWebKitAPI.WebKit.ErrorSecureCoding
 [ ios ] TestWebKitAPI.WebKit.EvaluateEmptyJavaScript
 [ ios ] TestWebKitAPI.WebKit.EvaluateJavaScriptThatCreatesBlob
 [ ios ] TestWebKitAPI.WebKit.EvaluateJavaScriptThatThrowsAnException
 [ ios ] TestWebKitAPI.WebKit.EventModifiers
 [ ios ] TestWebKitAPI.WebKit.FailedLoad
-[ ios ] TestWebKitAPI.WebKit.FastServerTrust
 [ ios ] TestWebKitAPI.WebKit.Find
 [ ios ] TestWebKitAPI.WebKit.FindAndHighlightDifferentWebViews
 [ ios ] TestWebKitAPI.WebKit.FindAndReplace
@@ -5867,7 +5868,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WebKit.ScrollToFoundRangeRepeated
 [ ios ] TestWebKitAPI.WebKit.ScrollToFoundRangeWithExistingSelection
 [ ios ] TestWebKitAPI.WebKit.ScrollToUserSelectNoneFoundRange
-[ ios ] TestWebKitAPI.WebKit.ServerTrust
 [ ios ] TestWebKitAPI.WebKit.ShouldOpenExternalURLsInTargetedLink
 [ ios ] TestWebKitAPI.WebKit.ShouldOpenExternalURLsInWindowOpen
 [ ios ] TestWebKitAPI.WebKit.SlowBeforeUnloadPromptAllow

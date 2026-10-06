@@ -299,6 +299,8 @@ list(APPEND TestWebKit_SOURCES
     Helpers/cocoa/WebExtensionUtilities.mm
     Helpers/cocoa/WebTransportServer.mm
 
+    Helpers/cocoa/HTTPServer/TestCertificates.mm
+
     Helpers/mac/DragAndDropSimulatorMac.mm
     Helpers/mac/JavaScriptTestMac.mm
     Helpers/mac/NSFontPanelTesting.mm
@@ -730,6 +732,7 @@ list(APPEND TestWebKit_SOURCES
     "Tests/WebKit/WebPage/AppKit Gesture Tests/RefreshControlGesturesTests.swift"
     "Tests/WebKit/WebPage/AppKit Gesture Tests/SiteIsolationAppKitGesturesTests.swift"
 
+    Tests/WebKit/WKWebView/Challenge.swift
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift

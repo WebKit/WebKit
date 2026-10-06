@@ -27,14 +27,15 @@
 
 #if HAVE(WEBTRANSPORT)
 
-#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
-#import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/HTTPServer/TestCertificates.h"
+#import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
-#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/WebTransportServer.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -66,7 +67,7 @@ static void validateChallenge(NSURLAuthenticationChallenge *challenge, uint16_t 
     EXPECT_NOT_NULL(challenge.protectionSpace.serverTrust);
     EXPECT_EQ(challenge.protectionSpace.port, port);
     EXPECT_WK_STREQ(challenge.protectionSpace.host, "127.0.0.1");
-    verifyCertificateAndPublicKey(challenge.protectionSpace.serverTrust);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:challenge.protectionSpace.serverTrust]);
 }
 
 TEST(WebTransport, ClientBidirectional)
