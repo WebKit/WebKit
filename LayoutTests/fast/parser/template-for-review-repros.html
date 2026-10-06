@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<title>template for: the three cases raised in review</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>#positional li:last-child { color: rgb(0, 128, 0); }</style>
+
+<div id="iframeTarget"><?start name="iframe-case">Loading...<?end></div>
+<template for="iframe-case"><iframe id="patchedFrame" srcdoc="hi"></iframe></template>
+
+<div id="siblingTarget"><iframe id="existingFrame" srcdoc="hi"></iframe><?start name="sibling-case">x<?end></div>
+<template for="sibling-case">patched</template>
+
+<ul id="positional"><li id="firstItem">A</li><?marker name="positional-case"></ul>
+<script>
+  // Force style so the stale value, if any, is the one that was already resolved.
+  getComputedStyle(document.getElementById('firstItem')).color;
+</script>
+<template for="positional-case"><li id="secondItem">B</li></template>
+
+<script>
+test(() => {
+  const frame = document.getElementById('patchedFrame');
+  assert_not_equals(frame, null, 'the patched iframe should be in the tree');
+  assert_not_equals(frame.contentWindow, null, 'an iframe inside the patch keeps its browsing context');
+}, 'Removing the markers does not disconnect an iframe inside the patch');
+
+test(() => {
+  const frame = document.getElementById('existingFrame');
+  assert_not_equals(frame, null, 'the pre-existing iframe should still be in the tree');
+  assert_not_equals(frame.contentWindow, null, 'an iframe that is a sibling of the markers keeps its browsing context');
+}, 'Removing the markers does not disconnect an iframe beside the patch');
+
+test(() => {
+  const first = document.getElementById('firstItem');
+  const second = document.getElementById('secondItem');
+  assert_not_equals(second, null, 'the patched list item should be in the tree');
+  assert_equals(getComputedStyle(second).color, 'rgb(0, 128, 0)', ':last-child should match the new last item');
+  assert_not_equals(getComputedStyle(first).color, 'rgb(0, 128, 0)', ':last-child should no longer match the old last item');
+}, 'Patching invalidates positional styles in the target');
+</script>

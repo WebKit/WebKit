@@ -1,13 +1,13 @@
 
 
-FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (iframe) assert_equals: no <?start>/<?end> processing instructions should remain expected 0 but got 2
-FAIL Unclosed element in <template for> with <?marker> still removes markers (iframe) assert_equals: no <?marker> processing instruction should remain expected 0 but got 1
-FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (innerHTML) assert_equals: no <?start>/<?end> processing instructions should remain expected 0 but got 2
-FAIL Unclosed element in <template for> with <?marker> still removes markers (innerHTML) assert_equals: no <?marker> processing instruction should remain expected 0 but got 1
-FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (template) assert_equals: no <?start>/<?end> processing instructions should remain expected 0 but got 2
-FAIL Unclosed element in <template for> with <?marker> still removes markers (template) assert_equals: no <?marker> processing instruction should remain expected 0 but got 1
-FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (DOMParser) assert_equals: no <?start>/<?end> processing instructions should remain expected 0 but got 2
-FAIL Unclosed element in <template for> with <?marker> still removes markers (DOMParser) assert_equals: no <?marker> processing instruction should remain expected 0 but got 1
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (iframe)
+PASS Unclosed element in <template for> with <?marker> still removes markers (iframe)
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (innerHTML)
+PASS Unclosed element in <template for> with <?marker> still removes markers (innerHTML)
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (template)
+PASS Unclosed element in <template for> with <?marker> still removes markers (template)
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (DOMParser)
+PASS Unclosed element in <template for> with <?marker> still removes markers (DOMParser)
 FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
 FAIL Unclosed element in <template for> with <?marker> still removes markers (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
 
