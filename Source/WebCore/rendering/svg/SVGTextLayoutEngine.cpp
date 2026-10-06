@@ -102,7 +102,15 @@ void SVGTextLayoutEngine::updateRelativePositionAdjustmentsIfNeeded(float dx, fl
     m_dy = dy;
 }
 
-void SVGTextLayoutEngine::recordTextFragment(InlineIterator::SVGTextBoxIterator textBox, const Vector<SVGTextMetrics>& textMetricsValues)
+void SVGTextLayoutEngine::computeCurrentFragmentMetrics(InlineIterator::SVGTextBoxIterator textBox)
+{
+    auto metrics = SVGTextMetrics::measureCharacterRange(textBox->renderer(), textBox->start(), textBox->length());
+
+    m_currentTextFragment.width = metrics.width();
+    m_currentTextFragment.height = metrics.height();
+}
+
+void SVGTextLayoutEngine::recordTextFragment(InlineIterator::SVGTextBoxIterator textBox, const  Vector<SVGTextMetrics>&)
 {
     ASSERT(!m_currentTextFragment.length);
     ASSERT(m_visualMetricsListOffset > 0);
@@ -110,24 +118,7 @@ void SVGTextLayoutEngine::recordTextFragment(InlineIterator::SVGTextBoxIterator 
     // Figure out length of fragment.
     m_currentTextFragment.length = m_visualCharacterOffset - m_currentTextFragment.characterOffset;
 
-    // Figure out fragment metrics.
-    auto& lastCharacterMetrics = textMetricsValues.at(m_visualMetricsListOffset - 1);
-    m_currentTextFragment.width = lastCharacterMetrics.width();
-    m_currentTextFragment.height = lastCharacterMetrics.height();
-
-    if (m_currentTextFragment.length > 1) {
-        // SVGTextLayoutAttributesBuilder assures that the length of the range is equal to the sum of the individual lengths of the glyphs.
-        float length = 0;
-        if (m_isVerticalText) {
-            for (unsigned i = m_currentTextFragment.metricsListOffset; i < m_visualMetricsListOffset; ++i)
-                length += textMetricsValues.at(i).height();
-            m_currentTextFragment.height = length;
-        } else {
-            for (unsigned i = m_currentTextFragment.metricsListOffset; i < m_visualMetricsListOffset; ++i)
-                length += textMetricsValues.at(i).width();
-            m_currentTextFragment.width = length;
-        }
-    }
+    computeCurrentFragmentMetrics(textBox);
 
     auto& fragments = m_fragmentMap.ensure(makeKey(*textBox), [&] {
         return Vector<SVGTextFragment> { };
