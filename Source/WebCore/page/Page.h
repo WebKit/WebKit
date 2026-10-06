@@ -172,6 +172,7 @@ class PaymentCoordinator;
 class PerformanceLogging;
 class PerformanceLoggingClient;
 class PerformanceMonitor;
+class ProofOfPossessionCoordinator;
 class PluginData;
 class PluginInfoProvider;
 class PointerCaptureController;
@@ -814,6 +815,9 @@ public:
 #if ENABLE(WEB_AUTHN)
     AuthenticatorCoordinator& authenticatorCoordinator() LIFETIME_BOUND { return m_authenticatorCoordinator.get(); }
     CredentialRequestCoordinator& credentialRequestCoordinator() { return m_credentialRequestCoordinator.get(); }
+#if ENABLE(PROOF_OF_POSSESSION)
+    ProofOfPossessionCoordinator& proofOfPossessionCoordinator() LIFETIME_BOUND { return m_proofOfPossessionCoordinator.get(); }
+#endif
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1794,6 +1798,9 @@ private:
 #if ENABLE(WEB_AUTHN)
     const UniqueRef<AuthenticatorCoordinator> m_authenticatorCoordinator;
     const Ref<CredentialRequestCoordinator> m_credentialRequestCoordinator;
+#if ENABLE(PROOF_OF_POSSESSION)
+    const UniqueRef<ProofOfPossessionCoordinator> m_proofOfPossessionCoordinator;
+#endif
 #endif // ENABLE(WEB_AUTHN)
 
 #if ENABLE(APPLICATION_MANIFEST)

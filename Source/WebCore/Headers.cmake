@@ -660,6 +660,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/plugins/PluginReplacement.h
     Modules/plugins/YouTubePluginReplacement.h
 
+    Modules/proofofpossession/ProofOfPossessionCoordinatorClient.h
     Modules/proofofpossession/ProofOfPossessionProviderData.h
     Modules/proofofpossession/ProofOfPossessionRequest.h
     Modules/proofofpossession/ProofOfPossessionResponse.h

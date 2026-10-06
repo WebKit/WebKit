@@ -65,6 +65,7 @@
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorCoordinatorClient.h"
 #include "CredentialRequestCoordinatorClient.h"
+#include "ProofOfPossessionCoordinatorClient.h"
 #endif
 #if ENABLE(APPLE_PAY)
 #include "PaymentCoordinatorClient.h"
