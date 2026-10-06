@@ -28,6 +28,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComposedTreeAncestorIterator.h"
+#include "Document.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "Element.h"
@@ -43,7 +44,6 @@
 #include "PointerEvent.h"
 #include "Quirks.h"
 #include "Settings.h"
-#include "TaskSource.h"
 #include <algorithm>
 #include <ranges>
 #include <wtf/CheckedArithmetic.h>
@@ -167,14 +167,11 @@ void PointerCaptureController::elementWasRemovedSlow(Element& element)
     for (auto [pointerId, capturingData] : m_activePointerIdsToCapturingData) {
         if (capturingData->pendingTargetOverride == &element || capturingData->targetOverride == &element) {
             // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
-            // When the pointer capture target override is no longer connected, the pending pointer capture target override and pointer capture target
-            // override nodes SHOULD be cleared and also a PointerEvent named lostpointercapture corresponding to the captured pointer SHOULD be fired
-            // at the document.
+            // When the pending pointer capture target override is no longer connected, the pending pointer capture target override node SHOULD
+            // be cleared. When the pointer capture target override is no longer connected, it SHOULD be set to the document, which results in
+            // lostpointercapture being fired at the document during the next Process Pending Pointer Capture.
             ASSERT(isInBounds<PointerID>(pointerId));
-            auto pointerType = capturingData->pointerType;
             releasePointerCapture(&element, pointerId);
-            // FIXME: Spec doesn't specify which task source to use.
-            protect(element.document())->queueTaskToDispatchEvent(TaskSource::UserInteraction, PointerEvent::create(eventNames().lostpointercaptureEvent, pointerId, pointerType));
             return;
         }
     }
@@ -623,29 +620,45 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     // 1. If the pointer capture target override for this pointer is set and is not equal to the pending pointer capture target override,
     // then fire a pointer event named lostpointercapture at the pointer capture target override node.
     if (auto targetOverride = capturingData->targetOverride; targetOverride && targetOverride != pendingTargetOverride) {
-        if (capturingData->targetOverride->isConnected())
-            protect(capturingData->targetOverride)->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData->isPrimary, capturingData->pointerType));
+        // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
+        // When the pointer capture target override is no longer connected, it SHOULD be set to the document.
+        RefPtr<EventTarget> lostPointerCaptureTarget = targetOverride;
+        if (!targetOverride->isConnected())
+            lostPointerCaptureTarget = &targetOverride->document();
+        lostPointerCaptureTarget->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData->isPrimary, capturingData->pointerType));
         if (capturingData->pointerType == mousePointerEventType()) {
-            if (RefPtr frame = capturingData->targetOverride->document().frame())
+            if (RefPtr frame = targetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(nullptr);
         }
     }
 
     // 2. If the pending pointer capture target override for this pointer is set and is not equal to the pointer capture target override,
     // then fire a pointer event named gotpointercapture at the pending pointer capture target override.
-    if (capturingData->pendingTargetOverride && capturingData->targetOverride != pendingTargetOverride) {
+    bool didFireGotPointerCapture = false;
+    if (pendingTargetOverride && capturingData->pendingTargetOverride && capturingData->targetOverride != pendingTargetOverride) {
         if (capturingData->pointerType == mousePointerEventType()) {
             if (RefPtr frame = pendingTargetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(pendingTargetOverride.get());
         }
         pendingTargetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().gotpointercaptureEvent, pointerId, capturingData->isPrimary, capturingData->pointerType));
+        didFireGotPointerCapture = true;
     }
+
+    // If the pending pointer capture target override was cleared while firing lostpointercapture (for instance, because it was removed
+    // from the document), gotpointercapture was never fired at it, so it should not become the pointer capture target override.
+    if (!didFireGotPointerCapture && !capturingData->pendingTargetOverride)
+        pendingTargetOverride = nullptr;
 
     // 3. Set the pointer capture target override to the pending pointer capture target override, if set. Otherwise, clear the pointer
     // capture target override.
     capturingData->targetOverride = pendingTargetOverride;
 
     m_processingPendingPointerCapture = false;
+
+    // If the new pointer capture target override was disconnected while dispatching gotpointercapture, release the capture
+    // right away so that no further pointer events are targeted at the disconnected node.
+    if (didFireGotPointerCapture && capturingData->targetOverride && !capturingData->targetOverride->isConnected() && capturingData->pendingTargetOverride != capturingData->targetOverride)
+        processPendingPointerCapture(pointerId);
 }
 
 } // namespace WebCore
