@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script src="resources/custom-highlight-repaint.js"></script>
+<title>Tracking the repaint cost of the custom-highlight test document with no highlights</title>
+<style>
+    body { margin: 0; }
+    #doc {
+        width: 784px;
+        padding: 8px;
+        outline: 0;
+        font: 13px/19.5px monospace, monospace;
+    }
+    #doc p {
+        margin: 0;
+        white-space: break-spaces;
+    }
+    ::highlight(demo) {
+        color: hsl(0 80% 45%);
+    }
+</style>
+</head>
+<body>
+<pre id="log"></pre>
+<div id="doc"></div>
+<script>
+function setupTest() {
+    buildDocument();
+    PerfTestRunner.prepareToMeasureValuesAsync({ done: cleanUp, unit: "ms" });
+    requestAnimationFrame(runRepaintTest);
+}
+
+onload = setupTest;
+</script>
+</body>
+</html>
