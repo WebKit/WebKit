@@ -453,7 +453,9 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
 {
     // SMIL <animateMotion> sets the supplemental transform.
     // FIXME: Switch from "const AffineTransform*" to "std::optional<AffineTransform>" for supplementalTransform().
-    applySVGTransform(transform, graphicsElement.concatenatedTransform(), graphicsElement.supplementalTransform(), style, boundingBox, preApplySVGTransformMatrix, postApplySVGTransformMatrix, options);
+    // An author-level 'transform' declaration, even 'none', overrides the transform attribute.
+    const auto& svgTransform = style.hasExplicitlySetTransform() ? identity : graphicsElement.concatenatedTransform();
+    applySVGTransform(transform, svgTransform, graphicsElement.supplementalTransform(), style, boundingBox, preApplySVGTransformMatrix, postApplySVGTransformMatrix, options);
 }
 
 void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const AffineTransform& svgTransform, const AffineTransform* supplementalTransform, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const

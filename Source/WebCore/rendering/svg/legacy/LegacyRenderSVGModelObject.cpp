@@ -153,7 +153,7 @@ void LegacyRenderSVGModelObject::styleDidChange(Style::Difference diff, const St
 {
     if (diff == Style::DifferenceResult::Layout) {
         invalidateCachedBoundaries();
-        if (style().affectsTransform() || (oldStyle && oldStyle->affectsTransform()))
+        if (style().affectsTransform() || (oldStyle && (oldStyle->affectsTransform() || oldStyle->hasExplicitlySetTransform() != style().hasExplicitlySetTransform())))
             setNeedsTransformUpdate();
     }
     RenderElement::styleDidChange(diff, oldStyle);

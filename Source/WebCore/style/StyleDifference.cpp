@@ -211,6 +211,10 @@ public:
             }
         }
 
+        // An explicitly set 'transform: none' leaves the computed value unchanged, but overrides the SVG transform attribute.
+        if (a.hasExplicitlySetTransform != b.hasExplicitlySetTransform)
+            changedContextSensitiveProperties.add(DifferenceContextSensitiveProperty::Transform);
+
         if (a.opacity.isOpaque() != b.opacity.isOpaque()) {
             // FIXME: We would like to use SimplifiedLayout here, but we can't quite do that yet.
             // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need

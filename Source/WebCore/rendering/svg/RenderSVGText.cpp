@@ -1050,6 +1050,7 @@ void RenderSVGText::styleDidChange(Style::Difference diff, const Style::Computed
 
         return (oldStyle->affectsTransform() != newStyle.affectsTransform()
             || oldStyle->transform() != newStyle.transform()
+            || oldStyle->hasExplicitlySetTransform() != newStyle.hasExplicitlySetTransform()
             || oldStyle->translate() != newStyle.translate()
             || oldStyle->scale() != newStyle.scale()
             || oldStyle->rotate() != newStyle.rotate()

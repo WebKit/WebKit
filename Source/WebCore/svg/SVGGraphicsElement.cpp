@@ -172,18 +172,21 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
 
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
+    CheckedPtr renderer = this->renderer();
+    CheckedPtr style = renderer ? &renderer->style() : nullptr;
+
     // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
     if (document().settings().layerBasedSVGEngineEnabled()) {
+        // An author-level 'transform' declaration, even 'none', overrides the transform attribute.
+        const auto& svgTransform = style && style->hasExplicitlySetTransform() ? identity : concatenatedTransform();
         if (m_supplementalTransform)
-            return *m_supplementalTransform * concatenatedTransform();
-        return concatenatedTransform();
+            return *m_supplementalTransform * svgTransform;
+        return svgTransform;
     }
 
     AffineTransform matrix;
 
-    CheckedPtr renderer = this->renderer();
-    CheckedPtr style = renderer ? &renderer->style() : nullptr;
-    bool hasSpecifiedTransform = style && (!style->transform().isNone() || !style->offsetPath().isNone());
+    bool hasSpecifiedTransform = style && (style->hasExplicitlySetTransform() || !style->transform().isNone() || !style->offsetPath().isNone());
 
     // Honor any of the transform-related CSS properties if set.
     if (hasSpecifiedTransform || (style && (!style->translate().isNone() || !style->scale().isNone() || !style->rotate().isNone()))) {
