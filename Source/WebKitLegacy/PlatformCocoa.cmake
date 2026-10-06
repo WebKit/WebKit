@@ -1202,7 +1202,7 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     string(APPEND _wkl_modulemap_body "    header \"${_name}\"\n")
 endforeach ()
 string(APPEND _wkl_modulemap_body "    header \"WorkAround173516139.h\"\n")
-file(WRITE ${_wkl_fw}/Modules/module.private.modulemap
+WEBKIT_WRITE_FILE_IF_CHANGED(${_wkl_fw}/Modules/module.private.modulemap
 "framework module WebKitLegacy [system] {
 ${_wkl_modulemap_body}    export *
 }
@@ -1246,7 +1246,7 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
 endforeach ()
 list(JOIN _wkl_vfs_modules_entries "," _wkl_vfs_modules_str)
 list(JOIN _wkl_vfs_headers_entries "," _wkl_vfs_headers_str)
-file(WRITE "${_wkl_vfs}"
+WEBKIT_WRITE_FILE_IF_CHANGED("${_wkl_vfs}"
 "{\"case-sensitive\":\"false\",\"version\":0,\"roots\":[\
 {\"type\":\"directory\",\"name\":\"${_wkl_fw}/Modules\",\"contents\":[${_wkl_vfs_modules_str}]},\
 {\"type\":\"directory\",\"name\":\"${_wkl_fw}/PrivateHeaders\",\"contents\":[${_wkl_vfs_headers_str}]},\
