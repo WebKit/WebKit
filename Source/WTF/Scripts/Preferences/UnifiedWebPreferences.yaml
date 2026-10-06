@@ -137,6 +137,20 @@ AXCustomColorModeEnabled:
   condition: ENABLE(AX_CUSTOM_COLOR_MODE)
   defaultValue: false
 
+AcceleratedClipPathAnimationEnabled:
+  type: bool
+  status: unstable
+  humanReadableName: "Accelerated clip-path animation"
+  humanReadableDescription: "Enable accelerated clip-path animations"
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AcceleratedCompositingEnabled:
   type: bool
   status: embedder
