@@ -627,7 +627,10 @@ if (WEBKIT_SDK_IS_MACOS)
         ${SECURITYINTERFACE_LIBRARY}
         $<$<BOOL:${AVFAUDIO_LIBRARY}>:${AVFAUDIO_LIBRARY}>
     )
-    target_link_options(WebKit PRIVATE "LINKER:-weak_framework,PowerLog")
+    target_link_options(WebKit PRIVATE
+        "LINKER:-weak_framework,PDFKit"
+        "LINKER:-weak_framework,PowerLog"
+    )
     if (USE_APPLE_INTERNAL_SDK)
         target_link_options(WebKit PRIVATE
             "LINKER:-weak_framework,CoreML"
