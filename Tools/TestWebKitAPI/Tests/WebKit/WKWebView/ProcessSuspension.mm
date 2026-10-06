@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKWebViewConfiguration.h>
@@ -33,6 +34,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/Function.h>
+
+#if PLATFORM(MAC)
+#import "AppKitSPI.h"
+#endif
 
 TEST(ProcessSuspension, CancelWebProcessSuspension)
 {
@@ -235,3 +240,30 @@ TEST(ProcessSuspension, DeallocateSuspendedView)
         [webView _close];
     }
 }
+
+#if PLATFORM(MAC) && HAVE(LIQUID_GLASS)
+
+TEST(ProcessSuspension, TopScrollPocketCaptureViewAfterResuming)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(100, 0, 0, 0)];
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr captureView = [[webView _topScrollPocket] captureView];
+    EXPECT_NOT_NULL([[captureView layer] superlayer]);
+
+    __block bool done = false;
+    [webView _processWillSuspendForTesting:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _processDidResumeForTesting];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(captureView.get(), [[webView _topScrollPocket] captureView]);
+    EXPECT_NOT_NULL([[captureView layer] superlayer]);
+}
+
+#endif // PLATFORM(MAC) && HAVE(LIQUID_GLASS)

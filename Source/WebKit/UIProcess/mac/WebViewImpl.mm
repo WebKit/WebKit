@@ -4462,7 +4462,15 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_layerHostingView layer].sublayers = rootLayer ? @[ rootLayer ] : nil;
+    RetainPtr sublayers = adoptNS([NSMutableArray new]);
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    if (RetainPtr captureLayer = [[m_topScrollPocket captureView] layer])
+        [sublayers addObject:captureLayer];
+#endif
+    if (rootLayer)
+        [sublayers addObject:rootLayer];
+
+    [m_layerHostingView layer].sublayers = sublayers;
 
     [CATransaction commit];
 
