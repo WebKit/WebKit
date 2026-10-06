@@ -20,8 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from unittest.mock import Mock, patch
+
 from webkitcorepy import Version
 
+from webkitpy.port.embedded_port import EmbeddedPort
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
@@ -169,3 +172,23 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         self.assertEqual(configuration['platform'], 'ios')
         self.assertEqual(configuration['style'], 'release')
         self.assertEqual(configuration['version_name'], 'iOS {}'.format(port.device_version()))
+
+    def test_setup_test_run_warms_up_booted_simulators(self):
+        port = self.make_port(options=MockOptions(configuration='Release', install=True))
+        port.set_option('child_processes', 2)
+        port.target_host = lambda worker_number: Mock(platform_device=Mock(booted_by_script=worker_number == 1))
+        port.create_driver = Mock()
+        with patch.object(EmbeddedPort, 'setup_test_run'):
+            port.setup_test_run()
+        port.create_driver.assert_called_once_with(1)
+        driver_input = port.create_driver.return_value.run_test.call_args.args[0]
+        self.assertEqual(driver_input.test_name, 'file:///warmup-does-not-exist')
+        self.assertEqual(port.create_driver.return_value.run_test.call_args.kwargs, {'stop_when_done': True})
+
+    def test_setup_test_run_without_install_does_not_warm_up(self):
+        port = self.make_port(options=MockOptions(configuration='Release'))
+        port.target_host = lambda worker_number: Mock(platform_device=Mock(booted_by_script=True))
+        port.create_driver = Mock()
+        with patch.object(EmbeddedPort, 'setup_test_run'):
+            port.setup_test_run()
+        port.create_driver.assert_not_called()
