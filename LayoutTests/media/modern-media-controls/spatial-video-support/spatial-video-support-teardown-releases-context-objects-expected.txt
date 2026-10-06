@@ -1,0 +1,24 @@
+Testing that SpatialVideoSupport releases the objects owned by its WebGL context on teardown, so that re-enabling does not bind a texture belonging to the destroyed context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS support._active is true
+PASS !!support._gl is true
+PASS !!support._texture is true
+
+Tearing down the renderer:
+PASS support._gl is null
+PASS support._program is null
+PASS support._texture is null
+PASS support._mesh is null
+PASS support._mvpLocation is null
+PASS support._featherLocation is null
+
+Re-enabling the renderer with a fresh context:
+PASS support._active is true
+PASS support._gl.getError() is support._gl.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
