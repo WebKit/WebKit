@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-static const bool verbose = false;
-
 pas_simple_large_free_heap PAS_SIMPLE_FREE_HEAP_NAME = PAS_SIMPLE_LARGE_FREE_HEAP_INITIALIZER;
 size_t PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes) = 0;
 size_t PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes_peak) = 0;
@@ -55,7 +53,7 @@ PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_manual_alignment)(
     pas_allocation_kind allocation_kind)
 {
     return pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
-        &PAS_SIMPLE_FREE_HEAP_NAME, initialize_config, PAS_SIMPLE_FREE_HEAP_ID(_kind),
+        &PAS_SIMPLE_FREE_HEAP_NAME, PAS_SIMPLE_FREE_HEAP_ID(_initialize_config), PAS_SIMPLE_FREE_HEAP_ID(_kind),
         size, alignment, name, allocation_kind,
         &PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes),
         &PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes_peak));
@@ -108,7 +106,7 @@ void PAS_SIMPLE_FREE_HEAP_ID(_deallocate)(
     pas_allocation_kind allocation_kind)
 {
     return pas_simple_free_heap_helpers_deallocate(
-        &PAS_SIMPLE_FREE_HEAP_NAME, initialize_config, PAS_SIMPLE_FREE_HEAP_ID(_kind),
+        &PAS_SIMPLE_FREE_HEAP_NAME, PAS_SIMPLE_FREE_HEAP_ID(_initialize_config), PAS_SIMPLE_FREE_HEAP_ID(_kind),
         ptr, size, allocation_kind,
         &PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes));
 }

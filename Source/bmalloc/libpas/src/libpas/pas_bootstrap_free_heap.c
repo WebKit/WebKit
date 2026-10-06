@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,32 +39,48 @@ static pas_aligned_allocation_result bootstrap_source_allocate_aligned(size_t si
                                                                        pas_alignment alignment,
                                                                        void* arg)
 {
-    PAS_UNUSED_PARAM(arg);
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
+    pas_memory_flavor flavor = (pas_memory_flavor)(uintptr_t)arg;
 
     if (verbose)
-        pas_log("bootstrap heap allocating %zu\n", size);
+        pas_log("%s bootstrap heap allocating %zu\n", pas_memory_flavor_get_string(flavor), size);
 
-    pas_aligned_allocation_result retval = pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment, pas_memory_flavor_plain);
+    pas_aligned_allocation_result retval = pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment, flavor);
 
     if (verbose)
-        pas_log("bootstrap heap done allocating, returning %p.\n", retval.result);
+        pas_log("%s bootstrap heap done allocating, returning %p.\n", pas_memory_flavor_get_string(flavor), retval.result);
 
     return retval;
 }
 
-static void initialize_config(pas_large_free_heap_config* config)
+static void initialize_config(pas_large_free_heap_config* config, pas_memory_flavor flavor)
 {
     config->type_size = 1;
     config->min_alignment = 1;
     config->aligned_allocator = bootstrap_source_allocate_aligned;
-    config->aligned_allocator_arg = NULL;
+    config->aligned_allocator_arg = (void*)(uintptr_t)flavor;
     config->deallocator = NULL;
     config->deallocator_arg = NULL;
 }
 
+static void pas_bootstrap_free_heap_initialize_config(pas_large_free_heap_config* config)
+{
+    initialize_config(config, pas_memory_flavor_plain);
+}
+
 #define PAS_SIMPLE_FREE_HEAP_NAME pas_bootstrap_free_heap
 #define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_bootstrap_free_heap ## suffix
+#include "pas_simple_free_heap_definitions.def"
+#undef PAS_SIMPLE_FREE_HEAP_NAME
+#undef PAS_SIMPLE_FREE_HEAP_ID
+
+static void pas_mte_bootstrap_free_heap_initialize_config(pas_large_free_heap_config* config)
+{
+    initialize_config(config, pas_memory_flavor_mte);
+}
+
+#define PAS_SIMPLE_FREE_HEAP_NAME pas_mte_bootstrap_free_heap
+#define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_mte_bootstrap_free_heap ## suffix
 #include "pas_simple_free_heap_definitions.def"
 #undef PAS_SIMPLE_FREE_HEAP_NAME
 #undef PAS_SIMPLE_FREE_HEAP_ID
