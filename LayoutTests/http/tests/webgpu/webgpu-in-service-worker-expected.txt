@@ -1,0 +1,9 @@
+Tests that WebGPU works in a service worker that may run in the process of the page: a WebGPU buffer is written and read back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS state is "works"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/webgl-in-workers.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that WebGL works in a dedicated worker: WebGL 1 and WebGL 2 contexts clear and read back.");
+runDedicatedWorkerTest();
+</script>
+</body>
+</html>

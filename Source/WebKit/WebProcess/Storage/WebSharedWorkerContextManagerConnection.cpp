@@ -100,7 +100,7 @@ void WebSharedWorkerContextManagerConnection::postErrorToWorkerObject(WebCore::S
 
 void WebSharedWorkerContextManagerConnection::updatePreferencesStore(const WebPreferencesStore& store)
 {
-    WebPage::updatePreferencesGenerated(store);
+    WebProcess::singleton().updateRemoteWorkerPreferences(store);
     m_preferencesStore = store;
 }
 
@@ -123,12 +123,10 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     } }, WebCore::SandboxFlags { }, WebCore::ReferrerPolicy::EmptyString };
 
     Ref page = WebCore::Page::create(WTF::move(pageConfiguration));
-    if (m_preferencesStore) {
-        WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
-        page->settings().setStorageBlockingPolicy(static_cast<WebCore::StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
-    }
-    if (WebProcess::singleton().isLockdownModeEnabled())
-        WebPage::adjustSettingsForLockdownMode(page->settings(), m_preferencesStore ? &m_preferencesStore.value() : nullptr);
+    if (m_preferencesStore)
+        WebPage::updateSettings(*m_preferencesStore, page->settings());
+    else if (WebProcess::singleton().isLockdownModeEnabled())
+        WebPage::adjustSettingsForLockdownMode(page->settings(), nullptr);
 
     if (initializationData.userAgent.isEmpty())
         initializationData.userAgent = m_userAgent;

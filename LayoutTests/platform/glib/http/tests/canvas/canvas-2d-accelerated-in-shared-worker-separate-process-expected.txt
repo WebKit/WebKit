@@ -1,0 +1,11 @@
+Tests that accelerated 2D canvases work in a shared worker that runs in a process that does not have a page: a 2D canvas forced to the accelerated rendering mode is accelerated and reads back what is drawn.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL state.renderingMode should be Accelerated. Was Unaccelerated.
+PASS state.drawing is "works"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

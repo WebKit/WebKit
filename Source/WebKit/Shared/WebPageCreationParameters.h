@@ -279,10 +279,6 @@ struct WebPageCreationParameters {
 
     bool needsScrollGeometryUpdates { false };
 
-    // WebRTC members.
-    bool iceCandidateFilteringEnabled { true };
-    bool enumeratingAllNetworkInterfacesEnabled { false };
-
     UserContentControllerParameters userContentControllerParameters;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -304,19 +300,9 @@ struct WebPageCreationParameters {
     String processDisplayName { };
 
     bool shouldCaptureAudioInUIProcess { false };
-    bool shouldCaptureAudioInGPUProcess { false };
     bool shouldCaptureVideoInUIProcess { false };
-    bool shouldCaptureVideoInGPUProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
-    bool shouldCaptureDisplayInGPUProcess { false };
-    bool shouldRenderCanvasInGPUProcess { false };
     bool shouldRenderDOMInGPUProcess { false };
-    bool shouldPlayMediaInGPUProcess { false };
-#if ENABLE(WEBGL)
-    bool shouldRenderWebGLInGPUProcess { false };
-#endif
-    bool shouldEnableVP8Decoder { false };
-    bool shouldEnableVP9Decoder { false };
 #if ENABLE(APP_BOUND_DOMAINS)
     bool limitsNavigationsToAppBoundDomains { false };
 #endif

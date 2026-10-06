@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/iokit-blocked-in-workers.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that IOKit is blocked in the sandbox of the process of a service worker that runs in a process that does not have a page: the process cannot open an IOKit service.");
+if (window.testRunner)
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+runServiceWorkerTest();
+</script>
+</body>
+</html>

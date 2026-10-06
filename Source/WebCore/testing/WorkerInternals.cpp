@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+bool WorkerInternals::isIOKitAvailable()
+{
+    return Internals::isIOKitAvailable();
+}
+
 #if ENABLE(WEBGL)
 void WorkerInternals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContextBase& context)
 {

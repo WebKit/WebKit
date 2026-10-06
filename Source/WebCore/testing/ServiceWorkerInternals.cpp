@@ -31,6 +31,7 @@
 #include "FetchRequest.h"
 #include "GraphicsClient.h"
 #include "ImageBuffer.h"
+#include "Internals.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
@@ -232,6 +233,11 @@ String ServiceWorkerInternals::effectiveRenderingModeOfNewlyCreatedAcceleratedCa
     if (*renderingMode != RenderingMode::Accelerated)
         return "unaccelerated"_s;
     return imageBuffer->isRemoteImageBufferProxy() ? "remote"_s : "local-iosurface"_s;
+}
+
+bool ServiceWorkerInternals::isIOKitAvailable()
+{
+    return Internals::isIOKitAvailable();
 }
 
 } // namespace WebCore

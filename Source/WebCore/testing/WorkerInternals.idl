@@ -28,6 +28,8 @@
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     LegacyNoInterfaceObject,
 ] interface WorkerInternals {
+    boolean isIOKitAvailable();
+
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGL2RenderingContext context);
     [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);

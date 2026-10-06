@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/webgpu-in-workers.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that WebGPU works in a shared worker that runs in a process that does not have a page: a WebGPU buffer is written and read back.");
+if (window.testRunner)
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+runSharedWorkerTest();
+</script>
+</body>
+</html>
