@@ -336,6 +336,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
 
 #if ENABLE(WEBDRIVER_BIDI)
 const WebDriverService::StaticBidiCommand WebDriverService::s_staticBidiCommands[] = {
+    { "session.new"_s, &WebDriverService::bidiSessionNew },
     { "session.status"_s, &WebDriverService::bidiSessionStatus },
 };
 #endif
@@ -408,6 +409,13 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
     HashMap<String, String> parameters;
     if (!findCommand(method.value(), request.path, &handler, parameters)) {
         sendResponse(WTF::move(actualReplyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown command: "_s, request.path)));
+        return;
+    }
+
+    auto sessionID = parameters.get("sessionId"_s);
+    // A BiDi-only session is not addressable through classic HTTP commands.
+    if (!sessionID.isNull() && m_session && m_session->id() == sessionID && !m_session->hasHTTPFlag()) {
+        sendResponse(WTF::move(actualReplyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID));
         return;
     }
 
@@ -560,13 +568,13 @@ bool WebDriverService::acceptHandshake(HTTPRequestHandler::Request&& request)
     return true;
 }
 
-void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)
+void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message, Function<void(WebSocketMessageHandler::Message&&)>&& replyHandler)
 {
     // https://w3c.github.io/webdriver-bidi/#handle-an-incoming-message
 
     if (!message.connection) {
         RELEASE_LOG(WebDriverBiDi, "Incoming message without attached connection. Ignoring message.");
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::UnknownError, std::nullopt));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::UnknownError, std::nullopt));
         return;
     }
 
@@ -575,28 +583,28 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
     auto parsedMessageValue = JSON::Value::parseJSON(String { message.payload });
     if (!parsedMessageValue) {
         RELEASE_LOG(WebDriverBiDi, "WebDriverService::handleMessage() Failed to parse incoming message");
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, message.connection));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, message.connection));
         return;
     }
 
     const auto& messageObject = parsedMessageValue->asObject();
     if (!messageObject) {
         RELEASE_LOG_ERROR(WebDriverBiDi, "WebDriver handle BiDi message: Expected object.");
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection));
         return;
     }
 
     std::optional<int> commandId = messageObject->getInteger("id"_s);
     if (!commandId) {
         RELEASE_LOG_ERROR(WebDriverBiDi, "Missing command ID.");
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command id"_s));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command id"_s));
         return;
     }
 
     auto method = messageObject->getString("method"_s);
     if (!method) {
         RELEASE_LOG_ERROR(WebDriverBiDi, "Missing command method.");
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command method"_s, commandId));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command method"_s, commandId));
         return;
     }
 
@@ -604,37 +612,35 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
     bool isSessionBoundCommand = bidiSessionBoundCommandNames.contains(method);
     if (!staticCommand && !isSessionBoundCommand) {
         RELEASE_LOG_ERROR(WebDriverBiDi, "Unknown BiDi command: %s", method.utf8());
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::UnknownCommand, connection, makeString("Unknown command: "_s, method), commandId));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::UnknownCommand, connection, makeString("Unknown command: "_s, method), commandId));
         return;
     }
 
     auto parameters = messageObject->getObject("params"_s);
     if (!parameters) {
         RELEASE_LOG_ERROR(WebDriverBiDi, "Missing command parameters.");
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command parameters"_s, commandId));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command parameters"_s, commandId));
         return;
     }
 
     if (staticCommand) {
-        ((*this).*staticCommand->handler)(*commandId, WTF::move(parameters), [completionHandler = WTF::move(completionHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
-            // 6.7.5 If method is "session.new", let session be the entry in the list of active sessions whose session ID is equal to the "sessionId" property of value, append connection to session’s session WebSocket connections, and remove connection from the WebSocket connections not associated with a session.
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=281722
+        ((*this).*staticCommand->handler)(*commandId, WTF::move(parameters), connection, [replyHandler = WTF::move(replyHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
             resultMessage.connection = connection;
-            completionHandler(WTF::move(resultMessage));
+            replyHandler(WTF::move(resultMessage));
         });
         return;
     }
 
     ASSERT(isSessionBoundCommand);
     if (!m_session || m_bidiServer->sessionID(connection) != m_session->id()) {
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidSessionID, connection, "No active session associated with this connection"_s, commandId));
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidSessionID, connection, "No active session associated with this connection"_s, commandId));
         return;
     }
 
     RELEASE_LOG(WebDriverBiDi, "Relaying BiDi command to the browser: %s", method.utf8());
-    m_session->relayBidiCommand(makeString(message.payload), *commandId, [completionHandler = WTF::move(completionHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
+    m_session->relayBidiCommand(makeString(message.payload), *commandId, [replyHandler = WTF::move(replyHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
         resultMessage.connection = connection;
-        completionHandler(WTF::move(resultMessage));
+        replyHandler(WTF::move(resultMessage));
     });
 }
 
@@ -1140,90 +1146,127 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     return matchedCapabilitiesList;
 }
 
-void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& replyHandler)
 {
     // §8.1 New Session.
     // https://www.w3.org/TR/webdriver/#new-session
-    auto matchedCapabilitiesList = processCapabilities(*parameters, completionHandler);
+    auto matchedCapabilitiesList = processCapabilities(*parameters, replyHandler);
     if (matchedCapabilitiesList.isEmpty())
         return;
+
+    if (m_sessionCreationInProgress || (m_session && !m_replaceOnNewSession)) {
+        RELEASE_LOG(WebDriverClassic, "WebDriverService::newSession: Maximum number of active sessions reached. Returning error.");
+        replyHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Maximum number of active sessions"_s)));
+        return;
+    }
+
+    m_sessionCreationInProgress = true;
+    SessionCreationCompletionHandler finalizeHTTPSessionCreation = [this, replyHandler = WTF::move(replyHandler)](RefPtr<Session>&& createdSession, CommandResult&& creationResult) mutable {
+        ASSERT(m_sessionCreationInProgress);
+        if (createdSession) {
+            ASSERT(!creationResult.isError());
+            m_session = WTF::move(createdSession);
+        } else
+            ASSERT(creationResult.isError());
+        m_sessionCreationInProgress = false;
+        replyHandler(WTF::move(creationResult));
+    };
 
     if (!m_session) {
         // Reverse the vector to always take last item.
         matchedCapabilitiesList.reverse();
-        connectToBrowser(WTF::move(matchedCapabilitiesList), WTF::move(completionHandler));
+        connectToBrowser(SessionCreationMode::Http, WTF::move(matchedCapabilitiesList), WTF::move(finalizeHTTPSessionCreation));
         return;
     }
 
-    if (m_replaceOnNewSession) {
-        RELEASE_LOG(WebDriverClassic, "WebDriverService::newSession: Replacing existing session.");
-        auto session = std::exchange(m_session, nullptr);
-        session->close([this, session, matchedCapabilitiesList, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
+    ASSERT(m_replaceOnNewSession);
+    RELEASE_LOG(WebDriverClassic, "WebDriverService::newSession: Replacing existing session.");
+    auto replacedSession = std::exchange(m_session, nullptr);
+    Function<void(CommandResult&&)> replacedSessionCloseCompletionHandler = [this, replacedSession, matchedCapabilitiesList, resumeSessionCreation = WTF::move(finalizeHTTPSessionCreation)](CommandResult&& closeResult) mutable {
 #if ENABLE(WEBDRIVER_BIDI)
-            m_bidiServer->disconnectSession(session->id());
+        m_bidiServer->disconnectSession(replacedSession->id());
 #endif
-            // Ignore unknown errors when closing the session if the session has abeen actually closed.
-            if ((!result.isError()) || (result.errorCode() == CommandResult::ErrorCode::UnknownError && !session->isConnected())) {
-                matchedCapabilitiesList.reverse();
-                connectToBrowser(WTF::move(matchedCapabilitiesList), WTF::move(completionHandler));
-            } else
-                completionHandler(WTF::move(result));
-        });
-        return;
-    }
-    RELEASE_LOG(WebDriverClassic, "WebDriverService::newSession: Maximum number of active sessions reached. Returning error.");
-    completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Maximum number of active sessions"_s)));
+        // Ignore unknown errors when closing the session if the session has actually been closed.
+        if ((!closeResult.isError()) || (closeResult.errorCode() == CommandResult::ErrorCode::UnknownError && !replacedSession->isConnected())) {
+            matchedCapabilitiesList.reverse();
+            connectToBrowser(SessionCreationMode::Http, WTF::move(matchedCapabilitiesList), WTF::move(resumeSessionCreation));
+        } else
+            resumeSessionCreation(nullptr, WTF::move(closeResult));
+    };
+    replacedSession->close(WTF::move(replacedSessionCloseCompletionHandler));
 }
 
-void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::connectToBrowser(SessionCreationMode mode, Vector<Capabilities>&& capabilitiesList, SessionCreationCompletionHandler&& sessionCreationCompletionHandler)
 {
     if (capabilitiesList.isEmpty()) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to match capabilities"_s)));
+        sessionCreationCompletionHandler(nullptr, CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to match capabilities"_s)));
         return;
     }
 
     auto sessionHost = SessionHost::create(capabilitiesList.takeLast());
     sessionHost->setHostAddress(m_targetAddress, m_targetPort);
     auto protectedSessionHost = Ref<SessionHost>(sessionHost);
-    protectedSessionHost->connectToBrowser([this, capabilitiesList = WTF::move(capabilitiesList), sessionHost = WTF::move(sessionHost), completionHandler = WTF::move(completionHandler)](std::optional<String> error) mutable {
-        if (error) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: "_s, error.value())));
+    Function<void(std::optional<String>)> browserConnectionCompletionHandler = [this, mode, capabilitiesList = WTF::move(capabilitiesList), sessionHost = WTF::move(sessionHost), completeSessionCreation = WTF::move(sessionCreationCompletionHandler)](std::optional<String> connectionError) mutable {
+        if (connectionError) {
+            completeSessionCreation(nullptr, CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: "_s, connectionError.value())));
             return;
         }
 
-        createSession(WTF::move(capabilitiesList), WTF::move(sessionHost), WTF::move(completionHandler));
-    });
+        createSession(mode, WTF::move(capabilitiesList), WTF::move(sessionHost), WTF::move(completeSessionCreation));
+    };
+    protectedSessionHost->connectToBrowser(WTF::move(browserConnectionCompletionHandler));
 }
 
-void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Ref<SessionHost>&& sessionHost, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::createSession(SessionCreationMode mode, Vector<Capabilities>&& capabilitiesList, Ref<SessionHost>&& sessionHost, SessionCreationCompletionHandler&& sessionCreationCompletionHandler)
 {
     auto protectedSessionHost = Ref<SessionHost>(sessionHost);
-    protectedSessionHost->startAutomationSession([this, capabilitiesList = WTF::move(capabilitiesList), sessionHost = WTF::move(sessionHost), completionHandler = WTF::move(completionHandler)](bool capabilitiesDidMatch, std::optional<String> errorMessage) mutable {
-        if (errorMessage) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, errorMessage.value()));
+    Function<void(bool, std::optional<String>)> automationSessionCompletionHandler = [this, mode, capabilitiesList = WTF::move(capabilitiesList), sessionHost = WTF::move(sessionHost), completeSessionCreation = WTF::move(sessionCreationCompletionHandler)](bool capabilitiesDidMatch, std::optional<String> sessionStartError) mutable {
+        if (sessionStartError) {
+            completeSessionCreation(nullptr, CommandResult::fail(CommandResult::ErrorCode::UnknownError, sessionStartError.value()));
             return;
         }
         if (!capabilitiesDidMatch) {
-            connectToBrowser(WTF::move(capabilitiesList), WTF::move(completionHandler));
+            connectToBrowser(mode, WTF::move(capabilitiesList), WTF::move(completeSessionCreation));
             return;
         }
+        auto hasHTTPFlag = mode == SessionCreationMode::Http ? Session::HasHTTPFlag::Yes : Session::HasHTTPFlag::No;
 #if ENABLE(WEBDRIVER_BIDI)
-        RefPtr<Session> session = Session::create(WTF::move(sessionHost), m_bidiServer);
+        RefPtr<Session> session = Session::create(WTF::move(sessionHost), m_bidiServer, hasHTTPFlag);
+        if (mode == SessionCreationMode::BiDi)
+            session->setHasBiDiEnabled(true);
 #else
-        RefPtr<Session> session = Session::create(WTF::move(sessionHost));
+        ASSERT(mode == SessionCreationMode::Http);
+        RefPtr<Session> session = Session::create(WTF::move(sessionHost), hasHTTPFlag);
 #endif
-        session->createTopLevelBrowsingContext([this, session, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
-            if (result.isError()) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, result.errorMessage().value_or("Unknown error creating top level browsing context."_s)));
+        Function<void(CommandResult&&)> browsingContextCreationCompletionHandler = [this, mode, session, finishSessionCreation = WTF::move(completeSessionCreation)](CommandResult&& contextCreationResult) mutable {
+            if (contextCreationResult.isError()) {
+                auto creationFailure = CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, contextCreationResult.errorMessage().value_or("Unknown error creating top level browsing context."_s));
+                Function<void(CommandResult&&)> provisionalSessionCloseCompletionHandler = [mode, session, creationFailure = WTF::move(creationFailure), finishSessionCreation = WTF::move(finishSessionCreation)](CommandResult&& closeResult) mutable {
+                    if (closeResult.isError()) {
+                        auto errorMessage = closeResult.errorMessage().value_or(closeResult.errorString());
+                        if (mode == SessionCreationMode::BiDi)
+                            RELEASE_LOG_ERROR(WebDriverBiDi, "Failed to close provisional session %s after top-level browsing context creation failed: %s", session->id().utf8(), errorMessage.utf8());
+                        else
+                            RELEASE_LOG_ERROR(WebDriverClassic, "Failed to close provisional session %s after top-level browsing context creation failed: %s", session->id().utf8(), errorMessage.utf8());
+                    }
+                    finishSessionCreation(nullptr, WTF::move(creationFailure));
+                };
+                session->close(WTF::move(provisionalSessionCloseCompletionHandler));
                 return;
             }
 
-            m_session = WTF::move(session);
+#if ENABLE(WEBDRIVER_BIDI)
+            if (mode == SessionCreationMode::BiDi) {
+                buildBidiSessionResult(WTF::move(session), WTF::move(finishSessionCreation));
+                return;
+            }
+#endif
 
+            ASSERT(mode == SessionCreationMode::Http);
             auto resultObject = JSON::Object::create();
-            resultObject->setString("sessionId"_s, m_session->id());
+            resultObject->setString("sessionId"_s, session->id());
             auto capabilitiesObject = JSON::Object::create();
-            const auto& capabilities = m_session->capabilities();
+            const auto& capabilities = session->capabilities();
             capabilitiesObject->setString("browserName"_s, capabilities.browserName.value_or(emptyString()));
             capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.value_or(emptyString()));
             capabilitiesObject->setString("platformName"_s, capabilities.platformName.value_or(emptyString()));
@@ -1262,38 +1305,81 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Re
             if (!capabilities.proxy)
                 capabilitiesObject->setObject("proxy"_s, JSON::Object::create());
             auto timeoutsObject = JSON::Object::create();
-            if (m_session->scriptTimeout() == std::numeric_limits<double>::infinity())
+            if (session->scriptTimeout() == std::numeric_limits<double>::infinity())
                 timeoutsObject->setValue("script"_s, JSON::Value::null());
             else
-                timeoutsObject->setDouble("script"_s, m_session->scriptTimeout());
-            timeoutsObject->setDouble("pageLoad"_s, m_session->pageLoadTimeout());
-            timeoutsObject->setDouble("implicit"_s, m_session->implicitWaitTimeout());
+                timeoutsObject->setDouble("script"_s, session->scriptTimeout());
+            timeoutsObject->setDouble("pageLoad"_s, session->pageLoadTimeout());
+            timeoutsObject->setDouble("implicit"_s, session->implicitWaitTimeout());
             capabilitiesObject->setObject("timeouts"_s, WTF::move(timeoutsObject));
 
 #if ENABLE(WEBDRIVER_BIDI)
             // Extension steps defined by BiDi spec: https://w3c.github.io/webdriver-bidi/#establishing
-            if (!m_session->hasBiDiEnabled() && capabilities.webSocketURL && *capabilities.webSocketURL) {
-                auto listener = m_bidiServer->startListening(m_session->id());
-                // We need to update the listener host to a visible one so remote clients can connect to it.
-                listener->host = m_server.visibleHost();
+            if (mode == SessionCreationMode::Http) {
+                if (!session->hasBiDiEnabled() && capabilities.webSocketURL && *capabilities.webSocketURL) {
+                    auto listener = m_bidiServer->startListening(session->id());
+                    // We need to update the listener host to a visible one so remote clients can connect to it.
+                    listener->host = m_server.visibleHost();
 
-                auto webSocketURL = m_bidiServer->getWebSocketURL(listener, m_session->id());
-                capabilitiesObject->setString("webSocketUrl"_s, webSocketURL);
-                m_session->setHasBiDiEnabled(true);
-            } else {
-                RELEASE_LOG(WebDriverBiDi, "BiDi support not enabled for session %s", m_session->id().utf8());
-                if (!m_session->hasBiDiEnabled())
-                    RELEASE_LOG(WebDriverBiDi, "BiDi flag not set for session %s", m_session->id().utf8());
-                if (!capabilities.webSocketURL || !*capabilities.webSocketURL)
-                    RELEASE_LOG(WebDriverBiDi, "webSocketURL not set for session %s", m_session->id().utf8());
+                    auto webSocketURL = m_bidiServer->getWebSocketURL(listener, session->id());
+                    capabilitiesObject->setString("webSocketUrl"_s, webSocketURL);
+                    session->setHasBiDiEnabled(true);
+                } else {
+                    RELEASE_LOG(WebDriverBiDi, "BiDi support not enabled for session %s", session->id().utf8());
+                    if (!session->hasBiDiEnabled())
+                        RELEASE_LOG(WebDriverBiDi, "BiDi flag not set for session %s", session->id().utf8());
+                    if (!capabilities.webSocketURL || !*capabilities.webSocketURL)
+                        RELEASE_LOG(WebDriverBiDi, "webSocketURL not set for session %s", session->id().utf8());
+                }
             }
 #endif
 
             resultObject->setObject("capabilities"_s, WTF::move(capabilitiesObject));
-            completionHandler(CommandResult::success(WTF::move(resultObject)));
-        });
-    });
+            finishSessionCreation(WTF::move(session), CommandResult::success(WTF::move(resultObject)));
+        };
+        session->createTopLevelBrowsingContext(WTF::move(browsingContextCreationCompletionHandler));
+    };
+    protectedSessionHost->startAutomationSession(WTF::move(automationSessionCompletionHandler));
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WebDriverService::buildBidiSessionResult(RefPtr<Session>&& session, SessionCreationCompletionHandler&& sessionCreationCompletionHandler)
+{
+    ASSERT(session);
+    Function<void(CommandResult&&)> userAgentCompletionHandler = [session, finishSessionCreation = WTF::move(sessionCreationCompletionHandler)](CommandResult&& userAgentResult) mutable {
+        if (userAgentResult.isError()) {
+            auto creationFailure = CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, userAgentResult.errorMessage().value_or("Could not retrieve user agent"_s));
+            Function<void(CommandResult&&)> provisionalSessionCloseCompletionHandler = [session, creationFailure = WTF::move(creationFailure), finishSessionCreation = WTF::move(finishSessionCreation)](CommandResult&& closeResult) mutable {
+                if (closeResult.isError()) {
+                    auto errorMessage = closeResult.errorMessage().value_or(closeResult.errorString());
+                    RELEASE_LOG_ERROR(WebDriverBiDi, "Failed to close provisional session %s after user agent retrieval failed: %s", session->id().utf8(), errorMessage.utf8());
+                }
+                finishSessionCreation(nullptr, WTF::move(creationFailure));
+            };
+            session->close(WTF::move(provisionalSessionCloseCompletionHandler));
+            return;
+        }
+
+        ASSERT(userAgentResult.result());
+        auto userAgent = userAgentResult.result()->asString();
+        ASSERT(!userAgent.isNull());
+
+        auto resultObject = JSON::Object::create();
+        resultObject->setString("sessionId"_s, session->id());
+        auto capabilitiesObject = JSON::Object::create();
+        const auto& capabilities = session->capabilities();
+        capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.value_or(false));
+        capabilitiesObject->setString("browserName"_s, capabilities.browserName.value_or(emptyString()));
+        capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.value_or(emptyString()));
+        capabilitiesObject->setString("platformName"_s, capabilities.platformName.value_or(emptyString()));
+        capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
+        capabilitiesObject->setString("userAgent"_s, userAgent);
+        resultObject->setObject("capabilities"_s, WTF::move(capabilitiesObject));
+        finishSessionCreation(WTF::move(session), CommandResult::success(WTF::move(resultObject)));
+    };
+    session->getUserAgent(WTF::move(userAgentCompletionHandler));
+}
+#endif
 
 void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
@@ -1329,8 +1415,13 @@ void WebDriverService::status(RefPtr<JSON::Object>&&, Function<void (CommandResu
     // §8.3 Status
     // https://w3c.github.io/webdriver/webdriver-spec.html#status
     auto body = JSON::Object::create();
-    body->setBoolean("ready"_s, !m_session);
-    body->setString("message"_s, m_session ? "A session already exists"_s : "No sessions"_s);
+    body->setBoolean("ready"_s, !m_session && !m_sessionCreationInProgress);
+    if (m_session)
+        body->setString("message"_s, "A session already exists"_s);
+    else if (m_sessionCreationInProgress)
+        body->setString("message"_s, "A session is being created"_s);
+    else
+        body->setString("message"_s, "No sessions"_s);
     completionHandler(CommandResult::success(WTF::move(body)));
 }
 
@@ -2880,17 +2971,76 @@ void WebDriverService::takeElementScreenshot(RefPtr<JSON::Object>&& parameters, 
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebDriverService::bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)
+void WebDriverService::bidiSessionNew(unsigned id, RefPtr<JSON::Object>&& parameters, WebSocketMessageHandler::Connection connection, Function<void(WebSocketMessageHandler::Message&&)>&& replyHandler)
+{
+    if (m_session || m_sessionCreationInProgress) {
+        replyHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::SessionNotCreated, std::nullopt, "Maximum number of active sessions"_s, id));
+        return;
+    }
+
+    Function<void(CommandResult&&)> sendBidiReply = [id, replyHandler = WTF::move(replyHandler)](CommandResult&& commandResult) mutable {
+        if (commandResult.isError()) {
+            replyHandler(WebSocketMessageHandler::Message::fail(commandResult.errorCode(), std::nullopt, commandResult.errorMessage(), id));
+            return;
+        }
+
+        auto resultValue = commandResult.result();
+        ASSERT(resultValue);
+        replyHandler(WebSocketMessageHandler::Message::reply("success"_s, id, resultValue.releaseNonNull()));
+    };
+
+    auto matchedCapabilitiesList = processCapabilities(*parameters, sendBidiReply);
+    if (matchedCapabilitiesList.isEmpty())
+        return;
+
+    matchedCapabilitiesList.reverse();
+    m_sessionCreationInProgress = true;
+    SessionCreationCompletionHandler finalizeBidiSessionCreation = [this, connection, sendBidiReply = WTF::move(sendBidiReply)](RefPtr<Session>&& createdSession, CommandResult&& creationResult) mutable {
+        ASSERT(m_sessionCreationInProgress);
+        if (!createdSession) {
+            ASSERT(creationResult.isError());
+            m_sessionCreationInProgress = false;
+            sendBidiReply(WTF::move(creationResult));
+            return;
+        }
+
+        ASSERT(!creationResult.isError());
+        ASSERT(!m_session);
+        if (!m_bidiServer->associateConnectionWithSession(connection, createdSession->id())) {
+            auto associationFailure = CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, "WebSocket connection is no longer available for session association"_s);
+            Function<void(CommandResult&&)> provisionalSessionCloseCompletionHandler = [this, createdSession, associationFailure = WTF::move(associationFailure), sendBidiReply = WTF::move(sendBidiReply)](CommandResult&& closeResult) mutable {
+                ASSERT(m_sessionCreationInProgress);
+                if (closeResult.isError()) {
+                    auto errorMessage = closeResult.errorMessage().value_or(closeResult.errorString());
+                    RELEASE_LOG_ERROR(WebDriverBiDi, "Failed to close provisional session %s after WebSocket association failed: %s", createdSession->id().utf8(), errorMessage.utf8());
+                }
+                m_sessionCreationInProgress = false;
+                sendBidiReply(WTF::move(associationFailure));
+            };
+            createdSession->close(WTF::move(provisionalSessionCloseCompletionHandler));
+            return;
+        }
+
+        m_session = WTF::move(createdSession);
+        m_sessionCreationInProgress = false;
+        sendBidiReply(WTF::move(creationResult));
+    };
+    connectToBrowser(SessionCreationMode::BiDi, WTF::move(matchedCapabilitiesList), WTF::move(finalizeBidiSessionCreation));
+}
+
+void WebDriverService::bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, WebSocketMessageHandler::Connection, Function<void(WebSocketMessageHandler::Message&&)>&& replyHandler)
 {
     auto result = JSON::Object::create();
-    bool ready = !m_session;
+    bool ready = !m_session && !m_sessionCreationInProgress;
     result->setBoolean("ready"_s, ready);
     if (ready)
         result->setString("message"_s, "Ready for new sessions"_s);
+    else if (m_sessionCreationInProgress)
+        result->setString("message"_s, "A session is being created"_s);
     else
         result->setString("message"_s, "Maximum number of sessions created"_s);
 
-    completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, WTF::move(result)));
+    replyHandler(WebSocketMessageHandler::Message::reply("success"_s, id, WTF::move(result)));
 }
 
 void WebDriverService::clientDisconnected(const WebSocketMessageHandler::Connection& connection)

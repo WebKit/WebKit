@@ -73,8 +73,9 @@ const String& Session::shadowRootIdentifier()
     return shadowRootID;
 }
 
-Session::Session(Ref<SessionHost>&& host)
+Session::Session(Ref<SessionHost>&& host, HasHTTPFlag hasHTTPFlag)
     : m_host(WTF::move(host))
+    , m_hasHTTPFlag(hasHTTPFlag == HasHTTPFlag::Yes)
     , m_scriptTimeout(defaultScriptTimeout)
     , m_pageLoadTimeout(defaultPageLoadTimeout)
     , m_implicitWaitTimeout(defaultImplicitWaitTimeout)
@@ -85,8 +86,8 @@ Session::Session(Ref<SessionHost>&& host)
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-Session::Session(Ref<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer)
-    : Session(WTF::move(host))
+Session::Session(Ref<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer, HasHTTPFlag hasHTTPFlag)
+    : Session(WTF::move(host), hasHTTPFlag)
 {
     m_bidiServer = WTF::move(bidiServer);
     m_host->setBidiHandler(this);
@@ -266,6 +267,46 @@ void Session::createTopLevelBrowsingContext(Function<void(CommandResult&&)>&& co
 
         switchToTopLevelBrowsingContext(handle);
         completionHandler(CommandResult::success());
+    });
+}
+
+void Session::getUserAgent(Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!m_currentBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    auto parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+    parameters->setString("function"_s, "function() { return navigator.userAgent; }"_s);
+    parameters->setArray("arguments"_s, JSON::Array::create());
+    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTF::move(parameters), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        if (response.isError || !response.responseObject) {
+            completionHandler(CommandResult::fail(WTF::move(response.responseObject)));
+            return;
+        }
+
+        auto valueString = response.responseObject->getString("result"_s);
+        if (!valueString) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not retrieve user agent from browsing context"_s));
+            return;
+        }
+
+        auto resultValue = JSON::Value::parseJSON(valueString);
+        if (!resultValue) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not parse user agent"_s));
+            return;
+        }
+
+        auto userAgent = resultValue->asString();
+        if (userAgent.isNull()) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "User agent is not a string"_s));
+            return;
+        }
+
+        completionHandler(CommandResult::success(JSON::Value::create(userAgent)));
     });
 }
 
