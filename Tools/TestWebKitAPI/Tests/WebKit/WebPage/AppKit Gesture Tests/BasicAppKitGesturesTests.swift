@@ -2287,6 +2287,56 @@ extension AppKitGesturesTests.Basic {
         #expect(abs(reported - (lastClientY - firstClientY)) <= 2)
     }
 
+    @Test
+    func dragOverRangeInputChangesValueAfterPageCancelsDragStart() async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let html = """
+            <body style="margin: 0;">
+                <img id="img" src="400x400-green.png" style="display: block; margin: 50px; width: 200px; height: 200px;">
+                <input id="slider" type="range" min="0" max="10" value="0" style="display: block; margin: 50px; width: 300px;">
+                <script>
+                    const slider = document.getElementById("slider");
+                    window.sliderValue = Number(slider.value);
+                    window.sliderEvents = [];
+                    slider.addEventListener("input", () => { window.sliderValue = Number(slider.value); });
+                    slider.addEventListener("mousedown", event => window.sliderEvents.push(event.type));
+                    document.addEventListener("dragstart", event => event.preventDefault());
+                </script>
+            </body>
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        // Dragging the image attempts to start a drag, but the page cancels dragstart.
+        let imgBounds = try await screenBounds(ofElementWithID: "img")
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: imgBounds.center,
+                end: CGPoint(x: imgBounds.center.x + 300, y: imgBounds.center.y),
+                duration: .seconds(1.5),
+                pressAndWait: .seconds(1.0)
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        // A subsequent drag should allow mouse tracking.
+        let sliderBounds = try await screenBounds(ofElementWithID: "slider")
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: CGPoint(x: sliderBounds.minX + 10, y: sliderBounds.center.y),
+                end: CGPoint(x: sliderBounds.maxX, y: sliderBounds.center.y),
+                duration: .seconds(0.5),
+                release: true
+            )
+        }
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        #expect(try await sliderEvents() == ["mousedown"])
+        #expect(try await sliderValue() > 0)
+    }
+
     @Test(
         .bug("https://webkit.org/b/315155", "Gesture-driven drag-and-drop does not recognize <img> elements")
     )

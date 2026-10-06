@@ -64,6 +64,7 @@ NS_SWIFT_UI_ACTOR
 - (void)beginSuppressingSingleClickGestureForTextSelection;
 - (void)endSuppressingSingleClickGestureForTextSelection;
 - (NSGestureRecognizer *)activeDragGestureRecognizer;
+- (void)didReceiveDragStart;
 - (void)setGestureDraggingSession:(NSDraggingSession *)session;
 - (void)clearGestureDragState;
 - (void)setTextSelectionDragGesture:(NSGestureRecognizer *)gesture completionHandler:(void (^)(NSDraggingSession *))completionHandler;

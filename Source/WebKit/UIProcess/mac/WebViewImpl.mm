@@ -4960,6 +4960,10 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
     // The call below could release the view.
     auto protector = m_view.get();
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    [appKitGestureController() didReceiveDragStart];
+#endif
+
     if (RefPtr frame = WebFrameProxy::webFrame(item.rootFrameID)) {
         // FIXME: The `dragLocationInWindowCoordinates` is in window coordinates (equivalent to root view), but `convertPointToMainFrameCoordinates`
         // expects the input to be in content coordinates of the frame corresponding to the given frame ID.

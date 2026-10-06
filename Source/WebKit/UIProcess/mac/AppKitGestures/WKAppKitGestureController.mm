@@ -282,6 +282,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<NSDraggingSession> _gestureDraggingSession;
     BlockPtr<void(NSDraggingSession *)> _textSelectionDragCompletionHandler;
     bool _dragGestureHasSentMouseDown;
+    bool _dragGestureDidReceiveDragStart;
+    uint64_t _dragIdentifier;
 
     RetainPtr<WKPressGestureRecognizer> _imageAnalysisGestureRecognizer;
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisTextSelectionDeferringGestureRecognizer;
@@ -1522,6 +1524,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     case NSGestureRecognizerStateBegan: {
         [self _handleClickCancelled];
         _dragGestureHasSentMouseDown = false;
+        _dragGestureDidReceiveDragStart = false;
+        ++_dragIdentifier;
 
         RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
         impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
@@ -1552,9 +1556,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         mouseUp = [_dragPressGestureRecognizer eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
         impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
 
-        // We do not clear gesture drag state here since startDrag() may still be in flight via IPC.
-        // State is cleared in draggingSessionEnded: (normal completion) or in startDrag() when
+        // Normally, drag state is cleared in draggingSessionEnded: (normal completion) or in startDrag() when
         // beginDraggingSessionWithItems:gesture: returns nil (gesture ended before session started).
+        // But, if the page prevents dragstart, we won't get startDrag(), so clear the state ourselves.
+        [webView _protectedPage]->doAfterProcessingAllPendingMouseEvents([weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), dragIdentifier = _dragIdentifier] {
+            RetainPtr strongSelf = weakSelf.get();
+            if (!strongSelf || strongSelf->_dragIdentifier != dragIdentifier)
+                return;
+            if (!strongSelf->_dragGestureHasSentMouseDown || strongSelf->_dragGestureDidReceiveDragStart || strongSelf->_gestureDraggingSession)
+                return;
+            strongSelf->_dragGestureHasSentMouseDown = false;
+        });
         break;
     }
     default:
@@ -2072,6 +2084,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _textSelectionDragCompletionHandler = makeBlockPtr(completionHandler);
 }
 
+- (void)didReceiveDragStart
+{
+    _dragGestureDidReceiveDragStart = true;
+}
+
 - (void)setGestureDraggingSession:(NSDraggingSession *)session
 {
     _gestureDraggingSession = session;
@@ -2091,6 +2108,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _textSelectionDragGesture = nil;
     _textSelectionDragCompletionHandler = nullptr;
     _dragGestureHasSentMouseDown = false;
+    _dragGestureDidReceiveDragStart = false;
 }
 
 - (void)reset
