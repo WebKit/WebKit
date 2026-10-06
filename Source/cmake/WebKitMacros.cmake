@@ -2,6 +2,29 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
+# WEBKIT_WRITE_FILE_IF_CHANGED(<path> <content>...) is file(WRITE) that leaves
+# the file alone if it already holds exactly <content>, so that its timestamp,
+# and with it everything built from it, only changes when its content does. Use
+# it rather than file(WRITE) for files written at configure time that the build
+# reads: CMake runs again on most pulls, and a plain file(WRITE) would make each
+# of those rebuild their dependents.
+function(WEBKIT_WRITE_FILE_IF_CHANGED _path)
+    set(_content "")
+    math(EXPR _last "${ARGC} - 1")
+    if (_last GREATER_EQUAL 1)
+        foreach (_i RANGE 1 ${_last})
+            string(APPEND _content "${ARGV${_i}}")
+        endforeach ()
+    endif ()
+    if (EXISTS "${_path}")
+        file(READ "${_path}" _existing)
+        if (_existing STREQUAL _content)
+            return ()
+        endif ()
+    endif ()
+    file(WRITE "${_path}" "${_content}")
+endfunction()
+
 # Translates a definition list into one Swift can be given.
 #
 #   FOO       -> -DFOO       for every language (already valid Swift)
