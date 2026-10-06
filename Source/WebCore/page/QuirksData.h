@@ -137,6 +137,7 @@ struct QuirksData {
         NeedsScrollbarWidthThinDisabledQuirk,
         NeedsSeekingSupportDisabledQuirk,
         NeedsSuppressPostLayoutBoundaryEventsQuirk,
+        NeedsTikTokCaptchaSliderTouchActionQuirk,
         NeedsTikTokOverflowingContentQuirk,
         NeedsVP9FullRangeFlagQuirk,
         NeedsVideoShouldMaintainAspectRatioQuirk,

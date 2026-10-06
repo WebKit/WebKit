@@ -2868,6 +2868,17 @@ std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOver
     return { };
 }
 
+// tiktok.com rdar://problem/183445905
+bool Quirks::needsTikTokCaptchaSliderTouchActionQuirk(const Element& element) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsTikTokCaptchaSliderTouchActionQuirk))
+        return false;
+
+    return element.getIdAttribute() == "secsdk-captcha-drag-wrapper"_s;
+}
+
 // rdar://166400170
 bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const Style::ComputedStyle& elementStyle, const Style::ComputedStyle& parentStyle) const
 {
@@ -3291,6 +3302,8 @@ static void handleTikTokQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
     quirksData.isTikTok = true;
     quirksData.enableQuirks({
+        // tiktok.com rdar://problem/183445905
+        QuirksData::SiteSpecificQuirk::NeedsTikTokCaptchaSliderTouchActionQuirk,
         QuirksData::SiteSpecificQuirk::NeedsTikTokOverflowingContentQuirk,
         // tiktok.com rdar://174179805
         QuirksData::SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,

@@ -1103,6 +1103,10 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
         }
     }
 
+    // tiktok.com rdar://problem/183445905
+    if (documentQuirks.needsTikTokCaptchaSliderTouchActionQuirk(protect(*m_element)))
+        style.setUsedTouchAction(CSS::Keyword::None { });
+
 #if ENABLE(VIDEO)
     if (documentQuirks.needsFullscreenDisplayNoneQuirk()) {
         if (is<HTMLDivElement>(*m_element) && style.display() == DisplayType::None) {
