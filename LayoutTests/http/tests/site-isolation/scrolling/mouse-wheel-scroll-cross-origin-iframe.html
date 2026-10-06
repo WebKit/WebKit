@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+iframe {
+    display: block;
+    border: none;
+}
+</style>
+<body>
+<iframe id="frame" width="300" height="300" src="http://localhost:8000/site-isolation/scrolling/resources/scrollable-frame-reports-scroll.html"></iframe>
+<script>
+description("Verifies that mouse wheel events targeted at a cross-origin iframe actually scroll that iframe's own document.");
+jsTestIsAsync = true;
+
+addEventListener('message', (event) => {
+    if (!event.data || event.data.type != 'scrolled')
+        return;
+    shouldBeTrue("event.data.scrollY > 0");
+    finishJSTest();
+});
+
+window.addEventListener('load', async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+
+    await UIHelper.mouseWheelScrollAt(150, 150, 0, 0, 0, -200);
+    await UIHelper.waitForScrollCompletion();
+}, false);
+</script>
+</body>

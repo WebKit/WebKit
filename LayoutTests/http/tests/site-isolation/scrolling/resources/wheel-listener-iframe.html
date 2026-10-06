@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+</style>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+document.body.style.height = (params.get('height') || 3000) + 'px';
+
+// 'passive': passive listener, cannot block scrolling.
+// 'active-blocking': non-passive listener that calls preventDefault() to block scrolling.
+// 'active-noop': non-passive listener that does nothing, forcing synchronous wheel event
+//     dispatch (see EventHandler::handleWheelEventInternal()) without actually blocking the scroll.
+let lastEvent = null;
+let currentHandler = null;
+
+function onWheelBlocking(event)
+{
+    event.preventDefault();
+    lastEvent = { cancelable: event.cancelable, defaultPrevented: event.defaultPrevented };
+}
+
+function onWheelNoop(event)
+{
+    lastEvent = { cancelable: event.cancelable, defaultPrevented: event.defaultPrevented };
+}
+
+function removeListener()
+{
+    if (currentHandler)
+        removeEventListener('wheel', currentHandler.fn);
+    currentHandler = null;
+}
+
+function addListener(mode)
+{
+    removeListener();
+    if (mode == 'passive')
+        currentHandler = { fn: onWheelBlocking, passive: true };
+    else if (mode == 'active-blocking')
+        currentHandler = { fn: onWheelBlocking, passive: false };
+    else if (mode == 'active-noop')
+        currentHandler = { fn: onWheelNoop, passive: false };
+    else
+        return;
+    addEventListener('wheel', currentHandler.fn, { passive: currentHandler.passive });
+}
+
+if (params.has('mode'))
+    addListener(params.get('mode'));
+
+addEventListener('message', (event) => {
+    if (event.data.command == 'addListener')
+        addListener(event.data.mode);
+    else if (event.data.command == 'removeListener')
+        removeListener();
+    else if (event.data.command == 'query')
+        event.source.postMessage({ scrollY: document.scrollingElement.scrollTop, lastEvent }, '*');
+});
+
+parent.postMessage({ loaded: true }, '*');
+</script>
+</body>

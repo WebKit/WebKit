@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+    <pre id="scrollingTree"></pre>
+</body>
+<script>
+description("Verifies that a cross-origin iframe added after load contributes a frame hosting node to the scrolling tree.");
+jsTestIsAsync = true;
+
+window.addEventListener('load', async () => {
+    if (!window.internals)
+        return
+
+    const iframe = document.createElement('iframe');
+    iframe.width = 200;
+    iframe.height = 100;
+    iframe.src = "http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html";
+    document.body.appendChild(iframe);
+    await new Promise(resolve => iframe.onload = resolve);
+
+    await UIHelper.ensurePresentationUpdate();
+    document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
+    finishJSTest();
+}, false);
+</script>
+<iframe width="300" height="400" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>

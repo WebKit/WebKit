@@ -1,0 +1,90 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+iframe { display: block; border: none; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<script>
+description("Verifies that dynamically adding a non-passive wheel event listener in a cross-origin iframe starts blocking scrolling there, and that removing it again lets scrolling resume.");
+jsTestIsAsync = true;
+
+let frame;
+let result;
+
+function loadFrame()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        frame = document.createElement('iframe');
+        frame.width = 300;
+        frame.height = 300;
+        frame.src = 'http://localhost:8000/site-isolation/scrolling/resources/wheel-listener-iframe.html';
+        document.body.appendChild(frame);
+    });
+}
+
+function queryFrame()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.scrollY === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data);
+        });
+        frame.contentWindow.postMessage({ command: 'query' }, '*');
+    });
+}
+
+async function wheelScroll()
+{
+    // Don't rely on UIHelper.waitForScrollCompletion() since the scrolling happens in another
+    // process. Reset latching before each gesture since these calls are independent attempts,
+    // not a single continuing gesture.
+    await UIHelper.startMonitoringWheelEvents();
+    eventSender.mouseMoveTo(150, 150);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -200, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    let result;
+    for (let i = 0; i < 20; ++i) {
+        await UIHelper.renderingUpdate();
+        result = await queryFrame();
+    }
+    return result;
+}
+
+window.addEventListener('load', async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+
+    await loadFrame();
+    await UIHelper.ensurePresentationUpdate();
+
+    frame.contentWindow.postMessage({ command: 'addListener', mode: 'active-blocking' }, '*');
+    await UIHelper.ensurePresentationUpdate();
+
+    result = await wheelScroll();
+    shouldBeTrue('result.scrollY == 0');
+
+    frame.contentWindow.postMessage({ command: 'removeListener' }, '*');
+    await UIHelper.ensurePresentationUpdate();
+
+    result = await wheelScroll();
+    shouldBeTrue('result.scrollY > 0');
+
+    finishJSTest();
+}, false);
+</script>
+</body>
