@@ -63,23 +63,24 @@ public:
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
-        if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
+        if (formattingContextRoot().writingMode().isLineInverted())
             return contentLogicalTop();
-        for (auto precedingLineIndex = m_lineIndex; precedingLineIndex--;) {
-            auto precedingLineBox = LineBoxIteratorModernPath { *m_inlineContent, precedingLineIndex };
-            if (!precedingLineBox.line().hasContentfulInFlowBox())
-                continue;
-            if (precedingLineBox.hasBlockLevelBox())
-                break;
-            if (precedingLineBox.logicalBottom() < logicalTop())
-                break;
-            return precedingLineBox.contentLogicalBottom();
-        }
+        if (auto lineBox = precedingLineBox())
+            return adjustedContentLogicalBottom(*lineBox, *this);
+        if (followingLineBox())
+            return std::min(logicalTop(), contentLogicalTop());
         return contentLogicalTop();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        if (!formattingContextRoot().writingMode().isLineInverted()) {
+            if (auto lineBox = followingLineBox())
+                return adjustedContentLogicalBottom(*this, *lineBox);
+            if (precedingLineBox())
+                return std::max(logicalBottom(), contentLogicalBottom());
+            return contentLogicalBottom();
+        }
+        if (m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         auto followingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 };
         if (followingLineBox.hasBlockLevelBox())
@@ -153,6 +154,45 @@ public:
 
 private:
     void setAtEnd() { m_lineIndex = lines().size(); }
+
+    std::optional<LineBoxIteratorModernPath> precedingLineBox() const
+    {
+        for (auto precedingLineIndex = m_lineIndex; precedingLineIndex--;) {
+            auto lineBox = LineBoxIteratorModernPath { *m_inlineContent, precedingLineIndex };
+            if (!lineBox.hasContentfulInFlowBox())
+                continue;
+            if (lineBox.hasBlockLevelBox())
+                break;
+            if (lineBox.logicalBottom() < logicalTop())
+                break;
+            return lineBox;
+        }
+        return { };
+    }
+
+    std::optional<LineBoxIteratorModernPath> followingLineBox() const
+    {
+        if (!hasContentfulInFlowBox() || hasBlockLevelBox())
+            return { };
+        for (auto followingLineIndex = m_lineIndex + 1; followingLineIndex < lines().size(); ++followingLineIndex) {
+            auto lineBox = LineBoxIteratorModernPath { *m_inlineContent, followingLineIndex };
+            if (!lineBox.hasContentfulInFlowBox())
+                continue;
+            if (logicalBottom() < lineBox.logicalTop())
+                break;
+            return lineBox;
+        }
+        return { };
+    }
+
+    static float adjustedContentLogicalBottom(const LineBoxIteratorModernPath& precedingLineBox, const LineBoxIteratorModernPath& followingLineBox)
+    {
+        auto precedingContentLogicalBottom = precedingLineBox.contentLogicalBottom();
+        auto followingContentLogicalTop = followingLineBox.contentLogicalTop();
+        if (precedingContentLogicalBottom >= followingContentLogicalTop)
+            return precedingContentLogicalBottom;
+        return std::clamp(followingLineBox.logicalTop(), precedingContentLogicalBottom, followingContentLogicalTop);
+    }
 
     const InlineDisplay::Lines& lines() const LIFETIME_BOUND { return m_inlineContent->displayContent().lines; }
     const InlineDisplay::Line& line() const LIFETIME_BOUND { return lines()[m_lineIndex]; }
