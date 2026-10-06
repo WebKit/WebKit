@@ -489,8 +489,12 @@ inline bool MarkedBlock::Handle::isEmpty()
 
 inline void MarkedBlock::Handle::setIsDestructible(bool value)
 {
-    Locker locker { m_directory->bitvectorLock() };
     m_directory->assertIsMutatorOrMutatorIsStopped();
+    if (m_directory->isDestructible(this) == value)
+        return;
+
+    m_directory->releaseAssertAcquiredBitVectorLock();
+    Locker locker { m_directory->bitvectorLock() };
     return m_directory->setIsDestructible(this, value);
 }
 
