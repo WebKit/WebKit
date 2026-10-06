@@ -419,9 +419,14 @@ public:
             m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
     }
 
+    RefPtr<NavigationHistoryEntry> findEntry(const LocalFrame& localFrame) const
+    {
+        return protect(protect(localFrame.window())->navigation())->findEntryByKey(m_key);
+    }
+
     std::optional<Ref<HistoryItem>> findBackForwardItemByKey(const LocalFrame& localFrame) const
     {
-        RefPtr entry = protect(protect(localFrame.window())->navigation())->findEntryByKey(m_key);
+        RefPtr entry = findEntry(localFrame);
         if (!entry)
             return std::nullopt;
 
@@ -457,6 +462,20 @@ public:
             return;
         }
 
+        // The UI process resolves the target and applies the traversal in order with the page's other traversals, so nothing here needs a synchronous message to it.
+        if (page->settings().useUIProcessForBackForwardItemLoading()) {
+            RefPtr entry = findEntry(*localFrame);
+            if (!entry) {
+                m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
+                return;
+            }
+            Ref historyItem = entry->associatedHistoryItem();
+            localFrame->loader().client().dispatchEnqueueHistoryTraversalToItem(historyItem->frameItemID(), [completionHandler = std::exchange(m_completionHandler, nullptr)](bool didTakeTraversal) mutable {
+                completionHandler(didTakeTraversal ? ScheduleHistoryNavigationResult::Completed : ScheduleHistoryNavigationResult::Aborted);
+            });
+            return;
+        }
+
         auto historyItem = findBackForwardItemByKey(*localFrame);
         if (!historyItem) {
             m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
@@ -489,6 +508,15 @@ public:
         RefPtr page { localFrame->page() };
         if (!page)
             return false;
+
+        // Answered from the entry itself; the lookup below asks the UI process synchronously.
+        if (page->settings().useUIProcessForBackForwardItemLoading()) {
+            RefPtr entry = findEntry(*localFrame);
+            if (!entry)
+                return false;
+            Ref historyItem = entry->associatedHistoryItem();
+            return equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), historyItem->url());
+        }
 
         auto historyItem = findBackForwardItemByKey(*localFrame);
         if (!historyItem)

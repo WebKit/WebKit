@@ -1756,6 +1756,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::FindDecorationStyle': ['"WebFindOptions.h"'],
         'WebKit::FindOptions': ['"WebFindOptions.h"'],
         'WebKit::FrameState': ['"SessionState.h"'],
+        'WebKit::FrameTraversalResult': ['"GoToBackForwardItemParameters.h"'],
         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],
         'WebKit::GestureType': ['"GestureTypes.h"'],
         'WebKit::InputType': ['"FocusedElementInformation.h"'],

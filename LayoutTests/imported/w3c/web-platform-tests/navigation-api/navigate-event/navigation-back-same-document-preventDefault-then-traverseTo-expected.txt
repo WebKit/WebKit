@@ -1,0 +1,3 @@
+
+PASS navigation.traverseTo() after a same-document navigation.back() is canceled by preventDefault
+

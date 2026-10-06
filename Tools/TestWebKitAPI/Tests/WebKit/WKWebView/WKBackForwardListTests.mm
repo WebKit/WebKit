@@ -2327,6 +2327,45 @@ static void runIframeBackThenPushStateAdjustsAggregatedTraversalTest(BOOL useUIP
     EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL1.UTF8String);
 }
 
+// The second traversal is scheduled in a later task, after the first one has been sent, so it must wait for the first one
+// to move the current item instead of resolving its delta against the same item. The queue may still coalesce the two.
+// Only the UI process's traversal queue orders them; without UseUIProcessForBackForwardItemLoading the later one is lost.
+static void runTraversalInLaterTaskWaitsForPendingBackTest(NSString *laterTraversal, NSString *expectedURL, unsigned expectedBackCount)
+{
+    RetainPtr webView = webViewForCoalescingTests(YES);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL2]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+    if (expectedBackCount) {
+        [webView goBack];
+        waitForFinishCount(4);
+    }
+
+    finishCount = 0;
+    [webView _evaluateJavaScriptWithoutUserGesture:[NSString stringWithFormat:@"history.back(); setTimeout(() => %@, 0);", laterTraversal] completionHandler:nil];
+    for (unsigned i = 0; i < 200 && finishCount < 2; ++i)
+        TestWebKitAPI::Util::runFor(10_ms);
+    TestWebKitAPI::Util::runFor(0.2_s);
+
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, expectedURL.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, expectedBackCount);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 2 - expectedBackCount);
+}
+
 TEST(WKBackForwardList, SynchronousBackForwardGoesNowhere)
 {
     runSynchronousBackForwardGoesNowhereTest(NO);
@@ -2385,6 +2424,16 @@ TEST(WKBackForwardList, IframeBackThenPushStateAdjustsAggregatedTraversal)
 TEST(WKBackForwardList, IframeBackThenPushStateAdjustsAggregatedTraversalWithUIProcessLoading)
 {
     runIframeBackThenPushStateAdjustsAggregatedTraversalTest(YES);
+}
+
+TEST(WKBackForwardList, BackInLaterTaskWaitsForPendingBackWithUIProcessLoading)
+{
+    runTraversalInLaterTaskWaitsForPendingBackTest(@"history.back()", loadableURL1, 0);
+}
+
+TEST(WKBackForwardList, ForwardInLaterTaskWaitsForPendingBackWithUIProcessLoading)
+{
+    runTraversalInLaterTaskWaitsForPendingBackTest(@"history.forward()", loadableURL2, 1);
 }
 
 #if ENABLE(IPC_TESTING_API)
