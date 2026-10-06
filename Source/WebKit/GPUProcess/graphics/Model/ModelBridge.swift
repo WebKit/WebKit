@@ -22,12 +22,11 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Metal
-import WebKit
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
-import RealityKit
-import USDKit
-import DirectResource
+@_weakLinked import RealityKit
+@_weakLinked import USDKit
+@_weakLinked import DirectResource
 #endif
 
 @objc
@@ -228,21 +227,6 @@ extension WKBridgeTypedResourceId {
         self.value = value.uuidString
         self.path = path
         self.cachedHashValue = hashValue
-    }
-
-    public override var hash: Int {
-        cachedHashValue
-    }
-
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? WKBridgeTypedResourceId else {
-            return false
-        }
-        return self.cachedHashValue == other.cachedHashValue
-    }
-
-    public override var description: String {
-        path + "@" + value
     }
 }
 

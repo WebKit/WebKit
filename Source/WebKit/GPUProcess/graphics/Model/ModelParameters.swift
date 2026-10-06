@@ -23,9 +23,10 @@
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 
-import USDKit
-import RealityKit
+@_weakLinked import USDKit
+@_weakLinked import RealityKit
 
+@_expose(!Cxx)
 func makeParameters(
     for function: any LowLevelMaterialResource.Function,
     renderContext: any LowLevelRenderContext,
@@ -42,6 +43,7 @@ func makeParameters(
     )
 }
 
+@_expose(!Cxx)
 func makeParameters(
     for material: LowLevelMaterialResource,
     renderContext: any LowLevelRenderContext,
