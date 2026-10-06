@@ -127,7 +127,6 @@ private:
 
     RetainPtr<SOAuthorizationViewController> m_viewController;
 #if PLATFORM(MAC)
-    RetainPtr<NSViewController> m_presentingViewController;
     RetainPtr<NSWindow> m_sheetWindow;
     RetainPtr<NSObject> m_sheetWindowWillCloseObserver;
     RetainPtr<NSObject> m_presentingWindowDidDeminiaturizeObserver;
