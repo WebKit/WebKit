@@ -482,6 +482,8 @@ struct LiveResizeSnapshotState {
     std::optional<std::pair<WebKit::TransactionID, LiveResizeSnapshotState>> _liveResizeSnapshotState;
 #endif
     CGFloat _lastAdjustmentForScroller;
+    BOOL _didAdjustScrollViewForKeyboardInCurrentRunLoopIteration;
+    RetainPtr<NSDictionary> _pendingKeyboardInfoForScrollViewAdjustment;
 
     std::pair<CGSize, UIInterfaceOrientation> _lastKnownWindowSizeAndOrientation;
     RetainPtr<NSTimer> _endLiveResizeTimer;
