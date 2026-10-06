@@ -162,7 +162,6 @@
 #include <WebKitAdditions/AXCustomColorBackdropContext.h>
 #endif
 
-#include "LayoutContext.h"
 
 #define PAGE_ID (m_frame->pageID() ? m_frame->pageID()->toUInt64() : 0)
 #define FRAME_ID m_frame->frameID().toUInt64()

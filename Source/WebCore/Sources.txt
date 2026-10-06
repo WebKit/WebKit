@@ -2081,25 +2081,12 @@ inspector/agents/worker/WorkerNetworkAgent.cpp
 inspector/agents/worker/WorkerRuntimeAgent.cpp
 inspector/agents/worker/WorkerTimelineAgent.cpp
 inspector/agents/worker/WorkerWorkerAgent.cpp
-layout/FormattingState.cpp
-layout/LayoutContext.cpp @header:RenderStyleGetters
-layout/LayoutPhase.cpp
 layout/LayoutState.cpp
 layout/LayoutUnits.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp @header:RenderStyleGetters
 layout/floats/PlacedFloats.cpp @header:RenderStyleGetters
-layout/formattingContexts/FormattingContext.cpp @header:RenderStyleGetters
-layout/formattingContexts/FormattingGeometry.cpp @header:RenderStyleGetters
-layout/formattingContexts/FormattingQuirks.cpp @header:RenderStyleGetters
-layout/formattingContexts/block/BlockFormattingContext.cpp @header:RenderStyleGetters
-layout/formattingContexts/block/BlockFormattingGeometry.cpp @header:RenderStyleGetters
-layout/formattingContexts/block/BlockFormattingQuirks.cpp @header:RenderStyleGetters
 layout/formattingContexts/block/BlockFormattingState.cpp
-layout/formattingContexts/block/BlockMarginCollapse.cpp @header:RenderStyleGetters
-layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp @header:RenderStyleGetters
-layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp @header:RenderStyleGetters
-layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexFormattingUtils.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexLineBreaker.cpp
@@ -2142,12 +2129,6 @@ layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp @header:Ren
 layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp @header:RenderStyleGetters
 layout/formattingContexts/inline/text/TextBreakingPositionCache.cpp @header:RenderStyleGetters
 layout/formattingContexts/inline/text/TextUtil.cpp @header:RenderStyleGetters
-layout/formattingContexts/table/TableFormattingContext.cpp @header:RenderStyleGetters
-layout/formattingContexts/table/TableFormattingGeometry.cpp @header:RenderStyleGetters
-layout/formattingContexts/table/TableFormattingQuirks.cpp @header:RenderStyleGetters
-layout/formattingContexts/table/TableFormattingState.cpp @header:RenderStyleGetters
-layout/formattingContexts/table/TableGrid.cpp
-layout/formattingContexts/table/TableLayout.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp @header:RenderStyleGetters
 layout/integration/LayoutIntegrationCoverage.cpp @header:RenderStyleGetters

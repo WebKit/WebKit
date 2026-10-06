@@ -49,6 +49,8 @@ private:
     Box* nextSibling() = delete;
 };
 
+const InitialContainingBlock& NODELETE initialContainingBlock(const Box&);
+
 }
 }
 

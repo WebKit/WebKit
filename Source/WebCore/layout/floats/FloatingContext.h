@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "FormattingContext.h"
+#include <WebCore/FormattingConstraints.h>
 #include <WebCore/LayoutElementBox.h>
+#include <WebCore/LayoutUnits.h>
 #include <WebCore/PlacedFloats.h>
 #include <wtf/TZoneMalloc.h>
 

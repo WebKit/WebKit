@@ -33,7 +33,6 @@
 #include "FrameInlines.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutContext.h"
 #include "LayoutDisallowedScope.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LayoutIntegrationLineLayout.h"

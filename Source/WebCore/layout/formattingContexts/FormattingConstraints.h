@@ -51,13 +51,9 @@ struct ConstraintsForInFlowContent {
 
     enum BaseTypeFlag : uint8_t {
         GenericContent,
-        InlineContent,
-        TableContent,
-        FlexContent
+        InlineContent
     };
     bool isConstraintsForInlineContent() const { return baseTypeFlags().contains(InlineContent); }
-    bool isConstraintsForTableContent() const { return baseTypeFlags().contains(TableContent); }
-    bool isConstraintsForFlexContent() const { return baseTypeFlags().contains(FlexContent); }
 
 protected:
     ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, EnumSet<BaseTypeFlag>);

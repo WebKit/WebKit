@@ -31,7 +31,6 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutPhase.h"
 #include "LayoutShape.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
@@ -91,8 +90,6 @@ void Box::updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::Co
 
 bool Box::establishesFormattingContext() const
 {
-    // We need the final tree structure to tell whether a box establishes a certain formatting context. 
-    ASSERT(!Phase::isInTreeBuilding());
     return establishesInlineFormattingContext()
         || establishesBlockFormattingContext()
         || establishesTableFormattingContext()
@@ -615,6 +612,46 @@ void Box::removeRareData()
     setHasRareData(false);
 }
 
-}
+const ElementBox& containingBlock(const Box& layoutBox)
+{
+    // If we ever end up here with the ICB, we must be doing something not-so-great.
+    RELEASE_ASSERT(!is<InitialContainingBlock>(layoutBox));
+    // The containing block in which the root element lives is a rectangle called the initial containing block.
+    // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
+    // content edge of the nearest block container ancestor box or which establishes a formatting context.
+    // If the element has 'position: fixed', the containing block is established by the viewport
+    // If the element has 'position: absolute', the containing block is established by the nearest ancestor with a
+    // 'position' of 'absolute', 'relative' or 'fixed'.
+    if (!layoutBox.isPositioned() || layoutBox.isInFlowPositioned()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* ancestor = &layoutBox.parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForInFlow())
+                return *ancestor;
+        }
+        return *ancestor;
+    }
+
+    if (layoutBox.isFixedPositioned()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* ancestor = &layoutBox.parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForFixedPosition())
+                return *ancestor;
+        }
+        return *ancestor;
+    }
+
+    if (layoutBox.isOutOfFlowPositioned()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* ancestor = &layoutBox.parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForOutOfFlowPosition())
+                return *ancestor;
+        }
+        return *ancestor;
+    }
+
+    ASSERT_NOT_REACHED();
+    return layoutBox.parent();
 }
 
+}
+}

@@ -44,7 +44,6 @@
 #include "InlineTextItem.h"
 #include "IntrinsicWidthHandler.h"
 #include "LayoutBox.h"
-#include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
