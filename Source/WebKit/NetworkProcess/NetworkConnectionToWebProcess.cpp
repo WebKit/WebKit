@@ -744,7 +744,7 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
         WebCore::prefetchDNS(hostname);
 }
 
-void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
 #if ENABLE(SERVER_PRECONNECT)
     CheckedPtr networkSession = this->networkSession();
@@ -758,6 +758,11 @@ void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier
     parameters.parentPID = legacyPresentingApplicationPID();
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    UNUSED_PARAM(advancedPrivacyProtections);
+#else
+    parameters.advancedPrivacyProtections = advancedPrivacyProtections;
+#endif // RC_REMOVE_SEC_ACCEL_3
     parameters.request = ResourceRequest { WTF::move(url) };
 
     auto pingURL = parameters.request.url();
@@ -767,7 +772,7 @@ void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier
 #else
     ASSERT_NOT_REACHED();
     completionHandler(makeUnexpected(internalError(url)));
-#endif
+#endif // ENABLE(SERVER_PRECONNECT)
 }
 
 void NetworkConnectionToWebProcess::preconnectTo(PreconnectRequest&& preconnectRequest)

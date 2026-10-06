@@ -2448,7 +2448,7 @@ public:
     WebContextMenuProxy* activeContextMenu() const { return m_activeContextMenu.get(); }
 #endif
 
-    void preconnectTo(WebCore::ResourceRequest&&);
+    void preconnectTo(WebCore::ResourceRequest&&, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
 
     bool canUseCredentialStorage() { return m_canUseCredentialStorage; }
     void setCanUseCredentialStorage(bool);

@@ -76,7 +76,7 @@ private:
     void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
     void retrieveEntryFromStorage(const SubresourceInfo&, RetrieveCompletionHandler&&);
     void revalidateSubresource(const SubresourceInfo&, std::unique_ptr<Entry>, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
-    void preconnectForSubresource(const SubresourceInfo&, Entry*, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>);
+    void preconnectForSubresource(const SubresourceInfo&, Entry*, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
     bool satisfyPendingRequests(const Key&, Entry*);
     void retrieveSubresourcesEntry(const Key& storageKey, WTF::Function<void (std::unique_ptr<SubresourcesEntry>)>&&);
     void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&, bool, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
