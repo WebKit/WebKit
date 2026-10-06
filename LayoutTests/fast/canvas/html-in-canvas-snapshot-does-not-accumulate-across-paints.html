@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+<style>
+#canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+#child {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 128, 0, 0.5);
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="50" height="50" content="drawable">
+    <div id="child"></div>
+</canvas>
+<script>
+description("Tests that repainting a drawable element without a layout does not accumulate drawing in its snapshot.");
+jsTestIsAsync = true;
+
+const canvas = document.getElementById("canvas");
+const child = document.getElementById("child");
+const context = canvas.getContext("2d", { willReadFrequently: true });
+
+// Resolves after the next frame has been painted.
+function nextFrame() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+var pixel;
+
+function capturePixel() {
+    context.clearRect(0, 0, 50, 50);
+    context.drawElementImage(child, 0, 0);
+    pixel = context.getImageData(25, 25, 1, 1).data;
+}
+
+async function runTest() {
+    await nextFrame();
+    capturePixel();
+    shouldBeCloseTo("pixel[3]", 128, 2);
+
+    // Background color changes only trigger a repaint, not a layout.
+    const colors = ["rgba(0, 0, 128, 0.5)", "rgba(0, 128, 0, 0.5)", "rgba(0, 0, 128, 0.5)"];
+    for (const color of colors) {
+        child.style.backgroundColor = color;
+        await nextFrame();
+    }
+
+    capturePixel();
+    shouldBeCloseTo("pixel[1]", 0, 2);
+    shouldBeCloseTo("pixel[2]", 128, 2);
+    shouldBeCloseTo("pixel[3]", 128, 2);
+}
+
+window.onload = () => {
+    runTest().catch(e => testFailed("Unexpected exception: " + e)).finally(finishJSTest);
+};
+</script>
+</body>
+</html>

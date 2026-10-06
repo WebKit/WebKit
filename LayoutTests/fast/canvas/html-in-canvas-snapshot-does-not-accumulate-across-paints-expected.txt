@@ -1,0 +1,13 @@
+Tests that repainting a drawable element without a layout does not accumulate drawing in its snapshot.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pixel[3] is within 2 of 128
+PASS pixel[1] is within 2 of 0
+PASS pixel[2] is within 2 of 128
+PASS pixel[3] is within 2 of 128
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

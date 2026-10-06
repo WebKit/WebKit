@@ -145,22 +145,24 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     if (!innerRenderer)
         return;
 
+    // Snapshot each drawable child once per paint, painting all of its phases atomically into a fresh
+    // recorder, so the snapshot doesn't accumulate drawing from previous paints.
+    if (paintInfo.phase != PaintPhase::Foreground)
+        return;
+
     for (CheckedRef child : childrenOfType<RenderElement>(*innerRenderer)) {
         PaintInfo childPaintInfo(paintInfo);
         auto& context = paintInfo.context();
 
-        auto addResult = m_drawableRendererSnapshotRecorderMap.ensure(child.get(), [&] {
-            auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
-            auto boundingRect = child->absoluteBoundingBoxRect();
-            auto initialTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-            auto snapshotRecorder =  makeUniqueRef<DisplayList::RecorderImpl>(initialState, boundingRect, initialTransform, context.colorSpace());
-            snapshotRecorder->translate(-boundingRect.x(), -boundingRect.y());
-            return snapshotRecorder;
-        });
+        auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
+        auto boundingRect = child->absoluteBoundingBoxRect();
+        auto initialTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        auto snapshotRecorder = makeUniqueRef<DisplayList::RecorderImpl>(initialState, boundingRect, initialTransform, context.colorSpace());
+        snapshotRecorder->translate(-boundingRect.x(), -boundingRect.y());
 
-        auto& snapshotRecorder = addResult.iterator->value.get();
-        childPaintInfo.setContext(snapshotRecorder);
-        child->paint(childPaintInfo, paintOffset);
+        childPaintInfo.setContext(snapshotRecorder.get());
+        child->paintAsInlineBlock(childPaintInfo, paintOffset);
+        m_drawableRendererSnapshotRecorderMap.set(child.get(), WTF::move(snapshotRecorder));
     }
 }
 
