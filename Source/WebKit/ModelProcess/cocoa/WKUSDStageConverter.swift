@@ -30,8 +30,7 @@ import WebKit_Internal
 
 #if canImport(_USDKit_RealityKit)
 
-// FIXME: radar://141774327
-@_weakLinked @_spi(Eryx) import _USDKit_RealityKit
+import USDKit_SPI
 
 extension os.Logger {
     fileprivate static let usdStageConverter = Logger(subsystem: "com.apple.WebKit", category: "USDStageConverter")
@@ -44,7 +43,7 @@ extension WKUSDStageConverter {
     class func convert(_ data: Data) -> Data? {
         let stage: UsdStage
         do {
-            stage = try UsdStage.open(buffer: data)
+            stage = try UsdStage.open(buffer: data, initialLoadSet: .loadAll)
         } catch {
             Logger.usdStageConverter.error("WKUSDStageConverter: Failed to open stage: \(error)")
             return nil

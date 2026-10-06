@@ -26,6 +26,7 @@
 import CryptoKit
 import CoreGraphics
 import CoreImage
+import IOSurface
 import os
 import UniformTypeIdentifiers
 import WebKit_Internal

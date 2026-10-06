@@ -1,0 +1,25 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -module-abi-name USDKit -module-name USDKit_SPI
+import Foundation
+import Swift
+@_exported import USDKit
+
+public struct UsdStage {
+  public enum InitialLoadSet {
+    case loadAll
+  }
+
+  // USDKit.UsdStage.open(buffer:initialLoadSet:) throws -> USDKit.UsdStage
+  @_silgen_name("$s6USDKit8UsdStageV4open6buffer14initialLoadSetAC10Foundation4DataV_AC07InitialgH0OtKFZ")
+  public static func open(buffer: Foundation.Data, initialLoadSet: InitialLoadSet) throws -> UsdStage
+
+  public struct ExportOptions {
+    // USDKit.UsdStage.ExportOptions.preferSmallMeshFiles.getter : USDKit.UsdStage.ExportOptions
+    @_silgen_name("$s6USDKit8UsdStageV13ExportOptionsV20preferSmallMeshFilesAEvgZ")
+    public static var preferSmallMeshFiles: ExportOptions { get }
+  }
+
+  // USDKit.UsdStage.export(options:) throws -> Foundation.Data
+  @_silgen_name("$s6USDKit8UsdStageV6export7options10Foundation4DataVAC13ExportOptionsV_tKF")
+  public func export(options: ExportOptions) throws -> Foundation.Data
+}
