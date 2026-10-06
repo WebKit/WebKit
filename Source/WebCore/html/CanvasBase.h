@@ -57,6 +57,7 @@ enum class ShouldApplyPostProcessingToDirtyRect : bool { No, Yes };
 
 class CanvasDisplayBufferObserver : public AbstractRefCountedAndCanMakeWeakPtr<CanvasDisplayBufferObserver> {
 public:
+    CanvasDisplayBufferObserver();
     virtual ~CanvasDisplayBufferObserver();
 
     virtual void canvasDisplayBufferPrepared(CanvasBase&) = 0;

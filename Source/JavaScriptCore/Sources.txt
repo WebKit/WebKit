@@ -345,7 +345,7 @@ dfg/DFGBackwardsPropagationPhase.cpp
 dfg/DFGBasicBlock.cpp
 dfg/DFGBlockInsertionSet.cpp
 dfg/DFGBlockSet.cpp
-dfg/DFGByteCodeParser.cpp
+dfg/DFGByteCodeParser.cpp @cost:12
 dfg/DFGCFAPhase.cpp
 dfg/DFGCFGSimplificationPhase.cpp
 dfg/DFGCPSRethreadingPhase.cpp
@@ -421,7 +421,7 @@ dfg/DFGOSRExitFuzz.cpp
 dfg/DFGOSRExitJumpPlaceholder.cpp
 dfg/DFGObjectAllocationSinkingPhase.cpp
 dfg/DFGObjectMaterializationData.cpp
-dfg/DFGOperations.cpp
+dfg/DFGOperations.cpp @cost:18
 dfg/DFGPhantomInsertionPhase.cpp
 dfg/DFGPhase.cpp
 dfg/DFGPhiChildren.cpp

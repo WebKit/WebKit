@@ -43,6 +43,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOMKeywordValue);
 
+CSSOMKeywordValue::CSSOMKeywordValue(const String& value)
+    : m_value(value)
+{
+}
+
 Ref<CSSOMKeywordValue> CSSOMKeywordValue::rectifyKeywordish(CSSOMKeywordish&& keywordish)
 {
     // https://drafts.css-houdini.org/css-typed-om/#rectify-a-keywordish-value

@@ -51,20 +51,8 @@ public:
     NODELETE static Ref<CachedScriptFetcher> create(const AtomString& charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriority, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
-        : m_nonce(nonce)
-        , m_charset(charset)
-        , m_initiatorType(initiatorType)
-        , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
-        , m_referrerPolicy(referrerPolicy)
-        , m_fetchPriority(fetchPriority)
-    {
-    }
-
-    explicit CachedScriptFetcher(const AtomString& charset)
-        : m_charset(charset)
-    {
-    }
+    CachedScriptFetcher(const String& nonce, ReferrerPolicy, RequestPriority fetchPriority, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    explicit CachedScriptFetcher(const AtomString& charset);
 
     RefPtr<CachedResource> requestResourceWithCache(Document&, const URL& sourceURL, FetchOptionsDestination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority>, std::optional<ServiceWorkersMode>, const URL& referrer = { }) const;
 

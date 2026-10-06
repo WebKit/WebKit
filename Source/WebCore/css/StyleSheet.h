@@ -38,6 +38,7 @@ class WebCoreOpaqueRoot;
 
 class StyleSheet : public RefCounted<StyleSheet> {
 public:
+    StyleSheet();
     virtual ~StyleSheet();
 
     virtual bool disabled() const = 0;

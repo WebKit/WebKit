@@ -46,7 +46,7 @@ public:
     Node& ownerNode() { return m_owner; }
 
 private:
-    explicit EmptyNodeList(Node& owner) : m_owner(owner) { }
+    explicit EmptyNodeList(Node& owner);
 
     unsigned length() const override { return 0; }
     Node* item(unsigned) const override { return nullptr; }

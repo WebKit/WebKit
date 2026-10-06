@@ -33,6 +33,12 @@
 
 namespace WebCore {
 
+SVGAnimatedString::SVGAnimatedString(SVGElement* contextElement, const IsHrefProperty& isHrefProperty)
+    : SVGAnimatedPrimitiveProperty<String>(contextElement)
+    , m_isHrefProperty(isHrefProperty)
+{
+}
+
 ExceptionOr<void> SVGAnimatedString::setBaseVal(const StringOrTrustedScriptURL& baseVal)
 {
     auto stringValueHolder = WTF::switchOn(baseVal,

@@ -155,6 +155,8 @@ const WebAssemblyBuiltinSet* WebAssemblyBuiltinRegistry::findByQualifiedName(con
     return index != notFound ? &m_builtinSets[index] : nullptr;
 }
 
+WebAssemblyArrayMutI16TypeExpectation::WebAssemblyArrayMutI16TypeExpectation() = default;
+
 bool WebAssemblyArrayMutI16TypeExpectation::isValid(const Wasm::Type& type) const
 {
     if (!type.isRefNull())

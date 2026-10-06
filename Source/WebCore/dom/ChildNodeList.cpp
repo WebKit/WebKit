@@ -33,6 +33,11 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyNodeList);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ChildNodeList);
 
+EmptyNodeList::EmptyNodeList(Node& owner)
+    : m_owner(owner)
+{
+}
+
 EmptyNodeList::~EmptyNodeList()
 {
     m_owner.get().nodeLists()->removeEmptyChildNodeList(this);
