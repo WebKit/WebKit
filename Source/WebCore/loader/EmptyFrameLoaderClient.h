@@ -166,6 +166,7 @@ private:
     void LEGACY_NODELETE shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const final;
     void LEGACY_NODELETE dispatchGoToBackForwardItemAtIndex(int steps) final;
     void LEGACY_NODELETE dispatchEnqueueHistoryTraversalDelta(int delta) final;
+    void dispatchEnqueueHistoryTraversalToItem(BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&&) final;
 
     void LEGACY_NODELETE saveViewStateToItem(HistoryItem&) final;
     bool LEGACY_NODELETE canCachePage() const final;

@@ -2920,7 +2920,26 @@ void WebPage::reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCo
     }
 }
 
-void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
+static bool isLoadingForNavigation(LocalFrame& frame, NavigationIdentifier navigationID)
+{
+    auto& loader = frame.loader();
+    RefPtr policyDocumentLoader = loader.policyDocumentLoader();
+    if (policyDocumentLoader && policyDocumentLoader->navigationID() == navigationID)
+        return true;
+    RefPtr provisionalDocumentLoader = loader.provisionalDocumentLoader();
+    return provisionalDocumentLoader && provisionalDocumentLoader->navigationID() == navigationID;
+}
+
+static bool didApplyTraversal(LocalFrame& frame, HistoryItem& item)
+{
+    auto& loader = frame.loader();
+    if (loader.hasDeferredTraversal())
+        return true;
+    RefPtr currentItem = loader.history().currentItem();
+    return currentItem && currentItem->itemSequenceNumber() == item.itemSequenceNumber();
+}
+
+void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, CompletionHandler<void(FrameTraversalResult)>&& completionHandler)
 {
     WEBPAGE_RELEASE_LOG(Loading, "goToBackForwardItem: navigationID=%" PRIu64 ", backForwardItemID=%s, shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, parameters.navigationID.object().toUInt64(), parameters.frameState->itemID->toString().utf8(), static_cast<unsigned>(parameters.shouldTreatAsContinuingLoad), parameters.lastNavigationWasAppInitiated, parameters.existingNetworkResourceLoadIdentifierToResume ? parameters.existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
     SendStopResponsivenessTimer stopper;
@@ -2967,9 +2986,23 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
         if (targetFrame.ptr() == m_mainFrame.ptr())
             targetLocalFrame->loader().setNavigationUpgradeToHTTPSBehavior(item->url().protocolIs("http"_s) ? NavigationUpgradeToHTTPSBehavior::Disabled : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
-        protect(corePage())->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad, parameters.shouldRestoreFromBackForwardCache);
-    } else
+        // The UI process's traversal queue starts the next traversal once every frame has replied, so reply only after the history policy decision is applied.
+        protect(corePage())->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad, parameters.shouldRestoreFromBackForwardCache, [weakTargetLocalFrame = WeakPtr { *targetLocalFrame }, item = Ref { *item }, navigationID = parameters.navigationID, completionHandler = WTF::move(completionHandler)] mutable {
+            RefPtr targetLocalFrame = weakTargetLocalFrame;
+            if (!targetLocalFrame) {
+                completionHandler(FrameTraversalResult::NotTaken);
+                return;
+            }
+            if (isLoadingForNavigation(*targetLocalFrame, navigationID)) {
+                completionHandler(FrameTraversalResult::StartedLoad);
+                return;
+            }
+            completionHandler(didApplyTraversal(*targetLocalFrame, item) ? FrameTraversalResult::Taken : FrameTraversalResult::NotTaken);
+        });
+    } else {
         WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: No target local frame found for navigationID=%" PRIu64 ", backForwardItemID=%s — navigation silently dropped", parameters.navigationID.object().toUInt64(), parameters.frameState->itemID->toString().utf8());
+        completionHandler(FrameTraversalResult::NotTaken);
+    }
 }
 
 // GoToBackForwardItemWaitingForProcessLaunch should never be sent to the WebProcess. It must always be converted to a GoToBackForwardItem message.

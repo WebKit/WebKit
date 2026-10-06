@@ -209,7 +209,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ScrollBy(enum:uint8_t WebCore::ScrollDirection scrollDirection, enum:uint8_t WebCore::ScrollGranularity scrollGranularity)
     CenterSelectionInVisibleArea()
 
-    GoToBackForwardItem(struct WebKit::GoToBackForwardItemParameters parameters)
+    GoToBackForwardItem(struct WebKit::GoToBackForwardItemParameters parameters) -> (enum:uint8_t WebKit::FrameTraversalResult result)
     GoToBackForwardItemWaitingForProcessLaunch(struct WebKit::GoToBackForwardItemParameters parameters, WebKit::WebPageProxyIdentifier pageID)
     TryRestoreScrollPosition()
 

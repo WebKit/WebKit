@@ -25,16 +25,28 @@
 
 #pragma once
 
+#include <WebCore/BackForwardFrameItemIdentifier.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
+#include <wtf/Markable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
+
+namespace API {
+class Navigation;
+}
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class SessionHistoryTraversalQueue final : public CanMakeCheckedPtr<SessionHistoryTraversalQueue> {
+enum class FrameTraversalResult : uint8_t;
+
+class SessionHistoryTraversalQueue final : public CanMakeCheckedPtr<SessionHistoryTraversalQueue>, public CanMakeWeakPtr<SessionHistoryTraversalQueue> {
     WTF_MAKE_TZONE_ALLOCATED(SessionHistoryTraversalQueue);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SessionHistoryTraversalQueue);
 public:
@@ -42,23 +54,45 @@ public:
     ~SessionHistoryTraversalQueue();
 
     void enqueueDelta(int32_t delta);
+    void enqueueItem(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(bool didTakeTraversal)>&&);
     void cancel();
 
-    // Release any deltas held while a traversal was in flight, once it settles (commit or failure).
-    void traversalDidSettle();
+    // A frame the in-flight traversal was sent to has handled it. When the main frame started a cross-document load, a delta
+    // could resolve against a stale current index until that load commits or fails, so the next traversal waits for it.
+    void frameDidHandleTraversal(WebCore::NavigationIdentifier, FrameTraversalResult, bool isMainFrame);
+    void mainFrameLoadDidFinish();
+    void navigationWasDestroyed(WebCore::NavigationIdentifier);
 
-    // -1 for a back traversal, +1 for forward, 0 when none is in flight. A dispatched traversal always
-    // has a non-zero delta, so this doubles as the "traversal in flight" flag.
-    int32_t inFlightDirection() const { return m_inFlightDirection; }
+    // -1 for a back traversal, +1 for forward, and 0 when no traversal is in flight or it targets an item rather than a delta.
+    int32_t inFlightDirection() const { return m_inFlightTraversal ? m_inFlightTraversal->direction : 0; }
 
 private:
+    void scheduleFlush();
     void flush();
+    CompletionHandler<void()> startTraversal(int8_t direction, CompletionHandler<void(bool didTakeTraversal)>&& = { });
+    void traversalWasDispatched(API::Navigation*);
+    void finishTraversalIfDone();
+
+    struct ItemTraversal {
+        WebCore::BackForwardFrameItemIdentifier frameItemID;
+        CompletionHandler<void(bool)> completionHandler;
+    };
+
+    struct InFlightTraversal {
+        uint64_t identifier { 0 };
+        int8_t direction { 0 };
+        Markable<WebCore::NavigationIdentifier> navigationID;
+        bool isWaitingForFrames { true };
+        bool isWaitingForMainFrameLoad { false };
+        bool didAnyFrameTakeTraversal { false };
+        CompletionHandler<void(bool)> completionHandler;
+    };
 
     WeakRef<WebPageProxy> m_pageProxy;
-    int32_t m_pendingDelta { 0 };
     RunLoop::Timer m_flushTimer;
-    bool m_hasPending { false };
-    int8_t m_inFlightDirection { 0 };
+    Deque<Variant<int32_t, ItemTraversal>> m_pendingTraversals;
+    std::optional<InFlightTraversal> m_inFlightTraversal;
+    uint64_t m_lastTraversalIdentifier { 0 };
 };
 
 } // namespace WebKit

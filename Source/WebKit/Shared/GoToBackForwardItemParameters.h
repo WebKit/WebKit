@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+enum class FrameTraversalResult : uint8_t { NotTaken, Taken, StartedLoad };
+
 struct GoToBackForwardItemParameters {
     WebCore::NavigationIdentifier navigationID;
     Ref<FrameState> frameState;
