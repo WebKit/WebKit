@@ -1194,10 +1194,6 @@ void WebPage::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> frameID
         return completionHandler(false, std::nullopt);
 
     DoublePoint globalPosition = position;
-    if (RefPtr view = localRootFrame->view()) {
-        auto locationAcrossIsolatedFrames = view->convertToRootViewAcrossIsolatedFrames(locationInRootView);
-        globalPosition = { locationAcrossIsolatedFrames.x(), locationAcrossIsolatedFrames.y() };
-    }
 
     DoublePoint movementDelta;
     if (type == PlatformEvent::Type::MouseMoved && previousLocation)
