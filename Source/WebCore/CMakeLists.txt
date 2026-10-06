@@ -3358,6 +3358,13 @@ endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
 
+if (WebCore_ARC_SOURCES)
+    WEBKIT_DEFINE_SUBTARGET(WebCoreARC WebCore ${WebCore_ARC_SOURCES})
+    target_compile_options(WebCoreARC PRIVATE -fobjc-arc)
+    WEBKIT_ADD_PREFIX_HEADER(WebCoreARC WebCorePrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES OBJCXX)
+    target_sources(WebCore PRIVATE $<TARGET_OBJECTS:WebCoreARC>)
+endif ()
+
 if (DEFINED WebCore_SWIFT_INTEROP_SOURCES)
     WEBKIT_DEFINE_SUBTARGET(WebCore_SwiftInterop WebCore ${WebCore_SWIFT_INTEROP_SOURCES})
     WEBKIT_REUSE_PREFIX_HEADER(WebCore_SwiftInterop WebCore WebCorePrefix.h PREFIX_LANGUAGES CXX OBJCXX)
