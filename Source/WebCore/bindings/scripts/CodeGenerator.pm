@@ -156,6 +156,7 @@ sub new
     $idlFileNamesList = shift;
     $ignoreStandaloneConstructorAttributes = shift // 0;
 
+    $reference->{writeIfChanged} = shift // 0;
     bless($reference, $object);
     return $reference;
 }
@@ -222,13 +223,8 @@ sub GenerateEmptyHeaderAndCpp
     scripts from trying to regenerate ${headerName} and ${cppName} on every build.
 */
 ";
-    open FH, "> ${useOutputHeadersDir}/${headerName}" or die "Cannot open ${headerName}\n";
-    print FH $contents;
-    close FH;
-
-    open FH, "> ${useOutputDir}/${cppName}" or die "Cannot open ${cppName}\n";
-    print FH $contents;
-    close FH;
+    $object->UpdateFile("${useOutputHeadersDir}/${headerName}", $contents);
+    $object->UpdateFile("${useOutputDir}/${cppName}", $contents);
 }
 
 sub ProcessDictionaryAndEnumerationImplementedAsOverrides
@@ -313,9 +309,7 @@ sub WriteInspectorNativeFunctionParameters
 
     my $basename = fileparse($useDocument->fileName, ".idl");
     my $filename = "${basename}.inspector-native-function-parameters.json";
-    open FH, ">", "${useOutputDir}/${filename}" or die "Couldn't open ${filename}: $!\n";
-    print FH $contents;
-    close FH;
+    $object->UpdateFile("${useOutputDir}/${filename}", $contents);
 }
 
 sub ProcessCallbackFunctions
@@ -595,6 +589,15 @@ sub UpdateFile
     my $object = shift;
     my $fileName = shift;
     my $contents = shift;
+
+    # Leave the file alone if its contents did not change, so that the build does not recompile everything
+    # that depends on it.
+    if ($object->{writeIfChanged} && open(my $existingFile, "<", $fileName)) {
+        local $/;
+        my $existingContents = <$existingFile>;
+        close($existingFile);
+        return if defined $existingContents && $existingContents eq $contents;
+    }
 
     open FH, ">", $fileName or die "Couldn't open $fileName: $!\n";
     print FH $contents;

@@ -31,7 +31,8 @@ require 'yaml'
 options = { 
   :outputDirectory => nil,
   :templates => [],
-  :settingsFiles => []
+  :settingsFiles => [],
+  :writeIfChanged => false
 }
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [--outputDir <output>] --template <input> [--template <file>...] <settings> [<settings>...]"
@@ -40,6 +41,7 @@ optparse = OptionParser.new do |opts|
 
   opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
   opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
+  opts.on("--write-if-changed", "do not rewrite output files whose contents did not change") { options[:writeIfChanged] = true }
 end
 
 optparse.parse!
@@ -317,7 +319,7 @@ class Settings
     @unstableGlobalFeatures = globalSettingsByName.values.reject(&:stableFeature?)
   end
 
-  def renderTemplate(template, outputDirectory)
+  def renderTemplate(template, outputDirectory, writeIfChanged)
     file = File.join(outputDirectory, File.basename(template, ".erb"))
 
     if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
@@ -327,6 +329,9 @@ class Settings
     end
     erb.filename = template
     output = erb.result(binding)
+    # Leave the file alone if its contents did not change, so that a build that checks whether outputs
+    # changed (like ninja's restat) does not recompile everything that depends on it.
+    return if writeIfChanged && File.exist?(file) && File.read(file) == output
     File.open(file, "w+") do |f|
       f.write(output)
     end
@@ -336,5 +341,5 @@ end
 settings = Settings.new(options[:settingsFiles])
 
 options[:templates].each do |template|
-  settings.renderTemplate(template, options[:outputDirectory])
+  settings.renderTemplate(template, options[:outputDirectory], options[:writeIfChanged])
 end
