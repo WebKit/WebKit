@@ -1,0 +1,9 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Reference: ::selection background on a non-first line covers that line box</title>
+<style>
+body { margin: 0; }
+/* Line 3 box: top = 100 + 2 * 27 = 154, height 27. Glyphs 2..18: left = 100 + 2 * 15, width 16 * 15. */
+#band { position: absolute; top: 154px; left: 130px; width: 240px; height: 27px; background: rgba(0, 64, 255, 0.5); }
+</style>
+<div id="band"></div>

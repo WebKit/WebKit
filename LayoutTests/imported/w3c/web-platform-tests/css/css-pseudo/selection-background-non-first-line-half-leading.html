@@ -1,0 +1,35 @@
+<!doctype html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Test: ::selection background on a non-first line covers that line box, including its half-leading</title>
+<link rel="author" title="Vitor Roriz" href="https://github.com/vitorroriz">
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-painting">
+<link rel="help" href="https://drafts.csswg.org/css2/#leading">
+<link rel="match" href="selection-background-non-first-line-half-leading-ref.html">
+<meta name="assert" content="With line-height larger than the font's content area, the ::selection background of text on the third line is painted over that line's line box (top = 2 * line-height), not shifted up by a half-leading.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+body { margin: 0; }
+#target {
+  position: absolute; top: 100px; left: 100px; width: 300px; margin: 0;
+  font: 15px/27px Ahem; color: transparent;
+}
+/* Non-opaque on purpose: some engines make an opaque ::selection background translucent. */
+#target::selection { background: rgba(0, 64, 255, 0.5); color: transparent; }
+</style>
+<div id="target">AAAAAAAAAAAAAAAAAAAA BBBBBBBBBBBBBBBBBBBB CCCCCCCCCCCCCCCCCCCC DDDDDDDDDDDDDDDDDDDD</div>
+<script>
+document.fonts.ready.then(() => {
+  // Each 20-character word fills one 300px line. Line 3 is "C...C",
+  // starting at text offset 42. Select its characters 2..18 (16 glyphs).
+  const text = document.getElementById('target').firstChild;
+  const range = document.createRange();
+  range.setStart(text, 42 + 2);
+  range.setEnd(text, 42 + 18);
+  getSelection().removeAllRanges();
+  getSelection().addRange(range);
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    document.documentElement.classList.remove('reftest-wait')));
+});
+</script>
+</html>
