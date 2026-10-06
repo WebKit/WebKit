@@ -87,6 +87,20 @@
 #include "ThemeTypes.h"
 #include "TreeResolutionState.h"
 
+// Each parsed by at least half of this subtarget's unified bundles.
+#include "AcceleratedEffectOffsetPath.h"
+#include "FontCascadeFonts.h"
+#include "RenderSVGModelObject.h"
+
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if PLATFORM(MAC)
+#include "CSSCalcSizeFunction.h"
+#include "StyleGradient.h"
+#include "BlockFormattingState.h"
+#include "Grid.h"
+#include "InlineFormattingUtils.h"
+#endif // PLATFORM(MAC)
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif

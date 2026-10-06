@@ -1026,6 +1026,10 @@ endif ()
 # under BUILDING_TestWebKit, as the sibling test targets also define.
 target_compile_definitions(TestWebKitAPIWebProcessPlugIn PRIVATE BUILDING_TestWebKit)
 
+# Without a PCH, nearly all of each TU's compile time is config.h's Cocoa and
+# WebKit imports. No codegen: the bundle links with -undefined dynamic_lookup.
+WEBKIT_ADD_PREFIX_HEADER(TestWebKitAPIWebProcessPlugIn Helpers/TestWebKitAPIPrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES OBJCXX)
+
 # configure_file substitutes ${EXECUTABLE_NAME}/${PRODUCT_NAME}/
 # ${PRODUCT_BUNDLE_IDENTIFIER} in the Info.plist shared with the Xcode build.
 set(EXECUTABLE_NAME TestWebKitAPIPlugIn)

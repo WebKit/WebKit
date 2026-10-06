@@ -1072,7 +1072,7 @@ css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp
 css/DOMCSSRegisterCustomProperty.cpp @cost:3
 css/DOMMatrix.cpp
-css/DOMMatrixReadOnly.cpp @cost:4
+css/DOMMatrixReadOnly.cpp @cost:40
 css/FontFace.cpp @cost:5
 css/FontFaceSet.cpp @cost:3
 css/ImmutableStyleProperties.cpp
@@ -1242,7 +1242,7 @@ css/values/backgrounds/CSSBorderImageWidth.cpp
 css/values/backgrounds/CSSBorderImage.cpp
 css/values/borders/CSSBorderRadius.cpp
 css/values/color-adjust/CSSColorScheme.cpp
-css/values/color/CSSColor.cpp
+css/values/color/CSSColor.cpp @cost:60
 css/values/color/CSSColorInterpolationMethod.cpp
 css/values/color/CSSColorLayers.cpp
 css/values/color/CSSColorLayersResolver.cpp
@@ -4230,7 +4230,7 @@ JSDOMStringList.cpp
 JSDOMStringMap.cpp
 JSDOMTokenList.cpp
 JSDOMURL.cpp
-JSDOMWindow.cpp @no-unify-when(bundle<=8) @cost:22
+JSDOMWindow.cpp @no-unify-when(bundle<=8) @cost:128
 JSDOMWindowConstructorAttributes.cpp @no-unify-when(bundle<=8) @cost:22
 JSDataCue.cpp
 JSDataTransfer.cpp

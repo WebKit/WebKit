@@ -245,6 +245,7 @@ public:
 
     class ProfilingClient {
     public:
+        ProfilingClient();
         virtual ~ProfilingClient();
         virtual bool isAlreadyProfiling() const = 0;
         virtual Seconds willEvaluateScript() = 0;

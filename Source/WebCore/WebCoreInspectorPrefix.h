@@ -46,7 +46,9 @@
 
 #if ENABLE(WEBGL)
 #include "GraphicsContextGL.h"
+#if !PLATFORM(MAC)
 #include "WebGLRenderingContextBase.h"
+#endif
 #endif
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
