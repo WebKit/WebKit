@@ -68,6 +68,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Quirks.h>
+#import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UniversalAccessZoom.h>
@@ -1243,6 +1244,17 @@ void WebPageProxy::interruptSyntheticMomentumScrolling()
         WebEventInputSource::Automation
     };
     handleNativeWheelEvent(NativeWebWheelEvent { cancelEvent });
+}
+
+void WebPageProxy::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> frameID, WebEventPhase phase, const FloatPoint& locationInRootView, OptionSet<WebEventModifier> modifiers, CompletionHandler<void(bool)>&& completionHandler)
+{
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DispatchTrackedPointerEvent(frameID, phase, locationInRootView, modifiers), Messages::WebPage::DispatchTrackedPointerEvent::Reply { [weakThis = WeakPtr { *this }, phase, modifiers, completionHandler = WTF::move(completionHandler)](bool wasCanceled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !remoteUserInputEventData)
+            return completionHandler(wasCanceled);
+
+        protectedThis->dispatchTrackedPointerEvent(remoteUserInputEventData->targetFrameID, phase, FloatPoint { remoteUserInputEventData->transformedPoint }, modifiers, WTF::move(completionHandler));
+    } });
 }
 
 } // namespace WebKit

@@ -75,10 +75,17 @@ extension AppKitGesturesTests.DoubleClick {
         try await page.callJavaScript {
             """
             window.fieldLog = [];
+            let pointerDownCount = 0;
             for (const type of ["pointerdown", "mousedown", "pointerup", "mouseup", "dblclick"]) {
                 document.addEventListener(type, event => {
-                    // Record only the second press -- what this test is about.
-                    if (event.detail !== 2)
+                    // Record only the second press -- what this test is about. Pointer events always
+                    // report a `detail` of 0, so count their presses instead.
+                    if (event instanceof PointerEvent) {
+                        if (event.type === "pointerdown")
+                            pointerDownCount++;
+                        if (pointerDownCount !== 2)
+                            return;
+                    } else if (event.detail !== 2)
                         return;
                     window.fieldLog.push(
                         `${event.type}:${event.buttons}:${event.pressure ?? "-"}:${event.webkitForce}`
@@ -108,8 +115,8 @@ extension AppKitGesturesTests.DoubleClick {
         #expect(
             fieldLog == [
                 "pointerdown:1:0.5:0",
-                "mousedown:1:-:1",
                 "pointerup:0:0:0",
+                "mousedown:1:-:1",
                 "mouseup:0:-:0",
                 "dblclick:0:-:0",
             ]

@@ -721,6 +721,7 @@ enum class UndoOrRedo : bool;
 enum class WasNavigationIntercepted : bool;
 enum class WebContentMode : uint8_t;
 enum class WebEventModifier : uint8_t;
+enum class WebEventPhase : uint8_t;
 enum class WebEventType : uint32_t;
 enum class WebEventInputSource : uint8_t;
 enum class WebMouseEventSyntheticClickType : uint8_t;
@@ -1479,6 +1480,10 @@ public:
     void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&, std::optional<bool> willStartSwipe);
     void wheelEventHandlingCompleted(bool wasHandled);
     void didEndSyntheticMomentumScrolling();
+
+#if PLATFORM(MAC)
+    void dispatchTrackedPointerEvent(std::optional<WebCore::FrameIdentifier>, WebEventPhase, const WebCore::FloatPoint& locationInRootView, OptionSet<WebEventModifier>, CompletionHandler<void(bool wasCanceled)>&&);
+#endif
 
     bool NODELETE isProcessingKeyboardEvents() const;
     void sendKeyEvent(const NativeWebKeyboardEvent&);

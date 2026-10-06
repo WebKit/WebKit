@@ -45,6 +45,7 @@
 #import "UserData.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WebEventConversion.h"
+#import "WebEventPhase.h"
 #import "WebFrame.h"
 #import "WebHitTestResultData.h"
 #import "WebImage.h"
@@ -82,6 +83,7 @@
 #import <WebCore/HTMLAttachmentElement.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLPlugInElement.h>
+#import <WebCore/HandleUserInputEventResult.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/ImmediateActionStage.h>
@@ -1159,6 +1161,57 @@ void WebPage::showPDFHUD(PDFPluginBase& plugin)
 }
 
 #endif // ENABLE(PDF_PLUGIN)
+
+void WebPage::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> frameID, WebEventPhase phase, FloatPoint locationInRootView, OptionSet<WebEventModifier> modifiers, CompletionHandler<void(bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
+{
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    if (!localRootFrame)
+        return completionHandler(false, std::nullopt);
+
+    bool isPressed = phase == WebEventPhase::Began || phase == WebEventPhase::Changed;
+    auto previousLocation = std::exchange(m_lastTrackedPointerLocation, isPressed ? std::optional { locationInRootView } : std::nullopt);
+
+    DoublePoint position { locationInRootView.x(), locationInRootView.y() };
+    if (phase == WebEventPhase::Cancelled) {
+        auto result = localRootFrame->eventHandler().cancelTrackedPointer(position, mousePointerID);
+        return completionHandler(false, result.remoteUserInputEventData());
+    }
+
+    auto type = [&] {
+        switch (phase) {
+        case WebEventPhase::Began:
+            return PlatformEvent::Type::MousePressed;
+        case WebEventPhase::Changed:
+            return PlatformEvent::Type::MouseMoved;
+        case WebEventPhase::Ended:
+            return PlatformEvent::Type::MouseReleased;
+        default:
+            return PlatformEvent::Type::NoType;
+        }
+    }();
+
+    if (type == PlatformEvent::Type::NoType)
+        return completionHandler(false, std::nullopt);
+
+    DoublePoint globalPosition = position;
+    if (RefPtr view = localRootFrame->view()) {
+        auto locationAcrossIsolatedFrames = view->convertToRootViewAcrossIsolatedFrames(locationInRootView);
+        globalPosition = { locationAcrossIsolatedFrames.x(), locationAcrossIsolatedFrames.y() };
+    }
+
+    DoublePoint movementDelta;
+    if (type == PlatformEvent::Type::MouseMoved && previousLocation)
+        movementDelta = { locationInRootView.x() - previousLocation->x(), locationInRootView.y() - previousLocation->y() };
+
+    SetForScope userIsInteractingChange { m_userIsInteracting, true };
+
+    PlatformMouseEvent platformEvent { position, globalPosition, MouseButton::Left, type, 1, platform(modifiers), MonotonicTime::now(), isPressed ? ForceAtClick : 0, SyntheticClickType::NoTap, MouseEventInputSource::Automation, mousePointerID, movementDelta };
+    // Pointer events report `buttons`, and a mouse pointer's `pressure`, from this.
+    platformEvent.setButtons(isPressed ? 1 : 0);
+
+    auto result = localRootFrame->eventHandler().dispatchTrackedPointerEvent(platformEvent);
+    completionHandler(result.wasHandled(), result.remoteUserInputEventData());
+}
 
 } // namespace WebKit
 

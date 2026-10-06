@@ -392,6 +392,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKPointerTrackingGestureRecognizer {
+        requires objc
+        header "../../UIProcess/mac/AppKitGestures/WKPointerTrackingGestureRecognizer.h"
+        export *
+    }
+
     module WKPressGestureRecognizer {
         requires objc
         header "../../UIProcess/mac/AppKitGestures/WKPressGestureRecognizer.h"

@@ -39,6 +39,7 @@
 #import "DocumentView.h"
 #import "DragController.h"
 #import "Editor.h"
+#import "EventNames.h"
 #import "FocusController.h"
 #import "FrameLoader.h"
 #import "HTMLBodyElement.h"
@@ -51,6 +52,7 @@
 #import "LocalFrameInlines.h"
 #import "LocalFrameView.h"
 #import "Logging.h"
+#import "MouseEvent.h"
 #import "MouseEventWithHitTestResults.h"
 #import "NodeInlines.h"
 #import "Page.h"
@@ -58,7 +60,9 @@
 #import "PlatformEventFactoryMac.h"
 #import "PlatformScreen.h"
 #import "PlatformWheelEvent.h"
+#import "PointerCaptureController.h"
 #import "Range.h"
+#import "RemoteFrame.h"
 #import "RenderLayer.h"
 #import "RenderLayerScrollableArea.h"
 #import "RenderListBox.h"
@@ -1153,6 +1157,103 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 
     auto frame = toUserSpaceForPrimaryScreen(screenRectForDisplay(page->chrome().displayID()));
     return flooredIntPoint(valueOrDefault(m_lastKnownMousePosition)) + autoscrollAdjustmentFactorForScreenBoundaries(flooredIntPoint(m_lastKnownMouseGlobalPosition), frame);
+}
+
+static const AtomString& mouseEventTypeForTrackedPointerEvent(PlatformEvent::Type type)
+{
+    switch (type) {
+    case PlatformEvent::Type::MousePressed:
+        return eventNames().mousedownEvent;
+    case PlatformEvent::Type::MouseMoved:
+        return eventNames().mousemoveEvent;
+    case PlatformEvent::Type::MouseReleased:
+        return eventNames().mouseupEvent;
+    default:
+        ASSERT_NOT_REACHED();
+        return nullAtom();
+    }
+}
+
+HandleUserInputEventResult EventHandler::dispatchTrackedPointerEvent(const PlatformMouseEvent& platformEvent)
+{
+    Ref frame = m_frame.get();
+    RefPtr view = frame->view();
+    RefPtr document = frame->document();
+    RefPtr page = frame->page();
+    if (!view || !document || !page)
+        return false;
+
+    auto documentPoint = view->windowToContents(platformEvent.position());
+    constexpr OptionSet hitType {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::Active,
+        HitTestRequest::Type::DisallowUserAgentShadowContent,
+        HitTestRequest::Type::SkipTransformToRootFrameCoordinates
+    };
+    auto hitTestResult = hitTestResultAtPoint(LayoutPoint { documentPoint }, hitType);
+
+    if (platformEvent.type() == PlatformEvent::Type::MousePressed)
+        m_trackedPointerSubframe = subframeForTargetNode(protect(hitTestResult.targetNode()).get());
+
+    if (RefPtr subframe = m_trackedPointerSubframe) {
+        if (platformEvent.type() == PlatformEvent::Type::MouseReleased)
+            m_trackedPointerSubframe = nullptr;
+
+        if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(*subframe)) {
+            if (auto remoteUserInputEventData = userInputEventDataForRemoteFrame(remoteSubframe.get(), documentPoint))
+                return *remoteUserInputEventData;
+            return false;
+        }
+
+        RefPtr localSubframe = dynamicDowncast<LocalFrame>(*subframe);
+        if (!localSubframe || !localSubframe->view())
+            return false;
+
+        return localSubframe->eventHandler().dispatchTrackedPointerEvent(platformEvent);
+    }
+
+    // A pointer captured by the page keeps its target however far the press travels.
+    auto& pointerCaptureController = page->pointerCaptureController();
+    auto pointerId = platformEvent.pointerId();
+    pointerCaptureController.processPendingPointerCapture(pointerId);
+
+    RefPtr target = pointerCaptureController.pointerCaptureElement(document.get(), pointerId);
+    if (!target)
+        target = hitTestResult.targetElement();
+    if (!target)
+        return false;
+
+    const auto& eventType = mouseEventTypeForTrackedPointerEvent(platformEvent.type());
+
+    Vector<Ref<MouseEvent>> coalescedEvents;
+    if (platformEvent.type() == PlatformEvent::Type::MouseMoved)
+        coalescedEvents.append(MouseEvent::create(eventType, document->windowProxy(), platformEvent, { }, { }, 0, nullptr));
+
+    Ref mouseEvent = MouseEvent::create(eventType, document->windowProxy(), platformEvent, coalescedEvents, { }, 0, nullptr);
+    return pointerCaptureController.dispatchEventForTrackedPointer(*target, mouseEvent, pointerId, platformEvent.pointerType());
+}
+
+HandleUserInputEventResult EventHandler::cancelTrackedPointer(const DoublePoint& positionInRootView, PointerID pointerId)
+{
+    Ref frame = m_frame.get();
+    if (RefPtr subframe = std::exchange(m_trackedPointerSubframe, nullptr)) {
+        if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(*subframe)) {
+            RefPtr view = frame->view();
+            if (!view)
+                return false;
+            if (auto remoteUserInputEventData = userInputEventDataForRemoteFrame(remoteSubframe.get(), view->windowToContents(positionInRootView)))
+                return *remoteUserInputEventData;
+            return false;
+        }
+
+        if (RefPtr localSubframe = dynamicDowncast<LocalFrame>(*subframe))
+            return localSubframe->eventHandler().cancelTrackedPointer(positionInRootView, pointerId);
+        return false;
+    }
+
+    if (RefPtr page = frame->page())
+        page->pointerCaptureController().cancelTrackedPointer(pointerId);
+    return false;
 }
 
 }

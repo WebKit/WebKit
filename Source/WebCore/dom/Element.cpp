@@ -505,6 +505,16 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
         UNUSED_PARAM(platformEvent);
 #endif
 
+#if PLATFORM(MAC)
+        // A tracked pointer's events are dispatched as its press happens, so the mouse events synthesized for
+        // the same press must not derive them a second time.
+        if (!isAnyClick(mouseEvent) && mouseEvent.type() != eventNames().contextmenuEvent && pointerCaptureController.mouseEventBelongsToTrackedPointer(platformEvent)) {
+            if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
+                return ShouldIgnoreMouseEvent::Yes;
+            return ShouldIgnoreMouseEvent::No;
+        }
+#endif
+
         // FIXME: <https://webkit.org/b/314881> This early-return is using synthetic click type
         // and input source to approximate "pointer events for this interaction have already been
         // dispatched upstream by other compat paths."

@@ -472,6 +472,9 @@ void EventHandler::clear()
     clearElementUnderMouse();
     m_lastElementUnderMouse = nullptr;
     m_lastMouseMoveEventSubframe = nullptr;
+#if PLATFORM(MAC)
+    m_trackedPointerSubframe = nullptr;
+#endif
     m_lastScrollbarUnderMouse = nullptr;
     m_clickCount = 0;
     m_clickNode = nullptr;
@@ -2021,6 +2024,10 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
     if (!page)
         return false;
 
+#if PLATFORM(MAC)
+    page->pointerCaptureController().mouseButtonWillBePressed(platformMouseEvent);
+#endif
+
 #if ENABLE(POINTER_LOCK)
     if (auto& pointerLockController = page->pointerLockController(); pointerLockController.isLocked()) {
         pointerLockController.dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousedownEvent);
@@ -2556,6 +2563,13 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
     RefPtr page = frame->page();
     if (!page)
         return false;
+
+#if PLATFORM(MAC)
+    auto notifyPointerCaptureController = makeScopeExit([frame, page, &platformMouseEvent] {
+        if (frame->isRootFrame())
+            page->pointerCaptureController().mouseButtonWasReleased(platformMouseEvent);
+    });
+#endif
 
 #if ENABLE(POINTER_LOCK)
     if (auto& pointerLockController = page->pointerLockController(); pointerLockController.isLocked()) {

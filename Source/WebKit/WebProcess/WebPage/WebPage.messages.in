@@ -86,6 +86,10 @@ messages -> WebPage WantsAsyncDispatchMessage {
     HandleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId, enum:uint8_t WebKit::WebEventInputSource inputSource, enum:uint8_t WebKit::WebMouseEventSyntheticClickType syntheticClickType)
 #endif
 
+#if PLATFORM(MAC)
+    DispatchTrackedPointerEvent(std::optional<WebCore::FrameIdentifier> frameID, enum:uint8_t WebKit::WebEventPhase phase, WebCore::FloatPoint locationInRootView, OptionSet<WebKit::WebEventModifier> modifiers) -> (bool wasCanceled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     SetSceneIdentifier(String sceneIdentifier)
     SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor, double minimumEffectiveDeviceWidth)

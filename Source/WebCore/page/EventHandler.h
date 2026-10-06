@@ -294,6 +294,11 @@ public:
     WEBCORE_EXPORT void dispatchSyntheticMouseMove(const PlatformMouseEvent&);
 #endif
 
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT HandleUserInputEventResult dispatchTrackedPointerEvent(const PlatformMouseEvent&);
+    WEBCORE_EXPORT HandleUserInputEventResult cancelTrackedPointer(const DoublePoint& positionInRootView, PointerID);
+#endif
+
 #if ENABLE(CONTEXT_MENU_EVENT)
     WEBCORE_EXPORT bool sendContextMenuEvent(const PlatformMouseEvent&);
     WEBCORE_EXPORT bool sendContextMenuEventForKey();
@@ -713,6 +718,9 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_mouseMoveTargetOverride;
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>, 31> m_ancestorsOfLastElementUnderMouse;
     RefPtr<LocalFrame> m_lastMouseMoveEventSubframe;
+#if PLATFORM(MAC)
+    RefPtr<Frame> m_trackedPointerSubframe;
+#endif
     SingleThreadWeakPtr<Scrollbar> m_lastScrollbarUnderMouse;
     Cursor m_currentMouseCursor;
 

@@ -40,6 +40,7 @@
 #include "MouseEventTypes.h"
 #include "NodeDocument.h"
 #include "Page.h"
+#include "PlatformMouseEvent.h"
 #include "PointerEvent.h"
 #include "Quirks.h"
 #include "Settings.h"
@@ -213,8 +214,7 @@ bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(Poi
     return capturingData && capturingData->preventsCompatibilityMouseEvents;
 }
 
-#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
-static bool hierarchyHasCapturingEventListeners(Element* target, const AtomString& eventName)
+bool PointerCaptureController::hierarchyHasCapturingEventListeners(Element* target, const AtomString& eventName)
 {
     for (RefPtr<ContainerNode> currentNode = target; currentNode; currentNode = currentNode->parentInComposedTree()) {
         if (currentNode->hasCapturingEventListeners(eventName))
@@ -223,6 +223,51 @@ static bool hierarchyHasCapturingEventListeners(Element* target, const AtomStrin
     return false;
 }
 
+void PointerCaptureController::dispatchBoundaryEvents(Element* previousTarget, Element* currentTarget, NOESCAPE const Function<Ref<PointerEvent>(const AtomString& eventType)>& createEvent)
+{
+    // The pointerenter and pointerleave events are only dispatched if there is a capturing event listener on an ancestor
+    // or a normal event listener on the element itself since those events do not bubble.
+    // This optimization is necessary since these events can cause O(n^2) capturing event-handler checks. This follows the
+    // code for similar mouse events in EventHandler::updateMouseEventTargetNode().
+    bool hasCapturingPointerEnterListener = hierarchyHasCapturingEventListeners(currentTarget, eventNames().pointerenterEvent);
+    bool hasCapturingPointerLeaveListener = hierarchyHasCapturingEventListeners(previousTarget, eventNames().pointerleaveEvent);
+
+    Vector<Ref<Element>, 32> leftElementsChain;
+    for (RefPtr element = previousTarget; element; element = element->parentElementInComposedTree())
+        leftElementsChain.append(*element);
+    Vector<Ref<Element>, 32> enteredElementsChain;
+    for (RefPtr element = currentTarget; element; element = element->parentElementInComposedTree())
+        enteredElementsChain.append(*element);
+
+    if (!leftElementsChain.isEmpty() && !enteredElementsChain.isEmpty() && leftElementsChain.last().ptr() == enteredElementsChain.last().ptr()) {
+        size_t minHeight = std::min(leftElementsChain.size(), enteredElementsChain.size());
+        size_t i;
+        for (i = 0; i < minHeight; ++i) {
+            if (leftElementsChain[leftElementsChain.size() - i - 1].ptr() != enteredElementsChain[enteredElementsChain.size() - i - 1].ptr())
+                break;
+        }
+        leftElementsChain.shrink(leftElementsChain.size() - i);
+        enteredElementsChain.shrink(enteredElementsChain.size() - i);
+    }
+
+    if (previousTarget)
+        dispatchEvent(createEvent(eventNames().pointeroutEvent), previousTarget);
+
+    for (auto& chain : leftElementsChain) {
+        if (hasCapturingPointerLeaveListener || chain->hasEventListeners(eventNames().pointerleaveEvent))
+            dispatchEvent(createEvent(eventNames().pointerleaveEvent), chain.ptr());
+    }
+
+    if (currentTarget)
+        dispatchEvent(createEvent(eventNames().pointeroverEvent), currentTarget);
+
+    for (auto& chain : enteredElementsChain | std::views::reverse) {
+        if (hasCapturingPointerEnterListener || chain->hasEventListeners(eventNames().pointerenterEvent))
+            dispatchEvent(createEvent(eventNames().pointerenterEvent), chain.ptr());
+    }
+}
+
+#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
 void PointerCaptureController::dispatchOverOrOutEvent(const AtomString& type, EventTarget* target, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, DoublePoint touchDelta)
 {
     dispatchEvent(PointerEvent::create(type, event, { }, { }, index, isPrimary, view, touchDelta), target);
@@ -284,46 +329,11 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     capturingData->previousTarget = currentTarget;
 
     if (pointerEvent->type() == eventNames().pointermoveEvent && previousTarget != currentTarget) {
-        // The pointerenter and pointerleave events are only dispatched if there is a capturing event listener on an ancestor
-        // or a normal event listener on the element itself since those events do not bubble.
-        // This optimization is necessary since these events can cause O(n^2) capturing event-handler checks. This follows the
-        // code for similar mouse events in EventHandler::updateMouseEventTargetNode().
-        bool hasCapturingPointerEnterListener = hierarchyHasCapturingEventListeners(currentTarget.get(), eventNames().pointerenterEvent);
-        bool hasCapturingPointerLeaveListener = hierarchyHasCapturingEventListeners(previousTarget.get(), eventNames().pointerleaveEvent);
-
-        Vector<Ref<Element>, 32> leftElementsChain;
-        for (RefPtr element = previousTarget.get(); element; element = element->parentElementInComposedTree())
-            leftElementsChain.append(*element);
-        Vector<Ref<Element>, 32> enteredElementsChain;
-        for (RefPtr element = currentTarget.get(); element; element = element->parentElementInComposedTree())
-            enteredElementsChain.append(*element);
-
-        if (!leftElementsChain.isEmpty() && !enteredElementsChain.isEmpty() && leftElementsChain.last().ptr() == enteredElementsChain.last().ptr()) {
-            size_t minHeight = std::min(leftElementsChain.size(), enteredElementsChain.size());
-            size_t i;
-            for (i = 0; i < minHeight; ++i) {
-                if (leftElementsChain[leftElementsChain.size() - i - 1].ptr() != enteredElementsChain[enteredElementsChain.size() - i - 1].ptr())
-                    break;
-            }
-            leftElementsChain.shrink(leftElementsChain.size() - i);
-            enteredElementsChain.shrink(enteredElementsChain.size() - i);
-        }
-
-        if (previousTarget)
-            dispatchOverOrOutEvent(eventNames().pointeroutEvent, previousTarget.get(), platformTouchEvent, index, isPrimary, view, touchDelta);
-
-        for (auto& chain : leftElementsChain) {
-            if (hasCapturingPointerLeaveListener || chain->hasEventListeners(eventNames().pointerleaveEvent))
-                dispatchEvent(PointerEvent::create(eventNames().pointerleaveEvent, platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta), chain.ptr());
-        }
-
-        if (currentTarget)
-            dispatchOverOrOutEvent(eventNames().pointeroverEvent, currentTarget.get(), platformTouchEvent, index, isPrimary, view, touchDelta);
-
-        for (auto& chain : enteredElementsChain | std::views::reverse) {
-            if (hasCapturingPointerEnterListener || chain->hasEventListeners(eventNames().pointerenterEvent))
-                dispatchEvent(PointerEvent::create(eventNames().pointerenterEvent, platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta), chain.ptr());
-        }
+        dispatchBoundaryEvents(previousTarget.get(), currentTarget.get(), [&](const AtomString& eventType) {
+            if (eventType == eventNames().pointeroverEvent || eventType == eventNames().pointeroutEvent)
+                return PointerEvent::create(eventType, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta);
+            return PointerEvent::create(eventType, platformTouchEvent, coalescedEvents, predictedEvents, index, isPrimary, view, touchDelta);
+        });
     }
 
     if (pointerEvent->type() == eventNames().pointerdownEvent) {
@@ -384,6 +394,122 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     capturingData->previousTarget = nullptr;
 }
 #endif // ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
+
+#if PLATFORM(MAC)
+
+bool PointerCaptureController::dispatchEventForTrackedPointer(Element& target, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+{
+    auto& names = eventNames();
+    auto type = PointerEvent::typeFromMouseEventType(mouseEvent.type());
+    Ref pointerEvent = PointerEvent::create(type, PointerEvent::buttonForType(type), mouseEvent, pointerId, pointerType);
+    Ref capturingData = ensureCapturingDataForPointerEvent(pointerEvent);
+
+    if (type == names.pointerdownEvent) {
+        capturingData->state = CapturingData::State::Ready;
+        capturingData->trackingState = CapturingData::TrackingState::Pressed;
+        capturingData->trackedPressHasMouseButtonDown = false;
+    }
+
+    if (capturingData->previousTarget != &target) {
+        RefPtr previousTarget = std::exchange(capturingData->previousTarget, &target);
+        if (previousTarget && (!previousTarget->isConnected() || !previousTarget->document().frame()))
+            previousTarget = nullptr;
+        dispatchBoundaryEvents(previousTarget.get(), &target, [&](const AtomString& eventType) {
+            return PointerEvent::create(eventType, MouseButton::PointerHasNotChanged, mouseEvent, pointerId, pointerType);
+        });
+    }
+
+    dispatchEvent(pointerEvent, &target);
+
+    if (type == names.pointerupEvent)
+        capturingData->trackingState = CapturingData::TrackingState::Released;
+
+    return pointerEvent->defaultPrevented() || pointerEvent->defaultHandled();
+}
+
+void PointerCaptureController::cancelTrackedPointer(PointerID pointerId)
+{
+    RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
+    if (!capturingData || capturingData->trackingState != CapturingData::TrackingState::Pressed)
+        return;
+
+    RefPtr target = capturingData->targetOverride;
+    if (!target)
+        target = capturingData->previousTarget;
+
+    capturingData->pendingTargetOverride = nullptr;
+    capturingData->previousTarget = nullptr;
+    capturingData->state = CapturingData::State::Cancelled;
+    capturingData->trackingState = CapturingData::TrackingState::NotTracked;
+    capturingData->pointerIsPressed = false;
+
+    if (!target)
+        return;
+
+    // https://w3c.github.io/pointerevents/#the-pointercancel-event
+    // After firing the pointercancel event, a user agent MUST also fire a pointer event named pointerout
+    // followed by firing a pointer event named pointerleave.
+    auto isPrimary = capturingData->isPrimary ? PointerEvent::IsPrimary::Yes : PointerEvent::IsPrimary::No;
+    const auto& names = eventNames();
+    target->dispatchEvent(PointerEvent::create(names.pointercancelEvent, pointerId, capturingData->pointerType, isPrimary));
+    target->dispatchEvent(PointerEvent::create(names.pointeroutEvent, pointerId, capturingData->pointerType, isPrimary));
+    target->dispatchEvent(PointerEvent::create(names.pointerleaveEvent, pointerId, capturingData->pointerType, isPrimary));
+    processPendingPointerCapture(pointerId);
+}
+
+bool PointerCaptureController::mouseEventCanBelongToTrackedPointer(const PlatformMouseEvent& event) const
+{
+    if (event.inputSource() != MouseEventInputSource::Automation)
+        return false;
+
+    RefPtr page = m_page.get();
+    return page && page->settings().useAppKitGesturesForPointerEvents();
+}
+
+bool PointerCaptureController::mouseEventBelongsToTrackedPointer(const PlatformMouseEvent& event) const
+{
+    if (!mouseEventCanBelongToTrackedPointer(event))
+        return false;
+
+    RefPtr capturingData = m_activePointerIdsToCapturingData.get(event.pointerId());
+    if (!capturingData)
+        return false;
+
+    if (capturingData->trackedPressHasMouseButtonDown)
+        return true;
+
+    switch (capturingData->trackingState) {
+    case CapturingData::TrackingState::NotTracked:
+        return false;
+    case CapturingData::TrackingState::Pressed:
+        return true;
+    case CapturingData::TrackingState::Released:
+        return event.syntheticClickType() != SyntheticClickType::NoTap;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void PointerCaptureController::mouseButtonWillBePressed(const PlatformMouseEvent& event)
+{
+    if (!mouseEventCanBelongToTrackedPointer(event))
+        return;
+
+    if (RefPtr capturingData = m_activePointerIdsToCapturingData.get(event.pointerId()))
+        capturingData->trackedPressHasMouseButtonDown = capturingData->trackingState == CapturingData::TrackingState::Pressed;
+}
+
+void PointerCaptureController::mouseButtonWasReleased(const PlatformMouseEvent& event)
+{
+    if (!mouseEventCanBelongToTrackedPointer(event))
+        return;
+
+    if (RefPtr capturingData = m_activePointerIdsToCapturingData.get(event.pointerId()))
+        capturingData->trackedPressHasMouseButtonDown = false;
+}
+
+#endif // PLATFORM(MAC)
 
 void PointerCaptureController::clearUnmatchedMouseDown(PointerID pointerID)
 {
@@ -571,9 +697,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     capturingData->pendingTargetOverride = nullptr;
     capturingData->state = CapturingData::State::Cancelled;
 
-#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
     capturingData->previousTarget = nullptr;
-#endif
 
     auto target = [&]() -> RefPtr<Element> {
         if (capturingData->targetOverride)
