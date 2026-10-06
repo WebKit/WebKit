@@ -166,6 +166,7 @@ private:
     void NODELETE shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const final;
     void NODELETE dispatchGoToBackForwardItemAtIndex(int steps) final;
     void NODELETE dispatchEnqueueHistoryTraversalDelta(int delta) final;
+    void dispatchEnqueueHistoryTraversalToItem(BackForwardItemIdentifier, BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&&) final;
 
     void NODELETE saveViewStateToItem(HistoryItem&) final;
     bool NODELETE canCachePage() const final;

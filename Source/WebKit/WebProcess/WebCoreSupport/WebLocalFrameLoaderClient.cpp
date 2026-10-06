@@ -1549,6 +1549,17 @@ void WebLocalFrameLoaderClient::dispatchEnqueueHistoryTraversalDelta(int delta)
     webPage->send(Messages::WebPageProxy::EnqueueHistoryTraversalDelta(delta));
 }
 
+void WebLocalFrameLoaderClient::dispatchEnqueueHistoryTraversalToItem(BackForwardItemIdentifier itemID, BackForwardFrameItemIdentifier frameItemID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr webPage = m_frame->page();
+    if (!webPage) {
+        completionHandler(false);
+        return;
+    }
+
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::EnqueueHistoryTraversalToItem(itemID, frameItemID), WTF::move(completionHandler));
+}
+
 bool WebLocalFrameLoaderClient::shouldFallBack(const ResourceError& error) const
 {
     static NeverDestroyed<const ResourceError> cancelledError(WebKit::cancelledError(ResourceRequest()));

@@ -1,0 +1,44 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true UseUIProcessForBackForwardItemLoading=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: consecutive traversals that change only an iframe (Site Isolation)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+function nextReport(step) {
+    return new Promise(resolve => {
+        const onMessage = event => {
+            if (event.data.step !== step)
+                return;
+            window.removeEventListener("message", onMessage);
+            resolve(event.data);
+        };
+        window.addEventListener("message", onMessage);
+    });
+}
+
+promise_test(async t => {
+    const iframe = document.createElement("iframe");
+    const readyReport = nextReport("ready");
+    iframe.src = "resources/traverse-in-iframe.html";
+    document.body.appendChild(iframe);
+
+    const ready = await readyReport;
+    assert_equals(ready.index, 2, "index after two fragment navigations");
+    assert_equals(ready.length, 3, "entries after two fragment navigations");
+
+    const traverseToReport = nextReport("traverseTo");
+    iframe.contentWindow.postMessage("traverseTo", "*");
+    const traversed = await traverseToReport;
+    assert_equals(traversed.error, undefined, "traverseTo() is not rejected");
+    assert_equals(traversed.index, 0, "index after traverseTo()");
+    assert_equals(traversed.hash, "", "hash after traverseTo()");
+
+    const forwardReport = nextReport("forward");
+    iframe.contentWindow.postMessage("forward", "*");
+    const forwarded = await forwardReport;
+    assert_equals(forwarded.error, undefined, "forward() is not rejected");
+    assert_equals(forwarded.index, 1, "index after forward()");
+    assert_equals(forwarded.hash, "#1", "hash after forward()");
+}, "A traversal that changes only an iframe does not hold back the next traversal");
+</script>
