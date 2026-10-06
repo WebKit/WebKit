@@ -1122,7 +1122,7 @@ public:
     void selectPositionAtPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void updateSelectionWithExtentPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
     void updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, TextInteractionSource, SelectionExtentAnchor, CompletionHandler<void(bool)>&&);
-    void selectTextWithGranularityAtPoint(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
+    void selectTextWithGranularityAtPoint(WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool preventedByPage)>&&);
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(TWO_PHASE_CLICKS)
@@ -1772,6 +1772,10 @@ public:
 
     void sampledPageTopColorChanged() { m_pendingSampledPageTopColorChange = true; }
     void flushPendingSampledPageTopColorChange();
+
+#if __has_include(<WebKitAdditions/WebPageAdditions.h>)
+#include <WebKitAdditions/WebPageAdditions.h>
+#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&);
@@ -3163,6 +3167,9 @@ private:
     WebCore::PointerID m_pendingSyntheticClickPointerId { 0 };
     Function<void()> m_deferredSyntheticClick;
     uint64_t m_deferredSyntheticClickGeneration { 0 };
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    bool m_lastSyntheticMousePressPreventedSelection { false };
+#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY)

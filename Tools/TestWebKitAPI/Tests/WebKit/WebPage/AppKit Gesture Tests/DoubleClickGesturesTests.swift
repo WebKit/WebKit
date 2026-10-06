@@ -161,6 +161,201 @@ extension AppKitGesturesTests.DoubleClick {
         #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
     }
 
+    @Test(arguments: [false, true])
+    func doubleClickDoesNotSelectWordWhenPagePreventsMousedown(dblclickHandler: Bool) async throws {
+        try await loadHTML(dblclickHandler: dblclickHandler)
+        // Only log dblclick events when the page listens for them, since listening for them changes how the clicks are delivered.
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: dblclickHandler ? [.click, .dblclick] : [.click]))
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        try await doubleClickText("crazy")
+
+        // A late click for the second press would arrive after the double click, so give it time to.
+        try await Task.sleep(for: .seconds(0.5))
+
+        // The page still gets both clicks, as a double click when it listens for one.
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected =
+            dblclickHandler
+            ? [
+                DOMEvent(type: .click, detail: 1),
+                DOMEvent(type: .click, detail: 2),
+                DOMEvent(type: .dblclick, detail: 2),
+            ]
+            : [
+                DOMEvent(type: .click, detail: 1),
+                DOMEvent(type: .click, detail: 1),
+            ]
+
+        #expect(actual == expected)
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleClickSelectsWordWhenPageObservesMousedownWithoutPreventingIt() async throws {
+        try await loadHTML()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown]))
+
+        try await doubleClickText("crazy")
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test
+    func doubleClickAndHoldDoesNotSelectWordWhenPagePreventsMousedown() async throws {
+        try await loadHTML()
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        try await doubleClickText("crazy", secondPressDuration: .seconds(1.2))
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleClickAndHoldSelectsWord() async throws {
+        try await loadHTML()
+
+        try await doubleClickText("crazy", secondPressDuration: .seconds(1.2))
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    @Test
+    func doubleClickOnCanvasThatPreventsMousedownDeliversBothClicksWithoutSelecting() async throws {
+        let html = """
+            <body style="margin: 0; \(nonManipulableSurfaceStyle)">
+                <div id="map" tabindex="0" role="application" style="position: absolute; inset: 0;">
+                    <canvas id="canvas" width="400" height="300"></canvas>
+                    <img id="logo" width="100" height="20" style="position: absolute; left: 150px; top: 250px;" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                </div>
+            </body>
+            """
+        try await page.load(html: html).wait()
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "canvas", for: [.click]))
+        try await page.callJavaScript {
+            """
+            document.getElementById("map").addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        let canvasBounds = try await screenBounds(ofElementWithID: "canvas")
+
+        await recap.play { composer in
+            composer._wk_click(at: canvasBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: canvasBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(0.5))
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+        ]
+
+        #expect(actual == expected)
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleClickWithListenerDoesNotSelectWordWhenPagePreventsSecondMousedown() async throws {
+        // A page that listens for double clicks gets the second press as one, before AppKit begins the selection.
+        try await loadHTML(dblclickHandler: true)
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => {
+                if (event.detail > 1)
+                    event.preventDefault();
+            });
+            """
+        }
+
+        try await doubleClickText("crazy")
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleClickDoesNotSelectWordWhenBusyPagePreventsMousedown() async throws {
+        try await loadHTML()
+        try await page.callJavaScript {
+            """
+            document.addEventListener("mousedown", event => {
+                event.preventDefault();
+                // Keep the web process busy past the second press, like a page that is busy rendering.
+                const end = performance.now() + 300;
+                while (performance.now() < end) { }
+            });
+            """
+        }
+
+        try await doubleClickText("crazy")
+
+        try await expectNoRangeSelection()
+    }
+
+    @Test
+    func doubleClickSelectsWordAfterClickingElementThatPreventsMousedown() async throws {
+        let html = """
+            <button id="button" style="font-size: 30px;">Button</button>
+            <div id="div" style="font-size: 30px;">\(Self.text)</div>
+            """
+        try await page.load(html: html).wait()
+        try await page.callJavaScript {
+            """
+            document.getElementById("button").addEventListener("mousedown", event => event.preventDefault());
+            """
+        }
+
+        let buttonBounds = try await screenBounds(ofElementWithID: "button")
+
+        await recap.play { composer in
+            composer._wk_click(at: buttonBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        // Far enough apart that AppKit does not treat this click and the next as a double click.
+        try await Task.sleep(for: .seconds(0.5))
+
+        try await doubleClickText("crazy")
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
     @Test(arguments: [true, false])
     func doubleClickWithListenerFiresDblclickRegardlessOfEditability(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable, dblclickHandler: true)
@@ -501,6 +696,29 @@ extension AppKitGesturesTests.DoubleClick {
 
         #expect(try await page.callJavaScript(JavaScriptMessages.EventLog()).contains(.init(type: .dblclick, detail: 2)))
         #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
+    }
+
+    private func doubleClickText(
+        _ text: String,
+        secondPressDuration: Duration = .seconds(0.1)
+    ) async throws {
+        let bounds = try await screenBoundsOfText(text)
+
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: bounds.center, for: secondPressDuration)
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func expectNoRangeSelection(sourceLocation: SourceLocation = #_sourceLocation) async throws {
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        if case .range = selection {
+            Issue.record("Expected no range selection, but got \(selection)", sourceLocation: sourceLocation)
+        }
     }
 
     private func loadZoomableHTML(dblclickHandler: Bool = false) async throws {

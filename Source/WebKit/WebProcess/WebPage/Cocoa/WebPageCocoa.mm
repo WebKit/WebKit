@@ -3005,14 +3005,14 @@ void WebPage::cancelAutoscroll()
 #endif
 }
 
-void WebPage::selectTextWithGranularityAtPoint(WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
+void WebPage::selectTextWithGranularityAtPoint(WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool preventedByPage)>&& completionHandler)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
 #if PLATFORM(IOS_FAMILY)
     if (!m_potentialTapNode) {
         setSelectionRange(point, granularity, isInteractingWithFocusedElement);
-        completionHandler();
+        completionHandler(false);
         return;
     }
 
@@ -3022,15 +3022,32 @@ void WebPage::selectTextWithGranularityAtPoint(WebCore::IntPoint point, WebCore:
     m_selectionChangedHandler = [point, granularity, isInteractingWithFocusedElement, completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler();
+            completionHandler(false);
             return;
         }
         protectedThis->setSelectionRange(point, granularity, isInteractingWithFocusedElement);
-        completionHandler();
+        completionHandler(false);
     };
 #else
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    // AppKit begins word and paragraph selections for gesture double clicks on its own. A page keeps a mouse double
+    // click from selecting by preventing the default action of its mouse press, so honor the latest synthetic press.
+    // Clicks are committed before AppKit begins the selection, so this is the double click's first press (or its
+    // second, when it is delivered as a double click).
+    if (granularity != TextGranularity::CharacterGranularity) {
+        if (m_lastSyntheticMousePressPreventedSelection) {
+            // Keep the rest of the gesture from extending a selection that it never made.
+            m_initialSelection = std::nullopt;
+            completionHandler(true);
+            return;
+        }
+
+        // Otherwise, the second press's pending click would land on the new selection.
+        cancelPotentialClick();
+    }
+#endif
     setSelectionRange(point, granularity, isInteractingWithFocusedElement);
-    completionHandler();
+    completionHandler(false);
 #endif
 }
 
@@ -3347,6 +3364,9 @@ void WebPage::cancelPotentialTap()
 
 void WebPage::didHandleTapAsHover()
 {
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    m_lastSyntheticMousePressPreventedSelection = false;
+#endif
     invokePendingSyntheticClickCallback(SyntheticClickResult::Hover);
     send(Messages::WebPageProxy::DidHandleTapAsHover());
 }
@@ -3470,6 +3490,10 @@ void WebPage::invokePendingSyntheticClickCallback(SyntheticClickResult result)
 
 void WebPage::commitPotentialTapFailed()
 {
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    m_lastSyntheticMousePressPreventedSelection = false;
+#endif
+
     if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, { }))
         selectionChangedHandler();
 
@@ -3527,6 +3551,11 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     bool handledPress = localRootFrame->eventHandler().handleMousePressEvent(pressEvent).wasHandled();
     if (m_isClosed)
         return;
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    RefPtr frameRespondingToClick = nodeRespondingToClick.document().frame();
+    m_lastSyntheticMousePressPreventedSelection = frameRespondingToClick && !frameRespondingToClick->eventHandler().mouseDownMayStartSelect();
+#endif
 
     if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, { }))
         selectionChangedHandler();
