@@ -1233,7 +1233,7 @@ endfunction()
 # FIXME: Continue merging forked iOS/Mac code here.
 if (WEBKIT_SDK_IS_IOS_FAMILY)
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h
+WEBKIT_WRITE_FILE_IF_CHANGED(${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h
     "#if defined(__has_include) && __has_include(<WebKitLegacy/WebKit.h>)\n"
     "#import <WebKitLegacy/WebKit.h>\n"
     "#endif\n"
@@ -1253,15 +1253,31 @@ set(WebKit_USE_PREFIX_HEADER ON)
 # directory before the compile so the umbrella header lookup succeeds.
 # WebKit_CopyHeaders / WebKit_CopyPrivateHeaders are defined later in
 # CMakeLists.txt; defer the add_dependencies until those targets exist.
-add_custom_target(WebKit_StageFrameworkHeaders
+#
+# The command depends on the two staging directories rather than on the headers
+# in them: a directory's timestamp changes when an entry is added, removed or
+# replaced, which is when the links need to be redone, and not when a header is
+# edited. (As an add_custom_target, it used to run in every build, so a no-op
+# build never was one.)
+set(_webkit_stage_framework_headers_stamp "${CMAKE_CURRENT_BINARY_DIR}/WebKit_StageFrameworkHeaders.stamp")
+file(MAKE_DIRECTORY ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit)
+add_custom_command(
+    OUTPUT ${_webkit_stage_framework_headers_stamp}
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/SymlinkHeaders.cmake
         ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Headers
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/SymlinkHeaders.cmake
         ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/PrivateHeaders
+    COMMAND ${CMAKE_COMMAND} -E touch ${_webkit_stage_framework_headers_stamp}
+    DEPENDS
+        ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
+        ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit
+        ${CMAKE_SOURCE_DIR}/Source/cmake/SymlinkHeaders.cmake
     COMMENT "Staging WebKit.framework Headers/, PrivateHeaders/"
+    VERBATIM
 )
+add_custom_target(WebKit_StageFrameworkHeaders DEPENDS ${_webkit_stage_framework_headers_stamp})
 add_dependencies(WebKit WebKit_StageFrameworkHeaders)
 cmake_language(DEFER CALL add_dependencies WebKit_StageFrameworkHeaders WebKit_CopyHeaders WebKit_CopyPrivateHeaders)
 
@@ -1288,6 +1304,7 @@ set(_migrated_excluded_for_ios
 # own `WebFrame` -- conflicting with the real WebKitLegacy module.
 set(_migrate_pairs_file "${CMAKE_BINARY_DIR}/WebKit_MigrateHeaders.pairs")
 set(_migrate_pairs_content "")
+set(_migrate_outputs "")
 file(STRINGS "${WEBKIT_DIR}/MigratedHeaders-input.xcfilelist" _migrate_in_lines)
 file(STRINGS "${WEBKIT_DIR}/MigratedHeaders-output.xcfilelist" _migrate_out_lines)
 # Drop comment / blank lines from both, preserving order, so the indices line up.
@@ -1336,17 +1353,24 @@ foreach (_i RANGE ${_migrate_last})
         message(FATAL_ERROR "Unrecognized destination in MigratedHeaders-output.xcfilelist: ${_out}")
     endif ()
     string(APPEND _migrate_pairs_content "${_src}|${_dst}\n")
+    list(APPEND _migrate_outputs "${_dst}")
 endforeach ()
-file(WRITE "${_migrate_pairs_file}" "${_migrate_pairs_content}")
+WEBKIT_WRITE_FILE_IF_CHANGED("${_migrate_pairs_file}" "${_migrate_pairs_content}")
 
-add_custom_target(WebKit_MigrateHeaders
+# The stubs only depend on the pairs, which are only rewritten when they change.
+add_custom_command(
+    OUTPUT ${_migrate_outputs}
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/MigrateHeaders.cmake "${_migrate_pairs_file}"
+    DEPENDS "${_migrate_pairs_file}" ${CMAKE_SOURCE_DIR}/Source/cmake/MigrateHeaders.cmake
     COMMENT "Migrating WebCore/WebKitLegacy headers into WebKit.framework/{Headers,PrivateHeaders}/"
+    VERBATIM
 )
+add_custom_target(WebKit_MigrateHeaders DEPENDS ${_migrate_outputs})
 add_dependencies(WebKit_MigrateHeaders WebKit_StageFrameworkHeaders WebCore_CopyPrivateHeaders WebKitLegacy_CopyHeaders)
 add_dependencies(WebKit WebKit_MigrateHeaders)
 unset(_migrate_pairs_file)
 unset(_migrate_pairs_content)
+unset(_migrate_outputs)
 unset(_migrate_in_lines)
 unset(_migrate_out_lines)
 unset(_migrate_in)
@@ -1375,7 +1399,7 @@ unset(_migrated_excluded_for_ios)
 # avoids compiling the offending headers altogether. Bug 312083.
 set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/Internal")
 file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
-file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
+WEBKIT_WRITE_FILE_IF_CHANGED("${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
 "module WebKit_Internal [system] {
     module WKMaterialHostingSupport {
         requires objc
@@ -2627,18 +2651,18 @@ set(_private_modulemap_intermediates_dir "${CMAKE_BINARY_DIR}/WebKit/Modules")
 set(_private_modulemap_preprocessed "${_private_modulemap_intermediates_dir}/module.private.modulemap.preprocessed")
 set(_private_modulemap_addendum "${_private_modulemap_intermediates_dir}/module.private.addendum.modulemap")
 if (WEBKIT_SDK_IS_IOS_FAMILY)
-    file(WRITE "${_private_modulemap_addendum}"
+    WEBKIT_WRITE_FILE_IF_CHANGED("${_private_modulemap_addendum}"
 "  explicit module WKWebViewPrivate {
     header \"WKWebViewPrivate.h\"
     export *
   }
 ")
 else ()
-    file(WRITE "${_private_modulemap_addendum}" "")
+    WEBKIT_WRITE_FILE_IF_CHANGED("${_private_modulemap_addendum}" "")
 endif ()
 
 set(_private_modulemap_inject_script "${_private_modulemap_intermediates_dir}/inject-addendum.cmake")
-file(WRITE "${_private_modulemap_inject_script}"
+WEBKIT_WRITE_FILE_IF_CHANGED("${_private_modulemap_inject_script}"
 "file(READ \"\${INPUT}\" _content)
 file(READ \"\${ADDENDUM}\" _addendum)
 # Strip trailing whitespace, then replace the final `}` (closing
