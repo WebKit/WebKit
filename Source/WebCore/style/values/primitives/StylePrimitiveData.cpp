@@ -37,7 +37,7 @@ PrimitiveData::PrimitiveData(uint8_t opaqueType, UnevaluatedCalculationBase&& va
     : m_opaqueType { opaqueType }
     , m_kind { PrimitiveDataKind::Calculation }
 {
-    m_calculationValueHandle = Calculation::ValueMap::calculationValues().insert(value.leakRef());
+    m_calculationValueHandle = Calculation::ValueMap::calculationValues().insert(adoptRef(value.leakRef()));
 }
 
 PrimitiveData::PrimitiveData(uint8_t opaqueType, const UnevaluatedCalculationBase& value)
