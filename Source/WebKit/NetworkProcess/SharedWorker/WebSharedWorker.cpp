@@ -107,10 +107,10 @@ void WebSharedWorker::launch(WebSharedWorkerServerToContextConnection& connectio
         connection.suspendSharedWorker(identifier());
 }
 
-void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort& port)
+void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, std::optional<WebCore::FrameIdentifier> frameID, const WebCore::TransferredMessagePort& port)
 {
-    ASSERT(!m_sharedWorkerObjects.contains({ sharedWorkerObjectIdentifier, { false, port } }));
-    m_sharedWorkerObjects.add({ sharedWorkerObjectIdentifier, { false, port } });
+    ASSERT(!m_sharedWorkerObjects.contains({ sharedWorkerObjectIdentifier, { false, frameID, port } }));
+    m_sharedWorkerObjects.add({ sharedWorkerObjectIdentifier, { false, frameID, port } });
     if (RefPtr connection = contextConnection())
         connection->addSharedWorkerObject(sharedWorkerObjectIdentifier);
 
@@ -176,6 +176,16 @@ void WebSharedWorker::forEachSharedWorkerObject(NOESCAPE const Function<void(Web
 {
     for (auto& object : m_sharedWorkerObjects)
         apply(object.identifier, *object.state.port);
+}
+
+Vector<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> WebSharedWorker::sharedWorkerObjectFrames() const
+{
+    Vector<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> frames;
+    for (auto& object : m_sharedWorkerObjects) {
+        if (object.state.frameID)
+            frames.append({ object.identifier.processIdentifier(), *object.state.frameID });
+    }
+    return frames;
 }
 
 std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObjectProcess() const

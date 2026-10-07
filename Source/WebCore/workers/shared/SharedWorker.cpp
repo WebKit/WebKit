@@ -120,7 +120,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
         return sharedWorker;
     }
 
-    protect(sharedWorkerMainThreadConnection())->requestSharedWorker(key, sharedWorker->identifier(), WTF::move(transferredPort), options);
+    protect(sharedWorkerMainThreadConnection())->requestSharedWorker(key, sharedWorker->identifier(), document.frameID(), WTF::move(transferredPort), options);
     return sharedWorker;
 }
 

@@ -89,7 +89,7 @@ NetworkSession* WebSharedWorkerServerConnection::session()
     return NetworkProcess::singleton().networkSession(server->sessionID());
 }
 
-void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
+void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, std::optional<WebCore::FrameIdentifier> frameID, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
 {
     // The claimed top origin decides which process runs this worker, via WebSharedWorker::topSite() and
     // WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess. Validate the whole site rather
@@ -109,7 +109,7 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
     MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
     if (CheckedPtr session = this->session())
-        session->ensureSharedWorkerServer().requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, WTF::move(port), WTF::move(workerOptions));
+        session->ensureSharedWorkerServer().requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, frameID, WTF::move(port), WTF::move(workerOptions));
 }
 
 void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
