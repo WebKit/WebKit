@@ -653,6 +653,55 @@ TEST(DragAndDropTests, ExternalSourcePlainTextToIFrame)
     checkDragCaretRectIsContainedInRect([simulator lastKnownDragCaretRect], CGRectMake(containerLeft, containerTop, containerWidth, containerHeight));
 }
 
+// Drags text over an editable area in an iframe offset by (100, 150). The drag caret and the editable area's
+// rect must be in the top-level page's coordinates no matter which process the iframe runs in.
+static void runExternalSourcePlainTextToOffsetIFrameTest(ASCIILiteral iframeSource)
+{
+    HTTPServer server({
+        { "/main"_s, { makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 150px; width: 400px; height: 300px; border: none;' src='"_s, iframeSource, "'></iframe></body>"_s) } },
+        { "/inner"_s, { "<body style='margin: 0'>"
+            "<div contenteditable style='position: absolute; left: 0; top: 0; width: 300px; height: 200px; padding: 10px;'></div>"
+            "<script>window.webkit.messageHandlers.testHandler.postMessage('inner frame loaded')</script>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [[configuration preferences] _setSiteIsolationEnabled:YES];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool innerFrameLoaded = false;
+    [webView performAfterReceivingMessage:@"inner frame loaded" action:^{
+        innerFrameLoaded = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    ASSERT_TRUE(Util::runFor(&innerFrameLoaded, 10_s));
+
+    RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(250, 300)];
+
+    // The editable area's border box is (0, 0, 320, 220) in the iframe.
+    checkDragCaretRectIsContainedInRect([simulator lastKnownDragCaretRect], CGRectMake(100, 150, 320, 220));
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
+}
+
+TEST(DragAndDropTests, ExternalSourcePlainTextToSameSiteOffsetIFrame)
+{
+    runExternalSourcePlainTextToOffsetIFrameTest("https://example.com/inner"_s);
+}
+
+TEST(DragAndDropTests, ExternalSourcePlainTextToCrossOriginOffsetIFrame)
+{
+    runExternalSourcePlainTextToOffsetIFrameTest("https://webkit.org/inner"_s);
+}
+
 TEST(DragAndDropTests, ExternalSourceInlineTextToFileInput)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

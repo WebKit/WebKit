@@ -27,10 +27,12 @@
 
 #include "SandboxExtension.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntPoint.h>
 
 namespace WebKit {
 struct DragEventForwardingData {
     WebCore::FrameIdentifier targetFrameID;
+    WebCore::IntPoint transformedClientPosition;
     SandboxExtensionHandle sandboxExtensionHandle;
     Vector<SandboxExtensionHandle> sandboxExtensionsForUpload;
 };

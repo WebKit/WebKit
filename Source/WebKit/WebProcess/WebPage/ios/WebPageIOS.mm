@@ -1078,8 +1078,10 @@ void WebPage::didConcludeEditDrag()
     m_pendingImageElementsForDropSnapshot.clear();
 
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
+    if (!frame) {
+        computeAndSendEditDragSnapshot();
         return;
+    }
 
     if (auto selectionRange = frame->selection().selection().toNormalizedRange()) {
         m_pendingImageElementsForDropSnapshot = visibleImageElementsInRangeWithNonLoadedImages(*selectionRange);

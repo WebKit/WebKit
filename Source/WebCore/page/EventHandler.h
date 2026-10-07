@@ -151,7 +151,7 @@ enum class LastKnownMousePositionSource : uint8_t { Mouse, Wheel, Touch };
 enum class DragEventHandled : bool;
 
 using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
-using DragEventTargetData = Variant<DragEventHandled, FrameIdentifier>;
+using DragEventTargetData = Variant<DragEventHandled, RemoteUserInputEventData>;
 
 class EventHandler final : public CanMakeCheckedPtr<EventHandler> {
     WTF_MAKE_TZONE_ALLOCATED(EventHandler);
