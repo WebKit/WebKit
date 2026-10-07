@@ -92,23 +92,31 @@ def out_of(number, base):
     return '[{}{}/{}]'.format(' ' * (len(base) - len(number)), number, base)
 
 
-def elapsed(seconds):
-    if seconds <= 0:
-        return 'no time'
-    elif seconds < 1:
-        return 'less than a second'
+def elapsed(seconds: float, precision: int = None, shorthand: bool = False):
+    rounded_seconds = round(seconds, ndigits=precision)
+    if seconds < 60:
+        if shorthand:
+            return f'{rounded_seconds}s' if not (rounded_seconds == 0 and seconds > 0) else '<1s'
+        elif precision is None:
+            if seconds <= 0:
+                return 'no time'
+            elif seconds < 1:
+                return 'less than a second'
+        return pluralize(rounded_seconds, 'second')
 
-    seconds = int(round(seconds))
+    seconds = int(seconds)
     minutes = seconds // 60
     hours = minutes // 60
     days = hours // 24
 
+    precise_seconds = (seconds % 60) + round(rounded_seconds - seconds, ndigits=precision)
+
     force = False
     result = ''
-    for value, description in [(days, 'day'), (hours % 24, 'hour'), (minutes % 60, 'minute')]:
+    for value, description, letter in [(days, 'day', 'd'), (hours % 24, 'hour', 'h'), (minutes % 60, 'minute', 'm')]:
         if force or value:
             force = True
-            result += ' ' + pluralize(value, description)
+            result += f'{str(value)}{letter} ' if shorthand else f' {pluralize(value, description)}'
     if force:
-        return result[1:] + ' and ' + pluralize(seconds % 60, 'second')
-    return pluralize(seconds % 60, 'second')
+        return result + f'{precise_seconds}s' if shorthand else f"{result[1:]} and {pluralize(precise_seconds, 'second')}"
+    return pluralize(precise_seconds, 'second')
