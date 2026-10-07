@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
 
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/CompletionHandler.h>
@@ -56,6 +58,10 @@ class WebPageProxy;
 using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteractionType;
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
+
+// https://w3c.github.io/webdriver/#dfn-normalised-key-value
+VirtualKey NODELETE normalizedVirtualKey(VirtualKey);
+
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
 using CharKey = String;
@@ -63,6 +69,8 @@ using CharKeySet = ListHashSet<String>;
 #else
 using CharKey = char32_t;
 using CharKeySet = ListHashSet<uint32_t>;
+
+std::optional<CharKey> pressedCharKey(const String&);
 #endif
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
@@ -129,6 +137,16 @@ public:
     Vector<StateEntry> states;
 };
 
+struct SimulatedInputViewport {
+    WebCore::FloatPoint originInMainFrameViewport;
+    WebCore::FloatSize size;
+};
+
+struct SimulatedInputRunOptions {
+    std::optional<SimulatedInputViewport> viewport;
+    bool interpolatePointerMoves { false };
+};
+
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {
     WTF_MAKE_NONCOPYABLE(SimulatedInputDispatcher);
 public:
@@ -158,7 +176,7 @@ public:
 
     ~SimulatedInputDispatcher();
 
-    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
+    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions, AutomationCompletionHandler&&);
     void cancel();
 
     bool NODELETE isActive() const;
@@ -176,7 +194,27 @@ private:
     void keyFrameTransitionDurationTimerFired();
     bool isKeyFrameTransitionComplete() const;
 
+    WebCore::IntPoint currentLocationOfSource(const SimulatedInputSourceState&) const;
     void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
+
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    struct PointerMoveInterpolation {
+        uint64_t identifier { 0 };
+        WebCore::IntPoint start;
+        WebCore::IntPoint end;
+        MouseButton button;
+        String pointerType;
+        unsigned stepCount { 1 };
+        unsigned stepIndex { 0 };
+        Seconds stepInterval;
+        WebCore::IntPoint lastDispatchedLocation;
+        AutomationCompletionHandler completionHandler;
+    };
+
+    void startPointerMoveInterpolation(const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton, const String& pointerType, Seconds duration, AutomationCompletionHandler&&);
+    void pointerMoveInterpolationTimerFired();
+    void finishPointerMoveInterpolation(std::optional<AutomationCommandError>);
+#endif
 
     WeakRef<WebPageProxy> m_page;
     SimulatedInputDispatcher::Client& m_client;
@@ -185,6 +223,13 @@ private:
     AutomationCompletionHandler m_runCompletionHandler;
     AutomationCompletionHandler m_keyFrameTransitionCompletionHandler;
     RunLoop::Timer m_keyFrameTransitionDurationTimer;
+    SimulatedInputRunOptions m_options;
+
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    RunLoop::Timer m_pointerMoveInterpolationTimer;
+    std::optional<PointerMoveInterpolation> m_pointerMoveInterpolation;
+    uint64_t m_lastPointerMoveInterpolationIdentifier { 0 };
+#endif
 
     Vector<SimulatedInputKeyFrame> m_keyframes;
 

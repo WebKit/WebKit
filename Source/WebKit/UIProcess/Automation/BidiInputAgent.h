@@ -27,9 +27,16 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+#include "SimulatedInputDispatcher.h"
+#endif
 #include "WebDriverBidiBackendDispatchers.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -82,14 +89,41 @@ struct Source {
 };
 
 // https://w3c.github.io/webdriver/#dfn-input-state — one per (session, top-level traversable).
-class State {
+class State : public RefCountedAndCanMakeWeakPtr<State> {
     WTF_MAKE_TZONE_ALLOCATED(State);
 public:
+    static Ref<State> create() { return adoptRef(*new State); }
+
     const Source* find(const String& id) const;
     void add(const String& id, Source);
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+    SimulatedInputSource& simulatedSource(const Action&);
+    const HashMap<String, Ref<SimulatedInputSource>>& simulatedSources() const { return m_simulatedSources; }
+#endif
+
+    // https://w3c.github.io/webdriver/#dfn-input-cancel-list
+    Vector<Action>& inputCancelList() { return m_inputCancelList; }
+
+    // https://w3c.github.io/webdriver/#dfn-actions-queue
+    using QueuedCommand = Function<void(CompletionHandler<void()>&&)>;
+    void enqueue(QueuedCommand&&);
+
+    void reset();
+
 private:
+    State() = default;
+    void runNextQueuedCommand();
+
     HashMap<String, Source> m_inputStateMap;
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+    HashMap<String, Ref<SimulatedInputSource>> m_simulatedSources;
+#endif
+    Vector<Action> m_inputCancelList;
+    Deque<QueuedCommand> m_queue;
+    bool m_isRunningQueuedCommand { false };
+    bool m_isPumpingQueuedCommands { false };
+    bool m_shouldPumpAgain { false };
 };
 
 } // namespace WebKit::BidiInput
@@ -108,15 +142,15 @@ public:
     void releaseActions(const String& context, Inspector::CommandCallback<void>&&) override;
     void setFiles(const String& context, Ref<JSON::Object>&& element, Ref<JSON::Array>&& files, Inspector::CommandCallback<void>&&) override;
 
+    void willClosePage(const String& pageHandle);
+
 private:
     // https://w3c.github.io/webdriver/#dfn-get-the-input-state — keyed by top-level context handle.
     BidiInput::State& inputStateForTopLevelContext(const String& pageHandle);
-    // https://w3c.github.io/webdriver/#dfn-reset-the-input-state
-    void resetInputState(const String& pageHandle);
 
     WeakPtr<WebAutomationSession> m_session;
     Ref<Inspector::BidiInputBackendDispatcher> m_inputDomainDispatcher;
-    HashMap<String, std::unique_ptr<BidiInput::State>> m_inputStates;
+    HashMap<String, Ref<BidiInput::State>> m_inputStates;
 };
 
 } // namespace WebKit

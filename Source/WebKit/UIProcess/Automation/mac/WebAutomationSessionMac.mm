@@ -197,6 +197,8 @@ static WebMouseEventButton NODELETE automationMouseButtonToPlatformMouseButton(M
     case MouseButton::Left:   return WebMouseEventButton::Left;
     case MouseButton::Middle: return WebMouseEventButton::Middle;
     case MouseButton::Right:  return WebMouseEventButton::Right;
+    case MouseButton::Back:   return WebMouseEventButton::Back;
+    case MouseButton::Forward: return WebMouseEventButton::Forward;
     case MouseButton::None:   return WebMouseEventButton::None;
     default: RELEASE_ASSERT_NOT_REACHED();
     }
