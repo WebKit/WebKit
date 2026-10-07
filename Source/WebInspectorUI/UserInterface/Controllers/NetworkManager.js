@@ -36,6 +36,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._resourceRequestIdentifierMap = new Map;
         this._orphanedResources = new Map;
         this._webSocketIdentifierToURL = new Map;
+        this._usesLegacyHeaderCookieParsing = undefined;
 
         this._waitingForMainFrameResourceTreePayload = true;
         this._transitioningPageTarget = false;
@@ -285,6 +286,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     get bootstrapScript() { return this._bootstrapScript; }
     get enabledNetworkForSiteIsolation() { return this._enabledNetworkForSiteIsolation; }
     get enabledPageForSiteIsolation() { return this._enabledPageForSiteIsolation; }
+    get usesLegacyHeaderCookieParsing() { return this._usesLegacyHeaderCookieParsing; }
 
     get frames()
     {
@@ -750,6 +752,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestWillBeSent(requestIdentifier, frameIdentifier, loaderIdentifier, request, type, redirectResponse, timestamp, walltime, initiator, targetId)
     {
+        this._checkLegacyHeaderCookieParsing(request.headers);
+
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -793,6 +797,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request)
     {
+        this._checkLegacyHeaderCookieParsing(request.headers);
+
         let url = this._webSocketIdentifierToURL.get(requestId);
         console.assert(url);
         if (!url)
@@ -817,6 +823,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     webSocketHandshakeResponseReceived(requestId, timestamp, response)
     {
+        this._checkLegacyHeaderCookieParsing(response.headers);
+
         let resource = this._resourceRequestIdentifierMap.get(requestId);
         console.assert(resource);
         if (!resource)
@@ -829,7 +837,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // FIXME: <webkit.org/b/169166> Web Inspector: WebSockets: Implement timing information
         let responseTiming = response.timing || null;
 
-        resource.updateForResponse(resource.url, resource.mimeType, resource.type, response.headers, response.status, response.statusText, elapsedTime, responseTiming);
+        resource.updateForResponse(resource.url, resource.mimeType, resource.type, response.headers, response.status, response.statusText, elapsedTime, responseTiming, response.source, response.security);
 
         resource.markAsFinished(elapsedTime);
     }
@@ -878,6 +886,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestWasServedFromMemoryCache(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload, timestamp, initiator)
     {
+        this._checkLegacyHeaderCookieParsing(cachedResourcePayload.response?.headers);
+
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -915,6 +925,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestDidReceiveResponse(requestIdentifier, frameIdentifier, loaderIdentifier, type, response, timestamp)
     {
+        this._checkLegacyHeaderCookieParsing(response.headers);
+
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -980,6 +992,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     resourceRequestDidFinishLoading(requestIdentifier, timestamp, sourceMapURL, metrics)
     {
+        this._checkLegacyHeaderCookieParsing(metrics?.requestHeaders);
+
         // Ignore this while waiting for the whole frame/resource tree.
         if (this._waitingForMainFrameResourceTreePayload)
             return;
@@ -1027,6 +1041,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     async requestIntercepted(target, requestId, request)
     {
+        this._checkLegacyHeaderCookieParsing(request.headers);
+
         for (let localResourceOverride of this.localResourceOverridesForURL(request.url)) {
             if (localResourceOverride.disabled)
                 continue;
@@ -1035,7 +1051,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 continue;
 
             let isPassthrough = localResourceOverride.isPassthrough;
-            let originalHeaders = isPassthrough ? request.headers : {};
 
             let localResource = localResourceOverride.localResource;
             await localResource.requestContent();
@@ -1056,7 +1071,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     requestId,
                     url: localResourceOverride.generateRequestRedirectURL(request.url) ?? undefined,
                     method,
-                    headers: {...originalHeaders, ...localResource.requestHeaders},
+                    headers: this._headersForOverride(request.headers, localResource.requestHeaders, isPassthrough),
                     postData: (function() {
                         if (method && WI.HTTPUtilities.RequestMethodsWithBody.has(method)) {
                             if (localResource.requestData ?? false)
@@ -1087,7 +1102,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
                         return WI.HTTPUtilities.statusTextForStatusCode(200);
                     })(),
-                    headers: {...originalHeaders, ...localResource.responseHeaders},
+                    headers: this._headersForOverride(request.headers, localResource.responseHeaders, isPassthrough),
                 });
                 return;
             }
@@ -1104,6 +1119,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     async responseIntercepted(target, requestId, response)
     {
+        this._checkLegacyHeaderCookieParsing(response.headers);
+
         for (let localResourceOverride of this.localResourceOverridesForURL(response.url)) {
             if (localResourceOverride.disabled)
                 continue;
@@ -1112,7 +1129,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 continue;
 
             let isPassthrough = localResourceOverride.isPassthrough;
-            let originalHeaders = isPassthrough ? response.headers : {};
 
             let localResource = localResourceOverride.localResource;
             await localResource.requestContent();
@@ -1148,7 +1164,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
                         return WI.HTTPUtilities.statusTextForStatusCode(200);
                     })(),
-                    headers: {...originalHeaders, ...localResource.responseHeaders},
+                    headers: this._headersForOverride(response.headers, localResource.responseHeaders, isPassthrough),
                 });
                 return;
 
@@ -1248,6 +1264,35 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         frame.clearExecutionContexts();
         for (let context of survivors)
             frame.addExecutionContext(context);
+    }
+
+    _checkLegacyHeaderCookieParsing(headers)
+    {
+        if (this._usesLegacyHeaderCookieParsing !== undefined)
+            return;
+
+        if (!headers)
+            return;
+
+        // COMPATIBILITY (iOS X.Y, macOS X.Y): Network.Header did not exist yet.
+        this._usesLegacyHeaderCookieParsing = !Array.isArray(headers);
+    }
+
+    _headersForOverride(headers, overrides, isPassthrough)
+    {
+        let result = overrides;
+
+        if (isPassthrough) {
+            result = result.copy();
+            let originalHeaders = new WI.HTTPHeaderMap(headers);
+            for (let [name, value] of originalHeaders) {
+                if (!overrides.has(name))
+                    result.add(name, value);
+            }
+        }
+
+        // COMPATIBILITY (iOS X.Y, macOS X.Y): Network.Header did not exist yet.
+        return Array.isArray(headers) ? result : Object.fromEntries(result.combined());
     }
 
     _addNewResourceToFrameOrTarget(url, frameIdentifier, resourceOptions = {}, frameOptions = {})

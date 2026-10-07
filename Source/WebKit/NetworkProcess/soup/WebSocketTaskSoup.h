@@ -31,6 +31,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
+namespace WebCore {
+class ResourceResponse;
+}
+
 namespace WebKit {
 class NetworkSocketChannel;
 struct SessionSet;
@@ -59,6 +63,7 @@ private:
     void delayFailTimerFired();
 
     String acceptedExtensions() const;
+    WebCore::ResourceResponse handshakeResponse() const;
 
     static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
     static void didReceiveErrorCallback(WebSocketTask*, GError*);

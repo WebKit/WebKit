@@ -91,15 +91,30 @@ function test()
                 let fetchCode = resource.generateFetchCode();
 
                 // Strip inconsistent and unrelated headers.
-                fetchCode = fetchCode.replace(/\s+"Accept-Language": ".+?",\n/, "\n");
-                fetchCode = fetchCode.replace(/\s+"Cache-Control": ".+?",\n/, "\n");
-                fetchCode = fetchCode.replace(/\s+"Pragma": ".+?",\n/, "\n");
-                fetchCode = fetchCode.replace(/\s+"Priority": ".+?",\n/, "\n");
-                fetchCode = fetchCode.replace(/("User-Agent": )(".+?")(,?\n)/, "$1<filtered>$3");
+                fetchCode = fetchCode.replace(/\s+\["Accept-Language", ".+?"\],\n/, "\n");
+                fetchCode = fetchCode.replace(/\s+\["Cache-Control", ".+?"\],\n/, "\n");
+                fetchCode = fetchCode.replace(/\s+\["Pragma", ".+?"\],\n/, "\n");
+                fetchCode = fetchCode.replace(/\s+\["Priority", ".+?"\],\n/, "\n");
+                fetchCode = fetchCode.replace(/("User-Agent", )(".+?")/, "$1<filtered>");
 
                 InspectorTest.log(fetchCode);
             },
         });
+    });
+
+    suite.addTestCase({
+        name: "WI.Resource.prototype.generateFetchCode.RepeatedHeaders",
+        async test() {
+            let resource = new WI.Resource("https://example.com/", {
+                requestMethod: "GET",
+                requestHeaders: [
+                    {name: "X-Example", value: 'first, "quoted"'},
+                    {name: "x-example", value: "second"},
+                    {name: "X-Example", value: 'third, "quoted"'},
+                ],
+            });
+            InspectorTest.log(resource.generateFetchCode());
+        },
     });
 
     suite.runTestCasesAndFinish();

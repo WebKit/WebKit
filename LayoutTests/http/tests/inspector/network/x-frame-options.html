@@ -24,7 +24,7 @@ function test()
             let event = await WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
 
             let resource = event.target;
-            InspectorTest.expectEqual(resource.responseHeaders["X-Frame-Options"], option, "X-Frame-Options headers should match.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Frame-Options"), option, "X-Frame-Options headers should match.");
         }
     });
 
@@ -39,7 +39,7 @@ function test()
             let event = await WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
 
             let resource = event.target;
-            InspectorTest.expectEqual(resource.responseHeaders["X-Frame-Options"], option, "X-Frame-Options headers should match.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Frame-Options"), option, "X-Frame-Options headers should match.");
         }
     });
 

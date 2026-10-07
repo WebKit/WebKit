@@ -1,0 +1,23 @@
+Tests original response fields before completion, after cancellation, and across redirects.
+
+
+== Running test suite: Network.ResponseHeaderEntries
+-- Running test case: Network.ResponseHeaderEntries.BeforeCompletion
+PASS: The response should succeed.
+PASS: Original fields should be available before the body finishes.
+x-example: ["one,two, three"]
+www-authenticate: ["Digest realm=\"one,two\", nonce=\"three,four\", Basic realm=\"five,six\""]
+set-cookie: ["first=one; Expires=Wed, 21 Oct 2037 07:28:00 GMT, second=two; Expires=Wed, 21 Oct 2037 07:28:00 GMT; Path=/; Secure"]
+PASS: Public response headers should not expose Set-Cookie.
+PASS: The unfinished response should be canceled.
+PASS: Canceling the body should retain the response fields.
+
+-- Running test case: Network.ResponseHeaderEntries.Redirect
+PASS: The redirect should be recorded.
+redirect cache-control: ["no-store, private"]
+final cache-control: ["no-store"]
+x-example: ["one,two, three"]
+www-authenticate: ["Digest realm=\"one,two\", nonce=\"three,four\", Basic realm=\"five,six\""]
+set-cookie: ["first=one; Expires=Wed, 21 Oct 2037 07:28:00 GMT, second=two; Expires=Wed, 21 Oct 2037 07:28:00 GMT; Path=/; Secure"]
+PASS: Public response headers should not expose Set-Cookie.
+

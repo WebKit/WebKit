@@ -112,6 +112,7 @@ private:
 
     static void gotHeadersCallback(SoupMessage*, NetworkDataTaskSoup*);
     void didGetHeaders();
+    void captureResponseHeadersForWebInspector(SoupMessageHeaders*);
 
     static void wroteBodyDataCallback(SoupMessage*, unsigned, NetworkDataTaskSoup*);
     void didWriteBodyData(uint64_t bytesSent);

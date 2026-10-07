@@ -448,6 +448,8 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 
     switch (shouldStartHTTPRedirection(m_response)) {
     case ShouldStartHTTPRedirection::Yes:
+        if (m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector)
+            m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
         m_inputStream = WTF::move(inputStream);
         skipInputStreamForRedirection();
         return;
@@ -1041,6 +1043,8 @@ void NetworkDataTaskSoup::didRequestNextPart(GRefPtr<GInputStream>&& inputStream
     m_response = ResourceResponse(URL { m_firstRequest.url() }, extractMIMETypeFromMediaType(contentType),
         soup_message_headers_get_content_length(headers), extractCharsetFromMediaType(contentType).toString());
     m_response.updateFromSoupMessageHeaders(headers);
+    if (shouldCaptureExtraNetworkLoadMetrics())
+        captureResponseHeadersForWebInspector(headers);
     dispatchDidReceiveResponse();
 }
 
@@ -1124,6 +1128,21 @@ WebCore::AdditionalNetworkLoadMetricsForWebInspector& NetworkDataTaskSoup::addit
     return *m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector;
 }
 
+void NetworkDataTaskSoup::captureResponseHeadersForWebInspector(SoupMessageHeaders* soupHeaders)
+{
+    // Do not change the header snapshot attached to an earlier response.
+    if (RefPtr previousMetrics = m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector)
+        m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = previousMetrics->isolatedCopy();
+    auto& rawResponseHeaders = additionalNetworkLoadMetricsForWebInspector().rawResponseHeaders;
+    rawResponseHeaders.clear();
+    SoupMessageHeadersIter iterator;
+    soup_message_headers_iter_init(&iterator, soupHeaders);
+    const char* name;
+    const char* value;
+    while (soup_message_headers_iter_next(&iterator, &name, &value))
+        rawResponseHeaders.append({ String::fromLatin1(name), String::fromLatin1(value) });
+}
+
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -1159,6 +1178,7 @@ void NetworkDataTaskSoup::didGetHeaders()
     // is the first one we receive after starting, so we use it also to get information about the
     // request headers.
     if (shouldCaptureExtraNetworkLoadMetrics()) {
+        captureResponseHeadersForWebInspector(soup_message_get_response_headers(m_soupMessage.get()));
         auto& additionalMetrics = additionalNetworkLoadMetricsForWebInspector();
 
         HTTPHeaderMap requestHeaders;
@@ -1617,4 +1637,3 @@ void NetworkDataTaskSoup::didReadFile(GRefPtr<GInputStream>&& inputStream)
 }
 
 } // namespace WebKit
-

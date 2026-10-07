@@ -33,6 +33,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CurlStreamScheduler.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/WebSocketHandshake.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -313,13 +314,29 @@ std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
     if (headerLength <= 0)
         return false;
 
+    auto response = m_handshake->serverHandshakeResponse();
+    if (RefPtr channel = m_channel.get(); channel && channel->shouldCaptureExtraNetworkLoadMetrics()) {
+        auto headerBytes = m_receiveBuffer.span().first(headerLength);
+        if (WTF::contains(headerBytes, "\r\n\r\n"_span8)) {
+            auto metrics = Box<WebCore::NetworkLoadMetrics>::create();
+            auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
+            additionalMetrics->parseRawResponseHeaders(String::fromLatin1(headerBytes).split('\n'));
+            WebCore::HTTPHeaderMap headers;
+            for (const auto& [name, value] : additionalMetrics->rawResponseHeaders)
+                headers.add(name, value);
+            response.setHTTPHeaderFields(WTF::move(headers));
+            metrics->additionalNetworkLoadMetricsForWebInspector = WTF::move(additionalMetrics);
+            response.setDeprecatedNetworkLoadMetrics(WTF::move(metrics));
+        }
+    }
+
     skipReceivedBuffer(headerLength);
 
     if (m_handshake->mode() != WebCore::WebSocketHandshake::Connected) {
         auto reason = m_handshake->failureReason();
         if (!m_handshake->serverHandshakeResponse().isNull()) {
             if (RefPtr channel = m_channel.get())
-                channel->didReceiveHandshakeResponse(WebCore::ResourceResponse(m_handshake->serverHandshakeResponse()));
+                channel->didReceiveHandshakeResponse(WTF::move(response));
         }
         m_handshake = nullptr;
         return makeUnexpected(reason);
@@ -336,7 +353,7 @@ std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
 
     if (RefPtr channel = m_channel.get()) {
         channel->didConnect(m_handshake->serverWebSocketProtocol(), m_handshake->acceptedExtensions());
-        channel->didReceiveHandshakeResponse(WebCore::ResourceResponse(m_handshake->serverHandshakeResponse()));
+        channel->didReceiveHandshakeResponse(WTF::move(response));
     }
     m_handshake = nullptr;
     return true;

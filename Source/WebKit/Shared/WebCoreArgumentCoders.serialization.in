@@ -5648,6 +5648,7 @@ header: <WebCore/NetworkLoadMetrics.h>
     String tlsProtocol;
     String tlsCipher;
     WebCore::HTTPHeaderMap requestHeaders;
+    Vector<std::pair<String, String>> rawResponseHeaders;
     uint64_t requestHeaderBytesSent;
     uint64_t responseHeaderBytesReceived;
     uint64_t requestBodyBytesSent;

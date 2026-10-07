@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkLoadMetrics.h"
 
+#include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -147,11 +148,28 @@ Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsFor
     copy->tlsProtocol = tlsProtocol.isolatedCopy();
     copy->tlsCipher = tlsCipher.isolatedCopy();
     copy->requestHeaders = requestHeaders.isolatedCopy();
+    copy->rawResponseHeaders = crossThreadCopy(rawResponseHeaders);
     copy->requestHeaderBytesSent = requestHeaderBytesSent;
     copy->responseHeaderBytesReceived = responseHeaderBytesReceived;
     copy->requestBodyBytesSent = requestBodyBytesSent;
     copy->isProxyConnection = isProxyConnection;
     return copy;
+}
+
+void AdditionalNetworkLoadMetricsForWebInspector::parseRawResponseHeaders(const Vector<String>& lines)
+{
+    rawResponseHeaders.clear();
+    for (const auto& line : lines) {
+        if (line.trim(isASCIIWhitespaceWithoutFF<char16_t>).isEmpty())
+            break;
+        if (line.startsWithIgnoringASCIICase("HTTP/"_s))
+            continue;
+        if (auto colon = line.find(':'); colon != notFound) {
+            auto name = line.left(colon).trim(isASCIIWhitespaceWithoutFF<char16_t>);
+            auto value = line.substring(colon + 1).trim(isASCIIWhitespaceWithoutFF<char16_t>);
+            rawResponseHeaders.append({ WTF::move(name), WTF::move(value) });
+        }
+    }
 }
 
 NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
@@ -202,18 +220,19 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
     return copy;
 }
 
-Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, Vector<std::pair<String, String>>&& rawResponseHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
 {
-    return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector(WTF::move(priority), WTF::move(remoteAddress), WTF::move(connectionIdentifier), WTF::move(tlsProtocol), WTF::move(tlsCipher), WTF::move(requestHeaders), requestHeaderBytesSent, responseHeaderBytesReceived, requestBodyBytesSent, isProxyConnection));
+    return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector(WTF::move(priority), WTF::move(remoteAddress), WTF::move(connectionIdentifier), WTF::move(tlsProtocol), WTF::move(tlsCipher), WTF::move(requestHeaders), WTF::move(rawResponseHeaders), requestHeaderBytesSent, responseHeaderBytesReceived, requestBodyBytesSent, isProxyConnection));
 }
 
-AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, Vector<std::pair<String, String>>&& rawResponseHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
     : priority(WTF::move(priority))
     , remoteAddress(WTF::move(remoteAddress))
     , connectionIdentifier(WTF::move(connectionIdentifier))
     , tlsProtocol(WTF::move(tlsProtocol))
     , tlsCipher(WTF::move(tlsCipher))
     , requestHeaders(WTF::move(requestHeaders))
+    , rawResponseHeaders(WTF::move(rawResponseHeaders))
     , requestHeaderBytesSent(requestHeaderBytesSent)
     , responseHeaderBytesReceived(responseHeaderBytesReceived)
     , requestBodyBytesSent(requestBodyBytesSent)

@@ -28,7 +28,7 @@ PASS: Resource should have a 401 status code.
 PASS: Response should have a 'WWW-Authenticate' response header for the failure.
 FAIL: 'Authorization' header value should be for badUsername:badPassword.
     Expected: "Basic YmFkVXNlcm5hbWU6YmFkUGFzc3dvcmQ="
-    Actual: undefined
+    Actual: ""
 
 -- Running test case: Resource.Metrics.RequestHeaders.BasicAuth.Success
 PASS: Resource should be created.
