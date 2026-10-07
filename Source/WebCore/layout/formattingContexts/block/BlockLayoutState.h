@@ -27,17 +27,44 @@
 
 #include <WebCore/AdjoiningMargins.h>
 #include <WebCore/Font.h>
+#include <WebCore/LayoutBoxGeometry.h>
+#include <WebCore/LayoutRange.h>
 #include <WebCore/LayoutUnits.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <algorithm>
+#include <wtf/CheckedRef.h>
 #include <wtf/EnumSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+class RenderBox;
+
 namespace Layout {
 
 class BlockFormattingContext;
 
-// This class holds block level information shared across child inline formatting contexts.
+struct ContainingBlockState {
+    CheckedRef<const RenderBox> blockContainer;
+    // The geometry of the block container itself, completed once its content is laid out (not used for the root).
+    BoxGeometry geometry;
+    // The content box in the inline direction, from the inline start of the block container's border box (in its own direction).
+    LayoutRange inlineRange;
+    // Block offsets are relative to the border box of the root (every box in the block formatting context has the same block flow direction).
+    LayoutUnit borderBoxLogicalTop;
+    LayoutUnit contentBoxLogicalTop;
+    // Percentage block sizes of the children resolve against this, and behave as auto without it (CSS 2.2 §10.5).
+    std::optional<LayoutUnit> contentBoxBlockSize;
+    // FIXME: With margin collapsing (CSS 2.2 §8.3.1) the next child starts at this border box bottom plus the collapsed margins.
+    std::optional<LayoutUnit> lastInFlowChildMarginBoxLogicalBottom;
+
+    LayoutUnit logicalTopForNextChild() const { return lastInFlowChildMarginBoxLogicalBottom.value_or(contentBoxLogicalTop); }
+    // The auto height ends at the bottom margin edge of the last in-flow child (CSS 2.2 §10.6.3).
+    LayoutUnit intrinsicContentBlockSize() const { return logicalTopForNextChild() - contentBoxLogicalTop; }
+};
+
+// This class holds block level information shared across child inline formatting contexts, and what the block formatting context changes
+// as it lays out its content.
 class BlockLayoutState {
 public:
     struct LineClamp {
@@ -106,6 +133,9 @@ public:
     // The margins coming into the inline content; the inline formatting context carries its own copy (InlineLayoutState::marginState).
     const MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
 
+    // The block containers whose content is being laid out, from the root to the innermost one.
+    Vector<ContainingBlockState>& containingBlockStates() LIFETIME_BOUND { return m_containingBlockStates; }
+
 private:
     std::optional<LineClamp> m_lineClamp;
     TextBoxTrim m_textBoxTrim;
@@ -113,6 +143,7 @@ private:
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
     std::optional<LineGrid> m_lineGrid;
     MarginState m_marginState;
+    Vector<ContainingBlockState> m_containingBlockStates;
 };
 
 inline BlockLayoutState::BlockLayoutState(MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
