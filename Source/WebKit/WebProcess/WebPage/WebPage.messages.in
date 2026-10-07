@@ -269,7 +269,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     RestoreSelectionInFocusedEditableElement()
 
     # Callbacks.
-    GetContentsAsString(enum:bool WebKit::ContentAsStringIncludesChildFrames inChildFrames) -> (String string)
+    GetContentsAsString() -> (String string)
+    GetContentsOfAllFramesAsString() -> (HashMap<WebCore::FrameIdentifier, String> frameContents)
 #if PLATFORM(COCOA)
     GetContentsAsAttributedString() -> (struct WebCore::AttributedString result)
 #endif
