@@ -1,0 +1,16 @@
+Testing that the equi-angular cubemap samples the direction the camera is aimed at, across all six faces. The texture encodes the longitude and latitude of each texel's direction, so the colour at the centre of the view should decode back to the camera's own yaw and pitch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS errors.worstByFace !== null is true
+PASS errors.worstByFace.front < 4 is true
+PASS errors.worstByFace.right < 4 is true
+PASS errors.worstByFace.left < 4 is true
+PASS errors.worstByFace.back < 4 is true
+PASS errors.worstByFace.up < 4 is true
+PASS errors.worstByFace.down < 4 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

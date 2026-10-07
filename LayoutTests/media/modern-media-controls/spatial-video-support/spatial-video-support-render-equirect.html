@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/spatial-video-render-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the equirectangular projections sample the direction the camera is aimed at. The texture encodes the longitude and latitude of each texel's direction, so the colour at the centre of the view should decode back to the camera's own yaw and pitch.");
+
+const TOLERANCE_DEGREES = 4;
+
+// An equirectangular texture spreads longitude across its width and latitude down its height.
+function equirectangularGrid(span)
+{
+    return SpatialRenderTest.paintGrid(512, 256, (u, v) => {
+        const longitude = -span / 2 + u * span;
+        const latitude = Math.PI / 2 - v * Math.PI;
+        return [
+            Math.cos(latitude) * Math.sin(longitude),
+            Math.sin(latitude),
+            -Math.cos(latitude) * Math.cos(longitude),
+        ];
+    });
+}
+
+window.errors = {};
+
+function measure(name, projection, span, aims)
+{
+    const support = SpatialRenderTest.createRenderer(projection);
+    if (!support) {
+        errors[name] = null;
+        return;
+    }
+    SpatialRenderTest.uploadGrid(support, equirectangularGrid(span));
+    let worst = 0;
+    for (const [yaw, pitch] of aims)
+        worst = Math.max(worst, SpatialRenderTest.aimErrorDegrees(support, yaw, pitch));
+    errors[name] = worst;
+    SpatialRenderTest.destroy(support);
+}
+
+// Aims chosen away from the longitude seam, where linear filtering blends across the wrap.
+measure("equirect360", "equirect360", 2 * Math.PI, [
+    [0, 0], [45, 0], [-45, 0], [120, 0], [-120, 0],
+    [0, 30], [0, -30], [60, 25], [-60, -25],
+]);
+
+// A hemisphere only carries the front half, so the camera stays well inside it.
+measure("equirect180", "equirect180", Math.PI, [
+    [0, 0], [30, 0], [-30, 0], [60, 0], [-60, 0],
+    [0, 30], [0, -30], [40, 20], [-40, -20],
+]);
+
+shouldBeTrue("errors.equirect360 !== null");
+shouldBeTrue("errors.equirect180 !== null");
+shouldBeTrue(`errors.equirect360 < ${TOLERANCE_DEGREES}`);
+shouldBeTrue(`errors.equirect180 < ${TOLERANCE_DEGREES}`);
+
+</script>
+</body>
