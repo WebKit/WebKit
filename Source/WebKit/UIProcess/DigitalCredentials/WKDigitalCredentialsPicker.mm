@@ -353,6 +353,13 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 
 - (void)performRequest:(const WebCore::DigitalCredentialsMobileDocumentRequestData &)requestData
 {
+    if (!_presentmentController) {
+        RELEASE_LOG_ERROR(DigitalCredentials, "WKDigitalCredentialsPicker: WKIdentityDocumentPresentmentController is unavailable, libWebKitSwift may have failed to load");
+        WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "No supported document requests to present."_s };
+        [self completeWith:makeUnexpected(exceptionData)];
+        return;
+    }
+
     RetainPtr mobileDocumentRequests = adoptNS([[NSMutableArray alloc] init]);
 
     for (auto&& validatedRequest : requestData.requests) {
