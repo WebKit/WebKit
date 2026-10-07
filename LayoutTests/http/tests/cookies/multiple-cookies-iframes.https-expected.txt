@@ -49,11 +49,17 @@ PASS Has DOM cookie "test2.10" with value foobar.
 
 Tests 3: Set multiple partitioned cookies.
 PASS cookie is 'test3=foobar'.
-PASS Do not have DOM cookie "test3.1".
+PASS Do not have DOM cookie "test3".
 PASS cookie is 'test3=foobar; test3=foobar'.
 PASS Has DOM cookie "test3" with value foobar.
 PASS cookie is 'test3=foobar; test3=foobar'.
 PASS Has DOM cookie "test3" with value foobar.
+PASS cookie is 'test3=foobar; test3=foobar2'.
+PASS Has DOM cookie "test3" with value foobar.
+PASS cookie is 'test3=foobar2; test3=foobar2'.
+PASS Has DOM cookie "test3" with value foobar2.
+PASS cookie is 'test3=foobar2; test3=foobar2'.
+PASS Has DOM cookie "test3" with value foobar2.
 
 Tests 4: Set partitioned cookie with multiple partitioned attributes, unspecified samesite.
 PASS cookie is 'test4=foobar'.
@@ -377,11 +383,17 @@ FAIL Should have DOM cookie "test2.10". But do not.
 
 Tests 3: Set multiple partitioned cookies.
 PASS cookie is 'test3=foobar'.
-PASS Do not have DOM cookie "test3.1".
+PASS Do not have DOM cookie "test3".
 PASS cookie is 'test3=foobar; test3=foobar'.
 PASS Has DOM cookie "test3" with value foobar.
 PASS cookie is 'test3=foobar; test3=foobar'.
 PASS Has DOM cookie "test3" with value foobar.
+PASS cookie is 'test3=foobar; test3=foobar2'.
+PASS Has DOM cookie "test3" with value foobar.
+PASS cookie is 'test3=foobar2; test3=foobar2'.
+PASS Has DOM cookie "test3" with value foobar2.
+PASS cookie is 'test3=foobar2; test3=foobar2'.
+PASS Has DOM cookie "test3" with value foobar2.
 
 Tests 4: Set partitioned cookie with multiple partitioned attributes, unspecified samesite.
 PASS cookie is 'test4=foobar'.
