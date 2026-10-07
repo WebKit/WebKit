@@ -44,7 +44,7 @@ const pas_heap_config tagged_bmalloc_heap_config = TAGGED_BMALLOC_HEAP_CONFIG;
 extern const pas_heap_config bmalloc_heap_config;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
-    tagged_bmalloc, TAGGED_BMALLOC, true,
+    tagged_bmalloc, TAGGED_BMALLOC,
     .allocate_page_should_zero = false,
     .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
 

@@ -400,7 +400,7 @@ void testBootstrapHeap(const vector<Action>& actions,
 {
     static constexpr size_t slabSize = 1lu << 20;
     void* slabPtr = pas_page_malloc_try_allocate_without_deallocating_padding(
-        slabSize, alignSimple(slabSize), false).result;
+        slabSize, alignSimple(slabSize), pas_memory_flavor_plain).result;
     CHECK(slabPtr);
     uintptr_t slab = reinterpret_cast<uintptr_t>(slabPtr);
     

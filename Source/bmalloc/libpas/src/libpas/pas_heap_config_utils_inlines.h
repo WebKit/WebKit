@@ -52,9 +52,9 @@ typedef struct {
     pas_heap_runtime_config_view_cache_capacity_for_object_size_callback intrinsic_view_cache_capacity;
 } pas_basic_heap_config_definitions_arguments;
 
-#define PAS_BASIC_HEAP_CONFIG_DEFINITIONS(name, upcase_name, may_tag, ...) \
+#define PAS_BASIC_HEAP_CONFIG_DEFINITIONS(name, upcase_name, ...) \
     pas_basic_heap_page_caches name ## _page_caches = \
-        PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(may_tag); \
+        PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(upcase_name ## _HEAP_CONFIG.memory_flavor); \
     \
     pas_basic_heap_runtime_config name ## _intrinsic_runtime_config = { \
         .base = { \

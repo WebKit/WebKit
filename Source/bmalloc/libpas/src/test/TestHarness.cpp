@@ -385,6 +385,7 @@ void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
 void addMARTests();
 void addMemalignTests();
+void addMemoryFlavorTests();
 void addMinHeapTests();
 void addPGMTests();
 void addRaceTests();
@@ -881,6 +882,7 @@ int main(int argc, char** argv)
     ADD_SUITE(LotsOfHeapsAndThreads);
     ADD_SUITE(MAR);
     ADD_SUITE(Memalign);
+    ADD_SUITE(MemoryFlavor);
     ADD_SUITE(MinHeap);
     ADD_SUITE(PGM);
     ADD_SUITE(Race);

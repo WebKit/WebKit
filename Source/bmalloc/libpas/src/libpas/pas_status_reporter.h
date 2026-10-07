@@ -57,6 +57,7 @@ PAS_API void pas_status_reporter_dump_compact_large_utility_free_heap(pas_stream
 PAS_API void pas_status_reporter_dump_large_utility_free_heap(pas_stream* stream);
 PAS_API void pas_status_reporter_dump_compact_bootstrap_free_heap(pas_stream* stream);
 PAS_API void pas_status_reporter_dump_bootstrap_free_heap(pas_stream* stream);
+PAS_API void pas_status_reporter_dump_mte_bootstrap_free_heap(pas_stream* stream);
 
 PAS_API void pas_status_reporter_dump_bitfit_heap(pas_stream* stream, pas_bitfit_heap* heap);
 PAS_API void pas_status_reporter_dump_segregated_heap(pas_stream* stream, pas_segregated_heap* heap);

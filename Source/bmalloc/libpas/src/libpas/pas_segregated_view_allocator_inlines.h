@@ -177,7 +177,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                 }
             
                 pas_page_malloc_commit(exclusive->page_boundary, page_config.base.page_size,
-                                       page_config.base.heap_config_ptr->page_flags);
+                                       page_config.base.heap_config_ptr->memory_flavor);
                 if (verbose) {
                     pas_log("Creating page header when committing exclusive page, view = %p, "
                             "boundary = %p.\n",

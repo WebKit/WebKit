@@ -80,7 +80,7 @@ void* thingy_try_allocate_primitive(size_t size)
 
 void* thingy_try_allocate_primitive_zeroed(size_t size)
 {
-    return (void*)pas_allocation_result_zero(try_allocate_primitive(size, 1), size).begin;
+    return (void*)pas_allocation_result_zero(try_allocate_primitive(size, 1), size, THINGY_HEAP_CONFIG.memory_flavor).begin;
 }
 
 void* thingy_try_allocate_primitive_with_alignment(size_t size, size_t alignment)
@@ -117,7 +117,7 @@ void* thingy_try_allocate(pas_heap_ref* heap_ref)
 void* thingy_try_allocate_zeroed(pas_heap_ref* heap_ref)
 {
     return (void*)pas_allocation_result_zero(
-        try_allocate(heap_ref), THINGY_HEAP_CONFIG.get_type_size(heap_ref->type)).begin;
+        try_allocate(heap_ref), THINGY_HEAP_CONFIG.get_type_size(heap_ref->type), THINGY_HEAP_CONFIG.memory_flavor).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE_ARRAY(
@@ -141,7 +141,7 @@ void* thingy_try_allocate_zeroed_array(pas_heap_ref* heap_ref, size_t count, siz
         return NULL;
     
     return (void*)pas_allocation_result_zero(
-        try_allocate_array_by_size(heap_ref, size, alignment), size).begin;
+        try_allocate_array_by_size(heap_ref, size, alignment), size, THINGY_HEAP_CONFIG.memory_flavor).begin;
 }
 
 size_t thingy_get_allocation_size(void* ptr)

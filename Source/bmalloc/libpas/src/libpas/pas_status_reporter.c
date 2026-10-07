@@ -49,6 +49,7 @@
 #include "pas_large_sharing_pool.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
+#include "pas_mte_bootstrap_free_heap.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_segregated_heap.h"
 #include "pas_segregated_size_directory.h"
@@ -427,6 +428,17 @@ void pas_status_reporter_dump_bootstrap_free_heap(pas_stream* stream)
         pas_bootstrap_free_heap_get_num_free_bytes());
 }
 
+void pas_status_reporter_dump_mte_bootstrap_free_heap(pas_stream* stream)
+{
+    pas_stream_printf(
+        stream,
+        "Alloc: %zu, Peak Alloc: %zu, Mapped: %zu, Free: %zu",
+        pas_mte_bootstrap_free_heap_num_allocated_object_bytes,
+        pas_mte_bootstrap_free_heap_num_allocated_object_bytes_peak,
+        pas_mte_bootstrap_free_heap.num_mapped_bytes,
+        pas_mte_bootstrap_free_heap_get_num_free_bytes());
+}
+
 static bool dump_segregated_heap_directory_callback(
     pas_segregated_heap* heap,
     pas_segregated_size_directory* directory,
@@ -578,10 +590,10 @@ static bool dump_large_sharing_pool_node_callback(pas_large_sharing_node* node,
             stream, ", %s",
             pas_physical_memory_synchronization_style_get_string(node->synchronization_style));
     }
-    if (node->page_flags != pas_page_flags_none) {
+    if (node->memory_flavor != pas_memory_flavor_plain) {
         pas_stream_printf(
-            stream, ", page_flags=0x%x",
-            (unsigned)node->page_flags);
+            stream, ", memory_flavor=%s",
+            pas_memory_flavor_get_string((pas_memory_flavor)node->memory_flavor));
     }
 
     pas_stream_printf(stream, "\n");
@@ -996,6 +1008,10 @@ void pas_status_reporter_dump_everything(pas_stream* stream)
 
     pas_stream_printf(stream, "    Bootstrap Free Heap: ");
     pas_status_reporter_dump_bootstrap_free_heap(stream);
+    pas_stream_printf(stream, "\n");
+
+    pas_stream_printf(stream, "    MTE Bootstrap Free Heap: ");
+    pas_status_reporter_dump_mte_bootstrap_free_heap(stream);
     pas_stream_printf(stream, "\n");
 
     pas_status_reporter_dump_configuration(stream);

@@ -352,7 +352,7 @@ static PAS_ALWAYS_INLINE bool scavenge_impl(pas_expendable_memory* header,
                 (char*)payload + index * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
                 (other_index - index) * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
                 /* is_symmetric */ false,
-                pas_page_flags_none);
+                pas_memory_flavor_plain);
         }
 
         /* At this point, any of the pages in this range could get decommitted, but it won't necessarily

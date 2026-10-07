@@ -84,6 +84,7 @@ typedef struct {
     bool delegate_large_user_allocations;
     pas_large_map_variant large_map_variant;
     bool allow_mte_tagging;
+    pas_memory_flavor memory_flavor;
 } pas_basic_heap_config_arguments;
 
 #define PAS_BASIC_HEAP_CONFIG_SEGREGATED_HEAP_FIELDS(name, ...) \
@@ -318,7 +319,7 @@ typedef struct {
         .aligned_allocator = name ## _aligned_allocator, \
         .aligned_allocator_talks_to_sharing_pool = true, \
         .deallocator = NULL, \
-        .page_flags = pas_page_flags_none, \
+        .memory_flavor = ((pas_basic_heap_config_arguments){__VA_ARGS__}).memory_flavor, \
         .root_data = &name ## _root_data, \
         .prepare_to_enumerate = name ## _prepare_to_enumerate, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(name ## _heap_config), \

@@ -98,8 +98,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_auxiliary_zeroed_inline(
     pas_allocation_result result;
     result = bmalloc_try_allocate_auxiliary_impl(heap_ref, size, 1);
     if (PAS_MAR_SHOULD_LOG((void*) result.begin))
-        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size);
-    return (void*)pas_allocation_result_zero(result, size).begin;
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size, BMALLOC_HEAP_CONFIG.memory_flavor);
+    return (void*)pas_allocation_result_zero(result, size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_zeroed_inline(pas_primitive_heap_ref* heap_ref,
@@ -108,8 +108,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_zeroed_inline(pas_prim
     pas_allocation_result result;
     result = bmalloc_allocate_auxiliary_impl(heap_ref, size, 1);
     if (PAS_MAR_SHOULD_LOG((void*) result.begin))
-        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size);
-    return (void*)pas_allocation_result_zero(result, size).begin;
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size, BMALLOC_HEAP_CONFIG.memory_flavor);
+    return (void*)pas_allocation_result_zero(result, size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -144,10 +144,10 @@ bmalloc_try_allocate_auxiliary_zeroed_with_alignment_inline(pas_primitive_heap_r
     pas_allocation_result result;
     result = bmalloc_try_allocate_auxiliary_impl_inline_only(heap_ref, size, alignment);
     if (PAS_LIKELY(result.did_succeed))
-        return (void*)pas_allocation_result_zero(result, size).begin;
+        return (void*)pas_allocation_result_zero(result, size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
     return (void*)pas_allocation_result_zero(
         bmalloc_try_allocate_auxiliary_impl_casual_case(heap_ref, size, alignment),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -158,10 +158,10 @@ bmalloc_allocate_auxiliary_zeroed_with_alignment_inline(pas_primitive_heap_ref* 
     pas_allocation_result result;
     result = bmalloc_allocate_auxiliary_impl_inline_only(heap_ref, size, alignment);
     if (PAS_LIKELY(result.did_succeed))
-        return (void*)(pas_allocation_result_zero(result, size).begin);
+        return (void*)(pas_allocation_result_zero(result, size, BMALLOC_HEAP_CONFIG.memory_flavor).begin);
     return (void*)pas_allocation_result_zero(
         bmalloc_allocate_auxiliary_impl_casual_case(heap_ref, size, alignment),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_reallocate_auxiliary_inline(
@@ -267,7 +267,7 @@ bmalloc_try_allocate_zeroed_with_alignment_inline(size_t size, size_t alignment)
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_try_allocate_with_alignment_impl(size, alignment),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_zeroed_inline(size_t size)
@@ -275,8 +275,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_zeroed_inline(size_t size)
     pas_allocation_result result;
     result = bmalloc_try_allocate_impl(size, 1);
     if (PAS_MAR_SHOULD_LOG((void*) result.begin))
-        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size);
-    return (void*)pas_allocation_result_zero(result, size).begin;
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size, BMALLOC_HEAP_CONFIG.memory_flavor);
+    return (void*)pas_allocation_result_zero(result, size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_inline(size_t size)
@@ -298,7 +298,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_allocate_zeroed_inline(size_t size)
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_allocate_impl(size, 1),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -306,7 +306,7 @@ bmalloc_allocate_zeroed_with_alignment_inline(size_t size, size_t alignment)
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_allocate_with_alignment_impl(size, alignment),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void*

@@ -112,7 +112,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
                     (char*)allocation_result.begin + aligned_size);
         }
         
-        allocation_result = pas_allocation_result_zero(allocation_result, aligned_size);
+        allocation_result = pas_allocation_result_zero(allocation_result, aligned_size, data->config->memory_flavor);
     }
 
     pas_enumerable_range_list_append(
@@ -136,7 +136,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
     pas_large_sharing_pool_boot_free(
         pas_range_create(allocation_result.begin, allocation_result.begin + aligned_size),
         pas_physical_memory_is_locked_by_virtual_range_common_lock,
-        data->config->page_flags,
+        data->config->memory_flavor,
         data->cache->provider_commit_mode);
     
     result.result = (void*)allocation_result.begin;
