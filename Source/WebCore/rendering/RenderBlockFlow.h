@@ -42,6 +42,7 @@ class InlineContentCache;
 }
 
 namespace LayoutIntegration {
+class BlockLayout;
 class LineLayout;
 }
 
@@ -148,6 +149,7 @@ protected:
     // When the children are all inline (e.g., lines), we call layoutInlineChildren.
     void layoutInFlowChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void layoutBlockChildren(RelayoutChildren, LayoutUnit& maxFloatLogicalBottom);
+    bool layoutUsingBlockFormattingContext();
     void layoutInlineChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     void simplifiedNormalFlowLayout() override;
@@ -457,6 +459,8 @@ protected:
     LayoutIntegration::LineLayout& ensureInlineLayout();
 
 private:
+    friend class LayoutIntegration::BlockLayout;
+
     bool LEGACY_NODELETE isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const;
 
     bool recomputeLogicalWidthAndColumnWidth();
