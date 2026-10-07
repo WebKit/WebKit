@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<style>
+#container {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    width: 200px;
+    background: red;
+    font: 50px/50px monospace;
+}
+#target {
+    width: 100px;
+    color: transparent;
+    background: green;
+    offset-path: ray(90deg closest-side);
+    offset-position: 50% 50%;
+    offset-distance: 0;
+}
+</style>
+<p>Test passes if there is a green rectangle and no red.</p>
+<div id="container"><div id="target">X</div></div>
+<script>
+// A single child with only text takes the clamped-only layout path. The child's
+// offset-path transform depends on its own size and must be updated after it
+// is resized.
+document.body.offsetHeight;
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        document.getElementById("target").style.width = "200px";
+        document.body.offsetHeight;
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove("reftest-wait");
+        });
+    });
+});
+</script>
+</html>

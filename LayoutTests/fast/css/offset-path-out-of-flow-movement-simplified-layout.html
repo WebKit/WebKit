@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<style>
+#container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background: red;
+}
+#target {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: 200px;
+    background: green;
+    offset-path: ray(90deg closest-side);
+    offset-position: 50% 50%;
+    offset-distance: 0;
+}
+</style>
+<p>Test passes if there is a green square and no red.</p>
+<div id="container"><div id="target"></div></div>
+<script>
+// Only the out-of-flow child moves, so it and its containing block take the
+// simplified layout path. The offset-path transform depends on the position of
+// the box within its containing block and must still be updated.
+document.body.offsetHeight;
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        document.getElementById("target").style.left = "100px";
+        document.body.offsetHeight;
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove("reftest-wait");
+        });
+    });
+});
+</script>
+</html>
