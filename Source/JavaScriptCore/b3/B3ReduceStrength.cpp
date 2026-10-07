@@ -61,6 +61,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/LayeredHashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -629,51 +630,10 @@ public:
 
     bool run()
     {
-        bool result = runOnePass();
-
-        if (m_proc.optLevel() >= 2) {
-            if (result) {
-                m_changed = false;
-                m_changedCFG = false;
-                simplifyCFG();
-                handleChangedCFGIfNecessary();
-                m_changedCFG = false;
-                simplifySSA();
-
-                // A second value walk is only worthwhile when the CFG/SSA cleanup above exposed
-                // new opportunities: merged blocks enabling Check CSE, or a folded Phi turning
-                // Branch(Phi) into Branch(Identity).
-                if (m_changed) {
-                    m_valueForConstant.clear();
-                    reduceAllBlocksStrength();
-                    m_changedCFG = false;
-                    simplifyCFG();
-                    handleChangedCFGIfNecessary();
-                    m_changedCFG = false;
-                }
-
-                eliminateDeadCodeImpl(m_proc);
-            }
-        } else {
-            m_changedCFG = false;
-            simplifyCFG();
-            handleChangedCFGIfNecessary();
-            result |= m_changed;
-        }
-
-        return result;
-    }
-
-    bool runOnePass()
-    {
         m_changed = false;
-        m_changedCFG = false;
 
         simplifyCFG();
-
         handleChangedCFGIfNecessary();
-        // handleChangedCFGIfNecessary() can't reset m_changedCFG.
-        m_changedCFG = false;
 
         // We definitely want to do DCE before we do CSE so that we don't hoist things. For
         // example:
@@ -687,17 +647,23 @@ public:
         // keep @thing. That's better, since we usually want things to stay wherever the client
         // put them. We're not actually smart enough to move things around at random.
         m_changed |= eliminateDeadCodeImpl(m_proc);
-        m_valueForConstant.clear();
-
-        simplifySSA();
 
         reduceAllBlocksStrength();
 
+        if (m_proc.optLevel() >= 2 && !m_changed && !m_mayHaveUnfoldedPhis)
+            return false;
+
+        simplifyCFG();
+        handleChangedCFGIfNecessary();
+        if (m_mayHaveUnfoldedPhis)
+            simplifySSA();
+        if (m_proc.optLevel() >= 2)
+            eliminateDeadCodeImpl(m_proc);
         return m_changed;
     }
 
-    // Recompute the per-walk caches (dominators, value numbering) then run reduceBlockStrength
-    // over every block.
+    // Recompute the per-walk caches (dominators, value numbering, the Phi-to-Upsilon snapshot, and
+    // block reachability) then walk every block, reducing the ones that may be reachable.
     void reduceAllBlocksStrength()
     {
         // lowerMacros expands every wasm-GC opcode, so the Final run cannot see one.
@@ -710,13 +676,38 @@ public:
             m_wasmGCEpochs.shrink(0);
             m_wasmGCEpochs.grow(wasmGCSlotCount());
             m_wasmGCEpochsAtTail.resize(static_cast<size_t>(m_proc.size()) * wasmGCSlotCount());
-            m_wasmGCVisited.clearAll();
-            m_wasmGCVisited.ensureSize(m_proc.size());
         }
 
-        m_dominators = &m_proc.dominators(); // Recompute if necessary.
-        m_layeredCSE.clear();
-        reduceAllBlocksStrengthInDominatorPreOrder();
+        {
+            // The walk folds a Phi based on this snapshot of its Upsilons, so it must not create Phis or
+            // Upsilons, nor delete values.
+            PhiChildren phiChildren(m_proc);
+            SetForScope phiChildrenScope(m_phiChildren, &phiChildren);
+            SetForScope phiChildrenValueCountScope(m_phiChildrenValueCount, m_proc.values().size());
+            m_blockStates = IndexMap<BasicBlock*, BlockState>(m_proc.size(), BlockState::Unvisited);
+            m_enteredFromReachableBlock.clearAll();
+            m_enteredFromReachableBlock.ensureSize(m_proc.size());
+            m_valueForConstant.clear();
+
+            m_dominators = &m_proc.dominators(); // Recompute if necessary.
+            m_layeredCSE.clear();
+            reduceAllBlocksStrengthInDominatorPreOrder();
+            m_valueForConstant.clear();
+
+#if ASSERT_ENABLED
+            BitVector snapshotUpsilonIndices;
+            for (Value* phi : phiChildren.phis()) {
+                for (Value* upsilon : phiChildren[phi]) {
+                    ASSERT(upsilon->opcode() == Nop || (phi->opcode() == Phi && upsilon->as<UpsilonValue>()->phi() == phi));
+                    snapshotUpsilonIndices.set(upsilon->index());
+                }
+            }
+            for (Value* value : m_proc.values()) {
+                if (value->opcode() == Upsilon)
+                    ASSERT(snapshotUpsilonIndices.get(value->index()));
+            }
+#endif
+        }
 
         handleChangedCFGIfNecessary();
     }
@@ -766,15 +757,25 @@ public:
 
             m_layeredCSE.startLayer();
 
+            m_block = block;
+            m_blockState = computeBlockReachability();
+
             if (m_trackWasmGCAccesses) {
                 m_wasmGCMap.startLayer();
                 beginWasmGCBlock(block);
             }
 
-            reduceBlockStrength(block);
+            // Every block an unreachable block dominates is unreachable too, and the whole region is
+            // deleted right after the walk, so only the Upsilons feeding Phis elsewhere matter.
+            if (m_blockState == BlockState::Unreachable)
+                removeUpsilonsFromUnreachableBlock();
+            else
+                reduceBlockStrength();
 
             if (m_trackWasmGCAccesses)
                 endWasmGCBlock(block);
+
+            finishBlock(block);
 
             auto& kids = children[block->index()];
             for (unsigned i = kids.size(); i--;)
@@ -783,14 +784,13 @@ public:
     }
 
 private:
-    void reduceBlockStrength(BasicBlock* block)
+    void reduceBlockStrength()
     {
-        m_block = block;
-        for (m_index = 0; m_index < block->size(); ++m_index) {
+        for (m_index = 0; m_index < m_block->size(); ++m_index) {
             if (B3ReduceStrengthInternal::verbose) {
                 dataLog(
-                    "Looking at ", *block, " #", m_index, ": ",
-                    deepDump(m_proc, block->at(m_index)), "\n");
+                    "Looking at ", *m_block, " #", m_index, ": ",
+                    deepDump(m_proc, m_block->at(m_index)), "\n");
             }
             m_value = m_block->at(m_index);
             m_value->performSubstitution();
@@ -831,6 +831,31 @@ private:
     void reduceValueStrength()
     {
         switch (m_value->opcode()) {
+        case Phi: {
+            auto upsilons = upsilonsInSnapshot(m_value);
+            Value* input = uniquePhiInput(m_value, upsilons);
+            if (!input) {
+                // An Upsilon in a block the walk has not reached yet may still reduce to an input
+                // already seen.
+                if (hasUnfinishedPredecessor())
+                    m_mayHaveUnfoldedPhis = true;
+                break;
+            }
+            // Every path into a reachable block runs one of the Phi's Upsilons, and the walk only
+            // removes an Upsilon that can never run or whose Phi is removed too, so the one remaining
+            // input dominates the Phi. A block of unknown reachability may sit in a dead cycle, where
+            // folding can leave a value using itself. An input defined in a block that strictly
+            // dominates this one cannot depend on the Phi, so it is safe either way. A value still
+            // waiting in an insertion set has no owner yet.
+            if (m_blockState == BlockState::Unknown
+                && !(input->owner && m_dominators->strictlyDominates(input->owner, m_block))) {
+                m_mayHaveUnfoldedPhis = true;
+                break;
+            }
+            replacePhi(m_value, input, upsilons);
+            break;
+        }
+
         case Opaque:
             // Turn this: Opaque(Opaque(value))
             // Into this: Opaque(value)
@@ -3336,8 +3361,14 @@ private:
                 // Replace the rest of the block with an Oops. The terminal becomes a Bottom rather
                 // than the Oops itself because it may produce a value (e.g. a Patchpoint with a
                 // slow path successor) that successors, not yet pruned, still use.
-                for (unsigned i = m_index + 1; i < m_block->size(); ++i)
-                    m_block->at(i)->replaceWithBottom(m_insertionSet, m_index);
+                for (unsigned i = m_index + 1; i < m_block->size(); ++i) {
+                    Value* value = m_block->at(i);
+                    if (value->opcode() == Phi) {
+                        for (Value* upsilon : upsilonsInSnapshot(value))
+                            upsilon->replaceWithNop();
+                    }
+                    value->replaceWithBottom(m_insertionSet, m_index);
+                }
                 m_insertionSet.insert<Value>(m_block->size(), Oops, checkValue->origin());
                 for (BasicBlock* successor : m_block->successorBlocks())
                     successor->removePredecessor(m_block);
@@ -3346,6 +3377,8 @@ private:
                 // Replace ourselves last.
                 checkValue->replaceWithNop();
                 m_changedCFG = true;
+                // The Upsilons just removed may have fed a Phi the walk already visited.
+                m_mayHaveUnfoldedPhis = true;
                 break;
             }
 
@@ -3398,18 +3431,14 @@ private:
             // Turn this: Branch(0, then, else)
             // Into this: Jump(else)
             if (triState == TriState::False) {
-                m_block->taken().block()->removePredecessor(m_block);
-                m_value->replaceWithJump(m_block, m_block->notTaken());
-                m_changedCFG = true;
+                replaceTerminalWithJump(m_block->notTaken());
                 break;
             }
 
             // Turn this: Branch(not 0, then, else)
             // Into this: Jump(then)
             if (triState == TriState::True) {
-                m_block->notTaken().block()->removePredecessor(m_block);
-                m_value->replaceWithJump(m_block, m_block->taken());
-                m_changedCFG = true;
+                replaceTerminalWithJump(m_block->taken());
                 break;
             }
 
@@ -3420,9 +3449,7 @@ private:
                 if (m_layeredCSE.find(ValueKey(Check, Void, m_value->child(0)))) {
                     // The Check would have side-exited if child(0) was non-zero. So, it must be
                     // zero here.
-                    m_block->taken().block()->removePredecessor(m_block);
-                    m_value->replaceWithJump(m_block, m_block->notTaken());
-                    m_changedCFG = true;
+                    replaceTerminalWithJump(m_block->notTaken());
                 }
             }
             break;
@@ -3442,12 +3469,7 @@ private:
                     break;
                 }
             }
-            for (BasicBlock* successor : m_block->successorBlocks()) {
-                if (successor != target.block())
-                    successor->removePredecessor(m_block);
-            }
-            m_value->replaceWithJump(m_block, target);
-            m_changedCFG = true;
+            replaceTerminalWithJump(target);
             break;
         }
 
@@ -4687,6 +4709,70 @@ private:
         }
     }
 
+    enum class BlockState : uint8_t { Unvisited, Reachable, Unknown, Unreachable };
+
+    // A block's successors are final once the walk finishes it, so only then are its state and edges
+    // recorded. Until then the block is Unvisited, including to its own back edge.
+    void finishBlock(BasicBlock* block)
+    {
+        m_blockStates[block] = m_blockState;
+        if (m_blockState == BlockState::Reachable) {
+            for (BasicBlock* successor : block->successorBlocks())
+                m_enteredFromReachableBlock.quickSet(successor->index());
+        }
+    }
+
+    bool isFinished(BasicBlock* block) { return m_blockStates[block] != BlockState::Unvisited; }
+
+    bool hasUnfinishedPredecessor()
+    {
+        for (BasicBlock* predecessor : m_block->predecessors()) {
+            if (!isFinished(predecessor))
+                return true;
+        }
+        return false;
+    }
+
+    // A block is reachable once a finished reachable block jumps to it. It is unreachable once its
+    // immediate dominator is, or once every predecessor is unreachable or dominated by the block,
+    // since a path to the latter must pass through the block first. Otherwise its reachability is
+    // unknown, as when it is entered over an edge the walk has not seen yet.
+    BlockState computeBlockReachability()
+    {
+        if (m_block == m_root || m_enteredFromReachableBlock.quickGet(m_block->index()))
+            return BlockState::Reachable;
+        if (m_blockStates[m_dominators->idom(m_block)] == BlockState::Unreachable)
+            return BlockState::Unreachable;
+        for (BasicBlock* predecessor : m_block->predecessors()) {
+            if (m_blockStates[predecessor] != BlockState::Unreachable && !m_dominators->dominates(m_block, predecessor))
+                return BlockState::Unknown;
+        }
+        return BlockState::Unreachable;
+    }
+
+    // Predecessor lists may keep stale entries but must never miss a live edge. Dropping the folded
+    // edges is what lets a block entered only through them become unreachable.
+    void replaceTerminalWithJump(FrequentedBlock target)
+    {
+        for (BasicBlock* successor : m_block->successorBlocks()) {
+            if (successor != target.block())
+                successor->removePredecessor(m_block);
+        }
+        m_value->replaceWithJump(m_block, target);
+        m_changedCFG = true;
+    }
+
+    void removeUpsilonsFromUnreachableBlock()
+    {
+        for (Value* value : *m_block) {
+            if (value->opcode() == Upsilon) {
+                value->replaceWithNop();
+                m_changed = true;
+                m_mayHaveUnfoldedPhis = true;
+            }
+        }
+    }
+
     void replaceIfRedundant()
     {
         if (m_value->opcode() == Identity || m_value->isConstant())
@@ -4907,6 +4993,11 @@ private:
 
     void beginWasmGCBlock(BasicBlock* block)
     {
+        // An unreachable block is not reduced, and only the blocks it dominates, which are
+        // unreachable too, seed from its tail.
+        if (m_blockState == BlockState::Unreachable)
+            return;
+
         unsigned slotCount = wasmGCSlotCount();
 
         // Seed from the immediate dominator, which the walk has already finished. Entries recorded
@@ -4916,18 +5007,11 @@ private:
         BasicBlock* idom = m_dominators->idom(block);
         ASSERT(idom != block);
         if (idom) {
-            ASSERT(m_wasmGCVisited.quickGet(idom->index()));
+            ASSERT(isFinished(idom));
             auto tailSpan = m_wasmGCEpochsAtTail.span().subspan(idom->index() * slotCount, slotCount);
             memcpySpan(m_wasmGCEpochs.mutableSpan(), tailSpan);
         } else
             m_wasmGCEpochs.fill(0);
-
-        // A block other than the root with no predecessors left lost them to a branch this walk
-        // folded, so nothing summarizes the paths that once flowed into it.
-        if (block != m_root && block->predecessors().isEmpty()) {
-            bumpAllWasmGCEpochs();
-            return;
-        }
 
         // An unvisited predecessor that the block's own natural loop contains is an ordinary back
         // edge, whose body can be summarized. Anything else is an irreducible retreating edge,
@@ -4936,7 +5020,10 @@ private:
         bool hasBackEdgeIntoLoop = false;
         bool hasUnaccountedPredecessor = false;
         for (BasicBlock* predecessor : block->predecessors()) {
-            if (!m_wasmGCVisited.quickGet(predecessor->index())) {
+            // Nothing written in a block that never runs reaches this one.
+            if (m_blockStates[predecessor] == BlockState::Unreachable)
+                continue;
+            if (!isFinished(predecessor)) {
                 if (loop && m_naturalLoops->belongsTo(predecessor, *loop))
                     hasBackEdgeIntoLoop = true;
                 else
@@ -5073,7 +5160,6 @@ private:
         unsigned slotCount = wasmGCSlotCount();
         auto tailSpan = m_wasmGCEpochsAtTail.mutableSpan().subspan(block->index() * slotCount, slotCount);
         memcpySpan(tailSpan, m_wasmGCEpochs.span());
-        m_wasmGCVisited.quickSet(block->index());
     }
 
     void computeWasmGCSpans()
@@ -5250,6 +5336,7 @@ private:
     void handleChangedCFGIfNecessary()
     {
         if (m_changedCFG) {
+            m_changedCFG = false;
             m_proc.resetReachability();
             m_proc.invalidateCFG();
             // Dominators and natural loops are not valid anymore, and we don't need them yet.
@@ -5291,44 +5378,61 @@ private:
         // 2) If all of the Phi's children are either the Phi itself or exactly one other child, then
         //    replace all uses of the Phi with the one other child.
         //
-        // Rule (2) subsumes rule (1), so we can just run (2). We only run one fixpoint iteration
-        // here. This premise is that in common cases, this will only find optimization opportunities
-        // as a result of CFG simplification and usually CFG simplification will only do one round
-        // of block merging per ReduceStrength fixpoint iteration, so it's OK for this to only do one
-        // round of Phi merging - since Phis are the value analogue of blocks.
+        // Rule (2) subsumes rule (1), so we can just run (2). Most Phis already fold during the value
+        // walk. One round here catches the rest: Phis the walk skipped, and those whose inputs only
+        // became equal after the walk visited them.
 
         PhiChildren phiChildren(m_proc);
+        for (Value* phi : phiChildren.phis())
+            simplifyPhi(phi, phiChildren[phi]);
+    }
 
-        for (Value* phi : phiChildren.phis()) {
-            Value* otherChild = nullptr;
-            bool ok = true;
-            for (Value* child : phiChildren[phi].values()) {
-                if (child == phi)
-                    continue;
-                if (child == otherChild)
-                    continue;
-                if (!otherChild) {
-                    otherChild = child;
-                    continue;
-                }
-                ok = false;
-                break;
-            }
-            if (!ok)
+    void simplifyPhi(Value* phi, PhiChildren::UpsilonCollection upsilons)
+    {
+        if (Value* input = uniquePhiInput(phi, upsilons))
+            replacePhi(phi, input, upsilons);
+    }
+
+    PhiChildren::UpsilonCollection upsilonsInSnapshot(Value* phi)
+    {
+        RELEASE_ASSERT(m_phiChildren && phi->index() < m_phiChildrenValueCount);
+        return (*m_phiChildren)[phi];
+    }
+
+    // Aycock and Horspool's rule (2), see simplifySSA(): the one input other than the Phi itself, or
+    // null if there is none or more than one. An Upsilon already turned into a Nop no longer feeds
+    // the Phi.
+    Value* uniquePhiInput(Value* phi, PhiChildren::UpsilonCollection upsilons)
+    {
+        Value* otherChild = nullptr;
+        for (Value* upsilon : upsilons) {
+            if (upsilon->opcode() != Upsilon) {
+                ASSERT(upsilon->opcode() == Nop);
                 continue;
-            if (!otherChild) {
-                // Wow, this would be super weird. It probably won't happen, except that things could
-                // get weird as a consequence of stepwise simplifications in the strength reduction
-                // fixpoint.
-                continue;
             }
-            
-            // Turn the Phi into an Identity and turn the Upsilons into Nops.
-            m_changed = true;
-            for (Value* upsilon : phiChildren[phi])
-                upsilon->replaceWithNop();
-            phi->replaceWithIdentity(otherChild);
+            ASSERT(upsilon->as<UpsilonValue>()->phi() == phi);
+            Value* child = upsilon->child(0)->foldIdentity();
+            // A constant the walk has not reached yet still has its own copy, distinct from the one
+            // in root that it will become.
+            if (child->isConstant()) {
+                if (Value* constInRoot = m_valueForConstant.get(child->key()))
+                    child = constInRoot;
+            }
+            if (child == phi || child == otherChild)
+                continue;
+            if (otherChild)
+                return nullptr;
+            otherChild = child;
         }
+        return otherChild;
+    }
+
+    void replacePhi(Value* phi, Value* input, PhiChildren::UpsilonCollection upsilons)
+    {
+        m_changed = true;
+        for (Value* upsilon : upsilons)
+            upsilon->replaceWithNop();
+        phi->replaceWithIdentity(input);
     }
 
     Procedure& m_proc;
@@ -5340,6 +5444,12 @@ private:
     unsigned m_index { 0 };
     Value* m_value { nullptr };
     Dominators* m_dominators { nullptr };
+    PhiChildren* m_phiChildren { nullptr };
+    unsigned m_phiChildrenValueCount { 0 };
+    IndexMap<BasicBlock*, BlockState> m_blockStates;
+    BlockState m_blockState { BlockState::Unvisited };
+    BitVector m_enteredFromReachableBlock;
+    bool m_mayHaveUnfoldedPhis { false };
     LayeredHashMap<ValueKey, Value*> m_layeredCSE;
 
     bool m_trackWasmGCAccesses { false };
@@ -5351,7 +5461,6 @@ private:
     unsigned m_wasmGCStructWidth { 0 };
     Vector<uint32_t> m_wasmGCEpochs;
     Vector<uint32_t> m_wasmGCEpochsAtTail;
-    BitVector m_wasmGCVisited; // Blocks whose tail epochs are valid.
     NaturalLoops* m_naturalLoops { nullptr };
     Vector<BitVector> m_wasmGCBlockWrites; // Slots each block inside a loop writes.
     bool m_changed { false };
