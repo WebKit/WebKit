@@ -171,3 +171,7 @@ PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
   "_timestamp": "<filtered>"
 }
 
+-- Running test case: Worker.Console.SingleToStringInvocation
+PASS: Worker Date toString should be invoked exactly once.
+PASS: Worker Function toString should be invoked exactly once.
+

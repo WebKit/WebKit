@@ -120,6 +120,42 @@ function test()
         message: "count",
     });
 
+    suite.addTestCase({
+        name: "Worker.Console.SingleToStringInvocation",
+        async test() {
+            for (let {name, source} of [
+                {
+                    name: "Date",
+                    source: `let value = new (class extends Date {
+                        toString() {
+                            ++count;
+                            return "worker-date";
+                        }
+                    });`,
+                },
+                {
+                    name: "Function",
+                    source: `let value = function() {};
+                    value.toString = function() {
+                        ++count;
+                        return "worker-function";
+                    };`,
+                },
+            ]) {
+                let {result} = await workerTarget.RuntimeAgent.evaluate.invoke({
+                    expression: `(function() {
+                        let count = 0;
+                        ${source}
+                        console.log(value);
+                        return count;
+                    })()`,
+                    returnByValue: true,
+                });
+                InspectorTest.expectEqual(result.value, 1, `Worker ${name} toString should be invoked exactly once.`);
+            }
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

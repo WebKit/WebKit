@@ -212,9 +212,10 @@ void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, co
 void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* lexicalGlobalObject, Ref<Inspector::ScriptArguments>&& arguments)
 {
     String messageText;
-    arguments->getFirstArgumentAsString(messageText);
+    bool messageIsFirstArgument = arguments->getFirstArgumentAsString(messageText);
 
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), lexicalGlobalObject);
+    message->setMessageIsFirstArgument(messageIsFirstArgument);
 
     auto url = message->url();
     auto lineNumber = message->line();

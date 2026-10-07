@@ -73,8 +73,11 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
         return;
 
     String message;
-    arguments->getFirstArgumentAsString(message);
-    m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), globalObject));
+    bool messageIsFirstArgument = arguments->getFirstArgumentAsString(message);
+
+    auto consoleMessage = makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), globalObject);
+    consoleMessage->setMessageIsFirstArgument(messageIsFirstArgument);
+    m_consoleAgent->addMessageToConsole(WTF::move(consoleMessage));
 
     if (type == MessageType::Assert) {
         if (CheckedPtr agent = m_debuggerAgent)

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: counting-1
+CONSOLE MESSAGE: counting-1
+Tests that console.log invokes an object's toString exactly once when the inspector is open (bug 306712).
+
+
+== Running test suite: Console.log.SingleToStringInvocation
+-- Running test case: Console.log.Date
+toString invocations: 1
+PASS: toString should be invoked exactly once.
+
+-- Running test case: Console.log.Function
+toString invocations: 1
+PASS: toString should be invoked exactly once.
+
