@@ -1119,6 +1119,38 @@ class TestMockGit(testing.PathTestCase):
             ).returncode)
             self.assertEqual(history[-1], mock_git.head.hash)
 
+    def test_find_remote_only_hash(self):
+        with mocks.local.Git(self.path) as mock_git:
+            self.assertIsNone(mock_git.find('bae5d1e0'))
+            remote_only = copy.deepcopy(mock_git.commits['main'][-1])
+            remote_only.hash = '0123456789abcdef0123456789abcdef01234567'
+            mock_git.remotes['origin/eng/remote-only'] = [copy.deepcopy(mock_git.commits['main'][-1]), remote_only]
+
+            self.assertEqual(remote_only.hash, mock_git.find('0123456789ab').hash)
+            self.assertEqual(mock_git.commits['main'][3].hash, mock_git.find('bae5d1e9').hash)
+
+    def test_rev_list_remote_only_hash(self):
+        with mocks.local.Git(self.path) as mock_git:
+            remote_only = copy.deepcopy(mock_git.commits['main'][-1])
+            remote_only.hash = '0123456789abcdef0123456789abcdef01234567'
+            remote_only.identifier += 1
+            mock_git.remotes['origin/main'] = [copy.deepcopy(commit) for commit in mock_git.commits['main']] + [remote_only]
+
+            self.assertEqual(6, len(mock_git.rev_list(remote_only.hash)))
+            self.assertEqual(1, len(mock_git.rev_list(f'main..{remote_only.hash}')))
+            self.assertEqual(5, len(mock_git.rev_list('main')))
+
+    def test_find_ancestor_of_remote_only_hash(self):
+        with mocks.local.Git(self.path) as mock_git:
+            remote_only = copy.deepcopy(mock_git.commits['main'][-1])
+            remote_only.hash = '0123456789abcdef0123456789abcdef01234567'
+            remote_only.branch = 'eng/remote-only'
+            remote_only.identifier = 1
+            remote_only.branch_point = 5
+            mock_git.remotes['origin/eng/remote-only'] = [copy.deepcopy(mock_git.commits['main'][-1]), remote_only]
+
+            self.assertEqual(mock_git.commits['main'][-1].hash, mock_git.find(f'{remote_only.hash}~1').hash)
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
