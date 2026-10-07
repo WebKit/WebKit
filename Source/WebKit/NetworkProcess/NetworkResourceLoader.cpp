@@ -59,7 +59,9 @@
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWServerConnection.h"
+#include "WebSharedWorker.h"
 #include "WebSharedWorkerServer.h"
+#include "WebSharedWorkerServerToContextConnection.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/BlobDataFileReference.h>
@@ -87,6 +89,8 @@
 #include <WebCore/ReportingScope.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/SWServer.h>
+#include <WebCore/SWServerToContextConnection.h>
+#include <WebCore/SWServerWorker.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -981,6 +985,9 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     if (!networkSession)
         return completionHandler(std::nullopt);
 
+    if (!std::holds_alternative<std::monostate>(m_parameters.workerIdentifier))
+        return checkLocalNetworkAccessForWorker(request, currentURL, connectionAddressSpace, *networkSession, WTF::move(completionHandler));
+
     auto clientAddressSpace = m_parameters.clientAddressSpace;
     auto clientIsSecureContext = m_parameters.clientIsSecureContext;
     auto localNetworkAllowedByPermissionsPolicy = m_parameters.localNetworkAllowedByPermissionsPolicy;
@@ -1043,7 +1050,85 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
         return finish(std::nullopt);
 
     networkSession->requestLocalNetworkAccessPermission(webPageProxyID(), clientOrigin, connectionAddressSpace, [finish = WTF::move(finish), url = request.url()](WebCore::PermissionState state) mutable {
-        finish(localNetworkAccessPermissionError(url, state));
+        finish(localNetworkAccessErrorIfNotGranted(url, state));
+    });
+}
+
+struct LocalNetworkAccessWorkerClient {
+    ClientOrigin origin;
+    std::optional<IPAddressSpace> addressSpace;
+};
+
+static std::optional<LocalNetworkAccessWorkerClient> localNetworkAccessWorkerClient(NetworkConnectionToWebProcess& connection, NetworkSession& networkSession, const FetchingWorkerIdentifier& workerIdentifier)
+{
+    std::optional<ClientOrigin> workerOrigin;
+    Vector<std::pair<ProcessIdentifier, FrameIdentifier>> clientFrames;
+    // A web process can name any worker on a load, so only the process hosting that worker is believed.
+    WTF::switchOn(workerIdentifier,
+        [](std::monostate) { },
+        [&](SharedWorkerIdentifier identifier) {
+            RefPtr worker = WebSharedWorker::fromIdentifier(identifier);
+            RefPtr contextConnection = worker ? worker->contextConnection() : nullptr;
+            if (!contextConnection || contextConnection->webProcessIdentifier() != connection.webProcessIdentifier()) {
+                RELEASE_LOG_ERROR(Network, "localNetworkAccessWorkerClient: shared worker %" PRIu64 " is not hosted by web process %" PRIu64, identifier.toUInt64(), connection.webProcessIdentifier().toUInt64());
+                return;
+            }
+            workerOrigin = worker->origin();
+            clientFrames = worker->sharedWorkerObjectFrames();
+        },
+        [&](ServiceWorkerIdentifier identifier) {
+            RefPtr server = networkSession.swServer();
+            RefPtr worker = server ? server->workerByID(identifier) : nullptr;
+            RefPtr contextConnection = worker ? worker->contextConnection() : nullptr;
+            if (!contextConnection || contextConnection->webProcessIdentifier() != connection.webProcessIdentifier()) {
+                RELEASE_LOG_ERROR(Network, "localNetworkAccessWorkerClient: service worker %" PRIu64 " is not hosted by web process %" PRIu64, identifier.toUInt64(), connection.webProcessIdentifier().toUInt64());
+                return;
+            }
+            workerOrigin = worker->origin();
+            server->forEachClientForOrigin(*workerOrigin, [&](ServiceWorkerClientData& client) {
+                if (client.frameIdentifier)
+                    clientFrames.append({ client.identifier.processIdentifier(), *client.frameIdentifier });
+            });
+        });
+    if (!workerOrigin)
+        return std::nullopt;
+
+    LocalNetworkAccessWorkerClient client { *workerOrigin, std::nullopt };
+    if (workerOrigin->topOrigin != workerOrigin->clientOrigin)
+        return client;
+
+    for (auto& [processIdentifier, frameIdentifier] : clientFrames) {
+        RefPtr clientConnection = connection.networkProcess().webProcessConnection(processIdentifier);
+        auto record = clientConnection ? clientConnection->localNetworkAccessFrameRecord(frameIdentifier, std::nullopt) : std::nullopt;
+        if (!record || record->origin != workerOrigin->clientOrigin)
+            continue;
+        auto addressSpace = record->addressSpace == IPAddressSpace::Unknown ? IPAddressSpace::Public : record->addressSpace;
+        if (!client.addressSpace || isLessPublicThan(*client.addressSpace, addressSpace))
+            client.addressSpace = addressSpace;
+    }
+    return client;
+}
+
+void NetworkResourceLoader::checkLocalNetworkAccessForWorker(const ResourceRequest& request, const URL& currentURL, IPAddressSpace connectionAddressSpace, NetworkSession& networkSession, CompletionHandler<void(std::optional<ResourceError>)>&& completionHandler)
+{
+    auto client = localNetworkAccessWorkerClient(protect(connectionToWebProcess()), networkSession, m_parameters.workerIdentifier);
+    auto clientOrigin = client ? client->origin : ClientOrigin { SecurityOriginData::createOpaque(), SecurityOriginData::createOpaque() };
+    auto clientAddressSpace = client && client->addressSpace ? *client->addressSpace : IPAddressSpace::Public;
+    bool clientIsSecureContext = client && shouldTreatAsPotentiallyTrustworthy(clientOrigin.clientOrigin.toURL());
+
+    auto requirement = WebCore::checkLocalNetworkAccess(request, currentURL, connectionAddressSpace, clientAddressSpace, clientIsSecureContext, clientOrigin, true, true);
+    if (!requirement)
+        return completionHandler(WTF::move(requirement.error()));
+    if (*requirement == LocalNetworkAccessRequirement::None)
+        return completionHandler(std::nullopt);
+
+    if (connectionAddressSpace == IPAddressSpace::Unknown)
+        return completionHandler(localNetworkAccessErrorIfNotGranted(request.url(), PermissionState::Denied));
+    if (!client || !client->addressSpace)
+        return completionHandler(localNetworkAccessErrorIfNotGranted(request.url(), PermissionState::Prompt));
+
+    networkSession.requestLocalNetworkAccessPermissionForWorker(clientOrigin, connectionAddressSpace, [url = request.url(), completionHandler = WTF::move(completionHandler)](auto state) mutable {
+        completionHandler(localNetworkAccessErrorIfNotGranted(url, state));
     });
 }
 

@@ -80,7 +80,7 @@ std::expected<LocalNetworkAccessRequirement, ResourceError> checkLocalNetworkAcc
     return LocalNetworkAccessRequirement::Permission;
 }
 
-std::optional<ResourceError> localNetworkAccessPermissionError(const URL& url, PermissionState state)
+std::optional<ResourceError> localNetworkAccessErrorIfNotGranted(const URL& url, PermissionState state)
 {
     switch (state) {
     case PermissionState::Granted:

@@ -1,5 +1,5 @@
 
-FAIL LNA Shared Worker Public to Loopback Fetch with permission assert_equals: unexpected error: TypeError: Load failed expected (undefined) undefined but got (string) "TypeError: Load failed"
+PASS LNA Shared Worker Public to Loopback Fetch with permission
 PASS LNA Shared Worker Public to Loopback Fetch without permission
 PASS LNA Shared Worker Public to Loopback WebTransport with permission
 FAIL LNA Shared Worker Public to Loopback WebTransport without permission assert_equals: expected "error" but got "open"
