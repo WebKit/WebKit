@@ -1,0 +1,4 @@
+
+PASS HTML base element
+PASS SVG base element without an HTML base element
+
