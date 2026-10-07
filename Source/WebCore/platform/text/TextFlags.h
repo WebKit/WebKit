@@ -65,6 +65,8 @@ enum class NonCJKGlyphOrientation : bool {
     Upright
 };
 
+enum class DirectionalOverride : bool { No, Yes };
+
 struct ExpansionBehavior {
     enum class Behavior : uint8_t {
         Forbid,

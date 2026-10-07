@@ -318,12 +318,9 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
 
     auto* cacheEntry = fonts()->glyphGeometryCache().add(run, { }, TextShapingContext { *this });
     bool callerNeedsFallbackFonts = fallbackFonts;
-    bool canUseFallbackFontCacheEntry = !callerNeedsFallbackFonts && !run.rtl();
+    bool canUseFallbackFontCacheEntry = !callerNeedsFallbackFonts;
 
     if (cacheEntry && cacheEntry->width) {
-        // The cache key doesn't include inline direction. For primary-font-only text this
-        // is fine (same total advance regardless of direction), but fallback-font text in
-        // vertical writing mode with RTL inline direction can produce different widths.
         if (!cacheEntry->usedFallbackFonts || canUseFallbackFontCacheEntry) {
             if (!glyphOverflow)
                 return *cacheEntry->width;
@@ -378,18 +375,20 @@ float FontCascade::width(CodePath codePathToUse, const TextRun& run, SingleThrea
     return it.runWidthSoFar();
 }
 
-NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, GlyphGeometryCacheEntry* cacheEntry) const
+NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, DirectionalOverride directionalOverride, GlyphGeometryCacheEntry* cacheEntry) const
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    TextRun run { text, 0, 0, ExpansionBehavior::defaultBehavior(), textDirection, false, false };
+    TextRun run { text, 0, 0, ExpansionBehavior::defaultBehavior(), textDirection, directionalOverride == DirectionalOverride::Yes, false };
     float result = width(CodePath::Simple, run);
 #else
+    // Like WidthIterator, the simple path shapes by direction alone.
+    UNUSED_PARAM(directionalOverride);
     GlyphBuffer glyphBuffer;
     Ref font = primaryFont();
 
     auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, auto characters) {
         for (size_t i = 0; i < characters.size(); ++i) {
-            auto glyph = font.glyphForCharacter(characters[i]);
+            auto glyph = font.glyphForCharacter(textDirection == TextDirection::RTL ? mirrorCharacterIfNeeded(characters[i]) : characters[i]);
             glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
         }
     };
