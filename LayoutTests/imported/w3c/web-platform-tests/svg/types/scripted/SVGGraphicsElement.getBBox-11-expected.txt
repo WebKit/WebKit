@@ -1,0 +1,18 @@
+ABCD
+ABCD
+ABCDE
+ABC
+AB
+ABCD
+AB
+
+PASS getBBox on a text element covers all of its glyphs
+PASS getBBox on a tspan covers its own glyphs, not the whole text element
+PASS two tspans in the same text element report different boxes
+PASS getBBox on a tspan includes the glyphs of a nested tspan
+PASS getBBox on a nested tspan covers its own glyphs
+PASS getBBox on a tspan follows its own x and y
+PASS getBBox on a tspan with no text is empty
+PASS getBBox on an a element inside a text element covers its own glyphs
+PASS getBBox on a textPath covers its own glyphs
+
