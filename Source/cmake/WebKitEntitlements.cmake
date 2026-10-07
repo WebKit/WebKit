@@ -60,7 +60,11 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
             SKIP_ROSETTA_BREAKING_ENTITLEMENTS=${_skip_rosetta_breaking_entitlements}
             TARGET_MAC_OS_X_VERSION_MAJOR=${_target_version_major}
             WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
+            WK_IS_COCOA_TOUCH=$<IF:$<BOOL:${WEBKIT_SDK_IS_IOS_FAMILY}>,YES,NO>
             WK_PROCESSED_XCENT_FILE=${_arg_OUTPUT}
+            # TestWebKitAPI's script writes the simulator signing entitlements here.
+            # Targets sign with WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS instead.
+            WK_PROCESSED_SIMULATOR_XCENT_FILE=${_arg_OUTPUT}.simulator
             WK_RELOCATABLE_WEBPUSHD=$<IF:$<BOOL:${USE_RELOCATABLE_WEBPUSHD}>,YES,NO>
             WK_USE_FATAL_EXCEPTIONS=$<IF:$<BOOL:${USE_FATAL_EXCEPTIONS}>,YES,NO>
             WK_USE_RESTRICTED_ENTITLEMENTS=${_use_restricted_entitlements}
