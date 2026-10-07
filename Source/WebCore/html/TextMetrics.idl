@@ -43,5 +43,9 @@
     readonly attribute double hangingBaseline;
     readonly attribute double alphabeticBaseline;
     readonly attribute double ideographicBaseline;
+
+    unsigned long getIndexFromOffset(double offset);
+    sequence<DOMRectReadOnly> getSelectionRects([EnforceRange] unsigned long start, [EnforceRange] unsigned long end);
+    DOMRectReadOnly getActualBoundingBox([EnforceRange] unsigned long start, [EnforceRange] unsigned long end);
 };
 
