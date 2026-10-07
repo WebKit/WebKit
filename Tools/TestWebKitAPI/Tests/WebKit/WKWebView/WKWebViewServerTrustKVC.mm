@@ -29,6 +29,7 @@
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/HTTPServer/TestCertificates.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -169,7 +170,7 @@ TEST(WKWebView, ServerTrustAfterTwoProcessSwaps)
 
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/source"]];
     [navigationDelegate waitForDidFinishNavigation];
-    verifyCertificateAndPublicKey([webView serverTrust]);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:[webView serverTrust]]);
 
     __block pid_t firstProvisionalProcessIdentifier = 0;
     navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *view, WKNavigation *) {
@@ -184,7 +185,7 @@ TEST(WKWebView, ServerTrustAfterTwoProcessSwaps)
     EXPECT_EQ(firstProvisionalProcessIdentifier, [webView _webProcessIdentifier]);
 
     EXPECT_NOT_NULL([webView serverTrust]);
-    verifyCertificateAndPublicKey([webView serverTrust]);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:[webView serverTrust]]);
 }
 
 TEST(WKWebView, QualifiedServerTrustKVC)
@@ -218,7 +219,7 @@ TEST(WKWebView, QualifiedServerTrustKVC)
 
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/binding-link"]];
     [observer waitUntilQualifiedServerTrustChanged];
-    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:[webView qualifiedServerTrust]]);
 
     // Committing a response without a tls-certificate-binding link clears the 2QWAC.
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/no-link"]];
@@ -228,7 +229,7 @@ TEST(WKWebView, QualifiedServerTrustKVC)
     // The tls-certificate-binding link is found even when it isn't the only link.
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/many-links"]];
     [observer waitUntilQualifiedServerTrustChanged];
-    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:[webView qualifiedServerTrust]]);
 
     // A link with a different rel is not a 2QWAC.
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/other-rel"]];
@@ -245,7 +246,7 @@ TEST(WKWebView, QualifiedServerTrustKVC)
     // Load a valid 2QWAC again to verify the checks above didn't just break the fetch entirely.
     [webView loadURL:[NSURL URLWithString:@"https://webkit.org/binding-link"]];
     [observer waitUntilQualifiedServerTrustChanged];
-    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:[webView qualifiedServerTrust]]);
 
     [webView removeObserver:observer.get() forKeyPath:@"qualifiedServerTrust"];
 }

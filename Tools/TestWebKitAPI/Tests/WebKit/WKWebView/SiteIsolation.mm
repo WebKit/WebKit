@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/HTTPServer/TestCertificates.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
@@ -8913,7 +8914,7 @@ TEST(SiteIsolation, FrameServerTrust)
     uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *frameInfo, void (^completionHandler)(void)) {
         EXPECT_WK_STREQ(message, "iframe loaded");
         EXPECT_NOT_NULL(frameInfo._serverTrust);
-        verifyCertificateAndPublicKey(frameInfo._serverTrust);
+        EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:frameInfo._serverTrust]);
         completionHandler();
         receivedAlert = true;
     };
@@ -8923,7 +8924,7 @@ TEST(SiteIsolation, FrameServerTrust)
     [webView loadRequest:plaintextServer.request()];
     Util::run(&receivedAlert);
     EXPECT_NULL([webView mainFrame].info._serverTrust);
-    verifyCertificateAndPublicKey([webView firstChildFrame]._serverTrust);
+    EXPECT_TRUE([TestCertificates verifyCertificateAndPublicKeyOfTrust:[webView firstChildFrame]._serverTrust]);
 }
 
 TEST(SiteIsolation, CoordinateTransformation)

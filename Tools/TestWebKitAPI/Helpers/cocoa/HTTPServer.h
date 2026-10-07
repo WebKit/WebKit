@@ -92,12 +92,8 @@ public:
 
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);
-    static String parseCookies(const Vector<char>& request);
-    static String parseAuthorization(const Vector<char>& request);
     static String parsePath(const Vector<char>& request);
     static String parseBody(const Vector<char>&);
-    static Vector<uint8_t> testPrivateKey();
-    static Vector<uint8_t> testCertificate();
 
 private:
     const char* scheme() const;
@@ -162,10 +158,5 @@ struct HTTPResponse {
 };
 
 } // namespace TestWebKitAPI
-
-RetainPtr<SecCertificateRef> testCertificate();
-RetainPtr<SecIdentityRef> testIdentity();
-RetainPtr<SecIdentityRef> testIdentity2();
-void verifyCertificateAndPublicKey(SecTrustRef);
 
 #endif // __cplusplus

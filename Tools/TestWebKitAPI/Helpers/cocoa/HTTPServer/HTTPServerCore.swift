@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Security
+private import TestWebKitAPILibrary.Helpers.cocoa.HTTPServer.TestCertificates
 
 import struct Swift.String
 

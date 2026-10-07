@@ -106,7 +106,6 @@ Tests/WebKit/WKWebView/BundleRangeHandle.mm @nonARC
 Tests/WebKit/WKWebView/CSSViewportUnits.mm @nonARC
 Tests/WebKit/WKWebView/CancelFontSubresource.mm @nonARC
 Tests/WebKit/WKWebView/LockdownModeFonts.mm @nonARC
-Tests/WebKit/WKWebView/Challenge.mm @nonARC
 Tests/WebKit/WKWebView/ClickAutoFillButton.mm @nonARC
 Tests/WebKit/WKWebView/ClipboardTests.mm @nonARC
 Tests/WebKit/WKWebView/CloseWebViewAfterEnterFullscreen.mm @nonARC
