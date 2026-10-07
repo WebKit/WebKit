@@ -44,7 +44,7 @@ IdleCallbackController::IdleCallbackController(Document& document)
 
 }
 
-int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
+unsigned IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
 {
     ++m_idleCallbackIdentifier;
     auto handle = m_idleCallbackIdentifier;
@@ -73,12 +73,8 @@ int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callbac
     return handle;
 }
 
-void IdleCallbackController::removeIdleCallback(int signedIdentifier)
+void IdleCallbackController::removeIdleCallback(unsigned identifier)
 {
-    if (signedIdentifier <= 0)
-        return;
-    unsigned identifier = signedIdentifier;
-
     m_idleRequestCallbacks.removeAllMatching([identifier](auto& request) {
         return request.identifier == identifier;
     });

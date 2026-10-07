@@ -704,7 +704,7 @@ ExceptionOr<void> DOMWindow::cancelAnimationFrame(int id)
     return { };
 }
 
-ExceptionOr<int> DOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callback, const IdleRequestOptions& options)
+ExceptionOr<unsigned> DOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callback, const IdleRequestOptions& options)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
@@ -712,7 +712,7 @@ ExceptionOr<int> DOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callb
     return localThis->requestIdleCallback(WTF::move(callback), options);
 }
 
-ExceptionOr<void> DOMWindow::cancelIdleCallback(int id)
+ExceptionOr<void> DOMWindow::cancelIdleCallback(unsigned id)
 {
     auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)

@@ -68,7 +68,6 @@ class Page;
 class Performance;
 class PushManager;
 class RequestAnimationFrameCallback;
-class RequestIdleCallback;
 class ScheduledAction;
 class Screen;
 class SecurityOrigin;
@@ -190,8 +189,8 @@ public:
     ExceptionOr<int> requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     ExceptionOr<int> webkitRequestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     ExceptionOr<void> cancelAnimationFrame(int id);
-    ExceptionOr<int> requestIdleCallback(Ref<IdleRequestCallback>&&, const IdleRequestOptions&);
-    ExceptionOr<void> cancelIdleCallback(int id);
+    ExceptionOr<unsigned> requestIdleCallback(Ref<IdleRequestCallback>&&, const IdleRequestOptions&);
+    ExceptionOr<void> cancelIdleCallback(unsigned id);
     ExceptionOr<void> createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     ExceptionOr<void> createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     ExceptionOr<RefPtr<CSSRuleList>> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;

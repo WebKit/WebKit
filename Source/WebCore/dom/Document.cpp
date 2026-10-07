@@ -9456,14 +9456,14 @@ void Document::processInternalResourceLinks(Element* element)
     }
 }
 
-int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
+unsigned Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
 {
     if (!m_idleCallbackController)
         lazyInitialize(m_idleCallbackController, makeUnique<IdleCallbackController>(*this));
     return m_idleCallbackController->queueIdleCallback(WTF::move(callback), timeout);
 }
 
-void Document::cancelIdleCallback(int id)
+void Document::cancelIdleCallback(unsigned id)
 {
     if (!m_idleCallbackController)
         return;

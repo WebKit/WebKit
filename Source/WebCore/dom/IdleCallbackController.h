@@ -44,8 +44,8 @@ class IdleCallbackController final : public CanMakeWeakPtr<IdleCallbackControlle
 public:
     explicit IdleCallbackController(Document&);
 
-    int queueIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
-    void removeIdleCallback(int);
+    unsigned queueIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
+    void removeIdleCallback(unsigned identifier);
 
     void startIdlePeriod();
     bool isEmpty() const { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }

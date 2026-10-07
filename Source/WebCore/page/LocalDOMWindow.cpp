@@ -2015,13 +2015,13 @@ void LocalDOMWindow::cancelAnimationFrame(int id)
         document->cancelAnimationFrame(id);
 }
 
-int LocalDOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callback, const IdleRequestOptions& options)
+unsigned LocalDOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callback, const IdleRequestOptions& options)
 {
     RefPtr document = this->document();
     return document ? document->requestIdleCallback(WTF::move(callback), Seconds::fromMilliseconds(options.timeout)) : 0;
 }
 
-void LocalDOMWindow::cancelIdleCallback(int id)
+void LocalDOMWindow::cancelIdleCallback(unsigned id)
 {
     if (RefPtr document = this->document())
         document->cancelIdleCallback(id);
