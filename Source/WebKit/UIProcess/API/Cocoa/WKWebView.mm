@@ -4618,11 +4618,48 @@ static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximi
     return adoptNS([[_WKTextManipulationViewportProximityInfo alloc] initWithRelation:createViewportRelation(info->relation) viewportSizedDistance:info->viewportSizedDistance viewportCoverage:info->viewportCoverage]);
 }
 
+static _WKTextManipulationGroupKind createGroupKind(WebCore::TextManipulationGroupKind kind)
+{
+    switch (kind) {
+    case WebCore::TextManipulationGroupKind::PageHeading:
+        return _WKTextManipulationGroupKindPageHeading;
+    case WebCore::TextManipulationGroupKind::Prose:
+        return _WKTextManipulationGroupKindProse;
+    case WebCore::TextManipulationGroupKind::Navigation:
+        return _WKTextManipulationGroupKindNavigation;
+    case WebCore::TextManipulationGroupKind::Banner:
+        return _WKTextManipulationGroupKindBanner;
+    case WebCore::TextManipulationGroupKind::Footer:
+        return _WKTextManipulationGroupKindFooter;
+    case WebCore::TextManipulationGroupKind::Sidebar:
+        return _WKTextManipulationGroupKindSidebar;
+    case WebCore::TextManipulationGroupKind::ViewportConstrained:
+        return _WKTextManipulationGroupKindViewportConstrained;
+    case WebCore::TextManipulationGroupKind::Dialog:
+        return _WKTextManipulationGroupKindDialog;
+    case WebCore::TextManipulationGroupKind::Other:
+        return _WKTextManipulationGroupKindOther;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKTextManipulationGroupKindOther;
+}
+
+static RetainPtr<_WKTextManipulationGroup> createWKGroup(const WebCore::TextManipulationGroupUpdate& update)
+{
+    auto frameID = update.frameID ? update.frameID->toUInt64() : 0;
+    auto itemIdentifiers = createNSArray(update.itemIdentifiers, [&](auto& itemIdentifier) {
+        return makeString(frameID, '-', itemIdentifier.toUInt64()).createNSString();
+    });
+    auto identifier = makeString(frameID, '-', update.identifier.toUInt64());
+    return adoptNS([[_WKTextManipulationGroup alloc] initWithIdentifier:identifier.createNSString() kind:createGroupKind(update.kind) itemIdentifiers:itemIdentifiers]);
+}
+
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)())completionHandler
 {
     THROW_IF_SUSPENDED;
     using ExclusionRule = WebCore::TextManipulationController::ExclusionRule;
     bool includeSubframes = configuration.includeSubframes;
+    bool includesGroups = configuration.includesGroups;
 
     if (!_textManipulationDelegate || !_page) {
         completionHandler();
@@ -4648,7 +4685,7 @@ static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximi
         }
     }
 
-    _page->startTextManipulations(exclusionRules, includeSubframes, [weakSelf = WeakObjCPtr<WKWebView>(self)] (const Vector<WebCore::TextManipulationItem>& itemReferences) {
+    _page->startTextManipulations(exclusionRules, includeSubframes, includesGroups, [weakSelf = WeakObjCPtr<WKWebView>(self)](const Vector<WebCore::TextManipulationItem>& itemReferences, const Vector<WebCore::TextManipulationGroupUpdate>& groupUpdates) {
         if (!weakSelf)
             return;
 
@@ -4670,12 +4707,17 @@ static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximi
             return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString().get() tokens:tokens.get() isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe viewportProximityInfo:createViewportProximityInfo(item.viewportProximityInfo).get()]);
         };
 
-        if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
-            [delegate _webView:retainedSelf.get() didFindTextManipulationItems:createNSArray(itemReferences, createWKItem).get()];
-        else {
-            for (auto& item : itemReferences)
-                [delegate _webView:retainedSelf.get() didFindTextManipulationItem:createWKItem(item).get()];
+        if (!itemReferences.isEmpty()) {
+            if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
+                [delegate _webView:retainedSelf didFindTextManipulationItems:createNSArray(itemReferences, createWKItem)];
+            else {
+                for (auto& item : itemReferences)
+                    [delegate _webView:retainedSelf didFindTextManipulationItem:createWKItem(item)];
+            }
         }
+
+        if (!groupUpdates.isEmpty() && [delegate respondsToSelector:@selector(_webView:didUpdateTextManipulationGroups:)])
+            [delegate _webView:retainedSelf didUpdateTextManipulationGroups:createNSArray(groupUpdates, createWKGroup)];
     }, [capturedCompletionBlock = makeBlockPtr(completionHandler)] () {
         capturedCompletionBlock();
     });

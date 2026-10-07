@@ -32,6 +32,7 @@ namespace WebKit {
 
 struct TextManipulationParameters {
     bool includeSubframes { false };
+    bool includesGroups { false };
     Vector<WebCore::TextManipulationControllerExclusionRule> exclusionRules;
 };
 

@@ -33,5 +33,6 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 
 @property (nonatomic, copy) NSArray<_WKTextManipulationExclusionRule *> *exclusionRules;
 @property (nonatomic) BOOL includeSubframes WK_API_AVAILABLE(macos(14.0), ios(17.0));
+@property (nonatomic) BOOL includesGroups WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end

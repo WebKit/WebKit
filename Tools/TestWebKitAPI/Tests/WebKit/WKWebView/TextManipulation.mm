@@ -46,8 +46,10 @@ typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);
 @interface TextManipulationDelegate : NSObject <_WKTextManipulationDelegate>
 
 - (void)_webView:(WKWebView *)webView didFindTextManipulationItems:(NSArray<_WKTextManipulationItem *> *)items;
+- (void)_webView:(WKWebView *)webView didUpdateTextManipulationGroups:(NSArray<_WKTextManipulationGroup *> *)groups;
 
 @property (nonatomic, readonly, copy) NSArray<_WKTextManipulationItem *> *items;
+@property (nonatomic, readonly, copy) NSArray<_WKTextManipulationGroup *> *groups;
 @property (strong) ItemCallback itemCallback;
 @property (strong) ItemListCallback itemListCallback;
 
@@ -55,6 +57,7 @@ typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);
 
 @implementation TextManipulationDelegate {
     RetainPtr<NSMutableArray> _items;
+    RetainPtr<NSMutableDictionary<NSString *, _WKTextManipulationGroup *>> _groups;
 }
 
 - (instancetype)init
@@ -62,7 +65,23 @@ typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);
     if (!(self = [super init]))
         return nil;
     _items = adoptNS([[NSMutableArray alloc] init]);
+    _groups = adoptNS([[NSMutableDictionary alloc] init]);
     return self;
+}
+
+- (void)_webView:(WKWebView *)webView didUpdateTextManipulationGroups:(NSArray<_WKTextManipulationGroup *> *)groups
+{
+    for (_WKTextManipulationGroup *group in groups) {
+        if (group.itemIdentifiers.count)
+            [_groups setObject:group forKey:group.identifier];
+        else
+            [_groups removeObjectForKey:group.identifier];
+    }
+}
+
+- (NSArray<_WKTextManipulationGroup *> *)groups
+{
+    return [_groups allValues];
 }
 
 - (void)_webView:(WKWebView *)webView didFindTextManipulationItems:(NSArray<_WKTextManipulationItem *> *)items
@@ -911,6 +930,87 @@ TEST(TextManipulation, ViewportProximityWithClippingAncestor)
     RetainPtr onscreen = proximityForItemContaining(items, @"Onscreen text");
     EXPECT_EQ([onscreen relation], _WKTextManipulationViewportRelationIntersecting);
     EXPECT_GT([onscreen viewportCoverage], 0.0);
+}
+
+static RetainPtr<NSArray<_WKTextManipulationItem *>> findTextManipulationItemsWithGroups(TestWKWebView *webView, TextManipulationDelegate *delegate)
+{
+    RetainPtr configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    [configuration setIncludesGroups:YES];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return [delegate items];
+}
+
+static RetainPtr<_WKTextManipulationItem> itemContaining(NSArray<_WKTextManipulationItem *> *items, NSString *text)
+{
+    for (_WKTextManipulationItem *item in items) {
+        for (_WKTextManipulationToken *token in item.tokens) {
+            if ([token.content containsString:text])
+                return item;
+        }
+    }
+    return nil;
+}
+
+static RetainPtr<_WKTextManipulationGroup> groupForItemContaining(TextManipulationDelegate *delegate, NSArray<_WKTextManipulationItem *> *items, NSString *text)
+{
+    RetainPtr item = itemContaining(items, text);
+    if (!item)
+        return nil;
+
+    for (_WKTextManipulationGroup *group in delegate.groups) {
+        if ([group.itemIdentifiers containsObject:[item identifier]])
+            return group;
+    }
+    return nil;
+}
+
+TEST(TextManipulation, GroupsContainEveryItemInPageOrder)
+{
+    RetainPtr delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setTextManipulationDelegate:delegate];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<meta name='viewport' content='width=800, initial-scale=1'>"
+        "<body><p>hello<br>world</p><div>WebKit</div></body>"];
+
+    RetainPtr items = findTextManipulationItemsWithGroups(webView, delegate);
+    EXPECT_EQ([items count], 3UL);
+
+    for (_WKTextManipulationItem *item in items.get()) {
+        NSUInteger groupCount = 0;
+        for (_WKTextManipulationGroup *group in [delegate groups]) {
+            if ([group.itemIdentifiers containsObject:item.identifier])
+                ++groupCount;
+        }
+        EXPECT_EQ(groupCount, 1UL);
+    }
+
+    RetainPtr group = groupForItemContaining(delegate, items, @"hello");
+    EXPECT_WK_STREQ([group identifier], [groupForItemContaining(delegate, items, @"world") identifier]);
+    auto helloIndex = [[group itemIdentifiers] indexOfObject:[itemContaining(items, @"hello") identifier]];
+    auto worldIndex = [[group itemIdentifiers] indexOfObject:[itemContaining(items, @"world") identifier]];
+    EXPECT_LT(helloIndex, worldIndex);
+}
+
+TEST(TextManipulation, GroupsAreOnlySentWhenRequested)
+{
+    RetainPtr delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<meta name='viewport' content='width=800, initial-scale=1'>"
+        "<body><p>hello<br>world</p><div>WebKit</div></body>"];
+
+    RetainPtr items = findTextManipulationItems(webView, delegate);
+    EXPECT_EQ([items count], 3UL);
+    EXPECT_EQ([delegate groups].count, 0UL);
 }
 
 TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAndSpansAsParagraphs)

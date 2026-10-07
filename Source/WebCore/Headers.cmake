@@ -1539,6 +1539,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/TextManipulationController.h
     editing/TextManipulationControllerExclusionRule.h
     editing/TextManipulationControllerManipulationFailure.h
+    editing/TextManipulationGroup.h
     editing/TextManipulationItem.h
     editing/TextManipulationItemIdentifier.h
     editing/TextManipulationToken.h
