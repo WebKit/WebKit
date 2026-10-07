@@ -1085,6 +1085,40 @@ class TestMockGit(testing.PathTestCase):
                 self.assertEqual(os.path.realpath('everything-command'), local.Git.executable())
                 self.assertEqual('everything-command', shutil.which('echo'))
 
+    def test_update_ref_moves_remote_backwards(self):
+        with mocks.local.Git(self.path) as mock_git:
+            history = [commit.hash for commit in mock_git.remotes['origin/main']]
+            self.assertEqual(0, run(
+                [local.Git.executable(), 'update-ref', 'refs/remotes/origin/main', history[1]],
+                cwd=self.path, capture_output=True,
+            ).returncode)
+            self.assertEqual(history[:2], [commit.hash for commit in mock_git.remotes['origin/main']])
+
+    def test_reset_hard_to_commit(self):
+        with mocks.local.Git(self.path) as mock_git:
+            history = [commit.hash for commit in mock_git.commits['main']]
+            self.assertEqual(0, run(
+                [local.Git.executable(), 'reset', '--hard', history[1]],
+                cwd=self.path, capture_output=True,
+            ).returncode)
+            self.assertEqual(history[:2], [commit.hash for commit in mock_git.commits['main']])
+            self.assertEqual(history[1], mock_git.head.hash)
+
+    def test_default_branch(self):
+        with mocks.local.Git(self.path, default_branch='master') as mock_git:
+            self.assertNotIn('main', mock_git.commits)
+            self.assertEqual({'master'}, {commit.branch for commit in mock_git.commits['master']})
+            self.assertEqual({'master'}, {commit.branch for commit in mock_git.remotes['origin/master']})
+            self.assertEqual('master', mock_git.head.branch)
+            self.assertEqual('master', local.Git(self.path).branch)
+
+            history = [commit.hash for commit in mock_git.commits['master']]
+            self.assertEqual(0, run(
+                [local.Git.executable(), 'reset', '--hard', 'origin/master'],
+                cwd=self.path, capture_output=True,
+            ).returncode)
+            self.assertEqual(history[-1], mock_git.head.hash)
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'

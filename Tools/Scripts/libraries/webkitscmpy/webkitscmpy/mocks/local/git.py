@@ -77,6 +77,14 @@ class Git(mocks.Subprocess):
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
             self.commits = json.load(file)
+        if self.default_branch != 'main':
+            self.commits = {(self.default_branch if key == 'main' else key): commits for key, commits in self.commits.items()}
+            for commits in self.commits.values():
+                for kwargs in commits:
+                    if kwargs.get('branch') == 'main':
+                        kwargs['branch'] = self.default_branch
+                    if str(kwargs.get('identifier', '')).endswith('@main'):
+                        kwargs['identifier'] = kwargs['identifier'][:-len('main')] + self.default_branch
         for key, commits in self.commits.items():
             commit_objs = []
             for kwargs in commits:
@@ -732,7 +740,7 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'reset', '--hard',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
+                generator=lambda *args, **kwargs: self.reset_hard(*args[3:]),
             ), mocks.Subprocess.Route(
                 self.executable, 'reset', re.compile(r'.+'),
                 cwd=self.path,
@@ -1475,6 +1483,11 @@ nothing to commit, working tree clean
             self.head = commits[-1]
         return mocks.ProcessCompletion(returncode=0)
 
+    def reset_hard(self, target=None):
+        if target is None or target == 'HEAD' or '~' in target:
+            return self.reset(None)
+        return self.reset_commit(target)
+
     def reset(self, index):
         if index is None:
             self.modified = {}
@@ -1669,8 +1682,7 @@ nothing to commit, working tree clean
                 returncode=128,
                 stderr=f'fatal: Unable to find remote reference {ref}\n',
             )
-        if commit not in self.remotes[remote_ref]:
-            self.remotes[remote_ref] = list(reversed(self.rev_list(value)))
+        self.remotes[remote_ref] = list(reversed(self.rev_list(value)))
         return mocks.ProcessCompletion(returncode=0)
 
 
