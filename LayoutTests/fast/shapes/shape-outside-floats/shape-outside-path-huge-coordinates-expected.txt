@@ -1,0 +1,1 @@
+PASS: laid out shape-outside path() with huge coordinates without hanging.
