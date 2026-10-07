@@ -757,6 +757,14 @@ BlobFileAccessEnforcementEnabled:
     "PLATFORM(COCOA)": true
     default: false
 
+BlockFormattingContextIntegrationEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Next-generation block layout integration (BFC)"
+  humanReadableDescription: "Enable next-generation block layout integration (BFC)"
+  defaultValue: false
+
 BlockMediaLayerRehostingInWebContentProcess:
   type: bool
   status: internal

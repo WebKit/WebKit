@@ -44,6 +44,8 @@
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
+#include "LayoutIntegrationBlockCoverage.h"
+#include "LayoutIntegrationBlockLayout.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutIntegrationUtils.h"
 #include "LayoutRepainter.h"
@@ -932,7 +934,10 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         auto textBoxTrimmer = TextBoxTrimmer { *this };
         auto lineClampUpdater = LineClampUpdater { *this };
         auto layoutChildren = [&](RelayoutChildren relayoutChildren) {
-            childrenInline() ? layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom) : layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+            if (childrenInline())
+                layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom);
+            else if (!layoutUsingBlockFormattingContext())
+                layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
         };
         // Content takes its lines off the line-clamp budget as it gets laid out, so content in this line-clamp container's formatting context can't be skipped over.
         auto* layoutState = view().frameView().layoutContext().layoutState();
@@ -1095,6 +1100,15 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
     // determining the correct collapsed bottom margin information.
     auto borderBoxLogicalHeight = handleAfterSideOfBlock(marginInfo, logicalHeight() - borderAndPaddingBefore());
     setLogicalHeight(borderBoxLogicalHeight);
+}
+
+bool RenderBlockFlow::layoutUsingBlockFormattingContext()
+{
+    if (!LayoutIntegration::canUseForBlockLayout(*this))
+        return false;
+
+    LayoutIntegration::BlockLayout { *this }.layout();
+    return true;
 }
 
 RenderBlockFlow::BlockPositionAndMargin RenderBlockFlow::layoutBlockChildFromInlineLayout(RenderBox& child, LayoutUnit contentHeight, MarginInfo marginInfo)
