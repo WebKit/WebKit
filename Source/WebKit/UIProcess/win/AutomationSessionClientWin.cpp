@@ -97,7 +97,6 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 legacyEmptyFrameInfo(WebCore::ResourceRequest()), /* originatingFrameInfoData */
                 std::nullopt, /* originatingPageID */
                 legacyEmptyFrameInfo(WebCore::ResourceRequest()), /* frameInfo */
-                std::nullopt, /* navigationID */
                 { }, /* originalRequest */
                 { }, /* request */
                 { }, /* invalidURLString */

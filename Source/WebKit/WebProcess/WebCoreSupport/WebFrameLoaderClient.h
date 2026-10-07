@@ -65,7 +65,7 @@ class WebFrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
-    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags) const;
+    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags) const;
 
     virtual void applyWebsitePolicies(WebsitePoliciesData&&) = 0;
 

@@ -535,7 +535,6 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         m_frame->info(),
         std::nullopt, /* originatingPageID */
         m_frame->info(),
-        { }, /* navigationID */
         { }, /* originalRequest */
         { }, /* request */
         { }, /* invalidURLString */
@@ -1076,7 +1075,6 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         m_frame->info(),
         std::nullopt, /* originatingPageID */
         m_frame->info(),
-        { }, /* navigationID */
         { }, /* originalRequest */
         request,
         request.url().isValid() ? String() : request.url().string(), /* invalidURLString */
