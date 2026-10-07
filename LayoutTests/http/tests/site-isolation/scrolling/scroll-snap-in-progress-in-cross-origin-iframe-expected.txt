@@ -1,0 +1,11 @@
+Tests that a cross-site iframe knows when the UI process is scroll snapping its document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Scroll snap is in progress in the iframe during the gesture.
+PASS Scroll snap is no longer in progress in the iframe after the gesture.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
