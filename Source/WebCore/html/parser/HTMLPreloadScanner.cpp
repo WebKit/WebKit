@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010-2023 Google Inc. All rights reserved.
  *
@@ -194,6 +194,7 @@ public:
         request->setNonce(m_nonceAttribute);
         request->setIntegrity(m_integrityAttribute);
         request->setScriptIsAsync(m_scriptIsAsync);
+        request->setLinkPreload(m_linkIsPreload);
 
         // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
         // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,

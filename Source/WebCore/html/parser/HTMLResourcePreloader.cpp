@@ -77,6 +77,13 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     auto request = createPotentialAccessControlRequest(completeURL(document), WTF::move(options), document, crossOriginMode);
     request.setInitiatorType(m_initiatorType);
 
+    // Resources discovered via <link rel=preload> are speculative and must not delay the load event,
+    // matching the behavior of the DOM-driven LinkLoader path.
+    if (m_linkPreload) {
+        request.setIsLinkPreload();
+        request.setIgnoreForRequestCount(true);
+    }
+
     if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic)
         request.setPriority(DefaultResourceLoadPriority::asyncScript);
 
