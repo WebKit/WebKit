@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<ol id="ol-without-markers" style="list-style: none">
+    <li>x</li>
+    <li>x</li>
+</ol>
+<ul id="ul-without-markers" style="list-style: none">
+    <li>x</li>
+    <li>x</li>
+</ul>
+<nav>
+    <ul id="ul-without-markers-in-nav" style="list-style: none">
+        <li>x</li>
+        <li>x</li>
+    </ul>
+</nav>
+<ol id="ol-with-markers">
+    <li>x</li>
+    <li>x</li>
+</ol>
+<div id="menu-without-menuitems" role="menu">
+    <div>x</div>
+</div>
+</div>
+
+<script>
+var output = "This test ensures that the computed role of an element whose role depends on its children is correct, even when nothing has caused those children to be added yet.\n\n";
+
+if (window.internals) {
+    // Query these before anything else builds the accessibility tree, since that would add the children.
+    output += expect("internals.getComputedRole(document.getElementById('ol-without-markers'))", "'group'");
+    output += expect("internals.getComputedRole(document.getElementById('ul-without-markers'))", "'group'");
+    output += expect("internals.getComputedRole(document.getElementById('ul-without-markers-in-nav'))", "'list'");
+    output += expect("internals.getComputedRole(document.getElementById('ol-with-markers'))", "'list'");
+    output += expect("internals.getComputedRole(document.getElementById('menu-without-menuitems'))", "'generic'");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

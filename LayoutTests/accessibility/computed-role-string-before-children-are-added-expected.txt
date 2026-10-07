@@ -1,0 +1,12 @@
+This test ensures that the computed role of an element whose role depends on its children is correct, even when nothing has caused those children to be added yet.
+
+PASS: internals.getComputedRole(document.getElementById('ol-without-markers')) === 'group'
+PASS: internals.getComputedRole(document.getElementById('ul-without-markers')) === 'group'
+PASS: internals.getComputedRole(document.getElementById('ul-without-markers-in-nav')) === 'list'
+PASS: internals.getComputedRole(document.getElementById('ol-with-markers')) === 'list'
+PASS: internals.getComputedRole(document.getElementById('menu-without-menuitems')) === 'generic'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
