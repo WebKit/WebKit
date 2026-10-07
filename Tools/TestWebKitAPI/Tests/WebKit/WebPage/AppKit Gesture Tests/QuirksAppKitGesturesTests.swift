@@ -99,18 +99,21 @@ extension AppKitGesturesTests.Quirks {
         try await expectDrag(from: start, to: end, over: surface, reachesContent: true)
     }
 
-    @Test
-    func clickAndHoldOnUnselectableMailListItemFiresContextMenuEventOnlyOnOutlook() async throws {
+    @Test(arguments: [
+        (topDocumentURL: "https://outlook.live.com/mail/", rowID: "outlook-row"),
+        (topDocumentURL: "https://www.icloud.com/mail/", rowID: "icloud-row"),
+    ])
+    func clickAndHoldOnUnselectableMailListItemFiresContextMenuEvent(topDocumentURL: String, rowID: String) async throws {
         let url = try #require(Bundle.testResources.url(forResource: "unselectable-mail-list-item", withExtension: "html"))
         try await page.load(url).wait()
 
-        try await page.callJavaScript(arguments: ["url": "https://outlook.live.com/mail/"]) {
+        try await page.callJavaScript(arguments: ["url": topDocumentURL]) {
             "internals.setTopDocumentURLForQuirks(url);"
         }
 
         await page.waitForNextPresentationUpdate()
 
-        let rowBounds = try await screenBounds(ofElementWithID: "row")
+        let rowBounds = try await screenBounds(ofElementWithID: rowID)
 
         await recap.play { composer in
             composer._wk_click(at: rowBounds.center, for: .seconds(1))

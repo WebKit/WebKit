@@ -2572,12 +2572,21 @@ bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
 // Outlook on the web: rdar://187832523
+// icloud.com: rdar://188875593
 bool Quirks::shouldTreatLongClickAsSecondaryClick(const Node& target) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldTreatLongClickAsSecondaryClickQuirk))
         return false;
+
+    if (m_quirksData.isICloud) {
+        for (Ref ancestor : lineageOfType<Element>(target)) {
+            if (ancestor->hasClassName("thread-list-item"_s) && equalLettersIgnoringASCIICase(ancestor->attributeWithoutSynchronization(HTMLNames::roleAttr), "treeitem"_s))
+                return true;
+        }
+        return false;
+    }
 
     for (Ref ancestor : lineageOfType<Element>(target)) {
         if (ancestor->hasAttribute("data-focusable-row"_s))
@@ -3201,10 +3210,15 @@ static void handleICloudQuirks(QuirksData& quirksData, const URL& quirksURL, con
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("icloud.com"_s);
 
+    quirksData.isICloud = true;
+
 #if ENABLE(TWO_PHASE_CLICKS)
     // icloud.com rdar://187710972
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::MayNeedToIgnoreContentObservation);
-    quirksData.isICloud = true;
+#endif
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    // icloud.com rdar://188875593
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldTreatLongClickAsSecondaryClickQuirk);
 #endif
 #if PLATFORM(IOS_FAMILY)
     // icloud.com rdar://131836301
