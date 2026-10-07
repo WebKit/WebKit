@@ -911,6 +911,22 @@ bool Quirks::needsZomatoEmailLoginLabelQuirk() const
 #endif
 }
 
+// box.com rdar://187475153
+bool Quirks::needsBoxAnnotationQuirk(const Element& element) const
+{
+#if PLATFORM(MAC)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsBoxAnnotationQuirk))
+        return false;
+
+    return element.hasClassName("ba-RegionCreation-creator"_s);
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
+}
+
 // google.com/maps/embed rdar://184166392
 bool Quirks::needsGoogleMapsEmbedManipulationSurfaceQuirk() const
 {
@@ -3543,6 +3559,16 @@ static void handleBankOfAmericaQuirks(QuirksData& quirksData, const URL& /* quir
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::MaybeBypassBackForwardCache);
 }
 
+#if PLATFORM(MAC)
+static void handleBoxQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
+{
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("box.com"_s);
+
+    // box.com rdar://187475153
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsBoxAnnotationQuirk);
+}
+#endif
+
 static void handleBingQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("bing.com"_s);
@@ -4342,6 +4368,9 @@ void Quirks::determineRelevantQuirks()
         { "bankofamerica"_s, &handleBankOfAmericaQuirks },
         { "bestbuy"_s, &handleBestBuyQuirks },
         { "bing"_s, &handleBingQuirks },
+#if PLATFORM(MAC)
+        { "box"_s, &handleBoxQuirks },
+#endif
         { "bungalow"_s, &handleBungalowQuirks },
         { "capitalgroup"_s, &handleCapitalGroupQuirks },
 #if PLATFORM(IOS_FAMILY)

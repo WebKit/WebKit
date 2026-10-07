@@ -84,6 +84,9 @@ struct QuirksData {
 #endif
         NeedsAirIndiaExpressLayeringQuirk,
         NeedsBodyScrollbarWidthNoneDisabledQuirk,
+#if PLATFORM(MAC)
+        NeedsBoxAnnotationQuirk,
+#endif
         NeedsCanPlayAfterSeekedQuirk,
         NeedsChromeMediaControlsPseudoElementQuirk,
 #if PLATFORM(COCOA)
