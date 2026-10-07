@@ -31,9 +31,10 @@ from unittest.mock import patch
 from webkitcorepy import LoggerCapture, OutputCapture, run, testing, mocks as wkmocks
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import Commit, Contributor, local, mocks, remote
+from webkitscmpy.test.cache_oracle import CacheOracle
 
 
-class TestGit(testing.PathTestCase):
+class TestGit(CacheOracle, testing.PathTestCase):
     basepath = 'mock/repository'
 
     def setUp(self):
@@ -67,6 +68,21 @@ class TestGit(testing.PathTestCase):
             mock_git.remotes[remote_branch] = [commit for commit in mock_git.remotes[remote_branch] if commit.hash != fetched_hash]
 
         return fetched_commit
+
+    def test_cached_matches_uncached(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock, OutputCapture():
+                repo = local.Git(self.path, cached=True)
+
+                for argument in ('1@main', '5@main', '2.3@branch-b', '2.1@branch-a', 'd8bce26fa65c', 'HEAD'):
+                    self.assert_matches_uncached(repo, lambda r: r.find(argument))
+                for cached in (True, False):
+                    with self.assertRaises(Exception):
+                        local.Git(self.path, cached=cached).find('badc0dd1f')
+                self.assertEqual(self.assert_matches_uncached(repo, lambda r: r.commit(identifier='5@main'))[1], '5@main')
+                self.assert_matches_uncached(repo, lambda r: r.commit(hash='a30ce8494bf1'))
+                self.assert_matches_uncached(repo, lambda r: r.branch_point())
+                self.assert_matches_uncached(repo, lambda r: r.commits(begin=dict(argument='1@main'), end=dict(argument='5@main')))
 
     def test_detection(self):
         with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn():
@@ -180,6 +196,78 @@ class TestGit(testing.PathTestCase):
             # Out-of-bounds commit
             with self.assertRaises(local.Git.Exception):
                 self.assertEqual(None, local.Git(self.path).commit(revision=10))
+
+    def test_find_hash_dropped_by_default_branch_rewrite_and_pruned(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            git = local.Git.executable()
+            history = [commit.hash for commit in mock_git.commits['main']]
+            dropped = 'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6'
+            repository = local.Git(self.path)
+            self.assertEqual(dropped, history[3])
+            self.assertEqual('4@main', str(repository.find(dropped)))
+
+            # Main is reset to 3@main and given 2 new commits, so 4@main is in no branch. The old 5@main also
+            # survives, because the mock keeps it on eng/squash-branch
+            run([git, 'reset', '--hard', history[2]], cwd=self.path, capture_output=True)
+            for message in ('Rewritten commit', 'Another rewritten commit'):
+                mock_git.staged['file.txt'] = message
+                run([git, 'commit', '-m', message], cwd=self.path, capture_output=True)
+            run([git, 'update-ref', 'refs/remotes/origin/main', mock_git.head.hash], cwd=self.path, capture_output=True)
+            time.sleep(60)
+
+            for hash, identifier in zip(history[:3], ('1@main', '2@main', '3@main')):
+                self.assertEqual(identifier, self.assert_matches_uncached(repository, lambda r: r.find(hash))[1])
+            for cached in (repository, local.Git(self.path), local.Git(self.path, cached=False)):
+                with self.assertRaises(Exception):
+                    cached.find(dropped)
+
+    def _move_off_default_branch(self, mock_git, dropped='bae5d1e9', new_branch='eng/rewritten'):
+        """Reset main to before `dropped`, which survives only on `new_branch` (3.1@new_branch)."""
+        default_branch = mock_git.default_branch
+        main_history = mock_git.commits[default_branch]
+        index = [commit.hash[:len(dropped)] for commit in main_history].index(dropped)
+        kept = main_history[index - 1]
+        moved = copy.deepcopy(main_history[index])
+        moved.branch = new_branch
+        moved.identifier = 1
+        moved.branch_point = index
+        mock_git.commits[new_branch] = [copy.deepcopy(kept), moved]
+
+        run([local.Git.executable(), 'reset', '--hard', kept.hash], cwd=self.path, capture_output=True)
+        run([local.Git.executable(), 'update-ref', f'refs/remotes/origin/{default_branch}', kept.hash], cwd=self.path, capture_output=True)
+        return moved
+
+    def _check_after_default_branch_rewrite(self, call):
+        """The cache saw `bae5d1e9` as 4@main, then main was rewritten without it: the cache must not still say so."""
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            self.assertEqual('4@main', str(repository.commit(hash='bae5d1e9')))
+
+            moved = self._move_off_default_branch(mock_git)
+            self.assertEqual('3.1@eng/rewritten', str(local.Git(self.path, cached=False).commit(hash=moved.hash)))
+            self.assert_matches_uncached(repository, call)
+
+    def test_commit_without_identifier_after_default_branch_rewrite(self):
+        self._check_after_default_branch_rewrite(lambda r: r.commit(hash='bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', include_identifier=False))
+
+    def test_commit_cached_branch_point_after_default_branch_rewrite(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            repository.commit(hash='bae5d1e9')
+
+            moved = self._move_off_default_branch(mock_git)
+            mock_git.head = moved
+            self.assertTrue(self.assert_matches_uncached(repository, lambda r: r.branch_point())[0].startswith('1abe25b4'))
+
+    def test_commit_cached_hash_still_on_default_branch(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            repository.commit(hash='bae5d1e9')
+
+            self._move_off_default_branch(mock_git)
+            self.assertEqual('3@main', str(repository.commit(hash='1abe25b4')))
+            self.assert_matches_uncached(repository, lambda r: r.commit(hash='1abe25b4'))
+            self.assert_matches_uncached(repository, lambda r: r.find('2@main'))
 
     def test_commit_hash(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
@@ -654,6 +742,37 @@ CommitDate: {time_c}
         with mocks.local.Git(self.path) as mocked, OutputCapture():
             mocked.staged['added.txt'] = 'added'
             self.assertEqual(local.Git(self.path).pull(rebase=True), 0)
+
+    # The mock only rebases a branch given by name, so the others assert on which branches the cache keeps
+    def _cache_after(self, call, head='branch-a', populate=('branch-a', 'branch-b')):
+        with mocks.local.Git(self.path) as mock_git, OutputCapture():
+            mock_git.head = mock_git.commits[head][-1]
+            repo = local.Git(self.path)
+            for branch in populate:
+                repo.cache.populate(branch=branch)
+            call(repo)
+            return set(repo.cache._ordered_commits.keys())
+
+    def test_rebase_clears_the_rebased_branch(self):
+        with mocks.local.Git(self.path) as mock_git, MockTime, OutputCapture():
+            # The branch rebased isn't the current one
+            mock_git.head = mock_git.commits['branch-b'][-1]
+            tip = mock_git.commits['branch-a'][-1].hash
+            repo = local.Git(self.path)
+            self.assertEqual('2.2@branch-a', str(repo.commit(hash=tip)))
+
+            repo.rebase(target='main', base='main', head='branch-a', recommit=False)
+            self.assertEqual('5.2@branch-a', self.assert_matches_uncached(repo, lambda r: r.commit(hash=tip))[1])
+
+    def test_rebase_of_head_clears_the_current_branch(self):
+        cached = self._cache_after(lambda repo: repo.rebase(target='main', base='main', recommit=False))
+        self.assertNotIn('branch-a', cached)
+        self.assertIn('branch-b', cached)
+
+    def test_pull_rebase_of_other_branch_clears_the_current_branch(self):
+        cached = self._cache_after(lambda repo: repo.pull(rebase=True, branch='main', remote='origin'))
+        self.assertNotIn('branch-a', cached)
+        self.assertIn('branch-b', cached)
 
     def test_pull_no_stash(self):
         with mocks.local.Git(self.path) as mocked, OutputCapture():
