@@ -721,6 +721,20 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     return LayoutSize(constraints.computeStickyOffset(constrainingRect));
 }
 
+RectEdges<bool> RenderBoxModelObject::stuckEdgesForStickyPosition() const
+{
+    // The shift that keeps the box inside an edge of its sticky view rectangle moves it away from
+    // that edge, so the sign of the offset names the edge. A shift toward one edge of an axis rules
+    // out the opposite one, since the box is never past both at once.
+    auto offset = stickyPositionOffset();
+    return {
+        offset.height() > 0,
+        offset.width() < 0,
+        offset.height() < 0,
+        offset.width() > 0
+    };
+}
+
 LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
 {
     if (isRelativelyPositioned())

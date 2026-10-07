@@ -497,6 +497,64 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
     }
 };
 
+// scroll-state(stuck [: <edge> | none]): whether a sticky positioned query container is shifted to
+// stay inside the given edge of its sticky view rectangle. Edges only, no axes, and nothing matches
+// for a container that is not sticky positioned -- not even none.
+// https://drafts.csswg.org/css-conditional-5/#stuck
+struct StuckFeatureSchema : public ScrollStateFeatureSchema {
+    using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
+
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        // Reading the snapshot rather than live geometry keeps a query result from feeding back into
+        // the state it queries. https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
+        std::optional<RectEdges<bool>> stuck;
+        if (CheckedPtr renderer = context.renderer.get()) {
+            if (CheckedPtr containerElement = renderer->element())
+                stuck = context.document->styleScope().scrollStateSnapshotFor(*containerElement).stuckEdges;
+        }
+
+        if (!stuck)
+            return EvaluationResult::False;
+
+        auto towardSide = [&](BoxSide side) { return (*stuck)[side]; };
+        bool stuckAnywhere = towardSide(BoxSide::Top) || towardSide(BoxSide::Right)
+            || towardSide(BoxSide::Bottom) || towardSide(BoxSide::Left);
+
+        // Boolean form `scroll-state(stuck)`: shifted toward any edge.
+        if (!feature.rightComparison)
+            return toEvaluationResult(stuckAnywhere);
+
+        auto requested = WTF::switchOn(*feature.rightComparison->value,
+            [](const CSS::Keyword& keyword) { return keyword.value; },
+            [](const auto&) { return CSSValueInvalid; });
+
+        auto writingMode = context.conversionData.style().writingMode();
+        switch (requested) {
+        case CSSValueNone:
+            return toEvaluationResult(!stuckAnywhere);
+        case CSSValueTop:
+            return toEvaluationResult(towardSide(BoxSide::Top));
+        case CSSValueRight:
+            return toEvaluationResult(towardSide(BoxSide::Right));
+        case CSSValueBottom:
+            return toEvaluationResult(towardSide(BoxSide::Bottom));
+        case CSSValueLeft:
+            return toEvaluationResult(towardSide(BoxSide::Left));
+        case CSSValueBlockStart:
+            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)));
+        case CSSValueBlockEnd:
+            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)));
+        case CSSValueInlineStart:
+            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)));
+        case CSSValueInlineEnd:
+            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)));
+        default:
+            return EvaluationResult::False;
+        }
+    }
+};
+
 // MARK: - Singleton readonly instances of FeatureSchemas
 
 static const WidthFeatureSchema& widthFeatureSchema()
@@ -555,7 +613,7 @@ static const ScrollStateFeatureSchema& scrolledFeatureSchema()
 
 static const ScrollStateFeatureSchema& stuckFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "stuck"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd } };
+    static MainThreadNeverDestroyed<StuckFeatureSchema> schema { "stuck"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd } };
     return schema;
 }
 
