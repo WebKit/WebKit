@@ -62,6 +62,7 @@
 #include "WasmOps.h"
 #include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
+#include <algorithm>
 #include <bit>
 #include <cmath>
 #include <wtf/Assertions.h>
@@ -4300,23 +4301,143 @@ void BBQJIT::loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg was
     m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
 }
 
+static bool isPairable64(TypeKind type)
+{
+    return BBQJIT::sizeOfType(type) == 8;
+}
+
+static bool canPairSpills(const BBQJIT::RegisterSpill& a, const BBQJIT::RegisterSpill& b)
+{
+    if (a.reg.isGPR() != b.reg.isGPR())
+        return false;
+    if (!isPairable64(a.value.type()) || !isPairable64(b.value.type()))
+        return false;
+    return b.slot.asStackOffset() == a.slot.asStackOffset() + 8;
+}
+
+static void sortSpills(Vector<BBQJIT::RegisterSpill, 16>& entries)
+{
+    std::sort(entries.begin(), entries.end(), [](const BBQJIT::RegisterSpill& a, const BBQJIT::RegisterSpill& b) {
+        return a.slot.asStackOffset() < b.slot.asStackOffset();
+    });
+}
+
+void BBQJIT::collectRegisterSpills(Vector<RegisterSpill, 16>& gprs, Vector<RegisterSpill, 16>& fprs)
+{
+    for (Reg r : m_gprAllocator.allocatedRegisters()) {
+        Value value = m_gprAllocator.bindingFor(r.gpr()).toValue();
+        if (value.isNone())
+            continue;
+        gprs.append({ value, Location::fromGPR(r.gpr()), canonicalSlot(value) });
+    }
+    for (Reg r : m_fprAllocator.allocatedRegisters()) {
+        Value value = m_fprAllocator.bindingFor(r.fpr()).toValue();
+        if (value.isNone())
+            continue;
+        fprs.append({ value, Location::fromFPR(r.fpr()), canonicalSlot(value) });
+    }
+}
+
+void BBQJIT::collectRegisterSpills(const RegisterBindings& bindings, Vector<RegisterSpill, 16>& gprs, Vector<RegisterSpill, 16>& fprs)
+{
+    for (unsigned i = 0; i < bindings.m_gprBindings.size(); ++i) {
+        Value value = bindings.m_gprBindings[i].toValue();
+        if (value.isNone())
+            continue;
+        gprs.append({ value, Location::fromGPR(static_cast<GPRReg>(i)), canonicalSlot(value) });
+    }
+    for (unsigned i = 0; i < bindings.m_fprBindings.size(); ++i) {
+        Value value = bindings.m_fprBindings[i].toValue();
+        if (value.isNone())
+            continue;
+        fprs.append({ value, Location::fromFPR(static_cast<FPRReg>(i)), canonicalSlot(value) });
+    }
+}
+
+void BBQJIT::emitStorePairs(Vector<RegisterSpill, 16>& entries)
+{
+    sortSpills(entries);
+    for (size_t i = 0; i < entries.size();) {
+        if (i + 1 < entries.size() && canPairSpills(entries[i], entries[i + 1])) {
+            auto& lo = entries[i];
+            auto& hi = entries[i + 1];
+            if (lo.reg.isGPR())
+                m_jit.storePair64(lo.reg.asGPR(), hi.reg.asGPR(), lo.slot.asAddress());
+            else {
+#if CPU(ARM64)
+                m_jit.storePair64(lo.reg.asFPR(), hi.reg.asFPR(), lo.slot.asAddress().base, TrustedImm32(lo.slot.asAddress().offset));
+#else
+                emitStore(lo.value.type(), lo.reg, lo.slot);
+                emitStore(hi.value.type(), hi.reg, hi.slot);
+#endif
+            }
+            i += 2;
+            continue;
+        }
+        emitStore(entries[i].value.type(), entries[i].reg, entries[i].slot);
+        ++i;
+    }
+}
+
+void BBQJIT::emitLoadPairs(Vector<RegisterSpill, 16>& entries)
+{
+    sortSpills(entries);
+    for (size_t i = 0; i < entries.size();) {
+        if (i + 1 < entries.size() && canPairSpills(entries[i], entries[i + 1])) {
+            auto& lo = entries[i];
+            auto& hi = entries[i + 1];
+            if (lo.reg.isGPR())
+                m_jit.loadPair64(lo.slot.asAddress(), lo.reg.asGPR(), hi.reg.asGPR());
+            else {
+#if CPU(ARM64)
+                m_jit.loadPairDouble(lo.slot.asAddress(), lo.reg.asFPR(), hi.reg.asFPR());
+#else
+                emitLoad(lo.value.type(), lo.slot, lo.reg);
+                emitLoad(hi.value.type(), hi.slot, hi.reg);
+#endif
+            }
+            i += 2;
+            continue;
+        }
+        emitLoad(entries[i].value.type(), entries[i].slot, entries[i].reg);
+        ++i;
+    }
+}
+
+void BBQJIT::bindSpillsToSlots(const Vector<RegisterSpill, 16>& entries)
+{
+    for (const auto& entry : entries) {
+        unbind(entry.value, entry.reg);
+        bind(entry.value, entry.slot);
+    }
+}
+
 void BBQJIT::flushRegistersForException()
 {
-    // Flush all locals.
-    m_gprAllocator.flushIf(*this, [&](GPRReg, const RegisterBinding& binding) {
-        return binding.toValue().isLocal();
+    Vector<RegisterSpill, 16> gprs;
+    Vector<RegisterSpill, 16> fprs;
+    collectRegisterSpills(gprs, fprs);
+    gprs.removeAllMatching([](RegisterSpill& entry) {
+        return !entry.value.isLocal();
     });
-    m_fprAllocator.flushIf(*this, [&](FPRReg, const RegisterBinding& binding) {
-        return binding.toValue().isLocal();
+    fprs.removeAllMatching([](RegisterSpill& entry) {
+        return !entry.value.isLocal();
     });
+    emitStorePairs(gprs);
+    emitStorePairs(fprs);
+    bindSpillsToSlots(gprs);
+    bindSpillsToSlots(fprs);
 }
 
 void BBQJIT::flushRegisters()
 {
-    // Just flush everything.
-    // FIXME: These should be store pairs.
-    m_gprAllocator.flushAllRegisters(*this);
-    m_fprAllocator.flushAllRegisters(*this);
+    Vector<RegisterSpill, 16> gprs;
+    Vector<RegisterSpill, 16> fprs;
+    collectRegisterSpills(gprs, fprs);
+    emitStorePairs(gprs);
+    emitStorePairs(fprs);
+    bindSpillsToSlots(gprs);
+    bindSpillsToSlots(fprs);
 }
 
 void BBQJIT::RegisterBindings::dump(PrintStream& out) const
@@ -4340,34 +4461,20 @@ void BBQJIT::RegisterBindings::dump(PrintStream& out) const
 
 void BBQJIT::slowPathSpillBindings(const RegisterBindings& bindings)
 {
-    for (unsigned i = 0; i < bindings.m_fprBindings.size(); ++i) {
-        Value value = bindings.m_fprBindings[i].toValue();
-        if (!value.isNone())
-            emitStore(value.type(), Location::fromFPR(static_cast<FPRReg>(i)), canonicalSlot(value));
-    }
-
-    // FIXME: These should be store load pairs.
-    for (unsigned i = 0; i < bindings.m_gprBindings.size(); ++i) {
-        Value value = bindings.m_gprBindings[i].toValue();
-        if (!value.isNone())
-            emitStore(value.type(), Location::fromGPR(static_cast<GPRReg>(i)), canonicalSlot(value));
-    }
+    Vector<RegisterSpill, 16> gprs;
+    Vector<RegisterSpill, 16> fprs;
+    collectRegisterSpills(bindings, gprs, fprs);
+    emitStorePairs(fprs);
+    emitStorePairs(gprs);
 }
 
 void BBQJIT::slowPathRestoreBindings(const RegisterBindings& bindings)
 {
-    for (unsigned i = 0; i < bindings.m_fprBindings.size(); ++i) {
-        Value value = bindings.m_fprBindings[i].toValue();
-        if (!value.isNone())
-            emitLoad(value.type(), canonicalSlot(value), Location::fromFPR(static_cast<FPRReg>(i)));
-    }
-
-    // FIXME: These should be store load pairs.
-    for (unsigned i = 0; i < bindings.m_gprBindings.size(); ++i) {
-        Value value = bindings.m_gprBindings[i].toValue();
-        if (!value.isNone())
-            emitLoad(value.type(), canonicalSlot(value), Location::fromGPR(static_cast<GPRReg>(i)));
-    }
+    Vector<RegisterSpill, 16> gprs;
+    Vector<RegisterSpill, 16> fprs;
+    collectRegisterSpills(bindings, gprs, fprs);
+    emitLoadPairs(fprs);
+    emitLoadPairs(gprs);
 }
 
 template<typename Args>
