@@ -1,0 +1,4 @@
+
+PASS a first-party shared worker uses the grant for its origin
+PASS a third-party shared worker is refused even with a grant for its origin
+
