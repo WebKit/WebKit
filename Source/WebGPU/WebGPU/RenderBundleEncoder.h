@@ -111,6 +111,8 @@ public:
 
     bool NODELETE isValid() const final;
     void replayCommands(RenderPassEncoder&);
+    // Drops the Metal reference this encoder keeps to each destroyed resource.
+    void releaseDestroyedResources();
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
     static constexpr uint32_t defaultSampleMask = UINT32_MAX;

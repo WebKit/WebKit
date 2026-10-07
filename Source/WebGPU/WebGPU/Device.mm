@@ -449,7 +449,20 @@ void Device::destroy()
 {
     m_destroyed = true;
 
+    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-destroy drops the resources' memory. Buffers are left alone: Buffer::destroy() crashes if a mapped range is borrowed.
+    auto textures = m_textures.values();
+    m_textures.clear();
+    for (Ref texture : textures) {
+        if (!texture->isDestroyed())
+            texture->destroy();
+    }
+
     loseTheDevice(WGPUDeviceLostReason_Destroyed);
+}
+
+void Device::addTexture(const Texture& texture)
+{
+    m_textures.add(texture);
 }
 
 Vector<WebGPU::FeatureName> Device::features() const
