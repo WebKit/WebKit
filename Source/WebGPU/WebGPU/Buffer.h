@@ -108,11 +108,11 @@ public:
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     std::span<uint8_t> getBufferContents();
 
-    bool indirectIndexedBufferRequiresRecomputation(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
+    bool indirectIndexedBufferRequiresRecomputation(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, uint64_t indexContentsGeneration) const;
     bool indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
 
     void indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool committed = false);
-    void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool committed = false);
+    void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, uint64_t indexContentsGeneration, bool committed = false);
 
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
     uint64_t drawIndexedCacheInvalidationCount() const { return m_drawIndexedCacheInvalidationCount; }
@@ -126,6 +126,8 @@ public:
 
     void indirectBufferInvalidated(CommandEncoder* = nullptr);
     void indirectBufferInvalidated(CommandEncoder&);
+    uint64_t indexContentsGeneration() const { return m_indexContentsGeneration; }
+    void indexBufferContentsModified() { ++m_indexContentsGeneration; }
 #if ENABLE(WEBGPU_SWIFT)
     void copyFrom(const std::span<const uint8_t>, const size_t offset) HAS_SWIFTCXX_THUNK;
 #endif
@@ -178,6 +180,10 @@ private:
     struct IndirectArgsCache {
         uint64_t indirectOffset { UINT64_MAX };
         uint64_t indexBufferOffsetInBytes { UINT64_MAX };
+        // Generation of the index buffer's contents when the indexed-indirect clamp was encoded. The
+        // verdict is cached here, on the indirect buffer, but it was reached by inspecting a different
+        // buffer, so nothing this buffer tracks notices when those index values change.
+        uint64_t indexContentsGeneration { UINT64_MAX };
         uint32_t minVertexCount { 0 };
         uint32_t minInstanceCount { 0 };
         MTLIndexType indexType { MTLIndexTypeUInt16 };
@@ -195,6 +201,7 @@ private:
     mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
     bool m_mustTakeSlowIndexValidationPath { false };
+    uint64_t m_indexContentsGeneration { 0 };
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     bool m_mappedAtCreation { false };
 #endif

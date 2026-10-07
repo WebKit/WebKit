@@ -891,7 +891,8 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     if (!indirectBuffer || !minVertexCount || !minInstanceCount || checkedOffsetPlusSize.hasOverflowed() || checkedOffsetPlusSize.value() >= indexBuffer.length)
         return std::make_pair(nil, 0ull);
 
-    if (!indexedIndirectBuffer.indirectIndexedBufferRequiresRecomputation(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount)) {
+    uint64_t indexContentsGeneration = apiIndexBuffer->indexContentsGeneration();
+    if (!indexedIndirectBuffer.indirectIndexedBufferRequiresRecomputation(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, indexContentsGeneration)) {
         indexedIndirectBuffer.skippedDrawIndirectIndexedValidation(encoder.parentEncoder(), apiIndexBuffer, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, primitiveType);
         return std::make_pair(indexedIndirectBuffer.indirectIndexedBuffer(), 0ull);
     }
@@ -919,10 +920,10 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
-    indexedIndirectBuffer.indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount);
-    encoder.parentEncoder().addOnCommitHandler([weakBuffer = ThreadSafeWeakPtr { indexedIndirectBuffer }, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount](CommandBuffer&, CommandEncoder&) {
+    indexedIndirectBuffer.indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, indexContentsGeneration);
+    encoder.parentEncoder().addOnCommitHandler([weakBuffer = ThreadSafeWeakPtr { indexedIndirectBuffer }, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, indexContentsGeneration](CommandBuffer&, CommandEncoder&) {
         if (RefPtr buffer = weakBuffer.get())
-            buffer->indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, true);
+            buffer->indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, indexContentsGeneration, true);
         return true;
     });
     checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer);
