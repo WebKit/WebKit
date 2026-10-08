@@ -36,7 +36,7 @@
 #include "ModelProcessProxyMessages.h"
 #include "ProcessTerminationReason.h"
 #include "ProvisionalPageProxy.h"
-#include "SecurityFlagsController.h"
+#include "SecurityFlags.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -89,7 +89,7 @@ ModelProcessProxy::ModelProcessProxy()
 
     ModelProcessCreationParameters parameters;
     parameters.auxiliaryProcessParameters = auxiliaryProcessParameters();
-    parameters.securityFlags.replaceWith(SecurityFlagsController::singleton().securityFlags());
+    parameters.securityFlags.replaceWith(securityFlags());
     parameters.parentPID = getCurrentProcessID();
 
 #if PLATFORM(COCOA)

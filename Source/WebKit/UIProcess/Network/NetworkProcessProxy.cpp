@@ -59,7 +59,7 @@
 #include "ProcessTerminationReason.h"
 #include "RemoteWorkerType.h"
 #include "SandboxExtension.h"
-#include "SecurityFlagsController.h"
+#include "SecurityFlags.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "ViewSnapshotStore.h"
@@ -199,7 +199,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 
     NetworkProcessCreationParameters parameters;
     parameters.auxiliaryProcessParameters = auxiliaryProcessParameters();
-    parameters.securityFlags.replaceWith(SecurityFlagsController::singleton().securityFlags());
+    parameters.securityFlags.replaceWith(securityFlags());
     parameters.urlSchemesRegisteredAsSecure = copyToVector(LegacyGlobalSettings::singleton().schemesToRegisterAsSecure());
     parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy = copyToVector(LegacyGlobalSettings::singleton().schemesToRegisterAsBypassingContentSecurityPolicy());
     parameters.urlSchemesRegisteredAsLocal = copyToVector(LegacyGlobalSettings::singleton().schemesToRegisterAsLocal());

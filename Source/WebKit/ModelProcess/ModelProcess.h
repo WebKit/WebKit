@@ -74,9 +74,6 @@ public:
 
     ModelConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
-    // Never sent to the WebContent process.
-    const SecurityFlags& securityFlags() const LIFETIME_BOUND { return m_securityFlags; }
-
     void tryExitIfUnusedAndUnderMemoryPressure();
 
     const String& applicationVisibleName() const { return m_applicationVisibleName; }
@@ -125,7 +122,6 @@ private:
     WebCore::Timer m_idleExitTimer;
     String m_applicationVisibleName;
     std::optional<int> m_debugEntityMemoryLimit;
-    SecurityFlags m_securityFlags;
 };
 
 } // namespace WebKit

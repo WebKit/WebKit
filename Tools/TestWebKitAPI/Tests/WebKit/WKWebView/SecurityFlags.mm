@@ -56,6 +56,14 @@ static FlagState flagStateInNetworkProcess(WKWebsiteDataStore *dataStore, NSStri
     return [reply boolValue] ? FlagState::Enforced : FlagState::Disabled;
 }
 
+static FlagState flagStateInUIProcess(NSString *flagName)
+{
+    RetainPtr enabled = [WKWebsiteDataStore _isSecurityFlagEnabledInUIProcessForTesting:flagName];
+    if (!enabled)
+        return FlagState::NoSuchFlag;
+    return [enabled boolValue] ? FlagState::Enforced : FlagState::Disabled;
+}
+
 static RetainPtr<WKWebsiteDataStore> launchNetworkProcess()
 {
     RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
@@ -77,6 +85,16 @@ TEST_F(SecurityFlagsTest, SecureByDefault)
 {
     auto dataStore = launchNetworkProcess();
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
+}
+
+TEST_F(SecurityFlagsTest, UIProcessReadsItsOwnValue)
+{
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Enforced);
+    EXPECT_EQ(flagStateInUIProcess(@"radar99999999"), FlagState::NoSuchFlag);
+
+    [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[testSecurityFlagName]];
+
+    EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
 }
 
 TEST_F(SecurityFlagsTest, DidChangeReachesRunningProcess)

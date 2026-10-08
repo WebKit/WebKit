@@ -116,9 +116,6 @@ public:
 
     GPUConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
-    // Never sent to the WebContent process.
-    const SecurityFlags& securityFlags() const LIFETIME_BOUND { return m_securityFlags; }
-
     const String& mediaCacheDirectory(PAL::SessionID) const;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     const String& mediaKeysStorageDirectory(PAL::SessionID) const;
@@ -305,7 +302,6 @@ private:
     HashMap<PAL::SessionID, GPUSession> m_sessions;
     WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
-    SecurityFlags m_securityFlags;
     String m_applicationVisibleName;
 #if PLATFORM(MAC)
     String m_uiProcessName;

@@ -45,6 +45,7 @@
 #import "ProcessThrottler.h"
 #import "SandboxExtension.h"
 #import "SandboxUtilities.h"
+#import "SecurityFlags.h"
 #import "TextChecker.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStore.h"
@@ -585,6 +586,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::sharedSingleton().cachedListData();
+#endif
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    RELEASE_LOG(Process, "SecurityFlags: radar184485266 is %" PUBLIC_LOG_STRING, securityFlags().radar184485266() ? "enforced" : "disabled");
 #endif
 }
 

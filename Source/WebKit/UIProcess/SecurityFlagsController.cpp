@@ -57,7 +57,7 @@ void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
     if (knownNames.size() < names.size())
         RELEASE_LOG(Process, "SecurityFlagsController: ignoring %zu of %zu names, which no flag in this build has", names.size() - knownNames.size(), names.size());
 
-    if (newFlags == m_securityFlags)
+    if (!SecurityFlags::update(WTF::move(newFlags)))
         return;
 
     for (auto& name : knownNames) {
@@ -65,7 +65,6 @@ void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
         RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled", name.utf8().data());
     }
 
-    m_securityFlags.replaceWith(newFlags);
     propagateToChildProcesses();
 }
 
@@ -75,16 +74,16 @@ void SecurityFlagsController::propagateToChildProcesses()
 
     // Processes launched after this point pick the new value up through their creation parameters instead.
     for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
-        networkProcess->securityFlagsDidChange(m_securityFlags);
+        networkProcess->securityFlagsDidChange(securityFlags());
 
 #if ENABLE(GPU_PROCESS)
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
-        gpuProcess->securityFlagsDidChange(m_securityFlags);
+        gpuProcess->securityFlagsDidChange(securityFlags());
 #endif
 
 #if ENABLE(MODEL_PROCESS)
     if (RefPtr modelProcess = ModelProcessProxy::singletonIfCreated())
-        modelProcess->securityFlagsDidChange(m_securityFlags);
+        modelProcess->securityFlagsDidChange(securityFlags());
 #endif
 }
 
