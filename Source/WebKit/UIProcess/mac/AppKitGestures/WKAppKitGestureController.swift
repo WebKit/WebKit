@@ -73,6 +73,10 @@ final class WKPanGestureRecognizer: NSPanGestureRecognizer {
 
     // swift-format-ignore: AlwaysUseLowerCamelCase
     func wk_velocity(in view: NSView?) -> NSPoint {
+        if let lastMovementTime, timestamp - lastMovementTime >= Self.stalenessWindow {
+            return .zero
+        }
+
         let appKitVelocity = velocity(in: view)
 
         // Prefer AppKit's velocity if available.
@@ -84,10 +88,6 @@ final class WKPanGestureRecognizer: NSPanGestureRecognizer {
         // If we have seen less than two events, we can't work out a velocity at all.
         guard let gestureStartTime, let lastMovementTime, lastMovementTime > gestureStartTime
         else {
-            return .zero
-        }
-
-        guard timestamp - lastMovementTime < Self.stalenessWindow else {
             return .zero
         }
 
