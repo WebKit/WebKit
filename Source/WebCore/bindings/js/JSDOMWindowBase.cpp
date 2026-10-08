@@ -127,6 +127,12 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, Ref<DOMWindow>&& 
     , m_wrapped(WTF::move(window))
 {
     m_proxy.set(vm, this, proxy);
+#if ENABLE(WEBASSEMBLY)
+    if (RefPtr document = m_wrapped->documentIfLocal())
+        setWebAssemblyESMIntegrationEnabled(document->settingsValues().webAssemblyESMIntegrationEnabled);
+    else if (RefPtr frame = m_wrapped->frame())
+        setWebAssemblyESMIntegrationEnabled(frame->settings().webAssemblyESMIntegrationEnabled());
+#endif
 }
 
 JSDOMWindowBase::~JSDOMWindowBase() = default;

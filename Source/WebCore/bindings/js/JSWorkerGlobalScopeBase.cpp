@@ -88,6 +88,9 @@ JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* st
     : JSDOMGlobalObject(vm, structure, normalWorld(vm), globalObjectMethodTable())
     , m_wrapped(WTF::move(impl))
 {
+#if ENABLE(WEBASSEMBLY)
+    setWebAssemblyESMIntegrationEnabled(m_wrapped->settingsValues().webAssemblyESMIntegrationEnabled);
+#endif
 }
 
 void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)

@@ -82,6 +82,9 @@ JSShadowRealmGlobalScopeBase::JSShadowRealmGlobalScopeBase(JSC::VM& vm, JSC::Str
     : JSDOMGlobalObject(vm, structure, normalWorld(vm), globalObjectMethodTable())
     , m_wrapped(WTF::move(impl))
 {
+#if ENABLE(WEBASSEMBLY)
+    setWebAssemblyESMIntegrationEnabled(incubatingRealm()->webAssemblyESMIntegrationEnabled());
+#endif
 }
 
 void JSShadowRealmGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
