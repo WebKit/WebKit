@@ -29,6 +29,19 @@ namespace WebCore {
 
 class SVGForeignObjectElement;
 
+// A <foreignObject> sits on the SVG/HTML boundary and therefore lives in two coordinate spaces at once:
+//
+//  - As an SVG graphics element its geometry is positioned by x/y, exactly like a <rect> or an <image>.
+//    x/y is part of objectBoundingBox() (and so of getBBox(), and of everything resolved against
+//    *Units="objectBoundingBox"), and paint() / nodeAtFloatPoint() only apply localTransform().
+//  - As a CSS box hosting an HTML subtree its border box origin is at location(), which is set to x/y so
+//    that the hosted content lays out in the right place. The RenderBox repaint and coordinate-mapping
+//    machinery hands us rects in that space, i.e. relative to the border box origin and excluding x/y.
+//
+// The two spaces differ by exactly x/y, which is why localToParentTransform() carries the x/y translation
+// (for repaintRectInLocalCoordinates() and for HTML descendants walking up through SVGRenderSupport) while
+// the bounding boxes below carry x/y themselves. SVGRenderSupport maps them with localTransform() alone, so
+// that x/y is not counted twice - see boundingBoxToParentTransform() in SVGRenderSupport.cpp.
 class LegacyRenderSVGForeignObject final : public RenderSVGBlock {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGForeignObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGForeignObject);
@@ -43,12 +56,13 @@ public:
     bool requiresLayer() const override { return false; }
     void layout() override;
 
-    FloatRect objectBoundingBox() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
+    FloatRect objectBoundingBox() const override { return m_viewport; }
     bool isObjectBoundingBoxValid() const { return !m_viewport.isEmpty(); }
     bool objectBoundingBoxIsEmpty() const final { return !isObjectBoundingBoxValid(); }
-    FloatRect strokeBoundingBox() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
+    FloatRect strokeBoundingBox() const override { return m_viewport; }
+    // Unlike the bounding boxes, this one is in CSS box space - see the class comment.
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const override { return FloatRect(FloatPoint(), m_viewport.size()); }
-    FloatRect decoratedBoundingBox() const override { return FloatRect(FloatPoint(), m_viewport.size()); }
+    FloatRect decoratedBoundingBox() const override { return m_viewport; }
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
