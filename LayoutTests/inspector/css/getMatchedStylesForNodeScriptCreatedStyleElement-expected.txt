@@ -1,0 +1,14 @@
+Tests that a <style> element not created by the HTML parser (e.g. via document.createElement, as shadow-DOM libraries like Polymer do when cloning templates) is not misattributed to a bogus location in the page's HTML source.
+
+
+== Running test suite: CSS.getMatchedStylesForNode.ScriptCreatedStyleElement
+-- Running test case: CSS.getMatchedStylesForNode.ScriptCreatedStyleElement.ParserCreatedStyleTagHasSourceCodeLocation
+PASS: Stylesheet parsed inline by the HTML parser should not be anonymous.
+PASS: Rule should have a source code location.
+PASS: Source code location should point into a Resource (the page's HTML document).
+
+-- Running test case: CSS.getMatchedStylesForNode.ScriptCreatedStyleElement.ScriptCreatedStyleTagInShadowRootIsAnonymous
+PASS: Stylesheet with no valid parser position should be anonymous.
+PASS: Rule should still have a source code location, pointing into the stylesheet's own extracted content.
+PASS: Source code location should point at the anonymous CSSStyleSheet itself, not at the page's HTML document.
+

@@ -25,7 +25,7 @@ function test()
 
         for (let styleSheet of styleSheets) {
             InspectorTest.log("");
-            InspectorTest.log(`URL: ${styleSheet.isInlineStyleTag() ? "<style> on " : ""}${sanitizeURL(styleSheet.url)}`);
+            InspectorTest.log(`URL: ${styleSheet.anonymous ? "(anonymous)" : (styleSheet.isInlineStyleTag() ? "<style> on " : "") + sanitizeURL(styleSheet.url)}`);
             InspectorTest.log(`OFFSET: (${styleSheet.startLineNumber}, ${styleSheet.startColumnNumber})`);
             InspectorTest.expectThat(styleSheet.parentFrame, "Stylesheet should have a frame.");
         }

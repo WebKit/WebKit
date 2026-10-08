@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStylesForNode.ScriptCreatedStyleElement");
+
+    function nodeForId(id) {
+        return WI.domManager.nodeForId(id);
+    }
+
+    function findMatchedRule(domNodeStyles, selectorText) {
+        return domNodeStyles.matchedRules.find((rule) => rule.selectorText === selectorText);
+    }
+
+    suite.addTestCase({
+        name: "CSS.getMatchedStylesForNode.ScriptCreatedStyleElement.ParserCreatedStyleTagHasSourceCodeLocation",
+        description: "A <style> tag created by the HTML parser should be attributed to the document's URL with a valid source code location.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let domNode = nodeForId(await documentNode.querySelector("#light-dom-target"));
+            InspectorTest.assert(domNode, "Should find DOM Node '#light-dom-target'.");
+
+            let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+            await domNodeStyles.refreshIfNeeded();
+
+            let rule = findMatchedRule(domNodeStyles, "#light-dom-target");
+            InspectorTest.assert(rule, "Should find matched rule for '#light-dom-target'.");
+
+            InspectorTest.expectFalse(rule.ownerStyleSheet.anonymous, "Stylesheet parsed inline by the HTML parser should not be anonymous.");
+            InspectorTest.expectThat(!!rule.sourceCodeLocation, "Rule should have a source code location.");
+            InspectorTest.expectThat(rule.sourceCodeLocation && rule.sourceCodeLocation.sourceCode instanceof WI.Resource, "Source code location should point into a Resource (the page's HTML document).");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getMatchedStylesForNode.ScriptCreatedStyleElement.ScriptCreatedStyleTagInShadowRootIsAnonymous",
+        description: "A <style> tag created with document.createElement (not by the HTML parser) and inserted into a shadow root -- as shadow-DOM libraries like Polymer do when cloning templates -- has no meaningful position in any document's source. It should be reported as an anonymous stylesheet instead of being wrongly attributed to a bogus location in the page's HTML.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let hostNode = nodeForId(await documentNode.querySelector("#shadow-host"));
+            InspectorTest.assert(hostNode, "Should find DOM Node '#shadow-host'.");
+            InspectorTest.assert(hostNode.hasShadowRoots(), "Host node should have a shadow root.");
+
+            let domNodeStyles = WI.cssManager.stylesForNode(hostNode);
+            await domNodeStyles.refreshIfNeeded();
+
+            let rule = findMatchedRule(domNodeStyles, ":host");
+            InspectorTest.assert(rule, "Should find matched ':host' rule.");
+
+            let styleSheet = rule.ownerStyleSheet;
+            InspectorTest.expectThat(styleSheet.anonymous, "Stylesheet with no valid parser position should be anonymous.");
+            InspectorTest.expectThat(!!rule.sourceCodeLocation, "Rule should still have a source code location, pointing into the stylesheet's own extracted content.");
+            InspectorTest.expectEqual(rule.sourceCodeLocation && rule.sourceCodeLocation.sourceCode, styleSheet, "Source code location should point at the anonymous CSSStyleSheet itself, not at the page's HTML document.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a &lt;style&gt; element not created by the HTML parser (e.g. via document.createElement, as shadow-DOM libraries like Polymer do when cloning templates) is not misattributed to a bogus location in the page's HTML source.</p>
+<style>#light-dom-target { color: red; }</style>
+<div id="light-dom-target"></div>
+<div id="shadow-host"></div>
+<script>
+(function() {
+    let shadowRoot = document.getElementById("shadow-host").attachShadow({mode: "open"});
+    let style = document.createElement("style");
+    style.textContent = ":host { color: blue; }";
+    shadowRoot.appendChild(style);
+})();
+</script>
+</body>
+</html>
