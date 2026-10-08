@@ -26,6 +26,10 @@
 #include "config.h"
 #include <wtf/Logging.h>
 
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
 namespace WTF {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
@@ -37,6 +41,43 @@ DEFINE_LOG_CHANNEL_WITH_DETAILS(Threading,       logChannelStateOn,  logLevelErr
 DEFINE_LOG_CHANNEL(MemoryPressure);
 DEFINE_LOG_CHANNEL(SuspendableWorkQueue);
 DEFINE_LOG_CHANNEL(NativePromise);
+
+void logPreformatted([[maybe_unused]] WTFLogChannel& channel, [[maybe_unused]] const String& message)
+{
+#if !LOG_DISABLED
+    if (channel.state != WTFLogChannelState::Off)
+        SAFE_WTFLOG(&channel, "%s", message.utf8());
+#endif
+}
+
+#if !USE(OS_LOG) && !RELEASE_LOG_DISABLED
+
+static int releaseLogPriority(ReleaseLogType type)
+{
+    switch (type) {
+    case ReleaseLogType::Default:
+        return WTF_RELEASE_LOG_PRIORITY_DEFAULT;
+    case ReleaseLogType::Info:
+        return WTF_RELEASE_LOG_PRIORITY_INFO;
+    case ReleaseLogType::Debug:
+        return WTF_RELEASE_LOG_PRIORITY_DEBUG;
+    case ReleaseLogType::Error:
+        return WTF_RELEASE_LOG_PRIORITY_ERROR;
+    case ReleaseLogType::Fault:
+        return WTF_RELEASE_LOG_PRIORITY_FAULT;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void releaseLogPreformatted(WTFLogChannel& channel, ReleaseLogType type, const String& file, unsigned line, const String& function, const String& message)
+{
+    auto fileUTF8 = file.utf8();
+    auto functionUTF8 = function.utf8();
+    auto messageUTF8 = message.utf8();
+    WTF_RELEASE_LOG_SEND(channel, releaseLogPriority(type), safePrintfType(fileUTF8), line, safePrintfType(functionUTF8), "%s", messageUTF8);
+}
+
+#endif // !USE(OS_LOG) && !RELEASE_LOG_DISABLED
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
