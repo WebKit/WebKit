@@ -522,13 +522,17 @@ void AudioVideoRendererAVFObjC::setRate(double rate)
     if (m_rate == rate)
         return;
     m_rate = rate;
-    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch, m_rate).createNSString();
-    applyOnAudioRenderers([&](auto* renderer) {
-        setAudioTimePitchAlgorithm(renderer, algorithm.get());
-    });
 
     if (shouldBePlaying()) {
-        [m_synchronizer setRate:m_rate];
+        // False positive see webkit.org/b/298024
+        SUPPRESS_UNRETAINED_ARG auto timebase = [m_synchronizer timebase];
+        SUPPRESS_UNRETAINED_ARG CMTime synchronizerTime = PAL::CMTimebaseGetTime(timebase);
+        SUPPRESS_UNRETAINED_ARG bool timebaseIsRunning = PAL::CMTimebaseGetRate(timebase);
+        if (timebaseIsRunning && CMTIME_IS_NUMERIC(synchronizerTime) && PAL::CMTimeCompare(synchronizerTime, PAL::kCMTimeZero) >= 0) {
+            CMTime hostTime = PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock());
+            [m_synchronizer setRate:m_rate time:synchronizerTime atHostTime:hostTime];
+        } else
+            [m_synchronizer setRate:m_rate];
         m_lastSetSyncRate = m_rate;
     }
 }
@@ -848,7 +852,7 @@ void AudioVideoRendererAVFObjC::setPreservesPitchAndCorrectionAlgorithm(bool pre
 {
     m_preservesPitch = preservesPitch;
     m_pitchCorrectionAlgorithm = pitchCorrectionAlgorithm;
-    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), preservesPitch, m_rate).createNSString();
+    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), preservesPitch).createNSString();
     applyOnAudioRenderers([&](auto* renderer) {
         setAudioTimePitchAlgorithm(renderer, algorithm.get());
     });
@@ -1117,7 +1121,7 @@ void AudioVideoRendererAVFObjC::addAudioRenderer(TrackIdentifier trackId)
 
     [renderer setMuted:m_muted];
     [renderer setVolume:m_volume];
-    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch, m_rate).createNSString();
+    RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), m_preservesPitch).createNSString();
     setAudioTimePitchAlgorithm(renderer.get(), algorithm.get());
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)

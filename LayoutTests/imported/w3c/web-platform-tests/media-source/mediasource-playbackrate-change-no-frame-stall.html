@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="timeout" content="long">
+<title>MediaSource video keeps presenting frames when playbackRate changes</title>
+<link rel="author" title="Ian Gower" href="https://github.com/igower">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-playbackrate">
+<link rel="help" href="https://w3c.github.io/media-source/">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id="video" muted playsinline width="320" height="240"></video>
+<script>
+// The 30 fps media presents a frame every ~33 ms. A rate change must not freeze
+// presentation. 150 ms allows a few late frames on a loaded bot but still
+// catches the ~230 ms stall seen after each rate change.
+const maximumFrameGapMs = 150;
+// Audio and video go in separate SourceBuffers. A muxed file appended several
+// times leaves small gaps where its audio and video tracks end at different
+// times, and Chrome stops playback at such a gap.
+const tracks = [
+    { url: "mp4/test-v-128k-320x240-30fps-10kfr.mp4", type: 'video/mp4;codecs="avc1.4D4001"' },
+    { url: "mp4/test-a-128k-44100Hz-1ch.mp4", type: 'audio/mp4;codecs="mp4a.40.2"' },
+];
+// Each file is ~2 s long. Append it this many times in "sequence" mode to get
+// enough media for 1.5 s at 1x, 1.5 s at 2x and 1.2 s at 1x.
+const appendCount = 5;
+
+const video = document.getElementById("video");
+const sleep = milliseconds => new Promise(resolve => step_timeout(resolve, milliseconds));
+
+async function appendRepeatedly(sourceBuffer, mediaBytes) {
+    sourceBuffer.mode = "sequence";
+    for (let appendIndex = 0; appendIndex < appendCount; appendIndex++) {
+        sourceBuffer.appendBuffer(mediaBytes);
+        await new Promise(resolve => sourceBuffer.addEventListener("updateend", resolve, { once: true }));
+    }
+}
+
+async function attachMediaSource() {
+    const trackBytes = await Promise.all(tracks.map(async track => (await fetch(track.url)).arrayBuffer()));
+    const mediaSource = new MediaSource();
+    video.src = URL.createObjectURL(mediaSource);
+    await new Promise(resolve => mediaSource.addEventListener("sourceopen", resolve, { once: true }));
+    // Every SourceBuffer must exist before the first append, or Chrome rejects the later addSourceBuffer().
+    const sourceBuffers = tracks.map(track => mediaSource.addSourceBuffer(track.type));
+    await Promise.all(sourceBuffers.map((sourceBuffer, trackIndex) => appendRepeatedly(sourceBuffer, trackBytes[trackIndex])));
+    mediaSource.endOfStream();
+}
+
+// The window edges count as frame times so that a total freeze inside the
+// window reports the whole window as the gap instead of no gap at all.
+function longestFrameGap(frameTimes, from, to) {
+    const windowTimes = [from, ...frameTimes.filter(frameTime => frameTime > from && frameTime < to), to];
+    let longestGap = 0;
+    for (let timeIndex = 1; timeIndex < windowTimes.length; timeIndex++)
+        longestGap = Math.max(longestGap, windowTimes[timeIndex] - windowTimes[timeIndex - 1]);
+    return Math.round(longestGap);
+}
+
+async function measureRateChangeGaps() {
+    await attachMediaSource();
+    await video.play();
+    const frameTimes = [];
+    let collecting = true;
+    const onFrame = now => {
+        frameTimes.push(now);
+        if (collecting)
+            video.requestVideoFrameCallback(onFrame);
+    };
+    video.requestVideoFrameCallback(onFrame);
+    await sleep(1500);
+    const fastStart = performance.now();
+    video.playbackRate = 2;
+    await sleep(1500);
+    const slowStart = performance.now();
+    video.playbackRate = 1;
+    await sleep(1200);
+    collecting = false;
+    return {
+        riseGap: longestFrameGap(frameTimes, fastStart, fastStart + 1000),
+        dropGap: longestFrameGap(frameTimes, slowStart, slowStart + 1000),
+    };
+}
+
+let measurementPromise;
+function measurement() {
+    measurementPromise ??= measureRateChangeGaps();
+    return measurementPromise;
+}
+
+promise_test(async () => {
+    const { riseGap } = await measurement();
+    assert_less_than(riseGap, maximumFrameGapMs, "longest gap between presented frames in the 1 s after playbackRate 1 -> 2");
+}, "Frames keep being presented after playbackRate changes from 1 to 2");
+
+promise_test(async () => {
+    const { dropGap } = await measurement();
+    assert_less_than(dropGap, maximumFrameGapMs, "longest gap between presented frames in the 1 s after playbackRate 2 -> 1");
+}, "Frames keep being presented after playbackRate changes from 2 to 1");
+</script>
+</body>
+</html>

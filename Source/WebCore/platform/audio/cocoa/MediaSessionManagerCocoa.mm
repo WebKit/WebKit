@@ -249,7 +249,15 @@ void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::Interrupt
 
 String MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool preservesPitch, double rate)
 {
-    if (!preservesPitch || !rate || rate == 1.)
+    if (!rate || rate == 1.)
+        return AVAudioTimePitchAlgorithmVarispeed;
+
+    return audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm, preservesPitch);
+}
+
+String MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool preservesPitch)
+{
+    if (!preservesPitch)
         return AVAudioTimePitchAlgorithmVarispeed;
 
     switch (pitchCorrectionAlgorithm) {

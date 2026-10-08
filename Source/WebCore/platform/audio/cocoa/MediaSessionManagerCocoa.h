@@ -59,6 +59,7 @@ public:
     static WEBCORE_EXPORT void clearNowPlayingInfo();
     static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, bool shouldUpdateNowPlayingSuppression, const NowPlayingInfo&);
 
+    static String audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayerPitchCorrectionAlgorithm, bool preservesPitch);
     static String audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayerPitchCorrectionAlgorithm, bool preservesPitch, double rate);
 
 protected:
