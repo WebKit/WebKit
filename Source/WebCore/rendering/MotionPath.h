@@ -58,7 +58,7 @@ public:
     static std::optional<MotionPathData> motionPathDataForRenderer(const RenderElement&);
     static bool NODELETE needsUpdateAfterContainingBlockLayout(const Style::OffsetPath&);
 
-    static void applyMotionPathTransform(TransformationMatrix&, const TransformOperationData&, FloatPoint transformOrigin, TransformBox, const Path&, std::optional<FloatPoint> offsetAnchor, float offsetDistance, float offsetRotate, bool offsetRotateHasAuto);
+    static void applyMotionPathTransform(TransformationMatrix&, const TransformOperationData&, FloatPoint transformOrigin, TransformBox, const Path&, float offsetPathLength, std::optional<FloatPoint> offsetAnchor, float offsetDistance, float offsetRotate, bool offsetRotateHasAuto);
 };
 
 } // namespace WebCore
