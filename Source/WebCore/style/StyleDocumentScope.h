@@ -82,6 +82,9 @@ public:
     struct ScrollState {
         // Edges the container can currently be scrolled further toward.
         RectEdges<bool> scrollableEdges { false, false, false, false };
+        // Edges a sticky positioned container is shifted toward to stay inside its sticky view
+        // rectangle. Empty when the container is not sticky positioned, which no value matches.
+        std::optional<RectEdges<bool>> stuckEdges;
 
         bool operator==(const ScrollState&) const = default;
     };

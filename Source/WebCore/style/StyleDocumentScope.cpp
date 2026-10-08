@@ -347,6 +347,18 @@ static RectEdges<bool> scrollableEdges(const RenderBox& containerRenderer)
     };
 }
 
+// Edges a sticky positioned container is shifted toward to stay inside its sticky view rectangle.
+static std::optional<RectEdges<bool>> stuckEdges(const RenderBox& containerRenderer)
+{
+    // Nothing matches for a container that is not sticky positioned, which an empty state stands for
+    // rather than an all-false one: that would make none match.
+    // https://drafts.csswg.org/css-conditional-5/#stuck
+    if (!containerRenderer.isStickilyPositioned())
+        return std::nullopt;
+
+    return containerRenderer.stuckEdgesForStickyPosition();
+}
+
 // https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
 // Reading live scroll state during style resolution would allow layout cycles, since a scroll-state
 // query can change style, which changes layout, which changes the scroll state. Instead the state is
@@ -367,7 +379,7 @@ void DocumentScope::updateScrollStateSnapshots()
         if (!containerElement)
             continue;
 
-        auto scrollState = ScrollState { scrollableEdges(containerRenderer) };
+        auto scrollState = ScrollState { scrollableEdges(containerRenderer), stuckEdges(containerRenderer) };
 
         auto it = previousScrollStates.find(*containerElement);
         // A container seen for the first time is always invalidated, even when its state matches the

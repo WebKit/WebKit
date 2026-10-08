@@ -1,4 +1,8 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS bottom edge matching block-end for horizontal-tb/ltr
+PASS bottom edge matching inline-end for vertical-lr/ltr
+PASS bottom edge matching inline-end for vertical-rl/ltr
+PASS bottom edge matching inline-start for vertical-lr/rtl
+PASS bottom edge matching inline-start for vertical-rl/rtl
+PASS bottom edge matching block-end for horizontal-tb/rtl
 
