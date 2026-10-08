@@ -31,6 +31,7 @@
 #pragma once
 
 #include <wtf/HashSet.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 
@@ -129,6 +130,12 @@ String normalizeHTTPMethod(const String&);
 bool isSafeMethod(const String&);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
+
+WEBCORE_EXPORT String defaultAcceptLanguageHeaderValue();
+WEBCORE_EXPORT String defaultAcceptEncodingHeaderValue(const URL&);
+
+// The delimiter placed between values when appending to a request header, or nullopt if appending isn't supported.
+WEBCORE_EXPORT std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header);
 
 template<class HashType>
 bool addToAccessControlAllowList(const String& string, unsigned start, unsigned end, HashSet<String, HashType>& set)

@@ -37,6 +37,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKContentRuleListAction.h>
@@ -727,8 +728,8 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
         }, {
             "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
                 "operation": "append",
-                "header": "Content-Type",
-                "value": "Modified-by-test"
+                "header": "Content-Language",
+                "value": "de"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         } ]
@@ -740,19 +741,19 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
         NSString *path = task.request.URL.path;
         NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
         if ([path isEqualToString:@"/main.html"]) {
-            EXPECT_WK_STREQ(fields[@"Content-Type"], "Modified-by-test");
+            EXPECT_WK_STREQ(fields[@"Content-Language"], "de");
             EXPECT_WK_STREQ(fields[@"testkey"], "testvalue");
             EXPECT_NULL(fields[@"Accept"]);
             return respond(task, "<iframe src='//otherhost/frame.html'></iframe>");
         }
         if ([path isEqualToString:@"/frame.html"]) {
-            EXPECT_NULL(fields[@"Content-Type"]);
+            EXPECT_NULL(fields[@"Content-Language"]);
             EXPECT_NULL(fields[@"testkey"]);
             EXPECT_NOT_NULL(fields[@"Accept"]);
-            return respond(task, "<script>fetch('//testhost/fetch.txt',{headers: {'Content-Type': 'application/json'}})</script>");
+            return respond(task, "<script>fetch('//testhost/fetch.txt',{headers: {'Content-Language': 'en'}})</script>");
         }
         if ([path isEqualToString:@"/fetch.txt"]) {
-            EXPECT_WK_STREQ(fields[@"Content-Type"], "application/json; Modified-by-test");
+            EXPECT_WK_STREQ(fields[@"Content-Language"], "en, de");
             EXPECT_WK_STREQ(fields[@"testkey"], "testvalue");
             EXPECT_NULL(fields[@"Accept"]);
             receivedAllRequests = true;
@@ -781,8 +782,6 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
         "testscheme://testhost/main.html"_s,
         "testscheme://testhost/fetch.txt"_s
     });
-    
-    // FIXME: Appending to the User-Agent replaces the user agent because we haven't added the user agent yet when processing the request.
 }
 
 TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereAppendWins)
@@ -791,43 +790,43 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereAppendWin
         [ {
             "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
                 "operation": "append",
-                "header": "test-header-1",
-                "value": "test-value-1"
+                "header": "Via",
+                "value": "1.1 proxy-a"
             }, {
                 "operation": "append",
-                "header": "test-header-2",
-                "value": "test-value-2"
+                "header": "Forwarded",
+                "value": "for=192.0.2.1"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
                 "operation": "set",
-                "header": "test-header-1",
+                "header": "Via",
                 "value": "should-not-apply"
             }, {
                 "operation": "set",
-                "header": "test-header-2",
+                "header": "Forwarded",
                 "value": "should-not-apply"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
                 "operation": "remove",
-                "header": "test-header-1"
+                "header": "Via"
             }, {
                 "operation": "remove",
-                "header": "test-header-2"
+                "header": "Forwarded"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
                 "operation": "append",
-                "header": "test-header-1",
-                "value": "other-test-value-1"
+                "header": "Via",
+                "value": "1.1 proxy-b"
             }, {
                 "operation": "append",
-                "header": "test-header-2",
-                "value": "other-test-value-2"
+                "header": "Forwarded",
+                "value": "for=192.0.2.2"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }]
@@ -839,8 +838,8 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereAppendWin
         NSString *path = task.request.URL.path;
         NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
         if ([path isEqualToString:@"/main.html"]) {
-            EXPECT_WK_STREQ(fields[@"test-header-1"], "test-value-1; other-test-value-1");
-            EXPECT_WK_STREQ(fields[@"test-header-2"], "test-value-2; other-test-value-2");
+            EXPECT_WK_STREQ(fields[@"Via"], "1.1 proxy-a, 1.1 proxy-b");
+            EXPECT_WK_STREQ(fields[@"Forwarded"], "for=192.0.2.1, for=192.0.2.2");
             receivedAllRequests = true;
             return respond(task, "");
         }
@@ -874,49 +873,49 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereSetWins)
         [ {
             "action": { "type": "modify-headers", "priority": 10, "request-headers": [ {
                 "operation": "append",
-                "header": "test-header",
-                "value": "second-test-value"
+                "header": "Via",
+                "value": "1.1 proxy-b"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 20, "request-headers": [ {
                 "operation": "set",
-                "header": "test-header",
+                "header": "Via",
                 "value": "should-not-apply"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 40, "request-headers": [ {
                 "operation": "remove",
-                "header": "test-header"
+                "header": "Via"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 80, "request-headers": [ {
                 "operation": "set",
-                "header": "test-header",
-                "value": "test-value"
+                "header": "Via",
+                "value": "1.1 proxy-a"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
                 "operation": "set",
-                "header": "other-header",
-                "value": "a"
+                "header": "Forwarded",
+                "value": "for=192.0.2.1"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
                 "operation": "append",
-                "header": "other-header",
-                "value": "b"
+                "header": "Forwarded",
+                "value": "for=192.0.2.2"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
                 "operation": "append",
-                "header": "other-header",
-                "value": "c"
+                "header": "Forwarded",
+                "value": "for=192.0.2.3"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }]
@@ -928,8 +927,8 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereSetWins)
         NSString *path = task.request.URL.path;
         NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
         if ([path isEqualToString:@"/main.html"]) {
-            EXPECT_WK_STREQ(fields[@"test-header"], "test-value; second-test-value");
-            EXPECT_WK_STREQ(fields[@"other-header"], "a; b; c");
+            EXPECT_WK_STREQ(fields[@"Via"], "1.1 proxy-a, 1.1 proxy-b");
+            EXPECT_WK_STREQ(fields[@"Forwarded"], "for=192.0.2.1, for=192.0.2.2, for=192.0.2.3");
             receivedAllRequests = true;
             return respond(task, "");
         }
@@ -963,27 +962,27 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereRemoveWin
         [ {
             "action": { "type": "modify-headers", "priority": 5, "request-headers": [ {
                 "operation": "append",
-                "header": "test-header",
+                "header": "Via",
                 "value": "second-should-not-apply"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 7, "request-headers": [ {
                 "operation": "set",
-                "header": "test-header",
+                "header": "Via",
                 "value": "should-not-apply"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 9, "request-headers": [ {
                 "operation": "remove",
-                "header": "test-header"
+                "header": "Via"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
                 "operation": "remove",
-                "header": "test-header"
+                "header": "Via"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }]
@@ -995,7 +994,7 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereRemoveWin
         NSString *path = task.request.URL.path;
         NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
         if ([path isEqualToString:@"/main.html"]) {
-            EXPECT_WK_STREQ(fields[@"test-header"], "");
+            EXPECT_WK_STREQ(fields[@"Via"], "");
             receivedAllRequests = true;
             return respond(task, "");
         }
@@ -1029,15 +1028,15 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithMultipleRuleLists)
         [ {
             "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
                 "operation": "append",
-                "header": "test-header",
-                "value": "b"
+                "header": "Via",
+                "value": "1.1 proxy-b"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 8, "request-headers": [ {
                 "operation": "set",
-                "header": "test-header",
-                "value": "a"
+                "header": "Via",
+                "value": "1.0 proxy-a"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         } ]
@@ -1047,14 +1046,14 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithMultipleRuleLists)
         [ {
             "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
                 "operation": "append",
-                "header": "test-header",
-                "value": "c"
+                "header": "Via",
+                "value": "1.1 proxy-c"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
             "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
                 "operation": "remove",
-                "header": "test-header"
+                "header": "Via"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }]
@@ -1066,7 +1065,7 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithMultipleRuleLists)
         NSString *path = task.request.URL.path;
         NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
         if ([path isEqualToString:@"/main.html"]) {
-            EXPECT_WK_STREQ(fields[@"test-header"], "a; b; c");
+            EXPECT_WK_STREQ(fields[@"Via"], "1.0 proxy-a, 1.1 proxy-b, 1.1 proxy-c");
             receivedAllRequests = true;
             return respond(task, "");
         }
@@ -1335,6 +1334,617 @@ TEST_F(WKContentRuleListStoreTest, MainResourceCrossOriginRedirectFromLoadedPage
     EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded replacement successfully: https://apple.com/after_redirect");
     [webView goBack];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "original page loaded");
+}
+
+static RetainPtr<TestNavigationDelegate> navigationDelegateAllowingActiveActionsOnLoopback()
+{
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = @{
+            @"testidentifier": [NSSet setWithObject:@"*://127.0.0.1/*"],
+        };
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    return delegate;
+}
+
+using RequestHeadersCheck = void (^)(NSDictionary<NSString *, NSString *> *);
+
+static void loadMainAndCheckRequestHeaders(WKContentRuleList *list, RequestHeadersCheck check)
+{
+    __block bool receivedRequest { false };
+
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        check([task.request allHTTPHeaderFields]);
+        receivedRequest = true;
+
+        respond(task, "");
+    };
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedRequest);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendCookieUsesSemicolon)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
+                "operation": "set",
+                "header": "Cookie",
+                "value": "a=1"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "append",
+                "header": "Cookie",
+                "value": "b=2"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "cookie",
+                "value": "c=3"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        EXPECT_WK_STREQ(fields[@"Cookie"], "a=1; b=2; c=3");
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendToMissingHeaderSetsValue)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Cookie",
+                "value": "a=1"
+            }, {
+                "operation": "append",
+                "header": "Via",
+                "value": "1.1 proxy-a"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        EXPECT_WK_STREQ(fields[@"Cookie"], "a=1");
+        EXPECT_WK_STREQ(fields[@"Via"], "1.1 proxy-a");
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendHeaderNameIsCaseInsensitive)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "set",
+                "header": "Via",
+                "value": "1.1 proxy-a"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "VIA",
+                "value": "1.1 proxy-b"
+            }, {
+                "operation": "append",
+                "header": "X-Forwarded-For",
+                "value": "192.0.2.1"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        EXPECT_WK_STREQ(fields[@"Via"], "1.1 proxy-a, 1.1 proxy-b");
+        EXPECT_WK_STREQ(fields[@"X-Forwarded-For"], "192.0.2.1");
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendAcceptLanguageKeepsDefaultLanguages)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Accept-Language",
+                "value": "de-DE,de;q=0.8"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        NSString *value = fields[@"Accept-Language"];
+
+        EXPECT_TRUE([value hasSuffix:@"de-DE,de;q=0.8"]);
+
+        // The user's preferred languages stay in front of the appended value.
+        if ([NSLocale preferredLanguages].count)
+            EXPECT_TRUE([value hasSuffix:@", de-DE,de;q=0.8"]);
+    });
+}
+
+static void checkAppendedAcceptEncoding(TestWebKitAPI::HTTPServer::Protocol protocol, const String& expectedHeaderLine)
+{
+    using namespace TestWebKitAPI;
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Accept-Encoding",
+                "value": "zstd"
+            } ] },
+            "trigger": { "url-filter": "127.0.0.1" }
+        } ]
+    )JSON");
+
+    bool receivedRequest { false };
+    bool hadExpectedHeader { false };
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        hadExpectedHeader = String::fromUTF8(request.span()).contains(expectedHeaderLine);
+        receivedRequest = true;
+
+        co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+    }, protocol);
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnLoopback();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&receivedRequest);
+
+    EXPECT_TRUE(hadExpectedHeader);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendAcceptEncodingOverHTTPKeepsDefaultEncodings)
+{
+    checkAppendedAcceptEncoding(TestWebKitAPI::HTTPServer::Protocol::Http, "Accept-Encoding: gzip, deflate, zstd\r\n"_s);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendAcceptEncodingOverHTTPSKeepsDefaultEncodings)
+{
+    checkAppendedAcceptEncoding(TestWebKitAPI::HTTPServer::Protocol::Https, "Accept-Encoding: gzip, deflate, br, zstd\r\n"_s);
+}
+
+static NSString *userAgentHeaderValue(const Vector<char>& request)
+{
+    RetainPtr requestString = String::fromUTF8(request.span()).createNSString();
+    __block RetainPtr<NSString> userAgent;
+
+    [requestString enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
+        if (![line hasPrefix:@"User-Agent: "])
+            return;
+
+        userAgent = [line substringFromIndex:@"User-Agent: ".length];
+        *stop = YES;
+    }];
+
+    return userAgent.autorelease();
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendUserAgent)
+{
+    using namespace TestWebKitAPI;
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "User-Agent",
+                "value": "AppendedByRule"
+            } ] },
+            "trigger": { "url-filter": "127.0.0.1" }
+        } ]
+    )JSON");
+
+    bool receivedRequest { false };
+    RetainPtr<NSString> userAgent;
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        userAgent = userAgentHeaderValue(request);
+        receivedRequest = true;
+
+        co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnLoopback();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&receivedRequest);
+
+    // The default user agent stays in front of the appended value.
+    EXPECT_WK_STREQ(userAgent.get(), [webView.get()._userAgent stringByAppendingString:@" AppendedByRule"]);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendUserAgentOnHyperlinkAuditingPing)
+{
+    using namespace TestWebKitAPI;
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "User-Agent",
+                "value": "AppendedByRule"
+            } ] },
+            "trigger": { "url-filter": "/ping" }
+        } ]
+    )JSON");
+
+    bool receivedPing { false };
+    RetainPtr<NSString> pingUserAgent;
+    RetainPtr<NSString> pageUserAgent;
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            if (path == "/"_s) {
+                pageUserAgent = userAgentHeaderValue(request);
+                co_await connection.awaitableSend(HTTPResponse("<a id='link' href='/destination' ping='/ping'>link</a>"_s).serialize());
+            } else if (path == "/ping"_s) {
+                pingUserAgent = userAgentHeaderValue(request);
+                receivedPing = true;
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            } else
+                co_await connection.awaitableSend(HTTPResponse("destination"_s).serialize());
+        }
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnLoopback();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedPing);
+
+    EXPECT_WK_STREQ(pageUserAgent.get(), webView.get()._userAgent);
+    EXPECT_WK_STREQ(pingUserAgent.get(), [webView.get()._userAgent stringByAppendingString:@" AppendedByRule"]);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendUserAgentOnFetchAndXHR)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "User-Agent",
+                "value": "AppendedByRule"
+            } ] },
+            "trigger": { "url-filter": "testhost/.*txt" }
+        } ]
+    )JSON");
+
+    __block bool receivedAllRequests { false };
+    __block RetainPtr<NSString> fetchUserAgent;
+    __block RetainPtr<NSString> xhrUserAgent;
+
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSString *userAgent = task.request.allHTTPHeaderFields[@"User-Agent"];
+
+        if ([path isEqualToString:@"/main.html"])
+            return respond(task, "<script>fetch('/fetch.txt').then(() => { let request = new XMLHttpRequest(); request.open('GET', '/xhr.txt'); request.send(); })</script>");
+
+        if ([path isEqualToString:@"/fetch.txt"]) {
+            fetchUserAgent = userAgent;
+
+            return respond(task, "");
+        }
+
+        if ([path isEqualToString:@"/xhr.txt"]) {
+            xhrUserAgent = userAgent;
+            receivedAllRequests = true;
+
+            return respond(task, "");
+        }
+
+        ASSERT_NOT_REACHED();
+    };
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+
+    RetainPtr expectedUserAgent = [webView.get()._userAgent stringByAppendingString:@" AppendedByRule"];
+    EXPECT_WK_STREQ(fetchUserAgent.get(), expectedUserAgent.get());
+    EXPECT_WK_STREQ(xhrUserAgent.get(), expectedUserAgent.get());
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendAcceptLanguageFromMultipleRules)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "append",
+                "header": "Accept-Language",
+                "value": "de"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Accept-Language",
+                "value": "fr"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    // The default languages are only added once, in front of the first appended value.
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        NSString *value = fields[@"Accept-Language"];
+
+        EXPECT_TRUE([value hasSuffix:@", de, fr"]);
+        EXPECT_GT(value.length, @", de, fr".length);
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendAcceptLanguageAfterSetDoesNotAddDefault)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "set",
+                "header": "Accept-Language",
+                "value": "fr"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Accept-Language",
+                "value": "de"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        EXPECT_WK_STREQ(fields[@"Accept-Language"], "fr, de");
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendAcceptLanguageAfterRemoveIsIgnored)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "remove",
+                "header": "Accept-Language"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Accept-Language",
+                "value": "de"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        EXPECT_NULL(fields[@"Accept-Language"]);
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, BlockedHyperlinkAuditingPingIsNotSent)
+{
+    using namespace TestWebKitAPI;
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "block" },
+            "trigger": { "url-filter": "/ping" }
+        } ]
+    )JSON");
+
+    bool receivedPing { false };
+    bool receivedDestination { false };
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            if (path == "/"_s)
+                co_await connection.awaitableSend(HTTPResponse("<a id='link' href='/destination' ping='/ping'>link</a>"_s).serialize());
+            else if (path == "/ping"_s) {
+                receivedPing = true;
+
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            } else {
+                receivedDestination = true;
+
+                co_await connection.awaitableSend(HTTPResponse("destination"_s).serialize());
+            }
+        }
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnLoopback();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedDestination);
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    EXPECT_FALSE(receivedPing);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendUserAgentOnContentSecurityPolicyReport)
+{
+    using namespace TestWebKitAPI;
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "User-Agent",
+                "value": "AppendedByRule"
+            } ] },
+            "trigger": { "url-filter": "/report" }
+        } ]
+    )JSON");
+
+    bool receivedReport { false };
+    RetainPtr<NSString> reportUserAgent;
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            if (path == "/report"_s) {
+                reportUserAgent = userAgentHeaderValue(request);
+                receivedReport = true;
+
+                co_await connection.awaitableSend(HTTPResponse(""_s).serialize());
+            } else
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Security-Policy"_s, "script-src 'none'; report-uri /report"_s } }, "<script>window.ran = true</script>"_s).serialize());
+        }
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnLoopback();
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&receivedReport);
+
+    EXPECT_WK_STREQ(reportUserAgent.get(), [webView.get()._userAgent stringByAppendingString:@" AppendedByRule"]);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendTrailerHasNoDelimiter)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
+                "operation": "set",
+                "header": "Trailer",
+                "value": "Expires"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Trailer",
+                "value": ", ETag"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    // Trailer uses an empty delimiter, so the appended value supplies its own separator.
+    loadMainAndCheckRequestHeaders(list.get(), ^(NSDictionary<NSString *, NSString *> *fields) {
+        EXPECT_WK_STREQ(fields[@"Trailer"], "Expires, ETag");
+    });
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeadersAppendRequestHeaderAllowlist)
+{
+    auto compile = [](const char* json) {
+        __block RetainPtr<NSError> compileError;
+        __block bool done { false };
+
+        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"testidentifier" encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *, NSError *error) {
+            compileError = error;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        return compileError;
+    };
+
+    // Single-valued request headers can't be appended to.
+    auto requestError = compile(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "request-headers": [ {
+                "operation": "append",
+                "header": "Content-Type",
+                "value": "text/plain"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    EXPECT_NOT_NULL(requestError.get());
+    EXPECT_EQ(requestError.get().code, WKErrorContentRuleListStoreCompileFailed);
+
+    // Response headers have no such restriction.
+    auto responseError = compile(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "priority": 1, "response-headers": [ {
+                "operation": "append",
+                "header": "Content-Type",
+                "value": "text/plain"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    EXPECT_NULL(responseError.get());
 }
 
 TEST_F(WKContentRuleListStoreTest, NullPatternSet)
