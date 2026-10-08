@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: fit-content() in grid-template-rows</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#valdef-grid-template-columns-fit-content">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#algo-single-span-items">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#algo-spanning-items">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#algo-stretch">
+<meta name="assert" content="Checks that fit-content() rows are sized to their max-content contribution clamped by the fit-content() argument, floored by the minimum contribution, and are not stretched.">
+<style>
+.grid {
+  display: grid;
+  width: 100px;
+  height: 200px;
+  grid-template-columns: 100px;
+}
+.zeroMinimumSize {
+  min-height: 0;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- Max-content contribution smaller than the argument. -->
+<div class="grid" style="grid-template-rows: fit-content(50px);">
+  <div data-expected-height="20"><div style="height: 20px"></div></div>
+</div>
+
+<!-- The automatic minimum size floors the row above the argument. -->
+<div class="grid" style="grid-template-rows: fit-content(50px);">
+  <div data-expected-height="80"><div style="height: 80px"></div></div>
+</div>
+
+<!-- Max-content contribution larger than the argument. -->
+<div class="grid" style="grid-template-rows: fit-content(50px);">
+  <div class="zeroMinimumSize" data-expected-height="50"><div style="height: 80px"></div></div>
+</div>
+
+<!-- Percentage argument resolved against the grid container's definite height. -->
+<div class="grid" style="grid-template-rows: fit-content(25%);">
+  <div class="zeroMinimumSize" data-expected-height="50"><div style="height: 80px"></div></div>
+</div>
+
+<div class="grid" style="grid-template-rows: fit-content(calc(10% + 30px));">
+  <div class="zeroMinimumSize" data-expected-height="50"><div style="height: 80px"></div></div>
+</div>
+
+<!-- Only the auto row is stretched. -->
+<div class="grid" style="grid-template-rows: fit-content(50px) auto;">
+  <div data-expected-height="20"><div style="height: 20px"></div></div>
+  <div data-expected-height="180"><div style="height: 10px"></div></div>
+</div>
+
+<!-- A spanning item's minimum contribution fills the first row up to its argument before the second. -->
+<div class="grid" style="grid-template-columns: 50px 50px; grid-template-rows: fit-content(30px) fit-content(70px);">
+  <div style="grid-column: 1; grid-row: 1 / -1;" data-expected-height="100"><div style="height: 100px"></div></div>
+  <div style="grid-column: 2; grid-row: 1;" data-expected-height="30"></div>
+  <div style="grid-column: 2; grid-row: 2;" data-expected-height="70"></div>
+</div>
+</body>

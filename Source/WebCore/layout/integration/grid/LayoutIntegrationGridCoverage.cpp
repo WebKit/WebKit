@@ -241,17 +241,12 @@ static bool gridItemHasValidHeight(const Style::PreferredSize& height)
     );
 }
 
-static bool isUnsupportedGridTrackSize(const Style::GridTrackSize& trackSize)
-{
-    return trackSize.isFitContent();
-}
-
 static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackList)
 {
     return trackList.containsIf([](auto& trackListEntry) {
         return WTF::switchOn(trackListEntry,
-            [](const Style::GridTrackSize& trackSize) {
-                return isUnsupportedGridTrackSize(trackSize);
+            [](const Style::GridTrackSize&) {
+                return false;
             },
             [](const Style::GridLineNames& names) {
                 return !names.isEmpty();
@@ -259,8 +254,8 @@ static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackLi
             [](const Style::GridTrackEntryRepeat& repeat) {
                 return repeat.list.containsIf([](auto& repeatEntry) {
                     return WTF::switchOn(repeatEntry,
-                        [](const Style::GridTrackSize& trackSize) {
-                            return isUnsupportedGridTrackSize(trackSize);
+                        [](const Style::GridTrackSize&) {
+                            return false;
                         },
                         [](const Style::GridLineNames& names) {
                             return !names.isEmpty();
