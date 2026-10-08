@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ComputedAccessibilityProperties.h"
 #include "Connection.h"
 #include "CoordinateSystem.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
@@ -94,6 +95,7 @@ private:
     std::expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
     static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
+    Inspector::CommandResult<WebCore::AccessibilityObject*> getAccessibilityObjectForAXNode(WebCore::PageIdentifier, String accessibilityNodeHandle);
 
     void ensureObserverForFrame(WebFrame&);
 
@@ -112,6 +114,8 @@ private:
     void getComputedRole(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
     void getComputedLabel(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
     void consumeUserActivation(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, bool)>&&);
+    void getAccessibilityPropertiesForElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)>&&);
+    void getAccessibilityPropertiesForAccessibilityNode(WebCore::PageIdentifier, String accessibilityNodeHandle, CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)>&&);
     void selectOptionElement(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, CompletionHandler<void(std::optional<String>)>&&);
     void setFilesForInputFileUpload(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, Vector<String>&& filenames, CompletionHandler<void(std::optional<String>)>&&);
     void takeScreenshot(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&, String&&)>&&);

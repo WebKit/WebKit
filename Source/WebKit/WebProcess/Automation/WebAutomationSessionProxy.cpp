@@ -47,6 +47,7 @@
 #include <JavaScriptCore/JSStringRefPrivate.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <JavaScriptCore/SourceTaintedOrigin.h>
+#include <WebCore/AXID.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/ContainerNodeInlines.h>
@@ -76,6 +77,7 @@
 #include <WebCore/RenderElement.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
@@ -489,6 +491,38 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
 
     errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
     return nullptr;
+}
+
+Inspector::CommandResult<WebCore::AccessibilityObject*> WebAutomationSessionProxy::getAccessibilityObjectForAXNode(WebCore::PageIdentifier pageID, String accessibilityNodeHandle)
+{
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    RefPtr frame = page ? &page->mainWebFrame() : nullptr;
+    RefPtr localFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr document = localFrame ? localFrame->document() : nullptr;
+    RefPtr frameView = localFrame ? localFrame->view() : nullptr;
+
+    if (!localFrame || !frameView || !document)
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+
+    WebCore::AXObjectCache::enableAccessibility();
+
+    if (CheckedPtr axObjectCache = document->axObjectCache()) {
+        // Force a layout and cache update. If we don't, and this request has come in before the render tree was built,
+        // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
+        axObjectCache->performDeferredCacheUpdate(ForceLayout::Yes);
+
+        auto parsedAXID = parseInteger<uint64_t>(accessibilityNodeHandle);
+        if (!parsedAXID || !WebCore::AXID::isValidIdentifier(*parsedAXID))
+            return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier));
+
+        auto axID = WebCore::AXID { *parsedAXID };
+        if (RefPtr axObject = axObjectCache->objectForID(axID))
+            return axObject.get();
+
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound));
+    }
+
+    return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
 }
 
 void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
@@ -1051,6 +1085,77 @@ void WebAutomationSessionProxy::consumeUserActivation(WebCore::PageIdentifier pa
     }
 
     completionHandler(std::nullopt, window->consumeTransientActivation());
+}
+
+static AccessibilityTriState toAccessibilityTriState(AccessibilityButtonState state)
+{
+    switch (state) {
+    case AccessibilityButtonState::On:
+        return AccessibilityTriState::True;
+    case AccessibilityButtonState::Off:
+        return AccessibilityTriState::False;
+    case AccessibilityButtonState::Mixed:
+        return AccessibilityTriState::Mixed;
+    }
+    ASSERT_NOT_REACHED();
+    return AccessibilityTriState::False;
+}
+
+static ComputedAccessibilityProperties getComputedAccessibilityProperties(WebCore::AccessibilityObject& axObject)
+{
+    // AccessibilityObject::checkboxOrRadioValue() returns the tristate (true, false, or mixed) for both checked and
+    // pressed states. Keep these as separate computed AX properties, gated by supportsCheckedState()
+    // and isToggleButton() respectively.
+    std::optional<AccessibilityTriState> checked;
+    if (axObject.supportsCheckedState())
+        checked = toAccessibilityTriState(axObject.checkboxOrRadioValue());
+
+    std::optional<AccessibilityTriState> pressed;
+    if (axObject.isToggleButton())
+        pressed = toAccessibilityTriState(axObject.checkboxOrRadioValue());
+
+    std::optional<WebCore::AXID> parentAccessibilityNodeID;
+    if (RefPtr parent = axObject.parentObject())
+        parentAccessibilityNodeID = parent->objectID();
+
+    Vector<WebCore::AXID> childAccessibilityNodeIDs;
+    for (auto& child : axObject.stitchedUnignoredChildren())
+        childAccessibilityNodeIDs.append(child->objectID());
+
+    return {
+        axObject.objectID(),
+        axObject.computedRoleString(),
+        axObject.computedLabel(),
+        checked,
+        pressed,
+        parentAccessibilityNodeID,
+        WTF::move(childAccessibilityNodeIDs)
+    };
+}
+
+void WebAutomationSessionProxy::getAccessibilityPropertiesForElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)>&& completionHandler)
+{
+    String errorType;
+    RefPtr axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
+
+    if (!errorType.isNull()) {
+        completionHandler(errorType, std::nullopt);
+        return;
+    }
+
+    completionHandler(std::nullopt, getComputedAccessibilityProperties(*axObject));
+}
+
+void WebAutomationSessionProxy::getAccessibilityPropertiesForAccessibilityNode(WebCore::PageIdentifier pageID, String accessibilityNodeHandle, CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)>&& completionHandler)
+{
+    auto axObjectForNode = getAccessibilityObjectForAXNode(pageID, accessibilityNodeHandle);
+    if (!axObjectForNode) {
+        completionHandler(axObjectForNode.error(), std::nullopt);
+        return;
+    }
+
+    RefPtr axObject = axObjectForNode.value();
+    completionHandler(std::nullopt, getComputedAccessibilityProperties(*axObject));
 }
 
 void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>)>&& completionHandler)

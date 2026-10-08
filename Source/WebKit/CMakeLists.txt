@@ -606,6 +606,8 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/Authentication/AuthenticationChallengeDisposition.serialization.in
 
+    Shared/Automation/ComputedAccessibilityProperties.serialization.in
+
     Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 
     Shared/Extensions/WebExtensionActionClickBehavior.serialization.in

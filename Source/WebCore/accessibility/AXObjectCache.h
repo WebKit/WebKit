@@ -111,7 +111,6 @@ enum class AXStreamOptions : uint16_t;
 enum class AXProperty : uint16_t;
 enum class LiveRegionStatus: uint8_t;
 
-
 struct AXTreeData {
     String liveTree;
     String isolatedTree;

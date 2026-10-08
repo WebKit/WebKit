@@ -33,6 +33,7 @@
 #include "APIOpenPanelParameters.h"
 #include "APIString.h"
 #include "AutomationProtocolObjects.h"
+#include "ComputedAccessibilityProperties.h"
 #include "CoordinateSystem.h"
 #include "InspectorPassthroughChannel.h"
 #include "PageLoadState.h"
@@ -1779,6 +1780,83 @@ void WebAutomationSession::getComputedLabel(const Inspector::Protocol::Automatio
     };
 
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetComputedLabel(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle), WTF::move(completionHandler));
+}
+
+static String stringForAccessibilityNodeID(WebCore::AXID accessibilityNodeID)
+{
+    return String::number(accessibilityNodeID.toUInt64());
+}
+
+static String stringForAccessibilityTriState(AccessibilityTriState state)
+{
+    switch (state) {
+    case AccessibilityTriState::True:
+        return "true"_s;
+    case AccessibilityTriState::False:
+        return "false"_s;
+    case AccessibilityTriState::Mixed:
+        return "mixed"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "false"_s;
+}
+
+static WTF::CompletionHandler<void(std::optional<String>, std::optional<ComputedAccessibilityProperties>)> makeAccessibilityPropertiesCompletionHandler(Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::AccessibilityProperties>>&& callback)
+{
+    return [callback = WTF::move(callback)](std::optional<String>&& optionalError, std::optional<ComputedAccessibilityProperties>&& properties) mutable {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!properties, InternalError);
+
+        auto children = JSON::ArrayOf<String>::create();
+        for (auto childAccessibilityNodeID : properties->childAccessibilityNodeIDs)
+            children->addItem(stringForAccessibilityNodeID(childAccessibilityNodeID));
+
+        auto axProperties = Inspector::Protocol::Automation::AccessibilityProperties::create()
+            .setAccessibilityNodeId(stringForAccessibilityNodeID(properties->accessibilityNodeID))
+            .setRole(WTF::move(properties->role))
+            .setLabel(WTF::move(properties->label))
+            .setChildren(WTF::move(children))
+            .release();
+
+        if (properties->checked)
+            axProperties->setChecked(stringForAccessibilityTriState(*properties->checked));
+        if (properties->pressed)
+            axProperties->setPressed(stringForAccessibilityTriState(*properties->pressed));
+        if (properties->parentAccessibilityNodeID)
+            axProperties->setParent(stringForAccessibilityNodeID(*properties->parentAccessibilityNodeID));
+
+        callback({ WTF::move(axProperties) });
+    };
+}
+
+void WebAutomationSession::getAccessibilityPropertiesForElement(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::AccessibilityProperties>>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(
+        frameID,
+        Messages::WebAutomationSessionProxy::GetAccessibilityPropertiesForElement(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle),
+        Messages::WebAutomationSessionProxy::GetAccessibilityPropertiesForElement::Reply {
+            makeAccessibilityPropertiesCompletionHandler(WTF::move(callback))
+    });
+}
+
+void WebAutomationSession::getAccessibilityPropertiesForAccessibilityNode(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& accessibilityNodeHandle, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::AccessibilityProperties>>&& callback)
+{
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    // FIXME: Accessibility node handles are AXIDs, which are only unique within a single web process, and this
+    // always looks them up in the main frame's process. Encode the frame in the handle and route to the process
+    // containing that frame so that nodes in cross-process (site-isolated) iframes work.
+    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(
+        Messages::WebAutomationSessionProxy::GetAccessibilityPropertiesForAccessibilityNode(page->webPageIDInMainFrameProcess(), accessibilityNodeHandle),
+        makeAccessibilityPropertiesCompletionHandler(WTF::move(callback)));
 }
 
 void WebAutomationSession::selectOptionElement(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, CommandCallback<void>&& callback)
