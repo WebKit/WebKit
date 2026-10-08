@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<title>Mutating the d attribute keeps the other presentation attributes intact</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg width="100" height="100">
+    <path id="target" d="M 10 10 H 20" fill="red" stroke="blue" stroke-width="3"/>
+    <path id="reference" d="M 10 10 H 20" fill="red" stroke="blue" stroke-width="3"/>
+</svg>
+<script>
+// A d change updates the d presentation attribute hint in place rather than rebuilding the whole
+// presentational hint style. These tests check that the result stays the same as a full rebuild,
+// which `reference` is forced into by touching one of its other presentation attributes.
+const target = document.getElementById("target");
+const reference = document.getElementById("reference");
+
+function assertOtherPresentationAttributes(fill) {
+    assert_equals(getComputedStyle(target).fill, fill, "fill");
+    assert_equals(getComputedStyle(target).stroke, "rgb(0, 0, 255)", "stroke");
+    assert_equals(getComputedStyle(target).strokeWidth, "3px", "stroke-width");
+}
+
+// Resolve style once up front so that later changes go through the incremental path rather than
+// the initial build.
+function forceRebuiltReference(d) {
+    if (d === null)
+        reference.removeAttribute("d");
+    else
+        reference.setAttribute("d", d);
+    reference.setAttribute("stroke-dasharray", `${++forceRebuiltReference.counter}`);
+    return getComputedStyle(reference).d;
+}
+forceRebuiltReference.counter = 0;
+
+test(() => {
+    assert_equals(getComputedStyle(target).d, 'path("M 10 10 H 20")');
+    assertOtherPresentationAttributes("rgb(255, 0, 0)");
+}, "The d attribute and the other presentation attributes have their initial values");
+
+test(() => {
+    target.setAttribute("d", "M 20 20 H 40");
+    assert_equals(getComputedStyle(target).d, 'path("M 20 20 H 40")');
+    assertOtherPresentationAttributes("rgb(255, 0, 0)");
+}, "Changing the d attribute updates d and preserves the other presentation attributes");
+
+test(() => {
+    // Changing d twice without an intervening style resolution must still yield the last value.
+    target.setAttribute("d", "M 30 30 H 60");
+    target.setAttribute("d", "M 40 40 H 80");
+    assert_equals(getComputedStyle(target).d, 'path("M 40 40 H 80")');
+    assertOtherPresentationAttributes("rgb(255, 0, 0)");
+}, "Changing the d attribute twice before resolving style uses the last value");
+
+test(() => {
+    // Changing another presentation attribute dirties the whole presentational hint style, so d
+    // has to survive the resulting rebuild too.
+    target.setAttribute("fill", "green");
+    target.setAttribute("d", "M 50 50 H 90");
+    assert_equals(getComputedStyle(target).d, 'path("M 50 50 H 90")');
+    assertOtherPresentationAttributes("rgb(0, 128, 0)");
+}, "Changing another presentation attribute alongside d updates both");
+
+test(() => {
+    target.removeAttribute("d");
+    assert_equals(getComputedStyle(target).d, forceRebuiltReference(null));
+    assertOtherPresentationAttributes("rgb(0, 128, 0)");
+}, "Removing the d attribute matches a full presentational hint rebuild");
+
+test(() => {
+    target.setAttribute("d", "M 60 60 H 90");
+    assert_equals(getComputedStyle(target).d, 'path("M 60 60 H 90")');
+    assert_equals(getComputedStyle(target).d, forceRebuiltReference("M 60 60 H 90"));
+    assertOtherPresentationAttributes("rgb(0, 128, 0)");
+}, "Setting the d attribute again after removing it updates d");
+
+test(() => {
+    // The d property wins over the presentation attribute, and keeps doing so as the attribute changes.
+    target.style.d = 'path("M 0 0 H 10")';
+    target.setAttribute("d", "M 70 70 H 90");
+    assert_equals(getComputedStyle(target).d, 'path("M 0 0 H 10")');
+    target.style.d = "";
+    assert_equals(getComputedStyle(target).d, 'path("M 70 70 H 90")');
+}, "The d property overrides the d attribute as the attribute changes");
+</script>

@@ -42,10 +42,11 @@ inline void SVGElement::setAnimatedSVGAttributesAreDirty()
     ensureUniqueElementData().setAnimatedSVGAttributesAreDirty(true);
 }
 
-inline void SVGElement::setPresentationalHintStyleIsDirty()
+inline void SVGElement::setPresentationalHintStyleIsDirty(InvalidateStyle invalidate)
 {
     ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
-    invalidateStyle();
+    if (invalidate == InvalidateStyle::Yes)
+        invalidateStyle();
 }
 
 inline AtomString SVGElement::className() const
