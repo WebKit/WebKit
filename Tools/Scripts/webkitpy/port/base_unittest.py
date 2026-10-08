@@ -223,6 +223,99 @@ class PortTest(unittest.TestCase):
         self.assertEqual(environment['FOO'], 'BAR')
         self.assertEqual(environment['BAR'], 'FOO')
 
+    def test__append_sanitizer_option(self):
+        port = self.make_port()
+        variable = 'TSAN_OPTIONS'
+
+        # Unset: the option becomes the whole value.
+        environment = {}
+        port._append_sanitizer_option(environment, variable, 'suppressions=/a.txt')
+        self.assertEqual('suppressions=/a.txt', environment[variable])
+
+        # Different key present: append with a ':' separator, never os.pathsep.
+        environment[variable] = 'halt_on_error=0'
+        port._append_sanitizer_option(environment, variable, 'suppressions=/a.txt')
+        self.assertEqual('halt_on_error=0:suppressions=/a.txt', environment[variable])
+
+        # Same key already present: keep the existing value.
+        environment[variable] = 'suppressions=/mine.txt'
+        port._append_sanitizer_option(environment, variable, 'suppressions=/a.txt')
+        self.assertEqual('suppressions=/mine.txt', environment[variable])
+
+        # Same key present among others: still keep it, and do not reorder.
+        environment[variable] = 'halt_on_error=0:suppressions=/mine.txt:log_path=/tmp/t'
+        port._append_sanitizer_option(environment, variable, 'suppressions=/a.txt')
+        self.assertEqual('halt_on_error=0:suppressions=/mine.txt:log_path=/tmp/t', environment[variable])
+
+        # A key that merely ENDS WITH ours is a different key: append.
+        environment[variable] = 'foo_suppressions=/other.txt'
+        port._append_sanitizer_option(environment, variable, 'suppressions=/a.txt')
+        self.assertEqual('foo_suppressions=/other.txt:suppressions=/a.txt', environment[variable])
+
+        # Applying twice is idempotent.
+        port._append_sanitizer_option(environment, variable, 'suppressions=/a.txt')
+        self.assertEqual('foo_suppressions=/other.txt:suppressions=/a.txt', environment[variable])
+
+    def make_tsan_api_test_port(self, additional_env_var=None):
+        # A TSan build is identified by the marker file build-webkit --tsan writes.
+        port = self.make_port(options=optparse.Values({'additional_env_var': additional_env_var or []}))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        port.host.filesystem.write_text_file('/mock-build/TSan', 'YES\n')
+        return port
+
+    def test_environment_for_api_tests_asan_options(self):
+        # ASan options apply to every build, TSan or not.
+        port = self.make_port(options=optparse.Values({'additional_env_var': []}))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        environment = port.environment_for_api_tests()
+        self.assertEqual('allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+        self.assertEqual(environment['ASAN_OPTIONS'], environment['__XPC_ASAN_OPTIONS'])
+
+    def test_environment_for_api_tests_asan_options_additive(self):
+        # ASAN_OPTIONS set with a different key: keep theirs, append ours.
+        port = self.make_port(options=optparse.Values({'additional_env_var': ['ASAN_OPTIONS=detect_leaks=1']}))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        environment = port.environment_for_api_tests()
+        self.assertEqual('detect_leaks=1:allocator_may_return_null=1', environment['ASAN_OPTIONS'])
+
+    def test_environment_for_api_tests_asan_options_not_clobbered(self):
+        # ASAN_OPTIONS already sets our key: leave it alone.
+        port = self.make_port(options=optparse.Values({'additional_env_var': ['ASAN_OPTIONS=allocator_may_return_null=0']}))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        environment = port.environment_for_api_tests()
+        self.assertEqual('allocator_may_return_null=0', environment['ASAN_OPTIONS'])
+
+    def test_environment_for_api_tests_non_tsan_build(self):
+        # Not a TSan build: leave TSAN_OPTIONS alone entirely.
+        port = self.make_port(options=optparse.Values({'additional_env_var': []}))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        environment = port.environment_for_api_tests()
+        self.assertNotIn('TSAN_OPTIONS', environment)
+        self.assertNotIn('__XPC_TSAN_OPTIONS', environment)
+
+    def test_environment_for_api_tests_tsan_options_unset(self):
+        # TSan build, no TSAN_OPTIONS: set the in-tree suppressions file.
+        port = self.make_tsan_api_test_port()
+        environment = port.environment_for_api_tests()
+        self.assertEqual('second_deadlock_stack=1:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'), environment['TSAN_OPTIONS'])
+        # XPC-spawned children only inherit the __XPC_-prefixed twin.
+        self.assertEqual(environment['TSAN_OPTIONS'], environment['__XPC_TSAN_OPTIONS'])
+
+    def test_environment_for_api_tests_tsan_options_without_suppressions(self):
+        # TSAN_OPTIONS set without suppressions=: append ours, keep theirs.
+        # The separator is always ':', even on Windows where os.pathsep is ';'
+        # (TSan fails flag parsing and aborts on ';').
+        port = self.make_tsan_api_test_port(additional_env_var=['TSAN_OPTIONS=log_path=/tmp/tsan'])
+        environment = port.environment_for_api_tests()
+        self.assertEqual('log_path=/tmp/tsan:second_deadlock_stack=1:suppressions=' + port.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'), environment['TSAN_OPTIONS'])
+        self.assertNotIn(';', environment['TSAN_OPTIONS'])
+
+    def test_environment_for_api_tests_tsan_options_with_suppressions(self):
+        # TSAN_OPTIONS already names a suppressions file: leave it alone.
+        port = self.make_tsan_api_test_port(additional_env_var=['TSAN_OPTIONS=suppressions=/tmp/mine.txt'])
+        environment = port.environment_for_api_tests()
+        self.assertEqual('suppressions=/tmp/mine.txt:second_deadlock_stack=1', environment['TSAN_OPTIONS'])
+
     def test_uses_test_expectations_file(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
