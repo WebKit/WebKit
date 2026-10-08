@@ -37,6 +37,7 @@ from webkitcorepy import TaskPool
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
 from webkitpy.layout_tests.controllers import single_test_runner
+from webkitpy.layout_tests.controllers.reference_cache import hashes_path, read_hashes, write_hashes
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
@@ -335,6 +336,9 @@ class Worker(object):
         self._batch_count = 0
         self._driver = None
         self._batch_size = self._port.get_option('batch_size') or 0
+        self._reference_hashes = {}
+        self._reference_hashes_path = None
+        self._read_hashes = {}
 
     def run_tests(self, shard):
         for input in shard.test_inputs:
@@ -396,6 +400,11 @@ class Worker(object):
     def stop(self):
         _log.debug('cleaning up')
         self._kill_driver()
+        # A --run-singly test thread that timed out can still be writing to the shared dictionary.
+        hashes = dict(self._reference_hashes)
+        changed = {key: value for key, value in hashes.items() if self._read_hashes.get(key) != value}
+        if changed:
+            write_hashes(self._port.host, self._reference_hashes_path, changed)
 
     def _timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
@@ -514,10 +523,14 @@ class Worker(object):
         return self._run_single_test(self._driver, test_input, stop_when_done)
 
     def _run_single_test(self, driver, test_input, stop_when_done):
+        if self._port.get_option('cache_references') and not self._reference_hashes_path:
+            self._reference_hashes_path = hashes_path(self._port, driver)
+            self._read_hashes = read_hashes(self._port.host.filesystem, self._reference_hashes_path)
+            self._reference_hashes.update(self._read_hashes)
         return single_test_runner.run_single_test(
             self._port, self._port._options, self._results_directory,
             TaskPool.Process.name,
-            driver, test_input, stop_when_done,
+            driver, test_input, stop_when_done, self._reference_hashes,
         )
 
 

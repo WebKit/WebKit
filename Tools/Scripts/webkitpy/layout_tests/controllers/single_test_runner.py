@@ -35,7 +35,7 @@ from collections import deque
 from webkitcorepy import string_utils
 
 from webkitpy.common import read_checksum_from_png
-from webkitpy.layout_tests.controllers import test_result_writer
+from webkitpy.layout_tests.controllers import reference_cache, test_result_writer
 from webkitpy.layout_tests.models import test_expectations, test_failures
 from webkitpy.layout_tests.models.test_results import TestResult
 from webkitpy.port.driver import DriverInput, DriverOutput
@@ -53,14 +53,15 @@ _testharness_result_line_pattern = re.compile(r"^(PASS|FAIL|TIMEOUT|NOTRUN|PRECO
 _imported_wpt_dir = "imported/w3c/web-platform-tests/"
 
 
-def run_single_test(port, options, results_directory, worker_name, driver, test_input, stop_when_done):
-    runner = SingleTestRunner(port, options, results_directory, worker_name, driver, test_input, stop_when_done)
+def run_single_test(port, options, results_directory, worker_name, driver, test_input, stop_when_done, reference_hashes=None):
+    runner = SingleTestRunner(port, options, results_directory, worker_name, driver, test_input, stop_when_done, reference_hashes)
     return runner.run()
 
 
 class SingleTestRunner(object):
-    def __init__(self, port, options, results_directory, worker_name, driver, test_input, stop_when_done):
+    def __init__(self, port, options, results_directory, worker_name, driver, test_input, stop_when_done, reference_hashes=None):
         self._port = port
+        self._reference_hashes = {} if reference_hashes is None else reference_hashes
         self._filesystem = port.host.filesystem
         self._options = options
         self._results_directory = results_directory
@@ -474,10 +475,22 @@ class SingleTestRunner(object):
         return failures
 
     def _run_reftest(self):
+        reference_key = None
+        cached_reference_hash = None
+        if self._port.get_option('cache_references') and len(self._reference_files) == 1 and self._reference_files[0][0] == '==':
+            reference_key = reference_cache.cache_key(self._port, self._reference_files[0][1])
+            cached_reference_hash = self._reference_hashes.get(reference_key, [None])[0]
+
         test_output = self._driver.run_test(self._driver_input(), self._stop_when_done)
         test_output.strip_patterns(self._port.logging_patterns_to_strip())
         test_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
         test_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
+
+        if cached_reference_hash and test_output.image and test_output.image_hash == cached_reference_hash:
+            self._reference_hashes[reference_key] = [cached_reference_hash, reference_cache.today()]
+            failures = self._handle_error(test_output)
+            test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, None, failures)
+            return TestResult(self._test_input, failures, test_output.test_time, test_output.has_stderr(), reftest_type={'=='}, pid=test_output.pid, references=[self._port.relative_test_filename(self._reference_files[0][1])])
 
         if test_output.image is None:
             # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
@@ -517,6 +530,10 @@ class SingleTestRunner(object):
                 self._driver.stop()
 
             test_result = self._compare_output_with_reference(reference_output, test_output, reference_filename, expectation == '!=')
+            if reference_key and (test_result.failures or not reference_output.image_hash):
+                reference_cache.forget(self._reference_hashes, reference_key)
+            elif reference_key:
+                self._reference_hashes[reference_key] = [reference_output.image_hash, reference_cache.today()]
 
             if (expectation == '!=' and test_result.failures) or (expectation == '==' and not test_result.failures):
                 break
