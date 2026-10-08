@@ -1,0 +1,11 @@
+Regression test for a GPU-process OOB read / crash: the render-bundle record-into-ICB path for drawIndirect/drawIndexedIndirect stored a WebContent-controlled indirectOffset without validating it. At executeBundles() time that offset was fed straight into the clamp/encode shaders, so an out-of-bounds offset read past the indirect buffer. Each such draw must instead raise a validation error at record time and never reach executeBundles().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS drawIndexedIndirect out-of-bounds offset: validation error raised as expected.
+PASS drawIndirect out-of-bounds offset: validation error raised as expected.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
