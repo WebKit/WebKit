@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>querySelector(All) must find non-HTML elements whose local name is base</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-queryselector">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="container"><svg><base id="parsedSVGBase"/></svg></div>
+<script>
+"use strict";
+const svgNS = "http://www.w3.org/2000/svg";
+const mathMLNS = "http://www.w3.org/1998/Math/MathML";
+const parsedSVGBase = document.getElementById("parsedSVGBase");
+const container = document.getElementById("container");
+
+test(() => {
+  assert_equals(parsedSVGBase.namespaceURI, svgNS);
+  assert_equals(document.querySelector("base"), parsedSVGBase);
+  assert_array_equals(document.querySelectorAll("base"), [parsedSVGBase]);
+}, "Parser-created SVG base element without an HTML base element");
+
+test(t => {
+  const htmlBase = document.createElement("base");
+  container.append(htmlBase);
+  t.add_cleanup(() => htmlBase.remove());
+  assert_equals(document.querySelector("base"), parsedSVGBase);
+  assert_array_equals(document.querySelectorAll("base"), [parsedSVGBase, htmlBase]);
+}, "SVG base element preceding an HTML base element");
+
+test(t => {
+  parsedSVGBase.remove();
+  t.add_cleanup(() => container.firstChild.append(parsedSVGBase));
+  assert_equals(document.querySelector("base"), null);
+  assert_array_equals(document.querySelectorAll("base"), []);
+
+  const mathMLBase = document.createElementNS(mathMLNS, "base");
+  const otherBase = document.createElementNS("urn:example", "base");
+  container.append(mathMLBase, otherBase);
+  t.add_cleanup(() => { mathMLBase.remove(); otherBase.remove(); });
+  assert_equals(document.querySelector("base"), mathMLBase);
+  assert_array_equals(document.querySelectorAll("base"), [mathMLBase, otherBase]);
+
+  mathMLBase.remove();
+  assert_equals(document.querySelector("base"), otherBase);
+  assert_array_equals(document.querySelectorAll("base"), [otherBase]);
+
+  otherBase.remove();
+  assert_equals(document.querySelector("base"), null);
+  assert_array_equals(document.querySelectorAll("base"), []);
+}, "Dynamically inserted and removed non-HTML base elements");
+
+test(t => {
+  parsedSVGBase.remove();
+  t.add_cleanup(() => container.firstChild.append(parsedSVGBase));
+  const htmlBase = document.createElement("base");
+  const upperSVGBase = document.createElementNS(svgNS, "BASE");
+  container.append(upperSVGBase, htmlBase);
+  t.add_cleanup(() => { upperSVGBase.remove(); htmlBase.remove(); });
+  assert_equals(document.querySelector("base"), htmlBase);
+  assert_array_equals(document.querySelectorAll("base"), [htmlBase]);
+  assert_equals(document.querySelector("BASE"), upperSVGBase);
+  assert_array_equals(document.querySelectorAll("BASE"), [upperSVGBase, htmlBase]);
+}, "Uppercase SVG BASE element in an HTML document");
+</script>
