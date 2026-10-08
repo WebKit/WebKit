@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Repaint of the whole masked area when one of several mask images finishes loading</title>
+<style>
+#target {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(to bottom, #751fde, #120128);
+    /* Start with a single, immediately-available gradient mask so the element is fully painted. */
+    -webkit-mask-image: linear-gradient(#000, #000);
+    mask-image: linear-gradient(#000, #000);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(false);
+    testRunner.waitUntilDone();
+}
+
+// Two mask layers: a full-box gradient plus a small dot in the bottom-right corner.
+const kMaskImage = "linear-gradient(#000, #000), url(../backgrounds/resources/dot.png)";
+const kMaskPosition = "0 0, bottom right";
+const kMaskRepeat = "no-repeat, no-repeat";
+
+function startTest() {
+    const target = document.getElementById("target");
+
+    // Adding the second mask image is a style change, so flush its repaint *before* we start
+    // tracking. We only want to observe the invalidation issued when the still-loading dot
+    // image finishes loading: the whole masked area must be invalidated (because mask layers
+    // paint as an all-or-nothing group), not just the dot's destination rect. bug 241079.
+    target.style.webkitMaskImage = kMaskImage;
+    target.style.maskImage = kMaskImage;
+    target.style.webkitMaskPosition = kMaskPosition;
+    target.style.maskPosition = kMaskPosition;
+    target.style.webkitMaskRepeat = kMaskRepeat;
+    target.style.maskRepeat = kMaskRepeat;
+
+    document.body.offsetTop; // Force style + layout, flushing the style-change repaint.
+
+    if (!window.internals)
+        return; // Outside the harness, leave the rendered result on screen.
+
+    internals.startTrackingRepaints();
+
+    // The dot shares its CachedImage with this probe; once the probe reports load, the
+    // renderer's imageChanged() has been dispatched in the same notification pass. Defer
+    // the dump a turn so that dispatch (and its repaint) has completed.
+    const probe = new Image();
+    probe.onload = () => setTimeout(finishTest, 0);
+    probe.src = "../backgrounds/resources/dot.png";
+}
+
+function finishTest() {
+    document.body.offsetTop;
+    const rects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    const pre = document.createElement("pre");
+    pre.id = "result";
+    pre.textContent = rects;
+    document.body.appendChild(pre);
+    testRunner.notifyDone();
+}
+
+window.addEventListener("load", startTest);
+</script>
+</head>
+<body>
+<p>When the dot mask image finishes loading, the whole masked area should be repainted, not just
+the dot's rect. <a href="https://bugs.webkit.org/show_bug.cgi?id=241079">bug 241079</a>.</p>
+<div id="target"></div>
+</body>
+</html>
