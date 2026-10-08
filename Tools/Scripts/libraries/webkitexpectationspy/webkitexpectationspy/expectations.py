@@ -29,9 +29,11 @@ This module provides:
 
 from dataclasses import dataclass, field
 from enum import Flag, auto
-from typing import FrozenSet, Optional, Set, Tuple
+from functools import cached_property
+from typing import Dict, FrozenSet, Optional, Set, Tuple
 
 
+from webkitexpectationspy.configuration import ConfigurationSpecifier
 from webkitexpectationspy.modifiers import ModifiersBase
 
 
@@ -131,18 +133,19 @@ class Expectation:
             return test_name.startswith(self.test_pattern[:-1])
         return test_name == self.test_pattern
 
+    @cached_property
+    def configuration_specifier(self) -> ConfigurationSpecifier:
+        return ConfigurationSpecifier.from_tokens(self.configurations, self.version_specifiers)
+
+    @property
+    def specificity(self) -> int:
+        return self.configuration_specifier.specificity
+
     def matches_configuration(self, current_config: Set[str],
                               current_version: Optional[str] = None,
-                              version_order=None) -> bool:
-        if self.configurations and not self.configurations.issubset(current_config):
-            return False
-        if self.version_specifiers:
-            if not current_version or not version_order:
-                return False
-            for spec in self.version_specifiers:
-                if not spec.matches(current_version, version_order):
-                    return False
-        return True
+                              version_order=None,
+                              version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None) -> bool:
+        return self.configuration_specifier.matches(current_config, current_version, version_order, version_name_map)
 
     def result_is_expected(self, actual_status) -> bool:
         return actual_status in self.expected
