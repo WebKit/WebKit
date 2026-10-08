@@ -159,6 +159,9 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
         numBoundArgs = 0;
     }
 
+    JSValue alreadyMaterializedPrototype = JSBoundFunction::materializeObservablePrototype(globalObject, target);
+    RETURN_IF_EXCEPTION(scope, { });
+
     double length = 0;
     JSString* name = nullptr;
     JSFunction* function = dynamicDowncast<JSFunction>(target);
@@ -192,7 +195,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
 
     auto [taintedness, url] = sourceTaintedOriginFromStack(vm, callFrame);
     SourceCode source = makeSource("[bound function]"_s, SourceOrigin(url), taintedness);
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, name, source)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, name, source, alreadyMaterializedPrototype)));
 }
 
 // https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#isallowedreceiverfunctionforcallerandargumentsfunc-expectedrealm (except step 3)

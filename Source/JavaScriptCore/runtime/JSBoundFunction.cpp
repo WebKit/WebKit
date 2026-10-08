@@ -138,15 +138,27 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
     RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, targetFunction, constructData, args, newTarget)));
 }
 
-inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction)
+JSValue JSBoundFunction::materializeObservablePrototype(JSGlobalObject* globalObject, JSObject* targetFunction)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (!targetFunction->structure()->typeInfo().overridesGetPrototype())
+        return { };
+    RELEASE_AND_RETURN(scope, targetFunction->getPrototype(globalObject));
+}
+
+static Structure* structureForTarget(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue prototype)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSFunction* targetJSFunction = dynamicDowncast<JSFunction>(targetFunction);
-    if (targetJSFunction && targetJSFunction->getPrototypeDirect() == globalObject->functionPrototype()) [[likely]]
-        return globalObject->boundFunctionStructure();
+    // Empty means [[GetPrototypeOf]] has not run. Null is a real prototype.
+    if (!prototype) {
+        if (targetJSFunction && targetJSFunction->getPrototypeDirect() == globalObject->functionPrototype()) [[likely]]
+            return globalObject->boundFunctionStructure();
 
-    JSValue prototype = targetFunction->getPrototype(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+        prototype = targetFunction->getPrototype(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
 
     // We only cache the structure of the bound function if the bindee is a JSFunction since there
     // isn't any good place to put the structure on Internal Functions.
@@ -176,6 +188,12 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
 JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, ArgList args, double length, JSString* nameMayBeNull, const SourceCode& source)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(scope, create(vm, globalObject, targetFunction, boundThis, args, length, nameMayBeNull, source, JSValue()));
+}
+
+JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, ArgList args, double length, JSString* nameMayBeNull, const SourceCode& source, JSValue alreadyMaterializedPrototype)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (nameMayBeNull) {
         nameMayBeNull->value(globalObject); // Resolving rope.
@@ -201,7 +219,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
 
     bool isJSFunction = getJSFunction(targetFunction);
     NativeExecutable* executable = vm.getBoundFunction(isJSFunction, source.provider()->sourceTaintedOrigin());
-    Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
+    Structure* structure = structureForTarget(vm, globalObject, targetFunction, alreadyMaterializedPrototype);
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, structure, targetFunction, boundThis, args.size(), boundArgs[0], boundArgs[1], boundArgs[2], nameMayBeNull, length, source);
 
