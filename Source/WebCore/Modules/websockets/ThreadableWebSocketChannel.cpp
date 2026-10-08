@@ -33,6 +33,7 @@
 #include "ThreadableWebSocketChannel.h"
 
 #include "ContentRuleListResults.h"
+#include "DedicatedWorkerGlobalScope.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -61,6 +62,10 @@ RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& 
 RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
 {
     if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(context)) {
+        auto isInitiatedByDedicatedWorker = is<DedicatedWorkerGlobalScope>(*workerGlobalScope) ? IsInitiatedByDedicatedWorker::Yes : IsInitiatedByDedicatedWorker::No;
+        if (RefPtr channel = provider.createWebSocketChannel(*workerGlobalScope, client, isInitiatedByDedicatedWorker))
+            return channel;
+
         auto identifier = workerGlobalScope->thread()->runLoop().createUniqueId();
         return WorkerThreadableWebSocketChannel::create(*workerGlobalScope, client, makeString("webSocketChannelMode"_s, identifier), provider);
     }
