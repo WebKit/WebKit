@@ -1016,9 +1016,6 @@ RefPtr<FrameState> WebBackForwardList::findFrameStateInItem(WebCore::BackForward
             childFrameItem = parentFrameItem->childItemForFrameName(childFrameName);
         if (!childFrameItem)
             return nullptr;
-
-        if (!childFrameItem->frameID())
-            childFrameItem->updateFrameID(childFrameID);
     }
 
     return &childFrameItem->frameState();
