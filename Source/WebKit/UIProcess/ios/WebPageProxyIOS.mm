@@ -155,7 +155,7 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
-void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates)
+void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged()
 {
     notImplemented();
 }
