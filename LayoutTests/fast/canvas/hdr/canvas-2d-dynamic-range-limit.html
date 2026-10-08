@@ -1,0 +1,81 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true CSSConstrainedDynamicRangeLimitEnabled=true CanvasColorTypeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="canvasDefault"></canvas>
+<canvas id="canvasNoLimit" style="dynamic-range-limit: no-limit"></canvas>
+<canvas id="canvasConstrained" style="dynamic-range-limit: constrained"></canvas>
+<canvas id="canvasStandard" style="dynamic-range-limit: standard"></canvas>
+<div style="dynamic-range-limit: constrained"><canvas id="canvasInherited"></canvas></div>
+<canvas id="canvasLater"></canvas>
+<canvas id="canvasContentsStandard" width="4" height="4" style="dynamic-range-limit: standard"></canvas>
+<canvas id="canvasContentsNoLimit" width="4" height="4" style="dynamic-range-limit: no-limit"></canvas>
+<script>
+description("Tests that a 2D canvas context picks up the dynamic-range-limit of its element, and that the limit leaves the canvas's own contents alone.");
+
+if (window.internals) {
+    internals.clearMemoryCache();
+    internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+}
+
+function verifyEffectiveLimit(id, expectedComputed, expectedValue)
+{
+    shouldBe(`getComputedStyle(${id})["dynamic-range-limit"]`, `"${expectedComputed}"`);
+    shouldBe(`internals.getContextEffectiveDynamicRangeLimitValue(${id})`, expectedValue);
+}
+
+// An HDR green, well outside [0, 1] and exactly representable in float16.
+const hdrGreen = 2.5;
+
+function fillWithHDRGreen(canvas)
+{
+    const context = canvas.getContext("2d", { colorType: "float16" });
+    const imageData = context.createImageData(canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
+    for (let component = 0; component < imageData.data.length; component += 4) {
+        imageData.data[component + 1] = hdrGreen;
+        imageData.data[component + 3] = 1;
+    }
+    context.putImageData(imageData, 0, 0);
+    return context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-float16" });
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    shouldBeTrue(`CSS.supports("dynamic-range-limit", "standard")`);
+    shouldBeTrue(`CSS.supports("dynamic-range-limit", "no-limit")`);
+    shouldBeTrue(`CSS.supports("dynamic-range-limit", "constrained")`);
+
+    debug("\n- The effective limit each context reports");
+    document.body.offsetHeight;
+    for (const id of ["canvasDefault", "canvasNoLimit", "canvasConstrained", "canvasStandard", "canvasInherited", "canvasLater"])
+        document.getElementById(id).getContext("2d");
+
+    verifyEffectiveLimit("canvasDefault", "no-limit", "1.0");
+    verifyEffectiveLimit("canvasNoLimit", "no-limit", "1.0");
+    verifyEffectiveLimit("canvasConstrained", "constrained", "0.5");
+    verifyEffectiveLimit("canvasStandard", "standard", "0.0");
+
+    debug("\n- dynamic-range-limit is inherited");
+    verifyEffectiveLimit("canvasInherited", "constrained", "0.5");
+
+    debug("\n- A limit changed after the context exists");
+    canvasLater.style.setProperty("dynamic-range-limit", "standard");
+    canvasLater.offsetHeight;
+    verifyEffectiveLimit("canvasLater", "standard", "0.0");
+
+    canvasLater.style.removeProperty("dynamic-range-limit");
+    canvasLater.offsetHeight;
+    verifyEffectiveLimit("canvasLater", "no-limit", "1.0");
+
+    debug("\n- The limit leaves the canvas's contents alone");
+    window.standardContents = fillWithHDRGreen(canvasContentsStandard);
+    window.noLimitContents = fillWithHDRGreen(canvasContentsNoLimit);
+    shouldBe("standardContents.data[1]", "noLimitContents.data[1]");
+    shouldBeCloseTo("standardContents.data[1]", hdrGreen, 0.01);
+}
+</script>
+</body>
+</html>

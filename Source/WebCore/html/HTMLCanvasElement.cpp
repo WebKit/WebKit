@@ -458,6 +458,10 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
         protect(document())->setHasHDRContent();
 #endif
 
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    protect(m_context.get())->setDynamicRangeLimit(m_dynamicRangeLimit);
+#endif
+
 #if USE(CA) || USE(SKIA)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
     invalidateStyleAndLayerComposition();
@@ -701,8 +705,14 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
                     context.fillRect(snappedIntRect(r), Color::transparentBlack);
             } else {
                 RefPtr buffer = renderingContext->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
-                if (buffer)
-                    context.drawImageBuffer(*buffer, snappedIntRect(r), { context.compositeOperation() });
+                if (buffer) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+                    ImagePaintingOptions options { renderingContext->paintingOptionsForDisplay(), context.compositeOperation() };
+#else
+                    ImagePaintingOptions options { context.compositeOperation() };
+#endif
+                    context.drawImageBuffer(*buffer, snappedIntRect(r), options);
+                }
             }
         }
     }
