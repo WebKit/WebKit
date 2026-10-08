@@ -419,6 +419,11 @@ OverscrollBehavior RemoteScrollingCoordinatorProxy::mainFrameVerticalOverscrollB
     return m_scrollingTree->mainFrameVerticalOverscrollBehavior();
 }
 
+ScrollAxisLock RemoteScrollingCoordinatorProxy::mainFrameScrollAxisLock() const
+{
+    return m_scrollingTree->mainFrameScrollAxisLock();
+}
+
 WebCore::FloatRect RemoteScrollingCoordinatorProxy::computeVisibleContentRect()
 {
     auto scrollPosition = currentMainFrameScrollPosition();
