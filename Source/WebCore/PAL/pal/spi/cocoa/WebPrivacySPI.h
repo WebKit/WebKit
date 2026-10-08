@@ -144,26 +144,6 @@ typedef void (^WPStorageAccessUserAgentStringQuirksDataCompletionHandler)(WPStor
 @end
 #endif
 
-#if !defined(HAS_WEB_PRIVACY_RESTRICTED_OPENER_DOMAIN_CLASS)
-constexpr NSInteger WPResourceTypeRestrictedOpenerDomains = 8;
-
-typedef NS_ENUM(NSInteger, WPRestrictedOpenerType) {
-    WPRestrictedOpenerTypeNoOpener = 1,
-    WPRestrictedOpenerTypePostMessageAndClose,
-};
-
-@interface WPRestrictedOpenerDomain : NSObject
-@property (nonatomic, readonly) NSString *domain;
-@property (nonatomic, readonly) WPRestrictedOpenerType openerType;
-@end
-
-typedef void (^WPRestrictedOpenerDomainsCompletionHandler)(NSArray<WPRestrictedOpenerDomain *> *, NSError *);
-
-@interface WPResources (Staging_118208263)
-- (void)requestRestrictedOpenerDomains:(WPResourceRequestOptions *)options completionHandler:(WPRestrictedOpenerDomainsCompletionHandler)completion;
-@end
-#endif
-
 #if !defined(HAS_WEB_PRIVACY_HIGH_VALUE_FRAUD_TARGET_DOMAIN_CLASS)
 constexpr NSInteger WPResourceTypeHighValueFraudTargetDomains = 11;
 

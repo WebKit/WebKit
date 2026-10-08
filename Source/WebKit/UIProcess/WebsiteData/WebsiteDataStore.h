@@ -124,7 +124,6 @@ class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
 enum class CacheModel : uint8_t;
 enum class CallDownloadDidStart : bool;
-enum class RestrictedOpenerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class StorageAccessPromptStatus;
@@ -519,9 +518,6 @@ public:
 
     void setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&&);
 
-    RestrictedOpenerType openerTypeForDomain(const WebCore::RegistrableDomain&) const;
-    void setRestrictedOpenerTypeForDomainForTesting(const WebCore::RegistrableDomain&, RestrictedOpenerType);
-
     bool operator==(const WebsiteDataStore& other) const { return (m_sessionID == other.sessionID()); }
     void resolveDirectoriesAsynchronously();
 
@@ -725,8 +721,6 @@ private:
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     std::optional<bool> m_cachedIsOptInCookiePartitioningEnabled;
 #endif
-
-    HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypesForTesting;
 
 #if PLATFORM(COCOA)
     const RefPtr<EnhancedSecuritySitesHolder> m_enhancedSecuritySites;
