@@ -193,10 +193,12 @@ class PinchGestureRecognizer extends GestureRecognizer
     {
         console.assert(this.numberOfTouches === 2);
 
-        const firstTouch = this._targetTouches[0];
+        const pointers = Array.from(this._targetPointers.values());
+
+        const firstTouch = pointers[0];
         const firstTouchPoint = new DOMPoint(firstTouch.pageX, firstTouch.pageY);
 
-        const secondTouch = this._targetTouches[1];
+        const secondTouch = pointers[1];
         const secondTouchPoint = new DOMPoint(secondTouch.pageX, secondTouch.pageY);
 
         return Math.sqrt(Math.pow(firstTouchPoint.x - secondTouchPoint.x, 2) + Math.pow(firstTouchPoint.y - secondTouchPoint.y, 2));
