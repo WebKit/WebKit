@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKHitTestResult.h>
 
 #if TARGET_OS_OSX || TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 
@@ -38,21 +38,18 @@ typedef NS_ENUM(NSInteger, _WKHitTestResultElementType) {
 } WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 
 WK_CLASS_AVAILABLE(macos(10.12), ios(16.0))
-@interface _WKHitTestResult : NSObject <NSCopying>
+@interface _WKHitTestResult : WKHitTestResult
 
 @property (nonatomic, readonly, copy) NSURL *absoluteImageURL;
 @property (nonatomic, readonly, copy) NSString *imageMIMEType WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 
 @property (nonatomic, readonly, copy) NSURL *absolutePDFURL;
-@property (nonatomic, readonly, copy) NSURL *absoluteLinkURL;
 @property (nonatomic, readonly) BOOL hasLocalDataForLinkURL WK_API_DEPRECATED_WITH_REPLACEMENT("linkLocalResourceResponse", macos(15.0, 26.0), ios(18.0, 26.0), visionos(2.0, 26.0));
 @property (nonatomic, readonly, copy) NSString *linkLocalDataMIMEType WK_API_DEPRECATED_WITH_REPLACEMENT("linkLocalResourceResponse.MIMEType", macos(15.0, 26.0), ios(18.0, 26.0), visionos(2.0, 26.0));
 @property (nonatomic, readonly, copy) NSURL *absoluteMediaURL;
 @property (nonatomic, readonly, copy) NSURL *absoluteModelURL WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 @property (nonatomic, readonly, copy) NSURLResponse *linkLocalResourceResponse WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 
-@property (nonatomic, readonly, copy) NSString *linkLabel;
-@property (nonatomic, readonly, copy) NSString *linkTitle;
 @property (nonatomic, readonly, copy) NSString *linkSuggestedFilename WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 @property (nonatomic, readonly) BOOL linkHasTargetFrame WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 @property (nonatomic, readonly) BOOL linkTargetFrameIsSameAsLinkFrame WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));

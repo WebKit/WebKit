@@ -58,6 +58,7 @@ struct FrameTreeSyncSerializationData;
 namespace WebKit {
 
 class WebFrame;
+struct JSHandleInfo;
 struct NavigationActionData;
 struct WebsitePoliciesData;
 
@@ -89,6 +90,10 @@ protected:
     void didConsumeUserActivation();
     void didRevokeForcedUserActivation(WebCore::UserGestureTokenIdentifier);
     void didHandleFirstUserGesture(MonotonicTime);
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    static std::optional<JSHandleInfo> jsHandleInfoForHitTestResult(const std::optional<WebCore::HitTestResult>&);
+#endif
 
     const Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;

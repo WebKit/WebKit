@@ -40,6 +40,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/Expected.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessID.h>
@@ -712,6 +713,7 @@ enum class FindOptions : uint16_t;
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class GestureRecognizerState : uint8_t;
 enum class GestureType : uint8_t;
+enum class HitTestAtPointError : uint8_t;
 enum class InputType : uint8_t;
 enum class LoadedWebArchive : bool;
 enum class TextRecognitionUpdateResult : uint8_t;
@@ -3010,7 +3012,7 @@ public:
     void forEachWebContentProcess(NOESCAPE const Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&);
 
     void convertRectToMainFrameCoordinates(WebCore::FloatRect, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);
-    void hitTestAtPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, API::ContentWorld&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void hitTestAtPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, API::ContentWorld&, CompletionHandler<void(Expected<std::optional<JSHandleInfo>, HitTestAtPointError>&&, WebHitTestResultData&&)>&&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);

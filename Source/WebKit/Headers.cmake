@@ -183,6 +183,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKFormInfo.h
     UIProcess/API/Cocoa/WKFrameInfo.h
     UIProcess/API/Cocoa/WKHTTPCookieStore.h
+    UIProcess/API/Cocoa/WKHitTestResult.h
     UIProcess/API/Cocoa/WKImmersiveEnvironment.h
     UIProcess/API/Cocoa/WKImmersiveEnvironmentDelegate.h
     UIProcess/API/Cocoa/WKJSHandle.h

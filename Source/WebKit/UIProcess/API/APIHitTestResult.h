@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "APIJSHandle.h"
 #include "APIObject.h"
 #include "WebHitTestResultData.h"
 #include "WebPageProxy.h"
@@ -42,7 +43,7 @@ class WebFrame;
 
 class HitTestResult : public API::ObjectImpl<API::Object::Type::HitTestResult> {
 public:
-    static Ref<HitTestResult> create(const WebKit::WebHitTestResultData&, WebKit::WebPageProxy*);
+    static Ref<HitTestResult> create(const WebKit::WebHitTestResultData&, WebKit::WebPageProxy*, RefPtr<JSHandle>&& = nullptr);
 
     WTF::String absoluteImageURL() const { return m_data.absoluteImageURL; }
     WTF::String absolutePDFURL() const { return m_data.absolutePDFURL; }
@@ -86,15 +87,19 @@ public:
 
     const std::optional<WebCore::ResourceResponse>& linkLocalResourceResponse() const LIFETIME_BOUND { return m_data.linkLocalResourceResponse; }
 
+    const RefPtr<JSHandle>& domNodeHandle() const LIFETIME_BOUND { return m_domNodeHandle; }
+
 private:
-    explicit HitTestResult(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page)
+    explicit HitTestResult(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page, RefPtr<JSHandle>&& domNodeHandle)
         : m_data(hitTestResultData)
         , m_page(page)
+        , m_domNodeHandle(WTF::move(domNodeHandle))
     {
     }
 
     WebKit::WebHitTestResultData m_data;
     WeakPtr<WebKit::WebPageProxy> m_page;
+    const RefPtr<JSHandle> m_domNodeHandle;
 };
 
 } // namespace API

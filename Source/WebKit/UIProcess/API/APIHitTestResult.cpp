@@ -22,9 +22,9 @@
 
 namespace API {
 
-Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page)
+Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page, RefPtr<JSHandle>&& domNodeHandle)
 {
-    return adoptRef(*new HitTestResult(hitTestResultData, page));
+    return adoptRef(*new HitTestResult(hitTestResultData, page, WTF::move(domNodeHandle)));
 }
 
 } // namespace API

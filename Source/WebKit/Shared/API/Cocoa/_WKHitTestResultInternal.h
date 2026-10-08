@@ -23,26 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKHitTestResultInternal.h"
 #import "_WKHitTestResult.h"
-
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-
-#import "APIHitTestResult.h"
-#import "WKObject.h"
-#import <wtf/AlignedStorage.h>
-
-namespace WebKit {
-
-template<> struct WrapperTraits<API::HitTestResult> {
-    using WrapperClass = _WKHitTestResult;
-};
-
-}
-
-@interface _WKHitTestResult () <WKObject> {
-@package
-    AlignedStorage<API::HitTestResult> _hitTestResult;
-}
-@end
-
-#endif
