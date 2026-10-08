@@ -1556,6 +1556,7 @@ TEST(IPCSerialization, SecTrustRef)
             @{ },
         ],
         @"info" : @{
+            @"EvaluationID" : @"258EAFA5-E914-47DA-95CA-C5AB0DC85B11",
             @"Builder" : @{
                 @"RevocationDbIgnored" : @(NO),
                 @"RevocationIfTrusted" : @(YES),
@@ -1569,6 +1570,8 @@ TEST(IPCSerialization, SecTrustRef)
             @"RevocationInfo" : @[
                 @{
                     @"ocsp" : @{
+                        @"fetchFailed" : @YES,
+                        @"timedOut" : @NO,
                         @"isDefinitive" : @(YES),
                         @"isRevoked" : @(NO),
                         @"nextUpdate" : @(792270694),
