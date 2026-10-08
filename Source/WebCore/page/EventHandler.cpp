@@ -1983,7 +1983,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
     }
 #endif
 
-    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent, frame))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2235,7 +2235,7 @@ HandleUserInputEventResult EventHandler::mouseMoved(const PlatformMouseEvent& ev
     RefPtr protectedView { frame->view() };
     MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
-    if (frame->page() && frame->page()->pageOverlayController().handleMouseEvent(event))
+    if (frame->page() && frame->page()->pageOverlayController().handleMouseEvent(event, frame))
         return true;
 
     HitTestResult hitTestResult;
@@ -2552,7 +2552,7 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
     }
 #endif
 
-    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent, frame))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
