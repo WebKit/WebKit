@@ -49,6 +49,7 @@
                 { "name": "localName", "type": "string", "description": "<code>Node</code>'s localName." },
                 { "name": "nodeValue", "type": "string", "description": "<code>Node</code>'s nodeValue." },
                 { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the containing frame." },
+                { "name": "contentFrameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the frame hosted by a frame owner element, even when that frame is in another process." },
                 { "name": "childNodeCount", "type": "integer", "optional": true, "description": "Child count for <code>Container</code> nodes." },
                 { "name": "children", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Child nodes of this node when requested with children." },
                 { "name": "attributes", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]</code>." },
