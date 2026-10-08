@@ -1,0 +1,22 @@
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+min-height: 100px; grid-auto-rows: 50%;
+
+X
+min-height: 100px; grid-auto-rows: 20% auto;
+
+X
+X
+max-height: 50px; grid-auto-rows: 50%;
+
+X
+X
+X
+X
+grid-auto-rows: calc(50% + 10px);
+
+X
+X
