@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentSplicing.HiddenTree");
+
+    let mainFrameTarget = null;
+    let middleTarget = null;
+    let innerTarget = null;
+    let targetNames = new Map;
+
+    async function pageTreeInnerIframeElement(pageDocument) {
+        let middleIframe = await descendFromPageBody(pageDocument, (node) => node.nodeName() === "IFRAME");
+        let middleDocument = await childElement(middleIframe, (node) => node.nodeType() === Node.DOCUMENT_NODE);
+        let middleHTML = await childElement(middleDocument, (node) => node.nodeName() === "HTML");
+        let middleBody = await childElement(middleHTML, (node) => node.nodeName() === "BODY");
+        return childElement(middleBody, (node) => node.nodeName() === "IFRAME");
+    }
+
+    async function runCase(hiddenTarget, expression) {
+        let pageDocument = await simulateInspectorReopen();
+
+        let innerDocument = WI.domManager.frameTargetDocumentForTarget(innerTarget);
+        InspectorTest.expectNull(innerDocument.parentNode, "The inner frame's document should not be spliced in yet.");
+
+        let hiddenIframe = await pushNodeIntoFrameTargetTree(hiddenTarget, expression);
+        InspectorTest.expectNotNull(hiddenIframe, `Should push the inner frame's <iframe> into the ${targetNames.get(hiddenTarget)}'s tree.`);
+
+        let pageIframe = await pageTreeInnerIframeElement(pageDocument);
+        InspectorTest.expectNotNull(pageIframe, "Should find the inner frame's <iframe> in the page tree.");
+
+        InspectorTest.expectEqual(treeContainingNode(innerDocument, targetNames), "page", "The inner frame's document should be in the page tree.");
+        InspectorTest.expectEqual(innerDocument.parentNode, pageIframe, "The inner frame's document should be spliced into the page tree's <iframe>.");
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the main, middle, and inner frame targets.",
+        async test() {
+            mainFrameTarget = await frameTargetForURLContainingWhenReady("frame-document-splicing-hidden-tree-frame-target.html");
+            middleTarget = await frameTargetForURLContainingWhenReady("splice-same-origin-middle-frame.html");
+            innerTarget = await frameTargetForURLContainingWhenReady("dom-frame.html");
+
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+            InspectorTest.expectNotNull(middleTarget, "Should find the middle frame target.");
+            InspectorTest.expectNotNull(innerTarget, "Should find the inner frame target.");
+            InspectorTest.expectEqual(new Set([mainFrameTarget, middleTarget, innerTarget]).size, 3, "All three frame targets should be distinct.");
+
+            targetNames.set(mainFrameTarget, "main frame target");
+            targetNames.set(middleTarget, "middle frame target");
+            targetNames.set(innerTarget, "inner frame target");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.HiddenTree.MainFrameTargetTreeFirst",
+        description: "The inner <iframe> reaching the main frame target's tree first should not capture the inner frame's document.",
+        async test() {
+            await runCase(mainFrameTarget, `document.querySelector("iframe").contentDocument.querySelector("iframe")`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.HiddenTree.MiddleFrameTargetTreeFirst",
+        description: "The inner <iframe> reaching the middle frame target's tree first should not capture the inner frame's document.",
+        async test() {
+            await runCase(middleTarget, `document.querySelector("iframe")`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a nested cross-origin frame's document is spliced into the page tree, not into a hidden frame target tree that happened to load its &lt;iframe&gt; first.</p>
+<iframe src="resources/splice-same-origin-middle-frame.html"></iframe>
+</body>

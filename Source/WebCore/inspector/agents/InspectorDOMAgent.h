@@ -68,6 +68,7 @@ class Element;
 class Event;
 class Exception;
 class FloatQuad;
+class HTMLFrameOwnerElement;
 class InspectorHistory;
 #if ENABLE(VIDEO)
 class HTMLMediaElement;
@@ -200,6 +201,7 @@ public:
     void didChangeCustomElementState(Element&);
     bool handleTouchEvent(Node&);
     void didCommitLoad(Document*);
+    void frameOwnerContentFrameChanged(HTMLFrameOwnerElement&);
     void frameDocumentUpdated(LocalFrame&);
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
@@ -254,6 +256,7 @@ private:
     // Node-related methods.
     Inspector::Protocol::DOM::NodeId bind(Node&);
     void unbind(Node&);
+    void resendFrameOwner(HTMLFrameOwnerElement&);
 
     Node* assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Element* assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);

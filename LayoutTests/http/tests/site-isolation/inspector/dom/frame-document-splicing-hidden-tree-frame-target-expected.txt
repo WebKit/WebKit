@@ -1,0 +1,25 @@
+Test that a nested cross-origin frame's document is spliced into the page tree, not into a hidden frame target tree that happened to load its <iframe> first.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentSplicing.HiddenTree
+-- Running test case: Setup
+PASS: Should find the main frame target.
+PASS: Should find the middle frame target.
+PASS: Should find the inner frame target.
+PASS: All three frame targets should be distinct.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.HiddenTree.MainFrameTargetTreeFirst
+PASS: The inner frame's document should not be spliced in yet.
+PASS: Should push the inner frame's <iframe> into the main frame target's tree.
+PASS: Should find the inner frame's <iframe> in the page tree.
+PASS: The inner frame's document should be in the page tree.
+PASS: The inner frame's document should be spliced into the page tree's <iframe>.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.HiddenTree.MiddleFrameTargetTreeFirst
+PASS: The inner frame's document should not be spliced in yet.
+PASS: Should push the inner frame's <iframe> into the middle frame target's tree.
+PASS: Should find the inner frame's <iframe> in the page tree.
+PASS: The inner frame's document should be in the page tree.
+PASS: The inner frame's document should be spliced into the page tree's <iframe>.
+

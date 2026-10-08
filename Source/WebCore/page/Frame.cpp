@@ -34,6 +34,7 @@
 #include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
+#include "InspectorInstrumentation.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameView.h"
 #include "NavigationScheduler.h"
@@ -309,6 +310,7 @@ void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
     if (element) {
         element->clearContentFrame();
         element->setContentFrame(*this);
+        InspectorInstrumentation::frameOwnerContentFrameChanged(protect(element->document()), *element);
     }
     updateScrollingMode();
 }

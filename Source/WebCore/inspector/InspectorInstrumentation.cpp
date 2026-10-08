@@ -47,6 +47,7 @@
 #include "FrameInspectorController.h"
 #include "FrameRuntimeAgent.h"
 #include "GPUCanvasContext.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
@@ -996,6 +997,19 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
         if (CheckedPtr pageTimelineAgent = instrumentingAgents.trackingPageTimelineAgent())
             pageTimelineAgent->mainFrameNavigated();
     }
+}
+
+void InspectorInstrumentation::frameOwnerContentFrameChangedImpl(InstrumentingAgents& instrumentingAgents, HTMLFrameOwnerElement& frameOwner)
+{
+    if (!instrumentingAgents.developerExtrasEnabled()) [[likely]]
+        return;
+
+    if (RefPtr frame = frameOwner.document().frame()) {
+        if (CheckedPtr frameDOMAgent = frame->inspectorController().instrumentingAgents().persistentFrameDOMAgent())
+            frameDOMAgent->frameOwnerContentFrameChanged(frameOwner);
+    }
+    if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->frameOwnerContentFrameChanged(frameOwner);
 }
 
 void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
