@@ -208,7 +208,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Ended) {
         // FIXME: This triggers the rubberband timer even when we don't start rubberbanding.
-        startRubberBandAnimationIfNecessary();
+        startRubberBandAnimationIfNecessary(wheelEvent);
         updateRubberBandingState();
         return true;
     }
@@ -287,7 +287,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 if (canStartAnimation && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
-                    startRubberBandAnimationIfNecessary();
+                    startRubberBandAnimationIfNecessary(wheelEvent);
                 }
             }
         } else {
@@ -763,7 +763,7 @@ void ScrollingEffectsController::rubberBandTargetOffsetDidChange()
     startRubberBandAnimation({ }, stretchAmount);
 }
 
-void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
+void ScrollingEffectsController::startRubberBandAnimationIfNecessary(const PlatformWheelEvent& wheelEvent)
 {
     auto timeDelta = MonotonicTime::now() - m_lastMomentumScrollTimestamp;
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
@@ -782,6 +782,16 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
         return;
 
     auto initialVelocity = m_momentumVelocity;
+
+    bool allowsDiagonalRubberbanding = wheelEvent.inputSource() == MouseEventInputSource::Automation;
+    if (allowsDiagonalRubberbanding) {
+        bool isHorizontallyStretched = stretchAmount.width() || targetOffset.x() != contrainedOffset.x() || m_stretchScrollForce.width();
+        bool isVerticallyStretched = stretchAmount.height() || targetOffset.y() != contrainedOffset.y() || m_stretchScrollForce.height();
+        if (!isHorizontallyStretched)
+            initialVelocity.setWidth(0);
+        if (!isVerticallyStretched)
+            initialVelocity.setHeight(0);
+    }
 
     // Just like normal scrolling, prefer vertical rubberbanding
     if (std::abs(initialVelocity.height()) >= std::abs(initialVelocity.width()))
