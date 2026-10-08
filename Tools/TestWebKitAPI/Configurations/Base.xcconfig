@@ -146,6 +146,7 @@ SWIFT_OBJC_INTEROP_MODE_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = $(inherited);
 
 _SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP = $(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP);
 
-OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.$(arch).resp $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP));
+// FIXME(rdar://189512794): remove -enable-cross-import-overlays when resolved
+OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.$(arch).resp $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)) -Xfrontend -enable-cross-import-overlays;
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b -no-verify-emitted-module-interface;
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = ;
