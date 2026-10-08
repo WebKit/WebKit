@@ -144,6 +144,10 @@ class GLibPort(Port):
             # disable color output, making -stderr files more human-readable.
             environment['GST_DEBUG_NO_COLOR'] = '1'
 
+        # Disable the Ogg container support for playback. The WPT and WebKit media tests will
+        # fallback to mp4, nowadays likely the most common container used for playback on the Web.
+        environment['WEBKIT_GST_DISABLE_OGG_PLAYBACK'] = '1'
+
         environment['WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS'] = '1'
 
         # Fake a sound card with 2 output channels. Apparently we cannot assume test bots have an
