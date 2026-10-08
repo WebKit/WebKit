@@ -30,9 +30,12 @@
 #ifdef __cplusplus
 
 #import <WebKit/WKWebViewPrivate.h>
+#import <array>
+#import <string>
 #import <utility>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/ASCIILiteral.h>
+#import <wtf/text/MakeString.h>
 
 @class TestNavigationDelegate;
 @class TestWKWebView;
@@ -58,6 +61,39 @@ void enableSiteIsolation(WKWebViewConfiguration *);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect, bool enable);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect = CGRectZero);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer&, CGRect = CGRectZero);
+
+struct SiteIsolationParams {
+    bool crossOrigin;
+    bool siteIsolationEnabled;
+    bool sharedProcessEnabled;
+
+    bool isCrossOriginWithSiteIsolation() const { return crossOrigin && siteIsolationEnabled; }
+
+    String subframeURL(ASCIILiteral path) const { return makeString(crossOrigin ? "https://webkit.org"_s : "https://example.com"_s, path); }
+
+    void applyTo(WKWebViewConfiguration *configuration) const
+    {
+        setFeatureEnabled(configuration, @"SiteIsolationEnabled", siteIsolationEnabled);
+        setFeatureEnabled(configuration, @"SiteIsolationSharedProcessEnabled", sharedProcessEnabled);
+    }
+
+    std::string testName() const
+    {
+        return std::string { crossOrigin ? "CrossOrigin" : "SameOrigin" }
+            + "_SiteIsolation" + (siteIsolationEnabled ? "Enabled" : "Disabled")
+            + "_SiteIsolationSharedProcess" + (sharedProcessEnabled ? "Enabled" : "Disabled");
+    }
+};
+
+// Site isolation ignores the shared process preference when disabled, so skip that combination.
+inline constexpr std::array siteIsolationParams {
+    SiteIsolationParams { .crossOrigin = false, .siteIsolationEnabled = false, .sharedProcessEnabled = false },
+    SiteIsolationParams { .crossOrigin = false, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
+    SiteIsolationParams { .crossOrigin = false, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = false, .sharedProcessEnabled = false },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
+};
 
 // Some main frame text and a 400x300 cross-origin iframe with id 'iframe', loaded from https://webkit.org/iframe.
 static constexpr auto mainFrameTextWithCrossOriginIframe = "<body style='margin: 0'>main frame text<iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
