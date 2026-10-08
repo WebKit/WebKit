@@ -102,6 +102,7 @@ public:
     void didEndMagnificationGesture();
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
     void mainFramePageScaleFactorDidChange();
+    void pageScaleFactorDidChange();
     double pageScaleFactor() const;
     void pluginScaleFactorDidChange();
 #if ENABLE(TWO_PHASE_CLICKS)
