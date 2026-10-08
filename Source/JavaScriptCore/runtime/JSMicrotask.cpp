@@ -916,7 +916,7 @@ static void runPromiseFinallyReactionJob(JSGlobalObject*, VM& vm, InternalMicrot
     JSValue error;
     {
         auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-        result = callMicrotask(globalObject, onFinally, jsUndefined(), dynamicCastToCell(onFinally), "onFinally is not a function"_s, microtaskCallCache);
+        result = callMicrotask(globalObject, onFinally, jsUndefined(), resultPromise, "onFinally is not a function"_s, microtaskCallCache);
         if (catchScope.exception()) {
             error = catchScope.exception()->value();
             if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
@@ -1898,11 +1898,15 @@ static void runPromiseReactionJob(JSGlobalObject* globalObject, VM& vm, Internal
     JSValue promiseOrCapability = argument0;
     JSValue handler = argument1;
 
+    JSCell* exceptionContext = dynamicDowncast<JSPromise>(promiseOrCapability);
+    if (!exceptionContext)
+        exceptionContext = dynamicCastToCell(handler);
+
     JSValue result;
     JSValue error;
     {
         auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-        result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), "handler is not a function"_s, microtaskCallCache, argument2);
+        result = callMicrotask(globalObject, handler, jsUndefined(), exceptionContext, "handler is not a function"_s, microtaskCallCache, argument2);
         if (catchScope.exception()) {
             if (promiseOrCapability.isUndefinedOrNull()) {
                 scope.release();

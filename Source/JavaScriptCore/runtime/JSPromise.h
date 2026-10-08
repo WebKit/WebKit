@@ -113,6 +113,8 @@ public:
 
     JSValue asyncStackTraceContext() const;
 
+    bool hasUnhandledRejectionChain() const;
+
     JS_EXPORT_PRIVATE static JSPromise* resolvedPromise(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
 
