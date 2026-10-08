@@ -132,6 +132,7 @@ private:
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
     void dispatchDidCommitLoad(const std::optional<WebCore::BackForwardCacheCommitData>&) final;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&, WebCore::WillContinueLoading, WebCore::WillInternallyHandleFailure) final;
+    void dispatchDidBlockNavigationByContentPolicy(const URL& blockedURL) final;
     void dispatchDidFailLoad(const WebCore::ResourceError&) final;
     void dispatchDidFinishDocumentLoad() final;
     void dispatchDidFinishLoad() final;

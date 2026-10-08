@@ -185,6 +185,12 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     if (isSameDocumentNavigation == IsSameDocumentNavigation::No
         && !isAllowedByContentSecurityPolicy(request.url(), frameOwnerElement.get(), !redirectResponse.isNull())) {
         if (frameOwnerElement) {
+            // Report the terminally-blocked child-frame navigation to the client, but only on the
+            // initial check: a block on a redirect is already reported through the provisional-load
+            // failure path.
+            if (redirectResponse.isNull())
+                frameLoader->client().dispatchDidBlockNavigationByContentPolicy(request.url());
+
             // Fire a load event (even though we were blocked by CSP) as timing attacks would otherwise
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
             frameOwnerElement->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
