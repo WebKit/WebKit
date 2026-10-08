@@ -38,6 +38,8 @@ bool FixedContainerEdges::hasFixedEdge(BoxSide side) const
         return type != PredominantColorType::None;
     }, [&](const Color&) {
         return true;
+    }, [&](FrameIdentifier) {
+        return true;
     }), colors.at(side));
 }
 
@@ -54,6 +56,8 @@ BoxSideSet FixedContainerEdges::fixedEdges() const
 Color FixedContainerEdges::predominantColor(BoxSide side) const
 {
     return WTF::visit(WTF::makeVisitor([&](PredominantColorType) -> Color {
+        return { };
+    }, [&](FrameIdentifier) -> Color {
         return { };
     }, [&](const Color& color) {
         return color;
