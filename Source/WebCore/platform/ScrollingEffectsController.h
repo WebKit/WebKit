@@ -244,7 +244,7 @@ private:
 
     FloatSize deltaAlignedToPredominantGestureAxis(MonotonicTime, FloatSize);
 
-    void startRubberBandAnimationIfNecessary();
+    void startRubberBandAnimationIfNecessary(const PlatformWheelEvent&);
 
     bool startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
     bool startRubberBandAnimationWithElapsedTime(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, Seconds alreadyElapsed, std::optional<FloatSize> targetOverscroll = std::nullopt);

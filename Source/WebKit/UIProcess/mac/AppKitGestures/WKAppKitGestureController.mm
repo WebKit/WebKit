@@ -875,6 +875,28 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return isRecognizingTransformGesture;
 }
 
+- (BOOL)_isTransformGestureActiveOrEnding
+{
+    auto isActiveOrEnding = [](NSGestureRecognizer *gesture) {
+        switch ([gesture state]) {
+        case NSGestureRecognizerStateBegan:
+        case NSGestureRecognizerStateChanged:
+        case NSGestureRecognizerStateEnded:
+            return true;
+        default:
+            return false;
+        }
+    };
+
+    bool transformGestureIsActiveOrEnding = isActiveOrEnding(_magnificationGestureRecognizer);
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    transformGestureIsActiveOrEnding = transformGestureIsActiveOrEnding || isActiveOrEnding(_rotationGestureRecognizer);
+#endif
+
+    return transformGestureIsActiveOrEnding;
+}
+
 - (BOOL)_shouldSuppressMouseTrackingForTransformGesture
 {
     static constexpr Seconds transformGestureDriveTimeout = 50_ms;
@@ -896,8 +918,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)_transformGestureDidEnd
 {
-    if (![self _isRecognizingTransformGesture])
-        _contentDeclinedTransformGesture = false;
+    if ([self _isRecognizingTransformGesture])
+        return;
+
+    _contentDeclinedTransformGesture = false;
+    [self _resetCaughtDeceleratingScroll];
 }
 
 - (void)_transformGestureDidDrive
@@ -2029,6 +2054,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (![self supportsMomentumScroll:gesture])
         return;
 
+    // Momentum started now would scroll out of sight and then show up all at once.
+    if ([self _isTransformGestureActiveOrEnding]) {
+        _fastScrollTracker->reset();
+        return;
+    }
+
     auto unfilteredVelocity = WebCore::toFloatSize(WebCore::FloatPoint { [self panVelocityInView:webView.get()] });
 
     // Continue the scroll along the same axis the drag was locked to rather than reintroducing
@@ -2362,11 +2393,7 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
         return NO;
 
     if ([self _isMouseTrackingGestureRecognizer:gesture]
-        || gesture == _panGestureRecognizer
-        || gesture == _magnificationGestureRecognizer
-#if ENABLE(MAC_GESTURE_EVENTS)
-        || gesture == _rotationGestureRecognizer
-#endif
+        || [self _isOurManipulationGestureRecognizer:gesture]
         || gesture == _doubleClickGestureRecognizer
         || gesture == _singleClickGestureRecognizer
         || gesture == _dragPressGestureRecognizer
@@ -2504,12 +2531,13 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
     // While catching a decelerating scroll, only select gestures are allowed to begin:
     // - single click, so it can reset the interruption state
     // - mouse tracking or pan, so they can continue with successive scrolls (scrollbar drag for the former)
+    // - magnification or rotation, so they can continue with simultaneous manipulation gestures
     if (_caughtDeceleratingScroll) {
         if (gestureRecognizer == _singleClickGestureRecognizer)
             return YES;
         if ([self _isMouseTrackingGestureRecognizer:gestureRecognizer] && [self _isPointInScrollbar:locationInViewCoordinates])
             return YES;
-        if (gestureRecognizer != _panGestureRecognizer)
+        if (![self _isOurManipulationGestureRecognizer:gestureRecognizer])
             return NO;
     }
 
@@ -2555,13 +2583,20 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
     return YES;
 }
 
+- (BOOL)_isOurManipulationGestureRecognizer:(NSGestureRecognizer *)gesture
+{
+    bool isOurManipulationGestureRecognizer = gesture == _panGestureRecognizer || gesture == _magnificationGestureRecognizer;
+#if ENABLE(MAC_GESTURE_EVENTS)
+    isOurManipulationGestureRecognizer = isOurManipulationGestureRecognizer || gesture == _rotationGestureRecognizer;
+#endif
+    return isOurManipulationGestureRecognizer;
+}
+
 - (BOOL)_isSomeManipulationGestureRecognizer:(NSGestureRecognizer *)gesture
 {
-    return gesture == _panGestureRecognizer
+    return [self _isOurManipulationGestureRecognizer:gesture]
         || isBuiltInScrollViewPanGestureRecognizer(gesture)
-        || gesture == _magnificationGestureRecognizer
-        || isBuiltInScrollViewMagnificationGestureRecognizer(gesture)
-        || gesture == _rotationGestureRecognizer;
+        || isBuiltInScrollViewMagnificationGestureRecognizer(gesture);
 }
 
 - (BOOL)_gestureRecognizer:(NSGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(NSGestureRecognizer *)preventedGestureRecognizer
