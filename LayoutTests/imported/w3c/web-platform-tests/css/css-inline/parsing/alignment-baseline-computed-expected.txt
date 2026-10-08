@@ -1,11 +1,11 @@
 
 PASS Property alignment-baseline value 'baseline'
-FAIL Property alignment-baseline value 'text-bottom' assert_true: 'text-bottom' is a supported value for alignment-baseline. expected true got false
+PASS Property alignment-baseline value 'text-bottom'
 PASS Property alignment-baseline value 'alphabetic'
 PASS Property alignment-baseline value 'ideographic'
 PASS Property alignment-baseline value 'middle'
 PASS Property alignment-baseline value 'central'
 PASS Property alignment-baseline value 'mathematical'
 PASS Property alignment-baseline value 'hanging'
-FAIL Property alignment-baseline value 'text-top' assert_true: 'text-top' is a supported value for alignment-baseline. expected true got false
+PASS Property alignment-baseline value 'text-top'
 

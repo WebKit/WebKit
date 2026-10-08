@@ -1120,11 +1120,11 @@ enum class GlyphOrientation : uint8_t {
 enum class AlignmentBaseline : uint8_t {
     Baseline,
     BeforeEdge,
-    TextBeforeEdge,
+    TextTop,
     Middle,
     Central,
     AfterEdge,
-    TextAfterEdge,
+    TextBottom,
     Ideographic,
     Alphabetic,
     Hanging,
@@ -1139,8 +1139,8 @@ enum class DominantBaseline : uint8_t {
     Mathematical,
     Central,
     Middle,
-    TextAfterEdge,
-    TextBeforeEdge
+    TextBottom,
+    TextTop
 };
 
 enum class VectorEffect : uint8_t {
