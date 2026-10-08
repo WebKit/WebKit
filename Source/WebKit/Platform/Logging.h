@@ -195,6 +195,17 @@ WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #ifdef __cplusplus
 }
+
+namespace WebKit {
+
+// Lets Swift name a channel, e.g. WebKit.LogChannel.BackForward(), since it cannot use LOG_CHANNEL.
+struct LogChannel {
+#define DEFINE_LOG_CHANNEL_ACCESSOR(name) static WTFLogChannel& name() { return LOG_CHANNEL(name); }
+    WEBKIT2_LOG_CHANNELS(DEFINE_LOG_CHANNEL_ACCESSOR)
+#undef DEFINE_LOG_CHANNEL_ACCESSOR
+};
+
+} // namespace WebKit
 #endif
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

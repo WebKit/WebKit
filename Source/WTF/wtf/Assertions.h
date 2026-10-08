@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/StdIntExtras.h>
+#include <wtf/SwiftBridging.h>
 
 #if OS(ANDROID)
 #include <android/log.h>
@@ -171,7 +172,8 @@ typedef uint8_t WTFLogChannelState;
 typedef uint8_t WTFLogLevel;
 #endif
 
-typedef struct {
+// Channels are global variables that are never destroyed.
+typedef struct SWIFT_IMMORTAL_REFERENCE WTFLogChannel {
     WTFLogChannelState state;
     const char* name;
     WTFLogLevel level;
@@ -850,28 +852,22 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
 
 #elif OS(ANDROID)
 
-#define LOG_ANDROID_SEND(channel, priority, fmt, ...) do { \
-    auto& logChannel = LOG_CHANNEL(channel); \
-    if (logChannel.state != WTFLogChannelState::Off) \
-        __android_log_print(ANDROID_LOG_ ## priority, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] " fmt, logChannel.name WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
+// WTF_RELEASE_LOG_SEND is the only implementation of RELEASE_LOG for each non-os_log platform.
+// WTF::releaseLogPreformatted() also uses it, so that Swift shares the backend.
+#define WTF_RELEASE_LOG_PRIORITY_DEFAULT ANDROID_LOG_VERBOSE
+#define WTF_RELEASE_LOG_PRIORITY_INFO ANDROID_LOG_INFO
+#define WTF_RELEASE_LOG_PRIORITY_DEBUG ANDROID_LOG_DEBUG
+#define WTF_RELEASE_LOG_PRIORITY_ERROR ANDROID_LOG_ERROR
+#define WTF_RELEASE_LOG_PRIORITY_FAULT ANDROID_LOG_FATAL
+#define WTF_RELEASE_LOG_WITH_LEVEL_PRIORITY(logLevel) WTF_RELEASE_LOG_PRIORITY_DEFAULT
+
+#define WTF_RELEASE_LOG_SEND(logChannel, priority, file, line, function, fmt, ...) do { \
+    auto& wtfLogChannel = (logChannel); \
+    if (wtfLogChannel.state != WTFLogChannelState::Off) \
+        __android_log_print(priority, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] " fmt, wtfLogChannel.name WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
 } while (0)
 
-#define RELEASE_LOG(channel, ...) LOG_ANDROID_SEND(channel, VERBOSE, __VA_ARGS__)
-#define RELEASE_LOG_ERROR(channel, ...) LOG_ANDROID_SEND(channel, ERROR, __VA_ARGS__)
-#define RELEASE_LOG_FAULT(channel, ...) LOG_ANDROID_SEND(channel, FATAL, __VA_ARGS__)
 #define RELEASE_LOG_FAULT_WITH_PAYLOAD(channel, format, ...) RELEASE_LOG_FAULT(channel, format __VA_OPT__(, __VA_ARGS__))
-#define RELEASE_LOG_INFO(channel, ...) LOG_ANDROID_SEND(channel, INFO, __VA_ARGS__)
-#define RELEASE_LOG_DEBUG(channel, ...) LOG_ANDROID_SEND(channel, DEBUG, __VA_ARGS__)
-
-#define RELEASE_LOG_WITH_LEVEL(channel, logLevel, ...) do { \
-    if (LOG_CHANNEL(channel).level >= (logLevel)) \
-        LOG_ANDROID_SEND(channel, VERBOSE, __VA_ARGS__); \
-} while (0)
-
-#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, logLevel, ...) do { \
-    if ((isAllowed) && LOG_CHANNEL(channel).level >= (logLevel)) \
-        LOG_ANDROID_SEND(channel, VERBOSE, __VA_ARGS__); \
-} while (0)
 
 #elif ENABLE(JOURNALD_LOG)
 
@@ -901,68 +897,72 @@ inline const char* wtfLogPriorityName(int priority)
     }
 }
 
-#define JOURNAL_FALLBACK_LOGF(logChannel, priority, file, line, function, fmt, ...) do { \
-    IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call") \
-    fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%s] " fmt " [" file ":" line " %s]\n", logChannel.name, wtfLogPriorityName(priority) WTF_LOG_PRINTF_ARGS(__VA_ARGS__), function); \
-    IGNORE_WARNINGS_END \
-} while (0)
+#define WTF_RELEASE_LOG_PRIORITY_DEFAULT LOG_NOTICE
+#define WTF_RELEASE_LOG_PRIORITY_INFO LOG_INFO
+#define WTF_RELEASE_LOG_PRIORITY_DEBUG LOG_DEBUG
+#define WTF_RELEASE_LOG_PRIORITY_ERROR LOG_ERR
+#define WTF_RELEASE_LOG_PRIORITY_FAULT LOG_CRIT
+#define WTF_RELEASE_LOG_WITH_LEVEL_PRIORITY(logLevel) WTF_RELEASE_LOG_PRIORITY_INFO
 
-#define SD_JOURNAL_SEND(channel, priority, file, line, function, fmt, ...) do { \
+// The CODE_* fields are what sd_journal_send_with_location() adds, but this form also accepts a location that is not a literal.
+#define WTF_RELEASE_LOG_SEND(logChannel, priority, file, line, function, fmt, ...) do { \
     IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-format-attr-call") \
     wtfCompileTimeCheckPrintfSpecifier(fmt WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
-    auto& logChannel = LOG_CHANNEL(channel); \
-    if (logChannel.state != WTFLogChannelState::Off) { \
+    auto& wtfLogChannel = (logChannel); \
+    if (wtfLogChannel.state != WTFLogChannelState::Off) { \
         if (WTFShouldLogToJournal()) \
-            sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", logChannel.name, "PRIORITY=%u", static_cast<unsigned>(priority), "MESSAGE=" fmt WTF_LOG_PRINTF_ARGS(__VA_ARGS__), nullptr); \
-        else \
-            JOURNAL_FALLBACK_LOGF(logChannel, priority, file, line, function, fmt __VA_OPT__(, __VA_ARGS__)); \
+            sd_journal_send("CODE_FILE=%s", file, "CODE_LINE=%u", static_cast<unsigned>(line), "CODE_FUNC=%s", function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", wtfLogChannel.name, "PRIORITY=%u", static_cast<unsigned>(priority), "MESSAGE=" fmt WTF_LOG_PRINTF_ARGS(__VA_ARGS__), nullptr); \
+        else { \
+            IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call") \
+            fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%s] " fmt " [%s:%u %s]\n", wtfLogChannel.name, wtfLogPriorityName(priority) WTF_LOG_PRINTF_ARGS(__VA_ARGS__), file, static_cast<unsigned>(line), function); /* NOLINT(safercpp/printf): SAFE_FPRINTF rejects the const char* arguments that the logging macros accept. */ \
+            IGNORE_WARNINGS_END \
+        } \
     } \
     IGNORE_WARNINGS_END \
 } while (0)
 
-#define RELEASE_LOG(channel, ...) SD_JOURNAL_SEND(channel, LOG_NOTICE, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
-#define RELEASE_LOG_ERROR(channel, ...) SD_JOURNAL_SEND(channel, LOG_ERR, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
-#define RELEASE_LOG_FAULT(channel, ...) SD_JOURNAL_SEND(channel, LOG_CRIT, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
 #define RELEASE_LOG_FAULT_WITH_PAYLOAD(channel, format, ...) RELEASE_LOG_FAULT(channel, format __VA_OPT__(, SAFE_PRINTF_TYPE(__VA_ARGS__)))
-#define RELEASE_LOG_INFO(channel, ...) SD_JOURNAL_SEND(channel, LOG_INFO, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
-#define RELEASE_LOG_DEBUG(channel, ...) SD_JOURNAL_SEND(channel, LOG_DEBUG, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__)
-
-#define RELEASE_LOG_WITH_LEVEL(channel, logLevel, ...) do { \
-    if (LOG_CHANNEL(channel).level >= (logLevel)) \
-        SD_JOURNAL_SEND(channel, LOG_INFO, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__); \
-} while (0)
-
-#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, logLevel, ...) do { \
-    if ((isAllowed) && LOG_CHANNEL(channel).level >= (logLevel)) \
-        SD_JOURNAL_SEND(channel, LOG_INFO, __FILE__, _STRINGIFY(__LINE__), __func__, __VA_ARGS__); \
-} while (0)
 
 #else
 
-#define LOGF(channel, priority, fmt, ...) do { \
-    auto& logChannel = LOG_CHANNEL(channel); \
-    if (logChannel.state != WTFLogChannelState::Off) { \
+#define WTF_RELEASE_LOG_PRIORITY_DEFAULT 4
+#define WTF_RELEASE_LOG_PRIORITY_INFO 3
+#define WTF_RELEASE_LOG_PRIORITY_DEBUG 4
+#define WTF_RELEASE_LOG_PRIORITY_ERROR 1
+#define WTF_RELEASE_LOG_PRIORITY_FAULT 2
+#define WTF_RELEASE_LOG_WITH_LEVEL_PRIORITY(logLevel) (logLevel)
+
+#define WTF_RELEASE_LOG_SEND(logChannel, priority, file, line, function, fmt, ...) do { \
+    auto& wtfLogChannel = (logChannel); \
+    if (wtfLogChannel.state != WTFLogChannelState::Off) { \
         IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call") \
-        fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%u] " fmt "\n", logChannel.name, static_cast<unsigned>(priority) WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
+        fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%u] " fmt "\n", wtfLogChannel.name, static_cast<unsigned>(priority) WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); /* NOLINT(safercpp/printf): SAFE_FPRINTF rejects the const char* arguments that the logging macros accept. */ \
         IGNORE_WARNINGS_END \
     } \
 } while (0)
 
-#define RELEASE_LOG(channel, ...) LOGF(channel, 4, __VA_ARGS__)
-#define RELEASE_LOG_ERROR(channel, ...) LOGF(channel, 1, __VA_ARGS__)
-#define RELEASE_LOG_FAULT(channel, ...) LOGF(channel, 2, __VA_ARGS__)
 #define RELEASE_LOG_FAULT_WITH_PAYLOAD(channel, format, ...) RELEASE_LOG_FAULT(channel, format __VA_OPT__(, __VA_ARGS__))
-#define RELEASE_LOG_INFO(channel, ...) LOGF(channel, 3, __VA_ARGS__)
-#define RELEASE_LOG_DEBUG(channel, ...) LOGF(channel, 4, __VA_ARGS__)
+
+#endif
+
+#if !RELEASE_LOG_DISABLED && !USE(OS_LOG)
+
+#define WTF_RELEASE_LOG_AT(channel, priority, ...) WTF_RELEASE_LOG_SEND(LOG_CHANNEL(channel), priority, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+#define RELEASE_LOG(channel, ...) WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_PRIORITY_DEFAULT, __VA_ARGS__)
+#define RELEASE_LOG_ERROR(channel, ...) WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_PRIORITY_ERROR, __VA_ARGS__)
+#define RELEASE_LOG_FAULT(channel, ...) WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_PRIORITY_FAULT, __VA_ARGS__)
+#define RELEASE_LOG_INFO(channel, ...) WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_PRIORITY_INFO, __VA_ARGS__)
+#define RELEASE_LOG_DEBUG(channel, ...) WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_PRIORITY_DEBUG, __VA_ARGS__)
 
 #define RELEASE_LOG_WITH_LEVEL(channel, logLevel, ...) do { \
     if (LOG_CHANNEL(channel).level >= (logLevel)) \
-        LOGF(channel, logLevel, __VA_ARGS__); \
+        WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_WITH_LEVEL_PRIORITY(logLevel), __VA_ARGS__); \
 } while (0)
 
 #define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, logLevel, ...) do { \
     if ((isAllowed) && LOG_CHANNEL(channel).level >= (logLevel)) \
-        LOGF(channel, logLevel, __VA_ARGS__); \
+        WTF_RELEASE_LOG_AT(channel, WTF_RELEASE_LOG_WITH_LEVEL_PRIORITY(logLevel), __VA_ARGS__); \
 } while (0)
 
 #endif
