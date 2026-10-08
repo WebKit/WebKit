@@ -58,6 +58,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
     SetNeedsFixedContainerEdgesUpdate()
+    SetFixedContainerEdgeSamplingSides(WebCore::FrameIdentifier frameID, WebCore::RectEdges<bool> sides)
 
     ViewWillStartLiveResize()
     ViewWillEndLiveResize()

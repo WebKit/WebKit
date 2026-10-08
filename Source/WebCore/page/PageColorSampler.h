@@ -31,8 +31,10 @@
 namespace WebCore {
 
 class LayoutRect;
+class LocalFrame;
 class Page;
 
+enum class BoxSide : uint8_t;
 enum class PredominantColorType : uint8_t;
 
 class PageColorSampler {
@@ -41,7 +43,10 @@ public:
     WEBCORE_EXPORT static bool colorsAreSimilar(const Color&, const Color&);
 
     static constexpr auto nearlyTransparentAlphaThreshold = 0.1;
-    static Variant<PredominantColorType, Color> predominantColor(Page&, const LayoutRect&);
+    static constexpr auto fixedContainerSampleRectMargin = 4;
+    WEBCORE_EXPORT static LayoutRect fixedContainerSampleRect(const LayoutRect&, BoxSide);
+    WEBCORE_EXPORT static Color finishedFixedContainerColor(const Color&, bool isDimmingLayer, const Color& pageBackgroundColor);
+    WEBCORE_EXPORT static Variant<PredominantColorType, Color> predominantColor(LocalFrame&, const LayoutRect&);
 };
 
 } // namespace WebCore

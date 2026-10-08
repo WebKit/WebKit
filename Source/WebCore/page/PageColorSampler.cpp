@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PageColorSampler.h"
 
+#include "BoxSides.h"
+#include "ColorBlending.h"
 #include "ColorHash.h"
 #include "ColorSerialization.h"
 #include "ContentfulPaintChecker.h"
@@ -42,6 +44,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "LayoutRect.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
@@ -296,17 +299,42 @@ bool PageColorSampler::colorsAreSimilar(const Color& a, const Color& b)
     return distance <= maxDistanceSquaredForSimilarColors;
 }
 
-Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteRect)
+LayoutRect PageColorSampler::fixedContainerSampleRect(const LayoutRect& rect, BoxSide side)
 {
-    RefPtr frame = page.localMainFrame();
-    if (!frame)
-        return PredominantColorType::None;
+    static constexpr auto sampleRectThickness = 2;
 
-    RefPtr view = frame->view();
+    switch (side) {
+    case BoxSide::Top:
+        return { rect.minXMinYCorner(), LayoutPoint { rect.maxX(), rect.y() + sampleRectThickness } };
+    case BoxSide::Left:
+        return { rect.minXMinYCorner(), LayoutPoint { rect.x() + sampleRectThickness, rect.maxY() } };
+    case BoxSide::Right:
+        return { LayoutPoint { rect.maxX() - sampleRectThickness, rect.y() }, rect.maxXMaxYCorner() };
+    case BoxSide::Bottom:
+        return { LayoutPoint { rect.x(), rect.maxY() - sampleRectThickness }, rect.maxXMaxYCorner() };
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+Color PageColorSampler::finishedFixedContainerColor(const Color& color, bool isDimmingLayer, const Color& pageBackgroundColor)
+{
+    static constexpr auto minimumOpacityThresholdToClampToSolidColor = 0.75;
+
+    if (isDimmingLayer || color.alphaAsFloat() < minimumOpacityThresholdToClampToSolidColor)
+        return color.isOpaque() ? color : blendSourceOver(pageBackgroundColor, color);
+
+    return color.colorWithAlpha(1);
+}
+
+Variant<PredominantColorType, Color> PageColorSampler::predominantColor(LocalFrame& frame, const LayoutRect& absoluteRect)
+{
+    RefPtr view = frame.view();
     if (!view)
         return PredominantColorType::None;
 
-    RefPtr document = frame->document();
+    RefPtr document = frame.document();
     if (!document)
         return PredominantColorType::None;
 
@@ -319,7 +347,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     };
 
     auto colorSpace = ColorSpace::SRGB();
-    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
+    auto snapshot = snapshotFrameRect(frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return PredominantColorType::None;
 

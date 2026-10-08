@@ -41,6 +41,7 @@
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/Element.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FocusOptions.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameTreeSyncData.h>
@@ -2269,6 +2270,8 @@ public:
     bool shouldSendConsoleLogsToUIProcessForTesting() const { return m_shouldSendConsoleLogsToUIProcessForTesting; }
 
     void setNeedsFixedContainerEdgesUpdate() { m_needsFixedContainerEdgesUpdate = true; }
+    bool samplesFixedContainerEdges() const { return !m_fixedContainerEdgeSampling.isEmpty(); }
+    Vector<std::pair<WebCore::FrameIdentifier, WebCore::FixedContainerEdges>> sampleFixedContainerEdges(const Vector<WebCore::FrameIdentifier>& rootsWithLayerChanges);
 
     RefPtr<WebCore::MediaSessionManagerInterface> mediaSessionManager() const;
     WebCore::MediaSessionManagerInterface* NODELETE mediaSessionManagerIfExists() const;
@@ -2872,6 +2875,8 @@ private:
 
     void requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&&);
 
+    void setFixedContainerEdgeSamplingSides(WebCore::FrameIdentifier, WebCore::RectEdges<bool>);
+
     void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&&);
     void requestAllTargetableElements(float, CompletionHandler<void(Vector<Vector<WebCore::TargetedElementInfo>>&&)>&&);
 
@@ -3422,6 +3427,11 @@ private:
     };
     std::optional<RemoteSnapshotState> m_remoteSnapshotState;
 #endif
+    struct FixedContainerEdgeSampling {
+        WebCore::RectEdges<bool> sides;
+        std::optional<WebCore::FixedContainerEdges> lastSent;
+    };
+    HashMap<WebCore::FrameIdentifier, FixedContainerEdgeSampling> m_fixedContainerEdgeSampling;
 #if PLATFORM(GTK)
     WebCore::Color m_accentColor;
 #endif

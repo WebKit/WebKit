@@ -484,10 +484,9 @@ void PageClientImplCocoa::didCommitLayerTree(const RemoteLayerTreeTransaction& t
     [webView() _updateScrollGeometryWithContentOffset:transaction.scrollPosition() contentSize:transaction.scrollGeometryContentSize()];
 }
 
-void PageClientImplCocoa::didCommitMainFrameData(const MainFrameData& mainFrameData)
+void PageClientImplCocoa::didUpdateFixedContainerEdges(const WebCore::FixedContainerEdges& edges)
 {
-    if (mainFrameData.fixedContainerEdges)
-        [webView() _updateFixedContainerEdges:*mainFrameData.fixedContainerEdges];
+    [webView() _updateFixedContainerEdges:edges];
 }
 
 #if ENABLE(TWO_PHASE_CLICKS)
