@@ -1,0 +1,6 @@
+
+PASS Should have a feature for `lineItemTypeEstimated`.
+PASS Should propagate an `"estimated"` `type` for `total`.
+PASS Should propagate an `"estimated"` `type` for `additionalLineItems`.
+PASS Should allow an `"estimated"` `type` together with a `"recurring"` `paymentTiming`.
+

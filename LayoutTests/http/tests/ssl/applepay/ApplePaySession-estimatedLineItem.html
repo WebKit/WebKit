@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Test creating an ApplePaySession with an \"estimated\" line item type.");
+
+window.jsTestIsAsync = true;
+
+function validRequest() {
+    return {
+          countryCode: 'US',
+          currencyCode: 'USD',
+          supportedNetworks: ['visa', 'masterCard'],
+          merchantCapabilities: ['supports3DS'],
+          total: { label: 'Your Label', amount: '10.00' },
+    }
+}
+
+function logAndShouldThrow(setup, test) {
+    debug("SETUP: " + setup)
+    eval(setup);
+    shouldThrow(test);
+    debug("")
+}
+
+function logAndShouldNotThrow(setup, test) {
+    debug("SETUP: " + setup)
+    eval(setup);
+    shouldNotThrow(test);
+    debug("")
+}
+
+function go() {
+    debug("Testing PaymentRequest.features")
+    debug("");
+    logAndShouldThrow("request = validRequest(); request.features = ['invalidFeatureThatsNotLineItemTypeEstimated'];", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.features = ['lineItemTypeEstimated'];", "new ApplePaySession(2, request)")
+
+    debug("Testing PaymentRequest.total")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'estimated' };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', type: 'estimated' };", "new ApplePaySession(2, request)")
+
+    debug("Testing PaymentRequest.lineItems")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.lineItems = [{ label: 'label', amount: '10.00', type: 'estimated' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [{ label: 'label', type: 'estimated' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [{ label: 'label', amount: '', type: 'estimated' }];", "new ApplePaySession(2, request)")
+
+    document.querySelector("button").remove();
+
+    finishJSTest();
+}
+
+window.onload = async function() {
+    await UIHelper.activateElement(document.querySelector("button"));
+}
+
+</script>
+<button onclick='go()'>Go</button>
+</body>
+</html>

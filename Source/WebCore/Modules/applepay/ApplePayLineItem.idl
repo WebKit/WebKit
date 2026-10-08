@@ -28,6 +28,9 @@
 ] enum ApplePayLineItemType {
     "pending",
     "final"
+#if defined(ENABLE_APPLE_PAY_ESTIMATED_LINE_ITEM) && ENABLE_APPLE_PAY_ESTIMATED_LINE_ITEM
+    , "estimated"
+#endif
 };
 
 [
