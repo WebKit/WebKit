@@ -22,10 +22,12 @@
 
 #pragma once
 
+#include <WebCore/DeferredFetchIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Timer.h>
 #include <array>
 #include <wtf/CheckedPtr.h>
@@ -63,6 +65,9 @@ public:
     void resumePendingRequests() final;
 
     bool startKeepAliveLoadForWebKitLegacy(WebCore::FrameLoader&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&) final;
+
+    std::pair<std::optional<WebCore::DeferredFetchIdentifier>, uint64_t> reserveDeferredFetchQuota(WebCore::LocalFrame&, WebCore::FrameIdentifier controlFrameIdentifier, const WebCore::SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes) final;
+    void releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier) final;
 
     void preconnectTo(WebCore::FrameLoader&, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&) final;
 
@@ -149,6 +154,19 @@ private:
 
     unsigned m_suspendPendingRequestsCount;
     bool m_isSerialLoadingEnabled;
+
+    using DeferredFetchQuotaKey = std::pair<WebCore::PageIdentifier, WebCore::FrameIdentifier>;
+    struct DeferredFetchQuotaState {
+        uint64_t totalBytesUsed { 0 };
+        HashMap<WebCore::SecurityOriginData, uint64_t> bytesUsedByOrigin;
+    };
+    struct DeferredFetchQuotaReservation {
+        std::optional<DeferredFetchQuotaKey> key;
+        WebCore::SecurityOriginData reportingOrigin;
+        uint64_t bytes { 0 };
+    };
+    HashMap<DeferredFetchQuotaKey, DeferredFetchQuotaState> m_deferredFetchQuotas;
+    HashMap<WebCore::DeferredFetchIdentifier, DeferredFetchQuotaReservation> m_deferredFetchQuotaReservations;
 };
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebResourceLoadScheduler)

@@ -30,6 +30,11 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     ScheduleResourceLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
     PerformSynchronousLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
+    ReserveDeferredFetchQuota(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, WebCore::SecurityOriginData reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes) -> (std::optional<WebCore::DeferredFetchIdentifier> reservationIdentifier, uint64_t availableBytes) Synchronous
+    ReleaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier reservationIdentifier)
+    AddDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier, struct WebKit::NetworkResourceLoadParameters parameters)
+    SendDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier)
+    RemoveDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier)
     RemoveLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
     BrowsingContextRemoved(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)

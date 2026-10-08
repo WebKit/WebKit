@@ -27,17 +27,39 @@
 #include "WindowOrWorkerGlobalScopeFetch.h"
 
 #include "CachedResourceRequestInitiatorTypes.h"
+#include "ContentSecurityPolicy.h"
+#include "DOMWrapperWorld.h"
+#include "DeferredFetchRegistry.h"
 #include "DocumentQuirks.h"
 #include "EventLoop.h"
+#include "FetchBody.h"
+#include "FetchLaterResult.h"
 #include "FetchResponse.h"
+#include "FormData.h"
+#include "FrameLoader.h"
+#include "HTTPParsers.h"
 #include "JSDOMConvertAny.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
+#include "JSQuotaExceededError.h"
 #include "JSValueInWrappedObjectInlines.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "OriginAccessPatterns.h"
+#include "QuotaExceededError.h"
+#include "ResourceLoaderOptions.h"
+#include "ResourceRequest.h"
+#include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
+#include "SecurityPolicy.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
+#include <limits>
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -98,6 +120,114 @@ void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info
 void WindowOrWorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
     doFetch(scope, WTF::move(input), WTF::move(init), WTF::move(promise));
+}
+
+// https://fetch.spec.whatwg.org/#dom-window-fetchlater
+ExceptionOr<Ref<FetchLaterResult>> WindowOrWorkerGlobalScopeFetch::fetchLater(DOMWindow& window, JSC::JSGlobalObject& lexicalGlobalObject, FetchRequest::Info&& input, DeferredRequestInit&& init)
+{
+    // fetchLater() is exposed on Window only, so everything below, including the
+    // registry and the loader strategy calls it makes, stays on the main thread.
+    ASSERT(RunLoop::isMain());
+
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window);
+    if (!localWindow)
+        return Exception { ExceptionCode::InvalidStateError, "fetchLater() called on a non-local window"_s };
+
+    RefPtr document = localWindow->document();
+    if (!document || !document->isFullyActive())
+        return Exception { ExceptionCode::InvalidStateError, "fetchLater() requires a fully active Document"_s };
+    Ref<ScriptExecutionContext> context = *document;
+
+    // activateAfter must be non-negative.
+    if (init.activateAfter && *init.activateAfter < 0)
+        return Exception { ExceptionCode::RangeError, "activateAfter must be a non-negative number"_s };
+
+    auto requestOrException = FetchRequest::create(context.get(), WTF::move(input), FetchRequest::Init { init });
+    if (requestOrException.hasException())
+        return requestOrException.releaseException();
+    Ref request = requestOrException.releaseReturnValue();
+
+    if (request->hasReadableStreamBody())
+        return Exception { ExceptionCode::TypeError, "fetchLater() does not support ReadableStream bodies"_s };
+
+    if (!request->url().protocolIsInHTTPFamily() || !shouldTreatAsPotentiallyTrustworthy(request->url()))
+        return Exception { ExceptionCode::TypeError, "fetchLater() only supports HTTP(S) URLs on potentially trustworthy origins"_s };
+
+    // If the AbortSignal is already aborted, throw synchronously.
+    if (request->signal().aborted())
+        return Exception { ExceptionCode::AbortError, "Request signal is aborted"_s };
+
+    // Enforce CSP connect-src.
+    if (!document->shouldBypassMainWorldContentSecurityPolicy()
+        && !protect(document->contentSecurityPolicy())->allowConnectToSource(request->url(), document->currentParserSourcePosition())) {
+        // Treat as a silent network failure per Beacon precedent: return a
+        // FetchLaterResult that never activates.
+        return FetchLaterResult::create();
+    }
+
+    // Build the ResourceRequest we will hand to the network stack on activation.
+    ResourceRequest resourceRequest = request->resourceRequest();
+
+    // Compute quota accounting BEFORE FrameLoader adds Referer/Origin/User-Agent/
+    // Accept/etc. per fetch spec "total request length":
+    // https://fetch.spec.whatwg.org/#request-deferred-fetching-total-request-length
+    //   totalRequestLength = |URL bytes| + sum(|name| + |value|) over author's
+    //                        header list + |body bytes|
+    // Extra headers added later by the loader are not charged against the quota.
+    RefPtr<FormData> body = resourceRequest.httpBody();
+    uint64_t bodyBytes = body ? body->lengthInBytes() : 0;
+    URL urlWithoutFragment = resourceRequest.url();
+    urlWithoutFragment.removeFragmentIdentifier();
+    CheckedUint64 checkedRequestBytes = urlWithoutFragment.string().length();
+    checkedRequestBytes += request->referrer().length();
+    for (auto& header : resourceRequest.httpHeaderFields()) {
+        checkedRequestBytes += header.key.length();
+        checkedRequestBytes += header.value.length();
+    }
+    checkedRequestBytes += bodyBytes;
+    uint64_t requestBytes = checkedRequestBytes.hasOverflowed() ? std::numeric_limits<uint64_t>::max() : checkedRequestBytes.value();
+
+    // Add Referer, Origin, User-Agent and friends now, while the frame and document are
+    // still fully active. The network process holds the request until it is activated and
+    // has no FrameLoader to fill these in later. They are added after the quota accounting
+    // above so that headers the author did not set are not charged against the quota.
+    if (RefPtr frame = localWindow->frame()) {
+        auto referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), resourceRequest.url(), frame->loader().outgoingReferrerURL(), OriginAccessPatternsForWebProcess::singleton());
+        if (!referrer.isEmpty())
+            resourceRequest.setHTTPReferrer(referrer);
+        frame->loader().updateRequestAndAddExtraFields(resourceRequest, IsMainResource::No);
+    }
+
+    ResourceLoaderOptions options { request->fetchOptions() };
+    options.keepAlive = true;
+    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
+
+    Ref registry = document->ensureDeferredFetchRegistry();
+
+    std::optional<Seconds> activateAfter;
+    if (init.activateAfter)
+        activateAfter = Seconds::fromMilliseconds(*init.activateAfter);
+
+    uint64_t availableBytes;
+    auto result = registry->addDeferredFetch(WTF::move(resourceRequest), WTF::move(options), WTF::move(body), requestBytes, RefPtr { &request->signal() }, activateAfter, availableBytes);
+    if (!result) {
+        // https://fetch.spec.whatwg.org/#dom-window-fetchlater requires a QuotaExceededError
+        // reporting how much quota was left and how much the request needed, so throw the
+        // concrete error rather than letting the generic ExceptionCode path create a plain
+        // DOMException.
+        Ref world = currentWorld(lexicalGlobalObject);
+        auto* globalObject = toJSDOMGlobalObject(*document, world);
+        if (!globalObject)
+            return Exception { ExceptionCode::QuotaExceededError, "fetchLater() exceeded per-origin quota"_s };
+
+        auto& vm = lexicalGlobalObject.vm();
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        auto error = QuotaExceededError::create("fetchLater() exceeded per-origin quota"_s, { static_cast<double>(availableBytes), static_cast<double>(requestBytes) });
+        throwException(&lexicalGlobalObject, throwScope, toJSNewlyCreated(&lexicalGlobalObject, globalObject, WTF::move(error)));
+        return Exception { ExceptionCode::ExistingExceptionError };
+    }
+
+    return result.releaseNonNull();
 }
 
 }

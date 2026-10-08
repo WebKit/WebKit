@@ -1,0 +1,4 @@
+
+PASS Permissions policy "deferred-fetch" can be enabled in the same-origin iframe using allow="deferred-fetch" attribute.
+PASS Permissions policy "deferred-fetch" can be enabled in the cross-origin iframe using allow="deferred-fetch" attribute.
+

@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <WebCore/DeferredFetchIdentifier.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/LoadSchedulingMode.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadPriority.h>
@@ -34,6 +36,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
@@ -56,6 +59,7 @@ class FragmentedSharedBuffer;
 class SubresourceLoader;
 
 struct FetchOptions;
+class SecurityOriginData;
 
 class WEBCORE_EXPORT LoaderStrategy : public CanMakeCheckedPtr<LoaderStrategy> {
     WTF_MAKE_TZONE_ALLOCATED(LoaderStrategy);
@@ -78,6 +82,16 @@ public:
     virtual void prioritizeResourceLoads(const Vector<Ref<SubresourceLoader>>&);
 
     virtual bool startKeepAliveLoadForWebKitLegacy(FrameLoader&, const ResourceRequest&, const ResourceLoaderOptions&, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&&);
+
+    virtual std::pair<std::optional<DeferredFetchIdentifier>, uint64_t> reserveDeferredFetchQuota(LocalFrame&, FrameIdentifier, const SecurityOriginData&, uint64_t, uint64_t);
+    virtual void releaseDeferredFetchQuota(DeferredFetchIdentifier);
+
+    // Hands a deferred fetch to the network process so that it can be sent even once the
+    // queueing document is gone. Returns false if the port has no network process, in which
+    // case the caller sends the request itself while the document is still alive.
+    virtual bool addDeferredFetch(LocalFrame&, DeferredFetchIdentifier, const ResourceRequest&, const ResourceLoaderOptions&);
+    virtual void sendDeferredFetch(DeferredFetchIdentifier);
+    virtual void removeDeferredFetch(DeferredFetchIdentifier);
 
     using PreconnectCompletionHandler = Function<void(const ResourceError&)>;
     enum class ShouldPreconnectAsFirstParty : bool { No, Yes };

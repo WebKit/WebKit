@@ -447,6 +447,7 @@ def serialized_identifiers():
         'WebCore::DOMCacheIdentifierID',
         'WebCore::DictationContext',
         'WebCore::NodeIdentifier',
+        'WebCore::DeferredFetchIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',

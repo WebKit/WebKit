@@ -42,6 +42,7 @@
 #include "WebResourceLoadObserver.h"
 #include "WebSWServerToContextConnection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/DeferredFetchIdentifier.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IPAddressSpace.h>
@@ -320,6 +321,12 @@ private:
     void scheduleResourceLoad(NetworkResourceLoadParameters&&, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume);
     void performSynchronousLoad(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
+    void reserveDeferredFetchQuota(WebPageProxyIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, WebCore::SecurityOriginData&& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes, CompletionHandler<void(std::optional<WebCore::DeferredFetchIdentifier>, uint64_t availableBytes)>&&);
+    void releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier);
+    void addDeferredFetch(WebCore::DeferredFetchIdentifier, NetworkResourceLoadParameters&&);
+    void sendDeferredFetch(WebCore::DeferredFetchIdentifier);
+    void removeDeferredFetch(WebCore::DeferredFetchIdentifier);
+    void sendAllDeferredFetches();
     void prefetchDNS(const String&);
     void sendH2Ping(URL&&, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, std::optional<NavigatingToAppBoundDomain>, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void preconnectTo(PreconnectRequest&&);
@@ -550,7 +557,8 @@ private:
     HashMap<WebCore::FrameIdentifier, LocalNetworkAccessFrameRecord> m_localNetworkAccessFrameRecords;
 
     HashMap<WebCore::ResourceLoaderIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
-
+    HashSet<WebCore::DeferredFetchIdentifier> m_deferredFetchQuotaReservations;
+    HashMap<WebCore::DeferredFetchIdentifier, std::unique_ptr<NetworkResourceLoadParameters>> m_deferredFetches;
 
 #if USE(LIBWEBRTC)
     RefPtr<NetworkRTCProvider> m_rtcProvider;

@@ -1,0 +1,3 @@
+
+PASS FetchLater redirect blocked by CSP should reject
+

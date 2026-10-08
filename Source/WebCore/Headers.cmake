@@ -414,6 +414,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/encryptedmedia/legacy/LegacyCDMPrivate.h
     Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.h
 
+    Modules/fetch/DeferredFetchIdentifier.h
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h
     Modules/fetch/FetchHeaders.h

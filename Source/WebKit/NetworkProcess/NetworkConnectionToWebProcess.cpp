@@ -204,6 +204,9 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     // This may call hasUploadStateChanged().
     m_networkResourceLoaders.clear();
 
+    for (auto identifier : m_deferredFetchQuotaReservations)
+        m_networkProcess->releaseDeferredFetchQuota(identifier);
+
     closeAllEntangledMessagePorts();
 
     auto completionHandlers = std::exchange(m_messageBatchDeliveryCompletionHandlers, { });
@@ -484,6 +487,9 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
 
+    // Deferred fetches have to go out before the loaders below are aborted.
+    sendAllDeferredFetches();
+
 #if OS(DARWIN)
     CONNECTION_RELEASE_LOG(Loading, "didClose: WebProcess (%d) closed its connection. Aborting related loaders.", connection.remoteProcessID());
 #else
@@ -706,6 +712,59 @@ void NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingFo
     auto syncResult = protect(m_networkProcess->parentProcessConnection())->sendSync(Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(pageID), 0);
     auto [handled] = syncResult.takeReplyOr(false);
     reply(handled);
+}
+
+void NetworkConnectionToWebProcess::reserveDeferredFetchQuota(WebPageProxyIdentifier pageIdentifier, FrameIdentifier controlFrameIdentifier, SecurityOriginData&& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes, CompletionHandler<void(std::optional<WebCore::DeferredFetchIdentifier>, uint64_t)>&& completionHandler)
+{
+    auto [reservationIdentifier, availableBytes] = m_networkProcess->reserveDeferredFetchQuota(pageIdentifier, controlFrameIdentifier, reportingOrigin, maximumQuota, requestedBytes);
+    if (reservationIdentifier)
+        m_deferredFetchQuotaReservations.add(*reservationIdentifier);
+    completionHandler(reservationIdentifier, availableBytes);
+}
+
+void NetworkConnectionToWebProcess::addDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier, NetworkResourceLoadParameters&& parameters)
+{
+    MESSAGE_CHECK(m_deferredFetchQuotaReservations.contains(reservationIdentifier));
+    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, parameters.request.firstPartyForCookies()) == NetworkProcess::AllowCookieAccess::Allow);
+    m_deferredFetches.set(reservationIdentifier, makeUniqueWithoutFastMallocCheck<NetworkResourceLoadParameters>(WTF::move(parameters)));
+}
+
+void NetworkConnectionToWebProcess::sendDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier)
+{
+    auto parameters = m_deferredFetches.take(reservationIdentifier);
+    if (!parameters)
+        return;
+
+    CONNECTION_RELEASE_LOG(Loading, "sendDeferredFetch: (reservationIdentifier=%" PRIu64 ")", reservationIdentifier.toUInt64());
+
+    // The load is marked keepalive, so if this connection goes away while it is in flight the
+    // network session takes it over.
+    scheduleResourceLoad(WTF::move(*parameters), std::nullopt);
+    releaseDeferredFetchQuota(reservationIdentifier);
+}
+
+void NetworkConnectionToWebProcess::removeDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier)
+{
+    m_deferredFetches.remove(reservationIdentifier);
+    releaseDeferredFetchQuota(reservationIdentifier);
+}
+
+void NetworkConnectionToWebProcess::sendAllDeferredFetches()
+{
+    // A document that goes away without deactivating, including when its process disappears,
+    // still has to have its deferred fetches sent.
+    auto deferredFetches = std::exchange(m_deferredFetches, { });
+    for (auto& [reservationIdentifier, parameters] : deferredFetches) {
+        CONNECTION_RELEASE_LOG(Loading, "sendAllDeferredFetches: (reservationIdentifier=%" PRIu64 ")", reservationIdentifier.toUInt64());
+        scheduleResourceLoad(WTF::move(*parameters), std::nullopt);
+    }
+}
+
+void NetworkConnectionToWebProcess::releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier identifier)
+{
+    if (!m_deferredFetchQuotaReservations.remove(identifier))
+        return;
+    m_networkProcess->releaseDeferredFetchQuota(identifier);
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)

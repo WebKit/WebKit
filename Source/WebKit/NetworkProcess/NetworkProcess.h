@@ -44,6 +44,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
+#include <WebCore/DeferredFetchIdentifier.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/NotificationEventType.h>
@@ -52,6 +53,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <memory>
@@ -647,6 +649,10 @@ private:
     void performDeleteWebsiteDataTask(TaskIdentifier, TaskTrigger = TaskTrigger::Connection);
     void deleteWebsiteDataImpl(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
 
+    friend class NetworkConnectionToWebProcess;
+    std::pair<std::optional<WebCore::DeferredFetchIdentifier>, uint64_t> reserveDeferredFetchQuota(WebPageProxyIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, const WebCore::SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes);
+    void releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier);
+
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
     HashMap<WebCore::ProcessIdentifier, Vector<CompletionHandler<void()>>> m_webProcessConnectionCloseHandlers;
@@ -664,6 +670,19 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>> m_networkStorageSessions;
+
+    using DeferredFetchQuotaKey = std::pair<WebPageProxyIdentifier, WebCore::FrameIdentifier>;
+    struct DeferredFetchQuotaState {
+        uint64_t totalBytesUsed { 0 };
+        HashMap<WebCore::SecurityOriginData, uint64_t> bytesUsedByOrigin;
+    };
+    struct DeferredFetchQuotaReservation {
+        std::optional<DeferredFetchQuotaKey> key;
+        WebCore::SecurityOriginData reportingOrigin;
+        uint64_t bytes { 0 };
+    };
+    HashMap<DeferredFetchQuotaKey, DeferredFetchQuotaState> m_deferredFetchQuotas;
+    HashMap<WebCore::DeferredFetchIdentifier, DeferredFetchQuotaReservation> m_deferredFetchQuotaReservations;
     HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
     HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };

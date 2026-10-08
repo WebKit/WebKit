@@ -12,7 +12,7 @@
 // e.g. Chrome, default behavior, as the testing infra does not support enabling
 // it.
 
-parallelPromiseTest(async t => {
+promise_test(async t => {
   const uuid = token();
   const url = generateSetBeaconURL(uuid);
   // Sets no option to test the default behavior when a document enters BFCache.
@@ -46,7 +46,7 @@ parallelPromiseTest(async t => {
   await expectBeacon(uuid, {count: 1});
 }, `fetchLater() sends on page entering BFCache if BackgroundSync is off.`);
 
-parallelPromiseTest(async t => {
+promise_test(async t => {
   const uuid = token();
   const url = generateSetBeaconURL(uuid);
   const helper = new RemoteContextHelper();
@@ -80,7 +80,7 @@ parallelPromiseTest(async t => {
   await expectBeacon(uuid, {count: 1});
 }, `Call fetchLater() when BFCached with activateAfter=0 sends immediately.`);
 
-parallelPromiseTest(async t => {
+promise_test(async t => {
   const uuid = token();
   const url = generateSetBeaconURL(uuid);
   // Sets no option to test the default behavior when a document gets discarded
@@ -111,7 +111,7 @@ parallelPromiseTest(async t => {
   await expectBeacon(uuid, {count: 1});
 }, `fetchLater() sends on navigating away a page w/o BFCache.`);
 
-parallelPromiseTest(async t => {
+promise_test(async t => {
   const uuid = token();
   const url = generateSetBeaconURL(uuid);
   // Sets no option to test the default behavior when a document gets discarded
@@ -145,7 +145,7 @@ parallelPromiseTest(async t => {
   await expectBeacon(uuid, {count: 1});
 }, `fetchLater() does not send aborted request on navigating away a page w/o BFCache.`);
 
-parallelPromiseTest(async t => {
+promise_test(async t => {
   const uuid = token();
   const url = generateSetBeaconURL(uuid);
   const options = {activateAfter: 60000};

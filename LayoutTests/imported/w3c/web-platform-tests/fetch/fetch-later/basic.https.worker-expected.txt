@@ -1,0 +1,3 @@
+
+PASS fetchLater() is not supported in worker.
+

@@ -468,25 +468,25 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     LOG_WITH_STREAM(NetworkScheduling, stream << "(WebProcess) WebLoaderStrategy::scheduleLoad, url '"_s << resourceLoader.url().string() << "' will be scheduled with the NetworkProcess with priority "_s << static_cast<int>(resourceLoader.request().priority()) << ", storedCredentialsPolicy "_s << (int)storedCredentialsPolicy);
 
     NetworkResourceLoadParameters loadParameters {
-        trackingParameters.webPageProxyID,
-        trackingParameters.pageID,
-        trackingParameters.frameID,
-        request
+        .webPageProxyID = trackingParameters.webPageProxyID,
+        .webPageID = trackingParameters.pageID,
+        .webFrameID = trackingParameters.frameID,
+        .request = request,
+        .parentPID = legacyPresentingApplicationPID(),
+        .contentSniffingPolicy = contentSniffingPolicy,
+        .contentEncodingSniffingPolicy = contentEncodingSniffingPolicy,
+        .storedCredentialsPolicy = storedCredentialsPolicy,
+        // If there is no WebFrame then this resource cannot be authenticated with the client.
+        .clientCredentialPolicy = resourceLoader.isAllowedToAskUserForCredentials() ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials,
+        .shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect,
+        .needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo(),
+        .identifier = identifier,
+        .maximumBufferingTime = maximumBufferingTime,
+        .options = resourceLoader.options(),
+        .preflightPolicy = resourceLoader.options().preflightPolicy,
     };
     loadParameters.createSandboxExtensionHandlesIfNecessary();
 
-    loadParameters.identifier = identifier;
-    loadParameters.parentPID = legacyPresentingApplicationPID();
-    loadParameters.contentSniffingPolicy = contentSniffingPolicy;
-    loadParameters.contentEncodingSniffingPolicy = contentEncodingSniffingPolicy;
-    loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
-    // If there is no WebFrame then this resource cannot be authenticated with the client.
-    loadParameters.clientCredentialPolicy = resourceLoader.isAllowedToAskUserForCredentials() ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
-    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
-    loadParameters.needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo();
-    loadParameters.maximumBufferingTime = maximumBufferingTime;
-    loadParameters.options = resourceLoader.options();
-    loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
     bool isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
     addParametersShared(frame.get(), loadParameters, isMainFrameNavigation);
 
@@ -883,34 +883,34 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
         return;
     }
 
-    NetworkResourceLoadParameters loadParameters {
-        webPageProxyID,
-        pageID,
-        frameID,
-        request
-    };
-    loadParameters.createSandboxExtensionHandlesIfNecessary();
-
-    loadParameters.identifier = resourceLoadIdentifier;
-    loadParameters.parentPID = legacyPresentingApplicationPID();
-    loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
-    loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
-    loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
-    loadParameters.clientCredentialPolicy = clientCredentialPolicy;
-    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? protect(webFrame->coreLocalFrame()).get() : nullptr);
-
-    loadParameters.options = options;
-    loadParameters.sourceOrigin = document->securityOrigin();
-    loadParameters.topOrigin = document->topOrigin();
+    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     if (!document->shouldBypassMainWorldContentSecurityPolicy()) {
         if (CheckedPtr contentSecurityPolicy = document->contentSecurityPolicy())
-            loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
+            cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
-    loadParameters.originalRequestHeaders = originalRequestHeaders;
+
+    NetworkResourceLoadParameters loadParameters {
+        .webPageProxyID = webPageProxyID,
+        .webPageID = pageID,
+        .webFrameID = frameID,
+        .request = request,
+        .topOrigin = document->topOrigin(),
+        .sourceOrigin = document->securityOrigin(),
+        .parentPID = legacyPresentingApplicationPID(),
+        .contentSniffingPolicy = ContentSniffingPolicy::SniffContent,
+        .contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default,
+        .storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use,
+        .clientCredentialPolicy = clientCredentialPolicy,
+        .shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? protect(webFrame->coreLocalFrame()).get() : nullptr),
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (webFrame)
-        loadParameters.isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain();
+        .isNavigatingToAppBoundDomain = webFrame ? webFrame->isTopFrameNavigatingToAppBoundDomain() : std::optional<NavigatingToAppBoundDomain> { NavigatingToAppBoundDomain::No },
 #endif
+        .identifier = resourceLoadIdentifier,
+        .options = options,
+        .cspResponseHeaders = WTF::move(cspResponseHeaders),
+        .originalRequestHeaders = originalRequestHeaders,
+    };
+    loadParameters.createSandboxExtensionHandlesIfNecessary();
     addParametersShared(protect(webFrame->coreLocalFrame()).get(), loadParameters);
 
     data.shrink(0);
@@ -949,6 +949,90 @@ void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
         return;
 
     networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page->webPageProxyIdentifier(), page->identifier(), frame.frameID()), 0);
+}
+
+bool WebLoaderStrategy::addDeferredFetch(LocalFrame& frame, DeferredFetchIdentifier reservationIdentifier, const ResourceRequest& request, const ResourceLoaderOptions& options)
+{
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr document = frame.document();
+    if (!document || !webFrame)
+        return false;
+
+    RefPtr webPage = webFrame->page();
+    if (!webPage)
+        return false;
+
+    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    if (options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::DoPolicyCheck && !document->shouldBypassMainWorldContentSecurityPolicy()) {
+        if (CheckedPtr contentSecurityPolicy = document->contentSecurityPolicy())
+            cspResponseHeaders = contentSecurityPolicy->responseHeaders();
+    }
+
+    NetworkResourceLoadParameters loadParameters {
+        .webPageProxyID = webPage->webPageProxyIdentifier(),
+        .webPageID = webPage->identifier(),
+        .webFrameID = webFrame->frameID(),
+        .request = request,
+        .topOrigin = document->topOrigin(),
+        .sourceOrigin = document->securityOrigin(),
+        .parentPID = legacyPresentingApplicationPID(),
+        .storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use,
+        .shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(&frame),
+#if ENABLE(APP_BOUND_DOMAINS)
+        .isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain(),
+#endif
+        .identifier = ResourceLoaderIdentifier::generate(),
+        .options = options,
+        .cspResponseHeaders = WTF::move(cspResponseHeaders),
+        .frameURL = document->url(),
+    };
+    loadParameters.createSandboxExtensionHandlesIfNecessary();
+    addParametersShared(&frame, loadParameters);
+#if ENABLE(CONTENT_EXTENSIONS) || (ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS))
+    if (RefPtr page = document->page())
+        loadParameters.mainDocumentURL = page->mainFrameURL();
+#endif
+
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection->send(Messages::NetworkConnectionToWebProcess::AddDeferredFetch(reservationIdentifier, WTF::move(loadParameters)), 0);
+    return true;
+}
+
+void WebLoaderStrategy::sendDeferredFetch(DeferredFetchIdentifier reservationIdentifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::SendDeferredFetch(reservationIdentifier), 0);
+}
+
+void WebLoaderStrategy::removeDeferredFetch(DeferredFetchIdentifier reservationIdentifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RemoveDeferredFetch(reservationIdentifier), 0);
+}
+
+std::pair<std::optional<DeferredFetchIdentifier>, uint64_t> WebLoaderStrategy::reserveDeferredFetchQuota(LocalFrame& frame, FrameIdentifier controlFrameIdentifier, const SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes)
+{
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webPage = webFrame ? webFrame->page() : nullptr;
+    if (!webPage)
+        return { std::nullopt, 0 };
+
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    auto sendResult = connection->sendSync(Messages::NetworkConnectionToWebProcess::ReserveDeferredFetchQuota(webPage->webPageProxyIdentifier(), controlFrameIdentifier, reportingOrigin, maximumQuota, requestedBytes), 0);
+    auto [reservationIdentifier, availableBytes] = sendResult.takeReplyOr(std::nullopt, 0);
+    return { reservationIdentifier, availableBytes };
+}
+
+void WebLoaderStrategy::releaseDeferredFetchQuota(DeferredFetchIdentifier identifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::ReleaseDeferredFetchQuota(identifier), 0);
 }
 
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, ResourceRequest&& request, StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
