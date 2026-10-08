@@ -99,6 +99,9 @@ private:
     int maxTextureSize() const override;
     void willPaintTile() override;
     void didPaintTile() override;
+#if !USE(TEXTURE_MAPPER)
+    void didPaintPreRenderedTile(WebCore::CoordinatedPlatformLayer&) override;
+#endif
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -153,6 +156,7 @@ private:
     const RefPtr<ThreadedCompositor> m_compositor;
     std::unique_ptr<WebCore::CoordinatedTileManager> m_tileManager;
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
+    uint64_t m_renderingUpdateID { 0 };
 
 #if PLATFORM(GTK)
     bool m_transientZoom { false };

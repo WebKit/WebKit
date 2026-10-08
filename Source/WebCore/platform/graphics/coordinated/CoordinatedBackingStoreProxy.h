@@ -68,22 +68,26 @@ public:
         const Vector<uint32_t>& tilesToCreate() const LIFETIME_BOUND { return m_tilesToCreate; }
         const Vector<TileUpdate>& tilesToUpdate() const LIFETIME_BOUND { return m_tilesToUpdate; }
         const Vector<uint32_t>& tilesToRemove() const LIFETIME_BOUND { return m_tilesToRemove; }
+        const HashMap<uint32_t, bool>& tilesToUpdateVisibility() const LIFETIME_BOUND { return m_tilesToUpdateVisibility; }
 
-        void appendUpdate(Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&);
+        void appendUpdate(Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&, HashMap<uint32_t, bool>&&);
         void waitUntilPaintingFinished();
 
-        bool isEmpty() const { return m_tilesToCreate.isEmpty() && m_tilesToUpdate.isEmpty() && m_tilesToRemove.isEmpty(); }
+        bool isEmpty() const { return m_tilesToCreate.isEmpty() && m_tilesToUpdate.isEmpty() && m_tilesToRemove.isEmpty() && m_tilesToUpdateVisibility.isEmpty(); }
 
     private:
         Vector<uint32_t> m_tilesToCreate;
         Vector<TileUpdate> m_tilesToUpdate;
         Vector<uint32_t> m_tilesToRemove;
+        HashMap<uint32_t, bool> m_tilesToUpdateVisibility;
     };
 
     enum class UpdateResult : uint8_t {
         BuffersChanged = 1 << 0,
-        TilesPending = 1 << 1,
-        TilesChanged = 1 << 2
+        TilesChanged = 1 << 1,
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
+        TilesPending = 1 << 2
+#endif
     };
     OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
     Update takePendingUpdate();
@@ -124,6 +128,17 @@ private:
         }
 
 #if USE(SKIA)
+#if !USE(TEXTURE_MAPPER)
+        void setDistance(unsigned newDistance)
+        {
+            if (distance == newDistance)
+                return;
+
+            distance = newDistance;
+            distanceChanged = true;
+        }
+#endif
+
         void cancelActiveBuffers(CoordinatedPlatformLayer&);
 #endif
 
@@ -131,6 +146,11 @@ private:
         IntRect rect;
         IntRect dirtyRect;
 #if USE(SKIA)
+        unsigned distance { std::numeric_limits<unsigned>::max() };
+#if !USE(TEXTURE_MAPPER)
+        bool isVisible { false };
+        bool distanceChanged { false };
+#endif
         Vector<Ref<CoordinatedTileBuffer>, 1> activeBuffers;
 #endif
     };
@@ -152,7 +172,9 @@ private:
     float m_contentsScale { 1 };
     IntSize m_tileSize;
     float m_coverAreaMultiplier { 2 };
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     bool m_pendingTileCreation { false };
+#endif
     IntRect m_contentsRect;
     IntRect m_visibleRect;
     IntRect m_coverRect;

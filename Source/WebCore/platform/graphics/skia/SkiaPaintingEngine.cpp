@@ -230,7 +230,8 @@ void SkiaPaintingEngine::replay(const Ref<CoordinatedTileBuffer>& buffer, const 
     const bool needsReplayCanvas = recording->hasGPUAtlases();
 #endif
 
-    WTFBeginSignpost(canvas, PaintTile, "Skia/%s%s threaded, dirty region %ix%i+%i+%i", buffer->isBackedByOpenGL() ? "GPU" : "CPU", isDDLBuffer ? "(DDL)" : "", dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height());
+    WTFBeginSignpost(canvas, PaintTile, "Skia/%s%s, dirty region %ix%i+%i+%i, distance %u", buffer->isBackedByOpenGL() ? "GPU" : "CPU", isDDLBuffer ? "(DDL)" : "", dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height(), buffer->distance());
+
     // Use SkiaReplayCanvas if there are GPU fences or GPU atlases to handle.
     if (needsReplayCanvas) {
         auto replayCanvas = SkiaReplayCanvas::create(tileRect.size(), recording, m_threadSafeGrContext);

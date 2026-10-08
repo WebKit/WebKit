@@ -31,6 +31,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedSceneState.h"
+#include "CoordinatedTileManager.h"
 #include "DrawingArea.h"
 #include "WebPageInlines.h"
 #include "WebPageProxyMessages.h"

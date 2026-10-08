@@ -179,7 +179,12 @@ bool SkiaCompositingLayer::hasPendingBackingStoreTileUpdates() const
 void SkiaCompositingLayer::processPendingTileUpdates()
 {
     if (m_backingStore)
-        m_backingStore->processPendingTileUpdates();
+        m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::No);
+}
+
+bool SkiaCompositingLayer::processPendingTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles)
+{
+    return m_backingStore ? m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::Yes, shouldStopProcessingTiles) : false;
 }
 
 void SkiaCompositingLayer::setImageBackingStore(CoordinatedImageBackingStore* imageBackingStore)

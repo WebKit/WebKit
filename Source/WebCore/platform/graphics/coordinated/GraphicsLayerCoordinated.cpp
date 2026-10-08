@@ -847,9 +847,13 @@ void GraphicsLayerCoordinated::flushCompositingState(const FloatRect& visibleRec
 
     recursiveCommitChanges(commitState);
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     bool hasPendingTilesCreation = updateBackingStoresIfNeeded();
     if (hasPendingTilesCreation)
         client().notifySubsequentFlushRequired(this);
+#else
+    updateBackingStoresIfNeeded();
+#endif
 }
 
 void GraphicsLayerCoordinated::flushCompositingStateForThisLayerOnly()
@@ -1264,8 +1268,10 @@ bool GraphicsLayerCoordinated::needsCommit(CommitState& commitState) const
     if (isRunningTransformAnimation() || m_hasDescendantsWithRunningTransformAnimations)
         return true;
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     if (m_platformLayer->hasPendingTilesCreation() || m_hasDescendantsWithPendingTilesCreation)
         return true;
+#endif
 
     return false;
 }
@@ -1301,23 +1307,30 @@ void GraphicsLayerCoordinated::recursiveCommitChanges(CommitState& commitState, 
     if (RefPtr replicaLayer = downcast<GraphicsLayerCoordinated>(m_replicaLayer))
         replicaLayer->commitLayerChanges(childCommitState, pageScaleFactor, baseRelativePosition, affectedByTransformAnimation);
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     bool hasDescendantsWithPendingTilesCreation = false;
+#endif
     bool hasDescendantsWithRunningTransformAnimations = false;
     for (auto& currentChild : children()) {
         auto& child = downcast<GraphicsLayerCoordinated>(currentChild.get());
         child.recursiveCommitChanges(childCommitState, pageScaleFactor, positionRelativeToBase, affectedByPageScale);
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
         if (child.coordinatedPlatformLayer().hasPendingTilesCreation() || child.m_hasDescendantsWithPendingTilesCreation)
             hasDescendantsWithPendingTilesCreation = true;
+#endif
         if (child.isRunningTransformAnimation() || child.m_hasDescendantsWithRunningTransformAnimations)
             hasDescendantsWithRunningTransformAnimations = true;
     }
 
     m_hasDescendantsWithPendingChanges = false;
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
     m_hasDescendantsWithPendingTilesCreation = hasDescendantsWithPendingTilesCreation;
+#endif
     m_hasDescendantsWithRunningTransformAnimations = hasDescendantsWithRunningTransformAnimations;
 }
 
+#if USE(CAIRO) || USE(TEXTURE_MAPPER)
 bool GraphicsLayerCoordinated::updateBackingStoresIfNeeded()
 {
     bool hasPendingTilesCreation = false;
@@ -1341,6 +1354,26 @@ bool GraphicsLayerCoordinated::updateBackingStoreIfNeeded()
     m_platformLayer->updateBackingStore();
     return m_platformLayer->hasPendingTilesCreation();
 }
+
+#else
+void GraphicsLayerCoordinated::updateBackingStoresIfNeeded()
+{
+    if (RefPtr maskLayer = downcast<GraphicsLayerCoordinated>(m_maskLayer))
+        maskLayer->updateBackingStoreIfNeeded();
+    if (RefPtr replicaLayer = downcast<GraphicsLayerCoordinated>(m_replicaLayer))
+        replicaLayer->updateBackingStoreIfNeeded();
+
+    updateBackingStoreIfNeeded();
+
+    for (auto& currentChild : children())
+        downcast<GraphicsLayerCoordinated>(currentChild).updateBackingStoresIfNeeded();
+}
+
+void GraphicsLayerCoordinated::updateBackingStoreIfNeeded()
+{
+    m_platformLayer->updateBackingStore();
+}
+#endif
 
 } // namespace WebCore
 
