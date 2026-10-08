@@ -67,7 +67,10 @@ void RemoteProgressBasedTimeline::updateCurrentTime(const WebCore::ScrollingTree
 void RemoteProgressBasedTimeline::updateCurrentTime()
 {
     auto range = m_resolutionData.rangeEnd - m_resolutionData.rangeStart;
-    ASSERT(range);
+    if (!range) {
+        m_currentTime = std::nullopt;
+        return;
+    }
 
     auto distance = m_resolutionData.isReversed ? m_resolutionData.rangeEnd - m_resolutionData.scrollOffset : m_resolutionData.scrollOffset - m_resolutionData.rangeStart;
     auto progress = distance / range;
