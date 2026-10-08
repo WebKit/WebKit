@@ -1,0 +1,41 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<body style="margin:0">
+<iframe id="middle" style="width:400px; height:300px; border:0" src="http://localhost:8000/site-isolation/pageoverlay/resources/frame-scoped-overlay-middle.html"></iframe>
+<div id="toggle" style="will-change: transform; width:10px; height:10px"></div>
+<pre id="nested"></pre>
+<pre id="main"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const nextFrame = () => new Promise(requestAnimationFrame);
+
+async function runTest(nestedFrameDump)
+{
+    document.getElementById("nested").textContent = nestedFrameDump;
+
+    document.getElementById("middle").contentWindow.postMessage("removeInnerFrame", "*");
+    for (let i = 0; i < 300 && !internals.pageOverlayLayerTreeAsText().includes("whose root is gone: 1"); ++i) {
+        GCController.collect();
+        await nextFrame();
+    }
+
+    const toggle = document.getElementById("toggle");
+    toggle.style.display = "none";
+    await nextFrame();
+    toggle.style.display = "block";
+    await nextFrame();
+    document.getElementById("main").textContent = internals.pageOverlayLayerTreeAsText();
+
+    if (window.eventSender)
+        eventSender.mouseMoveTo(20, 20);
+    await nextFrame();
+    testRunner.notifyDone();
+}
+
+addEventListener("message", event => runTest(event.data.dump));
+</script>
+</body>
