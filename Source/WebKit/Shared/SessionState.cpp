@@ -163,6 +163,17 @@ Ref<FrameState> FrameState::copy()
     ));
 }
 
+Ref<FrameState> FrameState::copyIdentifiersOnly() const
+{
+    Ref frameState = create();
+    frameState->frameID = frameID;
+    frameState->itemID = itemID;
+    frameState->frameItemID = frameItemID;
+    frameState->itemSequenceNumber = itemSequenceNumber;
+    frameState->documentSequenceNumber = documentSequenceNumber;
+    return frameState;
+}
+
 void FrameState::replacePayloadFrom(Ref<FrameState>&& other)
 {
     // frameItemID and itemID are the position of this FrameState in the BF list tree

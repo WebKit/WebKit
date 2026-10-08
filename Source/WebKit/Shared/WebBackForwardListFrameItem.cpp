@@ -29,6 +29,9 @@
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
+#include "WebProcessProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -191,6 +194,22 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildren()
     Ref frameState = copyFrameState();
     for (auto& child : m_children)
         frameState->children.append(child->copyFrameStateWithChildren());
+    return frameState;
+}
+
+// With UseUIProcessForBackForwardItemLoading, the UI process sends each frame its own FrameState when it
+// loads, so a process only needs the identifiers of frames it does not host.
+Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildrenForProcess(WebPageProxy& page, WebProcessProxy& process)
+{
+    if (!protect(page.preferences())->useUIProcessForBackForwardItemLoading())
+        return copyFrameStateWithChildren();
+
+    RefPtr frame = m_parent ? WebFrameProxy::webFrame(frameID()) : page.mainFrame();
+    bool processHostsFrame = frame && frame->page() == &page && (&frame->process() == &process || &frame->provisionalLoadProcess() == &process);
+
+    Ref frameState = processHostsFrame ? copyFrameState() : m_frameState->copyIdentifiersOnly();
+    for (Ref child : m_children)
+        frameState->children.append(child->copyFrameStateWithChildrenForProcess(page, process));
     return frameState;
 }
 

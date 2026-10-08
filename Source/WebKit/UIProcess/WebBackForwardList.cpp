@@ -945,7 +945,7 @@ static RefPtr<WebFrameProxy> frameOnPage(FrameIdentifier frameID, WebPageProxy& 
     return frame;
 }
 
-void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+void WebBackForwardList::backForwardAllItems(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
 {
     RefPtr page = m_page.get();
     if (!page || !frameOnPage(frameID, *page))
@@ -955,8 +955,9 @@ void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, Completion
         return item->mainFrameItem().childItemForFrameID(frameID);
     });
 
-    completionHandler(WTF::map(WTF::move(frameItems), [](const auto& frameItem) {
-        return frameItem->copyFrameStateWithChildren();
+    Ref process = WebProcessProxy::fromConnection(connection);
+    completionHandler(WTF::map(WTF::move(frameItems), [&](const auto& frameItem) {
+        return frameItem->copyFrameStateWithChildrenForProcess(*page, process);
     }));
 }
 
@@ -976,14 +977,15 @@ void WebBackForwardList::backForwardItemAtIndexForWebContent(IPC::Connection& co
     if (!item)
         return completionHandler(nullptr);
 
+    Ref process = WebProcessProxy::fromConnection(connection);
     if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
-        return completionHandler(frameItem->copyFrameStateWithChildren());
+        return completionHandler(frameItem->copyFrameStateWithChildrenForProcess(*page, process));
 
     // Entries can lack the main frame's current ID (after session restore or a process swap).
     if (!frame->isMainFrame())
         return completionHandler(nullptr);
 
-    completionHandler(item->copyMainFrameStateWithChildren());
+    completionHandler(protect(item->mainFrameItem())->copyFrameStateWithChildrenForProcess(*page, process));
 }
 
 void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&& completionHandler)
