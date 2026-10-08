@@ -36,6 +36,10 @@ class EmbeddedSimulatorPort(EmbeddedPort):
 
     DEVICE_MANAGER = SimulatedDeviceManager
 
+    def default_api_test_workers_per_device(self):
+        # simctl spawn runs each test binary as a host process, so one simulator can serve two workers.
+        return 2
+
     @staticmethod
     def _version_from_name(name):
         if len(name.split('-')) > 2 and name.split('-')[2].isdigit():

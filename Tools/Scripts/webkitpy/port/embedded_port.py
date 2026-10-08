@@ -30,6 +30,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import VersionNameMap, PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.darwin import DarwinPort
+from webkitpy.port.device_provisioning import DeviceProvisioning
 from webkitpy.port.simulator_process import SimulatorProcess
 from webkitpy.results.upload import Upload
 from webkitpy.xcode.device_type import DeviceType
@@ -43,6 +44,10 @@ class EmbeddedPort(DarwinPort):
 
     DEVICE_MANAGER = None
     NO_DEVICE_MANAGER = 'No device manager found for port'
+
+    DEVICE_WAIT_TIMEOUT = 300
+
+    DEVICE_READY_TIMEOUT = SimulatedDeviceManager.SIMULATOR_BOOT_TIMEOUT
 
     @property
     @abstractmethod
@@ -59,6 +64,7 @@ class EmbeddedPort(DarwinPort):
         super(EmbeddedPort, self).__init__(*args, **kwargs)
         self._test_runner_process_constructor = SimulatorProcess
         self._printing_cmd_line = False
+        self._claimed_device = None
 
     def is_simulator(self):
         if not self.DEVICE_MANAGER:
@@ -95,9 +101,46 @@ class EmbeddedPort(DarwinPort):
             return self.host
         if self.DEVICE_MANAGER is None:
             raise RuntimeError('No device manager for specified port')
-        if self.DEVICE_MANAGER.INITIALIZED_DEVICES is None:
+        device = self._device_for_worker(worker_number)
+        if device is None:
             raise RuntimeError('No initialized devices for testing')
-        return self.DEVICE_MANAGER.INITIALIZED_DEVICES[worker_number]
+        return device
+
+    def _manager_provisions_devices(self):
+        return bool(self.DEVICE_MANAGER) and issubclass(self.DEVICE_MANAGER, DeviceProvisioning)
+
+    @property
+    def _provisioning(self):
+        return self.DEVICE_MANAGER if self._manager_provisions_devices() else DeviceProvisioning
+
+    def _device_for_worker(self, worker_number):
+        if self._claimed_device is not None:
+            return self._claimed_device
+
+        if self._manager_hands_out_devices():
+            device, sets_up = self._provisioning.claim_device(self.DEVICE_WAIT_TIMEOUT)
+            if device is None:
+                return None
+            _log.debug(u'Worker {} claimed {}'.format(worker_number, device))
+            self._claimed_device = device
+            self._prepare_claimed_device(device, sets_up=sets_up)
+            return device
+
+        if not self.DEVICE_MANAGER.INITIALIZED_DEVICES:
+            return None
+        return self.DEVICE_MANAGER.INITIALIZED_DEVICES[worker_number % len(self.DEVICE_MANAGER.INITIALIZED_DEVICES)]
+
+    def _manager_hands_out_devices(self):
+        return bool(self._provisioning.DEVICE_QUEUE)
+
+    def expects_more_devices(self):
+        return self._provisioning.expects_more_devices()
+
+    def provisioning_state(self):
+        return self._provisioning.provisioning_state()
+
+    def adopt_provisioning_state(self, state):
+        self._provisioning.adopt_provisioning_state(state)
 
     def devices(self):
         if self.DEVICE_MANAGER is None:
@@ -106,24 +149,47 @@ class EmbeddedPort(DarwinPort):
             return []
         return self.DEVICE_MANAGER.INITIALIZED_DEVICES
 
+    def __getstate__(self):
+        # A claim belongs to the process that made it.
+        return dict(self.__dict__, _claimed_device=None)
+
+    def any_ready_device(self):
+        ready = self._provisioning.READY_DEVICES
+        if ready:
+            return ready[0]
+        devices = self.devices()
+        return devices[0] if devices else None
+
+    def target_host_is_usable(self, worker_number=None, force_update=False):
+        if worker_number is None or self.DEVICE_MANAGER is None:
+            return True
+
+        device = self._device_for_worker(worker_number)
+        if device is None:
+            return False
+        return self._provisioning.is_device_present(device, force_update=force_update)
+
+    def has_usable_device(self):
+        if self.DEVICE_MANAGER is None:
+            return True
+        return any(self._provisioning.is_device_present(device) for device in self.devices())
+
     # Despite their names, these flags do not actually get passed all the way down to webkit-build.
     def _build_driver_flags(self):
         return ['--sdk', self.SDK] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
 
-    def _install(self):
+    def _install_on(self, device):
         if not self.get_option('install'):
             _log.debug('Skipping installation')
             return
 
-        for i in range(self.child_processes()):
-            device = self.target_host(i)
-            _log.debug(u'Installing to {}'.format(device))
-            # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
-            # leaving a crash log which will be picked up in results. DYLD_FRAMEWORK_PATH is needed to prevent an early crash.
-            if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path(), 'DYLD_FRAMEWORK_PATH': self._build_path()}):
-                raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
-            if not device.install_dylibs(self._build_path()):
-                raise RuntimeError('Failed to install dylibs at {} on device {}'.format(self._build_path(), device.udid))
+        _log.debug(u'Installing to {}'.format(device))
+        # Without passing DYLD_LIBRARY_PATH, libWebCoreTestSupport cannot be loaded and DRT/WKTR will crash pre-launch,
+        # leaving a crash log which will be picked up in results. DYLD_FRAMEWORK_PATH is needed to prevent an early crash.
+        if not device.install_app(self._path_to_driver(), {'DYLD_LIBRARY_PATH': self._build_path(), 'DYLD_FRAMEWORK_PATH': self._build_path()}):
+            raise RuntimeError('Failed to install app {} on device {}'.format(self._path_to_driver(), device.udid))
+        if not device.install_dylibs(self._build_path()):
+            raise RuntimeError('Failed to install dylibs at {} on device {}'.format(self._build_path(), device.udid))
 
     def _device_type_with_version(self, device_type=None):
         device_type = device_type if device_type else self.DEVICE_TYPE
@@ -224,7 +290,7 @@ class EmbeddedPort(DarwinPort):
 
         return self.DEFAULT_DEVICE_TYPES or [self.DEVICE_TYPE]
 
-    def setup_test_run(self, device_type=None):
+    def setup_test_run(self, device_type=None, workers_per_device=1):
         if not self.DEVICE_MANAGER:
             raise RuntimeError(self.NO_DEVICE_MANAGER)
 
@@ -237,14 +303,18 @@ class EmbeddedPort(DarwinPort):
             use_existing_simulator=False,
             allow_incomplete_match=self.get_option('force'),
         )
-        self.DEVICE_MANAGER.initialize_devices(
+        if self._manager_provisions_devices():
+            initialize_devices = self.DEVICE_MANAGER.create_devices
+        else:
+            initialize_devices = self.DEVICE_MANAGER.initialize_devices
+        initialize_devices(
             [request] * self.child_processes(),
             self.host,
             layout_test_dir=self.layout_tests_dir(),
             pin=self.get_option('pin', None),
             use_nfs=self.get_option('use_nfs', True),
             reboot=self.get_option('reboot', False),
-            udids=self.get_option('udids', None)
+            udids=self.get_option('udids', None),
         )
 
         if not self.devices():
@@ -252,25 +322,45 @@ class EmbeddedPort(DarwinPort):
         if len(self.DEVICE_MANAGER.INITIALIZED_DEVICES) < self.child_processes():
             raise RuntimeError('To few connected devices for {} processes'.format(self.child_processes()))
 
-        self._install()
+        if self._manager_provisions_devices():
+            self._skip_existing_crash_logs()
+            self.DEVICE_MANAGER.begin_provisioning(timeout=self.DEVICE_READY_TIMEOUT, slots_per_device=workers_per_device)
+            if not self.DEVICE_MANAGER.wait_for_first_ready_device():
+                raise RuntimeError('No device became ready for testing')
+            return
 
-        for i in range(self.child_processes()):
-            host = self.target_host(i)
-            host.prepare_for_testing(
-                self.ports_to_forward(),
-                self.app_identifier_from_bundle(self._path_to_driver()),
-                self.layout_tests_dir(),
-            )
-            self._crash_logs_to_skip_for_host[host] = host.filesystem.files_under(self.path_to_crash_logs())
+        for device in self.devices():
+            self._install_on(device)
+            self._prepare_for_testing(device)
+        self._skip_existing_crash_logs()
+
+    def _skip_existing_crash_logs(self):
+        for device in self.devices():
+            self._crash_logs_to_skip_for_host[device] = device.filesystem.files_under(self.path_to_crash_logs())
+
+    def _prepare_claimed_device(self, device, sets_up):
+        if sets_up:
+            self.DEVICE_MANAGER.block_on_ready([device], timeout=self.DEVICE_READY_TIMEOUT)
+            self._install_on(device)
+        # The listening socket must belong to the process running the driver, so every worker sharing a device does this.
+        self._prepare_for_testing(device)
+
+    def _prepare_for_testing(self, device):
+        device.prepare_for_testing(
+            self.ports_to_forward(),
+            self.app_identifier_from_bundle(self._path_to_driver()),
+            self.layout_tests_dir(),
+        )
 
     def clean_up_test_run(self):
+        self._claimed_device = None
+        self._provisioning.end_provisioning()
         super(EmbeddedPort, self).clean_up_test_run()
 
         # Best effort to let every device teardown before throwing any exceptions here.
         # Failure to teardown devices can leave things in a bad state.
         exception_list = []
-        for i in range(self.child_processes()):
-            device = self.target_host(i)
+        for device in self.devices():
             if not device:
                 continue
             try:
@@ -283,7 +373,7 @@ class EmbeddedPort(DarwinPort):
                     exception_list.append([Exception(u'Exception while tearing down {}'.format(device)), trace])
 
         if len(exception_list) == 1:
-            raise
+            raise exception_list[0][0]
         if len(exception_list) > 1:
             print('\n')
             for exception in exception_list:
@@ -296,7 +386,14 @@ class EmbeddedPort(DarwinPort):
     def did_spawn_worker(self, worker_number):
         super(EmbeddedPort, self).did_spawn_worker(worker_number)
 
-        self.target_host(worker_number).release_worker_resources()
+        device = self._device_for_worker(worker_number)
+        if device is None:
+            _log.debug(u'Worker {} has no device yet; its share of the tests will run elsewhere'.format(worker_number))
+            return
+        device.release_worker_resources()
+
+    def prepare_devices_for_workers(self):
+        self._provisioning.offer_ready_devices()
 
     def setup_environ_for_server(self, server_name=None):
         env = super(EmbeddedPort, self).setup_environ_for_server(server_name)

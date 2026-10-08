@@ -21,10 +21,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import multiprocessing
 import plistlib
+import queue
+import time
 import unittest
 
-from webkitcorepy import Version
+from unittest.mock import patch
+
+from webkitcorepy import OutputCapture, Version
 
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
@@ -844,3 +849,400 @@ class SimulatorUIAppTest(unittest.TestCase):
         # 'Simulator.app' would match no process at all; killall matches process names.
         self.assertIn(['killall', '-9', 'Simulator'], host.executive.calls)
         self.assertIsNone(SimulatedDeviceManager._managed_simulator_ui_process)
+
+
+class FakeBootWait(object):
+    def __init__(self, polls_until_done=0, returncode=0):
+        self._remaining = polls_until_done
+        self._final = returncode
+        self.returncode = None
+
+    def poll(self):
+        if self._remaining > 0:
+            self._remaining -= 1
+            return None
+        self.returncode = self._final
+        return self._final
+
+
+class FakeSimulatedDevice(object):
+    def __init__(self, name, booted=True):
+        self.name = name
+        self.udid = 'udid-' + name
+        self.platform_device = self
+        self.booted = booted
+
+    def is_booted_or_booting(self, force_update=False):
+        return self.booted
+
+    def __repr__(self):
+        return self.name
+
+
+def drain(device_queue):
+    claimed = []
+    while True:
+        try:
+            device, _sets_up = device_queue.get(timeout=0.3)
+            claimed.append(device)
+        except queue.Empty:
+            return claimed
+
+
+class ProvisioningTestCase(unittest.TestCase):
+    SAVED_STATE = (
+        'INITIALIZED_DEVICES', 'READY_DEVICES', 'PENDING_DEVICES', 'DEVICE_QUEUE', 'PROVISIONING_DONE',
+        '_boot_waits_by_udid', '_slots_per_device', '_provisioning_deadline', '_provisioning_thread', '_ready_or_done',
+    )
+
+    def setUp(self):
+        saved = {name: getattr(SimulatedDeviceManager, name) for name in self.SAVED_STATE}
+        self.addCleanup(lambda: [setattr(SimulatedDeviceManager, name, value) for name, value in saved.items()])
+        self.addCleanup(SimulatedDeviceManager.end_provisioning)
+
+    def _patch(self, *args):
+        patcher = patch.object(*args)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def _boot_waits(self, waits):
+        by_udid = {'udid-' + name: wait for name, wait in waits.items()}
+        self._patch(SimulatedDeviceManager, 'start_waiting_for_boot', staticmethod(lambda device: by_udid[device.udid]))
+        SimulatedDeviceManager.INITIALIZED_DEVICES = [FakeSimulatedDevice(name) for name in waits]
+        return SimulatedDeviceManager.INITIALIZED_DEVICES
+
+    def _offer(self, devices, slots):
+        SimulatedDeviceManager.INITIALIZED_DEVICES = list(devices)
+        SimulatedDeviceManager.READY_DEVICES = list(devices)
+        SimulatedDeviceManager.PENDING_DEVICES = []
+        SimulatedDeviceManager.DEVICE_QUEUE = multiprocessing.Queue()
+        SimulatedDeviceManager._slots_per_device = slots
+        SimulatedDeviceManager.offer_ready_devices()
+
+
+class WaitForFirstReadyDeviceTest(ProvisioningTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self._patch(SimulatedDeviceManager, 'PROVISIONING_POLL_INTERVAL', 0.01)
+
+    def test_returns_once_the_first_device_is_ready(self):
+        self._boot_waits({'slow': FakeBootWait(10 ** 6), 'quick': FakeBootWait(0)})
+        SimulatedDeviceManager.begin_provisioning(timeout=30)
+
+        self.assertTrue(SimulatedDeviceManager.wait_for_first_ready_device())
+        self.assertEqual([str(device) for device in SimulatedDeviceManager.READY_DEVICES], ['quick'])
+        self.assertEqual([str(device) for device in SimulatedDeviceManager.PENDING_DEVICES], ['slow'])
+
+    def test_reports_no_device_when_none_becomes_ready(self):
+        self._boot_waits({'broken': FakeBootWait(0, returncode=1)})
+        SimulatedDeviceManager.begin_provisioning(timeout=30)
+
+        with OutputCapture():
+            self.assertFalse(SimulatedDeviceManager.wait_for_first_ready_device())
+
+    def test_gives_up_at_the_deadline(self):
+        self._boot_waits({'never': FakeBootWait(10 ** 6)})
+        SimulatedDeviceManager.begin_provisioning(timeout=0.05)
+
+        with OutputCapture():
+            self.assertFalse(SimulatedDeviceManager.wait_for_first_ready_device())
+
+
+class ProvisioningThreadTest(ProvisioningTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self._patch(SimulatedDeviceManager, 'PROVISIONING_POLL_INTERVAL', 0.01)
+
+    def test_a_device_which_boots_while_no_shard_finishes_still_reaches_a_waiting_worker(self):
+        devices = self._boot_waits({'quick': FakeBootWait(0), 'slow': FakeBootWait(20)})
+        SimulatedDeviceManager.begin_provisioning(timeout=30)
+
+        claimed = [SimulatedDeviceManager.claim_device(5)[0] for _ in devices]
+
+        self.assertEqual(sorted(str(device) for device in claimed), ['quick', 'slow'])
+
+    def test_a_waiting_worker_stops_once_provisioning_ends_without_its_device(self):
+        self._boot_waits({'quick': FakeBootWait(0), 'broken': FakeBootWait(20, returncode=1)})
+        SimulatedDeviceManager.begin_provisioning(timeout=30)
+
+        with OutputCapture():
+            self.assertEqual(str(SimulatedDeviceManager.claim_device(5)[0]), 'quick')
+            self.assertIsNone(SimulatedDeviceManager.claim_device(0.05)[0])
+
+    def test_teardown_stops_the_thread(self):
+        self._boot_waits({'never': FakeBootWait(10 ** 6)})
+        SimulatedDeviceManager.begin_provisioning(timeout=30)
+        thread = SimulatedDeviceManager._provisioning_thread
+
+        SimulatedDeviceManager.end_provisioning()
+
+        self.assertFalse(thread.is_alive())
+
+
+class DeviceSetupOnceTest(ProvisioningTestCase):
+
+    def _claim_all(self, devices, slots):
+        self._offer(devices, slots)
+        return [SimulatedDeviceManager.claim_device(1) for _ in range(len(devices) * slots)]
+
+    def test_one_worker_a_device_always_sets_up(self):
+        claimed = self._claim_all([FakeSimulatedDevice('a'), FakeSimulatedDevice('b')], 1)
+        self.assertEqual([sets_up for _, sets_up in claimed], [True, True])
+
+    def test_only_the_first_worker_sharing_a_device_sets_it_up(self):
+        devices = [FakeSimulatedDevice('a'), FakeSimulatedDevice('b')]
+        claimed = self._claim_all(devices, 3)
+        by_device = {}
+        for device, sets_up in claimed:
+            by_device.setdefault(device.udid, []).append(sets_up)
+        self.assertEqual(len(by_device), 2)
+        for udid, flags in by_device.items():
+            self.assertEqual(sum(1 for f in flags if f), 1, 'exactly one worker sets up {}'.format(udid))
+            self.assertEqual(len(flags), 3)
+
+
+class SlotsPerDeviceTest(ProvisioningTestCase):
+
+    def test_one_slot_a_device_gives_each_worker_its_own(self):
+        devices = [FakeSimulatedDevice('a'), FakeSimulatedDevice('b')]
+        self._offer(devices, 1)
+        claimed = drain(SimulatedDeviceManager.DEVICE_QUEUE)
+        self.assertEqual(len(claimed), 2)
+        self.assertEqual(len({device.udid for device in claimed}), 2)
+
+    def test_three_slots_a_device_lets_three_workers_share_it(self):
+        devices = [FakeSimulatedDevice('a'), FakeSimulatedDevice('b')]
+        self._offer(devices, 3)
+        claimed = drain(SimulatedDeviceManager.DEVICE_QUEUE)
+        self.assertEqual(len(claimed), 6)
+        for device in devices:
+            self.assertEqual(len([c for c in claimed if c.udid == device.udid]), 3)
+
+    def test_offering_again_replaces_what_is_left(self):
+        devices = [FakeSimulatedDevice('a')]
+        self._offer(devices, 2)
+        SimulatedDeviceManager.offer_ready_devices()
+        self.assertEqual(len(drain(SimulatedDeviceManager.DEVICE_QUEUE)), 2)
+
+
+class BlockOnReadyTest(unittest.TestCase):
+
+    def setUp(self):
+        self._initialized = SimulatedDeviceManager.INITIALIZED_DEVICES
+        self._usable = SimulatedDeviceManager._wait_until_devices_are_usable
+        self._extras = SimulatedDeviceManager._set_up_environment_extras
+        self.waited_on = []
+        self.extras_for = []
+        SimulatedDeviceManager._wait_until_devices_are_usable = lambda devices, deadline, on_usable=None: (
+            self.waited_on.append(list(devices)), on_usable(list(devices)) if on_usable else None)
+        SimulatedDeviceManager._set_up_environment_extras = lambda devices: self.extras_for.append(list(devices))
+
+    def tearDown(self):
+        SimulatedDeviceManager.INITIALIZED_DEVICES = self._initialized
+        SimulatedDeviceManager._wait_until_devices_are_usable = self._usable
+        SimulatedDeviceManager._set_up_environment_extras = self._extras
+
+    def test_accepts_one_device(self):
+        device = FakeSimulatedDevice('one')
+        SimulatedDeviceManager.block_on_ready([device])
+        self.assertEqual(self.waited_on, [[device]])
+        self.assertEqual(self.extras_for, [[device]])
+
+    def test_accepts_multiple_devices(self):
+        devices = [FakeSimulatedDevice('one'), FakeSimulatedDevice('two')]
+        SimulatedDeviceManager.block_on_ready(devices)
+        self.assertEqual(self.waited_on, [devices])
+
+    def test_defaults_to_every_initialized_device(self):
+        devices = [FakeSimulatedDevice('one'), FakeSimulatedDevice('two')]
+        SimulatedDeviceManager.INITIALIZED_DEVICES = devices
+        SimulatedDeviceManager.block_on_ready()
+        self.assertEqual(self.waited_on, [devices])
+
+    def test_nothing_to_wait_on(self):
+        SimulatedDeviceManager.INITIALIZED_DEVICES = []
+        SimulatedDeviceManager.block_on_ready()
+        SimulatedDeviceManager.block_on_ready([])
+        self.assertEqual(self.waited_on, [])
+        self.assertEqual(self.extras_for, [])
+
+    def test_devices_are_waited_on_as_a_group(self):
+        devices = [FakeSimulatedDevice('one'), FakeSimulatedDevice('two'), FakeSimulatedDevice('three')]
+        SimulatedDeviceManager.block_on_ready(devices)
+        self.assertEqual(len(self.waited_on), 1)
+
+
+class UsabilityCheckBudgetTest(unittest.TestCase):
+
+    class FakeExecutive(object):
+        def __init__(self, recorder):
+            self._recorder = recorder
+            self.PIPE = -1
+
+        def popen(self, command, **kwargs):
+            return None
+
+    def _budgets_for(self, device_count, deadline_in):
+        budgets = []
+        devices = []
+        for index in range(device_count):
+            device = FakeSimulatedDevice('device-{}'.format(index))
+            device.device_type = DeviceType.from_string('iPhone 11')
+            device.UI_MANAGER_SERVICE = {'iOS': 'com.apple.Preferences'}
+            device.executive = self.FakeExecutive(budgets)
+            device.state = lambda force_update=False: SimulatedDevice.DeviceState.BOOTED
+            devices.append(device)
+
+        saved = simulated_device.run_all
+        simulated_device.run_all = lambda commands, timeout=None, popen=None: (
+            budgets.append(timeout) or [(0, b'', b'')] * len(commands))
+        try:
+            SimulatedDeviceManager._devices_not_yet_usable(devices, time.monotonic() + deadline_in)
+        finally:
+            simulated_device.run_all = saved
+        return budgets
+
+    def test_budget_scales_with_device_count(self):
+        budget = self._budgets_for(3, deadline_in=10000)[0]
+        self.assertEqual(budget, SimulatedDeviceManager.USABILITY_CHECK_TIMEOUT * 3)
+
+    def test_budget_is_capped_by_the_deadline(self):
+        budget = self._budgets_for(12, deadline_in=60)[0]
+        self.assertLessEqual(budget, 60)
+
+    def test_budget_is_zero_past_the_deadline(self):
+        for budget in self._budgets_for(2, deadline_in=-30):
+            self.assertEqual(budget, 0)
+
+
+class EnvironmentExtrasTest(unittest.TestCase):
+
+    def _devices(self, *extras):
+        devices = []
+        for index, commands in enumerate(extras):
+            device = FakeSimulatedDevice('device-{}'.format(index))
+            device.environment_extras = commands
+            device.executive = MockExecutive2()
+            devices.append(device)
+        return devices
+
+    def _run(self, devices, returncode):
+        ran = []
+
+        def run_all(commands, timeout=None, popen=None):
+            ran.extend(commands)
+            return [(returncode, b'', b'failed')] * len(commands)
+
+        with patch.object(simulated_device, 'run_all', run_all):
+            SimulatedDeviceManager._set_up_environment_extras(devices)
+        return ran
+
+    def test_every_devices_commands_run(self):
+        self.assertEqual(self._run(self._devices([['a']], [['b'], ['c']]), 0), [['a'], ['b'], ['c']])
+
+    def test_a_failed_command_is_fatal(self):
+        with self.assertRaises(RuntimeError):
+            self._run(self._devices([['a']]), 1)
+
+    def test_no_commands_runs_nothing(self):
+        self.assertEqual(self._run(self._devices([], []), 1), [])
+
+
+class DevicePresenceTest(unittest.TestCase):
+
+    def test_a_device_is_present_while_booted_or_booting(self):
+        self.assertTrue(SimulatedDeviceManager.is_device_present(FakeSimulatedDevice('up')))
+        self.assertFalse(SimulatedDeviceManager.is_device_present(FakeSimulatedDevice('gone', booted=False)))
+
+
+class ProvisioningTest(ProvisioningTestCase):
+
+    def _begin(self, waits, slots_per_device=1):
+        self._patch(SimulatedDeviceManager, '_start_provisioning_thread')
+        devices = self._boot_waits(waits)
+        SimulatedDeviceManager.begin_provisioning(timeout=60, slots_per_device=slots_per_device)
+        return devices
+
+    def test_a_device_is_offered_as_soon_as_its_own_boot_finishes(self):
+        self._begin({'quick': FakeBootWait(0), 'slow': FakeBootWait(5)})
+        SimulatedDeviceManager._advance_provisioning()
+
+        self.assertEqual([str(d) for d in SimulatedDeviceManager.READY_DEVICES], ['quick'])
+        self.assertEqual([str(d) for d in SimulatedDeviceManager.PENDING_DEVICES], ['slow'])
+        self.assertTrue(SimulatedDeviceManager.expects_more_devices())
+
+    def test_the_slow_device_joins_once_its_boot_finishes(self):
+        self._begin({'quick': FakeBootWait(0), 'slow': FakeBootWait(2)})
+        for _ in range(5):
+            SimulatedDeviceManager._advance_provisioning()
+
+        self.assertEqual([str(d) for d in SimulatedDeviceManager.READY_DEVICES], ['quick', 'slow'])
+        self.assertFalse(SimulatedDeviceManager.expects_more_devices())
+
+    def test_asking_never_blocks(self):
+        self._begin({'never': FakeBootWait(10 ** 6)})
+
+        started = time.monotonic()
+        for _ in range(5):
+            SimulatedDeviceManager._advance_provisioning()
+        self.assertLess(time.monotonic() - started, 1)
+
+    def test_a_device_that_fails_to_boot_is_left_behind(self):
+        self._begin({'fine': FakeBootWait(0), 'broken': FakeBootWait(0, returncode=1)})
+        with OutputCapture():
+            SimulatedDeviceManager._advance_provisioning()
+
+        self.assertEqual([str(d) for d in SimulatedDeviceManager.READY_DEVICES], ['fine'])
+        self.assertEqual(SimulatedDeviceManager.PENDING_DEVICES, [])
+        self.assertFalse(SimulatedDeviceManager.expects_more_devices())
+
+    def test_devices_still_booting_are_given_up_on_at_the_deadline(self):
+        self._begin({'never': FakeBootWait(10 ** 6)})
+        SimulatedDeviceManager._provisioning_deadline = time.monotonic() - 1
+
+        with OutputCapture():
+            SimulatedDeviceManager._advance_provisioning()
+
+        self.assertEqual(SimulatedDeviceManager.PENDING_DEVICES, [])
+        self.assertFalse(SimulatedDeviceManager.expects_more_devices())
+
+    def test_slots_below_one_are_treated_as_one(self):
+        self._begin({'only': FakeBootWait(0)}, slots_per_device=0)
+        SimulatedDeviceManager._advance_provisioning()
+
+        self.assertEqual(len(drain(SimulatedDeviceManager.DEVICE_QUEUE)), 1)
+
+    def test_a_claimed_device_is_the_copy_this_process_holds(self):
+        devices = self._begin({'only': FakeBootWait(0)})
+        SimulatedDeviceManager._advance_provisioning()
+        sent = FakeSimulatedDevice('only')
+        SimulatedDeviceManager.DEVICE_QUEUE.put((sent, True))
+        time.sleep(0.2)
+
+        SimulatedDeviceManager.DEVICE_QUEUE.get()
+        claimed, _sets_up = SimulatedDeviceManager.claim_device(1)
+
+        self.assertIs(claimed, devices[0])
+
+    def test_a_worker_gives_up_once_nothing_is_coming(self):
+        self._begin({'broken': FakeBootWait(0, returncode=1)})
+        with OutputCapture():
+            SimulatedDeviceManager._advance_provisioning()
+
+        self.assertIsNone(SimulatedDeviceManager.claim_device(0.1)[0])
+
+    def test_workers_only_need_the_queue_and_whether_provisioning_is_done(self):
+        self._begin({'only': FakeBootWait(0)})
+        self.assertEqual(set(SimulatedDeviceManager.provisioning_state()), {'device_queue', 'provisioning_done'})
+
+    def test_teardown_forgets_a_runs_devices(self):
+        self._begin({'only': FakeBootWait(0)})
+        SimulatedDeviceManager._advance_provisioning()
+
+        SimulatedDeviceManager.end_provisioning()
+
+        self.assertEqual(SimulatedDeviceManager.READY_DEVICES, [])
+        self.assertIsNone(SimulatedDeviceManager.DEVICE_QUEUE)
+        self.assertFalse(SimulatedDeviceManager.expects_more_devices())

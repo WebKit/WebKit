@@ -22,12 +22,20 @@
 
 from webkitcorepy import Version
 
+import unittest
+
+from unittest.mock import Mock
+
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.port.device_provisioning import DeviceProvisioning
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.xcode.device_type import DeviceType
+from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 from webkitcorepy import OutputCapture
 
@@ -169,3 +177,211 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         self.assertEqual(configuration['platform'], 'ios')
         self.assertEqual(configuration['style'], 'release')
         self.assertEqual(configuration['version_name'], 'iOS {}'.format(port.device_version()))
+
+
+class FakeClaimableDevice(object):
+    def __init__(self, name):
+        self.name = name
+        self.udid = 'udid-' + name
+        self.prepared = 0
+        self.installed = 0
+        self.filesystem = MockFileSystem()
+
+    def prepare_for_testing(self, ports_to_forward, test_app_bundle_id, layout_test_directory):
+        self.prepared += 1
+
+    def finished_testing(self):
+        self.prepared = 0
+
+    def __repr__(self):
+        return self.name
+
+
+def _claiming_manager(devices, sets_up=True):
+    class FakeManager(DeviceProvisioning):
+        AVAILABLE_DEVICES = []
+        INITIALIZED_DEVICES = list(devices)
+        DEVICE_QUEUE = object()
+        handed_out = list(devices)
+        ended = False
+
+        @classmethod
+        def claim_device(cls, wait_timeout):
+            return (cls.handed_out.pop(0), sets_up) if cls.handed_out else (None, False)
+
+        @classmethod
+        def block_on_ready(cls, devices=None, timeout=None):
+            pass
+
+        @classmethod
+        def expects_more_devices(cls):
+            return bool(cls.handed_out)
+
+        @classmethod
+        def end_provisioning(cls):
+            cls.ended = True
+
+    return FakeManager
+
+
+def _ready_device_manager(devices):
+    class FakeManager(object):
+        AVAILABLE_DEVICES = []
+        INITIALIZED_DEVICES = None
+
+        @classmethod
+        def initialize_devices(cls, requests, host=None, **kwargs):
+            cls.INITIALIZED_DEVICES = list(devices)
+            return cls.INITIALIZED_DEVICES
+
+    return FakeManager
+
+
+def _port_with_manager(manager, child_processes=1):
+    port = IOSSimulatorPort(MockSystemHost(os_name='mac'), 'ios-simulator', options=MockOptions(
+        configuration='Release', architecture='x86_64', child_processes=child_processes))
+    port.DEVICE_MANAGER = manager
+    port.ports_to_forward = lambda: []
+    port._path_to_driver = lambda: '/mock/Driver.app'
+    port.app_identifier_from_bundle = lambda path: 'com.example'
+    port.layout_tests_dir = lambda: '/mock/LayoutTests'
+    port._install_on = lambda device: setattr(device, 'installed', device.installed + 1)
+    return port
+
+
+class InheritedClaimTest(unittest.TestCase):
+
+    def test_a_claim_does_not_survive_pickling(self):
+        port = IOSSimulatorPort(MockSystemHost(), 'ios-simulator-wk2')
+        port._claimed_device = 'a device this process claimed'
+        self.assertIsNone(port.__getstate__()['_claimed_device'])
+
+    def test_pickling_keeps_everything_else(self):
+        port = IOSSimulatorPort(MockSystemHost(), 'ios-simulator-wk2')
+        port._claimed_device = 'a device this process claimed'
+        state = port.__getstate__()
+        self.assertEqual(set(state), set(port.__dict__))
+        self.assertEqual(state['_printing_cmd_line'], port._printing_cmd_line)
+
+
+class CollectionDeviceTest(unittest.TestCase):
+
+    class FakeDevice(object):
+        def __init__(self, name):
+            self.name = name
+            self.udid = 'udid-' + name
+
+        def __repr__(self):
+            return self.name
+
+    def setUp(self):
+        self._saved = (SimulatedDeviceManager.INITIALIZED_DEVICES, SimulatedDeviceManager.READY_DEVICES)
+        self.port = IOSSimulatorPort(MockSystemHost(), 'ios-simulator-wk2')
+
+    def tearDown(self):
+        SimulatedDeviceManager.INITIALIZED_DEVICES, SimulatedDeviceManager.READY_DEVICES = self._saved
+
+    def test_the_first_created_device_is_skipped_while_it_is_still_booting(self):
+        booting, ready = self.FakeDevice('Managed 0'), self.FakeDevice('Managed 1')
+        SimulatedDeviceManager.INITIALIZED_DEVICES = [booting, ready]
+        SimulatedDeviceManager.READY_DEVICES = [ready]
+        self.assertIs(self.port.any_ready_device(), ready)
+
+    def test_the_first_created_device_is_used_once_it_is_ready(self):
+        first, second = self.FakeDevice('Managed 0'), self.FakeDevice('Managed 1')
+        SimulatedDeviceManager.INITIALIZED_DEVICES = [first, second]
+        SimulatedDeviceManager.READY_DEVICES = [first, second]
+        self.assertIs(self.port.any_ready_device(), first)
+
+    def test_falls_back_when_nothing_is_ready_yet(self):
+        first = self.FakeDevice('Managed 0')
+        SimulatedDeviceManager.INITIALIZED_DEVICES = [first]
+        SimulatedDeviceManager.READY_DEVICES = []
+        self.assertIs(self.port.any_ready_device(), first)
+
+    def test_no_devices_at_all(self):
+        SimulatedDeviceManager.INITIALIZED_DEVICES = []
+        SimulatedDeviceManager.READY_DEVICES = []
+        self.assertIsNone(self.port.any_ready_device())
+
+
+class DeviceLivenessFreshnessTest(unittest.TestCase):
+
+    def _asked_with(self, **kwargs):
+        platform_device = Mock()
+        platform_device.is_booted_or_booting.return_value = True
+        port = IOSSimulatorPort(MockSystemHost(), 'ios-simulator-wk2')
+        port._claimed_device = Mock(platform_device=platform_device)
+        port.target_host_is_usable(0, **kwargs)
+        return [call.kwargs['force_update'] for call in platform_device.is_booted_or_booting.call_args_list]
+
+    def test_default_accepts_a_recent_answer(self):
+        self.assertEqual(self._asked_with(), [False])
+
+    def test_a_suspicious_caller_forces_a_fresh_answer(self):
+        self.assertEqual(self._asked_with(force_update=True), [True])
+
+
+class IOSSimulatorClaimTest(unittest.TestCase):
+
+    def test_the_port_claims_from_the_device_manager(self):
+        port = _port_with_manager(_claiming_manager([FakeClaimableDevice('device-0'), FakeClaimableDevice('device-1')]))
+
+        claimed = port._device_for_worker(0)
+
+        self.assertEqual(str(claimed), 'device-0')
+        self.assertEqual((claimed.installed, claimed.prepared), (1, 1))
+
+    def test_a_worker_sharing_a_device_prepares_it_without_installing(self):
+        port = _port_with_manager(_claiming_manager([FakeClaimableDevice('device-0')], sets_up=False))
+
+        claimed = port._device_for_worker(0)
+
+        self.assertEqual((claimed.installed, claimed.prepared), (0, 1))
+
+    def test_a_worker_keeps_the_device_it_claimed(self):
+        port = _port_with_manager(_claiming_manager([FakeClaimableDevice('device-0'), FakeClaimableDevice('device-1')]))
+
+        claimed = port._device_for_worker(0)
+        self.assertIs(port._device_for_worker(0), claimed)
+        self.assertIs(port.target_host(0), claimed)
+
+    def test_a_worker_without_a_device_reports_itself_unusable(self):
+        port = _port_with_manager(_claiming_manager([]))
+        self.assertIsNone(port._device_for_worker(0))
+        self.assertFalse(port.target_host_is_usable(0))
+
+    def test_teardown_hands_the_devices_back_to_the_manager(self):
+        port = _port_with_manager(_claiming_manager([FakeClaimableDevice('device-0')]))
+        port._device_for_worker(0)
+
+        port.clean_up_test_run()
+
+        self.assertIsNone(port._claimed_device)
+        self.assertTrue(port.DEVICE_MANAGER.ended)
+
+
+class ReadyDeviceManagerTest(unittest.TestCase):
+
+    def setUp(self):
+        self.devices = [FakeClaimableDevice('device-0'), FakeClaimableDevice('device-1')]
+        self.port = _port_with_manager(_ready_device_manager(self.devices), child_processes=2)
+
+    def test_setup_installs_and_prepares_every_device(self):
+        self.port.setup_test_run()
+
+        self.assertEqual([(device.installed, device.prepared) for device in self.devices], [(1, 1), (1, 1)])
+
+    def test_workers_are_addressed_by_position(self):
+        self.port.setup_test_run()
+
+        self.assertIs(self.port.target_host(1), self.devices[1])
+        self.assertIs(self.port.target_host(2), self.devices[0])
+        self.assertEqual([device.prepared for device in self.devices], [1, 1])
+
+    def test_every_device_is_always_usable(self):
+        self.port.setup_test_run()
+
+        self.assertTrue(self.port.target_host_is_usable(0, force_update=True))
+        self.assertTrue(self.port.has_usable_device())
+        self.assertFalse(self.port.expects_more_devices())

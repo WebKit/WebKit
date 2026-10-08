@@ -211,6 +211,37 @@ class Port(object):
     def target_host(self, worker_number=None):
         return self.host
 
+    def devices(self):
+        return []
+
+    def any_ready_device(self):
+        return None
+
+    def device_for_upload(self):
+        # Not target_host(0), which would claim a device away from the workers.
+        return self.any_ready_device() or self.target_host(0)
+
+    def default_api_test_workers_per_device(self):
+        return 1
+
+    def prepare_devices_for_workers(self):
+        pass
+
+    def has_usable_device(self):
+        return True
+
+    def expects_more_devices(self):
+        return False
+
+    def provisioning_state(self):
+        return None
+
+    def adopt_provisioning_state(self, state):
+        pass
+
+    def target_host_is_usable(self, worker_number=None, force_update=False):
+        return True
+
     def is_simulator(self):
         return False
 
@@ -765,7 +796,7 @@ class Port(object):
         # to have multiple copies of webkit checked out and built.
         return self._build_path('layout-test-results')
 
-    def setup_test_run(self, device_type=None):
+    def setup_test_run(self, device_type=None, workers_per_device=1):
         """Perform port-specific work at the beginning of a test run."""
         pass
 

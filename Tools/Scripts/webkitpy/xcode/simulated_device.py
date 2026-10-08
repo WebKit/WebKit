@@ -23,18 +23,25 @@
 import atexit
 import json
 import logging
+import multiprocessing
 import os
 import plistlib
+import queue
 import re
+import threading
 import time
 
-from webkitcorepy import Version, Timeout
+from dataclasses import dataclass
+
+from webkitcorepy import Version, Timeout, string_utils
+from webkitcorepy.subprocess_utils import run_all, wait_until_exit
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
+from webkitpy.port.device_provisioning import DeviceProvisioning
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs
 
@@ -56,7 +63,21 @@ class DeviceRequest(object):
         self.merge_requests = merge_requests  # Allow a single booted simulator to fullfil multiple requests.
 
 
-class SimulatedDeviceManager(object):
+@dataclass
+class _UsabilityCheck:
+    device: object
+    service: str
+
+    @property
+    def launch_command(self):
+        return [SimulatedDeviceManager.xcrun, 'simctl', 'launch', self.device.udid, self.service]
+
+    @property
+    def terminate_command(self):
+        return [SimulatedDeviceManager.xcrun, 'simctl', 'terminate', self.device.udid, self.service]
+
+
+class SimulatedDeviceManager(DeviceProvisioning):
     class Runtime(object):
         def __init__(self, runtime_dict):
             self.root = runtime_dict['runtimeRoot']
@@ -70,6 +91,10 @@ class SimulatedDeviceManager(object):
     AVAILABLE_DEVICES = []
     INITIALIZED_DEVICES = None
 
+    DEVICE_QUEUE = None
+    PROVISIONING_DONE = None
+    PENDING_DEVICES = []
+
     SIMULATOR_BOOT_TIMEOUT = 600
 
     MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 2 * (1024 ** 3)  # 2GB a simulator.
@@ -79,6 +104,12 @@ class SimulatedDeviceManager(object):
     # Testing on iMac Pros has indicated that more than 12 simulators, even if we seem to have enough resources for them,
     # results in diminishing returns.
     MAX_NUMBER_OF_SIMULATORS = 12
+
+    USABILITY_CHECK_TIMEOUT = 120
+    ENVIRONMENT_EXTRAS_TIMEOUT = 600
+    INSTALL_TIMEOUT = 600
+    SHUTDOWN_TIMEOUT = 30
+    PROVISIONING_POLL_INTERVAL = 1
 
     xcrun = '/usr/bin/xcrun'
     simulator_device_path = '~/Library/Developer/CoreSimulator/Devices'
@@ -92,6 +123,12 @@ class SimulatedDeviceManager(object):
     _device_identifier_to_name = {}
     _managed_simulator_ui_process = None
     _last_updated_state = 0
+    _boot_waits_by_udid = {}
+    _provisioning_deadline = 0
+    _slots_per_device = 1
+    _provisioning_lock = threading.Lock()
+    _provisioning_thread = None
+    _ready_or_done = None
 
     @staticmethod
     def _create_runtimes(runtimes):
@@ -369,16 +406,12 @@ class SimulatedDeviceManager(object):
                 raise RuntimeError('Timed out while waiting for all devices to boot')
 
     @staticmethod
-    def _wait_until_device_is_usable(device, deadline):
-        _log.debug(u'Waiting until {} is usable'.format(device))
-        state = device.platform_device.is_usable(force_update=True)
-        while not state:
-            if state is None:
-                raise RuntimeError(u'{} will never become healthy'.format(device))
-            if time.time() > deadline:
-                raise RuntimeError(u'Timed out while waiting for {} to become usable'.format(device))
-            time.sleep(1)
-            state = device.platform_device.is_usable(force_update=True)
+    def start_waiting_for_boot(device):
+        executive = device.platform_device.executive
+        return executive.popen(
+            [SimulatedDeviceManager.xcrun, 'simctl', 'bootstatus', device.udid, '-b'],
+            stdout=executive.PIPE, stderr=executive.PIPE,
+        )
 
     @staticmethod
     def _configure_launchd_before_booting(device, host):
@@ -412,25 +445,264 @@ class SimulatedDeviceManager(object):
                 _log.warning(u'Could not write {} for {} before booting: {}'.format(name, device.udid, error))
 
     @staticmethod
-    def _boot_device(device, host=None):
+    def _wait_until_devices_are_usable(devices, deadline, on_usable=None):
+        waiting_on = list(devices)
+        for device in waiting_on:
+            _log.debug(u'Waiting until {} is usable'.format(device))
+
+        while waiting_on:
+            still_waiting = SimulatedDeviceManager._devices_not_yet_usable(waiting_on, deadline)
+            if on_usable:
+                on_usable([device for device in waiting_on if device not in still_waiting])
+            waiting_on = still_waiting
+            if not waiting_on:
+                return
+            if time.monotonic() > deadline:
+                raise RuntimeError(u'Timed out while waiting for {} to become usable'.format(
+                    ', '.join(str(device) for device in waiting_on)))
+            time.sleep(1)
+
+    @staticmethod
+    def _devices_not_yet_usable(devices, deadline):
+        checks = []
+        not_ready = []
+        for device in devices:
+            platform_device = device.platform_device
+            if platform_device.state(force_update=True) != SimulatedDevice.DeviceState.BOOTED:
+                not_ready.append(device)
+                continue
+            service = platform_device.UI_MANAGER_SERVICE.get(platform_device.device_type.software_variant)
+            if not service:
+                _log.debug(u'{} has no service to check if the device is usable'.format(platform_device.device_type.software_variant))
+                continue
+            checks.append(_UsabilityCheck(device=device, service=service))
+        if not checks:
+            return not_ready
+
+        def budget_for(count):
+            return max(0, min(SimulatedDeviceManager.USABILITY_CHECK_TIMEOUT * count, deadline - time.monotonic()))
+
+        # Every simulator in a run is created against the same host, so they share one executive.
+        popen = checks[0].device.platform_device.executive.popen
+
+        launched = []
+        for check, (returncode, _stdout, _stderr) in zip(checks, run_all(
+                [check.launch_command for check in checks], timeout=budget_for(len(checks)), popen=popen)):
+            if returncode:
+                not_ready.append(check.device)
+            else:
+                launched.append(check)
+
+        if launched:
+            time.sleep(.7)
+            for check, (returncode, _stdout, _stderr) in zip(launched, run_all(
+                    [check.terminate_command for check in launched], timeout=budget_for(len(launched)), popen=popen)):
+                if returncode:
+                    not_ready.append(check.device)
+        return not_ready
+
+    @staticmethod
+    def _boot_devices(devices, host=None):
         host = host or SystemHost.get_default()
+        if not devices:
+            return
 
-        # FIXME: remove this workaround after rdar://129789675 has been resolved.
-        host.executive.run_command(['sh', '-c', "mkdir -m 700 -p " + "~/Library/Developer/CoreSimulator/Devices/" + device.udid + "/data/private/var/db"])
+        for device in devices:
+            # FIXME: remove this workaround after rdar://129789675 has been resolved.
+            host.executive.run_command(['sh', '-c', "mkdir -m 700 -p " + "~/Library/Developer/CoreSimulator/Devices/" + device.udid + "/data/private/var/db"])
+            SimulatedDeviceManager._configure_launchd_before_booting(device, host)
 
-        SimulatedDeviceManager._configure_launchd_before_booting(device, host)
+        processes = []
+        for device in devices:
+            _log.debug(u"Booting device '{}'".format(device.udid))
+            device.platform_device.booted_by_script = True
+            processes.append(host.executive.popen(
+                [SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid],
+                stdout=host.executive.PIPE, stderr=host.executive.PIPE,
+            ))
 
-        _log.debug(u"Booting device '{}'".format(device.udid))
-        device.platform_device.booted_by_script = True
-        try:
-            with Timeout(seconds=30, patch=False):
-                host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'boot', device.udid])
-        except (ScriptError, Timeout.Exception) as e:
-            _log.error('Error: ' + e.message_with_output(output_limit=None))
-            raise e
-        SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
-        # FIXME: Remove this delay once rdar://77234240 is resolved.
+        deadline = time.monotonic() + SimulatedDeviceManager.SIMULATOR_BOOT_TIMEOUT
+        for device, process in zip(devices, processes):
+            returncode, _, stderr = wait_until_exit(process, timeout=max(0, deadline - time.monotonic()))
+            if returncode:
+                device.platform_device.booted_by_script = False
+                _log.error(u'Failed to boot {}: {}'.format(
+                    device.udid,
+                    string_utils.decode(stderr, target_type=str).strip() if stderr else 'exit code {}'.format(returncode)))
+                if device in SimulatedDeviceManager.INITIALIZED_DEVICES:
+                    SimulatedDeviceManager.INITIALIZED_DEVICES.remove(device)
+                SimulatedDeviceManager._shut_down_device(device, host)
+                continue
+            if device not in SimulatedDeviceManager.INITIALIZED_DEVICES:
+                SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+
+        # FIXME: Remove this delay once rdar://77234240 is resolved. Booting together pays it once rather than per device.
         time.sleep(15)
+
+    @staticmethod
+    def _set_up_environment_extras(devices):
+        commands = [command for device in devices for command in device.platform_device.environment_extras]
+        if not commands:
+            return
+
+        popen = devices[0].platform_device.executive.popen
+        for command, (returncode, _stdout, stderr) in zip(commands, run_all(
+                commands, timeout=SimulatedDeviceManager.ENVIRONMENT_EXTRAS_TIMEOUT, popen=popen)):
+            if returncode:
+                raise RuntimeError(u'Environment setup command {} failed with exit code {}: {}'.format(
+                    command, returncode, string_utils.decode(stderr, target_type=str).strip() if stderr else ''))
+
+    @staticmethod
+    def _shut_down_device(device, host):
+        wait_until_exit(host.executive.popen(
+            [SimulatedDeviceManager.xcrun, 'simctl', 'shutdown', device.udid],
+            stdout=host.executive.PIPE, stderr=host.executive.PIPE,
+        ), timeout=SimulatedDeviceManager.SHUTDOWN_TIMEOUT)
+
+    @classmethod
+    def begin_provisioning(cls, timeout=SIMULATOR_BOOT_TIMEOUT, slots_per_device=1):
+        cls._slots_per_device = max(1, slots_per_device)
+        cls.DEVICE_QUEUE = multiprocessing.Queue()
+        cls.PROVISIONING_DONE = multiprocessing.Event()
+        cls.PENDING_DEVICES = list(cls.INITIALIZED_DEVICES or [])
+        cls.READY_DEVICES = []
+        cls._boot_waits_by_udid = {}
+        cls._ready_or_done = threading.Event()
+        cls._provisioning_deadline = time.monotonic() + timeout
+        cls._advance_provisioning()
+        cls._start_provisioning_thread()
+
+    @classmethod
+    def _start_provisioning_thread(cls):
+        # Workers block on devices still booting, so provisioning cannot wait on their results to move forward.
+        cls._provisioning_thread = threading.Thread(
+            target=cls._provision_until_done, args=(cls.PROVISIONING_DONE, cls._ready_or_done),
+            name='device-provisioning', daemon=True,
+        )
+        cls._provisioning_thread.start()
+
+    @classmethod
+    def _provision_until_done(cls, done, ready_or_done):
+        try:
+            while not done.is_set():
+                cls._advance_provisioning()
+                done.wait(cls.PROVISIONING_POLL_INTERVAL)
+        finally:
+            done.set()
+            ready_or_done.set()
+
+    @classmethod
+    def _advance_provisioning(cls):
+        with cls._provisioning_lock:
+            for device in list(cls.PENDING_DEVICES):
+                waiting = cls._boot_waits_by_udid.get(device.udid)
+                if waiting is None:
+                    cls._boot_waits_by_udid[device.udid] = cls.start_waiting_for_boot(device)
+                    continue
+                if waiting.poll() is None:
+                    continue
+
+                cls.PENDING_DEVICES.remove(device)
+                del cls._boot_waits_by_udid[device.udid]
+                if waiting.returncode:
+                    _log.error(u'{} never finished booting, continuing without it'.format(device))
+                    continue
+                _log.debug(u'{} is ready to test on'.format(device))
+                cls.READY_DEVICES.append(device)
+                cls._offer(device)
+                cls._ready_or_done.set()
+
+            if cls.PENDING_DEVICES and time.monotonic() > cls._provisioning_deadline:
+                _log.error(u'Gave up waiting for {} to become ready; continuing without them'.format(
+                    ', '.join(str(device) for device in cls.PENDING_DEVICES)))
+                cls.PENDING_DEVICES = []
+
+            if not cls.PENDING_DEVICES:
+                cls.PROVISIONING_DONE.set()
+                cls._ready_or_done.set()
+
+    @classmethod
+    def _offer(cls, device):
+        for slot in range(cls._slots_per_device):
+            cls.DEVICE_QUEUE.put((device, slot == 0))
+
+    @classmethod
+    def wait_for_first_ready_device(cls):
+        cls._ready_or_done.wait()
+        if cls.PENDING_DEVICES:
+            _log.debug(u'Starting on {} of {} devices; the rest join as they are ready'.format(
+                len(cls.READY_DEVICES), len(cls.INITIALIZED_DEVICES)))
+        return bool(cls.READY_DEVICES)
+
+    @classmethod
+    def offer_ready_devices(cls):
+        if cls.DEVICE_QUEUE is None:
+            return
+        with cls._provisioning_lock:
+            # Not drained and refilled: a device just put on a queue may not be readable yet, and would be offered twice.
+            cls._discard_device_queue()
+            cls.DEVICE_QUEUE = multiprocessing.Queue()
+            for device in cls.READY_DEVICES:
+                cls._offer(device)
+
+    @classmethod
+    def _discard_device_queue(cls):
+        # Its feeder thread may still be writing devices nobody will read.
+        cls.DEVICE_QUEUE.cancel_join_thread()
+        cls.DEVICE_QUEUE.close()
+
+    @classmethod
+    def claim_device(cls, wait_timeout):
+        """Returns a device and whether this worker sets it up, which only the first worker sharing a device does."""
+        while True:
+            try:
+                claimed, sets_up = cls.DEVICE_QUEUE.get(timeout=wait_timeout)
+                return cls.device_for(claimed) or claimed, sets_up
+            except queue.Empty:
+                if not cls.expects_more_devices():
+                    return None, False
+
+    @classmethod
+    def device_for(cls, other):
+        # A device sent through a queue is a copy, and refreshing state only reaches this process's own.
+        for known in cls.INITIALIZED_DEVICES or []:
+            if known and known.udid == other.udid:
+                return known
+        return None
+
+    @classmethod
+    def expects_more_devices(cls):
+        return bool(cls.PROVISIONING_DONE) and not cls.PROVISIONING_DONE.is_set()
+
+    @classmethod
+    def is_device_present(cls, device, force_update=False):
+        # Not is_usable, which launches an app and steals the foreground from the driver.
+        return device.platform_device.is_booted_or_booting(force_update=force_update)
+
+    @classmethod
+    def end_provisioning(cls):
+        if cls.PROVISIONING_DONE:
+            cls.PROVISIONING_DONE.set()
+        if cls._provisioning_thread:
+            cls._provisioning_thread.join()
+        if cls.DEVICE_QUEUE is not None:
+            cls._discard_device_queue()
+        cls.READY_DEVICES = []
+        cls.PENDING_DEVICES = []
+        cls.DEVICE_QUEUE = None
+        cls.PROVISIONING_DONE = None
+        cls._provisioning_thread = None
+        cls._ready_or_done = None
+        cls._boot_waits_by_udid = {}
+
+    @classmethod
+    def provisioning_state(cls):
+        return dict(device_queue=cls.DEVICE_QUEUE, provisioning_done=cls.PROVISIONING_DONE)
+
+    @classmethod
+    def adopt_provisioning_state(cls, state):
+        cls.DEVICE_QUEUE = state.get('device_queue')
+        cls.PROVISIONING_DONE = state.get('provisioning_done')
 
     @staticmethod
     def device_count_for_type(device_type, host=None, use_booted_simulator=True, **kwargs):
@@ -439,8 +711,10 @@ class SimulatedDeviceManager(object):
             return 0
 
         if SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.is_booted_or_booting(), host=host) and use_booted_simulator:
-            filter = lambda device: device.platform_device.is_booted_or_booting() and device.device_type in device_type
-            return len(SimulatedDeviceManager.device_by_filter(filter, host=host))
+            def is_booted_device_of_type(device):
+                return device.platform_device.is_booted_or_booting() and device.device_type in device_type
+
+            return len(SimulatedDeviceManager.device_by_filter(is_booted_device_of_type, host=host))
 
         for name in SimulatedDeviceManager._device_identifier_to_name.values():
             if DeviceType.from_string(name) in device_type:
@@ -505,7 +779,22 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager._managed_simulator_ui_process = process_name
 
     @classmethod
-    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, keep_alive=False, udids=None, **kwargs):
+    def initialize_devices(cls, requests, host=None, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
+        devices = cls.create_devices(requests, host=host, **kwargs)
+        cls.block_on_ready(devices, timeout=timeout)
+        return devices
+
+    @classmethod
+    def block_on_ready(cls, devices=None, timeout=SIMULATOR_BOOT_TIMEOUT):
+        devices = list(cls.INITIALIZED_DEVICES or []) if devices is None else list(devices)
+        if not devices:
+            return
+
+        cls._wait_until_devices_are_usable(devices, time.monotonic() + timeout,
+                                           on_usable=cls._set_up_environment_extras)
+
+    @classmethod
+    def create_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, keep_alive=False, udids=None, **kwargs):
         host = host or SystemHost.get_default()
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES
@@ -540,7 +829,7 @@ class SimulatedDeviceManager(object):
                     deferred_booted_devices.append((matched_request, device))
             else:
                 # For specified UDIDs, either use or boot them immediately
-                cls._boot_device(device, host) if not device_is_booted else SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+                cls._boot_devices([device], host) if not device_is_booted else SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
                 _log.debug(u'Attached to requested simulator {}'.format(device))
                 requests.remove(matched_request)
                 requests = cls._validate_running_device_against_requests(requests, device)
@@ -561,19 +850,18 @@ class SimulatedDeviceManager(object):
 
         # Check for any other matching simulators that can satisfy the request.
         # If none are found, we create and boot new ones.
+        devices_to_boot = []
         for request in requests:
             device = cls._create_or_find_device_for_request(request, host, name_base)
             assert device is not None
+            # Naming and reuse look at INITIALIZED_DEVICES, so an unregistered device's name would go to the next one.
+            SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+            devices_to_boot.append(device)
 
-            cls._boot_device(device, host)
+        cls._boot_devices(devices_to_boot, host)
 
         if simulator_ui:
             cls._launch_simulator_ui(host)
-
-        deadline = time.time() + timeout
-        for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
-            cls._wait_until_device_is_usable(device, deadline)
-            device.set_up_environment_extras()
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 
@@ -790,10 +1078,16 @@ class SimulatedDevice(object):
         for i in range(self.NUM_INSTALL_RETRIES):
             # FIXME: remove this workaround when rdar://129789675 has been resolved.
             eligibility_util = os.path.join(os.path.dirname(app_path), "WebKitEligibilityUtil")
-            exit_code = self.executive.run_command(['xcrun', 'simctl', 'spawn', self.udid, eligibility_util], return_exit_code=True)
+            exit_code, _, _ = wait_until_exit(
+                self.executive.popen(['xcrun', 'simctl', 'spawn', self.udid, eligibility_util],
+                                     stdout=self.executive.PIPE, stderr=self.executive.PIPE),
+                timeout=SimulatedDeviceManager.INSTALL_TIMEOUT)
             _log.debug(u'WebKitEligibilityUtil returned {}'.format(exit_code))
 
-            exit_code = self.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True)
+            exit_code, _, _ = wait_until_exit(
+                self.executive.popen(['xcrun', 'simctl', 'install', self.udid, app_path],
+                                     stdout=self.executive.PIPE, stderr=self.executive.PIPE),
+                timeout=SimulatedDeviceManager.INSTALL_TIMEOUT)
             if exit_code == 0:
                 return True
 
@@ -841,13 +1135,6 @@ class SimulatedDevice(object):
             raise RuntimeError(u'Failed to find process id for {}: {}'.format(bundle_id, output))
         _log.debug(u'Returning pid {} of launched process'.format(match.group('pid')))
         return int(match.group('pid'))
-
-    def set_up_environment_extras(self):
-        if len(self.environment_extras) == 0:
-            return
-        _log.debug(u'Running extra environment setup commands.')
-        for command in self.environment_extras:
-            self.executive.run_command(command)
 
     def __eq__(self, other):
         return self.udid == other.udid

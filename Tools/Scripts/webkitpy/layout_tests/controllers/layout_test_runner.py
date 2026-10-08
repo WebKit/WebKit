@@ -36,6 +36,7 @@ from webkitcorepy import TaskPool
 
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
+from webkitpy.common.unclaimed_shard import ShardAttempts, UnclaimedShard, UnclaimedShardTracker
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
@@ -53,6 +54,8 @@ def setup_shard(port=None, results_directory=None, devices=None, retrying=False)
     if devices and getattr(port, 'DEVICE_MANAGER', None):
         port.DEVICE_MANAGER.AVAILABLE_DEVICES = devices.get('available_devices', [])
         port.DEVICE_MANAGER.INITIALIZED_DEVICES = devices.get('initialized_devices', None)
+        if devices.get('provisioning'):
+            port.adopt_provisioning_state(devices['provisioning'])
 
     if retrying:
         results_directory = port.host.filesystem.join(results_directory, 'retries')
@@ -152,12 +155,15 @@ class LayoutTestRunner(object):
 
         self.printer.write_update('Starting {} ...'.format(pluralize(num_workers, "worker")))
 
+        self._port.prepare_devices_for_workers()
         devices = None
         if getattr(self._port, 'DEVICE_MANAGER', None):
             devices = dict(
                 available_devices=self._port.DEVICE_MANAGER.AVAILABLE_DEVICES,
                 initialized_devices=self._port.DEVICE_MANAGER.INITIALIZED_DEVICES,
+                provisioning=self._port.provisioning_state(),
             )
+        unclaimed_shards = UnclaimedShardTracker(self._port, num_workers)
 
         try:
             LayoutTestRunner.instance = self
@@ -174,6 +180,18 @@ class LayoutTestRunner(object):
             ) as pool:
                 was_sent = set()
 
+                def dispatch(shard, group=None, attempts=ShardAttempts()):
+                    pool.do(run_shard, shard, callback=lambda value: handle_shard_result(shard, value, attempts), group=group)
+
+                def handle_shard_result(shard, value, attempts):
+                    if not isinstance(value, UnclaimedShard):
+                        self._annotate_results_with_additional_failures(value)
+                        return
+                    attempts = unclaimed_shards.attempts_for_redispatch(shard.name, len(shard.test_inputs), value.tests, attempts)
+                    if attempts:
+                        # Not to its group: a group is bound to one worker, which would hand these back to the same device.
+                        dispatch(TestShard(shard.name, value.tests), attempts=attempts)
+
                 # Dispatch shards from groups first, so we start dedicated groups running before all our other shards
                 for shard in all_shards:
                     group = self._port.group_for_shard(shard)
@@ -181,19 +199,12 @@ class LayoutTestRunner(object):
                         continue
 
                     was_sent.add(shard.name)
-                    pool.do(
-                        run_shard, shard,
-                        callback=lambda value: self._annotate_results_with_additional_failures(value),
-                        group=group,
-                    )
+                    dispatch(shard, group=group)
 
                 for shard in all_shards:
                     if shard.name in was_sent:
                         continue
-                    pool.do(
-                        run_shard, shard,
-                        callback=lambda value: self._annotate_results_with_additional_failures(value),
-                    )
+                    dispatch(shard)
 
                 pool.wait()
 
@@ -209,6 +220,11 @@ class LayoutTestRunner(object):
             raise
         finally:
             LayoutTestRunner.instance = None
+
+        if unclaimed_shards.abandoned_test_count:
+            # Never-run tests are absent from the results, so without this the run would report success.
+            _log.error(u'{} tests could not be run because no device would take them'.format(unclaimed_shards.abandoned_test_count))
+            run_results.interrupted = True
 
         return run_results
 
@@ -334,12 +350,26 @@ class Worker(object):
         self._num_tests = 0
         self._batch_count = 0
         self._driver = None
+        self._driver_died = False
+        self._device_suspect = True
         self._batch_size = self._port.get_option('batch_size') or 0
 
     def run_tests(self, shard):
-        for input in shard.test_inputs:
+        worker_number = int((TaskPool.Process.name).split('/')[-1])
+        if self._device_suspect and not self._port.target_host_is_usable(worker_number):
+            _log.error(u'{} cannot reach its device; returning {} to be run elsewhere'.format(TaskPool.Process.name, shard.name))
+            return UnclaimedShard(shard.test_inputs)
+        self._device_suspect = False
+
+        for index, input in enumerate(shard.test_inputs):
             if not TaskPool.Process.working:
                 break
+            if self._driver_died and not self._port.target_host_is_usable(worker_number, force_update=True):
+                _log.error(u'{} lost its device partway through {}; returning {} remaining tests'.format(
+                    TaskPool.Process.name, shard.name, len(shard.test_inputs) - index))
+                self._kill_driver()
+                return UnclaimedShard(shard.test_inputs[index:])
+            self._driver_died = False
             Worker.instance.run_test(input, shard.name)
 
         _log.debug('finished test group')
@@ -419,6 +449,8 @@ class Worker(object):
         driver = self._driver
         self._driver = None
         if driver:
+            self._driver_died = True
+            self._device_suspect = True
             _log.debug('killing driver')
             driver.stop()
 
@@ -589,7 +621,7 @@ class Sharder(object):
             shard = TestShard(directory, test_inputs)
             shards.append(shard)
 
-        # Sort the shards by directory name.
-        shards.sort(key=lambda shard: shard.name)
+        # Biggest first, so a large shard is not left running alone at the end.
+        shards.sort(key=lambda shard: (-len(shard.test_inputs), shard.name))
 
         return shards

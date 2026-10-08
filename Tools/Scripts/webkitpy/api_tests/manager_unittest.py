@@ -26,6 +26,7 @@ import unittest
 
 from webkitpy.api_tests.manager import Manager
 from webkitpy.api_tests.test_expectations import PASS, FAIL, CRASH, TIMEOUT
+from webkitpy.tool.mocktool import MockOptions
 from webkitexpectationspy.expectations import Expectation
 
 
@@ -149,3 +150,32 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
     def test_expected_results_for_upload_flaky(self):
         result = Manager._expected_results_for_upload(Expectation('TestWebKitAPI.WebKit.SomeTest', expected={PASS, FAIL}))
         self.assertEqual({'PASS', 'FAIL'}, set(result.split()))
+
+
+class WorkerCountTest(unittest.TestCase):
+
+    class FakePort(object):
+        host = None
+
+        def default_child_processes(self):
+            return 8
+
+        def default_api_test_workers_per_device(self):
+            return 2
+
+    def _manager(self, args, child_processes=None):
+        manager = Manager(self.FakePort(), MockOptions(child_processes=child_processes), None)
+        manager._update_worker_count(args)
+        return manager
+
+    def test_the_default_shares_each_device_as_the_port_says(self):
+        manager = self._manager(['TestWebKitAPI'])
+        self.assertEqual((manager._options.child_processes, manager._workers_per_device), (8, 2))
+
+    def test_an_explicit_count_gets_one_worker_a_device(self):
+        manager = self._manager(['TestWebKitAPI'], child_processes='3')
+        self.assertEqual((manager._options.child_processes, manager._workers_per_device), (3, 1))
+
+    def test_naming_tests_gets_one_worker_on_one_device(self):
+        manager = self._manager(['TestWebKitAPI.Suite.Test'])
+        self.assertEqual((manager._options.child_processes, manager._workers_per_device), (1, 1))

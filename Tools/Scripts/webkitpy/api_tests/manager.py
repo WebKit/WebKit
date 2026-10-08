@@ -56,6 +56,7 @@ class Manager(object):
         self._options = options
         self._stream = stream
         self._expectations = None
+        self._workers_per_device = 1
 
     @staticmethod
     def _test_list_from_output(output: str, prefix='') -> list[str]:
@@ -231,10 +232,11 @@ class Manager(object):
             _log.info('All arguments name specific tests; defaulting to --child-processes=1')
             self._options.child_processes = 1
             return
-        self._options.child_processes = (
-            child_processes_option_value
-            or self._port.default_child_processes()
-        )
+        if child_processes_option_value:
+            self._options.child_processes = child_processes_option_value
+            return
+        self._options.child_processes = self._port.default_child_processes()
+        self._workers_per_device = self._port.default_api_test_workers_per_device()
 
     def _set_up_run(self, args, device_type=None):
         self._stream.write_update("Starting helper ...")
@@ -248,7 +250,7 @@ class Manager(object):
         if 'simulator' in self._port.port_name:
             if device_type is None:
                 device_type = self._port.supported_device_types()[0]
-            self._port.setup_test_run(device_type=device_type)
+            self._port.setup_test_run(device_type=device_type, workers_per_device=self._workers_per_device)
         elif 'device' in self._port.port_name:
             raise RuntimeError(f'Running api tests on {self._port.port_name} is not supported')
 
@@ -293,7 +295,7 @@ class Manager(object):
         if not self._set_up_run(args):
             return Manager.FAILED_BUILD_CHECK
 
-        configuration_for_upload = self._port.configuration_for_upload(self._port.target_host(0))
+        configuration_for_upload = self._port.configuration_for_upload(self._port.device_for_upload())
 
         self._stream.write_update('Collecting tests ...')
         try:
@@ -363,7 +365,7 @@ class Manager(object):
             runner.exit_after_n_failures = getattr(self._options, 'exit_after_n_failures', None)
             for i in range(self._options.iterations):
                 _log.debug(f'\nIteration {i + 1}')
-                runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None)
+                runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None, workers_per_device=self._workers_per_device)
         except EarlyExitException as e:
             self._stream.writeln(f'\nExiting early after {e.failure_count} failures.')
         except KeyboardInterrupt:

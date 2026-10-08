@@ -202,6 +202,8 @@ class MockExecutive2(MockExecutive):
     """MockExecutive2 is like MockExecutive except it doesn't log anything."""
 
     def __init__(self, output='', exit_code=0, exception=None, run_command_fn=None, stderr=''):
+        self._should_log = False
+        self._proc = None
         self._output = output
         self._stderr = stderr
         self._exit_code = exit_code
