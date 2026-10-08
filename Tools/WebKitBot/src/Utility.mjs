@@ -31,6 +31,22 @@ export function escapeForSlackText(text)
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
 }
 
+export function buildRevertSuccessMessage(user, result)
+{
+    if (!result.prUrl)
+        return `<@${user}> Created a revert patch https://webkit.org/b/${escapeForSlackText(result.bugId)}`;
+
+    if (result.action === "created")
+        return `<@${user}> Created revert PR: ${escapeForSlackText(result.prUrl)}`;
+
+    if (result.action === "updated")
+        return `<@${user}> A revert PR for this already existed, so I updated it instead of creating a new one: ${escapeForSlackText(result.prUrl)}`;
+
+    // git-webkit did not tell us whether it created or updated the pull request, so don't
+    // claim a creation we never observed.
+    return `<@${user}> Posted revert PR: ${escapeForSlackText(result.prUrl)}`;
+}
+
 export function dataLogLn(message)
 {
     if (process.env.DEBUG)
