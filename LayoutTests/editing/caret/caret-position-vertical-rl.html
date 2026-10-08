@@ -2,12 +2,12 @@
 <style>
 #test {
     writing-mode: vertical-rl;
-    /* If this test ends up being flaky, consider using Ahem. But it's more rigorous not to. */
+    /* Ahem so that the ascent and descent, and with them the caret's extent, are the same on every platform. */
     outline: solid gray 1px;
     padding: 1em;
     width: 10em;
     height: 20ch;
-    font: 20px/1 monospace;
+    font: 20px/1 Ahem;
     background: /* Create a 10px grid to help with debugging. */
         repeating-linear-gradient(transparent 0em 9px, #FC88 9px 10px),
         repeating-linear-gradient(to left, transparent 0px 9px, #FC88 9px 10px);
