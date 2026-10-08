@@ -50,7 +50,6 @@ public:
 
 private:
     friend class HeapSnapshotBuilder;
-    static constexpr intptr_t CellToSweepTag = 1;
 
     Vector<HeapSnapshotNode> m_nodes;
     TinyBloomFilter<uintptr_t> m_filter;
