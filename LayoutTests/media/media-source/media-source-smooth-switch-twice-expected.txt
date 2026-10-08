@@ -1,0 +1,69 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 7))
+RUN(sourceBuffer.appendBuffer(gops(1, [[0,8]])))
+EVENT(updateend)
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+RUN(sourceBuffer.appendBuffer(gops(2, [[2,10]])))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 8))
+
+Samples of the second generation must be enqueued as non-displaying.
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(3), generation(2)}
+RUN(sourceBuffer.appendBuffer(gops(3, [[4,12]])))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED))
+
+Samples of the third generation must also be enqueued as non-displaying, but only up to the end of the generation 1 GOP.
+No more samples of the second generation must be enqueued, since they are no longer useful to catch-up the decoder.
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(3), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(3), generation(3)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(2), generation(3)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(2), generation(3)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({8/1 = 8.000000}), DTS({8/1 = 8.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({9/1 = 9.000000}), DTS({9/1 = 9.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({10/1 = 10.000000}), DTS({10/1 = 10.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({11/1 = 11.000000}), DTS({11/1 = 11.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+Buffered samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(1), generation(3)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({8/1 = 8.000000}), DTS({8/1 = 8.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({9/1 = 9.000000}), DTS({9/1 = 9.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({10/1 = 10.000000}), DTS({10/1 = 10.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+{PTS({11/1 = 11.000000}), DTS({11/1 = 11.000000}), duration({1/1 = 1.000000}), flags(0), generation(3)}
+END OF TEST
+

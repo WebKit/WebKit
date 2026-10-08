@@ -1,0 +1,81 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 2))
+RUN(sourceBuffer.appendBuffer(gops(1, [[0,3],[3,6],[6,9]])))
+EVENT(updateend)
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+RUN(sourceBuffer.appendBuffer(gops(2, [[3,6]])))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 7))
+
+We should have generations 1, 2, 1.
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+
+But here is the edge case: turns out we weren't done with the generation 2 GOP! We enter the smooth switch state.
+RUN(sourceBuffer.appendBuffer(gopContinuation(2, [6,8])))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 8))
+
+For now, the generation 2 append hasn't reached the discontinuity boundary, so the browser keeps enqueueing the old quality:
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+
+Now the generation 2 GOP will be found to extend beyond the discontinuity boundary, forcing the smooth switch to end with via non-displaying samples.
+RUN(sourceBuffer.appendBuffer(gopContinuation(2, [8,12])))
+EVENT(updateend)
+RUN(internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED))
+
+We should have generations 1, 2, 1, 2. The last group needs to repeat samples as non-displaying to re-synchronize the decoder.
+Enqueued samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(3), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(2), generation(2)}
+{PTS({8/1 = 8.000000}), DTS({8/1 = 8.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({9/1 = 9.000000}), DTS({9/1 = 9.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({10/1 = 10.000000}), DTS({10/1 = 10.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({11/1 = 11.000000}), DTS({11/1 = 11.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+Buffered samples:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({5/1 = 5.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({6/1 = 6.000000}), DTS({6/1 = 6.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({7/1 = 7.000000}), DTS({7/1 = 7.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({8/1 = 8.000000}), DTS({8/1 = 8.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({9/1 = 9.000000}), DTS({9/1 = 9.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({10/1 = 10.000000}), DTS({10/1 = 10.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({11/1 = 11.000000}), DTS({11/1 = 11.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+END OF TEST
+

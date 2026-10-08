@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>media-source-smooth-switch-expensive-filling-gap</title>
+  <script src="mock-media-source.js"></script>
+  <script src="../video-test.js"></script>
+  <script src="smooth-switch-test.js"></script>
+  <script>
+    smoothSwitchTest(async () => {
+      run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 2)');
+      await sourceBufferAppend(1, [[0, 3], [3, 6], [9, 12], [12, 15]]);
+      await showEnqueuedSamples();
+
+      await sourceBufferAppend(2, [[1, 9]]);
+      run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+      consoleWrite("<br>Generation 2 needs to be enqueued with some non-displaying samples.")
+      consoleWrite("The remaining GOPs from generation 1 starting with PTS=9 must follow.")
+      await showEnqueuedSamples();
+      await showBufferedSamples();
+    });
+  </script>
+</head>
+
+<body>
+  <video controls></video>
+</body>
+
+</html>
