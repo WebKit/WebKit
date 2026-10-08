@@ -138,8 +138,18 @@ std::optional<AffineTransform> AffineTransform::inverse() const
 // this = this * other;
 AffineTransform& AffineTransform::multiply(const AffineTransform& other)
 {
+    if (isIdentityOrTranslation()) {
+        m_transform[0] = other.m_transform[0];
+        m_transform[1] = other.m_transform[1];
+        m_transform[2] = other.m_transform[2];
+        m_transform[3] = other.m_transform[3];
+        m_transform[4] += other.m_transform[4];
+        m_transform[5] += other.m_transform[5];
+        return *this;
+    }
+
     AffineTransform trans;
-    
+
     trans.m_transform[0] = other.m_transform[0] * m_transform[0] + other.m_transform[1] * m_transform[2];
     trans.m_transform[1] = other.m_transform[0] * m_transform[1] + other.m_transform[1] * m_transform[3];
     trans.m_transform[2] = other.m_transform[2] * m_transform[0] + other.m_transform[3] * m_transform[2];
