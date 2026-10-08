@@ -514,8 +514,54 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
     endif ()
 endmacro()
 
+# The Swift driver batches a module's files by count in source order, so the module waits on whichever batch
+# drew the most expensive files. Reorder each target's Swift sources so the batches are balanced at the -j CMake
+# passes the driver (see Tools/Scripts/swift/order_sources_for_batching.py), weighing files by what traced builds
+# on this machine measured when there is a history. This runs once every directory has added its sources, so it
+# orders the list the driver actually gets. Adding or removing a source reconfigures, which reorders again.
+function(_WEBKIT_ORDER_SWIFT_SOURCES _target)
+    if (NOT CMAKE_Swift_COMPILER OR NOT CMAKE_Swift_NUM_THREADS MATCHES "^[0-9]+$" OR CMAKE_Swift_NUM_THREADS LESS 2)
+        return ()
+    endif ()
+    get_target_property(_sources ${_target} SOURCES)
+    set(_swift ${_sources})
+    list(FILTER _swift INCLUDE REGEX "^[^$]*\\.swift$")
+    list(LENGTH _swift _count)
+    if (_count LESS 2)
+        return ()
+    endif ()
+    get_target_property(_source_dir ${_target} SOURCE_DIR)
+    get_target_property(_binary_dir ${_target} BINARY_DIR)
+    string(MAKE_C_IDENTIFIER "${_target}" _name)
+    set(_in "${_binary_dir}/${_name}.swift-order.in")
+    set(_out "${_binary_dir}/${_name}.swift-order.out")
+    list(JOIN _sources "\n" _lines)
+    file(WRITE "${_in}" "${_lines}\n")
+    set(_history_args)
+    if (WEBKIT_SWIFT_BATCH_HISTORY)
+        set(_history_args --history "${WEBKIT_SWIFT_BATCH_HISTORY}" --source-dir "${CMAKE_SOURCE_DIR}")
+        # Learn from the previous traced build once per configure, before the first target is ordered.
+        get_property(_observed GLOBAL PROPERTY WEBKIT_SWIFT_BATCH_HISTORY_OBSERVED)
+        if (NOT _observed AND SWIFT_JOBS_LOG AND EXISTS "${SWIFT_JOBS_LOG}")
+            list(APPEND _history_args --observe-jobs-log "${SWIFT_JOBS_LOG}" --observe-stats-dir "${SWIFT_STATS_DIR}")
+        endif ()
+        set_property(GLOBAL PROPERTY WEBKIT_SWIFT_BATCH_HISTORY_OBSERVED TRUE)
+    endif ()
+    execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/order_sources_for_batching.py"
+        --jobs ${CMAKE_Swift_NUM_THREADS} --base-dir "${_source_dir}" --input "${_in}" --output "${_out}"
+        ${_history_args}
+        RESULT_VARIABLE _result)
+    if (NOT _result EQUAL 0)
+        message(WARNING "Could not order the Swift sources of ${_target}; keeping the listed order")
+        return ()
+    endif ()
+    file(STRINGS "${_out}" _ordered)
+    set_property(TARGET ${_target} PROPERTY SOURCES "${_ordered}")
+endfunction()
+
 macro(_WEBKIT_TARGET _target)
     set(${_target}_FINALIZED TRUE)
+    cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL _WEBKIT_ORDER_SWIFT_SOURCES ${_target})
     if (CMAKE_GENERATOR MATCHES "Visual Studio")
         if (${_target}_C_SOURCES)
             add_library(${_target}_c OBJECT)

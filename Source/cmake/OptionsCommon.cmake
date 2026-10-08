@@ -197,6 +197,17 @@ if (CLANG_TIME_TRACE AND COMPILER_IS_CLANG)
     set(CMAKE_OBJCXX_FLAGS "${CMAKE_OBJCXX_FLAGS} -ftime-trace")
 endif ()
 
+# Where traced builds record Swift compile jobs for Tools/Scripts/swift/order_sources_for_batching.py. It lives
+# outside the build directory so that what one build learns survives clean builds.
+if (APPLE)
+    set(_swift_batch_history_default "$ENV{HOME}/Library/Caches/WebKit/swift-batch-history.json")
+elseif (DEFINED ENV{XDG_CACHE_HOME})
+    set(_swift_batch_history_default "$ENV{XDG_CACHE_HOME}/WebKit/swift-batch-history.json")
+else ()
+    set(_swift_batch_history_default "$ENV{HOME}/.cache/WebKit/swift-batch-history.json")
+endif ()
+set(WEBKIT_SWIFT_BATCH_HISTORY "${_swift_batch_history_default}" CACHE FILEPATH "Per-machine history of Swift compile jobs, used to balance the Swift driver's batches")
+
 option(SWIFT_NINJA_TRACE "Collect ninja and swift driver execution data and produce a Perfetto-style trace" OFF)
 if (SWIFT_NINJA_TRACE)
     if (WIN32)
@@ -221,7 +232,11 @@ if (SWIFT_NINJA_TRACE)
 ${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/ninja_build_trace.py \
 --ninja-log ${CMAKE_BINARY_DIR}/.ninja_log \
 --jobs-log ${SWIFT_JOBS_LOG} \
---stats-dir ${SWIFT_STATS_DIR} \"$@\""
+--stats-dir ${SWIFT_STATS_DIR} \"$@\"
+${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/order_sources_for_batching.py --ingest-only \
+--history \"${WEBKIT_SWIFT_BATCH_HISTORY}\" --source-dir ${CMAKE_SOURCE_DIR} \
+--observe-jobs-log ${SWIFT_JOBS_LOG} --observe-stats-dir ${SWIFT_STATS_DIR} \
+|| echo \"warning: could not update ${WEBKIT_SWIFT_BATCH_HISTORY}\" >&2"
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
             GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
     )
