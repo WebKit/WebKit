@@ -41,29 +41,50 @@ os.environ['SYSTEM_VERSION_COMPAT'] = '0'
 
 
 def _get_main_repo_autoinstall_path():
-    """If running in a git worktree, return the main repo's autoinstalled path.
-
-    This allows worktrees to share autoinstalled third-party packages with
-    the main repo, avoiding redundant downloads. Development libraries
-    (webkitcorepy, webkitscmpy, etc.) still come from the worktree itself.
-    """
+    """If running in a git worktree, return the main repo's autoinstalled path."""
     try:
-        # Get the common git directory (same for main repo and all worktrees)
         git_common_dir = subprocess.check_output(
             ['git', 'rev-parse', '--git-common-dir'],
             stderr=subprocess.DEVNULL,
             cwd=os.path.dirname(__file__)
         ).decode().strip()
 
-        # If we're in a worktree, git_common_dir points to main_repo/.git
-        # The main repo root is the parent of .git
         if git_common_dir and os.path.isdir(git_common_dir):
             main_repo_root = os.path.dirname(os.path.abspath(git_common_dir))
             main_autoinstall = os.path.join(main_repo_root, 'Tools', 'Scripts', 'libraries', 'autoinstalled')
-            # Only use if it exists and is writable
             if os.path.isdir(main_autoinstall) and os.access(main_autoinstall, os.W_OK):
                 return main_autoinstall
     except (subprocess.CalledProcessError, OSError, UnicodeDecodeError):
+        pass
+    return None
+
+
+def _get_workspace_clone_autoinstall_path():
+    """If running in a `git safari workspace create --clone` clone, return
+    the primary checkout's autoinstalled path."""
+    try:
+        import json as _json
+
+        scripts_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        this_root = os.path.dirname(os.path.dirname(scripts_dir))
+        this_name = os.path.basename(this_root)
+        parent_dir = os.path.dirname(this_root)
+
+        workspace_meta = os.path.join(parent_dir, '.workspace.json')
+        if not os.path.isfile(workspace_meta):
+            return None
+
+        with open(workspace_meta) as f:
+            meta = _json.load(f)
+        if meta.get('mode') != 'clone' or this_name not in meta.get('repos', {}):
+            return None
+
+        volume_root = os.path.dirname(os.path.dirname(parent_dir))
+        primary_autoinstall = os.path.join(
+            volume_root, this_name, 'Tools', 'Scripts', 'libraries', 'autoinstalled')
+        if os.path.isdir(primary_autoinstall) and os.access(primary_autoinstall, os.W_OK):
+            return primary_autoinstall
+    except (OSError, ValueError, KeyError, IOError):
         pass
     return None
 
@@ -84,8 +105,10 @@ if sys.platform == 'darwin':
 
 from webkitcorepy import AutoInstall, Package, Version
 
-# If in a git worktree, share autoinstalled packages with main repo
-autoinstall_base = _get_main_repo_autoinstall_path() or os.path.join(libraries, 'autoinstalled')
+# If in a git worktree or a `git safari workspace --clone` clone, share
+# autoinstalled packages with the main/primary checkout instead of
+# re-downloading them; otherwise fall back to this checkout's own directory.
+autoinstall_base = _get_main_repo_autoinstall_path() or _get_workspace_clone_autoinstall_path() or os.path.join(libraries, 'autoinstalled')
 AutoInstall.set_directory(os.path.join(autoinstall_base, 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 AutoInstall.register(Package('pylint', Version(2, 13, 9)))
