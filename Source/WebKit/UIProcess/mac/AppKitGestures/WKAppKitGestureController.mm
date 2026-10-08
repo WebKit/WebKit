@@ -1992,12 +1992,22 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         _everMagnifiedDuringCurrentGesture = YES;
 
     bool forwardToGestureController = impl->allowsBackForwardNavigationGestures() && [self prefersForwardingToGestureController:gesture];
-    if (forwardToGestureController && protect(impl->ensureGestureController())->handleScrollWheelEvent(makeWheelEvent(gestureDelta))) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "View gesture controller handled gesture");
-        return;
+    auto dispatchWheelEvent = [&](WebCore::FloatSize delta) {
+        if (forwardToGestureController && protect(impl->ensureGestureController())->handleScrollWheelEvent(makeWheelEvent(delta))) {
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "View gesture controller handled gesture");
+            return;
+        }
+
+        [webView _protectedPage]->handleNativeWheelEvent(makeWheelEvent(delta));
+    };
+
+    if (phase == WebKit::WebWheelEvent::Phase::Began) {
+        phase = WebKit::WebWheelEvent::Phase::MayBegin;
+        dispatchWheelEvent({ });
+        phase = WebKit::WebWheelEvent::Phase::Began;
     }
 
-    [webView _protectedPage]->handleNativeWheelEvent(makeWheelEvent(gestureDelta));
+    dispatchWheelEvent(gestureDelta);
 }
 
 - (BOOL)everMagnifiedDuringCurrentGesture

@@ -2314,6 +2314,55 @@ extension AppKitGesturesTests.Basic {
         #expect(page.url != initialURL)
     }
 
+    @Test
+    func scrollAfterMomentumScrollTargetsElementUnderNewGesture() async throws {
+        let html = """
+            <style>
+              body { margin: 0; height: 5000px; }
+              .box { position: fixed; top: 0; bottom: 0; width: 50%; }
+            </style>
+            <div id="left" class="box" style="left: 0; background: silver;"></div>
+            <div id="right" class="box" style="right: 0; background: gold;"></div>
+            <script>
+              window.wheelTargets = [];
+              document.addEventListener("wheel", event => wheelTargets.push(event.target.id), { passive: true });
+              window.scrollEnded = false;
+              document.addEventListener("scrollend", () => scrollEnded = true);
+            </script>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let left = try await screenBounds(ofElementWithID: "left").center
+        let right = try await screenBounds(ofElementWithID: "right").center
+
+        // Flick over the left box so that the gesture ends in momentum, and let the momentum settle.
+        await page.withWheelEventMonitoring(expectingMomentumEnd: true) {
+            await recap.play { composer in
+                composer._wk_scroll(withStart: left, end: CGPoint(x: left.x, y: left.y - 200), duration: .seconds(0.1))
+            }
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let flickTargets = try await page.callJavaScript(returning: [String].self) {
+            "const targets = wheelTargets; wheelTargets = []; scrollEnded = false; return targets;"
+        }
+        try #require(flickTargets.contains("left"), "the flick over #left did not dispatch wheel events to it")
+
+        // A new gesture over the right box must not stay latched to the element under the previous gesture.
+        // This deliberately avoids withWheelEventMonitoring(), since starting to monitor clears latching state.
+        await recap.play { composer in
+            composer._wk_scroll(withStart: right, end: CGPoint(x: right.x, y: right.y + 100), duration: .seconds(0.3))
+        }
+        try #require(try await waitUntil("return scrollEnded;"), "the scroll over #right never ended")
+
+        let scrollTargets = try await page.callJavaScript(returning: [String].self) {
+            "return wheelTargets;"
+        }
+        try #require(!scrollTargets.isEmpty, "the scroll over #right did not dispatch any wheel events")
+        #expect(Set(scrollTargets) == ["right"])
+    }
+
     @Test(arguments: [true, false])
     func clickThenDragSelectsTextUnlessItInterruptsDeceleratingScroll(interruptsScroll: Bool) async throws {
         let text = String(repeating: "\(Self.text) ", count: 2000)
