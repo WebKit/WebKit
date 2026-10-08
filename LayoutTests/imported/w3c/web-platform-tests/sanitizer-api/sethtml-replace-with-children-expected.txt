@@ -1,0 +1,11 @@
+
+FAIL setHTML: children of a replaced element get the target's node document target[method] is not a function. (In 'target[method]('<div><span id="child">text</span></div>',
+                   { sanitizer: { replaceWithChildrenElements: ["div"] } })', 'target[method]' is undefined)
+FAIL setHTML: a declarative shadow root inside a replaced element is not attached target[method] is not a function. (In 'target[method](
+      '<div><span id="child">text</span><template shadowrootmode="open"><p>dsd</p></template></div>',
+      { sanitizer: { replaceWithChildrenElements: ["div"] } })', 'target[method]' is undefined)
+FAIL setHTMLUnsafe: children of a replaced element get the target's node document assert_equals: expected "<span id=\"child\">text</span>" but got "<div><span id=\"child\">text</span></div>"
+FAIL setHTMLUnsafe: a declarative shadow root inside a replaced element is not attached assert_not_equals: the template inside a replaced element stays a plain <template> got disallowed value null
+FAIL setHTMLUnsafe: a custom element inside a replaced element is constructed and connected to the target assert_equals: expected "replaced-child-ce" but got "div"
+FAIL setHTMLUnsafe: a custom element inside a foster-parented replaced element is connected before the table assert_equals: expected "<replaced-child-ce></replaced-child-ce><table><tbody><tr><td>cell</td></tr></tbody></table>" but got "<div><replaced-child-ce></replaced-child-ce></div><table><tbody><tr><td>cell</td></tr></tbody></table>"
+

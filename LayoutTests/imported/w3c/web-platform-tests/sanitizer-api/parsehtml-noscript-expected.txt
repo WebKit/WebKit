@@ -1,0 +1,10 @@
+
+PASS parseHTMLUnsafe() parses noscript as markup (no options)
+PASS parseHTMLUnsafe() parses noscript as markup (empty options)
+PASS parseHTMLUnsafe() parses noscript as markup (empty sanitizer config)
+PASS parseHTMLUnsafe() parses noscript as markup (sanitizer allowing noscript)
+FAIL parseHTML() parses noscript as markup when noscript is allowed Document.parseHTML is not a function. (In 'Document.parseHTML(input, {
+          sanitizer: { elements: ["html", "head", "body", "noscript", "p"] },
+        })', 'Document.parseHTML' is undefined)
+FAIL parseHTML() removes noscript by default but keeps the markup it contained Document.parseHTML is not a function. (In 'Document.parseHTML(input)', 'Document.parseHTML' is undefined)
+

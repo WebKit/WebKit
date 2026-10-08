@@ -1,0 +1,10 @@
+
+FAIL Unknown element names get blocked without being allowed. d.setHTML is not a function. (In 'd.setHTML("<hello><world>",
+      { sanitizer: { elements: ["b", "em"] } })', 'd.setHTML' is undefined)
+FAIL Unknown element names pass when allowed. d.setHTML is not a function. (In 'd.setHTML("<hello><world>",
+      { sanitizer: { elements: ["hello", "world"] } })', 'd.setHTML' is undefined)
+FAIL Unknown attributes names get blocked without being allowed. d.setHTML is not a function. (In 'd.setHTML("<b hello='1' world>",
+    { sanitizer: { attributes: ["name", "href"] } })', 'd.setHTML' is undefined)
+FAIL Unknown attribute names pass when allowed. d.setHTML is not a function. (In 'd.setHTML("<b hello='1' world>",
+    { sanitizer: { attributes: ["hello", "world"] } })', 'd.setHTML' is undefined)
+

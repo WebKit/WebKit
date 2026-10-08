@@ -1,0 +1,65 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/html5lib-basics.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/parsehtml-noscript.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/parsehtmlunsafe-with-trustedtypes.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-base-immutable.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-basic-filtering.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-boolean-defaults.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-config.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-custom-elements-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-custom-elements-is.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-default-config.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-get.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-in-adoption-agency.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-in-adoption-agency.sub.dat
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-inert-document.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-javascript-url.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-modifiers.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-names.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-parseHTML.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-processing-instructions.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-removeUnsafe.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-svg-animate.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sanitizer-unknown.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-context.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-custom-element-reactions.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-replace-with-children.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-safety.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-safety.sub.dat
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-tree-construction.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-tree-construction.sub.dat
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-unsafety.sub.dat
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-custom-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-declarative-shadow-root.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedhtml-createParserOptions.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedtypes-createParserOptions-null.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedtypes-createParserOptions-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedtypes-createParserOptions-report-only.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedtypes-createParserOptions.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedtypes-immutable.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-with-trustedtypes.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-xml-document-sanitizer-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-xml-document-sanitizer-report-only.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-xml-document-sanitizer.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/sethtml-xml-document.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/trustedhtml-unvetted-parser-options-default-createHTML.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/trustedhtml-unvetted-parser-options-default-createParserOptions.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/trustedhtml-unvetted-parser-options-no-enforcement.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/trustedhtml-unvetted-parser-options-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/trustedhtml-unvetted-parser-options-report-only.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/sanitizer-api/trustedhtml-unvetted-parser-options.html

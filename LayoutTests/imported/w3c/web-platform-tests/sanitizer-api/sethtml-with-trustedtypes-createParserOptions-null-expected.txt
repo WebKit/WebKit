@@ -1,0 +1,4 @@
+
+PASS Named policy createParserOptions returning null throws TypeError
+PASS Named policy createParserOptions returning undefined throws TypeError
+

@@ -1,0 +1,13 @@
+
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+FAIL Element.setHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: two violations reported (one for parser options, one for string) expected 2 but got 1
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+FAIL ShadowRoot.setHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: two violations reported (one for parser options, one for string) expected 2 but got 1
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+FAIL Document.parseHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: two violations reported (one for parser options, one for string) expected 2 but got 1
+

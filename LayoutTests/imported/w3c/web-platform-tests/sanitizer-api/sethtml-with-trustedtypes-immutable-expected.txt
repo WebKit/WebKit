@@ -1,0 +1,8 @@
+
+FAIL createParserOptions doesn't mutate original object assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL createParserOptions doesn't mutate sanitizer object Can't find variable: Sanitizer
+FAIL TrustedHTMLParserOptions interface has no public members assert_true: TrustedHTMLParserOptions should be exposed on window expected true got false
+FAIL TrustedHTMLParserOptions with config input applies sanitization without public members policy.createParserOptions is not a function. (In 'policy.createParserOptions({ sanitizer: { removeElements: ["span"] } })', 'policy.createParserOptions' is undefined)
+FAIL TrustedHTMLParserOptions clone testing with Sanitizer object input Can't find variable: Sanitizer
+FAIL TrustedHTMLParserOptions with Preset string input policy.createParserOptions is not a function. (In 'policy.createParserOptions({ sanitizer: "default" })', 'policy.createParserOptions' is undefined)
+

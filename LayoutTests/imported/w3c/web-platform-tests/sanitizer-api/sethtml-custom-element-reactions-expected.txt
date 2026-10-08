@@ -1,0 +1,10 @@
+
+FAIL Element.setHTML with a sanitizer runs custom element reactions before returning target.setHTML is not a function. (In 'target.setHTML("<x-reaction></x-reaction>", allow)', 'target.setHTML' is undefined)
+FAIL Element.setHTML with a sanitizer runs disconnectedCallback for the replaced children before returning target.setHTML is not a function. (In 'target.setHTML("<x-reaction></x-reaction>", allow)', 'target.setHTML' is undefined)
+PASS Element.setHTMLUnsafe with a sanitizer runs custom element reactions before returning
+FAIL Element.setHTMLUnsafe with a sanitizer runs disconnectedCallback for the replaced children before returning assert_array_equals: expected property 0 to be "disconnected" but got "constructed" (expected array ["disconnected", "constructed", "connected"] got ["constructed", "connected", "disconnected"])
+FAIL ShadowRoot.setHTML with a sanitizer runs custom element reactions before returning target.shadowRoot.setHTML is not a function. (In 'target.shadowRoot.setHTML("<x-reaction></x-reaction>", allow)', 'target.shadowRoot.setHTML' is undefined)
+FAIL ShadowRoot.setHTML with a sanitizer runs disconnectedCallback for the replaced children before returning target.shadowRoot.setHTML is not a function. (In 'target.shadowRoot.setHTML("<x-reaction></x-reaction>", allow)', 'target.shadowRoot.setHTML' is undefined)
+PASS ShadowRoot.setHTMLUnsafe with a sanitizer runs custom element reactions before returning
+FAIL ShadowRoot.setHTMLUnsafe with a sanitizer runs disconnectedCallback for the replaced children before returning assert_array_equals: expected property 0 to be "disconnected" but got "constructed" (expected array ["disconnected", "constructed", "connected"] got ["constructed", "connected", "disconnected"])
+

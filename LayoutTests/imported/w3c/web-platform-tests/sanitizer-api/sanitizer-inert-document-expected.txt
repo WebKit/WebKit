@@ -1,0 +1,9 @@
+
+
+
+
+FAIL Test whether setHTML executes the fail handler. promise_test: Unhandled rejection with value: object "TypeError: div.setHTML is not a function. (In 'div.setHTML(`<img src="data:image/png," onerror="globalThis.failsafe('shouldnt load')">`)', 'div.setHTML' is undefined)"
+PASS Test whether setHTMLUnsafe executes the fail handler.
+FAIL Test whether setHTML loads the image. promise_test: Unhandled rejection with value: object "TypeError: div.setHTML is not a function. (In 'div.setHTML(`<img src="${url}">`, options)', 'div.setHTML' is undefined)"
+FAIL Test whether setHTMLUnsafe loads the image. promise_test: Unhandled rejection with value: "The server observed a request. It shouldn't have."
+

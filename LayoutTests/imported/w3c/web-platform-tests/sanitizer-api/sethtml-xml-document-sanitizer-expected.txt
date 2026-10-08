@@ -1,0 +1,18 @@
+
+PASS innerHTML on XML document throws TypeError without calling createParserOptions if default policy provides only a sanitizer without createHTML
+PASS outerHTML on XML document throws TypeError without calling createParserOptions if default policy provides only a sanitizer without createHTML
+PASS insertAdjacentHTML on XML document throws TypeError without calling createParserOptions if default policy provides only a sanitizer without createHTML
+PASS createContextualFragment on XML document throws TypeError without calling createParserOptions if default policy provides only a sanitizer without createHTML
+PASS innerHTML on XML document created by DOMParser throws TypeError without calling createParserOptions if default policy provides only a sanitizer without createHTML
+PASS innerHTML on XML document from XHR response throws TypeError without calling createParserOptions if default policy provides only a sanitizer without createHTML
+FAIL setHTMLUnsafe on XML document does not throw TypeError and applies createParserOptions sanitizer This assignment requires a TrustedHTML
+FAIL setHTMLUnsafe on XML document does not throw TypeError when createParserOptions has no sanitizer This assignment requires a TrustedHTML
+PASS innerHTML on XML document executes createHTML and does not call createParserOptions when default policy provides both
+PASS outerHTML on XML document executes createHTML and does not call createParserOptions when default policy provides both
+PASS insertAdjacentHTML on XML document executes createHTML and does not call createParserOptions when default policy provides both
+PASS createContextualFragment on XML document executes createHTML and does not call createParserOptions when default policy provides both
+PASS innerHTML on XML document created by DOMParser executes createHTML and does not call createParserOptions when default policy provides both
+PASS innerHTML on XML document from XHR response executes createHTML and does not call createParserOptions when default policy provides both
+PASS innerHTML on XML document does not invoke throwing createParserOptions
+PASS innerHTML on XML document accepts TrustedHTML without calling createParserOptions or throwing even if createHTML is missing
+

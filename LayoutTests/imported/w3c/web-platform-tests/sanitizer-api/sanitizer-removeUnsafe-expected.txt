@@ -1,0 +1,10 @@
+
+FAIL removeUnsafe removes the right elements and attributes Can't find variable: Sanitizer
+FAIL removeUnsafe with default config Can't find variable: Sanitizer
+FAIL removeUnsafe sets javascriptURLs to false Can't find variable: Sanitizer
+FAIL Baseline remove list is namespace specific #0: {"name":"script","namespace":"http://www.w3.org/1999/xhtml"} div.setHTML is not a function. (In 'div.setHTML(probe, { sanitizer: { elements } })', 'div.setHTML' is undefined)
+FAIL Baseline remove list is namespace specific #1: {"name":"script","namespace":"http://www.w3.org/2000/svg"} div.setHTML is not a function. (In 'div.setHTML(probe, { sanitizer: { elements } })', 'div.setHTML' is undefined)
+FAIL Baseline remove list is namespace specific #2: {"name":"use","namespace":"http://www.w3.org/2000/svg"} div.setHTML is not a function. (In 'div.setHTML(probe, { sanitizer: { elements } })', 'div.setHTML' is undefined)
+FAIL Baseline remove list is namespace specific #3: {"name":"use","namespace":"http://www.w3.org/1999/xhtml"} div.setHTML is not a function. (In 'div.setHTML(probe, { sanitizer: { elements } })', 'div.setHTML' is undefined)
+FAIL Baseline remove list is namespace specific #4: {"name":"script","namespace":"http://www.w3.org/1998/Math/MathML"} div.setHTML is not a function. (In 'div.setHTML(probe, { sanitizer: { elements } })', 'div.setHTML' is undefined)
+
