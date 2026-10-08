@@ -3,3 +3,5 @@ http/wpt/webrtc/av1-packetizer-large-encoded-frame-no-crash.html [ Pass ]
 http/wpt/webrtc/script-transform-oversized-frame.html [ Pass ]
 
 [ Debug ] sar3/ipc/restrictedendpoints/deny-oversized-writeBufferWithCopy.html [ Skip ]
+
+sar3/fast/webgpu/regression/draw-indexed-cache-size-cap-eviction.html [ Slow ]

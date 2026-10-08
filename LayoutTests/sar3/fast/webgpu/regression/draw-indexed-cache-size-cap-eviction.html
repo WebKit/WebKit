@@ -1,0 +1,169 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for rdar://186968639: the maxCacheSize eviction in " +
+           "Buffer::drawIndexedValidated() did not arm m_mustTakeSlowIndexValidationPath, so an " +
+           "unsubmitted encoder's raw drawIndexedPrimitives lost its backstop. Green means the backstop " +
+           "ran; anything else means an out-of-bounds vertex fetch.");
+
+// One more entry than maxCacheSize has to be resident before the draw meant to trip the cap, because
+// drawIndexedValidated() tests the size before inserting. Sized against maxCacheSize: if that constant
+// changes this has to change with it, or the eviction never fires and the test passes without ever
+// reaching the vulnerable state.
+const GRIND_TOTAL = 1000000;
+const GRIND_BATCH = 25000;
+const GRIND_FIRST = 1024;
+
+const INDEX_ELEMENTS = 1 << 20;
+const R_FIRST = 32, R_COUNT = 256;
+const S_FIRST = 1010000, S_COUNT = 16;
+const POISON = 1500000;
+
+// arrayStride 2048 over 12288 bytes => minVertexCount 6, so region R's cached verdict is a tight bound.
+const VICTIM_STRIDE = 2048, VICTIM_SIZE = 12288;
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    let queue = device.queue;
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // Position is constant so the point covers the 1x1 target whatever the attribute fetch returns; the
+    // colour carries the fetched attribute, so the rendered pixel identifies the vertex actually read.
+    let module = device.createShaderModule({ code: `
+        struct VSOut {
+            @builtin(position) pos: vec4f,
+            @location(0) color: vec4f,
+        }
+        @vertex fn vs(@location(0) v: f32) -> VSOut {
+            var o: VSOut;
+            o.pos = vec4f(0, 0, 0, 1);
+            o.color = vec4f(0, v, 0, 1);
+            return o;
+        }
+        @fragment fn fs(in: VSOut) -> @location(0) vec4f { return in.color; }
+    ` });
+    function makePipeline(stride, stepMode) {
+        return device.createRenderPipeline({
+            layout: 'auto',
+            vertex: {
+                module,
+                entryPoint: 'vs',
+                buffers: [{ arrayStride: stride, stepMode, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32' }] }],
+            },
+            fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+            primitive: { topology: 'point-list' },
+        });
+    }
+    let victimPipeline = makePipeline(VICTIM_STRIDE, 'vertex');
+    // Nothing vertex-stepped, so computeMininumVertexInstanceCount() leaves minVertexCount at
+    // invalidVertexInstanceCount and every verdict this pipeline records is UINT32_MAX.
+    let unboundedPipeline = makePipeline(4, 'instance');
+
+    // Only vertex 0 is 1.0, so a fetch of vertex 0 is green and every other in-bounds fetch is black.
+    let vertexData = new Float32Array(VICTIM_SIZE / 4);
+    vertexData[0] = 1;
+    let victimVertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    queue.writeBuffer(victimVertexBuffer, 0, vertexData);
+    let instanceVertexBuffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.VERTEX });
+
+    // INDEX but not INDIRECT, so writes small enough to be scanned go through needsIndexValidation().
+    // Deliberately never written before the poison write: with m_indexValueUpperBoundUint still 0 every
+    // draw below takes the allIndexValuesBelow() fast path and records its verdict synchronously at
+    // encode time instead of from a clamp pass completion handler, which is what makes a million-entry
+    // cache reachable in a layout test.
+    let indexBuffer = device.createBuffer({ size: INDEX_ELEMENTS * 4, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+
+    let victimTexture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let scratchTexture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    function beginPass(commandEncoder, texture) {
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+        });
+        pass.setIndexBuffer(indexBuffer, 'uint32');
+        return pass;
+    }
+
+    // Step 1: fill the cache to exactly maxCacheSize verdicts. instanceCount is 0, so
+    // clampIndexBufferToValidValues() still records a verdict but drawIndexed() returns before encoding
+    // anything - a million real point draws under Metal Shader Validation would be far too slow. Batches
+    // are submitted so each encoder stops counting as a holder of skipped validations.
+    for (let done = 0; done < GRIND_TOTAL; ) {
+        let count = Math.min(GRIND_BATCH, GRIND_TOTAL - done);
+        let commandEncoder = device.createCommandEncoder();
+        let pass = beginPass(commandEncoder, scratchTexture);
+        pass.setPipeline(victimPipeline);
+        pass.setVertexBuffer(0, victimVertexBuffer);
+        for (let i = 0; i < count; ++i)
+            pass.drawIndexed(1, 0, GRIND_FIRST + done + i, 0, 0);
+        pass.end();
+        queue.submit([commandEncoder.finish()]);
+        await queue.onSubmittedWorkDone();
+        done += count;
+    }
+
+    // Step 2: encoder E draws region R. That insert takes the cache to maxCacheSize + 1 and is read
+    // straight back as a hit, so E encodes a raw drawIndexedPrimitives. finish() but deliberately do not
+    // submit - CommandBuffer holds a Ref to its encoder, so E stays resolvable in
+    // Device::m_commandEncoderMap and still counts towards computeSize().
+    let cbE = (() => {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = beginPass(commandEncoder, victimTexture);
+        pass.setPipeline(victimPipeline);
+        pass.setVertexBuffer(0, victimVertexBuffer);
+        pass.drawIndexed(R_COUNT, 1, R_FIRST, 0, 0);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture: victimTexture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        return commandEncoder.finish();
+    })();
+    await queue.onSubmittedWorkDone();
+
+    // Step 3: one more validated draw, over a region E never touched. Its insert trips the cap and evicts
+    // the verdict E relies on, which is where the backstop has to arm. The verdict recorded in its place
+    // is UINT32_MAX, so m_minValidatedVertexCount comes back as UINT32_MAX rather than region R's 6.
+    {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = beginPass(commandEncoder, scratchTexture);
+        pass.setPipeline(unboundedPipeline);
+        pass.setVertexBuffer(0, instanceVertexBuffer);
+        pass.drawIndexed(S_COUNT, 0, S_FIRST, 0, 0);
+        pass.end();
+        queue.submit([commandEncoder.finish()]);
+        await queue.onSubmittedWorkDone();
+    }
+
+    // Step 4: overwrite region R with indices out of bounds for the 6-vertex pipeline E was validated
+    // against. needsIndexValidation() compares them against UINT32_MAX, so invalidation is skipped.
+    queue.writeBuffer(indexBuffer, R_FIRST * 4, new Uint32Array(R_COUNT).fill(POISON));
+    await queue.onSubmittedWorkDone();
+
+    // Step 5: submit E. The slow path must run, fail CPU verification, and zero the index buffer before
+    // the pre-encoded raw draw executes, so every index reads 0 and vertex 0 paints green. Otherwise the
+    // draw fetches 1500000 * 2048 = 3072000000 bytes into a 12288-byte vertex buffer.
+    queue.submit([cbE]);
+    await queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let pixel = [...new Uint8Array(readback.getMappedRange(0, 4))];
+    readback.unmap();
+
+    window.pixel = pixel;
+    shouldBeEqualToString('pixel.join()', '0,255,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>
