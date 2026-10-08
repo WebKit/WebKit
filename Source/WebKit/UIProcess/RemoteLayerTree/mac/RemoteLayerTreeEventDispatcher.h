@@ -146,14 +146,12 @@ private:
     void startOrStopDisplayLinkOnMainThread();
     void removeDisplayLinkClient();
 
-    void scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay);
-    void delayedRenderingUpdateDetectionTimerFired();
-
     bool scrollingThreadNeedsDisplayDidRefresh();
     bool scrollingTreeWasRecentlyActive();
     bool haveLayersWithAnimations();
 
     void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_scrollingTreeLock);
+    void renderingUpdateDidCommit();
 
     void startFingerDownSignpostInterval();
     void endFingerDownSignpostInterval();
@@ -206,11 +204,10 @@ private:
     };
 
     SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_scrollingTreeLock) { SynchronizationState::Idle };
+    bool m_renderingUpdateIsWaitingForCommit WTF_GUARDED_BY_LOCK(m_scrollingTreeLock) { false };
     Condition m_stateCondition;
 
     MonotonicTime m_lastDisplayDidRefreshTime WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
-
-    std::unique_ptr<RunLoop::Timer> m_delayedRenderingUpdateDetectionTimer;
 
 #if ENABLE(THREADED_ANIMATIONS)
     // For WTF_ACQUIRES_LOCK
