@@ -57,6 +57,7 @@ public:
     void clearForRegistrableDomain(RegistrableDomain&&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
     void setDebugModeIsEnabled(bool) final;
+    void setPrivateRelayEnforcementIsEnabled(bool) final;
     void firePendingAttributionRequests();
 
     void toStringForTesting(CompletionHandler<void(String)>&&) const final;
@@ -94,6 +95,7 @@ private:
     void clearExpired();
     bool featureEnabled() const;
     bool debugModeEnabled() const;
+    bool shouldBypassPrivateRelay() const;
     Seconds randomlyBetweenFifteenAndThirtyMinutes() const;
 
     RunLoop::Timer m_firePendingAttributionRequestsTimer;

@@ -1465,6 +1465,14 @@ void NetworkProcessProxy::setPrivateClickMeasurementDebugMode(PAL::SessionID ses
     send(Messages::NetworkProcess::SetPrivateClickMeasurementDebugMode(sessionID, debugMode), 0);
 }
 
+void NetworkProcessProxy::setPrivateClickMeasurementPrivateRelayEnforcement(PAL::SessionID sessionID, bool enforce)
+{
+    if (!canSendMessage())
+        return;
+
+    send(Messages::NetworkProcess::SetPrivateClickMeasurementPrivateRelayEnforcement(sessionID, enforce), 0);
+}
+
 void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
 {
     if (canSendMessage())

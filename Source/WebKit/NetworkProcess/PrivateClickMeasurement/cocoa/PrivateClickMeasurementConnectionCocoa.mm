@@ -38,14 +38,20 @@ namespace WebKit::PCM {
 void Connection::newConnectionWasInitialized() const
 {
     ASSERT(m_connection);
-    if (!m_networkSession
-        || m_networkSession->sessionID().isEphemeral()
-        || !m_networkSession->privateClickMeasurementDebugModeEnabled())
+    if (!m_networkSession || m_networkSession->sessionID().isEphemeral())
         return;
 
-    Daemon::Encoder encoder;
-    encoder.encode(true);
-    send(MessageType::SetDebugModeIsEnabled, encoder.takeBuffer());
+    if (m_networkSession->privateClickMeasurementDebugModeEnabled()) {
+        Daemon::Encoder encoder;
+        encoder.encode(true);
+        send(MessageType::SetDebugModeIsEnabled, encoder.takeBuffer());
+    }
+
+    if (m_networkSession->privateClickMeasurementPrivateRelayEnforcementEnabled()) {
+        Daemon::Encoder encoder;
+        encoder.encode(true);
+        send(MessageType::SetPrivateRelayEnforcementIsEnabled, encoder.takeBuffer());
+    }
 }
 
 void Connection::connectionReceivedEvent(xpc_object_t request)

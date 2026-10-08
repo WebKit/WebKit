@@ -4927,6 +4927,14 @@ PrivateClickMeasurementFraudPreventionEnabled:
     "HAVE(RSA_BSSA)": true
     default: false
 
+PrivateClickMeasurementPrivateRelayEnforcementEnabled:
+  type: bool
+  status: developer
+  category: privacy
+  humanReadableName: "Private Click Measurement Private Relay Enforcement in Debug Mode"
+  humanReadableDescription: "Require Private Click Measurement reports to be sent over Private Relay even when Private Click Measurement Debug Mode is enabled"
+  defaultValue: false
+
 PrivateTokenUsageByThirdPartyEnabled:
   type: bool
   status: stable

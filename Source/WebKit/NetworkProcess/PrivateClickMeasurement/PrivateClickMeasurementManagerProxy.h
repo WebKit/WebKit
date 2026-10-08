@@ -49,6 +49,7 @@ public:
     void clearForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
     void setDebugModeIsEnabled(bool) final;
+    void setPrivateRelayEnforcementIsEnabled(bool) final;
 
     void toStringForTesting(CompletionHandler<void(String)>&&) const final;
     void setOverrideTimerForTesting(bool) final;
