@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/break-on-exception-tests.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+
+async function testAsyncThrow()
+{
+    await 0;
+    doThrow();
+}
+
+async function testAsyncLocalCatch()
+{
+    await 0;
+    try {
+        doThrow();
+    } catch { }
+}
+
+async function testAwaitThrow()
+{
+    await testAsyncThrow();
+}
+
+async function testAwaitCatch()
+{
+    try {
+        await testAsyncThrow();
+    } catch { }
+}
+
+async function testAwaitPromiseThrow()
+{
+    await Promise.resolve().then(doThrow);
+}
+
+async function testAwaitPromiseCatch()
+{
+    try {
+        await Promise.resolve().then(doThrow);
+    } catch { }
+}
+
+async function testNestedAwaitCatch()
+{
+    try {
+        await testAwaitThrow();
+    } catch { }
+}
+
+async function testBeforeAwaitThrow()
+{
+    doThrow();
+    await 0;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("BreakOnUncaughtException.AsyncAwait");
+
+    function addTestCase({name, expression, expectedFunctions = [], state = "uncaught"}) {
+        suite.addTestCase({
+            name,
+            test(resolve) {
+                WI.debuggerManager.allExceptionsBreakpoint.disabled = state !== "all";
+                WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = state !== "uncaught";
+                let pauseCount = 0;
+                let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => {
+                    let callFrame = WI.debuggerManager.activeCallFrame;
+                    InspectorTest.expectEqual(callFrame.functionName, expectedFunctions[pauseCount++], "Should pause in the expected function.");
+                    if (callFrame.functionName === "doThrow") {
+                        let location = callFrame.sourceCodeLocation;
+                        InspectorTest.expectEqual(`${location.lineNumber + 1}:${location.columnNumber + 1}`, "8:22", "Should pause at the original throw location.");
+                    }
+                    WI.debuggerManager.resume();
+                });
+                InspectorTest.singleFireEventListener("AfterTestFunction", () => {
+                    InspectorTest.expectEqual(pauseCount, expectedFunctions.length, "Should pause the expected number of times.");
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+                    resolve();
+                });
+                InspectorTest.evaluateInPage(expression);
+                InspectorTest.evaluateInPage(`setTimeout(() => { TestPage.dispatchEventToFrontend("AfterTestFunction"); }, 50)`);
+            },
+        });
+    }
+
+    addTestCase({name: "Async.NoCatch", expression: "setTimeout(testAsyncThrow)", expectedFunctions: ["doThrow"]});
+    addTestCase({name: "Async.Catch", expression: "setTimeout(() => testAsyncThrow().catch(() => {}))"});
+    addTestCase({name: "Async.ChainWithoutCatch", expression: "setTimeout(() => testAsyncThrow().then(() => {}))", expectedFunctions: ["doThrow"]});
+    addTestCase({name: "Async.ChainWithCatch", expression: "setTimeout(() => testAsyncThrow().then(() => {}).catch(() => {}))"});
+    addTestCase({name: "Async.LocalCatch", expression: "setTimeout(testAsyncLocalCatch)"});
+    addTestCase({name: "Await.NoCatch", expression: "setTimeout(testAwaitThrow)", expectedFunctions: ["doThrow", "testAwaitThrow"]});
+    addTestCase({name: "Await.Catch", expression: "setTimeout(testAwaitCatch)"});
+    addTestCase({name: "Await.PromiseWithoutCatch", expression: "setTimeout(testAwaitPromiseThrow)", expectedFunctions: ["doThrow", "testAwaitPromiseThrow"]});
+    addTestCase({name: "Await.PromiseWithCatch", expression: "setTimeout(testAwaitPromiseCatch)"});
+    addTestCase({name: "Await.NestedCatch", expression: "setTimeout(testNestedAwaitCatch)"});
+    // Initial async execution still pauses before a subsequent catch can be attached.
+    addTestCase({name: "Existing.BeforeAwaitWithCatch", expression: "setTimeout(() => testBeforeAwaitThrow().catch(() => {}))", expectedFunctions: ["doThrow"]});
+    addTestCase({name: "All.AwaitCatch", expression: "setTimeout(testAwaitCatch)", expectedFunctions: ["doThrow", "testAwaitCatch"], state: "all"});
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking uncaught exception pauses in async functions and awaiting callers.</p>
+</body>
+</html>
