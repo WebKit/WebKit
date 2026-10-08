@@ -230,11 +230,13 @@ if (ENABLE_2022_GLIB_API)
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.h.in
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.h.in
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.h.in
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionManager.h.in
     )
     list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.cpp
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.cpp
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionManager.cpp
     )
 endif ()
 

@@ -69,6 +69,7 @@ static void webkitWebExtensionContextSetWebExtension(WebKitWebExtensionContext*,
 enum {
     PROP_0,
     PROP_WEB_EXTENSION,
+    PROP_LOADED,
     PROP_BASE_URI,
     PROP_OPTIONS_PAGE_URI,
     PROP_HAS_INJECTED_CONTENT,
@@ -85,6 +86,9 @@ static void webkitWebExtensionContextGetProperty(GObject* object, guint propId, 
     switch (propId) {
     case PROP_WEB_EXTENSION:
         g_value_set_object(value, webkit_web_extension_context_get_web_extension(context));
+        break;
+    case PROP_LOADED:
+        g_value_set_boolean(value, webkit_web_extension_context_get_loaded(context));
         break;
     case PROP_BASE_URI:
         g_value_set_string(value, webkit_web_extension_context_get_base_uri(context));
@@ -139,6 +143,22 @@ static void webkit_web_extension_context_class_init(WebKitWebExtensionContextCla
             nullptr, nullptr,
             WEBKIT_TYPE_WEB_EXTENSION,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
+        );
+
+    /**
+     * WebKitWebExtensionContext:loaded:
+     * 
+     * Whether this #WebKitWebExtensionContext has been loaded in a #WebKitWebExtensionManager.
+     * See webkit_web_extension_context_get_loaded() for more details.
+     * 
+     * Since: 2.56
+     */
+    properties[PROP_LOADED] =
+        g_param_spec_boolean(
+            "loaded",
+            nullptr, nullptr,
+            false,
+            WEBKIT_PARAM_READABLE
         );
 
     /**
@@ -208,6 +228,11 @@ static void webkit_web_extension_context_class_init(WebKitWebExtensionContextCla
     g_object_class_install_properties(objectClass, properties.size(), properties.data());
 }
 
+RefPtr<WebKit::WebExtensionContext> webkitWebExtensionContextGetInternalContext(WebKitWebExtensionContext* context)
+{
+    return context->priv->context;
+}
+
 static gboolean webkitWebExtensionContextInitableInit(GInitable* initable, GCancellable* cancellable, GError** error)
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -234,6 +259,7 @@ static gboolean webkitWebExtensionContextInitableInit(GInitable* initable, GCanc
     }
 
     self->priv->context = WTF::move(context);
+    self->priv->context->setWrapper(self);
 
     return TRUE;
 #else
@@ -295,6 +321,24 @@ WebKitWebExtension* webkit_web_extension_context_get_web_extension(WebKitWebExte
     g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), nullptr);
 
     return context->priv->extension.get();
+}
+
+/**
+ * webkit_web_extension_context_get_loaded:
+ * @context: a #WebKitWebExtensionContext
+ *
+ * Get whether @context is currently loaded in a #WebKitWebExtensionManager.
+ * To load a #WebKitWebExtensionContext in a #WebKitWebExtensionManager, see webkit_web_extension_manager_load_extension_context().
+ * 
+ * Returns: %TRUE if @context is loaded in a #WebKitWebExtensionManager
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_get_loaded(WebKitWebExtensionContext *context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), false);
+
+    return context->priv->context->isLoaded();
 }
 
 /**
@@ -537,6 +581,11 @@ WebKitWebExtensionContext* webkit_web_extension_context_new_for_extension(WebKit
 WebKitWebExtension* webkit_web_extension_context_get_web_extension(WebKitWebExtensionContext* context)
 {
     return nullptr;
+}
+
+gboolean webkit_web_extension_context_get_loaded(WebKitWebExtensionContext *context)
+{
+    return FALSE;
 }
 
 const gchar* webkit_web_extension_context_get_base_uri(WebKitWebExtensionContext* context)

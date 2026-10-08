@@ -590,15 +590,6 @@ void WebExtensionContext::removeStaleExtensionWebsiteData()
     });
 }
 
-void WebExtensionContext::invalidateStorage()
-{
-    m_registeredContentScriptsStorage = nullptr;
-    m_localStorageStore = nullptr;
-    m_sessionStorageStore = nullptr;
-    m_syncStorageStore = nullptr;
-    m_storageAccessLevels.clear();
-}
-
 void WebExtensionContext::setInspectable(bool inspectable)
 {
     m_inspectable = inspectable;
@@ -3461,19 +3452,6 @@ void WebExtensionContext::inspectorEffectiveAppearanceDidChange(API::InspectorEx
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
-void WebExtensionContext::unloadDeclarativeNetRequestState()
-{
-    removeDeclarativeNetRequestRules();
-
-    m_sessionRulesIDs.clear();
-    m_dynamicRulesIDs.clear();
-    m_matchedRules.clear();
-    m_enabledStaticRulesetIDs.clear();
-
-    m_declarativeNetRequestDynamicRulesStore = nullptr;
-    m_declarativeNetRequestSessionRulesStore = nullptr;
-}
-
 String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
 {
     if (!m_declarativeNetRequestContentRuleListFilePath.isEmpty())
@@ -3483,17 +3461,6 @@ String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
     m_declarativeNetRequestContentRuleListFilePath = FileSystem::pathByAppendingComponent(directoryPath, "DeclarativeNetRequestContentRuleList.data"_s);
 
     return m_declarativeNetRequestContentRuleListFilePath;
-}
-
-void WebExtensionContext::removeDeclarativeNetRequestRules()
-{
-    if (!isLoaded())
-        return;
-
-    // Use all user content controllers in case the extension was briefly allowed in private browsing
-    // and content was injected into any of those content controllers.
-    for (Ref userContentController : extensionController()->allUserContentControllers())
-        userContentController->removeContentRuleList(uniqueIdentifier());
 }
 
 static NSString *computeStringHashForContentBlockerRules(NSString *rules)
