@@ -102,6 +102,7 @@ NonInheritedMiscData::NonInheritedMiscData(const NonInheritedMiscData& o)
     , hasExplicitlySetColorScheme(o.hasExplicitlySetColorScheme)
 #endif
     , hasExplicitlySetDirection(o.hasExplicitlySetDirection)
+    , hasExplicitlySetTransform(o.hasExplicitlySetTransform)
     , hasExplicitlySetUserSelect(o.hasExplicitlySetUserSelect)
     , hasExplicitlySetWebkitUserSelect(o.hasExplicitlySetWebkitUserSelect)
     , hasExplicitlySetWritingMode(o.hasExplicitlySetWritingMode)
@@ -153,6 +154,7 @@ bool NonInheritedMiscData::operator==(const NonInheritedMiscData& o) const
         && hasExplicitlySetColorScheme == o.hasExplicitlySetColorScheme
 #endif
         && hasExplicitlySetDirection == o.hasExplicitlySetDirection
+        && hasExplicitlySetTransform == o.hasExplicitlySetTransform
         && hasExplicitlySetUserSelect == o.hasExplicitlySetUserSelect
         && hasExplicitlySetWebkitUserSelect == o.hasExplicitlySetWebkitUserSelect
         && hasExplicitlySetWritingMode == o.hasExplicitlySetWritingMode
@@ -212,6 +214,7 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
 #endif
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetDirection);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetTransform);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetUserSelect);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetWebkitUserSelect);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetWritingMode);
