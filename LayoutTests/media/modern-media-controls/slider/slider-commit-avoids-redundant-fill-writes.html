@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<style type="text/css" media="screen">
+    .slider { position: absolute; }
+</style>
+<body>
+<script type="text/javascript">
+
+description("Testing that <code>Slider.commit()</code> only writes the fill <code>flex-grow</code> styles when the value actually changes.");
+
+const slider = new Slider(null);
+slider.width = 200;
+slider.value = 0.5;
+
+// The fill LayoutNodes are what commit() writes to; reference their elements directly since the
+// child elements are only inserted into the DOM tree during a scheduled layout pass.
+const primaryFill = slider._primaryFill.element;
+const trackFill = slider._trackFill.element;
+
+document.body.appendChild(slider.element);
+
+// Flush the initial layout so the fills reflect the current value.
+scheduler.flushScheduledLayoutCallbacks();
+
+debug("Initial fills reflect value = 0.5:");
+shouldBeEqualToString("primaryFill.style.flexGrow", "50");
+shouldBeEqualToString("trackFill.style.flexGrow", "50");
+
+debug("");
+debug("Poke sentinel values into the fills, then dirty an unrelated property (width). Since the value did not change, commit() must not rewrite the fills:");
+primaryFill.style.flexGrow = "999";
+trackFill.style.flexGrow = "888";
+slider.width = 300;
+scheduler.flushScheduledLayoutCallbacks();
+shouldBeEqualToString("primaryFill.style.flexGrow", "999");
+shouldBeEqualToString("trackFill.style.flexGrow", "888");
+
+debug("");
+debug("Now change the value; commit() must update both fills:");
+slider.value = 0.25;
+scheduler.flushScheduledLayoutCallbacks();
+shouldBeEqualToString("primaryFill.style.flexGrow", "25");
+shouldBeEqualToString("trackFill.style.flexGrow", "75");
+
+</script>
+</body>
