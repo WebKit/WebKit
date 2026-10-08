@@ -230,7 +230,7 @@ RefPtr<PageOverlay> WebInspectorBackendClient::ensureHighlightOverlayForFrame(Lo
         // root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the main frame.
         // DoNotFade matches hideHighlightForFrame(): a Fade uninstall defers the real uninstall.
         Ref newOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-        newOverlay->setAssociatedFrame(&frame);
+        newOverlay->setAssociatedFrame(frame);
         corePage->pageOverlayController().installPageOverlay(newOverlay.copyRef(), PageOverlay::FadeMode::DoNotFade);
         return newOverlay.ptr();
     }).iterator->value;
@@ -321,7 +321,7 @@ auto WebInspectorBackendClient::ensurePaintRectOverlayForFrame(LocalFrame& frame
         Ref overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
         // Scope the overlay to this local root so the controller hosts it in that frame's own
         // compositing tree; sibling local roots in one process each flash in the right place.
-        overlay->setAssociatedFrame(&frame);
+        overlay->setAssociatedFrame(frame);
         newBucket.overlay = overlay.copyRef();
         newBucket.layerClient = makeUnique<RepaintIndicatorLayerClient>(*this, frame);
         page->corePage()->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
@@ -428,7 +428,7 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(LocalFrame& frame)
     RefPtr page = m_page.get();
     RefPtr corePage = page ? page->corePage() : nullptr;
 
-    // Tear the highlight overlay down too, or a stale one re-parents under the main frame.
+    // Tear the highlight overlay down too.
     // Erase it first: uninstalling re-enters willMoveToPage(), which mutates this map.
     if (auto highlightOverlay = m_frameHighlightOverlays.takeOptional(frame); highlightOverlay && corePage) {
         if (RefPtr overlay = *highlightOverlay)

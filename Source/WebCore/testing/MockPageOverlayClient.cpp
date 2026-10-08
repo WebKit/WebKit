@@ -48,9 +48,11 @@ MockPageOverlayClient& MockPageOverlayClient::singleton()
 
 MockPageOverlayClient::MockPageOverlayClient() = default;
 
-Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(Page& page, PageOverlay::OverlayType overlayType)
+Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(Page& page, PageOverlay::OverlayType overlayType, LocalFrame* associatedFrame)
 {
     Ref overlay = PageOverlay::create(*this, overlayType);
+    if (associatedFrame)
+        overlay->setAssociatedFrame(*associatedFrame);
     page.pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
 
     Ref mockOverlay = MockPageOverlay::create(overlay.ptr());
@@ -69,13 +71,29 @@ void MockPageOverlayClient::uninstallAllOverlays()
     }
 }
 
-String MockPageOverlayClient::layerTreeAsText(Page& page, OptionSet<LayerTreeAsTextOptions> options)
+String MockPageOverlayClient::layerTreeAsText(Page& page, LocalFrame& rootFrame, OptionSet<LayerTreeAsTextOptions> options)
 {
-    RefPtr viewOverlayRoot = page.pageOverlayController().viewOverlayRootLayer();
-    RefPtr documentOverlayRoot = page.pageOverlayController().documentOverlayRootLayer();
-    
-    return makeString("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
+    RefPtr viewOverlayRoot { page.pageOverlayController().viewOverlayRootLayer() };
+    RefPtr documentOverlayRoot { rootFrame.isMainFrame() ? page.pageOverlayController().documentOverlayRootLayer() : page.pageOverlayController().documentOverlayRootLayerIfExistsForFrame(rootFrame) };
+
+    StringBuilder builder;
+    builder.append("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
         , "\n\nDocument-relative:\n"_s, (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s));
+
+    unsigned scopedOverlayCount { 0 };
+    unsigned scopedOverlayWithoutRootCount { 0 };
+    for (auto& mockOverlay : m_overlays) {
+        RefPtr overlay { mockOverlay->overlay() };
+        if (!overlay->isScopedToFrame() || overlay->page() != &page)
+            continue;
+        ++scopedOverlayCount;
+        if (!overlay->associatedFrame())
+            ++scopedOverlayWithoutRootCount;
+    }
+    if (scopedOverlayCount)
+        builder.append("\n\nOverlays scoped to a local root: "_s, scopedOverlayCount, ", whose root is gone: "_s, scopedOverlayWithoutRootCount);
+
+    return builder.toString();
 }
 
 void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)

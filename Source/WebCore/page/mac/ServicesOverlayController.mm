@@ -532,7 +532,7 @@ void ServicesOverlayController::updateServicesOverlays()
             continue;
 
         Ref overlay { PageOverlay::create(*this, PageOverlay::OverlayType::Document) };
-        overlay->setAssociatedFrame(rootFrame.ptr());
+        overlay->setAssociatedFrame(rootFrame.get());
         m_servicesOverlays.append(overlay.get());
         page->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
     }
