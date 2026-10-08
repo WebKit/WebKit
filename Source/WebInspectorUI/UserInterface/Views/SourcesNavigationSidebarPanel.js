@@ -1767,7 +1767,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         this._updatePauseReasonGotoArrow();
 
-        let target = WI.debuggerManager.activeCallFrame.target;
+        let target = WI.debuggerManager.activeCallFrame?.target;
+        if (!target)
+            return false;
+
         let targetData = WI.debuggerManager.dataForTarget(target);
         return this._updatePauseReasonSection(target, targetData.pauseReason, targetData.pauseData);
     }
