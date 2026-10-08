@@ -1,0 +1,42 @@
+
+<html>
+<head>
+<script>
+forceGC = () => {
+    for (let i = 0; i < 20; ++i) {
+        new ArrayBuffer(100 * 1024 * 1024);
+    }
+}
+async function magic(){
+    frame.remove();
+    document.body.innerHTML = '<p>If you see this text, the select element and its containing iframe were successfully removed without crashing.</p>';
+    forceGC();
+}
+function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+            modifiers = ["ctrlKey", "altKey"];
+        else
+            modifiers = ["altKey"];
+        eventSender.keyDown("a", modifiers);
+    }
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks what happens if an access key causing a button or select element to be focused or blurred destroys the access key's node.</p>
+<p>This caused a crash on previous versions of WebKit .</p>
+<script>
+frame = document.body.appendChild(document.createElement('iframe'));
+frame.style = 'width: 100%; height: 100%; border: 0';
+outerContainer = frame.contentDocument.body.attachShadow({ mode: 'open' });
+outerContainer.innerHTML = `<select accesskey="a">SouthSea</select>
+<p>Made in the body</p>
+<input></input>`;
+outerContainer.childNodes[4].addEventListener('blur',magic);
+outerContainer.childNodes[4].focus();
+</script>
+</body>
+</html>
