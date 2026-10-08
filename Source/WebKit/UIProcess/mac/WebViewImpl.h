@@ -752,7 +752,7 @@ public:
     void removeFlagsChangedEventMonitor();
     bool NODELETE hasFlagsChangedEventMonitor();
 
-    void mouseMoved(NSEvent *);
+    void mouseMoved(NSEvent *, WebEventInputSource = WebEventInputSource::UserDriven);
     void mouseDown(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void mouseUp(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void mouseDragged(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
@@ -1007,7 +1007,7 @@ private:
 
     void scheduleMouseDidMoveOverElementForModifierFlagsChange(NSEvent *);
 
-    void mouseMovedInternal(NSEvent *);
+    void mouseMovedInternal(NSEvent *, WebEventInputSource);
     void mouseDownInternal(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void mouseUpInternal(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void mouseDraggedInternal(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);

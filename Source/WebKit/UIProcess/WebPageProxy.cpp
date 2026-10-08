@@ -5108,6 +5108,10 @@ void WebPageProxy::handleWheelEvent(Ref<WebWheelEvent>&& wheelEvent)
     if (!hasRunningProcess())
         return;
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    m_hoverActivatedByClickBounds = std::nullopt;
+#endif
+
     if (protect(drawingArea())->shouldSendWheelEventsToEventDispatcher()) {
         continueWheelEventHandling(WTF::move(wheelEvent), { WheelEventProcessingSteps::SynchronousScrolling, false }, { });
         return;
@@ -9302,6 +9306,9 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         process->didCommitMainFrameLoad(request.url());
 
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+        m_hoverActivatedByClickBounds = std::nullopt;
+#endif
 #if PLATFORM(COCOA)
         if (RefPtr drawingAreaProxy = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea))
             internals().firstLayerTreeTransactionIdAfterDidCommitLoad = drawingAreaProxy->nextMainFrameLayerTreeTransactionID();

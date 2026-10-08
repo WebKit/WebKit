@@ -77,6 +77,7 @@ struct InteractionInformationAtPosition {
         bool isCustomSlider,
         bool hasDirectionalResizeCursor,
         bool isInResizeControl,
+        bool isHoverActivatedByClick,
         bool isOverVideo,
         bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
@@ -162,6 +163,8 @@ struct InteractionInformationAtPosition {
     bool hasDirectionalResizeCursor { false };
 
     bool isInResizeControl { false };
+
+    bool isHoverActivatedByClick { false };
 
     bool isOverVideo { false };
 

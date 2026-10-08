@@ -208,6 +208,9 @@ messages -> WebPageProxy {
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     DidCompleteSyntheticClick()
     DidHandleTapAsHover()
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    SetHoverActivatedByClickBounds(std::optional<WebCore::IntRect> bounds)
+#endif
     DisableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier requestID)
     HandleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel, bool nodeIsPluginElement)
     IsPotentialTapInProgress() -> (bool result)
