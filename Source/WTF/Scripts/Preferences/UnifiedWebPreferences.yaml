@@ -2213,6 +2213,14 @@ EventTimingEnabled:
     default: true
     WebKitLegacy: false
 
+ExemptAllowlistedCookiesFromItp:
+  type: bool
+  status: unstable
+  category: privacy
+  humanReadableName: "Exempt Allowlisted Cookies From ITP Data Removal"
+  humanReadableDescription: "Exempt allowlisted cookies and local storage from ITP data deletion"
+  defaultValue: false
+
 ExperimentalSandboxEnabled:
   type: bool
   status: internal

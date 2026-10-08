@@ -116,6 +116,12 @@ bool experimentalFeatureEnabled(const String& key, bool defaultValue)
     return *optionalExperimentalFeatureEnabled(key, defaultValue);
 }
 
+static bool internalDebugFeatureEnabled(const String& key)
+{
+    RetainPtr defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", key.createNSString().get()]);
+    return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
+}
+
 static RetainPtr<NSString> applicationOrProcessIdentifier()
 {
     RetainPtr<NSString> identifier = [NSBundle mainBundle].bundleIdentifier;
@@ -233,6 +239,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode = firstPartyWebsiteDataRemovalMode;
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain = WebCore::RegistrableDomain { m_configuration->standaloneApplicationURL() };
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTF::move(resourceLoadStatisticsManualPrevalentResource);
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.exemptAllowlistedCookiesFromITP = internalDebugFeatureEnabled(WebPreferencesKey::exemptAllowlistedCookiesFromItpKey());
 
     auto cookieFile = directories.cookieStorageFile;
 #if PLATFORM(MAC)

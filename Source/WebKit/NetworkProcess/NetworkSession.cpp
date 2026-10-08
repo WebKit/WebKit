@@ -306,6 +306,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
+    setExemptAllowlistedCookiesFromITP(parameters.resourceLoadStatisticsParameters.exemptAllowlistedCookiesFromITP);
 
     setShouldSendPrivateTokenIPCForTesting(parameters.shouldSendPrivateTokenIPCForTesting);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
@@ -532,6 +533,12 @@ void NetworkSession::setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteSt
     m_sameSiteStrictEnforcementEnabled = enabled;
     if (RefPtr resourceLoadStatistics = m_resourceLoadStatistics)
         resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(enabled);
+}
+
+void NetworkSession::setExemptAllowlistedCookiesFromITP(bool exempt)
+{
+    if (CheckedPtr storageSession = networkStorageSession())
+        storageSession->setExemptAllowlistedCookiesFromITP(exempt);
 }
 
 void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain)

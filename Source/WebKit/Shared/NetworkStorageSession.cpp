@@ -519,7 +519,7 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
 
 void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> cookieHostNames, CompletionHandler<void()>&& completionHandler)
 {
-    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, WTF::move(completionHandler));
+    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, ExemptAllowlistedCookies::No, WTF::move(completionHandler));
 }
 
 #if !PLATFORM(COCOA)
