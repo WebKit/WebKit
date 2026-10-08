@@ -1233,6 +1233,14 @@ class Port(object):
         config_file_name = self._apache_config_file_name_for_platform(sys.platform)
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_file_name)
 
+    def reference_hashes_configuration(self):
+        """Rendering settings the driver doesn't get on its command line, which reference hashes depend on."""
+        return []
+
+    def reference_hashes_directory(self):
+        """Where run-webkit-tests keeps reftest reference hashes between runs: in the checkout's gitignored .cache, since testers replace WebKitBuild."""
+        return self.path_from_webkit_base('.cache', 'reference-hashes')
+
     def _build_path(self, *comps):
         root_directory = self.get_option('_cached_root') or self.get_option('root')
         if not root_directory:
