@@ -2624,6 +2624,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = loadParameters.navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, loadParameters.navigationID };
     m_internals->pendingWebsitePolicies = WTF::move(loadParameters.websitePolicies);
     m_pendingUnpartitionedStorageSite = WTF::move(loadParameters.unpartitionedStorageSite);
 
@@ -2699,6 +2700,7 @@ void WebPage::loadDataImpl(std::optional<WebCore::NavigationIdentifier> navigati
     SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, navigationID };
     m_internals->pendingWebsitePolicies = WTF::move(websitePolicies);
 
     SubstituteData substituteData(WTF::move(sharedBuffer), WTF::move(unreachableURL), WTF::move(response), sessionHistoryVisibility);
@@ -2820,6 +2822,7 @@ void WebPage::reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCo
 
     ASSERT(!m_mainFrame->coreLocalFrame()->loader().frameHasLoaded() || !m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, navigationID };
 
     Ref mainFrame = m_mainFrame;
     m_sandboxExtensionTracker.beginReload(mainFrame.ptr(), WTF::move(sandboxExtensionHandle));
@@ -2870,6 +2873,7 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
 #endif
 
     m_pendingNavigationID = parameters.navigationID;
+    NavigationRequestDispatchScope dispatchScope { *this, parameters.navigationID };
     m_internals->pendingWebsitePolicies = WTF::move(parameters.websitePolicies);
 
     Ref targetFrame = m_mainFrame;
@@ -8675,8 +8679,23 @@ void WebPage::didSameDocumentNavigationForFrame(WebFrame& frame)
 
 void WebPage::didNavigateWithinPageForFrame(WebFrame& frame)
 {
+    // popstate dispatch is synchronous and re-entrant.
     if (frame.isMainFrame())
-        m_pendingNavigationID = std::nullopt;
+        m_sameDocumentNavigationIDs.append(std::exchange(m_navigationIDOfPendingMainFrameDocumentLoader, { }).asOptional());
+}
+
+WebPage::NavigationRequestDispatchScope::~NavigationRequestDispatchScope()
+{
+    // A same-document navigation consumes the id synchronously while the request is dispatched.
+    if (m_navigationID && m_page->m_navigationIDOfPendingMainFrameDocumentLoader == *m_navigationID)
+        m_page->m_navigationIDOfPendingMainFrameDocumentLoader = { };
+}
+
+std::optional<WebCore::NavigationIdentifier> WebPage::takeSameDocumentNavigationIDForPopStateReport()
+{
+    if (m_sameDocumentNavigationIDs.isEmpty())
+        return std::nullopt;
+    return m_sameDocumentNavigationIDs.takeLast();
 }
 
 void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&& reply)
@@ -8920,6 +8939,8 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceReq
     if (frame.isMainFrame() || m_page->settings().siteIsolationEnabled()) {
         if (m_pendingNavigationID) {
             documentLoader->setNavigationID(*m_pendingNavigationID);
+            if (frame.isMainFrame())
+                m_navigationIDOfPendingMainFrameDocumentLoader = *m_pendingNavigationID;
             m_pendingNavigationID = std::nullopt;
         }
 

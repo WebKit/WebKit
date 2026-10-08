@@ -535,7 +535,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         m_frame->info(),
         std::nullopt, /* originatingPageID */
         m_frame->info(),
-        { }, /* navigationID */
+        m_frame->isMainFrame() && navigationType == SameDocumentNavigationType::SessionStatePop ? webPage->takeSameDocumentNavigationIDForPopStateReport() : std::nullopt, /* navigationID */
         { }, /* originalRequest */
         { }, /* request */
         { }, /* invalidURLString */
@@ -598,6 +598,8 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
 
     webPage->findController().hideFindUI();
     webPage->sandboxExtensionTracker().didStartProvisionalLoad(m_frame.ptr());
+    if (m_frame->isMainFrame())
+        webPage->didStartProvisionalLoadForMainFrameDocumentLoader();
 
     RefPtr<API::Object> userData;
 
