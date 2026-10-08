@@ -864,8 +864,8 @@ RefPtr<DMABufBuffer> VideoFrameGStreamer::getDMABuf()
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
     }
 
-    IntSize size(videoMeta->width, videoMeta->height);
     const auto& videoInfo = info();
+    IntSize size(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
     auto dmabufFormat = this->dmaBufFormat();
     uint64_t modifier = dmabufFormat ? dmabufFormat->second : DRM_FORMAT_MOD_INVALID;
     uint32_t fourcc = 0;
