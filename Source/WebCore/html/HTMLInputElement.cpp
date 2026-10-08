@@ -471,7 +471,7 @@ void HTMLInputElement::setDefaultSelectionAfterFocus(SelectionRestorationMode re
         start = std::numeric_limits<unsigned>::max();
         direction = SelectionHasForwardDirection;
     }
-    unsigned end = restorationMode == SelectionRestorationMode::PlaceCaretAtStart ? start : std::numeric_limits<unsigned>::max();
+    unsigned end = restorationMode == SelectionRestorationMode::SelectAll ? std::numeric_limits<unsigned>::max() : start;
     setSelectionRange(start, end, direction, revealMode, Element::defaultFocusTextStateChangeIntent());
 }
 
