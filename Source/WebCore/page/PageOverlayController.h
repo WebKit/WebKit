@@ -92,6 +92,7 @@ private:
 
     WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE documentOverlayRootLayer() const;
     GraphicsLayer& documentOverlayRootLayerForFrame(LocalFrame* rootFrame);
+    WEBCORE_EXPORT GraphicsLayer* documentOverlayRootLayerIfExistsForFrame(const LocalFrame& rootFrame) const;
 
     WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE viewOverlayRootLayer() const;
 

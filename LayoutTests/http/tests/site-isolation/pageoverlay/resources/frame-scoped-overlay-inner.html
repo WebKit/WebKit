@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<body style="margin:0">
+<script>
+const overlay = internals.installMockPageOverlay("document", { associateWithLocalRoot: true });
+overlay.setFrame(0, 0, 50, 50);
+requestAnimationFrame(() => requestAnimationFrame(() => top.postMessage({ dump: internals.pageOverlayLayerTreeAsText() }, "*")));
+</script>
+</body>

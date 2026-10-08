@@ -158,6 +158,11 @@ GraphicsLayer& PageOverlayController::documentOverlayRootLayerForFrame(LocalFram
     return layer.get();
 }
 
+GraphicsLayer* PageOverlayController::documentOverlayRootLayerIfExistsForFrame(const LocalFrame& rootFrame) const
+{
+    return m_frameDocumentOverlayRootLayers.get(rootFrame);
+}
+
 GraphicsLayer* PageOverlayController::viewOverlayRootLayer() const
 {
     return m_viewOverlayRootLayer.get();
@@ -191,13 +196,16 @@ GraphicsLayer& PageOverlayController::layerWithDocumentOverlaysForFrame(LocalFra
         if (overlay->overlayType() != PageOverlay::OverlayType::Document)
             continue;
 
-        // An associated overlay belongs to its own frame; an unassociated one is page-level.
+        // An overlay scoped to a frame belongs to that frame, or to no root once the frame is gone; an unscoped one is page-level.
         RefPtr overlayFrame = overlay->associatedFrame();
-        bool belongsToThisRoot = overlayFrame ? (overlayFrame.get() == rootFrame) : (rootFrame == localMainFrame.get());
-        if (!belongsToThisRoot)
-            continue;
-
+        bool belongsToThisRoot { overlay->isScopedToFrame() ? (overlayFrame && overlayFrame.get() == rootFrame) : (rootFrame == localMainFrame.get()) };
         auto& layer = overlayAndLayer.value;
+        if (!belongsToThisRoot) {
+            if (layer->parent() == rootLayer.ptr())
+                layer->removeFromParent();
+            continue;
+        }
+
         GraphicsLayer::traverse(layer.get(), [inWindow](GraphicsLayer& layer) {
             layer.setIsInWindow(inWindow);
         });
@@ -267,7 +275,8 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     case PageOverlay::OverlayType::Document: {
         // Parent under the root scoped to the overlay's associated frame (or the shared main-frame root).
         RefPtr associatedFrame = overlay.associatedFrame();
-        Ref { documentOverlayRootLayerForFrame(associatedFrame.get()) }->addChild(layer.get());
+        if (associatedFrame || !overlay.isScopedToFrame())
+            Ref { documentOverlayRootLayerForFrame(associatedFrame.get()) }->addChild(layer.get());
         break;
     }
     }
@@ -277,9 +286,9 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     overlay.setPage(protect(m_page).ptr());
 
     // Put the hosting frame in compositing mode so its RenderLayerCompositor picks up the overlay
-    // root: the associated frame for an associated overlay, else the local main-or-root frame.
+    // root: the associated frame for a scoped overlay (none once it is gone), else the local main-or-root frame.
     RefPtr hostFrame = overlay.associatedFrame();
-    if (!hostFrame)
+    if (!hostFrame && !overlay.isScopedToFrame())
         hostFrame = m_page->localMainOrRootFrame();
     if (hostFrame) {
         if (RefPtr frameView = hostFrame->view())

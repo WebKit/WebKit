@@ -91,6 +91,7 @@ public:
     // process (Site Isolation) each get an independent overlay. Unset keeps the page-level behavior.
     WEBCORE_EXPORT void LEGACY_NODELETE setAssociatedFrame(LocalFrame*);
     WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE associatedFrame() const;
+    bool isScopedToFrame() const { return m_isScopedToFrame; }
 
     WEBCORE_EXPORT void setNeedsDisplay(const IntRect& dirtyRect);
     WEBCORE_EXPORT void setNeedsDisplay();
@@ -146,6 +147,7 @@ private:
 
     // The local root frame this Document overlay is scoped to, if any (see setAssociatedFrame).
     WeakPtr<LocalFrame> m_associatedFrame;
+    bool m_isScopedToFrame { false };
 
     Timer m_fadeAnimationTimer;
     WallTime m_fadeAnimationStartTime;
