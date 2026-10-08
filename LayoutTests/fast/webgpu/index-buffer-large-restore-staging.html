@@ -1,0 +1,100 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+    const output = document.getElementById('output');
+    function log(msg) { output.textContent += msg + '\n'; }
+
+    const IB_SIZE = 33554432;
+    const HEAD = [1, 2, 3, 0];
+    const TAIL = [0xAAAAAAAA, 0xBBBBBBBB, 0xCCCCCCCC, 0xDDDDDDDD];
+
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) { log('No adapter'); if (window.testRunner) testRunner.notifyDone(); return; }
+        const device = await adapter.requestDevice();
+
+        const vertexBuffer = device.createBuffer({ size: 4096, usage: GPUBufferUsage.VERTEX });
+        const indexBuffer = device.createBuffer({
+            size: IB_SIZE,
+            usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+        });
+        const renderTarget = device.createTexture({
+            size: [4, 4], format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+
+        const shaderModule = device.createShaderModule({ code: `
+            @vertex fn vs(@location(0) pos: vec4f) -> @builtin(position) vec4f { return pos; }
+            @fragment fn fs() -> @location(0) vec4f { return vec4f(1.0); }
+        `});
+        const pipeline = device.createRenderPipeline({
+            layout: 'auto',
+            vertex: {
+                module: shaderModule,
+                buffers: [{
+                    arrayStride: 16,
+                    attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }],
+                }],
+            },
+            fragment: { module: shaderModule, targets: [{ format: 'rgba8unorm' }] },
+        });
+
+        function recordDrawIndexed() {
+            const encoder = device.createCommandEncoder();
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: renderTarget.createView(),
+                    loadOp: 'clear', storeOp: 'store',
+                }],
+            });
+            pass.setPipeline(pipeline);
+            pass.setVertexBuffer(0, vertexBuffer);
+            pass.setIndexBuffer(indexBuffer, 'uint32');
+            pass.drawIndexed(4, 1, 0, 0, 0);
+            pass.end();
+            return encoder.finish();
+        }
+
+        device.queue.writeBuffer(indexBuffer, 0, new Uint32Array(HEAD));
+        device.queue.writeBuffer(indexBuffer, IB_SIZE - 16, new Uint32Array(TAIL));
+
+        device.queue.submit([recordDrawIndexed()]);
+        await device.queue.onSubmittedWorkDone();
+
+        const deferredDraw = recordDrawIndexed();
+
+        device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([0xFFFFFFFE, 0, 0, 0]));
+
+        device.queue.submit([deferredDraw]);
+        await device.queue.onSubmittedWorkDone();
+
+        async function read(offset, size) {
+            const readback = device.createBuffer({
+                size,
+                usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+            });
+            const encoder = device.createCommandEncoder();
+            encoder.copyBufferToBuffer(indexBuffer, offset, readback, 0, size);
+            device.queue.submit([encoder.finish()]);
+            await readback.mapAsync(GPUMapMode.READ);
+            const values = Array.from(new Uint32Array(readback.getMappedRange().slice(0)));
+            readback.unmap();
+            return values;
+        }
+
+        const head = await read(0, 16);
+        const tail = await read(IB_SIZE - 16, 16);
+        const expectedHead = [0xFFFFFFFE, 0, 0, 0];
+        if (head.join() !== expectedHead.join())
+            log('FAIL - buffer start not restored: got ' + head.join() + ', expected ' + expectedHead.join());
+        else if (tail.join() !== TAIL.join())
+            log('FAIL - buffer end not restored: got ' + tail.join() + ', expected ' + TAIL.join());
+        else
+            log('PASS - index buffer restored without mapping heap memory for the GPU');
+    } catch (e) {
+        log('FAIL - ' + e);
+    }
+    if (window.testRunner) testRunner.notifyDone();
+};
+</script>
+<pre id="output"></pre>

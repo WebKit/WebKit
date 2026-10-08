@@ -53,6 +53,7 @@ namespace WebGPU {
 class CommandBuffer;
 class CommandEncoder;
 class Device;
+class Queue;
 
 // https://gpuweb.github.io/gpuweb/#gpubuffer
 class Buffer : public WGPUBufferImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Buffer>, public TrackedResource {
@@ -149,6 +150,8 @@ private:
     void decrementBufferMapCount();
     void takeSlowIndirectIndexValidationPath(CommandBuffer&, Buffer&, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint32_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType);
     void takeSlowIndirectValidationPath(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
+    id<MTLBuffer> _Nullable snapshotRangeBeforeClear(Queue&, NSUInteger offset, NSUInteger size);
+    void restoreSnapshotAfterCommit(CommandBuffer&, Queue&, id<MTLBuffer> _Nullable snapshot, NSUInteger offset);
     void invalidateDrawIndexedCache(CommandEncoder* = nullptr);
 
     id<MTLBuffer> m_buffer { nil };

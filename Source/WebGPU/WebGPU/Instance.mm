@@ -76,15 +76,28 @@ Instance::Instance()
 
 Instance::~Instance() = default;
 
+// -waitUntilCompleted never returns for a command buffer that was created but never committed,
+// because Metal only signals completion for committed work. Command buffers are registered with
+// the Instance at creation time (Queue::commandBufferWithDescriptor()), and plenty of them are
+// never committed - every command buffer belonging to a submit that failed validation, for one.
+// Waiting on such a buffer wedges the entire GPU process, since this runs on the WebGPU work queue
+// thread that GPUConnectionToWebProcess::releaseGPU() joins from the main thread.
+static void waitUntilCompletedIfCommitted(id<MTLCommandBuffer> commandBuffer)
+{
+    if (commandBuffer.status < MTLCommandBufferStatusCommitted)
+        return;
+    [commandBuffer waitUntilCompleted];
+}
+
 void Instance::waitForCommandBufferCompletions()
 {
     auto retainedCommandBuffers { std::exchange(m_retainedCommandBufferInstances, { }) };
     auto retainedDevices { std::exchange(retainedDeviceInstances, { }) };
     for (auto& pair : retainedCommandBuffers)
-        [pair.second.get().get() waitUntilCompleted];
+        waitUntilCompletedIfCommitted(pair.second.get().get());
     for (auto& container : retainedDevices.values()) {
         for (auto& mtlCommandBuffer : container)
-            [mtlCommandBuffer.get().get() waitUntilCompleted];
+            waitUntilCompletedIfCommitted(mtlCommandBuffer.get().get());
     }
 }
 
