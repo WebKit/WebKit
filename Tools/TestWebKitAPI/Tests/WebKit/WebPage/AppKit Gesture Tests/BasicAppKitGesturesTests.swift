@@ -3375,6 +3375,27 @@ extension AppKitGesturesTests.Basic {
         #expect(settled.y < dragDistance * 1.5)
     }
 
+    @Test
+    func flickThatRestsBeforeLiftoffDoesNotFling() async throws {
+        try await loadTallDocument()
+        await page.waitForNextPresentationUpdate()
+
+        let dragDistance = 250.0
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let end = CGPoint(x: center.x, y: center.y - dragDistance)
+
+        // Unlike the coalesced case above, this sees "changed" events, so it relies on the velocity going stale.
+        await recap.play { composer in
+            composer._wk_drag(withStart: center, end: end, duration: coalescedFlickDuration, release: false)
+            composer.advanceTime(0.5)
+            composer._wk_mouseUp()
+        }
+
+        let settled = try await settledScrollPosition()
+
+        #expect(settled.y < dragDistance * 1.5)
+    }
+
     @Test(.disabled("This test takes an unavoidable ~10 seconds to run"))
     func consecutiveQuickFlicksAccelerateScrolling() async throws {
         let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
