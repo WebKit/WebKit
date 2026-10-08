@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml">
+  <metadata>
+    <h:title>A text positioning list must not split a typographic character</h:title>
+    <h:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextLayoutAlgorithm"/>
+    <h:link rel="match" href="positioning-list-typographic-character-ref.svg"/>
+  </metadata>
+  <!-- The 'x' value belonging to the second character of a typographic character is skipped, but it
+       still consumes an entry in the list, so "a" is placed at x=80. The flag (a regional indicator
+       pair) and the "e" followed by U+0301 must each stay a single typographic character. -->
+  <text x="0 40 80" y="40" style="font-size: 20px">&#x1F1FA;&#x1F1F8;a</text>
+  <text x="0 40 80" y="80" style="font-size: 20px">e&#x0301;a</text>
+  <text x="0 40 80 120 160" y="120" style="font-size: 20px">&#x1F1FA;&#x1F1F8;</text>
+</svg>
