@@ -129,6 +129,7 @@ private:
     // Latest paint-rects toggle, fanned out to every WebContent process and replayed to any
     // process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
+    String m_bootstrapScript;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

@@ -133,6 +133,8 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
         frameRuntimeAgent->didClearWindowObjectInWorld(world);
         if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
             pageAgent->didClearWindowObjectInWorld(frame, world);
+        if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
+            pageProxy->didClearWindowObjectInWorld(frame, world);
         return;
     }
 
@@ -141,6 +143,9 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
 
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didClearWindowObjectInWorld(frame, world);
+
+    if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
+        pageProxy->didClearWindowObjectInWorld(frame, world);
 }
 
 bool InspectorInstrumentation::isDebuggerPausedImpl(InstrumentingAgents& instrumentingAgents)

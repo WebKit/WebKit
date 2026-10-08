@@ -35,6 +35,7 @@
 #include "ProxyingPageAgentMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentView.h>
@@ -48,6 +49,7 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/InspectorPageAgent.h>
 #include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LocalFrameInlines.h>
@@ -214,8 +216,19 @@ void PageAgentProxy::applyEmulatedMedia(AtomString&)
 {
 }
 
-void PageAgentProxy::didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&)
+void PageAgentProxy::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
+    if (&world != &mainThreadNormalWorldSingleton())
+        return;
+
+    if (m_bootstrapScript.isEmpty())
+        return;
+
+    // The main-frame process's enabled InspectorPageAgent evaluates its own copy, received through the page target.
+    if (Ref { m_instrumentingAgents.get() }->enabledPageAgent())
+        return;
+
+    InspectorPageAgent::evaluateBootstrapScript(frame, m_bootstrapScript);
 }
 
 void PageAgentProxy::didPaint(RenderObject& renderer, const LayoutRect& rect)
