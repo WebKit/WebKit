@@ -257,7 +257,13 @@ SUPPRESS_NODELETE ALWAYS_INLINE unsigned NODELETE ElementData::findAttributeInde
             if (attribute.localName() == caseAdjustedName)
                 return i;
         } else {
-            if (attribute.name().toString() == caseAdjustedName)
+            auto& prefix = attribute.prefix();
+            auto& localName = attribute.localName();
+            unsigned prefixLength = prefix.length();
+            if (caseAdjustedName.length() != prefixLength + 1 + localName.length())
+                continue;
+            StringView nameView { caseAdjustedName };
+            if (nameView[prefixLength] == ':' && nameView.startsWith(prefix) && nameView.endsWith(localName))
                 return i;
         }
     }
