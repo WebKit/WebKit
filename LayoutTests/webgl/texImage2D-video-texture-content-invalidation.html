@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL test for texImage2D(video) of the same frame after the texture is modified</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("texImage2D(video) of the same video frame uploads the frame again after the texture has been modified by other calls.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+// The video is 300x300, blue at the top and red at the bottom.
+const videoSize = 300;
+const blue = [0, 0, 255, 255];
+const red = [255, 0, 0, 255];
+const greenPixels = new Uint8Array(videoSize * videoSize * 4);
+for (let i = 0; i < greenPixels.length; i += 4) {
+    greenPixels[i + 1] = 255;
+    greenPixels[i + 3] = 255;
+}
+
+async function loadVideo() {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.loop = true;
+    video.src = "../fast/canvas/webgl/resources/orientation-normal.mp4";
+    await video.play();
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+    video.pause();
+    return video;
+}
+
+// Checks the top and bottom rows of the texture image, which are the top and bottom of the video.
+function checkVideoContent(gl, textarget, texture, name) {
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, textarget, texture, 0);
+    wtu.framebufferStatusShouldBe(gl, gl.FRAMEBUFFER, gl.FRAMEBUFFER_COMPLETE, name);
+    wtu.checkCanvasRect(gl, videoSize / 2, 2, 1, 1, blue, `${name}: top of the video should be blue`, 20);
+    wtu.checkCanvasRect(gl, videoSize / 2, videoSize - 3, 1, 1, red, `${name}: bottom of the video should be red`, 20);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.deleteFramebuffer(framebuffer);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, `${name}: after checking the content`);
+}
+
+function createGreenFramebuffer(gl) {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, videoSize, videoSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, greenPixels);
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    return framebuffer;
+}
+
+function testCubeMapFaceWith2DTextureBound(gl, video) {
+    debug("");
+    debug("A cube map face is redefined while a 2D texture is bound to the same texture unit.");
+    const cubeMap = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeMap);
+    // A cube map face can be attached to a framebuffer only if the cube map is cube complete.
+    for (let face = 0; face < 6; ++face)
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, gl.RGBA, videoSize, videoSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, greenPixels);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    const texture2D = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture2D);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, videoSize, videoSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, greenPixels);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "uploads");
+    checkVideoContent(gl, gl.TEXTURE_CUBE_MAP_POSITIVE_X, cubeMap, "cube map face");
+    gl.deleteTexture(cubeMap);
+    gl.deleteTexture(texture2D);
+}
+
+function testCopyTexSubImage2D(gl, video) {
+    debug("");
+    debug("The texture is modified with copyTexSubImage2D.");
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    const framebuffer = createGreenFramebuffer(gl);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, videoSize, videoSize);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "uploads");
+    checkVideoContent(gl, gl.TEXTURE_2D, texture, "copyTexSubImage2D");
+    gl.deleteFramebuffer(framebuffer);
+    gl.deleteTexture(texture);
+}
+
+function testFramebufferTexture2DWithOtherTextureBound(gl, video) {
+    debug("");
+    debug("The texture is attached to a framebuffer and cleared while another texture is bound.");
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    const otherTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, otherTexture);
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "uploads");
+    checkVideoContent(gl, gl.TEXTURE_2D, texture, "framebufferTexture2D");
+    gl.deleteFramebuffer(framebuffer);
+    gl.deleteTexture(otherTexture);
+    gl.deleteTexture(texture);
+}
+
+function runTests(gl, video) {
+    testCubeMapFaceWith2DTextureBound(gl, video);
+    testCopyTexSubImage2D(gl, video);
+    testFramebufferTexture2DWithOtherTextureBound(gl, video);
+}
+
+async function runTest() {
+    const video = await loadVideo();
+    for (const version of [1, 2]) {
+        debug("");
+        debug(`WebGL ${version}.0`);
+        const gl = wtu.create3DContext(undefined, undefined, version);
+        if (!gl) {
+            testFailed(`Could not create a WebGL ${version}.0 context`);
+            continue;
+        }
+        runTests(gl, video);
+    }
+    debug("");
+    finishJSTest();
+}
+
+runTest();
+</script>
+</body>
+</html>

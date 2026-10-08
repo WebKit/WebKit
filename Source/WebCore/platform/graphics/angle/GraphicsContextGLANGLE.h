@@ -405,6 +405,9 @@ protected:
     static void NODELETE platformReleaseThreadResources();
 
     virtual void invalidateKnownTextureContent(GCGLuint);
+    // Invalidates the known content of the texture bound to the binding point of `target` in the
+    // active texture unit. Must be called with the context current.
+    virtual void invalidateKnownTextureContentForTarget(GCGLenum target);
     bool supportsExtensionImpl(ASCIILiteral) const;
     // Enables extensions only if all are supported, returns true if all the extensions are supported. No changes if false is returned.
     [[nodiscard]] bool enableExtensionsImpl(std::initializer_list<ASCIILiteral>);

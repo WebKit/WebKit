@@ -12,6 +12,7 @@
 #define LIBANGLE_RENDERER_METAL_MTL_RENDER_UTILS_H_
 
 #import <Metal/Metal.h>
+#include <array>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -98,6 +99,18 @@ struct ColorBlitParams : public BlitParams
     bool unpackUnmultiplyAlpha  = false;
     bool transformLinearToSrgb  = false;
     bool dstLuminance           = false;
+
+    // Multiplanar NV12 source: `src` is the luma (R8) plane, `srcYUVChroma` the chroma (RG8) plane,
+    // and `yuvMatrix` the row-major YCbCr->RGB matrix applied in the shader.
+    bool srcIsYUV = false;
+    TextureRef srcYUVChroma;
+    std::array<float, 12> yuvMatrix{};
+
+    // Source orientation, applied to the normalized source texture coordinates after the source
+    // rectangle and unpackFlipY: invert y, then invert x, then swap x and y.
+    bool srcInvertX = false;
+    bool srcInvertY = false;
+    bool srcSwapXY  = false;
 };
 
 struct DepthStencilBlitParams : public BlitParams
@@ -242,26 +255,30 @@ class ColorBlitUtils final : angle::NonCopyable
     struct ShaderKey
     {
         int sourceTextureType        = 0;
-        uint32_t numColorAttachments : 29;
+        uint32_t numColorAttachments : 28;
         uint32_t unmultiplyAlpha : 1;
         uint32_t premultiplyAlpha : 1;
         uint32_t transformLinearToSrgb : 1;
+        uint32_t srcIsYUV : 1;
         ShaderKey()
             : numColorAttachments(0),
               unmultiplyAlpha(false),
               premultiplyAlpha(false),
-              transformLinearToSrgb(false)
+              transformLinearToSrgb(false),
+              srcIsYUV(false)
         {}
         ShaderKey(int sourceTextureType,
                   uint32_t numColorAttachments,
                   bool unmultiplyAlpha,
                   bool premultiplyAlpha,
-                  bool transformLinearToSrgb)
+                  bool transformLinearToSrgb,
+                  bool srcIsYUV)
             : sourceTextureType(sourceTextureType),
               numColorAttachments(numColorAttachments),
               unmultiplyAlpha(unmultiplyAlpha != premultiplyAlpha ? unmultiplyAlpha : false),
               premultiplyAlpha(unmultiplyAlpha != premultiplyAlpha ? premultiplyAlpha : false),
-              transformLinearToSrgb(transformLinearToSrgb)
+              transformLinearToSrgb(transformLinearToSrgb),
+              srcIsYUV(srcIsYUV)
         {}
         bool operator==(const ShaderKey &other) const
         {
@@ -269,7 +286,8 @@ class ColorBlitUtils final : angle::NonCopyable
                    numColorAttachments == other.numColorAttachments &&
                    unmultiplyAlpha == other.unmultiplyAlpha &&
                    premultiplyAlpha == other.premultiplyAlpha &&
-                   transformLinearToSrgb == other.transformLinearToSrgb;
+                   transformLinearToSrgb == other.transformLinearToSrgb &&
+                   srcIsYUV == other.srcIsYUV;
         }
         struct Hash
         {
@@ -277,7 +295,7 @@ class ColorBlitUtils final : angle::NonCopyable
             {
                 return angle::HashMultiple(k.sourceTextureType, k.numColorAttachments,
                                            k.unmultiplyAlpha, k.premultiplyAlpha,
-                                           k.transformLinearToSrgb);
+                                           k.transformLinearToSrgb, k.srcIsYUV);
             }
         };
     };

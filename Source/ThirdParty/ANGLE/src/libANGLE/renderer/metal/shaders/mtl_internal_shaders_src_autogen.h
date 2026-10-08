@@ -8,6 +8,8 @@
 
 // C++ string version of combined Metal default shaders.
 
+
+
 static char gDefaultMetallibSrc[] = R"(
 # include <simd/simd.h>
 # include <metal_stdlib>
@@ -237,6 +239,7 @@ constant bool kUnmultiplyAlpha [[function_constant(2)]];
 constant bool kTransformLinearToSrgb [[function_constant(3)]];
 constant int kSourceTextureType [[function_constant(4)]];
 constant int kSourceTexture2Type [[function_constant(5)]];
+constant bool kSourceIsYUV [[function_constant(6)]];
 constant bool kSourceTextureType2D = kSourceTextureType == kTextureType2D;
 constant bool kSourceTextureType2DArray = kSourceTextureType == kTextureType2DArray;
 constant bool kSourceTextureType2DMS = kSourceTextureType == kTextureType2DMultisample;
@@ -252,7 +255,9 @@ struct BlitParams
     int srcLevel;
     int srcLayer;
     bool dstLuminance;
-    uint8_t padding[7];
+    bool srcSwapXY;
+    uint8_t padding[6];
+    float4 colorMatrix[3];
 };
 struct BlitVSOut
 {
@@ -265,6 +270,10 @@ vertex BlitVSOut blitVS(unsigned int vid [[vertex_id]], constant BlitParams &opt
     output.position.xy = select(float2(-1.0f), float2(1.0f), bool2(vid & uint2(2, 1)));
     output.position.zw = float2(0.0, 1.0);
     output.texCoords = select(options.srcTexCoords.xy, options.srcTexCoords.zw, bool2(vid & uint2(2, 1)));
+    if (options.srcSwapXY)
+    {
+        output.texCoords = output.texCoords.yx;
+    }
     return output;
 }
 template <typename SrcTexture2d>
@@ -291,9 +300,26 @@ static inline vec<T, 4> blitSampleTexture3D(texture3d<T> srcTexture,
     return srcTexture.sample(textureSampler, float3(texCoords, zCoord), level(options.srcLevel));
 }
 template <typename T>
-static inline vec<T, 4> blitReadTexture(BlitVSOut input [[stage_in]], texture2d<T> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<T> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<T> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<T> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<T> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
+static inline vec<T, 4> blitReadTexture(BlitVSOut input [[stage_in]], texture2d<T> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<T> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<T> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<T> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<T> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
     vec<T, 4> output;
+    if (kSourceIsYUV)
+    {
+        float yValue =
+            srcTexture2d.sample(textureSampler, input.texCoords, level(options.srcLevel)).r;
+        float2 cbcr =
+            srcChromaTexture.sample(textureSampler, input.texCoords, level(options.srcLevel)).rg;
+        float4 yuv = float4(yValue, cbcr.x, cbcr.y, 1.0);
+        float3 rgb = saturate(float3(dot(options.colorMatrix[0], yuv),
+                                     dot(options.colorMatrix[1], yuv),
+                                     dot(options.colorMatrix[2], yuv)));
+        output = vec<T, 4>(rgb.r, rgb.g, rgb.b, 1.0);
+        if (options.dstLuminance)
+        {
+            output.g = output.b = output.r;
+        }
+        return output;
+    }
     switch (kSourceTextureType)
     {
         case kTextureType2D:
@@ -338,26 +364,26 @@ static inline vec<T, 4> blitReadTexture(BlitVSOut input [[stage_in]], texture2d<
     return output;
 }
 template <typename T>
-static inline MultipleColorOutputs<T> blitFS(BlitVSOut input [[stage_in]], texture2d<T> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<T> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<T> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<T> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<T> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
+static inline MultipleColorOutputs<T> blitFS(BlitVSOut input [[stage_in]], texture2d<T> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<T> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<T> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<T> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<T> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
-    vec<T, 4> output = blitReadTexture(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, textureSampler, options);
+    vec<T, 4> output = blitReadTexture(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, srcChromaTexture, textureSampler, options);
     return toMultipleColorOutputs(output);
 }
-fragment MultipleColorOutputs<float> blitFloatFS(BlitVSOut input [[stage_in]], texture2d<float> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<float> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<float> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<float> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<float> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
+fragment MultipleColorOutputs<float> blitFloatFS(BlitVSOut input [[stage_in]], texture2d<float> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<float> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<float> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<float> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<float> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
-    return blitFS(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, textureSampler, options);
+    return blitFS(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, srcChromaTexture, textureSampler, options);
 }
-fragment MultipleColorOutputs<int> blitIntFS(BlitVSOut input [[stage_in]], texture2d<int> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<int> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<int> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<int> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<int> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
+fragment MultipleColorOutputs<int> blitIntFS(BlitVSOut input [[stage_in]], texture2d<int> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<int> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<int> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<int> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<int> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
-    return blitFS(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, textureSampler, options);
+    return blitFS(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, srcChromaTexture, textureSampler, options);
 }
-fragment MultipleColorOutputs<uint> blitUIntFS(BlitVSOut input [[stage_in]], texture2d<uint> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<uint> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<uint> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<uint> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<uint> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
+fragment MultipleColorOutputs<uint> blitUIntFS(BlitVSOut input [[stage_in]], texture2d<uint> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<uint> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<uint> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<uint> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<uint> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
-    return blitFS(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, textureSampler, options);
+    return blitFS(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, srcChromaTexture, textureSampler, options);
 }
-fragment MultipleColorOutputs<uint> copyTextureFloatToUIntFS(BlitVSOut input [[stage_in]], texture2d<float> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<float> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<float> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<float> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<float> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
+fragment MultipleColorOutputs<uint> copyTextureFloatToUIntFS(BlitVSOut input [[stage_in]], texture2d<float> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<float> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<float> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<float> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<float> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], texture2d<float> srcChromaTexture [[texture(2), function_constant(kSourceIsYUV)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
-    float4 inputColor = blitReadTexture<>(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, textureSampler, options);
+    float4 inputColor = blitReadTexture<>(input, srcTexture2d, srcTexture2dArray, srcTexture2dMS, srcTextureCube, srcTexture3d, srcChromaTexture, textureSampler, options);
     uint4 output = uint4(inputColor * float4(255.0));
     return toMultipleColorOutputs(output);
 }

@@ -1,0 +1,73 @@
+texImage2D(video) and texSubImage2D(video) upload the video to formats that are not color renderable on all GPUs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+WebGL 1.0
+PASS getError was expected value: NO_ERROR : texImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video)
+PASS texImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): top of the video
+PASS texImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video)
+PASS texSubImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): top of the video
+PASS texSubImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video)
+PASS texImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): top of the video
+PASS texImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video)
+PASS texSubImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): top of the video
+PASS texSubImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(LUMINANCE_ALPHA, LUMINANCE_ALPHA, UNSIGNED_BYTE, video)
+PASS texImage2D(LUMINANCE_ALPHA, LUMINANCE_ALPHA, UNSIGNED_BYTE, video): top of the video
+PASS texImage2D(LUMINANCE_ALPHA, LUMINANCE_ALPHA, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(LUMINANCE_ALPHA, LUMINANCE_ALPHA, UNSIGNED_BYTE, video)
+PASS texSubImage2D(LUMINANCE_ALPHA, LUMINANCE_ALPHA, UNSIGNED_BYTE, video): top of the video
+PASS texSubImage2D(LUMINANCE_ALPHA, LUMINANCE_ALPHA, UNSIGNED_BYTE, video): bottom of the video
+
+WebGL 2.0
+PASS getError was expected value: NO_ERROR : texImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video)
+PASS texImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): top of the video
+PASS texImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video)
+PASS texSubImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): top of the video
+PASS texSubImage2D(ALPHA, ALPHA, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video)
+PASS texImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): top of the video
+PASS texImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video)
+PASS texSubImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): top of the video
+PASS texSubImage2D(LUMINANCE, LUMINANCE, UNSIGNED_BYTE, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(RGB9_E5, RGB, HALF_FLOAT, video)
+PASS texImage2D(RGB9_E5, RGB, HALF_FLOAT, video): top of the video
+PASS texImage2D(RGB9_E5, RGB, HALF_FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(RGB9_E5, RGB, HALF_FLOAT, video)
+PASS texSubImage2D(RGB9_E5, RGB, HALF_FLOAT, video): top of the video
+PASS texSubImage2D(RGB9_E5, RGB, HALF_FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(RGB9_E5, RGB, FLOAT, video)
+PASS texImage2D(RGB9_E5, RGB, FLOAT, video): top of the video
+PASS texImage2D(RGB9_E5, RGB, FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(RGB9_E5, RGB, FLOAT, video)
+PASS texSubImage2D(RGB9_E5, RGB, FLOAT, video): top of the video
+PASS texSubImage2D(RGB9_E5, RGB, FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(R11F_G11F_B10F, RGB, FLOAT, video)
+PASS texImage2D(R11F_G11F_B10F, RGB, FLOAT, video): top of the video
+PASS texImage2D(R11F_G11F_B10F, RGB, FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(R11F_G11F_B10F, RGB, FLOAT, video)
+PASS texSubImage2D(R11F_G11F_B10F, RGB, FLOAT, video): top of the video
+PASS texSubImage2D(R11F_G11F_B10F, RGB, FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(RGBA16F, RGBA, HALF_FLOAT, video)
+PASS texImage2D(RGBA16F, RGBA, HALF_FLOAT, video): top of the video
+PASS texImage2D(RGBA16F, RGBA, HALF_FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(RGBA16F, RGBA, HALF_FLOAT, video)
+PASS texSubImage2D(RGBA16F, RGBA, HALF_FLOAT, video): top of the video
+PASS texSubImage2D(RGBA16F, RGBA, HALF_FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texImage2D(RGBA32F, RGBA, FLOAT, video)
+PASS texImage2D(RGBA32F, RGBA, FLOAT, video): top of the video
+PASS texImage2D(RGBA32F, RGBA, FLOAT, video): bottom of the video
+PASS getError was expected value: NO_ERROR : texSubImage2D(RGBA32F, RGBA, FLOAT, video)
+PASS texSubImage2D(RGBA32F, RGBA, FLOAT, video): top of the video
+PASS texSubImage2D(RGBA32F, RGBA, FLOAT, video): bottom of the video
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

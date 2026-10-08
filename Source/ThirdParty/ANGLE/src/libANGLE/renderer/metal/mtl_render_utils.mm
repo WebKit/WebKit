@@ -36,6 +36,7 @@ namespace
 #define PREMULTIPLY_ALPHA_CONSTANT_NAME @"kPremultiplyAlpha"
 #define UNMULTIPLY_ALPHA_CONSTANT_NAME @"kUnmultiplyAlpha"
 #define TRANSFORM_LINEAR_TO_SRGB_CONSTANT_NAME @"kTransformLinearToSrgb"
+#define SOURCE_IS_YUV_CONSTANT_NAME @"kSourceIsYUV"
 #define SOURCE_TEXTURE_TYPE_CONSTANT_NAME @"kSourceTextureType"
 #define SOURCE_TEXTURE2_TYPE_CONSTANT_NAME @"kSourceTexture2Type"
 #define COPY_FORMAT_TYPE_CONSTANT_NAME @"kCopyFormatType"
@@ -58,7 +59,10 @@ struct BlitParamsUniform
     int srcLevel         = 0;
     int srcLayer         = 0;
     uint8_t dstLuminance = 0;  // dest texture is luminace
-    uint8_t padding[7];
+    uint8_t srcSwapXY    = 0;  // swap x and y of the interpolated source texture coordinates
+    uint8_t padding[6];
+    // Row-major YCbCr->RGB matrix used when kSourceIsYUV: rgb[i] = dot(row[i], float4(y,cb,cr,1)).
+    float yuvMatrix[3][4] = {};
 };
 
 struct BlitStencilToBufferParamsUniform
@@ -623,11 +627,33 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     {
         const ColorBlitParams *colorParams = static_cast<const ColorBlitParams *>(&params);
         uniformParams.dstLuminance         = colorParams->dstLuminance ? 1 : 0;
+        if (colorParams->srcIsYUV)
+        {
+            static_assert(sizeof(uniformParams.yuvMatrix) == 12 * sizeof(float));
+            memcpy(uniformParams.yuvMatrix, colorParams->yuvMatrix.data(),
+                   sizeof(uniformParams.yuvMatrix));
+        }
     }
 
     float u0, v0, u1, v1;
     GetBlitTexCoords(params.srcNormalizedCoords, params.srcYFlipped, params.unpackFlipX,
                      params.unpackFlipY, &u0, &v0, &u1, &v1);
+
+    if (isColorBlit)
+    {
+        const ColorBlitParams *colorParams = static_cast<const ColorBlitParams *>(&params);
+        if (colorParams->srcInvertY)
+        {
+            v0 = 1.0f - v0;
+            v1 = 1.0f - v1;
+        }
+        if (colorParams->srcInvertX)
+        {
+            u0 = 1.0f - u0;
+            u1 = 1.0f - u1;
+        }
+        uniformParams.srcSwapXY = colorParams->srcSwapXY ? 1 : 0;
+    }
 
     if (params.dstFlipX)
     {
@@ -673,6 +699,16 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
     if (params.src)
     {
         cmdEncoder->setFragmentTexture(params.src, 0);
+    }
+
+    // Bind the chroma plane for multiplanar YUV color blits.
+    if (isColorBlit)
+    {
+        const ColorBlitParams *colorParams = static_cast<const ColorBlitParams *>(&params);
+        if (colorParams->srcIsYUV && colorParams->srcYUVChroma)
+        {
+            cmdEncoder->setFragmentTexture(colorParams->srcYUVChroma, 2);
+        }
     }
 
     // Uniform
@@ -1228,6 +1264,7 @@ angle::Result ColorBlitUtils::ensureShadersInitialized(
             bool unmultiplyAlpha       = key.unmultiplyAlpha;
             bool premultiplyAlpha      = key.premultiplyAlpha;
             bool transformLinearToSrgb = key.transformLinearToSrgb;
+            bool srcIsYUV              = key.srcIsYUV;
             // Set alpha multiply flags
             [funcConstants setConstantValue:&unmultiplyAlpha
                                        type:MTLDataTypeBool
@@ -1238,6 +1275,9 @@ angle::Result ColorBlitUtils::ensureShadersInitialized(
             [funcConstants setConstantValue:&transformLinearToSrgb
                                        type:MTLDataTypeBool
                                    withName:TRANSFORM_LINEAR_TO_SRGB_CONSTANT_NAME];
+            [funcConstants setConstantValue:&srcIsYUV
+                                       type:MTLDataTypeBool
+                                   withName:SOURCE_IS_YUV_CONSTANT_NAME];
 
             uint32_t numColorAttachments = key.numColorAttachments;
             // We create blit shader pipeline cache for each number of color outputs.
@@ -1280,7 +1320,7 @@ angle::Result ColorBlitUtils::getColorBlitRenderPipelineState(
 
     ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachments,
                   params.unpackUnmultiplyAlpha, params.unpackPremultiplyAlpha,
-                  params.transformLinearToSrgb);
+                  params.transformLinearToSrgb, params.srcIsYUV);
 
     angle::ObjCPtr<id<MTLFunction>> *fragmentShader = &mBlitFragmentShaders[key];
     ANGLE_TRY(ensureShadersInitialized(contextMtl, key, fragmentShader));

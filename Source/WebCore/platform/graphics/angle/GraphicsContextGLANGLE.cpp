@@ -51,9 +51,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/UTF8CStringView.h>
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-#include "GraphicsContextGLCVCocoa.h"
-#endif
 
 // This one definition short-circuits the need for gl2ext.h, which
 // would need more work to be included from WebCore.
@@ -475,7 +472,7 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
     if (!makeContextCurrent())
         return;
     GL_TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, pixels.size(), pixels.data());
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -492,7 +489,7 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
         return;
     }
     GL_TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, 0, reinterpret_cast<GLvoid*>(offset));
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -502,7 +499,7 @@ void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
         return;
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     GL_TexSubImage2DRobustANGLE(target, level, xoff, yoff, width, height, format, type, pixels.size(), pixels.data());
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
 }
 
 void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoff, GCGLint yoff, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
@@ -517,7 +514,7 @@ void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
     }
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     GL_TexSubImage2DRobustANGLE(target, level, xoff, yoff, width, height, format, type, 0, reinterpret_cast<GLvoid*>(offset));
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
 }
 
 void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, std::span<const uint8_t> data)
@@ -525,7 +522,7 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
     if (!makeContextCurrent())
         return;
     GL_CompressedTexImage2D(target, level, internalformat, width, height, border, data.size(), data.data());
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -540,7 +537,7 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
         return;
     }
     GL_CompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, reinterpret_cast<GLvoid*>(offset));
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -549,7 +546,7 @@ void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level,
     if (!makeContextCurrent())
         return;
     GL_CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.size(), data.data());
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
 }
 
 void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset)
@@ -563,7 +560,7 @@ void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level,
         return;
     }
     GL_CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, reinterpret_cast<GLvoid*>(offset));
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
 }
 
 void GraphicsContextGLANGLE::depthRange(GCGLclampf zNear, GCGLclampf zFar)
@@ -918,7 +915,7 @@ void GraphicsContextGLANGLE::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
         return;
 
     GL_TexStorage2D(target, levels, internalformat, width, height);
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -928,7 +925,7 @@ void GraphicsContextGLANGLE::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
         return;
 
     GL_TexStorage3D(target, levels, internalformat, width, height, depth);
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -1080,6 +1077,7 @@ void GraphicsContextGLANGLE::copyTexImage2D(GCGLenum target, GCGLint level, GCGL
         return;
 
     GL_CopyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    invalidateKnownTextureContentForTarget(target);
     didChangeMemoryCost();
 }
 
@@ -1089,6 +1087,7 @@ void GraphicsContextGLANGLE::copyTexSubImage2D(GCGLenum target, GCGLint level, G
         return;
 
     GL_CopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    invalidateKnownTextureContentForTarget(target);
 }
 
 void GraphicsContextGLANGLE::cullFace(GCGLenum mode)
@@ -1211,7 +1210,7 @@ void GraphicsContextGLANGLE::framebufferTexture2D(GCGLenum target, GCGLenum atta
         return;
 
     GL_FramebufferTexture2D(target, attachment, textarget, texture, level);
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
+    invalidateKnownTextureContent(texture);
 }
 
 void GraphicsContextGLANGLE::frontFace(GCGLenum mode)
@@ -3257,6 +3256,10 @@ EnumSet<GCGLExtension> GraphicsContextGLANGLE::requestableExtensions() const
 }
 
 void GraphicsContextGLANGLE::invalidateKnownTextureContent(GCGLuint)
+{
+}
+
+void GraphicsContextGLANGLE::invalidateKnownTextureContentForTarget(GCGLenum)
 {
 }
 

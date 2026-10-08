@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL test for texImage2D(video) to formats that are not color renderable</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("texImage2D(video) and texSubImage2D(video) upload the video to formats that are not color renderable on all GPUs.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+// The video is 300x300, blue at the top and red at the bottom.
+const videoSize = 300;
+const blue = [0, 0, 255, 255];
+const red = [255, 0, 0, 255];
+const black = [0, 0, 0, 255];
+const white = [255, 255, 255, 255];
+
+async function loadVideo() {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.loop = true;
+    video.src = "../fast/canvas/webgl/resources/orientation-normal.mp4";
+    await video.play();
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+    video.pause();
+    return video;
+}
+
+function createContext(version) {
+    const canvas = document.createElement("canvas");
+    canvas.width = videoSize;
+    canvas.height = videoSize;
+    return wtu.create3DContext(canvas, { antialias: false }, version);
+}
+
+// Draws the texture to the whole canvas. The bottom of the canvas shows the first row of the
+// texture, which is the top of the video.
+function checkTexture(gl, texture, name, top, bottom) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    wtu.clearAndDrawUnitQuad(gl, [0, 255, 0, 255]);
+    wtu.checkCanvasRect(gl, videoSize / 2, 10, 1, 1, top, `${name}: top of the video`, 20);
+    wtu.checkCanvasRect(gl, videoSize / 2, videoSize - 11, 1, 1, bottom, `${name}: bottom of the video`, 20);
+}
+
+function testFormats(gl, video, formats) {
+    wtu.setupTexturedQuad(gl);
+    for (const { internalformat, format, type, top, bottom } of formats) {
+        for (const subImage of [false, true]) {
+            const name = `${subImage ? "texSubImage2D" : "texImage2D"}(${wtu.glEnumToString(gl, internalformat)}, ${wtu.glEnumToString(gl, format)}, ${wtu.glEnumToString(gl, type)}, video)`;
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            if (subImage) {
+                gl.texImage2D(gl.TEXTURE_2D, 0, internalformat, videoSize, videoSize, 0, format, type, null);
+                gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, format, type, video);
+            } else
+                gl.texImage2D(gl.TEXTURE_2D, 0, internalformat, format, type, video);
+            wtu.glErrorShouldBe(gl, gl.NO_ERROR, name);
+            checkTexture(gl, texture, name, top, bottom);
+            gl.deleteTexture(texture);
+        }
+    }
+}
+
+function testWebGL1(video) {
+    debug("");
+    debug("WebGL 1.0");
+    const gl = createContext(1);
+    if (!gl) {
+        testFailed("Could not create a WebGL 1.0 context");
+        return;
+    }
+    // Luminance is the red channel of the video.
+    testFormats(gl, video, [
+        { internalformat: gl.ALPHA, format: gl.ALPHA, type: gl.UNSIGNED_BYTE, top: black, bottom: black },
+        { internalformat: gl.LUMINANCE, format: gl.LUMINANCE, type: gl.UNSIGNED_BYTE, top: black, bottom: white },
+        { internalformat: gl.LUMINANCE_ALPHA, format: gl.LUMINANCE_ALPHA, type: gl.UNSIGNED_BYTE, top: black, bottom: white },
+    ]);
+}
+
+function testWebGL2(video) {
+    debug("");
+    debug("WebGL 2.0");
+    const gl = createContext(2);
+    if (!gl) {
+        testFailed("Could not create a WebGL 2.0 context");
+        return;
+    }
+    testFormats(gl, video, [
+        { internalformat: gl.ALPHA, format: gl.ALPHA, type: gl.UNSIGNED_BYTE, top: black, bottom: black },
+        { internalformat: gl.LUMINANCE, format: gl.LUMINANCE, type: gl.UNSIGNED_BYTE, top: black, bottom: white },
+        { internalformat: gl.RGB9_E5, format: gl.RGB, type: gl.HALF_FLOAT, top: blue, bottom: red },
+        { internalformat: gl.RGB9_E5, format: gl.RGB, type: gl.FLOAT, top: blue, bottom: red },
+        { internalformat: gl.R11F_G11F_B10F, format: gl.RGB, type: gl.FLOAT, top: blue, bottom: red },
+        { internalformat: gl.RGBA16F, format: gl.RGBA, type: gl.HALF_FLOAT, top: blue, bottom: red },
+        { internalformat: gl.RGBA32F, format: gl.RGBA, type: gl.FLOAT, top: blue, bottom: red },
+    ]);
+}
+
+async function runTest() {
+    const video = await loadVideo();
+    testWebGL1(video);
+    testWebGL2(video);
+    debug("");
+    finishJSTest();
+}
+
+runTest();
+</script>
+</body>
+</html>

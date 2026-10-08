@@ -8,6 +8,7 @@
 #define LIBANGLE_RENDERER_METAL_IOSURFACESURFACEMTL_H_
 
 #include <IOSurface/IOSurfaceRef.h>
+#include <array>
 #include "libANGLE/renderer/SurfaceImpl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/SurfaceMtl.h"
@@ -45,12 +46,30 @@ class IOSurfaceSurfaceMtl : public OffscreenSurfaceMtl
 
     static bool ValidateAttributes(EGLClientBuffer buffer, const egl::AttributeMap &attribs);
 
+    // Multiplanar YUV (NV12) support for GL_CHROMIUM_copy_texture.  When true, getColorTexture()
+    // returns the luma (R8) plane and getChromaTexture() the chroma (RG8) plane.
+    bool isYUV() const override { return mIsYUV; }
+    const mtl::TextureRef &getChromaTexture() const { return mChromaTexture; }
+    // Row-major YCbCr->RGB matrix: rgb[i] = dot(matrix[i], float4(y, cb, cr, 1)).
+    const std::array<float, 12> &getYUVToRGBMatrix() const { return mYUVToRGBMatrix; }
+    // EGL_IOSURFACE_ORIENTATION_ANGLE bits describing how the YUV planes map to the pbuffer.
+    EGLint getYUVOrientation() const { return mYUVOrientation; }
+
+  protected:
+    angle::Result ensureTexturesSizeCorrect(const gl::Context *context) override;
+
   private:
     angle::Result ensureColorTextureCreated(const gl::Context *context);
 
     IOSurfaceRef mIOSurface;
     NSUInteger mIOSurfacePlane;
     int mIOSurfaceFormatIdx;
+
+    bool mIsYUV = false;
+    mtl::Format mChromaFormat;
+    mtl::TextureRef mChromaTexture;
+    std::array<float, 12> mYUVToRGBMatrix{};
+    EGLint mYUVOrientation = 0;
 };
 
 }  // namespace rx

@@ -3529,6 +3529,33 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     return { };
 }
 
+#if ENABLE(VIDEO) || ENABLE(WEB_CODECS)
+// Returns true if texImage2D of a video frame with the combination can use GraphicsContextGL::copyTextureFromVideoFrame().
+// The copy does not take the format, so the combination must be valid for TexImage2D.
+static bool isValidVideoFrameCopyCombination(bool isWebGL2, GCGLenum internalformat, GCGLenum format, GCGLenum type)
+{
+    if (type != GraphicsContextGL::UNSIGNED_BYTE)
+        return false;
+    switch (internalformat) {
+    case GraphicsContextGL::RGB:
+        return format == GraphicsContextGL::RGB;
+    case GraphicsContextGL::RGBA:
+        return format == GraphicsContextGL::RGBA;
+    case GraphicsContextGL::RGB8:
+    case GraphicsContextGL::SRGB8:
+    case GraphicsContextGL::RGB565:
+        return isWebGL2 && format == GraphicsContextGL::RGB;
+    case GraphicsContextGL::RGBA8:
+    case GraphicsContextGL::SRGB8_ALPHA8:
+    case GraphicsContextGL::RGBA4:
+    case GraphicsContextGL::RGB5_A1:
+        return isWebGL2 && format == GraphicsContextGL::RGBA;
+    default:
+        return false;
+    }
+}
+#endif
+
 #if ENABLE(VIDEO)
 ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLVideoElement& source)
 {
@@ -3554,15 +3581,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
     // Otherwise, it will fall back to the normal SW path.
-    // FIXME: The current restrictions require that format shoud be RGB or RGBA,
-    // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
+    // FIXME: The current restrictions require that the source rectangle is the whole frame and
+    // the format is RGB or RGBA with UNSIGNED_BYTE. It may be lifted in the future.
     if (functionID == TexImageFunctionID::TexImage2D && sourceImageRectIsDefault && texture
-        && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
-        && type == GraphicsContextGL::UNSIGNED_BYTE
-        && !level) {
+        && isValidVideoFrameCopyCombination(isWebGL2(), internalformat, format, type)) {
         if (RefPtr player = source.player()) {
             if (RefPtr videoFrame = player->videoFrameForCurrentTime()) {
-                if (protect(graphicsContextGL())->copyTextureFromVideoFrame(*videoFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
+                if (protect(graphicsContextGL())->copyTextureFromVideoFrame(*videoFrame, texture->object(), target, level, internalformat, type, m_unpackFlipY, m_unpackPremultiplyAlpha))
                 return { };
             }
         }
@@ -3618,17 +3643,21 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
     if (!validateTexFunc(functionID, SourceWebCodecsVideoFrame, target, level, internalformat, source.displayWidth(), source.displayHeight(), depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
+    if (!inputSourceImageRect.isValid()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "source sub-rectangle specified via pixel unpack parameters is invalid"_s);
+        return { };
+    }
 
     auto internalFrame = source.internalFrame();
 
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
     // Otherwise, it will fall back to the normal SW path.
-    // FIXME: The current restrictions require that format shoud be RGB or RGBA,
-    // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
+    // FIXME: The current restrictions require that the source rectangle is the whole frame and
+    // the format is RGB or RGBA with UNSIGNED_BYTE. It may be lifted in the future.
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, static_cast<int>(internalFrame->presentationSize().width()), static_cast<int>(internalFrame->presentationSize().height()));
     RefPtr context = m_context;
-    if (isVideoFrameFormatEligibleToCopy(source) && functionID == TexImageFunctionID::TexImage2D && texture && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA) && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
-        if (context->copyTextureFromVideoFrame(*internalFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
+    if (isVideoFrameFormatEligibleToCopy(source) && functionID == TexImageFunctionID::TexImage2D && texture && sourceImageRectIsDefault && isValidVideoFrameCopyCombination(isWebGL2(), internalformat, format, type)) {
+        if (context->copyTextureFromVideoFrame(*internalFrame, texture->object(), target, level, internalformat, type, m_unpackFlipY, m_unpackPremultiplyAlpha))
             return { };
     }
 
