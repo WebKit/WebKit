@@ -219,6 +219,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 target.PageAgent.setBootstrapScript(this._bootstrapScript.content);
         }
 
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): Worker.setBootstrapScript did not exist yet.
+        if (target.hasCommand("Worker.setBootstrapScript") && this._bootstrapScript && this._bootstrapScriptEnabledSetting.value)
+            target.WorkerAgent.setBootstrapScript(this._bootstrapScript.content);
+
         if (target.hasDomain("ServiceWorker"))
             target.ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
 
@@ -419,10 +423,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let source = this._bootstrapScriptEnabledSetting.value ? this._bootstrapScript.content : undefined;
 
-        // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
         for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
             if (target.hasCommand("Page.setBootstrapScript"))
                 target.PageAgent.setBootstrapScript(source);
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): Worker.setBootstrapScript did not exist yet.
+            if (target.hasCommand("Worker.setBootstrapScript"))
+                target.WorkerAgent.setBootstrapScript(source);
         }
 
         this.dispatchEventToListeners(NetworkManager.Event.BootstrapScriptEnabledChanged, {bootstrapScript: this._bootstrapScript});
@@ -441,10 +448,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!source) {
             source = `
 /*
- * ${WI.UIString("The Inspector Bootstrap Script is guaranteed to be the first script evaluated in any page, as well as any sub-frames.")}
+ * ${WI.UIString("The Inspector Bootstrap Script is guaranteed to be the first script evaluated in any page, sub-frame, or dedicated worker.")}
  * ${WI.UIString("It is evaluated immediately after the global object is created, before any other content has loaded.")}
  * 
- * ${WI.UIString("Modifications made here will take effect on the next load of any page or sub-frame.")}
+ * ${WI.UIString("Modifications made here will take effect on the next load of any page or sub-frame, or the creation of any dedicated worker.")}
  * ${WI.UIString("The contents and enabled state will be preserved across Web Inspector sessions.")}
  * 
  * ${WI.UIString("Some examples of ways to use this script include (but are not limited to):")}
@@ -478,10 +485,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._bootstrapScript = null;
         WI.objectStores.general.delete(NetworkManager.bootstrapScriptSourceObjectStoreKey);
 
-        // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
         for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
             if (target.hasCommand("Page.setBootstrapScript"))
                 target.PageAgent.setBootstrapScript();
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): Worker.setBootstrapScript did not exist yet.
+            if (target.hasCommand("Worker.setBootstrapScript"))
+                target.WorkerAgent.setBootstrapScript();
         }
 
         this.dispatchEventToListeners(NetworkManager.Event.BootstrapScriptDestroyed, {bootstrapScript});
@@ -1921,10 +1931,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!this._bootstrapScriptEnabledSetting.value)
             return;
 
-        // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
         for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
             if (target.hasCommand("Page.setBootstrapScript"))
                 target.PageAgent.setBootstrapScript(source);
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): Worker.setBootstrapScript did not exist yet.
+            if (target.hasCommand("Worker.setBootstrapScript"))
+                target.WorkerAgent.setBootstrapScript(source);
         }
     }
 

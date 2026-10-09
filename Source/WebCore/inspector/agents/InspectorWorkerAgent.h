@@ -60,6 +60,7 @@ public:
     // WorkerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
+    Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(const String& source);
     Inspector::Protocol::ErrorStringOr<void> initialized(const String& workerId);
     Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(const String& workerId, const String& message);
 
@@ -67,6 +68,8 @@ public:
     bool shouldWaitForDebuggerOnStart() const { return m_enabled; }
     void workerStarted(WorkerInspectorProxy&);
     void workerTerminated(WorkerInspectorProxy&);
+
+    const String& bootstrapScript() const LIFETIME_BOUND { return m_bootstrapScript; }
 
 protected:
     InspectorWorkerAgent(WebAgentContext&);
@@ -105,6 +108,7 @@ private:
     const Ref<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
 
     MemoryCompactRobinHoodHashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
+    String m_bootstrapScript;
     bool m_enabled { false };
 };
 

@@ -12,6 +12,13 @@
             "description": "Disable Worker domain events."
         },
         {
+            "name": "setBootstrapScript",
+            "targetTypes": ["worker"],
+            "parameters": [
+                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future dedicated worker global objects created by this worker before their scripts run. Omitting `source` will stop this from happening." }
+            ]
+        },
+        {
             "name": "initialized",
             "description": "Sent after the frontend has sent all initialization messages and can resume this worker. This command is required to allow execution in the worker.",
             "parameters": [
