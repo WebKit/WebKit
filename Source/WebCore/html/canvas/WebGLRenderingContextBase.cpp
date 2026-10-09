@@ -3987,9 +3987,90 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
     return texImageSourceHelper(TexImageFunctionID::TexSubImage2D, target, level, 0, 0, format, type, xoffset, yoffset, 0, sentinelEmptyRect(), 1, 0, WTF::move(*source));
 }
 
-ExceptionOr<void> WebGLRenderingContextBase::texElementSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>)
+ExceptionOr<void> WebGLRenderingContextBase::texElementSnapshot2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, const CanvasElementSnapshot& snapshot, std::optional<WebGLCopyElementImageConfig> config)
 {
-    return Exception { ExceptionCode::InvalidStateError };
+    auto snapshotRect = FloatRect { { }, snapshot.size };
+    auto srcRect = snapshotRect;
+
+    if (config) {
+        srcRect = {
+            config->sx.value_or(0),
+            config->sy.value_or(0),
+            config->swidth.value_or(snapshotRect.width()),
+            config->sheight.value_or(snapshotRect.height())
+        };
+    }
+
+    if (!std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height())) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSnapshot2D"_s, "source rectangle is not finite"_s);
+        return { };
+    }
+
+    auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
+    if (normalizedSrcRect.isEmpty()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSnapshot2D"_s, "source rectangle is empty"_s);
+        return { };
+    }
+
+    int width = config && config->width ? *config->width : std::ceil(normalizedSrcRect.width());
+    int height = config && config->height ? *config->height : std::ceil(normalizedSrcRect.height());
+    if (width <= 0 || height <= 0) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSnapshot2D"_s, "width or height <= 0"_s);
+        return { };
+    }
+
+    auto texture = validateTexImageBinding(TexImageFunctionID::TexSubImage2D, target);
+    if (!texture)
+        return { };
+    if (!validateTexFunc(TexImageFunctionID::TexSubImage2D, SourceElementImage, target, level, 0, width, height, 1, 0, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, xoffset, yoffset, 0))
+        return { };
+
+    RefPtr scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return Exception { ExceptionCode::InvalidStateError, "scriptExecutionContext is null."_s };
+
+    RefPtr buffer = createImageBufferForWebGLContextReads({ width, height }, *scriptExecutionContext);
+    if (!buffer)
+        return Exception { ExceptionCode::InvalidStateError, "createImageBufferForWebGLContextReads failed to create an ImageBuffer."_s };
+
+    {
+        auto& context = buffer->context();
+        auto scale = FloatSize { width / normalizedSrcRect.width(), height / normalizedSrcRect.height() };
+        context.translate(-toFloatSize(normalizedSrcRect.location()) * scale);
+        context.scale(scale);
+        context.drawDisplayList(snapshot.displayList);
+    }
+
+    RefPtr image = buffer->createNativeImageReference();
+    if (!image)
+        return Exception { ExceptionCode::InvalidStateError, "createNativeImageReference failed to returna a NativeImage."_s };
+
+    texImageImpl(TexImageFunctionID::TexSubImage2D, target, level, 0, xoffset, yoffset, 0, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, *image, AlphaPremultiplication::Premultiplied, m_unpackFlipY, m_unpackPremultiplyAlpha, sentinelEmptyRect(), 1, 0);
+    return { };
+}
+
+ExceptionOr<void> WebGLRenderingContextBase::texElementSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, std::optional<CanvasElementImageSource> source, std::optional<WebGLCopyElementImageConfig> config)
+{
+    if (isContextLost())
+        return { };
+
+    if (!source) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "source is null"_s);
+        return { };
+    }
+
+    return WTF::switchOn(*source,
+        [&](Ref<Element>& element) -> ExceptionOr<void> {
+            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
+                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
+                    return texElementSnapshot2D(target, level, xoffset, yoffset, *snapshot, config);
+            }
+            return Exception { ExceptionCode::InvalidStateError, "WebGLRenderingContextBase failed to get a snapshot for a drawableElement."_s };
+        },
+        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
+            return texElementSnapshot2D(target, level, xoffset, yoffset, elementImage->snapshot(), config);
+        }
+    );
 }
 
 bool WebGLRenderingContextBase::validateTypeAndArrayBufferType(ASCIILiteral functionName, ArrayBufferViewFunctionType functionType, GCGLenum type, ArrayBufferView* pixels)
@@ -4145,6 +4226,7 @@ bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID fun
     // temporary data based on this combination, so it must be legal.
     if (sourceType == SourceHTMLImageElement
         || sourceType == SourceHTMLCanvasElement
+        || sourceType == SourceElementImage
         || sourceType == SourceImageData
         || sourceType == SourceImageBitmap
 #if ENABLE(VIDEO)

@@ -1,0 +1,112 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-96; totalPixels=0-1279">
+<style>
+    canvas {
+        width: 240px;
+        height: 240px;
+        border: solid 1px black;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        background-color: rgb(0 255 0 / 0.5);
+        border: solid 10px rgb(0 0 255);
+    }
+    .right-bottom {
+        background-color: rgb(255 0 0 / 0.5);
+    }
+</style>
+<body>
+    <canvas id="canvas" width="240" height="240" content="drawable">
+        <div id="box1" class="box" drawable></div>
+        <div id="box2" class="right-bottom box" drawable></div>
+    </canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const canvas = document.getElementById("canvas");
+        const gl = canvas.getContext("webgl");
+
+        function compile(type, text) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, text);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+                throw new Error(gl.getShaderInfoLog(shader));
+            return shader;
+        }
+
+        const program = gl.createProgram();
+        gl.attachShader(program, compile(gl.VERTEX_SHADER, `
+            attribute vec2 position;
+            attribute vec2 texCoord;
+            varying vec2 vTexCoord;
+            void main() {
+                gl_Position = vec4(position, 0.0, 1.0);
+                vTexCoord = texCoord;
+            }
+        `));
+        gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `
+            precision mediump float;
+            uniform sampler2D image;
+            varying vec2 vTexCoord;
+            void main() {
+                gl_FragColor = texture2D(image, vTexCoord);
+            }
+        `));
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+            throw new Error(gl.getProgramInfoLog(program));
+        gl.useProgram(program);
+
+        // A quad filling the canvas, drawn as a triangle strip: x, y, u, v.
+        const vertices = new Float32Array([
+            -1, -1, 0, 1,
+             1, -1, 1, 1,
+            -1,  1, 0, 0,
+             1,  1, 1, 0,
+        ]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const stride = 4 * Float32Array.BYTES_PER_ELEMENT;
+        const positionLocation = gl.getAttribLocation(program, "position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, stride, 0);
+        const texCoordLocation = gl.getAttribLocation(program, "texCoord");
+        gl.enableVertexAttribArray(texCoordLocation);
+        gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, stride, 2 * Float32Array.BYTES_PER_ELEMENT);
+
+        // texElementSubImage2D() only replaces a region of an existing texture,
+        // so allocate empty storage for the whole canvas first.
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.uniform1i(gl.getUniformLocation(program, "image"), 0);
+
+        function runTest() {
+            const box2Image = canvas.captureElementImage(box2);
+
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box1);
+            gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 120, 120, box2Image);
+
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.clearColor(0.9, 0.9, 0.9, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>
