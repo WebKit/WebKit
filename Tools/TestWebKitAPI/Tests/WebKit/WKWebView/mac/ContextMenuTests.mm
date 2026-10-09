@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/mac/AppKitSPI.h"
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/cocoa/PasteboardUtilities.h"
@@ -1064,6 +1065,73 @@ TEST(ContextMenuTests, CopyImageTIFFForHugeSVGIsCapped)
     EXPECT_EQ(size.width, 4096);
     EXPECT_EQ(size.height, 2048);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+TEST(ContextMenuTests, ContextMenuRequestForFrameOfAnotherPageIsRejected)
+{
+    HTTPServer server({ { "/page"_s, { "<body style='margin: 0; font-size: 40px'>Some text</body>"_s } } }, HTTPServer::Protocol::Http);
+
+    auto makeConfiguration = [] {
+        RetainPtr configuration { adoptNS([[WKWebViewConfiguration alloc] init]) };
+        setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+        setFeatureEnabled(configuration.get(), @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+        return configuration;
+    };
+    auto countingDelegate = [](unsigned& count) {
+        RetainPtr delegate { adoptNS([TestUIDelegate new]) };
+        [delegate setGetContextMenuFromProposedMenu:makeBlockPtr([&count](NSMenu *, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+            ++count;
+            completion(nil);
+        }).get()];
+        return delegate;
+    };
+
+    RetainPtr configurationA { makeConfiguration() };
+    RetainPtr webViewA { adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configurationA.get()]) };
+    [webViewA synchronouslyLoadRequest:server.request("/page"_s)];
+
+    RetainPtr configurationB { makeConfiguration() };
+    configurationB.get()._relatedWebView = webViewA.get();
+    RetainPtr webViewB { adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configurationB.get()]) };
+    [webViewB synchronouslyLoadRequest:server.request("/page"_s)];
+    ASSERT_EQ([webViewA _webProcessIdentifier], [webViewB _webProcessIdentifier]);
+
+    unsigned menuCountA { 0 };
+    unsigned menuCountB { 0 };
+    RetainPtr delegateA { countingDelegate(menuCountA) };
+    RetainPtr delegateB { countingDelegate(menuCountB) };
+    [webViewA setUIDelegate:delegateA.get()];
+    [webViewB setUIDelegate:delegateB.get()];
+
+    [webViewB objectByEvaluatingJavaScript:@"window.capturedMessage = null;"
+        "IPC.addOutgoingMessageListener('UI', message => {"
+        "    if (!window.capturedMessage && message.name === IPC.messages.WebPageProxy_ShowContextMenuFromFrame.name)"
+        "        window.capturedMessage = new Uint8Array(message.buffer).slice(16);"
+        "}); true"];
+    [webViewB rightClickAtPoint:NSMakePoint(20, 380)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return menuCountB == 1 && [[webViewB objectByEvaluatingJavaScript:@"!!window.capturedMessage"] boolValue];
+    }));
+
+    long long pageIDOfA { [[webViewA stringByEvaluatingJavaScript:@"String(IPC.pageID)"] longLongValue] };
+    NSString *invalidMessage { [webViewB stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+        "IPC.sendMessage('UI', %lld, IPC.messages.WebPageProxy_ShowContextMenuFromFrame.name, window.capturedMessage);"
+        "const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+        "return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '';"
+        "})()", pageIDOfA]] };
+    EXPECT_TRUE([invalidMessage hasPrefix:@"Message check failed"]) << invalidMessage.UTF8String;
+    EXPECT_EQ(menuCountA, 0u);
+
+    [webViewA rightClickAtPoint:NSMakePoint(20, 380)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return menuCountA >= 1;
+    }));
+    [webViewA waitForNextPresentationUpdate];
+    EXPECT_EQ(menuCountA, 1u);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
 
 } // namespace TestWebKitAPI
 
