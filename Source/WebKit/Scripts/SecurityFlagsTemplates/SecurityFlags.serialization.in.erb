@@ -24,8 +24,9 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 # WebKitPlatform because the WebKit framework does not export the generated coders, and TestIPC has to link this one.
+# CustomHeader because the generator otherwise guesses the header from the namespace, which is not what this is called.
 webkit_platform_headers: "SecurityFlags.h"
 
-[WebKitPlatform, CreateUsing=fromDisabledFlagsForIPC] struct WebKit::SecurityFlags {
-    std::array<uint64_t, WebKit::SecurityFlags::ipcWordCount> disabledFlagsForIPC();
+[CustomHeader, WebKitPlatform, CreateUsing=fromDisabledFlagsForIPC] struct WebKit::SecurityFlags::Storage {
+    std::array<uint64_t, WebKit::SecurityFlags::Storage::ipcWordCount> disabledFlagsForIPC();
 }

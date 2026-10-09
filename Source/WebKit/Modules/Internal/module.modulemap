@@ -5,6 +5,11 @@ module WebKit_Internal {
         export *
         requires objc
     }
+    module SecurityFlags {
+        requires cplusplus20
+        header "SecurityFlagsForSwift.h"
+        export *
+    }
     module WebKit_Internal_Cxx {
         header "WebKitInternalCxx.h"
         export *

@@ -26,7 +26,7 @@ headers: "ModelProcessCreationParameters.h" "AuxiliaryProcessCreationParameters.
 
 [RValue] struct WebKit::ModelProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    WebKit::SecurityFlags securityFlags;
+    WebKit::SecurityFlags::Storage securityFlags;
     ProcessID parentPID;
     String applicationVisibleName;
     bool restrictiveRenderingMode;

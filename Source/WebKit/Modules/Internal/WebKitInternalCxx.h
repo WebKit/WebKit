@@ -27,3 +27,4 @@
 
 #import "IPCTesterReceiverSwiftMessages.h"
 #import "UIProcess/SwiftDemoLogoConfirmation.h"
+#import "SecurityFlags.h"

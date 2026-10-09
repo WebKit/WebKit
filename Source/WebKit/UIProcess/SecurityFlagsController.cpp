@@ -46,7 +46,7 @@ void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
 {
     ASSERT(RunLoop::isMain());
 
-    SecurityFlags newFlags;
+    SecurityFlags::Storage newFlags;
     Vector<String> knownNames;
     for (auto& name : names) {
         if (newFlags.disableFlagNamed(name))
@@ -57,7 +57,7 @@ void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
     if (knownNames.size() < names.size())
         RELEASE_LOG(Process, "SecurityFlagsController: ignoring %zu of %zu names, which no flag in this build has", names.size() - knownNames.size(), names.size());
 
-    if (!SecurityFlags::update(WTF::move(newFlags)))
+    if (!SecurityFlags::Storage::update(WTF::move(newFlags)))
         return;
 
     for (auto& name : knownNames) {
