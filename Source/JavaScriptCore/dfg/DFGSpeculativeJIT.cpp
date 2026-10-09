@@ -9244,6 +9244,9 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
             addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), butterflyGPR);
 
             emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), butterflyGPR, scratch1GPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            mutatorFence(vm());
+#endif
 
             addSlowPathGenerator(slowPathCall(slowCases, this, operationNewArrayBuffer, resultGPR, TrustedImmPtr(&vm()), structure, immutableButterflyGPR));
 
@@ -14815,6 +14818,9 @@ void SpeculativeJIT::compileNewArrayBuffer(Node* node)
         JumpList slowCases;
 
         emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), TrustedImmPtr(array->toButterfly()), scratch1GPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        mutatorFence(vm());
+#endif
 
         addSlowPathGenerator(slowPathCall(slowCases, this, operationNewArrayBuffer, result.gpr(), TrustedImmPtr(&vm()), structure, LinkableConstant(*this, array)));
 
@@ -14929,6 +14935,9 @@ void SpeculativeJIT::compileNewArrayWithButterfly(Node* node)
     JumpList slowCases;
 
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratch1GPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    mutatorFence(vm());
+#endif
 
     addSlowPathGenerator(slowPathCall(slowCases, this, operationNewArrayWithSize, result.gpr(), LinkableConstant::globalObject(*this, node), structure, TrustedImm32(node->child1()->asInt32()), storageGPR));
 
@@ -15155,6 +15164,9 @@ void SpeculativeJIT::compileOwnPropertyKeysVariant(Node* node)
             addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), scratchGPR);
 
             emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(arrayStructure), scratchGPR, structureGPR, scratch2GPR, slowButArrayBufferCases, SlowAllocationResult::UndefinedBehavior);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            mutatorFence(vm());
+#endif
 
             addSlowPathGenerator(slowPathCall(slowButArrayBufferCases, this, operationNewArrayBuffer, resultGPR, TrustedImmPtr(&vm()), arrayStructure, scratch3GPR));
 
