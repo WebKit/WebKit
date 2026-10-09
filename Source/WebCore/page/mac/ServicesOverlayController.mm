@@ -301,10 +301,9 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
     if (!highlight)
         return 0_s;
 
-    Ref page = m_page.get();
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
-    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
-    if (focusedOrMainFrame && focusedOrMainFrame->selection().selection().isContentEditable())
+    RefPtr selectionFrame { frameWithPageSelection() };
+    if (selectionFrame && selectionFrame->selection().selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
     RefPtr rootFrame { rootFrameForHighlight(*highlight) };
@@ -416,8 +415,8 @@ void ServicesOverlayController::buildSelectionHighlight()
 
     HashSet<Ref<DataDetectorHighlight>> newPotentialHighlights;
 
-    Ref page = m_page.get();
-    auto selectionRange = page->selection().firstRange();
+    RefPtr selectionFrame { frameWithPageSelection() };
+    auto selectionRange { selectionFrame ? selectionFrame->selection().selection().firstRange() : std::nullopt };
     RefPtr viewForRange { selectionRange ? selectionRange->start.document().view() : nullptr };
     RefPtr rootView { viewForRange ? viewForRange->frame().rootFrame().view() : nullptr };
     if (rootView) {
@@ -469,7 +468,32 @@ void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighl
 
 bool ServicesOverlayController::hasRelevantSelectionServices()
 {
+    if (m_hasRelevantSelectionServicesForTesting)
+        return *m_hasRelevantSelectionServicesForTesting;
     return m_page->chrome().client().hasRelevantSelectionServices(m_isTextOnly);
+}
+
+void ServicesOverlayController::setHasRelevantSelectionServicesForTesting(std::optional<bool> hasServices)
+{
+    if (m_hasRelevantSelectionServicesForTesting == hasServices)
+        return;
+
+    m_hasRelevantSelectionServicesForTesting = hasServices;
+    invalidateHighlightsOfType(DataDetectorHighlight::Type::Selection);
+}
+
+RefPtr<LocalFrame> ServicesOverlayController::frameWithPageSelection() const
+{
+    Ref page { m_page.get() };
+    if (RefPtr focusedFrame { page->focusController().focusedFrame() })
+        return dynamicDowncast<LocalFrame>(focusedFrame.get());
+    return page->localMainFrame();
+}
+
+// Nothing tells this process when the page's selection moves to or from a frame in another process.
+void ServicesOverlayController::focusMovedToOrFromRemoteFrame()
+{
+    invalidateHighlightsOfType(DataDetectorHighlight::Type::Selection);
 }
 
 void ServicesOverlayController::updateServicesOverlays()
@@ -542,7 +566,8 @@ DataDetectorHighlight* ServicesOverlayController::findTelephoneNumberHighlightCo
     if (selectionHighlight.type() != DataDetectorHighlight::Type::Selection)
         return nullptr;
 
-    auto selectionRange = protect(m_page)->selection().toNormalizedRange();
+    RefPtr selectionFrame { frameWithPageSelection() };
+    auto selectionRange { selectionFrame ? selectionFrame->selection().selection().toNormalizedRange() : std::nullopt };
     if (!selectionRange)
         return nullptr;
 
