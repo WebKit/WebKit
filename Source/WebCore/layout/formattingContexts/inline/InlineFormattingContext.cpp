@@ -441,6 +441,23 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
     }
 }
 
+static void measureMaxedOutGlyphOverflow(InlineDisplay::Content& displayContent, size_t firstBoxIndex)
+{
+    for (auto boxIndex = firstBoxIndex; boxIndex < displayContent.boxes.size(); ++boxIndex) {
+        auto& displayBox = displayContent.boxes[boxIndex];
+        if (!displayBox.isText() || !displayBox.hasMaxedOutGlyphOverflow())
+            continue;
+
+        CheckedRef inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
+        CheckedRef style = displayBox.style();
+        auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(displayBox.text().renderedContent(), style, inlineTextBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
+        auto& fontMetrics = style->metricsOfPrimaryFont();
+        auto top = std::max(0.f, -enclosingAscentAndDescent.ascent - fontMetrics.ascent(FontBaseline::Alphabetic));
+        auto bottom = std::max(0.f, enclosingAscentAndDescent.descent - fontMetrics.descent(FontBaseline::Alphabetic));
+        displayContent.setMaxedOutGlyphOverflow(boxIndex, { top, 0.f, bottom, 0.f });
+    }
+}
+
 InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const LineBox& lineBox, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineDisplay::Content& displayContent, bool canUseSimplifiedDisplayContentBuild)
 {
     if (canUseSimplifiedDisplayContentBuild) {
@@ -451,6 +468,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
         auto numberOfDisplayBoxesFromPreviousLines = displayContent.boxes.size();
         displayContent.boxes.appendVector(InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.buildTextOnlyContent(lineLayoutResult));
         ASSERT(displayContent.boxes.size() > numberOfDisplayBoxesFromPreviousLines);
+        measureMaxedOutGlyphOverflow(displayContent, numberOfDisplayBoxesFromPreviousLines);
         displayLine.setBoxCount(displayContent.boxes.size() - numberOfDisplayBoxesFromPreviousLines);
         displayContent.lines.append(displayLine);
         return lineBoxRect;
@@ -482,7 +500,9 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
         }
     }
 
+    auto numberOfDisplayBoxesFromPreviousLines = displayContent.boxes.size();
     displayContent.boxes.appendVector(WTF::move(boxes));
+    measureMaxedOutGlyphOverflow(displayContent, numberOfDisplayBoxesFromPreviousLines);
     displayContent.lines.append(displayLine);
     if (ellipsis)
         displayContent.setEllipsisOnTrailingLine(WTF::move(*ellipsis));

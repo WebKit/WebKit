@@ -232,19 +232,21 @@ void InlineContentBuilder::updateInkOverflowForBoxes(InlineContent& inlineConten
             ++boxCount;
 
         auto boxesOnLine = boxes.subspan(firstBoxIndex, boxCount);
-        updateInkOverflowForText(boxesOnLine, root, initialContainingBlockSize);
+        updateInkOverflowForText(displayContent, firstBoxIndex, boxCount, root, initialContainingBlockSize);
         updateInkOverflowForInlineBoxes(boxesOnLine, root);
 
         firstBoxIndex += boxCount;
     }
 }
 
-void InlineContentBuilder::updateInkOverflowForText(std::span<InlineDisplay::Box> boxes, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize)
+void InlineContentBuilder::updateInkOverflowForText(InlineDisplay::Content& displayContent, size_t firstBoxIndex, size_t boxCount, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize)
 {
     auto logicalBottomForTextDecoration = std::optional<float> { };
     auto writingMode = root.writingMode();
+    auto boxes = displayContent.boxes.mutableSpan().subspan(firstBoxIndex, boxCount);
 
-    for (auto& displayBox : boxes) {
+    for (size_t boxIndex = firstBoxIndex; boxIndex < firstBoxIndex + boxCount; ++boxIndex) {
+        auto& displayBox = displayContent.boxes[boxIndex];
         if (!displayBox.isText())
             continue;
 
@@ -265,7 +267,7 @@ void InlineContentBuilder::updateInkOverflowForText(std::span<InlineDisplay::Box
             inkOverflow.expand(-letterSpacing, { });
         }
 
-        auto glyphOverflow = displayBox.glyphOverflow();
+        auto glyphOverflow = displayContent.glyphOverflow(boxIndex);
         inkOverflow.inflate(0.f, glyphOverflow.top(), 0.f, glyphOverflow.bottom());
 
         auto outsets = strokeAndTextShadowInkOverflowOutsets(textStyle, initialContainingBlockSize);

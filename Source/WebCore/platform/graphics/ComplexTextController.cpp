@@ -168,14 +168,20 @@ std::pair<float, float> ComplexTextController::enclosingGlyphBoundsForTextRun(co
         Ref font = complexTextRun->font();
         auto glyphs = complexTextRun->glyphs();
         ASSERT(glyphs.size() == complexTextRun->glyphCount());
+        auto origins = complexTextRun->glyphOrigins();
 
 #if USE(CORE_TEXT) || USE(SKIA)
         auto glyphBounds = font->boundsForGlyphs(glyphs);
-        for (auto& bounds : glyphBounds) {
-#else
-        for (auto& glyph : glyphs) {
-            auto bounds = font->boundsForGlyph(glyph);
 #endif
+        for (size_t glyphIndex = 0; glyphIndex < glyphs.size(); ++glyphIndex) {
+#if USE(CORE_TEXT) || USE(SKIA)
+            auto bounds = glyphBounds[glyphIndex];
+#else
+            auto bounds = font->boundsForGlyph(glyphs[glyphIndex]);
+#endif
+            // Same as in adjustGlyphsAndAdvances(): glyph origins have y pointing up.
+            if (!origins.empty())
+                bounds.move(0, -origins[glyphIndex].y());
             enclosingAscent = std::min(enclosingAscent.value_or(bounds.y()), bounds.y());
             enclosingDescent = std::max(enclosingDescent.value_or(bounds.maxY()), bounds.maxY());
         }
@@ -721,6 +727,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
         auto glyphs = complexTextRun->glyphs();
         auto advances = complexTextRun->baseAdvances();
+        auto origins = complexTextRun->glyphOrigins();
 
         float spaceWidth = font->spaceWidth();
         auto charactersSpan = complexTextRun->characters();
@@ -804,7 +811,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             if (!glyphIndex) {
                 advance.expand(complexTextRun->initialAdvance().width(), complexTextRun->initialAdvance().height());
                 advanceAdjustmentExcludedFromMarkCompensation = complexTextRun->initialAdvance().width();
-                if (auto origins = complexTextRun->glyphOrigins(); !origins.empty()) {
+                if (!origins.empty()) {
                     advance.expand(-origins[0].x(), -origins[0].y());
                     advanceAdjustmentExcludedFromMarkCompensation -= origins[0].x();
                 }
@@ -918,7 +925,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 float advanceAdjustment = (advance.width() - advances[glyphIndex].width()) - advanceAdjustmentExcludedFromMarkCompensation;
                 pendingMarkOriginCompensation = shouldCompensateMarkOrigins ? -advanceAdjustment : 0;
             }
-            if (auto origins = complexTextRun->glyphOrigins(); !origins.empty()) {
+            if (!origins.empty()) {
                 ASSERT(m_glyphOrigins.size() < m_adjustedBaseAdvances.size());
                 m_glyphOrigins.grow(m_adjustedBaseAdvances.size());
                 m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[glyphIndex] + FloatSize(textAutoSpaceSpacing + originCompensation, 0);
@@ -931,6 +938,11 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 #else
             auto glyphBounds = font->boundsForGlyph(glyph);
 #endif
+            // Shaping places combining marks through their glyph origins, which advance() applies when painting.
+            // Glyph origins have y pointing up and glyph bounds have y pointing down.
+            // FIXME: Apply the origin's x as well, so marks moved sideways get the right horizontal bounds.
+            if (!origins.empty())
+                glyphBounds.move(0, -origins[glyphIndex].y());
             glyphBounds.move(glyphOrigin.x(), glyphOrigin.y());
             m_minGlyphBoundingBoxX = std::min(m_minGlyphBoundingBoxX, glyphBounds.x());
             m_maxGlyphBoundingBoxX = std::max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());

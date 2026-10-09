@@ -49,7 +49,7 @@ public:
 
 private:
     void updateInkOverflowForBoxes(InlineContent&, size_t startIndex) const;
-    static void updateInkOverflowForText(std::span<InlineDisplay::Box>, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize);
+    static void updateInkOverflowForText(InlineDisplay::Content&, size_t firstBoxIndex, size_t boxCount, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize);
     static void updateInkOverflowForInlineBoxes(std::span<InlineDisplay::Box>, const Layout::ElementBox& root);
 
     void computeOverflowFromBoxes(InlineContent&, size_t startIndex) const;

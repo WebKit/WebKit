@@ -51,12 +51,24 @@ struct Content {
     void moveLineInBlockDirection(size_t, float offset);
     void shrinkLineInBlockDirection(size_t, float delta);
 
+    // Text boxes whose glyph overflow does not fit the box's packed fields keep the measured value here.
+    FloatBoxExtent glyphOverflow(size_t boxIndex) const;
+    void setMaxedOutGlyphOverflow(size_t boxIndex, const FloatBoxExtent&);
+
     Lines lines;
     Boxes boxes;
 
 private:
     using LineEllipses = Vector<std::optional<Line::Ellipsis>>;
     std::unique_ptr<LineEllipses> lineEllipses;
+    // Sparse and sorted by box index, since maxed-out glyph overflow is rare.
+    struct MaxedOutGlyphOverflow {
+        size_t boxIndex { 0 };
+        float top { 0 };
+        float bottom { 0 };
+    };
+    Vector<MaxedOutGlyphOverflow> maxedOutGlyphOverflows;
+    size_t maxedOutGlyphOverflowPosition(size_t boxIndex) const;
 };
 
 }
