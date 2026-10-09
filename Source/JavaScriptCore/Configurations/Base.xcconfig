@@ -156,6 +156,15 @@ WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 WK_USE_FATAL_EXCEPTIONS = $(OVERRIDE_WK_USE_FATAL_EXCEPTIONS:default=YES);
 
+// We only support upstream liblldb builds from the llvm project.
+WK_LLDB_ROOT = $(LLDB_ROOT:default=$(HOME)/Library/Developer/LLVM-21.1.8-macOS-ARM64);
+
+WK_LLDB_SYSTEM_HEADER_SEARCH_PATHS = $(WK_LLDB_SYSTEM_HEADER_SEARCH_PATHS_$(WK_MYA_HEAP));
+WK_LLDB_SYSTEM_HEADER_SEARCH_PATHS_YES = $(WK_LLDB_ROOT)/include;
+
+WK_LLDB_LDFLAGS = $(WK_LLDB_LDFLAGS_$(WK_MYA_HEAP));
+WK_LLDB_LDFLAGS_YES = -L$(WK_LLDB_ROOT)/lib -Wl,-rpath,$(WK_LLDB_ROOT)/lib;
+
 // Shared variables used for dynamic or static linking of JavaScriptCore and jsc.
 
 JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework BrowserEngineCore;

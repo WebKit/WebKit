@@ -56,3 +56,8 @@ STRIP_INSTALLED_PRODUCT = NO;
 // The sources include "config.h" and their own headers from the source tree,
 // plus JavaScriptCore's generated and private headers.
 HEADER_SEARCH_PATHS = $(SRCROOT) $(SRCROOT)/corpse "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);
+
+// This keeps MYA fast even when we need debug info.
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 2;
+
+SYSTEM_HEADER_SEARCH_PATHS = $(inherited) $(WK_LLDB_SYSTEM_HEADER_SEARCH_PATHS);

@@ -172,7 +172,7 @@ if (isCMakeBuild()) {
         # By default we build using all of the available CPUs
         $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
         $buildTarget = "jsc testb3 testair testapi testmasm testdfg testwasmdebugger";
-        $buildTarget .= " testLibJSCTools" if $^O eq "darwin"; # libJavaScriptCoreTools only available on Apple platforms.
+        $buildTarget .= " MyaExecutables";
         $buildTarget .= " $makeArgs";
     } elsif (canUseNinja()) {
         $buildTarget .= "jsc testapi testmasm";
