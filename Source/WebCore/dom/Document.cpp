@@ -9630,6 +9630,9 @@ void Document::didAddTouchEventHandler(Node& handler)
         return;
     }
 
+    if (RefPtr page = this->page())
+        page->chrome().client().touchEventHandlersChanged(!m_touchEventTargets.isEmptyIgnoringNullReferences());
+
     if (!shouldUseTouchEventRegions())
         return;
 
@@ -9647,6 +9650,11 @@ void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval rem
 
     if (auto* parent = parentDocument())
         parent->didRemoveTouchEventHandler(*this, removalMode);
+
+    if (!parentDocument()) {
+        if (RefPtr page = this->page())
+            page->chrome().client().touchEventHandlersChanged(!m_touchEventTargets.isEmptyIgnoringNullReferences());
+    }
 
     if (!shouldUseTouchEventRegions())
         return;
