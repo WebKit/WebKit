@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../network/resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function navigateFrame(id, url) {
+    document.getElementById(id).src = url;
+}
+
+function test() {
+    const crossOriginBase = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html";
+    const token = Math.random().toString(36).slice(2);
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.EnableDuringProvisionalIFrameLoadKeepsInstrumentation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.EnableDuringProvisionalIFrameLoadKeepsInstrumentation.Commit",
+        description: "Enabling Page while an iframe's load is provisional in a cross-origin frame's process should keep Page events flowing from that process after the load commits.",
+        async test() {
+            let crossOriginFrame = await awaitChildFrame((frame) => frame.name === "cross-origin");
+            InspectorTest.assert(crossOriginFrame, "Cross-origin frame should be in the frame model.");
+            if (!crossOriginFrame)
+                return;
+
+            // Hold the provisional load, as provisional-frame-target-pausing.html does.
+            let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+            WI.Target.prototype._resumeIfPaused = function() { };
+            InspectorTest.evaluateInPage(`navigateFrame("navigating", "${crossOriginBase}?navigating-${token}")`);
+            let provisionalTarget = await pollUntil(() => WI.targetManager.targets.find((target) => target.type === WI.TargetType.Frame && target.isProvisional));
+            WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+            InspectorTest.expectThat(provisionalTarget?.isPaused, "Provisional frame target should be paused.");
+            if (!provisionalTarget?.isPaused)
+                return;
+
+            // Run ProxyingPageAgent::enable() again, as a frontend attaching now would, while the cross-origin frame's process also hosts the provisional frame.
+            await WI.backendTarget.PageAgent.disable();
+            await WI.backendTarget.PageAgent.enable();
+
+            provisionalTarget._resumeIfPaused();
+            let committed = await pollUntil(() => !provisionalTarget.isProvisional);
+            InspectorTest.expectThat(!!committed, "Provisional load should commit.");
+
+            InspectorTest.evaluateInPage(`document.getElementById("navigating").remove()`);
+            let removed = await pollUntil(() => provisionalTarget.isDestroyed);
+            InspectorTest.expectThat(!!removed, "Committed frame's target should be removed.");
+
+            let url = `${crossOriginBase}?cross-origin-${token}`;
+            InspectorTest.evaluateInPage(`navigateFrame("cross-origin", "${url}")`);
+            let navigated = await pollUntil(() => crossOriginFrame.mainResource.url === url);
+            InspectorTest.expectThat(!!navigated, "Cross-origin frame's navigation should be committed in the frame model.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that enabling Page while an iframe's load is provisional in another process keeps Page events flowing from that process under Site Isolation.</p>
+<iframe id="cross-origin" name="cross-origin" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin"></iframe>
+<iframe id="navigating" name="navigating" src="../network/resources/iframe-with-script.html?navigating"></iframe>
+</body>
