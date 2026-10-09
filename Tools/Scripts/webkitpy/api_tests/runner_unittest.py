@@ -28,6 +28,19 @@ from unittest.mock import MagicMock
 from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result
 
 
+class FakeDevice(object):
+    def __init__(self, udid):
+        self.udid = udid
+
+
+def _port_with_devices(devices):
+    port = MagicMock(port_name='ios-simulator')
+    port.get_option.return_value = None
+    port.DEVICE_MANAGER.INITIALIZED_DEVICES = devices
+    port.target_host.side_effect = lambda worker_number: devices[worker_number]
+    return port
+
+
 class RunnerTest(unittest.TestCase):
     def test_is_disabled_test_detects_disabled_method(self):
         self.assertTrue(Runner._is_disabled_test(
@@ -107,6 +120,21 @@ class ReportResultEarlyExitTest(unittest.TestCase):
         report_result('w', 'D1', Runner.STATUS_DISABLED, output='', elapsed=0.1)
         report_result('w', 'P2', Runner.STATUS_PASSED, output='', elapsed=0.1)
         self.assertEqual(self.fake._failure_count, 0)
+
+
+class CommandForPortTest(unittest.TestCase):
+
+    def test_each_worker_spawns_on_its_own_device(self):
+        port = _port_with_devices([FakeDevice('udid-0'), FakeDevice('udid-1')])
+        self.assertEqual(
+            Runner.command_for_port(port, ['TestWTF'], worker_number=1),
+            ['/usr/bin/xcrun', 'simctl', 'spawn', 'udid-1', 'TestWTF'])
+
+    def test_work_outside_a_worker_uses_the_first_device(self):
+        port = _port_with_devices([FakeDevice('udid-0'), FakeDevice('udid-1')])
+        self.assertEqual(
+            Runner.command_for_port(port, ['TestWTF']),
+            ['/usr/bin/xcrun', 'simctl', 'spawn', 'udid-0', 'TestWTF'])
 
 
 if __name__ == '__main__':

@@ -141,7 +141,7 @@ class Runner(object):
 
     # FIXME API tests should run as an app, we won't need this function <https://bugs.webkit.org/show_bug.cgi?id=175204>
     @staticmethod
-    def command_for_port(port, args):
+    def command_for_port(port, args, worker_number=None):
         if (port.get_option('force')):
             args.append('--force')
         if (port.get_option('remote_layer_tree')):
@@ -156,7 +156,8 @@ class Runner(object):
             args.append('--no-use-gpu-process')
         if getattr(port, 'DEVICE_MANAGER', None):
             assert port.DEVICE_MANAGER.INITIALIZED_DEVICES
-            return ['/usr/bin/xcrun', 'simctl', 'spawn', port.DEVICE_MANAGER.INITIALIZED_DEVICES[0].udid] + args
+            device = port.target_host(worker_number) if worker_number is not None else port.DEVICE_MANAGER.INITIALIZED_DEVICES[0]
+            return ['/usr/bin/xcrun', 'simctl', 'spawn', device.udid] + args
         elif 'device' in port.port_name:
             raise RuntimeError(f'Running api tests on {port.port_name} is not supported')
         elif port.host.platform.is_win():
@@ -347,6 +348,7 @@ class _Worker(object):
         self._port = port
         self.host = port.host
         self.log_limit = log_limit
+        self.worker_number = int((TaskPool.Process.name).split('/')[-1]) if TaskPool.Process.name else None
 
         # ServerProcess doesn't allow for a timeout of 'None,' this uses a week instead of None.
         self._timeout = int(self._port.get_option('timeout')) if self._port.get_option('timeout') else 60 * 24 * 7
@@ -377,7 +379,7 @@ class _Worker(object):
 
         server_process = ServerProcess(
             self._port, binary_name,
-            Runner.command_for_port(self._port, [self._port.path_to_api_test(binary_name), '--filter', test]),
+            Runner.command_for_port(self._port, [self._port.path_to_api_test(binary_name), '--filter', test], worker_number=self.worker_number),
             env=self._port.environment_for_api_tests())
 
         status = Runner.STATUS_RUNNING
@@ -471,7 +473,7 @@ class _Worker(object):
                 self._port, binary_name,
                 Runner.command_for_port(self._port, [
                     self._port.path_to_api_test(binary_name), '--filter', ':'.join(remaining_tests)
-                ]), env=self._port.environment_for_api_tests())
+                ], worker_number=self.worker_number), env=self._port.environment_for_api_tests())
 
             try:
                 started = time.time()
