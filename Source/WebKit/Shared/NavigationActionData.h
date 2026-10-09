@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameInfoData.h"
+#include "JSHandleInfo.h"
 #include "WebHitTestResultData.h"
 #include "WebMouseEvent.h"
 #include "WebPageProxyIdentifier.h"
@@ -85,6 +86,7 @@ struct NavigationActionData {
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
+    std::optional<WebKit::JSHandleInfo> hitTestJSHandleInfo;
 #endif
     FrameInfoData originatingFrameInfoData;
     std::optional<WebPageProxyIdentifier> originatingPageID;
