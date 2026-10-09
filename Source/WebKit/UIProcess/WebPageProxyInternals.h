@@ -356,6 +356,7 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuContextData activeContextMenuContextData;
+    WeakPtr<WebProcessProxy> activeContextMenuProcess;
 #endif
 
 #if ENABLE(GAMEPAD)
