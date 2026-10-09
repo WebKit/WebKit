@@ -1,0 +1,47 @@
+Test that moving a media element to another document preserves its playback state.
+
+
+
+A playing element keeps its paused state and its playback pseudo-classes across a document move
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.matches(":playing") == 'true') OK
+EXPECTED (video.matches(":paused") == 'false') OK
+EXPECTED (document.querySelector("video:playing") == '[object HTMLVideoElement]') OK
+RUN(iframeDocument.body.appendChild(video))
+EXPECTED (video.ownerDocument === iframeDocument == 'true') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.matches(":playing") == 'true') OK
+EXPECTED (video.matches(":paused") == 'false') OK
+EXPECTED (iframeDocument.querySelector("video:playing") == '[object HTMLVideoElement]') OK
+EXPECTED (document.querySelector("video:playing") == 'null') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.matches(":playing") == 'true') OK
+EXPECTED (video.matches(":paused") == 'false') OK
+RUN(video.remove())
+
+A playing element fires no play or pause event across a document move, and playback continues
+EVENT(playing)
+RUN(iframeDocument.body.appendChild(video))
+EXPECTED (video.ownerDocument === iframeDocument == 'true') OK
+EXPECTED (pauseEventCount == '0') OK
+EXPECTED (playEventCount == '0') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (playbackAdvanced() == 'true') OK
+RUN(video.remove())
+
+A paused element stays paused across a document move
+EVENT(playing)
+RUN(video.pause())
+EVENT(pause)
+EXPECTED (video.paused == 'true') OK
+RUN(iframeDocument.body.appendChild(video))
+EXPECTED (video.ownerDocument === iframeDocument == 'true') OK
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.matches(":paused") == 'true') OK
+EXPECTED (video.matches(":playing") == 'false') OK
+EXPECTED (iframeDocument.querySelector("video:paused") == '[object HTMLVideoElement]') OK
+EXPECTED (playEventCount == '0') OK
+RUN(video.remove())
+END OF TEST
+

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>adopt-node-playback-state</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    // Moving a media element into another document is not one of the pause triggers in the
+    // HTML specification, so an element that was playing must still be playing after the
+    // move, and an element that was paused must still be paused. Removing an element from a
+    // document does pause it, but asynchronously, so these tests also cover that the pending
+    // pause is not applied to an element that was inserted into a different document in the
+    // same task.
+
+    var video;
+    var iframeDocument;
+    var playEventCount;
+    var pauseEventCount;
+    var timeAtMove;
+
+    async function createPlayingVideo()
+    {
+        video = document.createElement('video');
+        video.loop = true;
+        video.src = findMediaFile('video', 'content/test');
+        document.body.appendChild(video);
+        video.play();
+        await waitFor(video, 'playing');
+    }
+
+    function countPlaybackEvents()
+    {
+        playEventCount = 0;
+        pauseEventCount = 0;
+        video.addEventListener('play', () => ++playEventCount);
+        video.addEventListener('pause', () => ++pauseEventCount);
+    }
+
+    function playbackAdvanced()
+    {
+        return video.currentTime > timeAtMove;
+    }
+
+    function moveVideoToIFrameDocument()
+    {
+        timeAtMove = video.currentTime;
+        run('iframeDocument.body.appendChild(video)');
+        testExpected('video.ownerDocument === iframeDocument', true);
+    }
+
+    async function testPlayingElementStatePreserved()
+    {
+        consoleWrite('<br>A playing element keeps its paused state and its playback pseudo-classes across a document move');
+
+        await createPlayingVideo();
+        testExpected('video.paused', false);
+        testExpected('video.matches(":playing")', true);
+        testExpected('video.matches(":paused")', false);
+        testExpected('document.querySelector("video:playing")', video);
+
+        moveVideoToIFrameDocument();
+
+        testExpected('video.paused', false);
+        testExpected('video.matches(":playing")', true);
+        testExpected('video.matches(":paused")', false);
+        testExpected('iframeDocument.querySelector("video:playing")', video);
+        testExpected('document.querySelector("video:playing")', null);
+
+        // The pause queued by the removal from the old document runs in a later task; it must
+        // not fire for an element that is still connected, to a different document.
+        await sleepFor(0);
+        testExpected('video.paused', false);
+        testExpected('video.matches(":playing")', true);
+        testExpected('video.matches(":paused")', false);
+
+        run('video.remove()');
+    }
+
+    async function testPlayingElementFiresNoStateTransitionEvents()
+    {
+        consoleWrite('<br>A playing element fires no play or pause event across a document move, and playback continues');
+
+        await createPlayingVideo();
+        countPlaybackEvents();
+
+        moveVideoToIFrameDocument();
+        await sleepFor(0);
+
+        // The element never left the "potentially playing" state, so neither of the paused
+        // state transitions ran.
+        testExpected('pauseEventCount', 0);
+        testExpected('playEventCount', 0);
+        testExpected('video.paused', false);
+
+        // Playback really is still progressing in the new document.
+        await testExpectedEventually('playbackAdvanced()', true, '==', 3000);
+
+        run('video.remove()');
+    }
+
+    async function testPausedElementStaysPaused()
+    {
+        consoleWrite('<br>A paused element stays paused across a document move');
+
+        await createPlayingVideo();
+        run('video.pause()');
+        await waitFor(video, 'pause');
+        testExpected('video.paused', true);
+        countPlaybackEvents();
+
+        moveVideoToIFrameDocument();
+        await sleepFor(0);
+
+        testExpected('video.paused', true);
+        testExpected('video.matches(":paused")', true);
+        testExpected('video.matches(":playing")', false);
+        testExpected('iframeDocument.querySelector("video:paused")', video);
+        testExpected('playEventCount', 0);
+
+        run('video.remove()');
+    }
+
+    window.addEventListener('load', async event => {
+        const iframe = document.querySelector('iframe');
+        if (!iframe.contentDocument.body)
+            await waitFor(iframe, 'load', true);
+        iframeDocument = iframe.contentDocument;
+
+        await testPlayingElementStatePreserved();
+        await testPlayingElementFiresNoStateTransitionEvents();
+        await testPausedElementStaysPaused();
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <p>Test that moving a media element to another document preserves its playback state.</p>
+    <iframe src="about:blank"></iframe>
+</body>
+</html>
