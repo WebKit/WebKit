@@ -31,6 +31,15 @@
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
 #import <WebCore/LocalizedStrings.h>
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+#import "LayerHostingContext.h"
+#import <CoreVideo/CVPixelBuffer.h>
+#import <IOSurface/IOSurface.h>
+#import <Metal/Metal.h>
+#import <QuartzCore/CALayer.h>
+#import <WebCore/LayerHostingContextIdentifier.h>
+#import <wtf/cf/TypeCastsCF.h>
+#endif
 #import <WebCore/RealtimeMediaSourceCenter.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
@@ -135,6 +144,54 @@ void GPUConnectionToWebProcess::setDisplayCaptureEnvironment(WebCore::PageIdenti
         m_displayCaptureEnvironments.remove(pageIdentifier);
     else
         m_displayCaptureEnvironments.set(pageIdentifier, displayCaptureEnvironment);
+}
+#endif
+
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+void GPUConnectionToWebProcess::createModelLayerHostingContext(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&& completionHandler)
+{
+    constexpr size_t width = 512;
+    constexpr size_t height = 512;
+
+    RetainPtr<IOSurfaceRef> surface = adoptCF(IOSurfaceCreate((__bridge CFDictionaryRef)@{
+        (__bridge id)kIOSurfaceWidth: @(width),
+        (__bridge id)kIOSurfaceHeight: @(height),
+        (__bridge id)kIOSurfaceBytesPerElement: @4,
+        (__bridge id)kIOSurfacePixelFormat: @(kCVPixelFormatType_32BGRA),
+    }));
+    if (!surface) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    if (RetainPtr<id<MTLDevice>> device = adoptNS(MTLCreateSystemDefaultDevice())) {
+        RetainPtr<MTLTextureDescriptor> desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm width:width height:height mipmapped:NO];
+        [desc.get() setUsage:MTLTextureUsageRenderTarget];
+        [desc.get() setStorageMode:MTLStorageModeShared];
+        RetainPtr<id<MTLTexture>> texture = adoptNS([device.get() newTextureWithDescriptor:desc.get() iosurface:surface.get() plane:0]);
+        RetainPtr<id<MTLCommandQueue>> queue = adoptNS([device.get() newCommandQueue]);
+        RetainPtr<MTLRenderPassDescriptor> pass = [MTLRenderPassDescriptor renderPassDescriptor];
+        RetainPtr<MTLRenderPassColorAttachmentDescriptor> colorAttachment = [[pass.get() colorAttachments] objectAtIndexedSubscript:0];
+        [colorAttachment.get() setTexture:texture.get()];
+        [colorAttachment.get() setLoadAction:MTLLoadActionClear];
+        [colorAttachment.get() setStoreAction:MTLStoreActionStore];
+        [colorAttachment.get() setClearColor:MTLClearColorMake(0, 1, 0, 1)];
+        RetainPtr<id<MTLCommandBuffer>> commandBuffer = [queue.get() commandBuffer];
+        RetainPtr<id<MTLRenderCommandEncoder>> encoder = [commandBuffer.get() renderCommandEncoderWithDescriptor:pass.get()];
+        [encoder.get() endEncoding];
+        [commandBuffer.get() commit];
+        [commandBuffer.get() waitUntilCompleted];
+    }
+
+    m_modelLayerHostingContext = LayerHostingContext::create();
+
+    RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
+    [layer setName:@"WebKit:GPUProcessModelIOSurfaceLayer"];
+    [layer setFrame:CGRectMake(0, 0, width, height)];
+    [layer setContents:(__bridge id)surface.get()];
+    m_modelLayerHostingContext->setRootLayer(layer.get());
+
+    completionHandler(WebCore::LayerHostingContextIdentifier(m_modelLayerHostingContext->contextID()));
 }
 #endif
 

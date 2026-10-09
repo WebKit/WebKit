@@ -50,7 +50,7 @@
 #include <WebCore/Model.h>
 #endif
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #include <WebCore/ModelContext.h>
 #endif
 
@@ -98,7 +98,7 @@ public:
             CustomData, // PlatformCALayerRemoteCustom
 #if ENABLE(MODEL_ELEMENT)
             Ref<WebCore::Model>, // PlatformCALayerRemoteModelHosting
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
             Ref<WebCore::ModelContext>, // PlatformCALayerRemoteCustom
 #endif
 #endif
@@ -123,7 +123,7 @@ public:
         bool preservesFlip() const;
         float hostingDeviceScaleFactor() const;
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
         RefPtr<WebCore::ModelContext> modelContext() const;
 #endif
     };

@@ -23,22 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT) && HAVE(CORE_RE)
 
 #import "RemoteLayerTreeViews.h"
 #import <WebCore/Color.h>
+#import <optional>
 
-NS_ASSUME_NONNULL_BEGIN
+OBJC_CLASS CALayer;
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface WKPageHostedPortalView : WKCompositingView
 
-@property (nonatomic, retain) UIView *remoteModelView;
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+- (instancetype)initWithCompositedContents:(BOOL)useCompositedContents;
+
 @property (nonatomic) BOOL shouldDisablePortal;
 - (void)applyBackgroundColor:(std::optional<WebCore::Color>)backgroundColor;
 - (void)setPortalCrossing:(BOOL)enabled;
 
+- (void)setPlatformModelLayer:(nullable CALayer *)platformModelLayer;
+
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+- (void)hostModelWithContextID:(uint32_t)contextID processIdentifier:(pid_t)processIdentifier useCompositedContents:(BOOL)useCompositedContents;
+
+- (void)updatePageScale:(CGFloat)pageScale;
+
+- (nullable UIView *)prepareForDragPreview;
+
 @end
 
-NS_ASSUME_NONNULL_END
+NS_HEADER_AUDIT_END(nullability, sendability)
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT) && HAVE(CORE_RE)

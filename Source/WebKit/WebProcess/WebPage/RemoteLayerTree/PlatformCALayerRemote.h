@@ -41,7 +41,7 @@ namespace WebCore {
 class AcceleratedEffect;
 struct AcceleratedEffectValues;
 #endif
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 class ModelContext;
 #endif
 enum class GraphicsLayerCustomAppearance : bool;
@@ -61,7 +61,7 @@ class PlatformCALayerRemote : public WebCore::PlatformCALayer, public CanMakeWea
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     static Ref<PlatformCALayerRemote> create(Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 #endif
 #if ENABLE(MODEL_ELEMENT)

@@ -54,6 +54,9 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked);
     DestroyVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID);
 #endif
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    CreateModelLayerHostingContext() -> (std::optional<WebCore::LayerHostingContextIdentifier> identifier)
+#endif
     SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
     CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)

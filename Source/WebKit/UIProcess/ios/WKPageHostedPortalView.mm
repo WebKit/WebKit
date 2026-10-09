@@ -26,15 +26,20 @@
 #import "config.h"
 #import "WKPageHostedPortalView.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT) && HAVE(CORE_RE)
 
 #import "Logging.h"
+#import "UIKitSPI.h"
 #import "WKRKEntity.h"
 #import <CoreRE/CoreRE.h>
 #import <UIKit/UIKit.h>
 #import <WebKitAdditions/REPtr.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(VISION) && __has_include(<Spatial/Spatial.h>)
+#import <Spatial/Spatial.h>
+#endif
 
 #if __has_include(<CoreRE/CoreRE_SPI_WebKit.h>)
 #include <CoreRE/CoreRE_SPI_WebKit.h>
@@ -43,7 +48,9 @@
 #import "WebKitSwiftSoftLink.h"
 
 @implementation WKPageHostedPortalView {
-    RetainPtr<UIView> _remoteModelView;
+    BOOL _useCompositedContents;
+    RetainPtr<CALayer> _remoteModelLayer;
+    RetainPtr<_UIRemoteView> _remoteModelView;
     RetainPtr<UIView> _containerView;
     REPtr<REEntityRef> _rootEntity;
     REPtr<REEntityRef> _containerEntity;
@@ -72,10 +79,18 @@
 }
 #endif
 
-- (instancetype)init
+- (instancetype)initWithCompositedContents:(BOOL)useCompositedContents
 {
     if (!(self = [super init]))
         return nil;
+
+    _useCompositedContents = useCompositedContents;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+    if (useCompositedContents) {
+        self.layer.name = @"WebKit:PageHostedModelLayer";
+        return self;
+    }
 
     CALayer *portalLayer = self.layer;
     portalLayer.name = @"WebKit:PortalLayer";
@@ -198,23 +213,60 @@
     [super dealloc];
 }
 
-- (UIView *)remoteModelView
+- (void)setPlatformModelLayer:(CALayer *)platformModelLayer
 {
-    return _remoteModelView.get();
-}
-
-- (void)setRemoteModelView:(UIView *)remoteModelView
-{
-    if (_remoteModelView.get() == remoteModelView)
+    if (_remoteModelLayer.get() == platformModelLayer)
         return;
 
-    [_remoteModelView removeFromSuperview];
+    [_remoteModelLayer removeFromSuperlayer];
+    _remoteModelLayer = platformModelLayer;
 
-    _remoteModelView = remoteModelView;
-    CGRect bounds = [_containerView bounds];
-    [_remoteModelView setFrame:bounds];
+    if (!platformModelLayer)
+        return;
+
+    [platformModelLayer setFrame:[[_containerView layer] bounds]];
+    [[_containerView layer] addSublayer:platformModelLayer];
+}
+
+- (void)hostModelWithContextID:(uint32_t)contextID processIdentifier:(pid_t)processIdentifier useCompositedContents:(BOOL)useCompositedContents
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+    if (useCompositedContents) {
+        ASSERT(_useCompositedContents);
+        UNUSED_PARAM(contextID);
+        UNUSED_PARAM(processIdentifier);
+        return;
+    }
+
+    [_remoteModelView removeFromSuperview];
+    _remoteModelView = adoptNS([[_UIRemoteView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
+    [_remoteModelView setFrame:[_containerView bounds]];
     [_remoteModelView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
     [_containerView addSubview:_remoteModelView.get()];
+}
+
+- (void)updatePageScale:(CGFloat)pageScale
+{
+    if (!_remoteModelView)
+        return;
+
+    CATransform3D newTransform = [_remoteModelView transform3D];
+    newTransform.m33 = pageScale;
+    [_remoteModelView setTransform3D:newTransform];
+}
+
+- (UIView *)prepareForDragPreview
+{
+    if (!_remoteModelView)
+        return nil;
+
+#if PLATFORM(VISION)
+    CGRect frame = [_remoteModelView frame];
+    [_remoteModelView _setAssumedNoncoplanarHostedContentSize:SPSize3DMake(CGRectGetWidth(frame), CGRectGetHeight(frame), 100)];
+    [self setPortalCrossing:YES];
+#endif
+
+    return _remoteModelView.get();
 }
 
 - (void)setShouldDisablePortal:(BOOL)shouldDisablePortal
@@ -222,11 +274,16 @@
     if (_shouldDisablePortal == shouldDisablePortal)
         return;
 
+    if (_useCompositedContents) {
+        _shouldDisablePortal = shouldDisablePortal;
+        return;
+    }
+
     _shouldDisablePortal = shouldDisablePortal;
 
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
     if ([WKPageHostedPortalView _usesStereoContent]) {
-        if (_shouldDisablePortal) {
+        if (shouldDisablePortal) {
             REEntityRemoveFromSceneOrParent(_stereoContentEntity.get());
             [[_containerView layer] removeFromSuperlayer];
             [_stereoContentLayer removeFromSuperlayer];
@@ -244,7 +301,7 @@
     }
 #endif
 
-    if (_shouldDisablePortal) {
+    if (shouldDisablePortal) {
         [self.layer setValue:nil forKeyPath:@"separatedOptions.isPortal"];
         [self.layer setValue:@NO forKeyPath:@"separatedOptions.updates.clippingPrimitive"];
     } else {
@@ -255,6 +312,9 @@
 
 - (void)applyBackgroundColor:(std::optional<WebCore::Color>)backgroundColor
 {
+    if (_useCompositedContents)
+        return;
+
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
     if ([WKPageHostedPortalView _usesStereoContent]) {
         ASSERT(_stereoContentEntity);
@@ -294,6 +354,7 @@
     [super layoutSubviews];
 
     [_containerView setFrame:self.bounds];
+    [_remoteModelLayer setFrame:[[_containerView layer] bounds]];
 
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
     [_stereoContentLayer setFrame:self.bounds];
@@ -302,15 +363,20 @@
 
 - (void)setPortalCrossing:(BOOL)enabled
 {
+    if (_useCompositedContents)
+        return;
+
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
     if (REPtr<REComponentRef> portalCrossingComponent = REEntityGetOrAddComponentByClass(_stereoContentEntity.get(), REPortalCrossingFlagsComponentGetComponentType())) {
         REPortalCrossingFlagsComponentSetEnabled(portalCrossingComponent.get(), enabled);
         REPortalCrossingFlagsComponentSetInherited(portalCrossingComponent.get(), enabled);
         RENetworkMarkComponentDirty(portalCrossingComponent.get());
     }
+#else
+    UNUSED_PARAM(enabled);
 #endif
 }
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT) && HAVE(CORE_RE)

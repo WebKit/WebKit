@@ -30,6 +30,7 @@
 
 #include "ModelTypes.h"
 #include <WebCore/Color.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/Model.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerAnimationState.h>
@@ -164,6 +165,9 @@ private:
     WeakPtr<WebCore::Page> m_page;
     mutable RefPtr<ModelDisplayBufferDisplayDelegate> m_contentsDisplayDelegate;
     WeakPtr<WebCore::GraphicsLayer> m_graphicsLayer;
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier { WebCore::LayerHostingContextIdentifier::generate() };
+#endif
     uint32_t m_renderTextureIndex { 0 };
     uint32_t m_displayTextureIndex { 0 };
     bool m_hasRenderedFrame { false };

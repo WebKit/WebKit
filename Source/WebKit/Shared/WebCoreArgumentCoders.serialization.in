@@ -5392,7 +5392,7 @@ class WebCore::ModelPlayerAnimationState {
     std::optional<MonotonicTime> lastCachedClockTimestamp()
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 enum class WebCore::ModelContextDisablePortal : bool
 
 [RefCounted] class WebCore::ModelContext {

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PortalPresentationManagerProxy.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
 
 #if HAVE(CORE_RE)
 
@@ -34,6 +34,7 @@
 #import "WKPageHostedPortalView.h"
 #import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <WebCore/FloatPoint.h>
 #import <WebCore/FloatSize.h>
 #import <wtf/RefPtr.h>
@@ -83,21 +84,13 @@ RetainPtr<UIView> PortalPresentationManagerProxy::startDragForModel(const WebCor
         return nil;
 
     auto& modelPresentation = iterator->value;
-    RetainPtr modelView = modelPresentation->remoteModelView;
-    if (!modelView)
+    RetainPtr dragPreviewView = [modelPresentation->pageHostedPortalView prepareForDragPreview];
+    if (!dragPreviewView)
         return nil;
-
-#if PLATFORM(VISION)
-    CGRect frame = [modelView frame];
-    [modelView _setAssumedNoncoplanarHostedContentSize:SPSize3DMake(CGRectGetWidth(frame), CGRectGetHeight(frame), 100)];
-
-    auto hostedView = modelPresentation->pageHostedPortalView;
-    [hostedView setPortalCrossing:YES];
-#endif
 
     m_activelyDraggedModelLayerIDs.add(layerIdentifier);
 
-    return modelView;
+    return dragPreviewView;
 }
 
 void PortalPresentationManagerProxy::doneWithCurrentDragSession()
@@ -108,8 +101,8 @@ void PortalPresentationManagerProxy::doneWithCurrentDragSession()
             continue;
 
         auto& modelPresentation = iterator->value;
-        if (auto pageHostedPortalView = modelPresentation->pageHostedPortalView)
-            [modelPresentation->pageHostedPortalView setPortalCrossing:NO];
+        if (RetainPtr pageHostedPortalView = modelPresentation->pageHostedPortalView)
+            [pageHostedPortalView setPortalCrossing:NO];
     }
 
     m_activelyDraggedModelLayerIDs.clear();
@@ -118,12 +111,7 @@ void PortalPresentationManagerProxy::doneWithCurrentDragSession()
 void PortalPresentationManagerProxy::pageScaleDidChange(CGFloat newScale)
 {
     for (auto& modelPresentation : m_portalPresentations.values()) {
-        // This is safe because only the pageHostedView is part of the RemoteLayerTree
-        if (RetainPtr modelView = modelPresentation->remoteModelView) {
-            CATransform3D newTransform = [modelView transform3D];
-            newTransform.m33 = newScale;
-            modelView.get().transform3D = newTransform;
-        }
+        [modelPresentation->pageHostedPortalView updatePageScale:newScale];
     }
 }
 
@@ -310,23 +298,28 @@ void PortalPresentationManagerProxy::hideAllVolumetricScenes()
 
 PortalPresentationManagerProxy::PortalPresentation& PortalPresentationManagerProxy::ensurePortalPresentation(Ref<WebCore::ModelContext> modelContext, const WebPageProxy& webPageProxy)
 {
+    bool useCompositedContents = false;
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    useCompositedContents = webPageProxy.preferences().unifiedModelRenderingEnabled();
+#endif
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+    auto contextID = static_cast<uint32_t>(modelContext->modelContentsLayerHostingContextIdentifier().toUInt64());
+    auto processIdentifier = webPageProxy.legacyMainFrameProcessID();
+
     auto layerIdentifier = modelContext->modelLayerIdentifier();
     if (m_portalPresentations.contains(layerIdentifier)) {
         // Update the existing PortalPresentation
         PortalPresentation& modelPresentation = *(m_portalPresentations.get(layerIdentifier));
         if (modelPresentation.modelContext->modelContentsLayerHostingContextIdentifier() != modelContext->modelContentsLayerHostingContextIdentifier()) {
-            modelPresentation.remoteModelView = adoptNS([[_UIRemoteView alloc] initWithFrame:CGRectZero pid:webPageProxy.legacyMainFrameProcessID() contextID:modelContext->modelContentsLayerHostingContextIdentifier().toUInt64()]);
-            [modelPresentation.pageHostedPortalView setRemoteModelView:modelPresentation.remoteModelView.get()];
+            [modelPresentation.pageHostedPortalView hostModelWithContextID:contextID processIdentifier:processIdentifier useCompositedContents:useCompositedContents];
             RELEASE_LOG_INFO(ModelElement, "%p - PortalPresentationManagerProxy updated model view for element: %" PRIu64, this, layerIdentifier.object().toUInt64());
         }
         modelPresentation.modelContext = modelContext;
     } else {
-        RetainPtr pageHostedPortalView = adoptNS([[WKPageHostedPortalView alloc] init]);
-        RetainPtr remoteModelView = adoptNS([[_UIRemoteView alloc] initWithFrame:CGRectZero pid:webPageProxy.legacyMainFrameProcessID() contextID:modelContext->modelContentsLayerHostingContextIdentifier().toUInt64()]);
-        [pageHostedPortalView setRemoteModelView:remoteModelView.get()];
+        RetainPtr pageHostedPortalView = adoptNS([[WKPageHostedPortalView alloc] initWithCompositedContents:useCompositedContents]);
+        [pageHostedPortalView hostModelWithContextID:contextID processIdentifier:processIdentifier useCompositedContents:useCompositedContents];
         auto modelPresentation = PortalPresentation {
             .modelContext = modelContext,
-            .remoteModelView = remoteModelView,
             .pageHostedPortalView = pageHostedPortalView,
         };
         m_portalPresentations.add(layerIdentifier, makeUniqueRef<PortalPresentationManagerProxy::PortalPresentation>(WTF::move(modelPresentation)));
@@ -402,4 +395,4 @@ void PortalPresentationManagerProxy::hideAllVolumetricScenes()
 
 #endif // HAVE(CORE_RE)
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)

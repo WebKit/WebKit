@@ -38,7 +38,7 @@
 #import <WebCore/WebLayer.h>
 #import <wtf/RetainPtr.h>
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #import <WebCore/ModelContext.h>
 #endif
 
@@ -56,7 +56,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(PlatformLayer *pl
     return WTF::move(layer);
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     auto layer = adoptRef(*new PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType::LayerTypeCustom, modelContext, owner, context));
@@ -86,7 +86,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& video
     m_hasVideo = true;
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType layerType, Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemoteCustom(layerType, modelContext->modelContentsLayerHostingContextIdentifier().toUInt64(), owner, context)
 {
@@ -130,7 +130,7 @@ void PlatformCALayerRemoteCustom::populateCreationProperties(RemoteLayerTreeTran
     PlatformCALayerRemote::populateCreationProperties(properties, context, type);
     ASSERT(std::holds_alternative<RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData>(properties.additionalData));
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     if (m_modelContext) {
         properties.additionalData = *m_modelContext;
         return;

@@ -342,6 +342,10 @@ private:
     void destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier);
 #endif
 
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    void createModelLayerHostingContext(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&&);
+#endif
+
 #if USE(AUDIO_SESSION)
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
     void ensureAudioSession(EnsureAudioSessionCompletion&&);
@@ -457,6 +461,10 @@ private:
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     HashMap<std::pair<WebPageProxyIdentifier, WebCore::PageIdentifier>, std::unique_ptr<LayerHostingContext>> m_visibilityPropagationContexts;
+#endif
+
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    std::unique_ptr<LayerHostingContext> m_modelLayerHostingContext;
 #endif
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, Ref<RemoteAudioHardwareListenerProxy>>;

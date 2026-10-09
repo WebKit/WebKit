@@ -358,7 +358,7 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
     return PlatformCALayerCocoa::create(platformLayer, owner);
 }
 
-#if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(MODEL_CONTEXT)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<ModelContext>, PlatformCALayerClient* owner)
 {
     ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayer should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
@@ -1481,7 +1481,7 @@ void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifi
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
-#if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(MODEL_CONTEXT)
 void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, ContentsLayerPurpose purpose)
 {
     if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == modelContext->modelContentsLayerHostingContextIdentifier())
@@ -1489,7 +1489,16 @@ void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, 
 
     m_contentsLayer = createPlatformCALayer(modelContext, this);
     m_contentsLayerPurpose = purpose;
-    m_contentsDisplayDelegate = nullptr;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+    if (RefPtr contentsDisplayDelegate = m_contentsDisplayDelegate) {
+        Ref contentsLayer = *m_contentsLayer;
+        contentsLayer->setBackingStoreAttached(true);
+        contentsLayer->setAcceleratesDrawing(true);
+#if HAVE(SUPPORT_HDR_DISPLAY)
+        contentsLayer->setTonemappingEnabled(true);
+#endif
+        contentsDisplayDelegate->prepareToDelegateDisplay(contentsLayer);
+    }
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }

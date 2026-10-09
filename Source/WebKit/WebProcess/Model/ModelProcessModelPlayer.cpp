@@ -30,6 +30,10 @@
 #if ENABLE(MODEL_PROCESS)
 
 #include "ModelProcessModelPlayerManager.h"
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+#include "GPUConnectionToWebProcessMessages.h"
+#include "GPUProcessConnection.h"
+#endif
 #include "ModelProcessModelPlayerProxy.h"
 #include "ModelProcessModelPlayerProxyMessages.h"
 #include "ModelProcessModelPlayerTransformState.h"
@@ -119,6 +123,19 @@ void ModelProcessModelPlayer::didCreateLayer(WebCore::LayerHostingContextIdentif
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer obtained new layerHostingContextIdentifier id=%" PRIu64, this, m_id.toUInt64());
     RELEASE_ASSERT(modelProcessEnabled());
 
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    if (RefPtr strongPage = m_page.get(); strongPage && strongPage->corePage() && strongPage->corePage()->settings().unifiedModelRenderingEnabled()) {
+        WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(
+            Messages::GPUConnectionToWebProcess::CreateModelLayerHostingContext(),
+            [protectedThis = protect(*this)](std::optional<WebCore::LayerHostingContextIdentifier> gpuContextID) {
+                if (!gpuContextID)
+                    return;
+                protectedThis->m_layerHostingContextIdentifier = *gpuContextID;
+                protect(protectedThis->client())->didUpdate(protectedThis.get());
+            });
+        return;
+    }
+#endif
     m_layerHostingContextIdentifier = identifier;
     protect(client())->didUpdate(*this);
 }

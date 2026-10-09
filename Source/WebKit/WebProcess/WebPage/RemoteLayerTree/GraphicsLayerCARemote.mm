@@ -44,7 +44,7 @@
 #include <WebCore/RemoteFrame.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #include <WebCore/ModelContext.h>
 #endif
 
@@ -89,7 +89,7 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer*
     return PlatformCALayerRemote::create(platformLayer, owner, context.get());
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner)
 {
     Ref context = *m_context;
