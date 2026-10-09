@@ -299,6 +299,9 @@ def parse_args(args):
                  "those which are device-specific (implies --skipped=ignore)"),
         optparse.make_option("--time-out-ms", "--timeout",
             help="Set the timeout for each test in milliseconds"),
+        optparse.make_option(
+            "--expected-failure-time-out-ms", type="int", default=None,
+            help="Run tests expected to fail, including tests whose baseline records a harness timeout, with this timeout first, and again with the full timeout only if it cut short an unexpected result."),
         optparse.make_option("--order", action="store", default="natural",
             choices=["none", "natural", "random"],
             help=("determine the order in which the test cases will be run. "
