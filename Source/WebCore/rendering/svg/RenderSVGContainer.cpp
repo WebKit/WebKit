@@ -68,6 +68,21 @@ void RenderSVGContainer::layout()
     auto checkForRepaintOverride = isRenderSVGResourceMarker() ? std::make_optional(LayoutRepainter::CheckForRepaint::No) : std::nullopt;
     LayoutRepainter repainter(*this, checkForRepaintOverride);
 
+    // The layer transform is relative to the layout location, which moves with the children.
+    auto transformInContainerCoordinates = [&] -> std::optional<TransformationMatrix> {
+        auto* transform = layerTransform();
+        if (!transform)
+            return std::nullopt;
+        auto location = nominalSVGLayoutLocation();
+        TransformationMatrix result;
+        result.translate(location.x(), location.y());
+        result.multiply(*transform);
+        result.translate(-location.x(), -location.y());
+        return result;
+    };
+
+    std::optional<TransformationMatrix> transformBeforeChildrenLayout;
+
     // Update layer transform before laying out children (SVG needs access to the transform matrices during layout for on-screen text font-size calculations).
     // Eventually re-update if the transform reference box, relevant for transform-origin, has changed during layout.
     //
@@ -79,7 +94,18 @@ void RenderSVGContainer::layout()
         ASSERT(!m_didTransformToRootUpdate);
         SVGLayerTransformUpdater transformUpdater(*this);
         SetForScope trackTransformChanges(m_didTransformToRootUpdate, transformUpdater.layerTransformChanged() || SVGContainerLayout::transformToRootChanged(parent()));
+        transformBeforeChildrenLayout = transformInContainerCoordinates();
         layoutChildren();
+    }
+
+    // A transform that depends on the bounding box (transform-box: fill-box) can change after the children
+    // laid out. SVG container layers never repaint themselves, so repaint the old and the new area.
+    if (auto transform = transformInContainerCoordinates(); transform && transformBeforeChildrenLayout && *transform != *transformBeforeChildrenLayout) {
+        if (auto oldRect = layer()->cachedClippedOverflowRect()) {
+            CheckedPtr repaintContainer = containerForRepaint().renderer.get();
+            repaintUsingContainer(repaintContainer.get(), *oldRect);
+            repaintUsingContainer(repaintContainer.get(), clippedOverflowRect(repaintContainer.get(), visibleRectContextForRepaint()));
+        }
     }
 
     repainter.repaintAfterLayout();

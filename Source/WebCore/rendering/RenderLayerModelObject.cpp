@@ -855,6 +855,11 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
             markedAny = true;
         }
         if (markedAny) {
+            // SVG container layers never repaint themselves. Repaint the area under the old transform.
+            if (isLayered) {
+                if (auto oldRect = layer()->cachedClippedOverflowRect())
+                    repaintUsingContainer(containerForRepaint().renderer.get(), *oldRect);
+            }
             repaintClientsOfReferencedSVGResources();
             return;
         }

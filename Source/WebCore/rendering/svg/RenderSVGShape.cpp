@@ -43,6 +43,7 @@
 #include "RenderObjectNode.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderView.h"
+#include "SVGContainerLayout.h"
 #include "SVGPaintServerHandlingInlines.h"
 #include "SVGPathFromElement.h"
 #include "SVGTransformComputation.h"
@@ -147,7 +148,7 @@ void RenderSVGShape::layout()
         updateShapeFromElement();
 
         m_needsShapeUpdate = false;
-        setCurrentSVGLayoutRect(enclosingLayoutRect(m_fillBoundingBox));
+        setCurrentSVGLayoutRect({ SVGContainerLayout::layoutLocationRelativeToContainer(*this), enclosingLayoutRect(m_fillBoundingBox).size() });
         m_cachedVisualOverflowRect = std::nullopt;
     }
 
