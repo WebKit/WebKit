@@ -503,7 +503,7 @@ auto CSSValueConversion<PositionArea>::operator()(BuilderState& state, const CSS
 
     // Flip according to `position-try-fallbacks`, if specified.
     if (const auto& positionTryFallback = state.positionTryFallback()) {
-        auto writingMode = state.style().writingMode();
+        auto writingMode = positionTryFallback->containingBlockWritingMode;
         for (auto tactic : positionTryFallback->tactics) {
             switch (tactic) {
             case PositionTryFallbackTactic::FlipBlock:

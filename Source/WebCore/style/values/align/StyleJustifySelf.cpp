@@ -96,7 +96,7 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
     auto applyPositionTryFallbackTactics = [](auto& state, auto position) -> CSSValueID {
         // Flip the position according to position-try fallback, if specified.
         if (auto positionTryFallback = state.positionTryFallback())
-            position = AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPosition(state.cssPropertyID(), position, state.style().writingMode(), *positionTryFallback);
+            position = AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPosition(state.cssPropertyID(), position, *positionTryFallback);
         return position;
     };
 
