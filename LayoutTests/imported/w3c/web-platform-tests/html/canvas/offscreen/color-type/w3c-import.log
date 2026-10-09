@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8p3.to.f16srgb.to.u8p3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8p3.to.f16srgb.to.u8p3.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8p3.to.u8srgb.to.u8p3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8p3.to.u8srgb.to.u8p3.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8srgb.to.f16p3.to.u8srgb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8srgb.to.f16p3.to.u8srgb.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8srgb.to.u8p3.to.u8srgb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/color-type/2d.color.type.u8srgb.to.u8p3.to.u8srgb.worker.js
