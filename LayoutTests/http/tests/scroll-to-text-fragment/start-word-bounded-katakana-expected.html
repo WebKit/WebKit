@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - target inside a katakana word must be word-bounded</title>
+<style>
+  span {
+    background-color: pink;
+  }
+</style>
+
+<p>Pass condition: only the katakana for bread on the last line is highlighted; the first line is not highlighted.</p>
+<!-- champagne -->
+<p>シャンパン</p>
+<!-- bread -->
+<p><span>パン</span></p>

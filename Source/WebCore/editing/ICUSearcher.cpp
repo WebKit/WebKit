@@ -64,11 +64,13 @@ ICUSearcher::ICUSearcher(const String& foldedTarget, FindOptions& options)
     lock();
     // Characters in the separator category never really occur at the beginning of a word,
     // so if the target begins with such a character, we just ignore the AtWordStart option.
-    if (options.contains(FindOption::AtWordStarts) && foldedTarget.length()) {
-        char32_t targetFirstCharacter;
-        U16_GET(foldedTarget, 0, 0u, foldedTarget.length(), targetFirstCharacter);
-        if (isSeparator(targetFirstCharacter))
-            options.remove(FindOption::AtWordStarts);
+    if (options.contains(FindOption::AtWordStarts) && !options.contains(FindOption::IcuOnlyWordBoundaries)) {
+        if (foldedTarget.length()) {
+            char32_t targetFirstCharacter;
+            U16_GET(foldedTarget, 0, 0u, foldedTarget.length(), targetFirstCharacter);
+            if (isSeparator(targetFirstCharacter))
+                options.remove(FindOption::AtWordStarts);
+        }
     }
 
     UCollationStrength strength = options.contains(FindOption::CaseInsensitive) ? UCOL_SECONDARY : UCOL_TERTIARY;
@@ -326,6 +328,13 @@ bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t len
     if (!start)
         return true;
 
+    if (options.contains(FindOption::IcuOnlyWordBoundaries)) {
+        // buffer is capped by SearchBuffer's sliding window or StringImpl::MaxLength
+        RELEASE_ASSERT(buffer.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+        auto* iterator = WTF::wordBreakIterator(buffer);
+        return iterator && ubrk_isBoundary(iterator, static_cast<int32_t>(start));
+    }
+
     int size = buffer.size();
     int offset = start;
     char32_t firstCharacter;
@@ -381,7 +390,16 @@ bool isWordEndMatch(std::span<const char16_t> buffer, size_t start, size_t lengt
 {
     ASSERT(length);
     ASSERT(options.contains(FindOption::AtWordEnds));
-    UNUSED_PARAM(options);
+
+    if (options.contains(FindOption::IcuOnlyWordBoundaries)) {
+        size_t end = start + length;
+
+        // buffer is capped by SearchBuffer's sliding window or StringImpl::MaxLength
+        // end == buffer.size is valid offset to ubrk_isBoundary
+        RELEASE_ASSERT(end <= buffer.size() && buffer.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
+        auto* iterator = WTF::wordBreakIterator(buffer);
+        return iterator && ubrk_isBoundary(iterator, static_cast<int32_t>(end));
+    }
 
     int size = buffer.size();
     int offset = static_cast<int>(start);
