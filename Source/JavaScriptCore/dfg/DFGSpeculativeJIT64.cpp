@@ -6607,6 +6607,10 @@ void SpeculativeJIT::compile(Node* node)
         compileDateSet(node);
         break;
 
+    case TypedArraySet:
+        compileTypedArraySet(node);
+        break;
+
     case DataViewSet: {
         SpeculateCellOperand dataView(this, m_graph.varArgChild(node, 0));
         GPRReg dataViewGPR = dataView.gpr();

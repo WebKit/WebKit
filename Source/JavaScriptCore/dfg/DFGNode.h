@@ -1590,6 +1590,7 @@ public:
     {
         switch (op()) {
         case NewTypedArray:
+        case TypedArraySet:
             return true;
         default:
             return false;
