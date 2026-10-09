@@ -54,6 +54,7 @@
 #import <WebCore/DataDetectorType.h>
 #import <WebCore/ElementTargetingTypes.h>
 #import <WebCore/ICUSearcher.h>
+#import <WebCore/Region.h>
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/SharedMemory.h>
 #import <WebCore/TextExtractionTypes.h>
@@ -223,6 +224,9 @@ static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentif
 #if PLATFORM(MAC)
 - (RetainPtr<NSPopUpButtonCell>)_activePopupButtonCell;
 #endif
+#if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
+- (void)_recognizeTextInCanvasesAndImagesInResult:(WebCore::TextExtraction::Result&&)result completionHandler:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Result>&&)>&&)completionHandler;
+#endif
 @end
 
 @implementation WKWebView (WKTextExtraction)
@@ -292,6 +296,13 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     }
 }
 
+static bool shouldRecognizeOnlyTextWithUncertainVisibility(_WKTextExtractionConfiguration *configuration, bool allowFiltering)
+{
+    return allowFiltering
+        && (configuration.filterOptions & _WKTextExtractionFilterTextRecognition)
+        && configuration.textRecognitionPolicy == _WKTextExtractionTextRecognitionPolicyTextWithUncertainVisibility;
+}
+
 - (void)_ensureTextExtractionFilterRulesWithCompletionHandler:(CompletionHandler<void()>&&)completionHandler
 {
     _page->hasTextExtractionFilterRules([completionHandler = WTF::move(completionHandler), weakSelf = WeakObjCPtr<WKWebView>(self)](bool hasRules) mutable {
@@ -312,6 +323,9 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     bool filterUsingClassifier = allowFiltering && configuration.filterOptions & _WKTextExtractionFilterClassifier;
     bool filterHiddenText = allowFiltering && configuration.filterOptions & _WKTextExtractionFilterTextRecognition;
     bool filterUsingRules = allowFiltering && configuration.filterOptions & _WKTextExtractionFilterRules;
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    bool recognizeOnlyTextWithUncertainVisibility = shouldRecognizeOnlyTextWithUncertainVisibility(configuration, allowFiltering);
+#endif
 
     static uint64_t nextTextExtractionTracingID = 0;
     auto currentTextExtractionTracingID = ++nextTextExtractionTracingID;
@@ -352,6 +366,9 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         mainFrameIdentifier = mainFrame->frameID(),
         filterUsingClassifier,
         filterHiddenText,
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+        recognizeOnlyTextWithUncertainVisibility,
+#endif
         filterUsingRules,
         includeURLs = configuration.includeURLs,
         includeRects = configuration.includeRects,
@@ -378,7 +395,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
         if (filterUsingClassifier) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([](auto& text, auto&&, auto&&) mutable {
+            filterCallbacks.append([](auto& text, auto&&, auto&&, auto) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
 
@@ -395,9 +412,14 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
         if (filterHiddenText) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([strongSelf](auto& text, auto&& frameID, auto&& enclosingNodeID) mutable {
+            filterCallbacks.append([strongSelf, recognizeOnlyTextWithUncertainVisibility](auto& text, auto&& frameID, auto&& enclosingNodeID, auto visibility) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
+
+                if (recognizeOnlyTextWithUncertainVisibility && visibility == WebCore::TextExtraction::TextVisibility::Evident) {
+                    producer.settle(String { text });
+                    return promise;
+                }
 
                 auto lines = text.splitAllowingEmptyEntries('\n');
                 auto components = Box<Vector<String>>::create();
@@ -410,7 +432,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
                 for (size_t index = 0; index < lines.size(); ++index) {
                     static constexpr auto minimumLengthForTextDetection = 100;
                     auto line = lines[index];
-                    if (line.length() < minimumLengthForTextDetection) {
+                    if (line.isEmpty() || (!recognizeOnlyTextWithUncertainVisibility && line.length() < minimumLengthForTextDetection)) {
                         components->at(index) = WTF::move(line);
                         continue;
                     }
@@ -427,7 +449,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
         if (filterUsingRules) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([page = strongSelf->_page](auto& text, auto&&, auto&&) mutable {
+            filterCallbacks.append([page = strongSelf->_page](auto& text, auto&&, auto&&, auto) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
 
@@ -711,7 +733,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
                 return;
             }
 
-            Ref promise = callbacks[index](text, std::nullopt, std::nullopt);
+            Ref promise = callbacks[index](text, std::nullopt, std::nullopt, WebCore::TextExtraction::TextVisibility::Evident);
             promise->whenSettled(RunLoop::mainSingleton(), [text, protectedThis = Ref { *this }, index](auto&& result) mutable {
                 if (!result)
                     protectedThis->completion(@"");
@@ -725,7 +747,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     applier->completion = makeBlockPtr(completionHandler);
 
     if (filterUsingClassifier) {
-        applier->callbacks.append([](auto& text, auto&&, auto&&) mutable {
+        applier->callbacks.append([](auto& text, auto&&, auto&&, auto) mutable {
             WebKit::TextExtractionFilterPromise::Producer producer;
 
             Ref promise = producer.promise();
@@ -741,7 +763,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     }
 
     if (filterUsingRules) {
-        applier->callbacks.append([page = _page](auto& text, auto&&, auto&&) mutable {
+        applier->callbacks.append([page = _page](auto& text, auto&&, auto&&, auto) mutable {
             WebKit::TextExtractionFilterPromise::Producer producer;
 
             Ref promise = producer.promise();
@@ -823,6 +845,80 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
 
 #endif // ENABLE(DATA_DETECTION)
 
+#if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
+static size_t countTextItemsWithUncertainVisibility(const WebCore::TextExtraction::Item& item)
+{
+    size_t count = 0;
+    if (auto* textData = std::get_if<WebCore::TextExtraction::TextItemData>(&item.data); textData && textData->visibility == WebCore::TextExtraction::TextVisibility::Uncertain)
+        count++;
+
+    for (auto& child : item.children)
+        count += countTextItemsWithUncertainVisibility(child);
+    return count;
+}
+
+- (void)_recognizeWordsInSnapshotOfRect:(CGRect)rectInWebView startTime:(MonotonicTime)startTime aggregator:(Ref<MainRunLoopCallbackAggregator>&&)aggregator
+{
+    protect(_page)->callAfterNextPresentationUpdate([rectInWebView, weakSelf = WeakObjCPtr<WKWebView>(self), aggregator = WTF::move(aggregator), startTime] mutable {
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        WebCore::FloatRect snapshotRect { rectInWebView };
+        if (CGRectIsNull(rectInWebView)) {
+#if PLATFORM(IOS_FAMILY)
+            snapshotRect = [strongSelf convertRect:[strongSelf->_contentView bounds] fromView:strongSelf->_contentView.get()];
+#else
+            auto scrollPosition = strongSelf->_page->mainFrameScrollPosition();
+            snapshotRect = NSMakeRect(-scrollPosition.x(), -scrollPosition.y(), strongSelf->_lastContentSize.width, strongSelf->_lastContentSize.height);
+#endif
+        }
+
+        WebCore::FloatSize bitmapSize { snapshotRect.width(), snapshotRect.height() };
+        bitmapSize.scale(strongSelf->_page->deviceScaleFactor());
+
+        static constexpr OptionSet snapshotOptions { WebKit::SnapshotOption::FullContentRect, WebKit::SnapshotOption::ExcludeSelectionHighlighting };
+
+        strongSelf->_page->takeSnapshot(WebCore::enclosingIntRect(snapshotRect), WebCore::expandedIntSize(bitmapSize), snapshotOptions, [weakSelf, aggregator = WTF::move(aggregator), startTime](CGImageRef image) mutable {
+            RetainPtr strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            auto snapshotEndTime = MonotonicTime::now();
+            auto millisecondsSpent = (snapshotEndTime - startTime).milliseconds();
+            if (!image) {
+                RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> • Failed to take full snapshot (%.0f ms)", [strongSelf class], strongSelf.get(), millisecondsSpent);
+                return;
+            }
+
+            RELEASE_LOG(TextExtraction, "<%@: %p> • Took full snapshot (%.0f ms)", [strongSelf class], strongSelf.get(), millisecondsSpent);
+            strongSelf->_textExtractionTextRecognitionCount++;
+            WebKit::recognizeText(image, WebKit::TextRecognitionLevel::Fast, [weakSelf, snapshotEndTime, aggregator = WTF::move(aggregator)](NSString *text, NSError *error) mutable {
+                RetainPtr strongSelf = weakSelf.get();
+                if (!strongSelf)
+                    return;
+
+                auto millisecondsSpent = (MonotonicTime::now() - snapshotEndTime).milliseconds();
+                if (error) {
+                    RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> • Failed to recognize text in full snapshot: %@ (%.0f ms)", [strongSelf class], strongSelf.get(), error, millisecondsSpent);
+                    return;
+                }
+
+                __block HashSet<String> recognizedWords;
+                [text enumerateSubstringsInRange:NSMakeRange(0, text.length) options:NSStringEnumerationByWords usingBlock:^(NSString *word, NSRange, NSRange, BOOL *) {
+                    if (!word.length)
+                        return;
+
+                    recognizedWords.add(WebCore::foldQuoteMarks(word.lowercaseString));
+                }];
+                RELEASE_LOG(TextExtraction, "<%@: %p> • Recognized text in full snapshot (%.0f ms) - %u words", [strongSelf class], strongSelf.get(), millisecondsSpent, recognizedWords.size());
+                strongSelf->_textExtractionRecognizedWords = { WTF::move(recognizedWords) };
+            });
+        });
+    });
+}
+#endif // ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
+
 - (void)_requestTextExtractionInternal:(_WKTextExtractionConfiguration *)configuration completion:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Result>&&)>&&)completion
 {
     Ref preferences = _page->preferences();
@@ -849,6 +945,9 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         return WebCore::TextExtraction::NodeIdentifierInclusion::None;
     }();
     bool skipNearlyTransparentContent = configuration.skipNearlyTransparentContent;
+    if (configuration.textRecognitionPolicy != _WKTextExtractionTextRecognitionPolicyAllText && !(configuration.filterOptions & _WKTextExtractionFilterTextRecognition))
+        RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Ignoring textRecognitionPolicy, since filterOptions does not include _WKTextExtractionFilterTextRecognition", [self class], self);
+    bool recognizeOnlyTextWithUncertainVisibility = shouldRecognizeOnlyTextWithUncertainVisibility(configuration, preferences->textExtractionFilterEnabled());
     auto rectInRootView = [&] -> std::optional<WebCore::FloatRect> {
         if (CGRectIsNull(rectInWebView))
             return std::nullopt;
@@ -885,6 +984,7 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             .contextMenuTargetNodeIdentifier = contextMenuTargetNodeIdentifier,
             .mergeParagraphs = mergeParagraphs,
             .skipNearlyTransparentContent = skipNearlyTransparentContent,
+            .detectTextWithUncertainVisibility = recognizeOnlyTextWithUncertainVisibility,
             .nodeIdentifierInclusion = nodeIdentifierInclusion,
             .eventListenerCategories = coreEventListenerCategories(configuration.eventListenerCategories),
             .includeAccessibilityAttributes = !!configuration.includeAccessibilityAttributes,
@@ -920,11 +1020,37 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
     auto startTime = MonotonicTime::now();
     RELEASE_LOG(TextExtraction, "<%@: %p> Starting text extraction", [self class], self);
     auto results = Box<WebCore::TextExtraction::PageResults>::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([results, completion = WTF::move(completion)] mutable {
+    auto aggregator = MainRunLoopCallbackAggregator::create([
+        results,
+        completion = WTF::move(completion)
+#if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
+        , weakSelf
+        , recognizeOnlyTextWithUncertainVisibility
+        , rectInWebView
+        , startTime
+#endif
+    ] mutable {
         auto result = WebCore::TextExtraction::collatePageResults(WTF::move(*results));
         auto rootData = result.rootItem.dataAs<WebCore::TextExtraction::ScrollableItemData>();
         if (!rootData || !rootData->isRoot)
             return completion(std::nullopt);
+
+#if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
+        if (RetainPtr strongSelf = weakSelf.get(); strongSelf && recognizeOnlyTextWithUncertainVisibility) {
+            static constexpr auto maximumTextItemsToValidateIndividually = 10;
+            if (!strongSelf->_textExtractionRecognizedWords && countTextItemsWithUncertainVisibility(result.rootItem) > maximumTextItemsToValidateIndividually) {
+                auto results = Box<WebCore::TextExtraction::Result>::create(WTF::move(result));
+                Ref afterRecognizingWords = MainRunLoopCallbackAggregator::create([weakSelf, results, completion = WTF::move(completion)] mutable {
+                    if (RetainPtr strongSelf = weakSelf.get())
+                        [strongSelf _recognizeTextInCanvasesAndImagesInResult:WTF::move(*results) completionHandler:WTF::move(completion)];
+                    else
+                        completion(WTF::move(*results));
+                });
+                return [strongSelf _recognizeWordsInSnapshotOfRect:rectInWebView startTime:startTime aggregator:WTF::move(afterRecognizingWords)];
+            }
+            return [strongSelf _recognizeTextInCanvasesAndImagesInResult:WTF::move(result) completionHandler:WTF::move(completion)];
+        }
+#endif
 
         completion(WTF::move(result));
     });
@@ -953,64 +1079,8 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
     WebKit::TextExtractionTokenizer::singleton().prewarm();
 
 #if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
-    if (!_textExtractionRecognizedWords && preferences->textExtractionFilterEnabled() && (configuration.filterOptions & _WKTextExtractionFilterTextRecognition)) {
-        protect(_page)->callAfterNextPresentationUpdate([rectInWebView, weakSelf, aggregator, startTime] mutable {
-            RetainPtr strongSelf = weakSelf.get();
-            if (!strongSelf)
-                return;
-
-            WebCore::FloatRect snapshotRect { rectInWebView };
-            if (CGRectIsNull(rectInWebView)) {
-#if PLATFORM(IOS_FAMILY)
-                snapshotRect = [strongSelf convertRect:[strongSelf->_contentView bounds] fromView:strongSelf->_contentView.get()];
-#else
-                auto scrollPosition = strongSelf->_page->mainFrameScrollPosition();
-                snapshotRect = NSMakeRect(-scrollPosition.x(), -scrollPosition.y(), strongSelf->_lastContentSize.width, strongSelf->_lastContentSize.height);
-#endif
-            }
-
-            WebCore::FloatSize bitmapSize { snapshotRect.width(), snapshotRect.height() };
-            bitmapSize.scale(strongSelf->_page->deviceScaleFactor());
-
-            static constexpr OptionSet snapshotOptions { WebKit::SnapshotOption::FullContentRect, WebKit::SnapshotOption::ExcludeSelectionHighlighting };
-
-            strongSelf->_page->takeSnapshot(WebCore::enclosingIntRect(snapshotRect), WebCore::expandedIntSize(bitmapSize), snapshotOptions, [weakSelf, aggregator = WTF::move(aggregator), startTime](CGImageRef image) mutable {
-                RetainPtr strongSelf = weakSelf.get();
-                if (!strongSelf)
-                    return;
-
-                auto snapshotEndTime = MonotonicTime::now();
-                auto millisecondsSpent = (snapshotEndTime - startTime).milliseconds();
-                if (!image) {
-                    RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> • Failed to take full snapshot (%.0f ms)", [strongSelf class], strongSelf.get(), millisecondsSpent);
-                    return;
-                }
-
-                RELEASE_LOG(TextExtraction, "<%@: %p> • Took full snapshot (%.0f ms)", [strongSelf class], strongSelf.get(), millisecondsSpent);
-                WebKit::recognizeText(image, WebKit::TextRecognitionLevel::Fast, [weakSelf, snapshotEndTime, aggregator = WTF::move(aggregator)](NSString *text, NSError *error) mutable {
-                    RetainPtr strongSelf = weakSelf.get();
-                    if (!strongSelf)
-                        return;
-
-                    auto millisecondsSpent = (MonotonicTime::now() - snapshotEndTime).milliseconds();
-                    if (error) {
-                        RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> • Failed to recognize text in full snapshot: %@ (%.0f ms)", [strongSelf class], strongSelf.get(), error, millisecondsSpent);
-                        return;
-                    }
-
-                    __block HashSet<String> recognizedWords;
-                    [text enumerateSubstringsInRange:NSMakeRange(0, text.length) options:NSStringEnumerationByWords usingBlock:^(NSString *word, NSRange, NSRange, BOOL *) {
-                        if (!word.length)
-                            return;
-
-                        recognizedWords.add(WebCore::foldQuoteMarks(word.lowercaseString));
-                    }];
-                    RELEASE_LOG(TextExtraction, "<%@: %p> • Recognized text in full snapshot (%.0f ms) - %u words", [strongSelf class], strongSelf.get(), millisecondsSpent, recognizedWords.size());
-                    strongSelf->_textExtractionRecognizedWords = { WTF::move(recognizedWords) };
-                });
-            });
-        });
-    }
+    if (!_textExtractionRecognizedWords && !recognizeOnlyTextWithUncertainVisibility && preferences->textExtractionFilterEnabled() && (configuration.filterOptions & _WKTextExtractionFilterTextRecognition))
+        [self _recognizeWordsInSnapshotOfRect:rectInWebView startTime:startTime aggregator:WTF::move(aggregator)];
 #endif // ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
 }
 
@@ -1239,6 +1309,7 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         if (!cgImage)
             return completionHandler(text);
 
+        view->_textExtractionTextRecognitionCount++;
         WebKit::recognizeText(cgImage.get(), WebKit::TextRecognitionLevel::Accurate, [text = WTF::move(text), completionHandler = WTF::move(completionHandler), view = WTF::move(view), textHash](NSString *recognizedText, NSError *error) mutable {
             if (error)
                 return completionHandler(text);
@@ -1260,6 +1331,88 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         });
     });
 }
+
+#if HAVE(VISION)
+
+static void collectVisibleCanvasesAndImages(WebCore::TextExtraction::Item& item, const WebCore::FloatRect& visibleRect, Vector<std::pair<WebCore::TextExtraction::Item*, WebCore::FloatRect>>& regions)
+{
+    using namespace WebCore::TextExtraction;
+
+    if (item.dataAs<ContainerType>() == ContainerType::Canvas || item.hasData<ImageItemData>()) {
+        if (auto visiblePart = intersection(item.rectInRootView, visibleRect); !visiblePart.isEmpty())
+            regions.append({ &item, visiblePart });
+        return;
+    }
+
+    for (auto& child : item.children)
+        collectVisibleCanvasesAndImages(child, visibleRect, regions);
+}
+
+- (void)_recognizeTextInCanvasesAndImagesInResult:(WebCore::TextExtraction::Result&&)result completionHandler:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Result>&&)>&&)completionHandler
+{
+    using namespace WebCore::TextExtraction;
+
+    static constexpr auto minimumCoveredFractionOfView = 0.25;
+
+#if PLATFORM(IOS_FAMILY)
+    WebCore::FloatRect visibleRect { [self convertRect:self.bounds toView:_contentView.get()] };
+#else
+    WebCore::FloatRect visibleRect { { }, _page->viewSize() };
+#endif
+    auto results = Box<Result>::create(WTF::move(result));
+    Vector<std::pair<Item*, WebCore::FloatRect>> regions;
+    collectVisibleCanvasesAndImages(results->rootItem, visibleRect, regions);
+
+    WebCore::Region coveredRegion;
+    for (auto& [item, visiblePart] : regions)
+        coveredRegion.unite(WebCore::enclosingIntRect(visiblePart));
+    if (coveredRegion.totalArea() < minimumCoveredFractionOfView * visibleRect.area())
+        return completionHandler(WTF::move(*results));
+
+    WebCore::FloatRect coveredBounds { coveredRegion.bounds() };
+
+    static constexpr OptionSet snapshotOptions { WebKit::SnapshotOption::InViewCoordinates, WebKit::SnapshotOption::ExcludeSelectionHighlighting };
+    auto bitmapSize = coveredBounds.size();
+    bitmapSize.scale(_page->deviceScaleFactor());
+    _page->takeSnapshot(WebCore::enclosingIntRect(coveredBounds), WebCore::expandedIntSize(bitmapSize), snapshotOptions, [weakSelf = WeakObjCPtr<WKWebView>(self), results, regions = WTF::move(regions), coveredBounds, completionHandler = WTF::move(completionHandler)](CGImageRef image) mutable {
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf || !image)
+            return completionHandler(WTF::move(*results));
+
+        strongSelf->_textExtractionTextRecognitionCount++;
+        WebKit::recognizeTextLines(image, WebKit::TextRecognitionLevel::Fast, [results, regions = WTF::move(regions), coveredBounds, completionHandler = WTF::move(completionHandler)](auto&& lines, NSError *error) mutable {
+            if (error)
+                return completionHandler(WTF::move(*results));
+
+            Vector<Vector<String>> textInRegion(regions.size());
+            for (auto& line : lines) {
+                auto lineRect = line.rect;
+                lineRect.scale(coveredBounds.width(), coveredBounds.height());
+                lineRect.moveBy(coveredBounds.location());
+                auto index = regions.findIf([center = lineRect.center()](auto& region) {
+                    return region.second.contains(center);
+                });
+                if (index != notFound)
+                    textInRegion[index].append(line.text);
+            }
+
+            for (size_t index = 0; index < regions.size(); ++index) {
+                if (textInRegion[index].isEmpty())
+                    continue;
+
+                auto* region = regions[index].first;
+                auto rect = region->rectInRootView;
+                auto originalRegion = WTF::move(*region);
+                *region = Item { .data = ContainerType::Generic, .rectInRootView = rect };
+                region->children.append(WTF::move(originalRegion));
+                region->children.append(Item { .data = TextItemData { { }, { }, makeStringByJoining(textInRegion[index], " "_s), { } }, .rectInRootView = rect });
+            }
+            completionHandler(WTF::move(*results));
+        });
+    });
+}
+
+#endif // HAVE(VISION)
 
 - (void)_clearTextExtractionFilterCache
 {

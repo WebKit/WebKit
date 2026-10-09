@@ -599,6 +599,7 @@ struct LiveResizeSnapshotState {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
     std::optional<HashSet<String>> _textExtractionRecognizedWords;
+    NSUInteger _textExtractionTextRecognitionCount;
 #endif
     RefPtr<WebKit::TextExtractionURLCache> _textExtractionURLCache;
     Vector<std::pair<String, String>> _lastTextExtractionReplacementStrings;

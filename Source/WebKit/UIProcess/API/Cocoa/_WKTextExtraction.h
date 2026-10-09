@@ -86,6 +86,13 @@ typedef NS_ENUM(NSInteger, _WKTextExtractionWordLimitPolicy) {
     _WKTextExtractionWordLimitPolicyDiscretionary,
 } WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
+#define WK_TEXT_EXTRACTION_HAS_TEXT_RECOGNITION_POLICY 1
+
+typedef NS_ENUM(NSInteger, _WKTextExtractionTextRecognitionPolicy) {
+    _WKTextExtractionTextRecognitionPolicyAllText,
+    _WKTextExtractionTextRecognitionPolicyTextWithUncertainVisibility,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
 @interface _WKTextExtractionConfiguration : NSObject
 
@@ -246,6 +253,13 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  Defaults to `_WKTextExtractionFilterAll`.
  */
 @property (nonatomic) _WKTextExtractionFilterOptions filterOptions;
+
+/*!
+ Which text `_WKTextExtractionFilterTextRecognition` validates with text recognition. Has no effect unless
+ `filterOptions` includes `_WKTextExtractionFilterTextRecognition`.
+ Defaults to `_WKTextExtractionTextRecognitionPolicyAllText`.
+ */
+@property (nonatomic) _WKTextExtractionTextRecognitionPolicy textRecognitionPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  Automatically shorten extracted URLs by removing or replacing parts of each URL.

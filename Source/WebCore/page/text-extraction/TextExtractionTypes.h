@@ -97,6 +97,11 @@ enum class NodeIdentifierInclusion : uint8_t {
     AllContainers,
 };
 
+enum class TextVisibility : bool {
+    Evident,
+    Uncertain,
+};
+
 struct Request {
     HashMap<String, HashMap<JSHandleIdentifier, String>> clientNodeAttributes;
     std::optional<FloatRect> collectionRectInRootView;
@@ -105,6 +110,7 @@ struct Request {
     std::optional<NodeIdentifier> contextMenuTargetNodeIdentifier;
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
+    bool detectTextWithUncertainVisibility { false };
     NodeIdentifierInclusion nodeIdentifierInclusion { NodeIdentifierInclusion::None };
     OptionSet<EventListenerCategory> eventListenerCategories;
     bool includeAccessibilityAttributes { false };
@@ -130,6 +136,7 @@ struct TextItemData {
     std::optional<CharacterRange> selectedRange;
     String content;
     std::optional<Editable> editable;
+    TextVisibility visibility { TextVisibility::Evident };
 };
 
 struct ScrollableItemData {
