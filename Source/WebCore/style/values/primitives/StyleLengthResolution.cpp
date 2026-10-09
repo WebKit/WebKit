@@ -393,6 +393,7 @@ struct CSSToLengthConversionDataAdaptor {
 struct DirectDataAdaptor {
     CSSPropertyID propertyToCompute;
     const FontCascade& fontCascadeForUnit;
+    const FontCascade* rootFontCascadeForUnit;
     const RenderView* renderViewForUnit;
 
     void setUsesViewportUnits() const
@@ -421,7 +422,9 @@ struct DirectDataAdaptor {
 
     const FontCascade& fontCascadeForRootFontUnits() const
     {
-        return fontCascadeForUnit;
+        // Callers without access to the root element's font (e.g. an OffscreenCanvas in a worker)
+        // fall back to resolving root font units against the element's font.
+        return rootFontCascadeForUnit ? *rootFontCascadeForUnit : fontCascadeForUnit;
     }
 
     const ComputedStyle* styleForLineHeightUnits() const
@@ -622,11 +625,12 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
     });
 }
 
-double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const RenderView* renderViewForUnit)
+double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const FontCascade* rootFontCascadeForUnit, const RenderView* renderViewForUnit)
 {
     return resolveLengthImpl(value, lengthUnit, DirectDataAdaptor {
         .propertyToCompute = propertyToCompute,
         .fontCascadeForUnit = fontCascadeForUnit,
+        .rootFontCascadeForUnit = rootFontCascadeForUnit,
         .renderViewForUnit = renderViewForUnit,
     });
 }
