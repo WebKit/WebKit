@@ -79,6 +79,14 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
     return *m_gamepads[index];
 }
 
+RefPtr<Gamepad> NavigatorGamepad::gamepadIfExists(const PlatformGamepad& platformGamepad) const
+{
+    unsigned index = platformGamepad.index();
+    if (index >= m_gamepads.size())
+        return nullptr;
+    return m_gamepads[index];
+}
+
 ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Navigator& navigator)
 {
     RefPtr document = navigator.document() ? navigator.document() : nullptr;
