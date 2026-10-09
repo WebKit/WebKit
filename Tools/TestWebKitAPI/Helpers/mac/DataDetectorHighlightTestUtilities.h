@@ -32,9 +32,12 @@
 #if PLATFORM(MAC) && ENABLE(DATA_DETECTION) && !__has_feature(modules)
 
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
+#import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -57,6 +60,44 @@ RetainPtr<CALayer> visibleLayerNear(CALayer *rootLayer, CGRect expectedFrame, CG
 testing::AssertionResult hasVisibleLayerNear(CALayer *rootLayer, CGRect expectedFrame, CGFloat tolerance);
 testing::AssertionResult hoverUntilHighlightIsShown(TestWKWebView *, CGRect textRect, CGRect highlightBoundingRect, CGFloat tolerance);
 testing::AssertionResult waitUntilWindowClipRectWidthIs(TestWKWebView *, WKFrameInfo *, int width);
+
+class DataDetectorInSubframeTest : public testing::TestWithParam<SiteIsolationParams> {
+public:
+    static constexpr int iframeLeft = 100;
+    static constexpr int iframeTop = 120;
+    static constexpr int iframeWidth = 400;
+    static constexpr int iframeHeight = 300;
+    static constexpr int iframeBorder = 3;
+    static constexpr int iframePadding = 5;
+    static constexpr int iframeBorderAndPadding = iframeBorder + iframePadding;
+    static constexpr NSRect iframeContentBox { { iframeLeft + iframeBorderAndPadding, iframeTop + iframeBorderAndPadding }, { iframeWidth, iframeHeight } };
+    static constexpr int secondIframeLeft = 520;
+    static constexpr NSRect secondIframeContentBox { { secondIframeLeft + iframeBorderAndPadding, iframeTop + iframeBorderAndPadding }, { iframeWidth, iframeHeight } };
+    static constexpr int nestedFrameLeft = 30;
+    static constexpr int nestedFrameTop = 40;
+    static constexpr NSPoint nestedFrameContentOrigin { iframeLeft + iframeBorderAndPadding + nestedFrameLeft, iframeTop + iframeBorderAndPadding + nestedFrameTop };
+
+    static String iframe(int left, const String& url);
+    static String mainHTML(const String& iframes);
+    static String nestedFrameHTML(const String& url, int width, int height);
+    static HTTPResponse html(const String& body);
+
+    void setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure);
+    void load(NSString *path);
+    RetainPtr<WKFrameInfo> nestedFrame();
+    static CGRect rectInWebView(NSArray *rectInFrame, CGPoint frameContentOrigin);
+    static CGPoint pointInSecondFrame(CGPoint pointInFirstFrame);
+    static CGPoint center(CGRect);
+    CGRect rootVisibleRect(CGRect contentBoxIfRoot);
+    void moveMouse(CGPoint pointInWebView);
+    bool scrollTo(WKFrameInfo *, int scrollY);
+
+    static std::string testNameGenerator(testing::TestParamInfo<SiteIsolationParams>);
+
+    std::unique_ptr<HTTPServer> server;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestWKWebView> webView;
+};
 
 } // namespace TestWebKitAPI
 

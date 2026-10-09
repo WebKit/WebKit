@@ -38,7 +38,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKFrameTreeNode.h>
 #import <objc/runtime.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
@@ -199,43 +198,18 @@ namespace TestWebKitAPI {
 
 static constexpr CGFloat telephoneNumberRectTolerance = 2;
 
-class TelephoneNumberInSubframe : public testing::TestWithParam<SiteIsolationParams> {
+class TelephoneNumberInSubframe : public DataDetectorInSubframeTest {
 public:
-    static constexpr int iframeLeft = 100;
-    static constexpr int iframeTop = 120;
-    static constexpr int iframeWidth = 400;
-    static constexpr int iframeHeight = 300;
-    static constexpr int iframeBorder = 3;
-    static constexpr int iframePadding = 5;
-    static constexpr int iframeBorderAndPadding = iframeBorder + iframePadding;
-    static constexpr NSRect iframeContentBox { { iframeLeft + iframeBorderAndPadding, iframeTop + iframeBorderAndPadding }, { iframeWidth, iframeHeight } };
-    static constexpr int secondIframeLeft = 520;
-    static constexpr NSRect secondIframeContentBox { { secondIframeLeft + iframeBorderAndPadding, iframeTop + iframeBorderAndPadding }, { iframeWidth, iframeHeight } };
-    static constexpr int nestedFrameLeft = 30;
-    static constexpr int nestedFrameTop = 40;
-    static constexpr NSPoint nestedFrameContentOrigin { iframeLeft + iframeBorderAndPadding + nestedFrameLeft, iframeTop + iframeBorderAndPadding + nestedFrameTop };
-    static constexpr NSRect nestedFrameContentBox { nestedFrameContentOrigin, { 300, 200 } };
+    static constexpr int nestedFrameWidth = 300;
+    static constexpr int nestedFrameHeight = 200;
+    static constexpr NSRect nestedFrameContentBox { nestedFrameContentOrigin, { nestedFrameWidth, nestedFrameHeight } };
     static constexpr NSRect nestedFrameAtOriginBox { { 300, 120 }, { 300, 200 } };
     static constexpr NSRect iframeNextToTelephoneNumberBox { { 300, 120 }, { 400, 300 } };
 
     void SetUp() override
     {
-        auto iframe = [](int left, const String& url) {
-            return makeString("<iframe style='position:absolute; left:"_s, left, "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
-                "px; border:"_s, iframeBorder, "px solid black; padding:"_s, iframePadding, "px' src='"_s, url, "'></iframe>"_s);
-        };
-        auto mainHTML = [](const String& iframes) {
-            return makeString("<body style='margin:0'>"_s, iframes, "<div style='height:2000px'></div></body>"_s);
-        };
-        auto nestedFrameHTML = [](const String& url) {
-            return makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, nestedFrameLeft, "px; top:"_s, nestedFrameTop, "px; width:300px; height:200px; border:0' src='"_s, url, "'></iframe></body>"_s);
-        };
         String secondIframeOrigin { GetParam().crossOrigin ? "https://apple.com"_s : "https://example.com"_s };
-        auto html = [](const String& body) {
-            return HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, body };
-        };
-
-        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+        setUpWebView({
             { "/main"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)))) },
             { "/main-without-scroll-bars"_s, html(makeString("<html style='overflow:hidden'><body style='margin:0'>"_s, iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)), "</body></html>"_s)) },
             { "/main-with-two-iframes"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)), iframe(secondIframeLeft, makeString(secondIframeOrigin, "/text.html"_s))))) },
@@ -251,51 +225,18 @@ public:
                 "<iframe style='position:absolute; left:300px; top:120px; width:400px; height:300px; border:0' src='"_s, GetParam().subframeURL("/text.html"_s), "'></iframe></body>"_s)) },
             { "/main-with-scrollable-iframe"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/tall-telephone-number.html"_s)))) },
             { "/main-with-text-and-iframe"_s, html(mainHTML(makeString("<p style='margin:40px; font:20px Helvetica'>Select these words</p>"_s, iframe(iframeLeft, GetParam().subframeURL("/text.html"_s))))) },
-            { "/nested.html"_s, html(nestedFrameHTML("telephone-number.html"_s)) },
-            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/telephone-number.html"_s)) },
+            { "/nested.html"_s, html(nestedFrameHTML("telephone-number.html"_s, nestedFrameWidth, nestedFrameHeight)) },
+            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/telephone-number.html"_s, nestedFrameWidth, nestedFrameHeight)) },
             { "/nested-main-site-at-origin.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number.html'></iframe></body>"_s) },
             { "/nested-main-site-at-origin-with-telephone-number-at-left.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number-at-left.html'></iframe></body>"_s) },
             { "/telephone-number.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>Call <span id='phone'>408-996-1010</span> today</p></body>"_s) },
             { "/telephone-number-at-left.html"_s, html("<body style='margin:0'><span id='phone' style='position:absolute; left:4px; top:10px; font:20px Helvetica; white-space:nowrap'>408-996-1010</span></body>"_s) },
             { "/tall-telephone-number.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:100px'>Call <span id='phone'>408-996-1010</span> today</p><div style='height:1000px'></div></body>"_s) },
             { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No telephone number here</p></body>"_s) },
-        }, HTTPServer::Protocol::HttpsProxy);
-
-        RetainPtr configuration { [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES] };
-        [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
-        [[configuration preferences] _setTelephoneNumberDetectionIsEnabled:YES];
-        [configuration _setServiceControlsEnabled:YES];
-        GetParam().applyTo(configuration.get());
-
-        navigationDelegate = adoptNS([TestNavigationDelegate new]);
-        [navigationDelegate allowAnyTLSCertificate];
-        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 600) configuration:configuration.get() addToWindow:YES]);
-        [webView setNavigationDelegate:navigationDelegate.get()];
-        [[webView window] makeKeyAndOrderFront:nil];
-        [[webView window] orderFrontRegardless];
-    }
-
-    void load(NSString *path)
-    {
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[@"https://example.com" stringByAppendingString:path]]]];
-        [navigationDelegate waitForDidFinishNavigation];
-        [webView waitForNextPresentationUpdate];
-    }
-
-    RetainPtr<WKFrameInfo> nestedFrame()
-    {
-        RetainPtr<WKFrameInfo> frame;
-        EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
-            frame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject.info;
-            return !!frame;
-        }));
-        return frame;
-    }
-
-    static CGRect rectInWebView(NSArray *rectInFrame, CGPoint frameContentOrigin)
-    {
-        return CGRectMake(frameContentOrigin.x + [[rectInFrame objectAtIndex:0] doubleValue], frameContentOrigin.y + [[rectInFrame objectAtIndex:1] doubleValue],
-            [[rectInFrame objectAtIndex:2] doubleValue], [[rectInFrame objectAtIndex:3] doubleValue]);
+        }, [](WKWebViewConfiguration *configuration) {
+            [[configuration preferences] _setTelephoneNumberDetectionIsEnabled:YES];
+            [configuration _setServiceControlsEnabled:YES];
+        });
     }
 
     CGRect telephoneNumberRect(WKFrameInfo *frame, CGPoint frameContentOrigin)
@@ -309,21 +250,6 @@ public:
         return rectInWebView(rect.get(), frameContentOrigin);
     }
 
-    static CGPoint pointInSecondFrame(CGPoint pointInFirstFrame)
-    {
-        return CGPointMake(pointInFirstFrame.x - CGRectGetMinX(iframeContentBox) + CGRectGetMinX(secondIframeContentBox), pointInFirstFrame.y);
-    }
-
-    static CGPoint center(CGRect rect)
-    {
-        return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-    }
-
-    CGRect rootVisibleRect(CGRect contentBoxIfRoot)
-    {
-        return GetParam().isCrossOriginWithSiteIsolation() ? CGRectIntersection(contentBoxIfRoot, [webView bounds]) : [webView bounds];
-    }
-
     bool frameHasFocus(WKFrameInfo *frame)
     {
         return [[webView objectByEvaluatingJavaScript:@"document.hasFocus()" inFrame:frame] boolValue];
@@ -332,12 +258,6 @@ public:
     bool selectionContainsTelephoneNumber(WKFrameInfo *frame)
     {
         return [[webView objectByEvaluatingJavaScript:@"getSelection().toString().includes('408-996-1010')" inFrame:frame] boolValue];
-    }
-
-    void moveMouse(CGPoint pointInWebView)
-    {
-        [webView mouseMoveToPoint:[webView convertPoint:pointInWebView toView:nil] withFlags:0];
-        [webView waitForPendingMouseEvents];
     }
 
     void click(CGPoint pointInWebView)
@@ -462,15 +382,6 @@ public:
         ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), telephoneNumberRect, highlight.boundingRect, telephoneNumberRectTolerance));
         clickButtonAndExpectMenu(highlight.buttonCenter, telephoneNumberRect);
     }
-
-    static std::string testNameGenerator(testing::TestParamInfo<SiteIsolationParams> info)
-    {
-        return info.param.testName();
-    }
-
-    std::unique_ptr<HTTPServer> server;
-    RetainPtr<TestNavigationDelegate> navigationDelegate;
-    RetainPtr<TestWKWebView> webView;
 };
 
 TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAreAtTheTelephoneNumber)
@@ -487,12 +398,7 @@ TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAccountForMainFrameScroll)
     load(@"/main");
 
     static constexpr int scrollOffset = 40;
-    bool scrolled { TestWebKitAPI::Util::waitFor([&] {
-        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollOffset]];
-        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == scrollOffset;
-    }) };
-    EXPECT_TRUE(scrolled);
-    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(scrollTo(nil, scrollOffset));
 
     RetainPtr frame { [webView firstChildFrame] };
     CGRect rect { telephoneNumberRect(frame.get(), NSMakePoint(CGRectGetMinX(iframeContentBox), CGRectGetMinY(iframeContentBox) - scrollOffset)) };
@@ -507,12 +413,7 @@ TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAccountForSubframeScroll)
     selectTelephoneNumber(frame.get(), telephoneNumberRect(frame.get(), iframeContentBox.origin));
 
     static constexpr int scrollOffset = 30;
-    bool scrolled { TestWebKitAPI::Util::waitFor([&] {
-        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollOffset] inFrame:frame.get()];
-        return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:frame.get()] intValue] == scrollOffset;
-    }) };
-    EXPECT_TRUE(scrolled);
-    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(scrollTo(frame.get(), scrollOffset));
 
     showHighlightAndMenu(telephoneNumberRect(frame.get(), iframeContentBox.origin), rootVisibleRect(iframeContentBox));
 }
