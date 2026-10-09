@@ -27,6 +27,7 @@
 
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/LayoutRect.h>
+#include <WebCore/RectCorners.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollTypes.h>
 #include <wtf/InlineWeakPtr.h>
@@ -44,18 +45,20 @@ class RenderLayerCompositor;
 class ScrollingCoordinator;
 
 struct CompositedClipData {
-    CompositedClipData(RenderLayer* layer, const LayoutRoundedRect& roundedRect, bool isOverflowScrollEntry)
+    CompositedClipData(RenderLayer* layer, const LayoutRoundedRect& roundedRect, bool isOverflowScrollEntry, const RectCorners<float>& curvatures = { 1.0f, 1.0f, 1.0f, 1.0f })
         : clippingLayer(layer)
         , clipRect(roundedRect)
         , isOverflowScroll(isOverflowScrollEntry)
+        , cornerCurvatures(curvatures)
     {
     }
 
     friend bool operator==(const CompositedClipData&, const CompositedClipData&) = default;
-    
+
     InlineWeakPtr<RenderLayer> clippingLayer; // For scroller entries, the scrolling layer. For other entries, the most-descendant layer that has a clip.
     LayoutRoundedRect clipRect; // In the coordinate system of the RenderLayer that owns the stack.
     bool isOverflowScroll { false };
+    RectCorners<float> cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
 
