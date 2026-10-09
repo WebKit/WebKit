@@ -30,12 +30,14 @@
 #if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
+#include <optional>
 #include <stdint.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 namespace Corpse {
@@ -96,6 +98,10 @@ public:
 
     template<typename T> Ptr<T> ptr(Address);
     template<typename T> Span<T> span(Address, size_t count);
+
+    // The NUL-terminated string at `address`, Nullopt if it cannot be read
+    // or is longer than `maxLength`.
+    std::optional<UTF8CString> cString(Address, size_t maxLength);
 
     size_t regionCount() const;
     size_t mappedPageCount() const;

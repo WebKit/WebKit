@@ -44,7 +44,7 @@ void testThreads()
     SuiteTracer tracer("Thread");
     if (!tracer.shouldRun())
         return;
-    if (linuxSkip("Thread", "corpses are not implemented on Linux yet"))
+    if (linuxSkip("Thread", "listing a snapshot's threads is not implemented on Linux yet"))
         return;
 
     static constexpr const char* alphaName = "jsctools alpha";

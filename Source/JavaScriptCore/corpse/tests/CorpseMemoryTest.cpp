@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +34,12 @@
 #include <JavaScriptCore/CorpseMemory.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#include <algorithm>
 #include <array>
 #include <limits>
 #include <span>
+#include <string_view>
+#include <sys/mman.h>
 #include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakRandom.h>
@@ -53,6 +57,47 @@ using JSC::Corpse::Address;
 using JSC::Corpse::Memory;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+
+// Strings in the first of two pages, the second unreadable.
+static void testCString()
+{
+    size_t pageSize = Memory::pageSize();
+    void* mapping = mmap(nullptr, 2 * pageSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (mapping == MAP_FAILED) {
+        TEST_ASSERT(false, "the required test VA should be mappable");
+        return;
+    }
+    mprotect(static_cast<uint8_t*>(mapping) + pageSize, pageSize, PROT_NONE);
+    std::span<char> page { static_cast<char*>(mapping), pageSize };
+    std::ranges::fill(page, 'x');
+    page[0] = '\0';
+    page[pageSize - 1] = '\0';
+    Address start { mapping };
+    Address lastFour = start + pageSize - 4;
+
+    {
+        SelfSnapshot self;
+        if (self.isValid()) {
+            Memory& memory = self.snapshot().memory();
+            auto atEnd = memory.cString(lastFour, pageSize);
+            TEST_ASSERT(atEnd && std::string_view(atEnd->legacyCStringPointer()) == "xxx", "a string that ends just before an unreadable page is read");
+            auto empty = memory.cString(start, 16);
+            TEST_ASSERT(empty && !empty->length(), "an empty string is read");
+            auto spanning = memory.cString(start + 1, pageSize);
+            TEST_ASSERT(spanning && spanning->length() == pageSize - 2, "a string longer than a read chunk is read whole");
+            auto atLimit = memory.cString(start + 1, pageSize - 2);
+            TEST_ASSERT(atLimit && atLimit->length() == pageSize - 2, "a string as long as the limit is read");
+            TEST_ASSERT(!memory.cString(start + 1, pageSize - 3), "a string longer than the limit is not read");
+        }
+    }
+    page[pageSize - 1] = 'x';
+    {
+        SelfSnapshot self;
+        if (self.isValid())
+            TEST_ASSERT(!self.snapshot().memory().cString(lastFour, pageSize), "a string that runs into an unreadable page is not read");
+    }
+    munmap(mapping, 2 * pageSize);
+}
 
 #if OS(DARWIN)
 
@@ -158,6 +203,7 @@ void testMemory()
     SuiteTracer tracer("Memory");
     if (!tracer.shouldRun())
         return;
+    testCString();
 
     Arena arena;
     if (!arena.build()) {
@@ -444,7 +490,8 @@ void testMemory()
     SuiteTracer tracer("Memory");
     if (!tracer.shouldRun())
         return;
-    skipSuite("Memory", "the test arena is laid out with Mach VM calls");
+    testCString();
+    skipSuite("Memory arena", "the test arena is laid out with Mach VM calls");
 }
 
 #endif // OS(DARWIN)

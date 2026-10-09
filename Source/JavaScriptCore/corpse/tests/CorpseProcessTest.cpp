@@ -235,8 +235,7 @@ void testProcess()
         TEST_ASSERT(!analyzed, "a target that exits before it reports is not snapshotted");
     }
     analyzeInSeparateProcessStartedByRelativePath(createTargetGlobal, [](Snapshot& snapshot, Address) {
-        UTF8CString path = snapshot.process()->executablePath();
-        TEST_ASSERT(!path.isNull() && path == Process::create(getpid())->executablePath(),
+        TEST_ASSERT(!snapshot.executablePath().isNull() && snapshot.executablePath() == Process::create(getpid())->executablePath(),
             "a target started by a relative path has the absolute path of its executable");
     });
 }
