@@ -43,6 +43,7 @@
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -670,6 +671,8 @@ public:
     static constexpr NSRect nestedFrameContentBox { { iframeLeft + iframeBorderAndPadding + nestedFrameLeft, iframeTop + iframeBorderAndPadding + nestedFrameTop }, { nestedFrameWidth, nestedFrameHeight } };
     static constexpr size_t fiveSecondsOfTries { 50 };
 
+    virtual void adjustConfiguration(WKWebViewConfiguration *) { }
+
     void SetUp() override
     {
         auto iframe = [](int left, const String& url) {
@@ -709,6 +712,7 @@ public:
         RetainPtr configuration { [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES] };
         [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
         GetParam().applyTo(configuration.get());
+        adjustConfiguration(configuration.get());
 
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
@@ -851,7 +855,7 @@ public:
         CGPoint location { CGPointZero };
     };
 
-    std::optional<Menu> click(CGPoint pointInWebView, Seconds timeout = 5_s)
+    std::optional<Menu> presentedMenu(NOESCAPE const Function<void()>& trigger, Seconds timeout)
     {
         __block bool didShowMenu { false };
         __block Menu menu;
@@ -865,10 +869,19 @@ public:
             })
         };
 
-        [webView sendClickAtPoint:[webView convertPoint:pointInWebView toView:nil]];
-        if (!Util::runFor(&didShowMenu, timeout))
+        trigger();
+        if (!didShowMenu && timeout)
+            Util::runFor(&didShowMenu, timeout);
+        if (!didShowMenu)
             return std::nullopt;
         return menu;
+    }
+
+    std::optional<Menu> click(CGPoint pointInWebView, Seconds timeout = 5_s)
+    {
+        return presentedMenu([&] {
+            [webView sendClickAtPoint:[webView convertPoint:pointInWebView toView:nil]];
+        }, timeout);
     }
 
     void showHighlightAndMenu(WKFrameInfo *frame, CGRect dataDetectorRect, CGRect visibleRect)
@@ -1034,6 +1047,64 @@ TEST_P(LiveTextDataDetectorInSubframe, HighlightShowsWhenMouseMovesFromHighlight
 }
 
 INSTANTIATE_TEST_SUITE_P(ImageAnalysisTests, LiveTextDataDetectorInSubframe, testing::ValuesIn(siteIsolationParams), &LiveTextDataDetectorInSubframe::testNameGenerator);
+
+#if ENABLE(IPC_TESTING_API)
+
+class LiveTextDataDetectorMenuRequestFromSubframe : public LiveTextDataDetectorInSubframe {
+public:
+    void adjustConfiguration(WKWebViewConfiguration *configuration) override
+    {
+        setFeatureEnabled(configuration, @"IPCTestingAPIEnabled", true);
+        setFeatureEnabled(configuration, @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    }
+};
+
+TEST_P(LiveTextDataDetectorMenuRequestFromSubframe, ReplayShowsMenuOnlyFromTheImageFrameProcess)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    ASSERT_NE(frame.get()._processIdentifier, [webView _webProcessIdentifier]);
+    CGRect rect { installImageOverlayWithDataDetector(frame.get(), iframeContentBox.origin) };
+
+    [webView objectByEvaluatingJavaScript:@"window.capturedRequest = null;"
+        "IPC.addOutgoingMessageListener('UI', message => {"
+        "  if (!window.capturedRequest && message.name === IPC.messages.WebPageProxy_HandleClickForDataDetectionResult.name)"
+        "    window.capturedRequest = new Uint8Array(message.buffer).slice(16);"
+        "}); true" inFrame:frame.get()];
+    showHighlightAndMenu(frame.get(), rect, rootVisibleRect(iframeContentBox));
+    if (HasFatalFailure())
+        return;
+    ASSERT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.capturedRequest" inFrame:frame.get()] boolValue];
+    }));
+
+    RetainPtr<NSArray> bytes { [webView objectByEvaluatingJavaScript:@"Array.from(window.capturedRequest)" inFrame:frame.get()] };
+    RetainPtr bytesJSON { adoptNS([[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:bytes.get() options:0 error:nil] encoding:NSUTF8StringEncoding]) };
+    auto replay = [&](WKFrameInfo *sender) -> RetainPtr<NSString> {
+        return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+            "  IPC.sendMessage('UI', IPC.pageID, IPC.messages.WebPageProxy_HandleClickForDataDetectionResult.name, new Uint8Array(%@));"
+            "  const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+            "  return reply ? (reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '') : '<no reply>';"
+            "})()", bytesJSON.get()] inFrame:sender];
+    };
+
+    RetainPtr<NSString> invalidMessage;
+    EXPECT_FALSE(presentedMenu([&] {
+        invalidMessage = replay(nil);
+    }, 0_s).has_value());
+    EXPECT_WK_STREQ(@"", invalidMessage.get());
+
+    auto menu { presentedMenu([&] {
+        invalidMessage = replay(frame.get());
+    }, 0_s) };
+    ASSERT_TRUE(menu.has_value());
+    EXPECT_WK_STREQ(@"", invalidMessage.get());
+    EXPECT_TRUE(rectsAreNear(menu->elementBounds, rect, liveTextDataDetectorRectTolerance)) << NSStringFromRect(menu->elementBounds).UTF8String;
+}
+
+INSTANTIATE_TEST_SUITE_P(ImageAnalysisTests, LiveTextDataDetectorMenuRequestFromSubframe, testing::ValuesIn(crossOriginWithSiteIsolationParams), &LiveTextDataDetectorMenuRequestFromSubframe::testNameGenerator);
+
+#endif // ENABLE(IPC_TESTING_API)
 
 #endif // PLATFORM(MAC) && ENABLE(DATA_DETECTION) && ENABLE(REVEAL)
 
