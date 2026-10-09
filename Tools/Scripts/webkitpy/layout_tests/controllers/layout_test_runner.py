@@ -28,6 +28,7 @@
 
 import atexit
 import logging
+import statistics
 import threading
 import time
 
@@ -98,8 +99,9 @@ class TestRunInterruptedException(Exception):
 class LayoutTestRunner(object):
     instance = None
 
-    def __init__(self, options, port, printer, results_directory, needs_http=False, needs_websockets=False, needs_web_platform_test_server=False):
+    def __init__(self, options, port, printer, results_directory, needs_http=False, needs_websockets=False, needs_web_platform_test_server=False, test_times=None):
         self._options = options
+        self._test_times = test_times
         self._port = port
         self.printer = printer
         self._results_directory = results_directory
@@ -143,6 +145,8 @@ class LayoutTestRunner(object):
 
         self.printer.write_update('Sharding tests ...')
         all_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
+        if self._test_times:
+            all_shards = self._sharder.sort_by_duration(all_shards, self._test_times)
 
         num_workers = min(num_workers, len(all_shards))
         self.printer.print_workers_and_shards(num_workers, len(all_shards))
@@ -557,6 +561,20 @@ class Sharder(object):
         elif fully_parallel:
             return self._shard_every_file(test_inputs)
         return self._shard_by_directory(test_inputs, num_workers)
+
+    def sort_by_duration(self, shards, test_times):
+        times_by_directory = {}
+        for test_name, test_time in test_times.items():
+            times_by_directory.setdefault(self._split(test_name)[0], []).append(test_time)
+        mean_time = statistics.mean(test_times.values())
+        mean_time_by_directory = {directory: statistics.mean(times) for directory, times in times_by_directory.items()}
+
+        def estimate(test_input):
+            if test_input.test_name in test_times:
+                return test_times[test_input.test_name]
+            return mean_time_by_directory.get(self._split(test_input.test_name)[0], mean_time)
+
+        return sorted(shards, key=lambda shard: sum(estimate(test_input) for test_input in shard.test_inputs), reverse=True)
 
     def _shard_every_file(self, test_inputs):
         """Returns a list of shards, each shard containing a single test file.
