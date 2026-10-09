@@ -105,6 +105,13 @@ bool containsCurrentColor(const ColorMix& colorMix)
     });
 }
 
+bool containsCurrentAccentColor(const ColorMix& colorMix)
+{
+    return std::ranges::any_of(colorMix.components, [&](auto& component) {
+        return WebCore::Style::containsCurrentAccentColor(component.color);
+    });
+}
+
 // MARK: - Serialization
 
 namespace ColorMixSerializationDetails {

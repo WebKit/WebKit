@@ -331,6 +331,14 @@ inline void ComputedStyleProperties::didSetCounterSet()
     updateUsedCounterSetDirectives();
 }
 
+// MARK: accent-color
+
+inline void ComputedStyleProperties::setAccentColor(AccentColor&& accentColor)
+{
+    ASSERT_IMPLIES(accentColor.isColor(), !containsCurrentAccentColor(*accentColor.tryColor()));
+    SET(m_inheritedRareData, accentColor, WTF::move(accentColor));
+}
+
 } // namespace Style
 } // namespace WebCore
 

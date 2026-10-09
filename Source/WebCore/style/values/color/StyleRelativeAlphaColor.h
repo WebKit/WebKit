@@ -61,6 +61,7 @@ inline bool operator==(const UniqueRef<RelativeAlphaColor>& a, const UniqueRef<R
 Color toStyleColor(const CSS::RelativeAlphaColor&, ColorResolutionState&);
 WebCore::Color resolveColor(const RelativeAlphaColor&, const ResolvedColors&);
 bool containsCurrentColor(const RelativeAlphaColor&);
+bool containsCurrentAccentColor(const RelativeAlphaColor&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const RelativeAlphaColor&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const RelativeAlphaColor&);

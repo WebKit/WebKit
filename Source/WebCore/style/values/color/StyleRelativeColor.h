@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "StyleColor.h"
+#include "StyleColorResolutionState.h"
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleResolvedColor.h"
@@ -103,6 +104,11 @@ template<typename D> WebCore::Color resolveColor(const RelativeColor<D>& relativ
 template<typename D> bool containsCurrentColor(const RelativeColor<D>& relative)
 {
     return WebCore::Style::containsCurrentColor(relative.origin);
+}
+
+template<typename D> bool containsCurrentAccentColor(const RelativeColor<D>& relative)
+{
+    return WebCore::Style::containsCurrentAccentColor(relative.origin);
 }
 
 template<typename D> void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeColor<D>& relative)

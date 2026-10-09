@@ -1,0 +1,3 @@
+
+PASS accent-color: currentColor and color: AccentColor results in AccentColor being the parent's color
+

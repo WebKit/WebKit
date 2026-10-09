@@ -72,6 +72,7 @@ inline bool operator==(const UniqueRef<ColorMix>& a, const UniqueRef<ColorMix>& 
 Color toStyleColor(const CSS::ColorMix&, ColorResolutionState&);
 WebCore::Color resolveColor(const ColorMix&, const ResolvedColors&);
 bool containsCurrentColor(const ColorMix&);
+bool containsCurrentAccentColor(const ColorMix&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorMix&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorMix&);

@@ -182,6 +182,8 @@ private:
 
 WebCore::Color createColor(const Color&, PlatformColorResolutionState&);
 bool containsCurrentColor(const Color&);
+// NOTE: color scheme dependant color also includes AccentColor.
+// So there's no need to add a containsAccentColor just like containsCurrentColor
 bool containsColorSchemeDependentColor(const Color&);
 
 template<> struct Serialize<Color> { void operator()(StringBuilder&, const SerializationContext&, const Color&); };
