@@ -59,7 +59,7 @@ class IOSPort(EmbeddedPort):
             wk_string = 'wk2'
 
         versions_to_fallback = []
-        if self.device_version().major == self.CURRENT_VERSION.major:
+        if self.device_version() and self.device_version().major == self.CURRENT_VERSION.major:
             versions_to_fallback = [self.CURRENT_VERSION]
         elif self.device_version():
             temp_version = Version(self.device_version().major)
