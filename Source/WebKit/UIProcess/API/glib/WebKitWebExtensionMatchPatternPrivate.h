@@ -24,6 +24,7 @@
 #include "WebExtensionMatchPattern.h"
 #include "WebKitWebExtensionMatchPattern.h"
 #include <wtf/RefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitWebExtensionMatchPattern WebKitWebExtensionMatchPattern;
 
@@ -31,7 +32,12 @@ typedef struct _WebKitWebExtensionMatchPattern WebKitWebExtensionMatchPattern;
 
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(Ref<WebKit::WebExtensionMatchPattern>&);
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(const RefPtr<WebKit::WebExtensionMatchPattern>&);
+RefPtr<WebKit::WebExtensionMatchPattern> webkitWebExtensionMatchPatternToImpl(WebKitWebExtensionMatchPattern*);
 
 #endif
+
+namespace WTF {
+WTF_DECLARE_GREF_TRAITS(WebKitWebExtensionMatchPattern)
+}
 
 #endif // ENABLE(2022_GLIB_API)
