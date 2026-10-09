@@ -111,6 +111,11 @@ inline bool RenderElement::createsGroupForStyle(const Style::ComputedStyle& styl
         || !style.clipPath().isNone();
 }
 
+inline bool RenderElement::createsGroup() const
+{
+    return createsGroupForStyle(style());
+}
+
 inline bool RenderElement::shouldApplyAnyContainment() const
 {
     RefPtr element = this->element();

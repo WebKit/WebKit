@@ -195,7 +195,7 @@ public:
     // Returns true if this renderer requires a new stacking context.
     static bool createsGroupForStyle(const Style::ComputedStyle&); // Defined in RenderElementStyleInlines.h.
     static bool createsGroupForStyleExcludingClipPathAndMask(const Style::ComputedStyle&); // Defined in RenderElementStyleInlines.h.
-    bool createsGroup() const { return createsGroupForStyle(style()); }
+    inline bool createsGroup() const; // Defined in RenderElementStyleInlines.h.
 
     inline bool isTransparent() const; // FIXME: This function is incorrectly named. It's isNotOpaque, sometimes called hasOpacity, not isEntirelyTransparent. Defined in RenderElementStyleInlines.h.
     inline float opacity() const; // Defined in RenderElementStyleInlines.h.
