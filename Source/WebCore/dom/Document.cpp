@@ -8402,6 +8402,11 @@ RefPtr<LocalFrame> Document::localMainFrame() const
     return nullptr;
 }
 
+RefPtr<LocalFrame> Document::rootFrame() const
+{
+    return m_frame ? &m_frame->rootFrame() : nullptr;
+}
+
 ScriptRunner& Document::ensureScriptRunner()
 {
     lazyInitialize(m_scriptRunner, makeUniqueWithoutRefCountedCheck<ScriptRunner>(*this));
