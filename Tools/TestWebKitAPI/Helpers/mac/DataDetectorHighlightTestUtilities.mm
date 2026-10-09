@@ -175,6 +175,7 @@ void DataDetectorInSubframeTest::setUpWebView(std::initializer_list<std::pair<St
     [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
     configure(configuration);
     GetParam().applyTo(configuration);
+    adjustConfiguration(configuration);
 
     navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
