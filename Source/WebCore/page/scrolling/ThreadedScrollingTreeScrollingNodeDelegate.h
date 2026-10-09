@@ -70,6 +70,7 @@ protected:
 
     bool allowsHorizontalScrolling() const override;
     bool allowsVerticalScrolling() const override;
+    ScrollAxisLock scrollAxisLock() const final;
 
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) override;
     void adjustScrollPositionToBoundsIfNecessary() override;
