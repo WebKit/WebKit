@@ -54,14 +54,16 @@ public:
     ~ServicesOverlayController();
 
     // DataDetectorHighlightClient.
-    void NODELETE ref() const final;
-    void deref() const final;
+    WEBCORE_EXPORT void NODELETE ref() const final;
+    WEBCORE_EXPORT void deref() const final;
 
     void selectedTelephoneNumberRangesChanged();
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);
     void mouseDidLeaveLocalRoot(LocalFrame&);
+    void focusMovedToOrFromRemoteFrame();
 
     unsigned telephoneNumberRangesChangedCountForTesting() const { return m_telephoneNumberRangesChangedCountForTesting; }
+    WEBCORE_EXPORT void setHasRelevantSelectionServicesForTesting(std::optional<bool>);
 
 private:
     // PageOverlayClient
@@ -101,6 +103,7 @@ private:
     DataDetectorHighlight* findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight&);
 
     bool hasRelevantSelectionServices();
+    RefPtr<LocalFrame> frameWithPageSelection() const;
 
     bool mouseIsOverHighlight(DataDetectorHighlight&, const IntPoint& mousePosition, bool& mouseIsOverButton) const;
     bool shouldHandleMouseEventInRootFrame(const LocalFrame&, const IntPoint& mousePosition);
@@ -134,6 +137,7 @@ private:
     Timer m_buildHighlightsTimer;
 
     unsigned m_telephoneNumberRangesChangedCountForTesting { 0 };
+    std::optional<bool> m_hasRelevantSelectionServicesForTesting;
 };
 
 } // namespace WebCore
