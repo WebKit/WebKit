@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import dataclasses
 import logging
 import os
 import ssl
@@ -17,6 +18,7 @@ from aioquic.asyncio.client import connect
 from aioquic.asyncio.protocol import QuicStreamAdapter
 from aioquic.h3.connection import H3_ALPN, FrameType, H3Connection, ProtocolError, SettingsError
 from aioquic.h3.events import H3Event, HeadersReceived, WebTransportStreamDataReceived, DatagramReceived, DataReceived
+from aioquic.quic import connection as quic_connection
 from aioquic.quic.configuration import QuicConfiguration
 from aioquic.quic.connection import logger as quic_connection_logger
 from aioquic.quic.connection import (
@@ -24,6 +26,7 @@ from aioquic.quic.connection import (
     stream_is_unidirectional,
 )
 from aioquic.quic.events import QuicEvent, ProtocolNegotiated, ConnectionTerminated, StreamReset
+from aioquic.quic.packet import QuicTransportParameters
 from aioquic.tls import SessionTicket
 
 from tools import localpaths  # noqa: F401
@@ -47,6 +50,39 @@ _doc_root: str = ""
 # Set aioquic's log level to WARNING to suppress some INFO logs which are
 # recorded every connection close.
 quic_connection_logger.setLevel(logging.WARNING)
+
+# aioquic 1.2.0 cannot handle UDP payloads larger than 1500 bytes (PACKET_LENGTH_MAX in
+# its _crypto.c), but it does not send any max_udp_payload_size parameter (which
+# defaults to 65527). As a result of this, peers may send us datagrams larger than what
+# it supports, which it then drops.
+#
+# This patches aioquic to advertise its limit by injecting max_udp_payload_size as
+# the transport parameters are serialized, via the name bound in aioquic.quic.connection
+# rather than the one in aioquic.quic.packet so that only the send path is affected:
+# _serialize_transport_parameters() is the sole caller. Received parameters are built by
+# pull_quic_transport_parameters() and stay untouched.
+#
+# See also: https://github.com/aiortc/aioquic/pull/648
+
+_push_quic_transport_parameters = quic_connection.push_quic_transport_parameters
+
+
+def _push_quic_transport_parameters_with_max_udp_payload_size(
+        buf: Buffer, params: QuicTransportParameters) -> None:
+    params = dataclasses.replace(
+        params,
+        max_udp_payload_size=(
+            1500
+            if params.max_udp_payload_size is None
+            else max(1500, params.max_udp_payload_size)
+        ),
+    )
+    _push_quic_transport_parameters(buf, params)
+
+
+quic_connection.push_quic_transport_parameters = (
+    _push_quic_transport_parameters_with_max_udp_payload_size
+)
 
 
 class H3DatagramSetting(IntEnum):
@@ -191,6 +227,9 @@ class WebTransportH3Protocol(QuicConnectionProtocol):
         elif capsule.type == CapsuleType.CLOSE_WEBTRANSPORT_SESSION:
             self._set_close_info_and_may_close_session(
                 data=capsule.data, fin=fin)
+        elif capsule.type == CapsuleType.WT_DRAIN_SESSION:
+            # Ignore WT_DRAIN_SESSION - it's informational only
+            pass
         else:
             # Ignore unknown capsules.
             return
@@ -203,7 +242,8 @@ class WebTransportH3Protocol(QuicConnectionProtocol):
             raise ProtocolError(
                 f"Unimplemented capsule type: {capsule.type}")
         if capsule.type in {CapsuleType.REGISTER_DATAGRAM_NO_CONTEXT_DRAFT04,
-                            CapsuleType.CLOSE_WEBTRANSPORT_SESSION}:
+                            CapsuleType.CLOSE_WEBTRANSPORT_SESSION,
+                            CapsuleType.WT_DRAIN_SESSION}:
             # We'll handle this case below.
             pass
         else:
@@ -223,6 +263,9 @@ class WebTransportH3Protocol(QuicConnectionProtocol):
         elif capsule.type == CapsuleType.CLOSE_WEBTRANSPORT_SESSION:
             self._set_close_info_and_may_close_session(
                 data=capsule.data, fin=fin)
+        elif capsule.type == CapsuleType.WT_DRAIN_SESSION:
+            # Ignore WT_DRAIN_SESSION - it's informational only
+            pass
 
     def _set_close_info_and_may_close_session(
             self, data: bytes, fin: bool) -> None:
@@ -438,6 +481,18 @@ class WebTransportSession:
         :param code: the reason of the error.
         """
         self._http._quic.reset_stream(stream_id, code)
+
+    def initiate_draining(self) -> None:
+        """
+        Initiate graceful session draining by sending a WT_DRAIN_SESSION capsule.
+        After calling this, the session remains usable and new streams can be opened,
+        but the client is notified that the session will be closed soon.
+        """
+        assert self._protocol._session_stream_id is not None
+        session_stream_id = self._protocol._session_stream_id
+        capsule = H3Capsule(CapsuleType.WT_DRAIN_SESSION, b'')
+        self._http.send_data(
+            session_stream_id, capsule.encode(), end_stream=False)
 
 
 class WebTransportEventHandler:
