@@ -86,6 +86,11 @@ public:
         m_view ? RefPtr { m_view }->setCommandEncoder(encoder) : RefPtr { m_texture }->setCommandEncoder(encoder);
     }
 
+    void setProvisionallyCleared(const CommandEncoder& encoder)
+    {
+        m_view ? RefPtr { m_view }->setProvisionallyCleared(encoder) : RefPtr { m_texture }->setProvisionallyCleared(encoder);
+    }
+
     id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice)
     {
         return m_view ? RefPtr { m_view }->rasterizationMapForSlice(slice) : RefPtr { m_texture }->rasterizationMapForSlice(slice);

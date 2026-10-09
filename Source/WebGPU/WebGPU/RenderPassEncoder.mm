@@ -149,13 +149,21 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (texture.isDestroyed())
             m_parentEncoder->makeSubmitInvalid();
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         texture.setPreviouslyCleared();
+#else
+        texture.setProvisionallyCleared(m_parentEncoder);
+#endif // RC_REMOVE_SEC_ACCEL_3
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         m_rasterSampleCount = texture.sampleCount();
         if (attachment.resolveTarget || attachment.resolveTexture) {
             auto texture = attachment.resolveTarget ? TextureOrTextureView(fromAPI(attachment.resolveTarget)) : TextureOrTextureView(fromAPI(attachment.resolveTexture));
             texture.setCommandEncoder(m_parentEncoder);
+#ifdef RC_REMOVE_SEC_ACCEL_3
             texture.setPreviouslyCleared();
+#else
+            texture.setProvisionallyCleared(m_parentEncoder);
+#endif // RC_REMOVE_SEC_ACCEL_3
             addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         }
 
@@ -179,7 +187,11 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         auto textureView = attachment->view ? TextureOrTextureView(fromAPI(attachment->view)) : TextureOrTextureView(fromAPI(attachment->texture));
+#ifdef RC_REMOVE_SEC_ACCEL_3
         textureView.setPreviouslyCleared();
+#else
+        textureView.setProvisionallyCleared(m_parentEncoder);
+#endif // RC_REMOVE_SEC_ACCEL_3
         textureView.setCommandEncoder(m_parentEncoder);
         id<MTLTexture> depthTexture = textureView.isDestroyed() ? nil : textureView.texture();
         if (textureView.width() && !m_renderTargetWidth) {

@@ -189,6 +189,9 @@ CommandEncoder::~CommandEncoder()
     retainTimestampsForOneUpdateLoop();
     m_commandBuffer = nil; // Do not remove, this is needed to workaround rdar://143905417
     clearTracking();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    m_device->protectedQueue()->discardProvisionalTextureClears(m_uniqueId);
+#endif // RC_REMOVE_SEC_ACCEL_3
     m_device->removeCommandEncoder(m_uniqueId);
 }
 
@@ -321,6 +324,10 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 
 void CommandEncoder::discardCommandBuffer()
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    m_device->protectedQueue()->discardProvisionalTextureClears(m_uniqueId);
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted) {
         retainTimestampsForOneUpdateLoop();
         m_commandBuffer = nil;
@@ -685,11 +692,19 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         if (textureToClear) {
             TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
             [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
+#ifdef RC_REMOVE_SEC_ACCEL_3
             texture.setPreviouslyCleared();
             if (attachment.resolveTarget)
                 protectedFromAPI(attachment.resolveTarget)->setPreviouslyCleared();
             if (attachment.resolveTexture)
                 protectedFromAPI(attachment.resolveTexture)->setPreviouslyCleared();
+#else
+            texture.setProvisionallyCleared(*this);
+            if (attachment.resolveTarget)
+                protectedFromAPI(attachment.resolveTarget)->setProvisionallyCleared(*this);
+            if (attachment.resolveTexture)
+                protectedFromAPI(attachment.resolveTexture)->setProvisionallyCleared(*this);
+#endif // RC_REMOVE_SEC_ACCEL_3
         }
     }
 
@@ -808,7 +823,11 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (attachmentsToClear.count || depthStencilAttachmentToClear) {
         if (const auto* attachment = descriptor.depthStencilAttachment; depthStencilAttachmentToClear) {
             auto textureView = attachment->view ? TextureOrTextureView(fromAPI(attachment->view)) : TextureOrTextureView(fromAPI(attachment->texture));
+#ifdef RC_REMOVE_SEC_ACCEL_3
             textureView.setPreviouslyCleared();
+#else
+            textureView.setProvisionallyCleared(*this);
+#endif // RC_REMOVE_SEC_ACCEL_3
         }
 
         runClearEncoder(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear);
@@ -1106,7 +1125,11 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         NSUInteger destinationSlice = destinationTexture->dimension() == WGPUTextureDimension_3D ? 0 : originPlusLayer.value();
         RELEASE_ASSERT(mtlDestinationTexture.parentTexture == nil);
         if (Queue::writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers))
+#ifdef RC_REMOVE_SEC_ACCEL_3
             destinationTexture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
+#else
+            destinationTexture->setProvisionallyCleared(destination.mipLevel, destinationSlice, *this);
+#endif // RC_REMOVE_SEC_ACCEL_3
         else
             clearTextureIfNeeded(destination, destinationSlice);
     }
@@ -1328,24 +1351,36 @@ void CommandEncoder::clearTextureIfNeeded(const WGPUImageCopyTexture& destinatio
     }
 #endif
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     clearTextureIfNeeded(destination, slice, m_device, m_blitCommandEncoder);
+#else
+    clearTextureIfNeeded(destination, slice, m_device, m_blitCommandEncoder, this);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 
-void CommandEncoder::clearTextureIfNeeded(const WGPUImageCopyTexture& destination, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder)
+void CommandEncoder::clearTextureIfNeeded(const WGPUImageCopyTexture& destination, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder, const CommandEncoder* owningCommandEncoder)
 {
     Ref texture = fromAPI(destination.texture);
     NSUInteger mipLevel = destination.mipLevel;
-    CommandEncoder::clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder);
+    CommandEncoder::clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder, owningCommandEncoder);
 }
 
 
-void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder)
+void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel, NSUInteger slice, const Device& device, id<MTLBlitCommandEncoder> blitCommandEncoder, const CommandEncoder* owningCommandEncoder)
 {
     if (!blitCommandEncoder || texture.previouslyCleared(mipLevel, slice))
         return;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    UNUSED_PARAM(owningCommandEncoder);
     texture.setPreviouslyCleared(mipLevel, slice);
+#else
+    if (owningCommandEncoder)
+        texture.setProvisionallyCleared(mipLevel, slice, *owningCommandEncoder);
+    else
+        texture.setPreviouslyCleared(mipLevel, slice);
+#endif // RC_REMOVE_SEC_ACCEL_3
     auto logicalExtent = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
     if (!logicalExtent.width)
         return;
@@ -1454,6 +1489,9 @@ void CommandEncoder::makeInvalid(NSString* errorString)
     m_blitCommandEncoder = nil;
     m_existingCommandEncoder = nil;
     m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    m_device->protectedQueue()->discardProvisionalTextureClears(m_uniqueId);
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     m_commandBuffer = nil;
     m_lastErrorString = errorString;
@@ -1903,7 +1941,11 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
             return;
         NSUInteger destinationSlice = destinationTexture->dimension() == WGPUTextureDimension_3D ? 0 : destinationOriginPlusLayer.value();
         if (Queue::writeWillCompletelyClear(destinationTextureDimension, copySize.width, destinationLogicalSize.width, copySize.height, destinationLogicalSize.height, copySize.depthOrArrayLayers, destinationLogicalSize.depthOrArrayLayers))
+#ifdef RC_REMOVE_SEC_ACCEL_3
             destinationTexture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
+#else
+            destinationTexture->setProvisionallyCleared(destination.mipLevel, destinationSlice, *this);
+#endif // RC_REMOVE_SEC_ACCEL_3
         else
             clearTextureIfNeeded(destination, destinationSlice);
     }

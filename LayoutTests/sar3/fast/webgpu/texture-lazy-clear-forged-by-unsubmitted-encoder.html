@@ -1,0 +1,159 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Tests that WebGPU only treats a texture slice as zero initialized once the work which actually writes " +
+           "the zeros has been submitted. CommandEncoder used to set the per-(mipLevel, slice) previouslyCleared flag " +
+           "while encoding, even though the blit which writes the texels only lives in that encoder's command buffer " +
+           "and only runs when that command buffer is submitted, so a fully covering copyBufferToTexture in a command " +
+           "buffer which was never submitted branded the destination slice initialized without writing anything and a " +
+           "copyTextureToBuffer in a later, genuinely submitted encoder trusted the flag and skipped the lazy zero " +
+           "clear. Every read below has to see the clear run, copies which really are submitted still have to land, " +
+           "and a queue.writeTexture which follows an unsubmitted copy must not be overwritten by the clear that " +
+           "copy's flag had deferred.");
+
+const textureSize = 128;
+const format = 'rgba8unorm';
+const bytesPerRow = textureSize * 4;
+const byteLength = bytesPerRow * textureSize;
+
+const copyByte = 0xbb;
+const writeByte = 0xcc;
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    function newTexture() {
+        return device.createTexture({
+            size: [textureSize, textureSize],
+            format,
+            usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+        });
+    }
+
+    function filledBuffer(byte) {
+        let buffer = device.createBuffer({ size: byteLength, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
+        device.queue.writeBuffer(buffer, 0, new Uint8Array(byteLength).fill(byte));
+        return buffer;
+    }
+
+    // Covers the destination slice completely, which is what lets the encoder claim the slice is initialized.
+    function recordFullCopy(texture) {
+        let commandEncoder = device.createCommandEncoder();
+        commandEncoder.copyBufferToTexture(
+            { buffer: filledBuffer(copyByte), bytesPerRow, rowsPerImage: textureSize },
+            { texture },
+            [textureSize, textureSize, 1]);
+        return commandEncoder;
+    }
+
+    function recordRead(texture) {
+        let readback = device.createBuffer({ size: byteLength, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+        let commandEncoder = device.createCommandEncoder();
+        commandEncoder.copyTextureToBuffer(
+            { texture },
+            { buffer: readback, bytesPerRow, rowsPerImage: textureSize },
+            [textureSize, textureSize, 1]);
+        return { commandBuffer: commandEncoder.finish(), readback };
+    }
+
+    async function distinctBytes(readback) {
+        await readback.mapAsync(GPUMapMode.READ);
+        let distinct = new Set(new Uint8Array(readback.getMappedRange()));
+        readback.unmap();
+        return [...distinct].sort((a, b) => a - b).join();
+    }
+
+    async function read(texture) {
+        let pending = recordRead(texture);
+        device.queue.submit([pending.commandBuffer]);
+        return await distinctBytes(pending.readback);
+    }
+
+    // No forgery: the flag is down, so the read has to see the lazy zero clear.
+    window.controlRead = await read(newTexture());
+
+    // The copy is finished but never submitted, so nothing it recorded ever runs and the read still has to see the
+    // lazy zero clear.
+    let forged = newTexture();
+    recordFullCopy(forged).finish();
+    window.forgedRead = await read(forged);
+
+    // Same, with an encoder which is dropped without even being finished.
+    let forgedByUnfinishedEncoder = newTexture();
+    recordFullCopy(forgedByUnfinishedEncoder);
+    window.forgedByUnfinishedEncoderRead = await read(forgedByUnfinishedEncoder);
+
+    // Same, with a command buffer whose submit is rejected: submitting one twice is a validation error, so neither
+    // copy runs.
+    let forgedByRejectedSubmit = newTexture();
+    let rejected = recordFullCopy(forgedByRejectedSubmit).finish();
+    device.pushErrorScope('validation');
+    device.queue.submit([rejected, rejected]);
+    window.rejectedSubmitWasRejected = !!await device.popErrorScope();
+    window.forgedByRejectedSubmitRead = await read(forgedByRejectedSubmit);
+
+    // A copy which really is submitted still initializes the texture.
+    let copied = newTexture();
+    device.queue.submit([recordFullCopy(copied).finish()]);
+    window.submittedCopyRead = await read(copied);
+
+    // Copy and read submitted together, copy first: the read runs after the copy, so it sees the copy.
+    let sameSubmit = newTexture();
+    let sameSubmitCopy = recordFullCopy(sameSubmit).finish();
+    let sameSubmitRead = recordRead(sameSubmit);
+    device.queue.submit([sameSubmitCopy, sameSubmitRead.commandBuffer]);
+    window.sameSubmitRead = await distinctBytes(sameSubmitRead.readback);
+
+    // A copy finished before the read but submitted after it: the read must not see the copy, and the copy must
+    // survive the zero clear that read needed.
+    let deferred = newTexture();
+    let deferredCopy = recordFullCopy(deferred).finish();
+    window.beforeDeferredCopyRead = await read(deferred);
+    device.queue.submit([deferredCopy]);
+    window.afterDeferredCopyRead = await read(deferred);
+
+    // A queue.writeTexture which completely covers a slice an unsubmitted copy claimed: the write initializes the
+    // slice itself, so the clear the unsubmitted copy owes must not be run on top of it.
+    let writtenAfterForge = newTexture();
+    recordFullCopy(writtenAfterForge).finish();
+    device.queue.writeTexture({ texture: writtenAfterForge }, new Uint8Array(byteLength).fill(writeByte),
+        { bytesPerRow, rowsPerImage: textureSize }, [textureSize, textureSize, 1]);
+    window.writtenAfterForgeRead = await read(writtenAfterForge);
+
+    // Same, but the write only covers the top half, so the slice does need a zero clear: it has to be ordered before
+    // the write rather than after it.
+    let partlyWrittenAfterForge = newTexture();
+    let halfHeight = textureSize / 2;
+    recordFullCopy(partlyWrittenAfterForge).finish();
+    device.queue.writeTexture({ texture: partlyWrittenAfterForge }, new Uint8Array(bytesPerRow * halfHeight).fill(writeByte),
+        { bytesPerRow, rowsPerImage: halfHeight }, [textureSize, halfHeight, 1]);
+    window.partlyWrittenAfterForgeRead = await read(partlyWrittenAfterForge);
+
+    shouldBeEqualToString('controlRead', '0');
+    shouldBeEqualToString('forgedRead', '0');
+    shouldBeEqualToString('forgedByUnfinishedEncoderRead', '0');
+    shouldBeTrue('rejectedSubmitWasRejected');
+    shouldBeEqualToString('forgedByRejectedSubmitRead', '0');
+    shouldBeEqualToString('submittedCopyRead', '187');
+    shouldBeEqualToString('sameSubmitRead', '187');
+    shouldBeEqualToString('beforeDeferredCopyRead', '0');
+    shouldBeEqualToString('afterDeferredCopyRead', '187');
+    shouldBeEqualToString('writtenAfterForgeRead', '204');
+    shouldBeEqualToString('partlyWrittenAfterForgeRead', '0,204');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

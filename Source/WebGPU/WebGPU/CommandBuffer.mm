@@ -79,8 +79,15 @@ void CommandBuffer::makeInvalid(NSString* lastError)
     retainTimestampsForOneUpdateLoop();
     m_commandBuffer = nil;
     m_cachedCommandBuffer = nil;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (RefPtr commandEncoder = m_commandEncoder)
         commandEncoder->clearTracking();
+#else
+    if (RefPtr commandEncoder = m_commandEncoder) {
+        commandEncoder->clearTracking();
+        m_device->protectedQueue()->discardProvisionalTextureClears(commandEncoder->uniqueId());
+    }
+#endif // RC_REMOVE_SEC_ACCEL_3
     m_commandEncoder = nullptr;
     m_preCommitHandlers.clear();
     m_postCommitHandlers.clear();
@@ -89,11 +96,21 @@ void CommandBuffer::makeInvalid(NSString* lastError)
 bool CommandBuffer::preCommitHandler()
 {
     bool result = true;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (RefPtr commandEncoder = m_commandEncoder) {
         auto& commandEncoderRef = *commandEncoder;
         for (auto& function : m_preCommitHandlers)
             result = function(*this, commandEncoderRef) && result;
     }
+#else
+    if (RefPtr commandEncoder = m_commandEncoder) {
+        auto& commandEncoderRef = *commandEncoder;
+        m_device->protectedQueue()->resolveProvisionalTextureClears(commandEncoderRef.uniqueId());
+        for (auto& function : m_preCommitHandlers)
+            result = function(*this, commandEncoderRef) && result;
+    } else
+        m_device->protectedQueue()->resolveProvisionalTextureClears();
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     m_preCommitHandlers.clear();
     return result;

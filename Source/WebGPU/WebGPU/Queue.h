@@ -97,6 +97,11 @@ public:
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
+    void addProvisionalTextureClear(Texture&, uint32_t mipLevel, uint32_t slice, uint64_t commandEncoderId);
+    void removeProvisionalTextureClears(const Texture&, uint32_t mipLevel, uint32_t slice);
+    void discardProvisionalTextureClears(uint64_t commandEncoderId);
+    void resolveProvisionalTextureClears(std::optional<uint64_t> committingCommandEncoderId = std::nullopt);
+
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
     WARN_UNUSED_RETURN uint64_t retainCounterSampleBuffer(CommandEncoder&);
@@ -126,6 +131,13 @@ private:
 
     NSString * _Nullable errorValidatingWriteTexture(const WGPUImageCopyTexture&, const WGPUTextureDataLayout&, const WGPUExtent3D&, size_t, const Texture&) const;
 
+    struct ProvisionalTextureClear {
+        WeakPtr<Texture> texture;
+        uint32_t mipLevel { 0 };
+        uint32_t slice { 0 };
+        uint64_t commandEncoderId { 0 };
+    };
+
     id<MTLCommandQueue> _Nullable m_commandQueue { nil };
     id<MTLCommandBuffer> _Nullable m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> _Nullable m_blitCommandEncoder { nil };
@@ -145,6 +157,7 @@ private:
     const ThreadSafeWeakPtr<Instance> m_instance;
     id<MTLBuffer> _Nullable m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
+    Vector<ProvisionalTextureClear> m_provisionalTextureClears;
 } SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
 } // namespace WebGPU

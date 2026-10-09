@@ -1,0 +1,20 @@
+Tests that WebGPU only treats a texture slice as zero initialized once the work which actually writes the zeros has been submitted. CommandEncoder used to set the per-(mipLevel, slice) previouslyCleared flag while encoding, even though the blit which writes the texels only lives in that encoder's command buffer and only runs when that command buffer is submitted, so a fully covering copyBufferToTexture in a command buffer which was never submitted branded the destination slice initialized without writing anything and a copyTextureToBuffer in a later, genuinely submitted encoder trusted the flag and skipped the lazy zero clear. Every read below has to see the clear run, copies which really are submitted still have to land, and a queue.writeTexture which follows an unsubmitted copy must not be overwritten by the clear that copy's flag had deferred.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS controlRead is "0"
+PASS forgedRead is "0"
+PASS forgedByUnfinishedEncoderRead is "0"
+PASS rejectedSubmitWasRejected is true
+PASS forgedByRejectedSubmitRead is "0"
+PASS submittedCopyRead is "187"
+PASS sameSubmitRead is "187"
+PASS beforeDeferredCopyRead is "0"
+PASS afterDeferredCopyRead is "187"
+PASS writtenAfterForgeRead is "204"
+PASS partlyWrittenAfterForgeRead is "0,204"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
