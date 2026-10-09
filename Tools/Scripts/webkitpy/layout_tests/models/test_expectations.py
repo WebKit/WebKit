@@ -30,6 +30,7 @@
 for layout tests.
 """
 
+import bisect
 import logging
 import re
 
@@ -127,6 +128,7 @@ class TestExpectationParser(object):
             self._full_test_list = None  # type: Optional[Set[str]]
         else:
             self._full_test_list = set(full_test_list)
+        self._sorted_full_test_list = None
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
         self._shorten_filename = shorten_filename
 
@@ -253,7 +255,13 @@ class TestExpectationParser(object):
 
         if not expectation_line.is_file:
             # this is a test category, return all the tests of the category.
-            expectation_line.matching_tests = [test for test in self._full_test_list if test.startswith(expectation_line.path)]
+            if self._sorted_full_test_list is None:
+                self._sorted_full_test_list = sorted(self._full_test_list)
+            start = bisect.bisect_left(self._sorted_full_test_list, expectation_line.path)
+            end = start
+            while end < len(self._sorted_full_test_list) and self._sorted_full_test_list[end].startswith(expectation_line.path):
+                end += 1
+            expectation_line.matching_tests = self._sorted_full_test_list[start:end]
             return
 
         # this is a test file, do a quick check if it's in the
