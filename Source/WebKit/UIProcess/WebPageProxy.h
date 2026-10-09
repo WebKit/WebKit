@@ -1428,7 +1428,7 @@ public:
 
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(DataDetectionResult&&);
-    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+    void handleClickForDataDetectionResult(IPC::Connection&, IPC::Untrusted<WebCore::FrameIdentifier>&&, const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
     void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
     void didCommitMainFrameData(const MainFrameData&, const TransactionID&);
@@ -3544,7 +3544,7 @@ private:
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
-    void showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint&, const WebCore::IntRect&);
+    void showTelephoneNumberMenu(IPC::Connection&, IPC::Untrusted<WebCore::FrameIdentifier>&&, const String& telephoneNumber, const WebCore::IntPoint&, const WebCore::IntRect&);
 #endif
 
     // Search popup results

@@ -2087,20 +2087,20 @@ void WebChromeClient::updateTextIndicator(RefPtr<WebCore::TextIndicator>&& textI
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-void WebChromeClient::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
+void WebChromeClient::handleTelephoneNumberClick(FrameIdentifier frameID, const String& number, const IntPoint& point, const IntRect& rect)
 {
     if (RefPtr page = m_page.get())
-        page->handleTelephoneNumberClick(number, point, rect);
+        page->handleTelephoneNumberClick(frameID, number, point, rect);
 }
 
 #endif
 
 #if ENABLE(DATA_DETECTION)
 
-void WebChromeClient::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+void WebChromeClient::handleClickForDataDetectionResult(FrameIdentifier frameID, const DataDetectorElementInfo& info, const IntPoint& clickLocation)
 {
     if (RefPtr page = m_page.get())
-        page->handleClickForDataDetectionResult(info, clickLocation);
+        page->handleClickForDataDetectionResult(frameID, info, clickLocation);
 }
 
 #endif

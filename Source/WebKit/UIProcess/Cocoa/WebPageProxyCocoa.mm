@@ -56,6 +56,7 @@
 #import "SharedBufferReference.h"
 #import "SynapseSPI.h"
 #import "UIRemoteObjectRegistry.h"
+#import "ValidationProcedures.h"
 #import "VideoPresentationManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -156,6 +157,8 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
+#define EXTRACT_WITH_MESSAGE_CHECK(connection, name, untrusted, ...) \
+    EXTRACT_WITH_MESSAGE_CHECK_BASE(connection, name, untrusted, (void)0, __VA_ARGS__)
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
@@ -257,8 +260,12 @@ void WebPageProxy::setDataDetectionResult(DataDetectionResult&& dataDetectionRes
     });
 }
 
-void WebPageProxy::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+void WebPageProxy::handleClickForDataDetectionResult(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, const DataDetectorElementInfo& info, const IntPoint& clickLocation)
 {
+    Ref process { WebProcessProxy::fromConnection(connection) };
+    EXTRACT_WITH_MESSAGE_CHECK(connection, frameID, untrustedFrameID, ProcessHostsFrameInPage { process, *this });
+    UNUSED_VARIABLE(frameID);
+
     if (RefPtr pageClient = this->pageClient())
         pageClient->handleClickForDataDetectionResult(info, clickLocation);
 }
@@ -2700,5 +2707,6 @@ void WebPageProxy::isPotentialTapInProgress(CompletionHandler<void(bool)>&& comp
 
 } // namespace WebKit
 
+#undef EXTRACT_WITH_MESSAGE_CHECK
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK

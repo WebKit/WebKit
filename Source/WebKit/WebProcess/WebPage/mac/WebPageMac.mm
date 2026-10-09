@@ -738,9 +738,9 @@ void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
+void WebPage::handleTelephoneNumberClick(FrameIdentifier frameID, const String& number, const IntPoint& point, const IntRect& rect)
 {
-    send(Messages::WebPageProxy::ShowTelephoneNumberMenu(number, point, rect));
+    send(Messages::WebPageProxy::ShowTelephoneNumberMenu(frameID, number, point, rect));
 }
 #endif
 

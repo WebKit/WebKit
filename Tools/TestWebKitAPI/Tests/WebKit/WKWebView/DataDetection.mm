@@ -34,6 +34,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -218,6 +219,8 @@ public:
     static constexpr NSRect nestedFrameAtOriginBox { { 300, 120 }, { 300, 200 } };
     static constexpr NSRect iframeNextToTelephoneNumberBox { { 300, 120 }, { 400, 300 } };
 
+    virtual void adjustConfiguration(WKWebViewConfiguration *) { }
+
     void SetUp() override
     {
         auto iframe = [](int left, const String& url) {
@@ -266,6 +269,7 @@ public:
         [[configuration preferences] _setTelephoneNumberDetectionIsEnabled:YES];
         [configuration _setServiceControlsEnabled:YES];
         GetParam().applyTo(configuration.get());
+        adjustConfiguration(configuration.get());
 
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
@@ -410,7 +414,7 @@ public:
         CGPoint location { CGPointZero };
     };
 
-    std::optional<Menu> clickButton(CGPoint pointOverButton)
+    std::optional<Menu> presentedMenu(NOESCAPE const Function<void()>& trigger, Seconds timeout)
     {
         Class highlightDelegateClass { NSClassFromString(@"WKEmptyPresenterHighlightDelegate") };
         EXPECT_NOT_NULL(highlightDelegateClass);
@@ -440,10 +444,19 @@ public:
             })
         };
 
-        click(pointOverButton);
-        if (!TestWebKitAPI::Util::runFor(&didShowMenu, 5_s))
+        trigger();
+        if (!didShowMenu && timeout)
+            TestWebKitAPI::Util::runFor(&didShowMenu, timeout);
+        if (!didShowMenu)
             return std::nullopt;
         return menu;
+    }
+
+    std::optional<Menu> clickButton(CGPoint pointOverButton)
+    {
+        return presentedMenu([&] {
+            click(pointOverButton);
+        }, 5_s);
     }
 
     void clickButtonAndExpectMenu(CGPoint pointOverButton, CGRect telephoneNumberRect)
@@ -1113,6 +1126,67 @@ TEST_P(SelectionServicesInSubframe, ButtonIsNotShownForSubframeSelectionAfterSel
 }
 
 INSTANTIATE_TEST_SUITE_P(DataDetection, SelectionServicesInSubframe, testing::ValuesIn(siteIsolationParams), &SelectionServicesInSubframe::testNameGenerator);
+
+#if ENABLE(IPC_TESTING_API)
+
+class TelephoneNumberMenuRequestFromSubframe : public TelephoneNumberInSubframe {
+public:
+    void adjustConfiguration(WKWebViewConfiguration *configuration) override
+    {
+        setFeatureEnabled(configuration, @"IPCTestingAPIEnabled", true);
+        setFeatureEnabled(configuration, @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    }
+
+    RetainPtr<NSString> requestMenuNamingFrame(WKFrameInfo *sender, NSString *frameIDExpression)
+    {
+        return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+            "  IPC.sendMessage('UI', IPC.pageID, IPC.messages.WebPageProxy_ShowTelephoneNumberMenu.name, ["
+            "    { type: 'FrameID', value: %@ },"
+            "    { type: 'String', value: '408-996-1010' },"
+            "    { type: 'IntPoint', x: 20, y: 20 },"
+            "    { type: 'IntRect', x: 10, y: 10, width: 120, height: 20 },"
+            "  ]);"
+            "  const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+            "  return reply ? (reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '') : '<no reply>';"
+            "})()", frameIDExpression] inFrame:sender];
+    }
+};
+
+TEST_P(TelephoneNumberMenuRequestFromSubframe, NamingTheMainFrameShowsNoMenu)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    ASSERT_NE(frame.get()._processIdentifier, [webView _webProcessIdentifier]);
+    RetainPtr mainFrameID { [webView stringByEvaluatingJavaScript:@"String(IPC.frameID[0])"] };
+
+    RetainPtr<NSString> invalidMessage;
+    auto menu { presentedMenu([&] {
+        invalidMessage = requestMenuNamingFrame(frame.get(), [NSString stringWithFormat:@"[BigInt('%@')]", mainFrameID.get()]);
+    }, 0_s) };
+    EXPECT_FALSE(menu.has_value());
+    EXPECT_WK_STREQ(@"", invalidMessage.get());
+}
+
+TEST_P(TelephoneNumberMenuRequestFromSubframe, NamingItsOwnFrameShowsMenuAtTheGivenPoint)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    ASSERT_NE(frame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    RetainPtr<NSString> invalidMessage;
+    auto menu { presentedMenu([&] {
+        invalidMessage = requestMenuNamingFrame(frame.get(), @"IPC.frameID");
+    }, 0_s) };
+    ASSERT_TRUE(menu.has_value());
+    EXPECT_WK_STREQ(@"", invalidMessage.get());
+    EXPECT_EQ(menu->location.x, 20);
+    EXPECT_EQ(menu->location.y, 20);
+    EXPECT_TRUE(rectsAreNear(menu->telephoneNumberRect, CGRectMake(10, 10, 120, 20), telephoneNumberRectTolerance)) << NSStringFromRect(menu->telephoneNumberRect).UTF8String;
+}
+
+INSTANTIATE_TEST_SUITE_P(DataDetection, TelephoneNumberMenuRequestFromSubframe, testing::ValuesIn(crossOriginWithSiteIsolationParams), &TelephoneNumberMenuRequestFromSubframe::testNameGenerator);
+
+#endif // ENABLE(IPC_TESTING_API)
 
 } // namespace TestWebKitAPI
 
