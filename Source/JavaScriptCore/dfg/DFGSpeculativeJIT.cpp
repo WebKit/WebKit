@@ -378,6 +378,10 @@ void SpeculativeJIT::speculationCheckOutOfMemory(JSValueSource, Node*, const Jum
     });
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+// Note that emitting the mutatorFence is the responsibility of the caller and should be
+// done after its last initializing stores and before the object escapes.
+#endif
 void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure structure, GPRReg storageGPR, unsigned numElements, unsigned vectorLength)
 {
     ASSERT(!isCopyOnWrite(structure->indexingMode()));
@@ -448,8 +452,10 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
         store32(TrustedImm32(numElements), Address(storageGPR, Butterfly::offsetOfPublicLength()));
     
     emitInitializeOutOfLineStorage(storageGPR, structure->outOfLineCapacity(), scratchGPR);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     
     mutatorFence(vm);
+#endif
 }
 
 void SpeculativeJIT::emitGetLength(InlineCallFrame* inlineCallFrame, GPRReg lengthGPR, bool includeThis)
@@ -9117,6 +9123,9 @@ void SpeculativeJIT::compileNewArray(Node* node)
                 break;
             }
         }
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        mutatorFence(vm());
+#endif
 
         // Yuck, we should *really* have a way of also returning the storageGPR. But
         // that's the least of what's wrong with this code. We really shouldn't be
@@ -13774,6 +13783,9 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
             break;
         }
     }
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    mutatorFence(vm());
+#endif
 
     cellResult(resultGPR, node);
 }
