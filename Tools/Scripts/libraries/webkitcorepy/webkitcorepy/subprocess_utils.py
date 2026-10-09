@@ -52,6 +52,47 @@ def run(*popenargs, **kwargs):
         return subprocess.run(*popenargs, timeout=timeout, **kwargs)
 
 
+def wait_until_exit(process, timeout=None):
+    """Returns (returncode, stdout, stderr), killing the process if it overruns its timeout.
+
+    Unlike Timeout, this does not rely on SIGALRM, so it is safe to call off the main thread."""
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except TimeoutExpired:
+        process.kill()
+        stdout, stderr = process.communicate()
+    return process.returncode, stdout, stderr
+
+
+def run_all(commands, timeout=None, popen=None, **kwargs):
+    """Starts every command before waiting on any, returning each one's (returncode, stdout, stderr).
+
+    Each process is drained by its own thread, since one with a full stdout pipe blocks until something reads it."""
+    popen = popen or subprocess.Popen
+    processes = []
+    results = [None] * len(commands)
+
+    try:
+        for command in commands:
+            processes.append(popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs))
+    except BaseException:
+        for process in processes:
+            process.kill()
+            process.communicate()
+        raise
+
+    def drain(index, process):
+        results[index] = wait_until_exit(process, timeout=timeout)
+
+    threads = [Thread(target=drain, args=(index, process), name='run-all-{}'.format(index))
+               for index, process in enumerate(processes)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return results
+
+
 class Thread(threading.Thread):
     @classmethod
     def terminated(cls):
