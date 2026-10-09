@@ -62,6 +62,7 @@ public:
     double NODELETE maxWriteOperationsPerMinute();
 
     WebExtensionAPIEvent& onChanged();
+#endif
 
 private:
     explicit WebExtensionAPIStorageArea(const WebExtensionAPIObject& parentObject, WebExtensionDataType type)
@@ -73,7 +74,6 @@ private:
 
     WebExtensionDataType m_type { WebExtensionDataType::Local };
     const RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
 };
 
 } // namespace WebKit
