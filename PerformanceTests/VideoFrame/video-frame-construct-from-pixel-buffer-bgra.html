@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+const dimension = 1920;
+const pixelBuffer = new Uint8Array(dimension * dimension * 4);
+const pixelFormat = "BGRA";
+
+PerfTestRunner.measureRunsPerSecond({
+    description: `Construct VideoFrame from ${pixelFormat} buffer of image ${dimension}x${dimension}`,
+    run: () => {
+        const videoFrame = new VideoFrame(pixelBuffer, {
+            format: pixelFormat,
+            codedHeight: dimension,
+            codedWidth: dimension,
+            timestamp: performance.now(),
+        });
+        videoFrame.close();
+    }
+});
+</script>
+</body>
+</html>
