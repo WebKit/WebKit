@@ -35,7 +35,6 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NavigationHistoryBehavior.h>
-#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PendingNavigateEventIdentifier.h>
@@ -89,7 +88,6 @@ struct NavigationActionData {
     FrameInfoData originatingFrameInfoData;
     std::optional<WebPageProxyIdentifier> originatingPageID;
     FrameInfoData frameInfo;
-    std::optional<WebCore::NavigationIdentifier> navigationID;
     // Sent as nullopt when equal to `request`, to avoid serializing and re-parsing a potentially
     // very large URL twice. Resolve via originalRequestOrFallback() / fall back to `request`.
     std::optional<WebCore::ResourceRequest> originalRequest;

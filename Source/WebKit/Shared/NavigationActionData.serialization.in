@@ -58,7 +58,6 @@ struct WebKit::NavigationActionData {
     WebKit::FrameInfoData originatingFrameInfoData;
     std::optional<WebKit::WebPageProxyIdentifier> originatingPageID;
     WebKit::FrameInfoData frameInfo;
-    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::ResourceRequest> originalRequest;
     [EncodeRequestBody] WebCore::ResourceRequest request;
     String invalidURLString;

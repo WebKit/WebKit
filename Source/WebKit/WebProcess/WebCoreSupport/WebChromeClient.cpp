@@ -441,7 +441,6 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         webFrame->info(), /* originatingFrameInfoData */
         webFrame->page()->webPageProxyIdentifier(),
         webFrame->info(), /* frameInfo */
-        std::nullopt, /* navigationID */
         originalRequest, /* originalRequest */
         originalRequest, /* request */
         originalRequest.url().isValid() ? String() : originalRequest.url().string(), /* invalidURLString */
