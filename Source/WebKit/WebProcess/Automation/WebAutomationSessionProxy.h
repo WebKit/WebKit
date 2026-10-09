@@ -43,6 +43,7 @@
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
+#include <WebCore/DOMWrapperWorld.h>
 #endif
 
 namespace WebCore {
@@ -90,7 +91,8 @@ private:
     explicit WebAutomationSessionProxy(const String& sessionIdentifier);
     JSObjectRef scriptObject(JSGlobalContextRef);
     void setScriptObject(JSGlobalContextRef, JSObjectRef);
-    JSObjectRef scriptObjectForFrame(WebFrame&);
+    JSObjectRef scriptObjectForContext(WebFrame&, JSGlobalContextRef);
+    JSGlobalContextRef jsContextForSandbox(WebFrame&, const std::optional<String>& sandboxName);
     std::expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
     static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
@@ -101,8 +103,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by WebAutomationSessionProxy messages
-    void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
-    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
+    void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, std::optional<String> sandboxName, CompletionHandler<void(String&&, String&&)>&&);
+    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, std::optional<String> sandboxName, CompletionHandler<void(String&&, String&&)>&&);
     void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithNodeHandle(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
     void resolveChildFrameWithName(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& name, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
@@ -124,6 +126,7 @@ private:
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+    void clearSandboxWorldsForFrame(WebCore::FrameIdentifier);
 #endif
 
     String m_sessionIdentifier;
@@ -143,6 +146,7 @@ private:
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
+    HashMap<WebCore::FrameIdentifier, HashMap<String, Ref<WebCore::DOMWrapperWorld>>> m_sandboxWorlds;
 #endif
 };
 
