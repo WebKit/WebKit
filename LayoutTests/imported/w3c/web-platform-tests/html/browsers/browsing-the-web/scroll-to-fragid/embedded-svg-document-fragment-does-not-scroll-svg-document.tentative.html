@@ -1,0 +1,23 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Scrolling to the fragment of an embedded SVG document scrolls neither the SVG document nor the parent document</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#scroll-to-the-fragment-identifier">
+<link rel="help" href="https://svgwg.org/svg2-draft/linking.html#SVGFragmentIdentifiers">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin:0">
+<iframe id="frame" width="394" height="322"></iframe>
+<div style="height:3000px"></div>
+<script>
+promise_test(async () => {
+  const frame = document.getElementById("frame");
+  const loaded = new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+  frame.src = "resources/tall-fragment-target.svg#far";
+  await loaded;
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await new Promise(resolve => step_timeout(resolve, 100));
+  assert_not_equals(frame.contentDocument.getElementById("far"), null, "fragment target exists in the SVG document");
+  assert_equals(frame.contentWindow.scrollY, 0, "SVG document scroll position");
+  assert_equals(window.scrollY, 0, "parent document scroll position");
+}, "Scrolling to the fragment of an SVG document in an <iframe> does not scroll the SVG document");
+</script>

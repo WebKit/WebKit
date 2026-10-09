@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Scrolling to the fragment of an embedded SVG document does not scroll the parent document</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#scroll-to-the-fragment-identifier">
+<link rel="help" href="https://svgwg.org/svg2-draft/linking.html#SVGFragmentIdentifiers">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin:0">
+<div style="height:3000px"></div>
+<div id="container"></div>
+<div style="height:3000px"></div>
+<script>
+async function loadEmbeddedSVG(tagName) {
+  window.scrollTo(0, 0);
+  const element = document.createElement(tagName);
+  element.width = 394;
+  element.height = 322;
+  const loaded = new Promise(resolve => element.addEventListener("load", resolve, { once: true }));
+  const url = "resources/fragment-target.svg#g1";
+  if (tagName == "object") {
+    element.type = "image/svg+xml";
+    element.data = url;
+  } else
+    element.src = url;
+  document.getElementById("container").append(element);
+  await loaded;
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await new Promise(resolve => step_timeout(resolve, 100));
+  assert_not_equals(element.contentDocument, null, "embedded document loaded");
+  assert_not_equals(element.contentDocument.getElementById("g1"), null, "fragment target exists in the embedded document");
+  return element;
+}
+
+for (const tagName of ["object", "iframe"]) {
+  promise_test(async t => {
+    const element = await loadEmbeddedSVG(tagName);
+    t.add_cleanup(() => { element.remove(); window.scrollTo(0, 0); });
+    assert_equals(window.scrollY, 0, "parent document scroll position");
+  }, `Scrolling to the fragment of an SVG document in an <${tagName}> does not scroll the parent document`);
+}
+</script>
