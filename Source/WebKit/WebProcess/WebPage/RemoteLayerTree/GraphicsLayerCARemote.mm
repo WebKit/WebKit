@@ -166,6 +166,24 @@ public:
         return !!storeContents(buffer, opaque, frame);
     }
 
+    bool tryDisplaySurface(const MachSendRight& surface, ContentsFormat contentsFormat, bool opaque, PlaceholderFrameIdentifier frame) final
+    {
+        if (!m_layerID || !surface)
+            return false;
+
+        {
+            Locker locker { m_surfaceLock };
+            m_surfaceBackendHandle = ImageBufferBackendHandle { MachSendRight { surface } };
+            m_frame = frame;
+            m_contentsFormat = contentsFormat;
+            m_opaque = opaque;
+        }
+
+        RemoteLayerBackingStoreProperties properties(ImageBufferBackendHandle { MachSendRight { surface } }, frame, opaque);
+        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(*m_layerID, WTF::move(properties)), m_drawingArea.toUInt64());
+        return true;
+    }
+
     void display(PlatformCALayer& layer) final
     {
         Locker locker { m_surfaceLock };

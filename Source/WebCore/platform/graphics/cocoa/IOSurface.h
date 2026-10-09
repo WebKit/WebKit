@@ -188,6 +188,7 @@ public:
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage(CGContextRef);
     WEBCORE_EXPORT RefPtr<NativeImage> createNativeImage(ShouldForceOpaque = ShouldForceOpaque::Yes);
+    WEBCORE_EXPORT void withNativeImage(ShouldForceOpaque, NOESCAPE const Function<void(NativeImage*)>&);
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> = nullptr);
 

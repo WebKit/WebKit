@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="utf-8">
+<title>An rgba16float WebGPU OffscreenCanvas in a worker shows its frames in its placeholder</title>
+<style>
+  body { margin: 0; }
+  canvas { position: absolute; top: 0; left: 0; }
+</style>
+</head>
+<body>
+  <canvas id="canvas" width="100" height="100"></canvas>
+  <script>
+    // An rgba16float canvas element shows its render buffer in its layer, tone mapped for the
+    // screen's headroom, as the placeholder of the worker's canvas does.
+    function done() {
+      document.documentElement.classList.remove("reftest-wait");
+    }
+
+    async function run() {
+      const adapter = navigator.gpu && await navigator.gpu.requestAdapter();
+      if (!adapter) {
+        done();
+        return;
+      }
+      const device = await adapter.requestDevice();
+      const context = document.getElementById("canvas").getContext("webgpu");
+      context.configure({
+        device,
+        format: "rgba16float",
+        alphaMode: "opaque",
+        toneMapping: { mode: "extended" },
+      });
+
+      for (let i = 0; i < 10; ++i) {
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginRenderPass({
+          colorAttachments: [{
+            view: context.getCurrentTexture().createView(),
+            clearValue: { r: 0, g: 1, b: 0, a: 1 },
+            loadOp: "clear",
+            storeOp: "store",
+          }],
+        });
+        pass.end();
+        device.queue.submit([encoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+
+      // Lets the last frame reach the compositor before the snapshot.
+      requestAnimationFrame(() => requestAnimationFrame(done));
+    }
+
+    run().catch(done);
+  </script>
+</body>
+</html>

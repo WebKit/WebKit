@@ -1,0 +1,74 @@
+<!-- webkit-test-runner [ WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="16" height="16"></canvas>
+<script>
+// While nothing reads a placeholder, frames from its OffscreenCanvas only reach its layer, and
+// the placeholder's own pixels fall behind. Reading them has to catch up, even when the canvas
+// is no longer drawing: here the worker draws one colour and stops before the page reads it.
+
+function nextMessage(worker)
+{
+    return new Promise((resolve, reject) => {
+        worker.onmessage = event => event.data?.error ? reject(new Error(event.data.error)) : resolve(event.data);
+        worker.onerror = event => reject(new Error(event.message || "worker error"));
+    });
+}
+
+function nextAnimationFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(resolve));
+}
+
+// The first read may see an earlier frame, so it reads until the expected pixel arrives.
+async function readPlaceholderUntil(placeholder, expected)
+{
+    const reader = document.createElement("canvas");
+    reader.width = placeholder.width;
+    reader.height = placeholder.height;
+    const context = reader.getContext("2d", { willReadFrequently: true });
+    let pixel;
+    for (let attempt = 0; attempt < 120; ++attempt) {
+        context.clearRect(0, 0, reader.width, reader.height);
+        context.drawImage(placeholder, 0, 0);
+        pixel = Array.from(context.getImageData(8, 8, 1, 1).data);
+        if (pixel.join() === expected.join())
+            break;
+        await nextAnimationFrame();
+    }
+    return pixel;
+}
+
+promise_test(async () => {
+    const placeholder = document.getElementById("canvas");
+    const worker = new Worker("resources/offscreen-canvas-solid-color-worker.js");
+    const offscreen = placeholder.transferControlToOffscreen();
+
+    let reply = nextMessage(worker);
+    worker.postMessage({ canvas: offscreen, format: "rgba16float" }, [offscreen]);
+    assert_equals(await reply, "configured");
+
+    // Lets the placeholder get its layer, so that the frames that follow reach only the layer.
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+
+    reply = nextMessage(worker);
+    worker.postMessage({ color: { r: 0, g: 1, b: 0, a: 1 }, frames: 3 });
+    assert_equals(await reply, "rendered");
+    await nextAnimationFrame();
+    assert_array_equals(await readPlaceholderUntil(placeholder, [0, 255, 0, 255]), [0, 255, 0, 255], "the placeholder reads as the green the worker drew last");
+
+    reply = nextMessage(worker);
+    worker.postMessage({ color: { r: 0, g: 0, b: 1, a: 1 }, frames: 1 });
+    assert_equals(await reply, "rendered");
+    assert_array_equals(await readPlaceholderUntil(placeholder, [0, 0, 255, 255]), [0, 0, 255, 255], "the placeholder reads as the blue the worker drew after it");
+}, "Reading a worker WebGPU canvas's placeholder sees its last frame after the canvas stops drawing");
+</script>
+</body>
+</html>

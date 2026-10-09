@@ -174,6 +174,14 @@ OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext,
     , CanvasBase(WTF::move(size), scriptExecutionContext)
     , m_placeholderSource(WTF::move(placeholderSource))
 {
+    if (RefPtr source = m_placeholderSource) {
+        source->setRecommitHandler([weakThis = WeakPtr { *this }, contextIdentifier = scriptExecutionContext.identifier()] {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis](ScriptExecutionContext&) {
+                if (RefPtr canvas = weakThis.get())
+                    canvas->scheduleCommitToPlaceholderCanvas();
+            });
+        });
+    }
 }
 
 OffscreenCanvas::~OffscreenCanvas()
@@ -439,6 +447,8 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
         return;
     if (context->compositingResultsNeedUpdating())
         context->prepareForDisplay();
+    if (context->commitToPlaceholder(*protect(m_placeholderSource)))
+        return;
     RefPtr imageBuffer = context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     if (!imageBuffer)
         return;
