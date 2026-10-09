@@ -1294,7 +1294,7 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSS::PropertyParserSta
         case CSSValueImage:
             return consumeGeneratedImage([&](auto& args) { return consumeColorImage(args, state); });
         case CSSValueLightDark:
-            return consumeImageFunction([&](auto& args) { return consumeLightDarkImage(args, state, allowedImageTypes); });
+            return consumeImageFunction([&](auto& args) { return consumeLightDarkImage(args, state, allowedImageTypes - AllowedImageType::RawStringAsURL); });
         case CSSValueWebkitFilter:
         case CSSValueFilter:
             return consumeGeneratedImage([&](auto& args) { return consumeFilterImage(args, state); });
