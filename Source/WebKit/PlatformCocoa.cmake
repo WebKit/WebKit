@@ -2098,6 +2098,8 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/en.lproj/InfoPlist.strings
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/en.lproj/InfoPlist.strings
+        # FIXME: Use the coremlc command to produce the compiled model, same as
+        # macOS.
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/Resources/ResourceLoadStatistics/corePrediction_model
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/corePrediction_model
@@ -2549,10 +2551,21 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     add_custom_target(WebKit_Assets DEPENDS ${WebKit_RESOURCES_DIR}/Assets.car)
     add_dependencies(WebKit WebKit_Assets)
 
-    add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel
+    set(_text_extraction_filter_model_outputs
+        ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodelc/analytics/coremldata.bin
+        ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodelc/coremldata.bin
+        ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodelc/metadata.json
+    )
+    WEBKIT_XCRUN(_coremlc -f coremlc)
+    add_custom_command(OUTPUT ${_text_extraction_filter_model_outputs}
+        COMMAND ${_coremlc} compile ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${WebKit_RESOURCES_DIR}
+            --deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --sdkroot ${CMAKE_OSX_SYSROOT} --platform macos
+            --container bundle-resources
+        DEPENDS ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
+        COMMENT "Compiling TextExtractionFilter.mlmodel"
         VERBATIM)
-    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel)
+    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS
+        ${_text_extraction_filter_model_outputs})
     add_dependencies(WebKit WebKitTextExtractionFilterModel)
 
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/corePrediction_model COMMAND
