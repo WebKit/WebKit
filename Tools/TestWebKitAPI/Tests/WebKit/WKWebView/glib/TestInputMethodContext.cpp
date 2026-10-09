@@ -1665,6 +1665,33 @@ static void testWebKitInputMethodContextInputMode(InputMethodTest* test, gconstp
     checkInput("type='password' inputmode='none'", WEBKIT_INPUT_PURPOSE_PASSWORD, WEBKIT_INPUT_HINT_INHIBIT_OSK);
 }
 
+static void testWebKitInputMethodContextReadOnly(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>"
+        "<input id='plain' style='top:0' spellcheck='false'>"
+        "<input id='readonly-input' style='top:50px' spellcheck='false' readonly value='readonly'>"
+        "<textarea id='readonly-textarea' style='top:100px' spellcheck='false' readonly>readonly</textarea>", nullptr);
+    test->waitUntilLoadFinished();
+
+    // A read-only field gets no input method state, which the embedder sees as a focus out. Move
+    // from an editable field, so that the focus out is an event to wait for.
+    test->clickMouseButton(20, 15);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'plain'");
+    test->waitUntilInputMethodEnabled();
+
+    test->clickMouseButton(20, 65);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'readonly-input'");
+    test->waitUntilInputMethodDisabled();
+
+    test->clickMouseButton(20, 15);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'plain'");
+    test->waitUntilInputMethodEnabled();
+
+    test->clickMouseButton(20, 115);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'readonly-textarea'");
+    test->waitUntilInputMethodDisabled();
+}
+
 void beforeAll()
 {
     InputMethodTest::add("WebKitInputMethodContext", "simple", testWebKitInputMethodContextSimple);
@@ -1684,6 +1711,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "focus-change", testWebKitInputMethodContextFocusChange);
     InputMethodTest::add("WebKitInputMethodContext", "focus-interaction", testWebKitInputMethodContextFocusInteraction);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
+    InputMethodTest::add("WebKitInputMethodContext", "read-only", testWebKitInputMethodContextReadOnly);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode", testWebKitInputMethodContextInputMode);
 }
 

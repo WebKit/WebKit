@@ -183,6 +183,9 @@ static std::optional<InputMethodState> inputMethodStateForElement(Element* eleme
     if (!element || !element->shouldUseInputMethod())
         return std::nullopt;
 
+    if (auto* textControl = dynamicDowncast<HTMLTextFormControlElement>(*element); textControl && textControl->isReadOnly())
+        return std::nullopt;
+
     InputMethodState state;
     if (is<HTMLInputElement>(*element)) {
         auto& inputElement = downcast<HTMLInputElement>(*element);
