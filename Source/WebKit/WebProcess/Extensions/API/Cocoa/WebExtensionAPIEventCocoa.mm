@@ -1,5 +1,4 @@
-/*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+/* * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +82,30 @@ void WebExtensionAPIEvent::invokeListenersWithJSONArgument(const String& argumen
             toJSValueRef(listener->globalContext(), argument1),
             !argument2.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument2).get()) : JSValueMakeUndefined(listener->globalContext())
         );
+    }
+}
+
+void WebExtensionAPIEvent::invokeListenersWithJSArgument(JSListenerArgument argument1, JSListenerArgument argument2)
+{
+    if (m_listeners.isEmpty())
+        return;
+
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    for (RefPtr listener : listenersCopy) {
+        JSValueRef argument1JS, argument2JS;
+        if (argument1.convertToJSON)
+            argument1JS = !argument1.argument.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument1.argument).get()) : JSValueMakeUndefined(listener->globalContext());
+        else
+            argument1JS = toJSValueRef(listener->globalContext(), argument1.argument);
+
+        if (argument2.convertToJSON)
+            argument2JS = !argument2.argument.isEmpty() ? JSValueMakeFromJSONString(listener->globalContext(), toJSString(argument2.argument).get()) : JSValueMakeUndefined(listener->globalContext());
+        else
+            argument2JS = toJSValueRef(listener->globalContext(), argument2.argument);
+
+        listener->call(argument1JS, argument2JS);
     }
 }
 

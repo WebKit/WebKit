@@ -26,6 +26,7 @@
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,
+    UseCPPAPI
 ] interface WebExtensionAPIStorage {
 
     [Dynamic] readonly attribute WebExtensionAPIStorageArea local;
