@@ -1533,6 +1533,7 @@ private:
         VariableEnvironment lexicalVariables;
         CodeFeatures features;
         int numConstants;
+        unsigned usedPrivateNameCount;
     };
     std::expected<ParseInnerResult, String> parseInner(const Identifier&, ParsingContext, std::optional<int> functionConstructorParametersEndPosition, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>*, const PrivateNameEnvironment* parentScopePrivateNames);
 
@@ -2124,7 +2125,7 @@ private:
     ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
     bool m_isInsideOrdinaryFunction;
     bool m_seenTaggedTemplateInNonReparsingFunctionMode { false };
-    bool m_seenPrivateNameUseInNonReparsingFunctionMode { false };
+    bool m_seenPrivateNameUse { false };
     bool m_seenArgumentsDotLength { false };
     // offset 192; too rarely touched for grouping to pay.
     ParserArena m_parserArena;
@@ -2210,6 +2211,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     WTF::move(m_moduleScopeData));
         result->setStartOffset(m_lexer->currentOffset());
         result->setEndOffset(m_lexer->currentOffset());
+        result->setUsedPrivateNameCount(parseResult.value().usedPrivateNameCount);
 
         if (!isFunctionParseMode(parseMode)) {
             m_source->provider()->setSourceURLDirective(m_lexer->sourceURLDirective());
