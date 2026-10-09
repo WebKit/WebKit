@@ -11,6 +11,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module BrowsingContextGroup {
+        requires cplusplus20
+        header "../../UIProcess/BrowsingContextGroup.h"
+        export *
+    }
+
     module CallbackID {
         requires cplusplus20
         header "../../Shared/CallbackID.h"
