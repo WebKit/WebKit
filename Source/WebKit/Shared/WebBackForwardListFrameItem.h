@@ -49,6 +49,8 @@ public:
     Ref<FrameState> copyFrameState();
     Ref<FrameState> copyFrameStateWithChildren();
 
+    const Vector<Ref<WebBackForwardListFrameItem>>& children() const LIFETIME_BOUND { return m_children; }
+
     std::optional<WebCore::FrameIdentifier> NODELETE frameID() const;
     WebCore::BackForwardFrameItemIdentifier identifier() const { return m_identifier; }
     const String& NODELETE url() const LIFETIME_BOUND;
