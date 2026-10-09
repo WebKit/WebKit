@@ -696,6 +696,18 @@ bool ServicesOverlayController::mouseEvent(PageOverlay& overlay, const PlatformM
     return false;
 }
 
+void ServicesOverlayController::mouseDidLeaveLocalRoot(LocalFrame& rootFrame)
+{
+    if (m_mouseRootFrame.get() != &rootFrame)
+        return;
+
+    m_mouseRootFrame = nullptr;
+    m_determineActiveHighlightTimer.stop();
+
+    bool mouseIsOverButton { false };
+    determineActiveHighlight(mouseIsOverButton);
+}
+
 // The UI process sends a mouse event to the main frame first, so a nested local root's event reaches its ancestor roots in this process first.
 bool ServicesOverlayController::shouldHandleMouseEventInRootFrame(const LocalFrame& rootFrame, const IntPoint& mousePosition)
 {
