@@ -1,0 +1,7 @@
+
+PASS replaceSync() with new text replaces the previous rules
+PASS replaceSync() with new text replaces the previous rules after they were accessed
+PASS replaceSync() back to earlier text yields only that text's rules
+PASS replaceSync() on one sheet does not affect other sheets created from the same text
+PASS Mutating rules of one sheet does not affect other sheets created from the same text
+
