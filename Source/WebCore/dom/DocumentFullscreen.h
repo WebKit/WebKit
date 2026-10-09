@@ -49,8 +49,7 @@ public:
 
     // Document+Fullscreen.idl methods.
     static void exitFullscreen(Document&, Ref<DeferredPromise>&&);
-    static bool fullscreenEnabled(Document&);
-    static bool webkitFullscreenEnabled(Document& document) { return protect(document.fullscreen())->enabledByPermissionsPolicy(); }
+    WEBCORE_EXPORT static bool fullscreenEnabled(Document&);
     static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(protect(document.fullscreen())->fullscreenElement()); };
     WEBCORE_EXPORT static void webkitExitFullscreen(Document&);
     static bool webkitIsFullScreen(Document& document) { return protect(document.fullscreen())->isFullscreen(); };
