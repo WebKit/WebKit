@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCJSValueInlines.h"
+#include "Options.h"
 #include "WasmBranchHintsSectionParser.h"
 #include "WasmConstExprGenerator.h"
 #include "WasmMemoryInformation.h"
@@ -140,6 +141,85 @@ auto SectionParser::parseType() -> PartialResult
     return { };
 }
 
+auto SectionParser::parseImportType(uint32_t importNumber, const Name& module, const Name& field, ExternalKind kind, ParsedImportType& parsed) -> PartialResult
+{
+    parsed.kind = kind;
+    switch (kind) {
+    case ExternalKind::Function: {
+        uint32_t functionTypeIndex;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(functionTypeIndex), "can't get "_s, importNumber, "th Import's function signature in module '"_s, module, "' field '"_s, field, "'"_s);
+        WASM_PARSER_FAIL_IF(functionTypeIndex >= m_info->typeCount(), "invalid function signature for "_s, importNumber, "th Import, "_s, functionTypeIndex, " is out of range of "_s, m_info->typeCount(), " in module '"_s, module, "' field '"_s, field, "'"_s);
+        parsed.typeIndex = TypeSignatureIndex(functionTypeIndex);
+        const auto& importRTT = m_info->rtt(parsed.typeIndex);
+        WASM_PARSER_FAIL_IF(importRTT.kind() != RTTKind::Function, importNumber, "th Function type "_s, functionTypeIndex, " doesn't have a function signature"_s);
+        break;
+    }
+    case ExternalKind::Table:
+        WASM_FAIL_IF_HELPER_FAILS(parseTableType(true, parsed.table));
+        break;
+    case ExternalKind::Memory:
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryType(true, parsed.memory));
+        break;
+    case ExternalKind::Global:
+        WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(parsed.global));
+        // Only mutable globals need floating bindings.
+        if (parsed.global.mutability == Mutability::Mutable)
+            parsed.global.bindingMode = GlobalInformation::BindingMode::Portable;
+        break;
+    case ExternalKind::Exception: {
+        uint8_t tagType;
+        WASM_PARSER_FAIL_IF(!parseUInt8(tagType), "can't get "_s, importNumber, "th Import exception's tag type"_s);
+        WASM_PARSER_FAIL_IF(tagType, importNumber, "th Import exception has tag type "_s, tagType, " but the only supported tag type is 0"_s);
+
+        uint32_t exceptionSignatureIndex;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionSignatureIndex), "can't get "_s, importNumber, "th Import's exception signature in module '"_s, module, "' field '"_s, field, "'"_s);
+        WASM_PARSER_FAIL_IF(exceptionSignatureIndex >= m_info->typeCount(), "invalid exception signature for "_s, importNumber, "th Import, "_s, exceptionSignatureIndex, " is out of range of "_s, m_info->typeCount(), " in module '"_s, module, "' field '"_s, field, "'"_s);
+        parsed.typeIndex = TypeSignatureIndex(exceptionSignatureIndex);
+        const auto& expandedRTT = m_info->rtt(parsed.typeIndex);
+        WASM_PARSER_FAIL_IF(expandedRTT.kind() != RTTKind::Function, importNumber, "th Exception type "_s, exceptionSignatureIndex, " doesn't have a function signature"_s);
+        WASM_PARSER_FAIL_IF(!expandedRTT.returnsVoid(), importNumber, "th Exception type cannot have a non-void return type "_s, exceptionSignatureIndex);
+        break;
+    }
+    }
+    return { };
+}
+
+auto SectionParser::appendImportType(const ParsedImportType& parsed, unsigned& kindIndex) -> PartialResult
+{
+    switch (parsed.kind) {
+    case ExternalKind::Function:
+        kindIndex = m_info->importFunctionTypeSignatureIndices.size();
+        WASM_ALLOCATOR_FAIL_IF(!m_info->importFunctionTypeSignatureIndices.tryAppend(parsed.typeIndex), "can't allocate enough memory for import function signatures"_s);
+        break;
+    case ExternalKind::Table:
+        kindIndex = m_info->tables.size();
+        WASM_FAIL_IF_HELPER_FAILS(appendTable(parsed.table));
+        break;
+    case ExternalKind::Memory:
+        kindIndex = m_info->memories.size();
+        WASM_FAIL_IF_HELPER_FAILS(appendMemory(parsed.memory));
+        break;
+    case ExternalKind::Global:
+        kindIndex = m_info->globals.size();
+        WASM_ALLOCATOR_FAIL_IF(!m_info->globals.tryAppend(parsed.global), "can't allocate enough memory for globals"_s);
+        break;
+    case ExternalKind::Exception:
+        kindIndex = m_info->importExceptionTypeSignatureIndices.size();
+        WASM_ALLOCATOR_FAIL_IF(!m_info->importExceptionTypeSignatureIndices.tryAppend(parsed.typeIndex), "can't allocate enough memory for import exception signatures"_s);
+        break;
+    }
+    return { };
+}
+
+auto SectionParser::addImport(Name&& module, Name&& field, const ParsedImportType& parsed) -> PartialResult
+{
+    WASM_PARSER_FAIL_IF(m_info->imports.size() >= maxImports, "Import section's count is too big "_s, m_info->imports.size() + 1, " maximum "_s, maxImports);
+    unsigned kindIndex = 0;
+    WASM_FAIL_IF_HELPER_FAILS(appendImportType(parsed, kindIndex));
+    WASM_ALLOCATOR_FAIL_IF(!m_info->imports.tryAppend({ WTF::move(module), WTF::move(field), parsed.kind, kindIndex }), "can't allocate enough memory for imports"_s);
+    return { };
+}
+
 auto SectionParser::parseImport() -> PartialResult
 {
     uint32_t importCount;
@@ -149,83 +229,65 @@ auto SectionParser::parseImport() -> PartialResult
     RELEASE_ASSERT(!m_info->imports.capacity());
     RELEASE_ASSERT(!m_info->importFunctionTypeSignatureIndices.capacity());
     RELEASE_ASSERT(!m_info->importExceptionTypeSignatureIndices.capacity());
-    WASM_ALLOCATOR_FAIL_IF(!m_info->globals.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " globals"_s); // FIXME this over-allocates when we fix the FIXMEs below.
-    WASM_ALLOCATOR_FAIL_IF(!m_info->imports.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " imports"_s); // FIXME this over-allocates when we fix the FIXMEs below.
-    WASM_ALLOCATOR_FAIL_IF(!m_info->importFunctionTypeSignatureIndices.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " import function signatures"_s); // FIXME this over-allocates when we fix the FIXMEs below.
-    WASM_ALLOCATOR_FAIL_IF(!m_info->importExceptionTypeSignatureIndices.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " import exception signatures"_s); // FIXME this over-allocates when we fix the FIXMEs below.
+    WASM_ALLOCATOR_FAIL_IF(!m_info->globals.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " globals"_s);
+    WASM_ALLOCATOR_FAIL_IF(!m_info->imports.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " imports"_s);
+    WASM_ALLOCATOR_FAIL_IF(!m_info->importFunctionTypeSignatureIndices.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " import function signatures"_s);
+    WASM_ALLOCATOR_FAIL_IF(!m_info->importExceptionTypeSignatureIndices.tryReserveInitialCapacity(importCount), "can't allocate enough memory for "_s, importCount, " import exception signatures"_s);
+
+    auto parseField = [&](uint32_t importNumber, const Name& module, Name& field) -> PartialResult {
+        uint32_t fieldLen;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get "_s, importNumber, "th Import's field name length in module '"_s, module, "'"_s);
+        WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(field, fieldLen), "can't get "_s, importNumber, "th Import's field name of length "_s, fieldLen, " in module '"_s, module, "'"_s);
+        return { };
+    };
 
     for (uint32_t importNumber = 0; importNumber < importCount; ++importNumber) {
         uint32_t moduleLen;
-        uint32_t fieldLen;
         Name moduleString;
         Name fieldString;
-        ExternalKind kind;
-        unsigned kindIndex { 0 };
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(moduleLen), "can't get "_s, importNumber, "th Import's module name length"_s);
         WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(moduleString, moduleLen), "can't get "_s, importNumber, "th Import's module name of length "_s, moduleLen);
+        WASM_FAIL_IF_HELPER_FAILS(parseField(importNumber, moduleString, fieldString));
 
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get "_s, importNumber, "th Import's field name length in module '"_s, moduleString, "'"_s);
-        WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get "_s, importNumber, "th Import's field name of length "_s, moduleLen, " in module '"_s, moduleString, "'"_s);
+        uint8_t rawKind;
+        WASM_PARSER_FAIL_IF(!parseUInt8(rawKind), "can't get "_s, importNumber, "th Import's kind in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
 
-        WASM_PARSER_FAIL_IF(!parseExternalKind(kind), "can't get "_s, importNumber, "th Import's kind in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
-        switch (kind) {
-        case ExternalKind::Function: {
-            uint32_t functionTypeIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(functionTypeIndex), "can't get "_s, importNumber, "th Import's function signature in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
-            WASM_PARSER_FAIL_IF(functionTypeIndex >= m_info->typeCount(), "invalid function signature for "_s, importNumber, "th Import, "_s, functionTypeIndex, " is out of range of "_s, m_info->typeCount(), " in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
-            kindIndex = m_info->importFunctionTypeSignatureIndices.size();
-            auto index = TypeSignatureIndex(functionTypeIndex);
-            const auto& importRTT = m_info->rtt(index);
-            WASM_PARSER_FAIL_IF(importRTT.kind() != RTTKind::Function, importNumber, "th Function type "_s, functionTypeIndex, " doesn't have a function signature"_s);
-            m_info->importFunctionTypeSignatureIndices.append(index);
-            break;
-        }
-        case ExternalKind::Table: {
-            bool isImport = true;
-            kindIndex = m_info->tables.size();
-            PartialResult result = parseTableHelper(isImport);
-            if (!result) [[unlikely]]
-                return makeUnexpected(WTF::move(result.error()));
-            break;
-        }
-        case ExternalKind::Memory: {
-            bool isImport = true;
-            kindIndex = m_info->memories.size();
-            PartialResult result = parseMemoryHelper(isImport);
-            if (!result) [[unlikely]]
-                return makeUnexpected(WTF::move(result.error()));
-            break;
-        }
-        case ExternalKind::Global: {
-            GlobalInformation global;
-            WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
-            // Only mutable globals need floating bindings.
-            if (global.mutability == Mutability::Mutable)
-                global.bindingMode = GlobalInformation::BindingMode::Portable;
-            kindIndex = m_info->globals.size();
-            m_info->globals.append(WTF::move(global));
-            break;
-        }
-        case ExternalKind::Exception: {
-            uint8_t tagType;
-            WASM_PARSER_FAIL_IF(!parseUInt8(tagType), "can't get "_s, importNumber, "th Import exception's tag type"_s);
-            WASM_PARSER_FAIL_IF(tagType, importNumber, "th Import exception has tag type "_s, tagType, " but the only supported tag type is 0"_s);
-
-            uint32_t exceptionSignatureIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionSignatureIndex), "can't get "_s, importNumber, "th Import's exception signature in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
-            WASM_PARSER_FAIL_IF(exceptionSignatureIndex >= m_info->typeCount(), "invalid exception signature for "_s, importNumber, "th Import, "_s, exceptionSignatureIndex, " is out of range of "_s, m_info->typeCount(), " in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
-            kindIndex = m_info->importExceptionTypeSignatureIndices.size();
-            auto index = TypeSignatureIndex(exceptionSignatureIndex);
-            const auto& expandedRTT = m_info->rtt(index);
-            WASM_PARSER_FAIL_IF(expandedRTT.kind() != RTTKind::Function, importNumber, "th Exception type "_s, exceptionSignatureIndex, " doesn't have a function signature"_s);
-            WASM_PARSER_FAIL_IF(!expandedRTT.returnsVoid(), importNumber, "th Exception type cannot have a non-void return type "_s, exceptionSignatureIndex);
-            m_info->importExceptionTypeSignatureIndices.append(index);
-            break;
-        }
+        if (Options::useWasmCompactImportSection() && fieldString.isEmpty()) {
+            if (rawKind == compactImportEncodingItemsWithTypes) {
+                uint32_t itemCount;
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(itemCount), "can't get "_s, importNumber, "th Import group's compact item count"_s);
+                for (uint32_t i = 0; i < itemCount; ++i) {
+                    Name itemField;
+                    WASM_FAIL_IF_HELPER_FAILS(parseField(importNumber, moduleString, itemField));
+                    ExternalKind kind;
+                    WASM_PARSER_FAIL_IF(!parseExternalKind(kind), "can't get "_s, importNumber, "th Import group's "_s, i, "th kind in module '"_s, moduleString, "' field '"_s, itemField, "'"_s);
+                    ParsedImportType parsed;
+                    WASM_FAIL_IF_HELPER_FAILS(parseImportType(importNumber, moduleString, itemField, kind, parsed));
+                    WASM_FAIL_IF_HELPER_FAILS(addImport(Name { moduleString }, WTF::move(itemField), parsed));
+                }
+                continue;
+            }
+            if (rawKind == compactImportEncodingItemsWithSharedType) {
+                ExternalKind kind;
+                WASM_PARSER_FAIL_IF(!parseExternalKind(kind), "can't get "_s, importNumber, "th Import group's kind in module '"_s, moduleString, "'"_s);
+                ParsedImportType parsed;
+                WASM_FAIL_IF_HELPER_FAILS(parseImportType(importNumber, moduleString, fieldString, kind, parsed));
+                uint32_t itemCount;
+                WASM_PARSER_FAIL_IF(!parseVarUInt32(itemCount), "can't get "_s, importNumber, "th Import group's compact item count"_s);
+                for (uint32_t i = 0; i < itemCount; ++i) {
+                    Name itemField;
+                    WASM_FAIL_IF_HELPER_FAILS(parseField(importNumber, moduleString, itemField));
+                    WASM_FAIL_IF_HELPER_FAILS(addImport(Name { moduleString }, WTF::move(itemField), parsed));
+                }
+                continue;
+            }
         }
 
-        m_info->imports.append({ WTF::move(moduleString), WTF::move(fieldString), kind, kindIndex });
+        WASM_PARSER_FAIL_IF(!isValidExternalKind(rawKind), "can't get "_s, importNumber, "th Import's kind in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
+        ParsedImportType parsed;
+        WASM_FAIL_IF_HELPER_FAILS(parseImportType(importNumber, moduleString, fieldString, static_cast<ExternalKind>(rawKind), parsed));
+        WASM_FAIL_IF_HELPER_FAILS(addImport(WTF::move(moduleString), WTF::move(fieldString), parsed));
     }
 
     m_info->firstInternalGlobal = m_info->globals.size();
@@ -313,10 +375,8 @@ auto SectionParser::parseResizableLimits(uint64_t& initial, std::optional<uint64
     return { };
 }
 
-auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
+auto SectionParser::parseTableType(bool isImport, TableInformation& table) -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(m_info->tableCount() >= maxTables, "Table count of "_s, m_info->tableCount(), " is too big, maximum "_s, maxTables);
-
     Type type;
     bool hasInitExpr = false;
     TableInformation::InitializationType tableInitType = TableInformation::Default;
@@ -368,9 +428,23 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
     }
 
     TableElementType tableType = isSubtype(type, funcrefType()) ? TableElementType::Funcref : TableElementType::Externref;
-    m_info->tables.append(TableInformation(initial, maximum, isImport, tableType, type, tableInitType, initialBitsOrImportNumber, isTable64));
+    table = TableInformation(initial, maximum, isImport, tableType, type, tableInitType, initialBitsOrImportNumber, isTable64);
 
     return { };
+}
+
+auto SectionParser::appendTable(const TableInformation& table) -> PartialResult
+{
+    WASM_PARSER_FAIL_IF(m_info->tableCount() >= maxTables, "Table count of "_s, m_info->tableCount(), " is too big, maximum "_s, maxTables);
+    WASM_ALLOCATOR_FAIL_IF(!m_info->tables.tryAppend(table), "can't allocate enough memory for tables"_s);
+    return { };
+}
+
+auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
+{
+    TableInformation table;
+    WASM_FAIL_IF_HELPER_FAILS(parseTableType(isImport, table));
+    return appendTable(table);
 }
 
 auto SectionParser::parseTable() -> PartialResult
@@ -388,15 +462,8 @@ auto SectionParser::parseTable() -> PartialResult
     return { };
 }
 
-auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
+auto SectionParser::parseMemoryType(bool isImport, MemoryInformation& memory) -> PartialResult
 {
-    // This test is here in order to handle the case of a single imported memory and a single specified memory
-    // in its own section, which is legal iff multimemory is enabled
-    if (!Options::useWasmMultiMemory())
-        WASM_PARSER_FAIL_IF(m_info->memoryCount(), "there can at most be one Memory section for now"_s);
-
-    WASM_PARSER_FAIL_IF(m_info->memoryCount() >= maxMemories, "there can be at most "_s, maxMemories, " memories"_s);
-
     PageCount initialPageCount;
     PageCount maximumPageCount;
     bool isShared { false };
@@ -422,9 +489,25 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     ASSERT(initialPageCount);
     ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
-    m_info->memories.append(MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport, isMemory64));
-
+    memory = MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport, isMemory64);
     return { };
+}
+
+auto SectionParser::appendMemory(const MemoryInformation& memory) -> PartialResult
+{
+    // Imported memory plus a defined Memory section is legal only if multi-memory is enabled.
+    if (!Options::useWasmMultiMemory())
+        WASM_PARSER_FAIL_IF(m_info->memoryCount(), "there can at most be one Memory section for now"_s);
+    WASM_PARSER_FAIL_IF(m_info->memoryCount() >= maxMemories, "there can be at most "_s, maxMemories, " memories"_s);
+    WASM_ALLOCATOR_FAIL_IF(!m_info->memories.tryAppend(memory), "can't allocate enough memory for memories"_s);
+    return { };
+}
+
+auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
+{
+    MemoryInformation memory;
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryType(isImport, memory));
+    return appendMemory(memory);
 }
 
 auto SectionParser::parseMemory() -> PartialResult
