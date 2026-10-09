@@ -177,6 +177,20 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return _pageConfiguration->ignoresViewportScaleLimits();
 }
 
+#else // PLATFORM(IOS_FAMILY)
+
+- (WKUserInterfaceDirectionPolicy)userInterfaceDirectionPolicy
+{
+    return _pageConfiguration->userInterfaceDirectionPolicy() == WebCore::UserInterfaceDirectionPolicy::System ? WKUserInterfaceDirectionPolicySystem : WKUserInterfaceDirectionPolicyContent;
+}
+
+- (void)setUserInterfaceDirectionPolicy:(WKUserInterfaceDirectionPolicy)policy
+{
+    return _pageConfiguration->setUserInterfaceDirectionPolicy(policy == WKUserInterfaceDirectionPolicySystem ? WebCore::UserInterfaceDirectionPolicy::System : WebCore::UserInterfaceDirectionPolicy::Content);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 - (void)setDataDetectorTypes:(WKDataDetectorTypes)types
 {
 #if ENABLE(DATA_DETECTION)
@@ -192,20 +206,6 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return WKDataDetectorTypeNone;
 #endif
 }
-
-#else // PLATFORM(IOS_FAMILY)
-
-- (WKUserInterfaceDirectionPolicy)userInterfaceDirectionPolicy
-{
-    return _pageConfiguration->userInterfaceDirectionPolicy() == WebCore::UserInterfaceDirectionPolicy::System ? WKUserInterfaceDirectionPolicySystem : WKUserInterfaceDirectionPolicyContent;
-}
-
-- (void)setUserInterfaceDirectionPolicy:(WKUserInterfaceDirectionPolicy)policy
-{
-    return _pageConfiguration->setUserInterfaceDirectionPolicy(policy == WKUserInterfaceDirectionPolicySystem ? WebCore::UserInterfaceDirectionPolicy::System : WebCore::UserInterfaceDirectionPolicy::Content);
-}
-
-#endif // PLATFORM(IOS_FAMILY)
 
 - (NSString *)description
 {
@@ -236,9 +236,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
 
     [coder encodeBool:self._drawsBackground forKey:@"drawsBackground"];
+    [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
 
 #if PLATFORM(IOS_FAMILY)
-    [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
     [coder encodeBool:self.allowsInlineMediaPlayback forKey:@"allowsInlineMediaPlayback"];
     [coder encodeBool:self._allowsInlineMediaPlaybackAfterFullscreen forKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     [coder encodeBool:self.mediaTypesRequiringUserActionForPlayback forKey:@"mediaTypesRequiringUserActionForPlayback"];
@@ -288,8 +288,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([coder containsValueForKey:@"drawsBackground"])
         self._drawsBackground = [coder decodeBoolForKey:@"drawsBackground"];
 
-#if PLATFORM(IOS_FAMILY)
     self.dataDetectorTypes = [coder decodeIntegerForKey:@"dataDetectorTypes"];
+
+#if PLATFORM(IOS_FAMILY)
     self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
     self._allowsInlineMediaPlaybackAfterFullscreen = [coder decodeBoolForKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     self.mediaTypesRequiringUserActionForPlayback = [coder decodeBoolForKey:@"mediaTypesRequiringUserActionForPlayback"];

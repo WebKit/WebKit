@@ -49,6 +49,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightCreateWithRectsInVi
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectors, kDataDetectorsReferenceDateKey, const NSString *)
 
 namespace PAL {
 

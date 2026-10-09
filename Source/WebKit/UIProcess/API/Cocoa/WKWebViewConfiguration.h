@@ -187,15 +187,6 @@ on the system setting.
  */
 @property (nonatomic) BOOL allowsPictureInPictureMediaPlayback WK_API_AVAILABLE(ios(9.0));
 
-/*! @abstract An enum value indicating the type of data detection desired.
- @discussion The default value is WKDataDetectorTypeNone.
- An example of how this property may affect the content loaded in the WKWebView is that content like
- 'Visit apple.com on July 4th or call 1 800 555-5545' will be transformed to add links around 'apple.com', 'July 4th' and '1 800 555-5545'
- if the dataDetectorTypes property is set to WKDataDetectorTypePhoneNumber | WKDataDetectorTypeLink | WKDataDetectorTypeCalendarEvent.
-
- */
-@property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_API_AVAILABLE(ios(10.0));
-
 /*! @abstract A Boolean value indicating whether the WKWebView should always allow scaling of the web page, regardless of author intent.
  @discussion This will override the user-scalable property.
  The default value is NO.
@@ -211,6 +202,15 @@ on the system setting.
 @property (nonatomic) WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy WK_API_AVAILABLE(macos(10.12));
 
 #endif
+
+/*! @abstract An enum value indicating the type of data detection desired.
+ @discussion The default value is WKDataDetectorTypeNone.
+ An example of how this property may affect the content loaded in the WKWebView is that content like
+ 'Visit apple.com on July 4th or call 1 800 555-5545' will be transformed to add links around 'apple.com', 'July 4th' and '1 800 555-5545'
+ if the dataDetectorTypes property is set to WKDataDetectorTypePhoneNumber | WKDataDetectorTypeLink | WKDataDetectorTypeCalendarEvent.
+
+ */
+@property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(10.0));
 
 /* @abstract Sets the URL scheme handler object for the given URL scheme.
  @param urlSchemeHandler The object to register.

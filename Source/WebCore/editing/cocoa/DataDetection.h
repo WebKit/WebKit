@@ -53,6 +53,8 @@ typedef struct __DDScanner *DDScannerRef;
 namespace WebCore {
 
 class Document;
+class Element;
+class Event;
 class HTMLDivElement;
 class HTMLElement;
 class HitTestResult;
@@ -70,6 +72,7 @@ class DataDetection {
 public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static std::optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
+    static bool handleClickOnDataDetectorLink(Element&, const Event&);
 #endif
     WEBCORE_EXPORT static void detectContentInFrame(LocalFrame*, OptionSet<DataDetectorType>, std::optional<double>, CompletionHandler<void(NSArray *)>&&);
     WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double> referenceDate);

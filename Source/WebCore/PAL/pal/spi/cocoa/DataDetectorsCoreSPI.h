@@ -210,6 +210,7 @@ void *DDScanQueryGetFragmentMetaData(DDScanQueryRef, CFIndex queryIndex);
 bool DDResultHasProperties(DDResultRef, CFIndex propertySet);
 CFArrayRef DDResultGetSubResults(DDResultRef);
 DDQueryRange DDResultGetQueryRangeForURLification(DDResultRef);
+CFStringRef DDResultCopyExtractedURL(DDResultRef);
 void DDResultDisableURLSchemeChecking();
 
 #if HAVE(DDSCANNER_QOS_CONFIGURATION)

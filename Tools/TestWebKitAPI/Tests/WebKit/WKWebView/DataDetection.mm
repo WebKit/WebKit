@@ -30,10 +30,12 @@
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "InstanceMethodSwizzler.h"
 #import <WebKit/WebKit.h>
+#import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(DATA_DETECTION)
 
 @interface WKWebView (DataDetection)
 - (void)synchronouslyDetectDataWithTypes:(WKDataDetectorTypes)types;
@@ -105,7 +107,7 @@ TEST(WebKit, DISABLED_DataDetectionReferenceDate)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setDataDetectorTypes:WKDataDetectorTypeCalendarEvent];
 
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 
     RetainPtr<DataDetectionUIDelegate> UIDelegate = adoptNS([[DataDetectionUIDelegate alloc] init]);
     [webView setUIDelegate:UIDelegate.get()];
@@ -127,7 +129,7 @@ TEST(WebKit, DISABLED_DataDetectionReferenceDate)
     expectLinkCount(webView.get(), @"yesterday at 6PM", 1);
 }
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 TEST(WebKit, AddAndRemoveDataDetectors)
 {
@@ -174,6 +176,85 @@ TEST(WebKit, DoNotCrashWhenDetectingDataAfterWebProcessTerminates)
     [webView synchronouslyRemoveDataDetectedLinks];
 }
 
-#endif // PLATFORM(IOS) || PLATFORM(VISION)
+#endif // PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
-#endif
+TEST(DataDetectorTests, LoadWKWebViewWithDataDetectorTypePhoneNumber)
+{
+    NSString *const phoneNumber = @"(555) 867-5309";
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setDataDetectorTypes:WKDataDetectorTypePhoneNumber];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<!DOCTYPE><html><head></head><body><p>Call Jenny at %@</p></body></html>", phoneNumber]];
+
+    // Ensure that the phone number is linked by Data Detectors. Detection finishes asynchronously after the load.
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelectorAll('a').length"] intValue] == 1;
+    }));
+    NSString *linkText = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('a')[0].innerText"];
+    EXPECT_WK_STREQ(phoneNumber, linkText);
+    NSString *linkURL = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('a')[0].href"];
+    NSString *expectedLinkURL = [NSString stringWithFormat:@"tel:%@", [phoneNumber stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet whitespaceCharacterSet].invertedSet]];
+    EXPECT_WK_STREQ(expectedLinkURL, linkURL);
+}
+
+#if PLATFORM(MAC) && ENABLE(REVEAL)
+
+TEST(DataDetectorTests, ClickingDataDetectorLinkShowsRevealMenu)
+{
+    __block bool didShowMenu = false;
+    __block CGRect elementBounds = CGRectNull;
+    __block CGPoint menuLocation = CGPointZero;
+    InstanceMethodSwizzler showContextMenuSwizzler {
+        NSClassFromString(@"WKRevealItemPresenter"),
+        NSSelectorFromString(@"showContextMenu"),
+        imp_implementationWithBlock(^(NSObject *presenter) {
+            elementBounds = [(NSValue *)[presenter valueForKey:@"frameInView"] rectValue];
+            menuLocation = [(NSValue *)[presenter valueForKey:@"menuLocationInView"] pointValue];
+            didShowMenu = true;
+        })
+    };
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setDataDetectorTypes:WKDataDetectorTypeAddress];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; font-size: 24px;'><p style='margin: 0;'>Meet me at 2 Apple Park Way, Cupertino 95014 tomorrow.</p></body>"];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelectorAll('a[x-apple-data-detectors=true]').length"] intValue] == 1;
+    }));
+
+    RetainPtr<NSArray<NSNumber *>> linkRect = [webView objectByEvaluatingJavaScript:@"(() => {"
+        @"    const rect = document.querySelector('a[x-apple-data-detectors=true]').getBoundingClientRect();"
+        @"    return [rect.left, rect.top, rect.width, rect.height];"
+        @"})()"];
+    auto linkBounds = CGRectMake([linkRect.get()[0] doubleValue], [linkRect.get()[1] doubleValue], [linkRect.get()[2] doubleValue], [linkRect.get()[3] doubleValue]);
+
+    __block bool didAttemptNavigation = false;
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDecidePolicyForNavigationAction:^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        didAttemptNavigation = true;
+        decisionHandler(WKNavigationActionPolicyCancel);
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    auto clickLocation = CGPointMake(std::floor(CGRectGetMidX(linkBounds)), std::floor(CGRectGetMidY(linkBounds)));
+    [webView sendClickAtPoint:[webView convertPoint:clickLocation toView:nil]];
+    TestWebKitAPI::Util::run(&didShowMenu);
+    [webView waitForNextPresentationUpdate];
+
+    // Clicking a detected link should present the Reveal menu instead of navigating to the x-apple-data-detectors URL.
+    EXPECT_FALSE(didAttemptNavigation);
+    EXPECT_NEAR(elementBounds.origin.x, linkBounds.origin.x, 2);
+    EXPECT_NEAR(elementBounds.origin.y, linkBounds.origin.y, 2);
+    EXPECT_NEAR(elementBounds.size.width, linkBounds.size.width, 2);
+    EXPECT_NEAR(elementBounds.size.height, linkBounds.size.height, 2);
+    EXPECT_NEAR(menuLocation.x, clickLocation.x, 1);
+    EXPECT_NEAR(menuLocation.y, clickLocation.y, 1);
+}
+
+#endif // PLATFORM(MAC) && ENABLE(REVEAL)
+
+#endif // ENABLE(DATA_DETECTION)

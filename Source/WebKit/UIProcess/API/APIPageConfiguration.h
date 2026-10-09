@@ -216,11 +216,6 @@ public:
     WebKit::DragLiftDelay dragLiftDelay() const { return m_data.dragLiftDelay; }
     void setDragLiftDelay(WebKit::DragLiftDelay delay) { m_data.dragLiftDelay = delay; }
 
-#if ENABLE(DATA_DETECTION)
-    OptionSet<WebCore::DataDetectorType> dataDetectorTypes() const { return m_data.dataDetectorTypes; }
-    void setDataDetectorTypes(OptionSet<WebCore::DataDetectorType> types) { m_data.dataDetectorTypes = types; }
-#endif
-
     WebKit::SelectionGranularity selectionGranularity() const { return m_data.selectionGranularity; }
     void setSelectionGranularity(WebKit::SelectionGranularity granularity) { m_data.selectionGranularity = granularity; }
 
@@ -238,6 +233,11 @@ public:
 
     bool shouldDecidePolicyBeforeLoadingQuickLookPreview() const { return m_data.shouldDecidePolicyBeforeLoadingQuickLookPreview; }
     void setShouldDecidePolicyBeforeLoadingQuickLookPreview(bool shouldDecide) { m_data.shouldDecidePolicyBeforeLoadingQuickLookPreview = shouldDecide; }
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    OptionSet<WebCore::DataDetectorType> dataDetectorTypes() const { return m_data.dataDetectorTypes; }
+    void setDataDetectorTypes(OptionSet<WebCore::DataDetectorType> types) { m_data.dataDetectorTypes = types; }
 #endif
 
     bool mediaDataLoadsAutomatically() const { return m_data.mediaDataLoadsAutomatically; }
@@ -565,9 +565,6 @@ private:
         bool allowsInlineMediaPlaybackAfterFullscreen { !allowsInlineMediaPlayback };
         bool mediaDataLoadsAutomatically { allowsInlineMediaPlayback };
         WebKit::DragLiftDelay dragLiftDelay { defaultDragLiftDelay() };
-#if ENABLE(DATA_DETECTION)
-        OptionSet<WebCore::DataDetectorType> dataDetectorTypes;
-#endif
         WebKit::SelectionGranularity selectionGranularity { WebKit::SelectionGranularity::Dynamic };
 #if PLATFORM(WATCHOS)
         bool allowsPictureInPictureMediaPlayback { false };
@@ -583,6 +580,9 @@ private:
 #else // PLATFORM(IOS_FAMILY)
         bool mediaDataLoadsAutomatically { true };
 #endif // PLATFORM(IOS_FAMILY)
+#if ENABLE(DATA_DETECTION)
+        OptionSet<WebCore::DataDetectorType> dataDetectorTypes;
+#endif
         bool initialCapitalizationEnabled { true };
         bool waitsForPaintAfterViewDidMoveToWindow { true };
         bool drawsBackground { true };
