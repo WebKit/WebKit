@@ -284,6 +284,8 @@ public:
 
     WEBCORE_EXPORT OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
     WEBCORE_EXPORT OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
+
+    WEBCORE_EXPORT ScrollAxisLock mainFrameScrollAxisLock() const;
     
     WEBCORE_EXPORT IntPoint mainFrameScrollOrigin() const;
     WEBCORE_EXPORT int mainFrameHeaderHeight() const;
