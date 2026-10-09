@@ -150,6 +150,7 @@ public:
     bool NODELETE needsFullscreenObjectFitQuirk() const;
     bool needsZomatoEmailLoginLabelQuirk() const;
     bool needsBoxAnnotationQuirk(const Element&) const;
+    bool NODELETE needsGoogleDocsNavigationWidgetScrollQuirk() const;
     bool NODELETE needsGoogleMapsEmbedManipulationSurfaceQuirk() const;
     bool NODELETE needsGoogleMapsMagnificationWheelDeltaScalingQuirk() const;
     bool NODELETE needsGoogleMapsScrollingQuirk() const;

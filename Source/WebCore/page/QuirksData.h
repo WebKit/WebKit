@@ -115,6 +115,7 @@ struct QuirksData {
         NeedsGoogleTranslateScrollingQuirk,
 #endif
 #if PLATFORM(MAC)
+        NeedsGoogleDocsNavigationWidgetScrollQuirk,
         NeedsGoogleMapsEmbedManipulationSurfaceQuirk,
         NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk,
 #endif
