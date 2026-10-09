@@ -21,12 +21,13 @@ function start() {
     button.onfocus = eventhandler2;
     input.onfocus = eventhandler;
     button.click();
+    input.focus();
     testPassed('if not crashed.');
 }
 </script>
 </head>
 <body>
-<input id="input" autofocus="autofocus" type="button">
+<input id="input" type="button">
 <div id="div1">
     <form id="form1"></form>
 </div>

@@ -6515,7 +6515,7 @@ void Document::flushAutofocusCandidates()
     if (m_autofocusCandidates.isEmpty())
         return;
 
-    if (cssTarget()) {
+    if (treeScope().focusedElementInScope() || cssTarget()) {
         m_autofocusCandidates.clear();
         page->setAutofocusProcessed();
         return;

@@ -1,0 +1,4 @@
+
+
+PASS Autofocus preserves focus inside a closed shadow tree
+
