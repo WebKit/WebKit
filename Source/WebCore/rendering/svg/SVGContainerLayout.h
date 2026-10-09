@@ -38,15 +38,20 @@ public:
     void layoutChildren(bool containerNeedsLayout);
 
     void positionChildrenRelativeToContainer();
+    static LayoutPoint layoutLocationRelativeToContainer(const RenderLayerModelObject& child);
 
     static void verifyLayoutLocationConsistency(const RenderLayerModelObject&);
     static bool NODELETE transformToRootChanged(const RenderObject* ancestor);
 
 private:
+    static LayoutPoint containerLayoutLocation(const RenderLayerModelObject& container);
     bool NODELETE layoutSizeOfNearestViewportChanged() const;
 
     SingleThreadWeakRef<RenderLayerModelObject> m_container;
     Vector<std::reference_wrapper<RenderLayerModelObject>> m_positionedChildren;
+#if ASSERT_ENABLED
+    LayoutPoint m_containerLayoutLocationBeforeLayout;
+#endif
 };
 
 } // namespace WebCore

@@ -41,6 +41,7 @@
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
+#include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SVGImageIntrinsicSizing.h"
@@ -92,8 +93,7 @@ void RenderSVGImage::layout()
 
     updateImageViewport();
 
-    // Refresh the layout-rect size only. SVGContainerLayout assigns the container-relative location.
-    setCurrentSVGLayoutRect({ currentSVGLayoutLocation(), enclosingLayoutRect(m_objectBoundingBox).size() });
+    setCurrentSVGLayoutRect({ SVGContainerLayout::layoutLocationRelativeToContainer(*this), enclosingLayoutRect(m_objectBoundingBox).size() });
 
     updateLayerTransform();
     updateCachedVisualOverflowRect();
