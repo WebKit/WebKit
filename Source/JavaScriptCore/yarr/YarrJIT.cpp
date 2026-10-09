@@ -6942,13 +6942,13 @@ class YarrGenerator final : public YarrJITInfo {
 
     void skipToEndAnchoredStart()
     {
-        if (!m_pattern.hasEndAnchoredFixedSize())
+        if (!m_pattern.hasEndAnchoredMaximumSize())
             return;
 
-        unsigned endAnchoredFixedSize = m_pattern.m_endAnchoredFixedSize;
+        unsigned endAnchoredMaximumSize = m_pattern.m_endAnchoredMaximumSize;
         MacroAssembler::JumpList noStartAdjustment;
-        noStartAdjustment.append(m_jit.branch32(MacroAssembler::Below, m_regs.length, MacroAssembler::TrustedImm32(endAnchoredFixedSize)));
-        m_jit.sub32(m_regs.length, MacroAssembler::TrustedImm32(endAnchoredFixedSize), m_regs.regT0);
+        noStartAdjustment.append(m_jit.branch32(MacroAssembler::Below, m_regs.length, MacroAssembler::TrustedImm32(endAnchoredMaximumSize)));
+        m_jit.sub32(m_regs.length, MacroAssembler::TrustedImm32(endAnchoredMaximumSize), m_regs.regT0);
         noStartAdjustment.append(m_jit.branch32(MacroAssembler::AboveOrEqual, m_regs.index, m_regs.regT0));
         m_jit.move(m_regs.regT0, m_regs.index);
         noStartAdjustment.link(&m_jit);
@@ -7228,13 +7228,11 @@ public:
         // Initialize subpatterns' starts. And initialize matchStart if `!m_pattern.m_body->m_hasFixedSize`.
         // If shouldRecordSubpatterns(), then matchStart is subpatterns[0]'s start.
         emitClearAllCaptures();
-        if (!m_pattern.m_body->m_hasFixedSize) {
-            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
+        if (!m_pattern.m_body->m_hasFixedSize)
             setMatchStart(m_regs.index);
-        }
 
         if (m_pattern.m_saveInitialStartValue) {
-            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
+            ASSERT(!m_pattern.hasEndAnchoredMaximumSize());
             storeToFrame(m_regs.index, m_pattern.m_initialStartValueFrameLocation);
         }
 
@@ -7358,13 +7356,11 @@ public:
             m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(m_regs.input, m_regs.length, MacroAssembler::TimesTwo), m_regs.endOfStringAddress);
 
         emitClearAllCaptures();
-        if (!m_pattern.m_body->m_hasFixedSize) {
-            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
+        if (!m_pattern.m_body->m_hasFixedSize)
             setMatchStart(m_regs.index);
-        }
 
         if (m_pattern.m_saveInitialStartValue) {
-            ASSERT(!m_pattern.hasEndAnchoredFixedSize());
+            ASSERT(!m_pattern.hasEndAnchoredMaximumSize());
             storeToFrame(m_regs.index, m_pattern.m_initialStartValueFrameLocation);
         }
 
