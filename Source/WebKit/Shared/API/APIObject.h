@@ -185,7 +185,6 @@ public:
         UserInitiatedAction,
         UserMediaPermissionCheck,
         UserMediaPermissionRequest,
-        ViewportAttributes,
         VisitedLinkStore,
 #if ENABLE(WK_WEB_EXTENSIONS)
         WebExtension,
