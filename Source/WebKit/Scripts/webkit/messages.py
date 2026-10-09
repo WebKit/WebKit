@@ -2433,11 +2433,14 @@ def generate_swift_message_handler(receiver):
         result.append('            guard let target else {\n')
         result.append('                return\n')
         result.append('            }\n')
+        # Create the invocation outside the Task so the escaping closure captures one immutable reference:
+        # capturing the `sending` parameters boxes them, and Swift 6.3 asserts emitting debug info for
+        # those boxes (IRGenDebugInfo "Failed to reconstruct type").
+        result.append('            let invocation = %s(\n' % invocation_class)
+        result.append(',\n'.join(['                %s: %s' % (name, name) for name in stored_names]))
+        result.append('\n            )\n')
         result.append('            Task.immediateOnMainActor {\n')
-        result.append('                await %s(\n' % invocation_class)
-        result.append(',\n'.join(['                    %s: %s' % (name, name) for name in stored_names]))
-        result.append('\n                )\n')
-        result.append('                .run()\n')
+        result.append('                await invocation.run()\n')
         result.append('            }\n')
         result.append('        }\n')
         result.append('    }\n')

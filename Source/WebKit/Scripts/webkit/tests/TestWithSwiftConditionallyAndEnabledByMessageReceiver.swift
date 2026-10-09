@@ -49,14 +49,14 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef: @unchecked Sendable {
             guard let target else {
                 return
             }
+            let invocation = TestAsyncMessageInvocation(
+                target: target,
+                connection: connection,
+                param: param,
+                completionHandler: completionHandler
+            )
             Task.immediateOnMainActor {
-                await TestAsyncMessageInvocation(
-                    target: target,
-                    connection: connection,
-                    param: param,
-                    completionHandler: completionHandler
-                )
-                .run()
+                await invocation.run()
             }
         }
     }
@@ -106,14 +106,14 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef: @unchecked Sendable {
             guard let target else {
                 return
             }
+            let invocation = TestSyncMessageInvocation(
+                target: target,
+                connection: connection,
+                param: param,
+                completionHandler: completionHandler
+            )
             Task.immediateOnMainActor {
-                await TestSyncMessageInvocation(
-                    target: target,
-                    connection: connection,
-                    param: param,
-                    completionHandler: completionHandler
-                )
-                .run()
+                await invocation.run()
             }
         }
     }

@@ -45,13 +45,13 @@ final class TestWithStreamSwiftWeakRef: @unchecked Sendable {
             guard let target else {
                 return
             }
+            let invocation = SendStringInvocation(
+                target: target,
+                connection: connection,
+                url: url
+            )
             Task.immediateOnMainActor {
-                await SendStringInvocation(
-                    target: target,
-                    connection: connection,
-                    url: url
-                )
-                .run()
+                await invocation.run()
             }
         }
     }
@@ -96,14 +96,14 @@ final class TestWithStreamSwiftWeakRef: @unchecked Sendable {
             guard let target else {
                 return
             }
+            let invocation = SendStringSyncInvocation(
+                target: target,
+                connection: connection,
+                url: url,
+                completionHandler: completionHandler
+            )
             Task.immediateOnMainActor {
-                await SendStringSyncInvocation(
-                    target: target,
-                    connection: connection,
-                    url: url,
-                    completionHandler: completionHandler
-                )
-                .run()
+                await invocation.run()
             }
         }
     }

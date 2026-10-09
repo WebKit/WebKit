@@ -45,13 +45,13 @@ final class TestWithStreamSwiftEnabledByWeakRef: @unchecked Sendable {
             guard let target else {
                 return
             }
+            let invocation = SendStringInvocation(
+                target: target,
+                connection: connection,
+                url: url
+            )
             Task.immediateOnMainActor {
-                await SendStringInvocation(
-                    target: target,
-                    connection: connection,
-                    url: url
-                )
-                .run()
+                await invocation.run()
             }
         }
     }
