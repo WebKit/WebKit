@@ -66,19 +66,22 @@ public:
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<Latin1Character>&);
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<char16_t>&);
 
-    template<typename CharacterType>
-    static bool parseAndReplaceTransform(SVGTransformValue::SVGTransformType, StringParsingBuffer<CharacterType>&, SVGTransform&); // Defined in SVGTransformListInlines.h
-
-    template<typename CharacterType>
-    static RefPtr<SVGTransform> parseTransform(SVGTransformValue::SVGTransformType, StringParsingBuffer<CharacterType>&); // Defined in SVGTransformListInlines.h
-
 private:
-
-    enum class ListReplacement : bool {
-        Append,
-        Replace
+    // A transform function as read from the attribute, before it is written
+    // into an SVGTransform. Holds no SVGMatrix, so reading costs no memory.
+    struct ParsedTransform {
+        SVGTransformValue::SVGTransformType type;
+        std::array<float, 6> values;
+        int valueCount;
     };
-    template<typename CharacterType> bool parseGeneric(StringParsingBuffer<CharacterType>&, ListReplacement = ListReplacement::Append);
+    using ParsedTransforms = Vector<ParsedTransform, 4>;
+
+    template<typename CharacterType>
+    static std::optional<ParsedTransform> parseTransform(SVGTransformValue::SVGTransformType, StringParsingBuffer<CharacterType>&); // Defined in SVGTransformListInlines.h
+    static void setTransformValue(SVGTransformValue&, const ParsedTransform&);
+
+    template<typename CharacterType> static bool parseGeneric(StringParsingBuffer<CharacterType>&, ParsedTransforms&);
+    template<typename CharacterType> bool parseAndAppend(StringParsingBuffer<CharacterType>&);
     bool parse(StringParsingBuffer<Latin1Character>&);
     bool parse(StringParsingBuffer<char16_t>&);
 };
