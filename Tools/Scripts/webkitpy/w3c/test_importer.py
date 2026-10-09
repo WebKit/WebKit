@@ -182,6 +182,7 @@ class TestImporter(object):
 
         self.import_list = []
         self.upstream_revision = None
+        self._saved_webkit_test_runner_options = {}
 
         self._resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, 'resources', 'resource-files.json')
         self._resource_files = json.loads(self.filesystem.read_text_file(self._resource_files_json_path)) if self.filesystem.exists(self._resource_files_json_path) else None
@@ -243,6 +244,7 @@ class TestImporter(object):
 
         if self.options.clean_destination_directory:
             for test_path in test_paths:
+                self.save_webkit_test_runner_options(test_path)
                 self.clean_destination_directory(test_path)
             if self._resource_files:
                 test_paths_tuple = tuple(test_paths)
@@ -373,6 +375,18 @@ class TestImporter(object):
         for relative_path in self.filesystem.files_under(directory, file_filter=self._should_remove_before_importing):
             self.filesystem.remove(self.filesystem.join(directory, relative_path))
 
+    def save_webkit_test_runner_options(self, filename):
+        # Cleaning the destination directory deletes the test files that carry
+        # <!-- webkit-test-runner --> options, so record them beforehand. Without this the options
+        # are silently dropped on every import, since _webkit_test_runner_options() reads them back
+        # from a file that no longer exists.
+        directory = self.filesystem.join(self.destination_directory, filename)
+        for relative_path in self.filesystem.files_under(directory, file_filter=self._should_remove_before_importing):
+            path = self.filesystem.join(directory, relative_path)
+            options = self._read_webkit_test_runner_options(path)
+            if options:
+                self._saved_webkit_test_runner_options[self.filesystem.normpath(path)] = options
+
     def remove_dangling_expectations(self, filename):
         #FIXME: Clean also the expected files stored in all platform specific folders.
         directory = self.filesystem.join(self.destination_directory, filename)
@@ -489,6 +503,13 @@ class TestImporter(object):
                     'reftests': reftests, 'jstests': jstests, 'crashtests': crashtests, 'total_tests': total_tests})
 
     def _webkit_test_runner_options(self, path):
+        saved_options = self._saved_webkit_test_runner_options.get(self.filesystem.normpath(path))
+        if saved_options:
+            return saved_options
+
+        return self._read_webkit_test_runner_options(path)
+
+    def _read_webkit_test_runner_options(self, path):
         if not(self.filesystem.isfile(path)):
             return ''
 
