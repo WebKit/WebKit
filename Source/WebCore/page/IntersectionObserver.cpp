@@ -563,6 +563,8 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
     intersectionState.observationChanged = isFirstObservation || intersectionState.thresholdIndex != registration.previousThresholdIndex;
     if (intersectionState.observationChanged) {
         intersectionState.absoluteRootBounds = rootLocalToAbsoluteRect(intersectionState.rootBounds);
+        if (rootRenderer)
+            intersectionState.rootZoomForClient = rootRenderer->document().zoomForClient(rootRenderer->style()).value_or(rootRenderer->frame().pageZoomFactor());
 
         if (!intersectionState.absoluteTargetRect)
             intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
@@ -640,6 +642,7 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
                 auto targetZoomForClient = target->document().zoomForClient(target->renderer()->style());
                 targetBoundingClientRect = targetFrameView->absoluteToClientRect(*intersectionState.absoluteTargetRect, targetZoomForClient);
                 clientRootBounds = hostFrameView->absoluteToLayoutViewportRect(*intersectionState.absoluteRootBounds);
+                clientRootBounds.scale(1 / intersectionState.rootZoomForClient);
 
                 if (intersectionState.isIntersecting) {
                     ASSERT(intersectionState.absoluteIntersectionRect);

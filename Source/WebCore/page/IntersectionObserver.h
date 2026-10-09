@@ -140,6 +140,7 @@ private:
         std::optional<FloatRect> absoluteIntersectionRect; // Only computed if intersecting.
         std::optional<FloatRect> absoluteTargetRect; // Only computed if first observation, or intersecting.
         std::optional<FloatRect> absoluteRootBounds; // Only computed if observationChanged.
+        float rootZoomForClient { 1 };
         float intersectionRatio { 0 };
         size_t thresholdIndex { 0 };
         bool canComputeIntersection { false };
