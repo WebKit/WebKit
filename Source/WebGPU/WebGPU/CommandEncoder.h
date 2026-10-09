@@ -138,6 +138,7 @@ public:
     void addICB(id<MTLIndirectCommandBuffer>);
     void addTexture(id<MTLTexture>);
     void addTexture(const Texture&);
+    void addResidentResource(id<MTLResource>);
     void addSampler(const Sampler&);
     id<MTLCommandBuffer> _Nullable commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);

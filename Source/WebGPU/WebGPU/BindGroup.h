@@ -110,6 +110,17 @@ public:
     bool previouslyValidatedBindGroup(uint32_t groupIndex, uint64_t pipelineIndex, uint32_t maxOffset) const;
     bool hasSamplers() const { return m_samplers.size(); }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Counts live RenderBundles holding this bind group; see updateExternalTextures().
+    void addRenderBundleConsumer() const { ++m_renderBundleConsumerCount; }
+    void removeRenderBundleConsumer() const
+    {
+        ASSERT(m_renderBundleConsumerCount);
+        if (m_renderBundleConsumerCount)
+            --m_renderBundleConsumerCount;
+    }
+#endif // RC_REMOVE_SEC_ACCEL_3
+
 private:
     BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, SamplersContainer&&, ShaderStageArray<ExternalTextureIndices>&&, uint32_t uniqueIdentifier, Device&);
     BindGroup(Device&);
@@ -127,6 +138,9 @@ private:
     SamplersContainer m_samplers;
     ShaderStageArray<ExternalTextureIndices> m_externalTextureIndices;
     uint32_t m_uniqueIdentifier { 0 };
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    mutable size_t m_renderBundleConsumerCount { 0 };
+#endif // RC_REMOVE_SEC_ACCEL_3
 };
 
 } // namespace WebGPU

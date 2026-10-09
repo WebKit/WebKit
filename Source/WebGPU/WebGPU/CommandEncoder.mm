@@ -1537,6 +1537,17 @@ void CommandEncoder::addTexture(id<MTLTexture> texture)
         [m_retainedTextures addObject:texture];
 }
 
+void CommandEncoder::addResidentResource(id<MTLResource> resource)
+{
+    if (!m_retainedTextures && !m_retainedBuffers)
+        return;
+
+    if ([resource conformsToProtocol:@protocol(MTLTexture)])
+        addTexture((id<MTLTexture>)resource);
+    else if ([resource conformsToProtocol:@protocol(MTLBuffer)])
+        addBuffer((id<MTLBuffer>)resource);
+}
+
 void CommandEncoder::addTexture(const Texture& baseTexture)
 {
     addTexture(baseTexture.texture());

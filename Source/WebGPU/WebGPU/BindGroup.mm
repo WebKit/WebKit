@@ -1497,6 +1497,9 @@ bool BindGroup::updateExternalTextures(ExternalTexture& externalTexture)
     if (!m_bindGroupLayout || externalTexture.openCommandEncoderCount())
         return false;
 #else
+    if (m_renderBundleConsumerCount)
+        return false;
+
     if (!m_bindGroupLayout)
         return false;
 

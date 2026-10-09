@@ -64,6 +64,13 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Ve
 {
     m_descriptor.colorFormats = m_descriptorColorFormats.size() ? &m_descriptorColorFormats[0] : nullptr;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // This bundle's indirect command buffer references these bind groups' argument buffers, and its
+    // residency snapshot is frozen here. See BindGroup::updateExternalTextures().
+    for (RefPtr bindGroup : m_bindGroups)
+        bindGroup->addRenderBundleConsumer();
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     ASSERT(m_renderBundleEncoder || m_renderBundlesResources);
 }
 
@@ -73,7 +80,15 @@ RenderBundle::RenderBundle(Device& device, NSString* errorString)
 {
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 RenderBundle::~RenderBundle() = default;
+#else
+RenderBundle::~RenderBundle()
+{
+    for (RefPtr bindGroup : m_bindGroups)
+        bindGroup->removeRenderBundleConsumer();
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 bool RenderBundle::isValid() const
 {
