@@ -1873,6 +1873,12 @@ struct WebCore::DictationAlternative {
 };
 
 header: <WebCore/ScrollTypes.h>
+[CustomHeader] enum class WebCore::ScrollRelativity : uint8_t {
+    Delta,
+    Absolute
+};
+
+header: <WebCore/ScrollTypes.h>
 [CustomHeader] enum class WebCore::ScrollElasticity : uint8_t {
     Automatic,
     None,
@@ -1947,6 +1953,7 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     WebCore::ScrollUpdateType updateType;
     WebCore::ScrollingLayerPositionAction updateLayerPositionAction;
     std::optional<WebCore::LayoutViewportOriginOrOverrideRect> layoutViewportOriginOrOverrideRect;
+    std::optional<WebCore::ScrollRelativity> scrollRelativity;
 };
 
 header: <WebCore/ScrollingCoordinatorTypes.h>

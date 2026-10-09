@@ -639,7 +639,7 @@ void AsyncScrollingCoordinator::synchronizeStateFromScrollingTree()
     protect(m_scrollingTree)->traverseScrollingTree([&](ScrollingNodeID nodeID, ScrollingNodeType, std::optional<FloatPoint> scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit) {
         if (scrollPosition && scrolledSinceLastCommit) {
             LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::synchronizeStateFromScrollingTree - node " << nodeID << " scroll position " << scrollPosition);
-            updateScrollPositionAfterAsyncScroll(nodeID, *scrollPosition, layoutViewportOrigin, ScrollingLayerPositionAction::Set, ScrollType::User, ViewportRectStability::Stable);
+            updateScrollPositionAfterAsyncScroll(nodeID, *scrollPosition, layoutViewportOrigin, ScrollingLayerPositionAction::Set, ScrollType::User, ViewportRectStability::Stable, std::nullopt);
         }
     });
 }
@@ -725,7 +725,7 @@ void AsyncScrollingCoordinator::applyScrollPositionUpdate(ScrollUpdate&& update,
         auto& data = std::get<ScrollUpdateData>(update.data);
         switch (data.updateType) {
         case ScrollUpdateType::PositionUpdate:
-            updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, data.layoutViewportOriginOrOverrideRect, data.updateLayerPositionAction, scrollType, viewportStability);
+            updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, data.layoutViewportOriginOrOverrideRect, data.updateLayerPositionAction, scrollType, viewportStability, data.scrollRelativity);
             break;
 
         case ScrollUpdateType::AnimatedScrollWillStart:
@@ -840,7 +840,7 @@ void AsyncScrollingCoordinator::notifyScrollableAreasForScrollEnd(ScrollingNodeI
         scrollableArea->scrollDidEnd();
 }
 
-void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID nodeID, FloatPoint scrollPosition, const std::optional<LayoutViewportOriginOrOverrideRect>& layoutViewportOriginOrOverrideRect, ScrollingLayerPositionAction updateLayerPositionAction, ScrollType scrollType, ViewportRectStability viewportRectStability)
+void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID nodeID, FloatPoint scrollPosition, const std::optional<LayoutViewportOriginOrOverrideRect>& layoutViewportOriginOrOverrideRect, ScrollingLayerPositionAction updateLayerPositionAction, ScrollType scrollType, ViewportRectStability viewportRectStability, std::optional<ScrollRelativity> relativity)
 {
     ASSERT(isMainThread());
 
@@ -860,6 +860,8 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     }
 
     if (nodeID == frameView->scrollingNodeID()) {
+        if (relativity)
+            frameView->setCurrentScrollRelativity(*relativity);
         reconcileScrollingState(*frameView, scrollPosition, layoutViewportOriginOrOverrideRect, scrollType, viewportRectStability, updateLayerPositionAction);
         return;
     }
@@ -868,6 +870,8 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     if (CheckedPtr scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID)) {
         {
             auto scope = ScrollTypeScope(*scrollableArea, scrollType);
+            if (relativity)
+                scrollableArea->setCurrentScrollRelativity(*relativity);
             scrollableArea->notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
         }
 

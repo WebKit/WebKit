@@ -86,6 +86,7 @@ void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&
             .updateType = ScrollUpdateType::PositionUpdate,
             .updateLayerPositionAction = scrollingLayerPositionAction,
             .layoutViewportOriginOrOverrideRect = layoutViewportOrigin,
+            .scrollRelativity = relativityForScrollUpdate(),
         }
     };
     addPendingScrollUpdate(WTF::move(scrollUpdate));

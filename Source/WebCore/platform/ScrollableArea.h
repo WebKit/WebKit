@@ -314,6 +314,14 @@ public:
     ScrollType currentScrollType() const { return m_currentScrollType; }
     void setCurrentScrollType(ScrollType scrollType) { m_currentScrollType = scrollType; }
 
+    // Each path that applies a scroll position sets its relativity, and the value outlives that
+    // call, since an animation applies positions after the call that started it returned.
+    void setCurrentScrollRelativity(ScrollRelativity scrollRelativity) { m_currentScrollRelativity = scrollRelativity; }
+
+    // Physical edges this area has most recently been scrolled toward by a delta scroll, which
+    // scroll-state(scrolled) queries. https://drafts.csswg.org/css-conditional-5/#scrolled
+    RectEdges<bool> scrolledDirections() const { return m_scrolledDirections; }
+
     // This reflects animated scrolls triggered by CSS OM View "smooth" scrolls.
     ScrollAnimationStatus scrollAnimationStatus() { return m_scrollAnimationStatus; }
     void setScrollAnimationStatus(ScrollAnimationStatus status) { m_scrollAnimationStatus = status; }
@@ -497,6 +505,9 @@ protected:
     bool isAwaitingScrollend() const { return m_isAwaitingScrollend; }
     void setIsAwaitingScrollend(bool isAwaitingScrollend) { m_isAwaitingScrollend = isAwaitingScrollend; }
 
+    bool shouldTrackScrolledDirections() const { return m_currentScrollRelativity == ScrollRelativity::Delta; }
+    void updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
+
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const ScrollPosition&);
@@ -536,6 +547,9 @@ private:
 
     ScrollType m_currentScrollType { ScrollType::User };
     ScrollAnimationStatus m_scrollAnimationStatus { ScrollAnimationStatus::NotAnimating };
+
+    RectEdges<bool> m_scrolledDirections;
+    ScrollRelativity m_currentScrollRelativity { ScrollRelativity::Absolute };
 
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };

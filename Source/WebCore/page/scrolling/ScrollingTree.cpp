@@ -43,6 +43,7 @@
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreePositionedNode.h"
 #include "ScrollingTreeScrollingNode.h"
+#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -166,6 +167,12 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         receivedWheelEventWithPhases(wheelEvent.phase(), wheelEvent.momentumPhase());
 
     m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
+
+    // The main thread cannot tell this is a delta scroll, so set it here.
+    m_isApplyingDeltaScroll = true;
+    auto clearApplyingDeltaScroll = WTF::makeScopeExit([&] {
+        m_isApplyingDeltaScroll = false;
+    });
 
     auto result = [&] {
         RefPtr rootNode = m_rootNode;

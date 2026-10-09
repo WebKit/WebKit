@@ -181,6 +181,7 @@ struct ScrollUpdateData {
     ScrollUpdateType updateType { ScrollUpdateType::PositionUpdate };
     ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
     std::optional<LayoutViewportOriginOrOverrideRect> layoutViewportOriginOrOverrideRect { };
+    std::optional<ScrollRelativity> scrollRelativity { };
 };
 
 struct ScrollRequestResponseData {

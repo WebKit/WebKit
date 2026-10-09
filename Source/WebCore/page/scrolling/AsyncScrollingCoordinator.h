@@ -189,7 +189,7 @@ private:
     void updateEventTrackingRegions(FrameIdentifier rootFrameID);
     
     void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType, ViewportRectStability);
-    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, FloatPoint, const std::optional<LayoutViewportOriginOrOverrideRect>&, ScrollingLayerPositionAction, ScrollType, ViewportRectStability);
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, FloatPoint, const std::optional<LayoutViewportOriginOrOverrideRect>&, ScrollingLayerPositionAction, ScrollType, ViewportRectStability, std::optional<ScrollRelativity>);
     void animatedScrollWillStartForNode(ScrollingNodeID);
     void animatedScrollDidEndForNode(ScrollingNodeID);
     void wheelEventScrollWillStartForNode(ScrollingNodeID);

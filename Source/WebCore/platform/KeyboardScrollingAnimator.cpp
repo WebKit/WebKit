@@ -224,6 +224,10 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (!scrollingDirections().at(boxSideForDirection(direction)))
         return false;
 
+    // Both branches below hand the scroll to an animation that applies positions after this returns,
+    // so set the relativity here while we know its source granularity.
+    scrollableArea->setCurrentScrollRelativity(scrollRelativityFor(granularity));
+
     if (granularity == ScrollGranularity::Document || (!isKeyRepeat && granularity == ScrollGranularity::Page)) {
         scrollableArea->endKeyboardScroll(false);
         auto newPosition = IntPoint(scrollableArea->scrollAnimator().currentPosition() + scroll->offset);

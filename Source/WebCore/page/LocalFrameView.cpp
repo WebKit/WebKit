@@ -3860,8 +3860,8 @@ void LocalFrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset
 // These scroll positions are affected by zooming.
 void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
 {
-    UNUSED_PARAM(oldPosition);
-    UNUSED_PARAM(newPosition);
+    if (shouldTrackScrolledDirections())
+        updateScrolledDirections(oldPosition, newPosition);
 
     RefPtr page = m_frame->page();
     Seconds throttlingDelay = page ? page->chrome().client().eventThrottlingDelay() : 0_s;
@@ -6711,6 +6711,8 @@ bool LocalFrameView::handleWheelEventForScrolling(const PlatformWheelEvent& whee
         ScrollPosition oldPosition = scrollPosition();
         ScrollPosition newPosition = oldPosition - IntSize(wheelEvent.deltaX(), wheelEvent.deltaY());
         if (oldPosition != newPosition) {
+            // scrollTo() skips setScrollPosition() where the scroll relativity is normally set.
+            setCurrentScrollRelativity(ScrollRelativity::Delta);
             ScrollView::scrollTo(newPosition);
             scrollPositionChanged(oldPosition, scrollPosition());
             didChangeScrollOffset();
