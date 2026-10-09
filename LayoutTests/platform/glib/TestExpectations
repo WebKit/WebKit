@@ -5054,6 +5054,8 @@ webkit.org/b/319050 [ Debug ] imported/w3c/web-platform-tests/fetch/local-networ
 webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/iframe.tentative.https.window.html?include=from-public [ Failure ]
 webkit.org/b/295047 http/wpt/fetch/local-network-access/address-space-overrides-apply-to-both-host-forms.html [ Skip ]
 webkit.org/b/295047 http/wpt/fetch/local-network-access/a-forged-client-is-judged-by-what-the-network-process-served.html [ Skip ]
+webkit.org/b/295047 http/wpt/fetch/local-network-access/a-websocket-holds-messages-until-access-is-decided.html [ Skip ]
+webkit.org/b/295047 http/wpt/fetch/local-network-access/a-websocket-to-an-address-literal-is-checked-before-connecting.html [ Skip ]
 webkit.org/b/295047 http/wpt/fetch/local-network-access/navigating-a-frame-is-checked-against-the-initiator.html [ Skip ]
 webkit.org/b/295047 http/wpt/fetch/local-network-access/prompt-records-the-answer.html [ Skip ]
 webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/dedicated-worker.tentative.https.html [ Failure ]

@@ -394,6 +394,17 @@ WebCore::IPAddressSpace NetworkSession::classifyConnectionAddressSpace(const std
     return WebCore::classifyIPAddressSpace(*resolvedIPAddress);
 }
 
+// FIXME: Replace this with the address space the OS reports before connecting once it does (rdar://160622869).
+std::optional<WebCore::IPAddressSpace> NetworkSession::addressSpaceBeforeConnecting(const URL& url) const
+{
+    auto addressSpace = WebCore::determineIPAddressSpace(url);
+    if (auto address = WebCore::IPAddress::fromString(url.host().toStringWithoutCopying()))
+        addressSpace = classifyConnectionAddressSpace(address, url);
+    if (addressSpace == WebCore::IPAddressSpace::Public)
+        return std::nullopt;
+    return addressSpace;
+}
+
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
     RefPtr resourceLoadStatistics = m_resourceLoadStatistics;

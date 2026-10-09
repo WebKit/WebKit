@@ -335,7 +335,7 @@ std::expected<bool, String> WebSocketTask::validateOpeningHandshake()
     m_didCompleteOpeningHandshake = true;
 
     if (RefPtr channel = m_channel.get()) {
-        channel->didConnect(m_handshake->serverWebSocketProtocol(), m_handshake->acceptedExtensions());
+        channel->didConnect(m_handshake->serverWebSocketProtocol(), m_handshake->acceptedExtensions(), WebCore::IPAddressSpace::Unknown);
         channel->didReceiveHandshakeResponse(WebCore::ResourceResponse(m_handshake->serverHandshakeResponse()));
     }
     m_handshake = nullptr;

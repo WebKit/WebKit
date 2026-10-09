@@ -39,7 +39,12 @@
 #include <WebCore/DocumentPage.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NodeDocument.h>
+#include <WebCore/PermissionsPolicy.h>
+#include <WebCore/Settings.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <wtf/CheckedArithmetic.h>
@@ -174,7 +179,19 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
         return mainFrame;
     }();
 
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, std::optional(frame->frameID()), frame->pageID(), document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), policySourceFrame->allowPrivacyProxy(), policySourceFrame->advancedPrivacyProtections(), storedCredentialsPolicy, m_isInitiatedByWorker });
+    bool localNetworkAllowedByPermissionsPolicy = false;
+    bool loopbackNetworkAllowedByPermissionsPolicy = false;
+    if (document->settings().localNetworkAccessEnabled()) {
+        localNetworkAllowedByPermissionsPolicy = PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LocalNetwork, *document, PermissionsPolicy::ShouldReportViolation::No);
+        loopbackNetworkAllowedByPermissionsPolicy = PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LoopbackNetwork, *document, PermissionsPolicy::ShouldReportViolation::No);
+    }
+    std::optional<FrameIdentifier> parentFrameID;
+    if (RefPtr ownerElement = frame->ownerElement()) {
+        if (RefPtr parentFrame = ownerElement->document().frame())
+            parentFrameID = parentFrame->frameID();
+    }
+
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, std::optional(frame->frameID()), frame->pageID(), document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), policySourceFrame->allowPrivacyProxy(), policySourceFrame->advancedPrivacyProtections(), storedCredentialsPolicy, m_isInitiatedByWorker, parentFrameID, document->ipAddressSpace(), document->isSecureContext(), localNetworkAllowedByPermissionsPolicy, loopbackNetworkAllowedByPermissionsPolicy });
     m_needsToCallClose = true;
     return ConnectStatus::OK;
 }
