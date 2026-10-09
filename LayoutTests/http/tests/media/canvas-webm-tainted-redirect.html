@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../security/resources/canvas-video-crossorigin.js"></script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+    description("Ensure that a canvas is tainted by a WebM video obtained via redirect to a different origin when CORS is not enabled.");
+
+    function test()
+    {
+        testDataRetrievalForbidden("redirected WebM video");
+        finishJSTest();
+    }
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", test);
+
+    video.src = "/resources/redirect.py?url=" + encodeURIComponent("http://localhost:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm");
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

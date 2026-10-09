@@ -63,12 +63,22 @@ void WebMResourceClient::stop()
     resource->shutdown();
 }
 
-void WebMResourceClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
+void WebMResourceClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
+{
+    RefPtr parent = m_parent.get();
+    if (parent) {
+        parent->responseReceived(resource, response);
+        parent->dataLengthReceived(response.expectedContentLength());
+    }
+    completionHandler(parent ? ShouldContinuePolicyCheck::Yes : ShouldContinuePolicyCheck::No);
+}
+
+void WebMResourceClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     RefPtr parent = m_parent.get();
     if (parent)
-        parent->dataLengthReceived(response.expectedContentLength());
-    completionHandler(parent ? ShouldContinuePolicyCheck::Yes : ShouldContinuePolicyCheck::No);
+        parent->redirectReceived(resource, response);
+    completionHandler(WTF::move(request));
 }
 
 void WebMResourceClient::dataReceived(PlatformMediaResource&, const SharedBuffer& buffer)
