@@ -1,0 +1,4 @@
+
+
+PASS navigate.traverseTo() cancelled by top frame cancels cross-document iframe
+
