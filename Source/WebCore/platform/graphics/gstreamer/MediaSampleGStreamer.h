@@ -39,7 +39,6 @@ public:
 
     static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, TrackID);
 
-    void extendToTheBeginning();
     MediaTime presentationTime() const override { return m_pts; }
     MediaTime decodeTime() const override { return m_dts; }
     MediaTime duration() const override { return m_duration; }

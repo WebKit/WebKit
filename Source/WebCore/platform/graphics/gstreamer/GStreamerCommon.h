@@ -514,20 +514,6 @@ bool enableMSEAdditionalPipelineDumps();
 #define GST_BUFFER_DTS_OR_PTS(buffer) (GST_BUFFER_DTS_IS_VALID(buffer) ? GST_BUFFER_DTS(buffer) : GST_BUFFER_PTS(buffer))
 #endif
 
-// In GStreamer 1.20 gst_audio_format_fill_silence() will be deprecated in favor of
-// gst_audio_format_info_fill_silence().
-#if GST_CHECK_VERSION(1, 20, 0)
-#define webkitGstAudioFormatFillSilence gst_audio_format_info_fill_silence
-#else
-#define webkitGstAudioFormatFillSilence gst_audio_format_fill_silence
-#endif
-
-// In GStreamer 1.20 gst_element_get_request_pad() was renamed to gst_element_request_pad_simple(),
-// so create an alias for older versions.
-#if !GST_CHECK_VERSION(1, 20, 0)
-#define gst_element_request_pad_simple gst_element_get_request_pad
-#endif
-
 // We can't pass macros as template parameters, so we need to wrap them in inline functions.
 inline void gstObjectLock(void* object) { GST_OBJECT_LOCK(object); }
 inline void gstObjectUnlock(void* object) { GST_OBJECT_UNLOCK(object); }
@@ -610,10 +596,6 @@ private:
     GstIterator* m_iter;
     bool m_started { false };
 };
-
-#if !GST_CHECK_VERSION(1, 20, 0)
-GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size);
-#endif
 
 #if !GST_CHECK_VERSION(1, 28, 0)
 void gst_pad_probe_info_set_buffer(GstPadProbeInfo*, GstBuffer*);
