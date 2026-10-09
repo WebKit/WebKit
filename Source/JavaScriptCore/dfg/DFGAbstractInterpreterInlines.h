@@ -3667,6 +3667,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case PhantomNewArrayBuffer:
         case PhantomCreateRest:
             break;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         default:
             if (!m_graph.canDoFastSpread(node, forNode(node->child1())))
                 clobberWorld();
@@ -3674,6 +3675,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 didFoldClobberWorld();
             break;
         }
+#else
+        default: {
+            Graph::ProtocolWatchResult watch = Graph::ProtocolWatchResult::Unwatchable;
+            if (node->child1().useKind() == ArrayUse)
+                watch = m_graph.tryWatchArrayIteratorProtocol(forNode(node->child1()));
+
+            switch (watch) {
+            case Graph::ProtocolWatchResult::Proven:
+                didFoldClobberWorld();
+                break;
+            case Graph::ProtocolWatchResult::Unwatchable:
+                clobberWorld();
+                break;
+            }
+            break;
+        }
+        }
+#endif // RC_REMOVE_SEC_ACCEL_3
+
 
         {
             RegisteredStructureSet structureSet;

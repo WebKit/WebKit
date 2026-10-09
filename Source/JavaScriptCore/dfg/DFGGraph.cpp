@@ -2013,6 +2013,7 @@ bool Graph::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
 {
     // The parameter 'value' is the AbstractValue for child1 (the thing being spread).
@@ -2050,6 +2051,61 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
 
     return allGood;
 }
+#else
+static bool isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(Graph* graph, JSGlobalObject* realm)
+{
+    return realm
+        && graph->isWatchingGlobalObjectWatchpoint(realm, realm->arrayPrototypeChainIsSaneWatchpointSet(), LinkerIR::Type::ArrayPrototypeChainIsSaneWatchpointSet)
+        && graph->isWatchingGlobalObjectWatchpoint(realm, realm->arrayIteratorProtocolWatchpointSet(), LinkerIR::Type::ArrayIteratorProtocolWatchpointSet)
+        && graph->isWatchingGlobalObjectWatchpoint(realm, realm->havingABadTimeWatchpointSet(), LinkerIR::Type::HavingABadTimeWatchpointSet);
+}
+
+bool Graph::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(Node* allocation)
+{
+    ASSERT(allocation->op() == CreateRest || allocation->op() == NewArrayBuffer);
+    return DFG::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(this, globalObjectFor(allocation->origin.semantic));
+}
+
+Graph::ProtocolWatchResult Graph::tryWatchArrayIteratorProtocol(const AbstractValue& arrayIterable)
+{
+    if (m_plan.isUnlinked())
+        return ProtocolWatchResult::Unwatchable;
+
+    // FIXME: We should add profiling of the incoming operand to Spread so we can speculate in such a
+    // way that we guarantee reaching Proven:
+    // https://bugs.webkit.org/show_bug.cgi?id=171198
+
+    // A clear value means this code is unreachable but has not been pruned yet, so there is nothing
+    // to prove anything about.
+    if (arrayIterable.isClear())
+        return ProtocolWatchResult::Unwatchable;
+
+    if (!arrayIterable.isType(SpecArray))
+        return ProtocolWatchResult::Unwatchable;
+
+    if (arrayIterable.m_structure.isClear() || !arrayIterable.m_structure.isFinite())
+        return ProtocolWatchResult::Unwatchable;
+
+    bool allGood = true;
+    // FIXME: Express these per-structure conditions as an ObjectPropertyConditionSet and watch it
+    // through watchConditions() instead. Rewriting the conditions by hand for every protocol is
+    // error prone, especially if the set of conditions ever changes.
+    arrayIterable.m_structure.forEach([&](const RegisteredStructure& structure) {
+        ASSERT(structure->typeInfo().type() == ArrayType);
+        // A set spanning several realms is fine so long as every one of them is watched.
+        JSGlobalObject* realm = structure->globalObject();
+        allGood &= realm
+            && structure->hasMonoProto()
+            && structure->storedPrototype() == realm->arrayPrototype()
+            && !structure->isDictionary()
+            && !structure->hasSpecialProperties()
+            && !structure->mayInterceptIndexedAccesses()
+            && DFG::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(this, realm);
+    });
+
+    return allGood ? ProtocolWatchResult::Proven : ProtocolWatchResult::Unwatchable;
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 bool Graph::isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue& value)
 {

@@ -10175,7 +10175,14 @@ IGNORE_CLANG_WARNINGS_END
         if (m_node->child1().useKind() == ArrayUse)
             speculateArray(m_node->child1());
 
-        if (m_graph.canDoFastSpread(m_node, m_state.forNode(m_node->child1()))) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+        bool fastSpreadProven = m_graph.canDoFastSpread(m_node, m_state.forNode(m_node->child1()));
+#else
+        bool fastSpreadProven = m_node->child1().useKind() == ArrayUse
+            && m_graph.tryWatchArrayIteratorProtocol(m_state.forNode(m_node->child1())) == Graph::ProtocolWatchResult::Proven;
+#endif // RC_REMOVE_SEC_ACCEL_3
+
+        if (fastSpreadProven) {
             LBasicBlock copyOnWriteContiguousCheck = m_out.newBlock();
             LBasicBlock copyOnWritePropagation = m_out.newBlock();
             LBasicBlock preLoop = m_out.newBlock();

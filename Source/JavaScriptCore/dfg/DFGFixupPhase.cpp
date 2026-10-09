@@ -1953,8 +1953,9 @@ private:
         }
 
         case Spread: {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             // Note: We care about performing the protocol on our child's global object, not necessarily ours.
-            
+
             watchHavingABadTime(node->child1().node());
 
             // When we go down the fast path, we don't consult the prototype chain, so we must prove
@@ -1967,6 +1968,14 @@ private:
                 fixEdge<ArrayUse>(node->child1());
             else
                 fixEdge<CellUse>(node->child1());
+#else
+            // Note: This is only speculating the operand is an Array. This gates optimizations that
+            // elide the iterator protocol but don't guarantee it can be.
+            if (node->child1()->shouldSpeculateArray())
+                fixEdge<ArrayUse>(node->child1());
+            else
+                fixEdge<CellUse>(node->child1());
+#endif // RC_REMOVE_SEC_ACCEL_3
             break;
         }
             

@@ -8971,7 +8971,14 @@ void SpeculativeJIT::compileSpread(Node* node)
     if (node->child1().useKind() == ArrayUse)
         speculateArray(node->child1(), argument);
 
-    if (m_graph.canDoFastSpread(node, m_state.forNode(node->child1()))) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    bool fastSpreadProven = m_graph.canDoFastSpread(node, m_state.forNode(node->child1()));
+#else
+    bool fastSpreadProven = node->child1().useKind() == ArrayUse
+        && m_graph.tryWatchArrayIteratorProtocol(m_state.forNode(node->child1())) == Graph::ProtocolWatchResult::Proven;
+#endif // RC_REMOVE_SEC_ACCEL_3
+
+    if (fastSpreadProven) {
 #if USE(JSVALUE64)
         GPRTemporary result(this);
         GPRTemporary scratch1(this);
