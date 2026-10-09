@@ -32,6 +32,10 @@
 #include "NetworkSession.h"
 #include "WebSocketChannelMessages.h"
 #include "WebSocketTask.h"
+#include <WebCore/LocalNetworkAccess.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ThreadableWebSocketChannel.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
@@ -43,9 +47,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSocketChannel);
 
-RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker, LocalNetworkAccessClaims&& localNetworkAccessClaims)
 {
-    Ref result = adoptRef(*new NetworkSocketChannel(connection, protect(connection.networkProcess().networkSession(sessionID)), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByDedicatedWorker));
+    Ref result = adoptRef(*new NetworkSocketChannel(connection, protect(connection.networkProcess().networkSession(sessionID)), request, protocol, identifier, webPageProxyID, frameID, pageID, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByDedicatedWorker, WTF::move(localNetworkAccessClaims)));
     if (!result->m_socket) {
         result->didClose(0, "Cannot create a web socket task"_s);
         return nullptr;
@@ -53,12 +57,16 @@ RefPtr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWeb
     return result;
 }
 
-NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker, LocalNetworkAccessClaims&& localNetworkAccessClaims)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_session(session)
     , m_errorTimer(*this, &NetworkSocketChannel::sendDelayedError)
     , m_webPageProxyID(webPageProxyID)
+    , m_url(request.url())
+    , m_frameID(frameID)
+    , m_clientOrigin(clientOrigin)
+    , m_localNetworkAccessClaims(WTF::move(localNetworkAccessClaims))
 {
     if (!session)
         return;
@@ -110,23 +118,96 @@ void NetworkSocketChannel::close(int32_t code, const String& reason)
     finishClosingIfPossible();
 }
 
-void NetworkSocketChannel::didConnect(const String& subprotocol, const String& extensions)
+void NetworkSocketChannel::didConnect(const String& subprotocol, const String& extensions, IPAddressSpace connectionAddressSpace)
 {
-    send(Messages::WebSocketChannel::DidConnect { subprotocol, extensions });
+    Ref connection = m_connectionToWebProcess.get();
+    CheckedPtr session = m_session.get();
+    if (!canDetermineConnectionAddressSpace() || !connection->localNetworkAccessEnabled() || !session) {
+        send(Messages::WebSocketChannel::DidConnect { subprotocol, extensions });
+        return;
+    }
+
+    // The handshake is a fetch of the http(s) URL, so that is the URL the check judges.
+    URL url = m_url;
+    if (url.protocolIs("ws"_s))
+        url.setProtocol("http"_s);
+    else if (url.protocolIs("wss"_s))
+        url.setProtocol("https"_s);
+
+    auto& claims = m_localNetworkAccessClaims;
+    auto client = connection->localNetworkAccessClient(m_frameID, claims.parentFrameID, m_clientOrigin, claims.clientAddressSpace, claims.clientIsSecureContext);
+    auto requirement = checkLocalNetworkAccess(ResourceRequest { URL { url } }, url, connectionAddressSpace, client.addressSpace, client.isSecureContext, client.origin, claims.localNetworkAllowedByPermissionsPolicy, claims.loopbackNetworkAllowedByPermissionsPolicy);
+    if (!requirement)
+        return refuseLocalNetworkAccess(requirement.error().localizedDescription());
+    if (*requirement == LocalNetworkAccessRequirement::None) {
+        send(Messages::WebSocketChannel::DidConnect { subprotocol, extensions });
+        return;
+    }
+
+    m_messagesAwaitingLocalNetworkAccess.emplace();
+    session->requestLocalNetworkAccessPermission(m_webPageProxyID, client.origin, connectionAddressSpace, [weakThis = WeakPtr { *this }, url = WTF::move(url), subprotocol, extensions](PermissionState state) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        auto messages = std::exchange(protectedThis->m_messagesAwaitingLocalNetworkAccess, std::nullopt);
+        if (auto error = localNetworkAccessPermissionError(url, state))
+            return protectedThis->refuseLocalNetworkAccess(error->localizedDescription());
+        protectedThis->send(Messages::WebSocketChannel::DidConnect { subprotocol, extensions });
+        for (auto& message : *messages)
+            message();
+    });
+}
+
+bool NetworkSocketChannel::isHeldForLocalNetworkAccess() const
+{
+    return m_localNetworkAccessRefused || m_messagesAwaitingLocalNetworkAccess;
+}
+
+void NetworkSocketChannel::holdForLocalNetworkAccess(Function<void()>&& message)
+{
+    if (m_messagesAwaitingLocalNetworkAccess)
+        m_messagesAwaitingLocalNetworkAccess->append(WTF::move(message));
+}
+
+void NetworkSocketChannel::refuseLocalNetworkAccess(const String& errorMessage)
+{
+    m_localNetworkAccessRefused = true;
+    protect(m_socket)->cancel();
+    m_errorMessage = makeString("Blocked a local network connection because "_s, errorMessage, "."_s);
+    m_closeInfo = std::make_pair(ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
+    m_errorTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
 }
 
 void NetworkSocketChannel::didReceiveText(const String& text)
 {
+    if (isHeldForLocalNetworkAccess()) {
+        holdForLocalNetworkAccess([this, protectedThis = Ref { *this }, text] {
+            didReceiveText(text);
+        });
+        return;
+    }
     send(Messages::WebSocketChannel::DidReceiveText { text });
 }
 
 void NetworkSocketChannel::didReceiveBinaryData(std::span<const uint8_t> data)
 {
+    if (isHeldForLocalNetworkAccess()) {
+        holdForLocalNetworkAccess([this, protectedThis = Ref { *this }, data = Vector<uint8_t> { data }] {
+            didReceiveBinaryData(data.span());
+        });
+        return;
+    }
     send(Messages::WebSocketChannel::DidReceiveBinaryData { data });
 }
 
 void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
 {
+    if (isHeldForLocalNetworkAccess()) {
+        holdForLocalNetworkAccess([this, protectedThis = Ref { *this }, code, reason] {
+            didClose(code, reason);
+        });
+        return;
+    }
     if (m_errorTimer.isActive()) {
         m_closeInfo = std::make_pair(code, reason);
         return;
@@ -137,6 +218,12 @@ void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
 
 void NetworkSocketChannel::didReceiveMessageError(String&& errorMessage)
 {
+    if (isHeldForLocalNetworkAccess()) {
+        holdForLocalNetworkAccess([this, protectedThis = Ref { *this }, errorMessage = WTF::move(errorMessage)] mutable {
+            didReceiveMessageError(WTF::move(errorMessage));
+        });
+        return;
+    }
     m_errorMessage = WTF::move(errorMessage);
     m_errorTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
 }
@@ -157,6 +244,12 @@ void NetworkSocketChannel::didSendHandshakeRequest(ResourceRequest&& request)
 
 void NetworkSocketChannel::didReceiveHandshakeResponse(ResourceResponse&& response)
 {
+    if (isHeldForLocalNetworkAccess()) {
+        holdForLocalNetworkAccess([this, protectedThis = Ref { *this }, response = WTF::move(response)] mutable {
+            didReceiveHandshakeResponse(WTF::move(response));
+        });
+        return;
+    }
     response.sanitizeHTTPHeaderFields(ResourceResponse::SanitizationType::CrossOriginSafe);
     send(Messages::WebSocketChannel::DidReceiveHandshakeResponse { response });
 }
