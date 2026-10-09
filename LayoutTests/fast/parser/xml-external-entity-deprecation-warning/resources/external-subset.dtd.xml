@@ -1,0 +1,3 @@
+<!-- WebKit never fetches an external DTD subset, so the external entity declared here must
+     not produce a deprecation warning. -->
+<!ENTITY unusedExternalEntity SYSTEM "message.xml">
