@@ -83,3 +83,59 @@ class CheckoutUnittest(testing.PathTestCase):
 
             with self.assertRaises(Checkout.Exception):
                 Checkout(path=self.path, url=None, sentinal=True)
+
+    def test_forward_update_attempts_every_target(self):
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
+            checkout = Checkout(path=self.path, url=repo.remote, sentinal=False)
+            checkout.remotes = {'first': 'url-1', 'second': 'url-2', 'third': 'url-3'}
+            checkout.forwarding = [('origin', ['first', 'second', 'third'])]
+
+            attempted = []
+
+            # 'first' reports False the way an already-up-to-date target does.
+            def record(branch=None, tag=None, remote=None, track=False, dest_branch=None):
+                attempted.append(remote)
+                return remote != 'first'
+
+            checkout.push_update = record
+            checkout.forward_update(branch='main', remote='origin')
+
+            self.assertEqual(attempted, ['first', 'second', 'third'])
+
+    def test_push_update_reports_nothing_to_push(self):
+        from reporelaypy.checkout import NOTHING_TO_PUSH
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
+            checkout = Checkout(path=self.path, url=repo.remote, sentinal=False)
+            self.assertIs(checkout.push_update(branch='main', remote=None), NOTHING_TO_PUSH)
+            self.assertIs(checkout.push_update(branch='main', remote='fork'), NOTHING_TO_PUSH)
+
+    def test_forward_update_succeeds_when_all_targets_current(self):
+        from reporelaypy.checkout import NOTHING_TO_PUSH
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
+            checkout = Checkout(path=self.path, url=repo.remote, sentinal=False)
+            checkout.forwarding = [('origin', ['a', 'b'])]
+            checkout.push_update = lambda **kwargs: NOTHING_TO_PUSH
+            self.assertTrue(checkout.forward_update(branch='main', remote='origin'))
+
+    def test_forwarding_targets_first_match_only(self):
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
+            checkout = Checkout(path=self.path, url=repo.remote, sentinal=False)
+            checkout.forwarding = [
+                ('origin:main', ['mirror-a:renamed']),
+                ('origin', ['mirror-a', 'mirror-c']),
+            ]
+            # The specific rule wins and the general one must not also apply.
+            self.assertEqual(
+                checkout.forwarding_targets(remote='origin', branch='main'),
+                [('mirror-a', 'renamed')],
+            )
+            self.assertEqual(
+                checkout.forwarding_targets(remote='origin', branch='other'),
+                [('mirror-a', None), ('mirror-c', None)],
+            )
+
+    def test_forwarding_targets_unmatched_remote_goes_nowhere(self):
+        with OutputCapture(), mocks.local.Git(self.path) as repo:
+            checkout = Checkout(path=self.path, url=repo.remote, sentinal=False)
+            checkout.forwarding = [('origin', ['mirror-a'])]
+            self.assertEqual(checkout.forwarding_targets(remote='mirror-d', branch='main'), [])
