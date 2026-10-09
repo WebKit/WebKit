@@ -22,6 +22,9 @@
 
 from webkitcorepy import Version
 
+import unittest
+
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
@@ -169,3 +172,22 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         self.assertEqual(configuration['platform'], 'ios')
         self.assertEqual(configuration['style'], 'release')
         self.assertEqual(configuration['version_name'], 'iOS {}'.format(port.device_version()))
+
+
+class TeardownFailureTest(unittest.TestCase):
+
+    class FailingDevice(object):
+        def finished_testing(self):
+            raise ValueError('could not shut down')
+
+    def test_a_single_teardown_failure_is_raised(self):
+        devices = [self.FailingDevice()]
+
+        class FakeManager(object):
+            INITIALIZED_DEVICES = devices
+
+        port = IOSSimulatorPort(MockSystemHost(), 'ios-simulator', options=MockOptions(child_processes=1))
+        port.DEVICE_MANAGER = FakeManager
+
+        with self.assertRaises(ValueError):
+            port.clean_up_test_run()
