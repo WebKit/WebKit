@@ -173,6 +173,8 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  */
 @property (nonatomic) BOOL includeTextInAutoFilledControls;
 
+@property (nonatomic) BOOL includeFormControlValues WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*!
  Include context around password fields, including those outside of `targetRect`.
  The default value is `NO`.
