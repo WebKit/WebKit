@@ -71,6 +71,8 @@ public:
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_SETTERS)
 
+    bool shouldUseUIProcessForBackForwardItemLoading() const;
+
     static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
     static const Vector<RefPtr<API::Object>>& internalDebugFeatures();
