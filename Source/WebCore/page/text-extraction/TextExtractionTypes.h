@@ -109,6 +109,7 @@ struct Request {
     OptionSet<EventListenerCategory> eventListenerCategories;
     bool includeAccessibilityAttributes { false };
     bool includeTextInAutoFilledControls { false };
+    bool includeFormControlValues { true };
     bool includeOffscreenPasswordFields { false };
     bool includeTagName { false };
 #if ENABLE(DATA_DETECTION)

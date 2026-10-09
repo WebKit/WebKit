@@ -1494,6 +1494,38 @@ struct TextExtractionTests {
     }
 
     @Test
+    func includeFormControlValues() async throws {
+        try await webView.load(
+            html: """
+                <body>\
+                <label>Name <input id='name' placeholder='Your name'></label>\
+                <textarea id='note' placeholder='Delivery notes'></textarea>\
+                <input type='submit' value='Send message'>\
+                </body>
+                """
+        )
+        _ = try await webView.callJavaScript(returning: Bool.self) {
+            "document.getElementById('name').value = 'Jordan Rivers'; document.getElementById('note').value = 'Leave it by the side door'; return true"
+        }
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = []
+
+        let textWithValues = try await webView.debugText(configuration)
+        #expect(textWithValues.contains("Jordan Rivers"))
+        #expect(textWithValues.contains("Leave it by the side door"))
+        #expect(textWithValues.contains("Your name"))
+        #expect(textWithValues.contains("Send message"))
+
+        configuration.includeFormControlValues = false
+        let textWithoutValues = try await webView.debugText(configuration)
+        #expect(textWithoutValues.contains("Jordan Rivers") == false)
+        #expect(textWithoutValues.contains("Leave it by the side door") == false)
+        #expect(textWithoutValues.contains("Your name"))
+        #expect(textWithoutValues.contains("Send message"))
+    }
+
+    @Test
     func visibleTextOnly() async throws {
         try await webView.load(testPageNamed: "debug-text-extraction")
 

@@ -877,6 +877,7 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             .eventListenerCategories = coreEventListenerCategories(configuration.eventListenerCategories),
             .includeAccessibilityAttributes = !!configuration.includeAccessibilityAttributes,
             .includeTextInAutoFilledControls = !!configuration.includeTextInAutoFilledControls,
+            .includeFormControlValues = !!configuration.includeFormControlValues,
             .includeOffscreenPasswordFields = !!configuration.includeOffscreenPasswordFields,
             .includeTagName = !!configuration.includeTagName,
 #if ENABLE(DATA_DETECTION)

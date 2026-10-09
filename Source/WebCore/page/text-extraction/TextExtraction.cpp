@@ -152,6 +152,7 @@ static bool isCandidateClassOrId(StringView text)
 static constexpr auto minOpacityToConsiderVisible = 0.05;
 
 enum class IncludeTextInAutoFilledControls : bool { No, Yes };
+enum class IncludeFormControlValues : bool { No, Yes };
 
 using TextNodesAndText = Vector<std::pair<Ref<Text>, String>>;
 using TextAndSelectedRange = std::pair<String, std::optional<CharacterRange>>;
@@ -171,7 +172,19 @@ static bool NODELETE hasEnclosingAutoFilledInput(Node& node)
     return input->autofilled() || input->autofilledAndViewable() || input->autofilledAndObscured();
 }
 
-static inline TextNodesAndText collectText(const SimpleRange& range, IncludeTextInAutoFilledControls includeTextInAutoFilledControls)
+static bool holdsUserEnteredValue(const HTMLTextFormControlElement& control)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(control);
+    return !input || !(input->isTextButton() || input->isImageButton() || input->isCheckbox() || input->isRadioButton());
+}
+
+static bool hasEnclosingControlWithUserEnteredValue(Node& node)
+{
+    RefPtr control = dynamicDowncast<HTMLTextFormControlElement>(node.shadowHost());
+    return control && holdsUserEnteredValue(*control);
+}
+
+static inline TextNodesAndText collectText(const SimpleRange& range, IncludeTextInAutoFilledControls includeTextInAutoFilledControls, IncludeFormControlValues includeFormControlValues)
 {
     TextNodesAndText nodesAndText;
     RefPtr<Text> lastTextNode;
@@ -195,6 +208,9 @@ static inline TextNodesAndText collectText(const SimpleRange& range, IncludeText
         }
 
         if (includeTextInAutoFilledControls == IncludeTextInAutoFilledControls::No && hasEnclosingAutoFilledInput(*node))
+            continue;
+
+        if (includeFormControlValues == IncludeFormControlValues::No && hasEnclosingControlWithUserEnteredValue(*node))
             continue;
 
         RefPtr textNode = dynamicDowncast<Text>(*node);
@@ -346,7 +362,7 @@ struct TraversalContext {
     }
 };
 
-static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoFilledControls includeTextInAutoFilledControls)
+static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoFilledControls includeTextInAutoFilledControls, IncludeFormControlValues includeFormControlValues)
 {
     auto nodeRange = makeRangeSelectingNodeContents(node);
     auto selection = node.document().selection().selection();
@@ -371,15 +387,15 @@ static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoF
         auto rangeBeforeSelection = makeSimpleRange(nodeRange.start, *selectionStart);
         auto selectionRange = makeSimpleRange(*selectionStart, *selectionEnd);
         auto rangeAfterSelection = makeSimpleRange(*selectionEnd, nodeRange.end);
-        textBeforeRangedSelection = collectText(rangeBeforeSelection, includeTextInAutoFilledControls);
-        textInRangedSelection = collectText(selectionRange, includeTextInAutoFilledControls);
-        textAfterRangedSelection = collectText(rangeAfterSelection, includeTextInAutoFilledControls);
+        textBeforeRangedSelection = collectText(rangeBeforeSelection, includeTextInAutoFilledControls, includeFormControlValues);
+        textInRangedSelection = collectText(selectionRange, includeTextInAutoFilledControls, includeFormControlValues);
+        textAfterRangedSelection = collectText(rangeAfterSelection, includeTextInAutoFilledControls, includeFormControlValues);
         return true;
     }();
 
     if (!populatedRangesAroundSelection) {
         // Fall back to collecting the full contents of the node.
-        textBeforeRangedSelection = collectText(nodeRange, includeTextInAutoFilledControls);
+        textBeforeRangedSelection = collectText(nodeRange, includeTextInAutoFilledControls, includeFormControlValues);
     }
 
     TextAndSelectedRangeMap result;
@@ -892,7 +908,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                 .autocomplete = control->autocomplete(),
                 .pattern = control->attributeWithoutSynchronization(HTMLNames::patternAttr),
                 .name = input ? stringOnlyIfHumanReadable(input->name()) : String { },
-                .value = input ? String { input->value() } : String { },
+                .value = input && (context.originalRequest.includeFormControlValues || !holdsUserEnteredValue(*control)) ? String { input->value() } : String { },
                 .minLength = input ? wholeNumberOrNull(input->minLength()) : std::optional<int> { },
                 .maxLength = input ? wholeNumberOrNull(input->maxLength()) : std::optional<int> { },
                 .isRequired = control->isRequired(),
@@ -1793,6 +1809,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
         }
 
         auto includeTextInAutoFilledControls = request.includeTextInAutoFilledControls ? IncludeTextInAutoFilledControls::Yes : IncludeTextInAutoFilledControls::No;
+        auto includeFormControlValues = request.includeFormControlValues ? IncludeFormControlValues::Yes : IncludeFormControlValues::No;
 
         HashSet<Ref<Node>> nodesToSkip;
         for (auto identifier : request.handleIdentifiersOfNodesToSkip) {
@@ -1832,7 +1849,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
         TraversalContext context {
             .originalRequest = { request },
             .clientNodeAttributes = WTF::move(clientNodeAttributes),
-            .visibleText = collectText(*extractionRootNode, includeTextInAutoFilledControls),
+            .visibleText = collectText(*extractionRootNode, includeTextInAutoFilledControls, includeFormControlValues),
             .nodesToSkip = WTF::move(nodesToSkip),
             .contextMenuTargetNode = WTF::move(contextMenuTargetNode),
             .rectInRootView = request.collectionRectInRootView,
