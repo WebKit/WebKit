@@ -20,11 +20,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import tempfile
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+
+from webkitcorepy import Terminal
 
 from webkitscmpy import Commit, local
 from webkitscmpy.program.diff.diff import DiffBase
+from webkitscmpy.program.diff.html_diff import HTMLDiff
 
 
 class _Commit(object):
@@ -68,6 +73,44 @@ class TestDiffBase(unittest.TestCase):
         diff = DiffBase(repository=None)
         line = self._from_line(self.NULL_SHA)
         self.assertEqual(diff.add_line(line), line + '\n')
+
+
+class TestHTMLDiff(unittest.TestCase):
+    DIFF = '''diff --git a/Source/Alpha.cpp b/Source/Alpha.cpp
+index 1111111..2222222 100644
+--- a/Source/Alpha.cpp
++++ b/Source/Alpha.cpp
+@@ -10,4 +10,4 @@ void Alpha::run()
+ {
+-    computeTheThing(input);
++    computeTheOtherThing(input);
+ }
+'''
+
+    def render(self, diff):
+        with tempfile.TemporaryDirectory() as directory, patch.object(Terminal, 'open_url'):
+            viewer = HTMLDiff(block=False)
+            viewer.file = os.path.join(directory, 'diff.html')
+            with viewer:
+                viewer.add_lines(diff.splitlines())
+            with open(viewer.file, 'r') as handle:
+                return handle.read()
+
+    def test_removed_line_is_numbered_in_a_section(self):
+        content = self.render(self.DIFF)
+        self.assertIn("<div class='section'>", content)
+        self.assertRegex(content, r'<div class="line remove">\s*<span class="original" data-line="11"></span>')
+
+    def test_added_line_is_numbered_in_a_section(self):
+        content = self.render(self.DIFF)
+        self.assertIn("<div class='section'>", content)
+        self.assertRegex(content, r'<div class="line add">\s*<span class="original"></span>\s*<span class="edited" data-line="11"></span>')
+
+    def test_move_detection_is_included(self):
+        content = self.render(self.DIFF)
+        self.assertIn('id="move-toggle"', content)
+        self.assertIn('id="whitespace-toggle"', content)
+        self.assertIn(HTMLDiff.SCRIPT, content)
 
 
 if __name__ == '__main__':
