@@ -302,15 +302,19 @@ class SharderTests(unittest.TestCase):
     def test_shard_by_dir(self):
         result = self.get_shards(num_workers=2, fully_parallel=False)
 
-        self.assert_shards(result,
-            [('animations', ['animations/keyframes.html']),
-             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html',
-                                      'dom/html/level2/html/HTMLAnchorElement06.html']),
-             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('http/tests/security', ['http/tests/security/view-source-no-refresh.html']),
-             ('http/tests/websocket/tests', ['http/tests/websocket/tests/unicode.htm', 'http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             ('http/tests/xmlhttprequest', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
-             ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+        self.assert_shards(result, [
+            ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html', 'dom/html/level2/html/HTMLAnchorElement06.html']),
+            ('http/tests/websocket/tests', ['http/tests/websocket/tests/unicode.htm', 'http/tests/websocket/tests/websocket-protocol-ignored.html']),
+            ('animations', ['animations/keyframes.html']),
+            ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
+            ('http/tests/security', ['http/tests/security/view-source-no-refresh.html']),
+            ('http/tests/xmlhttprequest', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
+            ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+
+    def test_shards_of_equal_size_stay_in_directory_order(self):
+        result = self.get_shards(num_workers=2, fully_parallel=False)
+        single_test_shards = [shard.name for shard in result if len(shard.test_inputs) == 1]
+        self.assertEqual(sorted(single_test_shards), single_test_shards)
 
     def test_shard_every_file(self):
         result = self.get_shards(num_workers=2, fully_parallel=True)

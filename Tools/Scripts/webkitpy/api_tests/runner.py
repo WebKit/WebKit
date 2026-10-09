@@ -164,6 +164,10 @@ class Runner(object):
         return args
 
     @staticmethod
+    def _shards_longest_first(shards):
+        return sorted(shards.items(), key=lambda item: (-len(item[1]), item[0]))
+
+    @staticmethod
     def _shard_tests(tests, fully_parallel):
         shards = {}
         for test in tests:
@@ -294,7 +298,7 @@ class Runner(object):
                             pool.do(run_test_parallel_safety_single_iteration, test_name, repeat=True, group=test_parallel_safety_group)
 
                     # Run regular shards
-                    for name, shard_tests in iteritems(shards):
+                    for name, shard_tests in Runner._shards_longest_first(shards):
                         if name.startswith('test-parallel-safety.'):
                             continue
 
@@ -312,7 +316,7 @@ class Runner(object):
                 ) as pool:
                     # Group system shard tests by suite for efficiency
                     non_allowlisted_shards = Runner._shard_tests(non_allowlisted_tests, False)
-                    for name, shard_tests in iteritems(non_allowlisted_shards):
+                    for name, shard_tests in Runner._shards_longest_first(non_allowlisted_shards):
                         pool.do(run_shard, name, *shard_tests)
 
                     pool.wait()
