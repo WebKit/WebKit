@@ -49,6 +49,7 @@
                 { "name": "localName", "type": "string", "description": "<code>Node</code>'s localName." },
                 { "name": "nodeValue", "type": "string", "description": "<code>Node</code>'s nodeValue." },
                 { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the containing frame." },
+                { "name": "contentFrameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the frame hosted by a frame owner element, even when that frame is in another process." },
                 { "name": "childNodeCount", "type": "integer", "optional": true, "description": "Child count for <code>Container</code> nodes." },
                 { "name": "children", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Child nodes of this node when requested with children." },
                 { "name": "attributes", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]</code>." },
@@ -560,6 +561,17 @@
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Node id for given object." }
+            ]
+        },
+        {
+            "name": "requestFrameOwner",
+            "description": "Requests that the frame owner element (such as <code>iframe</code>) of a child frame is sent to the caller. The child frame may be hosted by another process. All nodes that form the path from the owner element to the root are also sent to the client as a series of <code>setChildNodes</code> notifications.",
+            "targetTypes": ["frame", "page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of a frame whose owner element is in the document tree of this target." }
+            ],
+            "returns": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Node id for the frame owner element." }
             ]
         },
         {

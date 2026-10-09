@@ -68,6 +68,7 @@ class Element;
 class Event;
 class Exception;
 class FloatQuad;
+class HTMLFrameOwnerElement;
 class InspectorHistory;
 #if ENABLE(VIDEO)
 class HTMLMediaElement;
@@ -154,6 +155,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
 #endif
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Runtime::RemoteObjectId&);
+    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestFrameOwner(const Inspector::Protocol::Network::FrameId&);
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> pushNodeByPathToFrontend(const String& path);
     Inspector::Protocol::ErrorStringOr<void> hideHighlight();
     Inspector::Protocol::ErrorStringOr<void> highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
@@ -200,6 +202,7 @@ public:
     void didChangeCustomElementState(Element&);
     bool handleTouchEvent(Node&);
     void didCommitLoad(Document*);
+    void frameOwnerContentFrameChanged(HTMLFrameOwnerElement&);
     void frameDocumentUpdated(LocalFrame&);
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
@@ -254,6 +257,7 @@ private:
     // Node-related methods.
     Inspector::Protocol::DOM::NodeId bind(Node&);
     void unbind(Node&);
+    void resendFrameOwner(HTMLFrameOwnerElement&);
 
     Node* assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Element* assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);

@@ -113,6 +113,7 @@
 #include "RenderStyleConstants.h"
 #include "ScriptController.h"
 #include "SelectorChecker.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
 #include "StyleComputedStyle.h"
@@ -1855,6 +1856,34 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
     return nodeId;
 }
 
+Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDOMAgent::requestFrameOwner(const Inspector::Protocol::Network::FrameId& frameId)
+{
+    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsedFrameId)
+        return makeUnexpected("Invalid frameId format"_s);
+
+    // Compare the FrameIdentifier only: the hosting process in a frame ID can be stale in a process that
+    // holds a RemoteFrame. Do not look below a RemoteFrame: the frames there are reached through their own
+    // FrameDOMAgent, and an owner element in their documents is not part of this agent's tree.
+    for (RefPtr frame = &m_inspectedPage->mainFrame(); frame; frame = is<LocalFrame>(*frame) ? frame->tree().traverseNext() : frame->tree().traverseNextSkippingChildren()) {
+        if (frame->frameID() != parsedFrameId->second)
+            continue;
+
+        RefPtr ownerElement = frame->ownerElement();
+        if (!ownerElement)
+            return makeUnexpected("Missing owner element for given frameId"_s);
+
+        Inspector::Protocol::ErrorString errorString;
+        auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
+        if (!nodeId)
+            return makeUnexpected("Unable to push the owner element for given frameId"_s);
+
+        return nodeId;
+    }
+
+    return makeUnexpected("Missing frame for given frameId"_s);
+}
+
 String InspectorDOMAgent::documentURLString(Document* document)
 {
     if (!document || document->url().isNull())
@@ -1979,6 +2008,8 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
     if (RefPtr element = dynamicDowncast<Element>(*node)) {
         value->setAttributes(buildArrayForElementAttributes(element.get()));
         if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*element)) {
+            if (RefPtr contentFrame = frameOwner->contentFrame(); contentFrame && protect(frameOwner->document())->settings().siteIsolationEnabled())
+                value->setContentFrameId(IdentifierRegistry::protocolFrameId(*contentFrame));
             if (RefPtr document = frameOwner->contentDocument())
                 value->setContentDocument(buildObjectForNode(document.get(), 0));
         }
@@ -2576,21 +2607,28 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     if (m_inspectedNode && &m_inspectedNode->document() == document)
         m_inspectedNode = nullptr;
 
-    RefPtr<Element> frameOwner = document->ownerElement();
-    if (!frameOwner)
-        return;
+    if (RefPtr frameOwner = document->ownerElement())
+        resendFrameOwner(*frameOwner);
+}
 
-    auto frameOwnerId = boundNodeId(frameOwner.get());
+void InspectorDOMAgent::frameOwnerContentFrameChanged(HTMLFrameOwnerElement& frameOwner)
+{
+    resendFrameOwner(frameOwner);
+}
+
+void InspectorDOMAgent::resendFrameOwner(HTMLFrameOwnerElement& frameOwner)
+{
+    auto frameOwnerId = boundNodeId(&frameOwner);
     if (!frameOwnerId)
         return;
 
     // Re-add frame owner element together with its new children.
-    auto parentId = boundNodeId(protect(innerParentNode(frameOwner.get())));
+    auto parentId = boundNodeId(protect(innerParentNode(&frameOwner)));
     m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
-    unbind(*frameOwner);
+    unbind(frameOwner);
 
-    auto value = buildObjectForNode(frameOwner.get(), 0);
-    RefPtr previousSibling = innerPreviousSibling(frameOwner.get());
+    auto value = buildObjectForNode(&frameOwner, 0);
+    RefPtr previousSibling = innerPreviousSibling(&frameOwner);
     auto prevId = boundNodeId(previousSibling.get());
     m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
 }
