@@ -66,7 +66,7 @@ function createSecondSyncAcessHandle(fromHandle)
         // First creation should fail as there is an active handle.
         createError = error;
         debug("accessHandle2 cannot be created");
-        shouldBeEqualToString("createError.toString()", "InvalidStateError: The object is in an invalid state.");
+        shouldBeEqualToString("createError.name", "NoModificationAllowedError");
         close();
     });
 }
