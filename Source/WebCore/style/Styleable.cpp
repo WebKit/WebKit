@@ -611,18 +611,23 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     // https://drafts.csswg.org/css-transitions-1/#before-change-style
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
-    auto beforeChangeStyle = [&]() -> const Style::ComputedStyle {
+    // Only clone the source style if a declarative animation actually modifies it for this property; otherwise
+    // reference it directly to avoid a full ComputedStyle copy for every transitioning property.
+    std::unique_ptr<Style::ComputedStyle> beforeChangeStyleStorage;
+    auto& beforeChangeStyle = [&]() -> const Style::ComputedStyle& {
         if (auto* lastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle()) {
-            auto style = Style::ComputedStyle::clone(*lastStyleChangeEventStyle);
             if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
                 for (const auto& effect : keyframeEffectStack->sortedEffects()) {
-                    if (effect->animatesProperty(property))
-                        protect(*effect)->apply(style, { nullptr });
+                    if (effect->animatesProperty(property)) {
+                        if (!beforeChangeStyleStorage)
+                            beforeChangeStyleStorage = Style::ComputedStyle::clonePtr(*lastStyleChangeEventStyle);
+                        protect(*effect)->apply(*beforeChangeStyleStorage, { nullptr });
+                    }
                 }
             }
-            return style;
+            return beforeChangeStyleStorage ? *beforeChangeStyleStorage : *lastStyleChangeEventStyle;
         }
-        return Style::ComputedStyle::clone(currentStyle);
+        return currentStyle;
     }();
 
     // https://drafts.csswg.org/css-transitions-1/#after-change-style
@@ -630,14 +635,16 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     // of that style change event, but using the computed values of the animation-* properties from the before-change style, excluding any styles
     // from CSS Transitions in the computation, and inheriting from the after-change style of the parent. Note that this means the after-change
     // style does not differ from the before-change style due to newly created or canceled CSS Animations.
-    auto afterChangeStyle = [&]() -> const Style::ComputedStyle {
+    // Only clone the new style if a relevant CSS Animation resolves onto it; otherwise reference it directly.
+    std::unique_ptr<Style::ComputedStyle> afterChangeStyleStorage;
+    auto& afterChangeStyle = [&]() -> const Style::ComputedStyle& {
         if (is<CSSAnimation>(animation) && animation->isRelevant()) {
-            auto animatedStyle = Style::ComputedStyle::clone(newStyle);
-            animation->resolve(animatedStyle, { nullptr });
-            return animatedStyle;
+            afterChangeStyleStorage = Style::ComputedStyle::clonePtr(newStyle);
+            animation->resolve(*afterChangeStyleStorage, { nullptr });
+            return *afterChangeStyleStorage;
         }
 
-        return Style::ComputedStyle::clone(newStyle);
+        return newStyle;
     }();
 
     auto allowsDiscreteTransitions = matchingTransition && matchingTransition->behavior() == TransitionBehavior::AllowDiscrete;
