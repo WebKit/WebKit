@@ -167,13 +167,13 @@ HTTPResponse DataDetectorInSubframeTest::html(const String& body)
     return HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, body };
 }
 
-void DataDetectorInSubframeTest::setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure)
+void DataDetectorInSubframeTest::setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes)
 {
     server = makeUnique<HTTPServer>(routes, HTTPServer::Protocol::HttpsProxy);
 
     RetainPtr configuration { [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES] };
     [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
-    configure(configuration);
+    adjustConfiguration(configuration);
     GetParam().applyTo(configuration);
 
     navigationDelegate = adoptNS([TestNavigationDelegate new]);

@@ -173,7 +173,7 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!renderer)
         return false;
 
-    m_page->chrome().client().handleClickForDataDetectionResult({ WTF::move(dataDetectionResult), frameView->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToMainFrameView(frameView->windowToContents(locationInWindow)));
+    m_page->chrome().client().handleClickForDataDetectionResult(frame->frameID(), { WTF::move(dataDetectionResult), frameView->contentsToMainFrameView(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToMainFrameView(frameView->windowToContents(locationInWindow)));
     return true;
 }
 
