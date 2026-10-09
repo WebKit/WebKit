@@ -28,7 +28,10 @@
 #include "IdleRequestCallback.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -57,14 +60,32 @@ private:
 
     unsigned m_idleCallbackIdentifier { 0 };
 
-    struct IdleRequest {
+    struct IdleRequest : RefCounted<IdleRequest> {
+        static Ref<IdleRequest> create(unsigned identifier, Ref<IdleRequestCallback>&& callback, std::optional<MonotonicTime> timeout)
+        {
+            return adoptRef(*new IdleRequest(identifier, WTF::move(callback), timeout));
+        }
+
         unsigned identifier { 0 };
         Ref<IdleRequestCallback> callback;
         std::optional<MonotonicTime> timeout;
+        bool isPending { true };
+
+    private:
+        IdleRequest(unsigned identifier, Ref<IdleRequestCallback>&& callback, std::optional<MonotonicTime> timeout)
+            : identifier(identifier)
+            , callback(WTF::move(callback))
+            , timeout(timeout)
+        {
+        }
     };
 
-    Deque<IdleRequest> m_idleRequestCallbacks;
-    Deque<IdleRequest> m_runnableIdleCallbacks;
+    // Removal/timeout only flips isPending to false so lookups by identifier stay
+    // O(1); stale entries are skipped lazily wherever the deques are drained,
+    // avoiding an O(n) find-and-shift per removal during a burst of cancellations.
+    Deque<Ref<IdleRequest>> m_idleRequestCallbacks;
+    Deque<Ref<IdleRequest>> m_runnableIdleCallbacks;
+    HashMap<unsigned, Ref<IdleRequest>> m_pendingIdleRequestsByIdentifier;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
