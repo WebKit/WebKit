@@ -127,6 +127,17 @@ testing::AssertionResult hoverUntilHighlightIsShown(TestWKWebView *webView, CGRe
     return isShown;
 }
 
+testing::AssertionResult waitUntilWindowClipRectWidthIs(TestWKWebView *webView, WKFrameInfo *frame, int width)
+{
+    int lastWidth { 0 };
+    if (Util::waitFor([&] {
+        lastWidth = [[webView objectByEvaluatingJavaScript:@"Math.round(internals.windowClipRect().width)" inFrame:frame] intValue];
+        return lastWidth == width;
+    }))
+        return testing::AssertionSuccess();
+    return testing::AssertionFailure() << "The frame's window clip rect is " << lastWidth << "px wide, not " << width << "px.";
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) && ENABLE(DATA_DETECTION)

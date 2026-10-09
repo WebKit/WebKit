@@ -32,6 +32,7 @@
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -235,6 +236,7 @@ public:
 
         server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
             { "/main"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)))) },
+            { "/main-without-scroll-bars"_s, html(makeString("<html style='overflow:hidden'><body style='margin:0'>"_s, iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)), "</body></html>"_s)) },
             { "/main-with-two-iframes"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)), iframe(secondIframeLeft, makeString(secondIframeOrigin, "/text.html"_s))))) },
             { "/main-with-two-telephone-numbers"_s, html(mainHTML(makeString(iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)), iframe(secondIframeLeft, makeString(secondIframeOrigin, "/telephone-number.html"_s))))) },
             { "/main-with-nested-frame"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/nested.html"_s)))) },
@@ -255,7 +257,7 @@ public:
             { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No telephone number here</p></body>"_s) },
         }, HTTPServer::Protocol::HttpsProxy);
 
-        RetainPtr configuration { adoptNS([[WKWebViewConfiguration alloc] init]) };
+        RetainPtr configuration { [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES] };
         [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
         [[configuration preferences] _setTelephoneNumberDetectionIsEnabled:YES];
         [configuration _setServiceControlsEnabled:YES];
@@ -311,7 +313,7 @@ public:
 
     CGRect rootVisibleRect(CGRect contentBoxIfRoot)
     {
-        return GetParam().isCrossOriginWithSiteIsolation() ? contentBoxIfRoot : [webView bounds];
+        return GetParam().isCrossOriginWithSiteIsolation() ? CGRectIntersection(contentBoxIfRoot, [webView bounds]) : [webView bounds];
     }
 
     bool frameHasFocus(WKFrameInfo *frame)
@@ -498,6 +500,27 @@ TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAccountForSubframeScroll)
     [webView waitForNextPresentationUpdate];
 
     showHighlightAndMenu(telephoneNumberRect(frame.get(), iframeContentBox.origin), rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(TelephoneNumberInSubframe, HighlightButtonStaysInViewWhenFrameIsPartlyOutOfView)
+{
+    load(@"/main-without-scroll-bars");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { telephoneNumberRect(frame.get(), iframeContentBox.origin) };
+
+    CGRect visibleRect { [webView bounds] };
+    int offset { static_cast<int>(std::round(CGRectGetMaxX(visibleRect) - 10 - CGRectGetMaxX(rect))) };
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('iframe').style.left = '%dpx'", iframeLeft + offset]];
+    CGRect contentBox { NSOffsetRect(iframeContentBox, offset, 0) };
+    ASSERT_TRUE(waitUntilWindowClipRectWidthIs(webView.get(), frame.get(), static_cast<int>(CGRectGetMaxX(visibleRect) - CGRectGetMinX(contentBox))));
+    rect = telephoneNumberRect(frame.get(), contentBox.origin);
+
+    auto highlight { dataDetectorHighlightGeometry(rect, visibleRect) };
+    ASSERT_FALSE(rectsAreNear(highlight.boundingRect, dataDetectorHighlightGeometry(rect, contentBox).boundingRect, telephoneNumberRectTolerance));
+    ASSERT_TRUE(rectsAreNear(highlight.boundingRect, dataDetectorHighlightGeometry(rect, CGRectIntersection(contentBox, visibleRect)).boundingRect, telephoneNumberRectTolerance));
+
+    selectTelephoneNumber(frame.get(), rect);
+    showHighlightAndMenu(rect, visibleRect);
 }
 
 TEST_P(TelephoneNumberInSubframe, HighlightAndMenuAreAtTheTelephoneNumberInNestedFrame)
