@@ -104,11 +104,11 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObjec
     if (markOptions && markOptions->startTime)
         timestamp = m_performance->monotonicTimeFromRelativeTime(*markOptions->startTime);
 
-    InspectorInstrumentation::performanceMark(context.get(), markName, timestamp);
-
     auto mark = PerformanceMark::create(globalObject, context, markName, WTF::move(markOptions));
     if (mark.hasException())
         return mark.releaseException();
+
+    InspectorInstrumentation::performanceMark(context.get(), markName, timestamp);
 
     addPerformanceEntry(m_marksMap, markName, mark.returnValue().get());
     return mark.releaseReturnValue();

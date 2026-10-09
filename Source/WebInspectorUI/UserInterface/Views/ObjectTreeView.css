@@ -57,7 +57,7 @@
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
-.object-tree.properties-only > :is(.title, .object-preview) {
+.object-tree.hide-this > :is(.title, .object-preview) {
     display: none;
 }
 
@@ -101,16 +101,16 @@
 }
 
 .tree-outline.object .item,
-.object-tree.properties-only .tree-outline.object {
+.object-tree.hide-this .tree-outline.object {
     padding-left: 0;
 }
 
-.object-tree.properties-only .object-tree-property .property-name {
+.object-tree.hide-this .object-tree-property .property-name {
     opacity: 1;
 }
 
-.object-tree.properties-only.json-only .object-tree-property.prototype-property,
-.object-tree.properties-only.json-only .object-tree-property.prototype-property + .children {
+.object-tree.hide-prototype .object-tree-property.prototype-property,
+.object-tree.hide-prototype .object-tree-property.prototype-property + .children {
     display: none;
 }
 

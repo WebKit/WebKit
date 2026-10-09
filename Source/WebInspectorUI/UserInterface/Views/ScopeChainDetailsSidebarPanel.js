@@ -260,8 +260,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
             for (let object of scope.objects) {
                 let scopePropertyPath = WI.PropertyPath.emptyPropertyPathForScope(object);
                 let objectTree = new WI.ObjectTreeView(object, WI.ObjectTreeView.Mode.Properties, scopePropertyPath);
-
-                objectTree.showOnlyProperties();
+                objectTree.hideThis();
 
                 if (extraPropertyDescriptor) {
                     objectTree.appendExtraPropertyDescriptor(extraPropertyDescriptor);
@@ -316,7 +315,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         let watchExpressionsRemoteObject = WI.RemoteObject.createFakeRemoteObject();
         let fakePropertyPath = WI.PropertyPath.emptyPropertyPathForScope(watchExpressionsRemoteObject);
         let objectTree = new WI.ObjectTreeView(watchExpressionsRemoteObject, WI.ObjectTreeView.Mode.Properties, fakePropertyPath);
-        objectTree.showOnlyProperties();
+        objectTree.hideThis();
 
         let treeOutline = objectTree.treeOutline;
         const watchExpressionSectionIdentifier = "watch-expressions";

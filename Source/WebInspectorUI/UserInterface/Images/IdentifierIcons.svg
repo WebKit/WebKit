@@ -98,6 +98,17 @@
                 --fill: hsl(143, 48%, 20%);
                 --outline: hsl(153, 50%, 52%);
             }
+
+            .light.gray {
+                --fill: hsl(0, 0%, 72%);
+                --stroke: hsl(0, 0%, 52%);
+                --outline: hsl(0, 0%, 52%);
+            }
+
+            .dark.gray {
+                --fill: hsl(0, 0%, 32%);
+                --outline: hsl(0, 0%, 55%);
+            }
         </style>
 
         <clipPath id="clip">
@@ -168,6 +179,13 @@
         <line stroke="white" x1="11" y1="5" x2="11" y2="11" stroke-width="1.5" stroke-linecap="round"/>
     </symbol>
 
+    <symbol id="stopwatch" viewBox="0 0 16 16">
+        <path d="M 6.95 3.6 L 9.05 3.6 M 8 3.6 L 8 5.65 M 8 9.25 L 9.2 8.15" fill="none" stroke="var(--stroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="8" cy="9.25" r="3.6" fill="none" stroke="var(--stroke)" stroke-width="2.5"/>
+        <path d="M 6.95 3.6 L 9.05 3.6 M 8 3.6 L 8 5.65 M 8 9.25 L 9.2 8.15" fill="none" stroke="white" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="8" cy="9.25" r="3.6" fill="none" stroke="white" stroke-width="1.1"/>
+    </symbol>
+
     <g id="NetworkInstrument-light" class="light blue"><use href="#circle"/><use href="#network"/></g>
     <g id="NetworkInstrument-dark" class="dark blue"><use href="#circle"/><use href="#network"/></g>
     <g id="CPUInstrument-light" class="light green"><use href="#circle"/><use href="#cpu"/></g>
@@ -188,4 +206,6 @@
     <g id="ScriptsInstrument-dark" class="dark purple"><use href="#circle"/><use href="#script"/></g>
     <g id="Thread-light" class="light blue"><use href="#circle"/><use href="#threads"/></g>
     <g id="Thread-dark" class="dark blue"><use href="#circle"/><use href="#threads"/></g>
+    <g id="UserTimingInstrument-light" class="light gray"><use href="#circle"/><use href="#stopwatch"/></g>
+    <g id="UserTimingInstrument-dark" class="dark gray"><use href="#circle"/><use href="#stopwatch"/></g>
 </svg>

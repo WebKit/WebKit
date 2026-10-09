@@ -644,6 +644,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
                 markerElement.title = WI.UIString("DOM Content Loaded \u2014 %s").format(Number.secondsToString(markerTime));
                 break;
             case WI.TimelineMarker.Type.TimeStamp:
+            case WI.TimelineMarker.Type.PerformanceMark:
                 if (marker.details)
                     markerElement.title = WI.UIString("%s \u2014 %s").format(marker.details, Number.secondsToString(markerTime));
                 else

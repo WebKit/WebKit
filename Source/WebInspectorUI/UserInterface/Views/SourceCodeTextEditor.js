@@ -2084,7 +2084,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         // FIXME: If this is a variable, it would be nice to put the variable name in the PropertyPath.
         var objectTree = new WI.ObjectTreeView(data);
-        objectTree.showOnlyProperties();
+        objectTree.hideThis();
         objectTree.expand();
 
         var bodyElement = content.appendChild(document.createElement("div"));

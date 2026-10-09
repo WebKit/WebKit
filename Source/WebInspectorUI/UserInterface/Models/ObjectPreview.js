@@ -45,14 +45,35 @@ WI.ObjectPreview = class ObjectPreview
 
     // Static
 
-    // Runtime.ObjectPreview.
     static fromPayload(payload)
     {
-        if (payload.properties)
-            payload.properties = payload.properties.map(WI.PropertyPreview.fromPayload);
-        if (payload.entries)
-            payload.entries = payload.entries.map(WI.CollectionEntryPreview.fromPayload);
-        return new WI.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, payload.properties, payload.entries, payload.size);
+        let properties = payload.properties?.map((property) => WI.PropertyPreview.fromPayload(property)) || null;
+        let entries = payload.entries?.map((entry) => WI.CollectionEntryPreview.fromPayload(entry)) || null;
+        return new WI.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, properties, entries, payload.size);
+    }
+
+    // Import / Export
+
+    exportData()
+    {
+        // Only expected to be used by timeline recordings.
+        let json = {
+            type: this._type,
+            lossless: this._lossless,
+        };
+        if (this._subtype)
+            json.subtype = this._subtype;
+        if (this._description)
+            json.description = this._description;
+        if (this._overflow)
+            json.overflow = this._overflow;
+        if (this._properties)
+            json.properties = this._properties.map((property) => property.exportData());
+        if (this._entries)
+            json.entires = this._entries.map((entry) => entry.exportData());
+        if (this.hasSize())
+            json.size = this._size;
+        return json;
     }
 
     // Public

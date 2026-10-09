@@ -1,0 +1,20 @@
+Tests 'performance.measure' Timeline event records.
+
+
+== Running test suite: TimelineEvent.PerformanceMeasure
+-- Running test case: TimelineEvent.PerformanceMeasure.performanceMeasure
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Should be a UserTimingTimelineRecord.
+PASS: Should be a PerformanceMeasure event.
+PASS: Should have the measure name.
+PASS: Should have endTime after startTime.
+PASS: Should have a captured stack trace.
+PASS: Should have an initiator call frame.
+PASS: Should have RemoteObject detail.
+PASS: Should have object detail.
+PASS: Should have detail with children.
+PASS: Should have preview 3 properties in detail.
+PASS: Should have map preview in detail.
+

@@ -56,6 +56,7 @@ public:
     static Ref<JSON::Object> createTimerInstallData(int timerId, Seconds timeout, bool singleShot);
     static Ref<JSON::Object> createEvaluateScriptData(const String&, int lineNumber, int columnNumber);
     static Ref<JSON::Object> createTimeStampData(const String&);
+    static Ref<JSON::Object> createTimeRangeData(const String&, double startTime, double endTime);
     static Ref<JSON::Object> createLargestContentfulPaintData(Inspector::Protocol::DOM::NodeId, unsigned area);
     static Ref<JSON::Object> createAnimationFrameData(int callbackId);
     static Ref<JSON::Object> createObserverCallbackData(const String& callbackType);
