@@ -478,11 +478,12 @@ void UnifiedPDFPlugin::enableDataDetection()
 
 void UnifiedPDFPlugin::handleClickForDataDetectionResult(const DataDetectorElementInfo& dataDetectorElementInfo, const IntPoint& clickPointInMainFrameView)
 {
+    RefPtr frame { m_frame.get() };
     RefPtr page = this->page();
-    if (!page)
+    if (!frame || !page)
         return;
 
-    page->chrome().client().handleClickForDataDetectionResult(dataDetectorElementInfo, clickPointInMainFrameView);
+    page->chrome().client().handleClickForDataDetectionResult(frame->frameID(), dataDetectorElementInfo, clickPointInMainFrameView);
 }
 
 bool UnifiedPDFPlugin::canShowDataDetectorHighlightOverlays() const
