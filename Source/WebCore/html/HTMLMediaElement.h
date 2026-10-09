@@ -429,6 +429,7 @@ public:
 
     Vector<MediaTime> findCueMatches(const String& target, FindOptions);
     void clearFindCaptionTrack();
+    WEBCORE_EXPORT void seekToFindMatch(const MediaTime&);
 
     virtual void didAddTextTrack(HTMLTrackElement&);
     virtual void didRemoveTextTrack(HTMLTrackElement&);
