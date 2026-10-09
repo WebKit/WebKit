@@ -82,6 +82,7 @@ public:
     static String nestedFrameHTML(const String& url, int width, int height);
     static HTTPResponse html(const String& body);
 
+    virtual void adjustConfiguration(WKWebViewConfiguration *) { }
     void setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure);
     void load(NSString *path);
     RetainPtr<WKFrameInfo> nestedFrame();

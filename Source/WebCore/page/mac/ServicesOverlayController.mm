@@ -774,7 +774,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPointInMainFram
         if (!rangeFrameView)
             return;
 
-        page->chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), clickPointInMainFrameView, rangeFrameView->contentsToMainFrameView(protect(rangeFrame->editor())->firstRectForRange(highlight.range())));
+        page->chrome().client().handleTelephoneNumberClick(rangeFrame->frameID(), plainText(highlight.range()), clickPointInMainFrameView, rangeFrameView->contentsToMainFrameView(protect(rangeFrame->editor())->firstRectForRange(highlight.range())));
     }
 }
 

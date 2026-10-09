@@ -1100,9 +1100,9 @@ void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHa
 
 #if ENABLE(DATA_DETECTION)
 
-void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+void WebPage::handleClickForDataDetectionResult(FrameIdentifier frameID, const DataDetectorElementInfo& info, const IntPoint& clickLocation)
 {
-    send(Messages::WebPageProxy::HandleClickForDataDetectionResult(info, clickLocation));
+    send(Messages::WebPageProxy::HandleClickForDataDetectionResult(frameID, info, clickLocation));
 }
 
 #endif
