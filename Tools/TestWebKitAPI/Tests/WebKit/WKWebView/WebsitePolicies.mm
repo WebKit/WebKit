@@ -1971,10 +1971,12 @@ TEST(WebpagePreferences, HttpPageContentBlockers)
                     window.results.push(event.data);
                     alert();
                 });
-                window.results.push(window.location.href);
             </script>
+            )INDEX"
+            "<script src='test:///script.js'></script>"
+            R"INDEX(
             <iframe src='/subframe.html'></iframe>)INDEX"_s } },
-        { "/subframe.html"_s, { "<script>window.parent.postMessage(window.location.href, '*');</script>"_s } },
+        { "/subframe.html"_s, { "<script src='test:///script_subframe.js'></script>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
