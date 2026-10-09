@@ -32,20 +32,20 @@ namespace WTF {
 
 String logLevelString()
 {
-    const char* propertyValue = nullptr;
+    String propertyValue;
 
     if (const auto* propertyInfo = __system_property_find("debug." LOG_CHANNEL_WEBKIT_SUBSYSTEM ".log")) {
-        __system_property_read_callback(propertyInfo, [](void *userData, const char*, const char* value, unsigned) {
-            auto **propertyValue = static_cast<const char**>(userData);
-            *propertyValue = value;
+        // The value is only valid while the callback runs, so copy it there.
+        __system_property_read_callback(propertyInfo, [](void* userData, const char*, const char* value, unsigned) {
+            *static_cast<String*>(userData) = String::fromLatin1(value);
         }, &propertyValue);
     }
 
     // Disable all log channels if the property is unset or empty.
-    if (!propertyValue || !*propertyValue)
+    if (propertyValue.isEmpty())
         return makeString("-all"_s);
 
-    return String::fromLatin1(propertyValue);
+    return propertyValue;
 }
 
 } // namespace WTF
