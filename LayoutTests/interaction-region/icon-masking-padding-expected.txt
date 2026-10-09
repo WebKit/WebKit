@@ -1,0 +1,29 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (guard (20,10) width=31 height=33),
+        (interaction (20,20) width=31 height=13)
+        (clipPath add rect (6,0) width=19 height=1, add rect (3,1) width=25 height=1, add rect (2,2) width=27 height=1, add rect (1,3) width=29 height=3, add rect (0,6) width=31 height=1, add rect (1,7) width=29 height=3, add rect (2,10) width=27 height=1, add rect (3,11) width=25 height=1, add rect (6,12) width=19 height=1),
+        (interaction (80,20) width=31 height=49)
+        (cornerRadius 8.00),
+        (interaction (140,20) width=31 height=49),
+        (interaction (200,20) width=62 height=26)
+        (clipPath add rect (11,0) width=40 height=1, add rect (5,1) width=52 height=2, add rect (3,3) width=56 height=2, add rect (1,5) width=60 height=6, add rect (0,11) width=62 height=4, add rect (1,15) width=60 height=6, add rect (3,21) width=56 height=2, add rect (5,23) width=52 height=2, add rect (11,25) width=40 height=1),
+        (guard (280,10) width=31 height=35),
+        (interaction (280,20) width=31 height=15)
+        (clipPath add rect (6,0) width=19 height=1, add rect (3,1) width=25 height=1, add rect (2,2) width=27 height=1, add rect (1,3) width=29 height=3, add rect (0,6) width=31 height=3, add rect (1,9) width=29 height=3, add rect (2,12) width=27 height=1, add rect (3,13) width=25 height=1, add rect (6,14) width=19 height=1)])
+      )
+    )
+  )
+)
+

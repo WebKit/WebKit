@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    img {
+        position: absolute;
+        top: 20px;
+        cursor: pointer;
+    }
+    #no-padding { left: 20px; }
+    #padding {
+        left: 80px;
+        padding: 14px 0 22px 0;
+    }
+    #padding-and-background {
+        left: 140px;
+        padding: 14px 0 22px 0;
+        background-color: #f5f5f7;
+    }
+    #proportional-padding {
+        left: 200px;
+        padding: 6.5px 15.5px;
+    }
+    #slight-padding {
+        left: 280px;
+        padding-bottom: 2px;
+    }
+</style>
+<body>
+<!--
+    An icon's interaction region is clipped to the shape of its image, stretched over its border box. When padding
+    changes the proportions of the box too much, the stretched shape is distorted, so the region uses the shape of
+    the box instead: the minimum corner radius, or square corners when the image has a visible background. Padding
+    that keeps the proportions of the image, or changes them slightly, keeps the stretched shape.
+-->
+<section id="test">
+    <img id="no-padding" src="resources/color-dots.png" width="31" height="13">
+    <img id="padding" src="resources/color-dots.png" width="31" height="13">
+    <img id="padding-and-background" src="resources/color-dots.png" width="31" height="13">
+    <img id="proportional-padding" src="resources/color-dots.png" width="31" height="13">
+    <img id="slight-padding" src="resources/color-dots.png" width="31" height="13">
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>

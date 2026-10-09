@@ -357,6 +357,15 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return nullptr;
 
+        FloatSize contentBoxSize = renderImage->contentBoxRect().size();
+        if (contentBoxSize.isEmpty())
+            return nullptr;
+
+        constexpr float maximumStretchRatio = 1.25;
+        float stretchRatio = contentBoxSize.aspectRatio() / FloatSize(renderImage->borderBoxSize()).aspectRatio();
+        if (std::max(stretchRatio, 1 / stretchRatio) > maximumStretchRatio)
+            return nullptr;
+
         RefPtr image = protect(*renderImage->cachedImage())->image();
         if (!image)
             return nullptr;
