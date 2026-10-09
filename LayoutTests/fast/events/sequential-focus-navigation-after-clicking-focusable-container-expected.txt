@@ -1,0 +1,6 @@
+To test manually, click on the text inside the group below and press shift+tab.
+Focus should move to the text field.
+
+
+click here link
+PASS

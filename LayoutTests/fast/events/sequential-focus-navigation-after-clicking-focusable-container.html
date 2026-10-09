@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/ui-helper.js"></script>
+<p>To test manually, click on the text inside the group below and press shift+tab.<br>
+Focus should move to the text field.</p>
+<input id="textField">
+<div id="group" tabindex="0"><span id="text">click here</span> <a href="#">link</a></div>
+<div id="result"></div>
+<script>
+
+onload = runTest;
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    result.textContent = 'In progress';
+
+    const rect = text.getBoundingClientRect();
+    await UIHelper.activateAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+    if (document.activeElement != group)
+        result.textContent = 'FAIL: clicking the text did not focus the group';
+    else {
+        await UIHelper.keyDown('\t', ['shiftKey']);
+        result.textContent = document.activeElement == textField ? 'PASS' : 'FAIL';
+    }
+
+    testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>
