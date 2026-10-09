@@ -1320,6 +1320,11 @@
             ]
         },
         {
+            "bugs": ["rdar://189631518"],
+            "matches": ["*://news.yahoo.co.jp/*"],
+            "behaviors": [{ "id": "ShouldDisableCSSSizeShorthandQuirk" }]
+        },
+        {
             "bugs": ["rdar://127246368"],
             "matches": ["*://news.ycombinator.com/*"],
             "behaviors": [{ "id": "ShouldIgnoreTextAutoSizingQuirk" }]

@@ -89,6 +89,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     isHTMLDocument = document.isHTMLDocument();
     hasDocumentSecurityOrigin = sheetBaseURL.isNull() || protect(document.securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
     webkitMediaTextTrackDisplayQuirkEnabled = document.quirks().needsWebKitMediaTextTrackDisplayQuirk();
+    if (document.quirks().shouldDisableCSSSizeShorthandQuirk())
+        propertySettings.cssSizeShorthandEnabled = false;
 }
 
 CSSParserContext::CSSParserContext(const Settings& settings)

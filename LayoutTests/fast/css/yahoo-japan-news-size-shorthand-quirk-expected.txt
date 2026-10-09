@@ -1,0 +1,5 @@
+
+PASS #target { size: 0.75rem; } should be a valid rule
+PASS #target { min-size: 12px; max-size: 12px; } should be a valid rule
+PASS @page { size: a4; } should be a valid rule
+
