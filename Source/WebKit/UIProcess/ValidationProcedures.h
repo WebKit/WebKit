@@ -28,12 +28,15 @@
 #include "Untrusted.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
+
+class WebPageProxy;
 
 enum class ShouldCheckWithoutSiteIsolation : bool { No, Yes };
 
@@ -208,6 +211,17 @@ private:
     WeakPtr<const WebProcessProxy> m_process;
 };
 
+class ProcessHostsFrameInPage : public IPC::CanValidateUntrusted<ProcessHostsFrameInPage> {
+public:
+    explicit ProcessHostsFrameInPage(const WebProcessProxy& sender, const WebPageProxy&);
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::FrameIdentifier&) const;
+
+private:
+    WeakPtr<const WebProcessProxy> m_sender;
+    WeakPtr<const WebPageProxy> m_page;
+};
+
 } // namespace WebKit
 
 namespace IPC {
@@ -220,5 +234,7 @@ template<> struct IsValidationProcedureFor<WebKit::ProcessParticipatesInPageWith
 
 template<> struct IsValidationProcedureFor<WebKit::ProcessCommittedClientOrigin, WebCore::ClientOrigin> : std::true_type { };
 template<> struct IsValidationProcedureFor<WebKit::ProcessCommittedStorageClientOrigin, WebCore::ClientOrigin> : std::true_type { };
+
+template<> struct IsValidationProcedureFor<WebKit::ProcessHostsFrameInPage, WebCore::FrameIdentifier> : std::true_type { };
 
 } // namespace IPC
