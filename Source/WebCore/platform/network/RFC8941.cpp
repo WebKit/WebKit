@@ -378,14 +378,12 @@ std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDict
     });
 }
 
-std::optional<String> escapeString(StringView input)
+bool escapeString(StringView input, StringBuilder& builder)
 {
     // https://datatracker.ietf.org/doc/html/rfc8941#section-3.3.3
-    StringBuilder builder;
-    builder.reserveCapacity(input.length());
     for (char16_t codeUnit : input.codeUnits()) {
         if (codeUnit < 0x20 || codeUnit > 0x7E)
-            return std::nullopt;
+            return false;
         if (codeUnit == '"')
             builder.append("\\\""_s);
         else if (codeUnit == '\\')
@@ -393,7 +391,22 @@ std::optional<String> escapeString(StringView input)
         else
             builder.append(static_cast<Latin1Character>(codeUnit));
     }
-    return builder.toString();
+    return true;
+};
+
+std::optional<size_t> escapedStringLength(StringView input)
+{
+    // https://datatracker.ietf.org/doc/html/rfc8941#section-3.3.3
+    size_t length = input.length();
+    for (char16_t codeUnit : input.codeUnits()) {
+        if (codeUnit < 0x20 || codeUnit > 0x7E)
+            return std::nullopt;
+        if (codeUnit == '"')
+            length++;
+        else if (codeUnit == '\\')
+            length++;
+    }
+    return length;
 };
 
 } // namespace RFC8941
