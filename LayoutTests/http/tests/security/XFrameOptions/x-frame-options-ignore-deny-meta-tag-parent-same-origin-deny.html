@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ dumpResourceLoadCallbacks=true ] -->
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -17,6 +18,7 @@
                 console.log(e);
             console.log("FAIL: Could not read contentWindow.location.href");
         }
+        testRunner.clearMemoryCache();
         testRunner.notifyDone();
     }
 </script>
