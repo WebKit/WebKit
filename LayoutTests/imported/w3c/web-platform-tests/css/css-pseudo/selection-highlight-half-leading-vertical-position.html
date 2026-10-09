@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Test: ::selection background covers the whole line box when line-height exceeds the font height</title>
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-painting">
+<link rel="match" href="selection-highlight-half-leading-vertical-position-ref.html">
+<meta name="assert" content="The ::selection background of selected text on a line with half-leading (15px font, 27px line-height) is painted over the line box, not shifted up by the half-leading.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+body { margin: 0; }
+#target {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  margin: 0;
+  font: 15px/27px Ahem;
+  color: transparent;
+}
+/* Non-opaque on purpose: engines may adjust an opaque selection colour. */
+#target::selection {
+  background: rgba(0, 128, 0, 0.5);
+  color: transparent;
+}
+</style>
+<div id="target">XXXXXXXXXX<br>XXXXXXXXXX</div>
+<script>
+var text = document.getElementById("target").lastChild;
+var range = document.createRange();
+range.setStart(text, 0);
+range.setEnd(text, text.length);
+getSelection().removeAllRanges();
+getSelection().addRange(range);
+</script>

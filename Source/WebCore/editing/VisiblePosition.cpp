@@ -690,7 +690,12 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
         return { };
 
     auto line = box->lineBox();
-    return protect(line->formattingContextRoot())->localToAbsoluteQuad(FloatRect { LineSelection::physicalRect(*line) }).boundingBox();
+    auto lineContentRect = FloatRect { FloatPoint { line->contentLogicalLeft(), line->contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { line->contentLogicalRight(), line->contentLogicalBottomAdjustedForFollowingLineBox() } };
+    if (!line->isHorizontal())
+        lineContentRect = lineContentRect.transposedRect();
+    CheckedRef<const RenderBlockFlow> formattingContextRoot = line->formattingContextRoot();
+    formattingContextRoot->flipForWritingMode(lineContentRect);
+    return formattingContextRoot->localToAbsoluteQuad(lineContentRect).boundingBox();
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
