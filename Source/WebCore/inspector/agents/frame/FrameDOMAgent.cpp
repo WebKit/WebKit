@@ -633,7 +633,12 @@ Inspector::CommandResult<Ref<Inspector::Protocol::DOM::Node>> FrameDOMAgent::get
     reset();
     m_document = document;
 
-    return buildObjectForNode(m_document.get(), 2);
+    auto root = buildObjectForNode(m_document.get(), 2);
+
+    if (CheckedPtr cssAgent = Ref { m_instrumentingAgents.get() }->enabledFrameCSSAgent())
+        cssAgent->didBindDocument();
+
+    return root;
 }
 
 Inspector::CommandResult<void> FrameDOMAgent::requestChildNodes(int nodeId, std::optional<int>&& depth)

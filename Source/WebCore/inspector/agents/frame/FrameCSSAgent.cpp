@@ -728,15 +728,25 @@ Inspector::CommandResult<void> FrameCSSAgent::setLayoutContextTypeChangedMode(In
         if (!domAgent)
             return makeUnexpected("DOM domain must be enabled"_s);
 
-        if (RefPtr document = m_inspectedFrame->document()) {
-            for (Ref element : descendantsOfType<Element>(*document)) {
-                if (InspectorCSSAgent::layoutFlagContextType(protect(element->renderer())))
-                    domAgent->pushNodePathToFrontend(element.ptr());
-            }
-        }
+        pushLayoutContextNodesToFrontend(*domAgent);
     }
 
     return { };
+}
+
+void FrameCSSAgent::pushLayoutContextNodesToFrontend(FrameDOMAgent& domAgent)
+{
+    if (documentIsReportedByPageCSSAgent())
+        return;
+
+    RefPtr document = m_inspectedFrame->document();
+    if (!document)
+        return;
+
+    for (Ref element : descendantsOfType<Element>(*document)) {
+        if (InspectorCSSAgent::layoutFlagContextType(protect(element->renderer())))
+            domAgent.pushNodePathToFrontend(element.ptr());
+    }
 }
 
 void FrameCSSAgent::didChangeRendererForDOMNode(Node& node)
@@ -775,6 +785,18 @@ RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> FrameCS
     return InspectorCSSAgent::protocolLayoutFlags(layoutFlags);
 }
 
+void FrameCSSAgent::didBindDocument()
+{
+    if (m_layoutContextTypeChangedMode != Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All)
+        return;
+
+    // The frontend now has only the nodes in the `DOM.getDocument` reply. Push the rest after that reply
+    // is sent, since the frontend drops nodes that arrive before their parent.
+    m_needsLayoutContextNodesPush = true;
+    if (!m_nodesWithPendingLayoutFlagsChangeDispatchTimer.isActive())
+        m_nodesWithPendingLayoutFlagsChangeDispatchTimer.startOneShot(0_s);
+}
+
 void FrameCSSAgent::nodeHasLayoutFlagsChange(Node& node)
 {
     m_nodesWithPendingLayoutFlagsChange.add(node);
@@ -789,6 +811,9 @@ void FrameCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()
     if (!domAgent)
         return;
 
+    if (std::exchange(m_needsLayoutContextNodesPush, false) && m_layoutContextTypeChangedMode == Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All)
+        pushLayoutContextNodesToFrontend(*domAgent);
+
     for (Ref node : std::exchange(m_nodesWithPendingLayoutFlagsChange, { })) {
         auto layoutFlags = InspectorCSSAgent::layoutFlagsForNode(node);
         if (m_lastLayoutFlagsForNode.get(node) == layoutFlags)
@@ -796,7 +821,7 @@ void FrameCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()
 
         auto nodeId = domAgent->boundNodeId(node.ptr());
         bool nodeWasPushedToFrontend = false;
-        if (!nodeId && m_layoutContextTypeChangedMode == Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All && InspectorCSSAgent::layoutFlagsContainLayoutContextType(layoutFlags)) {
+        if (!nodeId && m_layoutContextTypeChangedMode == Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All && InspectorCSSAgent::layoutFlagsContainLayoutContextType(layoutFlags) && !documentIsReportedByPageCSSAgent()) {
             nodeId = domAgent->pushNodePathToFrontend(node.ptr());
             nodeWasPushedToFrontend = nodeId;
         }
@@ -855,6 +880,7 @@ void FrameCSSAgent::reset()
     m_lastLayoutFlagsForNode.clear();
     m_nodesWithPendingLayoutFlagsChange.clear();
     m_nodesWithPendingLayoutFlagsChangeDispatchTimer.stop();
+    m_needsLayoutContextNodesPush = false;
     m_layoutContextTypeChangedMode = Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed;
 }
 
