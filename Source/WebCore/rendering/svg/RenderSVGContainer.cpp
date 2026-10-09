@@ -131,21 +131,8 @@ FloatRect RenderSVGContainer::strokeBoundingBox() const
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhase::EventRegion && paintInfo.context().paintingDisabled())
-        return;
-
     static constexpr OptionSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline, PaintPhase::EventRegion };
-    if (!relevantPaintPhases.contains(paintInfo.phase))
-        return;
-
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return;
-
-    if (style().display() == Style::DisplayType::None)
-        return;
-
-    // Children can override with "visibility: visible", per SVG spec.
-    if (paintInfo.phase != PaintPhase::Foreground && usedStyle().visibility() == UsedVisibility::Hidden)
+    if (!shouldPaintSVGContainerRenderer(paintInfo, relevantPaintPhases))
         return;
 
     if (paintInfo.phase == PaintPhase::ClippingMask) {

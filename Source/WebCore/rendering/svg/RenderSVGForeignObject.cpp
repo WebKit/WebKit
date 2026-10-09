@@ -59,7 +59,11 @@ SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!shouldPaintSVGRenderer(paintInfo))
+    // No visibility check: each CSS box checks its own visibility.
+    if (paintInfo.context().paintingDisabled() || !paintInfo.shouldPaintWithinRoot(*this))
+        return;
+
+    if (style().display() == Style::DisplayType::None)
         return;
 
     if (paintInfo.phase == PaintPhase::ClippingMask) {
