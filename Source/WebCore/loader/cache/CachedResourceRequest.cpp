@@ -198,10 +198,15 @@ String CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type typ
     }
 }
 
+void setRequestAcceptHeaderIfNone(ResourceRequest& request, CachedResource::Type type)
+{
+    if (!request.hasHTTPHeader(HTTPHeaderName::Accept))
+        request.setHTTPHeaderField(HTTPHeaderName::Accept, CachedResourceRequest::acceptHeaderValueFromType(type, request.url().protocolIsSecure()));
+}
+
 void CachedResourceRequest::setAcceptHeaderIfNone(CachedResource::Type type)
 {
-    if (!m_resourceRequest.hasHTTPHeader(HTTPHeaderName::Accept))
-        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Accept, acceptHeaderValueFromType(type, m_resourceRequest.url().protocolIsSecure()));
+    setRequestAcceptHeaderIfNone(m_resourceRequest, type);
 }
 
 void CachedResourceRequest::disableCachingIfNeeded()
@@ -210,40 +215,45 @@ void CachedResourceRequest::disableCachingIfNeeded()
         m_options.cachingPolicy = CachingPolicy::DisallowCaching;
 }
 
-void CachedResourceRequest::updateAccordingCacheMode()
+void updateRequestAccordingCacheMode(ResourceRequest& request, FetchOptions::Cache& cache)
 {
-    if (m_options.cache == FetchOptions::Cache::Default
-        && (m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfModifiedSince)
-            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfNoneMatch)
-            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfUnmodifiedSince)
-            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfMatch)
-            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfRange)))
-        m_options.cache = FetchOptions::Cache::NoStore;
+    if (cache == FetchOptions::Cache::Default
+        && (request.hasHTTPHeaderField(HTTPHeaderName::IfModifiedSince)
+            || request.hasHTTPHeaderField(HTTPHeaderName::IfNoneMatch)
+            || request.hasHTTPHeaderField(HTTPHeaderName::IfUnmodifiedSince)
+            || request.hasHTTPHeaderField(HTTPHeaderName::IfMatch)
+            || request.hasHTTPHeaderField(HTTPHeaderName::IfRange)))
+        cache = FetchOptions::Cache::NoStore;
 
-    switch (m_options.cache) {
+    switch (cache) {
     case FetchOptions::Cache::NoCache:
-        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
-        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
+        request.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
+        request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
         break;
     case FetchOptions::Cache::NoStore:
-        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
-        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
-        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+        request.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
+        request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;
     case FetchOptions::Cache::Reload:
-        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
-        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
-        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+        request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
+        request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;
     case FetchOptions::Cache::Default:
         break;
     case FetchOptions::Cache::ForceCache:
-        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataElseLoad);
+        request.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataElseLoad);
         break;
     case FetchOptions::Cache::OnlyIfCached:
-        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataDontLoad);
+        request.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataDontLoad);
         break;
     }
+}
+
+void CachedResourceRequest::updateAccordingCacheMode()
+{
+    updateRequestAccordingCacheMode(m_resourceRequest, m_options.cache);
 }
 
 void CachedResourceRequest::updateCacheModeIfNeeded(CachePolicy cachePolicy)
@@ -252,15 +262,20 @@ void CachedResourceRequest::updateCacheModeIfNeeded(CachePolicy cachePolicy)
         m_options.cache = FetchOptions::Cache::Reload;
 }
 
-void CachedResourceRequest::updateAcceptEncodingHeader()
+void updateRequestAcceptEncodingHeader(ResourceRequest& request, FetchOptions::Destination destination)
 {
-    if (!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::Range))
+    if (!request.hasHTTPHeaderField(HTTPHeaderName::Range))
         return;
 
     // FIXME: rdar://problem/40879225. Media engines triggering the load should not set this Accept-Encoding header.
-    ASSERT(!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::AcceptEncoding) || m_options.destination == FetchOptions::Destination::Audio || m_options.destination == FetchOptions::Destination::Video);
+    ASSERT_UNUSED(destination, !request.hasHTTPHeaderField(HTTPHeaderName::AcceptEncoding) || destination == FetchOptions::Destination::Audio || destination == FetchOptions::Destination::Video);
 
-    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, "identity"_s);
+    request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, "identity"_s);
+}
+
+void CachedResourceRequest::updateAcceptEncodingHeader()
+{
+    updateRequestAcceptEncodingHeader(m_resourceRequest, m_options.destination);
 }
 
 void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
@@ -285,28 +300,48 @@ void CachedResourceRequest::updateReferrerPolicy(ReferrerPolicy defaultPolicy)
         m_options.referrerPolicy = defaultPolicy;
 }
 
-void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoader)
+// `contextOrigin` is the origin of the context that initiated the load, and is only consulted for a
+// fetch() with no destination; every other caller derives the origin from the outgoing referrer.
+void updateRequestReferrerAndOrigin(ResourceRequest& request, const ResourceLoaderOptions& options, const URL& outgoingReferrerURL, RefPtr<SecurityOrigin>&& contextOrigin, const OriginAccessPatterns& originAccessPatterns)
 {
     // Implementing step 9 to 11 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 16 March 2018
+    updateRequestReferrer(request, options.referrerPolicy, outgoingReferrerURL, originAccessPatterns);
+
+    if (!request.httpOrigin().isEmpty())
+        return;
+
+    Ref actualOrigin = contextOrigin ? contextOrigin.releaseNonNull() : SecurityOrigin::create(outgoingReferrerURL);
+    String outgoingOrigin;
+    if (options.mode == FetchOptions::Mode::Cors)
+        outgoingOrigin = actualOrigin->toString();
+    else
+        outgoingOrigin = SecurityPolicy::generateOriginHeader(options.referrerPolicy, request.url(), actualOrigin, originAccessPatterns);
+
+    FrameLoader::addHTTPOriginIfNeeded(request, outgoingOrigin);
+}
+
+void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoader)
+{
     URL outgoingReferrerURL;
     if (m_resourceRequest.hasHTTPReferrer())
         outgoingReferrerURL = URL { m_resourceRequest.httpReferrer() };
     else
         outgoingReferrerURL = frameLoader.outgoingReferrerURL();
-    updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrerURL, OriginAccessPatternsForWebProcess::singleton());
-
-    if (!m_resourceRequest.httpOrigin().isEmpty())
-        return;
 
     RefPtr document = frameLoader.frame().document();
-    auto actualOrigin = (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch) ? Ref { document->securityOrigin() } : SecurityOrigin::create(outgoingReferrerURL);
-    String outgoingOrigin;
-    if (m_options.mode == FetchOptions::Mode::Cors)
-        outgoingOrigin = actualOrigin->toString();
-    else
-        outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), actualOrigin, OriginAccessPatternsForWebProcess::singleton());
+    RefPtr<SecurityOrigin> contextOrigin;
+    if (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch)
+        contextOrigin = document->securityOrigin();
 
-    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
+    updateRequestReferrerAndOrigin(m_resourceRequest, m_options, outgoingReferrerURL, WTF::move(contextOrigin), OriginAccessPatternsForWebProcess::singleton());
+}
+
+void updateRequestUserAgent(ResourceRequest& request, const String& userAgent)
+{
+    if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
+        ASSERT(!userAgent.isNull());
+        request.setHTTPUserAgent(userAgent);
+    }
 }
 
 void CachedResourceRequest::updateUserAgentHeader(FrameLoader& frameLoader)
@@ -314,7 +349,7 @@ void CachedResourceRequest::updateUserAgentHeader(FrameLoader& frameLoader)
     frameLoader.applyUserAgentIfNeeded(m_resourceRequest);
 }
 
-bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const ResourceLoaderOptions& options)
+bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const ResourceLoaderOptions& options, const OriginAccessPatterns& originAccessPatterns)
 {
     if (!origin)
         return false;
@@ -327,7 +362,7 @@ bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const R
     if (requestURL.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)
         return false;
 
-    return !origin->canRequest(requestURL, OriginAccessPatternsForWebProcess::singleton());
+    return !origin->canRequest(requestURL, originAccessPatterns);
 }
 
 void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination destination)

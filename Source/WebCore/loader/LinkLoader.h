@@ -66,6 +66,12 @@ public:
     void loadCompressionDictionaryLink(const LinkLoadParameters&, Document&);
     enum class ShouldLog : bool { No, Yes };
     enum class IsModulePreload : bool { No, Yes };
+    // Why an `as` value was rejected, so a caller without a Document can still report it.
+    enum class AsAttributeParseError : uint8_t { Invalid, EmptyString, TextNotSupported, JSONNotSupported, UnsupportedDestination };
+
+    // Document-free overload, for callers such as the network process that must map the `as` of an
+    // HTTP 103 early hints preload the same way the web process maps a <link rel=preload>.
+    WEBCORE_EXPORT static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, bool mediaPreloadingEnabled, IsModulePreload = IsModulePreload::No, AsAttributeParseError* = nullptr);
     static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No, IsModulePreload = IsModulePreload::No);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
