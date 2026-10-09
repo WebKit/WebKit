@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <div id="images"></div>
+    <script>
+        description("Repeatedly removing small batches during animation decoding must not accumulate waiting workers and stall later images.");
+        jsTestIsAsync = true;
+        var completedBatches = 0;
+
+        (async () => {
+            internals.clearMemoryCache();
+            for (let batch = 0; batch < 160; ++batch) {
+                const images = await Promise.all(Array.from({ length: 4 }, async (_, index) => {
+                    const image = new Image;
+                    image.decoding = "async";
+                    await new Promise((resolve, reject) => {
+                        image.onload = resolve;
+                        image.onerror = reject;
+                        image.src = `resources/animated-red-green-blue-repeat-1.gif?removed-${batch}-${index}`;
+                    });
+                    internals.setAsyncDecodingEnabledForTesting(image, true);
+                    return image;
+                }));
+                await Promise.all(images.map(image => image.decode()));
+                for (const image of images)
+                    internals.setImageFrameDecodingDuration(image, 0.1);
+                document.getElementById("images").append(...images);
+                document.body.offsetHeight;
+                // Attaching an image can start its timer without requesting a frame.
+                // Explicitly request the next frame before removing the renderer.
+                for (const image of images)
+                    internals.resetImageAnimation(image);
+                const decoding = Promise.all(images.map(image => image.decode()));
+                await new Promise(resolve => setTimeout(resolve, 5));
+                if (!images.every(image => internals.imageDecodeCount(image) === 1))
+                    throw new Error("The animation frame must still be decoding when the images are removed.");
+                document.getElementById("images").replaceChildren();
+                document.body.offsetHeight;
+                testRunner.display();
+                // Wait for this batch to finish before creating another. Only four
+                // images are attached at once, and earlier batches are not retained.
+                await decoding;
+                if (!images.every(image => internals.imageDecodeCount(image) >= 2))
+                    throw new Error("The removed images must finish asynchronous decoding.");
+                ++completedBatches;
+            }
+            shouldBe("completedBatches", "160");
+        })().catch(error => testFailed(String(error))).finally(() => {
+            document.getElementById("images").remove();
+            finishJSTest();
+        });
+    </script>
+</body>
+</html>

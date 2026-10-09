@@ -129,10 +129,15 @@ void BitmapImageSource::destroyDecodedFrames(bool destroyAll)
 
     unsigned primaryFrameIndex = this->primaryFrameIndex();
     unsigned currentFrameIndex = this->currentFrameIndex();
+    std::optional<unsigned> nextFrameIndex;
+    if (m_frameAnimator && m_frameAnimator->isAnimating())
+        nextFrameIndex = m_frameAnimator->nextFrameIndex();
     unsigned decodedSize = 0;
 
     for (unsigned index = 0, framesSize = m_frames.size(); index < framesSize; ++index) {
-        if (!canDestroyDecodedData && (index == primaryFrameIndex || index == currentFrameIndex))
+        // A decoded next frame is still needed while the animation timer is pending.
+        // Dropping it here would force a synchronous decode when the timer advances.
+        if (!canDestroyDecodedData && (index == primaryFrameIndex || index == currentFrameIndex || index == nextFrameIndex))
             continue;
 
         if (!destroyAll && index > currentFrameIndex)
@@ -148,9 +153,8 @@ void BitmapImageSource::destroyDecodedData(bool destroyAll)
 {
     destroyDecodedFrames(destroyAll);
 
-    // There's no need to throw away the decoder unless we're explicitly asked
-    // to destroy all of the frames.
-    if (destroyAll && isDecodingWorkQueueIdle())
+    // Keep the decoder while decoded frames are still needed by the image.
+    if (destroyAll && isDecodingWorkQueueIdle() && !m_decodedSize)
         resetData();
     else
         clearFrameBufferCache();
