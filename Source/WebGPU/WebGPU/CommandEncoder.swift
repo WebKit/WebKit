@@ -314,8 +314,6 @@ extension WebGPU.CommandEncoder {
         #if ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
         // FIXME: rdar://138042799 remove default argument.
         texture.setPreviouslyCleared(UInt32(mipLevel), UInt32(slice), true)
-        #else
-        texture.setProvisionallyCleared(UInt32(mipLevel), UInt32(slice), self)
         #endif
         let logicalExtent = texture.logicalMiplevelSpecificTextureExtent(UInt32(mipLevel))
         if logicalExtent.width == 0 {
@@ -389,6 +387,9 @@ extension WebGPU.CommandEncoder {
             return
         }
 
+        #if !ENABLE_RC_REMOVE_SEC_ACCEL_3_FOR_SWIFT
+        texture.setProvisionallyCleared(UInt32(mipLevel), UInt32(mutableSlice), self)
+        #endif
         // FIXME: Remove these unnecessary force unwraps.
         // swift-format-ignore: NeverForceUnwrap
         blitCommandEncoder?

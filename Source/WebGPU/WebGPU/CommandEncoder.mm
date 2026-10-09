@@ -1375,11 +1375,6 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
 #ifdef RC_REMOVE_SEC_ACCEL_3
     UNUSED_PARAM(owningCommandEncoder);
     texture.setPreviouslyCleared(mipLevel, slice);
-#else
-    if (owningCommandEncoder)
-        texture.setProvisionallyCleared(mipLevel, slice, *owningCommandEncoder);
-    else
-        texture.setPreviouslyCleared(mipLevel, slice);
 #endif // RC_REMOVE_SEC_ACCEL_3
     auto logicalExtent = texture.logicalMiplevelSpecificTextureExtent(mipLevel);
     if (!logicalExtent.width)
@@ -1438,6 +1433,12 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     if (slice >= mtlTexture.arrayLength)
         return;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (owningCommandEncoder)
+        texture.setProvisionallyCleared(mipLevel, slice, *owningCommandEncoder);
+    else
+        texture.setPreviouslyCleared(mipLevel, slice);
+#endif // RC_REMOVE_SEC_ACCEL_3
     [blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0
