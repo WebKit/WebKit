@@ -1,0 +1,9 @@
+Tests that a cross-site iframe whose response has a Content-Security-Policy: upgrade-insecure-requests header loads without the UI process terminating the web process or crashing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The cross-site iframe loaded.
+PASS successfullyParsed is true
+
+TEST COMPLETE

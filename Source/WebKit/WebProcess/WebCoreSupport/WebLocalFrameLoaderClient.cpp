@@ -469,6 +469,9 @@ void WebLocalFrameLoaderClient::dispatchDidChangeCSPOriginsThatUpgradeInsecureNa
 {
     if (!siteIsolationEnabled())
         return;
+    // Incorrect to send while the frame is provisional. The set is included in DidCommitLoadForFrame.
+    if (m_frame->provisionalFrame())
+        return;
     m_frame->send(Messages::WebFrameProxy::DidChangeCSPOriginsThatUpgradeInsecureNavigations(cspOriginsThatUpgradeInsecureNavigations));
 }
 
