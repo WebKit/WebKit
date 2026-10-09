@@ -960,6 +960,15 @@ void VideoMediaSampleRenderer::shutdown()
         [renderer flush];
         [renderer stopRequestingMediaData];
     }
+
+#if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
+    if (isUsingDecompressionSession()) {
+        // stopRequestingMediaData may deadlock if used on the main thread while enqueuing on the workqueue
+        dispatcher()->dispatch([videoRenderer = RetainPtr { videoRendererFor(renderer()) }] {
+            [videoRenderer stopRequestingMediaData];
+        });
+    }
+#endif
 }
 
 void VideoMediaSampleRenderer::requestMediaDataWhenReady(Function<void()>&& function)
@@ -980,6 +989,9 @@ void VideoMediaSampleRenderer::resetReadyForMoreMediaData()
         });
         return;
     }
+
+    if (!m_readyForMoreMediaDataFunction)
+        return;
 
     ThreadSafeWeakPtr weakThis { *this };
     [protect(renderer()) requestMediaDataWhenReadyOnQueue:mainDispatchQueueSingleton() usingBlock:^{

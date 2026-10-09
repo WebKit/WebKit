@@ -246,6 +246,12 @@ private:
     void flushAudio();
     void flushAudioTrack(TrackIdentifier);
     void notifyRequiresFlushToResume();
+    void requestVideoDataWhenReady(TrackIdentifier);
+    void requestAudioDataWhenReady(TrackIdentifier);
+    void setReadyToRequestVideoData();
+    void fulfillPendingVideoDataRequestIfNeeded(TrackIdentifier);
+    void fulfillPendingAudioDataRequestIfNeeded(TrackIdentifier);
+    void setReadyToRequestAudioData(TrackIdentifier);
 
     void cancelSeekingPromiseIfNeeded();
     void cancelPerformTaskAtTimeObserverIfNeeded();
@@ -277,6 +283,7 @@ private:
     struct AudioTrackProperties {
         bool hasAudibleSample { false };
         bool readyToRequestAudioData { true };
+        bool pendingAudioDataRequest { false };
         std::unique_ptr<RequestPromise::AutoRejectProducer> requestPromise;
         Function<void(TrackIdentifier, const MediaTime&)> callbackForReenqueuing;
     };
@@ -333,6 +340,7 @@ private:
     HashMap<TrackIdentifier, AudioTrackProperties> m_audioTracksMap;
     std::optional<RequestPromise::AutoRejectProducer> m_requestVideoPromise;
     bool m_readyToRequestVideoData { true };
+    bool m_pendingVideoDataRequest { false };
     bool m_hasEverSubmittedVideoSample { false };
 
     HashMap<TrackIdentifier, TrackType> m_trackTypes;
