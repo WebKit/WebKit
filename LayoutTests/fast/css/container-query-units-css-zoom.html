@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Container query units with css zoom</title>
+    <meta name="assert" content="Container query units should use unzoomed lengths">
+    <style>
+        body {
+            margin: 0;
+        }
+        .outer-1 {
+            zoom: 1.1;
+            margin: 0;
+        }
+        .outer-2 {
+            zoom: 1.2;
+            margin: 0;
+        }
+        .container {
+            width: 200px;
+            height: 100px;
+            background-color: red;
+            container-type: size;
+            overflow: hidden;
+            position: relative;
+        }
+        .inner {
+            width: 100cqw;
+            height: 100cqh;
+            background-color: green;
+        }
+        .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100cqw;
+            text-align: center;
+            font-size: 5cqmin;
+            line-height: 1.2;
+            color: white;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+  <span>Unzoomed</span>
+  <div class="outer-1">
+    <div class="outer-2">
+      <div class="container">
+          <div class="inner"></div>
+          <div class="caption">Caption Text</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

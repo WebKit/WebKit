@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x150
+  RenderBlock {HTML} at (0,0) size 800x150
+    RenderBody {BODY} at (0,0) size 800x150
+      RenderBlock (anonymous) at (0,0) size 800x18
+        RenderInline {SPAN} at (0,0) size 71x18
+          RenderText {#text} at (0,0) size 71x18
+            text run at (0,0) width 71: "Unzoomed"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,18) size 800x132
+        RenderBlock {DIV} at (0,0) size 800x132
+layer at (0,18) size 264x132
+  RenderBlock (relative positioned) {DIV} at (0,0) size 264x132 [bgcolor=#FF0000]
+    RenderBlock {DIV} at (0,0) size 264x132 [bgcolor=#008000]
+layer at (0,142) size 264x8
+  RenderBlock (positioned) {DIV} at (0,124) size 264x8 [color=#FFFFFF] [bgcolor=#000000]
+    RenderText {#text} at (114,0) size 36x8
+      text run at (114,0) width 36: "Caption Text"

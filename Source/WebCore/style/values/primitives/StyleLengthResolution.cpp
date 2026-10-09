@@ -250,13 +250,7 @@ static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const a
         auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
         if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
             auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
-            auto adjustedWidthOrHeight = widthOrHeight.toDouble();
-
-            // FIXME: Document why `font-size` is excluded or remove this special case.
-            if (adaptor.property() != CSSPropertyFontSize)
-                adjustedWidthOrHeight = adjustedWidthOrHeight / adaptor.renderViewForViewportUnits()->pageZoomFactor();
-
-            return adjustedWidthOrHeight / 100;
+            return widthOrHeight.toDouble() / containerRenderer->style().usedZoomForLength().value / 100;
         }
         // For pseudo-elements the element itself can be the container. Avoid looping forever.
         mode = ContainerQueryEvaluator::SelectionMode::Element;
