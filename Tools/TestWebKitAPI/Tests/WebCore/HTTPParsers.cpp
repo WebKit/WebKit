@@ -28,6 +28,9 @@
 #include "Helpers/Test.h"
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/RFC8941.h>
+#include <wtf/Language.h>
+#include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 
@@ -574,6 +577,41 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     auto* paramBoolean = valueAndParameters.second.getIf<bool>("*note"_s);
     EXPECT_TRUE(!!paramBoolean);
     EXPECT_TRUE(*paramBoolean);
+}
+
+TEST(HTTPParsers, DefaultAcceptLanguageHeaderValue)
+{
+    auto languages = defaultAcceptLanguageHeaderValue().split(',');
+
+    EXPECT_GE(languages.size(), 1U);
+    EXPECT_LE(languages.size(), 5U);
+
+    // The first language has no weight, and each following one is weighted 0.9, 0.8, and so on.
+    EXPECT_FALSE(languages[0].contains(';'));
+    for (size_t index = 1; index < languages.size(); ++index)
+        EXPECT_TRUE(languages[index].endsWith(makeString(";q=0."_s, 10 - index)));
+}
+
+TEST(HTTPParsers, DefaultAcceptEncodingHeaderValue)
+{
+    EXPECT_EQ(defaultAcceptEncodingHeaderValue(URL { String { "https://example.com/"_s } }), String("gzip, deflate, br"_s));
+    EXPECT_EQ(defaultAcceptEncodingHeaderValue(URL { String { "http://example.com/"_s } }), String("gzip, deflate"_s));
+    EXPECT_EQ(defaultAcceptEncodingHeaderValue(URL { String { "custom-scheme://example.com/"_s } }), String("gzip, deflate"_s));
+}
+
+TEST(HTTPParsers, RequestHeaderAppendDelimiter)
+{
+    EXPECT_STREQ(requestHeaderAppendDelimiter("accept-language"_s)->characters(), ", ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("Via"_s)->characters(), ", ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("X-FORWARDED-FOR"_s)->characters(), ", ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("Cookie"_s)->characters(), "; ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("User-Agent"_s)->characters(), " ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("Trailer"_s)->characters(), "");
+
+    EXPECT_FALSE(requestHeaderAppendDelimiter("Content-Type"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("Authorization"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("X-Custom"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter(emptyString()).has_value());
 }
 
 } // namespace TestWebKitAPI
