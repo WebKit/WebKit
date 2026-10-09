@@ -61,6 +61,7 @@ class InspectorFrontendClient;
 class InspectorInstrumentation;
 class InstrumentingAgents;
 class LocalFrame;
+class Node;
 class PageInspectorController;
 class RenderObject;
 class WebInjectedScriptManager;
@@ -98,6 +99,10 @@ public:
 
     WEBCORE_EXPORT void siteIsolationFirstEnabled();
     void inspectedFrameDestroyed();
+
+    // Selects the node in the frontend. A node chosen while no frontend is connected is selected once the
+    // first one connects.
+    WEBCORE_EXPORT void inspect(Node&);
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
     WebInjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager.get(); }
@@ -142,6 +147,9 @@ private:
 
     // Non-owning; the agent is owned by m_agents. Kept so the overlay can reach the flex line-start cache.
     CheckedPtr<FrameDOMAgent> m_domAgent;
+
+    // Weak so a node never keeps its document alive; see inspect().
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_pendingNodeToInspect;
 };
 
 } // namespace WebCore
