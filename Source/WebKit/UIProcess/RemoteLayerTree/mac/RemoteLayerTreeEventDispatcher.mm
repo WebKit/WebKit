@@ -46,6 +46,7 @@
 #import <WebCore/ScrollingNodeID.h>
 #import <WebCore/ScrollingThread.h>
 #import <WebCore/WheelEventDeltaFilter.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -126,7 +127,6 @@ RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCo
 RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 {
     ASSERT(!m_displayRefreshObserverID);
-    ASSERT(!m_delayedRenderingUpdateDetectionTimer);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     ASSERT(!m_momentumEventDispatcher);
 #endif
@@ -150,16 +150,6 @@ void RemoteLayerTreeEventDispatcher::invalidate()
         Locker locker { m_scrollingTreeLock };
         m_scrollingTree = nullptr;
     }
-
-    // m_delayedRenderingUpdateDetectionTimer is created on the scrolling thread and fires on the
-    // scrolling thread's run loop, so it must be destroyed there to avoid racing with an in-flight
-    // CFRunLoopTimer callback that holds a raw pointer to it. The dispatcher itself is destroyed on the
-    // main run loop (DestructionThread::MainRunLoop), so dropping the last reference on the scrolling
-    // thread here hops the destructor back to the main run loop, where the main-run-loop timers are torn
-    // down safely.
-    ScrollingThread::dispatch([protectedThis = Ref { *this }] {
-        protectedThis->m_delayedRenderingUpdateDetectionTimer = nullptr;
-    });
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     {
@@ -507,7 +497,6 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     }
 #endif
 
-    auto needsUpdateLayerPositionsAndAnimations = false;
     {
         Locker locker { m_scrollingTreeLock };
 
@@ -516,24 +505,11 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
 
         scrollingTree->displayDidRefresh(displayID);
 
-        needsUpdateLayerPositionsAndAnimations = m_state != SynchronizationState::Idle;
-
-        switch (m_state) {
-        case SynchronizationState::Idle: {
+        if (m_state == SynchronizationState::Idle)
             m_state = SynchronizationState::WaitingForRenderingUpdate;
-            constexpr auto maxStartRenderingUpdateDelay = 1_ms;
-            scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
-            break;
-        }
-        case SynchronizationState::WaitingForRenderingUpdate:
-        case SynchronizationState::InRenderingUpdate:
-        case SynchronizationState::Desynchronized:
-            break;
-        }
     }
 
-    if (needsUpdateLayerPositionsAndAnimations)
-        updateLayerPositionsAndAnimations();
+    updateLayerPositionsAndAnimations();
 }
 
 void RemoteLayerTreeEventDispatcher::updateLayerPositionsAndAnimations()
@@ -550,33 +526,10 @@ void RemoteLayerTreeEventDispatcher::updateLayerPositionsAndAnimations()
 #endif
 }
 
-void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay)
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-
-    if (!m_delayedRenderingUpdateDetectionTimer)
-        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "RemoteLayerTreeEventDispatcher::DelayedRenderingUpdateDetectionTimer"_s, [weakThis = ThreadSafeWeakPtr { *this }] {
-            auto strongThis = weakThis.get();
-            if (strongThis)
-                strongThis->delayedRenderingUpdateDetectionTimerFired();
-        });
-
-    m_delayedRenderingUpdateDetectionTimer->startOneShot(delay);
-}
-
-void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-    updateLayerPositionsAndAnimations();
-}
-
 void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
 {
     ASSERT(ScrollingThread::isCurrentThread());
     ASSERT(m_scrollingTreeLock.isLocked());
-
-    if (m_delayedRenderingUpdateDetectionTimer)
-        m_delayedRenderingUpdateDetectionTimer->stop();
 
     auto currentTime = MonotonicTime::now();
     RefPtr scrollingTree = m_scrollingTree;
@@ -600,12 +553,18 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
 
     if (!becameIdle) {
         m_state = SynchronizationState::Desynchronized;
-        // At this point we know the main thread is taking too long in the rendering update,
-        // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
-        // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
-        ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
-            protectedThis->updateLayerPositionsAndAnimations();
-        });
+        if (m_renderingUpdateIsWaitingForCommit) {
+            RunLoop::mainSingleton().dispatch([] {
+                [CATransaction flush];
+            });
+        } else {
+            // At this point we know the main thread is taking too long in the rendering update,
+            // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
+            // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
+            ScrollingThread::dispatch([protectedThis = Ref { *this }] {
+                protectedThis->updateLayerPositionsAndAnimations();
+            });
+        }
         tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
     } else
         tracePoint(ScrollingThreadRenderUpdateSyncEnd);
@@ -684,7 +643,47 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
     updateAnimations(AnimationStacksToUpdate::ProgressBasedOnly);
 #endif
 
+    bool shouldWaitForCommit = false;
+    bool needsFlush = false;
+    {
+        Locker locker { m_scrollingTreeLock };
+
+        bool hasUncommittedChanges = [CATransaction currentState];
+        if (m_state == SynchronizationState::InRenderingUpdate && hasUncommittedChanges)
+            shouldWaitForCommit = !std::exchange(m_renderingUpdateIsWaitingForCommit, true);
+        else {
+            needsFlush = m_state == SynchronizationState::Desynchronized && hasUncommittedChanges;
+            m_renderingUpdateIsWaitingForCommit = false;
+
+            if (m_state == SynchronizationState::InRenderingUpdate)
+                m_stateCondition.notifyOne();
+
+            m_state = SynchronizationState::Idle;
+        }
+    }
+
+    if (shouldWaitForCommit) {
+        [CATransaction addCommitHandler:[weakThis = ThreadSafeWeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->renderingUpdateDidCommit();
+        } forPhase:kCATransactionPhasePostCommit];
+    }
+
+    if (needsFlush) {
+        RunLoop::mainSingleton().dispatch([] {
+            [CATransaction flush];
+        });
+    }
+}
+
+void RemoteLayerTreeEventDispatcher::renderingUpdateDidCommit()
+{
+    ASSERT(isMainRunLoop());
+
     Locker locker { m_scrollingTreeLock };
+
+    if (!std::exchange(m_renderingUpdateIsWaitingForCommit, false))
+        return;
 
     if (m_state == SynchronizationState::InRenderingUpdate)
         m_stateCondition.notifyOne();
