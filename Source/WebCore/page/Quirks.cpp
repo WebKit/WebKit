@@ -927,6 +927,18 @@ bool Quirks::needsBoxAnnotationQuirk(const Element& element) const
 #endif
 }
 
+// docs.google.com rdar://189433637
+bool Quirks::needsGoogleDocsNavigationWidgetScrollQuirk() const
+{
+#if PLATFORM(MAC)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsGoogleDocsNavigationWidgetScrollQuirk);
+#else
+    return false;
+#endif
+}
+
 // google.com/maps/embed rdar://184166392
 bool Quirks::needsGoogleMapsEmbedManipulationSurfaceQuirk() const
 {
@@ -3713,6 +3725,8 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
 #if PLATFORM(MAC)
     // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk, quirksData.isGoogleDocs);
+    // docs.google.com rdar://189433637
+    quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::NeedsGoogleDocsNavigationWidgetScrollQuirk, quirksData.isGoogleDocs);
 #endif
 }
 

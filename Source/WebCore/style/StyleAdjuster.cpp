@@ -1006,6 +1006,12 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setOverflowY(Overflow::Auto);
     }
 
+    if (documentQuirks.needsGoogleDocsNavigationWidgetScrollQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("navigation-widget-content"_s);
+        if (style.visibility() == Visibility::Hidden && m_parentStyle.visibility() == Visibility::Visible && m_element->hasClassName(className))
+            style.setVisibility(Visibility::Visible);
+    }
+
     if (documentQuirks.needsWebExScrollabilityQuirk()) {
         // Ignore overflow: hidden on the body and #wrapper so the page remains
         // scrollable, and drop the width constraints on #wrapper so the desktop
