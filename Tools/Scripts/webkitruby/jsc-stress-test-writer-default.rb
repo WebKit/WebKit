@@ -50,10 +50,15 @@ def noisyOutputHandler
 end
 
 def getFailCondition(plan)
-    # jsc shell's expected crashes are configured to return with an error > 130.
-    # So, if we're expecting a crash and the exitCode is less or equal to 130, the test
-    # is not exiting due to an expected crash, and it should be considered a test failure.
-    plan.expectCrash ? "-le 130" : "-ne 0"
+    # Status codes assigned by jsc.cpp's --signal-expected handler — keep in sync.
+    case plan.expectCrash
+    when :any then "-le 130"
+    when :trap then "-ne 137"
+    when :segv then "-ne 138"
+    when :fpe then "-ne 139"
+    when false, nil then "-ne 0"
+    else raise "Unknown expectCrash value: #{plan.expectCrash.inspect}"
+    end
 end
 
 def getAndTestExitCode(plan, condition)
@@ -71,6 +76,16 @@ def simpleErrorHandler
         outp.puts "then"
         outp.puts "    (echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
+        if plan.expectCrashMessage
+            outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+            messagePattern = Shellwords.shellescape(plan.expectCrashMessage)
+            diagnostic = Shellwords.shellescape(
+                "ERROR: Crashed as expected, but stdout/stderr did not contain expected message: #{plan.expectCrashMessage}")
+            outp.puts "elif ! grep -q -F -- #{messagePattern} #{outputFilename}"
+            outp.puts "then"
+            outp.puts "    (cat #{outputFilename} && echo #{diagnostic}) | " + redirectAndPrefixCommand(plan.name)
+            outp.puts "    " + plan.failCommand
+        end
         outp.puts "else"
         outp.puts "    " + plan.successCommand
         outp.puts "fi"
