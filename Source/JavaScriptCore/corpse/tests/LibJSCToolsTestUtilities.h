@@ -48,6 +48,7 @@
 #include <JavaScriptCore/CorpseAddress.h>
 
 namespace JSC {
+class VM;
 namespace Corpse {
 class Process;
 class Snapshot;
@@ -237,6 +238,9 @@ private:
     Vector<Thread*> m_threads;
 };
 
+// A snapshot of `pid`, or null, having failed the test.
+std::unique_ptr<JSC::Corpse::Snapshot> takeSnapshot(pid_t);
+
 // create() an object, then analyze() it in and out of process.
 void analyzeInAndOutOfProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
 
@@ -245,16 +249,35 @@ void analyzeInAndOutOfProcess(JSC::Corpse::Address (*create)(), NOESCAPE const F
 [[nodiscard]] bool analyzeInSeparateProcess(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
 
 // analyzeInSeparateProcess, with the target started by a path relative to its own
-// working directory, while this process is in another.
+// working directory, while this process is in another, and on Darwin exited before analyze().
 void analyzeInSeparateProcessStartedByRelativePath(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
 
 // create() an object in a separate process, snapshot it, and analyze() the
-// snapshot only after that process has exited.
+// snapshot only after that process has exited. A Linux snapshot ends with its target.
 void analyzeAfterTargetExits(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+// create() an object in a separate process run from a copy of this executable,
+// rename another executable over that copy once the object is reported, then
+// snapshot the target and analyze() it.
+void analyzeAfterExecutableReplaced(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze);
+
+#if OS(LINUX)
+// create() an object in a separate process, analyze() its snapshot, release the
+// snapshot, then call afterRelease() while the target still runs.
+void analyzeOutOfProcessThenRelease(JSC::Corpse::Address (*create)(), NOESCAPE const Function<void(JSC::Corpse::Snapshot&, JSC::Corpse::Address object)>& analyze, Function<void(pid_t target, pid_t copy)>&& afterRelease);
+
+#endif
 
 // The main function for a copy of this process launched as `--target <offset>`: runs the
 // create function at `offset` into this executable and holds its object.
 int runCorpseTarget(const char* offsetText);
+
+// What a target does with its object: reports it to the analysis, and offers
+// the analysis a snapshot of itself, at a safepoint of the target's VM if it set one.
+void reportTargetObject(JSC::Corpse::Address);
+void reportTargetAddress(JSC::Corpse::Address);
+void offerTargetSnapshot();
+void setTargetVM(JSC::VM&);
 
 #endif // ENABLE(MYA)
 

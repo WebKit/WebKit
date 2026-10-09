@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,26 +33,86 @@
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseRegion.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#include <algorithm>
+#include <dlfcn.h>
 #if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_vm.h>
+#else
+#include <stdlib.h>
 #endif
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <wtf/Scope.h>
 
 namespace JSCToolsTest {
 
 using JSC::Corpse::Address;
 using JSC::Corpse::Region;
 
+static void testAllRegions()
+{
+    size_t pageSize = static_cast<size_t>(getpagesize());
+    void* mapping = mmap(nullptr, 3 * pageSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (mapping == MAP_FAILED) {
+        TEST_ASSERT(false, "the required test VA should be mappable");
+        return;
+    }
+    // The kernel keeps a page with other protections as a region of its own.
+    Address first { mapping };
+    Address middle = first + pageSize;
+    Address last = middle + pageSize;
+    mprotect(reinterpret_cast<void*>(middle.toTargetVMAddress()), pageSize, PROT_READ);
+    auto unmap = makeScopeExit([&] {
+        munmap(mapping, 3 * pageSize);
+    });
+
+    {
+        SelfSnapshot self;
+        if (!self.isValid())
+            return;
+        const Vector<Region>& regions = self.snapshot().regions();
+        TEST_ASSERT(&self.snapshot().regions() == &regions, "the region list is read once");
+        bool isOrdered = std::ranges::adjacent_find(regions, [](const Region& region, const Region& next) {
+            return region.end() > next.base();
+        }) == regions.end();
+        TEST_ASSERT(isOrdered, "the regions are by address, and do not overlap");
+        auto containing = [&](Address address) {
+            return std::ranges::find_if(regions, [&](const Region& region) {
+                return region.contains(address);
+            });
+        };
+        auto firstRegion = containing(first);
+        auto middleRegion = containing(middle);
+        auto lastRegion = containing(last);
+        TEST_ASSERT(firstRegion != regions.end() && firstRegion->end() == middle, "a region ends where the protection changes");
+        TEST_ASSERT(middleRegion != regions.end() && middleRegion->base() == middle && middleRegion->end() == last, "and the next starts there");
+        TEST_ASSERT(lastRegion != regions.end() && lastRegion->base() == last, "and so on to the last page of a mapping");
+        auto found = Region::findContaining(self.snapshot().corpsePort(), middle);
+        TEST_ASSERT(middleRegion != regions.end() && found && found->base() == middleRegion->base() && found->size() == middleRegion->size()
+            && found->residentPageCount() == middleRegion->residentPageCount(), "a listed region is the one found by its address");
+#if !OS(DARWIN)
+        // This executable's ELF header is at offset 0 of a mapping of its file.
+        Dl_info info;
+        std::unique_ptr<char, decltype(&free)> executable { realpath("/proc/self/exe", nullptr), &free };
+        auto header = dladdr(reinterpret_cast<const void*>(&testRegion), &info) ? containing(Address { info.dli_fbase }) : regions.end();
+        TEST_ASSERT(executable && header != regions.end() && header->base() == Address { info.dli_fbase } && !header->fileOffset()
+            && header->name() == String::fromUTF8(executable.get()), "a region names the file it maps, and the offset it maps it from");
+#endif
+    }
+
+    ExpectedErrors expectedErrors(2);
+    JSC::Corpse::Snapshot invalid(JSC::Corpse::Process::create(getpid()));
+    TEST_ASSERT(invalid.regions().isEmpty(), "an invalid snapshot lists no regions");
+}
+
 void testRegion()
 {
     SuiteTracer tracer("Region");
     if (!tracer.shouldRun())
         return;
-    if (linuxSkip("Region", "corpses are not implemented on Linux yet"))
-        return;
+    testAllRegions();
 
     size_t pageSize = static_cast<size_t>(getpagesize());
     static constexpr size_t mappedPages = 5;
@@ -133,6 +194,7 @@ void testRegion()
             TEST_ASSERT(!region->contains(region->end()), "a region does not contain the byte past its end");
             TEST_ASSERT(!region->contains(region->base() - 1), "a region does not contain the byte before it");
 
+#if OS(DARWIN)
             uint64_t accessedKernelPages =
                 static_cast<uint64_t>((writtenPages + readPages) * pageSize / kernelPageSize);
             TEST_ASSERT_EQ(region->residentPageCount(), accessedKernelPages,
@@ -146,6 +208,9 @@ void testRegion()
             TEST_ASSERT(region->dirtyPageCount() >= writtenKernelPages
                 && region->dirtyPageCount() <= accessedKernelPages,
                 "every page that was written is dirty and no page that was never accessed is");
+#else
+            skipSuite("Region page residency", "/proc/<pid>/maps gives no resident or dirty page counts");
+#endif
         }
     }
     {
@@ -171,14 +236,14 @@ void testRegion()
         TEST_ASSERT(!region, "an address in the hole above a region finds no region");
     }
     {
-        // The shared cache is mapped as a submap, which the search has to descend
+        // On Darwin, the shared cache is mapped as a submap, which the search has to descend
         // into before it can describe what is actually there. A function's address
         // arrives signed on arm64e, and is an address only once stripped.
-        Address inSharedCache = Address(reinterpret_cast<void*>(&memcpy)).stripped();
-        auto region = Region::findContaining(corpsePort, inSharedCache);
-        TEST_ASSERT(region, "an address in the shared cache finds a region");
+        Address inSystemLibrary = Address(reinterpret_cast<void*>(&memcpy)).stripped();
+        auto region = Region::findContaining(corpsePort, inSystemLibrary);
+        TEST_ASSERT(region, "an address in a system library (the shared cache on Darwin) finds a region");
         if (region)
-            TEST_ASSERT(region->size(), "a shared cache region has a size");
+            TEST_ASSERT(region->size(), "a system library region has a size");
     }
 
     unmapPagesStillHeld();

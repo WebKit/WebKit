@@ -31,10 +31,10 @@
 
 #include "CorpseError.h"
 #include <array>
+#include <errno.h>
 #include <span>
 
 #if OS(DARWIN)
-#include <errno.h>
 #include <libproc.h>
 #include <mach/mach.h>
 #include <mach/mach_error.h>
@@ -43,8 +43,10 @@
 #include <sys/proc.h>
 #include <sys/sysctl.h>
 #else
+#include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/text/MakeString.h>
 #endif
 
@@ -134,6 +136,28 @@ bool Process::attach()
     }
     m_taskPort = OwnedTaskHandle::adopt(m_pid);
     return true;
+}
+
+std::optional<std::string> readProcFile(pid_t pid, const char* path)
+{
+    ASCIICString fullPath = makeString("/proc/"_s, pid, '/', StringView::fromLatin1(path)).ascii();
+    int file = open(fullPath.data(), O_RDONLY | O_CLOEXEC);
+    if (file < 0)
+        return std::nullopt;
+    std::string contents;
+    std::array<char, 16 * 1024> buffer;
+    for (;;) {
+        ssize_t length = read(file, buffer.data(), buffer.size());
+        if (length < 0 && errno == EINTR)
+            continue;
+        if (length <= 0) {
+            close(file);
+            if (length < 0)
+                return std::nullopt;
+            return contents;
+        }
+        contents.append(buffer.data(), static_cast<size_t>(length));
+    }
 }
 
 UTF8CString Process::executablePath() const

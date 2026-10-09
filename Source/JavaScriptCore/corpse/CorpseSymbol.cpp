@@ -37,9 +37,6 @@
 #if OS(DARWIN)
 #include <mach-o/dyld_images.h>
 #include <mach-o/loader.h>
-#include <mach/mach.h>
-#include <mach/mach_error.h>
-#include <mach/task_info.h>
 #endif
 #include <optional>
 #include <span>
@@ -238,51 +235,17 @@ std::optional<Address> Symbol::platformLookUpName(Snapshot& snapshot)
     Memory& memory = snapshot.memory();
 
     // dyld publishes the list of loaded images; search each one in turn.
-    task_dyld_info_data_t dyldInfo;
-    mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;
-    kern_return_t kr = task_info(snapshot.corpsePort(), TASK_DYLD_INFO, reinterpret_cast<task_info_t>(&dyldInfo), &count);
-    if (kr != KERN_SUCCESS) {
-        CORPSE_REPORT("Could not read dyld information: %s (0x%x)", mach_error_string(kr), kr);
+    auto allImages = snapshot.dyldAllImageInfos();
+    if (!allImages)
         return std::nullopt;
-    }
-
-    Address allImageInfosAddress { dyldInfo.all_image_info_addr };
-    if (!allImageInfosAddress) {
-        CORPSE_REPORT("dyld reports no image list");
+    auto images = snapshot.dyldImageInfos(allImages);
+    if (!images)
         return std::nullopt;
-    }
-    auto allImages = memory.ptr<dyld_all_image_infos>(allImageInfosAddress);
-    if (!allImages) {
-        CORPSE_REPORT("Could not read dyld_all_image_infos at 0x%llx", allImageInfosAddress.toTargetVMAddress());
-        return std::nullopt;
-    }
-
-    Address arrayAddress = Address { allImages->infoArray }.stripped();
-    uint32_t imageCount = allImages->infoArrayCount;
-    if (!arrayAddress || !imageCount) {
-        CORPSE_REPORT("dyld_all_image_infos v%u at 0x%llx lists no images",
-            allImages->version, allImageInfosAddress.toTargetVMAddress());
-        return std::nullopt;
-    }
-    // Each image below costs a Mach round-trip and two buffer reads, so an
-    // implausible count is a lot of work to be talked into doing.
-    if (imageCount > maxImageCount) {
-        CORPSE_REPORT("%u images is too many to be a real image list", imageCount);
-        return std::nullopt;
-    }
-
-    size_t imageArrayBytes = static_cast<size_t>(imageCount) * sizeof(dyld_image_info);
-    if (!hasReadBudget(imageArrayBytes))
+    if (!hasReadBudget(images.size() * sizeof(dyld_image_info)))
         return Address { };
-    auto images = memory.span<dyld_image_info>(arrayAddress, imageCount);
-    if (!images) {
-        CORPSE_REPORT("Could not read the %u image entries at 0x%llx", imageCount, arrayAddress.toTargetVMAddress());
-        return std::nullopt;
-    }
-    Diagnostics::count(DiagnosticCounter::ImagesListed, imageCount);
 
-    for (uint32_t i = 0; i < imageCount; ++i) {
-        auto imageAddress = Address(images[i].imageLoadAddress).stripped();
+    for (const dyld_image_info& image : images) {
+        auto imageAddress = Address(image.imageLoadAddress).stripped();
         auto symbolAddress = resolveInImage(memory, imageAddress, name);
         if (symbolAddress)
             return symbolAddress;

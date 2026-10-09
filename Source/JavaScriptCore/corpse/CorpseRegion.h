@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,11 @@
 #include <JavaScriptCore/CorpseAddress.h>
 #include <optional>
 #include <stdint.h>
+#include <wtf/Vector.h>
+#if !OS(DARWIN)
+#include <string_view>
+#include <wtf/text/WTFString.h>
+#endif
 
 namespace JSC {
 namespace Corpse {
@@ -42,6 +48,9 @@ public:
     // The region containing `address`, or nullopt if not found in any region.
     static std::optional<Region> findContaining(TaskHandle, Address);
 
+    // Every region of the task, by address. Empty if they cannot all be listed.
+    static Vector<Region> all(TaskHandle);
+
     Address base() const { return m_base; }
     size_t size() const { return m_size; }
     Address end() const { return m_base + m_size; }
@@ -51,11 +60,31 @@ public:
     uint64_t residentPageCount() const { return m_residentPageCount; }
     uint64_t dirtyPageCount() const { return m_dirtyPageCount; }
 
+#if !OS(DARWIN)
+    // The path of the file the region maps, or a label such as "[stack]", as /proc/<pid>/maps gives it.
+    const String& name() const { return m_name; }
+    uint64_t fileOffset() const { return m_fileOffset; }
+    uint64_t inode() const { return m_inode; }
+    bool isExecutable() const { return m_isExecutable; }
+#endif
+
 private:
+#if OS(DARWIN)
+    static kern_return_t atOrAbove(TaskHandle, Address, Region&);
+#else
+    static std::optional<Region> parseMapsLine(std::string_view);
+#endif
+
     Address m_base;
     size_t m_size { 0 };
     uint64_t m_residentPageCount { 0 };
     uint64_t m_dirtyPageCount { 0 };
+#if !OS(DARWIN)
+    String m_name;
+    uint64_t m_fileOffset { 0 };
+    uint64_t m_inode { 0 };
+    bool m_isExecutable { false };
+#endif
 };
 
 } // namespace Corpse

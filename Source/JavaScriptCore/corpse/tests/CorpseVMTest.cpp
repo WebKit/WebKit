@@ -62,6 +62,7 @@ Address createFixture()
 
     JSC::initialize();
     JSC::VM& vm = JSC::VM::create(JSC::HeapType::Large).leakRef();
+    setTargetVM(vm);
     JSC::JSLockHolder locker(vm);
     JSC::JSGlobalObject* globalObject = JSC::JSGlobalObject::create(vm, JSC::JSGlobalObject::createStructure(vm, JSC::jsNull()));
 
@@ -97,7 +98,8 @@ void testVM()
         return;
 
     analyzeInAndOutOfProcess(createFixture, analyze);
-    analyzeAfterTargetExits(createFixture, analyzeExited);
+    if (!linuxSkip("VM after its target exits", "a Linux snapshot ends with its target"))
+        analyzeAfterTargetExits(createFixture, analyzeExited);
 }
 
 } // namespace JSCToolsTest

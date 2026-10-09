@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,7 @@
 #include <sys/uio.h>
 #include <wtf/PageBlock.h>
 #endif
+#include <algorithm>
 #include <limits>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
@@ -157,6 +159,25 @@ size_t Memory::pageSize()
 #else
     return WTF::pageSize();
 #endif
+}
+
+std::optional<UTF8CString> Memory::cString(Address address, size_t maxLength)
+{
+    Vector<char8_t> characters;
+    size_t page = pageSize();
+    // One byte past `maxLength` holds the NUL of a string of that length.
+    while (characters.size() <= maxLength) {
+        Address next = address + characters.size();
+        size_t toPageEnd = page - (next.toTargetVMAddress() & (page - 1));
+        auto chunk = span<char8_t>(next, std::min(toPageEnd, maxLength + 1 - characters.size()));
+        if (!chunk)
+            return std::nullopt;
+        size_t length = std::ranges::find(chunk, u8'\0') - chunk.begin();
+        characters.append(chunk.first(length));
+        if (length < chunk.size())
+            return UTF8CString(characters.span());
+    }
+    return std::nullopt;
 }
 
 Memory::Memory(TaskHandle corpsePort)

@@ -51,6 +51,8 @@ namespace Corpse {
 constexpr size_t maxLoadCommandsSize = 128 * KB; // About 17× the measured maximum.
 constexpr size_t maxExportsTrieSize = 16 * MB; // About 8× the measured maximum.
 constexpr uint32_t maxImageCount = 16 * 1024; // About 6× the measured maximum.
+constexpr size_t maxImagePathLength = 4 * KB; // Linux's PATH_MAX, 4x Darwin's.
+constexpr size_t maxRegionCount = 1024 * 1024; // A browser process measured 12,375.
 
 // A lookup that finds nothing will read every image's load commands and exports
 // trie, which measured 101 MB for the ~2,800 image process above and 0.4 MB for

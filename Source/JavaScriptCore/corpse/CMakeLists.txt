@@ -5,6 +5,7 @@ set(JavaScriptCoreTools_SOURCES
     CorpseClient.cpp
     CorpseError.cpp
     CorpseExportsTrie.cpp
+    CorpseImage.cpp
     CorpseMemory.cpp
     CorpseProcess.cpp
     CorpseRegion.cpp
