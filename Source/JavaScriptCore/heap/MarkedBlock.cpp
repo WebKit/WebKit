@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,8 +124,12 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList, StopAllocatin
     
     if (MarkedBlockInternal::verbose)
         dataLog(RawPointer(this), ": MarkedBlock::Handle::stopAllocating!\n");
-    m_directory->assertIsMutatorOrMutatorIsStopped();
-    ASSERT(!m_directory->isAllocated(this));
+#if ASSERT_ENABLED
+    {
+        Locker bitLocker { m_directory->bitvectorLock().mutate() };
+        ASSERT(!m_directory->isAllocated(this));
+    }
+#endif
 
     if (!isFreeListed()) {
         if (MarkedBlockInternal::verbose)
@@ -184,24 +188,27 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList, StopAllocatin
 void MarkedBlock::Handle::lastChanceToFinalize()
 {
     // Concurrent sweeper is shut down at this point.
-    m_directory->assertSweeperIsSuspended();
-    m_directory->setIsAllocated(this, false);
-    m_directory->setIsDestructible(this, true);
-    m_directory->setIsUnswept(this, true);
+    m_directory->assertIsMutatorOrMutatorIsStopped();
+    // Nothing else can be holding this block at shutdown.
+    bool claimed = m_directory->claimInUse(index());
+    RELEASE_ASSERT(claimed);
+    m_directory->assertInUse(index());
+    m_directory->setIsAllocated(index(), false);
+    m_directory->setIsDestructible(index(), true);
+    m_directory->setIsUnswept(index(), true);
     blockHeader().m_marks.clearAll();
     block().clearHasAnyMarked();
     blockHeader().m_markingVersion = heap()->objectSpace().markingVersion();
     m_weakSet.lastChanceToFinalize();
     blockHeader().m_newlyAllocated.clearAll();
     blockHeader().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
-    m_directory->setIsInUse(this, true);
     sweep(nullptr);
 }
 
 void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 {
     BlockDirectory* directory = this->directory();
-    directory->assertSweeperIsSuspended();
+    directory->assertIsMutatorOrMutatorIsStopped();
     {
         Locker locker { blockHeader().m_lock };
         
@@ -221,7 +228,8 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
         }
     }
 
-    directory->setIsInUse(this, true);
+    bool claimed = directory->claimInUse(index());
+    RELEASE_ASSERT(claimed);
 
     // Re-create our free list from before stopping allocation. Note that this may return an empty
     // freelist, in which case the block will still be Marked!
@@ -288,8 +296,8 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
     BlockDirectory* directory = handle->directory();
     bool isAllocated;
     {
-        Locker bitLocker { directory->bitvectorLock() };
-        isAllocated = directory->isAllocated(handle);
+        Locker bitLocker { directory->bitvectorLock().mutate() };
+        isAllocated = directory->isAllocated(handle->index());
     }
 
     if (isAllocated || !marksConveyLivenessDuringMarking(markingVersion)) {
@@ -324,18 +332,10 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
     clearHasAnyMarked();
     WTF::storeStoreFence();
     header().m_markingVersion = markingVersion;
-    
-    // Workaround for a clang regression <rdar://111818130>.
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wthread-safety-analysis"
-#endif
+
     // This means we're the first ones to mark any object in this block.
-    Locker bitLocker { directory->bitvectorLock() };
-    directory->setIsMarkingNotEmpty(handle, true);
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
+    Locker bitLocker { directory->bitvectorLock().mutate() };
+    directory->setIsMarkingNotEmpty(handle->index(), true);
 }
 
 void MarkedBlock::resetAllocated()
@@ -386,8 +386,9 @@ void MarkedBlock::Handle::didConsumeFreeList()
         dataLog(RawPointer(this), ": MarkedBlock::Handle::didConsumeFreeList!\n");
     ASSERT(isFreeListed());
     m_isFreeListed = false;
-    Locker bitLocker(m_directory->bitvectorLock());
-    m_directory->setIsAllocated(this, true);
+    Locker bitLocker { m_directory->bitvectorLock().mutate() };
+    m_directory->assertInUse(index());
+    m_directory->setIsAllocated(index(), true);
     m_directory->didFinishUsingBlock(bitLocker, this);
 }
 
@@ -404,8 +405,8 @@ void MarkedBlock::clearHasAnyMarked()
 void MarkedBlock::noteMarkedSlow()
 {
     BlockDirectory* directory = handle().directory();
-    Locker locker { directory->bitvectorLock() };
-    directory->setIsMarkingRetired(&handle(), true);
+    Locker locker { directory->bitvectorLock().mutate() };
+    directory->setIsMarkingRetired(handle().index(), true);
 }
 
 void MarkedBlock::Handle::removeFromDirectory()
@@ -474,7 +475,8 @@ void MarkedBlock::assertValidCell(VM& vm, HeapCell* cell) const
 void MarkedBlock::Handle::dumpState(PrintStream& out)
 {
     CommaPrinter comma;
-    Locker locker { directory()->bitvectorLock() };
+    // A diagnostic, so it may be reached from any thread.
+    Locker locker { directory()->bitvectorLock().mutate() };
     directory()->forEachBitVectorWithName(
         [&](auto vectorRef, const char* name) {
             out.print(comma, name, ":"_s, vectorRef[index()] ? "YES"_s : "no"_s);
@@ -488,26 +490,31 @@ Subspace* MarkedBlock::Handle::subspace() const
 
 void MarkedBlock::Handle::sweep(FreeList* freeList)
 {
-    m_directory->assertIsMutatorOrMutatorIsStopped();
-    ASSERT(m_directory->isInUse(this));
-
     SweepMode sweepMode = freeList ? SweepToFreeList : SweepOnly;
-    bool needsDestruction = m_attributes.destruction != DoesNotNeedDestruction && m_directory->isDestructible(this);
+    bool needsDestruction;
+    bool isUnswept;
+    {
+        // Only held while reading the bits, not across the sweep below: what keeps this block ours for
+        // the duration is its inUse bit, and holding the directory lock through m_weakSet.sweep() and
+        // the destructors would serialise every sweep against every allocation.
+        Locker locker { m_directory->bitvectorLock().mutate() };
+        m_directory->assertInUse(index());
+        needsDestruction = m_attributes.destruction != DoesNotNeedDestruction && m_directory->isDestructible(index());
+        isUnswept = m_directory->isUnswept(index());
+    }
+
     // Nothing has been allocated into a block that is still swept, so no weak handle into it can have
     // been created and died since; re-sweeping its weak set would find nothing.
-    if (sweepMode == SweepOnly && !needsDestruction && !m_directory->isUnswept(this))
+    if (sweepMode == SweepOnly && !needsDestruction && !isUnswept)
         return;
 
     SweepingScope sweepingScope(*heap());
 
     m_weakSet.sweep();
 
-    // If we don't "release" our read access without locking then the ThreadSafetyAnalysis code gets upset with the locker below.
-    m_directory->releaseAssertAcquiredBitVectorLock();
-
     if (sweepMode == SweepOnly && !needsDestruction) {
-        Locker locker(m_directory->bitvectorLock());
-        m_directory->setIsUnswept(this, false);
+        Locker locker { m_directory->bitvectorLock().mutate() };
+        m_directory->setIsUnswept(index(), false);
         return;
     }
 

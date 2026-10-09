@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,12 @@ inline void BlockDirectory::forEachNotEmptyBlock(NOESCAPE const std::invocable<M
 
 inline MarkedBlock::Handle* BlockDirectory::findBlockToSweep()
 {
-    return findBlockToSweep(m_unsweptCursor);
+    unsigned cursor = m_unsweptCursor.loadRelaxed();
+    MarkedBlock::Handle* block = findBlockToSweep(cursor);
+    // This can race, that's ok. The worst case is that we'll scan some bits that
+    // have already been swept.
+    m_unsweptCursor.storeRelaxed(cursor);
+    return block;
 }
 
 } // namespace JSC

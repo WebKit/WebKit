@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -217,6 +217,7 @@ void* LocalAllocator::tryAllocateWithoutCollecting(size_t cellSize)
         if (MarkedBlock::Handle* block = allocator->findEmptyBlockToSteal()) {
             RELEASE_ASSERT(block->alignedMemoryAllocator() == allocator);
 
+            // Even though the block cannot have destructors it could still have a WeakSet, which we need to sweep.
             block->sweep(nullptr);
             // A block must own no WeakBlock before it changes cell size and owner: a survivor would
             // go on reading mark bits for cells that no longer exist at those addresses. Sweeping an
@@ -244,8 +245,13 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
 {
     ASSERT(block);
     ASSERT(!block->isFreeListed());
-    m_directory->assertIsMutatorOrMutatorIsStopped();
-    ASSERT(m_directory->isInUse(block));
+#if ASSERT_ENABLED
+    {
+        // Scoped: sweep() takes this lock itself, and the shared side is not recursive.
+        Locker locker { m_directory->bitvectorLock().mutate() };
+        ASSERT(m_directory->isInUse(block->index()));
+    }
+#endif
     
     block->sweep(&m_freeList);
     
@@ -255,8 +261,13 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
         ASSERT(block->isFreeListed());
         block->unsweepWithNoNewlyAllocated();
         ASSERT(!block->isFreeListed());
-        ASSERT(!m_directory->isEmpty(block));
-        ASSERT(!m_directory->isCanAllocate(block));
+#if ASSERT_ENABLED
+        {
+            Locker locker { m_directory->bitvectorLock().mutate() };
+            ASSERT(!m_directory->isEmpty(block));
+            ASSERT(!m_directory->isCanAllocate(block));
+        }
+#endif
         return nullptr;
     }
     
@@ -268,8 +279,11 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
             return nullptr;
         }, cellSize);
 
-    // FIXME: We should make this work with thread safety analysis.
-    m_directory->m_bits.setIsEden(m_currentBlock->index(), true);
+    {
+        Locker locker { m_directory->bitvectorLock().mutate() };
+        m_directory->assertInUse(m_currentBlock->index());
+        m_directory->setIsEden(m_currentBlock->index(), true);
+    }
     m_directory->markedSpace().didAllocateInBlock(m_currentBlock);
     return result;
 }

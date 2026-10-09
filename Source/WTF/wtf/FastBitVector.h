@@ -445,6 +445,30 @@ public:
     FastBitReference& operator|=(bool value) { return value ? *this = value : *this; }
     FastBitReference& operator&=(bool value) { return value ? *this : *this = value; }
 
+    bool concurrentGet(std::memory_order order = std::memory_order_seq_cst) const
+    {
+        return !!(atomicLoad(m_word, order) & m_mask);
+    }
+
+    void concurrentSet(bool value, std::memory_order order = std::memory_order_seq_cst)
+    {
+        if (value)
+            atomicExchangeOr(m_word, m_mask, order);
+        else
+            atomicExchangeAnd(m_word, ~m_mask, order);
+    }
+
+    // These return the previous value of the bit.
+    bool concurrentTestAndSet(std::memory_order order = std::memory_order_seq_cst)
+    {
+        return !!(atomicExchangeOr(m_word, m_mask, order) & m_mask);
+    }
+
+    bool concurrentTestAndClear(std::memory_order order = std::memory_order_seq_cst)
+    {
+        return !!(atomicExchangeAnd(m_word, ~m_mask, order) & m_mask);
+    }
+
 private:
     uint32_t* m_word { nullptr };
     uint32_t m_mask { 0 };
@@ -542,7 +566,7 @@ public:
     {
         return atImpl(index);
     }
-    
+
     bool operator[](size_t index) const
     {
         return atImpl(index);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,7 +84,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
 
 NEVER_INLINE WTF::BitSet<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(unsigned blockIndex)
 {
-    Locker locker { m_subspace.m_directory.m_bitvectorLock };
+    Locker locker { m_lock };
     auto& bitsPtrRef = m_bits[blockIndex];
     auto* bits = bitsPtrRef.get();
     if (!bits) {
@@ -98,16 +98,20 @@ NEVER_INLINE WTF::BitSet<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(unsign
 
 void IsoCellSet::didResizeBits(unsigned newSize)
 {
+    // Both vectors are reallocated here, so this has to exclude the operations that pair them. The
+    // directory's grow lock does not cover that on its own: it orders this against other directory
+    // growth, not against a sweep or an add that is only holding m_lock.
+    Locker locker { m_lock };
     m_blocksWithBits.resize(newSize);
     m_bits.grow(newSize);
 }
 
 void IsoCellSet::didRemoveBlock(unsigned blockIndex)
 {
-    {
-        Locker locker { m_subspace.m_directory.m_bitvectorLock };
-        m_blocksWithBits[blockIndex] = false;
-    }
+    // Retract before freeing, and keep both under the lock: a concurrent add() for this index would
+    // otherwise be able to install bits between the two statements and have them dropped on the floor.
+    Locker locker { m_lock };
+    m_blocksWithBits[blockIndex] = false;
     m_bits[blockIndex] = nullptr;
 }
 
@@ -134,12 +138,8 @@ void IsoCellSet::sweepToFreeList(MarkedBlock::Handle* block)
     }
 
     if (block->isEmpty() || block->areMarksStaleForSweep()) {
-        {
-            // Holding the bitvector lock happens to be enough because that's what we also hold in
-            // other places where we manipulate this bitvector.
-            Locker locker { m_subspace.m_directory.m_bitvectorLock };
-            m_blocksWithBits[block->index()] = false;
-        }
+        Locker locker { m_lock };
+        m_blocksWithBits[block->index()] = false;
         m_bits[block->index()] = nullptr;
         return;
     }

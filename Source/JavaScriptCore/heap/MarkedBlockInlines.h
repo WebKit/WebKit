@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -271,15 +271,16 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     };
 
     auto setBits = [&] (bool isEmpty) ALWAYS_INLINE_LAMBDA {
-        Locker locker { m_directory->bitvectorLock() };
-        bool wasUnswept = m_directory->isUnswept(this);
-        m_directory->setIsUnswept(this, false);
-        m_directory->setIsDestructible(this, m_attributes.destruction == DestructionMode::MayNeedDestruction && destructionMode != BlockHasNoDestructors && !isEmpty && m_directory->isDestructible(this));
-        m_directory->setIsEmpty(this, false);
+        Locker locker { m_directory->bitvectorLock().mutate() };
+        m_directory->assertInUse(index());
+        m_directory->setIsEmpty(index(), sweepMode != SweepToFreeList && isEmpty);
+        ASSERT_IMPLIES(destructionMode != BlockHasNoDestructors, m_directory->isDestructible(index()));
+        bool mayStillNeedDestruction = m_attributes.destruction == DestructionMode::MayNeedDestruction && destructionMode != BlockHasNoDestructors && !isEmpty;
+        if (!mayStillNeedDestruction)
+            m_directory->setIsDestructible(index(), false);
+        bool wasUnswept = m_directory->testAndClearIsUnswept(index());
         if (sweepMode == SweepToFreeList)
             m_isFreeListed = true;
-        else if (isEmpty)
-            m_directory->setIsEmpty(this, true);
         return wasUnswept;
     };
 
@@ -484,14 +485,14 @@ inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestr
 inline bool MarkedBlock::Handle::isEmpty()
 {
     m_directory->assertIsMutatorOrMutatorIsStopped();
-    return m_directory->isEmpty(this);
+    return m_directory->isEmpty(index());
 }
 
 inline void MarkedBlock::Handle::setIsDestructible(bool value)
 {
-    Locker locker { m_directory->bitvectorLock() };
-    m_directory->assertIsMutatorOrMutatorIsStopped();
-    return m_directory->setIsDestructible(this, value);
+    Locker locker { m_directory->bitvectorLock().mutate() };
+    m_directory->assertMayNotifyNeedsDestruction();
+    m_directory->setIsDestructible(index(), value);
 }
 
 inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +26,32 @@
 #pragma once
 
 #include <array>
+#include <wtf/Atomics.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Vector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+// Acquiring this capability means that the thread in question is the one that set the inUse bit.
+class WTF_CAPABILITY("inUse block ownership") BlockOwnership { };
+
 #define FOR_EACH_BLOCK_DIRECTORY_BIT(macro) \
-    macro(live, Live) /* The set of block indices that have actual blocks. */\
-    macro(empty, Empty) /* The set of all blocks that have no live objects and are not free listed. */ \
-    macro(allocated, Allocated) /* The set of all blocks that are full of live objects. */\
-    macro(canAllocate, CanAllocate) /* The set of all blocks are live and not retired (i.e. are more than minMarkedBlockUtilization full). Note: This also implies they wouldn't be allocated. */ \
-    macro(destructible, Destructible) /* The set of all blocks that may have destructors to run. */\
-    macro(eden, Eden) /* The set of all blocks that have new objects since the last GC. */\
-    macro(unswept, Unswept) /* The set of all blocks that could be swept by the incremental sweeper. */\
-    macro(inUse, InUse) /* This tells us if a block is currently being allocated from or swept. This acts like a lock bit. */\
+    macro(live, Live, BlockOwned) /* The set of block indices that have actual blocks. */\
+    macro(empty, Empty, BlockOwned) /* The set of all blocks that have no live objects and are not free listed. */ \
+    macro(allocated, Allocated, BlockOwned) /* The set of all blocks that are full of live objects. */\
+    macro(canAllocate, CanAllocate, BlockOwned) /* The set of all blocks are live and not retired (i.e. are more than minMarkedBlockUtilization full). Note: This also implies they wouldn't be allocated. */ \
+    macro(destructible, Destructible, BlockOwned) /* The set of all blocks that may have destructors to run. */\
+    macro(eden, Eden, BlockOwned) /* The set of all blocks that have new objects since the last GC. */\
+    macro(unswept, Unswept, BlockOwned) /* The set of all blocks that could be swept by the incremental sweeper. */\
+    macro(inUse, InUse, Unowned) /* This tells us if a block is currently being allocated from or swept. This acts like a lock bit. */\
     \
-    /* These are computed during marking. */\
-    macro(markingNotEmpty, MarkingNotEmpty) /* The set of all blocks that are not empty. */ \
-    macro(markingRetired, MarkingRetired) /* The set of all blocks that are retired. */
+    /* These are computed during marking, by any marker thread. */\
+    macro(markingNotEmpty, MarkingNotEmpty, Unowned) /* The set of all blocks that are not empty. */ \
+    macro(markingRetired, MarkingRetired, Unowned) /* The set of all blocks that are retired. */
 
 class BlockDirectoryBits {
     WTF_MAKE_TZONE_ALLOCATED(BlockDirectoryBits);
@@ -56,12 +61,12 @@ public:
     static constexpr unsigned indexMask = (1U << segmentShift) - 1;
     static_assert((1 << segmentShift) == bitsPerSegment);
 
-#define BLOCK_DIRECTORY_BIT_KIND_COUNT(lowerBitName, capitalBitName) + 1
+#define BLOCK_DIRECTORY_BIT_KIND_COUNT(lowerBitName, capitalBitName, ownership) + 1
     static constexpr unsigned numberOfBlockDirectoryBitKinds = 0 FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_KIND_COUNT);
 #undef BLOCK_DIRECTORY_BIT_KIND_COUNT
 
     enum class Kind {
-#define BLOCK_DIRECTORY_BIT_KIND_DECLARATION(lowerBitName, capitalBitName) \
+#define BLOCK_DIRECTORY_BIT_KIND_DECLARATION(lowerBitName, capitalBitName, ownership) \
         capitalBitName,
         FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_KIND_DECLARATION)
 #undef BLOCK_DIRECTORY_BIT_KIND_DECLARATION
@@ -120,6 +125,8 @@ public:
     template<Kind kind>
     using BlockDirectoryBitVectorView = WTF::FastBitVectorImpl<BlockDirectoryBitVectorWordView<kind>>;
 
+    // FIXME: We should be able to combine this with API changes to FastBitVectorImpl so we don't need
+    // this subclass.
     template<Kind kind>
     class BlockDirectoryBitVectorRef final : public BlockDirectoryBitVectorView<kind> {
     public:
@@ -165,22 +172,39 @@ public:
         }
     };
 
-#define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
-    bool is ## capitalBitName(size_t index) const \
-    { \
-        return lowerBitName()[index]; \
-    } \
-    void setIs ## capitalBitName(size_t index, bool value) \
-    { \
-        lowerBitName()[index] = value; \
-    } \
+    template<Kind kind>
+    BlockDirectoryBitVectorRef<kind> words()
+    {
+        return BlockDirectoryBitVectorRef<kind>(BlockDirectoryBitVectorWordView<kind>(m_segments.span().data(), m_numBits));
+    }
+
+    template<Kind kind>
+    BlockDirectoryBitVectorView<kind> words() const
+    {
+        return BlockDirectoryBitVectorView<kind>(BlockDirectoryBitVectorWordView<kind>(m_segments.span().data(), m_numBits));
+    }
+
+    template<Kind kind>
+    WTF::FastBitReference bit(size_t index)
+    {
+        return words<kind>().at(index);
+    }
+
+    template<Kind kind>
+    const WTF::FastBitReference bit(size_t index) const
+    {
+        // BlockDirectoryBitVectorView returns a bool but our users want a concurrentGet to avoid UB.
+        return const_cast<BlockDirectoryBits*>(this)->bit<kind>(index);
+    }
+
+#define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName, ownership) \
     BlockDirectoryBitVectorView<Kind::capitalBitName> lowerBitName() const \
     { \
-        return BlockDirectoryBitVectorView<Kind::capitalBitName>(BlockDirectoryBitVectorWordView<Kind::capitalBitName>(m_segments.span().data(), m_numBits)); \
+        return words<Kind::capitalBitName>(); \
     } \
     BlockDirectoryBitVectorRef<Kind::capitalBitName> lowerBitName() \
     { \
-        return BlockDirectoryBitVectorRef<Kind::capitalBitName>(BlockDirectoryBitVectorWordView<Kind::capitalBitName>(m_segments.span().data(), m_numBits)); \
+        return words<Kind::capitalBitName>(); \
     }
     FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_ACCESSORS)
 #undef BLOCK_DIRECTORY_BIT_ACCESSORS

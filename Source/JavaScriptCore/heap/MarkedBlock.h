@@ -153,6 +153,8 @@ public:
         // and the block is freshly created, then we'll make the mistake of running destructors in
         // the block. If it's not set and the block has nothing marked, then we'll make the
         // mistake of making a pop freelist rather than a bump freelist.
+        // Takes the directory's bits itself, at the granularity of the individual writes, so callers
+        // must not hold them: the shared side is not recursive.
         void sweep(FreeList*);
         
         // This is to be called by Subspace.
