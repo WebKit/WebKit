@@ -462,6 +462,9 @@ class LayoutTestFinder(object):
         if "web-platform-tests" not in f:
             return [""]
 
+        if b"variant" not in self.fs.read_binary_file(f):
+            return [""]
+
         opened_file = self.fs.open_text_file_for_reading(f)
         try:
             first_line = opened_file.readline()
