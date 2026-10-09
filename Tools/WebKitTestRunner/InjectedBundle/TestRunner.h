@@ -204,8 +204,6 @@ public:
     bool isPageBoxVisible(JSContextRef, int pageIndex);
     void setPrinting() const;
 
-    void setValueForUser(JSContextRef, JSValueRef element, JSStringRef value);
-
     // Audio testing.
     void setAudioResult(JSContextRef, JSValueRef data);
 

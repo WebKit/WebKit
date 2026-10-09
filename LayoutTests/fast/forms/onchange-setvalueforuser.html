@@ -10,10 +10,10 @@
           didFireOnChange = true;
         }
 
-        if (window.testRunner) {
+        if (window.testRunner)
             testRunner.dumpAsText();
-            testRunner.setValueForUser(tf, 'Hello!');
-        }
+        if (window.internals)
+            internals.setValueForUser(tf, 'Hello!');
 
         if (didFireOnChange) {
             testPassed('');

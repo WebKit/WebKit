@@ -2734,6 +2734,11 @@ bool Internals::elementShouldAutoComplete(HTMLInputElement& element)
     return element.shouldAutocomplete();
 }
 
+void Internals::setValueForUser(HTMLInputElement& element, const String& value)
+{
+    element.setValueForUser(value);
+}
+
 void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
 {
     element.setAutofilled(enabled);

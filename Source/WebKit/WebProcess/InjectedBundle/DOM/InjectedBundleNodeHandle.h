@@ -65,8 +65,6 @@ public:
     WebCore::IntRect absoluteBoundingRect(bool*);
     RefPtr<WebImage> renderedImage(SnapshotOptions, bool shouldExcludeOverflow, const std::optional<float>& bitmapWidth = std::nullopt);
     RefPtr<InjectedBundleRangeHandle> visibleRange();
-    void setHTMLInputElementValueForUser(const String&);
-    void setHTMLInputElementSpellcheckEnabled(bool);
     bool isHTMLInputElementAutoFilled() const;
     bool isHTMLInputElementAutoFilledAndViewable() const;
     bool isHTMLInputElementAutoFilledAndObscured() const;
@@ -78,7 +76,6 @@ public:
     WebCore::AutoFillButtonType htmlInputElementAutoFillButtonType() const;
     WebCore::AutoFillButtonType htmlInputElementLastAutoFillButtonType() const;
     bool isAutoFillAvailable() const;
-    void setAutoFillAvailable(bool);
     WebCore::IntRect htmlInputElementAutoFillButtonBounds();
     bool htmlInputElementLastChangeWasUserEdit();
     bool htmlTextAreaElementLastChangeWasUserEdit();
