@@ -486,6 +486,11 @@ static DrawIndexCacheContainerKey makeKey(uint32_t firstIndex, uint32_t indexCou
 
 std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb) const
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (hasPendingRecordedIndexWrite())
+        return std::nullopt;
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     auto containerIt = m_drawIndexedCache.find(makeKey(firstIndex, indexCount, baseVertex, indexType, primitiveOffset, icb));
     if (containerIt != m_drawIndexedCache.end() && containerIt->value <= vertexCount)
         return containerIt;
@@ -497,6 +502,11 @@ void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t
 {
     if (invalidationCountAtDispatch != m_drawIndexedCacheInvalidationCount)
         return;
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (hasPendingRecordedIndexWrite())
+        return;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     constexpr auto maxCacheSize = 1000000;
     if (m_drawIndexedCache.size() > maxCacheSize) {
@@ -779,6 +789,11 @@ void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
 #endif // RC_REMOVE_SEC_ACCEL_3
     indirectBufferInvalidated();
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index))
+        CommandEncoder::trackEncoder(commandEncoder, m_pendingIndexWriteCommandEncoders);
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = WeakPtr { commandEncoder }](CommandBuffer&, CommandEncoder&) {
         if (!weakThis.get() || !weakCommandEncoder)
             return true;
@@ -788,6 +803,9 @@ void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
         protectedThis->m_maxUnsignedIndex = protectedThis->m_maxUshortIndex = 0;
 #endif // RC_REMOVE_SEC_ACCEL_3
         RefPtr commandEncoder = weakCommandEncoder.get();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        protectedThis->m_pendingIndexWriteCommandEncoders.remove(commandEncoder->uniqueId());
+#endif // RC_REMOVE_SEC_ACCEL_3
         protectedThis->indirectBufferInvalidated(commandEncoder.get());
         return true;
     });
@@ -800,6 +818,13 @@ static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::Unsigned
     });
     return encoders.size();
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+bool Buffer::hasPendingRecordedIndexWrite() const
+{
+    return computeSize(m_pendingIndexWriteCommandEncoders, m_device.get());
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortIndex)
 {

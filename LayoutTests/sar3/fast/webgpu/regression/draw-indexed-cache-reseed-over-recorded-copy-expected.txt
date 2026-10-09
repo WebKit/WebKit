@@ -1,0 +1,11 @@
+Regression test for rdar://187163818: a copyBufferToBuffer recorded into a still open command encoder bumps the index contents generation at record time, long before the copy executes, so a drawIndexed validated in that window re-seeded the skip-validation cache over index contents the pending copy was about to replace. The identical drawIndexed on the still open encoder then matched that verdict and was encoded unclamped. The clear colour means the clamp pass ran instead; anything else means an out-of-bounds vertex fetch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS warmPixel is "0,255,0,255"
+PASS poisonPixel is "255,0,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
