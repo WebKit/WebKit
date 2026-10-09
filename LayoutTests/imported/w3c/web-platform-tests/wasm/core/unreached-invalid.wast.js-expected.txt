@@ -4,49 +4,49 @@ PASS #2 Test that WebAssembly compilation fails (unreached-invalid.wast:3)
 PASS #3 Test that WebAssembly compilation fails (unreached-invalid.wast:7)
 PASS #4 Test that WebAssembly compilation fails (unreached-invalid.wast:11)
 PASS #5 Test that WebAssembly compilation fails (unreached-invalid.wast:15)
-FAIL #6 Test that WebAssembly compilation fails (unreached-invalid.wast:20) assert_equals: expected true but got false
-FAIL #7 Test that WebAssembly compilation fails (unreached-invalid.wast:26) assert_equals: expected true but got false
-FAIL #8 Test that WebAssembly compilation fails (unreached-invalid.wast:32) assert_equals: expected true but got false
-FAIL #9 Test that WebAssembly compilation fails (unreached-invalid.wast:41) assert_equals: expected true but got false
-FAIL #10 Test that WebAssembly compilation fails (unreached-invalid.wast:45) assert_equals: expected true but got false
-FAIL #11 Test that WebAssembly compilation fails (unreached-invalid.wast:49) assert_equals: expected true but got false
-FAIL #12 Test that WebAssembly compilation fails (unreached-invalid.wast:55) assert_equals: expected true but got false
-FAIL #13 Test that WebAssembly compilation fails (unreached-invalid.wast:59) assert_equals: expected true but got false
-FAIL #14 Test that WebAssembly compilation fails (unreached-invalid.wast:63) assert_equals: expected true but got false
-FAIL #15 Test that WebAssembly compilation fails (unreached-invalid.wast:70) assert_equals: expected true but got false
-FAIL #16 Test that WebAssembly compilation fails (unreached-invalid.wast:76) assert_equals: expected true but got false
-FAIL #17 Test that WebAssembly compilation fails (unreached-invalid.wast:82) assert_equals: expected true but got false
-FAIL #18 Test that WebAssembly compilation fails (unreached-invalid.wast:88) assert_equals: expected true but got false
-FAIL #19 Test that WebAssembly compilation fails (unreached-invalid.wast:94) assert_equals: expected true but got false
-FAIL #20 Test that WebAssembly compilation fails (unreached-invalid.wast:100) assert_equals: expected true but got false
-FAIL #21 Test that WebAssembly compilation fails (unreached-invalid.wast:106) assert_equals: expected true but got false
-FAIL #22 Test that WebAssembly compilation fails (unreached-invalid.wast:112) assert_equals: expected true but got false
-FAIL #23 Test that WebAssembly compilation fails (unreached-invalid.wast:118) assert_equals: expected true but got false
-FAIL #24 Test that WebAssembly compilation fails (unreached-invalid.wast:124) assert_equals: expected true but got false
-FAIL #25 Test that WebAssembly compilation fails (unreached-invalid.wast:131) assert_equals: expected true but got false
-FAIL #26 Test that WebAssembly compilation fails (unreached-invalid.wast:137) assert_equals: expected true but got false
-FAIL #27 Test that WebAssembly compilation fails (unreached-invalid.wast:143) assert_equals: expected true but got false
-FAIL #28 Test that WebAssembly compilation fails (unreached-invalid.wast:149) assert_equals: expected true but got false
-FAIL #29 Test that WebAssembly compilation fails (unreached-invalid.wast:155) assert_equals: expected true but got false
-FAIL #30 Test that WebAssembly compilation fails (unreached-invalid.wast:161) assert_equals: expected true but got false
-FAIL #31 Test that WebAssembly compilation fails (unreached-invalid.wast:167) assert_equals: expected true but got false
-FAIL #32 Test that WebAssembly compilation fails (unreached-invalid.wast:173) assert_equals: expected true but got false
-FAIL #33 Test that WebAssembly compilation fails (unreached-invalid.wast:179) assert_equals: expected true but got false
-FAIL #34 Test that WebAssembly compilation fails (unreached-invalid.wast:185) assert_equals: expected true but got false
-FAIL #35 Test that WebAssembly compilation fails (unreached-invalid.wast:192) assert_equals: expected true but got false
-FAIL #36 Test that WebAssembly compilation fails (unreached-invalid.wast:198) assert_equals: expected true but got false
-FAIL #37 Test that WebAssembly compilation fails (unreached-invalid.wast:204) assert_equals: expected true but got false
-FAIL #38 Test that WebAssembly compilation fails (unreached-invalid.wast:210) assert_equals: expected true but got false
-FAIL #39 Test that WebAssembly compilation fails (unreached-invalid.wast:216) assert_equals: expected true but got false
-FAIL #40 Test that WebAssembly compilation fails (unreached-invalid.wast:222) assert_equals: expected true but got false
-FAIL #41 Test that WebAssembly compilation fails (unreached-invalid.wast:228) assert_equals: expected true but got false
-FAIL #42 Test that WebAssembly compilation fails (unreached-invalid.wast:234) assert_equals: expected true but got false
-FAIL #43 Test that WebAssembly compilation fails (unreached-invalid.wast:240) assert_equals: expected true but got false
-FAIL #44 Test that WebAssembly compilation fails (unreached-invalid.wast:246) assert_equals: expected true but got false
-FAIL #45 Test that WebAssembly compilation fails (unreached-invalid.wast:252) assert_equals: expected true but got false
-FAIL #46 Test that WebAssembly compilation fails (unreached-invalid.wast:258) assert_equals: expected true but got false
-FAIL #47 Test that WebAssembly compilation fails (unreached-invalid.wast:264) assert_equals: expected true but got false
-FAIL #48 Test that WebAssembly compilation fails (unreached-invalid.wast:270) assert_equals: expected true but got false
+PASS #6 Test that WebAssembly compilation fails (unreached-invalid.wast:20)
+PASS #7 Test that WebAssembly compilation fails (unreached-invalid.wast:26)
+PASS #8 Test that WebAssembly compilation fails (unreached-invalid.wast:32)
+PASS #9 Test that WebAssembly compilation fails (unreached-invalid.wast:41)
+PASS #10 Test that WebAssembly compilation fails (unreached-invalid.wast:45)
+PASS #11 Test that WebAssembly compilation fails (unreached-invalid.wast:49)
+PASS #12 Test that WebAssembly compilation fails (unreached-invalid.wast:55)
+PASS #13 Test that WebAssembly compilation fails (unreached-invalid.wast:59)
+PASS #14 Test that WebAssembly compilation fails (unreached-invalid.wast:63)
+PASS #15 Test that WebAssembly compilation fails (unreached-invalid.wast:70)
+PASS #16 Test that WebAssembly compilation fails (unreached-invalid.wast:76)
+PASS #17 Test that WebAssembly compilation fails (unreached-invalid.wast:82)
+PASS #18 Test that WebAssembly compilation fails (unreached-invalid.wast:88)
+PASS #19 Test that WebAssembly compilation fails (unreached-invalid.wast:94)
+PASS #20 Test that WebAssembly compilation fails (unreached-invalid.wast:100)
+PASS #21 Test that WebAssembly compilation fails (unreached-invalid.wast:106)
+PASS #22 Test that WebAssembly compilation fails (unreached-invalid.wast:112)
+PASS #23 Test that WebAssembly compilation fails (unreached-invalid.wast:118)
+PASS #24 Test that WebAssembly compilation fails (unreached-invalid.wast:124)
+PASS #25 Test that WebAssembly compilation fails (unreached-invalid.wast:131)
+PASS #26 Test that WebAssembly compilation fails (unreached-invalid.wast:137)
+PASS #27 Test that WebAssembly compilation fails (unreached-invalid.wast:143)
+PASS #28 Test that WebAssembly compilation fails (unreached-invalid.wast:149)
+PASS #29 Test that WebAssembly compilation fails (unreached-invalid.wast:155)
+PASS #30 Test that WebAssembly compilation fails (unreached-invalid.wast:161)
+PASS #31 Test that WebAssembly compilation fails (unreached-invalid.wast:167)
+PASS #32 Test that WebAssembly compilation fails (unreached-invalid.wast:173)
+PASS #33 Test that WebAssembly compilation fails (unreached-invalid.wast:179)
+PASS #34 Test that WebAssembly compilation fails (unreached-invalid.wast:185)
+PASS #35 Test that WebAssembly compilation fails (unreached-invalid.wast:192)
+PASS #36 Test that WebAssembly compilation fails (unreached-invalid.wast:198)
+PASS #37 Test that WebAssembly compilation fails (unreached-invalid.wast:204)
+PASS #38 Test that WebAssembly compilation fails (unreached-invalid.wast:210)
+PASS #39 Test that WebAssembly compilation fails (unreached-invalid.wast:216)
+PASS #40 Test that WebAssembly compilation fails (unreached-invalid.wast:222)
+PASS #41 Test that WebAssembly compilation fails (unreached-invalid.wast:228)
+PASS #42 Test that WebAssembly compilation fails (unreached-invalid.wast:234)
+PASS #43 Test that WebAssembly compilation fails (unreached-invalid.wast:240)
+PASS #44 Test that WebAssembly compilation fails (unreached-invalid.wast:246)
+PASS #45 Test that WebAssembly compilation fails (unreached-invalid.wast:252)
+PASS #46 Test that WebAssembly compilation fails (unreached-invalid.wast:258)
+PASS #47 Test that WebAssembly compilation fails (unreached-invalid.wast:264)
+PASS #48 Test that WebAssembly compilation fails (unreached-invalid.wast:270)
 PASS #49 Test that WebAssembly compilation fails (unreached-invalid.wast:276)
 PASS #50 Test that WebAssembly compilation fails (unreached-invalid.wast:283)
 PASS #51 Test that WebAssembly compilation fails (unreached-invalid.wast:289)
@@ -78,15 +78,15 @@ PASS #76 Test that WebAssembly compilation fails (unreached-invalid.wast:444)
 PASS #77 Test that WebAssembly compilation fails (unreached-invalid.wast:450)
 PASS #78 Test that WebAssembly compilation fails (unreached-invalid.wast:456)
 PASS #79 Test that WebAssembly compilation fails (unreached-invalid.wast:462)
-FAIL #80 Test that WebAssembly compilation fails (unreached-invalid.wast:469) assert_equals: expected true but got false
-FAIL #81 Test that WebAssembly compilation fails (unreached-invalid.wast:476) assert_equals: expected true but got false
-FAIL #82 Test that WebAssembly compilation fails (unreached-invalid.wast:483) assert_equals: expected true but got false
+PASS #80 Test that WebAssembly compilation fails (unreached-invalid.wast:469)
+PASS #81 Test that WebAssembly compilation fails (unreached-invalid.wast:476)
+PASS #82 Test that WebAssembly compilation fails (unreached-invalid.wast:483)
 PASS #83 Test that WebAssembly compilation fails (unreached-invalid.wast:489)
-FAIL #84 Test that WebAssembly compilation fails (unreached-invalid.wast:497) assert_equals: expected true but got false
-FAIL #85 Test that WebAssembly compilation fails (unreached-invalid.wast:506) assert_equals: expected true but got false
-FAIL #86 Test that WebAssembly compilation fails (unreached-invalid.wast:514) assert_equals: expected true but got false
-FAIL #87 Test that WebAssembly compilation fails (unreached-invalid.wast:520) assert_equals: expected true but got false
-FAIL #88 Test that WebAssembly compilation fails (unreached-invalid.wast:526) assert_equals: expected true but got false
+PASS #84 Test that WebAssembly compilation fails (unreached-invalid.wast:497)
+PASS #85 Test that WebAssembly compilation fails (unreached-invalid.wast:506)
+PASS #86 Test that WebAssembly compilation fails (unreached-invalid.wast:514)
+PASS #87 Test that WebAssembly compilation fails (unreached-invalid.wast:520)
+PASS #88 Test that WebAssembly compilation fails (unreached-invalid.wast:526)
 PASS #89 Test that WebAssembly compilation fails (unreached-invalid.wast:539)
 PASS #90 Test that WebAssembly compilation fails (unreached-invalid.wast:545)
 PASS #91 Test that WebAssembly compilation fails (unreached-invalid.wast:551)
@@ -107,197 +107,68 @@ PASS #105 Test that WebAssembly compilation fails (unreached-invalid.wast:642)
 PASS #106 Test that WebAssembly compilation fails (unreached-invalid.wast:648)
 PASS #107 Test that WebAssembly compilation fails (unreached-invalid.wast:655)
 PASS #108 Test that WebAssembly compilation fails (unreached-invalid.wast:661)
-FAIL #109 Test that WebAssembly compilation fails (unreached-invalid.wast:668) assert_equals: expected true but got false
-FAIL #110 Test that WebAssembly compilation fails (unreached-invalid.wast:675) assert_equals: expected true but got false
-FAIL #111 Test that WebAssembly compilation fails (unreached-invalid.wast:686) assert_equals: expected true but got false
-FAIL #112 Test that WebAssembly compilation fails (unreached-invalid.wast:697) assert_equals: expected true but got false
-FAIL #113 Test that WebAssembly compilation fails (unreached-invalid.wast:709) assert_equals: expected true but got false
-FAIL #114 Test that WebAssembly compilation fails (unreached-invalid.wast:714) assert_equals: expected true but got false
-FAIL #115 Test that WebAssembly compilation fails (unreached-invalid.wast:720) assert_equals: expected true but got false
-FAIL #116 Test that WebAssembly compilation fails (unreached-invalid.wast:725) assert_equals: expected true but got false
-FAIL #117 Test that WebAssembly compilation fails (unreached-invalid.wast:730) assert_equals: expected true but got false
-FAIL #118 Test that WebAssembly compilation fails (unreached-invalid.wast:736) assert_equals: expected true but got false
-FAIL #119 Test that WebAssembly compilation fails (unreached-invalid.wast:743) assert_equals: expected true but got false
+PASS #109 Test that WebAssembly compilation fails (unreached-invalid.wast:668)
+PASS #110 Test that WebAssembly compilation fails (unreached-invalid.wast:675)
+PASS #111 Test that WebAssembly compilation fails (unreached-invalid.wast:686)
+PASS #112 Test that WebAssembly compilation fails (unreached-invalid.wast:697)
+PASS #113 Test that WebAssembly compilation fails (unreached-invalid.wast:709)
+PASS #114 Test that WebAssembly compilation fails (unreached-invalid.wast:714)
+PASS #115 Test that WebAssembly compilation fails (unreached-invalid.wast:720)
+PASS #116 Test that WebAssembly compilation fails (unreached-invalid.wast:725)
+PASS #117 Test that WebAssembly compilation fails (unreached-invalid.wast:730)
+PASS #118 Test that WebAssembly compilation fails (unreached-invalid.wast:736)
+PASS #119 Test that WebAssembly compilation fails (unreached-invalid.wast:743)
 PASS #120 Test that WebAssembly compilation fails (unreached-invalid.wast:748)
-FAIL #121 Test that WebAssembly compilation fails (unreached-invalid.wast:763) assert_equals: expected true but got false
-FAIL #122 Test that WebAssembly compilation fails (unreached-invalid.wast:773) assert_equals: expected true but got false
+PASS #121 Test that WebAssembly compilation fails (unreached-invalid.wast:763)
+PASS #122 Test that WebAssembly compilation fails (unreached-invalid.wast:773)
 PASS #123 Reinitialize the default imports
 PASS #124 Test that WebAssembly compilation fails (unreached-invalid.wast:3)
 PASS #125 Test that WebAssembly compilation fails (unreached-invalid.wast:7)
 PASS #126 Test that WebAssembly compilation fails (unreached-invalid.wast:11)
 PASS #127 Test that WebAssembly compilation fails (unreached-invalid.wast:15)
-FAIL #128 Test that WebAssembly compilation fails (unreached-invalid.wast:20) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:16:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #129 Test that WebAssembly compilation fails (unreached-invalid.wast:26) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:19:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #130 Test that WebAssembly compilation fails (unreached-invalid.wast:32) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:22:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #131 Test that WebAssembly compilation fails (unreached-invalid.wast:41) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:25:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #132 Test that WebAssembly compilation fails (unreached-invalid.wast:45) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:28:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #133 Test that WebAssembly compilation fails (unreached-invalid.wast:49) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:31:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #134 Test that WebAssembly compilation fails (unreached-invalid.wast:55) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:34:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #135 Test that WebAssembly compilation fails (unreached-invalid.wast:59) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:37:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #136 Test that WebAssembly compilation fails (unreached-invalid.wast:63) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:40:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #137 Test that WebAssembly compilation fails (unreached-invalid.wast:70) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:43:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #138 Test that WebAssembly compilation fails (unreached-invalid.wast:76) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:46:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #139 Test that WebAssembly compilation fails (unreached-invalid.wast:82) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:49:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #140 Test that WebAssembly compilation fails (unreached-invalid.wast:88) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:52:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #141 Test that WebAssembly compilation fails (unreached-invalid.wast:94) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:55:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #142 Test that WebAssembly compilation fails (unreached-invalid.wast:100) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:58:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #143 Test that WebAssembly compilation fails (unreached-invalid.wast:106) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:61:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #144 Test that WebAssembly compilation fails (unreached-invalid.wast:112) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:64:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #145 Test that WebAssembly compilation fails (unreached-invalid.wast:118) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:67:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #146 Test that WebAssembly compilation fails (unreached-invalid.wast:124) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:70:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #147 Test that WebAssembly compilation fails (unreached-invalid.wast:131) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:73:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #148 Test that WebAssembly compilation fails (unreached-invalid.wast:137) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:76:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #149 Test that WebAssembly compilation fails (unreached-invalid.wast:143) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:79:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #150 Test that WebAssembly compilation fails (unreached-invalid.wast:149) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:82:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #151 Test that WebAssembly compilation fails (unreached-invalid.wast:155) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:85:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #152 Test that WebAssembly compilation fails (unreached-invalid.wast:161) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:88:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #153 Test that WebAssembly compilation fails (unreached-invalid.wast:167) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:91:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #154 Test that WebAssembly compilation fails (unreached-invalid.wast:173) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:94:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #155 Test that WebAssembly compilation fails (unreached-invalid.wast:179) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:97:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #156 Test that WebAssembly compilation fails (unreached-invalid.wast:185) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:100:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #157 Test that WebAssembly compilation fails (unreached-invalid.wast:192) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:103:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #158 Test that WebAssembly compilation fails (unreached-invalid.wast:198) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:106:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #159 Test that WebAssembly compilation fails (unreached-invalid.wast:204) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:109:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #160 Test that WebAssembly compilation fails (unreached-invalid.wast:210) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:112:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #161 Test that WebAssembly compilation fails (unreached-invalid.wast:216) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:115:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #162 Test that WebAssembly compilation fails (unreached-invalid.wast:222) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:118:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #163 Test that WebAssembly compilation fails (unreached-invalid.wast:228) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:121:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #164 Test that WebAssembly compilation fails (unreached-invalid.wast:234) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:124:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #165 Test that WebAssembly compilation fails (unreached-invalid.wast:240) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:127:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #166 Test that WebAssembly compilation fails (unreached-invalid.wast:246) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:130:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #167 Test that WebAssembly compilation fails (unreached-invalid.wast:252) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:133:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #168 Test that WebAssembly compilation fails (unreached-invalid.wast:258) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:136:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #169 Test that WebAssembly compilation fails (unreached-invalid.wast:264) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:139:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #170 Test that WebAssembly compilation fails (unreached-invalid.wast:270) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:142:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
+PASS #128 Test that WebAssembly compilation fails (unreached-invalid.wast:20)
+PASS #129 Test that WebAssembly compilation fails (unreached-invalid.wast:26)
+PASS #130 Test that WebAssembly compilation fails (unreached-invalid.wast:32)
+PASS #131 Test that WebAssembly compilation fails (unreached-invalid.wast:41)
+PASS #132 Test that WebAssembly compilation fails (unreached-invalid.wast:45)
+PASS #133 Test that WebAssembly compilation fails (unreached-invalid.wast:49)
+PASS #134 Test that WebAssembly compilation fails (unreached-invalid.wast:55)
+PASS #135 Test that WebAssembly compilation fails (unreached-invalid.wast:59)
+PASS #136 Test that WebAssembly compilation fails (unreached-invalid.wast:63)
+PASS #137 Test that WebAssembly compilation fails (unreached-invalid.wast:70)
+PASS #138 Test that WebAssembly compilation fails (unreached-invalid.wast:76)
+PASS #139 Test that WebAssembly compilation fails (unreached-invalid.wast:82)
+PASS #140 Test that WebAssembly compilation fails (unreached-invalid.wast:88)
+PASS #141 Test that WebAssembly compilation fails (unreached-invalid.wast:94)
+PASS #142 Test that WebAssembly compilation fails (unreached-invalid.wast:100)
+PASS #143 Test that WebAssembly compilation fails (unreached-invalid.wast:106)
+PASS #144 Test that WebAssembly compilation fails (unreached-invalid.wast:112)
+PASS #145 Test that WebAssembly compilation fails (unreached-invalid.wast:118)
+PASS #146 Test that WebAssembly compilation fails (unreached-invalid.wast:124)
+PASS #147 Test that WebAssembly compilation fails (unreached-invalid.wast:131)
+PASS #148 Test that WebAssembly compilation fails (unreached-invalid.wast:137)
+PASS #149 Test that WebAssembly compilation fails (unreached-invalid.wast:143)
+PASS #150 Test that WebAssembly compilation fails (unreached-invalid.wast:149)
+PASS #151 Test that WebAssembly compilation fails (unreached-invalid.wast:155)
+PASS #152 Test that WebAssembly compilation fails (unreached-invalid.wast:161)
+PASS #153 Test that WebAssembly compilation fails (unreached-invalid.wast:167)
+PASS #154 Test that WebAssembly compilation fails (unreached-invalid.wast:173)
+PASS #155 Test that WebAssembly compilation fails (unreached-invalid.wast:179)
+PASS #156 Test that WebAssembly compilation fails (unreached-invalid.wast:185)
+PASS #157 Test that WebAssembly compilation fails (unreached-invalid.wast:192)
+PASS #158 Test that WebAssembly compilation fails (unreached-invalid.wast:198)
+PASS #159 Test that WebAssembly compilation fails (unreached-invalid.wast:204)
+PASS #160 Test that WebAssembly compilation fails (unreached-invalid.wast:210)
+PASS #161 Test that WebAssembly compilation fails (unreached-invalid.wast:216)
+PASS #162 Test that WebAssembly compilation fails (unreached-invalid.wast:222)
+PASS #163 Test that WebAssembly compilation fails (unreached-invalid.wast:228)
+PASS #164 Test that WebAssembly compilation fails (unreached-invalid.wast:234)
+PASS #165 Test that WebAssembly compilation fails (unreached-invalid.wast:240)
+PASS #166 Test that WebAssembly compilation fails (unreached-invalid.wast:246)
+PASS #167 Test that WebAssembly compilation fails (unreached-invalid.wast:252)
+PASS #168 Test that WebAssembly compilation fails (unreached-invalid.wast:258)
+PASS #169 Test that WebAssembly compilation fails (unreached-invalid.wast:264)
+PASS #170 Test that WebAssembly compilation fails (unreached-invalid.wast:270)
 PASS #171 Test that WebAssembly compilation fails (unreached-invalid.wast:276)
 PASS #172 Test that WebAssembly compilation fails (unreached-invalid.wast:283)
 PASS #173 Test that WebAssembly compilation fails (unreached-invalid.wast:289)
@@ -329,39 +200,15 @@ PASS #198 Test that WebAssembly compilation fails (unreached-invalid.wast:444)
 PASS #199 Test that WebAssembly compilation fails (unreached-invalid.wast:450)
 PASS #200 Test that WebAssembly compilation fails (unreached-invalid.wast:456)
 PASS #201 Test that WebAssembly compilation fails (unreached-invalid.wast:462)
-FAIL #202 Test that WebAssembly compilation fails (unreached-invalid.wast:469) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:238:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #203 Test that WebAssembly compilation fails (unreached-invalid.wast:476) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:241:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #204 Test that WebAssembly compilation fails (unreached-invalid.wast:483) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:244:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
+PASS #202 Test that WebAssembly compilation fails (unreached-invalid.wast:469)
+PASS #203 Test that WebAssembly compilation fails (unreached-invalid.wast:476)
+PASS #204 Test that WebAssembly compilation fails (unreached-invalid.wast:483)
 PASS #205 Test that WebAssembly compilation fails (unreached-invalid.wast:489)
-FAIL #206 Test that WebAssembly compilation fails (unreached-invalid.wast:497) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:250:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #207 Test that WebAssembly compilation fails (unreached-invalid.wast:506) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:253:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #208 Test that WebAssembly compilation fails (unreached-invalid.wast:514) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:256:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #209 Test that WebAssembly compilation fails (unreached-invalid.wast:520) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:259:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #210 Test that WebAssembly compilation fails (unreached-invalid.wast:526) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:262:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
+PASS #206 Test that WebAssembly compilation fails (unreached-invalid.wast:497)
+PASS #207 Test that WebAssembly compilation fails (unreached-invalid.wast:506)
+PASS #208 Test that WebAssembly compilation fails (unreached-invalid.wast:514)
+PASS #209 Test that WebAssembly compilation fails (unreached-invalid.wast:520)
+PASS #210 Test that WebAssembly compilation fails (unreached-invalid.wast:526)
 PASS #211 Test that WebAssembly compilation fails (unreached-invalid.wast:539)
 PASS #212 Test that WebAssembly compilation fails (unreached-invalid.wast:545)
 PASS #213 Test that WebAssembly compilation fails (unreached-invalid.wast:551)
@@ -382,57 +229,18 @@ PASS #227 Test that WebAssembly compilation fails (unreached-invalid.wast:642)
 PASS #228 Test that WebAssembly compilation fails (unreached-invalid.wast:648)
 PASS #229 Test that WebAssembly compilation fails (unreached-invalid.wast:655)
 PASS #230 Test that WebAssembly compilation fails (unreached-invalid.wast:661)
-FAIL #231 Test that WebAssembly compilation fails (unreached-invalid.wast:668) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:325:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #232 Test that WebAssembly compilation fails (unreached-invalid.wast:675) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:328:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #233 Test that WebAssembly compilation fails (unreached-invalid.wast:686) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:331:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #234 Test that WebAssembly compilation fails (unreached-invalid.wast:697) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:334:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #235 Test that WebAssembly compilation fails (unreached-invalid.wast:709) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:337:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #236 Test that WebAssembly compilation fails (unreached-invalid.wast:714) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:340:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #237 Test that WebAssembly compilation fails (unreached-invalid.wast:720) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:343:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #238 Test that WebAssembly compilation fails (unreached-invalid.wast:725) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:346:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #239 Test that WebAssembly compilation fails (unreached-invalid.wast:730) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:349:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #240 Test that WebAssembly compilation fails (unreached-invalid.wast:736) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:352:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #241 Test that WebAssembly compilation fails (unreached-invalid.wast:743) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:355:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
+PASS #231 Test that WebAssembly compilation fails (unreached-invalid.wast:668)
+PASS #232 Test that WebAssembly compilation fails (unreached-invalid.wast:675)
+PASS #233 Test that WebAssembly compilation fails (unreached-invalid.wast:686)
+PASS #234 Test that WebAssembly compilation fails (unreached-invalid.wast:697)
+PASS #235 Test that WebAssembly compilation fails (unreached-invalid.wast:709)
+PASS #236 Test that WebAssembly compilation fails (unreached-invalid.wast:714)
+PASS #237 Test that WebAssembly compilation fails (unreached-invalid.wast:720)
+PASS #238 Test that WebAssembly compilation fails (unreached-invalid.wast:725)
+PASS #239 Test that WebAssembly compilation fails (unreached-invalid.wast:730)
+PASS #240 Test that WebAssembly compilation fails (unreached-invalid.wast:736)
+PASS #241 Test that WebAssembly compilation fails (unreached-invalid.wast:743)
 PASS #242 Test that WebAssembly compilation fails (unreached-invalid.wast:748)
-FAIL #243 Test that WebAssembly compilation fails (unreached-invalid.wast:763) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:361:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
-FAIL #244 Test that WebAssembly compilation fails (unreached-invalid.wast:773) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
-unreached_invalid_wast_js@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:364:15
-global code@http://web-platform.test:8800/wasm/core/js/unreached-invalid.wast.js:366:3 expected true got false
+PASS #243 Test that WebAssembly compilation fails (unreached-invalid.wast:763)
+PASS #244 Test that WebAssembly compilation fails (unreached-invalid.wast:773)
 

@@ -443,8 +443,263 @@ private:
     size_t m_currentOpcodeStartingOffset { 0 };
 
     unsigned m_unreachableBlocks { 0 };
+    Vector<Type, 16> m_unreachableTypeStack;
+
+    struct UnreachableControlFrame {
+        enum class Kind : uint8_t { Block, Loop, If, Else, Try, Catch, CatchAll, TryTable };
+        Kind kind { Kind::Block };
+        BlockSignature signature;
+        unsigned height { 0 };
+        bool polymorphic { false };
+        uint32_t localInitStackHeight { 0 };
+
+        bool isAnyCatch() const { return kind == Kind::Catch || kind == Kind::CatchAll; }
+    };
+    Vector<UnreachableControlFrame, 8> m_unreachableControlFrames;
+
     unsigned m_loopIndex { 0 };
     unsigned m_callProfileIndex { 0 };
+
+    void clearUnreachableTypeState()
+    {
+        m_unreachableTypeStack.shrink(0);
+        m_unreachableControlFrames.shrink(0);
+    }
+
+    UnreachableControlFrame& currentUnreachableFrame()
+    {
+        ASSERT(!m_unreachableControlFrames.isEmpty());
+        return m_unreachableControlFrames.last();
+    }
+
+    const UnreachableControlFrame& currentUnreachableFrame() const
+    {
+        ASSERT(!m_unreachableControlFrames.isEmpty());
+        return m_unreachableControlFrames.last();
+    }
+
+    void markUnreachableAndClearStack()
+    {
+        ASSERT(!m_unreachableBlocks);
+        m_unreachableTypeStack.shrink(0);
+        m_unreachableControlFrames.shrink(0);
+        m_unreachableControlFrames.append({ UnreachableControlFrame::Kind::Block, BlockSignature(), 0, true, getLocalInitStackHeight() });
+        m_unreachableBlocks = 1;
+    }
+
+    void truncateUnreachableStack()
+    {
+        ASSERT(!m_unreachableControlFrames.isEmpty());
+        auto& frame = currentUnreachableFrame();
+        m_unreachableTypeStack.resize(frame.height);
+        frame.polymorphic = true;
+    }
+
+    void pushUnreachableOperand(Type type)
+    {
+        if (type.isV128())
+            m_context.notifyFunctionUsesSIMD();
+        m_unreachableTypeStack.append(type);
+    }
+
+    [[nodiscard]] PartialResult popUnreachableOperand()
+    {
+        const auto& frame = currentUnreachableFrame();
+        if (m_unreachableTypeStack.size() > frame.height) {
+            m_unreachableTypeStack.removeLast();
+            return { };
+        }
+        WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+        return { };
+    }
+
+    [[nodiscard]] PartialResult popUnreachableOperand(Type expected, Type& actual)
+    {
+        const auto& frame = currentUnreachableFrame();
+        if (m_unreachableTypeStack.size() > frame.height) {
+            actual = m_unreachableTypeStack.takeLast();
+            if (actual != Types::Void)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(actual, expected), "type mismatch in unreachable context. "_s, actual, " is not a "_s, expected);
+            else
+                actual = expected;
+            return { };
+        }
+        WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+        actual = expected;
+        return { };
+    }
+
+    [[nodiscard]] PartialResult ensureUnreachableStackAtHeight()
+    {
+        const auto& frame = currentUnreachableFrame();
+        WASM_VALIDATOR_FAIL_IF(m_unreachableTypeStack.size() != frame.height, "type mismatch in unreachable context: leftover values at control boundary"_s);
+        return { };
+    }
+
+    [[nodiscard]] PartialResult finishUnreachableControlBody(const BlockSignature& signature)
+    {
+        const unsigned returnCount = signature.returnCount();
+        for (unsigned i = 0; i < returnCount; ++i) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(signature.returnType(returnCount - 1 - i), actual));
+        }
+        WASM_FAIL_IF_HELPER_FAILS(ensureUnreachableStackAtHeight());
+        return { };
+    }
+
+    [[nodiscard]] PartialResult checkUnreachableBranchTarget(const BlockSignature& signature, bool isLoop)
+    {
+        const unsigned arity = isLoop ? signature.argumentCount() : signature.returnCount();
+        if (!arity)
+            return { };
+        const auto& frame = currentUnreachableFrame();
+        const unsigned available = m_unreachableTypeStack.size() - frame.height;
+        if (available < arity) {
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "branch to block on expression stack of size "_s, available, ", but block expects "_s, arity, " values"_s);
+            return { };
+        }
+        const unsigned offset = m_unreachableTypeStack.size() - arity;
+        for (unsigned i = 0; i < arity; ++i) {
+            Type expected = isLoop ? signature.argumentType(i) : signature.returnType(i);
+            Type actual = m_unreachableTypeStack[offset + i];
+            if (actual != Types::Void)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(actual, expected), "branch's stack type is not a subtype of block's type branch target type. Stack value has type "_s, actual, " but branch target expects a value of "_s, expected, " at index "_s, i);
+        }
+        return { };
+    }
+
+    bool isNestedUnreachableLabel(uint32_t target) const
+    {
+        return target < m_unreachableBlocks - 1;
+    }
+
+    const UnreachableControlFrame& nestedUnreachableLabel(uint32_t target) const
+    {
+        ASSERT(isNestedUnreachableLabel(target));
+        return m_unreachableControlFrames[m_unreachableControlFrames.size() - 1 - target];
+    }
+
+    ControlType& realUnreachableLabel(uint32_t target)
+    {
+        ASSERT(!isNestedUnreachableLabel(target));
+        const uint32_t realTarget = target - (m_unreachableBlocks - 1);
+        return m_controlStack[m_controlStack.size() - 1 - realTarget].controlData;
+    }
+
+    unsigned unreachableBranchArity(uint32_t target) const
+    {
+        if (isNestedUnreachableLabel(target)) {
+            const auto& frame = nestedUnreachableLabel(target);
+            return frame.kind == UnreachableControlFrame::Kind::Loop ? frame.signature.argumentCount() : frame.signature.returnCount();
+        }
+        return m_controlStack[m_controlStack.size() - 1 - (target - (m_unreachableBlocks - 1))].controlData.branchTargetArity();
+    }
+
+    [[nodiscard]] PartialResult popUnreachableBranchArgs(const ControlType& target)
+    {
+        const auto arity = target.branchTargetArity();
+        for (unsigned i = 0; i < arity; ++i) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(target.branchTargetType(arity - 1 - i), actual));
+        }
+        return { };
+    }
+
+    [[nodiscard]] PartialResult popUnreachableBranchArgs(const BlockSignature& signature, bool isLoop)
+    {
+        const unsigned arity = isLoop ? signature.argumentCount() : signature.returnCount();
+        for (unsigned i = 0; i < arity; ++i) {
+            Type expected = isLoop ? signature.argumentType(arity - 1 - i) : signature.returnType(arity - 1 - i);
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(expected, actual));
+        }
+        return { };
+    }
+
+    [[nodiscard]] PartialResult checkUnreachableBranchTarget(const ControlType& target)
+    {
+        const auto arity = target.branchTargetArity();
+        if (!arity)
+            return { };
+        const auto& frame = currentUnreachableFrame();
+        const unsigned available = m_unreachableTypeStack.size() - frame.height;
+        if (available < arity) {
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "branch to block on expression stack of size "_s, available, ", but block expects "_s, arity, " values"_s);
+            return { };
+        }
+        const unsigned offset = m_unreachableTypeStack.size() - arity;
+        for (unsigned i = 0; i < arity; ++i) {
+            Type actual = m_unreachableTypeStack[offset + i];
+            if (actual != Types::Void)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(actual, target.branchTargetType(i)), "branch's stack type is not a subtype of block's type branch target type. Stack value has type "_s, actual, " but branch target expects a value of "_s, target.branchTargetType(i), " at index "_s, i);
+        }
+        return { };
+    }
+
+    [[nodiscard]] PartialResult enterUnreachableControl(UnreachableControlFrame::Kind kind, BlockSignature&& signature, bool popIfCondition = false)
+    {
+        ASSERT(m_unreachableBlocks >= 1);
+        if (popIfCondition) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+        }
+        const unsigned argumentCount = signature.argumentCount();
+        for (unsigned i = 0; i < argumentCount; ++i) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(signature.argumentType(argumentCount - 1 - i), actual));
+        }
+        const unsigned height = m_unreachableTypeStack.size();
+        m_unreachableControlFrames.append({ kind, WTF::move(signature), height, false, getLocalInitStackHeight() });
+        const auto& frame = currentUnreachableFrame();
+        for (unsigned i = 0; i < frame.signature.argumentCount(); ++i)
+            pushUnreachableOperand(frame.signature.argumentType(i));
+        m_unreachableBlocks++;
+        return { };
+    }
+
+    [[nodiscard]] PartialResult exitUnreachableNestedControl()
+    {
+        ASSERT(m_unreachableBlocks > 1);
+        ASSERT(m_unreachableControlFrames.size() == m_unreachableBlocks);
+        auto& frame = currentUnreachableFrame();
+        WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(frame.signature));
+        if (frame.kind == UnreachableControlFrame::Kind::If) {
+            resetLocalInitStackToHeight(frame.localInitStackHeight);
+            frame.kind = UnreachableControlFrame::Kind::Else;
+            frame.polymorphic = false;
+            m_unreachableTypeStack.resize(frame.height);
+            for (unsigned i = 0; i < frame.signature.argumentCount(); ++i)
+                pushUnreachableOperand(frame.signature.argumentType(i));
+            WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(frame.signature));
+        }
+        resetLocalInitStackToHeight(frame.localInitStackHeight);
+        auto finished = m_unreachableControlFrames.takeLast();
+        m_unreachableBlocks--;
+        for (unsigned i = 0; i < finished.signature.returnCount(); ++i)
+            pushUnreachableOperand(finished.signature.returnType(i));
+        return { };
+    }
+
+    [[nodiscard]] PartialResult beginUnreachableCatchBody(const BlockSignature& trySignature, bool isCatchAll)
+    {
+        auto& frame = currentUnreachableFrame();
+        WASM_VALIDATOR_FAIL_IF(frame.kind != UnreachableControlFrame::Kind::Try && frame.kind != UnreachableControlFrame::Kind::Catch, "catch block isn't associated to a try"_s);
+        WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(trySignature));
+        resetLocalInitStackToHeight(frame.localInitStackHeight);
+        frame.kind = isCatchAll ? UnreachableControlFrame::Kind::CatchAll : UnreachableControlFrame::Kind::Catch;
+        frame.polymorphic = false;
+        m_unreachableTypeStack.resize(frame.height);
+        return { };
+    }
+
+    template<typename SignatureType>
+    [[nodiscard]] PartialResult checkUnreachableTailCallReturns(const SignatureType& calleeSignature)
+    {
+        WASM_PARSER_FAIL_IF(calleeSignature.returnCount() != m_signature.returnCount(), "tail call function with return count "_s, calleeSignature.returnCount(), ", but the caller's signature has "_s, m_signature.returnCount(), " return values"_s);
+        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(calleeSignature.returnType(i), m_signature.returnType(i)), "tail call return type mismatch: expected "_s, m_signature.returnType(i), ", got "_s, calleeSignature.returnType(i));
+        return { };
+    }
 };
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename Context>, FunctionParser<Context>);
@@ -3349,7 +3604,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             WASM_TRY_ADD_TO_CONTEXT(addCall(m_callProfileIndex++, functionIndex, calleeSignature, args, results, CallType::TailCall));
 
-            m_unreachableBlocks = 1;
+            markUnreachableAndClearStack();
 
             return { };
         }
@@ -3408,7 +3663,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(m_callProfileIndex++, tableIndex, calleeSignature, args, results, CallType::TailCall));
 
-            m_unreachableBlocks = 1;
+            markUnreachableAndClearStack();
 
             return { };
         }
@@ -3470,7 +3725,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             WASM_TRY_ADD_TO_CONTEXT(addCallRef(m_callProfileIndex++, calleeSignature, args, results, CallType::TailCall));
 
-            m_unreachableBlocks = 1;
+            markUnreachableAndClearStack();
 
             return { };
         }
@@ -3748,7 +4003,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         m_expressionStack.shrink(offset);
 
         WASM_TRY_ADD_TO_CONTEXT(addThrow(exceptionIndex, args, expressionStack()));
-        m_unreachableBlocks = 1;
+        markUnreachableAndClearStack();
         return { };
     }
 
@@ -3758,7 +4013,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!isSubtype(exnref.type(), exnrefType()), "throw_ref expected an exception reference"_s);
 
         WASM_TRY_ADD_TO_CONTEXT(addThrowRef(exnref, expressionStack()));
-        m_unreachableBlocks = 1;
+        markUnreachableAndClearStack();
         return { };
     }
 
@@ -3770,7 +4025,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isAnyCatch(data), "rethrow doesn't refer to a catch block");
 
         WASM_TRY_ADD_TO_CONTEXT(addRethrow(target, data));
-        m_unreachableBlocks = 1;
+        markUnreachableAndClearStack();
         return { };
     }
 
@@ -3784,13 +4039,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br / br_if condition"_s);
             WASM_VALIDATOR_FAIL_IF(!condition.type().isI32(), "conditional branch with non-i32 condition ", condition.type());
         } else {
-            m_unreachableBlocks = 1;
             condition = TypedExpression { Types::Void, Context::emptyExpression() };
         }
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, m_currentOpcode == BrIf ? Conditional : Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addBranch(data, condition, expressionStack()));
+        if (m_currentOpcode == Br)
+            markUnreachableAndClearStack();
         return { };
     }
 
@@ -3838,14 +4094,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget, Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, defaultTarget, expressionStack()));
 
-        m_unreachableBlocks = 1;
+        markUnreachableAndClearStack();
         return { };
     }
 
     case Return: {
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(m_controlStack[0].controlData, Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, expressionStack()));
-        m_unreachableBlocks = 1;
+        markUnreachableAndClearStack();
         return { };
     }
 
@@ -3866,7 +4122,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case Unreachable: {
         WASM_TRY_ADD_TO_CONTEXT(addUnreachable());
-        m_unreachableBlocks = 1;
+        markUnreachableAndClearStack();
         return { };
     }
 
@@ -3961,12 +4217,24 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 #define CREATE_CASE(name, ...) case OpType::name:
     switch (m_currentOpcode) {
     case Else: {
-        if (m_unreachableBlocks > 1)
+        if (m_unreachableBlocks > 1) {
+            auto& frame = currentUnreachableFrame();
+            WASM_VALIDATOR_FAIL_IF(frame.kind != UnreachableControlFrame::Kind::If, "else block isn't associated to an if"_s);
+            WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(frame.signature));
+            resetLocalInitStackToHeight(frame.localInitStackHeight);
+            frame.kind = UnreachableControlFrame::Kind::Else;
+            frame.polymorphic = false;
+            m_unreachableTypeStack.resize(frame.height);
+            for (unsigned i = 0; i < frame.signature.argumentCount(); ++i)
+                pushUnreachableOperand(frame.signature.argumentType(i));
             return { };
+        }
 
         ControlEntry& data = m_controlStack.last();
-        m_unreachableBlocks = 0;
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(data.controlData), "else block isn't associated to an if");
+        WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(data.controlData.signature()));
+        m_unreachableBlocks = 0;
+        clearUnreachableTypeState();
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
         m_expressionStack.shrink(m_currentStackBegin);
         m_expressionStack.append(data.elseBlockStack.span());
@@ -3979,13 +4247,19 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
         const auto& exceptionSignature = m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
 
-        if (m_unreachableBlocks > 1)
+        if (m_unreachableBlocks > 1) {
+            WASM_FAIL_IF_HELPER_FAILS(beginUnreachableCatchBody(currentUnreachableFrame().signature, false));
+            for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i)
+                pushUnreachableOperand(exceptionSignature.argumentType(i));
             return { };
+        }
 
         ControlEntry& data = m_controlStack.last();
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
+        WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(data.controlData.signature()));
 
         m_unreachableBlocks = 0;
+        clearUnreachableTypeState();
         m_expressionStack.shrink(m_currentStackBegin);
         ResultList results;
         WASM_TRY_ADD_TO_CONTEXT(addCatchToUnreachable(exceptionIndex, exceptionSignature, data.controlData, results));
@@ -4002,35 +4276,52 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case CatchAll: {
-        if (m_unreachableBlocks > 1)
+        if (m_unreachableBlocks > 1) {
+            WASM_FAIL_IF_HELPER_FAILS(beginUnreachableCatchBody(currentUnreachableFrame().signature, true));
             return { };
+        }
 
         ControlEntry& data = m_controlStack.last();
-        m_unreachableBlocks = 0;
-        m_expressionStack.shrink(m_currentStackBegin);
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
+        WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(data.controlData.signature()));
+        m_unreachableBlocks = 0;
+        clearUnreachableTypeState();
+        m_expressionStack.shrink(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addCatchAllToUnreachable(data.controlData));
         resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
     case Delegate: {
-        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function"_s);
-
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseDelegateTarget(target, m_unreachableBlocks));
+
+        if (m_unreachableBlocks > 1) {
+            WASM_VALIDATOR_FAIL_IF(currentUnreachableFrame().kind != UnreachableControlFrame::Kind::Try, "delegate isn't associated to a try"_s);
+            const uint32_t outerTarget = target + 1;
+            if (isNestedUnreachableLabel(outerTarget)) {
+                const auto& targetFrame = nestedUnreachableLabel(outerTarget);
+                WASM_VALIDATOR_FAIL_IF(targetFrame.kind != UnreachableControlFrame::Kind::Try, "delegate target isn't a try block"_s);
+            } else {
+                ControlType& data = realUnreachableLabel(outerTarget);
+                WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(data) && !ControlType::isTopLevel(data), "delegate target isn't a try block"_s);
+            }
+            WASM_FAIL_IF_HELPER_FAILS(exitUnreachableNestedControl());
+            return { };
+        }
+
+        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function"_s);
 
         if (m_unreachableBlocks == 1) {
             ControlEntry controlEntry = m_controlStack.takeLast();
             WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
+            WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(controlEntry.controlData.signature()));
 
             ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
             WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(data) && !ControlType::isTopLevel(data), "delegate target isn't a try block");
 
             WASM_TRY_ADD_TO_CONTEXT(addDelegateToUnreachable(data, controlEntry.controlData));
 
-            // Drop child's slice and pre-allocate result placeholder slots that the generator
-            // will fill in.
             m_expressionStack.shrink(m_currentStackBegin);
             const auto& sig = controlEntry.controlData.signature();
             for (unsigned i = 0; i < sig.returnCount(); ++i)
@@ -4041,15 +4332,23 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
             m_currentStackBegin = parentBegin;
             resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
+            m_unreachableBlocks = 0;
+            clearUnreachableTypeState();
         }
-        m_unreachableBlocks--;
         return { };
     }
 
     case End: {
+        if (m_unreachableBlocks > 1) {
+            WASM_FAIL_IF_HELPER_FAILS(exitUnreachableNestedControl());
+            return { };
+        }
+
         if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
             const uint32_t parentBegin = parentEntryBegin();
+            const auto& sig = data.controlData.signature();
+            WASM_FAIL_IF_HELPER_FAILS(finishUnreachableControlBody(sig));
             if (ControlType::isIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
                 m_expressionStack.shrink(m_currentStackBegin);
@@ -4057,7 +4356,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
                 WASM_FAIL_IF_HELPER_FAILS(endBlockAndCheckResultTypes(data));
             } else {
                 m_expressionStack.shrink(m_currentStackBegin);
-                const auto& sig = data.controlData.signature();
                 for (unsigned i = 0; i < sig.returnCount(); ++i)
                     m_expressionStack.constructAndAppend(sig.returnType(i), Context::emptyExpression());
                 auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
@@ -4067,53 +4365,133 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             m_currentStackBegin = parentBegin;
             if (!ControlType::isTopLevel(data.controlData))
                 resetLocalInitStackToHeight(data.localInitStackHeight);
+            m_unreachableBlocks = 0;
+            clearUnreachableTypeState();
         }
-        m_unreachableBlocks--;
         return { };
     }
 
-    case Try:
-    case Loop:
-    case If:
     case Block: {
-        m_unreachableBlocks++;
-        BlockSignature unused;
-        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(unused), "can't get inline type for "_s, m_currentOpcode, " in unreachable context"_s);
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get inline type for "_s, m_currentOpcode, " in unreachable context"_s);
+        WASM_FAIL_IF_HELPER_FAILS(enterUnreachableControl(UnreachableControlFrame::Kind::Block, WTF::move(inlineSignature)));
+        return { };
+    }
+
+    case Loop: {
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get inline type for "_s, m_currentOpcode, " in unreachable context"_s);
+        WASM_FAIL_IF_HELPER_FAILS(enterUnreachableControl(UnreachableControlFrame::Kind::Loop, WTF::move(inlineSignature)));
+        return { };
+    }
+
+    case If: {
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get inline type for "_s, m_currentOpcode, " in unreachable context"_s);
+        WASM_FAIL_IF_HELPER_FAILS(enterUnreachableControl(UnreachableControlFrame::Kind::If, WTF::move(inlineSignature), true));
+        return { };
+    }
+
+    case Try: {
+        m_info.m_usesLegacyExceptions.storeRelaxed(true);
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get inline type for "_s, m_currentOpcode, " in unreachable context"_s);
+        WASM_FAIL_IF_HELPER_FAILS(enterUnreachableControl(UnreachableControlFrame::Kind::Try, WTF::move(inlineSignature)));
         return { };
     }
 
     case BrTable: {
         uint32_t numberOfTargets;
-        uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfTargets), "can't get the number of targets for br_table in unreachable context"_s);
         WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big "_s, numberOfTargets);
 
-        for (uint32_t i = 0; i < numberOfTargets; ++i)
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get "_s, i, "th target for br_table in unreachable context"_s);
+        Vector<uint32_t, 16> targetIndices;
+        WASM_ALLOCATOR_FAIL_IF(!targetIndices.tryReserveInitialCapacity(numberOfTargets), "can't allocate memory for "_s, numberOfTargets, " br_table targets"_s);
+        for (uint32_t i = 0; i < numberOfTargets; ++i) {
+            uint32_t target;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target, m_unreachableBlocks));
+            targetIndices.append(target);
+        }
 
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get default target for br_table in unreachable context"_s);
+        uint32_t defaultTargetIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(defaultTargetIndex, m_unreachableBlocks));
+
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+
+        const unsigned defaultArity = unreachableBranchArity(defaultTargetIndex);
+        for (uint32_t i = 0; i < numberOfTargets; ++i) {
+            const unsigned targetArity = unreachableBranchArity(targetIndices[i]);
+            WASM_VALIDATOR_FAIL_IF(defaultArity != targetArity, "br_table target type size mismatch. Default has size: "_s, defaultArity, "but target: "_s, i, " has size: "_s, targetArity);
+            if (isNestedUnreachableLabel(targetIndices[i])) {
+                const auto& frame = nestedUnreachableLabel(targetIndices[i]);
+                WASM_FAIL_IF_HELPER_FAILS(checkUnreachableBranchTarget(frame.signature, frame.kind == UnreachableControlFrame::Kind::Loop));
+            } else
+                WASM_FAIL_IF_HELPER_FAILS(checkUnreachableBranchTarget(realUnreachableLabel(targetIndices[i])));
+        }
+        if (isNestedUnreachableLabel(defaultTargetIndex)) {
+            const auto& frame = nestedUnreachableLabel(defaultTargetIndex);
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableBranchTarget(frame.signature, frame.kind == UnreachableControlFrame::Kind::Loop));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(frame.signature, frame.kind == UnreachableControlFrame::Kind::Loop));
+        } else {
+            ControlType& defaultTarget = realUnreachableLabel(defaultTargetIndex);
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableBranchTarget(defaultTarget));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(defaultTarget));
+        }
+        truncateUnreachableStack();
         return { };
     }
 
     case TryTable: {
-        m_unreachableBlocks++;
-
-        BlockSignature unused;
+        m_info.m_usesModernExceptions.storeRelaxed(true);
+        BlockSignature inlineSignature;
         uint32_t numberOfCatches;
-        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(unused), "can't get try_table's signature in unreachable context"_s);
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try_table's signature in unreachable context"_s);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfCatches), "can't get the number of catch statements for try_table in unreachable context"_s);
+        WASM_PARSER_FAIL_IF(numberOfCatches == std::numeric_limits<uint32_t>::max(), "try_table's number of catch targets is too big "_s, numberOfCatches);
 
         for (uint32_t i = 0; i < numberOfCatches; ++i) {
             uint8_t catchOpcode = 0;
-            uint32_t unusedTag;
-            uint32_t unusedLabel;
+            uint32_t exceptionTag = std::numeric_limits<uint32_t>::max();
+            const RTT* exceptionSignature = nullptr;
 
             WASM_PARSER_FAIL_IF(!parseUInt8(catchOpcode), "can't get catch opcode for try_table in unreachable context"_s);
-            WASM_PARSER_FAIL_IF(catchOpcode > 0x03, "invalid catch opcode for try_table in unreachable context"_s);
-            if (catchOpcode < 2)
-                WASM_PARSER_FAIL_IF(!parseExceptionIndex(unusedTag), "invalid exception tag for try_table in unreachable context"_s);
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(unusedLabel), "invalid destination label for try_table in unreachable context"_s);
+            WASM_PARSER_FAIL_IF(catchOpcode > CatchKind::CatchAllRef, "invalid catch opcode for try_table in unreachable context"_s);
+
+            if (catchOpcode < CatchKind::CatchAll) {
+                WASM_PARSER_FAIL_IF(!parseExceptionIndex(exceptionTag), "invalid exception tag for try_table in unreachable context"_s);
+                exceptionSignature = &m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionTag));
+                for (unsigned arg = 0; arg < exceptionSignature->argumentCount(); ++arg) {
+                    if (exceptionSignature->argumentType(arg).isV128())
+                        m_context.notifyFunctionUsesSIMD();
+                }
+            }
+
+            uint32_t exceptionLabel;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(exceptionLabel, m_unreachableBlocks));
+
+            Vector<Type, 8> results;
+            if (catchOpcode == CatchKind::Catch || catchOpcode == CatchKind::CatchRef) {
+                ASSERT(exceptionSignature);
+                for (unsigned arg = 0; arg < exceptionSignature->argumentCount(); ++arg)
+                    results.append(exceptionSignature->argumentType(arg));
+            }
+            if (catchOpcode == CatchKind::CatchRef || catchOpcode == CatchKind::CatchAllRef)
+                results.append(Type { TypeKind::Ref, typeIndexFromTypeKind(TypeKind::Exnref) });
+
+            const unsigned arity = unreachableBranchArity(exceptionLabel);
+            WASM_VALIDATOR_FAIL_IF(results.size() != arity, "try_table target type mismatch"_s);
+            for (unsigned j = 0; j < arity; ++j) {
+                Type expected;
+                if (isNestedUnreachableLabel(exceptionLabel)) {
+                    const auto& frame = nestedUnreachableLabel(exceptionLabel);
+                    expected = frame.kind == UnreachableControlFrame::Kind::Loop ? frame.signature.argumentType(j) : frame.signature.returnType(j);
+                } else
+                    expected = realUnreachableLabel(exceptionLabel).branchTargetType(j);
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(results[j], expected), "try_table target type mismatch"_s);
+            }
         }
+        WASM_FAIL_IF_HELPER_FAILS(enterUnreachableControl(UnreachableControlFrame::Kind::TryTable, WTF::move(inlineSignature)));
         return { };
     }
 
@@ -4124,6 +4502,22 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t signatureIndex;
         uint32_t tableIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseCallIndirectImmediates(signatureIndex, tableIndex));
+
+        const auto& calleeSignature = m_info.rtt(TypeSignatureIndex(signatureIndex));
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(m_info.table(tableIndex).addressType().asWasmType(), actual));
+        for (unsigned i = 0; i < calleeSignature.argumentCount(); ++i) {
+            Type argActual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(calleeSignature.argumentType(calleeSignature.argumentCount() - 1 - i), argActual));
+        }
+        if (m_currentOpcode == TailCallIndirect) {
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableTailCallReturns(calleeSignature));
+            truncateUnreachableStack();
+        } else {
+            for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
+                pushUnreachableOperand(calleeSignature.returnType(i));
+        }
+
         return { };
     }
 
@@ -4131,20 +4525,42 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         [[fallthrough]];
     case CallRef: {
-        uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't call_ref's signature index in unreachable context"_s);
+        uint32_t rawTypeIndex;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(rawTypeIndex), "can't call_ref's signature index in unreachable context"_s);
+
+        WASM_VALIDATOR_FAIL_IF(rawTypeIndex >= m_info.typeCount(), "call_ref index ", rawTypeIndex, " is out of bounds");
+        TypeSignatureIndex typeIndex(rawTypeIndex);
+        const auto& calleeSignature = m_info.rtt(typeIndex);
+        WASM_VALIDATOR_FAIL_IF(calleeSignature.kind() != RTTKind::Function, "invalid type index (not a function signature) for call_ref, got ", rawTypeIndex);
+        Type calleeType = Type { TypeKind::RefNull, calleeSignature.asTypeIndex() };
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(calleeType, actual));
+        for (unsigned i = 0; i < calleeSignature.argumentCount(); ++i) {
+            Type argActual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(calleeSignature.argumentType(calleeSignature.argumentCount() - 1 - i), argActual));
+        }
+        if (m_currentOpcode == TailCallRef) {
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableTailCallReturns(calleeSignature));
+            truncateUnreachableStack();
+        } else {
+            for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
+                pushUnreachableOperand(calleeSignature.returnType(i));
+        }
+
         return { };
     }
 
     case F32Const: {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseUInt32(unused), "can't parse 32-bit floating-point constant"_s);
+        pushUnreachableOperand(Types::F32);
         return { };
     }
 
     case F64Const: {
         uint64_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt64(constant), "can't parse 64-bit floating-point constant"_s);
+        pushUnreachableOperand(Types::F64);
         return { };
     }
 
@@ -4159,6 +4575,29 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds "_s, m_currentOpcode, "'s natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
         uint64_t unusedOffset;
         WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, unusedOffset));
+
+        Type addressType = m_info.memory(memoryIndex).addressType().asWasmType();
+        Type valueType = Types::I32;
+        bool isStore = false;
+        switch (m_currentOpcode) {
+#define CREATE_LOAD_TYPE(name, id, b3op, inc, memoryType) case OpType::name: valueType = Types::memoryType; break;
+            FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_LOAD_TYPE)
+#undef CREATE_LOAD_TYPE
+#define CREATE_STORE_TYPE(name, id, b3op, inc, memoryType) case OpType::name: valueType = Types::memoryType; isStore = true; break;
+            FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_STORE_TYPE)
+#undef CREATE_STORE_TYPE
+        default:
+            break;
+        }
+        Type actual;
+        if (isStore) {
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(valueType, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+        } else {
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+            pushUnreachableOperand(valueType);
+        }
+
         return { };
     }
 
@@ -4166,6 +4605,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t index;
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
         WASM_FAIL_IF_HELPER_FAILS(checkLocalInitialized(index));
+        pushUnreachableOperand(typeOfLocal(index));
         return { };
     }
 
@@ -4174,13 +4614,30 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t index;
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
         pushLocalInitialized(index);
+
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(typeOfLocal(index), actual));
+        if (m_currentOpcode == TeeLocal)
+            pushUnreachableOperand(typeOfLocal(index));
+
         return { };
     }
 
-    case GetGlobal:
+    case GetGlobal: {
+        uint32_t index;
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForGlobal(index));
+        pushUnreachableOperand(m_info.globals[index].type);
+        return { };
+    }
+
     case SetGlobal: {
         uint32_t index;
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForGlobal(index));
+        WASM_VALIDATOR_FAIL_IF(m_info.globals[index].mutability == Mutability::Immutable, "set_global "_s, index, " is immutable"_s);
+
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(m_info.globals[index].type, actual));
+
         return { };
     }
 
@@ -4190,15 +4647,34 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case Call: {
         FunctionSpaceIndex functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
+
+        const auto& calleeSignature = m_info.rtt(m_info.typeSignatureIndexFromFunctionIndexSpace(functionIndex));
+        for (unsigned i = 0; i < calleeSignature.argumentCount(); ++i) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(calleeSignature.argumentType(calleeSignature.argumentCount() - 1 - i), actual));
+        }
+        if (m_currentOpcode == TailCall) {
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableTailCallReturns(calleeSignature));
+            truncateUnreachableStack();
+        } else {
+            for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
+                pushUnreachableOperand(calleeSignature.returnType(i));
+        }
+
         return { };
     }
 
     case Rethrow: {
         uint32_t target;
-        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
-
-        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-        WASM_VALIDATOR_FAIL_IF(!ControlType::isAnyCatch(data), "rethrow doesn't refer to a catch block"_s);
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target, m_unreachableBlocks));
+        if (isNestedUnreachableLabel(target)) {
+            const auto& frame = nestedUnreachableLabel(target);
+            WASM_VALIDATOR_FAIL_IF(!frame.isAnyCatch(), "rethrow doesn't refer to a catch block"_s);
+        } else {
+            ControlType& data = realUnreachableLabel(target);
+            WASM_VALIDATOR_FAIL_IF(!ControlType::isAnyCatch(data), "rethrow doesn't refer to a catch block"_s);
+        }
+        truncateUnreachableStack();
         return { };
     }
 
@@ -4206,6 +4682,35 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case BrIf: {
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target, m_unreachableBlocks));
+
+        if (isNestedUnreachableLabel(target)) {
+            const auto& frame = nestedUnreachableLabel(target);
+            const bool isLoop = frame.kind == UnreachableControlFrame::Kind::Loop;
+            if (m_currentOpcode == BrIf) {
+                Type actual;
+                WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+                WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(frame.signature, isLoop));
+                const unsigned arity = isLoop ? frame.signature.argumentCount() : frame.signature.returnCount();
+                for (unsigned i = 0; i < arity; ++i)
+                    pushUnreachableOperand(isLoop ? frame.signature.argumentType(i) : frame.signature.returnType(i));
+            } else {
+                WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(frame.signature, isLoop));
+                truncateUnreachableStack();
+            }
+            return { };
+        }
+
+        ControlType& data = realUnreachableLabel(target);
+        if (m_currentOpcode == BrIf) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(data));
+            for (unsigned i = 0; i < data.branchTargetArity(); ++i)
+                pushUnreachableOperand(data.branchTargetType(i));
+        } else {
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(data));
+            truncateUnreachableStack();
+        }
         return { };
     }
 
@@ -4213,22 +4718,36 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t exceptionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
 
+        const auto& exceptionSignature = m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(exceptionSignature.argumentType(exceptionSignature.argumentCount() - 1 - i), actual));
+        }
+        truncateUnreachableStack();
+
         return { };
     }
 
     case ThrowRef: {
+
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(exnrefType(), actual));
+        truncateUnreachableStack();
+
         return { };
     }
 
     case I32Const: {
         int32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarInt32(unused), "can't get immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        pushUnreachableOperand(Types::I32);
         return { };
     }
 
     case I64Const: {
         int64_t unused;
         WASM_PARSER_FAIL_IF(!parseVarInt64(unused), "can't get immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        pushUnreachableOperand(Types::I64);
         return { };
     }
 
@@ -4240,6 +4759,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case Ext1OpType::TableInit: {
             TableInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
+
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(m_info.tables[immediates.tableIndex].addressType().asWasmType(), actual));
+
             return { };
         }
         case Ext1OpType::ElemDrop: {
@@ -4247,31 +4772,85 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseElementIndex(elementIndex));
             return { };
         }
-        case Ext1OpType::TableSize:
-        case Ext1OpType::TableGrow:
+        case Ext1OpType::TableSize: {
+            unsigned tableIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
+            pushUnreachableOperand(m_info.table(tableIndex).addressType().asWasmType());
+            return { };
+        }
+        case Ext1OpType::TableGrow: {
+            unsigned tableIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
+
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(m_info.table(tableIndex).addressType().asWasmType(), actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(m_info.tables[tableIndex].wasmType(), actual));
+            pushUnreachableOperand(m_info.table(tableIndex).addressType().asWasmType());
+
+            return { };
+        }
         case Ext1OpType::TableFill: {
             unsigned tableIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
+
+            Type addressType = m_info.table(tableIndex).addressType().asWasmType();
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(m_info.tables[tableIndex].wasmType(), actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+
             return { };
         }
         case Ext1OpType::TableCopy: {
             TableCopyImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableCopyImmediates(immediates));
+
+            auto dstAddress = m_info.tables[immediates.dstTableIndex].addressType();
+            auto srcAddress = m_info.tables[immediates.srcTableIndex].addressType();
+            Type lengthType = (dstAddress.is64Bit() && srcAddress.is64Bit()) ? Types::I64 : Types::I32;
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(lengthType, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(srcAddress.asWasmType(), actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(dstAddress.asWasmType(), actual));
+
             return { };
         }
         case Ext1OpType::MemoryFill: {
             uint8_t memoryIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate(memoryIndex));
+
+            Type addressType = m_info.memory(memoryIndex).addressType().asWasmType();
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+
             return { };
         }
         case Ext1OpType::MemoryCopy: {
             uint8_t dstMemoryIndex, srcMemoryIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates(dstMemoryIndex, srcMemoryIndex));
+
+            bool dst64 = m_info.memory(dstMemoryIndex).isMemory64();
+            bool src64 = m_info.memory(srcMemoryIndex).isMemory64();
+            Type lengthType = (dst64 && src64) ? Types::I64 : Types::I32;
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(lengthType, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(src64 ? Types::I64 : Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(dst64 ? Types::I64 : Types::I32, actual));
+
             return { };
         }
         case Ext1OpType::MemoryInit: {
             MemoryInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryInitImmediates(immediates));
+
+            Type dstType = m_info.memory(immediates.memoryIndex).isMemory64() ? Types::I64 : Types::I32;
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(dstType, actual));
+
             return { };
         }
         case Ext1OpType::DataDrop: {
@@ -4279,11 +4858,41 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
             return { };
         }
-#define CREATE_EXT1_CASE(name, ...) case Ext1OpType::name:
-        FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_EXT1_CASE)
-        FOR_EACH_WASM_WIDE_ARITHMETIC_OP(CREATE_EXT1_CASE)
+#define CREATE_TRUNC_UNREACHABLE(name, id, b3op, inc, operandType, returnType) \
+        case Ext1OpType::name: { \
+            Type actual; \
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::operandType, actual)); \
+            pushUnreachableOperand(Types::returnType); \
+            return { }; \
+        }
+        FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_TRUNC_UNREACHABLE)
+#undef CREATE_TRUNC_UNREACHABLE
+        case Ext1OpType::I64Add128:
+        case Ext1OpType::I64Sub128: {
+            WASM_PARSER_FAIL_IF(!Options::useWasmWideArithmetic(), "wasm wide arithmetic is not enabled"_s);
+
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I64, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I64, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I64, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I64, actual));
+            pushUnreachableOperand(Types::I64);
+            pushUnreachableOperand(Types::I64);
+
             return { };
-#undef CREATE_EXT1_CASE
+        }
+        case Ext1OpType::I64MulWideS:
+        case Ext1OpType::I64MulWideU: {
+            WASM_PARSER_FAIL_IF(!Options::useWasmWideArithmetic(), "wasm wide arithmetic is not enabled"_s);
+
+            Type actual;
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I64, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I64, actual));
+            pushUnreachableOperand(Types::I64);
+            pushUnreachableOperand(Types::I64);
+
+            return { };
+        }
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended 0xfc op "_s, m_currentExtOp);
             break;
@@ -4295,6 +4904,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case AnnotatedSelect: {
         AnnotatedSelectImmediates immediates;
         WASM_FAIL_IF_HELPER_FAILS(parseAnnotatedSelectImmediates(immediates));
+
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(immediates.targetType, actual));
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(immediates.targetType, actual));
+        pushUnreachableOperand(immediates.targetType);
+
         return { };
     }
 
@@ -4302,41 +4918,122 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case TableSet: {
         unsigned tableIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
-        return { };
-    }
 
-    case RefIsNull: {
+        Type addressType = m_info.table(tableIndex).addressType().asWasmType();
+        Type elementType = m_info.tables[tableIndex].wasmType();
+        Type actual;
+        if (m_currentOpcode == TableSet) {
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(elementType, actual));
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+        } else {
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+            pushUnreachableOperand(elementType);
+        }
+
         return { };
     }
 
     case RefNull: {
-        int32_t unused;
-        WASM_PARSER_FAIL_IF(!parseHeapType(m_info, unused), "can't get heap type for "_s, m_currentOpcode, " in unreachable context"_s);
+        int32_t heapType;
+        WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "can't get heap type for "_s, m_currentOpcode, " in unreachable context"_s);
+
+        Type typeOfNull;
+        if (isTypeIndexHeapType(heapType)) {
+            TypeIndex typeIndex = m_info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType)).asTypeIndex();
+            typeOfNull = Type { TypeKind::RefNull, typeIndex };
+        } else
+            typeOfNull = Type { TypeKind::RefNull, typeIndexFromTypeKind(static_cast<TypeKind>(heapType)) };
+        pushUnreachableOperand(typeOfNull);
+
         return { };
     }
 
     case RefFunc: {
         FunctionSpaceIndex index;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(index));
-        // Function references don't need to be declared in constant expression contexts.
         if constexpr (!std::is_same<Context, ConstExprGenerator>())
             WASM_VALIDATOR_FAIL_IF(!m_info.isDeclaredFunction(index), "ref.func index "_s, index, " isn't declared"_s);
+
+        TypeIndex typeIndex = m_info.rtt(index).asTypeIndex();
+        pushUnreachableOperand(Type { TypeKind::Ref, typeIndex });
+
         return { };
     }
 
-    case RefAsNonNull:
+    case RefAsNonNull: {
+        const auto& frame = currentUnreachableFrame();
+        Type refType = Types::Void;
+        if (m_unreachableTypeStack.size() > frame.height)
+            refType = m_unreachableTypeStack.takeLast();
+        else
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+        if (refType != Types::Void) {
+            WASM_VALIDATOR_FAIL_IF(!isRefType(refType), "ref.as_non_null ref to type ", refType, " expected a reference type");
+            pushUnreachableOperand(Type { TypeKind::Ref, refType.index() });
+        } else
+            pushUnreachableOperand(Types::Void);
+        return { };
+    }
+
     case RefEq: {
+
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(eqrefType(), actual));
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(eqrefType(), actual));
+        pushUnreachableOperand(Types::I32);
+
+        return { };
+    }
+
+    case RefIsNull: {
+        const auto& frame = currentUnreachableFrame();
+        Type refType = Types::Void;
+        if (m_unreachableTypeStack.size() > frame.height)
+            refType = m_unreachableTypeStack.takeLast();
+        else
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+        WASM_VALIDATOR_FAIL_IF(refType != Types::Void && !isRefType(refType), "ref.is_null to type "_s, refType, " expected a reference type"_s);
+        pushUnreachableOperand(Types::I32);
         return { };
     }
 
     case BrOnNull:
     case BrOnNonNull: {
         uint32_t target;
-        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target, m_unreachableBlocks));
+
+        const auto& frame = currentUnreachableFrame();
+        Type refType = Types::Void;
+        if (m_unreachableTypeStack.size() > frame.height)
+            refType = m_unreachableTypeStack.takeLast();
+        else
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+        WASM_VALIDATOR_FAIL_IF(refType != Types::Void && !isRefType(refType), m_currentOpcode == BrOnNull ? "br_on_null ref to type "_s : "br_on_non_null ref to type "_s, refType, " expected a reference type"_s);
+
+        Type nonNullRef = Types::Void;
+        if (refType != Types::Void)
+            nonNullRef = Type { TypeKind::Ref, refType.index() };
+
+        if (m_currentOpcode == BrOnNonNull)
+            pushUnreachableOperand(nonNullRef);
+
+        if (isNestedUnreachableLabel(target)) {
+            const auto& targetFrame = nestedUnreachableLabel(target);
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableBranchTarget(targetFrame.signature, targetFrame.kind == UnreachableControlFrame::Kind::Loop));
+        } else
+            WASM_FAIL_IF_HELPER_FAILS(checkUnreachableBranchTarget(realUnreachableLabel(target)));
+
+        if (m_currentOpcode == BrOnNull)
+            pushUnreachableOperand(nonNullRef);
+        else {
+            ASSERT(m_unreachableTypeStack.size() > currentUnreachableFrame().height);
+            m_unreachableTypeStack.removeLast();
+        }
         return { };
     }
 
     case ExtGC: {
+        truncateUnreachableStack();
         WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse extended GC opcode"_s);
         m_context.willParseExtendedOpcode();
 
@@ -4504,16 +5201,30 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    case GrowMemory:
-    case CurrentMemory: {
-        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory/current_memory is only valid if a memory is defined or imported"_s);
+    case GrowMemory: {
+        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory is only valid if a memory is defined or imported"_s);
         uint8_t memoryIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
+
+        Type addressType = m_info.memory(memoryIndex).addressType().asWasmType();
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(addressType, actual));
+        pushUnreachableOperand(addressType);
+
+        return { };
+    }
+
+    case CurrentMemory: {
+        WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "current_memory is only valid if a memory is defined or imported"_s);
+        uint8_t memoryIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
+        pushUnreachableOperand(m_info.memory(memoryIndex).addressType().asWasmType());
         return { };
     }
 
 #define CREATE_ATOMIC_CASE(name, ...) case ExtAtomicOpType::name:
     case ExtAtomic: {
+        truncateUnreachableStack();
         WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse atomic extended opcode"_s);
         m_context.willParseExtendedOpcode();
 
@@ -4560,6 +5271,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
 #if ENABLE(B3_JIT)
     case ExtSIMD: {
+        truncateUnreachableStack();
         WASM_PARSER_FAIL_IF(!Options::useWasmSIMD(), "wasm-simd is not enabled"_s);
         m_context.notifyFunctionUsesSIMD();
         WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse wasm extended opcode"_s);
@@ -4589,18 +5301,98 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     // no immediate cases
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
-    FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
-    case Unreachable:
+    FOR_EACH_WASM_UNARY_OP(CREATE_CASE) {
+        switch (m_currentOpcode) {
+#define CREATE_BINARY_UNREACHABLE(name, id, b3op, inc, lhsType, rhsType, returnType) \
+        case OpType::name: { \
+            Type actual; \
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::rhsType, actual)); \
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::lhsType, actual)); \
+            pushUnreachableOperand(Types::returnType); \
+            return { }; \
+        }
+        FOR_EACH_WASM_BINARY_OP(CREATE_BINARY_UNREACHABLE)
+#undef CREATE_BINARY_UNREACHABLE
+#define CREATE_UNARY_UNREACHABLE(name, id, b3op, inc, operandType, returnType) \
+        case OpType::name: { \
+            Type actual; \
+            WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::operandType, actual)); \
+            pushUnreachableOperand(Types::returnType); \
+            return { }; \
+        }
+        FOR_EACH_WASM_UNARY_OP(CREATE_UNARY_UNREACHABLE)
+#undef CREATE_UNARY_UNREACHABLE
+        default:
+            break;
+        }
+        return { };
+    }
+
+    case Unreachable: {
+        truncateUnreachableStack();
+        return { };
+    }
+
     case Nop:
-    case Return:
-    case Select:
+        return { };
+
+    case Return: {
+        ControlType& top = m_controlStack[0].controlData;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableBranchArgs(top));
+        truncateUnreachableStack();
+        return { };
+    }
+
+    case Select: {
+        Type actual;
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand(Types::I32, actual));
+
+        const auto& frame = currentUnreachableFrame();
+        bool zeroInvented = m_unreachableTypeStack.size() <= frame.height;
+        Type zero = Types::I32;
+        if (!zeroInvented)
+            zero = m_unreachableTypeStack.takeLast();
+        else
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+
+        bool nonZeroInvented = m_unreachableTypeStack.size() <= frame.height;
+        Type nonZero = Types::I32;
+        if (!nonZeroInvented)
+            nonZero = m_unreachableTypeStack.takeLast();
+        else
+            WASM_VALIDATOR_FAIL_IF(!frame.polymorphic, "can't pop empty stack in unreachable context"_s);
+
+        if (!zeroInvented && !nonZeroInvented) {
+            if (zero != Types::Void && nonZero != Types::Void) {
+                WASM_PARSER_FAIL_IF(isRefType(nonZero) || isRefType(zero), "can't use ref-types with unannotated select"_s);
+                WASM_VALIDATOR_FAIL_IF(nonZero != zero, "select result types must match, got "_s, nonZero, " and "_s, zero);
+                pushUnreachableOperand(zero);
+            } else if (zero != Types::Void)
+                pushUnreachableOperand(zero);
+            else if (nonZero != Types::Void)
+                pushUnreachableOperand(nonZero);
+            else
+                pushUnreachableOperand(Types::Void);
+        } else if (!zeroInvented) {
+            WASM_PARSER_FAIL_IF(zero != Types::Void && isRefType(zero), "can't use ref-types with unannotated select"_s);
+            pushUnreachableOperand(zero);
+        } else if (!nonZeroInvented) {
+            WASM_PARSER_FAIL_IF(nonZero != Types::Void && isRefType(nonZero), "can't use ref-types with unannotated select"_s);
+            pushUnreachableOperand(nonZero);
+        } else
+            pushUnreachableOperand(Types::Void);
+        return { };
+    }
+
     case Drop: {
+        WASM_FAIL_IF_HELPER_FAILS(popUnreachableOperand());
         return { };
     }
     }
 #undef CREATE_CASE
     RELEASE_ASSERT_NOT_REACHED();
 }
+
 
 } } // namespace JSC::Wasm
 
