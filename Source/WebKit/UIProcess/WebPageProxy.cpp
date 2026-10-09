@@ -13574,8 +13574,14 @@ void WebPageProxy::hidePopupMenu()
 
 #if ENABLE(CONTEXT_MENUS)
 
-void WebPageProxy::showContextMenuFromFrame(FrameInfoData&& frameInfo, ContextMenuContextData&& contextMenuContextData, UserData&& userData)
+void WebPageProxy::showContextMenuFromFrame(IPC::Connection& connection, FrameInfoData&& frameInfo, ContextMenuContextData&& contextMenuContextData, UserData&& userData)
 {
+    Ref process { WebProcessProxy::fromConnection(connection) };
+    if (auto failure = ProcessHostsFrameInPage { process, *this }.checkUntrusted(frameInfo.frameID)) {
+        MESSAGE_CHECK(process, *failure == IPC::ValidationFailure::Ignore);
+        return;
+    }
+
     // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref protectedThis { *this };
 
@@ -13599,6 +13605,7 @@ void WebPageProxy::showContextMenuFromFrame(FrameInfoData&& frameInfo, ContextMe
     discardQueuedMouseEvents();
 
     internals().activeContextMenuContextData = contextMenuContextData;
+    internals().activeContextMenuProcess = process.get();
 
     Ref activeContextMenu = pageClient->createContextMenuProxy(*this, WTF::move(frameInfo), WTF::move(contextMenuContextData), userData);
     m_activeContextMenu = activeContextMenu.copyRef();
@@ -13615,9 +13622,14 @@ void WebPageProxy::didShowContextMenu()
         pageClient->didShowContextMenu();
 }
 
+bool WebPageProxy::contextMenuReplyReachesAskingProcess(FrameIdentifier frameID)
+{
+    return processContainingFrame(frameID).ptr() == internals().activeContextMenuProcess.get();
+}
+
 void WebPageProxy::didDismissContextMenu(const FrameInfoData& frameInfo)
 {
-    if (hasRunningProcess())
+    if (hasRunningProcess() && contextMenuReplyReachesAskingProcess(frameInfo.frameID))
         sendToProcessContainingFrame(frameInfo.frameID, Messages::WebPage::DidDismissContextMenu());
 
     if (RefPtr pageClient = this->pageClient())
@@ -13631,6 +13643,9 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
         m_contextMenuClient->customContextMenuItemSelected(*this, item);
         return;
     }
+
+    if (!contextMenuReplyReachesAskingProcess(frameInfo.frameID))
+        return;
 
     struct DownloadInfo {
         String url;
@@ -13796,8 +13811,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
     }
     auto targetFrameID = frameInfo.frameID;
     platformDidSelectItemFromActiveContextMenu(item, targetFrameID, [weakThis = WeakPtr { *this }, item, targetFrameID] () mutable {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
+        RefPtr protectedThis { weakThis.get() };
+        if (!protectedThis || !protectedThis->contextMenuReplyReachesAskingProcess(targetFrameID))
+            return;
+        protectedThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
     });
 }
 
