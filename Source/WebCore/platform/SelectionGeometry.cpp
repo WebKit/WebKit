@@ -42,40 +42,29 @@ SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBe
 {
 }
 
-// FIXME: We should move some of these arguments to an auxillary struct.
-SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool isInFixedPosition, int pageNumber)
+SelectionGeometry::SelectionGeometry(const FloatQuad& quad, Options&& options)
     : m_quad(quad)
-    , m_behavior(behavior)
-    , m_direction(direction)
-    , m_minX(minX)
-    , m_maxX(maxX)
-    , m_maxY(maxY)
-    , m_lineNumber(lineNumber)
-    , m_isLineBreak(isLineBreak)
-    , m_isFirstOnLine(isFirstOnLine)
-    , m_isLastOnLine(isLastOnLine)
-    , m_containsStart(containsStart)
-    , m_containsEnd(containsEnd)
-    , m_isHorizontal(isHorizontal)
-    , m_isInFixedPosition(isInFixedPosition)
-    , m_pageNumber(pageNumber)
+    , m_behavior(options.behavior)
+    , m_direction(options.direction)
+    , m_minX(options.minX)
+    , m_maxX(options.maxX)
+    , m_maxY(options.maxY)
+    , m_lineNumber(options.lineNumber)
+    , m_isLineBreak(options.isLineBreak)
+    , m_isFirstOnLine(options.isFirstOnLine)
+    , m_isLastOnLine(options.isLastOnLine)
+    , m_containsStart(options.containsStart)
+    , m_containsEnd(options.containsEnd)
+    , m_isHorizontal(options.isHorizontal)
+    , m_isInFixedPosition(options.isInFixedPosition)
+    , m_pageNumber(options.pageNumber)
 {
 }
 
+// FIXME: This constructor exists so the generated IPC decoder can reconstruct a SelectionGeometry from its
+// serialized members; keep its argument order in sync with WebCoreArgumentCodersPlatform.serialization.in.
 SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal)
-    : m_quad(quad)
-    , m_behavior(behavior)
-    , m_direction(direction)
-    , m_minX(minX)
-    , m_maxX(maxX)
-    , m_maxY(maxY)
-    , m_lineNumber(lineNumber)
-    , m_isLineBreak(isLineBreak)
-    , m_isFirstOnLine(isFirstOnLine)
-    , m_isLastOnLine(isLastOnLine)
-    , m_containsStart(containsStart)
-    , m_containsEnd(containsEnd)
-    , m_isHorizontal(isHorizontal)
+    : SelectionGeometry(quad, { behavior, direction, minX, maxX, maxY, lineNumber, isLineBreak, isFirstOnLine, isLastOnLine, containsStart, containsEnd, isHorizontal, false, 0 })
 {
 }
 
