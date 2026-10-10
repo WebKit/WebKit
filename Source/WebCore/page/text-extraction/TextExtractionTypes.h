@@ -105,6 +105,7 @@ struct Request {
     std::optional<NodeIdentifier> contextMenuTargetNodeIdentifier;
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
+    bool detectTextWithUncertainVisibility { false };
     NodeIdentifierInclusion nodeIdentifierInclusion { NodeIdentifierInclusion::None };
     OptionSet<EventListenerCategory> eventListenerCategories;
     bool includeAccessibilityAttributes { false };
@@ -129,6 +130,7 @@ struct TextItemData {
     std::optional<CharacterRange> selectedRange;
     String content;
     std::optional<Editable> editable;
+    bool hasUncertainVisibility { false };
 };
 
 struct ScrollableItemData {

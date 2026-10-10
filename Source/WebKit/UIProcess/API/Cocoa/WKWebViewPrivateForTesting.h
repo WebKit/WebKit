@@ -102,6 +102,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 @property (nonatomic, readonly) CGRect _lastVideoPresentationSetupRectForTesting;
 
+@property (nonatomic, readonly) NSUInteger _textExtractionTextRecognitionCountForTesting;
+
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
 

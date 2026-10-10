@@ -802,7 +802,7 @@ public:
         return m_options.outputFormat == TextExtractionOutputFormat::MinifiedJSON;
     }
 
-    RefPtr<TextExtractionFilterPromise> filter(const String& text, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier)
+    RefPtr<TextExtractionFilterPromise> filter(const String& text, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier, bool hasUncertainVisibility)
     {
         if (m_options.filterCallbacks.isEmpty())
             return nullptr;
@@ -810,7 +810,7 @@ public:
         TextExtractionFilterPromise::Producer producer;
         Ref promise = producer.promise();
 
-        filterRecursive(text, frameIdentifier, identifier, 0, [producer = WTF::move(producer)](auto&& result) mutable {
+        filterRecursive(text, frameIdentifier, identifier, hasUncertainVisibility, 0, [producer = WTF::move(producer)](auto&& result) mutable {
             producer.settle(WTF::move(result));
         });
 
@@ -946,20 +946,20 @@ public:
     }
 
 private:
-    void filterRecursive(const String& originalText, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier, size_t index, CompletionHandler<void(String&&)>&& completion)
+    void filterRecursive(const String& originalText, const std::optional<FrameIdentifier>& frameIdentifier, const std::optional<NodeIdentifier>& identifier, bool hasUncertainVisibility, size_t index, CompletionHandler<void(String&&)>&& completion)
     {
         if (index >= m_options.filterCallbacks.size())
             return completion(String { originalText });
 
-        Ref promise = m_options.filterCallbacks[index](originalText, std::optional { frameIdentifier }, std::optional { identifier });
-        promise->whenSettled(RunLoop::mainSingleton(), [originalText, completion = WTF::move(completion), protectedThis = Ref { *this }, frameIdentifier, identifier, index](auto&& result) mutable {
+        Ref promise = m_options.filterCallbacks[index](originalText, std::optional { frameIdentifier }, std::optional { identifier }, hasUncertainVisibility);
+        promise->whenSettled(RunLoop::mainSingleton(), [originalText, completion = WTF::move(completion), protectedThis = Ref { *this }, frameIdentifier, identifier, hasUncertainVisibility, index](auto&& result) mutable {
             if (originalText != result)
                 protectedThis->m_filteredOutAnyText = true;
 
             if (!result)
                 return completion({ });
 
-            protectedThis->filterRecursive(WTF::move(*result), frameIdentifier, identifier, index + 1, WTF::move(completion));
+            protectedThis->filterRecursive(WTF::move(*result), frameIdentifier, identifier, hasUncertainVisibility, index + 1, WTF::move(completion));
         });
     }
 
@@ -1338,7 +1338,7 @@ static void addJSONTextContent(Ref<JSON::Object>&& jsonObject, const TextExtract
     };
 
     auto originalContent = textData.content;
-    RefPtr filterPromise = aggregator.filter(originalContent, frameIdentifier, identifier);
+    RefPtr filterPromise = aggregator.filter(originalContent, frameIdentifier, identifier, textData.hasUncertainVisibility);
     if (!filterPromise)
         return completion(WTF::move(originalContent));
 
@@ -1731,7 +1731,7 @@ static void addPartsForText(const TextExtraction::TextItemData& textItem, TextEx
         aggregator->addResult(currentLine, WTF::move(textParts), WTF::move(cachedTextParts));
     };
 
-    RefPtr filterPromise = aggregator->filter(textItem.content, frameIdentifier, enclosingNode);
+    RefPtr filterPromise = aggregator->filter(textItem.content, frameIdentifier, enclosingNode, textItem.hasUncertainVisibility);
     if (!filterPromise) {
         completion(String { textItem.content });
         return;

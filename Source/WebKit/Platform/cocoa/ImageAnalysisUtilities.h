@@ -27,9 +27,12 @@
 
 #if ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)
 
+#import <WebCore/FloatRect.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 OBJC_CLASS NSData;
 OBJC_CLASS NSError;
@@ -86,6 +89,12 @@ void requestPayloadForQRCode(CGImageRef, CompletionHandler<void(NSString *)>&&);
 
 enum class TextRecognitionLevel : bool { Accurate, Fast };
 void recognizeText(CGImageRef, std::optional<TextRecognitionLevel>, CompletionHandler<void(NSString *, NSError *)>&&);
+
+struct RecognizedTextLine {
+    String text;
+    WebCore::FloatRect rect;
+};
+void recognizeTextLines(CGImageRef, std::optional<TextRecognitionLevel>, CompletionHandler<void(Vector<RecognizedTextLine>&&, NSError *)>&&);
 #endif
 
 } // namespace WebKit

@@ -48,6 +48,7 @@
 
     _dataDetectorTypes = _WKTextExtractionDataDetectorNone;
     _filterOptions = _WKTextExtractionFilterAll;
+    _textRecognitionPolicy = _WKTextExtractionTextRecognitionPolicyAllText;
     _includeURLs = YES;
     _includeRects = YES;
     _includeTagName = NO;

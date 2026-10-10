@@ -606,6 +606,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+- (NSUInteger)_textExtractionTextRecognitionCountForTesting
+{
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    return _textExtractionTextRecognitionCount;
+#else
+    return 0;
+#endif
+}
+
 - (CGRect)_lastVideoPresentationSetupRectForTesting
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)

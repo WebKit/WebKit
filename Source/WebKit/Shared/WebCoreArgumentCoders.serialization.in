@@ -5026,6 +5026,7 @@ header: <WebCore/TextExtractionTypes.h>
     std::optional<WebCore::NodeIdentifier> contextMenuTargetNodeIdentifier;
     bool mergeParagraphs;
     bool skipNearlyTransparentContent;
+    bool detectTextWithUncertainVisibility;
     WebCore::TextExtraction::NodeIdentifierInclusion nodeIdentifierInclusion;
     OptionSet<WebCore::TextExtraction::EventListenerCategory> eventListenerCategories;
     bool includeAccessibilityAttributes;
@@ -5058,6 +5059,7 @@ header: <WebCore/TextExtractionTypes.h>
     std::optional<WebCore::CharacterRange> selectedRange;
     String content;
     std::optional<WebCore::TextExtraction::Editable> editable;
+    bool hasUncertainVisibility;
 };
 
 header: <WebCore/TextExtractionTypes.h>

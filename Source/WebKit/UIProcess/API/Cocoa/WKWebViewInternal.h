@@ -602,6 +602,7 @@ struct LiveResizeSnapshotState {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
     std::optional<HashSet<String>> _textExtractionRecognizedWords;
+    NSUInteger _textExtractionTextRecognitionCount;
 #endif
     RefPtr<WebKit::TextExtractionURLCache> _textExtractionURLCache;
     Vector<std::pair<String, String>> _lastTextExtractionReplacementStrings;
@@ -817,6 +818,7 @@ struct LiveResizeSnapshotState {
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
 - (void)_validateText:(const String&)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(const String&)>&&)completionHandler;
+- (void)_recognizeTextInCanvasesAndImagesInResult:(WebCore::TextExtraction::Result&&)result completionHandler:(CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&)completionHandler;
 #endif
 
 #endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP

@@ -422,10 +422,10 @@ static WorkQueue& textRecognitionQueueSingleton()
     return queue.get();
 }
 
-void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, CompletionHandler<void(NSString *, NSError *)>&& completion)
+void recognizeTextLines(CGImageRef image, std::optional<TextRecognitionLevel> level, CompletionHandler<void(Vector<RecognizedTextLine>&&, NSError *)>&& completion)
 {
     textRecognitionQueueSingleton().dispatch([level, image = retainPtr(image), completion = WTF::move(completion)] mutable {
-        __block RetainPtr<NSString> resultText;
+        __block Vector<RecognizedTextLine> lines;
         __block RetainPtr<NSError> error;
         RetainPtr request = adoptNS([PAL::allocVNRecognizeTextRequestInstance() initWithCompletionHandler:^(VNRequest *request, NSError *requestError) {
             if (requestError) {
@@ -434,24 +434,14 @@ void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, 
             }
 
             RetainPtr observations = dynamic_objc_cast<NSArray>(request.results);
-            if (![observations count]) {
-                resultText = @"";
-                return;
-            }
-
-            RetainPtr resultBuffer = adoptNS([NSMutableString new]);
             for (VNRecognizedTextObservation *observation in observations.get()) {
                 RetainPtr best = [[observation topCandidates:1] firstObject];
                 if (!best)
                     continue;
 
-                if ([resultBuffer length])
-                    [resultBuffer appendString:@" "];
-
-                [resultBuffer appendString:retainPtr([best string]).get()];
+                auto box = observation.boundingBox;
+                lines.append({ String { retainPtr([best string]).get() }, WebCore::FloatRect { static_cast<float>(box.origin.x), static_cast<float>(1 - box.origin.y - box.size.height), static_cast<float>(box.size.width), static_cast<float>(box.size.height) } });
             }
-
-            resultText = resultBuffer;
         }]);
 
         if (level) {
@@ -479,15 +469,28 @@ void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, 
             }];
         }
 
-        RunLoop::mainSingleton().dispatch([resultText = WTF::move(resultText), error = WTF::move(error), completion = WTF::move(completion)] mutable {
-            if (error)
-                completion(nil, error.get());
-            else
-                completion(resultText.get(), nil);
+        RunLoop::mainSingleton().dispatch([lines = WTF::move(lines), error = WTF::move(error), completion = WTF::move(completion)] mutable {
+            completion(WTF::move(lines), error.get());
         });
     });
 }
 
+
+void recognizeText(CGImageRef image, std::optional<TextRecognitionLevel> level, CompletionHandler<void(NSString *, NSError *)>&& completion)
+{
+    recognizeTextLines(image, level, [completion = WTF::move(completion)](auto&& lines, NSError *error) mutable {
+        if (error)
+            return completion(nil, error);
+
+        RetainPtr text = adoptNS([NSMutableString new]);
+        for (auto& line : lines) {
+            if ([text length])
+                [text appendString:@" "];
+            [text appendString:line.text.createNSString().get()];
+        }
+        completion(text.get(), nil);
+    });
+}
 #endif // HAVE(VISION)
 
 } // namespace WebKit

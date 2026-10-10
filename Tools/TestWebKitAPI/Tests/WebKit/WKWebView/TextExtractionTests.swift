@@ -1774,6 +1774,109 @@ struct TextExtractionTests {
     #endif // ENABLE_TEXT_EXTRACTION_FILTER
 
     @Test
+    func textRecognitionPolicyStillFiltersTextWithUncertainVisibility() async throws {
+        try await webView.load(testPageNamed: "debug-text-extraction")
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = .textRecognition
+        configuration.textRecognitionPolicy = .textWithUncertainVisibility
+        let result = try #require(await webView._extractDebugText(with: configuration))
+
+        #expect(result.textContent.contains("“The quick brown fox jumped over the lazy dog”"))
+        #if ENABLE_TEXT_EXTRACTION_FILTER
+        #expect(result.textContent.contains("Here’s to the crazy ones") == false)
+        #expect(result.filteredOutAnyText)
+        #expect(webView._textExtractionTextRecognitionCountForTesting >= 1)
+        #endif
+    }
+
+    @Test
+    func textRecognitionPolicySkipsRecognitionForEvidentlyVisibleText() async throws {
+        try await webView.load(
+            html: """
+                <body>\
+                <h1>Northstar Bakery</h1>\
+                <p>Fresh sourdough loaves are baked every morning in our wood-fired oven, and sold until the shelves are empty.</p>\
+                </body>
+                """
+        )
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = .textRecognition
+        configuration.textRecognitionPolicy = .textWithUncertainVisibility
+        let result = try #require(await webView._extractDebugText(with: configuration))
+
+        #expect(result.textContent.contains("Fresh sourdough loaves are baked every morning"))
+        #expect(!result.filteredOutAnyText)
+        #expect(webView._textExtractionTextRecognitionCountForTesting == 0)
+    }
+
+    @Test
+    func textRecognitionPolicyRecognizesTextDrawnInLargeCanvas() async throws {
+        try await webView.load(
+            html: """
+                <body style='margin: 0'>\
+                <p>Order summary</p>\
+                <canvas width='800' height='300'></canvas>\
+                <script>\
+                const context = document.querySelector('canvas').getContext('2d');\
+                context.fillStyle = 'white';\
+                context.fillRect(0, 0, 800, 300);\
+                context.fillStyle = 'black';\
+                context.font = '48px sans-serif';\
+                context.fillText('Spring menu now available', 20, 150);\
+                </script>\
+                </body>
+                """
+        )
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = .textRecognition
+        configuration.textRecognitionPolicy = .textWithUncertainVisibility
+        let result = try #require(await webView._extractDebugText(with: configuration))
+
+        #expect(result.textContent.contains("Order summary"))
+        #if ENABLE_TEXT_EXTRACTION_FILTER
+        #expect(webView._textExtractionTextRecognitionCountForTesting == 1)
+        #expect(result.textContent.contains("Spring menu now available"))
+        #endif
+    }
+
+    @Test
+    func textRecognitionPolicyRecognizesTextSplitAcrossManySmallCanvases() async throws {
+        let words = ["Fresh", "sourdough", "is", "baked", "every", "morning", "in", "our", "wood", "fired", "oven", "daily"]
+        let canvases = words.map { "<canvas width='200' height='60' data-word='\($0)'></canvas>" }.joined()
+        try await webView.load(
+            html: """
+                <body style='margin: 0; line-height: 0'>\
+                \(canvases)\
+                <script>\
+                for (const canvas of document.querySelectorAll('canvas')) {\
+                    const context = canvas.getContext('2d');\
+                    context.fillStyle = 'white';\
+                    context.fillRect(0, 0, 200, 60);\
+                    context.fillStyle = 'black';\
+                    context.font = '32px sans-serif';\
+                    context.fillText(canvas.dataset.word, 10, 42);\
+                }\
+                </script>\
+                </body>
+                """
+        )
+
+        let configuration = _WKTextExtractionConfiguration()
+        configuration.filterOptions = .textRecognition
+        configuration.textRecognitionPolicy = .textWithUncertainVisibility
+        let result = try #require(await webView._extractDebugText(with: configuration))
+
+        #if ENABLE_TEXT_EXTRACTION_FILTER
+        #expect(webView._textExtractionTextRecognitionCountForTesting == 1)
+        #expect(result.textContent.contains("sourdough"))
+        #expect(result.textContent.contains("morning"))
+        #endif
+    }
+
+    @Test
     func filterRedundantTextInLinks() async throws {
         try await webView.load(
             html: """
