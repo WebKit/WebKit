@@ -33,7 +33,39 @@ import hashlib
 import json
 import os
 import re
+import shlex
 import sys
+
+
+def include_search_directories(entry):
+    """Returns the include directories the bundle itself was compiled with.
+
+    The parent-directory heuristic below only maps bundles back to frameworks
+    living under Source/, so projects elsewhere in the tree (for instance
+    Tools/TestWebKitAPI) need the compiler's own search path to be resolved.
+    """
+    if 'arguments' in entry:
+        arguments = entry['arguments']
+    else:
+        arguments = shlex.split(entry['command'])
+
+    directories = []
+    index = 0
+    while index < len(arguments):
+        argument = arguments[index]
+        for flag in ('-iquote', '-I'):
+            if argument == flag:
+                if index + 1 < len(arguments):
+                    directories.append(arguments[index + 1])
+                    index += 1
+                break
+            if argument.startswith(flag):
+                directories.append(argument[len(flag):])
+                break
+        index += 1
+
+    return directories
+
 
 parser = argparse.ArgumentParser(
     description='This tool takes the compile_commands.json output by CMake and expands any UnifiedSources in it to regular sources.'
@@ -63,6 +95,7 @@ if last_hash == input_hash and os.path.exists(args.output_file):
     sys.exit(0)
 
 generated_compile_commands = []
+unresolved_includes = 0
 
 compile_commands = json.loads(input_data)
 
@@ -88,9 +121,12 @@ for entry in compile_commands:
     else:
         search_directories.append(os.path.join(source_dir, 'Source', parent_dir_1))
 
+    search_directories += include_search_directories(entry)
+
     with open(entry_file) as f:
         for line in f.readlines():
-            include_path = line[10:-2]  # Extract header from `#include "HEADER"\n`
+            # Extract the bundled source from `#include "SOURCE"\n`
+            include_path = line[10:-2]
             for d in search_directories:
                 include_file = os.path.join(d, include_path)
 
@@ -108,6 +144,12 @@ for entry in compile_commands:
 
                     generated_compile_commands.append(renamed_entry)
                     break
+            else:
+                unresolved_includes += 1
+
+if unresolved_includes:
+    print('%s: warning: dropped %d unified source member(s) that could not be '
+          'resolved to a file on disk.' % (parser.prog, unresolved_includes))
 
 output_directory = os.path.dirname(args.output_file)
 if not os.path.isdir(output_directory):

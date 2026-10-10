@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2026 ChangSeok Oh <changseok@webkit.org>. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,12 +29,40 @@
 
 # Script to generate compile_commands.json file
 
-import re
-import os
-import sys
+import argparse
 import glob
 import json
-import argparse
+import os
+import subprocess
+import sys
+import tempfile
+
+OUTPUT_FILE = 'compile_commands.json'
+THIRD_PARTY_DIRECTORY = os.path.join('Source', 'ThirdParty')
+
+
+def expand_unified_sources(entries, source_dir, build_dir):
+    """Expands the UnifiedSource entries into the sources they bundle.
+
+    rewrite-compile-commands already does this for the CMake ports, so run it
+    rather than growing a second copy of it here.
+    """
+    script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                          'rewrite-compile-commands')
+
+    with tempfile.TemporaryDirectory() as temporary_dir:
+        input_file = os.path.join(temporary_dir, OUTPUT_FILE)
+        output_file = os.path.join(temporary_dir, 'expanded', OUTPUT_FILE)
+
+        with open(input_file, 'w') as unexpanded:
+            json.dump(entries, unexpanded)
+
+        subprocess.check_call([sys.executable, script, input_file,
+                               output_file, source_dir, build_dir])
+
+        with open(output_file) as expanded:
+            return json.load(expanded)
+
 
 # Get command line args
 parser = argparse.ArgumentParser(description='Generate compile_commands.json for Xcode builds',
@@ -75,30 +104,22 @@ if not os.path.exists(compile_commands_dir):
 # valid json files. Sometimes if a compile error happens or the user stops the build part way through
 # there will be a very invalid json file sitting in the directory. When we go to bundle it up into the final
 # compile_commands.json file, we now have an invalid compile_commands.json file and clangd will not work.
-# To prevent this from happening we should check that every json file we add is valid, and also ensure there are no 
-# duplicate entries. We will build a map of all the valid files.
+# To prevent this from happening we should check that every json file we add is valid, and also ensure there are no
+# duplicate entries.
 
-# Key   - JSON file contents
-# Value - Timestamp contents
-files = dict()
+entries = []
+seen_entries = set()
 
-# Do not index third party code.
-# Most people probably do not need it.
-third_party_regex = re.compile('Source/ThirdParty')
+for j_file_name in sorted(glob.glob(compile_commands_dir + "/*.json")):
+    with open(j_file_name, "r") as j_file:
+        json_contents = j_file.read()
 
-for j_file_name in glob.glob(compile_commands_dir + "/*.json"):
-    j_file = open(j_file_name, "r")
-    json_contents = j_file.read()
-
-    if not opts.include_third_party and third_party_regex.search(json_contents):
-        continue
-
-    # -2 gets rid of the comma at the end of the file.
-    json_contents = json_contents[:-2]
+    # Each fragment is written to be concatenated with the others, so it ends with a comma.
+    json_contents = json_contents.rstrip().rstrip(',')
 
     # Try to load JSON File
     try:
-        json.loads(json_contents)
+        entry = json.loads(json_contents)
     except Exception:
         if opts.delete_invalid:
             os.remove(j_file_name)
@@ -107,30 +128,40 @@ for j_file_name in glob.glob(compile_commands_dir + "/*.json"):
             print("Invalid JSON File: " + j_file_name)
         continue
 
-    # Validate if the json file already exists in the map.
-    if json_contents in files:
-        pass
-    else:
-        files[json_contents] = os.path.getmtime(j_file_name)
+    # Match the file being compiled, not the flags, so that first party code
+    # including a third party header is kept.
+    if not opts.include_third_party and THIRD_PARTY_DIRECTORY in entry.get('file', ''):
+        continue
 
-# Remove any previous compile_commands.json
-try:
-    os.remove("compile_commands.json")
-except Exception:
-    pass
+    if json_contents in seen_entries:
+        continue
+    seen_entries.add(json_contents)
+    entries.append(entry)
+
+unified_source_count = sum(1 for entry in entries if 'UnifiedSource' in entry['file'])
+direct_entry_count = len(entries) - unified_source_count
+expanded_entry_count = 0
+
+# Xcode only bundles sources when unified builds are enabled, so let the build
+# itself say whether there is anything to expand.
+if unified_source_count:
+    entries = expand_unified_sources(entries, os.path.abspath(base_dir),
+                                     os.path.abspath(opts.built_products_dir))
+    expanded_entry_count = len(entries) - direct_entry_count
 
 # Write the new compile_commands.json file
-new_compile_commands_file = open("compile_commands.json", 'w')
-new_compile_commands_file.write("[")
+with open(OUTPUT_FILE, 'w') as new_compile_commands_file:
+    new_compile_commands_file.write("[")
+    for index, entry in enumerate(entries):
+        if index != 0:
+            new_compile_commands_file.write(",\n")
+        else:
+            new_compile_commands_file.write("\n")
+        new_compile_commands_file.write(json.dumps(entry))
+    new_compile_commands_file.write("\n]\n")
 
-for index, key in enumerate(files.keys()):
-    if index != 0:
-        new_compile_commands_file.write(",\n")
-    else:
-        new_compile_commands_file.write("\n")
-    new_compile_commands_file.write(key)
-
-new_compile_commands_file.write("\n]\n")
-new_compile_commands_file.close()
-
-print("Generated Compile Commands!")
+summary = "Generated Compile Commands! %d entries" % len(entries)
+if expanded_entry_count:
+    summary += "\n  (%d direct, %d expanded from %d unified sources)" \
+               % (direct_entry_count, expanded_entry_count, unified_source_count)
+print(summary)
