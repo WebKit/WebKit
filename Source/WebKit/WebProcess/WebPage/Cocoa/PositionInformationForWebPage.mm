@@ -94,10 +94,10 @@
 
 namespace WebKit {
 
-static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+static void focusedElementPositionInformation(WebPage& page, const WebCore::LocalFrame& localRoot, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     RefPtr frame = page.corePage()->focusController().focusedOrMainFrame();
-    if (!frame || !frame->editor().hasComposition())
+    if (!frame || &frame->rootFrame() != &localRoot || !frame->editor().hasComposition())
         return;
 
     const uint32_t kHitAreaWidth = 66;
@@ -548,7 +548,7 @@ static void selectionPositionInformation(WebPage& page, WebCore::LocalFrame& loc
 #if PLATFORM(MACCATALYST)
     bool isInsideFixedPosition;
     WebCore::VisiblePosition caretPosition(renderer->visiblePositionForPoint(contentsPoint, WebCore::HitTestSource::User));
-    info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
+    info.caretRect = frameView->contentsToRootView(caretPosition.absoluteCaretBounds(&isInsideFixedPosition));
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -777,7 +777,7 @@ Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> pos
     }();
 
     if (page.focusedElement())
-        focusedElementPositionInformation(page, *page.focusedElement(), request, info);
+        focusedElementPositionInformation(page, localRoot, *page.focusedElement(), request, info);
 
     RefPtr hitTestNode = hitTestResult.innerNonSharedNode();
 
