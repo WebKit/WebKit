@@ -27,6 +27,7 @@
 
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -1013,6 +1014,78 @@ TEST(EnhancedSecurity, ForceDisabledOverridesSecurityRestrictionMode)
     EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
     NSString *processVariant = [webView _webContentProcessVariantForFrame:nil];
     EXPECT_STREQ("standard", processVariant.UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeUsesLockdownProcess)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeOverridesLockdownModeOptOut)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = NO;
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeTakesPrecedenceOverEnhancedSecurity)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeOverridesNavigationPolicyOptOut)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.lockdownModeEnabled = NO;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 }
 
 #endif

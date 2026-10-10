@@ -6215,7 +6215,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         securityRestrictionsSourceFrame = m_mainFrame;
 
     auto lockdownMode = securityRestrictionsSourceFrame ? securityRestrictionsSourceFrame->process().lockdownMode()
-        : ((websitePolicies ? websitePolicies->lockdownModeEnabled() : shouldEnableLockdownMode()) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
+        : ((preferences->forceLockdownMode() || (websitePolicies ? websitePolicies->lockdownModeEnabled() : shouldEnableLockdownMode())) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
 
     // Apply CSP upgrade-insecure-requests before computing Site. Only needed for remote-frame
     // navigations. Same-process navigations are already upgraded in the WebProcess.
@@ -19566,7 +19566,7 @@ void WebPageProxy::scrollToEdge(WebCore::RectEdges<bool> edges, WebCore::ScrollI
 
 bool WebPageProxy::shouldEnableLockdownMode() const
 {
-    return m_configuration->lockdownModeEnabled();
+    return protect(preferences())->forceLockdownMode() || m_configuration->lockdownModeEnabled();
 }
 
 EnhancedSecurity WebPageProxy::currentEnhancedSecurityState(const API::WebsitePolicies* websitePolicies) const
