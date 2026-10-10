@@ -69,7 +69,6 @@ public:
     virtual void loadEventFired() = 0;
     virtual void frameNavigated(WebCore::LocalFrame&) = 0;
     virtual void frameDetached(WebCore::LocalFrame&) = 0;
-    virtual void loaderDetachedFromFrame(WebCore::DocumentLoader&) = 0;
 
     // User preference / accessibility events
     virtual void accessibilitySettingsDidChange() = 0;

@@ -675,7 +675,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             frame.commitProvisionalLoad(framePayload.name, framePayload.securityOrigin);
         } else {
             let mainResource;
-            if (frame.mainResource.url !== framePayload.url || frame.loaderIdentifier !== framePayload.loaderId) {
+            if (frame.mainResource.url !== framePayload.url || frame.loaderIdentifier !== (framePayload.loaderId || null)) {
                 // Navigations like back/forward do not have provisional loads, so create a new main resource here.
                 mainResource = new WI.Resource(framePayload.url, {
                     mimeType: framePayload.mimeType,
@@ -759,7 +759,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (resource) {
             // This is an existing request which is being redirected, update the resource.
             console.assert(resource.parentFrame?.id === frameIdentifier || resource.target?.identifier === targetId);
-            console.assert(resource.loaderIdentifier === loaderIdentifier);
+            console.assert(resource.loaderIdentifier === (loaderIdentifier || null));
             resource.updateForRedirectResponse(request, redirectResponse, elapsedTime, walltime);
             return;
         }
@@ -1555,7 +1555,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             if (resourcePayload.type === "Document" && resourcePayload.url === payload.frame.url)
                 continue;
 
-            var resource = this._createResource(resourcePayload, payload);
+            var resource = this._createResource(resourcePayload, payload.frame);
             if (resource.target === WI.pageTarget)
                 frame.addResource(resource);
             else if (resource.target)
@@ -1637,7 +1637,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             if (frame.resourceCollection.resourcesForURL(resourcePayload.url).size)
                 continue;
 
-            let resource = this._createResource(resourcePayload, payload);
+            let resource = this._createResource(resourcePayload, framePayload);
             if (resource.target === WI.pageTarget)
                 frame.addResource(resource);
             else if (resource.target)

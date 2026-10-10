@@ -74,7 +74,6 @@ public:
     void loadEventFired() final;
     void frameNavigated(WebCore::LocalFrame&) final;
     void frameDetached(WebCore::LocalFrame&) final;
-    void loaderDetachedFromFrame(WebCore::DocumentLoader&) final;
     void accessibilitySettingsDidChange() final;
     void defaultUserPreferencesDidChange() final;
 #if ENABLE(DARK_MODE_CSS)

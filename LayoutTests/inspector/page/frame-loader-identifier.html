@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function loadScriptInFrame(name)
+{
+    let frameDocument = frames[name].document;
+    let script = frameDocument.createElement("script");
+    script.src = new URL("resources/search-script.js?" + name, location.href).href;
+    frameDocument.body.appendChild(script);
+}
+
+function navigateFrame(name)
+{
+    frames[name].location.href = new URL("resources/blank.html?" + name, location.href).href;
+}
+
+function test()
+{
+    const framesWithNavigation = ["noSrc", "aboutBlank", "srcdoc", "dataURL", "file"];
+    const frameWithoutNavigation = "javascriptURL";
+
+    function childFrame(name) {
+        return Array.from(WI.networkManager.mainFrame.childFrameCollection).find((frame) => frame.name === name);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Page.FrameLoaderIdentifier");
+
+    suite.addTestCase({
+        name: "Page.FrameLoaderIdentifier.ResourceTree",
+        description: "Check that only a frame whose document came from a navigation has a loader identifier.",
+        async test() {
+            let {frameTree} = await PageAgent.getResourceTree();
+            let framePayloads = new Map(frameTree.childFrames.map((child) => [child.frame.name, child.frame]));
+
+            InspectorTest.expectThat(frameTree.frame.loaderId, "Main frame should have a loader identifier.");
+            InspectorTest.expectEqual(WI.networkManager.mainFrame.loaderIdentifier, frameTree.frame.loaderId, "Main frame model should have the loader identifier from the resource tree.");
+
+            let loaderIdentifiers = new Set([frameTree.frame.loaderId]);
+            for (let name of framesWithNavigation) {
+                let loaderId = framePayloads.get(name).loaderId;
+                InspectorTest.expectThat(loaderId, `Frame "${name}" should have a loader identifier.`);
+                InspectorTest.expectEqual(childFrame(name).loaderIdentifier, loaderId, `Frame "${name}" model should have the loader identifier from the resource tree.`);
+                loaderIdentifiers.add(loaderId);
+            }
+            InspectorTest.expectEqual(loaderIdentifiers.size, framesWithNavigation.length + 1, "Loader identifiers should be unique.");
+
+            InspectorTest.expectEqual(framePayloads.get(frameWithoutNavigation).loaderId, "", `Frame "${frameWithoutNavigation}" should have an empty loader identifier.`);
+            InspectorTest.expectNull(childFrame(frameWithoutNavigation).loaderIdentifier, `Frame "${frameWithoutNavigation}" model should have no loader identifier.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.FrameLoaderIdentifier.ResourceTreeSubresources",
+        description: "Check that a subresource from the resource tree has the loader identifier of its frame.",
+        async test() {
+            let mainFrame = WI.networkManager.mainFrame;
+            let resourcesFromTree = Array.from(mainFrame.resourceCollection).filter((resource) => !resource.requestIdentifier);
+
+            InspectorTest.expectGreaterThan(resourcesFromTree.length, 0, "Main frame should have subresources from the resource tree.");
+            InspectorTest.expectThat(resourcesFromTree.every((resource) => resource.loaderIdentifier === mainFrame.loaderIdentifier), "Subresources from the resource tree should have the loader identifier of the main frame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.FrameLoaderIdentifier.SubresourceInFrameWithoutNavigation",
+        description: "Check that a subresource of a document that did not come from a navigation is added to its frame.",
+        async test() {
+            let frame = childFrame(frameWithoutNavigation);
+            let resourceAddedPromise = frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await InspectorTest.evaluateInPage(`loadScriptInFrame("${frameWithoutNavigation}")`);
+            let {resource} = (await resourceAddedPromise).data;
+
+            InspectorTest.expectNull(resource.loaderIdentifier, "Resource should have no loader identifier.");
+            InspectorTest.expectEqual(resource.parentFrame, frame, "Resource should belong to the frame.");
+            InspectorTest.expectNull(frame.loaderIdentifier, "Frame should still have no loader identifier.");
+            InspectorTest.expectFalse(frame.provisionalMainResource, "Frame should not start a provisional load.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.FrameLoaderIdentifier.NavigateFrameWithoutNavigation",
+        description: "Check that a frame gets a loader identifier when it navigates away from a document that did not come from a navigation.",
+        async test() {
+            let frame = childFrame(frameWithoutNavigation);
+            let mainResourceDidChangePromise = frame.awaitEvent(WI.Frame.Event.MainResourceDidChange);
+            await InspectorTest.evaluateInPage(`navigateFrame("${frameWithoutNavigation}")`);
+            await mainResourceDidChangePromise;
+
+            InspectorTest.expectThat(frame.mainResource.url.endsWith("blank.html?" + frameWithoutNavigation), "Frame should have the new main resource.");
+            InspectorTest.expectThat(frame.loaderIdentifier, "Frame should have a loader identifier.");
+            InspectorTest.expectEqual(frame.mainResource.loaderIdentifier, frame.loaderIdentifier, "Main resource should have the loader identifier of the frame.");
+            InspectorTest.expectThat(frame.mainResource.requestIdentifier, "Main resource should be the one requested over the network.");
+            InspectorTest.expectEqual(frame.resourceCollection.size, 0, "Frame should have no subresources from the previous document.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a frame has a loader identifier only when its document came from a navigation.</p>
+<iframe name="noSrc"></iframe>
+<iframe name="aboutBlank" src="about:blank"></iframe>
+<iframe name="srcdoc" srcdoc="<p>srcdoc</p>"></iframe>
+<iframe name="dataURL" src="data:text/html,<p>data</p>"></iframe>
+<iframe name="file" src="resources/blank.html"></iframe>
+<iframe name="javascriptURL" src="javascript:'<p>javascript</p>'"></iframe>
+</body>
+</html>

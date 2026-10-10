@@ -188,10 +188,6 @@ void PageAgentProxy::frameDetached(LocalFrame& frame)
         m_page->identifier());
 }
 
-void PageAgentProxy::loaderDetachedFromFrame(DocumentLoader&)
-{
-}
-
 void PageAgentProxy::accessibilitySettingsDidChange()
 {
 }

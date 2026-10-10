@@ -778,11 +778,6 @@ RefPtr<LocalFrame> InspectorPageAgent::assertFrame(Inspector::Protocol::ErrorStr
     return protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
 }
 
-void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
-{
-    protect(m_inspectedPage->inspectorController().identifierRegistry())->takeLoader(loader);
-}
-
 void InspectorPageAgent::accessibilitySettingsDidChange()
 {
     defaultUserPreferencesDidChange();

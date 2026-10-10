@@ -1632,8 +1632,6 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
     if (auto navigationID = std::exchange(m_navigationID, { }))
         frame->loader().client().documentLoaderDetached(*navigationID, loadWillContinueInAnotherProcess);
 
-    InspectorInstrumentation::loaderDetachedFromFrame(*frame, *this);
-
     observeFrame(nullptr);
 }
 

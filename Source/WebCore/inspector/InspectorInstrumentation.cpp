@@ -1043,12 +1043,6 @@ void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& ins
         pageDOMDebuggerAgent->frameDocumentUpdated(frame);
 }
 
-void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader& loader)
-{
-    if (CheckedPtr inspectorPageAgent = instrumentingAgents.enabledPageAgent())
-        inspectorPageAgent->loaderDetachedFromFrame(loader);
-}
-
 void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (frame.isMainFrame()) {

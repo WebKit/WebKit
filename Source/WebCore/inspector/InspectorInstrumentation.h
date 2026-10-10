@@ -251,7 +251,6 @@ public:
     static void frameDetachedFromParent(LocalFrame&);
     static void didCommitLoad(LocalFrame&, DocumentLoader*);
     static void frameDocumentUpdated(LocalFrame&);
-    static void loaderDetachedFromFrame(LocalFrame&, DocumentLoader&);
     static void frameStartedLoading(LocalFrame&);
     static void frameStoppedLoading(LocalFrame&);
     static void didCompleteRenderingFrame(LocalFrame&);
@@ -487,7 +486,6 @@ private:
     static void frameDetachedFromParentImpl(InstrumentingAgents&, LocalFrame&);
     static void didCommitLoadImpl(InstrumentingAgents&, LocalFrame&, DocumentLoader*);
     static void frameDocumentUpdatedImpl(InstrumentingAgents&, LocalFrame&);
-    static void loaderDetachedFromFrameImpl(InstrumentingAgents&, DocumentLoader&);
     static void frameStartedLoadingImpl(InstrumentingAgents&, LocalFrame&);
     static void didCompleteRenderingFrameImpl(InstrumentingAgents&, LocalFrame&);
     static void frameStoppedLoadingImpl(InstrumentingAgents&, LocalFrame&);
@@ -1320,12 +1318,6 @@ inline void InspectorInstrumentation::frameDocumentUpdated(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     frameDocumentUpdatedImpl(protect(instrumentingAgents(frame)), frame);
-}
-
-inline void InspectorInstrumentation::loaderDetachedFromFrame(LocalFrame& frame, DocumentLoader& loader)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    loaderDetachedFromFrameImpl(protect(instrumentingAgents(frame)), loader);
 }
 
 inline void InspectorInstrumentation::frameStartedLoading(LocalFrame& frame)

@@ -1,0 +1,39 @@
+Test that a frame has a loader identifier only when its document came from a navigation.
+
+
+
+== Running test suite: Page.FrameLoaderIdentifier
+-- Running test case: Page.FrameLoaderIdentifier.ResourceTree
+PASS: Main frame should have a loader identifier.
+PASS: Main frame model should have the loader identifier from the resource tree.
+PASS: Frame "noSrc" should have a loader identifier.
+PASS: Frame "noSrc" model should have the loader identifier from the resource tree.
+PASS: Frame "aboutBlank" should have a loader identifier.
+PASS: Frame "aboutBlank" model should have the loader identifier from the resource tree.
+PASS: Frame "srcdoc" should have a loader identifier.
+PASS: Frame "srcdoc" model should have the loader identifier from the resource tree.
+PASS: Frame "dataURL" should have a loader identifier.
+PASS: Frame "dataURL" model should have the loader identifier from the resource tree.
+PASS: Frame "file" should have a loader identifier.
+PASS: Frame "file" model should have the loader identifier from the resource tree.
+PASS: Loader identifiers should be unique.
+PASS: Frame "javascriptURL" should have an empty loader identifier.
+PASS: Frame "javascriptURL" model should have no loader identifier.
+
+-- Running test case: Page.FrameLoaderIdentifier.ResourceTreeSubresources
+PASS: Main frame should have subresources from the resource tree.
+PASS: Subresources from the resource tree should have the loader identifier of the main frame.
+
+-- Running test case: Page.FrameLoaderIdentifier.SubresourceInFrameWithoutNavigation
+PASS: Resource should have no loader identifier.
+PASS: Resource should belong to the frame.
+PASS: Frame should still have no loader identifier.
+PASS: Frame should not start a provisional load.
+
+-- Running test case: Page.FrameLoaderIdentifier.NavigateFrameWithoutNavigation
+PASS: Frame should have the new main resource.
+PASS: Frame should have a loader identifier.
+PASS: Main resource should have the loader identifier of the frame.
+PASS: Main resource should be the one requested over the network.
+PASS: Frame should have no subresources from the previous document.
+

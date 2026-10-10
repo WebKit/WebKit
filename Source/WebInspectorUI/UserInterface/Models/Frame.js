@@ -62,7 +62,6 @@ WI.Frame = class Frame extends WI.Object
 
     initialize(name, securityOrigin, loaderIdentifier, mainResource)
     {
-        console.assert(loaderIdentifier);
         console.assert(mainResource);
 
         var oldName = this._name;

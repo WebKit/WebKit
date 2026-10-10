@@ -109,7 +109,6 @@ public:
     void loadEventFired();
     void frameNavigated(LocalFrame&);
     void frameDetached(LocalFrame&);
-    void loaderDetachedFromFrame(DocumentLoader&);
     void accessibilitySettingsDidChange();
     void defaultUserPreferencesDidChange();
 #if ENABLE(DARK_MODE_CSS)
