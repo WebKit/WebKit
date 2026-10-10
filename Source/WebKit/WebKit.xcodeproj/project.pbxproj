@@ -2593,7 +2593,6 @@
 		E838FCB02DE90BF800703353 /* ISO18013MobileDocumentRequest+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = E838FCAF2DE90BF800703353 /* ISO18013MobileDocumentRequest+Extras.swift */; };
 		E88885682DC914C400C572B8 /* WKISO18013Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E88885662DC914C400C572B8 /* WKISO18013Request.h */; };
 		EB0FBFA72B66C61E00269CC1 /* WKMarketplaceKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0FBFA62B66C61E00269CC1 /* WKMarketplaceKit.swift */; };
-		EB355DA02B6365C1008DEAA1 /* RestrictedOpenerType.h in Headers */ = {isa = PBXBuildFile; fileRef = EB355D9F2B636559008DEAA1 /* RestrictedOpenerType.h */; };
 		EB36B16827A7B4500050E00D /* PushService.h in Headers */ = {isa = PBXBuildFile; fileRef = EB36B16627A7B4500050E00D /* PushService.h */; };
 		EB36B16927A7B4500050E00D /* PushService.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB36B16727A7B4500050E00D /* PushService.mm */; };
 		EB44A69B2C8A4F6E006595BF /* WebClipCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB44A69A2C8A4F6E006595BF /* WebClipCache.mm */; };
@@ -8985,7 +8984,6 @@
 		EB0D312E275AE13300863D8F /* com.apple.webkit.webpushd.ios.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.apple.webkit.webpushd.ios.plist; sourceTree = "<group>"; };
 		EB0FBFA62B66C61E00269CC1 /* WKMarketplaceKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKMarketplaceKit.swift; sourceTree = "<group>"; };
 		EB29BD7A2F3FB15C004F44F6 /* RelocatableFrameworksLinkerFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RelocatableFrameworksLinkerFlags.xcconfig; sourceTree = "<group>"; };
-		EB355D9F2B636559008DEAA1 /* RestrictedOpenerType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RestrictedOpenerType.h; sourceTree = "<group>"; };
 		EB36B16627A7B4500050E00D /* PushService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushService.h; sourceTree = "<group>"; };
 		EB36B16727A7B4500050E00D /* PushService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushService.mm; sourceTree = "<group>"; };
 		EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProxyingNetworkAgent.h; sourceTree = "<group>"; };
@@ -10655,7 +10653,6 @@
 				8623B1282ACE1DE4002BA9EA /* ResourceLoadInfo.serialization.in */,
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,
 				516BF1D42AE5FF3F009A0204 /* ResourceLoadStatisticsParameters.serialization.in */,
-				EB355D9F2B636559008DEAA1 /* RestrictedOpenerType.h */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
 				410482CC1DDD2FB500F006D0 /* RTCNetwork.h */,
 				5CDFAD9C2ACFA9480040A8D8 /* RTCNetwork.serialization.in */,
@@ -19030,7 +19027,6 @@
 				6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */,
 				6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */,
 				1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */,
-				EB355DA02B6365C1008DEAA1 /* RestrictedOpenerType.h in Headers */,
 				F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */,
 				442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */,
 				410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */,

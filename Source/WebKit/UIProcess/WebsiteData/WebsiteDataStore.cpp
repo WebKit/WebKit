@@ -39,7 +39,6 @@
 #include "NetworkProcessConnectionInfo.h"
 #include "NetworkProcessMessages.h"
 #include "PageLoadState.h"
-#include "RestrictedOpenerType.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "TimeBasedEvictionMode.h"
@@ -3092,28 +3091,6 @@ void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, Completi
 
     RELEASE_LOG(Push, "Sending push message to network process to handle");
     protect(networkProcess())->processPushMessage(sessionID(), WTF::move(pushMessage), WTF::move(innerHandler));
-}
-
-RestrictedOpenerType WebsiteDataStore::openerTypeForDomain(const WebCore::RegistrableDomain& domain) const
-{
-    if (!m_restrictedOpenerTypesForTesting.isEmpty()) [[unlikely]] {
-        auto it = m_restrictedOpenerTypesForTesting.find(domain);
-        return it == m_restrictedOpenerTypesForTesting.end() ? RestrictedOpenerType::Unrestricted : it->value;
-    }
-
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    return RestrictedOpenerDomainsController::singleton().lookup(domain);
-#else
-    return RestrictedOpenerType::Unrestricted;
-#endif
-}
-
-void WebsiteDataStore::setRestrictedOpenerTypeForDomainForTesting(const WebCore::RegistrableDomain& domain, RestrictedOpenerType type)
-{
-    if (domain.isEmpty())
-        return;
-
-    m_restrictedOpenerTypesForTesting.set(domain, type);
 }
 
 void WebsiteDataStore::fetchLocalStorage(CompletionHandler<void(std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&&)>&& completionHandler)

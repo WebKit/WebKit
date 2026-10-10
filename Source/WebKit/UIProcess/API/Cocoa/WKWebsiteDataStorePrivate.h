@@ -41,12 +41,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
     _WKWebsiteDataStoreFetchOptionComputeSizes = 1 << 0,
 } WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
-typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
-    _WKRestrictedOpenerTypeUnrestricted,
-    _WKRestrictedOpenerTypeNoOpener,
-    _WKRestrictedOpenerTypePostMessageAndClosed,
-} WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
-
 @interface WKWebsiteDataStore (WKPrivate)
 
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate;
@@ -150,7 +144,6 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 -(void)_storeServiceWorkerRegistrations:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
 -(void)_setCompletionHandlerForRemovalFromNetworkProcess:(void(^)(NSError* error))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
--(void)_setRestrictedOpenerTypeForTesting:(_WKRestrictedOpenerType)type forDomain:(NSString *)domain WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 -(void)_getAppBadgeForTesting:(void(^)(NSNumber *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 // Resets every security flag to its secure default, then turns off the named ones, so an empty array resets.
