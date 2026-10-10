@@ -1968,6 +1968,9 @@ namespace JSC {
             return m_numConstants + 2;
         }
 
+        unsigned usedPrivateNameCount() const { return m_usedPrivateNameCount; }
+        void setUsedPrivateNameCount(unsigned count) { m_usedPrivateNameCount = count; }
+
         StatementNode* singleStatement() const;
 
         bool isEmptyBody() const { return !m_statements; }
@@ -1989,6 +1992,7 @@ namespace JSC {
         SourceCode m_source;
         VariableEnvironment m_varDeclarations;
         int m_numConstants;
+        unsigned m_usedPrivateNameCount { 0 };
         SourceElements* m_statements;
     };
 
