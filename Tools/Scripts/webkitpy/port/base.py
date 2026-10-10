@@ -69,6 +69,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.layout_tests.models.test import test_name_and_variant
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import config as port_config
 from webkitpy.port import driver
@@ -141,15 +142,7 @@ class Port(object):
     @staticmethod
     def test_name_and_variant(test_name):
         """Splits a test name into the filename part and the variant part."""
-        if '?' in test_name:
-            name, sep, variant = test_name.partition('?')
-            return (name, sep + variant)
-
-        if '#' in test_name:
-            name, sep, variant = test_name.partition('#')
-            return (name, sep + variant)
-
-        return (test_name, '')
+        return test_name_and_variant(test_name)
 
     @staticmethod
     def sanitized_variant(variant):
@@ -462,121 +455,11 @@ class Port(object):
     def driver_name(self):
         return self.determine_driver_name(self._options)
 
-    def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False, device_type=None):
-        baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
-        fs = self._filesystem
-
-        (test_name, variant) = Port.test_name_and_variant(test_name)
-
-        baseline_ext_parts = fs.splitext(test_name)
-
-        baseline_name_root = baseline_ext_parts[0]
-        if len(variant):
-            baseline_name_root += "_" + Port.sanitized_variant(variant[1:])
-        baseline_name_root += '-expected'
-
-        baselines = []
-        for platform_dir in baseline_search_path:
-            unsuffixed = fs.join(platform_dir, baseline_name_root)
-            for suffix in suffixes:
-                if fs.exists(unsuffixed + suffix):
-                    baseline_filename = baseline_name_root + suffix
-                    baselines.append((platform_dir, baseline_filename))
-
-            if not all_baselines and baselines:
-                return baselines
-
-        if baselines:
-            return baselines
-
-        for suffix in suffixes:
-            baselines.append((None, baseline_name_root + suffix))
-        return baselines
-
-    def expected_baselines(self, test_name, suffix, all_baselines=False, device_type=None):
-        """Given a test name, finds where the baseline results are located.
-
-        Args:
-        test_name: name of test file (usually a relative path under LayoutTests/)
-        suffix: file suffix of the expected results, including dot; e.g.
-            '.txt' or '.png'.  This should not be None, but may be an empty
-            string.
-        all_baselines: If True, return an ordered list of all baseline paths
-            for the given platform. If False, return only the first one.
-        Returns
-        a list of ( platform_dir, results_filename ), where
-            platform_dir - abs path to the top of the results tree (or test
-                tree)
-            results_filename - relative path from top of tree to the results
-                file
-            (port.join() of the two gives you the full path to the file,
-                unless None was returned.)
-        Return values will be in the format appropriate for the current
-        platform (e.g., "\\" for path separators on Windows). If the results
-        file is not found, then None will be returned for the directory,
-        but the expected relative pathname will still be returned.
-
-        This routine is generic but lives here since it is used in
-        conjunction with the other baseline and filename routines that are
-        platform specific.
-        """
-        return self._expected_baselines_for_suffixes(test_name, [suffix], all_baselines=all_baselines, device_type=device_type)
-
-    def expected_filename(self, test_name, suffix, return_default=True, device_type=None):
-        """Given a test name, returns an absolute path to its expected results.
-
-        If no expected results are found in any of the searched directories,
-        the directory in which the test itself is located will be returned.
-        The return value is in the format appropriate for the platform
-        (e.g., "\\" for path separators on windows).
-
-        Args:
-        test_name: name of test file (usually a relative path under LayoutTests/)
-        suffix: file suffix of the expected results, including dot; e.g. '.txt'
-            or '.png'.  This should not be None, but may be an empty string.
-        platform: the most-specific directory name to use to build the
-            search list of directories; e.g. 'mountainlion-wk2'
-        return_default: if True, returns the path to the generic expectation if nothing
-            else is found; if False, returns None.
-
-        This routine is generic but is implemented here to live alongside
-        the other baseline and filename manipulation routines.
-        """
-        platform_dir, baseline_filename = self.expected_baselines(test_name, suffix, device_type=device_type)[0]
-        if platform_dir or return_default:
-            return self._filesystem.join(platform_dir or self.layout_tests_dir(), baseline_filename)
-        return None
-
     def is_unexpected_crash(self, test_name):
         from webkitpy.layout_tests.models.test_expectations import TestExpectations, CRASH
         expectations = TestExpectations(self, [test_name, ])
         expectations.parse_all_expectations()
         return CRASH not in expectations.filtered_expectations_for_test(test_name, False, False)
-
-    def test_key(self, test_name):
-        """Turns a test name into a list with two sublists, the natural key of the
-        dirname, and the natural key of the basename.
-
-        This can be used when sorting paths so that files in a directory.
-        directory are kept together rather than being mixed in with files in
-        subdirectories."""
-        dirname, basename = self.split_test(test_name)
-        return (self._natural_sort_key(dirname + self.TEST_PATH_SEPARATOR), self._natural_sort_key(basename))
-
-    def _natural_sort_key(self, string_to_split):
-        """ Turns a string into a list of string and number chunks, i.e. "z23a" -> ["z", 23, "a"]
-
-        This can be used to implement "natural sort" order. See:
-        http://www.codinghorror.com/blog/2007/12/sorting-for-humans-natural-sort-order.html
-        http://nedbatchelder.com/blog/200712.html#e20071211T054956
-        """
-        def tryint(val):
-            try:
-                return int(val)
-            except ValueError:
-                return val
-
-        return [(tryint(chunk), chunk) for chunk in re.split(r'(\d+)', string_to_split)]
 
     @memoized
     def test_isfile(self, test_name):
@@ -589,18 +472,6 @@ class Port(object):
         """Return True if the test name refers to a directory of tests."""
         # Used by test_expectations.py to apply rules to whole directories.
         return self._filesystem.isdir(self.abspath_for_test(test_name))
-
-    @memoized
-    def test_exists(self, test_name):
-        """Return True if the test name refers to an existing test or baseline."""
-        # Used by test_expectations.py to determine if an entry refers to a
-        # valid test and by printing.py to determine if baselines exist.
-        if self.test_isfile(test_name) or self.test_isdir(test_name):
-            return True
-        if '?' in test_name or '#' in test_name:
-            (base_name, variant) = Port.test_name_and_variant(test_name)
-            return self.test_isfile(base_name)
-        return False
 
     def split_test(self, test_name):
         """Splits a test name into the 'directory' part and the 'basename' part."""
@@ -964,6 +835,13 @@ class Port(object):
 
     def web_platform_test_server_doc_root(self):
         return web_platform_test_server.doc_root(self).replace('\\', self.TEST_PATH_SEPARATOR) + self.TEST_PATH_SEPARATOR
+
+    def test_routes(self):
+        """Returns the roots of tests served over HTTP, for URL computation.
+
+        Each entry is a ServerRoute: test_file_dir is a "/"-separated directory
+        relative to LayoutTests, in the same form as Test.file_path."""
+        return apache_http_server.test_routes(self) + web_platform_test_server.test_routes(self)
 
     def web_platform_test_server_base_http_url(self, localhost_only=False):
         return web_platform_test_server.base_http_url(self, localhost_only)

@@ -195,3 +195,75 @@ class SummarizedResultsTest(unittest.TestCase):
                 summary['baseline_search_path'],
                 ['platform/test-mac-leopard', 'platform/test-mac-snowleopard'],
             )
+
+    def test_summarized_results_variant_in_test_name(self):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            initial_results = run_results(self.port)
+            initial_results.add(get_result('passes/text.html?1-100', test_expectations.TIMEOUT), False)
+            summary = test_run_results.summarize_results(
+                self.port, {None: initial_results.expectations}, initial_results, None,
+                enabled_pixel_tests_in_retry=False)
+            self.assertIn('text.html?1-100', summary['tests']['passes'])
+
+    def test_summarized_results_fragment_variant_in_test_name(self):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            initial_results = run_results(self.port)
+            initial_results.add(get_result('passes/text.html#frag', test_expectations.TIMEOUT), False)
+            summary = test_run_results.summarize_results(
+                self.port, {None: initial_results.expectations}, initial_results, None,
+                enabled_pixel_tests_in_retry=False)
+            self.assertIn('text.html#frag', summary['tests']['passes'])
+
+    def test_summarized_results_fragment_before_query_variant(self):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            initial_results = run_results(self.port)
+            initial_results.add(get_result('passes/text.html#frag?a=1', test_expectations.TIMEOUT), False)
+            summary = test_run_results.summarize_results(
+                self.port, {None: initial_results.expectations}, initial_results, None,
+                enabled_pixel_tests_in_retry=False)
+            self.assertIn('text.html#frag?a=1', summary['tests']['passes'])
+
+    def test_summarized_results_slash_in_query_variant(self):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            initial_results = run_results(self.port)
+            initial_results.add(get_result('passes/text.html?a/b', test_expectations.TIMEOUT), False)
+            summary = test_run_results.summarize_results(
+                self.port, {None: initial_results.expectations}, initial_results, None,
+                enabled_pixel_tests_in_retry=False)
+            self.assertIn('text.html?a/b', summary['tests']['passes'])
+
+    def test_summarized_results_slash_in_fragment_variant(self):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            initial_results = run_results(self.port)
+            initial_results.add(get_result('passes/text.html#frag/sub', test_expectations.TIMEOUT), False)
+            summary = test_run_results.summarize_results(
+                self.port, {None: initial_results.expectations}, initial_results, None,
+                enabled_pixel_tests_in_retry=False)
+            self.assertIn('text.html#frag/sub', summary['tests']['passes'])
+
+    def _summarized_names(self, test_name):
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            initial_results = run_results(self.port)
+            initial_results.add(get_result(test_name, test_expectations.TIMEOUT), False)
+            summary = test_run_results.summarize_results(
+                self.port, {None: initial_results.expectations}, initial_results, None,
+                enabled_pixel_tests_in_retry=False)
+            return summary['tests']['passes']
+
+    def test_summarized_results_fragment_variant_containing_slash_and_query(self):
+        # The variant's slash must not split the path: a fragment before a
+        # query was previously split at the query, leaving the slash in the
+        # directory part.
+        self.assertEqual(list(self._summarized_names('passes/text.html#frag/sub?a=1')), ['text.html#frag/sub?a=1'])
+
+    def test_summarized_results_with_repeated_and_empty_separators(self):
+        for test_name in ('passes/text.html?a?b/c', 'passes/text.html#a#b/c', 'passes/text.html?a/b#c/d', 'passes/text.html?', 'passes/text.html#'):
+            with self.subTest(test_name):
+                # Each is a single entry under passes/, named by the file and its whole variant.
+                self.assertEqual(list(self._summarized_names(test_name)), [test_name.split('/', 1)[1]])

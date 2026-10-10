@@ -374,21 +374,25 @@ class Printer(object):
         test_name = result.test_name
         self._print_default(self._test_status_line(test_name, ''))
 
-        for extension in ('.txt', '.png', '.wav', '.webarchive'):
-            self._print_baseline(test_name, extension)
+        test = result.test_input.test
+        for label, path in (
+            ('txt', test.expected_text_path),
+            ('png', test.expected_image_path),
+            ('wav', test.expected_audio_path),
+        ):
+            self._print_baseline(label, path)
 
         self._print_default('  exp: %s' % exp_str)
         self._print_default('  got: %s' % got_str)
         self._print_default(' took: %-.3f' % result.test_run_time)
         self._print_default('')
 
-    def _print_baseline(self, test_name, extension):
-        baseline = self._port.expected_filename(test_name, extension)
-        if self._port._filesystem.exists(baseline):
-            relpath = self._port.relative_test_filename(baseline)
+    def _print_baseline(self, label, baseline_path):
+        if baseline_path is not None:
+            relpath = self._port.relative_test_filename(baseline_path)
         else:
             relpath = '<none>'
-        self._print_default('  %s: %s' % (extension[1:], relpath))
+        self._print_default('  %s: %s' % (label, relpath))
 
     def _print_quiet(self, msg):
         self.writeln(msg)

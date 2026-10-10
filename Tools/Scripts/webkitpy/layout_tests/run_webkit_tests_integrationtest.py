@@ -1153,7 +1153,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         batch_tests_run_no_http = get_tests_run(['--no-http', 'LayoutTests/http', 'websocket/'])
         self.assertFalse(RunTest.has_test_of_type(batch_tests_run_no_http, 'http'))
-        self.assertFalse(RunTest.has_test_of_type(batch_tests_run_no_http, 'websocket'))
+        self.assertTrue(RunTest.has_test_of_type(batch_tests_run_no_http, 'websocket'))
 
         batch_tests_run_http = get_tests_run(['--http', 'LayoutTests/http', 'websocket/'])
         self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'http'))

@@ -30,6 +30,7 @@
 for layout tests.
 """
 
+import functools
 import logging
 import re
 
@@ -38,6 +39,7 @@ from webkitpy.layout_tests.models.test_configuration import (
     TestConfiguration,
     TestConfigurationConverter,
 )
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.port.base import Port
 
 _BUG_TOKEN_RE = re.compile(r'Bug\((\w+)\)$')
@@ -143,7 +145,7 @@ class TestExpectationParser(object):
 
     def expectation_for_skipped_test(self, test_name):
         # type: (str) -> TestExpectationLine
-        if not self._port.test_exists(test_name):
+        if not self._test_exists(test_name):
             _log.warning('The following test %s from the Skipped list doesn\'t exist' % test_name)
         expectation_line = TestExpectationLine()
         expectation_line.original_string = test_name
@@ -225,13 +227,33 @@ class TestExpectationParser(object):
             result.add(expectation)
         expectation_line.parsed_expectations = result
 
+    @functools.cached_property
+    def _layout_test_finder(self):
+        return LayoutTestFinder(
+            self._port.host.filesystem,
+            self._port.layout_tests_dir(),
+            self._port.baseline_search_path(),
+            test_routes=self._port.test_routes(),
+        )
+
+    def _test_exists(self, test_name):
+        # type: (str) -> bool
+        # Fast filesystem checks for on-disk tests and directories.
+        if self._port.test_isfile(test_name) or self._port.test_isdir(test_name):
+            return True
+        if '?' in test_name or '#' in test_name:
+            file_path = self._port.test_name_and_variant(test_name)[0]
+            if self._port.test_isfile(file_path):
+                return True
+        # Not on disk: the finder synthesizes runnable URLs for generated WPT
+        # variants (e.g. foo.any.js -> foo.any.worker.html), which have no file.
+        return any(test.test_path == test_name
+                   for test in self._layout_test_finder.get_tests([test_name]))
+
     def _check_test_exists(self, expectation_line):
         # type: (TestExpectationLine) -> bool
         assert expectation_line.name is not None
-        # WebKit's way of skipping tests is to add a -disabled suffix.
-        # So we should consider the path existing if the path or the
-        # -disabled version exists.
-        if not self._port.test_exists(expectation_line.name) and not self._port.test_exists(expectation_line.name + '-disabled'):
+        if not self._test_exists(expectation_line.name):
             # Log a warning here since you hit this case any
             # time you update TestExpectations without syncing
             # the LayoutTests directory
@@ -252,14 +274,24 @@ class TestExpectationParser(object):
             return
 
         if not expectation_line.is_file:
-            # this is a test category, return all the tests of the category.
-            expectation_line.matching_tests = [test for test in self._full_test_list if test.startswith(expectation_line.path)]
+            # Directory (or variant-bearing path): prefix match.
+            expectation_line.matching_tests = [
+                test for test in self._full_test_list
+                if test.startswith(expectation_line.path)
+            ]
             return
 
-        # this is a test file, do a quick check if it's in the
-        # full test suite.
-        if expectation_line.path in self._full_test_list:
-            expectation_line.matching_tests.append(expectation_line.path)
+        # File expectation: match the file itself and every `<path>?...` /
+        # `<path>#...` variant of it. A bare file name in TestExpectations
+        # covers all variants of that file unless a more-specific entry
+        # overrides — _already_seen_better_match handles precedence by path
+        # length.
+        path = expectation_line.path
+        prefix_q = path + "?"
+        prefix_f = path + "#"
+        for test in self._full_test_list:
+            if test == path or test.startswith(prefix_q) or test.startswith(prefix_f):
+                expectation_line.matching_tests.append(test)
 
     # FIXME: Update the original modifiers and remove this once the old syntax is gone.
     _configuration_tokens_list = [

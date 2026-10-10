@@ -38,6 +38,8 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.views import printing
 
 
@@ -187,6 +189,51 @@ class  Testprinter(unittest.TestCase):
         printer.print_started_test('passes/image.html')
         printer.print_finished_test(result, expected=False, exp_str='', got_str='')
         self.assertNotEmpty(err)
+
+    def test_print_test_trace_baselines(self):
+        # Test.expected_text_path is pre-resolved by the finder, folding in
+        # a .webarchive baseline when there's no plain .txt one -- printing
+        # should show it under the 'txt' label regardless of its extension.
+        printer, err = self.get_printer(['--details'])
+        fs = self._port.host.filesystem
+        d = self._port.layout_tests_dir()
+        test = Test(
+            'passes/text.html',
+            expected_text_path=fs.join(d, 'passes/text-expected.webarchive'),
+            expected_image_path=fs.join(d, 'passes/text-expected.png'),
+        )
+        result = test_results.TestResult(TestInput(test))
+
+        printer.print_started_test('passes/text.html')
+        printer.print_finished_test(result, expected=True, exp_str='', got_str='')
+
+        self.assertIn('txt: passes/text-expected.webarchive', err.getvalue())
+        self.assertIn('png: passes/text-expected.png', err.getvalue())
+        self.assertIn('wav: <none>', err.getvalue())
+
+    def test_print_test_trace_missing_baselines(self):
+        printer, err = self.get_printer(['--details'])
+        result = test_results.TestResult(TestInput(Test('passes/text.html')))
+
+        printer.print_started_test('passes/text.html')
+        printer.print_finished_test(result, expected=True, exp_str='', got_str='')
+
+        self.assertIn('txt: <none>', err.getvalue())
+        self.assertIn('png: <none>', err.getvalue())
+        self.assertIn('wav: <none>', err.getvalue())
+
+    def test_print_test_trace_audio_baseline(self):
+        printer, err = self.get_printer(['--details'])
+        fs = self._port.host.filesystem
+        d = self._port.layout_tests_dir()
+        test = Test('passes/audio.html', expected_audio_path=fs.join(d, 'passes/audio-expected.wav'))
+        result = test_results.TestResult(TestInput(test))
+
+        printer.print_started_test('passes/audio.html')
+        printer.print_finished_test(result, expected=True, exp_str='', got_str='')
+
+        self.assertIn('txt: <none>', err.getvalue())
+        self.assertIn('wav: passes/audio-expected.wav', err.getvalue())
 
     def test_print_found(self):
         printer, err = self.get_printer()

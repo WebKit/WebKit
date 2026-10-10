@@ -98,7 +98,6 @@ for my $tfile (@templates) {
     for my $file (@files) {
         my $html = $file;
         $html =~ s:${templateDirectory}/(.*)\.js:$1.html:;
-        next if -f "$html-disabled";
 
         system("cat ${file} | tr '\\0' ' ' | grep -q 'successfullyParsed ='");
         if ($? != 0) {

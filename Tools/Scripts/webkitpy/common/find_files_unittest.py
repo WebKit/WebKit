@@ -103,3 +103,56 @@ class TestFindFiles(unittest.TestCase):
             ),
             ["/".join(i) for i in itertools.product(test_subset, "12345")],
         )
+
+    def test_query_variant(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a/b.html?variant"])),
+            ["a/b.html?variant"],
+        )
+
+    def test_fragment_variant(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a/b.html#frag"])),
+            ["a/b.html#frag"],
+        )
+
+    def test_fragment_before_query_variant(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a/b.html#frag?query"])),
+            ["a/b.html#frag?query"],
+        )
+
+    def test_query_before_fragment_variant(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a/b.html?query#frag"])),
+            ["a/b.html?query#frag"],
+        )
+
+    def test_slash_in_query_variant(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a/b.html?a/b"])),
+            ["a/b.html?a/b"],
+        )
+
+    def test_slash_in_fragment_variant(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a/b.html#frag/sub"])),
+            ["a/b.html#frag/sub"],
+        )
+
+    def test_repeated_and_empty_variant_separators(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        for path in ("a/b.html?a?b", "a/b.html#a#b", "a/b.html?a#b#c", "a/b.html#a?b#c", "a/b.html?", "a/b.html#", "a/b.html?#"):
+            with self.subTest(path):
+                self.assertEqual(list(find_files.find(fs, "", paths=[path])), [path])
+
+    def test_variant_of_a_missing_file_is_not_found(self):
+        fs = MockFileSystem(files={"a/b.html": ""})
+        self.assertEqual(list(find_files.find(fs, "", paths=["a/missing.html?variant"])), [])
+        self.assertEqual(list(find_files.find(fs, "", paths=["a/missing.html#frag"])), [])

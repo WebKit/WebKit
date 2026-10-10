@@ -38,6 +38,7 @@ from webkitpy.layout_tests.controllers.layout_test_runner import (
     TestRunInterruptedException,
 )
 from webkitpy.layout_tests.models import test_expectations, test_failures
+from webkitpy.layout_tests.models.server_routing import ServerType
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
@@ -170,102 +171,57 @@ class LayoutTestRunnerTests(unittest.TestCase):
         self.assertEqual(4, runner._current_run_results.unexpected)
 
     def test_servers_started(self):
-
-        def start_http_server(additional_dirs=None):
-            self.http_started = True
-
-        def start_websocket_server():
-            self.websocket_started = True
-
-        def start_web_platform_test_server():
-            self.web_platform_test_server_started = True
-
-        def stop_http_server():
-            self.http_stopped = True
-
-        def stop_websocket_server():
-            self.websocket_stopped = True
-
-        def stop_web_platform_test_server():
-            self.web_platform_test_server_stopped = True
-
-        def is_http_server_running():
-            return self.http_started and not self.http_stopped
-
-        def is_websocket_server_running():
-            return self.websocket_started and not self.websocket_stopped
-
-        def is_wpt_server_running():
-            return self.websocket_started and not self.web_platform_test_server_stopped
-
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard')
-        port.start_http_server = start_http_server
-        port.start_websocket_server = start_websocket_server
-        port.start_web_platform_test_server = start_web_platform_test_server
-        port.stop_http_server = stop_http_server
-        port.stop_websocket_server = stop_websocket_server
-        port.stop_web_platform_test_server = stop_web_platform_test_server
-        port.is_http_server_running = is_http_server_running
-        port.is_websocket_server_running = is_websocket_server_running
-        port.is_wpt_server_running = is_wpt_server_running
-
-        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner = self._runner(port=port)
+
         runner._needs_http = True
         runner._needs_websockets = False
         runner._needs_web_platform_test_server = False
         runner.start_servers()
-        self.assertEqual(self.http_started, True)
-        self.assertEqual(self.websocket_started, False)
-        self.assertEqual(self.web_platform_test_server_started, False)
+        self.assertTrue(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
         runner.stop_servers()
-        self.assertEqual(self.http_stopped, True)
-        self.assertEqual(self.websocket_stopped, False)
-        self.assertEqual(self.web_platform_test_server_stopped, False)
+        self.assertFalse(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
 
-        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner._needs_http = True
         runner._needs_websockets = True
         runner._needs_web_platform_test_server = False
         runner.start_servers()
-        self.assertEqual(self.http_started, True)
-        self.assertEqual(self.websocket_started, True)
-        self.assertEqual(self.web_platform_test_server_started, False)
+        self.assertTrue(port.is_http_server_running())
+        self.assertTrue(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
         runner.stop_servers()
-        self.assertEqual(self.http_stopped, True)
-        self.assertEqual(self.websocket_stopped, True)
-        self.assertEqual(self.web_platform_test_server_stopped, False)
+        self.assertFalse(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
 
-        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner._needs_http = False
         runner._needs_websockets = False
         runner._needs_web_platform_test_server = True
         runner.start_servers()
-        self.assertEqual(self.http_started, False)
-        self.assertEqual(self.websocket_started, False)
-        self.assertEqual(self.web_platform_test_server_started, True)
+        self.assertFalse(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertTrue(port.is_wpt_server_running())
         runner.stop_servers()
-        self.assertEqual(self.http_stopped, False)
-        self.assertEqual(self.websocket_stopped, False)
-        self.assertEqual(self.web_platform_test_server_stopped, True)
+        self.assertFalse(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
 
-        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner._needs_http = False
         runner._needs_websockets = False
         runner._needs_web_platform_test_server = False
         runner.start_servers()
-        self.assertEqual(self.http_started, False)
-        self.assertEqual(self.websocket_started, False)
-        self.assertEqual(self.web_platform_test_server_started, False)
+        self.assertFalse(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
         runner.stop_servers()
-        self.assertEqual(self.http_stopped, False)
-        self.assertEqual(self.websocket_stopped, False)
-        self.assertEqual(self.web_platform_test_server_stopped, False)
+        self.assertFalse(port.is_http_server_running())
+        self.assertFalse(port.is_websocket_server_running())
+        self.assertFalse(port.is_wpt_server_running())
 
 
 class SharderTests(unittest.TestCase):
@@ -283,7 +239,8 @@ class SharderTests(unittest.TestCase):
     ]
 
     def get_test_input(self, test_file):
-        return TestInput(Test(test_file), needs_servers=(test_file.startswith('http')))
+        served_by = ServerType.HTTP if test_file.startswith('http') else ServerType.FILE
+        return TestInput(Test(test_file, served_by=served_by))
 
     def get_shards(self, num_workers, fully_parallel, test_list=None):
         port = TestPort(MockSystemHost())

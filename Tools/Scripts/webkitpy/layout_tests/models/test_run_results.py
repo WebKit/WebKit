@@ -33,7 +33,7 @@ import signal
 
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.models import test_expectations, test_failures
-from webkitpy.port.base import Port
+
 
 _log = logging.getLogger(__name__)
 
@@ -371,8 +371,9 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
         #         baz1.html: test_dict
         #     }
         # }
-        (base_name, variant) = Port.test_name_and_variant(test_name)
-        parts = base_name.split('/')
+        variant = result.test_input.test.variant
+        assert test_name.endswith(variant)
+        parts = test_name.removesuffix(variant).split('/')
         parts[-1] += variant
         current_map = tests
         for i, part in enumerate(parts):

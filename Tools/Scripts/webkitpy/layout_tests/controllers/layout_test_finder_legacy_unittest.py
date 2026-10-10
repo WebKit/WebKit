@@ -26,25 +26,45 @@
 import json
 import unittest
 
-from pyfakefs.fake_filesystem_unittest import TestCaseMixin
+from pyfakefs.fake_filesystem import OSType
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.fakefs_testcase import (
+    PyFakefsLinuxTestCaseMixin,
+    PyFakefsMacOSTestCaseMixin,
+    PyFakefsWindowsTestCaseMixin,
+)
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
     LayoutTestFinder,
     _is_reference_html_file,
 )
-from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.server_routing import ServerType
+from webkitpy.layout_tests.models.test import Reference, Test, _file_path_sort_key
 from webkitpy.port.test import (
     TestPort,
     add_unit_tests_to_mock_filesystem,
 )
 
 
-class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
+class IsReferenceHtmlFileTests(unittest.TestCase):
+    def test_is_reference_html_file(self):
+        filesystem = MockFileSystem()
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected.html'))
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected-mismatch.xml'))
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-ref.xhtml'))
+        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-notref.svg'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo.html'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.txt'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.shtml'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.php'))
+        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.mht'))
+
+
+class LayoutTestFinderTestsBase(object):
     def __init__(self, *args, **kwargs):
-        super(LayoutTestFinderTests, self).__init__(*args, **kwargs)
+        super(LayoutTestFinderTestsBase, self).__init__(*args, **kwargs)
         self.port = None
         self.finder = None
 
@@ -59,17 +79,10 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         self.port = None
         self.finder = None
 
-    def test_is_reference_html_file(self):
-        filesystem = MockFileSystem()
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected.html'))
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-expected-mismatch.xml'))
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-ref.xhtml'))
-        self.assertTrue(_is_reference_html_file(filesystem, '', 'foo-notref.svg'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo.html'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.txt'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.shtml'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.php'))
-        self.assertFalse(_is_reference_html_file(filesystem, '', 'foo-expected.mht'))
+    def test_emulated_os(self):
+        self.assertEqual(self.fs.os, self.fs_os)
+        expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
+        self.assertEqual(self.port.host.filesystem.sep, expected_sep)
 
     def test_find_no_paths_specified(self):
         finder = self.finder
@@ -79,7 +92,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
     def test_find_no_paths_sorted(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path([])]
-        sorted_tests = sorted(tests, key=self.port.test_key)
+        sorted_tests = sorted(tests, key=_file_path_sort_key)
         self.assertEqual(tests, sorted_tests)
 
     def test_find_all_no_paths(self):
@@ -221,6 +234,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
+                'http/tests/websocket/passes/text.html',
             ],
         )
 
@@ -399,6 +413,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
+                'http/tests/websocket/passes/text.html',
             ],
         )
 
@@ -474,106 +489,102 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         )
 
     def test_find_template_variants_meta(self):
-        find_paths = ["web-platform-tests"]
+        # Variant discovery for WPT HTML tests is delegated to SourceFile,
+        # which reads <meta name="variant"> elements. We exercise the
+        # integration here with a small set of valid variants; the full
+        # variant-parsing semantics (validation, percent-encoding, etc.) are
+        # tested upstream.
+        find_paths = ["imported/w3c/web-platform-tests/foo/variant_test.html"]
         finder = self.finder
 
-        path = finder._port.layout_tests_dir() + "/web-platform-tests/variant_test.html"
+        path = finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/foo/variant_test.html"
 
         finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
         finder._filesystem.write_text_file(path, """<!doctype html>
+<script src="/resources/testharness.js"></script>
 <meta name="variant" content="">
-<meta name="variant" content="?">
 <meta name="variant" content="?1-10">
 <meta name="variant" content="?11-20">
-<meta name="variant" content="#">
 <meta name="variant" content="#a-m">
 <meta name="variant" content="#n-z">
-<meta name="variant" content="?#">
 <meta name="variant" content="?1#a">
-<meta name="variant" content="nonsense">
-<meta name=variant content="?only open()ed, not aborted">
-<meta name=variant content="?aborted immediately after send()">
-<meta name=variant content="?call abort() after TIME_NORMAL_LOAD">
         """)
         tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
         self.assertEqual(
             [
-                "web-platform-tests/variant_test.html",
-                "web-platform-tests/variant_test.html?1-10",
-                "web-platform-tests/variant_test.html?11-20",
-                "web-platform-tests/variant_test.html#a-m",
-                "web-platform-tests/variant_test.html#n-z",
-                "web-platform-tests/variant_test.html?1#a",
-                "web-platform-tests/variant_test.html?only%20open()ed,%20not%20aborted",
-                "web-platform-tests/variant_test.html?aborted%20immediately%20after%20send()",
-                "web-platform-tests/variant_test.html?call%20abort()%20after%20TIME_NORMAL_LOAD",
+                "imported/w3c/web-platform-tests/foo/variant_test.html",
+                "imported/w3c/web-platform-tests/foo/variant_test.html?1-10",
+                "imported/w3c/web-platform-tests/foo/variant_test.html?11-20",
+                "imported/w3c/web-platform-tests/foo/variant_test.html#a-m",
+                "imported/w3c/web-platform-tests/foo/variant_test.html#n-z",
+                "imported/w3c/web-platform-tests/foo/variant_test.html?1#a",
             ],
             tests_found,
         )
 
     def test_find_template_variants_meta_passed_variants(self):
+        # Variants requested explicitly via the path argument should filter the
+        # variants produced by SourceFile.
         finder = self.finder
 
-        path = finder._port.layout_tests_dir() + "/web-platform-tests/variant_test.html"
+        path = finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/foo/variant_test.html"
 
         find_paths = [
-            path + "?a b",
-            path + "?c%20d",
-            path + "#m n",
-            path + "#o%20p",
-            path + "?e%20f#q%20r",
+            path + "?a-b",
+            path + "?c-d",
+            path + "#m-n",
+            path + "#o-p",
         ]
 
         finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
         finder._filesystem.write_text_file(
             path,
             """<!doctype html>
-<meta name=variant content="?a b">
-<meta name=variant content="?c%20d">
-<meta name=variant content="#m n">
-<meta name=variant content="#o%20p">
-<meta name=variant content="?e f#q r">
+<script src="/resources/testharness.js"></script>
+<meta name=variant content="?a-b">
+<meta name=variant content="?c-d">
+<meta name=variant content="#m-n">
+<meta name=variant content="#o-p">
         """,
         )
-        tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
+        tests_found = sorted(t.test_path for t in finder.find_tests_by_path(find_paths))
         self.assertEqual(
-            ['web-platform-tests/variant_test.html?a%20b',
-             'web-platform-tests/variant_test.html?c%20d',
-             'web-platform-tests/variant_test.html#m%20n',
-             'web-platform-tests/variant_test.html#o%20p',
-             'web-platform-tests/variant_test.html?e%20f#q%20r'],
+            ['imported/w3c/web-platform-tests/foo/variant_test.html#m-n',
+             'imported/w3c/web-platform-tests/foo/variant_test.html#o-p',
+             'imported/w3c/web-platform-tests/foo/variant_test.html?a-b',
+             'imported/w3c/web-platform-tests/foo/variant_test.html?c-d'],
             tests_found,
         )
 
 
-    def test_find_template_variants_comment(self):
-        find_paths = ["web-platform-tests"]
+    def test_find_template_variants_any_js(self):
+        """Test that .any.js source files are processed and produce multiple test URLs,
+        one per generated basename (.any.html, .any.worker.html) times variant, regardless
+        of whether an on-disk importer stub exists for a given generated basename."""
+        find_paths = ["imported/w3c/web-platform-tests/foo/variant_test.any.js"]
         finder = self.finder
 
-        path = finder._port.layout_tests_dir() + "/web-platform-tests/variant_test.any.html"
+        js_path = finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/foo/variant_test.any.js"
+        html_path = finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/foo/variant_test.any.html"
 
-        finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
-        finder._filesystem.write_text_file(path, """<!-- This file is required for WebKit test infrastructure to run the templated test -->
-<!-- META: variant= -->
-<!-- META: variant=? -->
-<!-- META: variant=?1-10 -->
-<!-- META: variant=?11-20 -->
-<!-- META: variant=# -->
-<!-- META: variant=#a-m -->
-<!-- META: variant=#n-z -->
-<!-- META: variant=?# -->
-<!-- META: variant=?1#a -->
-<!-- META: variant=nonsense -->
-        """)
-        tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
+        finder._filesystem.maybe_make_directory(finder._filesystem.dirname(js_path))
+        # The .any.js source has variant metadata.
+        finder._filesystem.write_text_file(js_path, """// META: variant=
+// META: variant=?1-10
+// META: variant=?11-20
+""")
+        # WebKit also writes a generated .html stub which should be skipped.
+        finder._filesystem.write_text_file(html_path, "<!-- generated stub -->")
+
+        tests_found = sorted(t.test_path for t in finder.find_tests_by_path(find_paths))
         self.assertEqual(
             [
-                "web-platform-tests/variant_test.any.html",
-                "web-platform-tests/variant_test.any.html?1-10",
-                "web-platform-tests/variant_test.any.html?11-20",
-                "web-platform-tests/variant_test.any.html#a-m",
-                "web-platform-tests/variant_test.any.html#n-z",
-                "web-platform-tests/variant_test.any.html?1#a",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.html",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.html?1-10",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.html?11-20",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.worker.html",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.worker.html?1-10",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.worker.html?11-20",
             ],
             tests_found,
         )
@@ -584,7 +595,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests_found = [
             t.test_path
             for t in finder.find_tests_by_path(tests_to_find)
-            if t.is_wpt_crash_test
+            if t.is_crash_test
         ]
         self.assertEqual(
             tests_found,
@@ -600,6 +611,18 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 "imported/w3c/web-platform-tests/some/test-timeout-crash.html",
             ],
         )
+
+    def test_wpt_crash_requires_wpt_directory_prefix(self):
+        finder = self.finder
+        fs = finder._filesystem
+        fs.chdir(self.port.layout_tests_dir())
+        path = "weird/imported/w3c/web-platform-tests/crashtests/crash.html"
+        fs.maybe_make_directory(fs.dirname(path))
+        fs.write_text_file(path, "")
+
+        tests = list(finder.find_tests_by_path([path]))
+        self.assertEqual([t.test_path for t in tests], [path])
+        self.assertFalse(tests[0].is_crash_test)
 
     def test_preserves_order_directories(self):
         tests_to_find = ['http/tests/ssl', 'http/tests/passes']
@@ -680,7 +703,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             fs.write_text_file(fs.join("order", d, "test.html"), "1")
 
         tests = [t.test_path for t in finder.find_tests_by_path(["order"])]
-        sorted_tests = sorted(tests, key=self.port.test_key)
+        sorted_tests = sorted(tests, key=_file_path_sort_key)
         self.assertEqual(tests, sorted_tests)
         self.assertEqual(
             tests,
@@ -961,16 +984,29 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             ],
         )
 
-    def test_is_websocket_test(self):
+    def test_is_http_test(self):
         finder = self.finder
         fs = finder._filesystem
 
         files = [
-            "http/tests/test.html",
-            "http/tests/websocket/construct-in-detached-frame.html",
-            "http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html",
-            "http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed.html",
-            "imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html",
+            "http/tests/foo.html",
+            # http/tests/local/ still expects an HTTP server, just serves the
+            # test itself from a different URL; it should still count as an
+            # HTTP test.
+            "http/tests/local/foo.html",
+            # A path that merely contains "http/tests/" isn't itself an HTTP test.
+            "some/http/tests/foo.html",
+            # A directory inserted between "http" and "tests" isn't a match either.
+            "http/some/tests/foo.html",
+            # Near-miss on the first segment.
+            "httpfoo/tests/foo.html",
+            # Near-miss on the second segment that still shares a "test" prefix.
+            "http/testing/foo.html",
+            # Near-miss on the second segment: "tests" is a prefix of the
+            # directory name, but there's no "/" boundary after it.
+            "http/testsfoo/bar.html",
+            # "http/" without any "tests" segment at all.
+            "http/foo/bar.html",
         ]
 
         fs.chdir(self.port.layout_tests_dir())
@@ -979,42 +1015,183 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             fs.maybe_make_directory(fs.dirname(f))
             fs.write_text_file(f, "XXX")
 
+        tests = finder.find_tests_by_path(files, with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(test_path="http/tests/foo.html", served_by=ServerType.HTTP),
+                Test(test_path="http/tests/local/foo.html", served_by=ServerType.HTTP),
+                Test(test_path="some/http/tests/foo.html", served_by=ServerType.FILE),
+                Test(test_path="http/some/tests/foo.html", served_by=ServerType.FILE),
+                Test(test_path="httpfoo/tests/foo.html", served_by=ServerType.FILE),
+                Test(test_path="http/testing/foo.html", served_by=ServerType.FILE),
+                Test(test_path="http/testsfoo/bar.html", served_by=ServerType.FILE),
+                Test(test_path="http/foo/bar.html", served_by=ServerType.FILE),
+            ],
+        )
+
+    def test_filename_and_directory_flags(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        expected = [
+            ("foo/a.h2.html", ServerType.FILE, {"h2"}),
+            ("foo/b.https.html", ServerType.FILE, {"https"}),
+            ("foo/c.sub.html", ServerType.FILE, {"sub"}),
+            ("foo/d.h2.https.sub.html", ServerType.FILE, {"h2", "https", "sub"}),
+            # Flags are matched case-insensitively.
+            ("foo/e.HTTPS.html", ServerType.FILE, {"https"}),
+            # A flag needs a "." on both sides: these are all plain names.
+            ("foo/f-https.html", ServerType.FILE, set()),
+            ("foo/https.html", ServerType.FILE, set()),
+            ("foo/g.httpsfoo.html", ServerType.FILE, set()),
+            # An HTTP test under ssl/ is served over HTTPS...
+            ("http/tests/ssl/h.html", ServerType.HTTP, {"https"}),
+            ("http/tests/security/ssl/i.html", ServerType.HTTP, {"https"}),
+            ("http/tests/security/j.https.html", ServerType.HTTP, {"https"}),
+            ("http/tests/security/k.html", ServerType.HTTP, set()),
+            # ...but ssl/ outside an HTTP root has no such meaning.
+            ("ssl/l.html", ServerType.FILE, set()),
+            ("foo/ssl/m.html", ServerType.FILE, set()),
+            # A directory merely containing "ssl" is not ssl/.
+            ("http/tests/sslfoo/n.html", ServerType.HTTP, set()),
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+        for path, _, _ in expected:
+            fs.maybe_make_directory(fs.dirname(path))
+            fs.write_text_file(path, "XXX")
+
+        tests = finder.find_tests_by_path([path for path, _, _ in expected], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [Test(test_path=path, served_by=served_by, flags=frozenset(flags)) for path, served_by, flags in expected],
+        )
+
+    def test_is_websocket_test(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "websocket/tests/standalone.html",
+            "http/tests/test.html",
+            "http/tests/websocket/construct-in-detached-frame.html",
+            "http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html",
+            "http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed.html",
+            "imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html",
+            # Not under websocket/ or http/tests/ at all -- the substring
+            # match with no directory-boundary requirement still fires here,
+            # unlike origin/main's is_websocket_test, which is gated on
+            # being under http/tests/ (or the "websocket/" directory itself).
+            "fast/websocket-something.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            # Use testharness.js script so SourceFile classifies WPT files as
+            # tests rather than support files.
+            fs.write_text_file(f, '<script src="/resources/testharness.js"></script>')
+
         tests = finder.find_tests_by_path(
             files + ["http/tests/test.html?websocket"], with_expectations=True
         )
         self.assertEqual(
             tests,
             [
+                # A bare "websocket/" directory outside http/tests/ is still
+                # a websocket test, just not an HTTP one.
+                Test(
+                    test_path="websocket/tests/standalone.html",
+                    served_by=ServerType.WEBSOCKET,
+                ),
                 Test(
                     test_path="http/tests/test.html",
-                    is_http_test=True,
-                    is_websocket_test=False,
+                    served_by=ServerType.HTTP,
                 ),
                 Test(
                     test_path="http/tests/websocket/construct-in-detached-frame.html",
-                    is_http_test=True,
-                    is_websocket_test=True,
+                    served_by=ServerType.HTTP | ServerType.WEBSOCKET,
                 ),
                 Test(
                     test_path="http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html",
-                    is_http_test=True,
-                    is_websocket_test=True,
+                    served_by=ServerType.HTTP | ServerType.WEBSOCKET,
                 ),
                 Test(
                     test_path="http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed.html",
-                    is_http_test=True,
-                    is_websocket_test=True,
+                    served_by=ServerType.HTTP | ServerType.WEBSOCKET,
                 ),
                 Test(
                     test_path="imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html",
-                    is_wpt_test=True,
-                    is_websocket_test=False,
+                    served_by=ServerType.WPT,
+                    flags={'https'},
+                ),
+                Test(
+                    test_path="fast/websocket-something.html",
+                    served_by=ServerType.WEBSOCKET,
                 ),
                 Test(
                     test_path="http/tests/test.html?websocket",
-                    is_http_test=True,
-                    is_websocket_test=True,
+                    served_by=ServerType.HTTP | ServerType.WEBSOCKET,
                 ),
+            ],
+        )
+
+    def test_is_wpt_test(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "imported/w3c/web-platform-tests/some/fresh.html",
+            "http/wpt/some/foo.html",
+            # A path that merely contains the WPT dir isn't itself a WPT test.
+            "some/imported/w3c/web-platform-tests/foo.html",
+            # A directory inserted before the last segment isn't a match either.
+            "imported/w3c/foo/web-platform-tests/text.html",
+            # Near-miss on the last segment: it's a prefix of the directory
+            # name, but there's no "/" boundary after it.
+            "imported/w3c/web-platform-testsfoo/bar.html",
+            # The WPT dir without its final segment at all.
+            "imported/w3c/foo.html",
+            # is_wpt_test also accepts the local "http/wpt/" dir; the same
+            # anchoring and boundary checks apply to it independently.
+            "some/http/wpt/foo.html",
+            "http/wptfoo/bar.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            # Use testharness.js script so SourceFile classifies WPT files as
+            # tests rather than support files.
+            fs.write_text_file(f, '<script src="/resources/testharness.js"></script>')
+
+        tests = finder.find_tests_by_path(files, with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="imported/w3c/web-platform-tests/some/fresh.html",
+                    served_by=ServerType.WPT,
+                ),
+                Test(test_path="http/wpt/some/foo.html", served_by=ServerType.WPT),
+                Test(
+                    test_path="some/imported/w3c/web-platform-tests/foo.html",
+                    served_by=ServerType.FILE,
+                ),
+                Test(
+                    test_path="imported/w3c/foo/web-platform-tests/text.html",
+                    served_by=ServerType.FILE,
+                ),
+                Test(
+                    test_path="imported/w3c/web-platform-testsfoo/bar.html",
+                    served_by=ServerType.FILE,
+                ),
+                Test(test_path="imported/w3c/foo.html", served_by=ServerType.FILE),
+                Test(test_path="some/http/wpt/foo.html", served_by=ServerType.FILE),
+                Test(test_path="http/wptfoo/bar.html", served_by=ServerType.FILE),
             ],
         )
 
@@ -1042,28 +1219,29 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             [
                 Test(
                     test_path="fast/crashtests/test.html",
-                    is_wpt_test=False,
-                    is_wpt_crash_test=False,
+                    served_by=ServerType.FILE,
+                    is_crash_test=False,
                 ),
                 Test(
                     test_path="fast/css/end-of-buffer-crash.html",
-                    is_wpt_test=False,
-                    is_wpt_crash_test=False,
+                    served_by=ServerType.FILE,
+                    is_crash_test=False,
                 ),
                 Test(
                     test_path="imported/w3c/web-platform-tests/editing/run/empty-editable-crash.html",
-                    is_wpt_test=True,
-                    is_wpt_crash_test=True,
+                    served_by=ServerType.WPT,
+                    is_crash_test=True,
                 ),
                 Test(
                     test_path="imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-crash.tentative.html",
-                    is_wpt_test=True,
-                    is_wpt_crash_test=True,
+                    served_by=ServerType.WPT,
+                    is_crash_test=True,
+                    flags={'tentative'},
                 ),
                 Test(
                     test_path="imported/w3c/web-platform-tests/mathml/crashtests/mtd-as-multicol.html",
-                    is_wpt_test=True,
-                    is_wpt_crash_test=True,
+                    served_by=ServerType.WPT,
+                    is_crash_test=True,
                 ),
             ],
         )
@@ -1235,9 +1413,9 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 Test(
                     test_path="foo/test.html",
                     reference_files=(
-                        (
-                            "==",
-                            fs.join(
+                        Reference(
+                            relation="==",
+                            path=fs.join(
                                 self.port.layout_tests_dir(),
                                 "foo",
                                 "test-expected.html",
@@ -1260,9 +1438,9 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 Test(
                     test_path="foo/test.html",
                     reference_files=(
-                        (
-                            "!=",
-                            fs.join(
+                        Reference(
+                            relation="!=",
+                            path=fs.join(
                                 self.port.layout_tests_dir(),
                                 "platform",
                                 "test-mac-snowleopard",
@@ -1296,7 +1474,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.svg"),
@@ -1341,7 +1519,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.xhtml"),
@@ -1382,7 +1560,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.xht"),
@@ -1423,7 +1601,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.svg"),
@@ -1622,3 +1800,15 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             tests,
             ["passes/skipped/skip.html"],
         )
+
+
+class LayoutTestFinderLinuxTests(PyFakefsLinuxTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class LayoutTestFinderWindowsTests(PyFakefsWindowsTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class LayoutTestFinderMacOSTests(PyFakefsMacOSTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
