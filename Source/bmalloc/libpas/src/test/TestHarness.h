@@ -239,6 +239,11 @@ public:
     DisableBitfit();
 };
 
+class ForceSegregated : public RuntimeConfigTestScope {
+public:
+    ForceSegregated();
+};
+
 class ForceBaselines : public RuntimeConfigTestScope {
 public:
     ForceBaselines();
