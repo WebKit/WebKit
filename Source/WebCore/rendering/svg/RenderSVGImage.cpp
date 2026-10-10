@@ -178,6 +178,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         invertContent() ? InvertContent::Yes : InvertContent::No,
 #endif
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
+        IgnoreRootPreserveAspectRatio::Yes,
         settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
         paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
@@ -210,20 +211,17 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
         return;
     }
 
-    auto imageRenderingSize = svgImageRenderingSize(*styleImage, *this, FloatSize { imageContainerSize() });
     FloatRect contentBoxRect = borderBoxRectEquivalent();
-    FloatRect replacedContentRect { { }, imageRenderingSize };
-    imageElement().preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
-
+    auto placement = calculateSVGImagePlacement(*styleImage, *this, imageElement().preserveAspectRatio(), contentBoxRect);
+    placement.destination.moveBy(paintOffset);
     contentBoxRect.moveBy(paintOffset);
 
-    ImageDrawResult result = paintIntoRect(paintInfo, contentBoxRect, replacedContentRect, imageRenderingSize);
+    ImageDrawResult result = paintIntoRect(paintInfo, placement.destination, placement.source, placement.imageRenderingRectangle.size());
 
     if (cachedImage() && !context.paintingDisabled()) {
         // For now, count images as unpainted if they are still progressively loading. We may want
         // to refine this in the future to account for the portion of the image that has painted.
-        replacedContentRect.moveBy(paintOffset);
-        auto visibleRect = intersection(replacedContentRect, contentBoxRect);
+        auto visibleRect = intersection(placement.destination, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
             protect(page())->addRelevantUnpaintedObject(*this, enclosingLayoutRect(visibleRect));
         else
@@ -277,17 +275,6 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
-IntSize RenderSVGImage::imageContainerSize() const
-{
-    // https://w3c.github.io/svgwg/svg2-draft/coords.html#PreserveAspectRatioAttribute
-    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (RefPtr cachedImage = imageResource().cachedImage())
-            return svgImageSizeForPreserveAspectRatioNone(*cachedImage, style().usedZoom());
-    }
-
-    return enclosingIntRect(m_objectBoundingBox).size();
-}
-
 bool RenderSVGImage::updateImageViewport()
 {
     auto oldBoundaries = m_objectBoundingBox;
@@ -307,10 +294,12 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
 
     FloatRect repaintRect = borderBoxRectEquivalent();
     if (RefPtr styleImage = imageResource().styleImage(); styleImage && rect) {
-        // The image changed rect is in source image coordinates (pre-zooming),
-        // so map from the bounds of the image to the contentsBox.
-        auto imageRenderingSize = svgImageRenderingSize(*styleImage, *this, FloatSize { imageContainerSize() });
-        repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageRenderingSize), repaintRect)));
+        auto naturalDimensions = calculateSVGImageNaturalDimensions(*styleImage, *this);
+        auto placement = calculateSVGImagePlacement(*styleImage, *this, imageElement().preserveAspectRatio(), repaintRect);
+
+        auto changedRectSpace = naturalDimensions.width && naturalDimensions.height ? FloatSize { *naturalDimensions.width, *naturalDimensions.height } : placement.imageRenderingRectangle.size();
+
+        repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), changedRectSpace), placement.imageRenderingRectangle)));
     }
 
     repaintRectangle(enclosingLayoutRect(repaintRect));

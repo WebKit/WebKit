@@ -112,6 +112,7 @@ private:
         IntSize containerSize;
         URL fragmentURL;
         Style::LinkParameters linkParameters;
+        IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio { IgnoreRootPreserveAspectRatio::No };
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         bool invertContent { false };
 #endif

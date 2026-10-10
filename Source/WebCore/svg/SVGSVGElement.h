@@ -30,6 +30,7 @@
 namespace WebCore {
 
 struct DOMMatrix2DInit;
+class RenderElement;
 class SMILTimeContainer;
 class SVGAngle;
 class SVGLength;
@@ -89,6 +90,8 @@ public:
     bool setViewForFragment(StringView fragmentIdentifier);
     void resetViewToDefault();
 
+    void setIgnoresPreserveAspectRatioForSVGImage(bool ignores) { m_ignoresPreserveAspectRatioForSVGImage = ignores; }
+
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGFitToViewBox>;
     using SVGGraphicsElement::ref;
     using SVGGraphicsElement::deref;
@@ -134,6 +137,7 @@ public:
     SVGAnimatedLength& heightAnimated() { return m_height; }
 
     void inheritViewAttributes(const SVGViewElement&);
+    void invalidateCurrentView(RenderElement&);
 
 private:
     SVGSVGElement(const QualifiedName&, Document&);
@@ -165,6 +169,7 @@ private:
     SVGSVGElement* findRootAnchor(StringView) const;
 
     bool m_useCurrentView { false };
+    bool m_ignoresPreserveAspectRatioForSVGImage { false };
     const Ref<SMILTimeContainer> m_timeContainer;
     const RefPtr<SVGViewSpec> m_viewSpec;
     RefPtr<SVGViewElement> m_currentViewElement;

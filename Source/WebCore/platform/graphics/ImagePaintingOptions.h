@@ -52,6 +52,7 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, StrictImageClamping>
 #endif
         || std::is_same_v<Type, ShowDebugBackground>
+        || std::is_same_v<Type, IgnoreRootPreserveAspectRatio>
         || std::is_same_v<Type, DrawsHDRContent>
         || std::is_same_v<Type, AllowAcceleratedApplyGainMap>
         || std::is_same_v<Type, Headroom>
@@ -111,6 +112,7 @@ struct ImagePaintingOptions {
     StrictImageClamping strictImageClamping() const { return m_strictImageClamping; }
 #endif
     ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
+    IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio() const { return m_ignoreRootPreserveAspectRatio; }
     DrawsHDRContent drawsHDRContent() const { return m_drawsHDRContent; }
     AllowAcceleratedApplyGainMap allowAcceleratedApplyGainMap() const { return m_allowAcceleratedApplyGainMap; }
     Headroom headroom() const { return m_headroom; }
@@ -132,6 +134,7 @@ private:
     void setOption(StrictImageClamping strictImageClamping) { m_strictImageClamping = strictImageClamping; }
 #endif
     void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
+    void setOption(IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio) { m_ignoreRootPreserveAspectRatio = ignoreRootPreserveAspectRatio; }
     void setOption(DrawsHDRContent drawsHDRContent) { m_drawsHDRContent = drawsHDRContent; }
     void setOption(AllowAcceleratedApplyGainMap allowAcceleratedApplyGainMap) { m_allowAcceleratedApplyGainMap = allowAcceleratedApplyGainMap; }
     void setOption(Headroom headroom) { m_headroom = headroom; }
@@ -151,6 +154,7 @@ private:
     StrictImageClamping m_strictImageClamping: 1 { StrictImageClamping::Yes };
 #endif
     ShowDebugBackground m_showDebugBackground : 1 { ShowDebugBackground::No };
+    IgnoreRootPreserveAspectRatio m_ignoreRootPreserveAspectRatio : 1 { IgnoreRootPreserveAspectRatio::No };
     DrawsHDRContent m_drawsHDRContent : 1 { DrawsHDRContent::No };
     AllowAcceleratedApplyGainMap m_allowAcceleratedApplyGainMap : 1 { AllowAcceleratedApplyGainMap::No };
     Headroom m_headroom { Headroom::FromImage };

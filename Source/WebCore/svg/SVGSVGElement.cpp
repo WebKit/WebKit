@@ -822,21 +822,21 @@ bool SVGSVGElement::hasIntrinsicDimensions() const
 
 AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
+    SVGPreserveAspectRatioValue none { SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE, SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET };
+
     if (!m_useCurrentView || !m_viewSpec) {
         auto currentViewBox = currentViewBoxRect();
 
         // If we synthesized a viewBox (no explicit viewBox but embedded through SVGImage),
         // we should also synthesize preserveAspectRatio="none" to allow stretching.
-        if (hasSynthesizedViewBoxForSVGImage()) {
-            auto preserveAspectRatio = SVGPreserveAspectRatioValue(SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE, SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET);
-            return SVGFitToViewBox::viewBoxToViewTransform(currentViewBox, preserveAspectRatio, viewWidth, viewHeight);
-        }
+        if (hasSynthesizedViewBoxForSVGImage() || m_ignoresPreserveAspectRatioForSVGImage)
+            return SVGFitToViewBox::viewBoxToViewTransform(currentViewBox, none, viewWidth, viewHeight);
 
         return SVGFitToViewBox::viewBoxToViewTransform(currentViewBox, preserveAspectRatio(), viewWidth, viewHeight);
     }
 
     RefPtr viewSpec = m_viewSpec;
-    AffineTransform transform = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), viewSpec->preserveAspectRatio(), viewWidth, viewHeight);
+    AffineTransform transform = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), m_ignoresPreserveAspectRatioForSVGImage ? none : viewSpec->preserveAspectRatio(), viewWidth, viewHeight);
     transform *= protect(viewSpec->transform())->concatenate().value_or(identity);
     return transform;
 }
@@ -862,6 +862,20 @@ SVGSVGElement* SVGSVGElement::findRootAnchor(StringView fragmentIdentifier) cons
     return nullptr;
 }
 
+void SVGSVGElement::invalidateCurrentView(RenderElement& renderer)
+{
+    if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
+            ASSERT(svgRoot->viewportContainer());
+            protect(svgRoot->viewportContainer())->updateHasSVGTransformFlags();
+        }
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+}
+
 bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
 {
     CheckedPtr renderer = downcast<RenderLayerModelObject>(this->renderer());
@@ -873,19 +887,6 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
     bool hadUseCurrentView = m_useCurrentView;
     m_useCurrentView = false;
 
-    auto invalidateView = [&](RenderElement& renderer) {
-        if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-            if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
-                ASSERT(svgRoot->viewportContainer());
-                protect(svgRoot->viewportContainer())->updateHasSVGTransformFlags();
-            }
-            updateSVGRendererForElementChange();
-            return;
-        }
-
-        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-    };
-
     if (fragmentIdentifier.startsWith("svgView("_s)) {
         if (!view)
             view = currentView(); // Create the SVGViewSpec.
@@ -894,7 +895,7 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
         else
             view->reset();
         if (renderer && (hadUseCurrentView || m_useCurrentView))
-            invalidateView(*renderer);
+            invalidateCurrentView(*renderer);
         return m_useCurrentView;
     }
 
@@ -919,7 +920,7 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
 
             rootElement->inheritViewAttributes(*viewElement);
             if (CheckedPtr renderer = rootElement->renderer())
-                invalidateView(*renderer);
+                invalidateCurrentView(*renderer);
             m_currentViewFragmentIdentifier = fragmentIdentifier.toString();
             return true;
         }
