@@ -1260,6 +1260,10 @@ inline-box
 initial-letter
 replaced
 
+// -webkit-initial-letter
+drop
+raise
+
 // font-feature-settings
 on
 off
