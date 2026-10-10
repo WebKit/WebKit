@@ -493,6 +493,9 @@ public:
     using HTMLMediaElementEnums::TextTrackVisibilityCheckType;
     void textTrackReadyStateChanged(TextTrack*);
     void updateTextTrackRepresentationImageIfNeeded();
+#if PLATFORM(IOS_FAMILY)
+    void displayedCaptionsDidChange(Vector<String>&&);
+#endif
 
     WEBCORE_EXPORT void showCaptionDisplaySettingsPreview();
     WEBCORE_EXPORT void hideCaptionDisplaySettingsPreview();
@@ -1253,6 +1256,11 @@ private:
     TaskCancellationGroup m_resourceSelectionTaskCancellationGroup;
     TaskCancellationGroup m_updateShouldAutoplayTaskCancellationGroup;
     TaskCancellationGroup m_updateAcceleratedRenderingStateTaskCancellationGroup;
+#if PLATFORM(IOS_FAMILY)
+    TaskCancellationGroup m_displayedCaptionsTaskCancellationGroup;
+    Vector<String> m_pendingDisplayedCaptions;
+    Vector<String> m_lastDisplayedCaptions;
+#endif
     RefPtr<TimeRanges> m_playedTimeRanges;
     TaskCancellationGroup m_asyncEventsCancellationGroup;
     TaskCancellationGroup m_periodicTimeupdateCancellationGroup;

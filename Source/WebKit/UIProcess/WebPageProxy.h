@@ -3342,6 +3342,7 @@ private:
     void relayAccessibilityNotification(String&&, std::span<const uint8_t>);
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&);
     void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&);
+    void didDisplayCaptions(Vector<String>&&);
 #endif
     void runBeforeUnloadConfirmPanel(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, String&& message, CompletionHandler<void(bool)>&&);
     void pageDidScroll(const WebCore::IntPoint& scrollOffset);

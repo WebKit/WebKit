@@ -747,6 +747,10 @@ public:
     void postNotification(AccessibilityObject&, AXNotification);
     void postDeferredNotification(RenderObject&, AXNotification);
     void postARIANotifyNotification(Node&, const String&, const AriaNotifyOptions&);
+#if PLATFORM(IOS_FAMILY)
+    // Tells assistive technology which captions or subtitles are currently displayed for a media element.
+    void postCaptionsDisplayedNotification(const Vector<String>&);
+#endif
 #if PLATFORM(COCOA)
     void postLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
     void postPossibleFormValidationErrorNotification(AccessibilityObject&, Vector<String>&& unannouncedText, unsigned errorFieldCount, bool targetIsSubmitter);

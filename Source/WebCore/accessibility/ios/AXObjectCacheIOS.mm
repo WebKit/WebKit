@@ -32,6 +32,7 @@
 #import "AXNotifications.h"
 #import "AccessibilityObject.h"
 #import "Chrome.h"
+#import "ChromeClient.h"
 #import "DocumentPage.h"
 #import "DocumentView.h"
 #import "RenderObject.h"
@@ -158,6 +159,21 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject&, con
                 @"UIAccessibilitySpeechAttributeLanguage": notificationData.language.createNSString().get()
             }]);
             [protect(root->wrapper()) accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : announcementString.get() }];
+        }
+    }
+}
+
+void AXObjectCache::postCaptionsDisplayedNotification(const Vector<String>& captions)
+{
+    // The UI process forwards the captions to MediaAccessibility, which notifies VoiceOver.
+    if (RefPtr page = document() ? document()->page() : nullptr)
+        page->chrome().client().didDisplayCaptions(Vector<String> { captions });
+
+    // For tests, also call the wrapper's accessibilityPostedNotification.
+    if (gShouldRepostNotificationsForTests) [[unlikely]] {
+        if (RefPtr root = getOrCreate(protect(m_document->view()))) {
+            RetainPtr textRuns = createNSArray(captions);
+            [protect(root->wrapper()) accessibilityPostedNotification:@"AXCaptionsDisplayed" userInfo:@{ @"AXCaptionsDisplayedTextRuns": textRuns.get() }];
         }
     }
 }

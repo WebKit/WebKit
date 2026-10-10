@@ -95,6 +95,9 @@ private:
     void updateActiveCuesFontSize();
     void updateTextStrokeStyle();
     void processActiveVTTCue(VTTCue&);
+#if PLATFORM(IOS_FAMILY)
+    void updateDisplayedCaptionsForAccessibility(const CueList&);
+#endif
     void updateTextTrackStyle();
 
     void hide();

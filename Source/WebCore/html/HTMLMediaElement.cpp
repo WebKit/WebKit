@@ -525,6 +525,9 @@ struct HTMLMediaElement::CueData {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(CueData);
     TextTrackCueIntervalTree cueTree;
     CueList currentlyActiveCues;
+    // textTrackRemoveCue() takes active cues out of currentlyActiveCues itself, so the next
+    // updateActiveTextTrackCues() can't see that the active set changed without this.
+    bool activeCueWasRemoved { false };
 };
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(HTMLMediaElement::CueData);
@@ -2335,7 +2338,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // 6 - If all of the cues in current cues have their text track cue active
     // flag set, none of the cues in other cues have their text track cue active
     // flag set, and missed cues is empty, then abort these steps.
-    bool activeSetChanged = missedCuesSize;
+    bool activeSetChanged = missedCuesSize || std::exchange(m_cueData->activeCueWasRemoved, false);
 
     for (size_t i = 0; !activeSetChanged && i < previousCuesSize; ++i)
         if (!currentCues.contains(previousCues[i]) && previousCues[i].data()->isActive())
@@ -2889,6 +2892,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
     if (index != notFound) {
         cue.setIsActive(false);
         m_cueData->currentlyActiveCues.removeAt(index);
+        m_cueData->activeCueWasRemoved = true;
     }
 
     cue.removeDisplayTree();
@@ -8341,6 +8345,34 @@ void HTMLMediaElement::updateTextTrackRepresentationImageIfNeeded()
     if (ensureMediaControls())
         m_mediaControlsHost->updateTextTrackRepresentationImageIfNeeded();
 }
+
+#if PLATFORM(IOS_FAMILY)
+void HTMLMediaElement::displayedCaptionsDidChange(Vector<String>&& captions)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+    // Changing a cue's text removes and re-adds it, so the displayed set can briefly be missing
+    // cues. Wait for the set to settle, so assistive technology doesn't output the intermediate state.
+    m_pendingDisplayedCaptions = WTF::move(captions);
+    if (m_displayedCaptionsTaskCancellationGroup.hasPendingTask())
+        return;
+
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_displayedCaptionsTaskCancellationGroup, [](auto& element) {
+        if (element.m_pendingDisplayedCaptions == element.m_lastDisplayedCaptions)
+            return;
+        element.m_lastDisplayedCaptions = WTF::move(element.m_pendingDisplayedCaptions);
+
+        // An empty set means no captions are displayed. There's nothing to output, but remembering it
+        // means the same caption is output again if it reappears later.
+        if (element.m_lastDisplayedCaptions.isEmpty())
+            return;
+
+        if (CheckedPtr cache = protect(element.document())->axObjectCache())
+            cache->postCaptionsDisplayedNotification(element.m_lastDisplayedCaptions);
+    });
+}
+#endif
 
 void HTMLMediaElement::showCaptionDisplaySettingsPreview()
 {
