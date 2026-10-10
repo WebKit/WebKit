@@ -1118,6 +1118,24 @@ foreach (_feat ENABLE_TOUCH_EVENTS ENABLE_IOS_GESTURE_EVENTS)
     endif ()
 endforeach ()
 
+# Migrating runs unifdef once per header, which is a few seconds on every
+# configure. A migrated header only depends on its source, the unifdef
+# arguments and the rules below, so skip headers that are newer than their
+# source while those are unchanged. (A header whose migrated content did not
+# change when its source did is left alone, and so is redone until its source
+# is older than it again.)
+file(SHA256 "${CMAKE_CURRENT_LIST_FILE}" _wkl_migrate_key)
+string(SHA256 _wkl_migrate_key "${_wkl_migrate_key};${UNIFDEF_EXECUTABLE};${_wkl_unifdef_args}")
+set(_wkl_migrate_key_file "${_wkl_migrate_tmp_dir}/migrate.key")
+set(_wkl_migrate_previous_key "")
+if (EXISTS "${_wkl_migrate_key_file}")
+    file(READ "${_wkl_migrate_key_file}" _wkl_migrate_previous_key)
+endif ()
+if (NOT _wkl_migrate_previous_key STREQUAL _wkl_migrate_key)
+    # Invalidate first, so that a configure that fails part way redoes them all.
+    file(REMOVE "${_wkl_migrate_key_file}")
+endif ()
+
 foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     get_filename_component(_name "${_file}" NAME)
     if (_name IN_LIST _wkl_excluded_for_ios)
@@ -1128,6 +1146,10 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
         set(_src_path "${_file}")
     else ()
         set(_src_path "${CMAKE_CURRENT_SOURCE_DIR}/${_file}")
+    endif ()
+    # IS_NEWER_THAN is also true for equal timestamps and missing files.
+    if (_wkl_migrate_previous_key STREQUAL _wkl_migrate_key AND NOT "${_src_path}" IS_NEWER_THAN "${_target_filename}")
+        continue ()
     endif ()
     # Stage 1 -- migrate-header-rule:
     #   sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e 's/(^ *)WEBCORE_EXPORT /\1/'
@@ -1180,6 +1202,10 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
         file(WRITE "${_target_filename}" "${_migrated}")
     endif ()
 endforeach ()
+file(WRITE "${_wkl_migrate_key_file}" "${_wkl_migrate_key}")
+unset(_wkl_migrate_key)
+unset(_wkl_migrate_key_file)
+unset(_wkl_migrate_previous_key)
 
 set(_wkl_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework")
 file(MAKE_DIRECTORY "${_wkl_fw}")

@@ -6,64 +6,69 @@ else ()
 endif ()
 option(USE_HEADER_MAPS "Collapse per-target include directories into a Clang header map" ${_USE_HEADER_MAPS_DEFAULT})
 
+# Header maps are written at the end of the configure, all in one Python
+# process (Tools/Scripts/generate-header-maps). Spawning Python twice per header
+# map, as this used to, was most of the time spent configuring a new build
+# directory. Nothing reads a header map before the build starts.
 function(WEBKIT_WRITE_HEADER_MAP target)
     set(options QUOTED BRACKETED)
     set(oneValueArgs DESTINATION)
     set(multiValueArgs FILES)
     cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    string(REPLACE ";" "\n" body "${opt_FILES}")
+    if (NOT opt_QUOTED AND NOT opt_BRACKETED)
+        message(AUTHOR_WARNING "Must call with QUOTED and/or BRACKETED argument")
+        return ()
+    endif ()
 
-    # Only regenerate headermaps if the manifest file has changed. Bump the
-    # version number in the path when this function changes and needs to
-    # invalidate existing listings.
-    set(manifest "${opt_DESTINATION}.v1.txt")
+    set(quoted 0)
+    set(bracketed 0)
+    if (opt_QUOTED)
+        set(quoted 1)
+    endif ()
+    if (opt_BRACKETED)
+        set(bracketed 1)
+    endif ()
+    string(REPLACE ";" "\n" files "${opt_FILES}")
+    set(body "${target}|${CMAKE_CURRENT_SOURCE_DIR}|${quoted}|${bracketed}\n${files}")
+
+    # Only regenerate header maps whose inputs changed since they were last
+    # written. Bump the version number in the suffixes (here and in
+    # generate-header-maps) when this function changes and needs to invalidate
+    # existing listings.
+    set(manifest "${opt_DESTINATION}.v2.txt")
     if (EXISTS ${manifest} AND EXISTS ${opt_DESTINATION})
         file(READ ${manifest} old_body)
         if ("${old_body}" STREQUAL "${body}")
             return ()
         endif ()
     endif ()
-    file(WRITE ${manifest} ${body})
+    # generate-header-maps renames this to ${manifest} once the header map is
+    # written, so a configure that fails before then retries next time.
+    file(WRITE "${opt_DESTINATION}.v2.pending" "${body}")
+    set_property(GLOBAL APPEND PROPERTY WEBKIT_PENDING_HEADER_MAPS "${opt_DESTINATION}")
+endfunction()
 
-    # Turn the source lists into a JSON object using a python snippet (CMake's
-    # own JSON operations are too slow for thousands of headers). Feed that
-    # object into a vendored copy of LLVM hmaptool.
-    if (opt_QUOTED AND opt_BRACKETED)
-        set(python_code "name, f'${target}/{name}'")
-    elseif (opt_QUOTED)
-        set(python_code "name")
-    elseif (opt_BRACKETED)
-        set(python_code "f'${target}/{name}'")
-    else ()
-        message(AUTHOR_WARNING "Must call with QUOTED and/or BRACKETED argument")
+function(_WEBKIT_WRITE_PENDING_HEADER_MAPS)
+    get_property(destinations GLOBAL PROPERTY WEBKIT_PENDING_HEADER_MAPS)
+    if (NOT destinations)
         return ()
     endif ()
-
+    set_property(GLOBAL PROPERTY WEBKIT_PENDING_HEADER_MAPS "")
+    list(REMOVE_DUPLICATES destinations)
+    list(LENGTH destinations count)
+    string(REPLACE ";" "\n" jobs "${destinations}")
+    set(jobs_file "${CMAKE_BINARY_DIR}/CMakeFiles/pending-header-maps.txt")
+    file(WRITE ${jobs_file} "${jobs}\n")
     execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} -c "
-import json, os, sys
-map = {}
-for line in sys.stdin:
-    header = line.rstrip()
-    name = os.path.basename(header)
-    dest = os.path.join('${CMAKE_CURRENT_SOURCE_DIR}', header)
-    for entry in [${python_code}]:
-        map[entry] = dest
-json.dump({'mappings': map}, sys.stdout)
-        "
-        OUTPUT_FILE ${opt_DESTINATION}.json
-        INPUT_FILE ${manifest}
+        COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_DIR}/Scripts/generate-header-maps ${jobs_file}
         RESULT_VARIABLE result
     )
-    if (result EQUAL 0)
-        execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_DIR}/Scripts/hmaptool write ${opt_DESTINATION}.json ${opt_DESTINATION}
-            RESULT_VARIABLE result
-        )
-    endif ()
     if (NOT result EQUAL 0)
-        file(REMOVE ${manifest})
-        message(FATAL_ERROR "Generating headermap \"${opt_DESTINATION}\" for ${target} failed")
+        message(FATAL_ERROR "Generating ${count} header maps failed")
     endif ()
+    message(STATUS "Generated ${count} header maps")
 endfunction()
+
+# Runs once every directory has been processed.
+cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL _WEBKIT_WRITE_PENDING_HEADER_MAPS)

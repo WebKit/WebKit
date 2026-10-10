@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Write every header map queued by WEBKIT_WRITE_HEADER_MAP in one process.
+
+usage: generate-header-maps <jobs-file>
+
+<jobs-file> lists one header map destination per line. For each destination,
+WebKitHeaderMap.cmake left a "<destination>.pending" file whose first line is
+"<target>|<source dir>|<QUOTED>|<BRACKETED>" and whose remaining lines are the
+headers, relative to <source dir> or absolute. Each header is mapped from its
+basename (QUOTED) and from "<target>/<basename>" (BRACKETED) to its path. Once a
+header map is written, "<destination>.pending" becomes the manifest that lets
+the next configure skip header maps whose inputs did not change.
+
+Configuring used to spawn two Python processes per header map (about 90 header
+maps on macOS), which was most of the time spent configuring a new build
+directory.
+"""
+
+import importlib.machinery
+import importlib.util
+import os
+import sys
+
+MANIFEST_SUFFIX = '.v2.txt'
+PENDING_SUFFIX = '.v2.pending'
+
+
+def load_hmaptool():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hmaptool')
+    loader = importlib.machinery.SourceFileLoader('hmaptool', path)
+    spec = importlib.util.spec_from_loader('hmaptool', loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def mappings_for(pending_path):
+    with open(pending_path, 'r') as f:
+        lines = f.read().split('\n')
+    target, source_dir, quoted, bracketed = lines[0].split('|')
+    mappings = {}
+    for header in lines[1:]:
+        if not header:
+            continue
+        name = os.path.basename(header)
+        path = os.path.join(source_dir, header)
+        if quoted == '1':
+            mappings[name] = path
+        if bracketed == '1':
+            mappings[f'{target}/{name}'] = path
+    return mappings
+
+
+def main():
+    if len(sys.argv) != 2:
+        print(__doc__, file=sys.stderr)
+        return 2
+    hmaptool = load_hmaptool()
+    with open(sys.argv[1], 'r') as f:
+        destinations = [line.strip() for line in f if line.strip()]
+    for destination in destinations:
+        pending = destination + PENDING_SUFFIX
+        if not os.path.exists(pending):
+            # Queued twice; already written.
+            continue
+        temporary = destination + '.tmp'
+        hmaptool.write_headermap(mappings_for(pending), temporary)
+        os.replace(temporary, destination)
+        os.replace(pending, destination + MANIFEST_SUFFIX)
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

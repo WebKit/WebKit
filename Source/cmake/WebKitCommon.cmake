@@ -277,10 +277,23 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     find_package(Perl 5.10.0 REQUIRED)
     find_package(PerlModules COMPONENTS English FindBin JSON::PP REQUIRED)
 
-    # This module looks preferably for version 3 of Python. If not found, version 2 is searched.
-    find_package(Python COMPONENTS Interpreter REQUIRED)
-    # Set the variable with uppercase name to keep compatibility with code and users expecting it.
-    set(PYTHON_EXECUTABLE ${Python_EXECUTABLE} CACHE FILEPATH "Path to the Python interpreter")
+    # find_package(Python) runs the interpreter about ten times to validate it,
+    # on every configure. Only WebKit's own lookup result is needed, so skip it
+    # once that is cached and the interpreter is still there.
+    if (DEFINED CACHE{_WEBKIT_VALIDATED_PYTHON_EXECUTABLE}
+        AND "$CACHE{_WEBKIT_VALIDATED_PYTHON_EXECUTABLE}" STREQUAL "$CACHE{PYTHON_EXECUTABLE}"
+        AND EXISTS "$CACHE{PYTHON_EXECUTABLE}"
+        AND (NOT DEFINED CACHE{Python_EXECUTABLE} OR "$CACHE{Python_EXECUTABLE}" STREQUAL "$CACHE{PYTHON_EXECUTABLE}"))
+        set(Python_EXECUTABLE "$CACHE{PYTHON_EXECUTABLE}")
+        set(Python_FOUND TRUE)
+        set(Python_Interpreter_FOUND TRUE)
+    else ()
+        # This module looks preferably for version 3 of Python. If not found, version 2 is searched.
+        find_package(Python COMPONENTS Interpreter REQUIRED)
+        # Set the variable with uppercase name to keep compatibility with code and users expecting it.
+        set(PYTHON_EXECUTABLE ${Python_EXECUTABLE} CACHE FILEPATH "Path to the Python interpreter")
+        set(_WEBKIT_VALIDATED_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}" CACHE INTERNAL "")
+    endif ()
 
     # We only need the Ruby interpreter (to run .rb generators), not the dev
     # package, so find the executable and query its version directly instead of
