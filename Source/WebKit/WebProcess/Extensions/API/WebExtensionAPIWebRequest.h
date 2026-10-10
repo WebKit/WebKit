@@ -40,15 +40,15 @@ class WebExtensionAPIWebRequest : public WebExtensionAPIObject, public JSWebExte
 
 public:
 #if PLATFORM(COCOA)
-    WebExtensionAPIWebRequestEvent& onBeforeRequest();
-    WebExtensionAPIWebRequestEvent& onBeforeSendHeaders();
-    WebExtensionAPIWebRequestEvent& onSendHeaders();
-    WebExtensionAPIWebRequestEvent& onHeadersReceived();
-    WebExtensionAPIWebRequestEvent& onAuthRequired();
-    WebExtensionAPIWebRequestEvent& onBeforeRedirect();
-    WebExtensionAPIWebRequestEvent& onResponseStarted();
-    WebExtensionAPIWebRequestEvent& onCompleted();
-    WebExtensionAPIWebRequestEvent& onErrorOccurred();
+    WebExtensionAPIWebRequestEvent& NODELETE onBeforeRequest();
+    WebExtensionAPIWebRequestEvent& NODELETE onBeforeSendHeaders();
+    WebExtensionAPIWebRequestEvent& NODELETE onSendHeaders();
+    WebExtensionAPIWebRequestEvent& NODELETE onHeadersReceived();
+    WebExtensionAPIWebRequestEvent& NODELETE onAuthRequired();
+    WebExtensionAPIWebRequestEvent& NODELETE onBeforeRedirect();
+    WebExtensionAPIWebRequestEvent& NODELETE onResponseStarted();
+    WebExtensionAPIWebRequestEvent& NODELETE onCompleted();
+    WebExtensionAPIWebRequestEvent& NODELETE onErrorOccurred();
 
 private:
     const RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeRequestEvent;

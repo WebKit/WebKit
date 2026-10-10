@@ -48,7 +48,7 @@ public:
 
     NSString *themeName();
 
-    WebExtensionAPIEvent& onThemeChanged();
+    WebExtensionAPIEvent& NODELETE onThemeChanged();
 #endif
 
 private:

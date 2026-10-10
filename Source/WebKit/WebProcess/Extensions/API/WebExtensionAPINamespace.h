@@ -67,47 +67,47 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
 public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 #if PLATFORM(COCOA)
-    WebExtensionAPIAction& action();
+    WebExtensionAPIAction& NODELETE action();
 #endif
-    WebExtensionAPIAlarms& alarms();
+    WebExtensionAPIAlarms& NODELETE alarms();
 #if PLATFORM(COCOA)
-    WebExtensionAPIAction& browserAction() { return action(); }
-    WebExtensionAPICommands& commands();
-    WebExtensionAPICookies& cookies();
-    WebExtensionAPIMenus& contextMenus() { return menus(); }
-    WebExtensionAPIDeclarativeNetRequest& declarativeNetRequest();
+    WebExtensionAPIAction& NODELETE browserAction() { return action(); }
+    WebExtensionAPICommands& NODELETE commands();
+    WebExtensionAPICookies& NODELETE cookies();
+    WebExtensionAPIMenus& NODELETE contextMenus() { return menus(); }
+    WebExtensionAPIDeclarativeNetRequest& NODELETE declarativeNetRequest();
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    WebExtensionAPIDevTools& devtools();
+    WebExtensionAPIDevTools& NODELETE devtools();
 #endif
-    WebExtensionAPIDOM& dom();
-    WebExtensionAPIExtension& extension();
-    WebExtensionAPILocalization& i18n();
-    WebExtensionAPIMenus& menus();
-    WebExtensionAPINotifications& notifications();
+    WebExtensionAPIDOM& NODELETE dom();
+    WebExtensionAPIExtension& NODELETE extension();
+    WebExtensionAPILocalization& NODELETE i18n();
+    WebExtensionAPIMenus& NODELETE menus();
+    WebExtensionAPINotifications& NODELETE notifications();
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    WebExtensionAPIOffscreen& offscreen();
+    WebExtensionAPIOffscreen& NODELETE offscreen();
 #endif
-    WebExtensionAPIAction& pageAction() { return action(); }
-    WebExtensionAPIPermissions& permissions();
+    WebExtensionAPIAction& NODELETE pageAction() { return action(); }
+    WebExtensionAPIPermissions& NODELETE permissions();
 #endif
-    WebExtensionAPIRuntime& runtime() const final;
+    WebExtensionAPIRuntime& NODELETE runtime() const final;
 #if PLATFORM(COCOA)
-    WebExtensionAPIScripting& scripting();
+    WebExtensionAPIScripting& NODELETE scripting();
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    WebExtensionAPISidePanel& sidePanel();
-    WebExtensionAPISidebarAction& sidebarAction();
+    WebExtensionAPISidePanel& NODELETE sidePanel();
+    WebExtensionAPISidebarAction& NODELETE sidebarAction();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-    WebExtensionAPIBookmarks& bookmarks();
+    WebExtensionAPIBookmarks& NODELETE bookmarks();
 #endif
-    WebExtensionAPIStorage& storage();
-    WebExtensionAPITabs& tabs();
+    WebExtensionAPIStorage& NODELETE storage();
+    WebExtensionAPITabs& NODELETE tabs();
 #endif
-    WebExtensionAPITest& test();
+    WebExtensionAPITest& NODELETE test();
 #if PLATFORM(COCOA)
-    WebExtensionAPIWindows& windows();
-    WebExtensionAPIWebNavigation& webNavigation();
-    WebExtensionAPIWebRequest& webRequest();
+    WebExtensionAPIWindows& NODELETE windows();
+    WebExtensionAPIWebNavigation& NODELETE webNavigation();
+    WebExtensionAPIWebRequest& NODELETE webRequest();
 #endif
 
 private:

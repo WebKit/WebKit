@@ -70,8 +70,8 @@ public:
     JSValue *error();
     void setError(JSContextRef, JSValueRef);
 
-    WebExtensionAPIEvent& onMessage();
-    WebExtensionAPIEvent& onDisconnect();
+    WebExtensionAPIEvent& NODELETE onMessage();
+    WebExtensionAPIEvent& NODELETE onDisconnect();
 
     virtual ~WebExtensionAPIPort()
     {

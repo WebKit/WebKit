@@ -38,8 +38,8 @@ class WebExtensionAPIDevToolsExtensionPanel : public WebExtensionAPIObject, publ
 
 public:
 #if PLATFORM(COCOA)
-    WebExtensionAPIEvent& onShown();
-    WebExtensionAPIEvent& onHidden();
+    WebExtensionAPIEvent& NODELETE onShown();
+    WebExtensionAPIEvent& NODELETE onHidden();
 #endif
 
 private:

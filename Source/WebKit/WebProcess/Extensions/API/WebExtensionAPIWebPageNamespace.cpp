@@ -57,7 +57,7 @@ WebExtensionAPIWebPageRuntime& WebExtensionAPIWebPageNamespace::runtime() const
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 
     if (!m_runtime) {
-        m_runtime = WebExtensionAPIWebPageRuntime::create(contentWorldType());
+        lazyInitialize(m_runtime, WebExtensionAPIWebPageRuntime::create(contentWorldType()));
         m_runtime->setPropertyPath("runtime"_s, this);
     }
 

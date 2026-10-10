@@ -44,8 +44,8 @@ public:
     void request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIEvent& onAdded();
-    WebExtensionAPIEvent& onRemoved();
+    WebExtensionAPIEvent& NODELETE onAdded();
+    WebExtensionAPIEvent& NODELETE onRemoved();
 
 private:
     const RefPtr<WebExtensionAPIEvent> m_onAdded;

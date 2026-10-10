@@ -85,15 +85,15 @@ public:
 
     double tabIdentifierNone() const { return -1; }
 
-    WebExtensionAPIEvent& onActivated();
-    WebExtensionAPIEvent& onAttached();
-    WebExtensionAPIEvent& onCreated();
-    WebExtensionAPIEvent& onDetached();
-    WebExtensionAPIEvent& onHighlighted();
-    WebExtensionAPIEvent& onMoved();
-    WebExtensionAPIEvent& onRemoved();
-    WebExtensionAPIEvent& onReplaced();
-    WebExtensionAPIEvent& onUpdated();
+    WebExtensionAPIEvent& NODELETE onActivated();
+    WebExtensionAPIEvent& NODELETE onAttached();
+    WebExtensionAPIEvent& NODELETE onCreated();
+    WebExtensionAPIEvent& NODELETE onDetached();
+    WebExtensionAPIEvent& NODELETE onHighlighted();
+    WebExtensionAPIEvent& NODELETE onMoved();
+    WebExtensionAPIEvent& NODELETE onRemoved();
+    WebExtensionAPIEvent& NODELETE onReplaced();
+    WebExtensionAPIEvent& NODELETE onUpdated();
 
 private:
     bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);

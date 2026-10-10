@@ -61,7 +61,7 @@ public:
     void setPopup(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void openPopup(WebPageProxyIdentifier, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIEvent& onClicked();
+    WebExtensionAPIEvent& NODELETE onClicked();
 
 private:
     friend class WebExtensionAPIMenus;

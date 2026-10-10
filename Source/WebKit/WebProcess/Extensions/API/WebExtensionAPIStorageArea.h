@@ -61,7 +61,7 @@ public:
     double NODELETE maxWriteOperationsPerHour();
     double NODELETE maxWriteOperationsPerMinute();
 
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& NODELETE onChanged();
 
 private:
     explicit WebExtensionAPIStorageArea(const WebExtensionAPIObject& parentObject, WebExtensionDataType type)

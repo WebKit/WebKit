@@ -50,7 +50,7 @@ public:
     void remove(id identifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void removeAll(Ref<WebExtensionCallbackHandler>&&);
 
-    WebExtensionAPIEvent& onClicked();
+    WebExtensionAPIEvent& NODELETE onClicked();
 
     double actionMenuTopLevelLimit() const { return webExtensionActionMenuItemTopLevelLimit; }
 

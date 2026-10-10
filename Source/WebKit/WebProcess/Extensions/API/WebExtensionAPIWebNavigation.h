@@ -40,11 +40,11 @@ class WebExtensionAPIWebNavigation : public WebExtensionAPIObject, public JSWebE
 
 public:
 #if PLATFORM(COCOA)
-    WebExtensionAPIWebNavigationEvent& onBeforeNavigate();
-    WebExtensionAPIWebNavigationEvent& onCommitted();
-    WebExtensionAPIWebNavigationEvent& onDOMContentLoaded();
-    WebExtensionAPIWebNavigationEvent& onCompleted();
-    WebExtensionAPIWebNavigationEvent& onErrorOccurred();
+    WebExtensionAPIWebNavigationEvent& NODELETE onBeforeNavigate();
+    WebExtensionAPIWebNavigationEvent& NODELETE onCommitted();
+    WebExtensionAPIWebNavigationEvent& NODELETE onDOMContentLoaded();
+    WebExtensionAPIWebNavigationEvent& NODELETE onCompleted();
+    WebExtensionAPIWebNavigationEvent& NODELETE onErrorOccurred();
 
     void getAllFrames(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getFrame(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

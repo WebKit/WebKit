@@ -78,9 +78,9 @@ public:
 
     WebExtensionContentWorldType contentWorldType() const { return m_contentWorldType; }
 
-    virtual WebExtensionAPIRuntimeBase& runtime() const { return *m_runtime; }
+    virtual WebExtensionAPIRuntimeBase& NODELETE runtime() const { return *m_runtime; }
 
-    WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
+    WebExtensionContextProxy& NODELETE extensionContext() const { return *m_extensionContext; }
     bool hasExtensionContext() const { return !!m_extensionContext; }
 
     const String& propertyPath() const LIFETIME_BOUND { return m_propertyPath; }

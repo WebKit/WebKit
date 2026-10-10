@@ -43,11 +43,11 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
+    WebExtensionAPIStorageArea& NODELETE local();
+    WebExtensionAPIStorageArea& NODELETE session();
+    WebExtensionAPIStorageArea& NODELETE sync();
 
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& NODELETE onChanged();
 
 private:
     friend class WebExtensionContextProxy;

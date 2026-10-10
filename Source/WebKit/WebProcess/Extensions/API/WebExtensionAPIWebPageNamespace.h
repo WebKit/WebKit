@@ -43,13 +43,13 @@ class WebExtensionAPIWebPageNamespace : public WebExtensionAPIObject, public JSW
 public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 #if PLATFORM(COCOA)
-    WebExtensionAPIWebPageRuntime& runtime() const;
+    WebExtensionAPIWebPageRuntime& NODELETE runtime() const;
 #endif
-    WebExtensionAPITest& test();
+    WebExtensionAPITest& NODELETE test();
 
 private:
 #if PLATFORM(COCOA)
-    mutable RefPtr<WebExtensionAPIWebPageRuntime> m_runtime;
+    const RefPtr<WebExtensionAPIWebPageRuntime> m_runtime;
 #endif
     const RefPtr<WebExtensionAPITest> m_test;
 };

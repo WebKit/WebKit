@@ -49,7 +49,7 @@ public:
 
     void getAllCookieStores(Ref<WebExtensionCallbackHandler>&&);
 
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& NODELETE onChanged();
 
 private:
     using ParsedDetails = std::tuple<std::optional<PAL::SessionID>, String, URL>;

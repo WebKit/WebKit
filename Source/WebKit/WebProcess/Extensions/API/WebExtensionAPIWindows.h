@@ -64,9 +64,9 @@ public:
     double windowIdentifierNone() const { return WebExtensionWindowConstants::None; }
     double windowIdentifierCurrent() const { return WebExtensionWindowConstants::Current; }
 
-    WebExtensionAPIWindowsEvent& onCreated();
-    WebExtensionAPIWindowsEvent& onRemoved();
-    WebExtensionAPIWindowsEvent& onFocusChanged();
+    WebExtensionAPIWindowsEvent& NODELETE onCreated();
+    WebExtensionAPIWindowsEvent& NODELETE onRemoved();
+    WebExtensionAPIWindowsEvent& NODELETE onFocusChanged();
 
 private:
     friend class WebExtensionAPITabs;

@@ -64,7 +64,7 @@ public:
 
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
-    WebExtensionAPIEvent& onRuleMatchedDebug();
+    WebExtensionAPIEvent& NODELETE onRuleMatchedDebug();
 
 private:
     const RefPtr<WebExtensionAPIEvent> m_onRuleMatchedDebug;
