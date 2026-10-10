@@ -131,6 +131,10 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 #if USE(TEXTURE_MAPPER)
         m_context = WTF::move(context);
         m_textureMapper = TextureMapper::create();
+#if USE(WPE_RENDERER)
+        if (m_surface->isLegacyWPERenderer() && !nativeSurfaceHandle)
+            m_flipY = !m_flipY;
+#endif
 #else
         PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(WTF::move(context));
         m_threadSafeGrContext = PlatformDisplay::sharedDisplay().skiaGrContext()->threadSafeProxy();
