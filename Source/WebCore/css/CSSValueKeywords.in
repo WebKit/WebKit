@@ -1260,6 +1260,10 @@ inline-box
 initial-letter
 replaced
 
+// initial-letter
+drop
+raise
+
 // font-feature-settings
 on
 off

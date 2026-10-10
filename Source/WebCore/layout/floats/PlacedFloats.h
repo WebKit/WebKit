@@ -64,6 +64,9 @@ public:
 
         BoxGeometry boxGeometry() const;
 
+        // Post-placement shift, so later lines wrap against the float's final position.
+        void moveVertically(LayoutUnit delta) { m_absoluteBoxGeometry.moveVertically(delta); m_localTopLeft.move(0_lu, delta); }
+
         Rect absoluteRectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
         Rect absoluteBorderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
         BoxGeometry::HorizontalEdges inlineAxisMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
@@ -88,6 +91,7 @@ public:
 
     void add(Item);
     bool remove(const Box&);
+    void moveFloatVertically(const Box&, LayoutUnit delta);
     void clear();
 
     bool isEmpty() const { return list().isEmpty(); }
