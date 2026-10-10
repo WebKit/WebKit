@@ -595,6 +595,7 @@ typedef struct {
     pas_lock_hold_mode heap_lock_hold_mode;
     const pas_segregated_page_config* my_page_config_ptr;
     pas_page_sharing_pool_take_result result;
+    bool is_forced_scavenge;
 } take_last_empty_data;
 
 static PAS_ALWAYS_INLINE unsigned
@@ -609,6 +610,19 @@ take_last_empty_should_consider_view_parallel(
     PAS_UNUSED_PARAM(data);
 
     return segment.empty_bits;
+}
+
+static void
+did_decommit_exclusive_view(pas_segregated_directory* directory,
+                            size_t index,
+                            pas_segregated_exclusive_view* view,
+                            bool is_forced_scavenge)
+{
+    /* Note the decommit before marking the view eligible, so a mutator that recommits the page right
+       away does not read the decommit_epoch or decommitted_by_forced_scavenge left over from the
+       page's earlier decommit. */
+    pas_segregated_exclusive_view_note_decommit(view, is_forced_scavenge);
+    pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
 }
 
 static bool
@@ -741,7 +755,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
             my_page_config.base.heap_config_ptr->page_flags);
         decommit_log->total += my_page_config.base.page_size;
         my_page_config.base.destroy_page_header(&page->base, pas_lock_is_held);
-        pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
+        did_decommit_exclusive_view(directory, index, view, data->is_forced_scavenge);
         pas_lock_switch(&held_lock, NULL);
         data->result = pas_page_sharing_pool_take_success;
         return true;
@@ -816,7 +830,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         }
         my_page_config.base.destroy_page_header(&page->base, heap_lock_hold_mode);
 
-        pas_segregated_directory_view_did_become_eligible_at_index(directory, index);
+        did_decommit_exclusive_view(directory, index, view, data->is_forced_scavenge);
     }
 
     data->result = pas_page_sharing_pool_take_success;
@@ -834,7 +848,8 @@ pas_page_sharing_pool_take_result
 pas_segregated_size_directory_take_last_empty(
     pas_segregated_size_directory* size_directory,
     pas_deferred_decommit_log* decommit_log,
-    pas_lock_hold_mode heap_lock_hold_mode)
+    pas_lock_hold_mode heap_lock_hold_mode,
+    bool is_forced_scavenge)
 {
     /* Be careful: heap_lock_hold_mode here can be unrelated to what page_config says, since
        we may be asked by the physical page sharing pool to decommit on behalf of any other heap,
@@ -852,6 +867,7 @@ pas_segregated_size_directory_take_last_empty(
     data.decommit_log = decommit_log;
     data.heap_lock_hold_mode = heap_lock_hold_mode;
     data.result = pas_page_sharing_pool_take_none_available;
+    data.is_forced_scavenge = is_forced_scavenge;
 
     data.my_page_config_ptr = pas_segregated_page_config_kind_get_config(directory->page_config_kind);
 
