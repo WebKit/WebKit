@@ -656,7 +656,11 @@ jobs:
           if [ -d build ]; then
             find build -name '*.obj' -exec touch {} + 2>/dev/null || true
           fi
-          cmake --build build --parallel $(nproc) -- -k 0 2>&1 | tee build.log || true
+          # Keep collecting the compiler diagnostics, but preserve the actual
+          # CMake/Ninja exit code so failed translation units cannot be packaged.
+          set +e
+          cmake --build build --parallel $(nproc) -- -k 0 2>&1 | tee build.log
+          BUILD_STATUS=${PIPESTATUS[0]}
           echo "===== ccache stats ====="
           ccache --show-stats || true
           echo "===== pthread capability probe (from earlier step) ====="
@@ -701,6 +705,10 @@ jobs:
             capturing && /CoreFoundation\/CoreFoundation.h: No such file/ { print buf "\n" $0; exit }
             { capturing=0 }
           ' build.log | head -40 || true
+          if [ "$BUILD_STATUS" -ne 0 ]; then
+            echo "::error::WebKit WKC compilation failed (exit $BUILD_STATUS); refusing to package an incomplete libWebKitWKC.a."
+            exit "$BUILD_STATUS"
+          fi
 
       # WebRTC bring-up harness: cross-compile the in-tree libwebrtc for the Wii U
       # (PowerPC). libwebrtc is NOT part of libWebKitWKC.a -- it is compiled here
