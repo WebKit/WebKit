@@ -185,7 +185,7 @@ if (USE_LIBHYPHEN)
 endif ()
 
 if (USE_VULKAN)
-    list(APPEND WebCore_PRIVATE_LIBRARIES volk::volk)
+    list(APPEND WebCore_LIBRARIES volk::volk)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/vulkan"
     )
