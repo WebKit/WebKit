@@ -1589,31 +1589,8 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         bool isFirstColumn = !tableElt->colToEffCol(col());
         bool isLastColumn = tableElt->colToEffCol(col() + colSpan() - 1) == tableElt->numEffCols() - 1;
 
-        LayoutUnit leftInset;
-        LayoutUnit rightInset;
-
-        if (isFirstColumn || isLastColumn) {
-            LayoutUnit cellLeftHalf = isFirstColumn ? borderHalfLeft(false) : 0_lu;
-            LayoutUnit cellRightHalf = isLastColumn ? borderHalfRight(false) : 0_lu;
-            LayoutUnit maxLeftHalf = cellLeftHalf;
-            LayoutUnit maxRightHalf = cellRightHalf;
-
-            for (auto* cell = tableElt->cellAbove(this); cell; cell = tableElt->cellAbove(cell)) {
-                if (isFirstColumn)
-                    maxLeftHalf = std::max(maxLeftHalf, cell->borderHalfLeft(false));
-                if (isLastColumn)
-                    maxRightHalf = std::max(maxRightHalf, cell->borderHalfRight(false));
-            }
-            for (auto* cell = tableElt->cellBelow(this); cell; cell = tableElt->cellBelow(cell)) {
-                if (isFirstColumn)
-                    maxLeftHalf = std::max(maxLeftHalf, cell->borderHalfLeft(false));
-                if (isLastColumn)
-                    maxRightHalf = std::max(maxRightHalf, cell->borderHalfRight(false));
-            }
-
-            leftInset = maxLeftHalf - cellLeftHalf;
-            rightInset = maxRightHalf - cellRightHalf;
-        }
+        LayoutUnit leftInset = isFirstColumn ? tableElt->maxCollapsedInnerBorderHalfForFirstColumn() - borderHalfLeft(false) : 0_lu;
+        LayoutUnit rightInset = isLastColumn ? tableElt->maxCollapsedInnerBorderHalfForLastColumn() - borderHalfRight(false) : 0_lu;
 
         if (leftInset || rightInset) {
             fillRect.shiftXEdgeBy(leftInset);
