@@ -45,13 +45,20 @@ struct ZoomFactor;
 }
 
 class SVGLengthContext {
+
+    enum class SVGUserSpace : bool { Outside, Inside };
+
 public:
     explicit SVGLengthContext(const SVGElement*, const std::optional<FloatSize>& viewportSize = std::nullopt);
     ~SVGLengthContext();
 
+    static SVGLengthContext outsideSVGUserSpace(const SVGElement& lengthOwner, FloatSize viewportSize);
+
     template<typename T>
     static FloatRect resolveRectangle(const SVGElement* context, T& element, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport)
     {
+        if (!context)
+            return resolveRectangle(&element, type, viewport, element.x(), element.y(), element.width(), element.height(), SVGUserSpace::Outside);
         return resolveRectangle(context, type, viewport, element.x(), element.y(), element.width(), element.height());
     }
 
@@ -61,7 +68,7 @@ public:
         return resolveRectangle(&element, element, type, viewport);
     }
 
-    static FloatRect resolveRectangle(const SVGElement*, SVGUnitTypes::SVGUnitType, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height);
+    static FloatRect resolveRectangle(const SVGElement*, SVGUnitTypes::SVGUnitType, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height, SVGUserSpace = SVGUserSpace::Inside);
     static FloatPoint resolvePoint(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue& x, const SVGLengthValue& y);
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue&);
 
@@ -80,6 +87,8 @@ public:
     std::optional<FloatSize> viewportSize() const;
 
 private:
+    SVGLengthContext(const SVGElement*, SVGUserSpace, const std::optional<FloatSize>& viewportSize);
+
     ExceptionOr<float> convertValueFromUserUnitsToPercentage(float value, SVGLengthMode) const;
     ExceptionOr<double> convertValueFromPercentageToUserUnits(double value, SVGLengthMode) const;
     static double convertValueFromPercentageToUserUnits(double value, SVGLengthMode, FloatSize);
@@ -95,6 +104,7 @@ private:
     template<typename SizeType> float valueForSizeType(const SizeType&, Style::ZoomFactor, SVGLengthMode = SVGLengthMode::Other);
 
     WeakPtr<const SVGElement, WeakPtrImplWithEventTargetData> m_context;
+    SVGUserSpace m_userSpace;
     mutable std::optional<FloatSize> m_viewportSize;
 };
 
