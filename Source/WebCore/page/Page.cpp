@@ -5803,7 +5803,7 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
     }());
 
     for (auto side : sides) {
-        if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && fixedContainerEdges().predominantColor(side).isVisible())) {
+        if (!edges.hasFixedEdge(side) || (!edges.predominantColor(side).isVisible() && !std::holds_alternative<FrameIdentifier>(edges.colors.at(side)) && fixedContainerEdges().predominantColor(side).isVisible())) {
             WeakPtr lastElement = m_fixedContainerEdgesAndElements.second.at(side);
             if (!lastElement)
                 continue;
@@ -5825,6 +5825,7 @@ void Page::updateFixedContainerEdges(BoxSideSet sides)
     m_fixedContainerEdgesAndElements = std::make_pair(makeUniqueRef<FixedContainerEdges>(WTF::move(edges)), WTF::move(elements));
 
 #if HAVE(RUBBER_BANDING)
+    // FIXME: Fill the top overhang when the top edge is in a remote frame.
     auto topOverhangColor = fixedContainerEdges().predominantColor(BoxSide::Top);
     if (RefPtr layer = frameView->setWantsLayerForTopOverhangColorExtension(topOverhangColor.isVisible())) {
         layer->setBackgroundColor(WTF::move(topOverhangColor));
