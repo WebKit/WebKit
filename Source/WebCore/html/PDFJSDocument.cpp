@@ -94,7 +94,11 @@ void PDFJSDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
 
 void PDFJSDocumentParser::finish()
 {
-    document().finishedParsing();
+    if (isStopped())
+        return;
+
+    document().didFinishParsingPDF();
+    RawDataDocumentParser::finish();
 }
 
 /* PDFJSDocumentEventListener: event listener for the PDFJSDocument iframe */
@@ -178,7 +182,7 @@ void PDFJSDocument::updateDuringParsing()
         createDocumentStructure();
 }
 
-void PDFJSDocument::finishedParsing()
+void PDFJSDocument::didFinishParsingPDF()
 {
     ASSERT(m_iframe);
     m_isFinishedParsing = true;
