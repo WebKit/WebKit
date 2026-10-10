@@ -55,6 +55,7 @@ class RemoteFrameClient : public FrameLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteFrameClient);
 public:
     virtual void frameDetached() = 0;
+    virtual void destroyProvisionalFrame() = 0;
     virtual void frameRectDidChange(IntRect) = 0;
     virtual void paintContents(GraphicsContext&, const IntRect&) = 0;
     virtual void postMessageToRemote(FrameIdentifier source, const SecurityOriginData& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts&, const std::optional<UserGestureTokenData>&) = 0;

@@ -79,6 +79,11 @@ void WebRemoteFrameClient::frameDetached()
         protect(ownerElement->document())->checkCompleted();
 }
 
+void WebRemoteFrameClient::destroyProvisionalFrame()
+{
+    m_frame->destroyProvisionalFrame();
+}
+
 void WebRemoteFrameClient::frameRectDidChange(IntRect rect)
 {
     broadcastFrameRectToOtherProcesses(rect);

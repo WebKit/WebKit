@@ -45,6 +45,7 @@ public:
 
 private:
     void frameDetached() final;
+    void destroyProvisionalFrame() final;
     void frameRectDidChange(WebCore::IntRect) final;
     void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect&) final;
     void postMessageToRemote(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&, const std::optional<WebCore::UserGestureTokenData>&) final;
