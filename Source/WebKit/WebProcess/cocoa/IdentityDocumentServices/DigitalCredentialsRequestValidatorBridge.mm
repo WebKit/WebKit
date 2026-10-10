@@ -168,6 +168,7 @@ Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequ
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
+    bool reportedMissingValidator = false;
 
     Vector<WebCore::ValidatedMobileDocumentRequest> validatedRequests;
 
@@ -176,6 +177,19 @@ Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequ
         if (!mobileDocumentRequest) {
             // FIXME: Validate the OpenID4VP protocols once rdar://problem/183338719 is
             // fulfilled.
+            continue;
+        }
+
+        if (!validator) {
+            if (!reportedMissingValidator) {
+                RELEASE_LOG_ERROR(DigitalCredentials, "DigitalCredentials::validateRequests: WKIdentityDocumentRawRequestValidator is unavailable, libWebKitSwift may have failed to load");
+                const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
+                    MessageSource::JS,
+                    MessageType::Log,
+                    MessageLevel::Error,
+                    "Digital credential requests cannot be validated because a required WebKit component failed to load. 'org-iso-mdoc' requests will be ignored."_s));
+                reportedMissingValidator = true;
+            }
             continue;
         }
 
