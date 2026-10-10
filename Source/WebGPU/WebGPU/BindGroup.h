@@ -101,6 +101,8 @@ public:
     uint32_t NODELETE dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
     bool rebindSamplersIfNeeded() const;
     bool updateExternalTextures(ExternalTexture&);
+    // Hands every destroyed resource's Metal reference back to the resource, which holds a placeholder once destroyed.
+    void releaseDestroyedResources();
     bool makeSubmitInvalid(ShaderStage, const BindGroupLayout*) const;
     const SamplersContainer& samplers() const LIFETIME_BOUND { return m_samplers; }
     uint32_t uniqueId() const { return m_uniqueIdentifier; }

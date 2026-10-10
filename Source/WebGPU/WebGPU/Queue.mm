@@ -288,6 +288,12 @@ void Queue::makeInvalid()
 
     m_createdNotCommittedBuffers = nil;
     m_openCommandEncoders = nil;
+
+    // Release the staging state: the queue can never be used again, and the staging command buffer retains everything it touched.
+    m_blitCommandEncoder = nil;
+    m_stagedCopyEncoder = nil;
+    m_commandBuffer = nil;
+    m_temporaryBuffer = nil;
 }
 
 void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)

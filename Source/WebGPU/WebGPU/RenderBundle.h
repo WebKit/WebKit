@@ -93,6 +93,8 @@ public:
     bool NODELETE requiresCommandReplay() const;
     bool NODELETE makeSubmitInvalid() const;
     bool rebindSamplersIfNeeded() const;
+    // Hands every destroyed resource's Metal reference back to the resource, which holds a placeholder once destroyed.
+    void releaseDestroyedResources();
     const Vector<WebGPU::Metal::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
 
 private:

@@ -42,8 +42,10 @@
 
 namespace WebGPU::Metal {
 
+class BindGroup;
 class Buffer;
 class ExternalTexture;
+class RenderBundle;
 class Texture;
 class TextureView;
 
@@ -83,6 +85,14 @@ struct BindableResources {
     MTLResourceUsage usage;
     MTLRenderStages renderStages;
 };
+
+// mtlResources above is a Metal reference to each bound resource, so let every resource reach its holders and take that reference back on destroy(). Defined in BindGroup.mm.
+void registerResourceHolder(const Vector<BindableResources>&, const BindGroup&);
+void registerResourceHolder(const Vector<BindableResources>&, const RenderBundle&);
+// The placeholder a destroyed buffer or texture hands out, or nil if it is still alive or is canvas backing.
+id<MTLResource> placeholderForDestroyedResource(const BindGroupEntryUsageData::Resource&);
+// Swaps in that placeholder for every destroyed resource, returning whether anything was replaced.
+bool replaceDestroyedResourcesWithPlaceholders(Vector<BindableResources>&);
 
 struct IndexData {
     uint64_t renderCommand { 0 };

@@ -137,6 +137,10 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
             }
 
             protectedThis->m_commandEncoder = nullptr;
+
+            // Prune here rather than only on the next submission, which never comes once the device is destroyed.
+            if (RefPtr instance = protectedThis->m_device->instance())
+                instance->releaseCompletedCommandBuffers();
         });
     }];
     m_lastErrorString = lastError;

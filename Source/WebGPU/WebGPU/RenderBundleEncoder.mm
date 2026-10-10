@@ -1099,7 +1099,27 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WebGPU::RenderBundleDescript
     renderBundle->setLabel(String { descriptor.label });
     m_finished = true;
 
+    // Let every resource reach the bundles holding a Metal reference to it, so destroy() can take that reference back.
+    registerResourceHolder(renderBundle->resources(), renderBundle);
+
     return renderBundle;
+}
+
+void RenderBundleEncoder::releaseDestroyedResources()
+{
+    if (!m_resources)
+        return;
+
+    // Remove rather than swap in placeholders: the table is keyed by the Metal resource, and every placeholder of a kind is the same object.
+    Vector<id<MTLResource>> destroyedResources;
+    for (id<MTLResource> mtlResource : m_resources) {
+        ResourceUsageAndRenderStage *usageAndStage = [m_resources objectForKey:mtlResource];
+        if (usageAndStage && placeholderForDestroyedResource(usageAndStage.resource))
+            destroyedResources.append(mtlResource);
+    }
+
+    for (id<MTLResource> mtlResource : destroyedResources)
+        [m_resources removeObjectForKey:mtlResource];
 }
 
 bool RenderBundleEncoder::isValid() const

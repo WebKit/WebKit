@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "BindGroup.h"
+#import "RenderBundleEncoder.h"
 #import "TextureOrTextureView.h"
 #import <wtf/TZoneMallocInlines.h>
 
@@ -185,6 +186,19 @@ bool RenderBundle::rebindSamplersIfNeeded() const
         result = bindGroup->rebindSamplersIfNeeded() && result;
 
     return result;
+}
+
+void RenderBundle::releaseDestroyedResources()
+{
+    if (!replaceDestroyedResourcesWithPlaceholders(m_resources))
+        return;
+
+    // The bundle binds through its indirect command buffer, so setCommandEncoder() never sees these resources.
+    m_makeSubmitInvalid = true;
+
+    // The encoder behind a replayable bundle keeps its own Metal reference to each resource.
+    if (RefPtr renderBundleEncoder = m_renderBundleEncoder)
+        renderBundleEncoder->releaseDestroyedResources();
 }
 
 } // namespace WebGPU::Metal
