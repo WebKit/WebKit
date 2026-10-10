@@ -27,6 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class _WKTextManipulationGroup;
 @class _WKTextManipulationItem;
 
 @protocol _WKTextManipulationDelegate <NSObject>
@@ -35,6 +36,7 @@
 
 - (void)_webView:(WKWebView *)webView didFindTextManipulationItem:(_WKTextManipulationItem *)item;
 - (void)_webView:(WKWebView *)webView didFindTextManipulationItems:(NSArray<_WKTextManipulationItem *> *)items;
+- (void)_webView:(WKWebView *)webView didUpdateTextManipulationGroups:(NSArray<_WKTextManipulationGroup *> *)groups WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

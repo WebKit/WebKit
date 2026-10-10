@@ -172,3 +172,62 @@ static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRe
 }
 
 @end
+
+static ASCIILiteral descriptionForGroupKind(_WKTextManipulationGroupKind kind)
+{
+    switch (kind) {
+    case _WKTextManipulationGroupKindPageHeading:
+        return "page-heading"_s;
+    case _WKTextManipulationGroupKindProse:
+        return "prose"_s;
+    case _WKTextManipulationGroupKindNavigation:
+        return "navigation"_s;
+    case _WKTextManipulationGroupKindBanner:
+        return "banner"_s;
+    case _WKTextManipulationGroupKindFooter:
+        return "footer"_s;
+    case _WKTextManipulationGroupKindSidebar:
+        return "sidebar"_s;
+    case _WKTextManipulationGroupKindViewportConstrained:
+        return "viewport-constrained"_s;
+    case _WKTextManipulationGroupKindDialog:
+        return "dialog"_s;
+    case _WKTextManipulationGroupKindOther:
+        return "other"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown"_s;
+}
+
+@implementation _WKTextManipulationGroup {
+    RetainPtr<NSString> _identifier;
+    RetainPtr<NSArray<NSString *>> _itemIdentifiers;
+}
+
+- (instancetype)initWithIdentifier:(NSString *)identifier kind:(_WKTextManipulationGroupKind)kind itemIdentifiers:(NSArray<NSString *> *)itemIdentifiers
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _identifier = adoptNS([identifier copy]);
+    _kind = kind;
+    _itemIdentifiers = adoptNS([itemIdentifiers copy]);
+    return self;
+}
+
+- (NSString *)identifier
+{
+    return _identifier;
+}
+
+- (NSArray<NSString *> *)itemIdentifiers
+{
+    return _itemIdentifiers;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ kind = %s itemIdentifiers = %@>", self.class, self, _identifier.get(), descriptionForGroupKind(_kind).characters(), _itemIdentifiers.get()];
+}
+
+@end

@@ -817,7 +817,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     PreferredBufferFormatsDidChange(Vector<WebKit::RendererBufferFormat> preferredBufferFormats)
 #endif
 
-    StartTextManipulations(Vector<WebCore::TextManipulationControllerExclusionRule> exclusionRules, bool includeSubframes) -> ()
+    StartTextManipulations(Vector<WebCore::TextManipulationControllerExclusionRule> exclusionRules, bool includeSubframes, bool includesGroups) -> ()
     CompleteTextManipulation(Vector<WebCore::TextManipulationItem> items) -> (struct WebCore::TextManipulationControllerManipulationResult result)
 
     SetOverriddenMediaType(String mediaType)

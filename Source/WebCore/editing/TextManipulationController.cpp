@@ -55,6 +55,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "TextManipulationGroup.h"
 #include "TextManipulationItem.h"
 #include "UnicodeHelpers.h"
 #include "VisibleUnits.h"
@@ -140,7 +141,7 @@ TextManipulationController::TextManipulationController(Document& document)
 {
 }
 
-void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback, Vector<ExclusionRule>&& exclusionRules)
+void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback, Vector<ExclusionRule>&& exclusionRules, IncludeGroups includeGroups)
 {
     RefPtr document { m_document.get() };
     if (!document)
@@ -148,6 +149,8 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
 
     m_callback = WTF::move(callback);
     m_exclusionRules = WTF::move(exclusionRules);
+    m_includesGroups = includeGroups == IncludeGroups::Yes;
+    resetGroups();
 
     observeParagraphs(firstPositionInNode(*document), lastPositionInNode(*document));
     flushPendingItemsForCallback();
@@ -675,6 +678,10 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
     ASSERT(m_document);
     ASSERT(!itemData.tokens.isEmpty());
     auto newID = TextManipulationItemIdentifier::generate();
+    Markable<TextManipulationGroupIdentifier> groupIdentifier;
+    if (m_includesGroups)
+        groupIdentifier = groupForItem(itemData);
+
     m_pendingItemsForCallback.append(TextManipulationItem {
         m_document->frame()->frameID(),
         !m_document->frame()->isMainFrame(),
@@ -685,17 +692,23 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
     });
     m_items.add(newID, WTF::move(itemData));
 
+    if (groupIdentifier) {
+        if (auto iterator = m_groups.find(*groupIdentifier); iterator != m_groups.end())
+            insertItemIntoGroup(iterator->value, newID);
+    }
+
     if (m_pendingItemsForCallback.size() >= itemCallbackBatchingSize)
         flushPendingItemsForCallback();
 }
 
 void TextManipulationController::flushPendingItemsForCallback()
 {
-    if (m_pendingItemsForCallback.isEmpty())
+    auto groupUpdates = takeGroupUpdates();
+    if (m_pendingItemsForCallback.isEmpty() && groupUpdates.isEmpty())
         return;
 
     Ref document { *m_document };
-    m_callback(document, m_pendingItemsForCallback);
+    m_callback(document, m_pendingItemsForCallback, groupUpdates);
     m_pendingItemsForCallback.clear();
 }
 
@@ -1044,6 +1057,70 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 void TextManipulationController::removeNode(Node& node)
 {
     m_manipulatedNodes.remove(node);
+}
+
+Markable<TextManipulationGroupIdentifier> TextManipulationController::groupForItem(const ManipulationItemData& item)
+{
+    RefPtr<Element> itemElement = item.element.get();
+    if (!itemElement) {
+        RefPtr containerNode = item.start.containerNode();
+        if (!containerNode)
+            return std::nullopt;
+
+        itemElement = dynamicDowncast<Element>(*containerNode);
+        if (!itemElement)
+            itemElement = containerNode->parentElementInComposedTree();
+    }
+
+    if (!itemElement)
+        return std::nullopt;
+
+    if (auto identifier = m_groupForDirectTextInElement.getOptional(*itemElement); identifier && m_groups.contains(*identifier))
+        return *identifier;
+
+    auto identifier = TextManipulationGroupIdentifier::generate();
+    TextManipulationGroup group { identifier, TextManipulationGroupKind::Other, { }, { } };
+    group.rootElements.append(*itemElement);
+    m_groups.add(identifier, WTF::move(group));
+    m_groupForDirectTextInElement.set(*itemElement, identifier);
+    return identifier;
+}
+
+void TextManipulationController::insertItemIntoGroup(TextManipulationGroup& group, TextManipulationItemIdentifier itemIdentifier)
+{
+    group.itemIdentifiers.append(itemIdentifier);
+    m_groupsChangedSinceLastFlush.add(*group.identifier);
+}
+
+void TextManipulationController::resetGroups()
+{
+    m_groups.clear();
+    m_groupForDirectTextInElement.clear();
+    m_groupsChangedSinceLastFlush.clear();
+}
+
+Vector<TextManipulationGroupUpdate> TextManipulationController::takeGroupUpdates()
+{
+    if (m_groupsChangedSinceLastFlush.isEmpty())
+        return { };
+
+    Markable<FrameIdentifier> frameID;
+    if (RefPtr document = m_document.get()) {
+        if (RefPtr frame = document->frame())
+            frameID = frame->frameID();
+    }
+
+    auto identifiers = copyToVector(m_groupsChangedSinceLastFlush);
+    m_groupsChangedSinceLastFlush.clear();
+
+    return identifiers.map([&](auto identifier) {
+        auto iterator = m_groups.find(identifier);
+        if (iterator == m_groups.end())
+            return TextManipulationGroupUpdate { frameID, identifier, TextManipulationGroupKind::Other, { } };
+
+        auto& group = iterator->value;
+        return TextManipulationGroupUpdate { frameID, identifier, group.kind, group.itemIdentifiers };
+    });
 }
 
 } // namespace WebCore

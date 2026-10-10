@@ -29,12 +29,14 @@
 #include <WebCore/QualifiedName.h>
 #include <WebCore/TextManipulationControllerExclusionRule.h>
 #include <WebCore/TextManipulationControllerManipulationFailure.h>
+#include <WebCore/TextManipulationGroup.h>
 #include <WebCore/TextManipulationItem.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Markable.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -55,8 +57,9 @@ public:
     using ManipulationFailure = TextManipulationControllerManipulationFailure;
     using ExclusionRule = TextManipulationControllerExclusionRule;
 
-    using ManipulationItemCallback = Function<void(Document&, const Vector<TextManipulationItem>&)>;
-    WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { });
+    using ManipulationItemCallback = Function<void(Document&, const Vector<TextManipulationItem>&, const Vector<TextManipulationGroupUpdate>&)>;
+    enum class IncludeGroups : bool { No, Yes };
+    WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { }, IncludeGroups = IncludeGroups::No);
 
     void didUpdateContentForNode(Node&);
     void didAddOrCreateRendererForNode(Node&);
@@ -107,7 +110,15 @@ private:
     void updateInsertions(Vector<NodeEntry>&, const Vector<Ref<Node>>&, Node*, NodeSet&, Vector<NodeInsertion>&);
     std::optional<ManipulationFailure::Type> replace(const ManipulationItemData&, const Vector<TextManipulationToken>&, NodeSet& containersWithoutVisualOverflowBeforeReplacement);
 
+    Markable<TextManipulationGroupIdentifier> groupForItem(const ManipulationItemData&);
+    void insertItemIntoGroup(TextManipulationGroup&, TextManipulationItemIdentifier);
+    Vector<TextManipulationGroupUpdate> takeGroupUpdates();
+    void resetGroups();
+
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    HashMap<TextManipulationGroupIdentifier, TextManipulationGroup> m_groups;
+    WeakHashMap<Element, TextManipulationGroupIdentifier, WeakPtrImplWithEventTargetData> m_groupForDirectTextInElement;
+    HashSet<TextManipulationGroupIdentifier> m_groupsChangedSinceLastFlush;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodes;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodesWithNewContent;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_addedOrNewlyRenderedNodes;
@@ -115,6 +126,7 @@ private:
     HashMap<String, bool> m_cachedFontFamilyExclusionResults;
 
     bool m_didScheduleObservationUpdate { false };
+    bool m_includesGroups { false };
 
     ManipulationItemCallback m_callback;
     Vector<TextManipulationItem> m_pendingItemsForCallback;

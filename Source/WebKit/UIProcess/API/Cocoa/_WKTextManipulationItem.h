@@ -67,6 +67,30 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 
 @end
 
+typedef NS_ENUM(NSInteger, _WKTextManipulationGroupKind) {
+    _WKTextManipulationGroupKindPageHeading,
+    _WKTextManipulationGroupKindProse,
+    _WKTextManipulationGroupKindNavigation,
+    _WKTextManipulationGroupKindBanner,
+    _WKTextManipulationGroupKindFooter,
+    _WKTextManipulationGroupKindSidebar,
+    _WKTextManipulationGroupKindViewportConstrained,
+    _WKTextManipulationGroupKindDialog,
+    _WKTextManipulationGroupKindOther,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+@interface _WKTextManipulationGroup : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithIdentifier:(NSString *)identifier kind:(_WKTextManipulationGroupKind)kind itemIdentifiers:(NSArray<NSString *> *)itemIdentifiers;
+
+@property (nonatomic, readonly, copy) NSString *identifier;
+@property (nonatomic, readonly) _WKTextManipulationGroupKind kind;
+@property (nonatomic, readonly, copy) NSArray<NSString *> *itemIdentifiers;
+
+@end
+
 WK_EXTERN NSString * const _WKTextManipulationItemErrorDomain WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 typedef NS_ENUM(NSInteger, _WKTextManipulationItemErrorCode) {
