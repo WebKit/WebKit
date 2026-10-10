@@ -63,6 +63,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "SyntheticNSEvent.h"
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 #else
@@ -1746,6 +1747,28 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
     RetainPtr event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
     [self scrollWheel:event.get()];
+}
+
+- (void)magnifyAtPoint:(NSPoint)pointInWindow phase:(NSEventPhase)phase magnification:(CGFloat)magnification
+{
+    static NSInteger eventNumber = 0;
+
+    RetainPtr window = [self hostWindow];
+    NSPoint globalLocation = [window convertRectToScreen:NSMakeRect(pointInWindow.x, pointInWindow.y, 1, 1)].origin;
+
+    RetainPtr event = adoptNS([[SyntheticNSEvent alloc] initMagnifyEventAtLocation:pointInWindow
+        globalLocation:globalLocation
+        magnification:magnification
+        phase:phase
+        time:NSProcessInfo.processInfo.systemUptime
+        eventNumber:++eventNumber
+        window:window.get()]);
+
+    dispatchSyntheticEvent(event.get(), self, @"magnify", ^(NSView *targetView, NSEvent *syntheticEvent) {
+        [targetView magnifyWithEvent:syntheticEvent];
+    });
+
+    [self waitForNextPresentationUpdate];
 }
 
 - (NSWindow *)hostWindow

@@ -28,7 +28,6 @@
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/cocoa/TestWKWebView.h"
-#import "SyntheticNSEvent.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
@@ -36,25 +35,7 @@ namespace TestWebKitAPI {
 
 static void magnify(TestWKWebView *webView, NSEventPhase phase, CGFloat delta)
 {
-    static NSInteger eventNumber = 0;
-
-    NSPoint locationInWindow = NSMakePoint(NSMidX(webView.frame), NSMidY(webView.frame));
-    RetainPtr<NSWindow> window = webView.hostWindow;
-    NSPoint globalLocation = [window convertRectToScreen:NSMakeRect(locationInWindow.x, locationInWindow.y, 1, 1)].origin;
-
-    RetainPtr event = adoptNS([[SyntheticNSEvent alloc] initMagnifyEventAtLocation:locationInWindow
-        globalLocation:globalLocation
-        magnification:delta
-        phase:phase
-        time:NSProcessInfo.processInfo.systemUptime
-        eventNumber:++eventNumber
-        window:window]);
-
-    dispatchSyntheticEvent(event, webView, @"magnify", ^(NSView *targetView, NSEvent *syntheticEvent) {
-        [targetView magnifyWithEvent:syntheticEvent];
-    });
-
-    [webView waitForNextPresentationUpdate];
+    [webView magnifyAtPoint:NSMakePoint(NSMidX(webView.frame), NSMidY(webView.frame)) phase:phase magnification:delta];
 }
 
 static double magnifyPastMaximum(TestWKWebView *webView)
