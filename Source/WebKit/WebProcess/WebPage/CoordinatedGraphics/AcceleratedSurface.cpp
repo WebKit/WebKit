@@ -179,6 +179,12 @@ void AcceleratedSurface::RenderTarget::createSkiaSurfaceForFramebuffer(unsigned 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedSurface::RenderTargetShareableBuffer);
 
+// GL_STENCIL_INDEX8 is a required renderbuffer format in GLES 2.0 and in desktop GL 3.0, and is
+// the one Skia asks for first, but a driver may still refuse it as a stencil attachment and
+// report the framebuffer as unsupported. The first render target finds out which format this
+// driver takes and the rest reuse the answer.
+static std::optional<bool> s_supportsStencilOnlyRenderbuffer;
+
 AcceleratedSurface::RenderTargetShareableBuffer::RenderTargetShareableBuffer(AcceleratedSurface& surface, const IntSize& size)
     : RenderTarget(surface, size)
 {
@@ -188,12 +194,40 @@ AcceleratedSurface::RenderTargetShareableBuffer::RenderTargetShareableBuffer(Acc
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    glGenRenderbuffers(1, &m_depthStencilBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
+    createStencilBuffer(size, s_supportsStencilOnlyRenderbuffer.value_or(true) ? StencilFormat::StencilOnly : StencilFormat::PackedDepthStencil);
+}
 
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+void AcceleratedSurface::RenderTargetShareableBuffer::createStencilBuffer(const IntSize& size, StencilFormat stencilFormat)
+{
+    glGenRenderbuffers(1, &m_stencilBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBuffer);
+
+    if (stencilFormat == StencilFormat::PackedDepthStencil) {
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_stencilBuffer);
+    } else
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, size.width(), size.height());
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBuffer);
+}
+
+void AcceleratedSurface::RenderTargetShareableBuffer::ensureCompleteStencilAttachment()
+{
+    if (s_supportsStencilOnlyRenderbuffer)
+        return;
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+        s_supportsStencilOnlyRenderbuffer = true;
+        return;
+    }
+
+    // The framebuffer can also be incomplete for reasons that have nothing to do with the
+    // stencil attachment. Reallocating as packed is what we did before this was made
+    // stencil-only, so it is a safe answer either way.
+    s_supportsStencilOnlyRenderbuffer = false;
+    glDeleteRenderbuffers(1, &m_stencilBuffer);
+    m_stencilBuffer = 0;
+    createStencilBuffer(m_size, StencilFormat::PackedDepthStencil);
 }
 
 AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
@@ -203,8 +237,8 @@ AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
     if (m_fbo)
         glDeleteFramebuffers(1, &m_fbo);
 
-    if (m_depthStencilBuffer)
-        glDeleteRenderbuffers(1, &m_depthStencilBuffer);
+    if (m_stencilBuffer)
+        glDeleteRenderbuffers(1, &m_stencilBuffer);
 
     if (m_colorBuffer)
         glDeleteRenderbuffers(1, &m_colorBuffer);
@@ -221,6 +255,7 @@ void AcceleratedSurface::RenderTargetShareableBuffer::initializeColorBuffer(EGLI
     else
         glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, m_size.width(), m_size.height());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorBuffer);
+    ensureCompleteStencilAttachment();
 
     if (m_surface->useSkia())
         createSkiaSurfaceForFramebuffer(m_fbo);
@@ -508,6 +543,8 @@ AcceleratedSurface::RenderTargetTexture::RenderTargetTexture(AcceleratedSurface&
     , m_texture(WTF::move(texture))
 {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->id(), 0);
+    ensureCompleteStencilAttachment();
+
     if (m_surface->useSkia())
         createSkiaSurfaceForFramebuffer(m_fbo);
 
