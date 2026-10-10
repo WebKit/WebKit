@@ -56,7 +56,7 @@ class Scm(ScmBase):
         def comments(self, pull_request):
             raise NotImplementedError()
 
-        def review(self, pull_request, comment=None, approve=None):
+        def review(self, pull_request, comment=None, approve=None, diff_comments=None):
             raise NotImplementedError()
 
         def statuses(self, pull_request):

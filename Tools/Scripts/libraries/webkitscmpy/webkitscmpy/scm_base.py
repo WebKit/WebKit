@@ -20,10 +20,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import logging
 import re
 import sys
 import time
+from typing import Any, Iterator, Sequence
 
 from logging import NullHandler
 from webkitscmpy import Commit, Contributor, CommitClassifier, log
@@ -42,13 +45,13 @@ class ScmBase(object):
     DEFAULT_BRANCHES = ['main', 'master', 'trunk']
 
     @classmethod
-    def gmtoffset(cls):
+    def gmtoffset(cls) -> int:
         return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
 
-    def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
+    def __init__(self, dev_branches: re.Pattern[str] | None = None, prod_branches: re.Pattern[str] | None = None, contributors: Contributor.Mapping | None = None, id: str | None = None, classifier: CommitClassifier | None = None) -> None:
         self.dev_branches = dev_branches or self.DEV_BRANCHES
         self.prod_branches = prod_branches or self.PROD_BRANCHES
-        self.path = getattr(self, 'path', None)
+        self.path: str | None = getattr(self, 'path', None)
         self.contributors = Contributor.Mapping() if contributors is None else contributors
         self.classifier = CommitClassifier() if classifier is None else classifier
 
@@ -57,28 +60,32 @@ class ScmBase(object):
         self.id = id
 
     @property
-    def is_svn(self):
+    def is_svn(self) -> bool:
         return False
 
     @property
-    def is_git(self):
+    def is_git(self) -> bool:
         return False
 
     @property
-    def default_branch(self):
+    def default_branch(self) -> str | None:
         raise NotImplementedError()
 
     @property
-    def branches(self):
+    def branches(self) -> list[str]:
         raise NotImplementedError()
 
-    def tags(self):
+    def tags(self) -> list[str]:
         raise NotImplementedError()
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+    def commit(
+        self, hash: str | None = None, revision: int | str | None = None, identifier: int | str | None = None,
+        branch: str | None = None, tag: str | None = None, include_log: bool = True, include_identifier: bool = True,
+    ) -> Commit:
         raise NotImplementedError()
 
-    def _commit_range(self, begin=None, end=None, include_log=False, include_identifier=True):
+    # `begin` and `end` are keyword arguments to commit(), or a single 'argument' to find().
+    def _commit_range(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = False, include_identifier: bool = True) -> tuple[Commit, Commit]:
         begin_args = begin or dict()
         end_args = end or dict()
 
@@ -101,16 +108,16 @@ class ScmBase(object):
             raise TypeError("'{}' failed to define begin in _commit_range()".format(begin_args))
         if not end_result:
             raise TypeError("'{}' failed to define begin in _commit_range()".format(end_args))
-        if begin_result.timestamp > end_result.timestamp:
+        if (begin_result.timestamp or 0) > (end_result.timestamp or 0):
             raise TypeError("'{}' pre-dates '{}' in _commit_range()".format(begin_result, end_result))
         if end_result.branch == self.default_branch and begin_result.branch != self.default_branch:
             raise TypeError("'{}' and '{}' do not share linear history".format(begin_result, end_result))
         return begin_result, end_result
 
-    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+    def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
         raise NotImplementedError()
 
-    def prioritize_branches(self, branches, preferred_branch=None):
+    def prioritize_branches(self, branches: Sequence[str], preferred_branch: str | None = None) -> str | None:
         if not branches:
             return None
         if len(branches) == 1:
@@ -125,7 +132,7 @@ class ScmBase(object):
         # then we prefer the branch specified by the caller (usually the currently checked out branch).
         # We then sort the list of candidate branches and pick the smallest.
 
-        filtered_candidates = [candidate for candidate in branches if self.prod_branches.match(candidate)]
+        filtered_candidates: Sequence[str] = [candidate for candidate in branches if self.prod_branches.match(candidate)]
         if not filtered_candidates:
             filtered_candidates = [candidate for candidate in branches if not self.dev_branches.match(candidate)]
         if not filtered_candidates:
@@ -134,7 +141,7 @@ class ScmBase(object):
             filtered_candidates = branches
         return sorted(filtered_candidates)[0]
 
-    def find(self, argument, include_log=True, include_identifier=True):
+    def find(self, argument: str, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -147,7 +154,7 @@ class ScmBase(object):
             argument = argument.split('~')[0]
 
         if argument in self.DEFAULT_BRANCHES:
-            argument = self.default_branch
+            argument = self.default_branch or argument
 
         if argument == 'HEAD':
             result = self.commit(include_log=include_log, include_identifier=include_identifier)
@@ -177,6 +184,8 @@ class ScmBase(object):
 
         if not offset:
             return result
+        if result.identifier is None:
+            raise ValueError("'{}' has no identifier to offset".format(result))
 
         return self.commit(
             identifier=result.identifier - offset,
@@ -186,11 +195,11 @@ class ScmBase(object):
         )
 
     @classmethod
-    def log(cls, message, level=logging.WARNING):
+    def log(cls, message: str, level: int = logging.WARNING) -> None:
         if not log.handlers or all([isinstance(handle, NullHandler) for handle in log.handlers]):
             sys.stderr.write(message + '\n')
         else:
             log.log(level, message)
 
-    def files_changed(self, argument=None):
+    def files_changed(self, argument: str | None = None) -> list[str]:
         raise NotImplementedError()

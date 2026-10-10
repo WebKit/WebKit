@@ -375,7 +375,6 @@ CommitDate: {time_a}
     git-svn-id: https://svn.example.org/repository/repository/trunk@8 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(
                 time_a=1601668000,
-                time_b=1601663000,
             ))
 
     def test_branch_log(self):

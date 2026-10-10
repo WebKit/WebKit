@@ -1,3 +1,4 @@
 include README.md
 include webkitscmpy/mocks/*.json
 include webkitscmpy/test/hooks/prepare-commit-msg
+include webkitscmpy/py.typed

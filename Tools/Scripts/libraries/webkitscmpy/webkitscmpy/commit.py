@@ -20,13 +20,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import re
+from typing import Any, Literal, TYPE_CHECKING, overload
 
 from datetime import datetime, timezone
 from webkitbugspy import Tracker
 from webkitscmpy import Contributor
 from webkitcorepy import string_utils
+
+if TYPE_CHECKING:
+    from webkitbugspy import Issue
 
 
 class Commit(object):
@@ -41,7 +47,7 @@ class Commit(object):
 
     class Encoder(json.JSONEncoder):
 
-        def default(self, obj):
+        def default(self, obj: Any) -> Any:
             if isinstance(obj, dict):
                 return {key: self.default(value) for key, value in obj.items()}
             if isinstance(obj, list):
@@ -49,7 +55,7 @@ class Commit(object):
             if not isinstance(obj, Commit):
                 return super(Commit.Encoder, self).default(obj)
 
-            result = dict()
+            result: dict[str, Any] = dict()
             for attribute in ['hash', 'revision', 'branch', 'timestamp', 'order', 'message', 'repository_id']:
                 value = getattr(obj, attribute, None)
                 if value is not None:
@@ -64,7 +70,7 @@ class Commit(object):
             return result
 
     @classmethod
-    def _parse_hash(cls, hash, do_assert=False):
+    def _parse_hash(cls, hash: object, do_assert: bool = False) -> str | None:
         if hash is None:
             return None
 
@@ -81,7 +87,7 @@ class Commit(object):
         return hash.lower()
 
     @classmethod
-    def _parse_revision(cls, revision, do_assert=False):
+    def _parse_revision(cls, revision: object, do_assert: bool = False) -> int | None:
         if revision is None:
             return None
 
@@ -109,11 +115,11 @@ class Commit(object):
         return revision
 
     @classmethod
-    def _parse_identifier(cls, identifier, do_assert=False):
+    def _parse_identifier(cls, identifier: object, do_assert: bool = False) -> tuple[int | None, int, str | None] | None:
         if identifier is None:
             return None
 
-        branch = None
+        branch: str | None = None
         if isinstance(identifier, string_utils.basestring):
             match = cls.IDENTIFIER_RE.match(identifier)
             if match:
@@ -138,8 +144,18 @@ class Commit(object):
 
         return (identifier[0], identifier[1], branch)
 
+    @overload
     @classmethod
-    def parse(cls, arg, do_assert=True):
+    def parse(cls, arg: str, do_assert: Literal[True] = ...) -> Commit:
+        ...
+
+    @overload
+    @classmethod
+    def parse(cls, arg: str, do_assert: bool) -> Commit | None:
+        ...
+
+    @classmethod
+    def parse(cls, arg: str, do_assert: bool = True) -> Commit | None:
         if cls._parse_identifier(arg):
             return Commit(identifier=arg)
 
@@ -154,8 +170,9 @@ class Commit(object):
         return None
 
     @classmethod
-    def from_json(cls, data):
+    def from_json(cls, data: str | dict[str, Any]) -> Commit:
         data = data if isinstance(data, dict) else json.loads(data)
+        assert isinstance(data, dict)
         hash_from_id = None
         revision_from_id = cls._parse_revision(data.get('id'))
         if not revision_from_id:
@@ -176,14 +193,18 @@ class Commit(object):
 
     def __init__(
         self,
-        hash=None,
-        revision=None,
-        identifier=None, branch=None, branch_point=None,
-        timestamp=None, author=None, message=None, order=None, repository_id=None
-    ):
+        hash: str | None = None,
+        revision: int | str | None = None,
+        identifier: int | str | tuple[int | None, int] | None = None, branch: str | None = None, branch_point: int | None = None,
+        timestamp: int | str | None = None, author: Contributor | str | dict[str, Any] | None = None, message: str | None = None,
+        order: int | str | None = None, repository_id: str | None = None,
+    ) -> None:
         self.hash = self._parse_hash(hash, do_assert=True)
         self.revision = self._parse_revision(revision, do_assert=True)
 
+        self.identifier: int | None
+        self.branch_point: int | None
+        self.branch: str | None
         parsed_identifier = self._parse_identifier(identifier, do_assert=True)
         if parsed_identifier:
             parsed_branch_point, self.identifier, parsed_branch = parsed_identifier
@@ -216,25 +237,26 @@ class Commit(object):
             timestamp = int(timestamp)
         if timestamp and not isinstance(timestamp, int):
             raise TypeError("Expected 'timestamp' to be of type int, got '{}'".format(timestamp))
-        self.timestamp = timestamp
+        self.timestamp = timestamp if isinstance(timestamp, int) else None
 
         if isinstance(order, string_utils.basestring) and order.isdigit():
             order = int(order)
         if order and not isinstance(order, int):
             raise TypeError("Expected 'order' to be of type int, got '{}'".format(order))
-        self.order = order or 0
+        self.order = order if isinstance(order, int) else 0
 
+        self.author: Contributor | None
         if author and isinstance(author, dict) and author.get('name'):
             emails = author.get('emails', [])
             if author.get('email'):
                 emails.append(author.get('email'))
-            self.author = Contributor(author.get('name'), emails)
+            self.author = Contributor(author['name'], emails)
         elif author and isinstance(author, string_utils.basestring) and '@' in author:
             self.author = Contributor(author, [author])
         elif author and not isinstance(author, Contributor):
             raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
         else:
-            self.author = author
+            self.author = author if isinstance(author, Contributor) else None
 
         if message and not isinstance(message, string_utils.basestring):
             raise ValueError("Expected 'message' to be a string, got '{}'".format(message))
@@ -247,7 +269,7 @@ class Commit(object):
         # Force a commit format check
         self.__repr__()
 
-    def pretty_print(self, message=False):
+    def pretty_print(self, message: bool = False) -> str:
         result = '{}\n'.format(self)
         if self.revision:
             result += '    SVN revision: r{}'.format(self.revision)
@@ -279,16 +301,16 @@ class Commit(object):
         return result
 
     @property
-    def uuid(self):
+    def uuid(self) -> int | None:
         if self.timestamp is None:
             return None
         return self.timestamp * self.UUID_MULTIPLIER + self.order
 
     @property
-    def issues(self):
+    def issues(self) -> list[Issue]:
         if not self.message:
             return []
-        result = []
+        result: list[Issue] = []
         links = set()
         seen_empty = False
         seen_first_line = False
@@ -325,7 +347,7 @@ class Commit(object):
         return result
 
     @property
-    def trailers(self):
+    def trailers(self) -> list[str]:
         if not self.message:
             return []
         result = []
@@ -339,7 +361,7 @@ class Commit(object):
                 break
         return list(reversed(result))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.branch_point and self.identifier is not None and self.branch:
             return '{}.{}@{}'.format(self.branch_point, self.identifier, self.branch)
         if self.identifier is not None and self.branch:
@@ -352,7 +374,7 @@ class Commit(object):
             return str(self.identifier)
         return '?'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         if self.identifier and self.branch:
             return hash(self.identifier) ^ hash(self.branch)
         if self.revision:
@@ -363,34 +385,34 @@ class Commit(object):
             return hash(self.identifier)
         raise ValueError('Incomplete commit format')
 
-    def __cmp__(self, other):
+    def __cmp__(self, other: object) -> int:
         if not isinstance(other, Commit):
             raise ValueError('Cannot compare commit and {}'.format(type(other)))
         if self.uuid and other.uuid:
             if self.uuid != other.uuid:
                 return self.uuid - other.uuid
             if self.repository_id != other.repository_id:
-                return 1 if self.repository_id > other.repository_id else -1
+                return 1 if (self.repository_id or '') > (other.repository_id or '') else -1
         if self.revision and other.revision:
             return self.revision - other.revision
         if self.identifier and other.identifier and self.branch == other.branch:
             return self.identifier - other.identifier
         raise ValueError('Cannot compare {} and {}'.format(self, other))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return hash(self) == hash(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return hash(self) != hash(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other: Commit) -> bool:
         return self.__cmp__(other) < 0
 
-    def __le__(self, other):
+    def __le__(self, other: Commit) -> bool:
         return self.__cmp__(other) <= 0
 
-    def __gt__(self, other):
+    def __gt__(self, other: Commit) -> bool:
         return self.__cmp__(other) > 0
 
-    def __ge__(self, other):
+    def __ge__(self, other: Commit) -> bool:
         return self.__cmp__(other) >= 0

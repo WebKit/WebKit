@@ -297,7 +297,7 @@ Reviewed by Tim Contributor.
 </pre>''',
         )
 
-    def test_parse_body_single(self):
+    def test_parse_body_with_comment_single(self):
         body, commits = PullRequest.parse_body('''Comment body
 
 ----------------------------------------------------------------------

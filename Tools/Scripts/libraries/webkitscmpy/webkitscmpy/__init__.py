@@ -31,7 +31,7 @@ import os
 log = logging.getLogger('webkitscmpy')
 
 
-def _maybe_add_webkitcorepy_path():
+def _maybe_add_webkitcorepy_path() -> None:
     # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
     libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
     webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
@@ -50,7 +50,7 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(7, 0, 6)
+version = Version(7, 0, 7)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('markupsafe', Version(3, 0, 3), pypi_name='MarkupSafe', wheel=True))
@@ -73,3 +73,18 @@ from webkitscmpy.scm_base import ScmBase
 from webkitscmpy import local
 
 name = 'webkitscmpy'
+
+__all__ = [
+    'AutoInstall',
+    'Commit',
+    'CommitClassifier',
+    'Contributor',
+    'Package',
+    'PullRequest',
+    'ScmBase',
+    'Version',
+    'local',
+    'log',
+    'name',
+    'version',
+]
