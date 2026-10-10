@@ -84,6 +84,17 @@ public:
         return offset;
     }
 
+    bool is8Bit() const { return m_string.is8Bit(); }
+
+    // Gets the 8-bit characters from lookaheadOffset to the end of the stream.
+    std::span<const Latin1Character> remainingSpan8(unsigned lookaheadOffset) const
+    {
+        ASSERT(is8Bit());
+        if ((m_offset + lookaheadOffset) >= m_stringLength)
+            return { };
+        return m_string.span8().subspan(m_offset + lookaheadOffset);
+    }
+
     void advanceUntilNonWhitespace();
     void advanceUntilNewlineOrNonWhitespace();
 
