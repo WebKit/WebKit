@@ -643,6 +643,7 @@ jobs:
           exit 0
 
       - name: Build WKC library
+        shell: bash
         run: |
           # Incremental strategy (see "Cache CMake build"): objects restored from a
           # previous run are marked up-to-date so ninja skips them and only builds
