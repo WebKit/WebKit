@@ -1,0 +1,1387 @@
+/* Self-contained: no vendored stylesheet and no CDN, so the pages render from a checkout with no
+   network. Every state is a colour and a word, since colour alone is unreadable to anyone who
+   cannot separate red from green. */
+
+:root {
+    --bg: #14171c;
+    --panel: #1b1f26;
+    --panel-raised: #212734;
+    --panel-hover: #262d3a;
+    --border: #2b323d;
+    --border-soft: #232936;
+    --ink: #e7eaf0;
+    --muted: #98a2b2;
+    --faint: #6f7a8a;
+    --accent: #6ba4f8;
+    --accent-soft: rgba(107, 164, 248, 0.14);
+
+    --good: #5fcb8e;
+    --good-bg: rgba(95, 203, 142, 0.12);
+    --warn: #e3ab63;
+    --warn-bg: rgba(227, 171, 99, 0.13);
+    --bad: #f2786e;
+    --bad-bg: rgba(242, 120, 110, 0.13);
+
+    --radius: 10px;
+    --radius-small: 7px;
+    --pad: 14px;
+    --gap: 12px;
+    --tiny: 0.78rem;
+    --small: 0.85rem;
+    --pane-height: 560px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+code {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.9em;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--panel-raised);
+    border: 1px solid var(--border-soft);
+}
+
+/* Header */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap);
+    padding: 10px var(--gap);
+    background: linear-gradient(180deg, #1d222b 0%, var(--panel) 100%);
+    border-bottom: 1px solid var(--border);
+}
+
+.header .title {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.header .title a {
+    color: var(--ink);
+}
+
+.header .list {
+    display: flex;
+    gap: 4px;
+}
+
+.header .item a {
+    display: block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: var(--small);
+}
+
+.header .item a:hover {
+    background: var(--panel-raised);
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.content {
+    padding: 0 var(--gap) var(--gap);
+}
+
+/* Grid. One gap token drives the space between cards in a row and between stacked rows, so a
+   column gap and a row gap never disagree. */
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    margin-bottom: var(--gap);
+}
+
+.col-3 { flex: 1 1 calc(25% - var(--gap)); min-width: 200px; }
+.col-4 { flex: 1 1 calc(33.33% - var(--gap)); min-width: 200px; }
+.col-5 { flex: 1 1 calc(41.66% - var(--gap)); min-width: 200px; }
+.col-7 { flex: 1 1 calc(58.33% - var(--gap)); min-width: 260px; }
+.col-8 { flex: 1 1 calc(66.66% - var(--gap)); min-width: 260px; }
+.col-12 { flex: 1 1 100%; }
+
+.align-right {
+    text-align: right;
+}
+
+.text {
+    color: var(--muted);
+}
+
+.text.tiny {
+    font-size: var(--tiny);
+}
+
+.text.large {
+    color: var(--ink);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* Headline, filters, badges */
+
+.headline {
+    align-items: center;
+    padding-top: 6px;
+}
+
+.headline .text.tiny {
+    display: block;
+}
+
+.chooser {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.chooser.start {
+    justify-content: flex-start;
+}
+
+.chooser.groups {
+    gap: var(--gap);
+}
+
+/* The overview reads left to right the way the explore page does: the queue rail picks what
+   everything to its right is about. The rail starts level with the first card beside it, caps at the
+   height the explore page's panes use, and sticks, so a page whose right column runs to several
+   screens never scrolls the choice out of reach. */
+
+.scope {
+    display: flex;
+    gap: var(--gap);
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.scope > .pane.queues {
+    position: sticky;
+    top: var(--gap);
+    max-height: var(--pane-height);
+    margin-bottom: var(--gap);
+}
+
+.scoped {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* A banded scope is one card beside the rail, both told the same height in pixels. A viewport height
+   cannot square them: a card is as tall as its own rows, so the two agree at one window and one row
+   count and nowhere else. The card scrolls its body instead of growing, which is what the rail beside
+   it already does. */
+
+.scope.banded > .pane.queues {
+    max-height: none;
+    height: var(--pane-height);
+}
+
+.scope.banded > .scoped > .section {
+    display: flex;
+    flex-direction: column;
+    height: var(--pane-height);
+    margin-bottom: 0;
+}
+
+.scope.banded > .scoped > .section:not(.chart) > .content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: var(--tiny);
+}
+
+.badge:hover {
+    background: var(--panel-hover);
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.badge.active {
+    background: var(--accent-soft);
+    border-color: rgba(107, 164, 248, 0.4);
+    color: var(--accent);
+}
+
+/* Cards */
+
+.section {
+    margin-bottom: var(--gap);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.section > .header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px var(--pad);
+    background: transparent;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.section > .header .chooser {
+    margin-left: auto;
+}
+
+.section > .header .title {
+    font-weight: 600;
+    font-size: var(--small);
+}
+
+.section > .content {
+    padding: var(--pad);
+}
+
+.placeholder {
+    padding: 22px;
+    text-align: center;
+    color: var(--muted);
+    font-size: var(--small);
+}
+
+.caption {
+    display: block;
+    margin-bottom: var(--gap);
+}
+
+/* Metrics */
+
+.metric {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px var(--pad);
+}
+
+.metric .label {
+    display: block;
+    min-height: 2.6em;
+}
+
+.metric .value {
+    display: block;
+    font-size: 1.9rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.metric .denominator {
+    display: block;
+}
+
+/* Tables */
+
+.table {
+    border-collapse: collapse;
+    font-size: var(--small);
+}
+
+.table.full-width {
+    width: 100%;
+}
+
+.table th {
+    text-align: left;
+    padding: 6px 10px;
+    color: var(--faint);
+    font-size: var(--tiny);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+}
+
+.table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr:hover {
+    background: var(--panel-raised);
+}
+
+.table .numeric, .table .when {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.table .when .clock {
+    display: block;
+    color: var(--faint);
+}
+
+.table .evidence {
+    display: block;
+    color: var(--faint);
+}
+
+/* Drill-down panes: queues, then that queue's builds, then that build's tests */
+
+/* The row caps its own height rather than each body capping itself, because the detail pane spends
+   part of its height on a breadcrumb, a summary and a filter: capping the bodies left the two
+   left-hand panes short of the row the detail pane had stretched. */
+.panes {
+    display: flex;
+    gap: var(--gap);
+    align-items: stretch;
+    max-height: var(--pane-height);
+    margin-bottom: var(--gap);
+}
+
+.pane {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.pane.queues { flex: 0 0 260px; }
+.pane.builds { flex: 0 0 300px; }
+.pane.categories { flex: 0 0 300px; }
+.pane.detail { flex: 1 1 auto; }
+.pane > .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px var(--pad);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.pane > .head .name {
+    font-size: var(--tiny);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--faint);
+}
+
+.pane > .head .tally {
+    font-size: var(--tiny);
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+}
+
+.pane > .body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+/* One row in a pane, drilling one level right */
+
+.entry {
+    display: block;
+    padding: 6px 9px 6px 8px;
+    border-left: 3px solid transparent;
+    border-radius: var(--radius-small);
+    color: var(--ink);
+}
+
+.entry:hover {
+    background: var(--panel-hover);
+    text-decoration: none;
+}
+
+.entry.selected {
+    background: var(--accent-soft);
+    border-left-color: var(--accent);
+}
+
+.entry.noise {
+    border-left-color: var(--bad);
+}
+
+.entry .line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.entry .label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.entry .when, .entry .tally {
+    flex: 0 0 auto;
+    color: var(--faint);
+    font-size: var(--tiny);
+    font-variant-numeric: tabular-nums;
+}
+
+.entry .sub {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--muted);
+    font-size: var(--tiny);
+}
+
+/* Two splits of the count in the entry above, indented under it rather than beside it */
+
+.subcategories {
+    margin: 0 9px 6px 22px;
+    padding-left: 9px;
+    border-left: 1px solid var(--border);
+}
+
+.subcategories .split {
+    display: block;
+    margin: 4px 0 2px;
+    color: var(--faint);
+}
+
+.subcategories .line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--muted);
+}
+
+.subcategories .tally {
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+}
+
+/* State: a tinted pill carrying both a colour and a word */
+
+.state {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: var(--tiny);
+    white-space: nowrap;
+}
+
+.state::before {
+    content: '●';
+    margin-right: 5px;
+    font-size: 0.7em;
+    vertical-align: 0.1em;
+}
+
+.state-CLEAN, .state-real, .state-CONTAINED {
+    background: var(--good-bg);
+    border-color: rgba(95, 203, 142, 0.32);
+    color: var(--good);
+}
+
+.state-PARTIAL_FP, .state-no_history, .state-FAILS_ON_MAIN {
+    background: var(--warn-bg);
+    border-color: rgba(227, 171, 99, 0.32);
+    color: var(--warn);
+}
+
+.state-FALSE_RED, .state-pre_existing, .state-ESCAPED {
+    background: var(--bad-bg);
+    border-color: rgba(242, 120, 110, 0.32);
+    color: var(--bad);
+}
+
+.state-UNDETERMINED, .state-unqueried, .state-unknown, .state-no_surfaced, .state-unclassified,
+.state-NO_RUNS, .state-NO_BASELINE, .state-TREE_DIVERGED {
+    background: var(--panel-raised);
+    border-color: var(--border);
+    color: var(--muted);
+}
+
+/* Build detail */
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px var(--pad);
+    border-bottom: 1px solid var(--border-soft);
+    font-size: var(--small);
+}
+
+.breadcrumb .separator {
+    color: var(--faint);
+}
+
+.kv {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--gap);
+    padding: 12px var(--pad);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.kv .k {
+    display: block;
+    color: var(--faint);
+    font-size: var(--tiny);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kv .v {
+    display: block;
+    font-size: var(--small);
+    overflow-wrap: anywhere;
+}
+
+.note {
+    margin: 0;
+    padding: 9px var(--pad);
+    background: var(--warn-bg);
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--warn);
+    font-size: var(--tiny);
+}
+
+.filter-form {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 8px var(--pad);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.filter-form input[type=search] {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--tiny);
+}
+
+.filter-form input[type=search]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.filter-form button {
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel-raised);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--tiny);
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background: var(--panel-hover);
+}
+
+/* Freshness banner */
+
+.freshness {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: var(--gap) 0 0;
+    padding: 7px 12px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border-soft);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: var(--tiny);
+}
+
+.freshness .message {
+    flex: 1 1 auto;
+}
+
+.freshness .dismiss {
+    flex: 0 0 auto;
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--faint);
+}
+
+.freshness .dismiss:hover {
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.freshness.stale {
+    background: var(--warn-bg);
+    border-color: rgba(227, 171, 99, 0.35);
+    color: var(--warn);
+}
+
+/* Trend chart */
+
+/* The chart card is exactly as tall as the queue rail beside it, so the row reads as one band. The svg
+   has no viewBox: its coordinates are percentages of the box these rules give it, so the height below
+   is the height the plot is drawn against. */
+.section.chart {
+    display: flex;
+    flex-direction: column;
+    height: var(--pane-height);
+}
+
+.section.chart > .content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.trend {
+    display: block;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    color: var(--ink);
+}
+
+.trend .gridline {
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.trend .axis {
+    fill: var(--faint);
+    font-size: var(--tiny);
+}
+
+.trend .rolling {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.trend .daily {
+    fill: var(--muted);
+}
+
+.trend .deployment {
+    stroke: var(--good);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+}
+
+.trend .deployment-label {
+    fill: var(--good);
+    font-size: var(--tiny);
+}
+
+.legend {
+    padding-top: 8px;
+}
+
+.legend .key {
+    display: inline-block;
+    width: 18px;
+    height: 3px;
+    margin: 0 4px 0 12px;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+.legend .key.daily { background: var(--muted); }
+.legend .key.rolling { background: var(--accent); }
+
+.legend .key.deployment {
+    background-image: linear-gradient(to right, var(--good) 50%, transparent 50%);
+    background-size: 6px 3px;
+}
+
+/* The rules table and the methodology share one card: how to read a conviction count is part of
+   reading it, and as its own card the qualification sat a screen below the number it qualified. The
+   prose is collapsed behind a details, like the builds filter, because this app needs no JavaScript
+   and open on the page it went unread. */
+.caveats-disclosure {
+    margin-top: var(--pad);
+    padding-top: var(--pad);
+    border-top: 1px solid var(--border-soft);
+}
+
+.caveats-disclosure > summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: var(--tiny);
+}
+
+.caveats-disclosure > summary:hover {
+    color: var(--ink);
+}
+
+/* Its own card on the escape page, where the method is long enough to read as a footnote rather than
+   as part of the table above it. */
+.section > .content > .caveats-disclosure:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.caveats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    margin-top: var(--pad);
+}
+
+.caveats p {
+    flex: 1 1 340px;
+    max-width: 84ch;
+    margin: 0;
+}
+
+/* The builds pane's filter. It opens into the pane header rather than over the list, because the
+   pane clips its overflow and a positioned dropdown would be cut off at the header's edge. */
+
+.pane.builds > .head { flex-wrap: wrap; }
+.pane.builds > .head .name { margin-right: auto; }
+
+.builds-filter {
+    font-size: var(--tiny);
+}
+
+.builds-filter[open] {
+    flex-basis: 100%;
+}
+
+.builds-filter > summary {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: var(--tiny);
+    cursor: pointer;
+    list-style: none;
+}
+
+.builds-filter > summary::after {
+    content: '▾';
+    margin-left: 4px;
+}
+
+.builds-filter[open] > summary::after {
+    content: '▴';
+}
+
+.builds-filter > summary::-webkit-details-marker {
+    display: none;
+}
+
+.builds-filter > summary:hover {
+    background: var(--panel-hover);
+    color: var(--ink);
+}
+
+.builds-filter > summary.active {
+    background: var(--accent-soft);
+    border-color: rgba(107, 164, 248, 0.4);
+    color: var(--accent);
+}
+
+.builds-filter .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 0 4px;
+    border-bottom: none;
+}
+
+.builds-filter .states {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.builds-filter label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+}
+
+.builds-filter .range,
+.builds-filter .actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.builds-filter input[type=number] {
+    width: 4.5em;
+    padding: 3px 7px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--tiny);
+}
+
+.builds-filter input[type=number]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* A convicted-tests table's own filters, in the section header and collapsed. Not an overlay: the
+   panes above clip their overflow, and a :target overlay has no escape key without JavaScript. */
+
+.table-filter {
+    margin-left: auto;
+    font-size: var(--tiny);
+}
+
+.table-filter[open] {
+    flex-basis: 100%;
+}
+
+.table-filter > summary {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: var(--tiny);
+    cursor: pointer;
+    list-style: none;
+}
+
+.table-filter > summary::after {
+    content: '▾';
+    margin-left: 4px;
+}
+
+.table-filter[open] > summary::after {
+    content: '▴';
+}
+
+.table-filter > summary::-webkit-details-marker {
+    display: none;
+}
+
+.table-filter > summary:hover {
+    background: var(--panel-hover);
+    color: var(--ink);
+}
+
+.table-filter > summary.active {
+    background: var(--accent-soft);
+    border-color: rgba(107, 164, 248, 0.4);
+    color: var(--accent);
+}
+
+.table-filter .filter-form {
+    flex-wrap: wrap;
+    align-items: baseline;
+    padding: 8px 0 4px;
+    border-bottom: none;
+}
+
+.table-filter .chip-group {
+    display: flex;
+    flex: 1 1 22em;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.table-filter .chip-group-label {
+    color: var(--faint);
+}
+
+.table-filter .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* One chip is a column, an operator and a value read as one unit: a shared border rather than three
+   loose controls, matching how a badge already reads as one thing in this file. */
+.chip {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border-soft);
+    background: var(--panel-raised);
+}
+
+.chip select,
+.chip input {
+    font: inherit;
+    font-size: var(--tiny);
+    box-sizing: border-box;
+    height: 1.9em;
+    padding: 0 3px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-small);
+    background: var(--panel);
+    color: inherit;
+}
+
+/* A value control is one width whatever it is: a select sizes to its longest option, a number and a
+   date input to their own defaults, so a chip would otherwise change width as its column changes. */
+.chip .chip-value {
+    width: 9em;
+}
+
+/* The spinner is width the value control does not have to give, and a chip is edited by typing or
+   by picking, never by nudging a count one at a time. */
+.chip input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.chip input[type="number"]::-webkit-outer-spin-button,
+.chip input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.table-filter .actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.table-filter label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--muted);
+}
+
+.table-filter select {
+    padding: 3px 6px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--tiny);
+}
+
+.table-filter select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.table-filter input[type=number],
+.table-filter input[type=date],
+.table-filter input[type=text] {
+    padding: 3px 6px;
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--tiny);
+}
+
+.table-filter input[type=number]:focus,
+.table-filter input[type=date]:focus,
+.table-filter input[type=text]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.table-filter .vocabulary {
+    flex-basis: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    color: var(--faint);
+}
+
+/* An anchored dropdown, not the tests-table filter it borrows its pill chrome from: `.table-filter`'s
+   own `margin-left: auto` and `[open] { flex-basis: 100% }` exist to right-align a filter inside a
+   table header and let its open body claim a full flex line, both wrong for a picker that sits inline
+   among other choosers and must not reflow the row around it. */
+.queue-tree {
+    margin-left: 0;
+    position: relative;
+}
+
+.queue-tree[open] {
+    flex-basis: auto;
+}
+
+.queue-tree .filter-form {
+    display: block;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 20;
+    min-width: 16rem;
+    max-width: 22rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.queue-tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.queue-tree ul ul {
+    padding-left: 14px;
+    border-left: 1px solid var(--border);
+    margin-left: 5px;
+}
+
+.queue-tree .node > .row,
+.queue-tree .leaf-node > label {
+    display: grid;
+    grid-template-columns: 1.1rem 1fr;
+    align-items: flex-start;
+    column-gap: 4px;
+    padding: 3px 6px;
+    border-radius: var(--radius-small);
+}
+
+.queue-tree .node > .row:hover,
+.queue-tree .leaf-node > label:hover {
+    background: var(--panel-hover);
+    color: var(--ink);
+}
+
+.queue-tree input[type=checkbox] {
+    accent-color: var(--accent);
+    /* Half-leading of the row's own text: font-size 0.78rem (--tiny) at the inherited line-height
+       1.45 (dashboard.css:44) leaves (0.78 * 1.45 - 0.78) / 2 = 0.175rem of leading above the first
+       line's glyphs. `align-items: flex-start` puts the checkbox flush with the line box's top edge;
+       this pushes it down past that leading so it lands on the first line's text instead of above it. */
+    margin-top: 0.175rem;
+}
+
+/* `dashboard.js` adds this class to a box it ticked or unticked on a reader's behalf because a parent
+   was ticked, so a reader can tell that state apart from one they set themselves; static markup never
+   carries the class, since only script can know which boxes it moved. */
+.queue-tree .implied {
+    opacity: 0.6;
+}
+
+/* The group/version checkbox is a sibling of the `<details>` it sits beside rather than a descendant
+   of its `<summary>`: Safari and Chrome both toggle the nearest ancestor `<details>` when an
+   interactive element inside its `<summary>` is clicked, which would expand or collapse a node every
+   time its own checkbox was ticked. */
+.queue-tree .tree-node {
+    min-width: 0;
+}
+
+.queue-tree .tree-node > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.queue-tree .tree-node > summary::-webkit-details-marker {
+    display: none;
+}
+
+.queue-tree .tree-node > summary::after {
+    content: '▾';
+    margin-left: 4px;
+}
+
+.queue-tree .tree-node[open] > summary::after {
+    content: '▴';
+}
+
+.queue-tree .group-node > .row > .tree-node > summary {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.queue-tree .version-node > .row > .tree-node > summary {
+    color: var(--muted);
+}
+
+.queue-tree .leaf-node > label {
+    color: var(--faint);
+}
+
+.queue-tree .actions {
+    position: sticky;
+    bottom: -8px;
+    margin: 8px -8px -8px;
+    padding: 8px;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.table.convictions .when {
+    white-space: normal;
+}
+
+.table.convictions th:nth-child(1), .table.convictions td:nth-child(1) {
+    max-width: 44ch;
+    overflow-wrap: anywhere;
+}
+
+.table.convictions th:nth-child(4), .table.convictions td:nth-child(4) {
+    max-width: 60ch;
+    overflow-wrap: anywhere;
+}
+
+/* A rule name is one identifier, so it wraps as a broken word rather than as two: the column is
+   told to keep it whole and given the width its longest name needs. */
+.table.convictions td:nth-child(2) {
+    white-space: nowrap;
+    overflow-wrap: normal;
+}
+
+.table.convictions .links a {
+    display: block;
+}
+
+.table.convicted-tests th:nth-child(1), .table.convicted-tests td:nth-child(1) {
+    max-width: 44ch;
+    overflow-wrap: anywhere;
+}
+
+/* Build and pull request are now narrow enough that their short nowrap values could still wrap:
+   neither has a natural break point worth taking. Queues now carries `.numeric` itself (its header
+   needs the same right alignment Convictions already has), so it is no longer listed here. */
+.table.convicted-tests td:nth-child(4), .table.convicted-tests td:nth-child(6),
+.table.convicted-tests td:nth-child(7) {
+    white-space: nowrap;
+}
+
+/* Measured from the longest realistic row, not rounded: `test.name` reads to 24ch before it wraps,
+   `BetweenBuilds` is the longest flake type at 13 characters, `Convictions`/`Queues` headers run 11/6
+   characters plus a sort arrow, `Last seen` bodies are `YYYY-MM-DD HH:MM` at 16 characters, a build
+   number nowrapped is `#` plus up to 6 digits, and `PR NNNNNNN` nowrapped is at most 10 characters —
+   each padded a few ch for the 6px/10px cell padding on both sides (dashboard.css:319-334), then
+   summed: 24 + 16 + 16 + 10 + 19 + 10 + 12 = 107, rounded up to 108ch. */
+.table.convicted-tests {
+    min-width: 108ch;
+}
+
+/* Measured from the longest realistic row, not rounded: `GTK-WK2-Tests-EWS` is the longest queue
+   name at 17 characters, `BetweenBuilds` is the longest flake type at 13, `When` renders
+   `YYYY-MM-DD HH:MM` at 16 characters, a build number nowrapped is `#` plus up to 6 digits, and
+   `PR NNNNNNN` nowrapped is at most 10 characters — each padded a few ch for cell padding, then
+   summed: 10 + 20 + 16 + 19 + 12 = 77, rounded up to 78ch. */
+.table.test-convictions {
+    min-width: 78ch;
+}
+
+.table.test-convictions th:nth-child(2), .table.test-convictions td:nth-child(2) {
+    max-width: 24ch;
+}
+
+.table.test-convictions td:nth-child(1), .table.test-convictions td:nth-child(5) {
+    white-space: nowrap;
+}
+
+/* The selected verdict's meaning, between the detail pane's head and the list it explains. Padded
+   like .note rather than reusing it, since .note carries the warning colours. */
+.pane > .meaning {
+    margin: 0;
+    padding: 9px var(--pad);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+/* The sortable headers above a convicted-test table, and the pager under it. Both are markup the
+   browser resolves on its own, since this app needs no JavaScript. */
+
+.table th.sortable {
+    cursor: pointer;
+}
+
+.table th.sortable a {
+    color: inherit;
+}
+
+.table th.sortable a:hover {
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.table th .arrow {
+    margin-left: 4px;
+    font-size: 0.9em;
+    color: var(--faint);
+}
+
+/* The convicted-tests table and the drilldown it opens sit side by side, the way the explore page's
+   own rail and its detail pane already do: the table keeps reading left to right while the drilldown
+   stays in view beside it rather than pushing the table down a screen. The split is the site's own
+   `.row`/`.col-7`/`.col-5` proportional idiom (dashboard.css:112-124) rather than a bespoke width
+   rule: `.col-7`/`.col-5` is the same idiom as `.col-8`/`.col-4` one notch narrower, chosen because
+   the drilldown's nowrap columns (dashboard.css:1068-1070) do not fit in a third of the row —
+   58.33%/41.66% is the smallest step up that gives the drilldown room without starving the table its
+   own long test-path column needs. `.tests-layout` itself now adds nothing about width — `.row` owns
+   that — only the equal-height, flush-edges behaviour below, which is specific to this pair of panes
+   and would be wrong to apply to every `.row`. With no drilldown open, `.col-7` is the layout's only
+   flex item and its `flex-grow` absorbs the row's whole width, so the table fills it exactly as it
+   did as a bare section. */
+
+/* Two panes side by side read as broken if one ends short of the other, so both are told the same
+   total height rather than left to the height of their own rows: `.section` takes `--pane-height`
+   itself, the way `.scope.banded` already gives a banded card that exact height, and `.content`
+   flexes to fill whatever the header leaves. That flex child needs `min-height: 0` for the same
+   reason `.scope.banded`'s does: its default automatic minimum size is its content's own height,
+   which would refuse to shrink to the fraction of `--pane-height` left over and defeat the fixed
+   total. `.table-scroll` inherits that same flex-and-shrink treatment in this layout, since it is
+   `.content`'s only child and the one that actually scrolls; scoped to `.tests-layout` so a
+   `.table-scroll` used standalone elsewhere keeps capping itself with `max-height` instead. */
+.tests-layout > .section {
+    display: flex;
+    flex-direction: column;
+    height: var(--pane-height);
+}
+
+.tests-layout > .section > .content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-scroll {
+    max-height: var(--pane-height);
+    overflow: auto;
+}
+
+.table-scroll:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.tests-layout .table-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+}
+
+.table-scroll .table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    z-index: 1;
+}
+
+/* `.row` already wraps its own children once `.col-7` and `.col-5`'s combined floors (260px + 200px
+   + gap) outgrow the container, around 470px — too narrow for the drilldown's five columns to stay
+   readable at a hair above its own 200px floor. This breakpoint forces the stack early, at the same
+   900px this pair used before the proportional split, purely for readability; `flex: 1 1 100%`
+   overrides `.col-7`/`.col-5`'s own basis rather than duplicating `.row`'s wrap. Past that, only the
+   fixed-height, side-by-side behaviour above needs undoing for the stacked case. */
+@media (max-width: 900px) {
+    .tests-layout > .section {
+        flex: 1 1 100%;
+        display: block;
+        height: auto;
+    }
+
+    .tests-layout > .section > .content {
+        display: block;
+        min-height: auto;
+    }
+
+    .tests-layout .table-scroll {
+        max-height: var(--pane-height);
+        min-height: auto;
+    }
+}
+
+/* The vocabulary legend: a `.section` a reader opens for what a chip means rather than for data, so
+   it sits collapsed-looking-open at the foot of the content rather than among the panes above it. A
+   `<details>` rather than a `.section` div, since this app needs no JavaScript and the disclosure is
+   markup the browser already opens and closes on its own. */
+.legend-pane > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.legend-pane > summary::-webkit-details-marker {
+    display: none;
+}
+
+.legend-group {
+    margin-bottom: var(--gap);
+}
+
+.legend-group:last-child {
+    margin-bottom: 0;
+}
+
+.legend-group-title {
+    margin-bottom: 6px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Each group is a `.table` — the same header, padding and row rules every data table already uses —
+   rather than a fourth list style, so a reader who has already read one of the data tables above
+   reads this one for free. */
+.legend-entry {
+    text-decoration: none;
+}

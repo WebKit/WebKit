@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% from 'parts.html' import window_chooser, suite_chooser, queue_dropdown, staleness, rate %}
+
+{% block title %}EWS flake detection — escapes{% endblock %}
+
+{% block content %}
+{% set filter_args = {'verdict': verdict_shown, 'group': group, 'version': version, 'builder': builder} %}
+{% macro held_fields() %}
+<input type="hidden" name="days" value="{{ window.days }}">
+{%- if suite %}<input type="hidden" name="suite" value="{{ suite }}">{% endif %}
+{%- if verdict_shown %}<input type="hidden" name="verdict" value="{{ verdict_shown }}">{% endif %}
+{%- endmacro %}
+{{ staleness(freshness, freshness_dismissed) }}
+
+<div class="row headline">
+  <div class="col-4">
+    <span class="text large">What main said afterwards</span>
+    <span class="text tiny">{% if suite %}{{ suite }}, {% endif %}{{ queue_summary }}, convictions from the last {{ window.days }} days</span>
+  </div>
+  <div class="col-8">
+    <div class="chooser groups">
+      {{ queue_dropdown('escaped_regressions', queue_tree, group, version, builder, queue_summary, held_fields()) }}
+      {{ suite_chooser('escaped_regressions', window, suite_choices, suite, filter_args=filter_args) }}
+      {{ window_chooser('escaped_regressions', window, window_choices, suite=suite, filter_args=filter_args) }}
+    </div>
+  </div>
+</div>
+
+<div class="row metrics">
+  <div class="col-4 metric">
+    <div class="text tiny label">Convictions main disagreed with</div>
+    {{ rate(tally.escape_rate_pct, tally.escaped, tally.decided, 'convictions main answered') }}
+  </div>
+  <div class="col-4 metric">
+    <div class="text tiny label">Convictions main answered nothing about</div>
+    <span class="value">{{ tally.undecided | count }}</span>
+    <span class="text tiny denominator">no runs, no baseline, or a moved head</span>
+  </div>
+  <div class="col-4 metric">
+    <div class="text tiny label">Convictions main could not be asked</div>
+    <span class="value">{{ tally.unasked | count }}</span>
+    <span class="text tiny denominator">{{ tally.unaskable['not_landed'] | count }} not landed, {{ tally.unaskable['ambiguous'] | count }} ambiguous, {{ tally.unaskable['unresolved'] | count }} not looked for</span>
+  </div>
+</div>
+
+<div class="panes">
+  <div class="pane categories">
+    <div class="head">
+      <span class="name">What main said</span>
+      <span class="tally">{{ tally.asked | count }} convictions</span>
+    </div>
+    <div class="body">
+      {% for verdict in verdicts %}
+      <a class="entry{{ ' selected' if verdict == verdict_shown }}" title="{{ verdict_descriptions[verdict] }}" href="{{ url_for('escaped_regressions', days=window.days, suite=suite, **dict(filter_args, verdict=verdict)) }}">
+        <span class="line">
+          <span class="label"><span class="state {{ verdict | state_class }}">{{ verdict }}</span></span>
+          <span class="tally">{{ tally.by_verdict[verdict] | count }}</span>
+        </span>
+      </a>
+      {% if verdict == escaped_verdict and subcategories.total %}
+      <div class="subcategories">
+        <span class="split text tiny">of those, main now</span>
+        <span class="line text tiny"><span class="label">still failing it</span><span class="tally">{{ subcategories.still_failing | count }}</span></span>
+        <span class="line text tiny"><span class="label">has stopped failing it</span><span class="tally">{{ subcategories.recovered | count }}</span></span>
+        <span class="line text tiny" title="Main ran the test no times in the last {{ currency_days }} days, so it has demonstrated neither the failure nor a recovery."><span class="label">has not run it lately</span><span class="tally">{{ subcategories.not_run_lately | count }}</span></span>
+        <span class="line text tiny" title="Nothing has asked main about these since the verdict was reached, so they are neither still failing nor recovered."><span class="label">not checked yet</span><span class="tally">{{ subcategories.unchecked | count }}</span></span>
+        <span class="split text tiny">and after the landing failed</span>
+        <span class="line text tiny"><span class="label">{{ failure_pct }}% of the runs or more</span><span class="tally">{{ subcategories.strong | count }}</span></span>
+        <span class="line text tiny"><span class="label">fewer than that</span><span class="tally">{{ subcategories.rare | count }}</span></span>
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% if tally.unrecognised %}
+      <div class="entry" title="Stored under verdict names this dashboard no longer has a bucket for: {{ tally.unrecognised | join(', ') }}. They are counted in the total above but in none of the categories, and no rate is taken over them. Run scripts/migrate_verdict_names.py to fold them into the category that replaced them.">
+        <span class="line">
+          <span class="label"><span class="state state-unknown">unrecognised</span></span>
+          <span class="tally">{{ tally.unrecognised_total | count }}</span>
+        </span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="pane detail">
+    <div class="head">
+      <span class="name">Convictions main answered <span class="state {{ verdict_shown | state_class }}">{{ verdict_shown }}</span></span>
+      <span class="tally">{{ convictions | length | count }} shown</span>
+    </div>
+    {% if convictions %}<p class="meaning text tiny">{{ verdict_descriptions[verdict_shown] }}</p>{% endif %}
+    <div class="body">
+      {% if not convictions %}
+      {% if verdict_shown == escaped_verdict %}
+      <div class="placeholder">No conviction in this window escaped: main never started failing a test a conviction had excused. The categories beside this are what main said instead, and a conviction can only be checked once its pull request has landed and bots have run the test on main.</div>
+      {% else %}
+      <div class="placeholder">No conviction in this window was answered this way. Pick another category to see what main said.</div>
+      {% endif %}
+      {% else %}
+      <table class="table full-width convictions">
+        <thead><tr><th>Test</th><th>Rule</th><th>Queue</th><th>Why</th><th class="when">Landed</th><th>Links</th><th class="numeric">Escape strength</th><th class="numeric">Current damage</th></tr></thead>
+        <tbody>
+          {% for conviction in convictions %}
+          <tr>
+            <td><a href="{{ links.test_history(conviction.configuration, conviction.test_name) }}">{{ conviction.test_name }}</a></td>
+            <td class="text tiny">{{ conviction.rule }}</td>
+            <td class="text tiny">{{ conviction.builder }}</td>
+            <td class="text tiny">{% for part in sentence(conviction) %}{% if part.emphasis %}<strong>{{ part.text }}</strong>{% else %}{{ part.text }}{% endif %}{% endfor %}</td>
+            <td class="when text tiny">{% if conviction.landed_at is none %}Landing time unknown{% else %}{{ conviction.landed_at | moment }}{% endif %}</td>
+            <td class="text tiny links">
+              <a href="{{ links.build(conviction.builder_id, conviction.build_number) }}">Build</a>
+              {% if conviction.pr_id %}<a href="{{ links.pull_request(conviction.pr_id) }}">PR {{ conviction.pr_id }}</a>{% endif %}
+              <a href="{{ links.test_investigation(conviction.configuration, conviction.test_name) }}">History</a>
+            </td>
+            <td class="numeric text tiny">{% if conviction.verdict != escaped_verdict or conviction.strength is none %}—{% else %}{{ (conviction.strength * 100) | round(1) | percent }}<span class="evidence">{{ conviction.failed_after }}/{{ conviction.runs_after }}</span>{% endif %}</td>
+            <td class="numeric text tiny">{% if conviction.verdict != escaped_verdict or conviction.damage is none %}—{% else %}{{ (conviction.damage * 100) | round(1) | percent }}<span class="evidence">{{ conviction.recent_failed }}/{{ conviction.recent_runs }}</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="content">
+    <details class="caveats-disclosure">
+      <summary>How an escape is decided, and what this page cannot see</summary>
+      <div class="caveats text tiny">
+        <p>An escape is a test main failed after the landing and never failed before it. The baseline says whose failure it is; the rate only says how sure — {{ failure_pct }}% or more of the runs after is strong, less than that rests on few failures. Already failing before the landing makes it main's own, not the change's. Whether main is still failing the test is asked separately, over the last {{ currency_days }} days and of the escapes alone, and answers four ways: still failing, stopped failing, not run in that window at all, or not yet asked about. The last two measure nothing, so neither is counted as a recovery.</p>
+        <p>A floor, like every number here: only landings pinned from a PR title, only tests a bot runs on main in the same configuration, only the {{ window_days }} days either side. Undecided convictions are counted above, not dropped.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<details class="section legend-pane" open>
+  <summary class="header"><span class="title">Legend</span></summary>
+  <div class="content">
+    <div class="legend-group">
+      <div class="legend-group-title text tiny">Escape strength — a lower bound on the failure share after the landing</div>
+      <p class="text tiny">The inputs are failed_after of runs_after, the pair shown beneath the figure, counted in the {{ window_days }} days after the landing.</p>
+      <p class="text tiny">The figure is the lower end of the 90% <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval">Wilson score interval</a> on that ratio, not the ratio itself.</p>
+      <p class="text tiny">Why a bound and not the rate: the bound sinks thin evidence. 1 failure in 8 runs is 12.5% raw but 2.8% bounded, while 7 in 98 is 7.1% raw and 3.9% bounded, so the bound puts the two escapes in the right order and the raw rate does not.</p>
+      <p class="text tiny">It ranks escapes against each other; it is not a confidence claim. Runs are not independent trials — they cluster by machine, by neighbouring test and by load, and retries inside a step are correlated by construction.</p>
+      <p class="text tiny">It does not decide the strong-or-rare split shown above, which stays the raw rate against {{ failure_pct }}%, so this page never carries two definitions of strong.</p>
+    </div>
+    <div class="legend-group">
+      <div class="legend-group-title text tiny">Current damage — what main is doing with the test right now, as a rate</div>
+      <p class="text tiny">The inputs are recent_failed of recent_runs from the last currency check, over the {{ currency_days }} days ending when that check ran.</p>
+      <p class="text tiny">Blank means no answer, not zero: either nobody has asked yet, or main ran the test not at all in that window.</p>
+      <p class="text tiny">Two known limits, disclosed rather than hidden: the currency window is not clamped to the landing, so it can reach back to runs from before the change landed; and recent_runs is a floor rather than a total, because the runs query's limit of 100 applies per response group, so the oldest runs in a wide window can be dropped silently.</p>
+    </div>
+  </div>
+</details>
+{% endblock %}
