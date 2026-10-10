@@ -26,8 +26,13 @@
 #include "config.h"
 
 #include "Helpers/Test.h"
+#include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSStringRef.h>
 #include <WebCore/IDBBindingUtilities.h>
 #include <WebCore/IDBValue.h>
 #include <WebCore/ParsedContentRange.h>
@@ -11484,6 +11489,45 @@ TEST(WebCore, SerializedScriptValueReadTerminalImageDataTag)
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     });
     deserializeJSValue(bytes);
+}
+
+// { p: Blob } with an empty URL and type. The Blob reader has to run for the object to survive;
+// it cannot create a Blob in this global object, so p is null.
+TEST(WebCore, SerializedScriptValueReadBlobInObject)
+{
+    constexpr auto bytes = WTF::toArray<uint8_t>({
+        0x10, 0x00, 0x00, 0x00, // Version 16.
+        0x02, // ObjectTag
+        0x01, 0x00, 0x00, 0x80, 'p',
+        0x0f, // BlobTag
+        0x00, 0x00, 0x00, 0x80, // URL
+        0x00, 0x00, 0x00, 0x80, // Type
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Size
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Memory cost
+        0xff, 0xff, 0xff, 0xff // TerminatorTag
+    });
+    WTF::initialize();
+    WTF::initializeMainThread();
+    JSC::initialize();
+    WebCore::Process::identifier();
+    Vector<uint8_t> vector { std::span<const uint8_t>(bytes) };
+    const WebCore::ThreadSafeDataBuffer value = WebCore::ThreadSafeDataBuffer::create(WTF::move(vector));
+    bool isObject = false;
+    bool propertyIsNull = false;
+    WebCore::callOnIDBSerializationThreadAndWait([&](auto& globalObject) {
+        auto jsValue = WebCore::deserializeIDBValueToJSValue(globalObject, value);
+        JSC::JSLockHolder locker(globalObject.vm());
+        isObject = jsValue.isObject();
+        if (!isObject)
+            return;
+        JSContextRef context = toRef(&globalObject);
+        JSObjectRef object = toRef(static_cast<JSC::JSObject*>(jsValue.asCell()));
+        JSStringRef name = JSStringCreateWithUTF8CString("p");
+        propertyIsNull = JSValueIsNull(context, JSObjectGetProperty(context, object, name, nullptr));
+        JSStringRelease(name);
+    });
+    EXPECT_TRUE(isObject);
+    EXPECT_TRUE(propertyIsNull);
 }
 
 // Deserializing is allowed in the WebContent process. The tests above cover the other allowed
