@@ -215,21 +215,26 @@ void SVGTextLayoutEngine::beginTextPathLayout(const RenderSVGTextPath& textPath,
 
     lineLayout.m_chunkLayoutBuilder.buildTextChunks(lineLayout.m_lineLayoutBoxes, lineLayout.m_lineLayoutChunkStarts);
 
-    // Handle text-anchor as additional start offset for text paths.
-    m_textPathStartOffset += lineLayout.m_chunkLayoutBuilder.totalAnchorShift();
+    float totalLength = lineLayout.m_chunkLayoutBuilder.totalLength();
+    float anchorShift = lineLayout.m_chunkLayoutBuilder.totalAnchorShift();
+
+    float desiredTextLength = 0;
+    RefPtr textContentElement = SVGTextContentElement::elementFromRenderer(&textPath);
+    if (textContentElement) {
+        SVGLengthContext lengthContext(textContentElement.get());
+        desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
+    }
+
+    // Handle text-anchor as additional start offset for text paths. With 'textLength', the
+    // anchor is resolved against the adjusted advance rather than the natural one.
+    if (desiredTextLength && totalLength)
+        anchorShift *= desiredTextLength / totalLength;
+    m_textPathStartOffset += anchorShift;
     m_textPathCurrentOffset = m_textPathStartOffset;
 
-    // Eventually handle textLength adjustments.
-    RefPtr textContentElement = SVGTextContentElement::elementFromRenderer(&textPath);
-    if (!textContentElement)
-        return;
-
-    SVGLengthContext lengthContext(textContentElement.get());
-    float desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
     if (!desiredTextLength)
         return;
 
-    float totalLength = lineLayout.m_chunkLayoutBuilder.totalLength();
     unsigned totalCharacters = lineLayout.m_chunkLayoutBuilder.totalCharacters();
 
     if (textContentElement->lengthAdjust() == SVGLengthAdjustSpacing) {
