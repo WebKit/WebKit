@@ -144,7 +144,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::DoubleConstraint> m_frameRate;
     std::optional<WebCore::DoubleConstraint> m_volume;
     std::optional<WebCore::BooleanConstraint> m_echoCancellation;
-    std::optional<WebCore::BooleanConstraint> m_displaySurface;
+    std::optional<WebCore::StringConstraint> m_displaySurface;
     std::optional<WebCore::BooleanConstraint> m_logicalSurface;
     std::optional<WebCore::StringConstraint> m_facingMode;
     std::optional<WebCore::StringConstraint> m_deviceId;
