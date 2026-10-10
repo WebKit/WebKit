@@ -38,7 +38,6 @@ IGNORE_WARNINGS_BEGIN("cast-align")
 IGNORE_WARNINGS_BEGIN("sign-compare")
 IGNORE_WARNINGS_BEGIN("documentation")
 IGNORE_WARNINGS_BEGIN("unused-parameter")
-IGNORE_WARNINGS_BEGIN("missing-field-initializers")
 IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 IGNORE_WARNINGS_BEGIN("incompatible-pointer-types-discards-qualifiers")
 
@@ -289,7 +288,6 @@ const char* arm64Disassemble(uint32_t* pc, char* buffer, size_t size)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
