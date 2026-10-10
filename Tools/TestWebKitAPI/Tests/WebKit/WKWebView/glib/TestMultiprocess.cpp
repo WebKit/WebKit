@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include "TestMain.h"
+#include "WebKitWebContextInternal.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
 
@@ -242,11 +243,37 @@ static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* te
     g_assert_cmpuint(test->m_initializeWebProcessExtensionsSignalCount, ==, 1);
 }
 
+static void setUpSandboxedWebViewTest(WebViewTest* fixture, gconstpointer)
+{
+    Test::shouldInitializeWebProcessExtensions = false;
+    new (fixture) WebViewTest;
+    Test::shouldInitializeWebProcessExtensions = true;
+    webkitWebContextSetSandboxEnabledForTesting(fixture->m_webContext.get(), true);
+}
+
+static void testSandboxRejectedPrewarmedProcess(WebViewTest* test, gconstpointer)
+{
+    webkitWebContextPrewarmProcessForTesting(test->m_webContext.get());
+    g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(test->m_webContext.get()), ==, 1);
+    Vector<GRefPtr<WebKitWebView>> views;
+    for (unsigned i = 0; i < 3; ++i) {
+        views.append(test->createWebView());
+        GUniquePtr<char> uri(g_strdup_printf("https://site-%u.example/", i));
+        test->loadHtml("<html></html>", uri.get(), views.last().get());
+        test->waitUntilLoadFinished(views.last().get());
+        // Count all live prewarmed processes, including any lost from the pool's prewarmed set.
+        g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(test->m_webContext.get()), ==, 1);
+        webkitWebContextPrewarmProcessForTesting(test->m_webContext.get());
+        g_assert_cmpuint(webkitWebContextGetPrewarmedProcessCountForTesting(test->m_webContext.get()), ==, 1);
+    }
+}
+
 void beforeAll()
 {
     Test::shouldInitializeWebProcessExtensions = true;
 
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
+    g_test_add("/webkit/WebKitWebContext/sandbox-rejected-prewarmed-process", WebViewTest, nullptr, setUpSandboxedWebViewTest, testSandboxRejectedPrewarmedProcess, WebViewTest::tearDown);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
 }
 
