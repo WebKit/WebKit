@@ -902,6 +902,10 @@ public:
     void setClientImplicitlyRequestedTopScrollPocket();
 #endif
 
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+    void updateAllowsSeparatorForScrollPocket();
+#endif
+
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     CGFloat webContentDistanceFromLeftEdge() const { return m_webContentDistanceFromLeftEdge; }
     CGFloat webContentDistanceFromRightEdge() const { return m_webContentDistanceFromRightEdge; }

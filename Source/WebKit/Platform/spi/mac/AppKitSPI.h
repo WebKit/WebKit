@@ -151,6 +151,9 @@ typedef NS_ENUM(NSInteger, NSScrollPocketEdge) {
 @property NSScrollPocketStyle style;
 @property (copy, nullable) NSColor *captureColor;
 @property (readonly, strong) NSView *captureView;
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+@property (nonatomic) BOOL allowsSeparator;
+#endif
 @end
 
 @interface NSView (NSConstraintBasedLayout)
