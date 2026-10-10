@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A space inside a ligature run keeps the zero advance given by the font's shaping</title>
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#word-spacing-property">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#font-feature-resolution">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face {
+  font-family: "qrfont-1L";
+  src: url(support/fonts/qrfont-1L.ttf) format("truetype");
+}
+p { font: 48px "qrfont-1L"; margin: 40px; }
+</style>
+<!-- The font shapes "[QR coded]" to one square 48px glyph: every character gets a
+     zero advance except the last one, including the space. -->
+<p id="target">Hello [QR coded] world!</p>
+<script>
+promise_test(async () => {
+  await document.fonts.load('48px "qrfont-1L"', "[QR coded]");
+  await document.fonts.ready;
+  const text = document.getElementById("target").firstChild;
+  const s = text.data;
+  const rangeWidth = (start, end) => {
+    const range = document.createRange();
+    range.setStart(text, start);
+    range.setEnd(text, end);
+    return range.getBoundingClientRect().width;
+  };
+  const runWidth = rangeWidth(s.indexOf("["), s.indexOf("]") + 1);
+  const lastCharacterWidth = rangeWidth(s.indexOf("]"), s.indexOf("]") + 1);
+  // Engines may snap both range edges to whole pixels, so a 48px advance can measure up to 49.
+  assert_approx_equals(runWidth, 48.01, 1, "width of the shaped [QR coded] run");
+  assert_approx_equals(runWidth, lastCharacterWidth, 0.5,
+    "the [QR coded] run is as wide as its last character, which carries the only advance");
+}, "A space inside a ligature run takes the zero advance from the font's shaping");
+</script>

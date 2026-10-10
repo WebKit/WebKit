@@ -1,0 +1,5 @@
+Hello [QR coded] world!
+
+
+PASS A space inside a ligature run takes the zero advance from the font's shaping
+
