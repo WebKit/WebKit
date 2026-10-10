@@ -67,7 +67,7 @@ generated_compile_commands = []
 compile_commands = json.loads(input_data)
 
 for entry in compile_commands:
-    entry_file = entry['file']
+    entry_file = os.path.normpath(entry['file'])
     if not 'UnifiedSource' in entry_file:
         generated_compile_commands.append(entry)
         continue
