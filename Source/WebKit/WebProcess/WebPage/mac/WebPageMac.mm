@@ -126,8 +126,6 @@
 #import "MediaPlaybackTargetSerialized.h"
 #endif
 
-#import "PDFKitSoftLink.h"
-
 namespace WebKit {
 using namespace WebCore;
 

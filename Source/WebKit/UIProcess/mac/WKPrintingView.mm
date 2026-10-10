@@ -42,8 +42,6 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-#import "PDFKitSoftLink.h"
-
 NSString * const WebKitOriginalTopPrintingMarginKey = @"WebKitOriginalTopMargin";
 NSString * const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMargin";
 
@@ -493,7 +491,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
     }
 
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
-        if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
+        if (![[annotation valueForAnnotationKey:PDFAnnotationKeySubtype] isEqualToString:PDFAnnotationSubtypeLink])
             continue;
 
         RetainPtr<NSURL> url = annotation.URL;
@@ -591,7 +589,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
 
     if (!_printedPagesPDFDocument) {
         RetainPtr pdfData = toNSData(_printedPagesData.span());
-        _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstance() initWithData:pdfData.get()]);
+        _printedPagesPDFDocument = adoptNS([[PDFDocument alloc] initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];
         _linkDestinationsPerPage.clear();
@@ -599,7 +597,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
         for (unsigned i = 0; i < pageCount; i++) {
             RetainPtr page = [_printedPagesPDFDocument pageAtIndex:i];
             for (PDFAnnotation *annotation in page.get().annotations) {
-                if (![[annotation valueForAnnotationKey:WebKit::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:WebKit::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
+                if (![[annotation valueForAnnotationKey:PDFAnnotationKeySubtype] isEqualToString:PDFAnnotationSubtypeLink])
                     continue;
 
                 if (annotation.URL)

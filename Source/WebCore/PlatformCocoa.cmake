@@ -119,6 +119,7 @@ if (WEBKIT_SDK_IS_MACOS)
         ${QUARTZ_LIBRARY}
         $<$<BOOL:${LOOKUP_FRAMEWORK}>:${LOOKUP_FRAMEWORK}>
     )
+    target_link_options(WebCore PRIVATE "LINKER:-weak_framework,PDFKit")
 endif ()
 
 if (WEBKIT_SDK_IS_IOS_FAMILY)

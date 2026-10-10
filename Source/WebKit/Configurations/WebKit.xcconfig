@@ -160,6 +160,9 @@ WK_PDFKIT_LDFLAGS_iphonesimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
 WK_PDFKIT_LDFLAGS_xros = $(WK_PDFKIT_LDFLAGS_iphoneos);
 WK_PDFKIT_LDFLAGS_xrsimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
 WK_PDFKIT_LDFLAGS_maccatalyst = $(WK_PDFKIT_LDFLAGS_iphoneos);
+WK_PDFKIT_LDFLAGS_macosx = -weak_framework PDFKit;
+WK_PDFKIT_LDFLAGS_appletvos = -weak_framework PDFKit;
+WK_PDFKIT_LDFLAGS_appletvsimulator = -weak_framework PDFKit;
 
 WK_PROTOTYPE_TOOLS_LDFLAGS = $(WK_PROTOTYPE_TOOLS_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_PROTOTYPE_TOOLS_LDFLAGS_cocoatouch = -framework PrototypeTools;
