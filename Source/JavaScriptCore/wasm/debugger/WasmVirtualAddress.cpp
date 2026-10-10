@@ -44,20 +44,18 @@ namespace Wasm {
 void VirtualAddress::dump(PrintStream& out) const
 {
     Type addressType = this->type();
-    uint32_t addressInstanceId = this->instanceId();
-    uint32_t addressOffset = this->offset();
 
     out.print("VirtualAddress(0x", WTF::hex(m_value, WTF::Lowercase), " -> ");
 
     switch (addressType) {
     case Type::Memory:
-        out.print("Memory[instance:", addressInstanceId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
+        out.print("Memory[instance:", instanceId(), ", memory:", memoryIndex(), ", offset:0x", WTF::hex(memoryOffset(), WTF::Lowercase), "])");
         break;
     case Type::Module:
-        out.print("Module[instance:", addressInstanceId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
+        out.print("Module[instance:", instanceId(), ", offset:0x", WTF::hex(moduleOffset(), WTF::Lowercase), "])");
         break;
     default:
-        out.print("Unknown[type:", (int)addressType, ", id:", addressInstanceId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
+        out.print("Unknown[type:", (int)addressType, ", raw:0x", WTF::hex(m_value, WTF::Lowercase), "])");
         break;
     }
 }
@@ -74,7 +72,7 @@ uint8_t* VirtualAddress::toPhysicalPC(JSWebAssemblyInstance& jsInstance)
 {
     RELEASE_ASSERT(type() == VirtualAddress::Type::Module);
 
-    uint32_t offset = this->offset();
+    uint32_t offset = this->moduleOffset();
 
     // All instances of a module share one bytecode buffer, so this resolves to the same physical
     // PC for every instance of the same module.

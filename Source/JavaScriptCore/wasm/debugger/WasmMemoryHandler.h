@@ -55,10 +55,12 @@ public:
 private:
     DebugServer& m_debugServer;
 
+    uint64_t nextMappedMemoryBase(uint32_t instanceId, uint32_t memoryIndex);
+
     bool readModuleData(VirtualAddress, size_t length, StringBuilder& data);
     bool readMemoryData(VirtualAddress, size_t length, StringBuilder& data);
 
-    void handleWasmMemoryRegionInfo(VirtualAddress, uint32_t instanceId, uint32_t offset);
+    void handleWasmMemoryRegionInfo(VirtualAddress);
     void handleWasmModuleRegionInfo(VirtualAddress, uint32_t instanceId, uint32_t offset);
     void sendMemoryRegionReply(uint64_t start, uint64_t size, StringView permissions, StringView name);
     void sendMemoryRegionReply(uint64_t start, uint64_t size, StringView permissions, StringView name, StringView type);

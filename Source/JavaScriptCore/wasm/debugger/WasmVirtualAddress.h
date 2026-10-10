@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <JavaScriptCore/JSExportMacros.h>
+#include <JavaScriptCore/WasmLimits.h>
 #include <cstdint>
 #include <limits>
 #include <type_traits>
@@ -46,19 +47,24 @@ namespace Wasm {
 enum class ProtocolError : uint8_t;
 class FunctionCodeIndex;
 
+static constexpr uint64_t virtualAddressFieldMask(uint32_t bits, uint32_t shift)
+{
+    return ((1ULL << bits) - 1) << shift;
+}
+
 /**
  * VirtualAddress - WebAssembly virtual address encoding for LLDB debugging
  *
  * Encodes 64-bit virtual addresses for WebAssembly debugging with LLDB.
  * Separates module image addresses from linear memory addresses.
  *
- * Address Format (64-bit):
- * - Bits 63-62: Address Type (2 bits)
- * - Bits 61-32: InstanceId (30 bits)
- * - Bits 31-0:  Offset (32 bits)
+ * Address Format (64-bit). The two halves divide the bits below the type tag differently:
+ *
+ *     Memory: 63-62 type | 61-41 instanceId (21) | 40-34 memoryIndex (7) | 33-0 offset (34)
+ *     Module: 63-62 type | 61-53 unused (9)      | 52-32 instanceId (21) | 31-0 offset (32)
  *
  * Address Types:
- * - 0x00 (Memory): The instance's linear memory
+ * - 0x00 (Memory): One of the instance's linear memories
  * - 0x01 (Module): The instance's view of its module image (bytecode)
  * - 0x02 (Invalid): Invalid/unmapped regions
  * - 0x03 (Invalid2): Invalid/unmapped regions
@@ -81,11 +87,17 @@ class FunctionCodeIndex;
  *
  *     Module A
  *     ├── Instance 0: Memory at 0x0000000000000000, image at 0x4000000000000000
- *     ├── Instance 1: Memory at 0x0000000100000000, image at 0x4000000100000000
- *     └── Instance 2: Memory at 0x0000000200000000, image at 0x4000000200000000
+ *     ├── Instance 1: Memory at 0x0000020000000000, image at 0x4000000100000000
+ *     └── Instance 2: Memory at 0x0000040000000000, image at 0x4000000200000000
  *
  *     Module B
- *     └── Instance 3: Memory at 0x0000000300000000, image at 0x4000000300000000
+ *     └── Instance 3: Memory at 0x0000060000000000, image at 0x4000000300000000
+ *
+ * An instance declaring three memories, here instance 0:
+ *
+ *     memory 0 at 0x0000000000000000
+ *     memory 1 at 0x0000000400000000
+ *     memory 2 at 0x0000000800000000
  *
  * Memory Region Example:
  *
@@ -103,6 +115,30 @@ public:
         Invalid2 = 0x03 // Invalid/unmapped regions
     };
 
+    static constexpr uint32_t typeBits = 2;
+    static constexpr uint32_t instanceIdBits = 21;
+    static constexpr uint32_t memoryIndexBits = 7;
+    static constexpr uint32_t memoryOffsetBits = 34;
+    static constexpr uint32_t moduleOffsetBits = 32;
+
+    static constexpr uint32_t typeShift = 62;
+    static constexpr uint32_t memoryIndexShift = memoryOffsetBits;
+    static constexpr uint32_t memoryInstanceIdShift = memoryOffsetBits + memoryIndexBits;
+    static constexpr uint32_t moduleInstanceIdShift = moduleOffsetBits;
+
+    static constexpr uint64_t typeMask = virtualAddressFieldMask(typeBits, typeShift);
+    static constexpr uint64_t memoryOffsetMask = virtualAddressFieldMask(memoryOffsetBits, 0);
+    static constexpr uint64_t memoryIndexMask = virtualAddressFieldMask(memoryIndexBits, memoryIndexShift);
+    static constexpr uint64_t memoryInstanceIdMask = virtualAddressFieldMask(instanceIdBits, memoryInstanceIdShift);
+    static constexpr uint64_t moduleOffsetMask = virtualAddressFieldMask(moduleOffsetBits, 0);
+    static constexpr uint64_t moduleInstanceIdMask = virtualAddressFieldMask(instanceIdBits, moduleInstanceIdShift);
+
+    static_assert(typeBits + instanceIdBits + memoryIndexBits + memoryOffsetBits == 64, "the Memory encoding has to account for all 64 bits");
+    static_assert(moduleInstanceIdShift + instanceIdBits <= typeShift, "the Module instance ID must not run into the type tag");
+    static_assert((1ULL << memoryOffsetBits) >= maxBufferByteLength(AddressType { AddressType::I64 }), "the offset field has to reach every byte of the largest linear memory, memory64 included");
+    static_assert((1U << memoryIndexBits) >= maxMemories, "the memory index field has to name every memory an instance may declare");
+    static_assert((1ULL << moduleOffsetBits) >= maxModuleSize, "the module offset field has to reach every byte of the largest module");
+
     static constexpr uint64_t MEMORY_BASE = 0x0000000000000000ULL;
     static constexpr uint64_t MEMORY_END = 0x3FFFFFFFFFFFFFFFULL;
     static constexpr uint64_t MODULE_BASE = 0x4000000000000000ULL;
@@ -111,7 +147,8 @@ public:
     static constexpr uint64_t JS_FRAME_BASE = 0xC000000000000000ULL; // JS frame boundary in the WASM call stack (Invalid2 type)
     static constexpr uint64_t INVALID_END = 0xFFFFFFFFFFFFFFFFULL;
 
-    static constexpr uint32_t MAX_ID = 0x3FFFFFFF; // Bits 61-32. IDs are never reused, so this also bounds how many instances one session may create.
+    // IDs are never reused, so this also bounds how many instances one session may create.
+    static constexpr uint32_t MAX_ID = (1U << instanceIdBits) - 1;
     static constexpr uint32_t INVALID_ID = MAX_ID + 1;
     static_assert(INVALID_ID > MAX_ID, "the sentinel must not be encodable");
 
@@ -124,19 +161,52 @@ public:
     {
     }
 
-    static VirtualAddress createMemory(uint32_t instanceId, uint32_t offset = 0)
+    static VirtualAddress createMemory(uint32_t instanceId, uint32_t memoryIndex, uint64_t offset = 0)
     {
-        return VirtualAddress(encode(Type::Memory, instanceId, offset));
+        RELEASE_ASSERT(instanceId <= MAX_ID);
+        RELEASE_ASSERT(memoryIndex < (1U << memoryIndexBits));
+        RELEASE_ASSERT(offset < (1ULL << memoryOffsetBits));
+        return VirtualAddress((static_cast<uint64_t>(Type::Memory) << typeShift)
+            | (static_cast<uint64_t>(instanceId) << memoryInstanceIdShift)
+            | (static_cast<uint64_t>(memoryIndex) << memoryIndexShift)
+            | offset);
     }
 
     static VirtualAddress createModule(uint32_t instanceId, uint32_t offset = 0)
     {
-        return VirtualAddress(encode(Type::Module, instanceId, offset));
+        RELEASE_ASSERT(instanceId <= MAX_ID);
+        return VirtualAddress((static_cast<uint64_t>(Type::Module) << typeShift)
+            | (static_cast<uint64_t>(instanceId) << moduleInstanceIdShift)
+            | static_cast<uint64_t>(offset));
     }
 
-    Type type() const { return static_cast<Type>((m_value & 0xC000000000000000ULL) >> 62); }
-    uint32_t instanceId() const { return static_cast<uint32_t>((m_value & 0x3FFFFFFF00000000ULL) >> 32); }
-    uint32_t offset() const { return static_cast<uint32_t>(m_value & 0x00000000FFFFFFFFULL); }
+    Type type() const { return static_cast<Type>((m_value & typeMask) >> typeShift); }
+
+    uint32_t instanceId() const
+    {
+        if (type() == Type::Memory)
+            return static_cast<uint32_t>((m_value & memoryInstanceIdMask) >> memoryInstanceIdShift);
+        return static_cast<uint32_t>((m_value & moduleInstanceIdMask) >> moduleInstanceIdShift);
+    }
+
+    uint32_t memoryIndex() const
+    {
+        ASSERT(type() == Type::Memory);
+        return static_cast<uint32_t>((m_value & memoryIndexMask) >> memoryIndexShift);
+    }
+
+    uint64_t memoryOffset() const
+    {
+        ASSERT(type() == Type::Memory);
+        return m_value & memoryOffsetMask;
+    }
+
+    uint32_t moduleOffset() const
+    {
+        ASSERT(type() == Type::Module);
+        return static_cast<uint32_t>(m_value & moduleOffsetMask);
+    }
+
     String hex() const { return makeString(WTF::hex(m_value, WTF::Lowercase)); }
     uint64_t value() const { return m_value; }
 
@@ -154,15 +224,6 @@ public:
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
 private:
-    static uint64_t encode(Type type, uint32_t instanceId, uint32_t offset)
-    {
-        // An ID wider than 30 bits spills into the type field, so the address would decode back
-        // to a different type and a different instance, and toPhysicalPC() would resolve it
-        // against the wrong module's bytecode.
-        RELEASE_ASSERT(instanceId <= MAX_ID);
-        return (((uint64_t)type << 62) | ((uint64_t)instanceId << 32) | ((uint64_t)offset << 0));
-    }
-
     uint64_t m_value;
 };
 
