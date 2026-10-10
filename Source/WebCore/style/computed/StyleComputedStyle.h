@@ -154,6 +154,10 @@ public:
     inline UserModify usedUserModify() const;
     WEBCORE_EXPORT UserSelect LEGACY_NODELETE usedUserSelect() const;
     Style::Contain usedContain() const;
+
+    float usedInitialLetterHeight() const;
+    float usedInitialLetterDrop() const;
+
     inline TransformStyle3D usedTransformStyle3D() const;
     WebCore::Color usedScrollbarThumbColor() const;
     WebCore::Color usedScrollbarTrackColor() const;

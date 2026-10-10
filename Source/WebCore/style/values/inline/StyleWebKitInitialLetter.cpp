@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 ChangSeok Oh <changseok@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,11 @@
 #include "StyleWebKitInitialLetter.h"
 
 #include "CSSKeywordValue.h"
+#include "CSSKeywordValueInlines.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSValueKeywords.h"
+#include "CSSValueList.h"
+#include "CSSValuePair.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
@@ -37,28 +43,64 @@ namespace Style {
 
 auto CSSValueConversion<WebkitInitialLetter>::operator()(BuilderState& state, const CSSValue& value) -> WebkitInitialLetter
 {
-    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueID::Normal)
-            return CSS::Keyword::Normal { };
+    // The value's shape identifies the property: consumeInitialLetter() emits a list for the
+    // standard `<number> <integer>` form specifically so it cannot be mistaken for the legacy
+    // `<number>{1,2}` pair.
 
+    if (valueID(value) == CSSValueID::Normal)
+        return CSS::Keyword::Normal { };
+
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
+        return { toStyleFromCSSValue<WebkitInitialLetter::Size>(state, *primitiveValue) };
+
+    if (RefPtr list = dynamicDowncast<CSSValueList>(value)) {
+        if (list->size() != 2) {
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Normal { };
+        }
+        RefPtr sizeValue = dynamicDowncast<CSSPrimitiveValue>(list->item(0));
+        RefPtr sinkValue = dynamicDowncast<CSSPrimitiveValue>(list->item(1));
+        if (!sizeValue || !sinkValue) {
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Normal { };
+        }
+        return {
+            toStyleFromCSSValue<WebkitInitialLetter::Size>(state, *sizeValue),
+            toStyleFromCSSValue<WebkitInitialLetter::Sink>(state, *sinkValue)
+        };
+    }
+
+    RefPtr pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair) {
         state.setCurrentPropertyInvalidAtComputedValueTime();
         return CSS::Keyword::Normal { };
     }
 
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
-        return { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue) };
+    RefPtr sizeValue = dynamicDowncast<CSSPrimitiveValue>(pair->first());
+    if (!sizeValue) {
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Normal { };
+    }
+    auto size = toStyleFromCSSValue<WebkitInitialLetter::Size>(state, *sizeValue);
 
-    auto pair = requiredPairDowncast<CSSPrimitiveValue>(state, value);
-    if (!pair)
+    auto& second = pair->second();
+    if (valueID(second) == CSSValueID::Drop)
+        return { size, CSS::Keyword::Drop { } };
+    if (valueID(second) == CSSValueID::Raise)
+        return { size, CSS::Keyword::Raise { } };
+
+    RefPtr sinkValue = dynamicDowncast<CSSPrimitiveValue>(second);
+    if (!sinkValue) {
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Normal { };
+    }
+    auto sink = toStyleFromCSSValue<WebkitInitialLetter::Sink>(state, *sinkValue);
+
+    // The legacy type encoded `normal` as both-zero; preserve that.
+    if (!size.value && !sink.value)
         return CSS::Keyword::Normal { };
 
-    Ref first = pair->first;
-    Ref second = pair->second;
-
-    return {
-        toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, first),
-        toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, second),
-    };
+    return { WebkitInitialLetter::LegacyTag { }, size, sink };
 }
 
 } // namespace Style

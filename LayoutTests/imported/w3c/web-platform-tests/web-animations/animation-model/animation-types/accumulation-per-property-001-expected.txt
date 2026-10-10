@@ -385,4 +385,7 @@ PASS hyphens: "manual" onto "none"
 PASS image-orientation (type: discrete) has testAccumulation function
 PASS image-orientation: "from-image" onto "none"
 PASS image-orientation: "none" onto "from-image"
+PASS initial-letter (type: discrete) has testAccumulation function
+PASS initial-letter: "3 4" onto "1 2"
+PASS initial-letter: "1 2" onto "3 4"
 
