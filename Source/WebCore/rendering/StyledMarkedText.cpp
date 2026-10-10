@@ -110,7 +110,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     }
     case MarkedText::Type::Highlight: {
-        auto* renderStyle = renderer.parent()->lazyPseudoElementStyle({ PseudoElementType::Highlight, markedText.highlightName });
+        auto* renderStyle = renderer.lazyPseudoElementStyle({ PseudoElementType::Highlight, markedText.highlightName });
         computeStyleForPseudoElementStyle(style, renderStyle, viewportSize, paintInfo);
         break;
     }

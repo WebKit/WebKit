@@ -110,10 +110,9 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 {
     Vector<MarkedText> markedTexts;
     RenderHighlight renderHighlight;
-    auto& parentRenderer = *renderer.parent();
     if (auto highlightRegistry = renderer.document().highlightRegistryIfExists()) {
         for (auto& highlightName : highlightRegistry->highlightNames()) {
-            CheckedPtr renderStyle = parentRenderer.lazyPseudoElementStyle({ PseudoElementType::Highlight, highlightName });
+            CheckedPtr renderStyle = renderer.lazyPseudoElementStyle({ PseudoElementType::Highlight, highlightName });
             if (!renderStyle)
                 continue;
             if (renderStyle->textDecorationLineInEffect().isNone() && phase == PaintPhase::Decoration)
