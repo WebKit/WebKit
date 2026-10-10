@@ -273,6 +273,33 @@ for (const attr of ["transform", "gradientTransform"]) {
     assert_equals(list.numberOfItems, 0, "numberOfItems");
     assert_equals(held.matrix.e, 1, "the detached item keeps its value");
   }, "SVGTransformList (" + attr + "): an empty list detaches every item");
+
+  // Step 1 reads the whole value before any item is touched: a value that only
+  // turns out unparsable after a valid transform function is an empty list, and
+  // Detach does not change the value of the items it detaches.
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "scale(3) oops(1)");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+    assert_equals(held.type, SVGTransform.SVG_TRANSFORM_TRANSLATE, "the detached item keeps its old type");
+    assert_equals(held.matrix.e, 1, "the detached item keeps its old matrix");
+  }, "SVGTransformList (" + attr + "): an unparsable value after a changed transform function detaches every item, which keeps its old value");
+
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "translate(5,6) oops(1)");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+    assert_equals(held.matrix.e, 1, "the detached item keeps its old matrix");
+  }, "SVGTransformList (" + attr + "): an unparsable value after an unchanged transform function detaches every item, which keeps its old value");
+
+  // A comma is only allowed between two transform functions.
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    el.setAttribute(attr, "scale(3),");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+  }, "SVGTransformList (" + attr + "): a trailing comma makes a shrinking value unparsable");
 }
 
 // The DOMString branch, step 5, is deliberately the other way round: the list is
