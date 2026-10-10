@@ -36,7 +36,7 @@ from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs
+from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs, quiet_logging_preferences
 
 try:
     from plistlib import load as readPlist
@@ -321,6 +321,7 @@ class SimulatedDeviceManager(object):
         for device in cls.available_devices(host):
             if device.platform_device.name == name and device.platform_device.device_type == device_type:
                 device.platform_device.managed_by_script = True
+                device.platform_device.write_quiet_logging_preferences()
                 return device
         return None
 
@@ -693,6 +694,17 @@ class SimulatedDevice(object):
         # Determine tear down behavior
         self.booted_by_script = False
         self.managed_by_script = False
+
+    def write_quiet_logging_preferences(self):
+        """Writes the logging preferences `log config` would, so they apply from the device's first boot."""
+        directory = self.filesystem.join(self.filesystem.expanduser(SimulatedDeviceManager.simulator_device_path), self.udid, 'data', 'Library', 'Preferences', 'Logging', 'Subsystems')
+        try:
+            self.filesystem.maybe_make_directory(directory)
+            for name, preferences in quiet_logging_preferences().items():
+                self.filesystem.write_binary_file(self.filesystem.join(directory, name), plistlib.dumps(preferences))
+            _log.debug(u'Wrote the logging configuration for {}'.format(self.udid))
+        except OSError as error:
+            _log.warning(u'Could not write the logging configuration for {}: {}'.format(self.udid, error))
 
     def state(self, force_update=False):
         # Don't allow state to get stale
