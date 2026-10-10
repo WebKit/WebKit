@@ -3768,6 +3768,13 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 #endif
 }
 
+#if PLATFORM(MAC) && HAVE(LIQUID_GLASS_ADJUSTMENTS)
+- (void)_updateAllowsSeparatorForScrollPocket
+{
+    _impl->updateAllowsSeparatorForScrollPocket();
+}
+#endif
+
 - (void)_updateHiddenScrollPocketEdges
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3962,6 +3969,8 @@ static ASCIILiteral descriptionForReason(WebKit::HideScrollPocketReason reason)
 
 #if PLATFORM(IOS_FAMILY)
     [self _updateHiddenScrollPocketEdges];
+#elif PLATFORM(MAC) && HAVE(LIQUID_GLASS_ADJUSTMENTS)
+    [self _updateAllowsSeparatorForScrollPocket];
 #endif
 }
 
@@ -3972,6 +3981,8 @@ static ASCIILiteral descriptionForReason(WebKit::HideScrollPocketReason reason)
 
 #if PLATFORM(IOS_FAMILY)
     [self _updateHiddenScrollPocketEdges];
+#elif PLATFORM(MAC) && HAVE(LIQUID_GLASS_ADJUSTMENTS)
+    [self _updateAllowsSeparatorForScrollPocket];
 #endif
 }
 

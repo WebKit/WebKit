@@ -2670,6 +2670,9 @@ void WebViewImpl::pageDidScroll(const IntPoint& scrollOffset)
         updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
         updatePrefersSolidColorHardPocket();
 #endif
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+        updateAllowsSeparatorForScrollPocket();
+#endif
         [protect(view()) didChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
     }
 }
@@ -8111,6 +8114,28 @@ void WebViewImpl::setClientImplicitlyRequestedTopScrollPocket()
     updateScrollPocket();
 }
 
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+void WebViewImpl::updateAllowsSeparatorForScrollPocket()
+{
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HideScrollPocketSeparatorAtTopOfPage))
+        return;
+
+    RetainPtr view = m_view.get();
+    if (!view)
+        return;
+
+    [m_topScrollPocket setAllowsSeparator:^{
+        if ([view _hasVisibleColorExtensionView:BoxSide::Top])
+            return NO;
+
+        if (pageIsScrolledToTop())
+            return NO;
+
+        return YES;
+    }()];
+}
+#endif
+
 void WebViewImpl::updatePrefersSolidColorHardPocket()
 {
     static bool canSetPrefersSolidColorHardPocket = [NSScrollPocket instancesRespondToSelector:@selector(setPrefersSolidColorHardPocket:)];
@@ -8190,6 +8215,9 @@ void WebViewImpl::updateScrollPocket()
             [m_topScrollPocket addElementContainer:pocketContainer];
         updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
         updatePrefersSolidColorHardPocket();
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+        updateAllowsSeparatorForScrollPocket();
+#endif
     } else
         captureView = [m_topScrollPocket captureView];
 

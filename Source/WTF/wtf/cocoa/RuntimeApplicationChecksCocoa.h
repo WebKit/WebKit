@@ -152,6 +152,7 @@ enum class SDKAlignedBehavior {
     NetworkProcessInheritsNetworkAccessFromUIProcess,
     UserSelectSupersedesWebkitUserSelect,
     DeprecatedSystemColorsUseCSSColor4Mappings,
+    HideScrollPocketSeparatorAtTopOfPage,
 
     NumberOfBehaviors
 };
