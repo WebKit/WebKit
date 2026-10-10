@@ -208,6 +208,7 @@ public:
     std::optional<WebCore::ResourceError> doCrossOriginEmbedderPolicyHandlingOfNavigationResponse(const WebCore::ResourceResponse&);
     void recordLocalNetworkAccessFrame(NetworkConnectionToWebProcess&, const WebCore::ResourceResponse&);
     void checkLocalNetworkAccess(const WebCore::ResourceRequest&, const URL& currentURL, WebCore::IPAddressSpace connectionAddressSpace, CompletionHandler<void(std::optional<WebCore::ResourceError>)>&&);
+    void checkLocalNetworkAccessForWorker(const WebCore::ResourceRequest&, const URL& currentURL, WebCore::IPAddressSpace connectionAddressSpace, NetworkSession&, CompletionHandler<void(std::optional<WebCore::ResourceError>)>&&);
     void continueDidReceiveResponseAfterLocalNetworkAccessCheck(PrivateRelayed, ResourceLoadInfo&&, ResponseCompletionHandler&&);
     void continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(std::unique_ptr<NetworkCache::Entry>);
     void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);

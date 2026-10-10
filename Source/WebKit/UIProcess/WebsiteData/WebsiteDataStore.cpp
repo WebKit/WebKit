@@ -2218,6 +2218,24 @@ void WebsiteDataStore::queryLocalNetworkAccessPermission(std::optional<WebPagePr
     page->queryLocalNetworkAccessPermission(origin.topOrigin, addressSpace, WTF::move(completionHandler));
 }
 
+void WebsiteDataStore::requestLocalNetworkAccessPermissionForWorker(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+{
+    if (auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace }); iterator != m_localNetworkAccessPermissions.end())
+        return completionHandler(iterator->value);
+
+    if (origin.clientOrigin != origin.topOrigin)
+        return completionHandler(WebCore::PermissionState::Prompt);
+
+    for (Ref page : m_pages) {
+        if (!page->canShowLocalNetworkAccessPrompt(origin))
+            continue;
+        return page->queryLocalNetworkAccessPermission(origin.topOrigin, addressSpace, [completionHandler = WTF::move(completionHandler)](std::optional<WebCore::PermissionState> state) mutable {
+            completionHandler(state.value_or(WebCore::PermissionState::Prompt));
+        });
+    }
+    completionHandler(WebCore::PermissionState::Prompt);
+}
+
 void WebsiteDataStore::cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
     Vector<LocalNetworkAccessPermissionKey> keys;

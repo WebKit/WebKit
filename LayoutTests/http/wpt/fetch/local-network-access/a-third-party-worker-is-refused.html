@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// A shared or service worker has no document of its own, so a local network request from one is judged
+// against the documents it serves. Only a first-party worker, whose origin is its partition's top origin,
+// can use a grant: its clients all show the origin the user approved. A third-party worker is refused even
+// with a grant for its origin, because nothing the user saw named the site it is embedded in.
+//
+// The worker's document is on port 9446, which the address-space overrides map to public, so its worker's
+// fetch to a loopback address is a local network request. It has to be https to be a secure context.
+
+const PUBLIC_ORIGIN = 'https://web-platform.test:9446';
+
+function publicURL(name)
+{
+    return new URL('resources/lna-shared-worker-client.html', location.href).href.replace(location.origin, PUBLIC_ORIGIN) + '#' + name;
+}
+
+function nextMessage()
+{
+    return new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+    });
+}
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_ORIGIN);
+
+    const result = nextMessage();
+    const popup = window.open(publicURL('first-party'));
+    t.add_cleanup(() => popup.close());
+    assert_equals(await result, 'loaded');
+}, 'a first-party shared worker uses the grant for its origin');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_ORIGIN);
+
+    const result = nextMessage();
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network';
+    frame.src = publicURL('third-party');
+    document.body.appendChild(frame);
+    t.add_cleanup(() => frame.remove());
+    assert_equals(await result, 'blocked');
+}, 'a third-party shared worker is refused even with a grant for its origin');
+
+</script>
+</body>
+</html>
