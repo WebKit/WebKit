@@ -1551,6 +1551,34 @@ extension AppKitGesturesTests.Basic {
         #expect(newSelection == crazySelection)
     }
 
+    @Test(arguments: [false, true])
+    func controlClickOnWordSelectsWordAndOpensContextMenu(contentEditable: Bool) async throws {
+        try await loadHTML(contentEditable: contentEditable)
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await withSwizzledContextMenu {
+            await recap.play { composer in
+                composer.holdingModifiers(.control) {
+                    composer._wk_click(at: crazyBounds.center, for: .seconds(0.05))
+                }
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        #expect(newSelection == crazySelection)
+    }
+
     @Test(arguments: [true, false])
     func clickAndHoldOnVideoOpensContextMenu(controls: Bool) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
