@@ -28,16 +28,28 @@
 #if ENABLE(PROOF_OF_POSSESSION)
 
 #include <WebCore/BasicCredential.h>
+#include <WebCore/IDLTypes.h>
 #include <WebCore/ProofOfPossessionProviderInfo.h>
 
 namespace WebCore {
 
+class AbortSignal;
+class Document;
+enum class MediationRequirement : uint8_t;
+struct ProofOfPossessionRequest;
 struct ProofOfPossessionResponse;
+template<typename IDLType> class DOMPromiseDeferred;
+
+using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class ProofOfPossessionCredential : public BasicCredential {
 public:
     static Ref<ProofOfPossessionCredential> create(ProofOfPossessionResponse&&);
     virtual ~ProofOfPossessionCredential();
+
+    static void discoverFromExternalSource(const Document&, ProofOfPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
+    static void isAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
+    static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
     Ref<ArrayBuffer> encryptedIdentifierWithProof() const { return m_encryptedIdentifierWithProof; }
     RefPtr<ProofOfPossessionProviderInfo> providerData() const { return m_providerData; }

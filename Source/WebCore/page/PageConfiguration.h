@@ -85,6 +85,7 @@ class MediaSessionManagerInterface;
 class ModelPlayerProvider;
 class PaymentCoordinatorClient;
 class PerformanceLoggingClient;
+class ProofOfPossessionCoordinatorClient;
 class PluginInfoProvider;
 class DocumentSyncClient;
 class ProgressTrackerClient;
@@ -171,6 +172,10 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<AuthenticatorCoordinatorClient> authenticatorCoordinatorClient;
+#endif
+
+#if ENABLE(PROOF_OF_POSSESSION)
+    std::unique_ptr<ProofOfPossessionCoordinatorClient> proofOfPossessionCoordinatorClient;
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
