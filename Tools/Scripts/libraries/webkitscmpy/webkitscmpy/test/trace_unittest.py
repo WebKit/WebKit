@@ -146,6 +146,59 @@ class TestRelationship(TestCase):
             ))
         )
 
+    def test_parse_all(self):
+        def parse_all(message):
+            return Relationship.parse_all(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main', message=message,
+            ))
+
+        self.assertEqual(
+            [('reverts', ['0123456789ab', '1230@main'])],
+            parse_all('Unreviewed, reverting 1230@main (0123456789ab)\nhttps://bugs.webkit.org/show_bug.cgi?id=1\n'),
+        )
+        self.assertEqual(
+            [('reverts', ['1230@main']), ('reverts', ['1231@main']), ('reverts', ['1232@main'])],
+            parse_all('Unreviewed, reverting 1230@main, 1231@main, and 1232@main\n'),
+        )
+        self.assertEqual(
+            [('reverts', ['0123456789ab'])],
+            parse_all('Revert "[GTK] Some change"\n\nThis reverts commit 0123456789abcdef0123456789abcdef01234567.\n'),
+        )
+        self.assertEqual(
+            [('follow-up to', ['1230@main'])],
+            parse_all('[GTK][WPE] REGRESSION(1230@main): Something broke\n'),
+        )
+        self.assertEqual(
+            [('follow-up to', ['1230@main'])],
+            parse_all('Web Inspector: (REGRESSION 1230@main): Something broke\n'),
+        )
+        self.assertEqual(
+            [('follow-up to', ['1230@main'])],
+            parse_all('REGRESSION (Safari 27, 1230@main): Something broke\n'),
+        )
+        self.assertEqual(
+            [('follow-up to', ['1230@main']), ('follow-up to', ['1231@main'])],
+            parse_all('REGRESSION(1230@main and 1231@main): Something broke\n'),
+        )
+        self.assertEqual(
+            [('follow-up to', ['1230@main'])],
+            parse_all('Followup(1230@main): Something broke\n'),
+        )
+        self.assertEqual([], parse_all('REGRESSION(macOS 27): Some test is a constant failure\n'))
+        self.assertEqual([], parse_all('[CSS] revert-layer handles accelerated animations\n'))
+
+    def test_parse_all_cherry_pick_of_revert(self):
+        self.assertEqual(
+            [('original', ['0123456789ab', '123.45@safari-branch']), ('reverts', ['1230@main']), ('reverts', ['123456789abc'])],
+            Relationship.parse_all(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Cherry-pick 123.45@safari-branch (0123456789ab). rdar://1\n\n'
+                        '    Revert the feature\n\n'
+                        '        Revert 1230@main (rdar://2)\n'
+                        '        Revert 123456789abc (rdar://3)\n',
+            )),
+        )
+
 
 class TestCommitsStory(TestCase):
     def setUp(self):
@@ -376,6 +429,44 @@ class TestTrace(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             '6@main | deadbeef1234 | REGRESSION (5@main) Fix the build\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_unreviewed_reverting(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='Unreviewed, reverting 5@main (d8bce26fa65c)', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | Unreviewed, reverting 5@main (d8bce26fa65c)\n    reverts 5@main | d8bce26fa65c | Patch Series\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_prefixed_regression(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):
+            repo.head = Commit(
+                hash='deadbeef1234', revision=10, identifier='6@main',
+                message='[GTK][WPE] REGRESSION(5@main): Fix the build', timestamp=int(time.time()),
+                author=repo.head.author,
+            )
+            repo.commits['main'].append(repo.head)
+
+            self.assertEqual(0, program.main(
+                args=('trace', '6@main', '--limit', '1'),
+                path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '6@main | deadbeef1234 | [GTK][WPE] REGRESSION(5@main): Fix the build\n    follow-up to 5@main | d8bce26fa65c | Patch Series\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
 
