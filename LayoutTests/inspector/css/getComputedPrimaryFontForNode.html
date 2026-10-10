@@ -35,7 +35,7 @@ function test()
                 let cssStyles = WI.cssManager.stylesForNode(domNode);
                 InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
 
-                await cssStyles.refreshIfNeeded();
+                await cssStyles.refresh({includeFontData: true});
 
                 await computedFontHandler(cssStyles.computedPrimaryFont);
             },

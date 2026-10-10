@@ -27,6 +27,11 @@ WI.CSSObserver = class CSSObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "CSS" domain.
 
+    fontDataChanged()
+    {
+        WI.cssManager.fontDataChanged(this._target);
+    }
+
     mediaQueryResultChanged()
     {
         WI.cssManager.mediaQueryResultChanged();
