@@ -113,6 +113,7 @@
 #include "RenderStyleConstants.h"
 #include "ScriptController.h"
 #include "SelectorChecker.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
 #include "StyleComputedStyle.h"
@@ -2030,6 +2031,8 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
     if (RefPtr element = dynamicDowncast<Element>(*node)) {
         value->setAttributes(buildArrayForElementAttributes(element.get()));
         if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*element)) {
+            if (RefPtr contentFrame = frameOwner->contentFrame(); contentFrame && protect(frameOwner->document())->settings().siteIsolationEnabled())
+                value->setContentFrameId(IdentifierRegistry::protocolFrameId(*contentFrame));
             if (RefPtr document = frameOwner->contentDocument())
                 value->setContentDocument(buildObjectForNode(document.get(), 0));
         }
@@ -2627,21 +2630,28 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     if (m_inspectedNode && &m_inspectedNode->document() == document)
         m_inspectedNode = nullptr;
 
-    RefPtr<Element> frameOwner = document->ownerElement();
-    if (!frameOwner)
-        return;
+    if (RefPtr frameOwner = document->ownerElement())
+        resendFrameOwner(*frameOwner);
+}
 
-    auto frameOwnerId = boundNodeId(frameOwner.get());
+void InspectorDOMAgent::frameOwnerContentFrameChanged(HTMLFrameOwnerElement& frameOwner)
+{
+    resendFrameOwner(frameOwner);
+}
+
+void InspectorDOMAgent::resendFrameOwner(HTMLFrameOwnerElement& frameOwner)
+{
+    auto frameOwnerId = boundNodeId(&frameOwner);
     if (!frameOwnerId)
         return;
 
     // Re-add frame owner element together with its new children.
-    auto parentId = boundNodeId(protect(innerParentNode(frameOwner.get())));
+    auto parentId = boundNodeId(protect(innerParentNode(&frameOwner)));
     m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
-    unbind(*frameOwner);
+    unbind(frameOwner);
 
-    auto value = buildObjectForNode(frameOwner.get(), 0);
-    RefPtr previousSibling = innerPreviousSibling(frameOwner.get());
+    auto value = buildObjectForNode(&frameOwner, 0);
+    RefPtr previousSibling = innerPreviousSibling(&frameOwner);
     auto prevId = boundNodeId(previousSibling.get());
     m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
 }

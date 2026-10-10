@@ -1,0 +1,40 @@
+Test that a frame target's document is still spliced under its <iframe> after the frame's URL changes in place and Web Inspector is reopened.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentSplicing.URLChange
+-- Running test case: Setup
+PASS: Should find the child frame target.
+PASS: Should find the grandchild frame target.
+PASS: Should find the page's <iframe>.
+PASS: The child frame's document should be spliced into the page's <iframe>.
+PASS: The child frame's document should be in the page tree.
+PASS: Should find the child frame's <iframe>.
+PASS: The grandchild frame's document should be spliced into the child frame's <iframe>.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.URLChange.TitleChange
+PASS: Should find the page's <iframe>.
+PASS: The child frame's document should be spliced into the page's <iframe>.
+PASS: The child frame's document should be in the page tree.
+PASS: Should find the child frame's <iframe>.
+PASS: The grandchild frame's document should be spliced into the child frame's <iframe>.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.URLChange.ReplaceStateInChild
+PASS: Should find the page's <iframe>.
+PASS: The child frame's document should be spliced into the page's <iframe>.
+PASS: The child frame's document should be in the page tree.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.URLChange.HashChangeInGrandchild
+PASS: Should find the page's <iframe>.
+PASS: The child frame's document should be spliced into the page's <iframe>.
+PASS: The child frame's document should be in the page tree.
+PASS: Should find the child frame's <iframe>.
+PASS: The grandchild frame's document should be spliced into the child frame's <iframe>.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.URLChange.PushStateInGrandchild
+PASS: Should find the page's <iframe>.
+PASS: The child frame's document should be spliced into the page's <iframe>.
+PASS: The child frame's document should be in the page tree.
+PASS: Should find the child frame's <iframe>.
+PASS: The grandchild frame's document should be spliced into the child frame's <iframe>.
+
