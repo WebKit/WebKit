@@ -42,6 +42,7 @@
 #include "ScriptController.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "AnimationTimelinesController.h"
 #include "LinkIconCollector.h"
 #include "LinkIcon.h"
