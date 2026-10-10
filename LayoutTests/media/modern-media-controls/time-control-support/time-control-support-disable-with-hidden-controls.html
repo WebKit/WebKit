@@ -1,0 +1,84 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" autoplay controls></video>
+<div id="host"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing <code>TimeControlSupport</code> stops syncing the time labels while the controls are not visible to the user.");
+
+const container = document.querySelector("div#host");
+const media = document.querySelector("video");
+const mediaController = createControls(container, media, null);
+const controls = mediaController.controls;
+
+controls.autoHideController.autoHideDelay = 100;
+
+let valueWhileFaded;
+
+media.addEventListener("canplay", startTest);
+
+function startTest()
+{
+    debug("Starting test.");
+    shouldBeTrue("controls.visible");
+    shouldBeFalse("controls.faded");
+
+    debug("");
+    debug("Now we wait for the controls to fade after a period of inactivity.");
+    shouldBecomeEqual("controls.faded", "true", controlsDidFade);
+}
+
+function controlsDidFade()
+{
+    scheduler.flushScheduledLayoutCallbacks();
+    valueWhileFaded = controls.timeControl.elapsedTimeLabel.value;
+
+    debug("");
+    debug("Waiting for the media to advance while the controls are faded.");
+    media.addEventListener("timeupdate", checkFrozenWhileFaded);
+}
+
+function checkFrozenWhileFaded()
+{
+    // Wait until the media has genuinely advanced past the value shown when the controls faded.
+    if (media.currentTime <= valueWhileFaded)
+        return;
+
+    media.removeEventListener("timeupdate", checkFrozenWhileFaded);
+    scheduler.flushScheduledLayoutCallbacks();
+
+    debug("");
+    debug("The media advanced, but the faded time label should not have been re-synced.");
+    shouldBeTrue("media.currentTime > valueWhileFaded");
+    shouldBe("controls.timeControl.elapsedTimeLabel.value", "valueWhileFaded");
+
+    debug("");
+    debug("We pause the media so that controls can show again.");
+    media.addEventListener("pause", mediaDidPause);
+    media.pause();
+}
+
+function mediaDidPause()
+{
+    scheduler.flushScheduledLayoutCallbacks();
+
+    debug("");
+    debug("Media paused, the elapsed time label should be re-synced now that controls are visible.");
+    shouldBeFalse("controls.faded");
+    shouldBe("controls.timeControl.elapsedTimeLabel.value", "media.currentTime");
+    finishTest();
+}
+
+function finishTest()
+{
+    debug("");
+    container.remove();
+    media.remove();
+    finishJSTest();
+}
+
+</script>
+</body>
