@@ -53,6 +53,7 @@ public:
         LayoutSize contentBoxSize;
         LayoutSize contentBoxLogicalSize;
         LayoutSize borderBoxLogicalSize;
+        LayoutSize devicePixelContentBoxLogicalSize;
     };
 
     std::optional<BoxSizes> elementSizeChanged() const;
@@ -63,6 +64,8 @@ public:
     FloatSize NODELETE borderBoxSize() const;
     FloatSize NODELETE contentBoxSize() const;
     FloatSize NODELETE snappedContentBoxSize() const;
+    FloatSize NODELETE devicePixelContentBoxSize() const;
+    LayoutSize computeDevicePixelContentBoxLogicalSize() const;
 
     Element* target() const { return m_target.get(); }
     ResizeObserverBoxOptions observedBox() const { return m_observedBox; }
@@ -74,9 +77,9 @@ private:
     std::optional<BoxSizes> computeObservedSizes() const;
     LayoutPoint computeTargetLocation() const;
 
+    ResizeObserverBoxOptions m_observedBox;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_target;
     BoxSizes m_lastObservationSizes;
-    ResizeObserverBoxOptions m_observedBox;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ResizeObservation&);
