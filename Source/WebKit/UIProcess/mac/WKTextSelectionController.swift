@@ -215,10 +215,24 @@ extension WKTextSelectionController {
 
         let windowNumber = impl.windowNumber()
 
-        guard
-            let mouseDown = NSEvent.syntheticMouseEvent(.rightMouseDown, location: point, windowNumber: windowNumber, pressure: 1),
-            let mouseUp = NSEvent.syntheticMouseEvent(.rightMouseUp, location: point, windowNumber: windowNumber, pressure: 0)
-        else {
+        let modifierFlags = NSEvent.modifierFlags
+
+        let mouseDown = NSEvent.syntheticMouseEvent(
+            .rightMouseDown,
+            location: point,
+            modifierFlags: modifierFlags,
+            windowNumber: windowNumber,
+            pressure: 1
+        )
+        let mouseUp = NSEvent.syntheticMouseEvent(
+            .rightMouseUp,
+            location: point,
+            modifierFlags: modifierFlags,
+            windowNumber: windowNumber,
+            pressure: 0
+        )
+
+        guard let mouseDown, let mouseUp else {
             assertionFailure("NSEvent.mouseEvent(with:...) returned nil for context-menu synthesis")
             return
         }

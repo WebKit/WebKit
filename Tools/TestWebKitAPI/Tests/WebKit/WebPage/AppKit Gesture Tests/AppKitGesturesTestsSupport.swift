@@ -58,6 +58,7 @@ extension Recap {
         static let shift = KeyboardModifiers(rawValue: 1 << 0)
         static let option = KeyboardModifiers(rawValue: 1 << 1)
         static let command = KeyboardModifiers(rawValue: 1 << 2)
+        static let control = KeyboardModifiers(rawValue: 1 << 3)
 
         static let all: KeyboardModifiers = [.shift, .option, .command]
 
@@ -66,6 +67,7 @@ extension Recap {
             if contains(.shift) { usages.append(UInt(kHIDUsage_KeyboardLeftShift)) }
             if contains(.option) { usages.append(UInt(kHIDUsage_KeyboardLeftAlt)) }
             if contains(.command) { usages.append(UInt(kHIDUsage_KeyboardLeftGUI)) }
+            if contains(.control) { usages.append(UInt(kHIDUsage_KeyboardLeftControl)) }
             return usages
         }
 
@@ -74,6 +76,7 @@ extension Recap {
             if contains(.shift) { names.append("shift") }
             if contains(.option) { names.append("alt") }
             if contains(.command) { names.append("meta") }
+            if contains(.control) { names.append("ctrl") }
             return names
         }
     }
