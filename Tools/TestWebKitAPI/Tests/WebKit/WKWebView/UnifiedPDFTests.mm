@@ -36,6 +36,7 @@
 #import "Helpers/cocoa/PDFTestHelpers.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestPDFDocument.h"
@@ -58,10 +59,15 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
+
+#if PLATFORM(MAC)
+#import "Helpers/mac/DataDetectorHighlightTestUtilities.h"
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 @interface UIPrintInteractionController ()
@@ -475,44 +481,6 @@ static std::string testName(PDFEmbedElement embedElement)
     return "";
 }
 
-struct SiteIsolationParams {
-    // Whether the PDF's frame is cross-origin to the main frame. Only then does site isolation put it
-    // in its own process, where the plugin's root view is no longer the main frame's view.
-    bool crossOrigin;
-    bool siteIsolationEnabled;
-    bool sharedProcessEnabled;
-
-    String pdfURL() const { return makeString("https://"_s, crossOrigin ? "webkit.org"_s : "example.com"_s, "/test.pdf"_s); }
-    String frameURL() const { return makeString("https://"_s, crossOrigin ? "webkit.org"_s : "example.com"_s, "/frame"_s); }
-
-    void applyTo(WKWebViewConfiguration *configuration) const
-    {
-        for (_WKFeature *feature in [WKPreferences _features]) {
-            if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
-                [[configuration preferences] _setEnabled:siteIsolationEnabled forFeature:feature];
-            else if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
-                [[configuration preferences] _setEnabled:sharedProcessEnabled forFeature:feature];
-        }
-    }
-
-    std::string testName() const
-    {
-        return std::string { crossOrigin ? "CrossOrigin" : "SameOrigin" }
-            + "_SiteIsolation" + (siteIsolationEnabled ? "Enabled" : "Disabled")
-            + "_SiteIsolationSharedProcess" + (sharedProcessEnabled ? "Enabled" : "Disabled");
-    }
-};
-
-// Site isolation ignores the shared process preference when disabled, so skip that combination.
-static constexpr std::array siteIsolationParams {
-    SiteIsolationParams { .crossOrigin = false, .siteIsolationEnabled = false, .sharedProcessEnabled = false },
-    SiteIsolationParams { .crossOrigin = false, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
-    SiteIsolationParams { .crossOrigin = false, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
-    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = false, .sharedProcessEnabled = false },
-    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
-    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
-};
-
 template<typename Params> static std::vector<Params> withEachPDFEmbedElement()
 {
     std::vector<Params> params;
@@ -567,7 +535,7 @@ TEST_P(EmbeddedPDFFitsToFrame, Test)
             return;
 #endif
 
-    auto mainHTML = [pdfURL = GetParam().siteIsolationParameters.pdfURL(), embedElement = embedElement()] {
+    auto mainHTML = [pdfURL = GetParam().siteIsolationParameters.subframeURL("/test.pdf"_s), embedElement = embedElement()] {
         auto layout = "style='position:absolute; left:0; top:0; border:0; width:600px; height:0'"_s;
         switch (embedElement) {
         case PDFEmbedElement::IFrame:
@@ -658,7 +626,7 @@ public:
         // The spacer makes the main frame scrollable.
         auto mainHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, iframeLeft,
             "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
-            "px; border:0' src='"_s, GetParam().pdfURL(), "'></iframe><div style='height:2000px'></div>"_s);
+            "px; border:0' src='"_s, GetParam().subframeURL("/test.pdf"_s), "'></iframe><div style='height:2000px'></div>"_s);
 
         server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML } },
@@ -810,6 +778,238 @@ TEST_P(EmbeddedPDFLookUp, TextIndicatorRectAccountsForMainFrameScroll)
 }
 
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUp, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFLookUp::testNameGenerator);
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION) && ENABLE(REVEAL)
+
+struct PDFWithPhoneNumber {
+    RetainPtr<NSData> data;
+    CGRect phoneNumberRect;
+    CGRect linkRect;
+};
+
+static PDFWithPhoneNumber pdfWithPhoneNumber()
+{
+    RetainPtr data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr consumer = adoptCF(CGDataConsumerCreateWithCFData(bridge_cast(data.get())));
+    CGRect mediaBox = CGRectMake(0, 0, 400, 200);
+    RetainPtr context = adoptCF(CGPDFContextCreate(consumer.get(), &mediaBox, nullptr));
+    CGPDFContextBeginPage(context.get(), nullptr);
+
+    RetainPtr font = adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), 18, nullptr));
+    RetainPtr text = adoptNS([[NSAttributedString alloc] initWithString:@"Call 408-996-1010 or visit our website" attributes:@{ bridge_cast(kCTFontAttributeName): (__bridge id)font.get() }]);
+    RetainPtr line = adoptCF(CTLineCreateWithAttributedString(bridge_cast(text.get())));
+
+    static constexpr CGFloat baselineX = 20;
+    static constexpr CGFloat baselineY = 100;
+    CGContextSetTextPosition(context.get(), baselineX, baselineY);
+    CTLineDraw(line.get(), context.get());
+
+    auto lineBounds = CTLineGetBoundsWithOptions(line.get(), 0);
+    auto rectForRange = [&](CFIndex start, CFIndex end) {
+        auto startX = baselineX + CTLineGetOffsetForStringIndex(line.get(), start, nullptr);
+        auto endX = baselineX + CTLineGetOffsetForStringIndex(line.get(), end, nullptr);
+        return CGRectMake(startX, baselineY + CGRectGetMinY(lineBounds), endX - startX, CGRectGetHeight(lineBounds));
+    };
+
+    auto phoneNumberRect = rectForRange(5, 17);
+    auto linkRect = rectForRange(27, 38);
+    CGPDFContextSetURLForRect(context.get(), bridge_cast([NSURL URLWithString:@"https://www.example.com/"]), linkRect);
+
+    CGPDFContextEndPage(context.get());
+    CGPDFContextClose(context.get());
+    return { WTF::move(data), phoneNumberRect, linkRect };
+}
+
+static constexpr CGFloat rectTolerance = 4;
+
+class EmbeddedPDFDataDetection : public testing::TestWithParam<SiteIsolationParams> {
+public:
+    static constexpr int iframeLeft = 100;
+    static constexpr int iframeTop = 120;
+    static constexpr int iframeWidth = 400;
+    static constexpr int iframeHeight = 300;
+    static constexpr int iframeBorder = 3;
+    static constexpr int iframePadding = 5;
+    static constexpr int iframeBorderAndPadding = iframeBorder + iframePadding;
+    static constexpr NSRect iframeContentBox { { iframeLeft + iframeBorderAndPadding, iframeTop + iframeBorderAndPadding }, { iframeWidth, iframeHeight } };
+    static constexpr int nestedFrameLeft = 30;
+    static constexpr int nestedFrameTop = 40;
+
+    void SetUp() override
+    {
+        pdf = pdfWithPhoneNumber();
+
+        auto mainHTML = [](const String& iframeURL) {
+            return makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, iframeLeft, "px; top:"_s, iframeTop,
+                "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight, "px; border:"_s, iframeBorder, "px solid black; padding:"_s, iframePadding, "px' src='"_s, iframeURL,
+                "'></iframe><div style='height:2000px'></div>"_s);
+        };
+        auto nestedFrameHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, nestedFrameLeft, "px; top:"_s, nestedFrameTop,
+            "px; width:300px; height:200px; border:0' src='test.pdf'></iframe></body>"_s);
+        auto nestedFrameURL = GetParam().subframeURL("/nested.html"_s);
+
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML(GetParam().subframeURL("/test.pdf"_s)) } },
+            { "/main-with-nested-frame"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML(nestedFrameURL) } },
+            { "/nested.html"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, nestedFrameHTML } },
+            { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, pdf.data.get() } },
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        configuration = configurationForWebViewTestingUnifiedPDF();
+        [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
+        GetParam().applyTo(configuration);
+
+        navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+        [webView _setWindowOcclusionDetectionEnabled:NO];
+        [webView setNavigationDelegate:navigationDelegate];
+        [[webView window] makeKeyAndOrderFront:nil];
+        [[webView window] orderFrontRegardless];
+    }
+
+    enum class PDFFrame : bool { IFrame, NestedFrame };
+
+    CGRect loadAndFindPhoneNumber(PDFFrame pdfFrame = PDFFrame::IFrame)
+    {
+        RetainPtr path = pdfFrame == PDFFrame::NestedFrame ? @"/main-with-nested-frame" : @"/main";
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[@"https://example.com" stringByAppendingString:path.get()]]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        RetainPtr<WKFrameInfo> frame;
+        bool foundFrame = TestWebKitAPI::Util::waitFor([&] {
+            RetainPtr<_WKFrameTreeNode> iframe = [webView mainFrame].childFrames.firstObject;
+            frame = pdfFrame == PDFFrame::NestedFrame ? iframe.get().childFrames.firstObject.info : iframe.get().info;
+            return !!frame;
+        });
+        EXPECT_TRUE(foundFrame);
+        if (!foundFrame)
+            return CGRectNull;
+
+        RetainPtr<NSArray> linkRect;
+        bool foundLink = TestWebKitAPI::Util::waitFor([&] {
+            linkRect = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+                "  const plugin = document.querySelector('embed');"
+                "  const rects = plugin ? internals.pdfAnnotationRectsForTesting(plugin) : [];"
+                "  if (!rects.length) return null;"
+                "  const box = plugin.getBoundingClientRect();"
+                "  return [box.x + rects[0].x, box.y + rects[0].y, rects[0].width];"
+                "})()" inFrame:frame.get()]);
+            return !!linkRect;
+        });
+        EXPECT_TRUE(foundLink);
+        if (!foundLink)
+            return CGRectNull;
+
+        [webView waitForNextPresentationUpdate];
+
+        auto frameOrigin = iframeContentBox.origin;
+        if (pdfFrame == PDFFrame::NestedFrame)
+            frameOrigin = NSMakePoint(frameOrigin.x + nestedFrameLeft, frameOrigin.y + nestedFrameTop);
+
+        auto linkLeft = frameOrigin.x + [[linkRect objectAtIndex:0] doubleValue];
+        auto linkTop = frameOrigin.y + [[linkRect objectAtIndex:1] doubleValue];
+        auto scale = [[linkRect objectAtIndex:2] doubleValue] / CGRectGetWidth(pdf.linkRect);
+        return CGRectMake(linkLeft + scale * (CGRectGetMinX(pdf.phoneNumberRect) - CGRectGetMinX(pdf.linkRect)),
+            linkTop + scale * (CGRectGetMaxY(pdf.linkRect) - CGRectGetMaxY(pdf.phoneNumberRect)),
+            scale * CGRectGetWidth(pdf.phoneNumberRect), scale * CGRectGetHeight(pdf.phoneNumberRect));
+    }
+
+    void moveMouse(CGPoint pointInWebView)
+    {
+        [webView mouseMoveToPoint:[webView convertPoint:pointInWebView toView:nil] withFlags:0];
+        [webView waitForPendingMouseEvents];
+    }
+
+    CGRect rootViewVisibleRect(int mainFrameScrollOffset = 0)
+    {
+        if (GetParam().isCrossOriginWithSiteIsolation())
+            return NSOffsetRect(iframeContentBox, 0, -mainFrameScrollOffset);
+        return [webView bounds];
+    }
+
+    struct Menu {
+        CGRect elementBounds { CGRectNull };
+        CGPoint location { CGPointZero };
+    };
+
+    std::optional<Menu> clickButton(CGPoint buttonCenter)
+    {
+        __block bool didShowMenu = false;
+        __block Menu menu;
+        InstanceMethodSwizzler showContextMenuSwizzler {
+            NSClassFromString(@"WKRevealItemPresenter"),
+            NSSelectorFromString(@"showContextMenu"),
+            imp_implementationWithBlock(^(NSObject *presenter) {
+                menu.elementBounds = [checked_objc_cast<NSValue>([presenter valueForKey:@"frameInView"]) rectValue];
+                menu.location = [checked_objc_cast<NSValue>([presenter valueForKey:@"menuLocationInView"]) pointValue];
+                didShowMenu = true;
+            })
+        };
+
+        moveMouse(buttonCenter);
+        [webView sendClickAtPoint:[webView convertPoint:buttonCenter toView:nil]];
+        if (!TestWebKitAPI::Util::runFor(&didShowMenu, 5_s))
+            return std::nullopt;
+        return menu;
+    }
+
+    void showHighlightAndMenu(CGRect phoneNumberRect, CGRect visibleRect)
+    {
+        auto highlight = dataDetectorHighlightGeometry(phoneNumberRect, visibleRect);
+        ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), phoneNumberRect, highlight.boundingRect, rectTolerance));
+
+        auto menu = clickButton(highlight.buttonCenter);
+        ASSERT_TRUE(menu.has_value());
+
+        EXPECT_TRUE(rectsAreNear(menu->elementBounds, phoneNumberRect, rectTolerance)) << "Expected " << NSStringFromRect(phoneNumberRect).UTF8String << ", got " << NSStringFromRect(menu->elementBounds).UTF8String;
+        EXPECT_NEAR(menu->location.x, highlight.buttonCenter.x, 1);
+        EXPECT_NEAR(menu->location.y, highlight.buttonCenter.y, 1);
+    }
+
+    static std::string testNameGenerator(testing::TestParamInfo<SiteIsolationParams> info)
+    {
+        return info.param.testName();
+    }
+
+    PDFWithPhoneNumber pdf;
+    std::unique_ptr<HTTPServer> server;
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestWKWebView> webView;
+};
+
+TEST_P(EmbeddedPDFDataDetection, HighlightAndMenuAreAtThePhoneNumber)
+{
+    auto phoneNumberRect = loadAndFindPhoneNumber();
+    showHighlightAndMenu(phoneNumberRect, rootViewVisibleRect());
+}
+
+TEST_P(EmbeddedPDFDataDetection, HighlightAndMenuAccountForMainFrameScroll)
+{
+    auto phoneNumberRect = loadAndFindPhoneNumber();
+
+    static constexpr int scrollOffset = 40;
+    bool scrolled = TestWebKitAPI::Util::waitFor([&] {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollOffset]];
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == scrollOffset;
+    });
+    EXPECT_TRUE(scrolled);
+    [webView waitForNextPresentationUpdate];
+
+    phoneNumberRect.origin.y -= scrollOffset;
+    showHighlightAndMenu(phoneNumberRect, rootViewVisibleRect(scrollOffset));
+}
+
+TEST_P(EmbeddedPDFDataDetection, HighlightAndMenuAreAtThePhoneNumberInNestedFrame)
+{
+    auto phoneNumberRect = loadAndFindPhoneNumber(PDFFrame::NestedFrame);
+    showHighlightAndMenu(phoneNumberRect, rootViewVisibleRect());
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFDataDetection, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFDataDetection::testNameGenerator);
+
+#endif // ENABLE(UNIFIED_PDF_DATA_DETECTION) && ENABLE(REVEAL)
 
 #endif // PLATFORM(MAC)
 
@@ -1129,7 +1329,7 @@ public:
 
     String embeddedPDFHTML(ASCIILiteral position) const
     {
-        auto pdfURL = GetParam().siteIsolationParameters.pdfURL();
+        auto pdfURL = GetParam().siteIsolationParameters.subframeURL("/test.pdf"_s);
         auto layout = makeString("width='300' height='150' style='position:absolute; "_s, position, "; border:0'"_s);
         switch (embedElement()) {
         case PDFEmbedElement::IFrame:
@@ -1156,7 +1356,7 @@ public:
 
     String mainHTMLWithIframe() const
     {
-        return makeString("<iframe src='"_s, GetParam().siteIsolationParameters.frameURL(), "' style='position:absolute; left:10px; top:28px; width:400px; height:300px; border:0'></iframe>"_s);
+        return makeString("<iframe src='"_s, GetParam().siteIsolationParameters.subframeURL("/frame"_s), "' style='position:absolute; left:10px; top:28px; width:400px; height:300px; border:0'></iframe>"_s);
     }
 
     String scrollableFrameHTML() const

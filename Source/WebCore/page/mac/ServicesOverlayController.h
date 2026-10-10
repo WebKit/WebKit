@@ -40,6 +40,7 @@ namespace WebCore {
 
 class GraphicsLayer;
 class LayoutRect;
+class LocalFrame;
 class Page;
 
 enum class RenderingUpdateStep : uint32_t;
@@ -58,6 +59,7 @@ public:
 
     void selectedTelephoneNumberRangesChanged();
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);
+    void mouseDidLeaveLocalRoot(LocalFrame&);
 
     unsigned telephoneNumberRangesChangedCountForTesting() const { return m_telephoneNumberRangesChangedCountForTesting; }
 
@@ -69,12 +71,12 @@ private:
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
     void didScrollFrame(PageOverlay&, LocalFrame&) override;
 
-    void createOverlayIfNeeded();
-    void handleClick(const IntPoint&, DataDetectorHighlight&);
+    void handleClick(const IntPoint& clickPointInMainFrameView, DataDetectorHighlight&);
 
     void drawHighlight(DataDetectorHighlight&, GraphicsContext&);
 
     void invalidateHighlightsOfType(DataDetectorHighlight::Type);
+    void buildHighlightsTimerFired();
     void buildPotentialHighlightsIfNeeded();
 
     void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<Ref<DataDetectorHighlight>>&&, DataDetectorHighlight::Type);
@@ -84,6 +86,9 @@ private:
 
     void determineActiveHighlight(bool& mouseIsOverButton);
     void clearActiveHighlight();
+
+    void updateServicesOverlays();
+    RefPtr<PageOverlay> servicesOverlayForRootFrame(const LocalFrame*) const;
 
 #if ENABLE(DATA_DETECTION)
     // DataDetectorHighlightClient
@@ -97,16 +102,15 @@ private:
 
     bool hasRelevantSelectionServices();
 
-    bool mouseIsOverHighlight(DataDetectorHighlight&, bool& mouseIsOverButton) const;
+    bool mouseIsOverHighlight(DataDetectorHighlight&, const IntPoint& mousePosition, bool& mouseIsOverButton) const;
+    bool shouldHandleMouseEventInRootFrame(const LocalFrame&, const IntPoint& mousePosition);
     Seconds remainingTimeUntilHighlightShouldBeShown(DataDetectorHighlight*) const;
     void determineActiveHighlightTimerFired();
-
-    Vector<SimpleRange> telephoneNumberRangesForFocusedFrame();
 
     Page& page() const { return m_page; }
 
     WeakRef<Page> m_page;
-    WeakPtr<PageOverlay> m_servicesOverlay;
+    Vector<WeakPtr<PageOverlay>> m_servicesOverlays;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;
@@ -124,6 +128,7 @@ private:
 
     RefPtr<DataDetectorHighlight> m_currentMouseDownOnButtonHighlight;
     IntPoint m_mousePosition;
+    WeakPtr<LocalFrame> m_mouseRootFrame;
 
     Timer m_determineActiveHighlightTimer;
     Timer m_buildHighlightsTimer;
