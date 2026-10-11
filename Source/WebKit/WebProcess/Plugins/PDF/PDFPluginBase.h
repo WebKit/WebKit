@@ -264,10 +264,10 @@ public:
     }
 
     // Under site isolation, the root view above is this process's local root, not the main frame.
-    // Anything sent to the UI process in root view coordinates should be converted with these first.
-    // FIXME: boundsOnScreen(), the accessibility screen conversions and autoscroll need this too.
+    // Use these for root view geometry exchanged with the UI process, including Chrome's screen conversions.
     WebCore::FloatPoint convertFromRootViewToMainFrameView(WebCore::FloatPoint) const;
     WebCore::FloatRect convertFromRootViewToMainFrameView(WebCore::FloatRect) const;
+    WebCore::FloatPoint convertFromMainFrameViewToRootView(WebCore::FloatPoint) const;
 
     WebCore::IntRect boundsOnScreen() const;
 
