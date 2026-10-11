@@ -527,8 +527,15 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     // FIXME: Stop ignoring origin.topOrigin.
     notImplemented();
 
-    auto host = origin.clientOrigin.host();
-    deleteCookiesForHostnames(singleElementSpan(host), WTF::move(completionHandler));
+    RegistrableDomain domain { origin.clientOrigin };
+    HashSet<String> hostnamesWithCookies;
+    getHostnamesWithCookies(hostnamesWithCookies);
+    Vector<String> hostnamesToDelete;
+    for (auto& hostname : hostnamesWithCookies) {
+        if (RegistrableDomain::uncheckedCreateFromHost(hostname) == domain)
+            hostnamesToDelete.append(hostname);
+    }
+    deleteCookiesForHostnames(hostnamesToDelete, WTF::move(completionHandler));
 }
 #endif
 
