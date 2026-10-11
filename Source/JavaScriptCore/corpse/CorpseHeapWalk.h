@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,42 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
 
-namespace JSCToolsTest {
+#if ENABLE(MYA) && HAVE(LLDB)
 
-void testByteParser();
+#include <JavaScriptCore/CorpseAddress.h>
 
-} // namespace JSCToolsTest
+namespace JSC {
+namespace Corpse {
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+class Snapshot;
+class SnapshotDebugInfo;
+class TargetType;
+
+// A C++ object in a snapshot, as its complete type when it is polymorphic.
+struct TargetObject {
+    Address address;
+    const TargetType* type;
+};
+
+// Like JSC::HeapAnalyzer, for the C++ objects of a snapshot.
+class HeapAnalyzer {
+public:
+    virtual ~HeapAnalyzer() = default;
+
+    // Each object the walk reaches, once for each type it is reached as. Types from different images
+    // may describe one object, such as a JSC::VM held by a class of the executable and by JavaScriptCore's.
+    virtual void analyzeNode(const TargetObject&) = 0;
+
+    // A non-null pointer or reference from one object to another, once for each one `from` holds.
+    virtual void analyzeEdge(const TargetObject& from, const TargetObject& to) = 0;
+};
+
+// Walks every object reachable from `root` through the pointers that SnapshotDebugInfo::pointers() gives.
+void walkHeap(Snapshot&, SnapshotDebugInfo&, const TargetObject& root, HeapAnalyzer&);
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA) && HAVE(LLDB)

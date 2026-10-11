@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CorpseTargetType.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA) && HAVE(LLDB)
 
-namespace JSCToolsTest {
+#include "CorpseLimits.h"
+#include <lldb/API/LLDB.h>
+#include <wtf/TZoneMallocInlines.h>
 
-// Builds a range of memory with a known page layout, takes a corpse of the running
-// test, and checks what Memory makes of it.
+namespace JSC {
+namespace Corpse {
 
-void testMemory();
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TargetType);
 
-} // namespace JSCToolsTest
+static String imagePath(lldb::SBModule module)
+{
+    char path[maxImagePathLength];
+    module.GetFileSpec().GetPath(path, sizeof(path));
+    return String::fromUTF8(path);
+}
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+TargetType::TargetType(const lldb::SBType& type, const lldb::SBModule& module)
+    : m_type(makeUniqueWithoutFastMallocCheck<lldb::SBType>(type))
+    , m_module(makeUniqueWithoutFastMallocCheck<lldb::SBModule>(module))
+    , m_name(String::fromUTF8(m_type->GetName()))
+    , m_image(imagePath(module))
+{
+}
+
+TargetType::~TargetType() = default;
+
+size_t TargetType::byteSize() const
+{
+    return m_type->GetByteSize();
+}
+
+bool TargetType::isPolymorphic() const
+{
+    return m_type->IsPolymorphicClass();
+}
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA) && HAVE(LLDB)
