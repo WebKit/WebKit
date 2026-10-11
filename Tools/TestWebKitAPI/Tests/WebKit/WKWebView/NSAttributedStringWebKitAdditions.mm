@@ -30,6 +30,7 @@
 #import <WebCore/FontCocoa.h>
 #import <WebKit/NSAttributedString.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 
 TEST(NSAttributedStringWebKitAdditions, DefaultFontSize)
 {
@@ -74,6 +75,81 @@ TEST(NSAttributedStringWebKitAdditions, BlockQuotes)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+// Like the global preference tests in PreferenceChanges.mm, this relies on global defaults reaching the
+// web content process, which is only covered on macOS. The converter itself is tested in PresentationIntents.mm.
+#if PLATFORM(MAC)
+
+static RetainPtr<NSAttributedString> attributedStringFromHTML(NSString *html)
+{
+    __block RetainPtr<NSAttributedString> result;
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithString:html options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        result = attributedString;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+static NSPresentationIntent *presentationIntentForSubstring(NSAttributedString *attributedString, NSString *substring)
+{
+    NSRange range = [attributedString.string rangeOfString:substring];
+    if (range.location == NSNotFound)
+        return nil;
+    return [attributedString attribute:NSPresentationIntentAttributeName atIndex:range.location effectiveRange:nil];
+}
+
+static NSInlinePresentationIntent inlinePresentationIntentForSubstring(NSAttributedString *attributedString, NSString *substring)
+{
+    NSRange range = [attributedString.string rangeOfString:substring];
+    if (range.location == NSNotFound)
+        return 0;
+    return [[attributedString attribute:NSInlinePresentationIntentAttributeName atIndex:range.location effectiveRange:nil] unsignedIntegerValue];
+}
+
+static const CFStringRef presentationIntentHTMLInterchangeKey = CFSTR("__NSPresentationIntentHTMLInterchange");
+
+// Sets the global default that makes WebKit read every presentation intent kind, or removes it if the value is null.
+// The web content process sees changes to global defaults asynchronously, so this waits until the change takes effect.
+static bool setPresentationIntentHTMLInterchangeValue(CFPropertyListRef value)
+{
+    CFPreferencesSetValue(presentationIntentHTMLInterchangeKey, value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+
+    id object = (__bridge id)value;
+    bool enabled = [object respondsToSelector:@selector(boolValue)] && [object boolValue];
+    auto readsParagraphIntents = [] {
+        return !!presentationIntentForSubstring(attributedStringFromHTML(@"<p>probe</p>").get(), @"probe");
+    };
+    for (unsigned i = 0; i < 50 && readsParagraphIntents() != enabled; ++i)
+        TestWebKitAPI::Util::runFor(100_ms);
+    return readsParagraphIntents() == enabled;
+}
+
+TEST(NSAttributedStringWebKitAdditions, PresentationIntentHTMLInterchangeDefault)
+{
+    RetainPtr previousValue = adoptCF(CFPreferencesCopyValue(presentationIntentHTMLInterchangeKey, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    auto restoreDefault = makeScopeExit([previousValue] {
+        setPresentationIntentHTMLInterchangeValue(previousValue.get());
+    });
+    ASSERT_TRUE(setPresentationIntentHTMLInterchangeValue(kCFBooleanTrue));
+
+    RetainPtr attributedString = attributedStringFromHTML(@"<h1>Title</h1><ul><li>item <em>soft</em></li></ul>");
+
+    NSPresentationIntent *title = presentationIntentForSubstring(attributedString.get(), @"Title");
+    ASSERT_NOT_NULL(title);
+    EXPECT_EQ(title.intentKind, NSPresentationIntentKindHeader);
+    EXPECT_EQ(title.headerLevel, 1);
+
+    NSPresentationIntent *item = presentationIntentForSubstring(attributedString.get(), @"item");
+    ASSERT_NOT_NULL(item);
+    EXPECT_EQ(item.intentKind, NSPresentationIntentKindListItem);
+    EXPECT_EQ(item.parentIntent.intentKind, NSPresentationIntentKindUnorderedList);
+    EXPECT_EQ(inlinePresentationIntentForSubstring(attributedString.get(), @"soft"), NSInlinePresentationIntentEmphasized);
+}
+
+#endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
 TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)
