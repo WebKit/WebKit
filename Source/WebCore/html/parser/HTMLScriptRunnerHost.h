@@ -42,7 +42,7 @@ public:
     virtual HTMLInputStream& inputStream() = 0;
 
     virtual bool hasPreloadScanner() const = 0;
-    virtual void appendCurrentInputStreamToPreloadScannerAndScan() = 0;    
+    virtual void appendCurrentInputStreamToPreloadScannerAndScan() = 0;
 };
 
 } // namespace WebCore
