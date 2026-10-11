@@ -246,6 +246,7 @@ file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/WKC/*.cpp
     ${WEBCORE_DIR}/platform/network/curl/*.cpp
     ${WEBCORE_DIR}/platform/graphics/WKC/*.cpp
+    ${WEBCORE_DIR}/platform/audio/WKC/*.cpp
     ${WEBCORE_DIR}/platform/text/WKC/*.cpp
     ${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp
 )
