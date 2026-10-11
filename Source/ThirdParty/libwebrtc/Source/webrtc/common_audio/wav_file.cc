@@ -148,9 +148,6 @@ size_t WavReader::ReadSamples(const size_t num_samples,
 }
 
 size_t WavReader::ReadSamples(const size_t num_samples, float* const samples) {
-#ifndef WEBRTC_ARCH_LITTLE_ENDIAN
-#error "Need to convert samples to big-endian when reading from WAV file"
-#endif
 
   size_t num_samples_left_to_read = num_samples;
   size_t next_chunk_start = 0;
@@ -266,9 +263,6 @@ void WavWriter::WriteSamples(const int16_t* samples, size_t num_samples) {
 }
 
 void WavWriter::WriteSamples(const float* samples, size_t num_samples) {
-#ifndef WEBRTC_ARCH_LITTLE_ENDIAN
-#error "Need to convert samples to little-endian when writing to WAV file"
-#endif
 
   for (size_t i = 0; i < num_samples; i += kMaxChunksize) {
     const size_t num_remaining_samples = num_samples - i;
