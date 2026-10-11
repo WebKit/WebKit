@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      experimental_full_webcore:
+        description: "Compile the full available WebCore source list (long, non-blocking porting diagnostic)"
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build:
@@ -710,6 +716,47 @@ jobs:
             echo "::error::WebKit WKC compilation failed (exit $BUILD_STATUS); refusing to package an incomplete libWebKitWKC.a."
             exit "$BUILD_STATUS"
           fi
+
+      # Full WebCore is large and not yet part of the default WKC bootstrap
+      # target. Opt into this diagnostic from the Actions UI while porting core
+      # DOM/HTML/CSS/rendering sources; it reports failures but preserves the
+      # default libWebKitWKC artifact until the expanded target is linkable.
+      - name: Probe full WebCore source list (manual opt-in)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore }}
+        shell: bash
+        run: |
+          set +e
+          cmake -S "$GITHUB_WORKSPACE/Source/WebKit/WKC" -B build-full --fresh \
+            -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WiiUToolchain.cmake" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DWKC_ENABLE_FULL_WEBCORE=ON > build-full-configure.log 2>&1
+          CONFIG_STATUS=$?
+          if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-full/build.ninja ]; then
+            echo "===== full WebCore configure failed (diagnostic only) ====="
+            grep -A5 -iE 'CMake Error|FATAL|Error' build-full-configure.log | head -100 || true
+            tail -n 60 build-full-configure.log || true
+            exit 0
+          fi
+
+          echo "===== full WebCore source selection ====="
+          grep -E 'WKC full WebCore probe:' build-full-configure.log || true
+          cmake --build build-full --parallel "$(nproc)" -- -k 0 2>&1 | tee build-full.log
+          BUILD_STATUS=${PIPESTATUS[0]}
+          echo "===== full WebCore FAILED translation units: $(grep -c '^FAILED:' build-full.log) ====="
+          echo "===== distinct WebCore compile errors (top 80) ====="
+          grep -hoE 'error: .*' build-full.log | sed -E 's/[0-9]+/N/g' | sort | uniq -c | sort -rn | head -80 || true
+          echo "===== first failing full-WebCore sources ====="
+          grep '^FAILED:' build-full.log | sed -E 's#.*(Source/WebCore/[^ ]+\.obj).*#\1#' | sort -u | head -100 || true
+          if [ "$BUILD_STATUS" -eq 0 ]; then
+            echo "Full WebCore source-list compilation passed."
+          else
+            echo "Full WebCore remains in porting bring-up; keeping this diagnostic non-blocking."
+          fi
+          exit 0
 
       # WebRTC bring-up harness: cross-compile the in-tree libwebrtc for the Wii U
       # (PowerPC). libwebrtc is NOT part of libWebKitWKC.a -- it is compiled here
