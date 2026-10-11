@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+function handleClick(event) { window.lastEventType = event.type; }
+function handleCustomEvent(event) { window.lastEventType = event.type; }
+function handleDebuggerEvent(event) { debugger; }
+function handleDOMContentLoaded(event) { window.didFireDOMContentLoaded = true; }
+function handleTimeout() { window.timeoutFired = true; }
+function handleInterval() { clearInterval(window.intervalID); window.intervalFired = true; }
+function handleAnimationFrame() { window.animationFrameFired = true; }
+
+function triggerClick() { document.getElementById("button").click(); return true; }
+function triggerCustomEvent() { document.body.dispatchEvent(new CustomEvent("frame-custom-event")); return true; }
+function triggerDebuggerEvent() { document.body.dispatchEvent(new CustomEvent("frame-debugger-event")); return true; }
+function triggerTimeout() { window.timeoutFired = false; setTimeout(handleTimeout, 0); return true; }
+function triggerInterval() { window.intervalFired = false; window.intervalID = setInterval(handleInterval, 0); return true; }
+function triggerAnimationFrame() { window.animationFrameFired = false; requestAnimationFrame(handleAnimationFrame); return true; }
+function triggerFetch() { fetch("dom-debugger-data.json"); return true; }
+function triggerXHR() { let xhr = new XMLHttpRequest; xhr.open("GET", "dom-debugger-data.json"); xhr.send(); return true; }
+
+addEventListener("DOMContentLoaded", handleDOMContentLoaded);
+</script>
+<body>
+<button id="button">Button</button>
+<script>
+document.getElementById("button").addEventListener("click", handleClick);
+document.body.addEventListener("frame-custom-event", handleCustomEvent);
+document.body.addEventListener("frame-debugger-event", handleDebuggerEvent);
+</script>
+</body>

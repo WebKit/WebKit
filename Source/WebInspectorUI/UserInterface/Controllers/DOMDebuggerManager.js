@@ -572,7 +572,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         console.assert(!breakpoint.disabled, breakpoint);
         console.assert(breakpoint.domNode instanceof WI.DOMNode, breakpoint);
-        console.assert(target.type !== WI.TargetType.Worker, "Worker targets do not support DOM breakpoints", target);
+        console.assert(target.hasCommand("DOMDebugger.setDOMBreakpoint"), "Target does not support DOM breakpoints", target);
 
         if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
             WI.debuggerManager.breakpointsEnabled = true;
@@ -587,7 +587,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     _removeDOMBreakpoint(breakpoint, target)
     {
         console.assert(breakpoint.domNode instanceof WI.DOMNode, breakpoint);
-        console.assert(target.type !== WI.TargetType.Worker, "Worker targets do not support DOM breakpoints", target);
+        console.assert(target.hasCommand("DOMDebugger.removeDOMBreakpoint"), "Target does not support DOM breakpoints", target);
 
         target.DOMDebuggerAgent.removeDOMBreakpoint(breakpoint.domNode.id, breakpoint.type);
     }
@@ -988,10 +988,9 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         }
     }
 
-    // FIXME: <https://webkit.org/b/298981> Add DOMDebugger support for FrameTarget.
     *#allSupportedTargets() {
         for (let target of WI.targets) {
-            if (!(target instanceof WI.FrameTarget))
+            if (target.hasDomain("DOMDebugger"))
                 yield target;
         }
     }

@@ -1,0 +1,167 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.Event");
+
+    let crossOriginTarget;
+
+    function addTestCase({name, description, test}) {
+        suite.addTestCase({
+            name,
+            description,
+            test,
+            async teardown() {
+                await removeAllDOMDebuggerBreakpoints();
+            },
+        });
+    }
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            crossOriginTarget = await frameTargetForURLContaining("dom-debugger-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame target.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.Listener.Click",
+        description: "A listener breakpoint should pause before a listener runs in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerClick()", {
+                pauseReason: WI.DebuggerManager.PauseReason.Listener,
+                eventName: "click",
+                functionName: "handleClick",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.Listener.Disabled",
+        description: "A disabled listener breakpoint should not pause in a cross-origin iframe.",
+        async test() {
+            let breakpoint = await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            InspectorTest.log(`Disabling "listener:click" Event Breakpoint...`);
+            breakpoint.disabled = true;
+
+            let pausedTargets = await collectPausesDuring(() => evaluateInFrameTarget(crossOriginTarget, "triggerClick()"));
+            InspectorTest.expectEqual(pausedTargets.length, 0, "Should not pause for disabled breakpoint.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.Listener.Removed",
+        description: "A removed listener breakpoint should not pause in a cross-origin iframe.",
+        async test() {
+            let breakpoint = await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            InspectorTest.log(`Removing "listener:click" Event Breakpoint...`);
+            breakpoint.remove();
+
+            let pausedTargets = await collectPausesDuring(() => evaluateInFrameTarget(crossOriginTarget, "triggerClick()"));
+            InspectorTest.expectEqual(pausedTargets.length, 0, "Should not pause for removed breakpoint.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.Listener.CaseInsensitive",
+        description: "A case-insensitive listener breakpoint should pause in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "CLICK", caseSensitive: false});
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerClick()", {
+                pauseReason: WI.DebuggerManager.PauseReason.Listener,
+                eventName: "click",
+                functionName: "handleClick",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.Listener.Regex",
+        description: "A regex listener breakpoint should pause in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "^frame-custom", isRegex: true});
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerCustomEvent()", {
+                pauseReason: WI.DebuggerManager.PauseReason.Listener,
+                eventName: "frame-custom-event",
+                functionName: "handleCustomEvent",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.AllListeners",
+        description: "The All Events breakpoint should pause in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener);
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerCustomEvent()", {
+                pauseReason: WI.DebuggerManager.PauseReason.Listener,
+                eventName: "frame-custom-event",
+                functionName: "handleCustomEvent",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.BreakpointsInactive",
+        description: "Listener breakpoints should not pause in a cross-origin iframe while that frame's breakpoints are inactive.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            InspectorTest.log("Deactivating breakpoints in the frame target...");
+            await crossOriginTarget.DebuggerAgent.setBreakpointsActive(false);
+
+            let pausedTargets = await collectPausesDuring(() => evaluateInFrameTarget(crossOriginTarget, "triggerClick()"));
+            InspectorTest.expectEqual(pausedTargets.length, 0, "Should not pause while breakpoints are inactive.");
+
+            InspectorTest.log("Reactivating breakpoints in the frame target...");
+            await crossOriginTarget.DebuggerAgent.setBreakpointsActive(true);
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Event.CommandLineAPI.$event",
+        description: "$event should be the event being dispatched when paused in a listener in a cross-origin iframe.",
+        async test() {
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let evaluatePromise = evaluateInFrameTarget(crossOriginTarget, "triggerDebuggerEvent()");
+            await pausedPromise;
+
+            let activeCallFrame = WI.debuggerManager.activeCallFrame;
+            InspectorTest.expectThat(activeCallFrame.target === crossOriginTarget, "Should pause in the frame target that ran the code.");
+            InspectorTest.expectEqual(WI.debuggerManager.dataForTarget(crossOriginTarget).pauseReason, WI.DebuggerManager.PauseReason.DebuggerStatement, `Pause reason should be "debugger-statement".`);
+
+            let {result, wasThrown} = await crossOriginTarget.DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: activeCallFrame.id,
+                expression: "$event.type",
+                objectGroup: "test",
+                includeCommandLineAPI: true,
+                doNotPauseOnExceptionsAndMuteConsole: true,
+                returnByValue: true,
+            });
+            InspectorTest.expectFalse(wasThrown, "Evaluating $event should not throw.");
+            InspectorTest.expectEqual(result.value, "frame-debugger-event", "$event.type should be \"frame-debugger-event\".");
+
+            await WI.debuggerManager.resume();
+            await evaluatePromise;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that event listener breakpoints pause in cross-origin iframes, and that $event is set there.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-debugger-frame.html"></iframe>
+</body>
