@@ -129,8 +129,7 @@ void WebExtensionContext::menusRemove(const String& identifier, CompletionHandle
         return;
     }
 
-    Function<void(WebExtensionMenuItem&)> removeRecursive;
-    removeRecursive = [this, protectedThis = Ref { *this }, &removeRecursive](WebExtensionMenuItem& menuItem) {
+    auto removeRecursive = [this, protectedThis = Ref { *this }](this auto& removeRecursive, WebExtensionMenuItem& menuItem) -> void {
         for (auto& submenuItem : menuItem.submenuItems())
             removeRecursive(submenuItem);
 

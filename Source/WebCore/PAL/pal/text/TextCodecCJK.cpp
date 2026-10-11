@@ -541,8 +541,7 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, NOESCAPE const Functio
         unencodableHandler(codePoint, result);
     };
 
-    Function<void(char32_t)> parseCodePoint;
-    parseCodePoint = [&] (char32_t codePoint) {
+    auto parseCodePoint = [&](this auto& parseCodePoint, char32_t codePoint) {
         if ((state == State::ASCII || state == State::Roman) && (codePoint == 0x000E || codePoint == 0x000F || codePoint == 0x001B)) {
             statefulUnencodableHandler(replacementCharacter, result);
             return;
@@ -941,8 +940,7 @@ static std::optional<uint16_t> NODELETE gb18030AsymmetricEncode(char16_t codePoi
 // https://encoding.spec.whatwg.org/#gb18030-decoder
 String TextCodecCJK::gb18030Decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    Function<SawError(uint8_t, StringBuilder&)> parseByte;
-    parseByte = [&] (uint8_t byte, StringBuilder& result) {
+    auto result = decodeCommon(bytes, flush, stopOnError, sawError, [&](this auto& parseByte, uint8_t byte, StringBuilder& result) -> SawError {
         if (m_gb18030Third) {
             if (byte < 0x30 || byte > 0x39) {
                 sawError = true;
@@ -1014,9 +1012,8 @@ String TextCodecCJK::gb18030Decode(std::span<const uint8_t> bytes, bool flush, b
             return SawError::No;
         }
         return SawError::Yes;
-    };
+    });
 
-    auto result = decodeCommon(bytes, flush, stopOnError, sawError, parseByte);
     if (flush && (m_gb18030First || m_gb18030Second || m_gb18030Third)) {
         m_gb18030First = 0x00;
         m_gb18030Second = 0x00;
