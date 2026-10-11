@@ -9,7 +9,6 @@
  *   - PageCache / BackForwardCache       (removed from WebKit)
  *   - WebCore::iconDatabase()            (removed from WebKit)
  *   - WebInspectorServer                 (removed from WebKit)
- *   - Gamepad API                        (not needed for WiiU homebrew)
  *   - EPUB inner class                   (Nintendo-only, no upstream)
  *   - Most SSL functions                 (stubbed; fill in if libcurl handles SSL)
  *   - RuntimeEnabledFeatures old API     (restructured in modern WebKit)
@@ -306,6 +305,9 @@ public:
     static WKCGamepadProvider& singleton()
     {
         static NeverDestroyed<WKCGamepadProvider> provider;
+        // Register through WebCore's provider registry. Defining a second
+        // GamepadProvider::singleton() here collides with upstream WebCore.
+        GamepadProvider::setSharedProvider(provider.get());
         return provider;
     }
 
@@ -379,31 +381,9 @@ private:
     HashSet<GamepadProviderClient*>      m_clients;
 };
 
-// ─── GamepadProvider::singleton() registration ───────────────────────────────
-//
-// GamepadManager (the thing that actually answers navigator.getGamepads())
-// talks to whatever GamepadProvider::singleton() returns — it has no idea
-// WKCGamepadProvider exists unless this generic factory function points at
-// it. Two possible situations depending on your WebKit revision:
-//
-//   1. Source/WebCore/platform/gamepad/GamepadProvider.cpp does NOT define
-//      singleton() (each port supplies its own translation unit). In that
-//      case this definition is exactly what's needed.
-//
-//   2. GamepadProvider.cpp DOES define singleton() generically with a
-//      per-platform #if/#elif chain (PLATFORM(WPE) / PLATFORM(GTK) / etc).
-//      In that case you'll get a duplicate-definition link error from the
-//      block below — delete it and instead add one line,
-//      "#elif PLATFORM(WKC)\n    return WKCGamepadProvider::singleton();",
-//      to that existing chain in the shared file.
-//
-// Check which situation applies before your first CI build.
-#if PLATFORM(WKC)
-GamepadProvider& GamepadProvider::singleton()
-{
-    return WKCGamepadProvider::singleton();
-}
-#endif
+// The provider is registered through GamepadProvider::setSharedProvider()
+// when WKCGamepadProvider::singleton() is first requested. This leaves the
+// generic singleton definition owned by upstream WebCore.
 
 } // namespace WebCore
 #endif // ENABLE(GAMEPAD)
@@ -526,6 +506,11 @@ WKCWebViewPrivate::create(WKCWebView* parent, WKCClientBuilders& builders)
 bool
 WKCWebViewPrivate::construct()
 {
+#if ENABLE(GAMEPAD)
+    // Register the Wii U peer-event implementation before the page can expose
+    // navigator.getGamepads() to scripts.
+    (void)WebCore::WKCGamepadProvider::singleton();
+#endif
     // ── PageConfiguration ──────────────────────────────────────────────────
     // Modern WebCore::PageConfiguration has no default constructor and its
     // client fields are UniqueRef (or unique_ptr for dragClient). Start from a
