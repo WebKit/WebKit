@@ -110,6 +110,8 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result)
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
             blockFlow->setMaxMarginBeforeValues(box.collapsedMarginsBefore.positive, box.collapsedMarginsBefore.negative);
             blockFlow->setMaxMarginAfterValues(box.collapsedMarginsAfter.positive, box.collapsedMarginsAfter.negative);
+            blockFlow->setHasMarginBeforeQuirk(box.marginBeforeIsQuirky);
+            blockFlow->setHasMarginAfterQuirk(box.marginAfterIsQuirky);
         }
     }
 
