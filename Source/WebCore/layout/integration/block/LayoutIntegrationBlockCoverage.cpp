@@ -28,7 +28,9 @@
 
 #include "Document.h"
 #include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
+#include "RenderView.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -40,6 +42,28 @@ bool canUseForBlockLayout(const RenderBlockFlow& rootContainer)
         return false;
     // Block formatting context integration does not cover any content yet.
     return false;
+}
+
+BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView& renderView)
+{
+    // A block-level box is placed by the block formatting context of its block container, which the new block formatting context lays
+    // out when the root of that block formatting context is covered.
+    auto coverage = BlockLayoutCoverage { };
+    auto renderersToVisit = Vector<std::pair<CheckedRef<const RenderElement>, bool>> { { renderView, false } };
+    while (!renderersToVisit.isEmpty()) {
+        auto [renderer, isCovered] = renderersToVisit.takeLast();
+        for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
+            if (is<RenderBlockFlow>(renderer) && is<RenderBox>(child) && !child->isInline()) {
+                ++coverage.boxes;
+                if (isCovered)
+                    ++coverage.coveredBoxes;
+            }
+            CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(child);
+            auto childrenAreCovered = blockContainer && blockContainer->createsNewFormattingContext() ? canUseForBlockLayout(*blockContainer) : isCovered;
+            renderersToVisit.append({ child, childrenAreCovered });
+        }
+    }
+    return coverage;
 }
 
 } // namespace LayoutIntegration
