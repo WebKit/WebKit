@@ -1,0 +1,5 @@
+
+
+PASS pauseThenSeek: paused timeline seeked before begin keeps its time and resumes from it
+PASS seekThenPause: paused timeline seeked before begin keeps its time and resumes from it
+
