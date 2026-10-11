@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include <wtf/BitVector.h>
 #include <wtf/IndexMap.h>
 #include "DFGGraph.h"
 #include "DFGPhase.h"
@@ -37,7 +38,7 @@
 namespace JSC { namespace DFG {
 
 // This phase is run at the end of BytecodeParsing, so the graph isn't in a fully formed state.
-// For example, we can't access the predecessor list of any basic blocks yet.
+// Reachability and predecessor lists have been computed, but unreachable blocks may still be present.
 //
 // Note that, so far, this phase should only be used in the byte code parsing phase
 // or after the fix up phases. We don't want to validate graph since
@@ -52,19 +53,26 @@ public:
 
     bool run()
     {
+        BitVector needsPropagation(m_graph.numBlocks());
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            if (!block->isReachable)
+                continue;
             m_flagsAtHead[block] = Operands<NodeFlags>(OperandsLike, m_graph.block(0)->variablesAtHead);
             m_flagsAtHead[block].fill(0);
+            needsPropagation.quickSet(block->index());
         }
 
+        // A block's propagation depends only on the flags at the heads of its successors, so it has
+        // to be revisited only when one of those changes.
         bool changed;
         do {
             changed = false;
 
             for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
+                if (!needsPropagation.quickClear(blockIndex))
                     continue;
+                BasicBlock* block = m_graph.block(blockIndex);
+                ASSERT(block);
 
                 {
                     unsigned numSuccessors = block->numSuccessors();
@@ -91,6 +99,8 @@ public:
 
                 if (m_flagsAtHead[block] != m_currentFlags) {
                     m_flagsAtHead[block] = m_currentFlags;
+                    for (BasicBlock* predecessor : block->predecessors)
+                        needsPropagation.quickSet(predecessor->index());
                     changed = true;
                 }
             }

@@ -1532,7 +1532,7 @@ private:
 
     bool needsDynamicLookup(ResolveType, OpcodeID);
 
-    void pruneUnreachableNodes();
+    bool pruneUnreachableNodes();
 
     VM* const m_vm;
     CodeBlock* const m_codeBlock;
@@ -14095,39 +14095,34 @@ auto ByteCodeParser::handleArraySort(Node* callee, Operand resultOperand, CallVa
     return CallOptimizationResult::Inlined;
 }
 
-void ByteCodeParser::pruneUnreachableNodes()
+bool ByteCodeParser::pruneUnreachableNodes()
 {
+    bool changed = false;
     if (m_hasAnyForceOSRExits) {
         BlockSet blocksToIgnore;
+        Vector<BasicBlock*, 16> worklist;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (block->isOSRTarget && block->bytecodeBegin == m_graph.m_plan.osrEntryBytecodeIndex()) {
+            if (block->isReachable && block->isOSRTarget && block->bytecodeBegin == m_graph.m_plan.osrEntryBytecodeIndex()) {
                 blocksToIgnore.add(block);
+                worklist.append(block);
                 break;
             }
         }
 
-        {
-            bool isSafeToValidate = false;
-            auto postOrder = m_graph.blocksInPostOrder(isSafeToValidate); // This algorithm doesn't rely on the predecessors list, which is not yet built.
-            bool changed;
-            do {
-                changed = false;
-                for (BasicBlock* block : postOrder) {
-                    for (BasicBlock* successor : block->successors()) {
-                        if (blocksToIgnore.contains(successor)) {
-                            changed |= blocksToIgnore.add(block);
-                            break;
-                        }
-                    }
-                }
-            } while (changed);
+        // Preserve every block that can reach the OSR entry target.
+        while (!worklist.isEmpty()) {
+            BasicBlock* block = worklist.takeLast();
+            for (BasicBlock* predecessor : block->predecessors) {
+                if (blocksToIgnore.add(predecessor))
+                    worklist.append(predecessor);
+            }
         }
 
         InsertionSet insertionSet(m_graph);
         Operands<VariableAccessData*> mapping(OperandsLike, m_graph.block(0)->variablesAtHead);
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (blocksToIgnore.contains(block))
+            if (!block->isReachable || blocksToIgnore.contains(block))
                 continue;
 
             mapping.fill(nullptr);
@@ -14155,14 +14150,7 @@ void ByteCodeParser::pruneUnreachableNodes()
 
                 ++nodeIndex;
 
-                if (validationEnabled()) {
-                    // This verifies that we don't need to change any of the successors's predecessor
-                    // list after planting the Unreachable below. At this point in the bytecode
-                    // parser, we haven't linked up the predecessor lists yet.
-                    for (BasicBlock* successor : block->successors())
-                        RELEASE_ASSERT(successor->predecessors.isEmpty());
-                }
-
+                // Reachability and predecessor lists are recomputed after pruning removes edges.
                 block->resize(nodeIndex);
 
                 {
@@ -14191,6 +14179,7 @@ void ByteCodeParser::pruneUnreachableNodes()
 
                 insertionSet.insertNode(nodeIndex, SpecNone, Unreachable, origin);
                 insertionSet.execute(block);
+                changed = true;
 
                 break;
             }
@@ -14202,6 +14191,11 @@ void ByteCodeParser::pruneUnreachableNodes()
                 RELEASE_ASSERT(node->op() != ForceOSRExit);
         }
     }
+
+    if (changed)
+        m_graph.resetReachability();
+
+    return changed;
 }
 
 #define RUN_ANALYSIS(code)                                           \
@@ -14260,6 +14254,8 @@ bool ByteCodeParser::parse()
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
+    m_graph.determineReachability();
+
     // We insert catch variable preservation here to show all bytecode
     // uses to the subsequent backward propagation phase.
     RUN_ANALYSIS(performLiveCatchVariablePreservationPhase(m_graph));
@@ -14273,7 +14269,6 @@ bool ByteCodeParser::parse()
 
     RUN_ANALYSIS(pruneUnreachableNodes());
 
-    m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
 
 #if ASSERT_ENABLED

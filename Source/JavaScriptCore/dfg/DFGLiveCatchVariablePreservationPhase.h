@@ -44,6 +44,7 @@ class Graph;
 // is ensuring all variables live in a "catch" are flushed to the
 // stack inside the "try" block.
 
+// Requires reachability and predecessor lists to have been computed.
 bool performLiveCatchVariablePreservationPhase(Graph&);
 
 } } // namespace JSC::DFG
