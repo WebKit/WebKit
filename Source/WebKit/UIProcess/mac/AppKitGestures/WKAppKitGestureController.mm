@@ -178,6 +178,12 @@ enum class ImageAnalysisDeferralOutcome : uint8_t {
     FoundText, // Image with selectable text: allow text selection; prevent drag / context menu.
 };
 
+enum class ImageAnalysisDeferralState : uint8_t {
+    Undecided,
+    Deferring,
+    GestureFailed,
+};
+
 struct CompletedImageAnalysis {
     WebCore::ElementContext element;
     ImageAnalysisDeferralOutcome outcome;
@@ -235,7 +241,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     return [WKAppKitGestureController loggingDescriptionForGestureRecognizer:gesture];
 }
 
-@interface WKAppKitGestureController () <NSGestureRecognizerDelegatePrivate, WKPointerTrackingGestureRecognizerDelegate>
+@interface WKAppKitGestureController () <NSGestureRecognizerDelegatePrivate, WKPointerTrackingGestureRecognizerDelegate, WKPressGestureRecognizerDelegate>
 @end
 
 @implementation WKAppKitGestureController {
@@ -299,6 +305,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisDragAndContextMenuDeferringGestureRecognizer;
 
     std::optional<WebKit::CompletedImageAnalysis> _lastCompletedImageAnalysis;
+    WebKit::ImageAnalysisDeferralState _imageAnalysisDeferralState;
 
     std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
     std::unique_ptr<WebKit::WKFastScrollTracker> _fastScrollTracker;
@@ -482,6 +489,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [self configureForImageAnalysis:_imageAnalysisGestureRecognizer];
     [_imageAnalysisGestureRecognizer setRefusesToBeFailureRequirement:YES];
     [_imageAnalysisGestureRecognizer setDelegate:self];
+    [_imageAnalysisGestureRecognizer setPressDelegate:self];
     [_imageAnalysisGestureRecognizer setName:@"WKImageAnalysisGesture"];
 }
 
@@ -1382,6 +1390,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)_resolveImageAnalysisDeferralsWithOutcome:(WebKit::ImageAnalysisDeferralOutcome)outcome
 {
+    if (_imageAnalysisDeferralState == WebKit::ImageAnalysisDeferralState::Deferring)
+        _imageAnalysisDeferralState = WebKit::ImageAnalysisDeferralState::Undecided;
+
     BOOL preventTextSelection = [self _outcome:outcome preventsGesturesDeferredBy:_imageAnalysisTextSelectionDeferringGestureRecognizer.get()];
     BOOL preventDragAndContextMenu = [self _outcome:outcome preventsGesturesDeferredBy:_imageAnalysisDragAndContextMenuDeferringGestureRecognizer.get()];
 
@@ -1393,6 +1404,25 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     if ([_imageAnalysisDragAndContextMenuDeferringGestureRecognizer state] == NSGestureRecognizerStatePossible)
         [_imageAnalysisDragAndContextMenuDeferringGestureRecognizer endDeferralShouldPreventGestures:preventDragAndContextMenu];
+}
+
+#pragma mark - WKPressGestureRecognizerDelegate
+
+- (void)pressGestureRecognizerDidFail:(WKPressGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer != _imageAnalysisGestureRecognizer)
+        return;
+
+    // Similar to iOS's -imageAnalysisGestureDidFail: if the initial gesture fails, resolve our deferrals immediately.
+    if (_imageAnalysisDeferralState != WebKit::ImageAnalysisDeferralState::Deferring) {
+        _imageAnalysisDeferralState = WebKit::ImageAnalysisDeferralState::GestureFailed;
+        return;
+    }
+
+    if (RetainPtr webView = _view.get())
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Image analysis preflight failed; releasing image-analysis deferrals");
+
+    [self _resolveImageAnalysisDeferralsWithOutcome:WebKit::ImageAnalysisDeferralOutcome::NotApplicable];
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -1422,6 +1452,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     RetainPtr webView = _view.get();
     if (!webView)
         return NO;
+
+    if (deferringGestureRecognizer == _imageAnalysisTextSelectionDeferringGestureRecognizer || deferringGestureRecognizer == _imageAnalysisDragAndContextMenuDeferringGestureRecognizer)
+        _imageAnalysisDeferralState = WebKit::ImageAnalysisDeferralState::Undecided;
 
     // An event that catches a decelerating scroll only stops the scroll (and may continue it as a new pan),
     // so it must never begin a text selection or any other deferred gesture, no matter how long it's held
@@ -1500,6 +1533,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                         return prevent;
                     }
 
+                    if (strongSelf->_imageAnalysisDeferralState == WebKit::ImageAnalysisDeferralState::GestureFailed) {
+                        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: image analysis preflight failed; not preventing");
+                        return false;
+                    }
+
+                    strongSelf->_imageAnalysisDeferralState = WebKit::ImageAnalysisDeferralState::Deferring;
                     return std::nullopt;
                 }
 

@@ -34,6 +34,25 @@ extension WKPressGestureRecognizer {
 
     var refusesToBeFailureRequirement = false
 
+    weak var pressDelegate: (any WKPressGestureRecognizerDelegate)?
+
+    // A press fails without invoking its action (e.g. on moving past `allowableMovement` before
+    // `minimumPressDuration`), so observe the transition itself.
+    @_implementationOnly
+    open override var state: NSGestureRecognizer.State {
+        get {
+            super.state
+        }
+        set {
+            let previousState = super.state
+            super.state = newValue
+
+            if state != previousState && state == .failed {
+                pressDelegate?.pressGestureRecognizerDidFail(self)
+            }
+        }
+    }
+
     @_implementationOnly
     open override func reset() {
         lastDeliveredLocationInWindow = .zero

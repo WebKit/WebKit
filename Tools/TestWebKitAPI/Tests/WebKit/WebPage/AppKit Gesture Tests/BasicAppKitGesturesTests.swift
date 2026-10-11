@@ -32,6 +32,7 @@ private import struct TestWebKitAPILibrary.DOMRect
 import Testing
 private import TestWebKitAPILibrary
 private import Recap
+private import Synchronization
 private import AppKit_Private.NSMenu_Private
 private import WebKit_Private.WKFrameInfoPrivate
 
@@ -3340,6 +3341,45 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func clickThatMovesBeforeImageAnalysisBeginsInitiatesDragAndDropWhileHeld() async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let html = """
+            <img id="img" src="400x400-green.png" style="display: block; height: 100vh; margin: 0; \(nonManipulableSurfaceStyle)">
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+
+        let imageViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "img"))
+        let imageScreenBounds = screenBounds(ofRectInViewportCoordinates: imageViewportBounds)
+
+        await page.waitForNextPresentationUpdate()
+
+        let start = imageScreenBounds.center
+        // Any movement before the click settles for 0.1s fails the image analysis gesture, so no analysis runs.
+        let nudged = CGPoint(x: start.x, y: start.y + 3)
+        let dragEnd = CGPoint(x: start.x, y: imageScreenBounds.midY + 200)
+
+        var gestureStateAtDragStart: NSGestureRecognizer.State?
+
+        await withMockedImageAnalyzer(response: .success(.init(lines: [])), after: .zero) {
+            gestureStateAtDragStart = await withSwizzledDraggingSession {
+                await recap.play { composer in
+                    // Click and hold past the drag gesture's minimum duration, then drag.
+                    composer._wk_drag(
+                        withStart: start,
+                        end: dragEnd,
+                        duration: .seconds(1),
+                        pressAndWait: .seconds(0.5),
+                        movingFirstTo: nudged
+                    )
+                }
+            }
+        }
+
+        let state = try #require(gestureStateAtDragStart)
+        #expect(state == .began || state == .changed, "the drag began from a gesture in state \(state.rawValue)")
+    }
+
+    @Test
     func clickingAfterImageInEditableContentPlacesCaretAfterImage() async throws {
         let html = """
             <body style="margin: 0">
@@ -3789,12 +3829,16 @@ nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () as
     }
 }
 
-nonisolated(nonsending) private func withSwizzledDraggingSession(perform body: () async -> Void) async {
+@discardableResult
+nonisolated(nonsending) private func withSwizzledDraggingSession(perform body: () async -> Void) async -> NSGestureRecognizer.State? {
     typealias ObjCImplementation = @convention(block) (NSView, NSArray, NSGestureRecognizer, AnyObject) -> NSDraggingSession?
 
     let dragInitiated = Future()
+    let gestureState = Mutex<NSGestureRecognizer.State?>(nil)
 
-    let implementation: ObjCImplementation = { _, _, _, _ in
+    let implementation: ObjCImplementation = { _, _, gesture, _ in
+        let state = MainActor.assumeIsolated { gesture.state }
+        gestureState.withLock { $0 = state }
         dragInitiated.signal()
         return NSDraggingSession()
     }
@@ -3808,6 +3852,8 @@ nonisolated(nonsending) private func withSwizzledDraggingSession(perform body: (
 
         await dragInitiated.wait()
     }
+
+    return gestureState.withLock { $0 }
 }
 
 extension ImageAnalysisResult.Quad {

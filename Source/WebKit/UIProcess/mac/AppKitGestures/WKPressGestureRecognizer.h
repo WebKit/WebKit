@@ -33,10 +33,18 @@
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
+@class WKPressGestureRecognizer;
+
+NS_SWIFT_UI_ACTOR
+@protocol WKPressGestureRecognizerDelegate <NSObject>
+- (void)pressGestureRecognizerDidFail:(WKPressGestureRecognizer *)gestureRecognizer;
+@end
+
 NS_SWIFT_UI_ACTOR
 @interface WKPressGestureRecognizer : NSPressGestureRecognizer
 
 @property (nonatomic) BOOL refusesToBeFailureRequirement;
+@property (nonatomic, weak, nullable) id<WKPressGestureRecognizerDelegate> pressDelegate;
 
 - (void)beginReportingMovementFromWindowLocation:(NSPoint)locationInWindow;
 - (NSEvent *)eventReportingMovement:(NSEvent *)event atWindowLocation:(NSPoint)locationInWindow;
