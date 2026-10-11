@@ -1,0 +1,84 @@
+<script>
+const realHost = "localhost";
+// The same length as realHost, so the encoded message stays well formed.
+const forgedHost = "evil.test";
+const thisPage = "/site-isolation/resources/post-message-forged-frame-url-iframe.html";
+const stage = new URLSearchParams(location.search).get("stage");
+
+function replaceHost(bytes)
+{
+    const realBytes = new TextEncoder().encode(realHost);
+    const forgedBytes = new TextEncoder().encode(forgedHost);
+    let replacements = 0;
+    outer: for (let i = 0; i + realBytes.length <= bytes.length; i++) {
+        for (let j = 0; j < realBytes.length; j++) {
+            if (bytes[i + j] !== realBytes[j])
+                continue outer;
+        }
+        bytes.set(forgedBytes, i);
+        replacements++;
+        i += realBytes.length - 1;
+    }
+    return replacements;
+}
+
+// Load this page again, stalled, and while that load is provisional tell the UI process it is for the forged host.
+function forgeFrameURL()
+{
+    let sent = false;
+    IPC.addOutgoingMessageListener("UI", (description) => {
+        if (sent || !description || description.name !== IPC.messages.WebPageProxy_DidStartProvisionalLoadForFrame.name)
+            return;
+        sent = true;
+        IPC.sendMessage("UI", IPC.pageID, IPC.messages.WebPageProxy_DidChangeProvisionalURLForFrame.name, [
+            { type: "FrameID", value: IPC.frameID },
+            // No navigation ID. IPC.sendMessage only encodes a bool from a number, not from true or false.
+            { type: "bool", value: 0 },
+            { type: "URL", value: "http://" + forgedHost + ":8000/" },
+        ]);
+    });
+    location = "/resources/load-and-stall.py?name=../site-isolation/resources/post-message-forged-frame-url-iframe.html&mimeType=text%2Fhtml&stallAt=0&stallFor=1&stage=forge-origin&rand=" + Math.random();
+}
+
+// The UI process now expects the forged origin, so send a message claiming it.
+function forgeSourceOrigin()
+{
+    let replayed = false;
+    IPC.addOutgoingMessageListener("UI", (description) => {
+        if (replayed || !description || !description.buffer || description.name !== IPC.messages.WebPageProxy_PostMessageToRemote.name)
+            return;
+        replayed = true;
+
+        // Drop the 16-byte header; IPC.sendMessage writes its own.
+        const body = new Uint8Array(description.buffer).slice(16);
+        const replacements = replaceHost(body);
+        if (replacements != 1) {
+            location = thisPage + "?stage=done&error=" + encodeURIComponent("replaced " + replacements + " copies of the host, expected 1");
+            return;
+        }
+
+        IPC.sendMessage("UI", description.destinationID, description.name, body);
+        // A load with the real URL, so the UI process accepts this frame's messages again.
+        location = thisPage + "?stage=done";
+    });
+
+    // Claims the real origin, which the UI process no longer expects, so it is dropped.
+    parent.postMessage("forged", "*");
+}
+
+onload = () => {
+    if (!window.IPC) {
+        parent.postMessage("ipc unavailable", "*");
+        return;
+    }
+
+    if (!stage)
+        forgeFrameURL();
+    else if (stage == "forge-origin")
+        forgeSourceOrigin();
+    else {
+        const error = new URLSearchParams(location.search).get("error");
+        parent.postMessage(error ? "error: " + error : "done", "*");
+    }
+};
+</script>

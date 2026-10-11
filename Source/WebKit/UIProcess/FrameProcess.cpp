@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 
 namespace WebKit {
@@ -72,6 +73,19 @@ FrameProcess::~FrameProcess()
 BrowsingContextGroup* FrameProcess::browsingContextGroup() const
 {
     return m_browsingContextGroup.get();
+}
+
+bool FrameProcess::isAllowedToClaimOrigin(const WebCore::SecurityOriginData& origin) const
+{
+    WebCore::Site site { origin };
+    if (site.isEmpty() || m_isArchiveProcess)
+        return true;
+
+    if (isSharedProcess())
+        return m_process->sharedProcessDomains().contains(site.domain());
+
+    // Site(URL) keeps the case of a non-special URL's host, but an origin's host is lowercased.
+    return site.protocol() == m_site->protocol() && equalIgnoringASCIICase(site.domain().string(), m_site->domain().string());
 }
 
 }
