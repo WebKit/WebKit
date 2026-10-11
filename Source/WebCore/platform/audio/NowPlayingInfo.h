@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <WebCore/Image.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/MediaUniqueIdentifier.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformMediaSessionTypes.h>
 #include <wtf/URL.h>
@@ -38,10 +38,15 @@
 
 namespace WebCore {
 
+class ShareableBitmap;
+
 struct NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<Image> image;
+    RefPtr<NativeImage> image;
+
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> shareableBitmap() const;
+    WEBCORE_EXPORT static NowPlayingInfoArtwork fromIPCData(String&& src, String&& mimeType, RefPtr<ShareableBitmap>&&);
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {

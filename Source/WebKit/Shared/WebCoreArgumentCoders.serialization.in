@@ -5706,10 +5706,10 @@ struct WebCore::MediaUsageInfo {
 }
 
 header: <WebCore/NowPlayingInfo.h>
-[CustomHeader] struct WebCore::NowPlayingInfoArtwork {
+[CustomHeader, CreateUsing=fromIPCData] struct WebCore::NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<WebCore::Image> image;
+    RefPtr<WebCore::ShareableBitmap> shareableBitmap();
 }
 
 header: <WebCore/NowPlayingInfo.h>

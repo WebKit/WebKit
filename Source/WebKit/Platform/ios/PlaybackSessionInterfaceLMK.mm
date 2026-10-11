@@ -32,11 +32,11 @@
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
 #import <WebCore/ExceptionOr.h>
+#import <WebCore/ImageAdapter.h>
 #import <WebCore/ImmersiveVideoMetadata.h>
 #import <WebCore/MediaSelectionOption.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PlaybackSessionModel.h>
-#import <WebCore/SharedBuffer.h>
 #import <WebCore/TimeRanges.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -447,16 +447,7 @@ static RetainPtr<NSData> artworkData(const WebCore::NowPlayingMetadata& metadata
     if (!image)
         return nil;
 
-    RefPtr fragmentedData = image->data();
-    if (!fragmentedData || fragmentedData->isEmpty())
-        return nil;
-
-    RetainPtr artworkData = adoptNS([[NSMutableData alloc] initWithCapacity:fragmentedData->size()]);
-    fragmentedData->forEachSegment([&](auto segment) {
-        [artworkData appendBytes:segment.data() length:segment.size()];
-    });
-
-    return adoptNS([artworkData copy]);
+    return bridge_cast(WebCore::ImageAdapter::tiffRepresentation({ *image }));
 }
 
 void PlaybackSessionInterfaceLMK::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)
