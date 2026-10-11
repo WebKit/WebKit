@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""Apply build-only Wii U compatibility edits to the temporary vendored WebRTC checkout."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import sys
+
+
+def patch_file(root: Path, relative_path: str, replacements: list[tuple[str, str]]) -> bool:
+    path = root / relative_path
+    if not path.is_file():
+        raise FileNotFoundError(f"Expected WebRTC source file is missing: {relative_path}")
+    original = path.read_text(encoding="utf-8")
+    updated = original
+    for old, new in replacements:
+        if new in updated:
+            continue
+        if old not in updated:
+            raise RuntimeError(
+                f"Could not find expected patch anchor in {relative_path}: {old[:100]!r}"
+            )
+        updated = updated.replace(old, new, 1)
+    if updated == original:
+        print(f"ALREADY PATCHED {relative_path}")
+        return False
+    path.write_text(updated, encoding="utf-8", newline="\n")
+    print(f"PATCHED {relative_path}")
+    return True
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo-root", type=Path, required=True)
+    root = parser.parse_args().repo_root.resolve()
+    vendor = Path("Source/ThirdParty/libwebrtc/Source")
+
+    patches = [
+        (
+            "third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.h",
+            [(
+                "#if defined(__ELF__) && !defined(__OpenBSD__)",
+                "#if defined(__ELF__) && !defined(WKC_WIIU_WEBRTC) && !defined(__OpenBSD__)",
+            )],
+        ),
+        (
+            "third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc",
+            [(
+                "#if !defined(_WIN32) && !defined(__wasi__)",
+                "#if !defined(_WIN32) && !defined(__wasi__) && !defined(WKC_WIIU_WEBRTC)",
+            )],
+        ),
+        (
+            "third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc",
+            [
+                (
+                    "namespace absl {\nABSL_NAMESPACE_BEGIN\nnamespace time_internal {\nnamespace cctz {",
+                    """#if defined(WKC_WIIU_WEBRTC)
+extern "C" {
+extern long _timezone;
+extern char *_tzname[2];
+}
+#endif
+
+namespace absl {
+ABSL_NAMESPACE_BEGIN
+namespace time_internal {
+namespace cctz {""",
+                ),
+                (
+                    "#elif defined(__native_client__) || defined(__myriad2__) ||",
+                    """#elif defined(WKC_WIIU_WEBRTC)
+// Newlib omits tm_gmtoff/tm_zone in struct tm. Its _timezone uses seconds
+// west of UTC, while cctz expects seconds east of UTC.
+auto tm_gmtoff(const std::tm& tm) -> decltype(_timezone + 0) {
+  return -_timezone + (tm.tm_isdst > 0 ? 60L * 60L : 0L);
+}
+auto tm_zone(const std::tm& tm) -> decltype(_tzname[0]) {
+  return _tzname[tm.tm_isdst > 0];
+}
+#elif defined(__native_client__) || defined(__myriad2__) ||""",
+                ),
+            ],
+        ),
+        (
+            "third_party/abseil-cpp/absl/base/internal/sysinfo.cc",
+            [(
+                "#else\n\n// Fallback implementation of",
+                """#elif defined(WKC_WIIU_WEBRTC)
+
+// Wii U pthread_t is a pointer-valued handle, not a numeric pid_t.
+pid_t GetTID() {
+  return static_cast<pid_t>(reinterpret_cast<unsigned long>(pthread_self()));
+}
+
+#else
+
+// Fallback implementation of""",
+            )],
+        ),
+        (
+            "webrtc/rtc_base/cpu_time.cc",
+            [
+                (
+                    '#else\n  // Not implemented yet.\n  static_assert(\n      false, "GetProcessCpuTimeNanos() platform support not yet implemented.");\n#endif',
+                    '#elif defined(WKC_WIIU_WEBRTC)\n  // The Wii U SDK does not expose process CPU time; metrics are optional.\n  return -1;\n#else\n  // Not implemented yet.\n  static_assert(\n      false, "GetProcessCpuTimeNanos() platform support not yet implemented.");\n#endif',
+                ),
+                (
+                    '#else\n  // Not implemented yet.\n  static_assert(\n      false, "GetThreadCpuTimeNanos() platform support not yet implemented.");\n#endif',
+                    '#elif defined(WKC_WIIU_WEBRTC)\n  // The Wii U SDK does not expose thread CPU time; metrics are optional.\n  return -1;\n#else\n  // Not implemented yet.\n  static_assert(\n      false, "GetThreadCpuTimeNanos() platform support not yet implemented.");\n#endif',
+                ),
+            ],
+        ),
+        (
+            "webrtc/rtc_base/memory_usage.cc",
+            [(
+                '#else\n  // Not implemented yet.\n  static_assert(false,\n                "GetProcessVirtualMemoryUsageBytes() platform support not yet "\n                "implemented.");\n#endif',
+                '#elif defined(WKC_WIIU_WEBRTC)\n  // The Wii U SDK does not expose process resident-memory metrics.\n  return -1;\n#else\n  // Not implemented yet.\n  static_assert(false,\n                "GetProcessVirtualMemoryUsageBytes() platform support not yet "\n                "implemented.");\n#endif',
+            )],
+        ),
+        (
+            "third_party/boringssl/src/crypto/fipsmodule/bcm.cc",
+            [(
+                '#include "bcm_interface.h"\n',
+                '''#include "bcm_interface.h"
+
+#if defined(WKC_WIIU_WEBRTC)
+// Wii U Espresso has no AES instruction-set acceleration. Use BoringSSL's
+// existing software AES fallback rather than probing for hardware AES.
+namespace bssl {
+inline bool hwaes_capable() { return false; }
+}  // namespace bssl
+#endif
+''',
+            )],
+        ),
+    ]
+
+    changed = 0
+    for relative_path, replacements in patches:
+        changed += patch_file(root, str(vendor / relative_path), replacements)
+
+    print(f"Wii U WebRTC compatibility patches complete ({changed} files changed).")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except Exception as exc:
+        print(f"Wii U WebRTC compatibility patch failed: {exc}", file=sys.stderr)
+        raise SystemExit(1)
