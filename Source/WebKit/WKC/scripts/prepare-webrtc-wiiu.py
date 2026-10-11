@@ -150,12 +150,12 @@ inline bool hwaes_capable() { return false; }
         "Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCProvider.cpp",
         [
             (
-                '#include "LibWebRTCUtils.h"\\n',
-                '// WKC patch: toRef() is provided by LibWebRTCRefWrappers.h.\\n',
+                '#include "LibWebRTCUtils.h"\n',
+                '// WKC patch: toRef() is provided by LibWebRTCRefWrappers.h.\n',
             ),
             (
-                '#include <dlfcn.h>\\n',
-                '// WKC patch: dlfcn.h is not needed by this provider on Wii U.\\n',
+                '#include <dlfcn.h>\n',
+                '// WKC patch: dlfcn.h is not needed by this provider on Wii U.\n',
             ),
         ],
     )
