@@ -1,5 +1,4 @@
 My container is snapped
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check that scroll-state(snapped: block) matches
 

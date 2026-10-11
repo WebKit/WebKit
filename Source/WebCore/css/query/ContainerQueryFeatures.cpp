@@ -497,6 +497,57 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
     }
 };
 
+// scroll-state(snapped [: <axis> | both | none]): whether the container is the snap target its
+// scroll container is snapped to in the queried axis. Axes only, no edges. A container that is not a
+// snap target matches none. https://drafts.csswg.org/css-conditional-5/#snapped
+struct SnappedFeatureSchema : public ScrollStateFeatureSchema {
+    using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
+
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        // Read the state snapshotted after layout, not the current geometry, so that a style change this
+        // query causes cannot change the answer within the same update.
+        // https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
+        Style::DocumentScope::ScrollState::SnappedAxes snapped;
+        if (CheckedPtr renderer = context.renderer.get()) {
+            if (CheckedPtr containerElement = renderer->element())
+                snapped = context.document->styleScope().scrollStateSnapshotFor(*containerElement).snappedAxes;
+        }
+
+        auto snappedInAxis = [&](BoxAxis axis) {
+            return axis == BoxAxis::Horizontal ? snapped.horizontal : snapped.vertical;
+        };
+
+        // Boolean form `scroll-state(snapped)`: snapped in either axis.
+        if (!feature.rightComparison)
+            return toEvaluationResult(snapped.horizontal || snapped.vertical);
+
+        auto requested = WTF::switchOn(*feature.rightComparison->value,
+            [](const CSS::Keyword& keyword) { return keyword.value; },
+            [](const auto&) { return CSSValueID::Invalid; });
+
+        // The logical axes resolve against the container being queried, which is the snap target, not
+        // against the scroller it snaps to.
+        auto writingMode = context.conversionData.style().writingMode();
+        switch (requested) {
+        case CSSValueID::None:
+            return toEvaluationResult(!snapped.horizontal && !snapped.vertical);
+        case CSSValueID::X:
+            return toEvaluationResult(snappedInAxis(BoxAxis::Horizontal));
+        case CSSValueID::Y:
+            return toEvaluationResult(snappedInAxis(BoxAxis::Vertical));
+        case CSSValueID::Block:
+            return toEvaluationResult(snappedInAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block)));
+        case CSSValueID::Inline:
+            return toEvaluationResult(snappedInAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline)));
+        case CSSValueID::Both:
+            return toEvaluationResult(snapped.horizontal && snapped.vertical);
+        default:
+            return EvaluationResult::False;
+        }
+    }
+};
+
 // MARK: - Singleton readonly instances of FeatureSchemas
 
 static const WidthFeatureSchema& widthFeatureSchema()
@@ -561,7 +612,7 @@ static const ScrollStateFeatureSchema& stuckFeatureSchema()
 
 static const ScrollStateFeatureSchema& snappedFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "snapped"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth } };
+    static MainThreadNeverDestroyed<SnappedFeatureSchema> schema { "snapped"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::X, CSSValueID::Y, CSSValueID::Block, CSSValueID::Inline, CSSValueID::Both } };
     return schema;
 }
 
