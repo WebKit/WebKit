@@ -30,11 +30,12 @@
 #if ENABLE(MATHML)
 #include "AccessibilityMathMLElement.h"
 
-#include "AccessibilityNodeObjectInlines.h"
 #include "AXObjectCacheInlines.h"
 #include "AXUtilities.h"
+#include "AccessibilityNodeObjectInlines.h"
 #include "AccessibilityObjectInlines.h"
 #include "FrameDestructionObserverInlines.h"
+#include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "NodeInlines.h"
 #include "Settings.h"
@@ -63,7 +64,11 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
-    if (WebCore::elementName(m_renderer->node()) == ElementName::MathML_math)
+    RefPtr element = this->element();
+    if (element && (element->isLink() || (HTMLNames::aTag->hasLocalName(element->localName()) && hasClickHandler())))
+        return AccessibilityRole::Link;
+
+    if (elementName() == ElementName::MathML_math)
         return AccessibilityRole::DocumentMath;
 
     // It's not clear which role a platform should choose for a math element.
@@ -112,17 +117,28 @@ String AccessibilityMathMLElement::stringValue() const
     return AccessibilityRenderObject::stringValue();
 }
 
+URL AccessibilityMathMLElement::url() const
+{
+    if (RefPtr element = dynamicDowncast<MathMLElement>(node()); element && element->isLink())
+        return element->getURLAttribute(MathMLNames::hrefAttr);
+
+    return AccessibilityRenderObject::url();
+}
+
 bool AccessibilityMathMLElement::isIgnoredElementWithinMathTree() const
 {
     if (m_isAnonymousOperator)
         return false;
 
-    // Only math elements that we explicitly recognize should be included
-    // We don't want things like <mstyle> to appear in the tree.
+    RefPtr element = this->element();
+    if (element && element->isLink())
+        return false;
+
     if (isMathFraction() || isMathFenced() || isMathSubscriptSuperscript() || isMathRow()
         || isMathUnderOver() || isMathRoot() || isMathText() || isMathNumber()
         || isMathOperator() || isMathFenceOperator() || isMathSeparatorOperator()
-        || isMathIdentifier() || isMathTable() || isMathTableRow() || isMathTableCell() || isMathMultiscript())
+        || isMathIdentifier() || isMathTable() || isMathTableRow() || isMathTableCell()
+        || isMathMultiscript() || isMathEmpty())
         return false;
 
     return true;
@@ -145,7 +161,19 @@ bool AccessibilityMathMLElement::isMathSubscriptSuperscript() const
 
 bool AccessibilityMathMLElement::isMathRow() const
 {
-    return m_renderer && m_renderer->isRenderMathMLRow() && !isMathRoot() && !isMathUnderOver() && !isMathMultiscript() && !isMathFraction();
+    if (m_renderer && m_renderer->isRenderMathMLRow() && !isMathRoot() && !isMathUnderOver() && !isMathMultiscript() && !isMathFraction())
+        return true;
+
+    auto elementName = this->elementName();
+    return elementName == ElementName::MathML_annotation_xml;
+}
+
+bool AccessibilityMathMLElement::isMathEmpty() const
+{
+    auto elementName = this->elementName();
+    return elementName == ElementName::MathML_none
+        || elementName == ElementName::MathML_mprescripts
+        || elementName == ElementName::MathML_mspace;
 }
 
 bool AccessibilityMathMLElement::isMathUnderOver() const
@@ -188,7 +216,9 @@ bool AccessibilityMathMLElement::isMathSeparatorOperator() const
 bool AccessibilityMathMLElement::isMathText() const
 {
     auto elementName = this->elementName();
-    return elementName == ElementName::MathML_mtext || elementName == ElementName::MathML_ms;
+    return elementName == ElementName::MathML_mtext
+        || elementName == ElementName::MathML_ms
+        || elementName == ElementName::MathML_annotation;
 }
 
 bool AccessibilityMathMLElement::isMathNumber() const
