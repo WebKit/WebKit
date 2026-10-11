@@ -936,23 +936,27 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         auto hasLineClamp = layoutState && layoutState->lineClamp();
         layoutChildren(hasLineClamp ? RelayoutChildren::Yes : relayoutChildren);
 
-        auto autoClamp = lineClampUpdater.isAutoLineClampRoot() ? lineClampUpdater.autoClampPoint() : std::nullopt;
-        auto ellipsisIsOnLastLine = lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this);
-        if (autoClamp) {
-            WTF::switchOn(*autoClamp, [&](size_t maximumLines) {
-                lineClampUpdater.setMaximumLines(maximumLines);
-            }, [&](const CheckedRef<const RenderBox>& clampAfterBox) {
-                lineClampUpdater.setClampAfterBox(clampAfterBox);
-            });
-        } else if (ellipsisIsOnLastLine)
-            lineClampUpdater.resetLineClamp();
-
-        auto contentNeedsRelayout = autoClamp || ellipsisIsOnLastLine;
-        if (contentNeedsRelayout) {
+        auto relayoutContent = [&] {
             rebuildFloatingObjectSetFromIntrudingFloats();
             for (CheckedRef descendant : descendantsOfType<RenderBox>(*this))
                 descendant->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
             layoutChildren(RelayoutChildren::Yes);
+        };
+        auto clampAtAutoClampPointIfNeeded = [&] {
+            auto autoClampPoints = lineClampUpdater.autoClampPoints();
+            if (autoClampPoints.isEmpty())
+                return false;
+            // Laid out clamped, block-end margins may still take the line-clamp container past the block size limit (see LineClampUpdater::autoClampPoints).
+            // Then the clamp point is the previous one.
+            do {
+                lineClampUpdater.setAutoClampPoint(autoClampPoints.takeLast());
+                relayoutContent();
+            } while (!autoClampPoints.isEmpty() && !lineClampUpdater.fitsAutoClampBlockSizeLimit());
+            return true;
+        };
+        if (!clampAtAutoClampPointIfNeeded() && lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
+            lineClampUpdater.resetLineClamp();
+            relayoutContent();
         }
     }
 
