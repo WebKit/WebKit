@@ -185,7 +185,18 @@ inline bool hwaes_capable() { return false; }
                     "  return received;\n\n#else\n  int received = 0;",
                     "  return received;\n#endif // WKC_WIIU_WEBRTC\n\n#else\n  int received = 0;",
                 ),
+                (
+                    "  int value = 1;\n  // Attempt to get receive packet timestamp from the socket.\n  if (::setsockopt(s_, SOL_SOCKET, SO_TIMESTAMP, &value, sizeof(value)) != 0) {\n    RTC_DLOG(LS_ERROR) << \"::setsockopt failed. errno: \" << LAST_SYSTEM_ERROR;\n  }",
+                    "  int value = 1;\n#if !defined(WKC_WIIU_WEBRTC)\n  // Attempt to get receive packet timestamp from the socket.\n  if (::setsockopt(s_, SOL_SOCKET, SO_TIMESTAMP, &value, sizeof(value)) != 0) {\n    RTC_DLOG(LS_ERROR) << \"::setsockopt failed. errno: \" << LAST_SYSTEM_ERROR;\n  }\n#endif // !WKC_WIIU_WEBRTC",
+                ),
             ],
+        ),
+        (
+            "third_party/libsrtp/srtp/srtp.c",
+            [(
+                "#include <limits.h>\n#ifdef HAVE_NETINET_IN_H",
+                "#if defined(WKC_WIIU_WEBRTC) && defined(HAVE_ARPA_INET_H)\n#include <arpa/inet.h>\n#endif\n\n#include <limits.h>\n#ifdef HAVE_NETINET_IN_H",
+            )],
         ),
     ]
 
