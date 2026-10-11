@@ -268,7 +268,21 @@ void RenderLayer::paintForegroundChildrenForSVG(GraphicsContext& context, const 
         return;
     }
 
+    // FIXME: A composited document element RenderSVGRoot still blends the root background.
+    bool blendContents = blendModeAppliesToSVGRootContentsOnly() && paintsWithTransparency(localPaintingInfo.paintBehavior);
+    if (blendContents) {
+        context.save();
+        context.setCompositeOperation(context.compositeOperation(), blendMode());
+        context.beginTransparencyLayer(1);
+        context.setCompositeOperation(context.compositeOperation(), BlendMode::Normal);
+    }
+
     paintChildrenInDOMOrderForSVG(context, localPaintingInfo, paintFlags, layerFragments, paintBehavior, subtreePaintRoot, svgPaintOrderItemRange, svgFilterChildLayerCorrection);
+
+    if (blendContents) {
+        context.endTransparencyLayer();
+        context.restore();
+    }
 }
 
 RenderLayer::HitLayer RenderLayer::hitTestChildrenForSVG(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffsetForDescendants)
