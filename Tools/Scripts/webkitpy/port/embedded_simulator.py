@@ -59,6 +59,25 @@ class EmbeddedSimulatorPort(EmbeddedPort):
                 new_environment[value] = inherited_env[value]
         return new_environment
 
+    # CMake builds TestWebKitAPI as an app that embeds the WebKit process extensions.
+    def _path_to_api_test_app(self):
+        return self._build_path('TestWebKitAPI.app')
+
+    def path_to_api_test(self, program_name):
+        if program_name == 'TestWebKitAPI' and self.get_option('use_cmake'):
+            return self._filesystem.join(self._path_to_api_test_app(), program_name)
+        return super().path_to_api_test(program_name)
+
+    def install_api_tests(self):
+        # The process extensions can only be launched once the app that embeds them is installed.
+        if not self.get_option('use_cmake'):
+            return
+        app_path = self._path_to_api_test_app()
+        for device in self.devices():
+            _log.debug(u'Installing {} to {}'.format(app_path, device))
+            if not device.install_app(app_path):
+                raise RuntimeError('Failed to install app {} on device {}'.format(app_path, device.udid))
+
     def setup_environ_for_server(self, server_name=None):
         _log.debug('Setting up environment for server on {}'.format(self.operating_system()))
         env = super().setup_environ_for_server(server_name)
