@@ -534,9 +534,6 @@ void RenderTable::layout()
         return;
 
     recalcSectionsIfNeeded();
-    // FIXME: We should do this recalc lazily in borderStart/borderEnd so that we don't have to make sure
-    // to call this before we call borderStart/borderEnd to avoid getting a stale value.
-    recalcBordersInRowDirection();
     bool sectionMoved = false;
     LayoutUnit movedSectionLogicalTop;
     unsigned sectionCount = 0;
@@ -1009,12 +1006,8 @@ void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset
 std::pair<LayoutUnit, LayoutUnit> RenderTable::computeIntrinsicLogicalWidths(TableIntrinsics intrinsics) const
 {
     recalcSectionsIfNeeded();
-    // FIXME: Do the recalc in borderStart/borderEnd and make those const_cast this call.
-    // Then m_borderStart/m_borderEnd will be transparent a cache and it removes the possibility
-    // of reading out stale values.
     // FIXME: Restructure the table layout code so that we can make this method const.
     // FIXME: We should include captions widths here like we do in computeIntrinsicLogicalWidthContributions.
-    const_cast<RenderTable*>(this)->recalcBordersInRowDirection();
     return const_cast<RenderTable*>(this)->m_tableLayout->computeIntrinsicLogicalWidths(intrinsics);
 }
 
@@ -1359,11 +1352,12 @@ void RenderTable::recalcSections() const
     m_needsSectionRecalc = false;
 }
 
-LayoutUnit RenderTable::calcBorderStart() const
+LayoutUnit RenderTable::borderStart() const
 {
     if (!collapseBorders())
         return RenderBlock::borderStart();
 
+    recalcSectionsIfNeeded();
     // Determined by the first cell of the first row. See the CSS 2.1 spec, section 17.6.2.
     if (!numEffCols())
         return 0;
@@ -1414,11 +1408,12 @@ LayoutUnit RenderTable::calcBorderStart() const
     return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, deviceScaleFactor, writingMode().isInlineFlipped());
 }
 
-LayoutUnit RenderTable::calcBorderEnd() const
+LayoutUnit RenderTable::borderEnd() const
 {
     if (!collapseBorders())
         return RenderBlock::borderEnd();
 
+    recalcSectionsIfNeeded();
     // Determined by the last cell of the first row. See the CSS 2.1 spec, section 17.6.2.
     if (!numEffCols())
         return 0;
@@ -1472,13 +1467,6 @@ LayoutUnit RenderTable::calcBorderEnd() const
         }
     }
     return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, deviceScaleFactor, !writingMode().isInlineFlipped());
-}
-
-void RenderTable::recalcBordersInRowDirection()
-{
-    // FIXME: We need to compute the collapsed before / after borders in the same fashion.
-    m_borderStart = calcBorderStart();
-    m_borderEnd = calcBorderEnd();
 }
 
 LayoutUnit RenderTable::borderBefore() const
