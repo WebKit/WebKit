@@ -64,8 +64,9 @@ jobs:
       # everywhere) no longer force a full 40-min JSC/WTF rebuild. Only the WKC
       # translation units that actually changed get recompiled; everything else is
       # served from the cache.
-      - name: Cache ccache
-        uses: actions/cache@v5.0.4
+      - name: Restore ccache
+        id: cache-ccache
+        uses: actions/cache/restore@v5.0.4
         with:
           path: .ccache
           key: ccache-${{ github.sha }}
@@ -432,8 +433,9 @@ jobs:
           find $GITHUB_WORKSPACE/.generated-jsc-cache -name "*.cpp" \
             -exec cp {} $GITHUB_WORKSPACE/Source/JavaScriptCore/JavaScriptCore/ \; 2>/dev/null || true
 
-      - name: Cache CMake build
-        uses: actions/cache@v5.0.4
+      - name: Restore CMake build
+        id: cache-cmake-build
+        uses: actions/cache/restore@v5.0.4
         with:
           path: build
           # Incremental object cache. Each run saves a fresh entry (unique run_id)
@@ -660,6 +662,7 @@ jobs:
           exit 0
 
       - name: Build WKC library
+        id: build-wkc
         shell: bash
         run: |
           # Incremental strategy (see "Cache CMake build"): objects restored from a
@@ -728,6 +731,14 @@ jobs:
             exit "$BUILD_STATUS"
           fi
 
+      # Save the object directory before later feature checks can fail the job.
+      - name: Save CMake build cache
+        if: always() && steps.build-wkc.outcome == 'success' && steps.cache-cmake-build.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5.0.4
+        with:
+          path: build
+          key: cmake-build-inc2-${{ github.run_id }}
+
       # Apply port-only patches before either full WebCore+WebRTC or the standalone
       # WebRTC diagnostic build. The script only edits the ephemeral CI checkout; the
       # tracked vendored upstream source is left unchanged.
@@ -754,9 +765,9 @@ jobs:
 
       # This independent diagnostic target previously bypassed ccache and had no
       # build-directory cache, so every run recompiled 1,700+ WebRTC objects.
-      - name: Cache libwebrtc build
+      - name: Restore libwebrtc build
         id: cache-webrtc
-        uses: actions/cache@v5.0.4
+        uses: actions/cache/restore@v5.0.4
         with:
           path: build-webrtc
           key: libwebrtc-wiiu-${{ hashFiles('Source/ThirdParty/libwebrtc/Source/**/*', 'Tools/wiiu/libwebrtc/**/*', 'Source/WebKit/WKC/cmake/WebRTCPlatform.cmake', 'Source/WebKit/WKC/cmake/WiiUToolchain.cmake', 'Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py') }}
@@ -855,12 +866,10 @@ jobs:
           fi
           exit 0
 
-      # WebRTC bring-up harness: cross-compile the in-tree libwebrtc for the Wii U
-      # (PowerPC). libwebrtc is NOT part of libWebKitWKC.a -- it is compiled here
-      # separately, only to surface its Wii U porting errors as a scoreboard (the
-      # same error-by-error method used to bring up the port library). This step
-      # never fails the job, so it cannot regress the green port build.
-      - name: Attempt libwebrtc cross-compile for Wii U (PPC) [informational]
+      # This is a required feature build, not a diagnostic-only probe. Fail before
+      # Collect output/upload steps if WebRTC cannot produce its real static archive.
+      - name: Build libwebrtc static archive for Wii U (PPC)
+        id: build-webrtc
         shell: bash
         run: |
           set +e
@@ -873,47 +882,92 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             > webrtc-configure.log 2>&1
           CONFIG_STATUS=$?
-          if [ "$CONFIG_STATUS" -eq 0 ] && [ -f build-webrtc/build.ninja ]; then
-            echo "===== libwebrtc configure: OK ====="
-          else
+          echo "configure_status=$CONFIG_STATUS" >> "$GITHUB_OUTPUT"
+          if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-webrtc/build.ninja ]; then
             echo "===== libwebrtc configure: FAILED (exit $CONFIG_STATUS) ====="
-          fi
-          echo "----- configure blockers (with context) -----"
-          grep -A6 -iE 'CMake Error|FATAL' webrtc-configure.log | head -80 || true
-          echo "----- configure log tail -----"
-          tail -n 40 webrtc-configure.log || true
-          if [ -f build-webrtc/build.ninja ]; then
-            # Stream Ninja's progress so this long diagnostic doesn't look hung.
-            # Keep it informational: failed translation units are summarized below,
-            # but they must not cancel the main WKC library/artifact build.
-            cmake --build build-webrtc --parallel "$(nproc)" -- -k 0 2>&1 | tee webrtc-build.log
-            BUILD_STATUS=${PIPESTATUS[0]}
-            FAILED_COUNT=$(grep -c '^FAILED:' webrtc-build.log || true)
-            echo "===== libwebrtc build exit status: $BUILD_STATUS ====="
-            echo "===== libwebrtc FAILED objects: $FAILED_COUNT ====="
-            if [ "$BUILD_STATUS" -eq 0 ]; then
-              echo "===== libwebrtc cross-compile: PASSED ====="
-            else
-              echo "::warning::libwebrtc cross-compile still has Wii U porting blockers (exit $BUILD_STATUS); see the compiler summary below."
-            fi
-            echo "===== ccache stats after libwebrtc probe ====="
+            grep -A6 -iE 'CMake Error|FATAL' webrtc-configure.log | head -80 || true
+            tail -n 60 webrtc-configure.log || true
+            echo "::error::libwebrtc CMake configuration failed; no feature archive will be published."
             ccache --show-stats || true
-            echo "----- distinct compile errors (top 60, normalized) -----"
-            grep -hoE 'error: .*' webrtc-build.log \
-              | sed -E 's/[0-9]+/N/g; s/0x[0-9a-fA-F]+/0xN/g' \
-              | sort | uniq -c | sort -rn | head -60 || true
-            echo "----- first failing sources -----"
-            grep '^FAILED:' webrtc-build.log \
-              | sed -E 's#.*/(Source/[^ ]+)\.obj[^ ]*#\1#; s#.*/(Source/[^ ]+)\.o[^ ]*#\1#' \
-              | sort -u | head -40 || true
-            echo "----- first FAILED command block (full, to diagnose) -----"
-            awk '/^FAILED:/{c++} c==1{print} c==2{exit}' webrtc-build.log | head -30 || true
-          else
-            echo "::warning::Skipping libwebrtc compilation because CMake did not generate build-webrtc/build.ninja."
+            exit 1
           fi
-          # Always succeed here: libwebrtc remains diagnostic-only until its Wii U
-          # platform port is complete. The primary WKC target has its own hard gate.
-          exit 0
+
+          echo "===== libwebrtc configure: OK ====="
+          cmake --build build-webrtc --parallel "$(nproc)" -- -k 0 2>&1 | tee webrtc-build.log
+          BUILD_STATUS=${PIPESTATUS[0]}
+          FAILED_COUNT=$(grep -c '^FAILED:' webrtc-build.log || true)
+          echo "===== libwebrtc build exit status: $BUILD_STATUS ====="
+          echo "===== libwebrtc FAILED objects: $FAILED_COUNT ====="
+          echo "===== ccache stats after libwebrtc build ====="
+          ccache --show-stats || true
+          echo "----- distinct compile errors (top 60, normalized) -----"
+          grep -hoE 'error: .*' webrtc-build.log \
+            | sed -E 's/[0-9]+/N/g; s/0x[0-9a-fA-F]+/0xN/g' \
+            | sort | uniq -c | sort -rn | head -60 || true
+          echo "----- first failing sources -----"
+          grep '^FAILED:' webrtc-build.log \
+            | sed -E 's#.*/(Source/[^ ]+)\.obj[^ ]*#\1#; s#.*/(Source/[^ ]+)\.o[^ ]*#\1#' \
+            | sort -u | head -40 || true
+          echo "----- first FAILED command block (full, to diagnose) -----"
+          awk '/^FAILED:/{c++} c==1{print} c==2{exit}' webrtc-build.log | head -30 || true
+
+          if [ "$BUILD_STATUS" -ne 0 ] || [ "$FAILED_COUNT" -ne 0 ]; then
+            echo "::error::libwebrtc PowerPC cross-compile failed (exit $BUILD_STATUS; failed objects $FAILED_COUNT). Stopping before output collection; no empty/missing feature .a will be packaged."
+            exit 1
+          fi
+
+          WEBRTC_ARCHIVE=$(find build-webrtc -type f \\( -name 'libwebrtc.a' -o -name 'webrtc.a' \\) -size +0c -print -quit)
+          if [ -z "$WEBRTC_ARCHIVE" ]; then
+            echo "::error::All libwebrtc compile steps passed but the required non-empty libwebrtc.a archive was not produced. Stopping before output collection."
+            find build-webrtc -type f -name '*.a' -printf 'Found archive candidate: %p (%s bytes)\\n' | head -80 || true
+            exit 1
+          fi
+          AR="$DEVKITPPC/bin/powerpc-eabi-ar"
+          MEMBER_COUNT=$("$AR" t "$WEBRTC_ARCHIVE" 2>/dev/null | wc -l)
+          if [ "${MEMBER_COUNT:-0}" -lt 1 ]; then
+            echo "::error::The generated libwebrtc.a is empty or unreadable: $WEBRTC_ARCHIVE"
+            exit 1
+          fi
+
+          mkdir -p dist-webrtc/lib/deps dist-webrtc/diagnostics
+          cp "$WEBRTC_ARCHIVE" dist-webrtc/lib/libwebrtc.a
+          while IFS= read -r archive; do
+            [ "$archive" = "$WEBRTC_ARCHIVE" ] && continue
+            relative_path="${archive#build-webrtc/}"
+            mkdir -p "dist-webrtc/lib/deps/$(dirname "$relative_path")"
+            cp -f "$archive" "dist-webrtc/lib/deps/$relative_path"
+          done < <(find build-webrtc -type f -name '*.a' -size +0c | sort)
+          for log in webrtc-pycompile.log webrtc-patches.log webrtc-configure.log webrtc-build.log; do
+            [ ! -f "$log" ] || cp "$log" dist-webrtc/diagnostics/
+          done
+          {
+            echo "Profile: standalone libwebrtc static archive bundle"
+            echo "Target: Wii U PowerPC 750 / devkitPPC"
+            echo "Main archive: lib/libwebrtc.a"
+            echo "Verification: CMake/Ninja build passed with zero failed objects; archive is non-empty"
+            echo "Runtime status: hardware networking/ICE/capture not verified; the WKC ifaddrs declarations are not themselves an interface-enumeration implementation"
+            echo
+            echo "Static archives included:"
+            find dist-webrtc/lib -type f -name '*.a' -printf '%P\\n' | sort
+          } > dist-webrtc/BUILD_PROFILE.txt
+          echo "===== libwebrtc archive verified: $WEBRTC_ARCHIVE ($MEMBER_COUNT members) ====="
+
+      # Save compiler output and partial object directory even when the required
+      # feature build fails. Cache writes happen before normal output steps, which
+      # GitHub skips after the hard failure above.
+      - name: Save ccache before WebRTC failure gate
+        if: always() && steps.cache-ccache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5.0.4
+        with:
+          path: .ccache
+          key: ccache-${{ github.sha }}
+
+      - name: Save libwebrtc build cache before failure gate
+        if: always() && steps.cache-webrtc.outputs.cache-hit != 'true' && steps.build-webrtc.outputs.configure_status == '0'
+        uses: actions/cache/save@v5.0.4
+        with:
+          path: build-webrtc
+          key: libwebrtc-wiiu-${{ hashFiles('Source/ThirdParty/libwebrtc/Source/**/*', 'Tools/wiiu/libwebrtc/**/*', 'Source/WebKit/WKC/cmake/WebRTCPlatform.cmake', 'Source/WebKit/WKC/cmake/WiiUToolchain.cmake', 'Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py') }}
 
       - name: Collect output
         run: |
@@ -969,4 +1023,11 @@ jobs:
         with:
           name: webkit-wiiu-full-engine
           path: dist-full/
+          retention-days: 30
+
+      - name: Upload standalone libwebrtc feature bundle
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: webkit-wiiu-libwebrtc
+          path: dist-webrtc/
           retention-days: 30
