@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<title>Content of an option translated outside the picker must repaint.</title>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+::picker(select) {
+    overflow: visible;
+}
+option {
+    translate: 100px 0;
+}
+#target {
+    display: inline-block;
+    width: 150px;
+    background-color: red;
+}
+#target.changed {
+    background-color: green;
+}
+</style>
+<select>
+    <option>One</option>
+    <option><span id="target">Two</span></option>
+</select>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+window.addEventListener("load", async () => {
+    await UIHelper.activateElement(document.querySelector("select"));
+    await UIHelper.renderingUpdate();
+    document.getElementById("target").classList.add("changed");
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+});
+</script>

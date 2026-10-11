@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<style>
+body {
+  margin: 0px;
+}
+#container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 50px;
+  height: 50px;
+  background: blue;
+}
+#child {
+  width: 100px;
+  transform: translateX(150px);
+}
+#target {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+</style>
+<!-- The repaint rects should include the target at 150 0 40 20. -->
+<div id=container><div id=child><span id=target></span></div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  container.style.height = "51px";
+  target.style.backgroundColor = "green";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>
