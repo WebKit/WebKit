@@ -34,6 +34,7 @@
 #include "WebGPUMapMode.h"
 #include "WebGPUOrigin2D.h"
 #include "WebGPUOrigin3D.h"
+#include "WebGPUPowerPreference.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUShaderStage.h"
 #include "WebGPUTextureUsage.h"
@@ -105,7 +106,6 @@ enum class IndexFormat : uint8_t;
 enum class LoadOp : uint8_t;
 enum class MipmapFilterMode : uint8_t;
 class PipelineLayout;
-enum class PowerPreference : bool;
 class PresentationContext;
 enum class PrimitiveTopology : uint8_t;
 class QuerySet;
