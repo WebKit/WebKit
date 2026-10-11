@@ -15,13 +15,16 @@ get_filename_component(SOURCE_DIR "${CMAKE_SOURCE_DIR}/../.." ABSOLUTE)
 option(WKC_ENABLE_FULL_WEBCORE "Compile the available common WebCore source list for Wii U porting" OFF)
 if (WKC_ENABLE_FULL_WEBCORE)
     set(_WKC_WEB_AUDIO_DEFAULT ON)
-    set(_WKC_WEBASSEMBLY_DEFAULT ON)
     set(_WKC_INDEXED_DATABASE_DEFAULT ON)
 else ()
     set(_WKC_WEB_AUDIO_DEFAULT OFF)
-    set(_WKC_WEBASSEMBLY_DEFAULT OFF)
     set(_WKC_INDEXED_DATABASE_DEFAULT OFF)
 endif ()
+
+# The portable JavaScriptCore IPInt interpreter does not require full WebCore.
+# Enable WebAssembly in the base WKC engine too; all JIT tiers remain disabled on
+# Wii U, and build.yml generates the opcode and lookup headers needed by these TUs.
+set(_WKC_WEBASSEMBLY_DEFAULT ON)
 
 option(WKC_ENABLE_WEB_AUDIO "Compile Web Audio against the WKC audio backend" ${_WKC_WEB_AUDIO_DEFAULT})
 if (WKC_ENABLE_WEB_AUDIO)
