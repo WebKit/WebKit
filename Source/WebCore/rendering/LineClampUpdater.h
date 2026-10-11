@@ -43,6 +43,7 @@ public:
     // The clamp point is either after this many lines, or between this block and its next sibling (with no line box right before it).
     using AutoClampPoint = Variant<size_t, CheckedRef<const RenderBox>>;
     std::optional<AutoClampPoint> autoClampPoint() const;
+    void setAutoClampPoint(const AutoClampPoint&);
     void setMaximumLines(size_t);
     void setClampAfterBox(const RenderBox&);
     void resetLineClamp();
