@@ -763,6 +763,19 @@ jobs:
       # separately, only to surface its Wii U porting errors as a scoreboard (the
       # same error-by-error method used to bring up the port library). This step
       # never fails the job, so it cannot regress the green port build.
+      - name: Apply Wii U-only WebRTC compatibility patches (temporary checkout)
+        shell: bash
+        run: |
+          set +e
+          python3 "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
+            --repo-root "$GITHUB_WORKSPACE" > webrtc-patches.log 2>&1
+          PATCH_STATUS=$?
+          cat webrtc-patches.log
+          if [ "$PATCH_STATUS" -ne 0 ]; then
+            echo "Wii U compatibility patching was incomplete; continue to capture compiler diagnostics."
+          fi
+          exit 0
+
       - name: Attempt libwebrtc cross-compile for Wii U (PPC) [informational]
         run: |
           set +e
