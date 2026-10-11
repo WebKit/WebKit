@@ -642,7 +642,6 @@ template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::comp
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&) const;
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&) const;
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&) const;
-template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::PreferredSize::Calc>(const FlexLayoutItem&, const Style::PreferredSize::Calc&) const;
 
 std::optional<bool> FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
