@@ -131,7 +131,7 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)
 {
-    let acceptedKeywords = ["initial", "unset", "revert", "revert-layer", "var()", "env()"];
+    let acceptedKeywords = [...WI.CSSKeywordCompletions.UniversalKeywords, "var()", "env()"];
 
     function addKeywordsForName(name) {
         let isNotPrefixed = name.charAt(0) !== "-";
@@ -269,6 +269,13 @@ WI.CSSKeywordCompletions.addPropertyCompletionValues = function(propertyName, ne
 };
 
 WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properties__";
+
+WI.CSSKeywordCompletions.UniversalKeywords = new Set([
+    "initial",
+    "revert",
+    "revert-layer",
+    "unset",
+]);
 
 // Populated by CSS.getSupportedCSSProperties.
 WI.CSSKeywordCompletions.PropertyNameForAlias = new Map;
