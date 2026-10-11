@@ -178,6 +178,7 @@ PASS hyphenate-limit-lines
 PASS hyphens
 PASS image-orientation
 PASS image-rendering
+PASS initial-letter
 PASS inline-size
 PASS input-security
 PASS inset-block-end
@@ -412,7 +413,6 @@ PASS -webkit-cursor-visibility
 PASS -webkit-font-smoothing
 PASS -webkit-hyphenate-limit-after
 PASS -webkit-hyphenate-limit-before
-PASS -webkit-initial-letter
 PASS -webkit-line-align
 PASS -webkit-line-box-contain
 PASS -webkit-line-grid

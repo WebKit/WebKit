@@ -483,4 +483,8 @@ PASS image-orientation (type: discrete) has testInterpolation function
 PASS image-orientation uses discrete animation when animating between "none" and "from-image" with linear easing
 PASS image-orientation uses discrete animation when animating between "none" and "from-image" with effect easing
 PASS image-orientation uses discrete animation when animating between "none" and "from-image" with keyframe easing
+PASS initial-letter (type: discrete) has testInterpolation function
+PASS initial-letter uses discrete animation when animating between "1 2" and "3 4" with linear easing
+PASS initial-letter uses discrete animation when animating between "1 2" and "3 4" with effect easing
+PASS initial-letter uses discrete animation when animating between "1 2" and "3 4" with keyframe easing
 

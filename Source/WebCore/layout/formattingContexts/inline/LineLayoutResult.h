@@ -112,7 +112,7 @@ struct LineLayoutResult {
 
     size_t nonSpanningInlineLevelBoxCount { 0 };
     InlineLayoutUnit trimmedTrailingWhitespaceWidth { 0.f }; // only used for line-break: after-white-space currently
-    InlineLayoutUnit firstLineStartTrim { 0.f }; // This is how much text-box-trim: start adjusts the first line box. We only need it to adjust the initial letter float position (which will not be needed once we drop the float behavior)
+    InlineLayoutUnit firstLineStartTrim { 0.f }; // This is how much text-box-trim: start adjusts the first line box. We need it to adjust the initial letter float position (which will not be needed once we drop the float behavior) and to undo that shift when measuring the initial letter's over-annotation offset.
     std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
     std::optional<BlockOverflowEllipsis> blockEllipsis { };
     bool isLastLineWithoutBlockEllipsis { false };

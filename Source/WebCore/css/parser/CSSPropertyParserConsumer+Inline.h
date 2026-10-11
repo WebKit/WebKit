@@ -46,5 +46,9 @@ RefPtr<CSSValue> consumeLineFitEdge(CSSParserTokenRange&, CSS::PropertyParserSta
 // https://drafts.csswg.org/css-inline-3/#propdef-text-box-edge
 RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange&, CSS::PropertyParserState&);
 
+// MARK: <'initial-letter'> consuming
+// https://drafts.csswg.org/css-inline-3/#propdef-initial-letter
+RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
