@@ -330,6 +330,34 @@ if (WKC_ENABLE_FULL_WEBCORE)
     message(STATUS "WKC full WebCore probe: ${_WKC_WEBCORE_SOURCE_COUNT} source files selected from Sources.txt/generated outputs")
 endif ()
 
+# Experimental full-WebRTC integration for the full-WebCore probe. Keep it
+# opt-in until the selected WKC providers compile and the final executable links.
+if (WKC_ENABLE_WEBRTC_API)
+    add_definitions(-DUSE_LIBWEBRTC=1)
+
+    list(APPEND WEBCORE_PLATFORM_SOURCES
+        ${WEBCORE_DIR}/platform/mediastream/WebRTCProvider.cpp
+        ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
+        ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
+        ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCLogSink.cpp
+        ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp
+        ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCVideoFrameUtilities.cpp
+        ${WEBCORE_DIR}/platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp
+    )
+
+    # Reuse the Wii U-specific standalone wrapper so the engine and RTC library
+    # share the same PPC toolchain, compatibility headers and temporary vendor
+    # patches. This adds the real libwebrtc target to the same CMake graph.
+    set(CMAKE_PROJECT_libwebrtc_wiiu_INCLUDE
+        "${WKC_DIR}/cmake/WebRTCPlatform.cmake")
+    set(LIBWEBRTC_DIR "${SOURCE_DIR}/ThirdParty/libwebrtc" CACHE PATH "" FORCE)
+    add_subdirectory(
+        "${WKC_DIR}/../../../Tools/wiiu/libwebrtc"
+        "${CMAKE_BINARY_DIR}/wiiu-libwebrtc")
+else ()
+    add_definitions(-DUSE_LIBWEBRTC=0)
+endif ()
+
 list(REMOVE_ITEM WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/WKC/ClipboardWKC.cpp
 )
@@ -364,6 +392,13 @@ target_include_directories(WebKitWKC PUBLIC
     ${WKC_DIR}/include/wkc
     ${WKC_DIR}/webkit
 )
+
+if (WKC_ENABLE_WEBRTC_API)
+    # Propagate libwebrtc and its bundled dependency link requirements to the
+    # final WKC consumer. The produced static archives still need a final link
+    # test before RTC can be treated as production-ready.
+    target_link_libraries(WebKitWKC PUBLIC webrtc)
+endif ()
 
 install(TARGETS WebKitWKC DESTINATION lib)
 install(DIRECTORY ${WKC_DIR}/include/ DESTINATION include/wkc)
