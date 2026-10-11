@@ -112,12 +112,6 @@
         _setWindowFrame(webView, frame);
 }
 
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
-{
-    if (_runOpenPanelWithParameters)
-        _runOpenPanelWithParameters(webView, parameters, frame, completionHandler);
-}
-
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 - (NSColor *)_webView:(WKWebView *)webView adjustedColorForTopContentInsetColor:(NSColor *)proposedColor
@@ -131,6 +125,12 @@
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 #endif // PLATFORM(MAC)
+
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
+{
+    if (_runOpenPanelWithParameters)
+        _runOpenPanelWithParameters(webView, parameters, frame, completionHandler);
+}
 
 - (void)webViewDidClose:(WKWebView *)webView
 {
