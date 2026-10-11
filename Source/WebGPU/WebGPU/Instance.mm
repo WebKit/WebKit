@@ -63,6 +63,17 @@ Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
     return adoptRef(*new Instance(cocoaDescriptor->scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor->webProcessResourceOwner)));
 }
 
+Ref<Instance> Instance::create(WebGPU::InstanceDescriptor&& descriptor)
+{
+    BlockPtr<void(WGPUWorkItem)> scheduleWorkBlock;
+    if (descriptor.scheduleWork) {
+        scheduleWorkBlock = makeBlockPtr([scheduleWork = WTF::move(descriptor.scheduleWork)](WGPUWorkItem workItem) {
+            scheduleWork(Function<void()>(makeBlockPtr(WTF::move(workItem))));
+        });
+    }
+    return adoptRef(*new Instance(scheduleWorkBlock.get(), descriptor.webProcessResourceOwner ? &*descriptor.webProcessResourceOwner : nullptr));
+}
+
 Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock, const MachSendRight* webProcessResourceOwner)
     : m_webProcessID(webProcessResourceOwner ? std::optional<MachSendRight>(*webProcessResourceOwner) : std::nullopt)
     , m_scheduleWorkBlock(scheduleWorkBlock ? WTF::move(scheduleWorkBlock) : ^(WGPUWorkItem workItem) { defaultScheduleWork(WTF::move(workItem)); })
@@ -94,6 +105,11 @@ void Instance::waitForCommandBufferCompletions()
 }
 
 Ref<PresentationContext> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
+{
+    return PresentationContext::create(descriptor, *this);
+}
+
+RefPtr<WebGPU::PresentationContext> Instance::createPresentationContext(const WebGPU::PresentationContextDescriptor& descriptor)
 {
     return PresentationContext::create(descriptor, *this);
 }
@@ -170,7 +186,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
     }
 }
 
-void Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<Adapter>&&)>&& callback)
+void Instance::requestAdapter(const WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&& callback)
 {
     auto devices = getDevices();
 
@@ -230,6 +246,15 @@ id<MTLDevice> Instance::device() const
 
 } // namespace WebGPU::Metal
 
+namespace WebGPU {
+
+RefPtr<Instance> createInstance(InstanceDescriptor&& descriptor)
+{
+    return Metal::Instance::create(WTF::move(descriptor));
+}
+
+} // namespace WebGPU
+
 #pragma mark WGPU Stubs
 
 void NODELETE wgpuInstanceAddRef(WGPUInstance instance)
@@ -270,10 +295,10 @@ static void requestAdapter(WGPUInstance instance, const WGPURequestAdapterOption
     auto apiOptions = WebGPU::Metal::fromAPI(options);
     if (!apiOptions)
         return callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference");
-    protectedInstance->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Metal::Adapter>&& adapter) {
+    protectedInstance->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Adapter>&& adapter) {
         if (!adapter)
             return callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
-        callback(WGPURequestAdapterStatus_Success, WebGPU::Metal::releaseToAPI(adapter.releaseNonNull()), "");
+        callback(WGPURequestAdapterStatus_Success, WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::Adapter>(WTF::move(adapter)), "");
     });
 }
 

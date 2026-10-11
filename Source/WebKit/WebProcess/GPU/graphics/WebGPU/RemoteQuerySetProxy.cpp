@@ -55,10 +55,16 @@ void RemoteQuerySetProxy::destroy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQuerySetProxy::setLabelInternal(const String& label)
+void RemoteQuerySetProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemoteQuerySet::SetLabel(label));
+    auto sendResult = send(Messages::RemoteQuerySet::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemoteQuerySetProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

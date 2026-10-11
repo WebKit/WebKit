@@ -32,12 +32,12 @@
 namespace WebCore {
 
 struct GPURenderBundleEncoderDescriptor : public GPURenderPassLayout {
-    WebGPU::RenderBundleEncoderDescriptor convertToBacking() const
+    WebGPURenderBundleEncoderDescriptor convertToBacking() const
     {
         return {
             {
                 { label },
-                colorFormats.map([](auto& colorFormat) -> std::optional<WebGPU::TextureFormat> {
+                colorFormats.map([](auto& colorFormat) -> std::optional<::WebGPU::TextureFormat> {
                     if (colorFormat)
                         return WebCore::convertToBacking(*colorFormat);
                     return std::nullopt;

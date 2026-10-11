@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUStorageTextureBindingLayout.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<StorageTextureBindingLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::StorageTextureBindingLayout& storageTextureBindingLayout)
+std::optional<StorageTextureBindingLayout> ConvertToBackingContext::convertToBacking(const ::WebGPU::StorageTextureBindingLayout& storageTextureBindingLayout)
 {
     return { { storageTextureBindingLayout.access, storageTextureBindingLayout.format, storageTextureBindingLayout.viewDimension } };
 }
 
-std::optional<WebCore::WebGPU::StorageTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const StorageTextureBindingLayout& storageTextureBindingLayout)
+std::optional<::WebGPU::StorageTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const StorageTextureBindingLayout& storageTextureBindingLayout)
 {
     return { { storageTextureBindingLayout.access, storageTextureBindingLayout.format, storageTextureBindingLayout.viewDimension } };
 }

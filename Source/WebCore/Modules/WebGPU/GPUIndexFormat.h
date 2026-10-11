@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUIndexFormat.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUIndexFormat : uint8_t {
     Uint32,
 };
 
-inline WebGPU::IndexFormat convertToBacking(GPUIndexFormat indexFormat)
+inline ::WebGPU::IndexFormat convertToBacking(GPUIndexFormat indexFormat)
 {
     switch (indexFormat) {
     case GPUIndexFormat::Uint16:
-        return WebGPU::IndexFormat::Uint16;
+        return ::WebGPU::IndexFormat::Uint16;
     case GPUIndexFormat::Uint32:
-        return WebGPU::IndexFormat::Uint32;
+        return ::WebGPU::IndexFormat::Uint32;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

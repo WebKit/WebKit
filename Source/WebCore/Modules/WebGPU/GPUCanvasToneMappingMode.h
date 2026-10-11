@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCanvasToneMappingMode.h"
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebCore {
 
@@ -34,13 +34,13 @@ enum class GPUCanvasToneMappingMode : uint8_t {
     Extended,
 };
 
-inline constexpr WebGPU::CanvasToneMappingMode convertToBacking(GPUCanvasToneMappingMode canvasToneMappingMode)
+inline constexpr ::WebGPU::CanvasToneMappingMode convertToBacking(GPUCanvasToneMappingMode canvasToneMappingMode)
 {
     switch (canvasToneMappingMode) {
     case GPUCanvasToneMappingMode::Standard:
-        return WebGPU::CanvasToneMappingMode::Standard;
+        return ::WebGPU::CanvasToneMappingMode::Standard;
     case GPUCanvasToneMappingMode::Extended:
-        return WebGPU::CanvasToneMappingMode::Extended;
+        return ::WebGPU::CanvasToneMappingMode::Extended;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

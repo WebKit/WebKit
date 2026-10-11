@@ -17,7 +17,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/ShapeDetection"
     "${WEBCORE_DIR}/Modules/ShapeDetection/Interfaces"
     "${WEBCORE_DIR}/Modules/WebGPU"
-    "${WEBCORE_DIR}/Modules/WebGPU/InternalAPI"
     "${WEBCORE_DIR}/Modules/WebGPU/Implementation"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/applepay"
@@ -2884,6 +2883,15 @@ if (NOT USE_FRAMEWORK_BUNDLES)
     set(WebCore_INTERFACE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR})
 endif ()
 
+if (NOT APPLE)
+    # The WebGPU C++ API header, <WebGPU/WebGPUCpp.h>, which ports without WebGPU.framework copy to
+    # a plain include directory. WebCore headers include it, so the users of WebCore need it too.
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES ${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR})
+    list(APPEND WebCore_INTERFACE_INCLUDE_DIRECTORIES ${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR})
+    list(APPEND WebCore_DEPENDENCIES WebGPU_CopyCppAPIHeaders)
+    list(APPEND WebCore_INTERFACE_DEPENDENCIES WebGPU_CopyCppAPIHeaders)
+endif ()
+
 set(WebCoreTestSupport_INTERFACE_LIBRARIES WebCoreTestSupport)
 set(WebCoreTestSupport_INTERFACE_INCLUDE_DIRECTORIES
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
@@ -3309,7 +3317,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/FrameTreeSyncData.serialization.in
     ${WebCore_DERIVED_SOURCES_DIR}/InspectorNativeFunctionParameters.json
 
-    Modules/WebGPU/InternalAPI/WebGPU.serialization.in
+    Modules/WebGPU/WebGPU.serialization.in
     Modules/indexeddb/IndexedDB.serialization.in
 
     page/ActivityState.serialization.in

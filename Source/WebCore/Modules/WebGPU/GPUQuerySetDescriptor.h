@@ -28,7 +28,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
 #include "GPUQueryType.h"
-#include "WebGPUQuerySetDescriptor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -36,10 +36,10 @@
 namespace WebCore {
 
 struct GPUQuerySetDescriptor : public GPUObjectDescriptorBase {
-    WebGPU::QuerySetDescriptor convertToBacking() const
+    ::WebGPU::QuerySetDescriptor convertToBacking() const
     {
         return {
-            { label },
+            label,
             WebCore::convertToBacking(type),
             count,
         };

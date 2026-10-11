@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "WebGPUExternalTextureBindingLayout.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUExternalTextureBindingLayout {
-    WebGPU::ExternalTextureBindingLayout convertToBacking() const
+    ::WebGPU::ExternalTextureBindingLayout convertToBacking() const
     {
         return { };
     }

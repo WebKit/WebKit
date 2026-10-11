@@ -49,10 +49,16 @@ RemoteExternalTextureProxy::~RemoteExternalTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteExternalTextureProxy::setLabelInternal(const String& label)
+void RemoteExternalTextureProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemoteExternalTexture::SetLabel(label));
+    auto sendResult = send(Messages::RemoteExternalTexture::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemoteExternalTextureProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void RemoteExternalTextureProxy::destroy()

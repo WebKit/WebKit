@@ -39,7 +39,7 @@ Lock QuerySet::querySetLock;
 __attribute__((no_destroy)) std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> QuerySet::m_counterSampleBuffers;
 __attribute__((no_destroy)) std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> QuerySet::m_counterSampleBufferFreeRanges;
 
-Ref<QuerySet> Device::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor)
+RefPtr<WebGPU::QuerySet> Device::createQuerySet(const WebGPU::QuerySetDescriptor& descriptor)
 {
     QuerySet::createContainersIfNeeded();
 

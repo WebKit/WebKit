@@ -30,16 +30,12 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPURenderPassDescriptor.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassDescriptor& renderPassDescriptor)
+std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPassDescriptor& renderPassDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(renderPassDescriptor));
-    if (!base)
-        return std::nullopt;
-
     Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
     colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
     for (const auto& colorAttachment : renderPassDescriptor.colorAttachments) {
@@ -68,16 +64,12 @@ std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(co
 
     auto timestampWrites = renderPassDescriptor.timestampWrites ? convertToBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTF::move(*base), WTF::move(colorAttachments), WTF::move(depthStencilAttachment), occlusionQuerySet, WTF::move(timestampWrites), renderPassDescriptor.maxDrawCount } };
+    return { { { renderPassDescriptor.label }, WTF::move(colorAttachments), WTF::move(depthStencilAttachment), occlusionQuerySet, WTF::move(timestampWrites), renderPassDescriptor.maxDrawCount } };
 }
 
-std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPassDescriptor& renderPassDescriptor)
+// The descriptor borrows the color attachments from colorAttachments.
+std::optional<::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPassDescriptor& renderPassDescriptor, Vector<std::optional<::WebGPU::RenderPassColorAttachment>>& colorAttachments)
 {
-    auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(renderPassDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    Vector<std::optional<WebCore::WebGPU::RenderPassColorAttachment>> colorAttachments;
     colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
     for (const auto& backingColorAttachment : renderPassDescriptor.colorAttachments) {
         if (backingColorAttachment) {
@@ -89,7 +81,7 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
             colorAttachments.append(std::nullopt);
     }
 
-    auto depthStencilAttachment = ([&] () -> std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> {
+    auto depthStencilAttachment = ([&] -> std::optional<::WebGPU::RenderPassDepthStencilAttachment> {
         if (renderPassDescriptor.depthStencilAttachment)
             return convertFromBacking(*renderPassDescriptor.depthStencilAttachment);
         return std::nullopt;
@@ -97,7 +89,7 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
     if (renderPassDescriptor.depthStencilAttachment && !depthStencilAttachment)
         return std::nullopt;
 
-    WeakPtr<WebCore::WebGPU::QuerySet> occlusionQuerySet;
+    RefPtr<::WebGPU::QuerySet> occlusionQuerySet;
     if (renderPassDescriptor.occlusionQuerySet) {
         occlusionQuerySet = convertQuerySetFromBacking(renderPassDescriptor.occlusionQuerySet.value());
         if (!occlusionQuerySet)
@@ -106,7 +98,14 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
 
     auto timestampWrites = renderPassDescriptor.timestampWrites ? convertFromBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTF::move(*base), WTF::move(colorAttachments), WTF::move(depthStencilAttachment), occlusionQuerySet, WTF::move(timestampWrites), renderPassDescriptor.maxDrawCount } };
+    return ::WebGPU::RenderPassDescriptor {
+        .label = renderPassDescriptor.label,
+        .colorAttachments = colorAttachments.span(),
+        .depthStencilAttachment = WTF::move(depthStencilAttachment),
+        .occlusionQuerySet = WTF::move(occlusionQuerySet),
+        .timestampWrites = WTF::move(timestampWrites),
+        .maxDrawCount = renderPassDescriptor.maxDrawCount,
+    };
 }
 
 } // namespace WebKit

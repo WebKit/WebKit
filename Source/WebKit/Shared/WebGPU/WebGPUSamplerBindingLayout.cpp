@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUSamplerBindingLayout.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<SamplerBindingLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::SamplerBindingLayout& samplerBindingLayout)
+std::optional<SamplerBindingLayout> ConvertToBackingContext::convertToBacking(const ::WebGPU::SamplerBindingLayout& samplerBindingLayout)
 {
     return { { samplerBindingLayout.type } };
 }
 
-std::optional<WebCore::WebGPU::SamplerBindingLayout> ConvertFromBackingContext::convertFromBacking(const SamplerBindingLayout& samplerBindingLayout)
+std::optional<::WebGPU::SamplerBindingLayout> ConvertFromBackingContext::convertFromBacking(const SamplerBindingLayout& samplerBindingLayout)
 {
     return { { samplerBindingLayout.type } };
 }

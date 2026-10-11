@@ -26,14 +26,14 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
-#include "WebGPUOrigin3D.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUOrigin3DDict {
-    WebGPU::Origin3DDict convertToBacking() const
+    ::WebGPU::Origin3D convertToBacking() const
     {
         return {
             x,
@@ -53,11 +53,15 @@ using GPUOrigin3D = Variant<Vector<GPUIntegerCoordinate>, GPUOrigin3DDict>;
 
 Ref<JSON::Value> toJSON(const GPUOrigin3D&);
 
-inline WebGPU::Origin3D convertToBacking(const GPUOrigin3D& origin3D)
+inline ::WebGPU::Origin3D convertToBacking(const GPUOrigin3D& origin3D)
 {
-    return WTF::switchOn(origin3D, [](const Vector<GPUIntegerCoordinate>& vector) -> WebGPU::Origin3D {
-        return vector;
-    }, [](const GPUOrigin3DDict& origin3D) -> WebGPU::Origin3D {
+    return WTF::switchOn(origin3D, [](const Vector<GPUIntegerCoordinate>& vector) -> ::WebGPU::Origin3D {
+        return {
+            vector.size() > 0 ? vector[0] : 0,
+            vector.size() > 1 ? vector[1] : 0,
+            vector.size() > 2 ? vector[2] : 0,
+        };
+    }, [](const GPUOrigin3DDict& origin3D) -> ::WebGPU::Origin3D {
         return origin3D.convertToBacking();
     });
 }

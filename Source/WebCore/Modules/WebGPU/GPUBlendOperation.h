@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUBlendOperation.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -38,19 +38,19 @@ enum class GPUBlendOperation : uint8_t {
     Max,
 };
 
-inline WebGPU::BlendOperation convertToBacking(GPUBlendOperation blendOperation)
+inline ::WebGPU::BlendOperation convertToBacking(GPUBlendOperation blendOperation)
 {
     switch (blendOperation) {
     case GPUBlendOperation::Add:
-        return WebGPU::BlendOperation::Add;
+        return ::WebGPU::BlendOperation::Add;
     case GPUBlendOperation::Subtract:
-        return WebGPU::BlendOperation::Subtract;
+        return ::WebGPU::BlendOperation::Subtract;
     case GPUBlendOperation::ReverseSubtract:
-        return WebGPU::BlendOperation::ReverseSubtract;
+        return ::WebGPU::BlendOperation::ReverseSubtract;
     case GPUBlendOperation::Min:
-        return WebGPU::BlendOperation::Min;
+        return ::WebGPU::BlendOperation::Min;
     case GPUBlendOperation::Max:
-        return WebGPU::BlendOperation::Max;
+        return ::WebGPU::BlendOperation::Max;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

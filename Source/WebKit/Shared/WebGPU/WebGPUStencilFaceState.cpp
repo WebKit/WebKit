@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUStencilFaceState.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<StencilFaceState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::StencilFaceState& stencilFaceState)
+std::optional<StencilFaceState> ConvertToBackingContext::convertToBacking(const ::WebGPU::StencilFaceState& stencilFaceState)
 {
     return { { stencilFaceState.compare, stencilFaceState.failOp, stencilFaceState.depthFailOp, stencilFaceState.passOp } };
 }
 
-std::optional<WebCore::WebGPU::StencilFaceState> ConvertFromBackingContext::convertFromBacking(const StencilFaceState& stencilFaceState)
+std::optional<::WebGPU::StencilFaceState> ConvertFromBackingContext::convertFromBacking(const StencilFaceState& stencilFaceState)
 {
     return { { stencilFaceState.compare, stencilFaceState.failOp, stencilFaceState.depthFailOp, stencilFaceState.passOp } };
 }

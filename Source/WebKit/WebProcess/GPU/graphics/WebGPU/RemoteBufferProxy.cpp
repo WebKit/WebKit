@@ -40,7 +40,7 @@ RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBacking
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
-    , m_mapModeFlags(mappedAtCreation ? WebCore::WebGPU::MapModeFlags(WebCore::WebGPU::MapMode::Write) : WebCore::WebGPU::MapModeFlags())
+    , m_mapModeFlags(mappedAtCreation ? OptionSet<::WebGPU::MapMode>(::WebGPU::MapMode::Write) : OptionSet<::WebGPU::MapMode>())
 {
 }
 
@@ -50,7 +50,7 @@ RemoteBufferProxy::~RemoteBufferProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
+void RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
 {
     auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTF::move(callback), mapModeFlags, protectedThis = protect(*this)](auto success) mutable {
         if (!success)
@@ -61,12 +61,12 @@ void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, Web
     UNUSED_PARAM(sendResult);
 }
 
-static bool NODELETE offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> requestedSize)
+static bool NODELETE offsetOrSizeExceedsBounds(size_t dataSize, uint64_t offset, std::optional<uint64_t> requestedSize)
 {
     return offset >= dataSize || (requestedSize.has_value() && requestedSize.value() + offset > dataSize);
 }
 
-void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, NOESCAPE const Function<void(std::span<uint8_t>)>& callback)
+void RemoteBufferProxy::getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>& callback)
 {
     // FIXME: Implement error handling.
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
@@ -88,7 +88,7 @@ std::span<uint8_t> RemoteBufferProxy::getBufferContents()
 
 void RemoteBufferProxy::copyFrom(std::span<const uint8_t> span, size_t offset)
 {
-    if (!m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
+    if (!m_mapModeFlags.contains(::WebGPU::MapMode::Write))
         return;
 
     if (span.size() > maxCrossProcessResourceCopySize) {
@@ -122,10 +122,16 @@ void RemoteBufferProxy::generateAValidationError()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteBufferProxy::setLabelInternal(const String& label)
+void RemoteBufferProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemoteBuffer::SetLabel(label));
+    auto sendResult = send(Messages::RemoteBuffer::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemoteBufferProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

@@ -103,7 +103,7 @@ static MTLStoreAction NODELETE storeAction(WGPUStoreOp storeOp, bool hasResolveT
     }
 }
 
-Ref<CommandEncoder> Device::createCommandEncoder(const WebGPU::CommandEncoderDescriptor& descriptor)
+RefPtr<WebGPU::CommandEncoder> Device::createCommandEncoder(const WebGPU::CommandEncoderDescriptor& descriptor)
 {
     if (!isValid())
         return CommandEncoder::createInvalid(*this);
@@ -258,6 +258,32 @@ static NSString* errorValidatingTimestampWrites(const auto& timestampWrites, con
 NSString* CommandEncoder::errorValidatingComputePassDescriptor(const WebGPU::ComputePassDescriptor& descriptor) const
 {
     return errorValidatingTimestampWrites(descriptor.timestampWrites, *this);
+}
+
+RefPtr<WebGPU::ComputePassEncoder> CommandEncoder::beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>& descriptor)
+{
+    return beginComputePass(descriptor ? *descriptor : WebGPU::ComputePassDescriptor { });
+}
+
+void CommandEncoder::copyBufferToBuffer(const WebGPU::Buffer& source, uint64_t sourceOffset, const WebGPU::Buffer& destination, uint64_t destinationOffset, uint64_t size)
+{
+    // The WebGPU::Metal commands take a mutable buffer where they track its use.
+    copyBufferToBuffer(downcast<Buffer>(source), sourceOffset, const_cast<Buffer&>(downcast<Buffer>(destination)), destinationOffset, size);
+}
+
+void CommandEncoder::clearBuffer(const WebGPU::Buffer& buffer, uint64_t offset, std::optional<uint64_t> size)
+{
+    clearBuffer(const_cast<Buffer&>(downcast<Buffer>(buffer)), offset, size);
+}
+
+void CommandEncoder::writeTimestamp(const WebGPU::QuerySet& querySet, uint32_t queryIndex)
+{
+    writeTimestamp(const_cast<QuerySet&>(downcast<QuerySet>(querySet)), queryIndex);
+}
+
+void CommandEncoder::resolveQuerySet(const WebGPU::QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const WebGPU::Buffer& destination, uint64_t destinationOffset)
+{
+    resolveQuerySet(downcast<QuerySet>(querySet), firstQuery, queryCount, const_cast<Buffer&>(downcast<Buffer>(destination)), destinationOffset);
 }
 
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WebGPU::ComputePassDescriptor& descriptor)
@@ -531,7 +557,7 @@ static bool isMultisampleTexture(id<MTLTexture> texture)
     return texture.textureType == MTLTextureType2DMultisample || texture.textureType == MTLTextureType2DMultisampleArray;
 }
 
-Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor)
+RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor)
 {
 #if ENABLE(WEBGPU_SWIFT)
     if (isWebGPUSwiftEnabled())
@@ -2143,7 +2169,7 @@ NSString* CommandEncoder::validateFinishError() const
     return nil;
 }
 
-Ref<CommandBuffer> CommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor)
+RefPtr<WebGPU::CommandBuffer> CommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor)
 {
 #if ENABLE(WEBGPU_SWIFT)
     if (isWebGPUSwiftEnabled())
@@ -2496,7 +2522,9 @@ WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder comma
     auto apiDescriptor = WebGPU::Metal::fromAPI(*descriptor, storage);
     if (!apiDescriptor)
         return WebGPU::Metal::releaseToAPI(WebGPU::Metal::RenderPassEncoder::createInvalid(protectedCommandEncoder, protectedCommandEncoder->device(), @"GPURenderPassDescriptor has an invalid enum value, a depth stencil attachment without a view or timestamp writes without a query set"));
-    return WebGPU::Metal::releaseToAPI(protectedCommandEncoder->beginRenderPass(*apiDescriptor));
+    // Every WebGPU::RenderPassEncoder that a WebGPU::Metal::CommandEncoder creates is a WebGPU::Metal::RenderPassEncoder.
+    Ref renderPassEncoder = downcast<WebGPU::Metal::RenderPassEncoder>(*protectedCommandEncoder->beginRenderPass(*apiDescriptor));
+    return WebGPU::Metal::releaseToAPI(WTF::move(renderPassEncoder));
 }
 
 void wgpuCommandEncoderCopyBufferToBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer source, uint64_t sourceOffset, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size)
@@ -2545,7 +2573,9 @@ void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer
 
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
-    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(commandEncoder))->finish({ .label = descriptor->label }));
+    // Every WebGPU::CommandBuffer that a WebGPU::Metal::CommandEncoder creates is a WebGPU::Metal::CommandBuffer.
+    Ref commandBuffer = downcast<WebGPU::Metal::CommandBuffer>(*protect(WebGPU::Metal::fromAPI(commandEncoder))->finish({ .label = descriptor->label }));
+    return WebGPU::Metal::releaseToAPI(WTF::move(commandBuffer));
 }
 
 void wgpuCommandEncoderInsertDebugMarker(WGPUCommandEncoder commandEncoder, WGPUStringView markerLabel)

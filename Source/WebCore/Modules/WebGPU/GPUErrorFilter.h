@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUErrorFilter.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -36,15 +36,15 @@ enum class GPUErrorFilter : uint8_t {
     Internal,
 };
 
-inline WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
+inline ::WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
 {
     switch (errorFilter) {
     case GPUErrorFilter::OutOfMemory:
-        return WebGPU::ErrorFilter::OutOfMemory;
+        return ::WebGPU::ErrorFilter::OutOfMemory;
     case GPUErrorFilter::Validation:
-        return WebGPU::ErrorFilter::Validation;
+        return ::WebGPU::ErrorFilter::Validation;
     case GPUErrorFilter::Internal:
-        return WebGPU::ErrorFilter::Internal;
+        return ::WebGPU::ErrorFilter::Internal;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

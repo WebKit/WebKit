@@ -29,8 +29,8 @@
 #include "GPUColorDict.h"
 #include "GPUIndexFormat.h"
 #include "GPUIntegralTypes.h"
-#include "WebGPURenderPassEncoder.h"
 #include <JavaScriptCore/Uint32Array.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <optional>
 #include <wtf/Ref.h>
@@ -53,9 +53,9 @@ template<typename> class ExceptionOr;
 
 class GPURenderPassEncoder : public RefCountedAndCanMakeWeakPtr<GPURenderPassEncoder> {
 public:
-    static Ref<GPURenderPassEncoder> create(Ref<WebGPU::RenderPassEncoder>&& backing, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
+    static Ref<GPURenderPassEncoder> create(Ref<::WebGPU::RenderPassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
     {
-        return adoptRef(*new GPURenderPassEncoder(WTF::move(backing), commandEncoder, canvasColorAttachmentMask));
+        return adoptRef(*new GPURenderPassEncoder(WTF::move(backing), WTF::move(label), commandEncoder, canvasColorAttachmentMask));
     }
 
     String NODELETE label() const;
@@ -104,17 +104,18 @@ public:
     void executeBundles(Vector<Ref<GPURenderBundle>>&&);
     void end();
 
-    WebGPU::RenderPassEncoder& backing() { return m_backing; }
-    const WebGPU::RenderPassEncoder& backing() const { return m_backing; }
+    ::WebGPU::RenderPassEncoder& backing() { return m_backing; }
+    const ::WebGPU::RenderPassEncoder& backing() const { return m_backing; }
 
     GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&&, GPUCommandEncoder&, uint8_t canvasColorAttachmentMask);
+    GPURenderPassEncoder(Ref<::WebGPU::RenderPassEncoder>&&, String&& label, GPUCommandEncoder&, uint8_t canvasColorAttachmentMask);
 
-    Ref<WebGPU::RenderPassEncoder> m_backing;
+    Ref<::WebGPU::RenderPassEncoder> m_backing;
+    String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     WeakPtr<GPURenderPipeline> m_currentPipeline;
 

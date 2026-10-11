@@ -32,15 +32,14 @@
 #include "WebGPUSamplerBindingLayout.h"
 #include "WebGPUStorageTextureBindingLayout.h"
 #include "WebGPUTextureBindingLayout.h"
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPUShaderStage.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
 
 struct BindGroupLayoutEntry {
-    WebCore::WebGPU::Index32 binding { 0 };
-    WebCore::WebGPU::ShaderStageFlags visibility;
+    uint32_t binding { 0 };
+    OptionSet<::WebGPU::ShaderStage> visibility;
 
     std::optional<BufferBindingLayout> buffer;
     std::optional<SamplerBindingLayout> sampler;

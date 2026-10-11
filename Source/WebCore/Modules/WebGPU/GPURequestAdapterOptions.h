@@ -26,14 +26,14 @@
 #pragma once
 
 #include "GPUPowerPreference.h"
-#include "WebGPURequestAdapterOptions.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct GPURequestAdapterOptions {
-    WebGPU::RequestAdapterOptions convertToBacking() const
+    ::WebGPU::RequestAdapterOptions convertToBacking() const
     {
         return {
             .powerPreference = powerPreference ? std::optional { WebCore::convertToBacking(*powerPreference) } : std::nullopt,

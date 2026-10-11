@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUTextureDimension.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -36,15 +36,15 @@ enum class GPUTextureDimension : uint8_t {
     _3d,
 };
 
-inline WebGPU::TextureDimension convertToBacking(GPUTextureDimension textureDimension)
+inline ::WebGPU::TextureDimension convertToBacking(GPUTextureDimension textureDimension)
 {
     switch (textureDimension) {
     case GPUTextureDimension::_1d:
-        return WebGPU::TextureDimension::_1d;
+        return ::WebGPU::TextureDimension::_1d;
     case GPUTextureDimension::_2d:
-        return WebGPU::TextureDimension::_2d;
+        return ::WebGPU::TextureDimension::_2d;
     case GPUTextureDimension::_3d:
-        return WebGPU::TextureDimension::_3d;
+        return ::WebGPU::TextureDimension::_3d;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

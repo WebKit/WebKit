@@ -31,14 +31,14 @@
 #include "RemoteTextureViewMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/WebGPUTextureView.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureView);
 
-RemoteTextureView::RemoteTextureView(WebCore::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteTextureView::RemoteTextureView(::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(textureView)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

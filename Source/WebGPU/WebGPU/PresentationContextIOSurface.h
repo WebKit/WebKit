@@ -41,6 +41,7 @@ class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_TZONE_ALLOCATED(PresentationContextIOSurface);
 public:
     static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&, const Instance&);
+    static Ref<PresentationContextIOSurface> create(const WebGPU::PresentationContextDescriptor&, const Instance&);
 
     virtual ~PresentationContextIOSurface();
 
@@ -48,7 +49,7 @@ public:
     void unconfigure() override;
 
     void present(uint32_t) override;
-    Texture* getCurrentTexture(uint32_t) override;
+    Texture* currentTexture(uint32_t) override;
     TextureView* getCurrentTextureView() override;
 
     Seconds lastFrameGPUCost() const override { return m_lastDrainedFrameGPUCost; }
@@ -58,7 +59,7 @@ public:
 
     bool isValid() const final { return true; }
 private:
-    PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance&);
+    explicit PresentationContextIOSurface(const Instance&);
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
     void onSubmittedWorkScheduled(Function<void()>&&);

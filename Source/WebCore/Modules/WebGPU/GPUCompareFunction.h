@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCompareFunction.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -41,25 +41,25 @@ enum class GPUCompareFunction : uint8_t {
     Always,
 };
 
-inline WebGPU::CompareFunction convertToBacking(GPUCompareFunction compareFunction)
+inline ::WebGPU::CompareFunction convertToBacking(GPUCompareFunction compareFunction)
 {
     switch (compareFunction) {
     case GPUCompareFunction::Never:
-        return WebGPU::CompareFunction::Never;
+        return ::WebGPU::CompareFunction::Never;
     case GPUCompareFunction::Less:
-        return WebGPU::CompareFunction::Less;
+        return ::WebGPU::CompareFunction::Less;
     case GPUCompareFunction::Equal:
-        return WebGPU::CompareFunction::Equal;
+        return ::WebGPU::CompareFunction::Equal;
     case GPUCompareFunction::LessEqual:
-        return WebGPU::CompareFunction::LessEqual;
+        return ::WebGPU::CompareFunction::LessEqual;
     case GPUCompareFunction::Greater:
-        return WebGPU::CompareFunction::Greater;
+        return ::WebGPU::CompareFunction::Greater;
     case GPUCompareFunction::NotEqual:
-        return WebGPU::CompareFunction::NotEqual;
+        return ::WebGPU::CompareFunction::NotEqual;
     case GPUCompareFunction::GreaterEqual:
-        return WebGPU::CompareFunction::GreaterEqual;
+        return ::WebGPU::CompareFunction::GreaterEqual;
     case GPUCompareFunction::Always:
-        return WebGPU::CompareFunction::Always;
+        return ::WebGPU::CompareFunction::Always;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

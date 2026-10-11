@@ -36,7 +36,7 @@
 
 namespace WebGPU::Metal {
 
-Ref<ExternalTexture> Device::importExternalTexture(const WebGPU::ExternalTextureDescriptor& descriptor)
+RefPtr<WebGPU::ExternalTexture> Device::importExternalTexture(const WebGPU::ExternalTextureDescriptor& descriptor)
 {
     if (!isValid())
         return ExternalTexture::createInvalid(*this);

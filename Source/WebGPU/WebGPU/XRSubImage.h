@@ -62,8 +62,10 @@ public:
 
     bool NODELETE isValid() const final;
     void update(const XRProjectionLayer&);
-    Texture* colorTexture();
+    Texture* currentColorTexture();
     Texture* depthTexture();
+    RefPtr<WebGPU::Texture> colorTexture() final;
+    RefPtr<WebGPU::Texture> depthStencilTexture() final;
 
 private:
     XRSubImage(bool, Device&);

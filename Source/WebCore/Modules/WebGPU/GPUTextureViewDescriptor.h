@@ -31,25 +31,25 @@
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
 #include "GPUTextureViewDimension.h"
-#include "WebGPUTextureViewDescriptor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
-    WebGPU::TextureViewDescriptor convertToBacking() const
+    ::WebGPU::TextureViewDescriptor convertToBacking() const
     {
         return {
-            { label },
-            format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
-            dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
-            convertTextureUsageFlagsToBacking(usage),
-            WebCore::convertToBacking(aspect),
-            baseMipLevel,
-            mipLevelCount,
-            baseArrayLayer,
-            arrayLayerCount,
+            .label = label,
+            .format = format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
+            .dimension = dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
+            .baseMipLevel = baseMipLevel,
+            .mipLevelCount = mipLevelCount,
+            .baseArrayLayer = baseArrayLayer,
+            .arrayLayerCount = arrayLayerCount,
+            .aspect = WebCore::convertToBacking(aspect),
+            .usage = convertTextureUsageFlagsToBacking(usage),
         };
     }
 

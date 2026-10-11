@@ -28,17 +28,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
 
 struct RenderPassLayout : public ObjectDescriptorBase {
-    Vector<std::optional<WebCore::WebGPU::TextureFormat>> colorFormats;
-    std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat;
-    WebCore::WebGPU::Size32 sampleCount { 1 };
+    Vector<std::optional<::WebGPU::TextureFormat>> colorFormats;
+    std::optional<::WebGPU::TextureFormat> depthStencilFormat;
+    uint32_t sampleCount { 1 };
 };
 
 } // namespace WebKit::WebGPU

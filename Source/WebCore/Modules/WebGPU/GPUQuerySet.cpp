@@ -34,6 +34,7 @@ namespace WebCore {
 GPUQuerySet::GPUQuerySet(Ref<WebGPU::QuerySet>&& backing, const GPUQuerySetDescriptor& descriptor, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_descriptor(descriptor)
+    , m_label(descriptor.label)
     , m_device(device)
 {
 }
@@ -51,11 +52,12 @@ GPUDevice* GPUQuerySet::device() const
 
 String GPUQuerySet::label() const
 {
-    return m_backing->label();
+    return m_label;
 }
 
 void GPUQuerySet::setLabel(String&& label)
 {
+    m_label = label;
     m_backing->setLabel(WTF::move(label));
 }
 

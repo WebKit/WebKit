@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct GPUFragmentState : public GPUProgrammableStage {
-    WebGPU::FragmentState convertToBacking() const
+    WebGPUFragmentState convertToBacking() const
     {
         return {
             {
@@ -43,7 +43,7 @@ struct GPUFragmentState : public GPUProgrammableStage {
                 entryPoint,
                 constants,
             },
-            targets.map([](auto& target) -> std::optional<WebGPU::ColorTargetState> {
+            targets.map([](auto& target) -> std::optional<WebGPUColorTargetState> {
                 if (target)
                     return target->convertToBacking();
                 return std::nullopt;

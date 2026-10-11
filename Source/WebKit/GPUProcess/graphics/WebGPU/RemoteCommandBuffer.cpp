@@ -31,14 +31,14 @@
 #include "RemoteCommandBufferMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/WebGPUCommandBuffer.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCommandBuffer);
 
-RemoteCommandBuffer::RemoteCommandBuffer(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteCommandBuffer::RemoteCommandBuffer(::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(commandBuffer)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

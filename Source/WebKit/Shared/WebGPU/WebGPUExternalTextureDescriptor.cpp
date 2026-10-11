@@ -34,9 +34,9 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ExternalTextureDescriptor& externalTextureDescriptor)
+std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPUExternalTextureDescriptor& externalTextureDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(externalTextureDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPUObjectDescriptorBase&>(externalTextureDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -50,7 +50,7 @@ std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacki
     } };
 }
 
-std::optional<WebCore::WebGPU::ExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor, ConvertFromBackingContext::PixelBufferType pixelBuffer)
+std::optional<WebCore::WebGPUExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor, ConvertFromBackingContext::PixelBufferType pixelBuffer)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(externalTextureDescriptor));
     if (!base)

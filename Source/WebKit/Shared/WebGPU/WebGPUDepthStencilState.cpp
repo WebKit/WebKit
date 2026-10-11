@@ -34,7 +34,7 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::DepthStencilState& depthStencilState)
+std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const ::WebGPU::DepthStencilState& depthStencilState)
 {
     auto stencilFront = convertToBacking(depthStencilState.stencilFront);
     if (!stencilFront)
@@ -47,7 +47,7 @@ std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const
     return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTF::move(*stencilFront), WTF::move(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
 }
 
-std::optional<WebCore::WebGPU::DepthStencilState> ConvertFromBackingContext::convertFromBacking(const DepthStencilState& depthStencilState)
+std::optional<::WebGPU::DepthStencilState> ConvertFromBackingContext::convertFromBacking(const DepthStencilState& depthStencilState)
 {
     auto stencilFront = convertFromBacking(depthStencilState.stencilFront);
     if (!stencilFront)
@@ -57,7 +57,7 @@ std::optional<WebCore::WebGPU::DepthStencilState> ConvertFromBackingContext::con
     if (!stencilBack)
         return std::nullopt;
 
-    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTF::move(*stencilFront), WTF::move(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
+    return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTF::move(*stencilFront), WTF::move(*stencilBack), depthStencilState.stencilReadMask.value_or(0), depthStencilState.stencilWriteMask.value_or(0), depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
 }
 
 } // namespace WebKit

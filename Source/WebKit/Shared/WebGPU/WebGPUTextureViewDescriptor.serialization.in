@@ -21,14 +21,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::TextureViewDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    std::optional<WebCore::WebGPU::TextureFormat> format;
-    std::optional<WebCore::WebGPU::TextureViewDimension> dimension;
-    WebCore::WebGPU::TextureUsageFlags usage;
-    WebCore::WebGPU::TextureAspect aspect;
-    WebCore::WebGPU::IntegerCoordinate baseMipLevel;
-    std::optional<WebCore::WebGPU::IntegerCoordinate> mipLevelCount;
-    WebCore::WebGPU::IntegerCoordinate baseArrayLayer;
-    std::optional<WebCore::WebGPU::IntegerCoordinate> arrayLayerCount;
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::TextureViewDescriptor {
+    String label;
+    std::optional<::WebGPU::TextureFormat> format;
+    std::optional<::WebGPU::TextureViewDimension> dimension;
+    uint32_t baseMipLevel;
+    std::optional<uint32_t> mipLevelCount;
+    uint32_t baseArrayLayer;
+    std::optional<uint32_t> arrayLayerCount;
+    ::WebGPU::TextureAspect aspect;
+    OptionSet<::WebGPU::TextureUsage> usage;
 };
+
+header: "WebGPUTextureViewDescriptor.h"
+using WebKit::WebGPU::TextureViewDescriptor = ::WebGPU::TextureViewDescriptor;
 #endif

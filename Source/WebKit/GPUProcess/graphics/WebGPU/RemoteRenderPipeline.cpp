@@ -32,15 +32,14 @@
 #include "RemoteRenderPipelineMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/WebGPUBindGroupLayout.h>
-#include <WebCore/WebGPURenderPipeline.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderPipeline);
 
-RemoteRenderPipeline::RemoteRenderPipeline(WebCore::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteRenderPipeline::RemoteRenderPipeline(::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(renderPipeline)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))

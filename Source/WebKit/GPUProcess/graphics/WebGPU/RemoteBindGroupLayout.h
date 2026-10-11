@@ -30,14 +30,11 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class BindGroupLayout;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -52,7 +49,7 @@ class ObjectHeap;
 class RemoteBindGroupLayout final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBindGroupLayout);
 public:
-    static Ref<RemoteBindGroupLayout> create(WebCore::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteBindGroupLayout> create(::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteBindGroupLayout(bindGroupLayout, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -66,21 +63,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBindGroupLayout(WebCore::WebGPU::BindGroupLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteBindGroupLayout(::WebGPU::BindGroupLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteBindGroupLayout(const RemoteBindGroupLayout&) = delete;
     RemoteBindGroupLayout(RemoteBindGroupLayout&&) = delete;
     RemoteBindGroupLayout& operator=(const RemoteBindGroupLayout&) = delete;
     RemoteBindGroupLayout& operator=(RemoteBindGroupLayout&&) = delete;
 
-    WebCore::WebGPU::BindGroupLayout& backing() { return m_backing; }
+    ::WebGPU::BindGroupLayout& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::BindGroupLayout> m_backing;
+    const Ref<::WebGPU::BindGroupLayout> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;

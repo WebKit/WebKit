@@ -49,10 +49,16 @@ RemoteTextureViewProxy::~RemoteTextureViewProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteTextureViewProxy::setLabelInternal(const String& label)
+void RemoteTextureViewProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemoteTextureView::SetLabel(label));
+    auto sendResult = send(Messages::RemoteTextureView::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemoteTextureViewProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

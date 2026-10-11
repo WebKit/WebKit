@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct GPUVertexState : public GPUProgrammableStage {
-    WebGPU::VertexState convertToBacking() const
+    WebGPUVertexState convertToBacking() const
     {
         return {
             {
@@ -43,7 +43,7 @@ struct GPUVertexState : public GPUProgrammableStage {
                 entryPoint,
                 constants,
             },
-            buffers.map([](auto& buffer) -> std::optional<WebGPU::VertexBufferLayout> {
+            buffers.map([](auto& buffer) -> std::optional<WebGPUVertexBufferLayout> {
                 if (buffer)
                     return buffer->convertToBacking();
                 return std::nullopt;

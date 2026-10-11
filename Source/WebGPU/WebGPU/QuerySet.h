@@ -71,7 +71,7 @@ public:
 
     ~QuerySet();
 
-    void destroy();
+    void destroy() final;
     void setLabel(String&&) final;
 
     bool NODELETE isValid() const final;

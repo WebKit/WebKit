@@ -23,10 +23,10 @@
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RenderPassColorAttachment {
     WebKit::WebGPUIdentifier view
-    std::optional<WebCore::WebGPU::IntegerCoordinate> depthSlice
+    std::optional<uint32_t> depthSlice
     std::optional<WebKit::WebGPUIdentifier> resolveTarget
 
     std::optional<WebKit::WebGPU::Color> clearValue
-    WebCore::WebGPU::LoadOp loadOp
-    WebCore::WebGPU::StoreOp storeOp
+    ::WebGPU::LoadOp loadOp
+    ::WebGPU::StoreOp storeOp
 }

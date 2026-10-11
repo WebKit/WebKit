@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUPrimitiveTopology.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -38,19 +38,19 @@ enum class GPUPrimitiveTopology : uint8_t {
     TriangleStrip,
 };
 
-inline WebGPU::PrimitiveTopology convertToBacking(GPUPrimitiveTopology primitiveTopology)
+inline ::WebGPU::PrimitiveTopology convertToBacking(GPUPrimitiveTopology primitiveTopology)
 {
     switch (primitiveTopology) {
     case GPUPrimitiveTopology::PointList:
-        return WebGPU::PrimitiveTopology::PointList;
+        return ::WebGPU::PrimitiveTopology::PointList;
     case GPUPrimitiveTopology::LineList:
-        return WebGPU::PrimitiveTopology::LineList;
+        return ::WebGPU::PrimitiveTopology::LineList;
     case GPUPrimitiveTopology::LineStrip:
-        return WebGPU::PrimitiveTopology::LineStrip;
+        return ::WebGPU::PrimitiveTopology::LineStrip;
     case GPUPrimitiveTopology::TriangleList:
-        return WebGPU::PrimitiveTopology::TriangleList;
+        return ::WebGPU::PrimitiveTopology::TriangleList;
     case GPUPrimitiveTopology::TriangleStrip:
-        return WebGPU::PrimitiveTopology::TriangleStrip;
+        return ::WebGPU::PrimitiveTopology::TriangleStrip;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

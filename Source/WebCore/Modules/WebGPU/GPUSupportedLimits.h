@@ -31,7 +31,7 @@ namespace WebCore {
 
 class GPUSupportedLimits : public RefCounted<GPUSupportedLimits> {
 public:
-    static Ref<GPUSupportedLimits> create(Ref<WebGPU::SupportedLimits>&& backing)
+    static Ref<GPUSupportedLimits> create(Ref<WebGPUSupportedLimits>&& backing)
     {
         return adoptRef(*new GPUSupportedLimits(WTF::move(backing)));
     }
@@ -72,16 +72,16 @@ public:
     uint32_t NODELETE maxStorageBuffersInVertexStage() const;
     uint32_t NODELETE maxStorageTexturesInVertexStage() const;
 
-    WebGPU::SupportedLimits& backing() { return m_backing; }
-    const WebGPU::SupportedLimits& backing() const { return m_backing; }
+    WebGPUSupportedLimits& backing() { return m_backing; }
+    const WebGPUSupportedLimits& backing() const { return m_backing; }
 
 private:
-    GPUSupportedLimits(Ref<WebGPU::SupportedLimits>&& backing)
+    GPUSupportedLimits(Ref<WebGPUSupportedLimits>&& backing)
         : m_backing(WTF::move(backing))
     {
     }
 
-    const Ref<WebGPU::SupportedLimits> m_backing;
+    const Ref<WebGPUSupportedLimits> m_backing;
 };
 
 }

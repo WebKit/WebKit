@@ -67,14 +67,15 @@ public:
     // Zero in either component means the source could not say.
     simd::uint2 visibleSize() const { return m_visibleSize; }
 
-    void destroy();
-    void undestroy();
+    void destroy() final;
+    void undestroy() final;
     void setCommandEncoder(CommandEncoder&) const;
     bool NODELETE isDestroyed() const;
 
     void setLabel(String&&) final { }
     bool NODELETE isValid() const final;
     void update(CVPixelBufferRef);
+    void updateExternalTexture(CVPixelBufferRef pixelBuffer) final { update(pixelBuffer); }
     size_t openCommandEncoderCount() const;
     void updateExternalTextures(id<MTLTexture>, id<MTLTexture>);
 

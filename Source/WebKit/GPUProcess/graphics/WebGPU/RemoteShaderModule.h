@@ -31,16 +31,13 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUCompilationMessage.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class ShaderModule;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -55,7 +52,7 @@ class ObjectHeap;
 class RemoteShaderModule final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteShaderModule);
 public:
-    static Ref<RemoteShaderModule> create(WebCore::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteShaderModule> create(::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -69,14 +66,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteShaderModule(WebCore::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteShaderModule(::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteShaderModule(const RemoteShaderModule&) = delete;
     RemoteShaderModule(RemoteShaderModule&&) = delete;
     RemoteShaderModule& operator=(const RemoteShaderModule&) = delete;
     RemoteShaderModule& operator=(RemoteShaderModule&&) = delete;
 
-    WebCore::WebGPU::ShaderModule& backing() { return m_backing; }
+    ::WebGPU::ShaderModule& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -85,7 +82,7 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::ShaderModule> m_backing;
+    const Ref<::WebGPU::ShaderModule> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;

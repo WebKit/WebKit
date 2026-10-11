@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUMultisampleState.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<MultisampleState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::MultisampleState& multisampleState)
+std::optional<MultisampleState> ConvertToBackingContext::convertToBacking(const ::WebGPU::MultisampleState& multisampleState)
 {
     return { { multisampleState.count, multisampleState.mask, multisampleState.alphaToCoverageEnabled } };
 }
 
-std::optional<WebCore::WebGPU::MultisampleState> ConvertFromBackingContext::convertFromBacking(const MultisampleState& multisampleState)
+std::optional<::WebGPU::MultisampleState> ConvertFromBackingContext::convertFromBacking(const MultisampleState& multisampleState)
 {
     return { { multisampleState.count, multisampleState.mask, multisampleState.alphaToCoverageEnabled } };
 }

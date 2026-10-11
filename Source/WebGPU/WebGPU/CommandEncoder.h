@@ -89,20 +89,28 @@ public:
     ~CommandEncoder();
 
     Ref<ComputePassEncoder> beginComputePass(const WebGPU::ComputePassDescriptor&);
-    Ref<RenderPassEncoder> beginRenderPass(const WebGPU::RenderPassDescriptor&);
+    RefPtr<WebGPU::RenderPassEncoder> beginRenderPass(const WebGPU::RenderPassDescriptor&) final;
     void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    void copyBufferToTexture(const WebGPU::TexelCopyBufferInfo& source, const WebGPU::TexelCopyTextureInfo& destination, const WebGPU::Extent3D& copySize);
-    void copyTextureToBuffer(const WebGPU::TexelCopyTextureInfo& source, const WebGPU::TexelCopyBufferInfo& destination, const WebGPU::Extent3D& copySize);
-    void copyTextureToTexture(const WebGPU::TexelCopyTextureInfo& source, const WebGPU::TexelCopyTextureInfo& destination, const WebGPU::Extent3D& copySize);
+    void copyBufferToTexture(const WebGPU::TexelCopyBufferInfo& source, const WebGPU::TexelCopyTextureInfo& destination, const WebGPU::Extent3D& copySize) final;
+    void copyTextureToBuffer(const WebGPU::TexelCopyTextureInfo& source, const WebGPU::TexelCopyBufferInfo& destination, const WebGPU::Extent3D& copySize) final;
+    void copyTextureToTexture(const WebGPU::TexelCopyTextureInfo& source, const WebGPU::TexelCopyTextureInfo& destination, const WebGPU::Extent3D& copySize) final;
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> existingEncoder = nil);
     // std::nullopt is the rest of the buffer after the offset.
     void clearBuffer(Buffer&, uint64_t offset, std::optional<uint64_t> size);
-    Ref<CommandBuffer> finish(const WebGPU::CommandBufferDescriptor&);
-    void insertDebugMarker(String&& markerLabel);
-    void popDebugGroup();
-    void pushDebugGroup(String&& groupLabel);
+    RefPtr<WebGPU::CommandBuffer> finish(const WebGPU::CommandBufferDescriptor&) final;
+    void insertDebugMarker(String&& markerLabel) final;
+    void popDebugGroup() final;
+    void pushDebugGroup(String&& groupLabel) final;
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(QuerySet&, uint32_t queryIndex);
+
+    // The WebGPU::CommandEncoder methods that take objects. Every object they take was created
+    // by this implementation, so they cast it to its WebGPU::Metal type.
+    RefPtr<WebGPU::ComputePassEncoder> beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>&) final;
+    void copyBufferToBuffer(const WebGPU::Buffer& source, uint64_t sourceOffset, const WebGPU::Buffer& destination, uint64_t destinationOffset, uint64_t size) final;
+    void clearBuffer(const WebGPU::Buffer&, uint64_t offset, std::optional<uint64_t> size) final;
+    void writeTimestamp(const WebGPU::QuerySet&, uint32_t queryIndex) final;
+    void resolveQuerySet(const WebGPU::QuerySet&, uint32_t firstQuery, uint32_t queryCount, const WebGPU::Buffer& destination, uint64_t destinationOffset) final;
     void setLabel(String&&) final;
 
     Device& device() const { return m_device; }

@@ -27,27 +27,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUObjectDescriptorBase.h"
-#include <WebCore/WebGPUAddressMode.h>
-#include <WebCore/WebGPUCompareFunction.h>
-#include <WebCore/WebGPUFilterMode.h>
-#include <cstdint>
-#include <optional>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-struct SamplerDescriptor : public ObjectDescriptorBase {
-    WebCore::WebGPU::AddressMode addressModeU { WebCore::WebGPU::AddressMode::ClampToEdge };
-    WebCore::WebGPU::AddressMode addressModeV { WebCore::WebGPU::AddressMode::ClampToEdge };
-    WebCore::WebGPU::AddressMode addressModeW { WebCore::WebGPU::AddressMode::ClampToEdge };
-    WebCore::WebGPU::FilterMode magFilter { WebCore::WebGPU::FilterMode::Nearest };
-    WebCore::WebGPU::FilterMode minFilter { WebCore::WebGPU::FilterMode::Nearest };
-    WebCore::WebGPU::MipmapFilterMode mipmapFilter { WebCore::WebGPU::MipmapFilterMode::Nearest };
-    float lodMinClamp { 0 };
-    float lodMaxClamp { 32 };
-    std::optional<WebCore::WebGPU::CompareFunction> compare;
-    uint16_t maxAnisotropy { 1 };
-};
+using SamplerDescriptor = ::WebGPU::SamplerDescriptor;
 
 } // namespace WebKit::WebGPU
 

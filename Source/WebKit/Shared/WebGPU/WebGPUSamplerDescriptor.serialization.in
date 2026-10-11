@@ -21,16 +21,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::SamplerDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    WebCore::WebGPU::AddressMode addressModeU;
-    WebCore::WebGPU::AddressMode addressModeV;
-    WebCore::WebGPU::AddressMode addressModeW;
-    WebCore::WebGPU::FilterMode magFilter;
-    WebCore::WebGPU::FilterMode minFilter;
-    WebCore::WebGPU::MipmapFilterMode mipmapFilter;
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::SamplerDescriptor {
+    String label;
+    ::WebGPU::AddressMode addressModeU;
+    ::WebGPU::AddressMode addressModeV;
+    ::WebGPU::AddressMode addressModeW;
+    ::WebGPU::FilterMode magFilter;
+    ::WebGPU::FilterMode minFilter;
+    ::WebGPU::MipmapFilterMode mipmapFilter;
     float lodMinClamp;
     float lodMaxClamp;
-    std::optional<WebCore::WebGPU::CompareFunction> compare;
+    std::optional<::WebGPU::CompareFunction> compare;
     uint16_t maxAnisotropy;
 };
+
+header: "WebGPUSamplerDescriptor.h"
+using WebKit::WebGPU::SamplerDescriptor = ::WebGPU::SamplerDescriptor;
 #endif

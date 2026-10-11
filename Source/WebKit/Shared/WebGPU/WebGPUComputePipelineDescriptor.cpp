@@ -34,30 +34,30 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<ComputePipelineDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePipelineDescriptor& computePipelineDescriptor)
+std::optional<ComputePipelineDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::ComputePipelineDescriptor& computePipelineDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::PipelineDescriptorBase&>(computePipelineDescriptor));
-    if (!base)
-        return std::nullopt;
+    std::optional<WebGPUIdentifier> layout;
+    if (computePipelineDescriptor.layout)
+        layout = convertToBacking(*protect(computePipelineDescriptor.layout));
 
     auto compute = convertToBacking(computePipelineDescriptor.compute);
     if (!compute)
         return std::nullopt;
 
-    return { { WTF::move(*base), WTF::move(*compute) } };
+    return { { { { computePipelineDescriptor.label }, layout }, WTF::move(*compute) } };
 }
 
-std::optional<WebCore::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePipelineDescriptor& computePipelineDescriptor, bool allowMissingPipelineLayout)
+std::optional<::WebGPU::ComputePipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePipelineDescriptor& computePipelineDescriptor, Vector<::WebGPU::ConstantEntry>& constantsStorage, bool allowMissingPipelineLayout)
 {
-    auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(computePipelineDescriptor), allowMissingPipelineLayout);
-    if (!base)
+    auto layout = convertLayoutFromBacking(computePipelineDescriptor, allowMissingPipelineLayout);
+    if (!layout)
         return std::nullopt;
 
-    auto compute = convertFromBacking(computePipelineDescriptor.compute);
+    auto compute = convertFromBacking(computePipelineDescriptor.compute, constantsStorage);
     if (!compute)
         return std::nullopt;
 
-    return { { WTF::move(*base), WTF::move(*compute) } };
+    return { { computePipelineDescriptor.label, WTF::move(*layout), WTF::move(*compute) } };
 }
 
 } // namespace WebKit

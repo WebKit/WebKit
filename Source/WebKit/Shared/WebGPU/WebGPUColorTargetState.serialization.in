@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ColorTargetState {
-    WebCore::WebGPU::TextureFormat format
+    ::WebGPU::TextureFormat format
     std::optional<WebKit::WebGPU::BlendState> blend
-    WebCore::WebGPU::ColorWriteFlags writeMask
+    uint32_t writeMask
 }

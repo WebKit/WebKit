@@ -81,8 +81,13 @@ public:
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
     void clearBuffer(id<MTLBuffer>, NSUInteger offset = 0, NSUInteger size = NSUIntegerMax);
     void writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::span<uint8_t> data, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D& writeSize, bool skipValidation = false);
-    void copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& source, const WebGPU::ImageCopyTextureTagged& destination, const WebGPU::Extent3D& copySize);
+    void copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& source, const WebGPU::ImageCopyTextureTagged& destination, const WebGPU::Extent3D& copySize) final;
     void setLabel(String&&) final;
+
+    void submit(Vector<Ref<WebGPU::CommandBuffer>>&&) final;
+    void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
+    void writeBuffer(const WebGPU::Buffer&, uint64_t bufferOffset, std::span<const uint8_t> data) final;
+    void writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::span<const uint8_t> data, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D& writeSize) final;
 
     void onSubmittedWorkScheduled(Function<void()>&&);
 

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct GPUObjectDescriptorBase {
-    WebGPU::ObjectDescriptorBase convertToBacking() const
+    WebGPUObjectDescriptorBase convertToBacking() const
     {
         return { label };
     }

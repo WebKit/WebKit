@@ -23,14 +23,13 @@
 headers: "StreamConnectionEncoder.h"
 
 #if ENABLE(GPU_PROCESS)
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::Origin3D {
+    uint32_t x;
+    uint32_t y;
+    uint32_t z;
+};
 
 header: "WebGPUOrigin3D.h"
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::Origin3DDict {
-    WebCore::WebGPU::IntegerCoordinate x
-    WebCore::WebGPU::IntegerCoordinate y
-    WebCore::WebGPU::IntegerCoordinate z
-}
-
-using WebKit::WebGPU::Origin3D = Variant<Vector<WebCore::WebGPU::IntegerCoordinate>, WebKit::WebGPU::Origin3DDict>;
-
+using WebKit::WebGPU::Origin3D = ::WebGPU::Origin3D;
 #endif

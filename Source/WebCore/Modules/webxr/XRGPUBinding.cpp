@@ -29,14 +29,14 @@
 #if ENABLE(WEBXR_LAYERS) && ENABLE(WEBGPU)
 
 #include "GPUDevice.h"
-#include "WebGPUXRBinding.h"
-#include "WebGPUXREye.h"
+#include "WebGPUXRLayerBacking.h"
 #include "WebXRFrame.h"
 #include "WebXRView.h"
 #include "XRCompositionLayer.h"
 #include "XRGPUProjectionLayerInit.h"
 #include "XRGPUSubImage.h"
 #include "XRProjectionLayer.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -81,7 +81,7 @@ ExceptionOr<Ref<XRProjectionLayer>> XRGPUBinding::createProjectionLayer(ScriptEx
     } else
         m_session->initializeTrackingAndRendering(std::nullopt);
 
-    WebGPU::XRProjectionLayerInit convertedInit;
+    WebGPU::XRProjectionLayerDescriptor convertedInit;
     if (init)
         convertedInit = init->convertToBacking();
     RefPtr projectionLayer = m_backing->createProjectionLayer(convertedInit);
@@ -89,7 +89,7 @@ ExceptionOr<Ref<XRProjectionLayer>> XRGPUBinding::createProjectionLayer(ScriptEx
         return Exception { ExceptionCode::AbortError };
 
     m_init = init;
-    return XRProjectionLayer::create(scriptExecutionContext, *m_session, projectionLayer.releaseNonNull(), { });
+    return XRProjectionLayer::create(scriptExecutionContext, *m_session, WebGPUXRLayerBacking::create(projectionLayer.releaseNonNull()), { });
 }
 
 double XRGPUBinding::nativeProjectionScaleFactor() const
@@ -119,7 +119,8 @@ ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& pro
     if (eyeIndex)
         viewport.move(-setupData->viewports[0].width(), 0);
 
-    RefPtr subImage = m_backing->getViewSubImage(static_cast<WebGPU::XRProjectionLayer&>(projectionLayer.backing()));
+    // Every layer that an XRGPUBinding creates is backed by a WebGPUXRLayerBacking.
+    RefPtr subImage = m_backing->getViewSubImage(static_cast<WebGPUXRLayerBacking&>(projectionLayer.backing()).projectionLayer());
     return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(eye), WTF::move(actualSize), WTF::move(viewport), m_device);
 }
 

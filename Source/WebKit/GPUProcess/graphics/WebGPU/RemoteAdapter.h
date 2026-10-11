@@ -30,15 +30,12 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
-
-namespace WebCore::WebGPU {
-class Adapter;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -56,7 +53,7 @@ struct SupportedLimits;
 class RemoteAdapter final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAdapter);
 public:
-    static Ref<RemoteAdapter> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteAdapter> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteAdapter(gpuConnectionToWebProcess, gpu, adapter, objectHeap, WTF::move(streamConnection), identifier));
     }
@@ -70,21 +67,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteAdapter(GPUConnectionToWebProcess&, RemoteGPU&, WebCore::WebGPU::Adapter&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteAdapter(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::Adapter&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteAdapter(const RemoteAdapter&) = delete;
     RemoteAdapter(RemoteAdapter&&) = delete;
     RemoteAdapter& operator=(const RemoteAdapter&) = delete;
     RemoteAdapter& operator=(RemoteAdapter&&) = delete;
 
-    WebCore::WebGPU::Adapter& backing() { return m_backing; }
+    ::WebGPU::Adapter& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void requestDevice(const WebGPU::DeviceDescriptor&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&&);
+    void requestDevice(const WebGPU::DeviceDescriptor&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(Vector<::WebGPU::FeatureName>&&, WebGPU::SupportedLimits&&)>&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::Adapter> m_backing;
+    const Ref<::WebGPU::Adapter> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

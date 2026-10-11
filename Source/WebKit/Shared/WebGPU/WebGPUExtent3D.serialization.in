@@ -21,13 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-header: "WebGPUExtent3D.h"
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::Extent3DDict {
-    WebCore::WebGPU::IntegerCoordinate width;
-    WebCore::WebGPU::IntegerCoordinate height;
-    WebCore::WebGPU::IntegerCoordinate depthOrArrayLayers;
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::Extent3D {
+    uint32_t width;
+    uint32_t height;
+    uint32_t depthOrArrayLayers;
 };
 
-using WebKit::WebGPU::Extent3D = Variant<Vector<WebCore::WebGPU::IntegerCoordinate>, WebKit::WebGPU::Extent3DDict>;
-
+header: "WebGPUExtent3D.h"
+using WebKit::WebGPU::Extent3D = ::WebGPU::Extent3D;
 #endif

@@ -192,7 +192,7 @@ void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& color
 #endif
 }
 
-Ref<XRProjectionLayer> XRBinding::createProjectionLayer(const WebGPU::XRProjectionLayerDescriptor& descriptor)
+RefPtr<WebGPU::XRProjectionLayer> XRBinding::createProjectionLayer(const WebGPU::XRProjectionLayerDescriptor& descriptor)
 {
     return XRProjectionLayer::create(descriptor, m_device);
 }

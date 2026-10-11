@@ -32,7 +32,7 @@
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPU.h>
-#include <WebCore/WebGPUPresentationContext.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -59,7 +59,7 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
+class RemoteGPUProxy final : public WebCore::WebGPUIntegration, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGPUProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGPUProxy);
 public:
@@ -76,6 +76,12 @@ public:
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
 
     void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
+    void copyExternalImageToTexture(::WebGPU::Queue&, const WebCore::WebGPUExternalImageSource&, const WebCore::WebGPUImageCopyTextureTagged& destination, const ::WebGPU::Extent3D& copySize) final;
+    RefPtr<WebCore::NativeImage> nativeImage(::WebGPU::Queue&, WebCore::VideoFrame&) final;
+    RefPtr<::WebGPU::ExternalTexture> importExternalTexture(::WebGPU::Device&, const WebCore::WebGPUExternalTextureDescriptor&) final;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void updateExternalTexture(::WebGPU::Device&, const ::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
+#endif
     WebGPUIdentifier backing() const { return m_backing; }
     RefPtr<WebKit::Mesh> NODELETE createModelBacking(unsigned width, unsigned height, WebModel::ImageAsset&& diffuseTexture, WebModel::ImageAsset&& specularTexture, bool standardDynamicRange, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 
@@ -118,38 +124,38 @@ private:
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
 
-    void requestAdapter(const WebCore::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&&) final;
+    void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;
 
-    RefPtr<WebCore::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor&) final;
+    RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPUPresentationContextDescriptor&) final;
 
-    RefPtr<WebCore::WebGPU::CompositorIntegration> createCompositorIntegration() final;
-    bool isValid(const WebCore::WebGPU::CompositorIntegration&) const final;
-    bool isValid(const WebCore::WebGPU::Buffer&) const final;
-    bool isValid(const WebCore::WebGPU::Adapter&) const final;
-    bool isValid(const WebCore::WebGPU::BindGroup&) const final;
-    bool isValid(const WebCore::WebGPU::BindGroupLayout&) const final;
-    bool isValid(const WebCore::WebGPU::CommandBuffer&) const final;
-    bool isValid(const WebCore::WebGPU::CommandEncoder&) const final;
-    bool isValid(const WebCore::WebGPU::ComputePassEncoder&) const final;
-    bool isValid(const WebCore::WebGPU::ComputePipeline&) const final;
-    bool isValid(const WebCore::WebGPU::Device&) const final;
-    bool isValid(const WebCore::WebGPU::ExternalTexture&) const final;
-    bool isValid(const WebCore::WebGPU::PipelineLayout&) const final;
-    bool isValid(const WebCore::WebGPU::PresentationContext&) const final;
-    bool isValid(const WebCore::WebGPU::QuerySet&) const final;
-    bool isValid(const WebCore::WebGPU::Queue&) const final;
-    bool isValid(const WebCore::WebGPU::RenderBundleEncoder&) const final;
-    bool isValid(const WebCore::WebGPU::RenderBundle&) const final;
-    bool isValid(const WebCore::WebGPU::RenderPassEncoder&) const final;
-    bool isValid(const WebCore::WebGPU::RenderPipeline&) const final;
-    bool isValid(const WebCore::WebGPU::Sampler&) const final;
-    bool isValid(const WebCore::WebGPU::ShaderModule&) const final;
-    bool isValid(const WebCore::WebGPU::Texture&) const final;
-    bool isValid(const WebCore::WebGPU::TextureView&) const final;
-    bool isValid(const WebCore::WebGPU::XRBinding&) const final;
-    bool isValid(const WebCore::WebGPU::XRSubImage&) const final;
-    bool isValid(const WebCore::WebGPU::XRProjectionLayer&) const final;
-    bool isValid(const WebCore::WebGPU::XRView&) const final;
+    RefPtr<WebCore::WebGPUCompositorIntegration> createCompositorIntegration() final;
+    bool isValid(const WebCore::WebGPUCompositorIntegration&) const final;
+    bool isValid(const ::WebGPU::Buffer&) const final;
+    bool isValid(const ::WebGPU::Adapter&) const final;
+    bool isValid(const ::WebGPU::BindGroup&) const final;
+    bool isValid(const ::WebGPU::BindGroupLayout&) const final;
+    bool isValid(const ::WebGPU::CommandBuffer&) const final;
+    bool isValid(const ::WebGPU::CommandEncoder&) const final;
+    bool isValid(const ::WebGPU::ComputePassEncoder&) const final;
+    bool isValid(const ::WebGPU::ComputePipeline&) const final;
+    bool isValid(const ::WebGPU::Device&) const final;
+    bool isValid(const ::WebGPU::ExternalTexture&) const final;
+    bool isValid(const ::WebGPU::PipelineLayout&) const final;
+    bool isValid(const ::WebGPU::PresentationContext&) const final;
+    bool isValid(const ::WebGPU::QuerySet&) const final;
+    bool isValid(const ::WebGPU::Queue&) const final;
+    bool isValid(const ::WebGPU::RenderBundleEncoder&) const final;
+    bool isValid(const ::WebGPU::RenderBundle&) const final;
+    bool isValid(const ::WebGPU::RenderPassEncoder&) const final;
+    bool isValid(const ::WebGPU::RenderPipeline&) const final;
+    bool isValid(const ::WebGPU::Sampler&) const final;
+    bool isValid(const ::WebGPU::ShaderModule&) const final;
+    bool isValid(const ::WebGPU::Texture&) const final;
+    bool isValid(const ::WebGPU::TextureView&) const final;
+    bool isValid(const ::WebGPU::XRBinding&) const final;
+    bool isValid(const ::WebGPU::XRSubImage&) const final;
+    bool isValid(const ::WebGPU::XRProjectionLayer&) const final;
+    bool isValid(const ::WebGPU::XRView&) const final;
 
     void abandonGPUProcess();
     void disconnectGpuProcessIfNeeded();
@@ -171,7 +177,7 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteGPUProxy)
-    static bool isType(const WebCore::WebGPU::GPU& gpu) { return gpu.isRemoteGPUProxy(); }
+    static bool isType(const WebCore::WebGPUIntegration& gpu) { return gpu.isRemoteGPUProxy(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

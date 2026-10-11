@@ -25,12 +25,12 @@
     WebKit::WebGPUIdentifier view
 
     float depthClearValue
-    std::optional<WebCore::WebGPU::LoadOp> depthLoadOp
-    std::optional<WebCore::WebGPU::StoreOp> depthStoreOp
+    std::optional<::WebGPU::LoadOp> depthLoadOp
+    std::optional<::WebGPU::StoreOp> depthStoreOp
     bool depthReadOnly
 
-    WebCore::WebGPU::StencilValue stencilClearValue
-    std::optional<WebCore::WebGPU::LoadOp> stencilLoadOp
-    std::optional<WebCore::WebGPU::StoreOp> stencilStoreOp
+    uint32_t stencilClearValue
+    std::optional<::WebGPU::LoadOp> stencilLoadOp
+    std::optional<::WebGPU::StoreOp> stencilStoreOp
     bool stencilReadOnly
 }

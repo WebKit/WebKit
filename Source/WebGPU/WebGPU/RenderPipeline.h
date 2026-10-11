@@ -69,7 +69,7 @@ public:
 
     ~RenderPipeline();
 
-    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
+    Ref<WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t groupIndex) final;
     void NODELETE setLabel(String&&) final;
 
     bool isValid() const final { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }

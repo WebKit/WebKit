@@ -21,12 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
-header: "WebGPUOrigin2D.h"
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::Origin2DDict {
-    WebCore::WebGPU::IntegerCoordinate x;
-    WebCore::WebGPU::IntegerCoordinate y;
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::Origin2D {
+    uint32_t x;
+    uint32_t y;
 };
 
-using WebKit::WebGPU::Origin2D = Variant<Vector<WebCore::WebGPU::IntegerCoordinate>, WebKit::WebGPU::Origin2DDict>;
-
+header: "WebGPUOrigin2D.h"
+using WebKit::WebGPU::Origin2D = ::WebGPU::Origin2D;
 #endif

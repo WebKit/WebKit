@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BlendComponent {
-    WebCore::WebGPU::BlendOperation operation
-    WebCore::WebGPU::BlendFactor srcFactor
-    WebCore::WebGPU::BlendFactor dstFactor
+    ::WebGPU::BlendOperation operation
+    ::WebGPU::BlendFactor srcFactor
+    ::WebGPU::BlendFactor dstFactor
 }

@@ -97,7 +97,6 @@ bool ImageBufferRemoteIOSurfaceBackend::canMapBackingStore() const
 GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
 {
     RELEASE_ASSERT_NOT_REACHED();
-    return *(GraphicsContext*)nullptr;
 }
 
 unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const

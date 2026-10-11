@@ -40,11 +40,12 @@ GPUDevice* GPUCommandBuffer::device() const
 
 String GPUCommandBuffer::label() const
 {
-    return m_overrideLabel ? *m_overrideLabel : m_backing->label();
+    return m_overrideLabel ? *m_overrideLabel : m_label;
 }
 
 void GPUCommandBuffer::setLabel(String&& label)
 {
+    m_label = label;
     protect(m_backing)->setLabel(WTF::move(label));
 }
 

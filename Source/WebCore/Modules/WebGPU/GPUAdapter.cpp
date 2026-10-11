@@ -30,6 +30,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapterInfo.h"
 #include "JSGPUDevice.h"
+#include <wtf/CheckedArithmetic.h>
 
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
@@ -39,14 +40,16 @@ namespace WebCore {
 
 String GPUAdapter::name() const
 {
-    return m_backing->name();
+    return m_adapterInfo.name;
 }
 
-GPUAdapter::GPUAdapter(Ref<WebGPU::Adapter>&& backing)
+GPUAdapter::GPUAdapter(Ref<WebGPU::Adapter>&& backing, Ref<WebGPUIntegration>&& gpu)
     : m_backing(WTF::move(backing))
-    , m_features(GPUSupportedFeatures::create(WebGPU::SupportedFeatures::clone(m_backing->features())))
-    , m_limits(GPUSupportedLimits::create(WebGPU::SupportedLimits::clone(m_backing->limits())))
-    , m_info(GPUAdapterInfo::create(name(), m_backing->subgroupMinSize(), m_backing->subgroupMaxSize()))
+    , m_gpu(WTF::move(gpu))
+    , m_adapterInfo(m_backing->info())
+    , m_features(GPUSupportedFeatures::create(m_backing->features()))
+    , m_limits(GPUSupportedLimits::create(WebGPUSupportedLimits::create(m_backing->limits())))
+    , m_info(GPUAdapterInfo::create(name(), m_adapterInfo.subgroupMinSize, m_adapterInfo.subgroupMaxSize))
 {
 }
 
@@ -62,10 +65,10 @@ Ref<GPUSupportedLimits> GPUAdapter::limits() const
 
 bool GPUAdapter::isFallbackAdapter() const
 {
-    return m_backing->isFallbackAdapter();
+    return m_adapterInfo.isFallbackAdapter;
 }
 
-static WebGPU::DeviceDescriptor convertToBacking(const std::optional<GPUDeviceDescriptor>& options)
+static WebGPUDeviceDescriptor convertToBacking(const std::optional<GPUDeviceDescriptor>& options)
 {
     if (!options)
         return { };
@@ -120,20 +123,173 @@ static bool isSubset(const Vector<GPUFeatureName>& expectedSubset, const Vector<
     return true;
 }
 
+static bool NODELETE setMaxIntegerValue(uint32_t& limitValue, uint64_t i)
+{
+    CheckedUint32 narrowed = i;
+    if (narrowed.hasOverflowed())
+        return false;
+
+    if (uint32_t narrowedValue = narrowed.value(); narrowedValue > limitValue)
+        limitValue = narrowedValue;
+
+    return true;
+}
+
+static bool NODELETE setMaxIntegerValue(uint64_t& limitValue, uint64_t i)
+{
+    if (i > limitValue)
+        limitValue = i;
+
+    return true;
+}
+
+static bool NODELETE setAlignmentIntegerValue(uint32_t& limitValue, uint64_t i, uint32_t supportedAlignment)
+{
+    CheckedUint32 narrowed = i;
+    if (narrowed.hasOverflowed())
+        return false;
+
+    uint32_t narrowedValue = narrowed.value();
+    if (narrowedValue < supportedAlignment || (narrowedValue % supportedAlignment))
+        return false;
+
+    if (narrowedValue < limitValue)
+        limitValue = narrowedValue;
+
+    return true;
+}
+
+// The limits of the device that the descriptor asks for: the default limits, raised to the ones it
+// names. std::nullopt when it names one that is unknown, or better than the adapter supports.
+static std::optional<::WebGPU::Limits> requiredLimits(const WebGPUDeviceDescriptor& descriptor, const ::WebGPU::Limits& supportedLimits)
+{
+    auto limits = ::WebGPU::defaultLimits();
+
+    for (const auto& pair : descriptor.requiredLimits) {
+#define SET_MAX_VALUE(LIMIT) \
+        else if (pair.key == #LIMIT ""_s) { \
+            if (pair.value > supportedLimits.LIMIT || !setMaxIntegerValue(limits.LIMIT, pair.value)) { \
+                return std::nullopt; \
+            } \
+        }
+
+#define SET_ALIGNMENT_VALUE(LIMIT) \
+        else if (pair.key == #LIMIT ""_s) { \
+            if (!setAlignmentIntegerValue(limits.LIMIT, pair.value, supportedLimits.LIMIT)) { \
+                return std::nullopt; \
+            } \
+        }
+
+        if (false) { }
+        SET_MAX_VALUE(maxTextureDimension1D)
+        SET_MAX_VALUE(maxTextureDimension2D)
+        SET_MAX_VALUE(maxTextureDimension3D)
+        SET_MAX_VALUE(maxTextureArrayLayers)
+        SET_MAX_VALUE(maxBindGroups)
+        SET_MAX_VALUE(maxBindGroupsPlusVertexBuffers)
+        SET_MAX_VALUE(maxBindingsPerBindGroup)
+        SET_MAX_VALUE(maxDynamicUniformBuffersPerPipelineLayout)
+        SET_MAX_VALUE(maxDynamicStorageBuffersPerPipelineLayout)
+        SET_MAX_VALUE(maxSampledTexturesPerShaderStage)
+        SET_MAX_VALUE(maxSamplersPerShaderStage)
+        SET_MAX_VALUE(maxStorageBuffersPerShaderStage)
+        SET_MAX_VALUE(maxStorageTexturesPerShaderStage)
+        SET_MAX_VALUE(maxUniformBuffersPerShaderStage)
+        SET_MAX_VALUE(maxUniformBufferBindingSize)
+        SET_MAX_VALUE(maxStorageBufferBindingSize)
+        SET_ALIGNMENT_VALUE(minUniformBufferOffsetAlignment)
+        SET_ALIGNMENT_VALUE(minStorageBufferOffsetAlignment)
+        SET_MAX_VALUE(maxVertexBuffers)
+        SET_MAX_VALUE(maxBufferSize)
+        SET_MAX_VALUE(maxVertexAttributes)
+        SET_MAX_VALUE(maxVertexBufferArrayStride)
+        SET_MAX_VALUE(maxInterStageShaderVariables)
+        SET_MAX_VALUE(maxColorAttachments)
+        SET_MAX_VALUE(maxColorAttachmentBytesPerSample)
+        SET_MAX_VALUE(maxComputeWorkgroupStorageSize)
+        SET_MAX_VALUE(maxComputeInvocationsPerWorkgroup)
+        SET_MAX_VALUE(maxComputeWorkgroupSizeX)
+        SET_MAX_VALUE(maxComputeWorkgroupSizeY)
+        SET_MAX_VALUE(maxComputeWorkgroupSizeZ)
+        SET_MAX_VALUE(maxComputeWorkgroupsPerDimension)
+        SET_MAX_VALUE(maxStorageBuffersInFragmentStage)
+        SET_MAX_VALUE(maxStorageTexturesInFragmentStage)
+        SET_MAX_VALUE(maxStorageBuffersInVertexStage)
+        SET_MAX_VALUE(maxStorageTexturesInVertexStage)
+        else
+            return std::nullopt;
+
+#undef SET_ALIGNMENT_VALUE
+#undef SET_MAX_VALUE
+    }
+
+    // https://gpuweb.github.io/gpuweb/#limits
+    // The combined maxStorage{Buffers,Textures}PerShaderStage limits and their per-stage counterparts
+    // auto-upgrade each other, so a page that only knows one spelling still gets the capacity it asked
+    // for: naming a per-stage limit raises the combined limit to match, and naming only the combined
+    // limit fills in the per-stage limits it implies.
+    const auto& wasRequested = [&](ASCIILiteral name) {
+        return descriptor.requiredLimits.containsIf([&](auto& pair) {
+            return pair.key == name;
+        });
+    };
+
+    if (wasRequested("maxStorageBuffersInVertexStage"_s) || wasRequested("maxStorageBuffersInFragmentStage"_s))
+        limits.maxStorageBuffersPerShaderStage = std::max({ limits.maxStorageBuffersPerShaderStage, limits.maxStorageBuffersInVertexStage, limits.maxStorageBuffersInFragmentStage });
+    else if (wasRequested("maxStorageBuffersPerShaderStage"_s)) {
+        limits.maxStorageBuffersInVertexStage = std::min(limits.maxStorageBuffersPerShaderStage, supportedLimits.maxStorageBuffersInVertexStage);
+        limits.maxStorageBuffersInFragmentStage = std::min(limits.maxStorageBuffersPerShaderStage, supportedLimits.maxStorageBuffersInFragmentStage);
+    }
+
+    if (wasRequested("maxStorageTexturesInVertexStage"_s) || wasRequested("maxStorageTexturesInFragmentStage"_s))
+        limits.maxStorageTexturesPerShaderStage = std::max({ limits.maxStorageTexturesPerShaderStage, limits.maxStorageTexturesInVertexStage, limits.maxStorageTexturesInFragmentStage });
+    else if (wasRequested("maxStorageTexturesPerShaderStage"_s)) {
+        limits.maxStorageTexturesInVertexStage = std::min(limits.maxStorageTexturesPerShaderStage, supportedLimits.maxStorageTexturesInVertexStage);
+        limits.maxStorageTexturesInFragmentStage = std::min(limits.maxStorageTexturesPerShaderStage, supportedLimits.maxStorageTexturesInFragmentStage);
+    }
+
+    return limits;
+}
+
+// The features that the descriptor asks for, with the ones that they imply.
+static Vector<WebGPU::FeatureName> requiredFeatures(const WebGPUDeviceDescriptor& descriptor)
+{
+    auto features = descriptor.requiredFeatures;
+
+    if (features.contains(WebGPU::FeatureName::TextureFormatsTier2) && !features.contains(WebGPU::FeatureName::TextureFormatsTier1))
+        features.append(WebGPU::FeatureName::TextureFormatsTier1);
+
+    if (features.contains(WebGPU::FeatureName::TextureFormatsTier1) && !features.contains(WebGPU::FeatureName::Rg11b10ufloatRenderable))
+        features.append(WebGPU::FeatureName::Rg11b10ufloatRenderable);
+
+    if (!features.contains(WebGPU::FeatureName::CoreFeaturesAndLimits))
+        features.append(WebGPU::FeatureName::CoreFeaturesAndLimits);
+
+    return features;
+}
+
 void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
 {
-    auto& existingFeatures = m_backing->features().features();
+    auto& existingFeatures = m_features->backing().features();
     if (deviceDescriptor && !isSubset(deviceDescriptor->requiredFeatures, existingFeatures)) {
         promise.reject(Exception(ExceptionCode::TypeError));
         return;
     }
 
-    m_backing->requestDevice(convertToBacking(deviceDescriptor), [protectedThis = protect(*this), deviceDescriptor, promise = WTF::move(promise), scriptExecutionContextRef = protect(scriptExecutionContext)](RefPtr<WebGPU::Device>&& device) mutable {
+    auto descriptor = convertToBacking(deviceDescriptor);
+    auto limits = requiredLimits(descriptor, m_backing->limits());
+    if (!limits) {
+        promise.reject(Exception(ExceptionCode::OperationError));
+        return;
+    }
+
+    auto features = requiredFeatures(descriptor);
+    m_backing->requestDevice({ .label = descriptor.label, .requiredFeatures = features.span(), .requiredLimits = *limits }, [protectedThis = protect(*this), label = descriptor.label, deviceDescriptor, promise = WTF::move(promise), scriptExecutionContextRef = protect(scriptExecutionContext)](RefPtr<WebGPU::Device>&& device) mutable {
         if (!device)
             promise.reject(Exception(ExceptionCode::OperationError));
         else {
             auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
             gpuDevice->suspendIfNeeded();
             promise.resolve(WTF::move(gpuDevice));
         }

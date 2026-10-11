@@ -36,7 +36,7 @@
 #include "WebGPUObjectHeap.h"
 #include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
-#include <WebCore/WebGPUAdapter.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -44,7 +44,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapter);
 
-RemoteAdapter::RemoteAdapter(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteAdapter::RemoteAdapter(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(adapter)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -67,16 +67,16 @@ void RemoteAdapter::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
+void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(Vector<::WebGPU::FeatureName>&&, WebGPU::SupportedLimits&&)>&& callback)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback({ { } }, { });
+        callback({ }, { });
         return;
     }
 
-    protect(m_backing)->requestDevice(*convertedDescriptor, [callback = WTF::move(callback), objectHeap = protect(m_objectHeap), streamConnection = protect(m_streamConnection), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(m_gpu)] (RefPtr<WebCore::WebGPU::Device>&& devicePtr) mutable {
+    protect(m_backing)->requestDevice(*convertedDescriptor, [callback = WTF::move(callback), objectHeap = protect(m_objectHeap), streamConnection = protect(m_streamConnection), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(m_gpu)](RefPtr<::WebGPU::Device>&& devicePtr) mutable {
         if (!devicePtr.get() || !gpuConnectionToWebProcess) {
             callback({ }, { });
             return;
@@ -86,45 +86,7 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         auto remoteDevice = RemoteDevice::create(*gpuConnectionToWebProcess, gpu, device, objectHeap, WTF::move(streamConnection), identifier, queueIdentifier);
         objectHeap->addObject(identifier, remoteDevice);
         objectHeap->addObject(queueIdentifier, remoteDevice->queue());
-        Ref features = device->features();
-        Ref limits = device->limits();
-        callback(WebGPU::SupportedFeatures { features->features() }, WebGPU::SupportedLimits {
-            limits->maxTextureDimension1D(),
-            limits->maxTextureDimension2D(),
-            limits->maxTextureDimension3D(),
-            limits->maxTextureArrayLayers(),
-            limits->maxBindGroups(),
-            limits->maxBindGroupsPlusVertexBuffers(),
-            limits->maxBindingsPerBindGroup(),
-            limits->maxDynamicUniformBuffersPerPipelineLayout(),
-            limits->maxDynamicStorageBuffersPerPipelineLayout(),
-            limits->maxSampledTexturesPerShaderStage(),
-            limits->maxSamplersPerShaderStage(),
-            limits->maxStorageBuffersPerShaderStage(),
-            limits->maxStorageTexturesPerShaderStage(),
-            limits->maxUniformBuffersPerShaderStage(),
-            limits->maxUniformBufferBindingSize(),
-            limits->maxStorageBufferBindingSize(),
-            limits->minUniformBufferOffsetAlignment(),
-            limits->minStorageBufferOffsetAlignment(),
-            limits->maxVertexBuffers(),
-            limits->maxBufferSize(),
-            limits->maxVertexAttributes(),
-            limits->maxVertexBufferArrayStride(),
-            limits->maxInterStageShaderVariables(),
-            limits->maxColorAttachments(),
-            limits->maxColorAttachmentBytesPerSample(),
-            limits->maxComputeWorkgroupStorageSize(),
-            limits->maxComputeInvocationsPerWorkgroup(),
-            limits->maxComputeWorkgroupSizeX(),
-            limits->maxComputeWorkgroupSizeY(),
-            limits->maxComputeWorkgroupSizeZ(),
-            limits->maxComputeWorkgroupsPerDimension(),
-            limits->maxStorageBuffersInFragmentStage(),
-            limits->maxStorageTexturesInFragmentStage(),
-            limits->maxStorageBuffersInVertexStage(),
-            limits->maxStorageTexturesInVertexStage(),
-        });
+        callback(device->features(), WebGPU::convertToBacking(device->limits()));
     });
 }
 

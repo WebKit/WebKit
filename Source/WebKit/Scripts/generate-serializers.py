@@ -746,7 +746,8 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
     all_namespaces = all_namespaces.union(set(template_types_by_namespace.keys()))
     for namespace in sorted(all_namespaces, key=lambda x: (x is None, x)):
         if namespace is not None:
-            result.append(f'namespace {namespace} {{')
+            # A type named from the global namespace, like ::WebGPU::TextureFormat, is forward declared in it.
+            result.append(f'namespace {namespace.removeprefix("::")} {{')
         for enum in serialized_enums_by_namespace.get(namespace, []):
             if enum.condition is not None:
                 result.append(f'#if {enum.condition}')
@@ -782,7 +783,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
                 if type.condition is not None:
                     result.append(f'#if {type.condition}')
                 if namespace is not None:
-                    result.append(f'namespace {namespace} {{')
+                    result.append(f'namespace {namespace.removeprefix("::")} {{')
 
                 if namespace is None or get_alias_namespace(type.alias) is None or get_alias_namespace(type.alias) == type.namespace:
                     result.append(f'template<{typenames(type.alias)}> {alias_struct_or_class(type.alias)} {remove_template_parameters(type.alias)};')

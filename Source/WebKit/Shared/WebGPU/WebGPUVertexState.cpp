@@ -34,9 +34,9 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<VertexState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::VertexState& vertexState)
+std::optional<VertexState> ConvertToBackingContext::convertToBacking(const ::WebGPU::VertexState& vertexState)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ProgrammableStage&>(vertexState));
+    auto base = convertToBacking(vertexState.stage);
     if (!base)
         return std::nullopt;
 
@@ -47,7 +47,7 @@ std::optional<VertexState> ConvertToBackingContext::convertToBacking(const WebCo
             auto convertedBuffer = convertToBacking(*buffer);
             if (!convertedBuffer)
                 return std::nullopt;
-            buffers.append(WTF::move(convertedBuffer));
+            buffers.append(WTF::move(*convertedBuffer));
         } else
             buffers.append(std::nullopt);
     }
@@ -55,25 +55,27 @@ std::optional<VertexState> ConvertToBackingContext::convertToBacking(const WebCo
     return { { WTF::move(*base), WTF::move(buffers) } };
 }
 
-std::optional<WebCore::WebGPU::VertexState> ConvertFromBackingContext::convertFromBacking(const VertexState& vertexState)
+std::optional<::WebGPU::VertexState> ConvertFromBackingContext::convertFromBacking(const VertexState& vertexState, RenderPipelineDescriptorStorage& storage)
 {
-    auto base = convertFromBacking(static_cast<const ProgrammableStage&>(vertexState));
-    if (!base)
+    auto stage = convertFromBacking(static_cast<const ProgrammableStage&>(vertexState), storage.vertexConstants);
+    if (!stage)
         return std::nullopt;
 
-    Vector<std::optional<WebCore::WebGPU::VertexBufferLayout>> buffers;
-    buffers.reserveInitialCapacity(vertexState.buffers.size());
-    for (const auto& backingBuffer : vertexState.buffers) {
+    // The attributes of each buffer are sized up front, so that the spans into them stay valid.
+    storage.vertexAttributes.resize(vertexState.buffers.size());
+    storage.vertexBuffers.reserveInitialCapacity(vertexState.buffers.size());
+    for (size_t i = 0; i < vertexState.buffers.size(); ++i) {
+        auto& backingBuffer = vertexState.buffers[i];
         if (backingBuffer) {
-            auto buffer = convertFromBacking(*backingBuffer);
+            auto buffer = convertFromBacking(*backingBuffer, storage.vertexAttributes[i]);
             if (!buffer)
                 return std::nullopt;
-            buffers.append(WTF::move(*buffer));
+            storage.vertexBuffers.append(WTF::move(*buffer));
         } else
-            buffers.append(std::nullopt);
+            storage.vertexBuffers.append(std::nullopt);
     }
 
-    return { { WTF::move(*base), WTF::move(buffers) } };
+    return { { WTF::move(*stage), storage.vertexBuffers.span() } };
 }
 
 } // namespace WebKit

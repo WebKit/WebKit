@@ -72,16 +72,23 @@ public:
 
     ~ComputePassEncoder();
 
-    void dispatch(uint32_t x, uint32_t y, uint32_t z);
+    void dispatch(uint32_t x, uint32_t y, uint32_t z) final;
     void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void endPass();
-    void insertDebugMarker(String&& markerLabel);
-    void popDebugGroup();
-    void pushDebugGroup(String&& groupLabel);
+    void insertDebugMarker(String&& markerLabel) final;
+    void popDebugGroup() final;
+    void pushDebugGroup(String&& groupLabel) final;
 
     // std::nullopt dynamic offsets are not validated against the bind group layout.
     void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets);
     void setPipeline(const ComputePipeline&);
+
+    // The WebGPU::ComputePassEncoder methods. Every object they take was created by this
+    // implementation, so they cast it to its WebGPU::Metal type.
+    void setPipeline(const WebGPU::ComputePipeline&) final;
+    void dispatchIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
+    void end() final { endPass(); }
+    void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
     void setLabel(String&&) final;
 
     Device& device() const { return m_device; }

@@ -40,7 +40,7 @@ public:
         return adoptRef(*new GPUInternalError(WTF::move(message)));
     }
 
-    static Ref<GPUInternalError> create(Ref<WebGPU::InternalError>&& backing)
+    static Ref<GPUInternalError> create(Ref<WebGPUInternalError>&& backing)
     {
         return adoptRef(*new GPUInternalError(WTF::move(backing)));
     }
@@ -48,8 +48,8 @@ public:
     Type type() const final { return Type::Internal; }
     const String& NODELETE message() const LIFETIME_BOUND final;
 
-    WebGPU::InternalError* backing() { return m_backing.get(); }
-    const WebGPU::InternalError* backing() const { return m_backing.get(); }
+    WebGPUInternalError* backing() { return m_backing.get(); }
+    const WebGPUInternalError* backing() const { return m_backing.get(); }
     String stack() const { return "_"_s; }
 
 private:
@@ -58,13 +58,13 @@ private:
     {
     }
 
-    GPUInternalError(Ref<WebGPU::InternalError>&& backing)
+    GPUInternalError(Ref<WebGPUInternalError>&& backing)
         : m_backing(WTF::move(backing))
     {
     }
 
     String m_message;
-    const RefPtr<WebGPU::InternalError> m_backing;
+    const RefPtr<WebGPUInternalError> m_backing;
 };
 
 }

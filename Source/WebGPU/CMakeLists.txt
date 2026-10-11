@@ -1,12 +1,14 @@
-add_subdirectory(WGSL)
+if (ENABLE_WEBGPU)
+    add_subdirectory(WGSL)
+endif ()
 
-# The C++ API header. WebCore and WebKit include it as <WebGPU/WebGPUCpp.h> on every
-# port that enables WebGPU, even where no WebGPU implementation is linked.
+# The C++ API header. WebCore and WebKit include it as <WebGPU/WebGPUCpp.h> on every port, because
+# WebCore compiles its WebGPU bindings even where WebGPU is disabled and no implementation is linked.
 set(WebGPU_CPP_API_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/WebGPUCpp.h
 )
 
-if (APPLE)
+if (APPLE AND ENABLE_WEBGPU)
     # Installed as a private header of WebGPU.framework.
     add_subdirectory(WebGPU)
 else ()

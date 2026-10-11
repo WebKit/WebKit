@@ -30,14 +30,11 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class TextureView;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -52,7 +49,7 @@ class ObjectHeap;
 class RemoteTextureView final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureView);
 public:
-    static Ref<RemoteTextureView> create(WebCore::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureView> create(::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteTextureView(textureView, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -66,21 +63,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteTextureView(WebCore::WebGPU::TextureView&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteTextureView(::WebGPU::TextureView&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteTextureView(const RemoteTextureView&) = delete;
     RemoteTextureView(RemoteTextureView&&) = delete;
     RemoteTextureView& operator=(const RemoteTextureView&) = delete;
     RemoteTextureView& operator=(RemoteTextureView&&) = delete;
 
-    WebCore::WebGPU::TextureView& backing() { return m_backing; }
+    ::WebGPU::TextureView& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::TextureView> m_backing;
+    const Ref<::WebGPU::TextureView> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;

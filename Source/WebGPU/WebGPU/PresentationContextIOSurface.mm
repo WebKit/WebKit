@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextIOSurface);
 
 Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor, const Instance& instance)
 {
-    auto presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(surfaceDescriptor, instance));
+    Ref presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(instance));
 
     const auto* descriptor = findChainedStruct<WGPUSurfaceDescriptorCocoaCustomSurface>(surfaceDescriptor.nextInChain);
     if (!descriptor)
@@ -56,7 +56,27 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
     return presentationContextIOSurface;
 }
 
-PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance& instance)
+Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WebGPU::PresentationContextDescriptor& descriptor, const Instance& instance)
+{
+    Ref presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(instance));
+    if (!descriptor.registerCompositorIntegration)
+        return presentationContextIOSurface;
+
+    descriptor.registerCompositorIntegration([presentationContext = presentationContextIOSurface.copyRef()](std::span<const IOSurfaceRef> ioSurfaces) {
+        RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:ioSurfaces.size()]);
+        for (auto& ioSurface : ioSurfaces)
+            [array addObject:(__bridge IOSurface *)ioSurface];
+        presentationContext->renderBuffersWereRecreated(array.get());
+    }, [presentationContext = presentationContextIOSurface.copyRef()](CompletionHandler<void()>&& completionHandler) {
+        presentationContext->onSubmittedWorkScheduled([completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler();
+        });
+    });
+
+    return presentationContextIOSurface;
+}
+
+PresentationContextIOSurface::PresentationContextIOSurface(const Instance& instance)
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     : m_webProcessID(instance.webProcessID())
 #endif
@@ -493,7 +513,7 @@ void PresentationContextIOSurface::present(uint32_t currentIndex)
     RELEASE_ASSERT(m_inFlightFrames.size() <= m_maximumInFlightFrames);
 }
 
-Texture* PresentationContextIOSurface::getCurrentTexture(uint32_t currentIndex)
+Texture* PresentationContextIOSurface::currentTexture(uint32_t currentIndex)
 {
     if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= currentIndex) {
         if (RefPtr device = m_device)

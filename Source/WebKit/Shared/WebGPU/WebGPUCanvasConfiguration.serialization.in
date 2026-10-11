@@ -23,11 +23,13 @@
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::CanvasConfiguration {
     WebKit::WebGPUIdentifier device
-    WebCore::WebGPU::TextureFormat format
-    WebCore::WebGPU::TextureUsageFlags usage
-    Vector<WebCore::WebGPU::TextureFormat> viewFormats
-    WebCore::WebGPU::PredefinedColorSpace colorSpace
-    WebCore::WebGPU::CanvasToneMappingMode toneMappingMode
-    WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode
+    ::WebGPU::TextureFormat format
+    OptionSet<::WebGPU::TextureUsage> usage
+    Vector<::WebGPU::TextureFormat> viewFormats
+    WebCore::PredefinedColorSpace colorSpace
+    ::WebGPU::CanvasToneMappingMode toneMappingMode
+    ::WebGPU::CanvasAlphaMode compositingAlphaMode
     bool reportValidationErrors
+    uint32_t width
+    uint32_t height
 }

@@ -34,7 +34,7 @@
 namespace WebKit::WebGPU {
 
 struct ImageCopyTextureTagged : public ImageCopyTexture {
-    WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
+    WebCore::PredefinedColorSpace colorSpace { WebCore::PredefinedColorSpace::SRGB };
     bool premultipliedAlpha { false };
 };
 

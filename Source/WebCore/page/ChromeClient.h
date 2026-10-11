@@ -145,6 +145,7 @@ class SecurityOrigin;
 class SecurityOriginData;
 class TextIndicator;
 class ViewportConstraints;
+class WebGPUIntegration;
 class Widget;
 class WorkerClient;
 
@@ -228,12 +229,6 @@ using TextSuggestionID = WTF::UUID;
 using SessionID = WTF::UUID;
 enum class TextSuggestionState : uint8_t;
 }
-
-#if HAVE(WEBGPU_IMPLEMENTATION)
-namespace WebGPU {
-class GPU;
-}
-#endif
 
 class ChromeClient {
 public:
@@ -503,7 +498,7 @@ public:
     WEBCORE_EXPORT virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const;
 #endif
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    virtual RefPtr<WebGPU::GPU> createGPUForWebGPU() const { return nullptr; }
+    virtual RefPtr<WebGPUIntegration> createGPUForWebGPU() const { return nullptr; }
 #endif
     virtual RefPtr<ShapeDetection::BarcodeDetector> createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const;
     virtual void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&&) const;

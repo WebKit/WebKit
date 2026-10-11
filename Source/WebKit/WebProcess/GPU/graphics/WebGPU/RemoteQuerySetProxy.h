@@ -29,14 +29,14 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUQuerySet.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteQuerySetProxy final : public WebCore::WebGPU::QuerySet {
+class RemoteQuerySetProxy final : public ::WebGPU::QuerySet {
     WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySetProxy);
 public:
     static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -49,6 +49,11 @@ public:
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    void destroy() final;
+
+    void setLabel(String&&) final;
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -59,8 +64,6 @@ private:
     RemoteQuerySetProxy& operator=(const RemoteQuerySetProxy&) = delete;
     RemoteQuerySetProxy& operator=(RemoteQuerySetProxy&&) = delete;
 
-    bool isRemoteQuerySetProxy() const final { return true; }
-
     WebGPUIdentifier backing() const { return m_backing; }
     
     template<typename T>
@@ -68,10 +71,6 @@ private:
     {
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
-
-    void destroy() final;
-
-    void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
@@ -81,7 +80,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteQuerySetProxy)
-    static bool isType(const WebCore::WebGPU::QuerySet& set) { return set.isRemoteQuerySetProxy(); }
+    // In the Web Process, every WebGPU::QuerySet is a RemoteQuerySetProxy.
+    static bool isType(const ::WebGPU::QuerySet&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

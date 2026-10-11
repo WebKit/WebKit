@@ -1781,6 +1781,37 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
     [m_renderCommandEncoder pushDebugGroup:groupLabel.createNSString().get()];
 }
 
+void RenderPassEncoder::setPipeline(const WebGPU::RenderPipeline& pipeline)
+{
+    setPipeline(downcast<RenderPipeline>(pipeline));
+}
+
+// The WebGPU::Metal commands take a mutable buffer, as they track its use.
+void RenderPassEncoder::setIndexBuffer(const WebGPU::Buffer& buffer, WebGPU::IndexFormat format, uint64_t offset, std::optional<uint64_t> size)
+{
+    setIndexBuffer(const_cast<Buffer&>(downcast<Buffer>(buffer)), format, offset, size);
+}
+
+void RenderPassEncoder::setVertexBuffer(uint32_t slot, const WebGPU::Buffer* buffer, uint64_t offset, std::optional<uint64_t> size)
+{
+    setVertexBuffer(slot, downcast<Buffer>(buffer), offset, size);
+}
+
+void RenderPassEncoder::drawIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset)
+{
+    drawIndirect(const_cast<Buffer&>(downcast<Buffer>(indirectBuffer)), indirectOffset);
+}
+
+void RenderPassEncoder::drawIndexedIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset)
+{
+    drawIndexedIndirect(const_cast<Buffer&>(downcast<Buffer>(indirectBuffer)), indirectOffset);
+}
+
+void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup* group, std::optional<std::span<const uint32_t>> dynamicOffsets)
+{
+    setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
+}
+
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)
 {
     RETURN_IF_FINISHED();

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUTextureAspect.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -36,15 +36,15 @@ enum class GPUTextureAspect : uint8_t {
     DepthOnly,
 };
 
-inline WebGPU::TextureAspect convertToBacking(GPUTextureAspect textureAspect)
+inline ::WebGPU::TextureAspect convertToBacking(GPUTextureAspect textureAspect)
 {
     switch (textureAspect) {
     case GPUTextureAspect::All:
-        return WebGPU::TextureAspect::All;
+        return ::WebGPU::TextureAspect::All;
     case GPUTextureAspect::StencilOnly:
-        return WebGPU::TextureAspect::StencilOnly;
+        return ::WebGPU::TextureAspect::StencilOnly;
     case GPUTextureAspect::DepthOnly:
-        return WebGPU::TextureAspect::DepthOnly;
+        return ::WebGPU::TextureAspect::DepthOnly;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

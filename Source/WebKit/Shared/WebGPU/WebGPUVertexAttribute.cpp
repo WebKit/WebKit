@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUVertexAttribute.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<VertexAttribute> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::VertexAttribute& vertexAttribute)
+std::optional<VertexAttribute> ConvertToBackingContext::convertToBacking(const ::WebGPU::VertexAttribute& vertexAttribute)
 {
     return { { vertexAttribute.format, vertexAttribute.offset, vertexAttribute.shaderLocation } };
 }
 
-std::optional<WebCore::WebGPU::VertexAttribute> ConvertFromBackingContext::convertFromBacking(const VertexAttribute& vertexAttribute)
+std::optional<::WebGPU::VertexAttribute> ConvertFromBackingContext::convertFromBacking(const VertexAttribute& vertexAttribute)
 {
     return { { vertexAttribute.format, vertexAttribute.offset, vertexAttribute.shaderLocation } };
 }

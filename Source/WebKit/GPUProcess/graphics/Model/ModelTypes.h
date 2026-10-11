@@ -30,11 +30,7 @@
 
 #ifdef __cplusplus
 #include <WebCore/SharedMemory.h>
-#include <WebCore/WebGPUPrimitiveTopology.h>
-#include <WebCore/WebGPUTextureFormat.h>
-#include <WebCore/WebGPUTextureUsage.h>
-#include <WebCore/WebGPUTextureViewDimension.h>
-#include <WebCore/WebGPUVertexFormat.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <WebKit/Float3.h>
 #include <WebKit/Float4x4.h>
 #include <wtf/ExportMacros.h>
@@ -561,11 +557,11 @@ struct ImageAsset {
     long width { 0 };
     long height { 0 };
     long depth { 0 };
-    WebCore::WebGPU::TextureViewDimension textureType { WebCore::WebGPU::TextureViewDimension::_2d };
-    WebCore::WebGPU::TextureFormat pixelFormat { WebCore::WebGPU::TextureFormat::R8unorm };
+    ::WebGPU::TextureViewDimension textureType { ::WebGPU::TextureViewDimension::_2d };
+    ::WebGPU::TextureFormat pixelFormat { ::WebGPU::TextureFormat::R8unorm };
     long mipmapLevelCount { 0 };
     long arrayLength { 0 };
-    WebCore::WebGPU::TextureUsageFlags textureUsage { };
+    OptionSet<::WebGPU::TextureUsage> textureUsage { };
     ImageAssetSwizzle swizzle { };
 };
 
@@ -588,7 +584,7 @@ struct VertexLayout {
 struct MeshPart {
     uint32_t indexOffset;
     uint32_t indexCount;
-    WebCore::WebGPU::PrimitiveTopology topology;
+    ::WebGPU::PrimitiveTopology topology;
     uint32_t materialIndex;
     Float3 boundsMin;
     Float3 boundsMax;
@@ -613,7 +609,7 @@ enum class VertexSemantic : uint8_t {
 
 struct VertexAttributeFormat {
     VertexSemantic semantic;
-    WebCore::WebGPU::VertexFormat format;
+    ::WebGPU::VertexFormat format;
     long layoutIndex;
     long offset;
 };

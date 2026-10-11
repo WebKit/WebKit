@@ -474,6 +474,21 @@ static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource,
     });
 }
 
+void ComputePassEncoder::setPipeline(const WebGPU::ComputePipeline& pipeline)
+{
+    setPipeline(downcast<ComputePipeline>(pipeline));
+}
+
+void ComputePassEncoder::dispatchIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset)
+{
+    dispatchIndirect(downcast<Buffer>(indirectBuffer), indirectOffset);
+}
+
+void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup* group, std::optional<std::span<const uint32_t>> dynamicOffsets)
+{
+    setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
+}
+
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)
 {
     // The encoder keeps the dynamic offsets.

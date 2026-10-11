@@ -26,7 +26,7 @@
 #pragma once
 
 #include "EventTarget.h"
-#include "WebGPUSampler.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -38,25 +38,26 @@ class GPUDevice;
 
 class GPUSampler : public RefCountedAndCanMakeWeakPtr<GPUSampler> {
 public:
-    static Ref<GPUSampler> create(Ref<WebGPU::Sampler>&& backing, GPUDevice& device)
+    static Ref<GPUSampler> create(Ref<::WebGPU::Sampler>&& backing, String&& label, GPUDevice& device)
     {
-        return adoptRef(*new GPUSampler(WTF::move(backing), device));
+        return adoptRef(*new GPUSampler(WTF::move(backing), WTF::move(label), device));
     }
 
     String NODELETE label() const;
     void setLabel(String&&);
 
-    WebGPU::Sampler& backing() { return m_backing; }
-    const WebGPU::Sampler& backing() const { return m_backing; }
+    ::WebGPU::Sampler& backing() { return m_backing; }
+    const ::WebGPU::Sampler& backing() const { return m_backing; }
 
     GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUSampler(Ref<WebGPU::Sampler>&&, GPUDevice&);
+    GPUSampler(Ref<::WebGPU::Sampler>&&, String&& label, GPUDevice&);
 
-    const Ref<WebGPU::Sampler> m_backing;
+    const Ref<::WebGPU::Sampler> m_backing;
+    String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

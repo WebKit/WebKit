@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCullMode.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -36,15 +36,15 @@ enum class GPUCullMode : uint8_t {
     Back,
 };
 
-inline WebGPU::CullMode convertToBacking(GPUCullMode cullMode)
+inline ::WebGPU::CullMode convertToBacking(GPUCullMode cullMode)
 {
     switch (cullMode) {
     case GPUCullMode::None:
-        return WebGPU::CullMode::None;
+        return ::WebGPU::CullMode::None;
     case GPUCullMode::Front:
-        return WebGPU::CullMode::Front;
+        return ::WebGPU::CullMode::Front;
     case GPUCullMode::Back:
-        return WebGPU::CullMode::Back;
+        return ::WebGPU::CullMode::Back;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

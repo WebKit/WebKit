@@ -31,17 +31,14 @@
 #include "RemoteComputePassEncoderMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/WebGPUBindGroup.h>
-#include <WebCore/WebGPUBuffer.h>
-#include <WebCore/WebGPUComputePassEncoder.h>
-#include <WebCore/WebGPUComputePipeline.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePassEncoder);
 
-RemoteComputePassEncoder::RemoteComputePassEncoder(WebCore::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteComputePassEncoder::RemoteComputePassEncoder(::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(computePassEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -73,12 +70,12 @@ void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
     protect(m_backing)->setPipeline(protect(*convertedComputePipeline));
 }
 
-void RemoteComputePassEncoder::dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
+void RemoteComputePassEncoder::dispatch(uint32_t workgroupCountX, uint32_t workgroupCountY, uint32_t workgroupCountZ)
 {
     protect(m_backing)->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
-void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
+void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, uint64_t indirectOffset)
 {
     auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
@@ -93,20 +90,20 @@ void RemoteComputePassEncoder::end()
     protect(m_backing)->end();
 }
 
-void RemoteComputePassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, std::optional<WebGPUIdentifier> bindGroup,
-    std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& offsets)
+void RemoteComputePassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUIdentifier> bindGroup,
+    std::optional<Vector<uint32_t>>&& offsets)
 {
     if (!bindGroup) {
-        protect(m_backing)->setBindGroup(index, nullptr, WTF::move(offsets));
+        protect(m_backing)->setBindGroup(index, nullptr, offsets ? std::optional { offsets->span() } : std::nullopt);
         return;
     }
 
-    RefPtr convertedBindGroup = protect(m_objectHeap)->convertBindGroupFromBacking(*bindGroup).get();
+    RefPtr convertedBindGroup = protect(m_objectHeap)->convertBindGroupFromBacking(*bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;
 
-    protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), WTF::move(offsets));
+    protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), offsets ? std::optional { offsets->span() } : std::nullopt);
 }
 
 void RemoteComputePassEncoder::pushDebugGroup(String&& groupLabel)

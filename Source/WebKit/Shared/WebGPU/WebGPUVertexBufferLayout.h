@@ -28,16 +28,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUVertexAttribute.h"
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPUVertexStepMode.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
 
 struct VertexBufferLayout {
-    WebCore::WebGPU::Size64 arrayStride { 0 };
-    WebCore::WebGPU::VertexStepMode stepMode { WebCore::WebGPU::VertexStepMode::Vertex };
+    uint64_t arrayStride { 0 };
+    ::WebGPU::VertexStepMode stepMode { ::WebGPU::VertexStepMode::Vertex };
     Vector<VertexAttribute> attributes;
 };
 

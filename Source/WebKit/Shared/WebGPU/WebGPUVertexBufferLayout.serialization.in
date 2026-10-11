@@ -22,8 +22,8 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::VertexBufferLayout {
-    WebCore::WebGPU::Size64 arrayStride
-    WebCore::WebGPU::VertexStepMode stepMode
+    uint64_t arrayStride
+    ::WebGPU::VertexStepMode stepMode
     Vector<WebKit::WebGPU::VertexAttribute> attributes
 }
 #endif

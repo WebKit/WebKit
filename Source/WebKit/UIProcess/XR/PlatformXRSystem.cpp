@@ -211,7 +211,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& conne
     });
 }
 
-void PlatformXRSystem::initializeTrackingAndRendering(IPC::Connection& connection, std::optional<WebCore::WebGPU::TextureFormat> colorFormat, std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat)
+void PlatformXRSystem::initializeTrackingAndRendering(IPC::Connection& connection, std::optional<::WebGPU::TextureFormat> colorFormat, std::optional<::WebGPU::TextureFormat> depthStencilFormat)
 {
     ASSERT(RunLoop::isMain());
     MESSAGE_CHECK(m_immersiveSessionMode, connection);

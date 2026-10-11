@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct GPUVertexBufferLayout {
-    WebGPU::VertexBufferLayout convertToBacking() const
+    WebGPUVertexBufferLayout convertToBacking() const
     {
         return {
             arrayStride,

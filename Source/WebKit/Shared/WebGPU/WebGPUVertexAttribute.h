@@ -27,17 +27,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPUVertexFormat.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
 
 struct VertexAttribute {
-    WebCore::WebGPU::VertexFormat format { WebCore::WebGPU::VertexFormat::Uint8x2 };
-    WebCore::WebGPU::Size64 offset { 0 };
+    ::WebGPU::VertexFormat format { ::WebGPU::VertexFormat::Uint8x2 };
+    uint64_t offset { 0 };
 
-    WebCore::WebGPU::Index32 shaderLocation { 0 };
+    uint32_t shaderLocation { 0 };
 };
 
 } // namespace WebKit::WebGPU

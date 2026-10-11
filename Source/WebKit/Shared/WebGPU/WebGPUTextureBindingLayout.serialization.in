@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::TextureBindingLayout {
-    WebCore::WebGPU::TextureSampleType sampleType
-    WebCore::WebGPU::TextureViewDimension viewDimension
+    ::WebGPU::TextureSampleType sampleType
+    ::WebGPU::TextureViewDimension viewDimension
     bool multisampled
 }

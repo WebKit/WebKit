@@ -29,14 +29,14 @@
 
 #include "RemoteTextureProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUTextureView.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteTextureViewProxy final : public WebCore::WebGPU::TextureView {
+class RemoteTextureViewProxy final : public ::WebGPU::TextureView {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureViewProxy);
 public:
     static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -48,6 +48,9 @@ public:
 
     RemoteGPUProxy& root() const { return m_root; }
 
+    void setLabel(String&&) final;
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -58,8 +61,6 @@ private:
     RemoteTextureViewProxy& operator=(const RemoteTextureViewProxy&) = delete;
     RemoteTextureViewProxy& operator=(RemoteTextureViewProxy&&) = delete;
 
-    bool isRemoteTextureViewProxy() const final { return true; }
-
     WebGPUIdentifier backing() const { return m_backing; }
     
     template<typename T>
@@ -67,8 +68,6 @@ private:
     {
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
-
-    void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
@@ -78,7 +77,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteTextureViewProxy)
-    static bool isType(const WebCore::WebGPU::TextureView& view) { return view.isRemoteTextureViewProxy(); }
+    // In the Web Process, every WebGPU::TextureView is a RemoteTextureViewProxy.
+    static bool isType(const ::WebGPU::TextureView&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

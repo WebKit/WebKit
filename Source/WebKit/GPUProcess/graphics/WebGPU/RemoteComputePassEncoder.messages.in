@@ -31,10 +31,10 @@
 messages -> RemoteComputePassEncoder Stream {
     void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
-    void Dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
-    void DispatchIndirect(WebKit::WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
+    void Dispatch(uint32_t workgroupCountX, uint32_t workgroupCountY, uint32_t workgroupCountZ)
+    void DispatchIndirect(WebKit::WebGPUIdentifier indirectBuffer, uint64_t indirectOffset)
     void End()
-    void SetBindGroup(WebCore::WebGPU::Index32 index, std::optional<WebKit::WebGPUIdentifier> identifier, std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>> dynamicOffsets)
+    void SetBindGroup(uint32_t index, std::optional<WebKit::WebGPUIdentifier> identifier, std::optional<Vector<uint32_t>> dynamicOffsets)
     void PushDebugGroup(String groupLabel)
     void PopDebugGroup()
     void InsertDebugMarker(String markerLabel)

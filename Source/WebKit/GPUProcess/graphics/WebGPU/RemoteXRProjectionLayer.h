@@ -33,7 +33,7 @@
 #include <WebCore/AlphaPremultiplication.h>
 #include <WebCore/PlatformXR.h>
 #include <WebCore/RenderingResourceIdentifier.h>
-#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -53,10 +53,6 @@ class ColorSpace;
 class ImageBuffer;
 }
 
-namespace WebCore::WebGPU {
-class XRProjectionLayer;
-}
-
 namespace IPC {
 class Connection;
 class StreamServerConnection;
@@ -73,7 +69,7 @@ class ObjectHeap;
 class RemoteXRProjectionLayer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRProjectionLayer);
 public:
-    static Ref<RemoteXRProjectionLayer> create(WebCore::WebGPU::XRProjectionLayer& xrProjectionLayer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteXRProjectionLayer> create(::WebGPU::XRProjectionLayer& xrProjectionLayer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteXRProjectionLayer(xrProjectionLayer, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -83,12 +79,12 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
     void stopListeningForIPC();
 
-    WebCore::WebGPU::XRProjectionLayer& backing() { return m_backing; }
+    ::WebGPU::XRProjectionLayer& backing() { return m_backing; }
 
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteXRProjectionLayer(WebCore::WebGPU::XRProjectionLayer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteXRProjectionLayer(::WebGPU::XRProjectionLayer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteXRProjectionLayer(const RemoteXRProjectionLayer&) = delete;
     RemoteXRProjectionLayer(RemoteXRProjectionLayer&&) = delete;
@@ -102,7 +98,7 @@ private:
 #endif
     void NODELETE endFrame();
 
-    const Ref<WebCore::WebGPU::XRProjectionLayer> m_backing;
+    const Ref<::WebGPU::XRProjectionLayer> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

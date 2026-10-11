@@ -35,15 +35,14 @@
 #include "RemoteXRSubImage.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/WebGPUXRBinding.h>
-#include <WebCore/WebGPUXRProjectionLayer.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBinding);
 
-RemoteXRBinding::RemoteXRBinding(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteXRBinding::RemoteXRBinding(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(xrBinding)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -61,9 +60,9 @@ void RemoteXRBinding::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat colorFormat, std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat, WebCore::WebGPU::TextureUsageFlags textureUsage, double scaleFactor, WebGPUIdentifier identifier)
+void RemoteXRBinding::createProjectionLayer(::WebGPU::TextureFormat colorFormat, std::optional<::WebGPU::TextureFormat> depthStencilFormat, OptionSet<::WebGPU::TextureUsage> textureUsage, double scaleFactor, WebGPUIdentifier identifier)
 {
-    WebCore::WebGPU::XRProjectionLayerInit init {
+    ::WebGPU::XRProjectionLayerDescriptor init {
         .colorFormat = colorFormat,
         .depthStencilFormat = WTF::move(depthStencilFormat),
         .textureUsage = textureUsage,

@@ -80,27 +80,37 @@ public:
 
     ~RenderPassEncoder();
 
-    void beginOcclusionQuery(uint32_t queryIndex);
-    void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
-    void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
+    void beginOcclusionQuery(uint32_t queryIndex) final;
+    void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) final;
+    void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance) final;
     void drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     void drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
-    void endOcclusionQuery();
+    void endOcclusionQuery() final;
     void endPass();
-    void executeBundles(std::span<const Ref<WebGPU::RenderBundle>>);
-    void insertDebugMarker(String&& markerLabel);
-    void popDebugGroup();
-    void pushDebugGroup(String&& groupLabel);
+    void executeBundles(std::span<const Ref<WebGPU::RenderBundle>>) final;
+    void insertDebugMarker(String&& markerLabel) final;
+    void popDebugGroup() final;
+    void pushDebugGroup(String&& groupLabel) final;
     // std::nullopt dynamic offsets are not validated against the bind group layout.
     void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets);
-    void setBlendConstant(const WebGPU::Color&);
+    void setBlendConstant(const WebGPU::Color&) final;
     // A std::nullopt size is the rest of the buffer after the offset.
     void setIndexBuffer(Buffer&, WebGPU::IndexFormat, uint64_t offset, std::optional<uint64_t> size);
     void setPipeline(const RenderPipeline&);
-    void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
-    void setStencilReference(uint32_t);
+    void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) final;
+    void setStencilReference(uint32_t) final;
     void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, std::optional<uint64_t> size);
-    void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
+    void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth) final;
+
+    // The WebGPU::RenderPassEncoder methods that take objects. Every object they take was
+    // created by this implementation, so they cast it to its WebGPU::Metal type.
+    void setPipeline(const WebGPU::RenderPipeline&) final;
+    void setIndexBuffer(const WebGPU::Buffer&, WebGPU::IndexFormat, uint64_t offset, std::optional<uint64_t> size) final;
+    void setVertexBuffer(uint32_t slot, const WebGPU::Buffer*, uint64_t offset, std::optional<uint64_t> size) final;
+    void drawIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
+    void drawIndexedIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
+    void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
+    void end() final { endPass(); }
     void setLabel(String&&) final;
 
     Device& device() const { return m_device; }

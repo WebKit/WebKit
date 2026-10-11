@@ -26,7 +26,7 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
-#include "WebGPUShaderStage.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
@@ -40,15 +40,15 @@ public:
     static constexpr GPUFlagsConstant COMPUTE  = 0x4;
 };
 
-inline WebGPU::ShaderStageFlags convertShaderStageFlagsToBacking(GPUShaderStageFlags shaderStageFlags)
+inline OptionSet<::WebGPU::ShaderStage> convertShaderStageFlagsToBacking(GPUShaderStageFlags shaderStageFlags)
 {
-    WebGPU::ShaderStageFlags result;
+    OptionSet<::WebGPU::ShaderStage> result;
     if (shaderStageFlags & GPUShaderStage::VERTEX)
-        result.add(WebGPU::ShaderStage::Vertex);
+        result.add(::WebGPU::ShaderStage::Vertex);
     if (shaderStageFlags & GPUShaderStage::FRAGMENT)
-        result.add(WebGPU::ShaderStage::Fragment);
+        result.add(::WebGPU::ShaderStage::Fragment);
     if (shaderStageFlags & GPUShaderStage::COMPUTE)
-        result.add(WebGPU::ShaderStage::Compute);
+        result.add(::WebGPU::ShaderStage::Compute);
     return result;
 }
 

@@ -34,22 +34,19 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPipelineDescriptor& renderPipelineDescriptor)
+std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPipelineDescriptor& renderPipelineDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::PipelineDescriptorBase&>(renderPipelineDescriptor));
-    if (!base)
-        return std::nullopt;
+    std::optional<WebGPUIdentifier> layout;
+    if (renderPipelineDescriptor.layout)
+        layout = convertToBacking(*protect(renderPipelineDescriptor.layout));
 
     auto vertex = convertToBacking(renderPipelineDescriptor.vertex);
     if (!vertex)
         return std::nullopt;
 
-    std::optional<PrimitiveState> primitive;
-    if (renderPipelineDescriptor.primitive) {
-        primitive = convertToBacking(*renderPipelineDescriptor.primitive);
-        if (!primitive)
-            return std::nullopt;
-    }
+    auto primitive = convertToBacking(renderPipelineDescriptor.primitive);
+    if (!primitive)
+        return std::nullopt;
 
     std::optional<DepthStencilState> depthStencil;
     if (renderPipelineDescriptor.depthStencil) {
@@ -58,12 +55,9 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
             return std::nullopt;
     }
 
-    std::optional<MultisampleState> multisample;
-    if (renderPipelineDescriptor.multisample) {
-        multisample = convertToBacking(*renderPipelineDescriptor.multisample);
-        if (!multisample)
-            return std::nullopt;
-    }
+    auto multisample = convertToBacking(renderPipelineDescriptor.multisample);
+    if (!multisample)
+        return std::nullopt;
 
     std::optional<FragmentState> fragment;
     if (renderPipelineDescriptor.fragment) {
@@ -71,52 +65,65 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
         if (!fragment)
             return std::nullopt;
     }
-    if (renderPipelineDescriptor.fragment && !fragment)
-        return std::nullopt;
 
-    return { { WTF::move(*base), WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
+    return { { { { renderPipelineDescriptor.label }, layout }, WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
 }
 
-std::optional<WebCore::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor, bool allowMissingPipelineLayout)
+std::optional<::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor, RenderPipelineDescriptorStorage& storage, bool allowMissingPipelineLayout)
 {
-    auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(renderPipelineDescriptor), allowMissingPipelineLayout);
-    if (!base)
+    auto layout = convertLayoutFromBacking(renderPipelineDescriptor, allowMissingPipelineLayout);
+    if (!layout)
         return std::nullopt;
 
-    auto vertex = convertFromBacking(renderPipelineDescriptor.vertex);
+    auto vertex = convertFromBacking(renderPipelineDescriptor.vertex, storage);
     if (!vertex)
         return std::nullopt;
 
-    std::optional<WebCore::WebGPU::PrimitiveState> primitive;
+    ::WebGPU::PrimitiveState primitive;
     if (renderPipelineDescriptor.primitive) {
-        primitive = convertFromBacking(*renderPipelineDescriptor.primitive);
-        if (!primitive)
+        auto convertedPrimitive = convertFromBacking(*renderPipelineDescriptor.primitive);
+        if (!convertedPrimitive)
             return std::nullopt;
+        primitive = *convertedPrimitive;
     }
 
-    std::optional<WebCore::WebGPU::DepthStencilState> depthStencil;
+    std::optional<::WebGPU::DepthStencilState> depthStencil;
     if (renderPipelineDescriptor.depthStencil) {
         depthStencil = convertFromBacking(*renderPipelineDescriptor.depthStencil);
         if (!depthStencil)
             return std::nullopt;
     }
 
-    std::optional<WebCore::WebGPU::MultisampleState> multisample;
+    ::WebGPU::MultisampleState multisample;
     if (renderPipelineDescriptor.multisample) {
-        multisample = convertFromBacking(*renderPipelineDescriptor.multisample);
-        if (!multisample)
+        auto convertedMultisample = convertFromBacking(*renderPipelineDescriptor.multisample);
+        if (!convertedMultisample)
+            return std::nullopt;
+        multisample = *convertedMultisample;
+    }
+
+    std::optional<::WebGPU::FragmentState> fragment;
+    if (renderPipelineDescriptor.fragment) {
+        fragment = convertFromBacking(*renderPipelineDescriptor.fragment, storage);
+        if (!fragment)
             return std::nullopt;
     }
 
-    auto fragment = ([&] () -> std::optional<WebCore::WebGPU::FragmentState> {
-        if (renderPipelineDescriptor.fragment)
-            return convertFromBacking(*renderPipelineDescriptor.fragment);
-        return std::nullopt;
-    })();
-    if (renderPipelineDescriptor.fragment && !fragment)
-        return std::nullopt;
+    return { { renderPipelineDescriptor.label, WTF::move(*layout), WTF::move(*vertex), primitive, WTF::move(depthStencil), multisample, WTF::move(fragment) } };
+}
 
-    return { { WTF::move(*base), WTF::move(*vertex), WTF::move(primitive), WTF::move(depthStencil), WTF::move(multisample), WTF::move(fragment) } };
+std::optional<RefPtr<::WebGPU::PipelineLayout>> ConvertFromBackingContext::convertLayoutFromBacking(const PipelineDescriptorBase& pipelineDescriptorBase, bool allowMissingPipelineLayout)
+{
+    if (!pipelineDescriptorBase.layout) {
+        if (!allowMissingPipelineLayout)
+            return std::nullopt;
+        return { nullptr };
+    }
+
+    RefPtr layout = convertPipelineLayoutFromBacking(*pipelineDescriptorBase.layout);
+    if (!layout)
+        return std::nullopt;
+    return { WTF::move(layout) };
 }
 
 } // namespace WebKit

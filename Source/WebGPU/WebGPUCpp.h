@@ -52,12 +52,14 @@
 #ifdef __cplusplus
 
 #include <cstdint>
+#include <expected>
 #include <optional>
 #include <span>
 #include <variant> // NOLINT: See the Swift C++ interop constraints above.
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
+#include <wtf/Seconds.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Variant.h>
@@ -65,10 +67,20 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 
+typedef struct CGImage* CGImageRef;
 typedef struct __CVBuffer* CVPixelBufferRef;
 typedef struct __IOSurface* IOSurfaceRef;
+#endif
+
+#if !defined(WEBGPU_EXPORT)
+#if defined(BUILDING_WEBGPU) || defined(STATICALLY_LINKED_WITH_WEBGPU)
+#define WEBGPU_EXPORT WTF_EXPORT_DECLARATION
+#else
+#define WEBGPU_EXPORT WTF_IMPORT_DECLARATION
+#endif
 #endif
 
 namespace WebGPU {
@@ -120,6 +132,9 @@ enum class BufferUsage : uint16_t {
     Storage         = 1 << 7,
     Indirect        = 1 << 8,
     QueryResolve    = 1 << 9,
+    // Set when the caller passed a bit that is not one of the above, so that the usage can be
+    // rejected instead of being silently narrowed to the bits we do recognize.
+    Invalid         = 1 << 10,
 };
 
 enum class CanvasAlphaMode : uint8_t {
@@ -137,6 +152,9 @@ enum class ColorWrite : uint8_t {
     Green = 1 << 1,
     Blue  = 1 << 2,
     Alpha = 1 << 3,
+    // Set when the caller passed a bit that is not one of the above, so that the mask can be
+    // rejected instead of being silently narrowed to the bits we do recognize.
+    Invalid = 1 << 4,
 };
 
 enum class CompareFunction : uint8_t {
@@ -600,6 +618,48 @@ struct Limits {
     uint32_t maxStorageTexturesInVertexStage { 0 };
 };
 
+// https://gpuweb.github.io/gpuweb/#limit-default
+constexpr Limits defaultLimits()
+{
+    return {
+        .maxTextureDimension1D = 8192,
+        .maxTextureDimension2D = 8192,
+        .maxTextureDimension3D = 2048,
+        .maxTextureArrayLayers = 256,
+        .maxBindGroups = 4,
+        .maxBindGroupsPlusVertexBuffers = 24,
+        .maxBindingsPerBindGroup = 1000,
+        .maxDynamicUniformBuffersPerPipelineLayout = 8,
+        .maxDynamicStorageBuffersPerPipelineLayout = 4,
+        .maxSampledTexturesPerShaderStage = 16,
+        .maxSamplersPerShaderStage = 16,
+        .maxStorageBuffersPerShaderStage = 8,
+        .maxStorageTexturesPerShaderStage = 4,
+        .maxUniformBuffersPerShaderStage = 12,
+        .maxUniformBufferBindingSize = 65536,
+        .maxStorageBufferBindingSize = 134217728,
+        .minUniformBufferOffsetAlignment = 256,
+        .minStorageBufferOffsetAlignment = 256,
+        .maxVertexBuffers = 8,
+        .maxBufferSize = 268435456,
+        .maxVertexAttributes = 16,
+        .maxVertexBufferArrayStride = 2048,
+        .maxInterStageShaderVariables = 16,
+        .maxColorAttachments = 8,
+        .maxColorAttachmentBytesPerSample = 32,
+        .maxComputeWorkgroupStorageSize = 16384,
+        .maxComputeInvocationsPerWorkgroup = 256,
+        .maxComputeWorkgroupSizeX = 256,
+        .maxComputeWorkgroupSizeY = 256,
+        .maxComputeWorkgroupSizeZ = 64,
+        .maxComputeWorkgroupsPerDimension = 65535,
+        .maxStorageBuffersInFragmentStage = 8,
+        .maxStorageTexturesInFragmentStage = 4,
+        .maxStorageBuffersInVertexStage = 8,
+        .maxStorageTexturesInVertexStage = 4,
+    };
+}
+
 class Adapter;
 class BindGroup;
 class BindGroupLayout;
@@ -769,6 +829,27 @@ struct Error {
     ErrorType type { ErrorType::Validation };
     String message;
 };
+
+struct InstanceDescriptor {
+    // Runs a work item on the thread that the instance calls back on. Empty: the work items wait
+    // for processEvents().
+    Function<void(Function<void()>&&)> scheduleWork;
+#if PLATFORM(COCOA)
+    // The task that owns the resources the instance allocates.
+    std::optional<MachSendRight> webProcessResourceOwner;
+#endif
+};
+
+#if PLATFORM(COCOA)
+// A canvas surface, backed by the render buffers of a compositor.
+struct PresentationContextDescriptor {
+    // Called once, with the functions that the compositor calls back: one with the IOSurfaces of the
+    // render buffers each time it recreates them, and one with a completion handler to call once the
+    // work submitted so far has been scheduled. The IOSurfaces are borrowed for the call. The
+    // signatures have no RetainPtr, which is a different type in ARC and non-ARC code.
+    Function<void(Function<void(std::span<const IOSurfaceRef>)>&&, Function<void(CompletionHandler<void()>&&)>&&)> registerCompositorIntegration;
+};
+#endif
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpurequestadapteroptions
 struct RequestAdapterOptions {
@@ -1024,7 +1105,7 @@ struct CompilationMessage {
     String message;
     CompilationMessageType type { CompilationMessageType::Error };
     uint64_t lineNum { 0 };
-    uint64_t linePos { 0 };
+    uint64_t linePos { 0 }; // One-based, as in GPUCompilationMessage.
     uint64_t offset { 0 };
     uint64_t length { 0 };
 };
@@ -1118,60 +1199,60 @@ struct BindGroupDescriptor {
 
 // Retain and release functions for SWIFT_SHARED_REFERENCE.
 #if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
-inline void refWebGPUAdapter(WebGPU::Adapter*);
-inline void derefWebGPUAdapter(WebGPU::Adapter*);
-inline void refWebGPUBindGroup(WebGPU::BindGroup*);
-inline void derefWebGPUBindGroup(WebGPU::BindGroup*);
-inline void refWebGPUBindGroupLayout(WebGPU::BindGroupLayout*);
-inline void derefWebGPUBindGroupLayout(WebGPU::BindGroupLayout*);
-inline void refWebGPUBuffer(WebGPU::Buffer*);
-inline void derefWebGPUBuffer(WebGPU::Buffer*);
-inline void refWebGPUCommandBuffer(WebGPU::CommandBuffer*);
-inline void derefWebGPUCommandBuffer(WebGPU::CommandBuffer*);
-inline void refWebGPUCommandEncoder(WebGPU::CommandEncoder*);
-inline void derefWebGPUCommandEncoder(WebGPU::CommandEncoder*);
-inline void refWebGPUComputePassEncoder(WebGPU::ComputePassEncoder*);
-inline void derefWebGPUComputePassEncoder(WebGPU::ComputePassEncoder*);
-inline void refWebGPUComputePipeline(WebGPU::ComputePipeline*);
-inline void derefWebGPUComputePipeline(WebGPU::ComputePipeline*);
-inline void refWebGPUDevice(WebGPU::Device*);
-inline void derefWebGPUDevice(WebGPU::Device*);
-inline void refWebGPUExternalTexture(WebGPU::ExternalTexture*);
-inline void derefWebGPUExternalTexture(WebGPU::ExternalTexture*);
-inline void refWebGPUInstance(WebGPU::Instance*);
-inline void derefWebGPUInstance(WebGPU::Instance*);
-inline void refWebGPUPipelineLayout(WebGPU::PipelineLayout*);
-inline void derefWebGPUPipelineLayout(WebGPU::PipelineLayout*);
-inline void refWebGPUPresentationContext(WebGPU::PresentationContext*);
-inline void derefWebGPUPresentationContext(WebGPU::PresentationContext*);
-inline void refWebGPUQuerySet(WebGPU::QuerySet*);
-inline void derefWebGPUQuerySet(WebGPU::QuerySet*);
-inline void refWebGPUQueue(WebGPU::Queue*);
-inline void derefWebGPUQueue(WebGPU::Queue*);
-inline void refWebGPURenderBundle(WebGPU::RenderBundle*);
-inline void derefWebGPURenderBundle(WebGPU::RenderBundle*);
-inline void refWebGPURenderBundleEncoder(WebGPU::RenderBundleEncoder*);
-inline void derefWebGPURenderBundleEncoder(WebGPU::RenderBundleEncoder*);
-inline void refWebGPURenderPassEncoder(WebGPU::RenderPassEncoder*);
-inline void derefWebGPURenderPassEncoder(WebGPU::RenderPassEncoder*);
-inline void refWebGPURenderPipeline(WebGPU::RenderPipeline*);
-inline void derefWebGPURenderPipeline(WebGPU::RenderPipeline*);
-inline void refWebGPUSampler(WebGPU::Sampler*);
-inline void derefWebGPUSampler(WebGPU::Sampler*);
-inline void refWebGPUShaderModule(WebGPU::ShaderModule*);
-inline void derefWebGPUShaderModule(WebGPU::ShaderModule*);
-inline void refWebGPUTexture(WebGPU::Texture*);
-inline void derefWebGPUTexture(WebGPU::Texture*);
-inline void refWebGPUTextureView(WebGPU::TextureView*);
-inline void derefWebGPUTextureView(WebGPU::TextureView*);
-inline void refWebGPUXRBinding(WebGPU::XRBinding*);
-inline void derefWebGPUXRBinding(WebGPU::XRBinding*);
-inline void refWebGPUXRProjectionLayer(WebGPU::XRProjectionLayer*);
-inline void derefWebGPUXRProjectionLayer(WebGPU::XRProjectionLayer*);
-inline void refWebGPUXRSubImage(WebGPU::XRSubImage*);
-inline void derefWebGPUXRSubImage(WebGPU::XRSubImage*);
-inline void refWebGPUXRView(WebGPU::XRView*);
-inline void derefWebGPUXRView(WebGPU::XRView*);
+inline void refWebGPUAdapter(::WebGPU::Adapter*);
+inline void derefWebGPUAdapter(::WebGPU::Adapter*);
+inline void refWebGPUBindGroup(::WebGPU::BindGroup*);
+inline void derefWebGPUBindGroup(::WebGPU::BindGroup*);
+inline void refWebGPUBindGroupLayout(::WebGPU::BindGroupLayout*);
+inline void derefWebGPUBindGroupLayout(::WebGPU::BindGroupLayout*);
+inline void refWebGPUBuffer(::WebGPU::Buffer*);
+inline void derefWebGPUBuffer(::WebGPU::Buffer*);
+inline void refWebGPUCommandBuffer(::WebGPU::CommandBuffer*);
+inline void derefWebGPUCommandBuffer(::WebGPU::CommandBuffer*);
+inline void refWebGPUCommandEncoder(::WebGPU::CommandEncoder*);
+inline void derefWebGPUCommandEncoder(::WebGPU::CommandEncoder*);
+inline void refWebGPUComputePassEncoder(::WebGPU::ComputePassEncoder*);
+inline void derefWebGPUComputePassEncoder(::WebGPU::ComputePassEncoder*);
+inline void refWebGPUComputePipeline(::WebGPU::ComputePipeline*);
+inline void derefWebGPUComputePipeline(::WebGPU::ComputePipeline*);
+inline void refWebGPUDevice(::WebGPU::Device*);
+inline void derefWebGPUDevice(::WebGPU::Device*);
+inline void refWebGPUExternalTexture(::WebGPU::ExternalTexture*);
+inline void derefWebGPUExternalTexture(::WebGPU::ExternalTexture*);
+inline void refWebGPUInstance(::WebGPU::Instance*);
+inline void derefWebGPUInstance(::WebGPU::Instance*);
+inline void refWebGPUPipelineLayout(::WebGPU::PipelineLayout*);
+inline void derefWebGPUPipelineLayout(::WebGPU::PipelineLayout*);
+inline void refWebGPUPresentationContext(::WebGPU::PresentationContext*);
+inline void derefWebGPUPresentationContext(::WebGPU::PresentationContext*);
+inline void refWebGPUQuerySet(::WebGPU::QuerySet*);
+inline void derefWebGPUQuerySet(::WebGPU::QuerySet*);
+inline void refWebGPUQueue(::WebGPU::Queue*);
+inline void derefWebGPUQueue(::WebGPU::Queue*);
+inline void refWebGPURenderBundle(::WebGPU::RenderBundle*);
+inline void derefWebGPURenderBundle(::WebGPU::RenderBundle*);
+inline void refWebGPURenderBundleEncoder(::WebGPU::RenderBundleEncoder*);
+inline void derefWebGPURenderBundleEncoder(::WebGPU::RenderBundleEncoder*);
+inline void refWebGPURenderPassEncoder(::WebGPU::RenderPassEncoder*);
+inline void derefWebGPURenderPassEncoder(::WebGPU::RenderPassEncoder*);
+inline void refWebGPURenderPipeline(::WebGPU::RenderPipeline*);
+inline void derefWebGPURenderPipeline(::WebGPU::RenderPipeline*);
+inline void refWebGPUSampler(::WebGPU::Sampler*);
+inline void derefWebGPUSampler(::WebGPU::Sampler*);
+inline void refWebGPUShaderModule(::WebGPU::ShaderModule*);
+inline void derefWebGPUShaderModule(::WebGPU::ShaderModule*);
+inline void refWebGPUTexture(::WebGPU::Texture*);
+inline void derefWebGPUTexture(::WebGPU::Texture*);
+inline void refWebGPUTextureView(::WebGPU::TextureView*);
+inline void derefWebGPUTextureView(::WebGPU::TextureView*);
+inline void refWebGPUXRBinding(::WebGPU::XRBinding*);
+inline void derefWebGPUXRBinding(::WebGPU::XRBinding*);
+inline void refWebGPUXRProjectionLayer(::WebGPU::XRProjectionLayer*);
+inline void derefWebGPUXRProjectionLayer(::WebGPU::XRProjectionLayer*);
+inline void refWebGPUXRSubImage(::WebGPU::XRSubImage*);
+inline void derefWebGPUXRSubImage(::WebGPU::XRSubImage*);
+inline void refWebGPUXRView(::WebGPU::XRView*);
+inline void derefWebGPUXRView(::WebGPU::XRView*);
 #endif
 
 namespace WebGPU {
@@ -1180,6 +1261,12 @@ class Adapter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Adapter> 
 public:
     virtual ~Adapter() = default;
 
+    virtual Vector<FeatureName> features() const = 0;
+    virtual const Limits& limits() const = 0;
+    virtual AdapterInfo info() = 0;
+    virtual bool isXRCompatible() const = 0;
+    // Completes with nullptr when the device cannot be created. An adapter creates one device.
+    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1191,6 +1278,9 @@ class BindGroup : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BindGro
 public:
     virtual ~BindGroup() = default;
 
+    // Rebinds the current frame of an external texture that the bind group binds. Returns false
+    // when the bind group has to be recreated instead.
+    virtual bool updateExternalTextures(ExternalTexture&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1213,6 +1303,17 @@ class Buffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Buffer> {
 public:
     virtual ~Buffer() = default;
 
+    // A std::nullopt size is the rest of the buffer after the offset, in the size the buffer
+    // was created with.
+    virtual void mapAsync(OptionSet<MapMode>, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&&) = 0;
+    virtual void getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>&) = 0;
+    virtual void unmap() = 0;
+    virtual void destroy() = 0;
+    // Generates the validation error of mapping a buffer that is not unmapped.
+    virtual void generateAValidationError() = 0;
+    // The whole contents, where the implementation can reach them. Only the GPU Process can.
+    virtual std::span<uint8_t> getBufferContents() = 0;
+    virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1235,6 +1336,21 @@ class CommandEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Co
 public:
     virtual ~CommandEncoder() = default;
 
+    virtual RefPtr<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) = 0;
+    // std::nullopt is a descriptor with all members at their defaults.
+    virtual RefPtr<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) = 0;
+    virtual void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size) = 0;
+    virtual void copyBufferToTexture(const TexelCopyBufferInfo& source, const TexelCopyTextureInfo& destination, const Extent3D& copySize) = 0;
+    virtual void copyTextureToBuffer(const TexelCopyTextureInfo& source, const TexelCopyBufferInfo& destination, const Extent3D& copySize) = 0;
+    virtual void copyTextureToTexture(const TexelCopyTextureInfo& source, const TexelCopyTextureInfo& destination, const Extent3D& copySize) = 0;
+    // A std::nullopt size is the rest of the buffer after the offset.
+    virtual void clearBuffer(const Buffer&, uint64_t offset = 0, std::optional<uint64_t> size = std::nullopt) = 0;
+    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void popDebugGroup() = 0;
+    virtual void insertDebugMarker(String&& markerLabel) = 0;
+    virtual void writeTimestamp(const QuerySet&, uint32_t queryIndex) = 0;
+    virtual void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) = 0;
+    virtual RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1246,6 +1362,16 @@ class ComputePassEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPt
 public:
     virtual ~ComputePassEncoder() = default;
 
+    virtual void setPipeline(const ComputePipeline&) = 0;
+    virtual void dispatch(uint32_t workgroupCountX, uint32_t workgroupCountY = 1, uint32_t workgroupCountZ = 1) = 0;
+    virtual void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset) = 0;
+    virtual void end() = 0;
+    // The dynamic offsets are borrowed for the call. std::nullopt skips the check of their
+    // count against the layout.
+    virtual void setBindGroup(uint32_t index, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) = 0;
+    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void popDebugGroup() = 0;
+    virtual void insertDebugMarker(String&& markerLabel) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1257,6 +1383,7 @@ class ComputePipeline : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<C
 public:
     virtual ~ComputePipeline() = default;
 
+    virtual Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1268,6 +1395,44 @@ class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 
+    virtual Vector<FeatureName> features() const = 0;
+    virtual const Limits& limits() const = 0;
+    virtual Ref<Queue> queue() = 0;
+    virtual void destroy() = 0;
+
+    virtual RefPtr<Buffer> createBuffer(const BufferDescriptor&) = 0;
+    virtual RefPtr<Texture> createTexture(const TextureDescriptor&) = 0;
+    virtual RefPtr<Sampler> createSampler(const SamplerDescriptor&) = 0;
+#if PLATFORM(COCOA)
+    virtual RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
+#endif
+    virtual RefPtr<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) = 0;
+    virtual RefPtr<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) = 0;
+    virtual RefPtr<BindGroup> createBindGroup(const BindGroupDescriptor&) = 0;
+    virtual RefPtr<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
+    virtual RefPtr<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
+    virtual RefPtr<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
+    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(std::expected<Ref<ComputePipeline>, PipelineError>&&)>&&) = 0;
+    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(std::expected<Ref<RenderPipeline>, PipelineError>&&)>&&) = 0;
+    // Creates the pipeline again, with the layout that pipelineToReplace generated from its shaders.
+    virtual void createComputePipelineWithPipelineLayoutFromPipelineAsync(const ComputePipelineDescriptor&, const ComputePipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<ComputePipeline>, PipelineError>&&)>&&) = 0;
+    virtual void createRenderPipelineWithPipelineLayoutFromPipelineAsync(const RenderPipelineDescriptor&, const RenderPipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<RenderPipeline>, PipelineError>&&)>&&) = 0;
+    virtual RefPtr<CommandEncoder> createCommandEncoder(const CommandEncoderDescriptor&) = 0;
+    virtual RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) = 0;
+    virtual RefPtr<QuerySet> createQuerySet(const QuerySetDescriptor&) = 0;
+    virtual RefPtr<XRBinding> createXRBinding() = 0;
+
+    virtual void pushErrorScope(ErrorFilter) = 0;
+    // Completes with true and no error when the scope caught none, or when the device is lost; with
+    // false and the error when it caught one; and with false and no error when there is no scope.
+    virtual void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
+    // Completes once, with true and the error, when an error is not caught by any scope; or with false
+    // when the device is destroyed or the callback is replaced.
+    virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
+    // An empty callback clears the current one. Setting a callback completes the current one.
+    virtual void resolveDeviceLostPromise(CompletionHandler<void(DeviceLostReason, String&&)>&&) = 0;
+    // Stops generating errors, for the objects that are created invalid on purpose.
+    virtual void pauseAllErrorReporting(bool pause) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1279,6 +1444,12 @@ class ExternalTexture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<E
 public:
     virtual ~ExternalTexture() = default;
 
+    virtual void destroy() = 0;
+    virtual void undestroy() = 0;
+#if PLATFORM(COCOA)
+    // Makes the external texture show the frame in the pixel buffer.
+    virtual void updateExternalTexture(CVPixelBufferRef) = 0;
+#endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1290,6 +1461,11 @@ class Instance : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance
 public:
     virtual ~Instance() = default;
 
+    // Completes with nullptr when no adapter is available.
+    virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
+#if PLATFORM(COCOA)
+    virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
+#endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1312,6 +1488,19 @@ class PresentationContext : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakP
 public:
     virtual ~PresentationContext() = default;
 
+    virtual void configure(const CanvasConfiguration&) = 0;
+    virtual void unconfigure() = 0;
+    virtual void present(uint32_t frameIndex) = 0;
+    virtual RefPtr<Texture> getCurrentTexture(uint32_t frameIndex) = 0;
+    // The GPU time of the last frame that finished.
+    virtual Seconds lastFrameGPUCost() const = 0;
+    // The time the last present waited for an in-flight frame to finish.
+    virtual Seconds lastFramePresentStall() const = 0;
+#if PLATFORM(COCOA)
+    // The contents of a render buffer. isIOSurfaceSupportedFormat is false when its format cannot be
+    // read back that way.
+    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) = 0;
+#endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1323,6 +1512,7 @@ class QuerySet : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<QuerySet
 public:
     virtual ~QuerySet() = default;
 
+    virtual void destroy() = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1330,10 +1520,23 @@ protected:
     QuerySet() = default;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUQuerySet, derefWebGPUQuerySet);
 
+// Queue::writeBuffer() and Queue::writeTexture() may alias rather than copy data of at least this size.
+constexpr uint64_t largeBufferSize = 32 * 1024 * 1024;
+
 class Queue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Queue> {
 public:
     virtual ~Queue() = default;
 
+    virtual void submit(Vector<Ref<CommandBuffer>>&&) = 0;
+    virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
+    // A write of at least largeBufferSize bytes may alias `data` rather than copy it, until the work
+    // submitted after it has completed. The caller keeps it alive until then, for example with
+    // onSubmittedWorkDone().
+    virtual void writeBuffer(const Buffer&, uint64_t bufferOffset, std::span<const uint8_t> data) = 0;
+    virtual void writeTexture(const TexelCopyTextureInfo& destination, std::span<const uint8_t> data, const TexelCopyBufferLayout&, const Extent3D& writeSize) = 0;
+#if PLATFORM(COCOA)
+    virtual void copyExternalImageToTexture(const ImageCopyExternalImage& source, const ImageCopyTextureTagged& destination, const Extent3D& copySize) = 0;
+#endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1356,6 +1559,21 @@ class RenderBundleEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakP
 public:
     virtual ~RenderBundleEncoder() = default;
 
+    virtual void setPipeline(const RenderPipeline&) = 0;
+    // A std::nullopt size is the rest of the buffer after the offset.
+    virtual void setIndexBuffer(const Buffer&, IndexFormat, uint64_t offset, std::optional<uint64_t> size) = 0;
+    virtual void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, std::optional<uint64_t> size) = 0;
+    virtual void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) = 0;
+    virtual void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance) = 0;
+    virtual void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset) = 0;
+    virtual void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset) = 0;
+    // The dynamic offsets are borrowed for the call. std::nullopt skips the check of their
+    // count against the layout.
+    virtual void setBindGroup(uint32_t index, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) = 0;
+    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void popDebugGroup() = 0;
+    virtual void insertDebugMarker(String&& markerLabel) = 0;
+    virtual RefPtr<RenderBundle> finish(const RenderBundleDescriptor&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1367,6 +1585,29 @@ class RenderPassEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr
 public:
     virtual ~RenderPassEncoder() = default;
 
+    virtual void setPipeline(const RenderPipeline&) = 0;
+    // A std::nullopt size is the rest of the buffer after the offset.
+    virtual void setIndexBuffer(const Buffer&, IndexFormat, uint64_t offset, std::optional<uint64_t> size) = 0;
+    virtual void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, std::optional<uint64_t> size) = 0;
+    virtual void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) = 0;
+    virtual void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance) = 0;
+    virtual void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset) = 0;
+    virtual void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset) = 0;
+    // The dynamic offsets are borrowed for the call. std::nullopt skips the check of their
+    // count against the layout.
+    virtual void setBindGroup(uint32_t index, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) = 0;
+    virtual void pushDebugGroup(String&& groupLabel) = 0;
+    virtual void popDebugGroup() = 0;
+    virtual void insertDebugMarker(String&& markerLabel) = 0;
+    virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth) = 0;
+    virtual void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+    virtual void setBlendConstant(const Color&) = 0;
+    virtual void setStencilReference(uint32_t) = 0;
+    virtual void beginOcclusionQuery(uint32_t queryIndex) = 0;
+    virtual void endOcclusionQuery() = 0;
+    // The bundles are borrowed for the call.
+    virtual void executeBundles(std::span<const Ref<RenderBundle>>) = 0;
+    virtual void end() = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1378,6 +1619,7 @@ class RenderPipeline : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Re
 public:
     virtual ~RenderPipeline() = default;
 
+    virtual Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1400,6 +1642,7 @@ class ShaderModule : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Shad
 public:
     virtual ~ShaderModule() = default;
 
+    virtual void compilationInfo(CompletionHandler<void(CompilationInfo&&)>&&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1411,6 +1654,11 @@ class Texture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Texture> 
 public:
     virtual ~Texture() = default;
 
+    // std::nullopt is a descriptor with all members at their defaults.
+    virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
+    virtual void destroy() = 0;
+    // Recreates a destroyed canvas texture, for the frame that reuses it.
+    virtual void undestroy() = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1433,6 +1681,8 @@ class XRBinding : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRBindi
 public:
     virtual ~XRBinding() = default;
 
+    virtual RefPtr<XRProjectionLayer> createProjectionLayer(const XRProjectionLayerDescriptor&) = 0;
+    virtual RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&) = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1444,6 +1694,12 @@ class XRProjectionLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr
 public:
     virtual ~XRProjectionLayer() = default;
 
+#if PLATFORM(COCOA)
+    // Starts a frame in the buffers of the compositor. The rasterization rate map is flattened into
+    // the size of the screen and its samples.
+    virtual void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples) = 0;
+#endif
+    virtual void endFrame() = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1455,6 +1711,8 @@ class XRSubImage : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<XRSubI
 public:
     virtual ~XRSubImage() = default;
 
+    virtual RefPtr<Texture> colorTexture() = 0;
+    virtual RefPtr<Texture> depthStencilTexture() = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1473,275 +1731,278 @@ protected:
     XRView() = default;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUXRView, derefWebGPUXRView);
 
+// The root of the implementation.
+WEBGPU_EXPORT RefPtr<Instance> createInstance(InstanceDescriptor&&);
+
 } // namespace WebGPU
 
 #if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
-inline void refWebGPUAdapter(WebGPU::Adapter* object)
+inline void refWebGPUAdapter(::WebGPU::Adapter* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUAdapter(WebGPU::Adapter* object)
+inline void derefWebGPUAdapter(::WebGPU::Adapter* object)
 {
     object->deref();
 }
 
-inline void refWebGPUBindGroup(WebGPU::BindGroup* object)
+inline void refWebGPUBindGroup(::WebGPU::BindGroup* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUBindGroup(WebGPU::BindGroup* object)
+inline void derefWebGPUBindGroup(::WebGPU::BindGroup* object)
 {
     object->deref();
 }
 
-inline void refWebGPUBindGroupLayout(WebGPU::BindGroupLayout* object)
+inline void refWebGPUBindGroupLayout(::WebGPU::BindGroupLayout* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUBindGroupLayout(WebGPU::BindGroupLayout* object)
+inline void derefWebGPUBindGroupLayout(::WebGPU::BindGroupLayout* object)
 {
     object->deref();
 }
 
-inline void refWebGPUBuffer(WebGPU::Buffer* object)
+inline void refWebGPUBuffer(::WebGPU::Buffer* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUBuffer(WebGPU::Buffer* object)
+inline void derefWebGPUBuffer(::WebGPU::Buffer* object)
 {
     object->deref();
 }
 
-inline void refWebGPUCommandBuffer(WebGPU::CommandBuffer* object)
+inline void refWebGPUCommandBuffer(::WebGPU::CommandBuffer* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUCommandBuffer(WebGPU::CommandBuffer* object)
+inline void derefWebGPUCommandBuffer(::WebGPU::CommandBuffer* object)
 {
     object->deref();
 }
 
-inline void refWebGPUCommandEncoder(WebGPU::CommandEncoder* object)
+inline void refWebGPUCommandEncoder(::WebGPU::CommandEncoder* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUCommandEncoder(WebGPU::CommandEncoder* object)
+inline void derefWebGPUCommandEncoder(::WebGPU::CommandEncoder* object)
 {
     object->deref();
 }
 
-inline void refWebGPUComputePassEncoder(WebGPU::ComputePassEncoder* object)
+inline void refWebGPUComputePassEncoder(::WebGPU::ComputePassEncoder* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUComputePassEncoder(WebGPU::ComputePassEncoder* object)
+inline void derefWebGPUComputePassEncoder(::WebGPU::ComputePassEncoder* object)
 {
     object->deref();
 }
 
-inline void refWebGPUComputePipeline(WebGPU::ComputePipeline* object)
+inline void refWebGPUComputePipeline(::WebGPU::ComputePipeline* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUComputePipeline(WebGPU::ComputePipeline* object)
+inline void derefWebGPUComputePipeline(::WebGPU::ComputePipeline* object)
 {
     object->deref();
 }
 
-inline void refWebGPUDevice(WebGPU::Device* object)
+inline void refWebGPUDevice(::WebGPU::Device* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUDevice(WebGPU::Device* object)
+inline void derefWebGPUDevice(::WebGPU::Device* object)
 {
     object->deref();
 }
 
-inline void refWebGPUExternalTexture(WebGPU::ExternalTexture* object)
+inline void refWebGPUExternalTexture(::WebGPU::ExternalTexture* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUExternalTexture(WebGPU::ExternalTexture* object)
+inline void derefWebGPUExternalTexture(::WebGPU::ExternalTexture* object)
 {
     object->deref();
 }
 
-inline void refWebGPUInstance(WebGPU::Instance* object)
+inline void refWebGPUInstance(::WebGPU::Instance* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUInstance(WebGPU::Instance* object)
+inline void derefWebGPUInstance(::WebGPU::Instance* object)
 {
     object->deref();
 }
 
-inline void refWebGPUPipelineLayout(WebGPU::PipelineLayout* object)
+inline void refWebGPUPipelineLayout(::WebGPU::PipelineLayout* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUPipelineLayout(WebGPU::PipelineLayout* object)
+inline void derefWebGPUPipelineLayout(::WebGPU::PipelineLayout* object)
 {
     object->deref();
 }
 
-inline void refWebGPUPresentationContext(WebGPU::PresentationContext* object)
+inline void refWebGPUPresentationContext(::WebGPU::PresentationContext* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUPresentationContext(WebGPU::PresentationContext* object)
+inline void derefWebGPUPresentationContext(::WebGPU::PresentationContext* object)
 {
     object->deref();
 }
 
-inline void refWebGPUQuerySet(WebGPU::QuerySet* object)
+inline void refWebGPUQuerySet(::WebGPU::QuerySet* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUQuerySet(WebGPU::QuerySet* object)
+inline void derefWebGPUQuerySet(::WebGPU::QuerySet* object)
 {
     object->deref();
 }
 
-inline void refWebGPUQueue(WebGPU::Queue* object)
+inline void refWebGPUQueue(::WebGPU::Queue* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUQueue(WebGPU::Queue* object)
+inline void derefWebGPUQueue(::WebGPU::Queue* object)
 {
     object->deref();
 }
 
-inline void refWebGPURenderBundle(WebGPU::RenderBundle* object)
+inline void refWebGPURenderBundle(::WebGPU::RenderBundle* object)
 {
     object->ref();
 }
 
-inline void derefWebGPURenderBundle(WebGPU::RenderBundle* object)
+inline void derefWebGPURenderBundle(::WebGPU::RenderBundle* object)
 {
     object->deref();
 }
 
-inline void refWebGPURenderBundleEncoder(WebGPU::RenderBundleEncoder* object)
+inline void refWebGPURenderBundleEncoder(::WebGPU::RenderBundleEncoder* object)
 {
     object->ref();
 }
 
-inline void derefWebGPURenderBundleEncoder(WebGPU::RenderBundleEncoder* object)
+inline void derefWebGPURenderBundleEncoder(::WebGPU::RenderBundleEncoder* object)
 {
     object->deref();
 }
 
-inline void refWebGPURenderPassEncoder(WebGPU::RenderPassEncoder* object)
+inline void refWebGPURenderPassEncoder(::WebGPU::RenderPassEncoder* object)
 {
     object->ref();
 }
 
-inline void derefWebGPURenderPassEncoder(WebGPU::RenderPassEncoder* object)
+inline void derefWebGPURenderPassEncoder(::WebGPU::RenderPassEncoder* object)
 {
     object->deref();
 }
 
-inline void refWebGPURenderPipeline(WebGPU::RenderPipeline* object)
+inline void refWebGPURenderPipeline(::WebGPU::RenderPipeline* object)
 {
     object->ref();
 }
 
-inline void derefWebGPURenderPipeline(WebGPU::RenderPipeline* object)
+inline void derefWebGPURenderPipeline(::WebGPU::RenderPipeline* object)
 {
     object->deref();
 }
 
-inline void refWebGPUSampler(WebGPU::Sampler* object)
+inline void refWebGPUSampler(::WebGPU::Sampler* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUSampler(WebGPU::Sampler* object)
+inline void derefWebGPUSampler(::WebGPU::Sampler* object)
 {
     object->deref();
 }
 
-inline void refWebGPUShaderModule(WebGPU::ShaderModule* object)
+inline void refWebGPUShaderModule(::WebGPU::ShaderModule* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUShaderModule(WebGPU::ShaderModule* object)
+inline void derefWebGPUShaderModule(::WebGPU::ShaderModule* object)
 {
     object->deref();
 }
 
-inline void refWebGPUTexture(WebGPU::Texture* object)
+inline void refWebGPUTexture(::WebGPU::Texture* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUTexture(WebGPU::Texture* object)
+inline void derefWebGPUTexture(::WebGPU::Texture* object)
 {
     object->deref();
 }
 
-inline void refWebGPUTextureView(WebGPU::TextureView* object)
+inline void refWebGPUTextureView(::WebGPU::TextureView* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUTextureView(WebGPU::TextureView* object)
+inline void derefWebGPUTextureView(::WebGPU::TextureView* object)
 {
     object->deref();
 }
 
-inline void refWebGPUXRBinding(WebGPU::XRBinding* object)
+inline void refWebGPUXRBinding(::WebGPU::XRBinding* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUXRBinding(WebGPU::XRBinding* object)
+inline void derefWebGPUXRBinding(::WebGPU::XRBinding* object)
 {
     object->deref();
 }
 
-inline void refWebGPUXRProjectionLayer(WebGPU::XRProjectionLayer* object)
+inline void refWebGPUXRProjectionLayer(::WebGPU::XRProjectionLayer* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUXRProjectionLayer(WebGPU::XRProjectionLayer* object)
+inline void derefWebGPUXRProjectionLayer(::WebGPU::XRProjectionLayer* object)
 {
     object->deref();
 }
 
-inline void refWebGPUXRSubImage(WebGPU::XRSubImage* object)
+inline void refWebGPUXRSubImage(::WebGPU::XRSubImage* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUXRSubImage(WebGPU::XRSubImage* object)
+inline void derefWebGPUXRSubImage(::WebGPU::XRSubImage* object)
 {
     object->deref();
 }
 
-inline void refWebGPUXRView(WebGPU::XRView* object)
+inline void refWebGPUXRView(::WebGPU::XRView* object)
 {
     object->ref();
 }
 
-inline void derefWebGPUXRView(WebGPU::XRView* object)
+inline void derefWebGPUXRView(::WebGPU::XRView* object)
 {
     object->deref();
 }

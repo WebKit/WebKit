@@ -121,11 +121,11 @@ WebModel::ImageAsset diffuseTexture { \
     .width = 64, \
     .height = 64, \
     .depth = 1, \
-    .textureType = WebCore::WebGPU::TextureViewDimension::Cube, \
-    .pixelFormat = WebCore::WebGPU::TextureFormat::R16float, \
+    .textureType = ::WebGPU::TextureViewDimension::Cube, \
+    .pixelFormat = ::WebGPU::TextureFormat::R16float, \
     .mipmapLevelCount = 1, \
     .arrayLength = 6, \
-    .textureUsage = WebCore::WebGPU::TextureUsage::TextureBinding, \
+    .textureUsage = ::WebGPU::TextureUsage::TextureBinding, \
     .swizzle = { } \
 }; \
 WebModel::ImageAsset specularTexture { \
@@ -133,11 +133,11 @@ WebModel::ImageAsset specularTexture { \
     .width = 256, \
     .height = 256, \
     .depth = 1, \
-    .textureType = WebCore::WebGPU::TextureViewDimension::Cube, \
-    .pixelFormat = WebCore::WebGPU::TextureFormat::R16float, \
+    .textureType = ::WebGPU::TextureViewDimension::Cube, \
+    .pixelFormat = ::WebGPU::TextureFormat::R16float, \
     .mipmapLevelCount = 9, \
     .arrayLength = 6, \
-    .textureUsage = WebCore::WebGPU::TextureUsage::TextureBinding, \
+    .textureUsage = ::WebGPU::TextureUsage::TextureBinding, \
     .swizzle = { } \
 };
 

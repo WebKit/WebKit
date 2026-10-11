@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-GPU::GPU(Ref<WebGPU::GPU>&& backing)
+GPU::GPU(Ref<WebGPUIntegration>&& backing)
     : m_backing(WTF::move(backing))
     , m_wgslLanguageFeatures(WGSLLanguageFeatures::create())
 {
@@ -69,12 +69,12 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
         return;
     }
 
-    m_backing->requestAdapter(convertToBacking(options), [promise = WTF::move(promise)](RefPtr<WebGPU::Adapter>&& adapter) mutable {
+    m_backing->requestAdapter(convertToBacking(options), [promise = WTF::move(promise), gpu = m_backing](RefPtr<WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             promise.resolve(nullptr);
             return;
         }
-        promise.resolve(GPUAdapter::create(adapter.releaseNonNull()).ptr());
+        promise.resolve(GPUAdapter::create(adapter.releaseNonNull(), WTF::move(gpu)).ptr());
     });
 }
 

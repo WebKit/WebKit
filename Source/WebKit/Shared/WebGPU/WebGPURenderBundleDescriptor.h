@@ -27,12 +27,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUObjectDescriptorBase.h"
-#include <optional>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-struct RenderBundleDescriptor : public ObjectDescriptorBase { };
+using RenderBundleDescriptor = ::WebGPU::RenderBundleDescriptor;
 
 } // namespace WebKit::WebGPU
 

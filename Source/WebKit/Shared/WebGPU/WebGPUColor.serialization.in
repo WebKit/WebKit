@@ -23,11 +23,14 @@
 header: "WebGPUColor.h"
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::ColorDict {
-    double r
-    double g
-    double b
-    double a
-}
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct ::WebGPU::Color {
+    double r;
+    double g;
+    double b;
+    double a;
+};
 
-using WebKit::WebGPU::Color = Variant<Vector<double>, WebKit::WebGPU::ColorDict>
+header: "WebGPUColor.h"
+using WebKit::WebGPU::Color = ::WebGPU::Color;
+#endif

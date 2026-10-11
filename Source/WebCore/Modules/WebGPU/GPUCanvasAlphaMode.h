@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCanvasAlphaMode.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUCanvasAlphaMode : uint8_t {
     Premultiplied,
 };
 
-inline WebGPU::CanvasAlphaMode convertToBacking(GPUCanvasAlphaMode canvasCompositingAlphaMode)
+inline ::WebGPU::CanvasAlphaMode convertToBacking(GPUCanvasAlphaMode canvasCompositingAlphaMode)
 {
     switch (canvasCompositingAlphaMode) {
     case GPUCanvasAlphaMode::Opaque:
-        return WebGPU::CanvasAlphaMode::Opaque;
+        return ::WebGPU::CanvasAlphaMode::Opaque;
     case GPUCanvasAlphaMode::Premultiplied:
-        return WebGPU::CanvasAlphaMode::Premultiplied;
+        return ::WebGPU::CanvasAlphaMode::Premultiplied;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

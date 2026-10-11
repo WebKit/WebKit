@@ -28,9 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPULoadOp.h>
-#include <WebCore/WebGPUStoreOp.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Ref.h>
 
@@ -40,13 +38,13 @@ struct RenderPassDepthStencilAttachment {
     WebGPUIdentifier view;
 
     float depthClearValue { 0 };
-    std::optional<WebCore::WebGPU::LoadOp> depthLoadOp;
-    std::optional<WebCore::WebGPU::StoreOp> depthStoreOp;
+    std::optional<::WebGPU::LoadOp> depthLoadOp;
+    std::optional<::WebGPU::StoreOp> depthStoreOp;
     bool depthReadOnly { false };
 
-    WebCore::WebGPU::StencilValue stencilClearValue { 0 };
-    std::optional<WebCore::WebGPU::LoadOp> stencilLoadOp;
-    std::optional<WebCore::WebGPU::StoreOp> stencilStoreOp;
+    uint32_t stencilClearValue { 0 };
+    std::optional<::WebGPU::LoadOp> stencilLoadOp;
+    std::optional<::WebGPU::StoreOp> stencilStoreOp;
     bool stencilReadOnly { false };
 };
 

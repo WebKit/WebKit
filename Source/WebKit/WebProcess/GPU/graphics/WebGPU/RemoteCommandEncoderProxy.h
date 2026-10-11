@@ -29,14 +29,14 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUCommandEncoder.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteCommandEncoderProxy final : public WebCore::WebGPU::CommandEncoder {
+class RemoteCommandEncoderProxy final : public ::WebGPU::CommandEncoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCommandEncoderProxy);
 public:
     static Ref<RemoteCommandEncoderProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -48,6 +48,45 @@ public:
 
     RemoteGPUProxy& root() const { return m_root; }
 
+    RefPtr<::WebGPU::RenderPassEncoder> beginRenderPass(const ::WebGPU::RenderPassDescriptor&) final;
+    RefPtr<::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<::WebGPU::ComputePassDescriptor>&) final;
+    void copyBufferToBuffer(
+        const ::WebGPU::Buffer& source,
+        uint64_t sourceOffset,
+        const ::WebGPU::Buffer& destination,
+        uint64_t destinationOffset,
+        uint64_t) final;
+    void copyBufferToTexture(
+        const ::WebGPU::TexelCopyBufferInfo& source,
+        const ::WebGPU::TexelCopyTextureInfo& destination,
+        const ::WebGPU::Extent3D& copySize) final;
+    void copyTextureToBuffer(
+        const ::WebGPU::TexelCopyTextureInfo& source,
+        const ::WebGPU::TexelCopyBufferInfo& destination,
+        const ::WebGPU::Extent3D& copySize) final;
+    void copyTextureToTexture(
+        const ::WebGPU::TexelCopyTextureInfo& source,
+        const ::WebGPU::TexelCopyTextureInfo& destination,
+        const ::WebGPU::Extent3D& copySize) final;
+    void clearBuffer(
+        const ::WebGPU::Buffer&,
+        uint64_t offset = 0,
+        std::optional<uint64_t> = std::nullopt) final;
+    void pushDebugGroup(String&& groupLabel) final;
+    void popDebugGroup() final;
+    void insertDebugMarker(String&& markerLabel) final;
+    void writeTimestamp(const ::WebGPU::QuerySet&, uint32_t queryIndex) final;
+    void resolveQuerySet(
+        const ::WebGPU::QuerySet&,
+        uint32_t firstQuery,
+        uint32_t queryCount,
+        const ::WebGPU::Buffer& destination,
+        uint64_t destinationOffset) final;
+    RefPtr<::WebGPU::CommandBuffer> finish(const ::WebGPU::CommandBufferDescriptor&) final;
+
+    void setLabel(String&&) final;
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -57,8 +96,6 @@ private:
     RemoteCommandEncoderProxy(RemoteCommandEncoderProxy&&) = delete;
     RemoteCommandEncoderProxy& operator=(const RemoteCommandEncoderProxy&) = delete;
     RemoteCommandEncoderProxy& operator=(RemoteCommandEncoderProxy&&) = delete;
-
-    bool isRemoteCommandEncoderProxy() const final { return true; }
 
     WebGPUIdentifier backing() const { return m_backing; }
     
@@ -73,53 +110,6 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
     }
 
-    RefPtr<WebCore::WebGPU::RenderPassEncoder> beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor&) final;
-    RefPtr<WebCore::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>&) final;
-
-    void copyBufferToBuffer(
-        const WebCore::WebGPU::Buffer& source,
-        WebCore::WebGPU::Size64 sourceOffset,
-        const WebCore::WebGPU::Buffer& destination,
-        WebCore::WebGPU::Size64 destinationOffset,
-        WebCore::WebGPU::Size64) final;
-
-    void copyBufferToTexture(
-        const WebCore::WebGPU::ImageCopyBuffer& source,
-        const WebCore::WebGPU::ImageCopyTexture& destination,
-        const WebCore::WebGPU::Extent3D& copySize) final;
-
-    void copyTextureToBuffer(
-        const WebCore::WebGPU::ImageCopyTexture& source,
-        const WebCore::WebGPU::ImageCopyBuffer& destination,
-        const WebCore::WebGPU::Extent3D& copySize) final;
-
-    void copyTextureToTexture(
-        const WebCore::WebGPU::ImageCopyTexture& source,
-        const WebCore::WebGPU::ImageCopyTexture& destination,
-        const WebCore::WebGPU::Extent3D& copySize) final;
-
-    void clearBuffer(
-        const WebCore::WebGPU::Buffer&,
-        WebCore::WebGPU::Size64 offset = 0,
-        std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
-
-    void pushDebugGroup(String&& groupLabel) final;
-    void popDebugGroup() final;
-    void insertDebugMarker(String&& markerLabel) final;
-
-    void writeTimestamp(const WebCore::WebGPU::QuerySet&, WebCore::WebGPU::Size32 queryIndex) final;
-
-    void resolveQuerySet(
-        const WebCore::WebGPU::QuerySet&,
-        WebCore::WebGPU::Size32 firstQuery,
-        WebCore::WebGPU::Size32 queryCount,
-        const WebCore::WebGPU::Buffer& destination,
-        WebCore::WebGPU::Size64 destinationOffset) final;
-
-    RefPtr<WebCore::WebGPU::CommandBuffer> finish(const WebCore::WebGPU::CommandBufferDescriptor&) final;
-
-    void setLabelInternal(const String&) final;
-
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
@@ -128,7 +118,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteCommandEncoderProxy)
-    static bool isType(const WebCore::WebGPU::CommandEncoder& encoder) { return encoder.isRemoteCommandEncoderProxy(); }
+    // In the Web Process, every WebGPU::CommandEncoder is a RemoteCommandEncoderProxy.
+    static bool isType(const ::WebGPU::CommandEncoder&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

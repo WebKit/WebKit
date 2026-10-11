@@ -30,14 +30,11 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class PipelineLayout;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -52,7 +49,7 @@ class ObjectHeap;
 class RemotePipelineLayout final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemotePipelineLayout);
 public:
-    static Ref<RemotePipelineLayout> create(WebCore::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemotePipelineLayout> create(::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemotePipelineLayout(pipelineLayout, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -66,21 +63,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePipelineLayout(WebCore::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemotePipelineLayout(::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemotePipelineLayout(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout(RemotePipelineLayout&&) = delete;
     RemotePipelineLayout& operator=(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout& operator=(RemotePipelineLayout&&) = delete;
 
-    WebCore::WebGPU::PipelineLayout& backing() { return m_backing; }
+    ::WebGPU::PipelineLayout& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::PipelineLayout> m_backing;
+    const Ref<::WebGPU::PipelineLayout> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;

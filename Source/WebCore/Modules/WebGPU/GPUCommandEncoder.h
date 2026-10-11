@@ -35,7 +35,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPURenderPassDescriptor.h"
 #include "GPURenderPassEncoder.h"
-#include "WebGPUCommandEncoder.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -51,9 +51,9 @@ class GPUQuerySet;
 
 class GPUCommandEncoder : public RefCountedAndCanMakeWeakPtr<GPUCommandEncoder> {
 public:
-    static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing, GPUDevice& device)
+    static Ref<GPUCommandEncoder> create(Ref<::WebGPU::CommandEncoder>&& backing, String&& label, GPUDevice& device)
     {
-        return adoptRef(*new GPUCommandEncoder(WTF::move(backing), device));
+        return adoptRef(*new GPUCommandEncoder(WTF::move(backing), WTF::move(label), device));
     }
 
     String NODELETE label() const;
@@ -109,18 +109,19 @@ public:
 
     ExceptionOr<Ref<GPUCommandBuffer>> finish(const std::optional<GPUCommandBufferDescriptor>&);
 
-    WebGPU::CommandEncoder& backing() { return m_backing; }
-    const WebGPU::CommandEncoder& backing() const { return m_backing; }
-    void setBacking(WebGPU::CommandEncoder&);
+    ::WebGPU::CommandEncoder& backing() { return m_backing; }
+    const ::WebGPU::CommandEncoder& backing() const { return m_backing; }
+    void setBacking(::WebGPU::CommandEncoder&);
 
     GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&&, GPUDevice&);
+    GPUCommandEncoder(Ref<::WebGPU::CommandEncoder>&&, String&& label, GPUDevice&);
 
-    Ref<WebGPU::CommandEncoder> m_backing;
+    Ref<::WebGPU::CommandEncoder> m_backing;
+    String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     std::optional<String> m_overrideLabel;
 };

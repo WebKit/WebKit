@@ -30,38 +30,29 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUBindGroupLayout.h>
-#include <WebCore/WebGPUPipelineLayoutDescriptor.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
+std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(pipelineLayoutDescriptor));
-    if (!base)
-        return std::nullopt;
-
     std::optional<Vector<WebGPUIdentifier>> optionalBindGroupLayouts;
     Vector<WebGPUIdentifier> bindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
         for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts)
-            bindGroupLayouts.append(convertToBacking(backingBindGroupLayout));
+            bindGroupLayouts.append(convertToBacking(backingBindGroupLayout.get()));
 
         optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTF::move(*base), WTF::move(optionalBindGroupLayouts) } };
+    return { { { pipelineLayoutDescriptor.label }, WTF::move(optionalBindGroupLayouts) } };
 }
 
-std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
+// The descriptor borrows the bind group layouts from bindGroupLayouts.
+std::optional<::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor, Vector<Ref<::WebGPU::BindGroupLayout>>& bindGroupLayouts)
 {
-    auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(pipelineLayoutDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    std::optional<Vector<Ref<WebCore::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts;
-    Vector<Ref<WebCore::WebGPU::BindGroupLayout>> bindGroupLayouts;
+    std::optional<std::span<const Ref<::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
         for (const auto& backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
@@ -71,10 +62,10 @@ std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingConte
             bindGroupLayouts.append(entry.releaseNonNull());
         }
 
-        optionalBindGroupLayouts = bindGroupLayouts;
+        optionalBindGroupLayouts = bindGroupLayouts.span();
     }
 
-    return { { WTF::move(*base), WTF::move(optionalBindGroupLayouts) } };
+    return ::WebGPU::PipelineLayoutDescriptor { .label = pipelineLayoutDescriptor.label, .bindGroupLayouts = optionalBindGroupLayouts };
 }
 
 } // namespace WebKit

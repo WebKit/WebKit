@@ -1,0 +1,324 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::ErrorFilter : uint8_t {
+    OutOfMemory,
+    Validation,
+    Internal
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::IndexFormat : uint8_t {
+    Uint16,
+    Uint32,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+[OptionSet] enum class ::WebGPU::MapMode : uint8_t {
+    Read,
+    Write,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+[AdditionalEncoder=StreamConnectionEncoder] enum class ::WebGPU::MapMode : uint8_t {
+    Read,
+    Write,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::BlendFactor : uint8_t {
+    Zero,
+    One,
+    Src,
+    OneMinusSrc,
+    SrcAlpha,
+    OneMinusSrcAlpha,
+    Dst,
+    OneMinusDst,
+    DstAlpha,
+    OneMinusDstAlpha,
+    SrcAlphaSaturated,
+    Constant,
+    OneMinusConstant,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::TextureSampleType : uint8_t {
+    Float,
+    UnfilterableFloat,
+    Depth,
+    Sint,
+    Uint,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::BlendOperation : uint8_t {
+    Add,
+    Subtract,
+    ReverseSubtract,
+    Min,
+    Max,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::CanvasToneMappingMode : uint8_t {
+    Standard,
+    Extended,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::CanvasAlphaMode : uint8_t {
+    Opaque,
+    Premultiplied,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::QueryType : uint8_t {
+    Occlusion,
+    Timestamp,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::CompareFunction : uint8_t {
+    Never,
+    Less,
+    Equal,
+    LessEqual,
+    Greater,
+    NotEqual,
+    GreaterEqual,
+    Always,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::FilterMode : uint8_t {
+    Nearest,
+    Linear,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::MipmapFilterMode : uint8_t {
+    Nearest,
+    Linear,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::TextureDimension : uint8_t {
+    _1d,
+    _2d,
+    _3d,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::VertexFormat : uint8_t {
+    Uint8,
+    Uint8x2,
+    Uint8x4,
+    Sint8,
+    Sint8x2,
+    Sint8x4,
+    Unorm8,
+    Unorm8x2,
+    Unorm8x4,
+    Snorm8,
+    Snorm8x2,
+    Snorm8x4,
+    Uint16,
+    Uint16x2,
+    Uint16x4,
+    Sint16,
+    Sint16x2,
+    Sint16x4,
+    Unorm16,
+    Unorm16x2,
+    Unorm16x4,
+    Snorm16,
+    Snorm16x2,
+    Snorm16x4,
+    Float16,
+    Float16x2,
+    Float16x4,
+    Float32,
+    Float32x2,
+    Float32x3,
+    Float32x4,
+    Uint32,
+    Uint32x2,
+    Uint32x3,
+    Uint32x4,
+    Sint32,
+    Sint32x2,
+    Sint32x3,
+    Sint32x4,
+    Snorm1010102,
+    Unorm1010102,
+    Unorm8x4Bgra,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+[OptionSet] enum class ::WebGPU::ShaderStage : uint8_t {
+    Vertex,
+    Fragment,
+    Compute,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::CompilationMessageType : uint8_t {
+    Error,
+    Warning,
+    Info,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::StencilOperation : uint8_t {
+    Keep,
+    Zero,
+    Replace,
+    Invert,
+    IncrementClamp,
+    DecrementClamp,
+    IncrementWrap,
+    DecrementWrap,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::DeviceLostReason : uint8_t {
+    Destroyed,
+    Unknown,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::AddressMode : uint8_t {
+    ClampToEdge,
+    Repeat,
+    MirrorRepeat,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::BufferBindingType : uint8_t {
+    Uniform,
+    Storage,
+    ReadOnlyStorage,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::StorageTextureAccess : uint8_t {
+    WriteOnly,
+    ReadOnly,
+    ReadWrite,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::FrontFace : uint8_t {
+    CCW,
+    CW,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::StoreOp : uint8_t {
+    Store,
+    Discard,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::LoadOp : uint8_t {
+    Load,
+    Clear,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::ColorWrite : uint8_t {
+    Red,
+    Green,
+    Blue,
+    Alpha,
+    Invalid,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::SamplerBindingType : uint8_t {
+    Filtering,
+    NonFiltering,
+    Comparison,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::PrimitiveTopology : uint8_t {
+    PointList,
+    LineList,
+    LineStrip,
+    TriangleList,
+    TriangleStrip,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::CullMode : uint8_t {
+    None,
+    Front,
+    Back,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::TextureViewDimension : uint8_t {
+    _1d,
+    _2d,
+    _2dArray,
+    Cube,
+    CubeArray,
+    _3d,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+enum class ::WebGPU::VertexStepMode : uint8_t {
+    Vertex,
+    Instance,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+[OptionSet] enum class ::WebGPU::BufferUsage : uint16_t {
+    MapRead,
+    MapWrite,
+    CopySource,
+    CopyDestination,
+    Index,
+    Vertex,
+    Uniform,
+    Storage,
+    Indirect,
+    QueryResolve,
+    Invalid,
+};
+
+header: <WebGPU/WebGPUCpp.h>
+[OptionSet] enum class ::WebGPU::TextureUsage : uint8_t {
+    CopySource,
+    CopyDestination,
+    TextureBinding,
+    StorageBinding,
+    RenderAttachment,
+    Transient,
+    Invalid,
+};
+
+header: <WebCore/WebGPUCppAPI.h>
+using OptionSet<::WebGPU::BufferUsage> = OptionSet<::WebGPU::BufferUsage>

@@ -61,6 +61,7 @@ class Instance final : public WebGPU::Instance, public WGPUInstanceImpl {
     WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
     static Ref<Instance> create(const WGPUInstanceDescriptor&);
+    static Ref<Instance> create(WebGPU::InstanceDescriptor&&);
     static Ref<Instance> createInvalid()
     {
         return adoptRef(*new Instance());
@@ -70,8 +71,8 @@ public:
 
     Ref<PresentationContext> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
-    // Completes with nullptr when no adapter is available.
-    void requestAdapter(const WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&);
+    void requestAdapter(const WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&&) final;
+    RefPtr<WebGPU::PresentationContext> createPresentationContext(const WebGPU::PresentationContextDescriptor&) final;
 
     void setLabel(String&&) final { }
     bool isValid() const final { return m_isValid; }

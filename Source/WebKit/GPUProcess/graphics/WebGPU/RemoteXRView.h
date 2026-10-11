@@ -32,7 +32,7 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/AlphaPremultiplication.h>
 #include <WebCore/RenderingResourceIdentifier.h>
-#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -46,10 +46,6 @@
 namespace WebCore {
 class ColorSpace;
 class ImageBuffer;
-}
-
-namespace WebCore::WebGPU {
-class XRView;
 }
 
 namespace IPC {
@@ -67,7 +63,7 @@ class ObjectHeap;
 class RemoteXRView final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRView);
 public:
-    static Ref<RemoteXRView> create(WebCore::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteXRView> create(::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteXRView(xrView, objectHeap, gpu, WTF::move(streamConnection), identifier));
     }
@@ -80,19 +76,19 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteXRView(WebCore::WebGPU::XRView&, WebGPU::ObjectHeap&, RemoteGPU&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteXRView(::WebGPU::XRView&, WebGPU::ObjectHeap&, RemoteGPU&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteXRView(const RemoteXRView&) = delete;
     RemoteXRView(RemoteXRView&&) = delete;
     RemoteXRView& operator=(const RemoteXRView&) = delete;
     RemoteXRView& operator=(RemoteXRView&&) = delete;
 
-    WebCore::WebGPU::XRView& backing() { return m_backing; }
+    ::WebGPU::XRView& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
 
-    const Ref<WebCore::WebGPU::XRView> m_backing;
+    const Ref<::WebGPU::XRView> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

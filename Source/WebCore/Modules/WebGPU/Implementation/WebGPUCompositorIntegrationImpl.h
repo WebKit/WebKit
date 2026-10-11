@@ -28,10 +28,10 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUCompositorIntegration.h"
+#include "WebGPUDevice.h"
 
-#include "WebGPUPresentationContextImpl.h"
 #include <WebCore/IOSurface.h>
-#include <WebGPU/WebGPU.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
@@ -44,30 +44,28 @@
 #endif
 
 namespace WebCore {
-class Device;
 class NativeImage;
 }
 
-namespace WebCore::WebGPU {
+namespace WebCore {
 
-class ConvertToBackingContext;
 
-class CompositorIntegrationImpl final : public CompositorIntegration {
-    WTF_MAKE_TZONE_ALLOCATED(CompositorIntegrationImpl);
+class WebGPUCompositorIntegrationImpl final : public WebGPUCompositorIntegration {
+    WTF_MAKE_TZONE_ALLOCATED(WebGPUCompositorIntegrationImpl);
 public:
-    static Ref<CompositorIntegrationImpl> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<WebGPUCompositorIntegrationImpl> create()
     {
-        return adoptRef(*new CompositorIntegrationImpl(convertToBackingContext));
+        return adoptRef(*new WebGPUCompositorIntegrationImpl());
     }
 
-    virtual ~CompositorIntegrationImpl();
+    virtual ~WebGPUCompositorIntegrationImpl();
 
-    void setPresentationContext(PresentationContextImpl& presentationContext)
+    void setPresentationContext(::WebGPU::PresentationContext& presentationContext)
     {
         lazyInitialize(m_presentationContext, Ref { presentationContext });
     }
 
-    void registerCallbacks(WTF::Function<void(CFArrayRef)>&& renderBuffersWereRecreatedCallback, WTF::Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduledCallback)
+    void registerCallbacks(WTF::Function<void(std::span<const IOSurfaceRef>)>&& renderBuffersWereRecreatedCallback, WTF::Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduledCallback)
     {
         ASSERT(!m_renderBuffersWereRecreatedCallback);
         m_renderBuffersWereRecreatedCallback = WTF::move(renderBuffersWereRecreatedCallback);
@@ -79,16 +77,15 @@ public:
     void NODELETE paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
 
 private:
-    friend class DowncastConvertToBackingContext;
 
-    explicit CompositorIntegrationImpl(ConvertToBackingContext&);
+    WebGPUCompositorIntegrationImpl();
 
-    CompositorIntegrationImpl(const CompositorIntegrationImpl&) = delete;
-    CompositorIntegrationImpl(CompositorIntegrationImpl&&) = delete;
-    CompositorIntegrationImpl& operator=(const CompositorIntegrationImpl&) = delete;
-    CompositorIntegrationImpl& operator=(CompositorIntegrationImpl&&) = delete;
+    WebGPUCompositorIntegrationImpl(const WebGPUCompositorIntegrationImpl&) = delete;
+    WebGPUCompositorIntegrationImpl(WebGPUCompositorIntegrationImpl&&) = delete;
+    WebGPUCompositorIntegrationImpl& operator=(const WebGPUCompositorIntegrationImpl&) = delete;
+    WebGPUCompositorIntegrationImpl& operator=(WebGPUCompositorIntegrationImpl&&) = delete;
 
-    bool isCompositorIntegrationImpl() const final { return true; }
+    bool isWebGPUCompositorIntegrationImpl() const final { return true; }
 
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) override;
     void updateContentsHeadroom(float) override;
@@ -97,24 +94,23 @@ private:
     Seconds lastFramePresentStall() const override;
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, Device&) override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, unsigned bufferCount, ::WebGPU::Device&) override;
 
     Vector<UniqueRef<WebCore::IOSurface>> m_renderBuffers;
     WebCore::AlphaPremultiplication m_alphaMode { WebCore::AlphaPremultiplication::Premultiplied };
-    WTF::Function<void(CFArrayRef)> m_renderBuffersWereRecreatedCallback;
+    WTF::Function<void(std::span<const IOSurfaceRef>)> m_renderBuffersWereRecreatedCallback;
 #endif
 
     WTF::Function<void(CompletionHandler<void()>&&)> m_onSubmittedWorkScheduledCallback;
 
-    const RefPtr<PresentationContextImpl> m_presentationContext;
-    const Ref<ConvertToBackingContext> m_convertToBackingContext;
-    WeakPtr<Device> m_device;
+    const RefPtr<::WebGPU::PresentationContext> m_presentationContext;
+    ThreadSafeWeakPtr<::WebGPU::Device> m_device;
 };
 
-} // namespace WebCore::WebGPU
+} // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPU::CompositorIntegrationImpl)
-    static bool isType(const WebCore::WebGPU::CompositorIntegration& compositorIntegration) { return compositorIntegration.isCompositorIntegrationImpl(); }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPUCompositorIntegrationImpl)
+    static bool isType(const WebCore::WebGPUCompositorIntegration& compositorIntegration) { return compositorIntegration.isWebGPUCompositorIntegrationImpl(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

@@ -29,8 +29,8 @@
 #include "GPUIndexFormat.h"
 #include "GPUIntegralTypes.h"
 #include "GPURenderBundleDescriptor.h"
-#include "WebGPURenderBundleEncoder.h"
 #include <JavaScriptCore/Uint32Array.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -49,9 +49,9 @@ template<typename> class ExceptionOr;
 
 class GPURenderBundleEncoder : public RefCountedAndCanMakeWeakPtr<GPURenderBundleEncoder> {
 public:
-    static Ref<GPURenderBundleEncoder> create(Ref<WebGPU::RenderBundleEncoder>&& backing, GPUDevice& device)
+    static Ref<GPURenderBundleEncoder> create(Ref<::WebGPU::RenderBundleEncoder>&& backing, String&& label, GPUDevice& device)
     {
-        return adoptRef(*new GPURenderBundleEncoder(WTF::move(backing), device));
+        return adoptRef(*new GPURenderBundleEncoder(WTF::move(backing), WTF::move(label), device));
     }
 
     String NODELETE label() const;
@@ -86,17 +86,18 @@ public:
 
     ExceptionOr<Ref<GPURenderBundle>> finish(const std::optional<GPURenderBundleDescriptor>&);
 
-    WebGPU::RenderBundleEncoder& backing() { return m_backing; }
-    const WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
+    ::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
+    const ::WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
 
     GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&&, GPUDevice&);
+    GPURenderBundleEncoder(Ref<::WebGPU::RenderBundleEncoder>&&, String&& label, GPUDevice&);
 
-    const Ref<WebGPU::RenderBundleEncoder> m_backing;
+    const Ref<::WebGPU::RenderBundleEncoder> m_backing;
+    String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     WeakPtr<GPURenderPipeline> m_currentPipeline;
 };

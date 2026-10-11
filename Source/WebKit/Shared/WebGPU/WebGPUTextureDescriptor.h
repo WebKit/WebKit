@@ -29,22 +29,19 @@
 
 #include "WebGPUExtent3D.h"
 #include "WebGPUObjectDescriptorBase.h"
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <WebCore/WebGPUTextureDimension.h>
-#include <WebCore/WebGPUTextureFormat.h>
-#include <WebCore/WebGPUTextureUsage.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
 
 struct TextureDescriptor : public ObjectDescriptorBase {
     Extent3D size;
-    WebCore::WebGPU::IntegerCoordinate mipLevelCount { 1 };
-    WebCore::WebGPU::Size32 sampleCount { 1 };
-    WebCore::WebGPU::TextureDimension dimension { WebCore::WebGPU::TextureDimension::_2d };
-    WebCore::WebGPU::TextureFormat format { WebCore::WebGPU::TextureFormat::R8unorm };
-    WebCore::WebGPU::TextureUsageFlags usage;
-    Vector<WebCore::WebGPU::TextureFormat> viewFormats;
+    uint32_t mipLevelCount { 1 };
+    uint32_t sampleCount { 1 };
+    ::WebGPU::TextureDimension dimension { ::WebGPU::TextureDimension::_2d };
+    ::WebGPU::TextureFormat format { ::WebGPU::TextureFormat::R8unorm };
+    OptionSet<::WebGPU::TextureUsage> usage;
+    Vector<::WebGPU::TextureFormat> viewFormats;
 };
 
 } // namespace WebKit::WebGPU

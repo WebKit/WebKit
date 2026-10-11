@@ -36,7 +36,7 @@ namespace WebCore {
 
 class GPUDeviceLostInfo : public RefCounted<GPUDeviceLostInfo> {
 public:
-    static Ref<GPUDeviceLostInfo> create(Ref<WebGPU::DeviceLostInfo>&& backing)
+    static Ref<GPUDeviceLostInfo> create(Ref<WebGPUDeviceLostInfo>&& backing)
     {
         return adoptRef(*new GPUDeviceLostInfo(WTF::move(backing)));
     }
@@ -44,16 +44,16 @@ public:
     GPUDeviceLostReason NODELETE reason() const;
     const String& NODELETE message() const LIFETIME_BOUND;
 
-    WebGPU::DeviceLostInfo& backing() { return m_backing; }
-    const WebGPU::DeviceLostInfo& backing() const { return m_backing; }
+    WebGPUDeviceLostInfo& backing() { return m_backing; }
+    const WebGPUDeviceLostInfo& backing() const { return m_backing; }
 
 private:
-    GPUDeviceLostInfo(Ref<WebGPU::DeviceLostInfo>&& backing)
+    GPUDeviceLostInfo(Ref<WebGPUDeviceLostInfo>&& backing)
         : m_backing(WTF::move(backing))
     {
     }
 
-    const Ref<WebGPU::DeviceLostInfo> m_backing;
+    const Ref<WebGPUDeviceLostInfo> m_backing;
 };
 
 }

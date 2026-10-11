@@ -50,7 +50,7 @@
 
 namespace WebGPU::Metal {
 
-constexpr static auto largeBufferSize = WGPU_LARGE_BUFFER_SIZE;
+static_assert(WGPU_LARGE_BUFFER_SIZE == WebGPU::largeBufferSize);
 constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
@@ -2104,6 +2104,32 @@ void Queue::setLabel(String&& label)
     m_commandQueue.label = label.createNSString().get();
 }
 
+void Queue::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands)
+{
+    submit(WTF::map(commands, [](auto& command) {
+        return Ref { downcast<CommandBuffer>(command.get()) };
+    }));
+}
+
+void Queue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
+{
+    onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)> { [callback = WTF::move(callback)](WGPUQueueWorkDoneStatus) mutable {
+        callback();
+    } });
+}
+
+// The WebGPU::Metal writes only read `data`. They take a mutable span because a large write wraps
+// it with newBufferWithBytesNoCopy, and they take a mutable buffer where they track its use.
+void Queue::writeBuffer(const WebGPU::Buffer& buffer, uint64_t bufferOffset, std::span<const uint8_t> data)
+{
+    writeBuffer(const_cast<Buffer&>(downcast<Buffer>(buffer)), bufferOffset, spanConstCast<uint8_t>(data));
+}
+
+void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::span<const uint8_t> data, const WebGPU::TexelCopyBufferLayout& dataLayout, const WebGPU::Extent3D& writeSize)
+{
+    writeTexture(destination, spanConstCast<uint8_t>(data), dataLayout, writeSize, false);
+}
+
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
 {
     if (auto instance = m_instance.get())
@@ -2165,16 +2191,16 @@ void wgpuQueueRelease(WGPUQueue queue)
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallback callback, void* userdata)
 {
-    protect(WebGPU::Metal::fromAPI(queue))->onSubmittedWorkDone([callback, userdata](WGPUQueueWorkDoneStatus status) {
+    protect(WebGPU::Metal::fromAPI(queue))->onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)> { [callback, userdata](WGPUQueueWorkDoneStatus status) {
         callback(status, userdata);
-    });
+    } });
 }
 
 void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlockCallback callback)
 {
-    protect(WebGPU::Metal::fromAPI(queue))->onSubmittedWorkDone([callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPUQueueWorkDoneStatus status) {
+    protect(WebGPU::Metal::fromAPI(queue))->onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)> { [callback = WebGPU::Metal::fromAPI(WTF::move(callback))](WGPUQueueWorkDoneStatus status) {
         callback(status);
-    });
+    } });
 }
 
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)

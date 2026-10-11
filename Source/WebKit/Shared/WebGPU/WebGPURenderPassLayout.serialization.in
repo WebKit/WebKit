@@ -22,8 +22,8 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RenderPassLayout : WebKit::WebGPU::ObjectDescriptorBase {
-    Vector<std::optional<WebCore::WebGPU::TextureFormat>> colorFormats;
-    std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat;
-    WebCore::WebGPU::Size32 sampleCount;
+    Vector<std::optional<::WebGPU::TextureFormat>> colorFormats;
+    std::optional<::WebGPU::TextureFormat> depthStencilFormat;
+    uint32_t sampleCount;
 };
 #endif

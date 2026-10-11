@@ -51,6 +51,7 @@ class PresentationContext : public WebGPU::PresentationContext, public WGPUSurfa
     WTF_MAKE_TZONE_ALLOCATED(PresentationContext);
 public:
     static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&, const Instance&);
+    static Ref<PresentationContext> create(const WebGPU::PresentationContextDescriptor&, const Instance&);
     static Ref<PresentationContext> createInvalid()
     {
         return adoptRef(*new PresentationContext());
@@ -60,19 +61,21 @@ public:
 
     WebGPU::TextureFormat NODELETE getPreferredFormat(const Adapter&);
 
-    virtual void configure(const WebGPU::CanvasConfiguration&);
-    virtual void unconfigure();
+    void configure(const WebGPU::CanvasConfiguration&) override;
+    void unconfigure() override;
 
-    virtual void present(uint32_t);
-    virtual Texture* getCurrentTexture(uint32_t);
+    void present(uint32_t) override;
+    // The texture is owned by the presentation context.
+    virtual Texture* currentTexture(uint32_t);
+    RefPtr<WebGPU::Texture> getCurrentTexture(uint32_t) final;
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
-    virtual Seconds lastFrameGPUCost() const { return 0_s; }
-    virtual Seconds lastFramePresentStall() const { return 0_s; }
+    Seconds lastFrameGPUCost() const override { return 0_s; }
+    Seconds lastFramePresentStall() const override { return 0_s; }
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }
-    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool&) { return nullptr; }
+    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool&) override { return nullptr; }
 
     void setLabel(String&&) override { }
     bool isValid() const override { return false; }

@@ -123,7 +123,14 @@ bool Adapter::hasFeature(WGPUFeatureName feature)
     return m_capabilities.features.contains(feature);
 }
 
-void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&& callback)
+void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<WebGPU::Device>&&)>&& callback)
+{
+    requestDeviceOrError(descriptor, [callback = WTF::move(callback)](std::expected<Ref<Device>, String>&& device) mutable {
+        callback(device ? RefPtr<WebGPU::Device> { WTF::move(*device) } : nullptr);
+    });
+}
+
+void Adapter::requestDeviceOrError(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<Device>, String>&&)>&& callback)
 {
     if (m_deviceRequested) {
         callback(makeUnexpected("Adapter can only request one device"_s));
@@ -201,7 +208,7 @@ size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* featur
 
 WGPUBool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
-    limits->limits = WebGPU::Metal::toAPI(WebGPU::Metal::fromAPI(adapter).limits());
+    limits->limits = WebGPU::Metal::toAPI(protect(WebGPU::Metal::fromAPI(adapter))->limits());
     return true;
 }
 
@@ -223,7 +230,7 @@ static void requestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor& descr
     auto apiDescriptor = WebGPU::Metal::fromAPI(descriptor, storage);
     if (!apiDescriptor)
         return callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested features");
-    protectedAdapter->requestDevice(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+    protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback)](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
         if (!device)
             return callback(WGPURequestDeviceStatus_Error, nullptr, device.error().utf8().legacyCStringPointer());
         callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), "");

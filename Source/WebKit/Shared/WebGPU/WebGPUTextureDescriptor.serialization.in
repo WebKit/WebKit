@@ -23,11 +23,11 @@
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::TextureDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
     WebKit::WebGPU::Extent3D size;
-    WebCore::WebGPU::IntegerCoordinate mipLevelCount;
-    WebCore::WebGPU::Size32 sampleCount;
-    WebCore::WebGPU::TextureDimension dimension;
-    WebCore::WebGPU::TextureFormat format;
-    WebCore::WebGPU::TextureUsageFlags usage;
-    Vector<WebCore::WebGPU::TextureFormat> viewFormats;
+    uint32_t mipLevelCount;
+    uint32_t sampleCount;
+    ::WebGPU::TextureDimension dimension;
+    ::WebGPU::TextureFormat format;
+    OptionSet<::WebGPU::TextureUsage> usage;
+    Vector<::WebGPU::TextureFormat> viewFormats;
 };
 #endif

@@ -704,7 +704,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             mtlTexture1 = [mtlTexture1 newTextureViewWithPixelFormat:mtlTexture1.pixelFormat textureType:mtlTexture1.textureType levels:NSMakeRange(0, mtlTexture1.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture1.arrayLength) swizzle:*secondPlaneSwizzle];
     }
 
-    protect(m_defaultQueue)->onSubmittedWorkDone([plane0 = adoptCF(plane0), plane1 = adoptCF(plane1)](WGPUQueueWorkDoneStatus) { });
+    protect(m_defaultQueue)->onSubmittedWorkDone(CompletionHandler<void()> { [plane0 = adoptCF(plane0), plane1 = adoptCF(plane1)] { } });
 
     float Ax = 1.f / (upperRight[0] - lowerLeft[0]);
     float Bx = -Ax * lowerLeft[0];
@@ -1265,7 +1265,7 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
     return std::nullopt;
 }
 
-Ref<BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor)
+RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor)
 {
 #define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
 #define VALIDATION_ERROR(...) generateAValidationError(INTERNAL_ERROR_STRING((__VA_ARGS__)))
@@ -1437,11 +1437,11 @@ Ref<BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescriptor& descri
                 if (textureViewResource) {
                     Ref apiTextureView = metal(textureViewResource->get());
                     if (auto result = validateTextureOrBindGroup(*this, apiTextureView, argumentBuffer, argumentEncoder, argumentIndices, bindGroupLayout, entry, externalTextureEntry, index, resourceUsage, stage, stageResourceUsages, stageResources, storageTextureEntry, textureEntry))
-                        return *result;
+                        return WTF::move(*result);
                 } else {
                     Ref apiTexture = metal(textureResource->get());
                     if (auto result = validateTextureOrBindGroup(*this, apiTexture, argumentBuffer, argumentEncoder, argumentIndices, bindGroupLayout, entry, externalTextureEntry, index, resourceUsage, stage, stageResourceUsages, stageResources, storageTextureEntry, textureEntry))
-                        return *result;
+                        return WTF::move(*result);
                 }
 
             } else if (externalTextureResource) {
@@ -1678,8 +1678,10 @@ bool BindGroup::rebindSamplersIfNeeded() const
     return true;
 }
 
-bool BindGroup::updateExternalTextures(ExternalTexture& externalTexture)
+bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTexture)
 {
+    // Every WebGPU::ExternalTexture that reaches a WebGPU::Metal::BindGroup is a WebGPU::Metal::ExternalTexture.
+    auto& externalTexture = downcast<ExternalTexture>(apiExternalTexture);
     if (!m_bindGroupLayout || externalTexture.openCommandEncoderCount())
         return false;
 

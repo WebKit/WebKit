@@ -252,7 +252,7 @@
 		DD5697FE2DC1316A00050321 /* rdar150228472.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5697FC2DC1311D00050321 /* rdar150228472.swift */; };
 		DDE748802F7B4337008013AB /* WorkAround173516139.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE7487F2F7B4331008013AB /* WorkAround173516139.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		596E957DAF12D022D09D9ED4 /* WebGPUCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D2ACF0E901738C24D0DDFE /* WebGPUCpp.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CFABBD75A0EC0E1A9B26F610 /* WebGPUCppBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 34D758CE51B9FCF776C71CF5 /* WebGPUCppBridge.h */; };
 		1BAE0AF932075C6734283F13 /* WebGPUCppConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EC38181D0F6A5B9E6D5F46 /* WebGPUCppConversions.h */; };
 		C58AE38494420555CFC65614 /* WebGPUCppBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4606ED06320AD4C5A15A157B /* WebGPUCppBridge.mm */; };
 /* End PBXBuildFile section */

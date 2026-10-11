@@ -27,19 +27,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUIntegralTypes.h>
-#include <optional>
-#include <wtf/Ref.h>
-#include <wtf/Vector.h>
+#include "WebGPURenderPassTimestampWrites.h"
 
 namespace WebKit::WebGPU {
 
-struct ComputePassTimestampWrites {
-    WebGPUIdentifier querySet;
-    WebCore::WebGPU::Size32 beginningOfPassWriteIndex { WebCore::WebGPU::kQuerySetIndexUndefined };
-    WebCore::WebGPU::Size32 endOfPassWriteIndex { WebCore::WebGPU::kQuerySetIndexUndefined };
-};
+// The render and compute passes take the same timestamp writes.
+using ComputePassTimestampWrites = RenderPassTimestampWrites;
 
 } // namespace WebKit::WebGPU
 

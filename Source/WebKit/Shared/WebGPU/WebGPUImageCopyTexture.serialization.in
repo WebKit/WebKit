@@ -23,8 +23,8 @@
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageCopyTexture {
     WebKit::WebGPUIdentifier texture;
-    WebCore::WebGPU::IntegerCoordinate mipLevel;
+    uint32_t mipLevel;
     std::optional<WebKit::WebGPU::Origin3D> origin;
-    WebCore::WebGPU::TextureAspect aspect;
+    ::WebGPU::TextureAspect aspect;
 };
 #endif

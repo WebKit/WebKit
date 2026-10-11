@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUVertexFormat.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -75,93 +75,93 @@ enum class GPUVertexFormat : uint8_t {
     Unorm8x4Bgra,
 };
 
-inline WebGPU::VertexFormat convertToBacking(GPUVertexFormat vertexFormat)
+inline ::WebGPU::VertexFormat convertToBacking(GPUVertexFormat vertexFormat)
 {
     switch (vertexFormat) {
     case GPUVertexFormat::Uint8:
-        return WebGPU::VertexFormat::Uint8;
+        return ::WebGPU::VertexFormat::Uint8;
     case GPUVertexFormat::Uint8x2:
-        return WebGPU::VertexFormat::Uint8x2;
+        return ::WebGPU::VertexFormat::Uint8x2;
     case GPUVertexFormat::Uint8x4:
-        return WebGPU::VertexFormat::Uint8x4;
+        return ::WebGPU::VertexFormat::Uint8x4;
     case GPUVertexFormat::Sint8:
-        return WebGPU::VertexFormat::Sint8;
+        return ::WebGPU::VertexFormat::Sint8;
     case GPUVertexFormat::Sint8x2:
-        return WebGPU::VertexFormat::Sint8x2;
+        return ::WebGPU::VertexFormat::Sint8x2;
     case GPUVertexFormat::Sint8x4:
-        return WebGPU::VertexFormat::Sint8x4;
+        return ::WebGPU::VertexFormat::Sint8x4;
     case GPUVertexFormat::Unorm8:
-        return WebGPU::VertexFormat::Unorm8;
+        return ::WebGPU::VertexFormat::Unorm8;
     case GPUVertexFormat::Unorm8x2:
-        return WebGPU::VertexFormat::Unorm8x2;
+        return ::WebGPU::VertexFormat::Unorm8x2;
     case GPUVertexFormat::Unorm8x4:
-        return WebGPU::VertexFormat::Unorm8x4;
+        return ::WebGPU::VertexFormat::Unorm8x4;
     case GPUVertexFormat::Snorm8:
-        return WebGPU::VertexFormat::Snorm8;
+        return ::WebGPU::VertexFormat::Snorm8;
     case GPUVertexFormat::Snorm8x2:
-        return WebGPU::VertexFormat::Snorm8x2;
+        return ::WebGPU::VertexFormat::Snorm8x2;
     case GPUVertexFormat::Snorm8x4:
-        return WebGPU::VertexFormat::Snorm8x4;
+        return ::WebGPU::VertexFormat::Snorm8x4;
     case GPUVertexFormat::Uint16:
-        return WebGPU::VertexFormat::Uint16;
+        return ::WebGPU::VertexFormat::Uint16;
     case GPUVertexFormat::Uint16x2:
-        return WebGPU::VertexFormat::Uint16x2;
+        return ::WebGPU::VertexFormat::Uint16x2;
     case GPUVertexFormat::Uint16x4:
-        return WebGPU::VertexFormat::Uint16x4;
+        return ::WebGPU::VertexFormat::Uint16x4;
     case GPUVertexFormat::Sint16:
-        return WebGPU::VertexFormat::Sint16;
+        return ::WebGPU::VertexFormat::Sint16;
     case GPUVertexFormat::Sint16x2:
-        return WebGPU::VertexFormat::Sint16x2;
+        return ::WebGPU::VertexFormat::Sint16x2;
     case GPUVertexFormat::Sint16x4:
-        return WebGPU::VertexFormat::Sint16x4;
+        return ::WebGPU::VertexFormat::Sint16x4;
     case GPUVertexFormat::Unorm16:
-        return WebGPU::VertexFormat::Unorm16;
+        return ::WebGPU::VertexFormat::Unorm16;
     case GPUVertexFormat::Unorm16x2:
-        return WebGPU::VertexFormat::Unorm16x2;
+        return ::WebGPU::VertexFormat::Unorm16x2;
     case GPUVertexFormat::Unorm16x4:
-        return WebGPU::VertexFormat::Unorm16x4;
+        return ::WebGPU::VertexFormat::Unorm16x4;
     case GPUVertexFormat::Snorm16:
-        return WebGPU::VertexFormat::Snorm16;
+        return ::WebGPU::VertexFormat::Snorm16;
     case GPUVertexFormat::Snorm16x2:
-        return WebGPU::VertexFormat::Snorm16x2;
+        return ::WebGPU::VertexFormat::Snorm16x2;
     case GPUVertexFormat::Snorm16x4:
-        return WebGPU::VertexFormat::Snorm16x4;
+        return ::WebGPU::VertexFormat::Snorm16x4;
     case GPUVertexFormat::Float16:
-        return WebGPU::VertexFormat::Float16;
+        return ::WebGPU::VertexFormat::Float16;
     case GPUVertexFormat::Float16x2:
-        return WebGPU::VertexFormat::Float16x2;
+        return ::WebGPU::VertexFormat::Float16x2;
     case GPUVertexFormat::Float16x4:
-        return WebGPU::VertexFormat::Float16x4;
+        return ::WebGPU::VertexFormat::Float16x4;
     case GPUVertexFormat::Float32:
-        return WebGPU::VertexFormat::Float32;
+        return ::WebGPU::VertexFormat::Float32;
     case GPUVertexFormat::Float32x2:
-        return WebGPU::VertexFormat::Float32x2;
+        return ::WebGPU::VertexFormat::Float32x2;
     case GPUVertexFormat::Float32x3:
-        return WebGPU::VertexFormat::Float32x3;
+        return ::WebGPU::VertexFormat::Float32x3;
     case GPUVertexFormat::Float32x4:
-        return WebGPU::VertexFormat::Float32x4;
+        return ::WebGPU::VertexFormat::Float32x4;
     case GPUVertexFormat::Uint32:
-        return WebGPU::VertexFormat::Uint32;
+        return ::WebGPU::VertexFormat::Uint32;
     case GPUVertexFormat::Uint32x2:
-        return WebGPU::VertexFormat::Uint32x2;
+        return ::WebGPU::VertexFormat::Uint32x2;
     case GPUVertexFormat::Uint32x3:
-        return WebGPU::VertexFormat::Uint32x3;
+        return ::WebGPU::VertexFormat::Uint32x3;
     case GPUVertexFormat::Uint32x4:
-        return WebGPU::VertexFormat::Uint32x4;
+        return ::WebGPU::VertexFormat::Uint32x4;
     case GPUVertexFormat::Sint32:
-        return WebGPU::VertexFormat::Sint32;
+        return ::WebGPU::VertexFormat::Sint32;
     case GPUVertexFormat::Sint32x2:
-        return WebGPU::VertexFormat::Sint32x2;
+        return ::WebGPU::VertexFormat::Sint32x2;
     case GPUVertexFormat::Sint32x3:
-        return WebGPU::VertexFormat::Sint32x3;
+        return ::WebGPU::VertexFormat::Sint32x3;
     case GPUVertexFormat::Sint32x4:
-        return WebGPU::VertexFormat::Sint32x4;
+        return ::WebGPU::VertexFormat::Sint32x4;
     case GPUVertexFormat::Snorm1010102:
-        return WebGPU::VertexFormat::Snorm1010102;
+        return ::WebGPU::VertexFormat::Snorm1010102;
     case GPUVertexFormat::Unorm1010102:
-        return WebGPU::VertexFormat::Unorm1010102;
+        return ::WebGPU::VertexFormat::Unorm1010102;
     case GPUVertexFormat::Unorm8x4Bgra:
-        return WebGPU::VertexFormat::Unorm8x4Bgra;
+        return ::WebGPU::VertexFormat::Unorm8x4Bgra;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

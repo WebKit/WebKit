@@ -350,7 +350,7 @@ public:
     static void didChangeWebGPURenderPipelineLabel(GPURenderPipeline&);
     static void willDestroyWebGPURenderPipeline(GPURenderPipeline&);
     static bool isWebGPURenderPipelineDisabled(GPURenderPipeline&);
-    static RefPtr<WebGPU::RenderPipeline> renderPipelineForWebGPUHighlighting(GPURenderPipeline&, unsigned canvasColorAttachmentMask);
+    static RefPtr<::WebGPU::RenderPipeline> renderPipelineForWebGPUHighlighting(GPURenderPipeline&, unsigned canvasColorAttachmentMask);
 
     static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationName(WebAnimation&);
@@ -574,7 +574,7 @@ private:
     static void willDestroyWebGPURenderPipelineImpl(InstrumentingAgents&, GPURenderPipeline&);
     static void didChangeWebGPURenderPipelineLabelImpl(InstrumentingAgents&, GPURenderPipeline&);
     static bool isWebGPURenderPipelineDisabledImpl(InstrumentingAgents&, GPURenderPipeline&);
-    static RefPtr<WebGPU::RenderPipeline> renderPipelineForWebGPUHighlightingImpl(InstrumentingAgents&, GPURenderPipeline&, unsigned canvasColorAttachmentMask);
+    static RefPtr<::WebGPU::RenderPipeline> renderPipelineForWebGPUHighlightingImpl(InstrumentingAgents&, GPURenderPipeline&, unsigned canvasColorAttachmentMask);
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
@@ -1655,7 +1655,7 @@ inline bool InspectorInstrumentation::isWebGPURenderPipelineDisabled(GPURenderPi
     return false;
 }
 
-inline RefPtr<WebGPU::RenderPipeline> InspectorInstrumentation::renderPipelineForWebGPUHighlighting(GPURenderPipeline& pipeline, unsigned canvasColorAttachmentMask)
+inline RefPtr<::WebGPU::RenderPipeline> InspectorInstrumentation::renderPipelineForWebGPUHighlighting(GPURenderPipeline& pipeline, unsigned canvasColorAttachmentMask)
 {
     FAST_RETURN_IF_NO_FRONTENDS(nullptr);
     if (RefPtr device = pipeline.device()) {
