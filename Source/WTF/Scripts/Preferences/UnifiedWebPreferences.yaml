@@ -757,6 +757,17 @@ BlobFileAccessEnforcementEnabled:
     "PLATFORM(COCOA)": true
     default: false
 
+BlockFormattingContextCoverageIndicatorEnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "Next-generation block layout coverage indicator (BFC)"
+  humanReadableDescription: "Show how much of the block content next-generation block layout lays out, when it is enabled"
+  defaultValue:
+    default: true
+    WebKitLegacy: false
+    WebCore: false
+
 BlockFormattingContextIntegrationEnabled:
   type: bool
   status: unstable
