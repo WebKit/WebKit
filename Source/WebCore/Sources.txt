@@ -2091,6 +2091,7 @@ layout/formattingContexts/block/BlockFormattingContext.cpp @header:RenderStyleGe
 layout/formattingContexts/block/BlockFormattingState.cpp
 layout/formattingContexts/block/BlockFormattingUtils.cpp
 layout/formattingContexts/block/BlockItemsBuilder.cpp
+layout/formattingContexts/block/BlockMarginCollapse.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexFormattingUtils.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexLineBreaker.cpp

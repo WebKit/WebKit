@@ -61,6 +61,11 @@ LayoutUnit BlockFormattingUtils::borderBoxBlockSize(const RenderBox& box, Layout
     return blockSize;
 }
 
+bool BlockFormattingUtils::blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize)
+{
+    return blockSize.isAuto() || (blockSize.isPercentOrCalculated() && !containingBlockContentBoxBlockSize);
+}
+
 std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode writingMode)
 {
     // Anonymous block boxes are ignored when resolving percentage values that would refer to them (CSS 2.2 §9.2.1.1).
