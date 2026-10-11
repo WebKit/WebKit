@@ -27,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-serialization.crossAgentCluster.helper.html
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-serialization.crossAgentCluster.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/av1.mp4
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/chunk-serialization.any.js

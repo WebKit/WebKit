@@ -32,6 +32,7 @@
     Exposed=(Window,DedicatedWorker),
     InterfaceName=AudioData,
     ReportExtraMemoryCost,
+    SameAgentCluster,
     Serializable,
     Transferable,
 ] interface WebCodecsAudioData {
