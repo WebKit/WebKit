@@ -23,11 +23,13 @@
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 
-import DirectResource
+@_weakLinked import DirectResource
+import CoreGraphics
 import Metal
-import USDKit
-import RealityKit
+@_weakLinked import USDKit
+@_weakLinked import RealityKit
 
+@_expose(!Cxx)
 final class MeshInstancePool {
     private(set) var meshInstances: LowLevelMeshInstanceArray
     private let renderContext: any LowLevelRenderContext
@@ -163,6 +165,7 @@ extension LowLevelTextureResource.Descriptor {
     }
 }
 
+@_optimize(none)
 private func mapSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> LowLevelMeshResource.VertexSemantic {
     switch semantic {
     case .position: .position
@@ -183,6 +186,7 @@ private func mapSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> LowLevelMes
     }
 }
 
+@_optimize(none)
 private func mapSemantic(_ semantic: WKBridgeVertexSemantic) -> LowLevelMeshResource.VertexSemantic {
     switch semantic {
     case .position: .position
@@ -231,6 +235,7 @@ extension LowLevelMeshResource.Descriptor {
     }
 }
 
+@_expose(!Cxx)
 internal func debugPrintShaderGraph(_ graph: ShaderGraph?, prefix: String = "", indent: String = "") {
     guard let graph = graph else {
         logInfo("\(indent)\(prefix)ShaderGraph: nil")
@@ -390,6 +395,7 @@ private func debugPrintValue(_ value: ShaderGraph.Value, indent: String = "") {
     }
 }
 
+@_expose(!Cxx)
 internal func compareShaderGraphs(
     _ graph1: ShaderGraph?,
     _ graph2: ShaderGraph?,
