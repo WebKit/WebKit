@@ -29,8 +29,11 @@
 #include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CanvasRenderingContext.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "GPUBuffer.h"
 #include "GPUDevice.h"
+#include "GPUDrawElementImageDestination.h"
+#include "GPUDrawElementImageSource.h"
 #include "GPUExternalTextureDescriptor.h"
 #include "GPUImageCopyExternalImage.h"
 #include "GPUTexture.h"
@@ -1462,9 +1465,90 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
     return { };
 }
 
-ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageSource&, const GPUDrawElementImageDestination&)
+ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& snapshot, const GPUDrawElementImageSource& source, const GPUDrawElementImageDestination& destination)
 {
-    return Exception { ExceptionCode::InvalidStateError };
+    FloatRect snapshotRect = { { }, snapshot.size };
+    FloatRect srcRect {
+        source.sourceX.value_or(0),
+        source.sourceY.value_or(0),
+        source.sourceWidth.value_or(snapshotRect.width()),
+        source.sourceHeight.value_or(snapshotRect.height())
+    };
+
+    if (!std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
+        return { };
+
+    auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
+    if (normalizedSrcRect.isEmpty())
+        return { };
+
+    GPUIntegerCoordinate width;
+    GPUIntegerCoordinate height;
+    if (destination.size) {
+        width = dimension(*destination.size, 0);
+        height = dimension(*destination.size, 1);
+    } else {
+        width = std::ceil(srcRect.width());
+        height = std::ceil(srcRect.height());
+    }
+
+    if (!width || !height)
+        return { };
+
+    RefPtr buffer = ImageBuffer::create(FloatSize(width, height), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!buffer)
+        return Exception { ExceptionCode::InvalidStateError, "createImageBufferForWebGLContextReads failed to create an ImageBuffer."_s };
+
+    {
+        auto& context = buffer->context();
+        auto scale = FloatSize { width / srcRect.width(), height / srcRect.height() };
+        context.translate(-toFloatSize(srcRect.location()) * scale);
+        context.scale(scale);
+        context.drawDisplayList(snapshot.displayList);
+    }
+
+    // FIXME: destination.colorSpace is not honored yet; the pixels are always sRGB.
+    bool needsPremultipliedAlpha = destination.premultipliedAlpha;
+    bool callbackScopeIsSafe { true };
+    getImageBytesFromImageBuffer(buffer, needsPremultipliedAlpha, [&](std::span<const uint8_t> imageBytes, size_t columns, size_t rows) {
+        RELEASE_ASSERT(callbackScopeIsSafe);
+        if (!imageBytes.data() || imageBytes.empty() || (imageBytes.size() % 4))
+            return;
+
+        Ref destinationTexture = destination.texture;
+        bool supportedFormat;
+        auto newImageBytes = copyToDestinationFormat(imageBytes, destinationTexture->format(), supportedFormat, rows, false, needsPremultipliedAlpha, std::nullopt);
+        auto sizeInBytes = newImageBytes ? newImageBytes.sizeInBytes() : imageBytes.size();
+        auto widthInBytes = sizeInBytes / rows;
+        GPUImageDataLayout dataLayout { 0, widthInBytes, rows };
+
+        auto copyDestination = destination.convertToBacking();
+
+        if (!supportedFormat || !(destinationTexture->usage() & GPUTextureUsage::RENDER_ATTACHMENT))
+            copyDestination.mipLevel = INT_MAX;
+
+        WebGPU::Extent3D backingCopySize = WebGPU::Extent3DDict { static_cast<WebGPU::IntegerCoordinate>(columns), static_cast<WebGPU::IntegerCoordinate>(rows), 1 };
+        m_backing->writeTexture(copyDestination, newImageBytes ? newImageBytes.span() : imageBytes, dataLayout.convertToBacking(), backingCopySize);
+    });
+
+    callbackScopeIsSafe = false;
+    return { };
+}
+
+ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageSource& source, const GPUDrawElementImageDestination& destination)
+{
+    return WTF::switchOn(source.source,
+        [&](const Ref<Element>& element) -> ExceptionOr<void> {
+            if (RefPtr canvasElement = ancestorsOfType<HTMLCanvasElement>(element.get()).first()) {
+                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
+                    return drawSnapshotToTexture(*snapshot, source, destination);
+            }
+            return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: Failed to get a snapshot for a drawableElement"_s };
+        },
+        [&](const Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
+            return drawSnapshotToTexture(elementImage->snapshot(), source, destination);
+        }
+    );
 }
 
 } // namespace WebCore

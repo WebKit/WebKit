@@ -88,8 +88,8 @@ public:
     void requestPaint();
     void dispatchPaintEvent();
 
-    ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&);
     std::optional<CanvasElementSnapshot> canvasDrawableSnapshot(Element&) const;
+    ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&) const;
 
     ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>);
     ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
