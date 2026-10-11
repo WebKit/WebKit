@@ -53,7 +53,7 @@ messages -> WebExtensionContext {
     [Validator=isAlarmsMessageAllowed] AlarmsGet(String name) -> (struct std::optional<WebKit::WebExtensionAlarmParameters> alarmInfo)
     [Validator=isAlarmsMessageAllowed] AlarmsClear(String name) -> (bool success)
     [Validator=isAlarmsMessageAllowed] AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms)
-    [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> (bool success)
+    [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> ()
 
 #if PLATFORM(COCOA)
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
