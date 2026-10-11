@@ -34,6 +34,25 @@ PAS_BEGIN_EXTERN_C;
 
 PAS_DECLARE_LOCK(pas_thread_suspend);
 
+/* Who holds the thread suspend lock. Clients that share it set this after locking, and reset it
+   to pas_thread_suspend_reason_libpas before unlocking. */
+typedef enum {
+    pas_thread_suspend_reason_libpas,
+    pas_thread_suspend_reason_client,
+} pas_thread_suspend_reason;
+
+PAS_API extern pas_thread_suspend_reason pas_thread_suspend_current_reason;
+
+#if PAS_OS(LINUX)
+/* libpas suspends threads with the client's suspend signal. The client calls set_signal() once its
+   handler is installed, and that handler calls handle_signal() when the reason is not the client.
+   Until then, libpas cannot suspend threads. */
+PAS_API void pas_thread_suspend_set_signal(int signal);
+PAS_API void pas_thread_suspend_handle_signal(void);
+PAS_API bool pas_thread_suspend_suspend(pthread_t thread);
+PAS_API void pas_thread_suspend_resume(pthread_t thread);
+#endif
+
 PAS_END_EXTERN_C;
 
 PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
