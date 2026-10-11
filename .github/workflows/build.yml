@@ -722,6 +722,7 @@ jobs:
           cmake -S "$GITHUB_WORKSPACE/Tools/wiiu/libwebrtc" -B build-webrtc -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WiiUToolchain.cmake" \
             -DLIBWEBRTC_DIR="$GITHUB_WORKSPACE/Source/ThirdParty/libwebrtc" \
+            -DCMAKE_PROJECT_libwebrtc_wiiu_INCLUDE="$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WebRTCPlatform.cmake" \
             -DCMAKE_BUILD_TYPE=Release \
             > webrtc-configure.log 2>&1
           if [ -f build-webrtc/build.ninja ]; then
