@@ -62,7 +62,7 @@ public:
     using TrailingDisplayBoxList = Vector<InlineDisplay::Box>;
     std::optional<InlineDisplay::Box> trailingContentForLine(size_t lineIndex) const;
 
-    void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTF::move(layoutBox)); }
+    void addDetachedBox(UniqueRef<Box>&&);
 
     bool isInlineItemListDirty() const { return m_isInlineItemListDirty; }
     void setInlineItemListClean() { m_isInlineItemListDirty = false; }
@@ -114,6 +114,13 @@ inline void InlineDamage::resetLayoutPosition()
     m_layoutStartPosition = { };
     m_trailingDisplayBoxes.clear();
     // Never reset m_detachedLayoutBoxes. We need to keep those layout boxes around until after layout.
+}
+
+inline void InlineDamage::addDetachedBox(UniqueRef<Box>&& layoutBox)
+{
+    // The inline item list may still have items for this box (e.g. from intrinsic width computation before its first layout).
+    setInlineItemListDirty();
+    m_detachedLayoutBoxes.append(WTF::move(layoutBox));
 }
 
 }

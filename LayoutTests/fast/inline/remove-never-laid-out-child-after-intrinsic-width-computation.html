@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+marquee { font: 20px/1 monospace; }
+</style>
+<marquee id="marquee" scrollamount="0"><div id="container">xxxx</div></marquee>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const widthBefore = marquee.offsetWidth;
+
+const span = document.createElement("span");
+span.textContent = " yyyy";
+container.appendChild(span);
+marquee.setAttribute("scrollamount", "6");
+// Update the render tree without running layout.
+getComputedStyle(marquee).color;
+// Starting the marquee computes its intrinsic widths, and with them the inline items for the new content, outside of layout.
+marquee.start();
+
+span.remove();
+
+const widthAfter = marquee.offsetWidth;
+document.body.textContent = widthBefore == widthAfter ? "PASS" : `FAIL: width ${widthBefore} -> ${widthAfter}`;
+</script>
