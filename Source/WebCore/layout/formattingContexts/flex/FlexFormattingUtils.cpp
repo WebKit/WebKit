@@ -51,64 +51,29 @@ FlexFormattingUtils::FlexFormattingUtils(const RenderFlexibleBox& flexBox)
 {
 }
 
-LayoutUnit FlexFormattingUtils::flowAwareBorderStart() const
+// The border and padding at a row's inline-start edge (inline-end for row-reverse) and at a column's block-start edge,
+// even for column-reverse, whose css-flexbox main-start is block-end: the items are laid out forwards and
+// computeFlexItemRects flips column-reverse afterwards.
+LayoutUnit FlexFormattingUtils::flowAwareBorderAndPaddingStart() const
 {
-    if (isHorizontalFlow(flexBox()))
-        return isLeftToRightFlow() ? flexBox().borderLeft() : flexBox().borderRight();
-    return isLeftToRightFlow() ? flexBox().borderTop() : flexBox().borderBottom();
+    if (isColumnFlow(flexBox()))
+        return flexBox().borderAndPaddingBefore();
+    return flexBox().style().flexDirection() == FlexDirection::RowReverse ? flexBox().borderAndPaddingEnd() : flexBox().borderAndPaddingStart();
 }
 
-LayoutUnit FlexFormattingUtils::flowAwareBorderEnd() const
+LayoutUnit FlexFormattingUtils::flowAwareBorderAndPaddingEnd() const
 {
-    if (isHorizontalFlow(flexBox()))
-        return isLeftToRightFlow() ? flexBox().borderRight() : flexBox().borderLeft();
-    return isLeftToRightFlow() ? flexBox().borderBottom() : flexBox().borderTop();
+    if (isColumnFlow(flexBox()))
+        return flexBox().borderAndPaddingAfter();
+    return flexBox().style().flexDirection() == FlexDirection::RowReverse ? flexBox().borderAndPaddingStart() : flexBox().borderAndPaddingEnd();
 }
 
-LayoutUnit FlexFormattingUtils::flowAwareBorderBefore() const
+// The border and padding at a row's block-start edge and at a column's inline-start edge, even for wrap-reverse, which
+// swaps css-flexbox's cross-start and cross-end: the lines are stacked forwards and computeFlexItemRects flips
+// wrap-reverse afterwards.
+LayoutUnit FlexFormattingUtils::flowAwareBorderAndPaddingBefore() const
 {
-    switch (transformedBlockFlowDirection()) {
-    case FlowDirection::TopToBottom:
-        return flexBox().borderTop();
-    case FlowDirection::BottomToTop:
-        return flexBox().borderBottom();
-    case FlowDirection::LeftToRight:
-        return flexBox().borderLeft();
-    case FlowDirection::RightToLeft:
-        return flexBox().borderRight();
-    }
-    ASSERT_NOT_REACHED();
-    return flexBox().borderTop();
-}
-
-LayoutUnit FlexFormattingUtils::flowAwarePaddingStart() const
-{
-    if (isHorizontalFlow(flexBox()))
-        return isLeftToRightFlow() ? flexBox().paddingLeft() : flexBox().paddingRight();
-    return isLeftToRightFlow() ? flexBox().paddingTop() : flexBox().paddingBottom();
-}
-
-LayoutUnit FlexFormattingUtils::flowAwarePaddingEnd() const
-{
-    if (isHorizontalFlow(flexBox()))
-        return isLeftToRightFlow() ? flexBox().paddingRight() : flexBox().paddingLeft();
-    return isLeftToRightFlow() ? flexBox().paddingBottom() : flexBox().paddingTop();
-}
-
-LayoutUnit FlexFormattingUtils::flowAwarePaddingBefore() const
-{
-    switch (transformedBlockFlowDirection()) {
-    case FlowDirection::TopToBottom:
-        return flexBox().paddingTop();
-    case FlowDirection::BottomToTop:
-        return flexBox().paddingBottom();
-    case FlowDirection::LeftToRight:
-        return flexBox().paddingLeft();
-    case FlowDirection::RightToLeft:
-        return flexBox().paddingRight();
-    }
-    ASSERT_NOT_REACHED();
-    return flexBox().paddingTop();
+    return isColumnFlow(flexBox()) ? flexBox().borderAndPaddingStart() : flexBox().borderAndPaddingBefore();
 }
 
 LayoutUnit FlexFormattingUtils::flowAwareMarginStartForFlexItem(const FlexLayoutItem& flexLayoutItem) const
