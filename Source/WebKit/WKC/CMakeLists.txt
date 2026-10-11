@@ -16,9 +16,21 @@ option(WKC_ENABLE_FULL_WEBCORE "Compile the available common WebCore source list
 if (WKC_ENABLE_FULL_WEBCORE)
     set(_WKC_WEB_AUDIO_DEFAULT ON)
     set(_WKC_INDEXED_DATABASE_DEFAULT ON)
+    set(_WKC_GAMEPAD_DEFAULT ON)
 else ()
     set(_WKC_WEB_AUDIO_DEFAULT OFF)
     set(_WKC_INDEXED_DATABASE_DEFAULT OFF)
+    set(_WKC_GAMEPAD_DEFAULT OFF)
+endif ()
+
+# The WKCWebView port bridges Wii U GamePad/Remote events to the standards-based
+# navigator.getGamepads() API. Enable it together with the full WebCore DOM;
+# the bootstrap-only archive stays lean until it includes the DOM-side provider.
+option(WKC_ENABLE_GAMEPAD "Expose the W3C Gamepad API through Wii U controller events" ${_WKC_GAMEPAD_DEFAULT})
+if (WKC_ENABLE_GAMEPAD)
+    set(_WKC_GAMEPAD_DEFINE 1)
+else ()
+    set(_WKC_GAMEPAD_DEFINE 0)
 endif ()
 
 # Keep WebAssembly opt-in until JavaScriptCore has a PowerPC register/ABI path.
@@ -154,6 +166,7 @@ add_definitions(
     -DENABLE_WEBGL=1
     -DENABLE_WEB_AUDIO=${_WKC_WEB_AUDIO_DEFINE}
     -DENABLE_MEDIA_STREAM=1
+    -DENABLE_GAMEPAD=${_WKC_GAMEPAD_DEFINE}
     -DENABLE_WEB_RTC=${_WKC_WEBRTC_API_DEFINE}
     -DENABLE_NOTIFICATIONS=0
     -DENABLE_FULLSCREEN_API=0
