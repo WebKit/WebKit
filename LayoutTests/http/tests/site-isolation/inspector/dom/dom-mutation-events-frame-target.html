@@ -46,13 +46,12 @@ function test() {
         name: "SiteIsolation.DOM.MutationEvents.AttributeModified",
         description: "Modifying an attribute in a cross-origin frame should fire attributeModified.",
         async test() {
-            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.AttributeModified);
+            let eventPromise = containerNode.awaitEvent(WI.DOMNode.Event.AttributeModified);
             evaluateInFrame("modifyAttribute()");
 
             let event = await eventPromise;
-            let {node, name} = event.data;
-            InspectorTest.expectEqual(node, containerNode, "Modified node should be #container.");
-            InspectorTest.expectEqual(name, "data-role", "Modified attribute should be 'data-role'.");
+            InspectorTest.expectEqual(event.target, containerNode, "Modified node should be #container.");
+            InspectorTest.expectEqual(event.data.name, "data-role", "Modified attribute should be 'data-role'.");
             InspectorTest.expectEqual(containerNode.getAttribute("data-role"), "updated-role", "Attribute value should be 'updated-role'.");
         }
     });
@@ -61,13 +60,12 @@ function test() {
         name: "SiteIsolation.DOM.MutationEvents.AttributeRemoved",
         description: "Removing an attribute in a cross-origin frame should fire attributeRemoved.",
         async test() {
-            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.AttributeRemoved);
+            let eventPromise = containerNode.awaitEvent(WI.DOMNode.Event.AttributeRemoved);
             evaluateInFrame("removeAttribute()");
 
             let event = await eventPromise;
-            let {node, name} = event.data;
-            InspectorTest.expectEqual(node, containerNode, "Removed attribute node should be #container.");
-            InspectorTest.expectEqual(name, "data-role", "Removed attribute should be 'data-role'.");
+            InspectorTest.expectEqual(event.target, containerNode, "Removed attribute node should be #container.");
+            InspectorTest.expectEqual(event.data.name, "data-role", "Removed attribute should be 'data-role'.");
             InspectorTest.expectEqual(containerNode.getAttribute("data-role"), undefined, "data-role attribute should no longer exist.");
         }
     });
@@ -81,13 +79,13 @@ function test() {
 
             // Expand #text-node so we can see its text child.
             await new Promise((resolve) => textParagraph.getChildNodes(resolve));
+            let textNode = textParagraph.children[0];
 
-            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.CharacterDataModified);
+            let eventPromise = textNode.awaitEvent(WI.DOMNode.Event.CharacterDataModified);
             evaluateInFrame("modifyCharacterData()");
 
             let event = await eventPromise;
-            let {node} = event.data;
-            InspectorTest.expectEqual(node.nodeValue(), "Updated text content.", "Text node should have updated content.");
+            InspectorTest.expectEqual(event.target.nodeValue(), "Updated text content.", "Text node should have updated content.");
         }
     });
 
@@ -97,12 +95,12 @@ function test() {
         async test() {
             let childCountBefore = containerNode.children.length;
 
-            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted);
+            let eventPromise = WI.DOMNode.awaitEvent(WI.DOMNode.Event.Inserted);
             evaluateInFrame("insertChild()");
 
             let event = await eventPromise;
-            let {node, parent} = event.data;
-            InspectorTest.expectEqual(parent, containerNode, "Inserted node's parent should be #container.");
+            let node = event.target;
+            InspectorTest.expectEqual(node.parentNode, containerNode, "Inserted node's parent should be #container.");
             InspectorTest.expectEqual(node.nodeName(), "SPAN", "Inserted node should be a SPAN.");
             InspectorTest.expectEqual(node.getAttribute("id"), "inserted-span", "Inserted node should have id='inserted-span'.");
             InspectorTest.expectEqual(containerNode.children.length, childCountBefore + 1, "Container should have one more child.");
@@ -118,13 +116,12 @@ function test() {
 
             let childCountBefore = containerNode.children.length;
 
-            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.NodeRemoved);
+            let eventPromise = headingNode.awaitEvent(WI.DOMNode.Event.Removed);
             evaluateInFrame("removeChild()");
 
             let event = await eventPromise;
-            let {node, parent} = event.data;
-            InspectorTest.expectEqual(node, headingNode, "Removed node should be #heading.");
-            InspectorTest.expectEqual(parent, containerNode, "Removed node's parent should be #container.");
+            InspectorTest.expectEqual(event.target, headingNode, "Removed node should be #heading.");
+            InspectorTest.expectEqual(event.data.parent, containerNode, "Removed node's parent should be #container.");
             InspectorTest.expectEqual(containerNode.children.length, childCountBefore - 1, "Container should have one fewer child.");
         }
     });
@@ -133,13 +130,12 @@ function test() {
         name: "SiteIsolation.DOM.MutationEvents.InlineStyleInvalidated",
         description: "Modifying inline style in a cross-origin frame should fire attributeModified for 'style'.",
         async test() {
-            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.AttributeModified);
+            let eventPromise = containerNode.awaitEvent(WI.DOMNode.Event.AttributeModified);
             evaluateInFrame("modifyInlineStyle()");
 
             let event = await eventPromise;
-            let {node, name} = event.data;
-            InspectorTest.expectEqual(node, containerNode, "Style-invalidated node should be #container.");
-            InspectorTest.expectEqual(name, "style", "Modified attribute should be 'style'.");
+            InspectorTest.expectEqual(event.target, containerNode, "Style-invalidated node should be #container.");
+            InspectorTest.expectEqual(event.data.name, "style", "Modified attribute should be 'style'.");
             InspectorTest.expectThat(containerNode.getAttribute("style").includes("color"), "Style attribute should include the updated color.");
         }
     });
@@ -154,21 +150,10 @@ function test() {
 
             let childCountBefore = listNode.childNodeCount;
 
-            // ChildNodeCountUpdated is a manager-wide event that the page target also fires (e.g. the
-            // harness mutating its own output element while logging), so wait for the event whose node
-            // belongs to the frame target instead of the first one that arrives.
-            let eventPromise = new Promise((resolve) => {
-                WI.domManager.addEventListener(WI.DOMManager.Event.ChildNodeCountUpdated, function listener(event) {
-                    let node = event.data;
-                    if (node._owningTarget !== frameTarget || node.getAttribute("id") !== "list")
-                        return;
-                    WI.domManager.removeEventListener(WI.DOMManager.Event.ChildNodeCountUpdated, listener, null);
-                    resolve(node);
-                });
-            });
+            let eventPromise = listNode.awaitEvent(WI.DOMNode.Event.ChildNodeCountUpdated);
             evaluateInFrame("insertUnexpandedChild()");
 
-            let node = await eventPromise;
+            let node = (await eventPromise).target;
             InspectorTest.expectEqual(node.getAttribute("id"), "list", "Count-updated node should be #list.");
             InspectorTest.expectEqual(node.childNodeCount, childCountBefore + 1, "#list should report one more child.");
         }

@@ -62,8 +62,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         WI.URLBreakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._handleURLBreakpointEditablePropertyChanged, this);
         WI.URLBreakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._handleURLBreakpointActionsChanged, this);
 
-        WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._nodeRemoved, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._nodeInserted, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.Removed, this._nodeRemoved, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, this._nodeInserted, this);
 
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
@@ -921,7 +921,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _nodeInserted(event)
     {
-        let node = event.data.node;
+        let node = event.target;
         if (node.nodeType() !== Node.ELEMENT_NODE || !node.frame)
             return;
 
@@ -964,7 +964,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _nodeRemoved(event)
     {
-        let node = event.data.node;
+        let node = event.target;
         if (node.nodeType() !== Node.ELEMENT_NODE || !node.frame)
             return;
 

@@ -93,7 +93,7 @@ function test()
             // Grid layout contexts are sent to the frontend when the mode is changed to all.
             InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
             await Promise.all([
-                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.Inserted),
                 setLayoutContextTypeChangeMode(WI.CSSManager.LayoutContextTypeChangedMode.All),
             ]);
             InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutFlag.Grid).length, 2, "2 grid nodes should be instrumented.");
