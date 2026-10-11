@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +64,10 @@ JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_call_arity_checkUntagGateAf
 JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_call_arity_checkTagGateAfter);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_construct_arity_checkUntagGateAfter);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_construct_arity_checkTagGateAfter);
+#if ENABLE(WEBASSEMBLY)
+JSC_ANNOTATE_JIT_OPERATION_RETURN(crossInstanceRestoreFrameOriginalReturnPCRetagGateAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(crossInstanceRestoreFrameTaggedRestoreFramePtrGateAfter);
+#endif
 JSC_ANNOTATE_JIT_OPERATION(vmEntryCustomGetter);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryCustomSetter);
 JSC_ANNOTATE_JIT_OPERATION(vmEntryHostFunction);
@@ -602,14 +607,12 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> returnFromLLIntGateThunk()
     return codeRef;
 }
 
-MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void* pointer)
+static void tagLR(CCallHelpers& jit, void* pointer, GPRReg scratch)
 {
-    CCallHelpers jit;
-
-    GPRReg signingTagReg = GPRInfo::regT3;
+    GPRReg signingTagReg = scratch;
     if (!Options::allowNonSPTagging()) {
         JIT_COMMENT(jit, "lldb dynamic execution / posix signals could trash your stack"); // We don't have to worry about signals because they shouldn't fire in WebContent process in this window.
-        jit.move(MacroAssembler::stackPointerRegister, GPRInfo::regT3);
+        jit.move(MacroAssembler::stackPointerRegister, scratch);
         signingTagReg = MacroAssembler::stackPointerRegister;
     }
 
@@ -619,14 +622,32 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void* pointer)
 
     if (!Options::allowNonSPTagging()) {
         JIT_COMMENT(jit, "lldb dynamic execution / posix signals are ok again");
-        jit.move(GPRInfo::regT3, MacroAssembler::stackPointerRegister);
+        jit.move(scratch, MacroAssembler::stackPointerRegister);
     }
 
-    jit.move(CCallHelpers::TrustedImmPtr(pointer), GPRInfo::regT3);
-    jit.farJump(GPRInfo::regT3, OperationPtrTag);
+    jit.move(CCallHelpers::TrustedImmPtr(pointer), scratch);
+    jit.farJump(scratch, OperationPtrTag);
+}
+
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void* pointer)
+{
+    CCallHelpers jit;
+
+    tagLR(jit, pointer, GPRInfo::regT3);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "tag"_s, "tag thunk");
+}
+
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagConstantGateThunk(void* pointer, const void* constant)
+{
+    CCallHelpers jit;
+
+    jit.move(CCallHelpers::TrustedImmPtr(constant), ARM64Registers::lr);
+    tagLR(jit, pointer, GPRInfo::regT5);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "tag (constant)"_s, "tag (constant) thunk");
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
@@ -642,6 +663,47 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
     return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "untag"_s, "untag thunk");
+}
+
+// Resigns a return pointer with a new cfr
+// Security: NativeToJITGatePtrTag call sites all look like:
+// loadp g_config (which is on a RO page)
+// jump *g_config[constant expression]
+// Hence: this gate can't be swapped with any other, and it can't be used with a non-NativeToJITGatePtrTag callsite,
+// so this resign gadget is safe.
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> retagGateThunk(void* pointer)
+{
+    CCallHelpers jit;
+
+    GPRReg newCFRIn = GPRInfo::regT4;
+    const GPRReg scratch = GPRInfo::regT5;
+    GPRReg signingTagReg = scratch;
+
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, sizeof(CPURegister)), ARM64Registers::lr);
+    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, scratch);
+    jit.untagPtr(scratch, ARM64Registers::lr);
+    jit.validateUntaggedPtr(ARM64Registers::lr, scratch);
+
+    if (!Options::allowNonSPTagging()) {
+        JIT_COMMENT(jit, "lldb dynamic execution / posix signals could trash your stack"); // See tagLR above
+        jit.move(MacroAssembler::stackPointerRegister, scratch);
+        signingTagReg = MacroAssembler::stackPointerRegister;
+    }
+
+    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), newCFRIn, signingTagReg);
+    jit.tagPtr(signingTagReg, ARM64Registers::lr);
+    jit.storePtr(ARM64Registers::lr, CCallHelpers::Address(newCFRIn, sizeof(CPURegister)));
+
+    if (!Options::allowNonSPTagging()) {
+        JIT_COMMENT(jit, "lldb dynamic execution / posix signals are ok again");
+        jit.move(scratch, MacroAssembler::stackPointerRegister);
+    }
+
+    jit.move(CCallHelpers::TrustedImmPtr(pointer), scratch);
+    jit.farJump(scratch, OperationPtrTag);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "retag"_s, "retag thunk");
 }
 
 #endif // CPU(ARM64E)

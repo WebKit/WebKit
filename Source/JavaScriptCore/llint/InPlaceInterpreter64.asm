@@ -11752,6 +11752,13 @@ end
     # need a common entrypoint because of x86 PC base
     jmp .ipint_mint_arg_dispatch
 
+if ARM64E
+    global _crossInstanceRestoreFrameOriginalReturnPCRetagTrampoline
+    global _crossInstanceRestoreFrameOriginalReturnPCRetagGateAfter
+    global _crossInstanceRestoreFrameTaggedRestoreFramePtrTrampoline
+    global _crossInstanceRestoreFrameTaggedRestoreFramePtrGateAfter
+end
+
 .ipint_tail_call_common:
     # Check if we need to insert a restore frame for cross-instance tail calls.
     # Registers on entry:
@@ -11783,12 +11790,17 @@ end
     loadp [cfr], t5
     storep t5, [t4]                         # originalCallerFrame
 if ARM64E
+    leap _g_config, t5
+    jmp JSCConfigGateMapOffset + (constexpr Gate::crossInstanceRestoreFrameOriginalReturnPCRetag) * PtrSize[t5], NativeToJITGatePtrTag
+    # For useJIT=0
+    _crossInstanceRestoreFrameOriginalReturnPCRetagTrampoline:
     loadp ReturnPC[cfr], lr
     addp CallerFrameAndPCSize, cfr, t5
     untagReturnAddress t5
     addp CallerFrameAndPCSize, t4, t5
     tagReturnAddress t5
     storep lr, ReturnPC[t4]                 # originalReturnPC (resigned for restore_cfr)
+    _crossInstanceRestoreFrameOriginalReturnPCRetagGateAfter:
 else
     loadp ReturnPC[cfr], t5
     storep t5, ReturnPC[t4]                 # originalReturnPC
@@ -11830,15 +11842,18 @@ end
     storep t4, [cfr]                        # CallerFrame = restore_cfr
 
 if ARM64E
-    leap _g_config, t4
-    loadp JSCConfigGateMapOffset + (constexpr Gate::wasmRestoreFrame) * PtrSize[t4], t4
-    removeCodePtrTag t4
+    pcrtoaddr _wasm_restore_frame_return, lr
+    leap _g_config, t5
+    jmp JSCConfigGateMapOffset + (constexpr Gate::crossInstanceRestoreFrameReturnAddressToRestoreFrameGate) * PtrSize[t5], NativeToJITGatePtrTag
+    _crossInstanceRestoreFrameTaggedRestoreFramePtrTrampoline:
     addp CallerFrameAndPCSize, cfr, t5
-    tagCodePtr t4, t5
+    tagReturnAddress t5
+    storep lr, ReturnPC[cfr]                # ReturnPC = wasmRestoreFrame gate
+    _crossInstanceRestoreFrameTaggedRestoreFramePtrGateAfter:
 else
     pcrtoaddr _wasm_restore_frame_return, t4
-end
     storep t4, ReturnPC[cfr]                # ReturnPC = wasmRestoreFrame gate
+end
 
 .ipint_tail_call_no_restore_frame:
     # Free up r0 to be used as argument register
