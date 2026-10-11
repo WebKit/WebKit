@@ -142,22 +142,23 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
     if (RefPtr presentationContextPtr = m_presentationContext)
         displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex, isIOSurfaceSupportedFormat);
 
-    if (!displayImage) {
-        if (!isIOSurfaceSupportedFormat)
-            return completion(nullptr);
-
-        // A premultiplied canvas must keep its alpha channel so transparent pixels
-        // composite over the page; an opaque canvas forces the alpha to be ignored.
-        // This matters for RGBA16F, whose IOSurface format cannot itself encode opacity.
-        auto shouldForceOpaque = m_alphaMode == WebCore::AlphaPremultiplication::Premultiplied ? IOSurface::ShouldForceOpaque::No : IOSurface::ShouldForceOpaque::Yes;
-        displayImage = m_renderBuffers[bufferIndex]->createNativeImage(shouldForceOpaque);
+    if (displayImage) {
+        CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
+        return completion(displayImage.get());
     }
 
-    if (!displayImage)
+    if (!isIOSurfaceSupportedFormat)
         return completion(nullptr);
 
-    CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
-    completion(displayImage.get());
+    // A premultiplied canvas must keep its alpha channel so transparent pixels
+    // composite over the page; an opaque canvas forces the alpha to be ignored.
+    // This matters for RGBA16F, whose IOSurface format cannot itself encode opacity.
+    auto shouldForceOpaque = m_alphaMode == WebCore::AlphaPremultiplication::Premultiplied ? IOSurface::ShouldForceOpaque::No : IOSurface::ShouldForceOpaque::Yes;
+    m_renderBuffers[bufferIndex]->withNativeImage(shouldForceOpaque, [&](NativeImage* image) {
+        if (image)
+            CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
+        completion(image);
+    });
 }
 
 void CompositorIntegrationImpl::paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t)

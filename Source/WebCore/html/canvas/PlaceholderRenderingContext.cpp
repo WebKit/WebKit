@@ -57,6 +57,41 @@ void PlaceholderLayerContents::copyFrame(ImageBuffer& imageBuffer, bool opaque, 
     m_frame = frame;
 }
 
+#if PLATFORM(COCOA)
+bool PlaceholderLayerContents::displaySurface(const MachSendRight& surface, ContentsFormat contentsFormat, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    Locker locker { m_lock };
+    if (!m_delegate || frame <= m_frame)
+        return false;
+    if (!protect(m_delegate)->tryDisplaySurface(surface, contentsFormat, opaque, frame))
+        return false;
+    m_frame = frame;
+    return true;
+}
+#endif
+
+bool PlaceholderLayerContents::needsFrameBuffers() const
+{
+    Locker locker { m_lock };
+    return !m_delegate || m_frameBuffersRequested;
+}
+
+void PlaceholderLayerContents::requestFrameBuffers()
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (std::exchange(m_frameBuffersRequested, true))
+        return;
+    if (m_recommitHandler)
+        m_recommitHandler();
+}
+
+void PlaceholderLayerContents::setRecommitHandler(Function<void()>&& handler)
+{
+    Locker locker { m_lock };
+    m_recommitHandler = WTF::move(handler);
+}
+
 void PlaceholderLayerContents::setFrameForNextDisplay(ImageBuffer& imageBuffer, bool opaque, PlaceholderFrameIdentifier frame)
 {
     assertIsMainThread();
@@ -99,6 +134,11 @@ void LocalPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& i
     auto frame = m_lastFrame.increment();
     m_layerContents->copyFrame(imageBuffer, opaque, frame);
 
+    if (!m_layerContents->needsFrameBuffers()) {
+        setPlaceholderFrameWithoutBuffer(imageBuffer.truncatedLogicalSize(), frame, originClean, opaque);
+        return;
+    }
+
     RefPtr clone = imageBuffer.clone();
     if (!clone)
         return;
@@ -117,6 +157,33 @@ void LocalPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& i
         // task does not override the newest buffer that the worker thread already set.
         protect(placeholder->layerContents())->copyFrame(*imageBuffer, opaque, frame);
         placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull(), frame, originClean, opaque);
+    });
+}
+
+#if PLATFORM(COCOA)
+bool LocalPlaceholderRenderingContextSource::setPlaceholderSurface(const MachSendRight& surface, ContentsFormat contentsFormat, const IntSize& size, bool originClean, bool opaque)
+{
+    if (m_layerContents->needsFrameBuffers())
+        return false;
+    auto frame = m_lastFrame.increment();
+    if (!m_layerContents->displaySurface(surface, contentsFormat, opaque, frame))
+        return false;
+    setPlaceholderFrameWithoutBuffer(size, frame, originClean, opaque);
+    return true;
+}
+#endif
+
+void LocalPlaceholderRenderingContextSource::setRecommitHandler(Function<void()>&& handler)
+{
+    m_layerContents->setRecommitHandler(WTF::move(handler));
+}
+
+void LocalPlaceholderRenderingContextSource::setPlaceholderFrameWithoutBuffer(const IntSize& size, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    callOnMainThread([weakPlaceholder = m_placeholder, size, frame, originClean, opaque] {
+        assertIsMainThread();
+        if (RefPtr placeholder = weakPlaceholder.get())
+            placeholder->setPlaceholderFrameWithoutBuffer(size, frame, originClean, opaque);
     });
 }
 
@@ -178,9 +245,11 @@ IntSize PlaceholderRenderingContext::size() const
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    auto layerID = m_layerContents->attach(layer, m_buffer.get(), m_opaque, m_frame);
+    auto layerID = m_layerContents->attach(layer, m_bufferIsStale ? nullptr : m_buffer.get(), m_opaque, m_frame);
     if (m_reportedLayerID.asOptional() == layerID)
         return;
+    if (m_bufferIsStale)
+        m_layerContents->requestFrameBuffers();
     m_reportedLayerID = layerID;
     // Lets a frame committed from another process be applied to the layer on the way here.
     if (RefPtr page = canvas().document().page())
@@ -212,17 +281,40 @@ void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuf
         return;
     m_frame = frame;
     IntSize newSize = newBuffer->truncatedLogicalSize();
-    Ref canvas = this->canvas();
-    canvas->willUpdateContents(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);
+    protect(canvas())->willUpdateContents(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);
     m_opaque = opaque;
     updateMemoryCost(newBuffer->memoryCost());
     m_buffer = WTF::move(newBuffer);
     m_bufferNativeImage = nullptr;
-    canvas->setSizeForControllingContext(newSize);
+    m_bufferIsStale = false;
+    updateCanvasForFrame(newSize, originClean);
+}
+
+void PlaceholderRenderingContext::setPlaceholderFrameWithoutBuffer(const IntSize& size, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    if (frame <= m_frame)
+        return;
+    m_frame = frame;
+    protect(canvas())->willUpdateContents(FloatRect { { }, size }, ShouldApplyPostProcessingToDirtyRect::No);
+    m_opaque = opaque;
+    m_bufferIsStale = true;
+    updateCanvasForFrame(size, originClean);
+}
+
+void PlaceholderRenderingContext::updateCanvasForFrame(const IntSize& size, bool originClean)
+{
+    Ref canvas = this->canvas();
+    canvas->setSizeForControllingContext(size);
     if (originClean)
         canvas->setOriginClean();
     else
         canvas->setOriginTainted();
+}
+
+void PlaceholderRenderingContext::requestFrameBuffersIfStale()
+{
+    if (m_bufferIsStale)
+        m_layerContents->requestFrameBuffers();
 }
 
 PixelFormat PlaceholderRenderingContext::pixelFormat() const
@@ -234,6 +326,7 @@ PixelFormat PlaceholderRenderingContext::pixelFormat() const
 
 RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
+    requestFrameBuffersIfStale();
     if (!m_buffer) {
         // Transparent black bitmaps are not cached.
         return protect(canvas())->createTransparentBlackImageBuffer();
@@ -243,6 +336,7 @@ RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(Surf
 
 RefPtr<NativeImage> PlaceholderRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer)
 {
+    requestFrameBuffersIfStale();
     if (m_bufferNativeImage)
         return m_bufferNativeImage;
     RefPtr buffer = m_buffer;
@@ -256,7 +350,7 @@ RefPtr<NativeImage> PlaceholderRenderingContext::surfaceBufferToNativeImage(Surf
 
 bool PlaceholderRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
 {
-    return !m_buffer;
+    return !m_buffer && !m_bufferIsStale;
 }
 
 void PlaceholderRenderingContext::didUpdateCanvasSizeProperties(bool)

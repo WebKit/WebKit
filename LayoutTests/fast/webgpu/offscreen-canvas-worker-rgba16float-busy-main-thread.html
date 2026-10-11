@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="64" height="64"></canvas>
+<script>
+// Committing each frame of an rgba16float OffscreenCanvas in a worker used to wait for the main
+// thread, to read the screen's headroom, so a busy main thread stalled the worker's frames for as
+// long as it was busy. Here the main thread blocks while the worker keeps drawing.
+
+const blockedMilliseconds = 500;
+const minimumFramesWhileBlocked = 3;
+
+function nextMessage(worker)
+{
+    return new Promise((resolve, reject) => {
+        worker.onmessage = event => event.data?.error ? reject(new Error(event.data.error)) : resolve(event.data);
+        worker.onerror = event => reject(new Error(event.message || "worker error"));
+    });
+}
+
+function now()
+{
+    return performance.timeOrigin + performance.now();
+}
+
+promise_test(async () => {
+    const worker = new Worker("resources/offscreen-canvas-solid-color-worker.js");
+    const offscreen = document.getElementById("canvas").transferControlToOffscreen();
+
+    let reply = nextMessage(worker);
+    worker.postMessage({ canvas: offscreen, format: "rgba16float" }, [offscreen]);
+    assert_equals(await reply, "configured");
+
+    // The first commit may still wait for the main thread, which is idle here.
+    reply = nextMessage(worker);
+    worker.postMessage({ color: { r: 0, g: 1, b: 0, a: 1 }, frames: 5 });
+    assert_equals(await reply, "rendered");
+
+    worker.postMessage({ color: { r: 0, g: 0, b: 1, a: 1 }, loop: true });
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const blockedStart = now();
+    while (now() - blockedStart < blockedMilliseconds) { }
+    const blockedEnd = now();
+
+    reply = nextMessage(worker);
+    worker.postMessage("stop");
+    const { frameTimes } = await reply;
+    const framesWhileBlocked = frameTimes.filter(time => time > blockedStart && time < blockedEnd).length;
+    assert_greater_than_equal(framesWhileBlocked, minimumFramesWhileBlocked, `frames the worker finished in the ${blockedMilliseconds} ms the main thread was blocked`);
+}, "A worker keeps finishing frames of an rgba16float WebGPU canvas while the main thread is busy");
+</script>
+</body>
+</html>
