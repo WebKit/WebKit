@@ -25,6 +25,7 @@ import logging
 from webkitcorepy import Version
 
 from webkitpy.common.memoized import memoized
+from webkitpy.port.driver import DriverInput
 from webkitpy.port.embedded_port import EmbeddedPort
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
@@ -68,6 +69,20 @@ class EmbeddedSimulatorPort(EmbeddedPort):
             env['MallocScribble'] = '1'
             env['__XPC_MallocScribble'] = '1'
         return env
+
+    def setup_test_run(self, device_type=None):
+        super().setup_test_run(device_type)
+        if not self.get_option('install') or self.get_option('no_timeout'):
+            return
+
+        # The first launch of the runner on a simulator booted for this run can outlast a test's timeout.
+        for worker_number in range(self.child_processes()):
+            device = self.target_host(worker_number)
+            if not device.platform_device.booted_by_script:
+                continue
+            _log.debug('Warming up the runner on {} ...'.format(device))
+            warmup_driver = self.create_driver(worker_number)
+            warmup_driver.run_test(DriverInput('file:///warmup-does-not-exist', 60000., None, should_run_pixel_test=False), stop_when_done=True)
 
     def reset_preferences(self):
         SimulatedDeviceManager.tear_down(self.host)
