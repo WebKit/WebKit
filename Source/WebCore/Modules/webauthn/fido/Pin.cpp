@@ -567,6 +567,38 @@ const Vector<uint8_t>& HmacSecretResponse::output() const
     return m_output;
 }
 
+std::optional<Vector<uint8_t>> encryptHmacSecretOutput(PINUVAuthProtocol protocol, const CryptoKeyEC& authenticatorPrivateKey, const CBORValue::MapValue& peerCoseKey, const Vector<uint8_t>& plaintext)
+{
+    if (plaintext.size() != hmacSecretOutputLength && plaintext.size() != hmacSecretDualOutputLength)
+        return std::nullopt;
+
+    auto peer = KeyAgreementResponse::parseFromCOSE(peerCoseKey);
+    if (!peer)
+        return std::nullopt;
+
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(authenticatorPrivateKey, peer->peerKey.get());
+    if (!sharedKeyResult)
+        return std::nullopt;
+
+    auto sharedSecret = deriveProtocolSharedSecret(protocol, WTF::move(*sharedKeyResult));
+    if (sharedSecret.isEmpty())
+        return std::nullopt;
+
+    Vector<uint8_t> aesKeyMaterial;
+    if (protocol == PINUVAuthProtocol::kPinProtocol2) {
+        if (sharedSecret.size() != 64)
+            return std::nullopt;
+        aesKeyMaterial = Vector<uint8_t>(sharedSecret.span().last(32));
+    } else
+        aesKeyMaterial = WTF::move(sharedSecret);
+
+    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTF::move(aesKeyMaterial), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
+    if (!sharedKey)
+        return std::nullopt;
+
+    return encryptForProtocol(protocol, *sharedKey, plaintext);
+}
+
 } // namespace pin
 } // namespace fido
 
