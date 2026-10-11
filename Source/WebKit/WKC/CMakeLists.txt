@@ -330,13 +330,27 @@ if (WKC_ENABLE_FULL_WEBCORE)
     message(STATUS "WKC full WebCore probe: ${_WKC_WEBCORE_SOURCE_COUNT} source files selected from Sources.txt/generated outputs")
 endif ()
 
+# Full WebCore requires the shared platform-side audio and media-stream
+# implementations in addition to Sources.txt. Select the portable top-level
+# implementations only; OS/port subdirectories remain excluded unless WKC-owned.
+if (WKC_ENABLE_FULL_WEBCORE)
+    file(GLOB WEBCORE_AUDIO_COMMON_SOURCES "${WEBCORE_DIR}/platform/audio/*.cpp")
+    file(GLOB WEBCORE_MEDIASTREAM_COMMON_SOURCES "${WEBCORE_DIR}/platform/mediastream/*.cpp")
+    list(APPEND WEBCORE_PLATFORM_SOURCES
+        ${WEBCORE_AUDIO_COMMON_SOURCES}
+        ${WEBCORE_MEDIASTREAM_COMMON_SOURCES}
+    )
+    list(REMOVE_DUPLICATES WEBCORE_PLATFORM_SOURCES)
+    list(LENGTH WEBCORE_PLATFORM_SOURCES _WKC_PLATFORM_SOURCE_COUNT)
+    message(STATUS "WKC full WebCore probe: ${_WKC_PLATFORM_SOURCE_COUNT} WKC/common platform sources selected")
+endif ()
+
 # Experimental full-WebRTC integration for the full-WebCore probe. Keep it
 # opt-in until the selected WKC providers compile and the final executable links.
 if (WKC_ENABLE_WEBRTC_API)
     add_definitions(-DUSE_LIBWEBRTC=1)
 
     list(APPEND WEBCORE_PLATFORM_SOURCES
-        ${WEBCORE_DIR}/platform/mediastream/WebRTCProvider.cpp
         ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
         ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
         ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCLogSink.cpp
@@ -394,6 +408,17 @@ target_include_directories(WebKitWKC PUBLIC
 )
 
 if (WKC_ENABLE_WEBRTC_API)
+    # WebKit's LibWebRTC provider includes libwebrtc and Abseil headers. Their
+    # targets are built as a child project, so expose the source/generated
+    # include roots explicitly to this static target.
+    target_include_directories(WebKitWKC PRIVATE
+        "${LIBWEBRTC_DIR}/Source"
+        "${LIBWEBRTC_DIR}/Source/third_party/abseil-cpp"
+        "${LIBWEBRTC_DIR}/Source/third_party/boringssl/src/include"
+        "${CMAKE_BINARY_DIR}/libwebrtc/DerivedSources"
+        "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders/libwebrtc"
+    )
+
     # Propagate libwebrtc and its bundled dependency link requirements to the
     # final WKC consumer. The produced static archives still need a final link
     # test before RTC can be treated as production-ready.
