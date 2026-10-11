@@ -350,6 +350,10 @@ endif ()
 if (WKC_ENABLE_WEBRTC_API)
     add_definitions(-DUSE_LIBWEBRTC=1)
 
+    # Give interface enumeration its own archive. It must be linked after
+    # libwebrtc because the latter references getifaddrs/freeifaddrs.
+    list(REMOVE_ITEM WKC_WEBKIT_SOURCES "${WKC_DIR}/webkit/WKCIfAddrs.cpp")
+
     list(APPEND WEBCORE_PLATFORM_SOURCES
         ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
         ${WEBCORE_DIR}/platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
@@ -401,6 +405,17 @@ add_library(WebKitWKC STATIC
     ${WEBCORE_BUILTINS_SOURCES}
 )
 
+if (WKC_ENABLE_WEBRTC_API)
+    add_library(WKCNetworkCompat STATIC "${WKC_DIR}/webkit/WKCIfAddrs.cpp")
+    target_include_directories(WKCNetworkCompat PRIVATE
+        "${WKC_DIR}/stubs"
+        "${WKC_DIR}/include"
+        "${WKC_DIR}/include/wkc"
+        "${WEBCORE_DIR}"
+        "${WEBCORE_DIR}/WebCore"
+    )
+endif ()
+
 target_include_directories(WebKitWKC PUBLIC
     ${WKC_DIR}/include
     ${WKC_DIR}/include/wkc
@@ -422,7 +437,9 @@ if (WKC_ENABLE_WEBRTC_API)
     # Propagate libwebrtc and its bundled dependency link requirements to the
     # final WKC consumer. The produced static archives still need a final link
     # test before RTC can be treated as production-ready.
-    target_link_libraries(WebKitWKC PUBLIC webrtc)
+    # WKCNetworkCompat comes after libwebrtc so its getifaddrs symbols
+    # satisfy the unresolved references introduced by the RTC archive.
+    target_link_libraries(WebKitWKC PUBLIC webrtc WKCNetworkCompat)
 endif ()
 
 install(TARGETS WebKitWKC DESTINATION lib)
