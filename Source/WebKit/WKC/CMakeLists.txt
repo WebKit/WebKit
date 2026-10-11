@@ -15,14 +15,35 @@ get_filename_component(SOURCE_DIR "${CMAKE_SOURCE_DIR}/../.." ABSOLUTE)
 option(WKC_ENABLE_FULL_WEBCORE "Compile the available common WebCore source list for Wii U porting" OFF)
 if (WKC_ENABLE_FULL_WEBCORE)
     set(_WKC_WEB_AUDIO_DEFAULT ON)
+    set(_WKC_WEBASSEMBLY_DEFAULT ON)
+    set(_WKC_INDEXED_DATABASE_DEFAULT ON)
 else ()
     set(_WKC_WEB_AUDIO_DEFAULT OFF)
+    set(_WKC_WEBASSEMBLY_DEFAULT OFF)
+    set(_WKC_INDEXED_DATABASE_DEFAULT OFF)
 endif ()
+
 option(WKC_ENABLE_WEB_AUDIO "Compile Web Audio against the WKC audio backend" ${_WKC_WEB_AUDIO_DEFAULT})
 if (WKC_ENABLE_WEB_AUDIO)
     set(_WKC_WEB_AUDIO_DEFINE 1)
 else ()
     set(_WKC_WEB_AUDIO_DEFINE 0)
+endif ()
+
+# WebAssembly uses the portable IPInt interpreter on Wii U; JIT tiers remain off.
+option(WKC_ENABLE_WEBASSEMBLY "Compile WebAssembly with the JSC interpreter tier" ${_WKC_WEBASSEMBLY_DEFAULT})
+if (WKC_ENABLE_WEBASSEMBLY)
+    set(_WKC_WEBASSEMBLY_DEFINE 1)
+else ()
+    set(_WKC_WEBASSEMBLY_DEFINE 0)
+endif ()
+
+# IndexedDB uses WebCore's SQLite layer with the WKC-specific SQLite filesystem.
+option(WKC_ENABLE_INDEXED_DATABASE "Compile IndexedDB using the WKC SQLite backend" ${_WKC_INDEXED_DATABASE_DEFAULT})
+if (WKC_ENABLE_INDEXED_DATABASE)
+    set(_WKC_INDEXED_DATABASE_DEFINE 1)
+else ()
+    set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
 # Turn on WebRTC API source compilation only in the experimental full-WebCore
@@ -131,7 +152,7 @@ add_definitions(
     -DENABLE_WEB_RTC=${_WKC_WEBRTC_API_DEFINE}
     -DENABLE_NOTIFICATIONS=0
     -DENABLE_FULLSCREEN_API=0
-    -DENABLE_INDEXED_DATABASE=0
+    -DENABLE_INDEXED_DATABASE=${_WKC_INDEXED_DATABASE_DEFINE}
     -DENABLE_SVG=1
     -DENABLE_CSS_ANIMATIONS=1
     -DENABLE_WEB_ARCHIVE=1
@@ -142,7 +163,7 @@ add_definitions(
     -DENABLE_JIT=0
     -DENABLE_DFG_JIT=0
     -DENABLE_FTL_JIT=0
-    -DENABLE_WEBASSEMBLY=0
+    -DENABLE_WEBASSEMBLY=${_WKC_WEBASSEMBLY_DEFINE}
     -DENABLE_WEBASSEMBLY_BBQJIT=0
     -DENABLE_WEBASSEMBLY_OMGJIT=0
     -DENABLE_SAMPLING_PROFILER=0
@@ -259,6 +280,17 @@ file(GLOB JSC_CORE_SOURCES
     ${JSC_DIR}/JavaScriptCore/YarrCanonicalizeUnicode.cpp
     ${JSC_DIR}/JavaScriptCore/BytecodeDumperGenerated.cpp
 )
+
+if (WKC_ENABLE_WEBASSEMBLY)
+    # WebAssembly has a portable IPInt interpreter; architecture-specific JIT
+    # tiers remain disabled for Wii U. Guarded JIT TUs compile empty when off.
+    file(GLOB JSC_WASM_SOURCES
+        ${JSC_DIR}/wasm/*.cpp
+        ${JSC_DIR}/wasm/js/*.cpp
+    )
+    list(APPEND JSC_CORE_SOURCES ${JSC_WASM_SOURCES})
+    include_directories("${CMAKE_BINARY_DIR}/wkc-generated/jsc")
+endif ()
 # Drop upstream files the globs pick up that must NOT be in a Wii U library:
 #  - JSStringRefBSTR.cpp  : Windows BSTR API
 #  - JSStringRefCF.cpp    : Apple CoreFoundation API
@@ -278,6 +310,7 @@ file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/network/curl/*.cpp
     ${WEBCORE_DIR}/platform/graphics/WKC/*.cpp
     ${WEBCORE_DIR}/platform/audio/WKC/*.cpp
+    ${WEBCORE_DIR}/platform/sql/WKC/*.cpp
     ${WEBCORE_DIR}/platform/text/WKC/*.cpp
     ${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp
 )
