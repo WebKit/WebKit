@@ -1979,7 +1979,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         _private->textIndicatorData = adoptNS([[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()]);
     _private->draggedLinkURL = dragItem.url.isEmpty() ? RetainPtr<NSURL>() : dragItem.url.createNSURL();
     _private->draggedLinkTitle = dragItem.title.isEmpty() ? nil : dragItem.title.createNSString().get();
-    _private->dragPreviewFrameInRootViewCoordinates = dragItem.dragPreviewFrameInRootViewCoordinates;
+    _private->dragPreviewFrameInRootViewCoordinates = dragItem.dragPreviewFrameInMainFrameViewCoordinates;
     _private->dragSourceAction = kit(dragItem.sourceAction);
 }
 

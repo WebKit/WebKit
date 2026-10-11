@@ -1450,10 +1450,13 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
                 if (auto* page = frame.page())
                     dragPreviewSize.scale(1 / page->deviceScaleFactor());
             }
-            item.dragPreviewFrameInRootViewCoordinates = { dragLocationInRootViewCoordinates, WTF::move(dragPreviewSize) };
+            item.dragPreviewFrameInMainFrameViewCoordinates = { dragLocationInRootViewCoordinates, WTF::move(dragPreviewSize) };
         } else {
             // We can position the preview using the bounds of the drag source element.
-            item.dragPreviewFrameInRootViewCoordinates = element->boundsInRootViewSpace();
+            auto elementBounds = element->boundsInRootViewSpace();
+            if (RefPtr localRootView = frame.rootFrame().view())
+                elementBounds = localRootView->convertToRootViewAcrossIsolatedFrames(elementBounds);
+            item.dragPreviewFrameInMainFrameViewCoordinates = elementBounds;
         }
 
         if (RefPtr link = containingLinkElement(*element)) {
