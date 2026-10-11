@@ -168,8 +168,9 @@ static Vector<unsigned> stringIndicesFromClusters(const Vector<WORD>& clusters, 
     return stringIndices;
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> cp, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> cp, unsigned stringLocation, const Font* font, std::span<const char16_t>, std::span<const unsigned> originalIndices)
 {
+    ASSERT_UNUSED(originalIndices, originalIndices.empty());
     if (!font) {
         // Create a run of missing glyphs from the primary font.
         m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), cp, stringLocation, 0, cp.size(), m_run->ltr()));

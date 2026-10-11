@@ -60,7 +60,7 @@ static std::span<const CGSize> CTRunGetAdvancesSpan(CTRunRef ctRun)
     return unsafeMakeSpan(baseAdvances, CTRunGetGlyphCount(ctRun));
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, std::span<const unsigned> originalIndices)
     : m_initialAdvance(CTRunGetInitialAdvance(ctRun))
     , m_font(font)
     , m_characters(characters)
@@ -78,7 +78,13 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), coreTextIndices.mutableSpan().data());
         coreTextIndicesSpan = coreTextIndices.span();
     }
-    m_coreTextIndices = coreTextIndicesSpan;
+    if (originalIndices.empty())
+        m_coreTextIndices = coreTextIndicesSpan;
+    else {
+        m_coreTextIndices = CoreTextIndicesVector(m_glyphCount, [&](size_t i) {
+            return originalIndices[coreTextIndicesSpan[i]];
+        });
+    }
 
     if (auto glyphsSpan = CTRunGetGlyphsSpan(ctRun); glyphsSpan.data())
         m_glyphs = glyphsSpan;
@@ -175,7 +181,7 @@ static CFDictionaryRef typesetterOptionsSingleton()
     return options.get().get();
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font, std::span<const char16_t> charactersToShape, std::span<const unsigned> originalIndices)
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
@@ -189,6 +195,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     char32_t baseCharacter = 0;
     RetainPtr<CFDictionaryRef> stringAttributes;
     if (effectiveFont->isSystemFontFallbackPlaceholder()) {
+        // Font selection only matches a precomposed character in a real font.
+        ASSERT(originalIndices.empty());
         // FIXME: This code path does not support small caps.
         isSystemFallback = true;
 
@@ -202,6 +210,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     } else
         stringAttributes = getCFStringAttributes(*effectiveFont, m_fontCascade->enableKerning(), effectiveFont->platformData().orientation(), m_fontCascade->fontDescription().usedLocale());
 
+    if (charactersToShape.empty())
+        charactersToShape = characters;
+
     RetainPtr<CTLineRef> line;
 
     LOG_WITH_STREAM(TextShaping,
@@ -214,7 +225,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     );
 
     if (!m_mayUseNaturalWritingDirection || m_run->directionalOverride()) {
-        ProviderInfo info { characters, stringAttributes.get() };
+        ProviderInfo info { charactersToShape, stringAttributes.get() };
         // FIXME: Some SDKs complain that the second parameter below cannot be null.
         IGNORE_NULL_CHECK_WARNINGS_BEGIN
         RetainPtr typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run->ltr() ? typesetterOptionsSingleton<CoreTextTypesetterEmbeddingLevel::LTR>() : typesetterOptionsSingleton<CoreTextTypesetterEmbeddingLevel::RTL>()));
@@ -229,7 +240,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     } else {
         LOG_WITH_STREAM(TextShaping, stream << "Not forcing direction");
 
-        ProviderInfo info { characters, stringAttributes.get() };
+        ProviderInfo info { charactersToShape, stringAttributes.get() };
 
         line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, nullptr, &info));
     }
@@ -245,6 +256,10 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     CFIndex runCount = CFArrayGetCount(runArray.get());
 
     LOG_WITH_STREAM(TextShaping, stream << "Result: " << runCount << " runs.");
+
+    auto originalIndex = [&](CFIndex index) -> unsigned {
+        return originalIndices.empty() ? index : originalIndices[index];
+    };
 
     for (CFIndex r = 0; r < runCount; r++) {
         RetainPtr ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray.get(), m_run->ltr() ? r : runCount - 1 - r));
@@ -290,7 +305,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
         LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");
 
-        m_complexTextRuns.append(ComplexTextRun::create(ctRun.get(), *runFont, characters, stringLocation, runRange.location, runRange.location + runRange.length));
+        m_complexTextRuns.append(ComplexTextRun::create(ctRun.get(), *runFont, characters, stringLocation, originalIndex(runRange.location), originalIndex(runRange.location + runRange.length), originalIndices));
     }
 }
 

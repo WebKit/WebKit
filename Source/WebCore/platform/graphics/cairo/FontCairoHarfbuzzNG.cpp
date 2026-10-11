@@ -93,8 +93,9 @@ static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, c
     return false;
 }
 
-RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView, std::optional<char32_t>& matchedPrecomposedCharacter) const
 {
+    matchedPrecomposedCharacter = std::nullopt;
     auto normalizedString = normalizedNFC(stringView);
 
     // Code below relies on normalizedNFC never narrowing a 16-bit input string into an 8-bit output string.

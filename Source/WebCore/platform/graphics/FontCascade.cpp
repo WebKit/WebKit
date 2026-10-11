@@ -1755,8 +1755,9 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 
 #if !PLATFORM(COCOA) && !USE(HARFBUZZ)
 // FIXME: Unify this with the macOS and iOS implementation.
-RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView, std::optional<char32_t>& matchedPrecomposedCharacter) const
 {
+    matchedPrecomposedCharacter = std::nullopt;
     ASSERT(stringView.length() > 0);
     char32_t baseCharacter = *stringView.codePoints().begin();
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, FontVariant::Normal);

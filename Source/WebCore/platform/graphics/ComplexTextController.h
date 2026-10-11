@@ -85,9 +85,9 @@ public:
 
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
-        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
+        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, std::span<const unsigned> originalIndices = { })
         {
-            return adoptRef(*new ComplexTextRun(ctRun, font, characters, stringLocation, indexBegin, indexEnd));
+            return adoptRef(*new ComplexTextRun(ctRun, font, characters, stringLocation, indexBegin, indexEnd, originalIndices));
         }
 
         static Ref<ComplexTextRun> create(hb_buffer_t* buffer, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
@@ -126,7 +126,7 @@ public:
         float textAutospaceSize() const { return m_textAutospaceSize; }
 
     private:
-        ComplexTextRun(CTRunRef, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd);
+        ComplexTextRun(CTRunRef, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, std::span<const unsigned> originalIndices);
         ComplexTextRun(hb_buffer_t*, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd);
         ComplexTextRun(const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr);
         WEBCORE_EXPORT ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font&, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr);
@@ -162,7 +162,16 @@ private:
 
     void collectComplexTextRuns();
 
-    void collectComplexTextRunsForCharacters(std::span<const char16_t>, unsigned stringLocation, const Font*);
+    // A cluster that font selection matched by its canonically equivalent precomposed character, and the character to shape it from.
+    struct PrecomposedCluster {
+        unsigned start;
+        unsigned end;
+        char32_t character;
+    };
+    void collectComplexTextRunsForItem(std::span<const char16_t>, unsigned stringLocation, const Font*, Vector<PrecomposedCluster>&);
+
+    // charactersToShape and originalIndices are empty, or the shaping text and the offset in the original characters of each of its code units, plus one entry for the end.
+    void collectComplexTextRunsForCharacters(std::span<const char16_t>, unsigned stringLocation, const Font*, std::span<const char16_t> charactersToShape = { }, std::span<const unsigned> originalIndices = { });
     void adjustGlyphsAndAdvances();
 
     unsigned NODELETE indexOfCurrentRun(unsigned& leftmostGlyph);

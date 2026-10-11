@@ -288,6 +288,9 @@ WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
 
+// The single code point that a string of more than one code point normalizes to under NFC, if there is one.
+WTF_EXPORT_PRIVATE std::optional<char32_t> precomposedCharacter(StringView);
+
 inline StringView nullStringView() { return { }; }
 inline StringView emptyStringView() { return ""_span; }
 
@@ -1610,3 +1613,4 @@ using WTF::nullStringView;
 using WTF::emptyStringView;
 using WTF::codePointCompare;
 using WTF::codePointCompareLessThan;
+using WTF::precomposedCharacter;

@@ -177,7 +177,8 @@ public:
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = FontVariant::Auto, std::optional<ResolvedEmojiPolicy> = std::nullopt) const;
     bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 
-    RefPtr<const Font> fontForCombiningCharacterSequence(StringView) const;
+    // Sets matchedPrecomposedCharacter when the font was chosen for the precomposed character that the sequence is canonically equivalent to.
+    RefPtr<const Font> fontForCombiningCharacterSequence(StringView, std::optional<char32_t>& matchedPrecomposedCharacter) const;
 
     static bool NODELETE isCJKIdeograph(char32_t);
     static bool NODELETE isCJKIdeographOrSymbol(char32_t);

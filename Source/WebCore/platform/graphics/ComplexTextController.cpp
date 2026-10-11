@@ -389,10 +389,14 @@ void ComplexTextController::collectComplexTextRuns()
     char32_t baseCharacter;
     advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter);
 
+    // The clusters of the current font run that font selection matched by their precomposed character.
+    Vector<PrecomposedCluster> precomposedClusters;
+    std::optional<char32_t> clusterPrecomposedCharacter;
+
     // We don't perform font fallback on the capitalized characters when small caps is synthesized.
     // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
     // would need to be updated accordingly too.
-    nextFont = m_fontCascade->fontForCombiningCharacterSequence(baseOfString.first(currentIndex));
+    nextFont = m_fontCascade->fontForCombiningCharacterSequence(baseOfString.first(currentIndex), clusterPrecomposedCharacter);
 
     if (shouldProcessTextSpacingTrim && nextFont && !nextFont->isSystemFontFallbackPlaceholder()) {
         TextSpacing::CharactersData charactersData = { .currentCharacter = baseCharacter, .currentCharacterClass = TextSpacing::characterClass(baseCharacter) };
@@ -402,6 +406,18 @@ void ComplexTextController::collectComplexTextRuns()
 
     bool isSmallCaps = false;
     bool nextIsSmallCaps = false;
+
+    // A small caps cluster is shaped capitalized, so it needs the capitalized cluster's precomposed character.
+    // When the font lacks one, the cluster is not shaped as small caps, and keeps the character font selection matched.
+    auto adjustPrecomposedCharacterForSmallCaps = [&](unsigned clusterStart, unsigned clusterEnd) {
+        if (!clusterPrecomposedCharacter || !nextIsSmallCaps)
+            return;
+        auto capitalizedCharacter = precomposedCharacter(m_smallCapsBuffer.subspan(clusterStart, clusterEnd - clusterStart));
+        if (capitalizedCharacter && smallSynthesizedFont->supportsCodePoint(*capitalizedCharacter))
+            clusterPrecomposedCharacter = capitalizedCharacter;
+        else
+            nextIsSmallCaps = false;
+    };
 
     auto capitalizedBase = capitalized(baseCharacter);
     if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont.get(), baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
@@ -414,6 +430,10 @@ void ComplexTextController::collectComplexTextRuns()
             m_smallCapsBuffer[i] = baseOfString[i];
         nextIsSmallCaps = true;
     }
+
+    adjustPrecomposedCharacterForSmallCaps(0, currentIndex);
+    if (clusterPrecomposedCharacter)
+        precomposedClusters.append({ 0, currentIndex, *clusterPrecomposedCharacter });
 
     while (currentIndex < m_end) {
         font = nextFont.get();
@@ -439,7 +459,7 @@ void ComplexTextController::collectComplexTextRuns()
             }
         }
 
-        nextFont = m_fontCascade->fontForCombiningCharacterSequence(baseOfString.subspan(previousIndex, currentIndex - previousIndex));
+        nextFont = m_fontCascade->fontForCombiningCharacterSequence(baseOfString.subspan(previousIndex, currentIndex - previousIndex), clusterPrecomposedCharacter);
 
         if (shouldProcessTextSpacingTrim && nextFont && !nextFont->isSystemFontFallbackPlaceholder()) {
             TextSpacing::CharactersData charactersData = { .currentCharacter = baseCharacter, .currentCharacterClass = TextSpacing::characterClass(baseCharacter) };
@@ -454,8 +474,11 @@ void ComplexTextController::collectComplexTextRuns()
             smallSynthesizedFont = synthesizedFont->smallCapsFont(m_fontCascade->fontDescription());
             nextIsSmallCaps = true;
             currentIndex = indexOfFontTransition;
+            precomposedClusters.clear();
             continue;
         }
+
+        adjustPrecomposedCharacterForSmallCaps(previousIndex, currentIndex);
 
         if (nextFont != font || nextIsSmallCaps != isSmallCaps) {
             unsigned itemLength = previousIndex - indexOfFontTransition;
@@ -463,11 +486,11 @@ void ComplexTextController::collectComplexTextRuns()
                 unsigned itemStart = indexOfFontTransition;
                 if (synthesizedFont) {
                     if (isSmallCaps)
-                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get());
+                        collectComplexTextRunsForItem(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get(), precomposedClusters);
                     else
-                        collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get());
+                        collectComplexTextRunsForItem(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get(), precomposedClusters);
                 } else
-                    collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, font.get());
+                    collectComplexTextRunsForItem(baseOfString.subspan(itemStart, itemLength), itemStart, font.get(), precomposedClusters);
                 if (nextFont != font) {
                     synthesizedFont = nullptr;
                     smallSynthesizedFont = nullptr;
@@ -476,6 +499,9 @@ void ComplexTextController::collectComplexTextRuns()
             }
             indexOfFontTransition = previousIndex;
         }
+
+        if (clusterPrecomposedCharacter)
+            precomposedClusters.append({ previousIndex, currentIndex, *clusterPrecomposedCharacter });
     }
 
     ASSERT(m_end >= indexOfFontTransition);
@@ -484,15 +510,55 @@ void ComplexTextController::collectComplexTextRuns()
         unsigned itemStart = indexOfFontTransition;
         if (synthesizedFont) {
             if (nextIsSmallCaps)
-                collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get());
+                collectComplexTextRunsForItem(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get(), precomposedClusters);
             else
-                collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get());
+                collectComplexTextRunsForItem(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get(), precomposedClusters);
         } else
-            collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont.get());
+            collectComplexTextRunsForItem(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont.get(), precomposedClusters);
     }
 
     if (!m_run->ltr())
         m_complexTextRuns.reverse();
+}
+
+void ComplexTextController::collectComplexTextRunsForItem(std::span<const char16_t> characters, unsigned stringLocation, const Font* font, Vector<PrecomposedCluster>& precomposedClusters)
+{
+    if (precomposedClusters.isEmpty()) {
+        collectComplexTextRunsForCharacters(characters, stringLocation, font);
+        return;
+    }
+
+    ASSERT(font);
+    Vector<char16_t, 64> charactersToShape;
+    Vector<unsigned, 64> originalIndices;
+    unsigned offset = 0;
+    auto appendUnchanged = [&](unsigned end) {
+        charactersToShape.append(characters.subspan(offset, end - offset));
+        originalIndices.appendUsingFunctor(end - offset, [&](size_t i) {
+            return offset + i;
+        });
+        offset = end;
+    };
+
+    for (auto& cluster : precomposedClusters) {
+        unsigned clusterStart = cluster.start - stringLocation;
+        unsigned clusterEnd = cluster.end - stringLocation;
+        appendUnchanged(clusterStart);
+
+        std::array<char16_t, 2> codeUnits;
+        unsigned codeUnitCount = 0;
+        U16_APPEND_UNSAFE(codeUnits, codeUnitCount, cluster.character);
+        charactersToShape.append(std::span { codeUnits }.first(codeUnitCount));
+        originalIndices.appendUsingFunctor(codeUnitCount, [&](size_t) {
+            return clusterStart;
+        });
+        offset = clusterEnd;
+    }
+    appendUnchanged(characters.size());
+    originalIndices.append(characters.size());
+    precomposedClusters.clear();
+
+    collectComplexTextRunsForCharacters(characters, stringLocation, font, charactersToShape.span(), originalIndices.span());
 }
 
 unsigned ComplexTextController::ComplexTextRun::indexAt(unsigned i) const
