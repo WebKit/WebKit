@@ -152,9 +152,7 @@ public:
     static bool consumeFontSynthesisShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeTextDecorationSkipShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeBorderSpacingShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
-    static bool consumeCornerSingleShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
-    static bool consumeCornerPairShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
-    static bool consumeCornerQuadShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
+    static bool consumeCornerShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeBorderRadiusShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeWebkitBorderRadiusShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeBorderRadiusSideShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
@@ -720,7 +718,7 @@ inline bool PropertyParserCustom::consumeBorderBlockShorthand(CSSParserTokenRang
 inline bool PropertyParserCustom::consumeBorderRadiusShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand&, PropertyParserResult& result)
 {
     auto borderRadius = consumeUnresolvedBorderRadius(range, state);
-    if (!borderRadius)
+    if (!borderRadius || !range.atEnd())
         return false;
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topLeft()));
@@ -733,7 +731,7 @@ inline bool PropertyParserCustom::consumeBorderRadiusShorthand(CSSParserTokenRan
 inline bool PropertyParserCustom::consumeWebkitBorderRadiusShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand&, PropertyParserResult& result)
 {
     auto borderRadius = consumeUnresolvedWebKitBorderRadius(range, state);
-    if (!borderRadius)
+    if (!borderRadius || !range.atEnd())
         return false;
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topLeft()));
@@ -743,140 +741,141 @@ inline bool PropertyParserCustom::consumeWebkitBorderRadiusShorthand(CSSParserTo
     return true;
 }
 
-// MARK: - Corner / Corner-* shorthands (combined border-radius + corner-shape)
+// MARK: - Corner / Corner-* shorthands (border-radius || corner-shape)
 //
-// Grammar (per corner): normal | <corner-shape>? <border-radius-corner> <corner-shape>?
-// Multiple corners are separated by '/' and follow the standard 1-to-N expansion.
+// corner-top-left and the other single corner shorthands:
+//     <'border-top-left-radius'> || <'corner-top-left-shape'>
+// corner-top and the other side shorthands:
+//     <'border-top-radius'> || <'corner-top-shape'>
+// corner:
+//     <'border-radius'> || <'corner-shape'>
+//
+// https://drafts.csswg.org/css-borders-4/#corner-shorthands
 
 namespace CornerShorthandHelpers {
 
-inline Ref<CSSValue> zeroRadius()
-{
-    auto zero = CSSPrimitiveValue::create(0, CSSUnitType::Px);
-    return CSSValuePair::create(zero.copyRef(), WTF::move(zero));
-}
+using CornerRadius = BorderRadius::Corner;
 
-inline Ref<CSSValue> roundShape()
+// Fills omitted values using the corner copy rules that `<'border-radius'>` uses.
+template<size_t N, typename T> void completeCorners(std::array<std::optional<T>, N>& values)
 {
-    return CSSKeywordValue::create(CSSValueRound);
-}
-
-inline bool consumeOneCorner(CSSParserTokenRange& range, PropertyParserState& state, CSSPropertyID radiusProperty, CSSPropertyID shapeProperty, RefPtr<CSSValue>& radiusOut, RefPtr<CSSValue>& shapeOut)
-{
-    if (range.peek().id() == CSSValueNormal) {
-        range.consumeIncludingWhitespace();
-        radiusOut = zeroRadius();
-        shapeOut = roundShape();
-        return true;
+    if constexpr (N > 1) {
+        if (!values[1])
+            values[1] = values[0];
     }
-    shapeOut = CSSPropertyParsing::parseStylePropertyLonghand(range, shapeProperty, state);
-    radiusOut = CSSPropertyParsing::parseStylePropertyLonghand(range, radiusProperty, state);
-    if (!radiusOut)
+    if constexpr (N > 2) {
+        if (!values[2])
+            values[2] = values[0];
+        if (!values[3])
+            values[3] = values[1];
+    }
+}
+
+// Radii come from the matching border-radius consumer: a single corner from
+// `<'border-top-left-radius'>`, a side from `<'border-top-radius'>`, and the
+// master shorthand from `<'border-radius'>`.
+template<size_t N> std::optional<std::array<CornerRadius, N>> consumeCornerRadii(CSSParserTokenRange& range, PropertyParserState& state)
+{
+    if constexpr (N == 1) {
+        auto corner = consumeUnresolvedBorderRadiusCorner(range, state);
+        if (!corner)
+            return { };
+        return std::array<CornerRadius, 1> { *corner };
+    } else if constexpr (N == 2) {
+        auto side = consumeUnresolvedBorderRadiusSide(range, state);
+        if (!side)
+            return { };
+        return std::array<CornerRadius, 2> { side->first(), side->second() };
+    } else {
+        auto radius = consumeUnresolvedBorderRadius(range, state);
+        if (!radius)
+            return { };
+        return std::array<CornerRadius, 4> { radius->topLeft(), radius->topRight(), radius->bottomRight(), radius->bottomLeft() };
+    }
+}
+
+// `<corner-shape-value>{1,N}`, following the same corner copy rules.
+template<size_t N> std::optional<std::array<RefPtr<CSSValue>, N>> consumeCornerShapes(CSSParserTokenRange& range, PropertyParserState& state, CSSPropertyID shapeProperty)
+{
+    std::array<std::optional<RefPtr<CSSValue>>, N> shapes;
+    for (size_t i = 0; i < N; ++i) {
+        if (RefPtr shape = CSSPropertyParsing::parseStylePropertyLonghand(range, shapeProperty, state))
+            shapes[i] = WTF::move(shape);
+        else
+            break;
+    }
+    if (!shapes[0])
+        return { };
+    completeCorners(shapes);
+
+    std::array<RefPtr<CSSValue>, N> result;
+    for (size_t i = 0; i < N; ++i)
+        result[i] = *shapes[i];
+    return result;
+}
+
+template<size_t N> bool consumeCornerShorthandOfSize(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
+{
+    ASSERT(shorthand.length() == N * 2);
+    auto longhands = shorthand.properties();
+
+    std::optional<std::array<CornerRadius, N>> radii;
+    std::optional<std::array<RefPtr<CSSValue>, N>> shapes;
+
+    // `<radius> || <shape>`, so the two components may appear in either order
+    // and either one may be omitted.
+    while (!range.atEnd()) {
+        if (!radii) {
+            auto rangeCopy = range;
+            if (auto parsed = consumeCornerRadii<N>(rangeCopy, state)) {
+                radii = WTF::move(parsed);
+                range = rangeCopy;
+                continue;
+            }
+        }
+        if (!shapes) {
+            auto rangeCopy = range;
+            if (auto parsed = consumeCornerShapes<N>(rangeCopy, state, longhands[N])) {
+                shapes = WTF::move(parsed);
+                range = rangeCopy;
+                continue;
+            }
+        }
+        break;
+    }
+
+    if ((!radii && !shapes) || !range.atEnd())
         return false;
-    if (!shapeOut)
-        shapeOut = CSSPropertyParsing::parseStylePropertyLonghand(range, shapeProperty, state);
-    return shapeOut != nullptr;
+
+    for (size_t i = 0; i < N; ++i) {
+        auto radius = radii ? (*radii)[i] : CornerRadius { 0_css_px, 0_css_px };
+        result.addPropertyForCurrentShorthand(state, longhands[i], WebCore::CSS::createCSSValue(state.pool, radius));
+        result.addPropertyForCurrentShorthand(state, longhands[N + i], shapes ? Ref<CSSValue> { *(*shapes)[i] } : Ref<CSSValue> { CSSKeywordValue::create(CSSValueRound) });
+    }
+    return true;
 }
 
 } // namespace CornerShorthandHelpers
 
-inline bool PropertyParserCustom::consumeCornerSingleShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
+inline bool PropertyParserCustom::consumeCornerShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
 {
-    ASSERT(shorthand.length() == 2);
-    auto longhands = shorthand.properties();
-    RefPtr<CSSValue> radius;
-    RefPtr<CSSValue> shape;
-    if (!CornerShorthandHelpers::consumeOneCorner(range, state, longhands[0], longhands[1], radius, shape))
-        return false;
-    if (!range.atEnd())
-        return false;
-
-    result.addPropertyForCurrentShorthand(state, longhands[0], radius.releaseNonNull());
-    result.addPropertyForCurrentShorthand(state, longhands[1], shape.releaseNonNull());
-    return true;
-}
-
-inline bool PropertyParserCustom::consumeCornerPairShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
-{
-    // Two-corner side shorthand: longhands are [radius0, shape0, radius1, shape1].
-    ASSERT(shorthand.length() == 4);
-    auto longhands = shorthand.properties();
-    std::array<RefPtr<CSSValue>, 2> radii;
-    std::array<RefPtr<CSSValue>, 2> shapes;
-
-    size_t count = 0;
-    for (size_t i = 0; i < 2; ++i) {
-        if (!CornerShorthandHelpers::consumeOneCorner(range, state, longhands[i * 2], longhands[i * 2 + 1], radii[i], shapes[i]))
-            return false;
-        ++count;
-        if (i == 1)
-            break;
-        if (!consumeSlashIncludingWhitespace(range))
-            break;
+    switch (shorthand.length()) {
+    case 2:
+        return CornerShorthandHelpers::consumeCornerShorthandOfSize<1>(range, state, shorthand, result);
+    case 4:
+        return CornerShorthandHelpers::consumeCornerShorthandOfSize<2>(range, state, shorthand, result);
+    case 8:
+        return CornerShorthandHelpers::consumeCornerShorthandOfSize<4>(range, state, shorthand, result);
     }
-    if (!range.atEnd() || !count)
-        return false;
-
-    if (count < 2) {
-        radii[1] = radii[0];
-        shapes[1] = shapes[0];
-    }
-
-    for (size_t i = 0; i < 2; ++i) {
-        result.addPropertyForCurrentShorthand(state, longhands[i * 2], radii[i].releaseNonNull());
-        result.addPropertyForCurrentShorthand(state, longhands[i * 2 + 1], shapes[i].releaseNonNull());
-    }
-    return true;
-}
-
-inline bool PropertyParserCustom::consumeCornerQuadShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
-{
-    // Master `corner`: longhands are [radius0, shape0, radius1, shape1, radius2, shape2, radius3, shape3]
-    // in order top-left, top-right, bottom-right, bottom-left.
-    ASSERT(shorthand.length() == 8);
-    auto longhands = shorthand.properties();
-    std::array<RefPtr<CSSValue>, 4> radii;
-    std::array<RefPtr<CSSValue>, 4> shapes;
-
-    size_t count = 0;
-    for (size_t i = 0; i < 4; ++i) {
-        if (!CornerShorthandHelpers::consumeOneCorner(range, state, longhands[i * 2], longhands[i * 2 + 1], radii[i], shapes[i]))
-            return false;
-        ++count;
-        if (i == 3)
-            break;
-        if (!consumeSlashIncludingWhitespace(range))
-            break;
-    }
-    if (!range.atEnd() || !count)
-        return false;
-
-    // 1-to-4 expansion (mirrors complete4Sides on a CSS quad).
-    if (count < 2) {
-        radii[1] = radii[0];
-        shapes[1] = shapes[0];
-    }
-    if (count < 3) {
-        radii[2] = radii[0];
-        shapes[2] = shapes[0];
-    }
-    if (count < 4) {
-        radii[3] = radii[1];
-        shapes[3] = shapes[1];
-    }
-
-    for (size_t i = 0; i < 4; ++i) {
-        result.addPropertyForCurrentShorthand(state, longhands[i * 2], radii[i].releaseNonNull());
-        result.addPropertyForCurrentShorthand(state, longhands[i * 2 + 1], shapes[i].releaseNonNull());
-    }
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 inline bool PropertyParserCustom::consumeBorderRadiusSideShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
 {
     ASSERT(shorthand.length() == 2);
     auto side = consumeUnresolvedBorderRadiusSide(range, state);
-    if (!side)
+    if (!side || !range.atEnd())
         return false;
 
     auto longhands = shorthand.properties();

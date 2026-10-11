@@ -1,12 +1,14 @@
 
 PASS e.style['corner-top-left'] = "auto" should not set the property value
 PASS e.style['corner-top-left'] = "none" should not set the property value
-PASS e.style['corner-top-left'] = "scoop" should not set the property value
+PASS e.style['corner-top-left'] = "normal" should not set the property value
+PASS e.style['corner-top-left'] = "-1px" should not set the property value
 PASS e.style['corner-top-left'] = "3% normal" should not set the property value
 PASS e.style['corner-top-left'] = "round round" should not set the property value
-PASS e.style['corner-top-left'] = "-1px" should not set the property value
-PASS e.style['corner-top-left'] = "10px" should not set the property value
-PASS e.style['corner-top-left'] = "4px 12px" should not set the property value
+PASS e.style['corner-top-left'] = "10px round 5px" should not set the property value
+PASS e.style['corner-top-left'] = "round / 10px" should not set the property value
+PASS e.style['corner-top-left'] = "10px / bevel" should not set the property value
 PASS e.style['corner-top-left'] = "4px / normal" should not set the property value
-PASS e.style['corner-top-left'] = "round / 4px" should not set the property value
+PASS e.style['corner-top-left'] = "10px 5px / 3px" should not set the property value
+PASS e.style['corner-top-left'] = "1px 2px 3px" should not set the property value
 

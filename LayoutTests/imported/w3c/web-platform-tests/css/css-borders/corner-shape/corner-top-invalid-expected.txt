@@ -1,0 +1,12 @@
+
+PASS e.style['corner-top'] = "auto" should not set the property value
+PASS e.style['corner-top'] = "normal" should not set the property value
+PASS e.style['corner-top'] = "-1px" should not set the property value
+PASS e.style['corner-top'] = "10px round / 20px bevel" should not set the property value
+PASS e.style['corner-top'] = "round 10% / 2rem squircle" should not set the property value
+PASS e.style['corner-top'] = "10px round 5px" should not set the property value
+PASS e.style['corner-top'] = "round / 10px" should not set the property value
+PASS e.style['corner-top'] = "1px 2px 3px" should not set the property value
+PASS e.style['corner-top'] = "bevel scoop round" should not set the property value
+PASS e.style['corner-top'] = "10px / 5px / 3px" should not set the property value
+

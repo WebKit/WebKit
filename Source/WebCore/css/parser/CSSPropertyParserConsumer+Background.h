@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSBorderRadius.h"
 #include <array>
 #include <optional>
 
@@ -38,8 +39,6 @@ struct BorderImageSlice;
 struct BorderImageSource;
 struct BorderImageWidth;
 struct BorderImage;
-struct BorderRadius;
-struct BorderRadiusSide;
 struct PropertyParserState;
 }
 
@@ -68,6 +67,11 @@ std::optional<CSS::BorderRadius> consumeUnresolvedWebKitBorderRadius(CSSParserTo
 // <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]?
 // https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands
 std::optional<CSS::BorderRadiusSide> consumeUnresolvedBorderRadiusSide(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// <'border-top-left-radius'> and the other single corner radius longhands, which the
+// single corner shorthands also accept in the slash form of <'border-radius'>.
+// <length-percentage [0,∞]>{1,2} | <length-percentage [0,∞]> / <length-percentage [0,∞]>
+std::optional<CSS::BorderRadius::Corner> consumeUnresolvedBorderRadiusCorner(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: - Border Image
 

@@ -126,10 +126,9 @@ private:
     String serializePair() const;
     String serializeQuad() const;
 
-    String serializeCornerSingle() const;
-    String serializeCornerPair() const;
-    String serializeCornerQuad() const;
-    String serializeOneCorner(unsigned radiusIndex, unsigned shapeIndex) const;
+    String serializeCorner() const;
+    String serializeCornerRadii(unsigned count) const;
+    String serializeCornerShapes(unsigned count) const;
 
     String serializeLayered() const;
     String serializeCoordinatingListPropertyGroup() const;
@@ -388,7 +387,6 @@ String ShorthandSerializer::serialize()
     case CSSPropertyCornerStartEnd:
     case CSSPropertyCornerEndStart:
     case CSSPropertyCornerEndEnd:
-        return serializeCornerSingle();
     case CSSPropertyCornerTop:
     case CSSPropertyCornerRight:
     case CSSPropertyCornerBottom:
@@ -397,9 +395,8 @@ String ShorthandSerializer::serialize()
     case CSSPropertyCornerBlockEnd:
     case CSSPropertyCornerInlineStart:
     case CSSPropertyCornerInlineEnd:
-        return serializeCornerPair();
     case CSSPropertyCorner:
-        return serializeCornerQuad();
+        return serializeCorner();
     case CSSPropertyBlockStep:
     case CSSPropertyBorderBlockEnd:
     case CSSPropertyBorderBlockStart:
@@ -601,88 +598,80 @@ String ShorthandSerializer::serializeQuad() const
     return top;
 }
 
-static bool cornerShorthandRadiusIsZero(const CSSValue& value)
+// The corner shorthands serialize as `<radius> || <shape>`, omitting a
+// component that is at its initial value. A zero percentage radius is not the
+// initial value and is therefore kept.
+// https://drafts.csswg.org/css-borders-4/#corner-shorthands
+
+String ShorthandSerializer::serializeCornerRadii(unsigned count) const
 {
-    RefPtr pair = dynamicDowncast<CSSValuePair>(value);
-    if (!pair)
-        return false;
-    auto isZero = [](const CSSValue& value) {
-        RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value);
-        return primitive && (primitive->isLength() || primitive->isPercentage()) && primitive->isZero().value_or(false);
+    auto horizontalRadius = [&](unsigned i) {
+        return protect(longhandValue(i).first());
     };
-    return isZero(pair->first()) && isZero(pair->second());
-}
-
-static bool cornerShorthandShapeIsRound(const CSSValue& value)
-{
-    if (RefPtr keyword = dynamicDowncast<CSSKeywordValue>(value))
-        return keyword->valueID() == CSSValueRound;
-
-    // round is equivalent to superellipse(1), which is also how computed values serialize.
-    RefPtr function = dynamicDowncast<CSSFunctionValue>(value);
-    if (!function || function->name() != CSSValueSuperellipse || function->size() != 1)
-        return false;
-    RefPtr parameter = dynamicDowncast<CSSPrimitiveValue>(function->item(0));
-    return parameter && parameter->isNumber() && parameter->isOne().value_or(false);
-}
-
-String ShorthandSerializer::serializeOneCorner(unsigned radiusIndex, unsigned shapeIndex) const
-{
-    RefPtr radius = m_longhandValues[radiusIndex];
-    RefPtr shape = m_longhandValues[shapeIndex];
-    if (!radius || !shape)
-        return String();
-    if (cornerShorthandRadiusIsZero(*radius) && cornerShorthandShapeIsRound(*shape))
-        return "normal"_s;
-    auto radiusStr = serializeLonghandValue(radiusIndex);
-    auto shapeStr = serializeLonghandValue(shapeIndex);
-    return makeString(radiusStr, ' ', shapeStr);
-}
-
-String ShorthandSerializer::serializeCornerSingle() const
-{
-    ASSERT(length() == 2);
-    return serializeOneCorner(0, 1);
-}
-
-String ShorthandSerializer::serializeCornerPair() const
-{
-    ASSERT(length() == 4);
-    auto first = serializeOneCorner(0, 1);
-    auto second = serializeOneCorner(2, 3);
-    if (first.isNull() || second.isNull())
-        return String();
-    if (first == second)
-        return first;
-    return makeString(first, " / "_s, second);
-}
-
-String ShorthandSerializer::serializeCornerQuad() const
-{
-    ASSERT(length() == 8);
-    std::array<String, 4> corners {
-        serializeOneCorner(0, 1),
-        serializeOneCorner(2, 3),
-        serializeOneCorner(4, 5),
-        serializeOneCorner(6, 7),
+    auto verticalRadius = [&](unsigned i) {
+        return protect(longhandValue(i).second());
     };
-    for (const auto& s : corners) {
-        if (s.isNull())
-            return String();
+
+    bool serializeVertical = false;
+    for (unsigned i = 0; i < count; ++i) {
+        if (!horizontalRadius(i)->equals(verticalRadius(i))) {
+            serializeVertical = true;
+            break;
+        }
     }
-    bool showBL = corners[1] != corners[3];
-    bool showBR = showBL || corners[0] != corners[2];
-    bool showTR = showBR || corners[0] != corners[1];
+
+    // A single corner is written as `<horizontal> <vertical>` rather than with a slash.
+    if (count == 1) {
+        if (!serializeVertical)
+            return horizontalRadius(0)->cssText(m_serializationContext);
+        return makeString(horizontalRadius(0)->cssText(m_serializationContext), ' ', verticalRadius(0)->cssText(m_serializationContext));
+    }
+
+    auto serializeAxis = [&](auto&& radius) {
+        StringBuilder axis;
+        unsigned lastIndex = count - 1;
+        while (lastIndex && radius(lastIndex)->equals(radius(lastIndex == 3 ? 1 : 0)))
+            --lastIndex;
+        for (unsigned i = 0; i <= lastIndex; ++i)
+            axis.append(i ? " "_s : ""_s, radius(i)->cssText(m_serializationContext));
+        return axis.toString();
+    };
+
+    auto horizontal = serializeAxis(horizontalRadius);
+    if (!serializeVertical)
+        return horizontal;
+    return makeString(horizontal, " / "_s, serializeAxis(verticalRadius));
+}
+
+String ShorthandSerializer::serializeCornerShapes(unsigned count) const
+{
+    auto shape = [&](unsigned i) {
+        return serializeLonghandValue(count + i);
+    };
+
+    unsigned lastIndex = count - 1;
+    while (lastIndex && shape(lastIndex) == shape(lastIndex == 3 ? 1 : 0))
+        --lastIndex;
 
     StringBuilder result;
-    result.append(corners[0]);
-    if (showTR)
-        result.append(" / "_s, corners[1]);
-    if (showBR)
-        result.append(" / "_s, corners[2]);
-    if (showBL)
-        result.append(" / "_s, corners[3]);
+    for (unsigned i = 0; i <= lastIndex; ++i)
+        result.append(i ? " "_s : ""_s, shape(i));
     return result.toString();
+}
+
+String ShorthandSerializer::serializeCorner() const
+{
+    ASSERT(!(length() % 2));
+    unsigned count = length() / 2;
+
+    auto radii = serializeCornerRadii(count);
+    auto shapes = serializeCornerShapes(count);
+
+    if (shapes == "round"_s)
+        return radii;
+    if (radii == "0px"_s)
+        return shapes;
+    return makeString(radii, ' ', shapes);
 }
 
 class LayerValues {
