@@ -963,7 +963,7 @@ jobs:
           key: ccache-${{ github.sha }}
 
       - name: Save libwebrtc build cache before failure gate
-        if: always() && steps.cache-webrtc.outputs.cache-hit != 'true' && steps.build-webrtc.outputs.configure_status == '0'
+        if: always() && steps.cache-webrtc.outputs.cache-hit != 'true' && steps.build-webrtc.outcome != 'skipped'
         uses: actions/cache/save@v5.0.4
         with:
           path: build-webrtc
