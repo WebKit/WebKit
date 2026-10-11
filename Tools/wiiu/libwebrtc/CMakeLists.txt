@@ -11,6 +11,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(libwebrtc_wiiu CXX C ASM)
 
+# Wii U/newlib compatibility headers for WebRTC dependencies that assume
+# glibc-only headers. These are target-specific and must precede system headers.
+include_directories(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/compat")
+
 # Path to the vendored libwebrtc (overridable from the CI invocation).
 if (NOT DEFINED LIBWEBRTC_DIR)
     set(LIBWEBRTC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/ThirdParty/libwebrtc")
