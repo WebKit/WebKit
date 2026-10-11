@@ -335,6 +335,7 @@ class Worker(object):
         self._batch_count = 0
         self._driver = None
         self._batch_size = self._port.get_option('batch_size') or 0
+        self._reference_hashes = {}
 
     def run_tests(self, shard):
         for input in shard.test_inputs:
@@ -517,7 +518,7 @@ class Worker(object):
         return single_test_runner.run_single_test(
             self._port, self._port._options, self._results_directory,
             TaskPool.Process.name,
-            driver, test_input, stop_when_done,
+            driver, test_input, stop_when_done, self._reference_hashes,
         )
 
 

@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import hashlib
 import logging
 import os
 import re
@@ -53,14 +54,15 @@ _testharness_result_line_pattern = re.compile(r"^(PASS|FAIL|TIMEOUT|NOTRUN|PRECO
 _imported_wpt_dir = "imported/w3c/web-platform-tests/"
 
 
-def run_single_test(port, options, results_directory, worker_name, driver, test_input, stop_when_done):
-    runner = SingleTestRunner(port, options, results_directory, worker_name, driver, test_input, stop_when_done)
+def run_single_test(port, options, results_directory, worker_name, driver, test_input, stop_when_done, reference_hashes=None):
+    runner = SingleTestRunner(port, options, results_directory, worker_name, driver, test_input, stop_when_done, reference_hashes)
     return runner.run()
 
 
 class SingleTestRunner(object):
-    def __init__(self, port, options, results_directory, worker_name, driver, test_input, stop_when_done):
+    def __init__(self, port, options, results_directory, worker_name, driver, test_input, stop_when_done, reference_hashes=None):
         self._port = port
+        self._reference_hashes = {} if reference_hashes is None else reference_hashes
         self._filesystem = port.host.filesystem
         self._options = options
         self._results_directory = results_directory
@@ -473,11 +475,34 @@ class SingleTestRunner(object):
                 _log.warning('  %s -> pixel hash failed (but diff passed)' % self._test_name)
         return failures
 
+    def _reference_cache_key(self, reference_filename):
+        if '?' in reference_filename or '#' in reference_filename:
+            return None
+        contents = self._filesystem.read_binary_file(reference_filename)
+        # WebKitTestRunner and DumpRenderTree scale pages whose path contains /hidpi-.
+        name = self._filesystem.basename(reference_filename)
+        return self._filesystem.dirname(reference_filename), self._filesystem.splitext(name)[1], name.startswith('hidpi-3x-'), name.startswith('hidpi-'), hashlib.sha1(contents).hexdigest()
+
     def _run_reftest(self):
-        test_output = self._driver.run_test(self._driver_input(), self._stop_when_done)
+        reference_key = None
+        cached_reference_hash = None
+        if self._port.get_option('cache_references') and len(self._reference_files) == 1 and self._reference_files[0][0] == '==':
+            reference_key = self._reference_cache_key(self._reference_files[0][1])
+            cached_reference_hash = self._reference_hashes.get(reference_key)
+
+        driver_input = self._driver_input()
+        if cached_reference_hash:
+            driver_input.image_hash = cached_reference_hash
+        test_output = self._driver.run_test(driver_input, self._stop_when_done)
         test_output.strip_patterns(self._port.logging_patterns_to_strip())
         test_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
         test_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
+
+        # The driver leaves out the image when it matches the hash it was given, which is the comparison a fresh reference would make.
+        if cached_reference_hash and test_output.image_hash == cached_reference_hash and not test_output.crash and not test_output.timeout:
+            failures = self._handle_error(test_output)
+            test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, None, failures)
+            return TestResult(self._test_input, failures, test_output.test_time, test_output.has_stderr(), reftest_type={'=='}, pid=test_output.pid, references=[self._port.relative_test_filename(self._reference_files[0][1])])
 
         if test_output.image is None:
             # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
@@ -507,16 +532,19 @@ class SingleTestRunner(object):
         for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
             reference_test_name = self._port.relative_test_filename(reference_filename)
             reference_test_names.append(reference_test_name)
-            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, None, should_run_pixel_test=True), self._stop_when_done)
+            expected_hash = test_output.image_hash if self._port.get_option('cache_references') and expectation == '==' else None
+            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, expected_hash, should_run_pixel_test=True), self._stop_when_done)
             reference_output.strip_patterns(self._port.logging_patterns_to_strip())
             reference_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
             reference_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
 
-            if reference_output.image is None:
+            if reference_output.image is None and not (expected_hash and reference_output.image_hash == expected_hash):
                 # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
                 self._driver.stop()
 
             test_result = self._compare_output_with_reference(reference_output, test_output, reference_filename, expectation == '!=')
+            if reference_key and reference_output.image_hash and not reference_output.crash and not reference_output.timeout:
+                self._reference_hashes[reference_key] = reference_output.image_hash
 
             if (expectation == '!=' and test_result.failures) or (expectation == '==' and not test_result.failures):
                 break

@@ -1098,6 +1098,12 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--no-ref-tests', '--no-pixel-tests', 'passes/reftest.html'])
         self.assertEqual([], tests_run)
 
+    def test_reftest_results_are_unchanged_by_cache_references(self):
+        tests = ['passes/reftest.html', 'passes/mismatch.html', 'passes/svgreftest.svg', 'failures/expected/reftest.html', 'failures/expected/mismatch.html']
+        self.assertTrue(passing_run(['--cache-references'] + tests, tests_included=True))
+        details, _, _ = logging_run(['--cache-references', 'failures/unexpected/reftest.html', 'failures/unexpected/mismatch.html'], tests_included=True)
+        self.assertEqual(details.exit_code, 2)
+
     def test_reftest_expected_html_should_be_ignored(self):
         tests_run = get_tests_run(['passes/reftest-expected.html'])
         self.assertEqual([], tests_run)

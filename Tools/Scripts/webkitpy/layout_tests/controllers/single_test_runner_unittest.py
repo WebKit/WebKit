@@ -44,6 +44,16 @@ class TestDriver:
         """do nothing"""
 
 
+class HashMatchingDriver(TestDriver):
+    def __init__(self):
+        self.inputs = []
+
+    def run_test(self, driver_input, stop_when_done):
+        self.inputs.append(driver_input)
+        image = None if driver_input.image_hash == 'hash' else b'image'
+        return DriverOutput('', image, 'hash', None)
+
+
 class SingleTestRunnerTest(unittest.TestCase):
 
     def _add_file(self, port, file_path, contents):
@@ -205,3 +215,44 @@ class SingleTestRunnerTest(unittest.TestCase):
             'worse-match-ref.html': [[15, 15], [30, 30]]
         }
         self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def _run_reftests_sharing_a_reference(self, cache_references, share_cache=True):
+        port = TestPort(MockHost())
+        for name, value in dict(cache_references=cache_references, site_isolation=False, reset_results=False, new_baseline=False, additional_header=None).items():
+            setattr(port._options, name, value)
+        self._add_file(port, 'cache/first-expected.html', b'<p>same</p>')
+        self._add_file(port, 'cache/second-expected.html', b'<p>same</p>')
+        driver = HashMatchingDriver()
+        reference_hashes = {} if share_cache else None
+        results = []
+        for name in ('cache/first.html', 'cache/second.html'):
+            reference = port.host.filesystem.join(port.layout_tests_dir(), name.replace('.html', '-expected.html'))
+            test_input = TestInput(Test(name, reference_files=[('==', reference)]), timeout='1000', should_run_pixel_test=True)
+            results.append(SingleTestRunner(port, port._options, 'layout-test-results', '', driver, test_input, False, reference_hashes).run())
+        return driver.inputs, results
+
+    def test_cached_reference_is_not_rendered_again(self):
+        inputs, results = self._run_reftests_sharing_a_reference(cache_references=True)
+        self.assertEqual([driver_input.test_name for driver_input in inputs], ['cache/first.html', 'cache/first-expected.html', 'cache/second.html'])
+        self.assertEqual(inputs[2].image_hash, 'hash')
+        self.assertEqual([result.failures for result in results], [[], []])
+
+    def test_reference_receives_the_test_hash(self):
+        inputs, _ = self._run_reftests_sharing_a_reference(cache_references=True)
+        self.assertEqual(inputs[1].image_hash, 'hash')
+
+    def test_every_reference_is_rendered_without_the_cache(self):
+        inputs, results = self._run_reftests_sharing_a_reference(cache_references=False)
+        self.assertEqual([driver_input.test_name for driver_input in inputs], ['cache/first.html', 'cache/first-expected.html', 'cache/second.html', 'cache/second-expected.html'])
+        self.assertEqual([result.failures for result in results], [[], []])
+
+    def test_runners_that_share_no_cache_render_every_reference(self):
+        inputs, _ = self._run_reftests_sharing_a_reference(cache_references=True, share_cache=False)
+        self.assertEqual([driver_input.test_name for driver_input in inputs], ['cache/first.html', 'cache/first-expected.html', 'cache/second.html', 'cache/second-expected.html'])
+
+    def test_hidpi_reference_is_cached_separately(self):
+        runner = self._make_test_runner('cache/test.html')
+        for name in ('cache/ref.html', 'cache/hidpi-ref.html'):
+            self._add_file(runner._port, name, b'<p>same</p>')
+        layout_tests_dir = runner._port.layout_tests_dir()
+        self.assertNotEqual(runner._reference_cache_key(layout_tests_dir + '/cache/ref.html'), runner._reference_cache_key(layout_tests_dir + '/cache/hidpi-ref.html'))

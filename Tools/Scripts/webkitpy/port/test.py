@@ -660,7 +660,7 @@ class TestDriver(Driver):
         else:
             image = test.actual_image
 
-        if test.is_reftest and image is None and audio is None:
+        if test.is_reftest and image is None and audio is None and not (test_input.image_hash and test.actual_checksum == test_input.image_hash):
             self.is_valid_state = False
 
         return DriverOutput(actual_text, image, test.actual_checksum, audio,
