@@ -1407,7 +1407,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
 
     switch (cell.type()) {
     case StringType: {
-        auto string = asString(&cell)->tryGetValue();
+        auto string = asString(&cell)->tryGetView();
         if (string.data.isNull()) [[unlikely]] {
             recordFailure("String::tryGetValue"_s);
             return;
@@ -1621,7 +1621,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             if constexpr (std::same_as<CharType, Latin1Character>) {
                 // Inlining String case here since it is too common.
                 if (value.isCell() && value.asCell()->type() == StringType) [[likely]] {
-                    auto valueString = asString(value.asCell())->tryGetValue();
+                    auto valueString = asString(value.asCell())->tryGetView();
                     if (!valueString.data.isNull() && valueString.data.is8Bit()) [[likely]] {
                         unsigned valueLength = valueString.data.length();
                         if (!hasRemainingCapacity(1 + valueLength + 1)) [[unlikely]] {

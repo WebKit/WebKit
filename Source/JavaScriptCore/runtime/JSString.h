@@ -233,6 +233,7 @@ public:
     GCOwnedDataScope<AtomStringImpl*> toExistingAtomString(JSGlobalObject*) const;
 
     GCOwnedDataScope<StringView> view(JSGlobalObject*) const;
+    GCOwnedDataScope<StringView> tryGetView() const;
 
     ALWAYS_INLINE bool equalInline(JSGlobalObject*, JSString* other) const;
     inline bool equal(JSGlobalObject*, JSString* other) const;
@@ -959,6 +960,17 @@ inline GCOwnedDataScope<const String&> JSString::tryGetValue(bool allocationAllo
     } else
         RELEASE_ASSERT(!isRope());
     return { this, valueInternal() };
+}
+
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSString::tryGetView() const
+{
+    if (isRope()) {
+        auto* rope = static_cast<const JSRopeString*>(this);
+        if (isSubstring())
+            return { rope->substringBase(), StringView { rope->substringBase()->valueInternal() }.substring(rope->substringOffset(), length()) };
+        return { this, rope->resolveRope(nullptr) };
+    }
+    return { this, *getValueImpl() };
 }
 
 inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)

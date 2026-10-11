@@ -4540,7 +4540,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpEmptyStr, JSCell*,
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto source = thisValue->value(globalObject);
+    auto source = thisValue->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     RegExp* regExp = searchValue->regExp();
     if (regExp->global()) {
@@ -4572,7 +4572,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceAllRegExpEmptyStr, JSCel
     // ES5.1 15.5.4.10 step 8.a.
     searchValue->setLastIndex(globalObject, 0);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-    auto source = thisValue->value(globalObject);
+    auto source = thisValue->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     OPERATION_RETURN(scope, removeAllUsingRegExpSearch(vm, globalObject, thisValue, source, regExp));
 }
