@@ -30,16 +30,27 @@
 #if ENABLE(MYA) && HAVE(LLDB)
 
 #include <memory>
+#include <optional>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace lldb {
+class SBModule;
 class SBType;
 }
 
 namespace JSC {
 namespace Corpse {
+
+class TargetType;
+
+// A pointer or reference held somewhere in an object, to an object of class, struct or union type.
+struct TargetPointer {
+    uint64_t offset; // From the start of the object that holds it.
+    const TargetType* pointee; // As declared. For a polymorphic pointee, perhaps a base of the object's class.
+};
 
 // A type from a snapshot's debug info, one per type, owned by the SnapshotDebugInfo.
 class TargetType {
@@ -49,14 +60,24 @@ public:
     ~TargetType();
 
     // As liblldb spells it, such as "JSC::StringFireDetail".
-    String name() const;
+    const String& name() const { return m_name; }
+    // The path of the image whose debug info describes this type. Another image may describe the same class.
+    const String& image() const { return m_image; }
     size_t byteSize() const;
+    bool isPolymorphic() const;
+    // Only declared where it was found, so its size and fields are unknown.
+    bool isDeclaration() const { return !byteSize(); }
 
 private:
     friend class SnapshotDebugInfo;
-    explicit TargetType(const lldb::SBType&);
+    TargetType(const lldb::SBType&, const lldb::SBModule&);
 
     const std::unique_ptr<lldb::SBType> m_type;
+    const std::unique_ptr<lldb::SBModule> m_module;
+    const String m_name;
+    const String m_image;
+    // Filled in by SnapshotDebugInfo::pointers().
+    mutable std::optional<Vector<TargetPointer>> m_pointers;
 };
 
 } // namespace Corpse

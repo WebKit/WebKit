@@ -28,6 +28,7 @@
 
 #if ENABLE(MYA) && HAVE(LLDB)
 
+#include "CorpseLimits.h"
 #include <lldb/API/LLDB.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -36,21 +37,31 @@ namespace Corpse {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TargetType);
 
-TargetType::TargetType(const lldb::SBType& type)
+static String imagePath(lldb::SBModule module)
+{
+    char path[maxImagePathLength];
+    module.GetFileSpec().GetPath(path, sizeof(path));
+    return String::fromUTF8(path);
+}
+
+TargetType::TargetType(const lldb::SBType& type, const lldb::SBModule& module)
     : m_type(makeUniqueWithoutFastMallocCheck<lldb::SBType>(type))
+    , m_module(makeUniqueWithoutFastMallocCheck<lldb::SBModule>(module))
+    , m_name(String::fromUTF8(m_type->GetName()))
+    , m_image(imagePath(module))
 {
 }
 
 TargetType::~TargetType() = default;
 
-String TargetType::name() const
-{
-    return String::fromUTF8(m_type->GetName());
-}
-
 size_t TargetType::byteSize() const
 {
     return m_type->GetByteSize();
+}
+
+bool TargetType::isPolymorphic() const
+{
+    return m_type->IsPolymorphicClass();
 }
 
 } // namespace Corpse

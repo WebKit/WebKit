@@ -1667,6 +1667,7 @@ if (ENABLE_MYA)
         corpse/CorpseClient.h
         corpse/CorpseError.h
         corpse/CorpseExportsTrie.h
+        corpse/CorpseHeapWalk.h
         corpse/CorpseImage.h
         corpse/CorpseLimits.h
         corpse/CorpseMemory.h

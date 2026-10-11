@@ -41,6 +41,7 @@
 
 namespace lldb {
 class SBDebugger;
+class SBModule;
 class SBTarget;
 class SBType;
 }
@@ -50,6 +51,7 @@ namespace Corpse {
 
 class Snapshot;
 class TargetType;
+struct TargetPointer;
 
 // The debug info of a snapshot's images, read through liblldb, which is never given a process.
 class SnapshotDebugInfo : public RefCounted<SnapshotDebugInfo> {
@@ -62,10 +64,19 @@ public:
     // The class of the complete object containing the polymorphic object at `address`, and where it starts.
     const TargetType* dynamicTypeAt(Snapshot&, Address, Address& completeObject);
 
+    // Whether the object at `address` starts with a pointer into a vtable, without reporting anything.
+    bool startsWithVTablePointer(Snapshot&, Address);
+
+    // Every pointer and reference in an object of `type`, through its bases, fields and arrays,
+    // except inside a type with a reader of its own (see hasReader()).
+    const Vector<TargetPointer>& pointers(const TargetType&);
+
 private:
     SnapshotDebugInfo();
 
-    const TargetType& type(const lldb::SBType&);
+    // liblldb does not know the image of every type, so the caller says where it found it.
+    const TargetType& type(const lldb::SBType&, const lldb::SBModule&);
+    void appendPointers(lldb::SBType, uint64_t offset, const lldb::SBModule&, Vector<TargetPointer>&);
 
     std::unique_ptr<lldb::SBDebugger> m_debugger;
     std::unique_ptr<lldb::SBTarget> m_target;
