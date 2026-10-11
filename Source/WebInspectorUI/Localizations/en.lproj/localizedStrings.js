@@ -1959,6 +1959,8 @@ localizedStrings["View Shader"] = "View Shader";
 localizedStrings["Viewport"] = "Viewport";
 /* Title for Viewport row in Media Sidebar */
 localizedStrings["Viewport @ Media Sidebar"] = "Viewport";
+/* Label for setting that only keeps on-screen console messages in the DOM for performance. */
+localizedStrings["Virtualize the console @ Experimental Settings"] = "Virtualize the console (detach off-screen messages)";
 localizedStrings["Visible"] = "Visible";
 /* Tooltip for AA contrast line in color picker */
 localizedStrings["WCAG AA minimum contrast (4.5:1) @ Tooltip for AA contrast line in color picker"] = "WCAG AA minimum contrast (4.5:1)";

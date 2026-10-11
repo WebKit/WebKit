@@ -33,11 +33,15 @@ WI.BlackboxedGroupView = class BlackboxedGroupView
         element.className = "blackboxed-group";
         element.title = WI.BlackboxedGroupView.generateTooltip(callFrames);
         element.addEventListener("click", (event) => {
+            let container = element.parentElement;
+
             const options = {showFunctionName: true, indicateIfBlackboxed: true};
             for (let i = callFrames.length - 1; i >= 0; --i)
-                element.parentElement.insertBefore(new WI.CallFrameView(callFrames[i], options), element);
+                container.insertBefore(new WI.CallFrameView(callFrames[i], options), element);
 
             element.remove();
+
+            WI.View.dispatchContentResizedEvent(container);
         });
 
         let titleElement = element.appendChild(document.createElement("span"));
