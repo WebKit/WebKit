@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../network/resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SrcdocIFrameResourceContentAfterReload");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SrcdocIFrameResourceContentAfterReload.Reload",
+        description: "A static srcdoc iframe's content should be available after reloading with the inspector open.",
+        async test() {
+            let framesBeforeReload = new Set(WI.networkManager.frames);
+            let mainLoaderBeforeReload = WI.networkManager.mainFrame.loaderIdentifier;
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            // TestPageDidLoad and the Page events arrive on different connections, so the old frames can still be in the model here.
+            let mainFrameCommitted = await pollUntil(() => WI.networkManager.mainFrame?.loaderIdentifier !== mainLoaderBeforeReload);
+            InspectorTest.expectThat(!!mainFrameCommitted, "Main frame should commit the reload.");
+
+            let frame = await awaitChildFrame((frame) => !framesBeforeReload.has(frame) && frame.name === "static-frame");
+            InspectorTest.expectThat(!!frame, "srcdoc frame should be attached to the main frame.");
+            if (!frame)
+                return;
+
+            let resource = frame.mainResource;
+            InspectorTest.expectEqual(resource.url, "about:srcdoc", "srcdoc frame's main resource should be its document.");
+            InspectorTest.expectEqual(await awaitResourceSettled(resource), "finished", "srcdoc document should finish loading.");
+            InspectorTest.expectThat(!!resource.requestIdentifier, "srcdoc document should carry the request identifier of its load.");
+
+            let {content, error} = await Promise.race([
+                resource.requestContent(),
+                new Promise((resolve) => setTimeout(() => resolve({error: "timed out waiting for the content"}), 5000)),
+            ]);
+            if (error)
+                InspectorTest.log(`requestContent() failed with: ${error}`);
+            InspectorTest.expectThat(!error, "requestContent() should succeed.");
+            InspectorTest.expectThat(typeof content === "string" && content.includes("srcdoc-frame-marker"), `Content should contain "srcdoc-frame-marker".`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a static srcdoc iframe's content is available after reloading with the inspector open under Site Isolation.</p>
+<iframe name="static-frame" srcdoc="<p>srcdoc-frame-marker</p>"></iframe>
+</body>

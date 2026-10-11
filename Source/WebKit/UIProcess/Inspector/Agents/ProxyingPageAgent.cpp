@@ -27,6 +27,7 @@
 #include "ProxyingPageAgent.h"
 
 #include "HandleMessage.h"
+#include "ProvisionalFrameProxy.h"
 #include "ProxyingPageAgentMessages.h"
 #include "ValidationProcedures.h"
 #include "WebFrameProxy.h"
@@ -233,9 +234,30 @@ CommandResult<void> ProxyingPageAgent::enable()
     if (!preferences->siteIsolationEnabled())
         return { };
 
+    if (m_enabled)
+        return { };
+
     m_enabled = true;
 
+    // Register once per frame, not once per process: WebPageInspectorController releases one registration per
+    // frame, so a process registered once would be released while it still hosts other frames.
+    for (RefPtr frame = inspectedPage->mainFrame(); frame; frame = frame->traverseNext().frame) {
+        if (auto pageID = frame->webPageIDInCurrentProcess()) {
+            Ref process = frame->process();
+            enableInstrumentationForProcess(process, *pageID);
+        }
+
+        // Released by willDestroyProvisionalFrame, or carried to the new process by didCommitProvisionalFrame.
+        if (RefPtr provisionalFrame = frame->provisionalFrame()) {
+            Ref process = provisionalFrame->process();
+            enableInstrumentationForProcess(process, inspectedPage->webPageIDInProcess(process));
+        }
+    }
+
+    // Processes that host this page's WebPage but no frame yet (e.g. a popup's process in the same group) still need instrumentation.
     inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (m_instrumentedProcessPageCounts.contains(std::make_pair(webProcess.coreProcessIdentifier(), pageID)))
+            return;
         Ref protectedWebProcess { webProcess };
         enableInstrumentationForProcess(protectedWebProcess, pageID);
     });

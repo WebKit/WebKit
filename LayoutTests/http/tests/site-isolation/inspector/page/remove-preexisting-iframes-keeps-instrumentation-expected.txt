@@ -1,0 +1,13 @@
+Tests that removing iframes that existed before the inspector attached keeps Page events flowing from their processes under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.RemovePreexistingIFramesKeepsInstrumentation
+-- Running test case: SiteIsolation.Page.RemovePreexistingIFramesKeepsInstrumentation.MainProcess
+PASS: Removed frame should be reported as removed.
+PASS: Remaining frame's navigation should be committed in the frame model.
+
+-- Running test case: SiteIsolation.Page.RemovePreexistingIFramesKeepsInstrumentation.CrossOriginProcess
+PASS: Removed frame should be reported as removed.
+PASS: Remaining frame's navigation should be committed in the frame model.
+

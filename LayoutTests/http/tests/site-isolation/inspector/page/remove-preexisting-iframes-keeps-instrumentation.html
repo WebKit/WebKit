@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../network/resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function navigateFrame(id, url) {
+    document.getElementById(id).src = url;
+}
+
+function test() {
+    const crossOriginBase = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html";
+    const token = Math.random().toString(36).slice(2);
+
+    function childFrameNamed(name) {
+        return Array.from(WI.networkManager.mainFrame.childFrameCollection).find((frame) => frame.name === name);
+    }
+
+    // Both frames existed before the frontend attached. Without per-frame registration, removing one would release its process's only registration.
+    async function removeFrameThenNavigateSibling(removedName, remainingName, url) {
+        let removedFrame = await pollUntil(() => childFrameNamed(removedName));
+        let remainingFrame = await pollUntil(() => childFrameNamed(remainingName));
+        InspectorTest.assert(removedFrame && remainingFrame, "Both frames should be in the frame model.");
+        if (!removedFrame || !remainingFrame)
+            return;
+
+        InspectorTest.evaluateInPage(`document.getElementById("${removedName}").remove()`);
+        let removed = await pollUntil(() => !WI.networkManager.frameForIdentifier(removedFrame.id));
+        InspectorTest.expectThat(!!removed, "Removed frame should be reported as removed.");
+
+        InspectorTest.evaluateInPage(`navigateFrame("${remainingName}", "${url}")`);
+        let committed = await pollUntil(() => remainingFrame.mainResource.url === url);
+        InspectorTest.expectThat(!!committed, "Remaining frame's navigation should be committed in the frame model.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.RemovePreexistingIFramesKeepsInstrumentation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.RemovePreexistingIFramesKeepsInstrumentation.MainProcess",
+        description: "Removing a same-origin iframe should not stop Page events from the main frame's process.",
+        async test() {
+            // Also passes without per-frame registration: once its proxies are torn down, this process reports commits through its in-process Page agent.
+            await removeFrameThenNavigateSibling("same-origin-1", "same-origin-2", new URL(`../network/resources/iframe-with-script.html?same-origin-${token}`, WI.networkManager.mainFrame.url).href);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.RemovePreexistingIFramesKeepsInstrumentation.CrossOriginProcess",
+        description: "Removing a cross-origin iframe should not stop Page events from the process that hosts its sibling.",
+        async test() {
+            await removeFrameThenNavigateSibling("cross-origin-1", "cross-origin-2", `${crossOriginBase}?cross-origin-${token}`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that removing iframes that existed before the inspector attached keeps Page events flowing from their processes under Site Isolation.</p>
+<iframe id="same-origin-1" name="same-origin-1" src="../network/resources/iframe-with-script.html?same-origin-1"></iframe>
+<iframe id="same-origin-2" name="same-origin-2" src="../network/resources/iframe-with-script.html?same-origin-2"></iframe>
+<iframe id="cross-origin-1" name="cross-origin-1" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin-1"></iframe>
+<iframe id="cross-origin-2" name="cross-origin-2" src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin-2"></iframe>
+</body>
