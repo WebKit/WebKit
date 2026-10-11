@@ -24,13 +24,14 @@
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {DOM, REF} from '/library/js/Ref.js';
 import {CommitBank} from '/assets/js/commit.js';
-import {queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} from '/assets/js/common.js';
+import {deepCompare, escapeHTML, queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js'
 import {Expectations} from '/assets/js/expectations.js';
 import {Failures} from '/assets/js/failures.js';
 import {TypeForSuite} from '/assets/js/suites.js';
 
 function commitsForUuid(uuid) {
+    const branch = queryToParams(document.URL.split('?')[1]).branch;
     return `Commits: ${CommitBank.commitsDuring(uuid).map((commit) => {
             const params = {
                 branch: commit.branch ? [commit.branch] : branch,
@@ -56,12 +57,33 @@ function parametersForInstance(suite, data)
     return paramsToQuery(buildParams);
 }
 
+// Keep fetched links and requests here, not on each run, whose fields come from its upload and could collide
+const linksForRun = new WeakMap();
+const linksRequestedFor = new WeakSet();
+
+function linksAllRowsAgreeOn(urlsByConfiguration)
+{
+    const linksPerRow = urlsByConfiguration.flatMap(pair => pair.urls).map(row => row.links).filter(links => links);
+    if (!linksPerRow.length || !linksPerRow.every(links => deepCompare(links, linksPerRow[0])))
+        return [];
+    return linksPerRow[0];
+}
+
+function anchorFor([name, url])
+{
+    return `<a href="${escapeHTML(url)}" target="_blank">${escapeHTML(name)}</a>`;
+}
+
 function testRunLink(suite, data)
 {
     if (!data.start_time)
         return '';
+    const startTime = new Date(data.start_time * 1000).toLocaleString();
+    const [firstLink, ...otherLinks] = linksForRun.get(data) || [];
+    if (firstLink)
+        return [`${anchorFor(firstLink)} @ ${startTime}`, ...otherLinks.map(anchorFor)].join('<br>');
     const typ = TypeForSuite(suite);
-    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">${typ.runDescription}</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
+    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">${typ.runDescription}</a> @ ${startTime}`;
 }
 
 function archiveLink(suite, data)
@@ -386,6 +408,21 @@ class _InvestigateDrawer {
             this.select(this.selected);
         });
     }
+    fetchLinks(run) {
+        if (!run.start_time || linksRequestedFor.has(run))
+            return;
+        linksRequestedFor.add(run);
+        fetch(`api/urls?${parametersForInstance(this.suite, run)}`)
+            .then(response => response.json())
+            .then(linksAllRowsAgreeOn)
+            .catch(() => [])
+            .then(links => {
+                if (!links.length)
+                    return;
+                linksForRun.set(run, links);
+                this.select(this.selected);
+            });
+    }
     collapse() {
         if (!this.isRendered())
             return;
@@ -426,12 +463,11 @@ class _InvestigateDrawer {
 
         if (this.agregate && this.data.length > 1 && !this.selected)
             this.content.setState(contentForAgregateData(this.suite, this.agregate, this.data, this.willFilterExpected));
-        else
-            this.content.setState(contentForData(
-                this.suite,
-                this.data[this.agregate && this.data.length > 1 ? this.selected - 1 : this.selected],
-                this.willFilterExpected,
-            ));
+        else {
+            const selectedRun = this.data[this.agregate && this.data.length > 1 ? this.selected - 1 : this.selected];
+            this.fetchLinks(selectedRun);
+            this.content.setState(contentForData(this.suite, selectedRun, this.willFilterExpected));
+        }
     }
 }
 

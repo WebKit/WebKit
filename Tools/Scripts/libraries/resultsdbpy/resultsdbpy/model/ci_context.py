@@ -24,6 +24,7 @@ import calendar
 import json
 import logging
 import requests
+import string
 import sys
 import time
 import urllib.parse
@@ -103,6 +104,17 @@ class CIContext(UploadCallbackContext):
             return None
         return factory.url(fetch=should_fetch, **kwargs)
 
+    @classmethod
+    def named_links(cls, details):
+        links = []
+        for key, url in details.items():
+            if not key.strip().lower().endswith('link') or key.strip().lower() == 'link':
+                continue
+            name = string.capwords(key.strip()[:-len('link')].replace('_', ' '))
+            if name and isinstance(url, str) and url.startswith(('https://', 'http://')):
+                links.append([name, url])
+        return links
+
     def register(self, configuration, commits, suite, test_results, timestamp=None):
         timestamp = timestamp or time.time()
         if not isinstance(timestamp, datetime):
@@ -130,6 +142,10 @@ class CIContext(UploadCallbackContext):
             # Custom build links override constructed buildbot links
             if 'link' in details:
                 urls['build'] = details['link']
+
+            links = self.named_links(details)
+            if links:
+                urls['links'] = links
 
             for key in details.keys():
                 if details[key] is None:

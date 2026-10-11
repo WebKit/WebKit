@@ -520,7 +520,8 @@ const documentation = {
                     '                "end_time": <UTC time build ended>,\n' +
                     '                "queue": <url to queue a>,\n' +
                     '                "worker": <url to worker a>,\n' +
-                    '                "build": <url to build a>\n' +
+                    '                "build": <url to build a>,\n' +
+                    '                "links": [[<link name>, <link url>], ...]\n' +
                     '            }\n' +
                     '        ]\n' +
                     '    }, {\n' +
@@ -537,6 +538,7 @@ const documentation = {
                     '    }\n' +
                     ']'),
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                    `"links" lists the upload's details whose keys end in "link", other than "link" itself, as [name, url] pairs in upload order. Each name comes from its key, so "post_build_link" is "Post Build". Only http and https URLs are kept, and "links" is only present when there are any.`,
                 ],
             ),
             documentEndpoint(
