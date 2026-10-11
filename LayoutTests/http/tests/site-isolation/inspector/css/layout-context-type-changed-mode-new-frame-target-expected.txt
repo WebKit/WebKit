@@ -1,0 +1,12 @@
+Tests that the `All` layout context type changed mode applies to frame targets created after it was set.
+
+
+== Running test suite: SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget.AllModeAppliesToNewTarget
+Changing `layoutContextTypeChangedMode` to `All`...
+Adding a cross-origin iframe...
+PASS: Should find the new frame target.
+PASS: #deep-grid should have been sent without toggling the mode again.
+PASS: #deep-grid should be a grid.
+-- Running test teardown.
+

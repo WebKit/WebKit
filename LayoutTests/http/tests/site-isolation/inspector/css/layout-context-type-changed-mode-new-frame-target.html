@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame()
+{
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/css/resources/frame-with-layout-flags.html`;
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget");
+
+    function frameNodeWithId(frameDocument, id) {
+        let pending = frameDocument ? [frameDocument] : [];
+        while (pending.length) {
+            let node = pending.shift();
+            if (node.nodeType() === Node.ELEMENT_NODE && node.getAttribute("id") === id)
+                return node;
+            pending.push(...(node.children || []));
+        }
+        return null;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget.AllModeAppliesToNewTarget",
+        description: "A frame target created after the mode is set to `All` should report grids the frontend has not received yet.",
+        async test() {
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+
+            InspectorTest.log("Adding a cross-origin iframe...");
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let target = await waitForFrameTargetForURLContaining("frame-with-layout-flags.html");
+            InspectorTest.expectThat(target instanceof WI.FrameTarget, "Should find the new frame target.");
+
+            // A layout change that lands before the frontend re-requests the document is not retried by the backend.
+            // Toggle #deep-grid until a change arrives after the document is available.
+            let deepGrid = null;
+            for (let attempt = 0; attempt < 30 && !deepGrid; ++attempt) {
+                deepGrid = frameNodeWithId(WI.domManager.frameTargetDocumentForTarget(target), "deep-grid");
+                if (deepGrid)
+                    break;
+                let display = attempt % 2 ? "grid" : "none";
+                await target.RuntimeAgent.evaluate.invoke({expression: `setDisplay("deep-grid", "${display}")`, objectGroup: "test"});
+                await new Promise((resolve) => setTimeout(resolve, 100));
+            }
+
+            InspectorTest.expectNotNull(deepGrid, "#deep-grid should have been sent without toggling the mode again.");
+            InspectorTest.expectEqual(deepGrid?.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "#deep-grid should be a grid.");
+        },
+        async teardown() {
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that the `All` layout context type changed mode applies to frame targets created after it was set.</p>
+</body>
