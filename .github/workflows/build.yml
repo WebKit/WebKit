@@ -728,9 +728,11 @@ jobs:
       # DOM/HTML/CSS/rendering sources; it reports failures but preserves the
       # default libWebKitWKC artifact until the expanded target is linkable.
       - name: Probe full WebCore source list (manual opt-in)
+        id: full-engine-probe
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore }}
         shell: bash
         run: |
+          echo "engine_ready=false" >> "$GITHUB_OUTPUT"
           set +e
           cmake -S "$GITHUB_WORKSPACE/Source/WebKit/WKC" -B build-full --fresh \
             -G Ninja \
@@ -739,7 +741,9 @@ jobs:
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DWKC_ENABLE_FULL_WEBCORE=ON > build-full-configure.log 2>&1
+            -DWKC_ENABLE_FULL_WEBCORE=ON \
+            -DWKC_ENABLE_WEB_AUDIO=ON \
+            -DWKC_ENABLE_WEBRTC_API=ON > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
           if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-full/build.ninja ]; then
             echo "===== full WebCore configure failed (diagnostic only) ====="
@@ -758,9 +762,32 @@ jobs:
           echo "===== first failing full-WebCore sources ====="
           grep '^FAILED:' build-full.log | sed -E 's#.*(Source/WebCore/[^ ]+\.obj).*#\1#' | sort -u | head -100 || true
           if [ "$BUILD_STATUS" -eq 0 ]; then
-            echo "Full WebCore source-list compilation passed."
+            echo "Full WebCore and WebRTC compilation passed; packaging the full static-library bundle."
+            mkdir -p "$GITHUB_WORKSPACE/dist-full/lib" "$GITHUB_WORKSPACE/dist-full/diagnostics"
+            if cmake --install build-full --prefix "$GITHUB_WORKSPACE/dist-full"; then
+              # A static WebKit archive does not absorb its linked static dependencies.
+              # Include every archive produced by this full CMake graph, not only
+              # libWebKitWKC.a, so the browser consumer can link the WebRTC stack too.
+              find build-full -type f -name '*.a' -exec cp -f {} "$GITHUB_WORKSPACE/dist-full/lib/" \\;
+              cp build-full-configure.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
+              cp build-full.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
+              {
+                echo "Profile: WKC full WebCore + Web Audio + WebRTC"
+                echo "Target: Wii U PowerPC 750 / devkitPPC"
+                echo "JavaScriptCore: CLoop interpreter; JIT disabled for Wii U"
+                echo "Verification: full CMake build and install passed"
+                echo "Not yet verified: Wave Browser final executable link, hardware capture, or on-console runtime"
+                echo
+                echo "Static archives included:"
+                find "$GITHUB_WORKSPACE/dist-full/lib" -maxdepth 1 -type f -name '*.a' -printf '%f\\n' | sort
+              } > "$GITHUB_WORKSPACE/dist-full/BUILD_PROFILE.txt"
+              echo "engine_ready=true" >> "$GITHUB_OUTPUT"
+              echo "Full engine bundle ready at dist-full/."
+            else
+              echo "Full build compiled but CMake install failed; withholding the full-engine artifact."
+            fi
           else
-            echo "Full WebCore remains in porting bring-up; keeping this diagnostic non-blocking."
+            echo "Full WebCore/WebRTC remains in porting bring-up; keeping this diagnostic non-blocking."
           fi
           exit 0
 
@@ -826,6 +853,12 @@ jobs:
       - name: Collect output
         run: |
           mkdir -p dist/lib dist/include dist/diagnostics
+          cat > dist/BUILD_PROFILE.txt <<'PROFILE'
+          Profile: WKC bootstrap archive (not the complete WebCore engine)
+          Includes: selected WTF/JSC interpreter sources, WKC glue and selected platform backends
+          Excludes: the full DOM/HTML/CSS/rendering source list and the experimental WebRTC linkage
+          Use the manual workflow_dispatch input experimental_full_webcore to attempt the full WebCore + Web Audio + WebRTC profile.
+          PROFILE
           # Preserve build logs with the library artifact so porting errors can be
           # inspected without relying on truncated Actions console output.
           for log in build.log build-full-configure.log build-full.log \
@@ -863,4 +896,12 @@ jobs:
         with:
           name: webkit-wiiu-lib
           path: dist/
+          retention-days: 30
+
+      - name: Upload full WebCore + WebRTC engine bundle
+        if: ${{ steps.full-engine-probe.outputs.engine_ready == 'true' }}
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: webkit-wiiu-full-engine
+          path: dist-full/
           retention-days: 30
