@@ -69,7 +69,7 @@ auto Blending<AspectRatio>::canBlend(const AspectRatio& a, const AspectRatio& b)
         || (a.isAutoAndRatio() && b.isAutoAndRatio());
 }
 
-auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> AspectRatio
+auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext& context) -> AspectRatio
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);
@@ -77,7 +77,7 @@ auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, co
     }
 
     ASSERT(a.m_type == b.m_type);
-    auto blendedRatio = WebCore::blend(std::log(aStyle.logicalAspectRatio()), std::log(bStyle.logicalAspectRatio()), context);
+    auto blendedRatio = WebCore::blend(std::log(a.width().value / a.height().value), std::log(b.width().value / b.height().value), context);
     return AspectRatio { a.m_type, Ratio { .numerator = { std::exp(blendedRatio) }, .denominator = { 1 } } };
 }
 
