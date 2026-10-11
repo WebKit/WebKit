@@ -336,18 +336,23 @@ jobs:
           # copy step place it on the JSC include path. (cd into wasm/ so the script's
           # sibling import of generateWasm resolves.)
           ( cd "$JSC/wasm" && python3 generateWasmOpsHeader.py wasm.json "$OUT/WasmOps.h" ) || echo "FAIL WasmOps.h"
-          # Per-class perfect-hash lookup tables: one <Class>.lut.h per runtime/*.cpp
+          # Per-class perfect-hash lookup tables: one <Class>.lut.h per source
           # that defines a static hash table (create_hash_table emits nothing useful
-          # for the rest, which we drop). wasm/*.lut.h are intentionally skipped
-          # (WebAssembly is disabled).
+          # for most TUs, which we drop). Generate tables for both runtime and wasm
+          # sources: WKC_ENABLE_WEBASSEMBLY now includes the portable interpreter,
+          # whose TUs may include generated wasm lookup tables.
           n=0
-          for cpp in "$JSC"/runtime/*.cpp; do
-            b=$(basename "$cpp" .cpp)
-            if perl "$JSC/create_hash_table" "$cpp" > "$OUT/$b.lut.h" 2>/dev/null && [ -s "$OUT/$b.lut.h" ]; then
-              n=$((n+1))
-            else
-              rm -f "$OUT/$b.lut.h"
-            fi
+          for dir in "$JSC"/runtime "$JSC"/wasm "$JSC"/wasm/js; do
+            [ -d "$dir" ] || continue
+            for cpp in "$dir"/*.cpp; do
+              [ -f "$cpp" ] || continue
+              b=$(basename "$cpp" .cpp)
+              if perl "$JSC/create_hash_table" "$cpp" > "$OUT/$b.lut.h" 2>/dev/null && [ -s "$OUT/$b.lut.h" ]; then
+                n=$((n+1))
+              else
+                rm -f "$OUT/$b.lut.h"
+              fi
+            done
           done
           echo "=== JSC derived sources ==="
           echo "runtime .lut.h generated: $n"
