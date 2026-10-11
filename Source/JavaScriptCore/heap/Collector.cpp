@@ -246,9 +246,14 @@ CollectionScope Collector::decideCollectionScope()
         return CollectionScope::Full;
     if (m_currentRequest.scope)
         return *m_currentRequest.scope;
-    if (heap().m_shouldDoFullCollection || heap().overCriticalMemoryThreshold())
-        return CollectionScope::Full;
-    return CollectionScope::Eden;
+    // FIXME: This policy probably needs rethinking for global collections, and overCriticalMemoryThreshold()
+    // should be process-wide, not per heap, but Heap::collectNow depends on the Heap cache given a consistent result.
+    bool anyHeapNeedsFullCollection = false;
+    forEachHeap([&](Heap& heap) {
+        if (heap.m_shouldDoFullCollection || heap.overCriticalMemoryThreshold())
+            anyHeapNeedsFullCollection = true;
+    });
+    return anyHeapNeedsFullCollection ? CollectionScope::Full : CollectionScope::Eden;
 }
 
 void Collector::collectInCollectorThread()
@@ -956,11 +961,11 @@ void Collector::verifyGC()
 
 void Collector::verifierMark()
 {
+    RELEASE_ASSERT(!m_isMarkingForGCVerifier);
     forEachHeap([](Heap& heap) {
-        RELEASE_ASSERT(!heap.m_isMarkingForGCVerifier);
         RELEASE_ASSERT(heap.m_collectionScope);
-        heap.m_isMarkingForGCVerifier = true;
     });
+    m_isMarkingForGCVerifier = true;
 
     VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
     do {
@@ -972,9 +977,7 @@ void Collector::verifierMark()
 
     visitor.setDoneMarking();
 
-    forEachHeap([](Heap& heap) {
-        heap.m_isMarkingForGCVerifier = false;
-    });
+    m_isMarkingForGCVerifier = false;
 }
 
 void Collector::clearVerifierSlotVisitor()
@@ -994,7 +997,7 @@ void Collector::dumpVerifierMarkerData(HeapCell* cell)
     }
 
     // Use VerifierSlotVisitorScope to keep it live.
-    RELEASE_ASSERT(m_verifierSlotVisitor && !cell->heap()->isMarkingForGCVerifier());
+    RELEASE_ASSERT(m_verifierSlotVisitor && !m_isMarkingForGCVerifier);
     VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
     RELEASE_ASSERT(visitor.doneMarking());
 

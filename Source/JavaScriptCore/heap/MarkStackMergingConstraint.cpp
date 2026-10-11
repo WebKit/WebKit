@@ -66,7 +66,7 @@ void MarkStackMergingConstraint::executeImplImpl(Visitor& visitor)
     // 2. The End phase explicitly calls iterateExecutingAndCompilingCodeBlocks()
     //    to add executing CodeBlocks to m_heap.m_mutatorMarkStack. We want to
     //    leave those unperturbed.
-    if (m_heap.m_isMarkingForGCVerifier)
+    if (visitor.collector().isMarkingForGCVerifier())
         return;
 
     m_heap.m_mutatorMarkStack->transferTo(visitor.mutatorMarkStack());

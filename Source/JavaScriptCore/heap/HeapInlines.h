@@ -59,7 +59,7 @@ inline JSC::Heap* Heap::heap(const JSValue v)
 
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
-    ASSERT(!m_isMarkingForGCVerifier);
+    ASSERT(!m_collector->isMarkingForGCVerifier());
     HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);
     // The marking version must come from the cell's own heap's object space.
     ASSERT(cell->heap() == this);
