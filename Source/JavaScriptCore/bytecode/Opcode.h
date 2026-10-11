@@ -91,6 +91,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSet(ma
 
 #define FOR_EACH_OPCODE_WITH_VALUE_PROFILE(macro) \
     macro(OpCallVarargs) \
+    macro(OpCallVarargsWithSpread) \
     macro(OpConstructVarargs) \
     macro(OpSuperConstructVarargs) \
     macro(OpGetByVal) \
@@ -126,6 +127,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSet(ma
     macro(OpAsyncIteratorOpen) \
     macro(OpAsyncIteratorNext) \
     macro(OpCallVarargs) \
+    macro(OpCallVarargsWithSpread) \
     macro(OpTailCallVarargs) \
     macro(OpConstructVarargs) \
     macro(OpSuperConstructVarargs) \

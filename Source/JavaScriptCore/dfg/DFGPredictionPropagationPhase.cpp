@@ -1066,6 +1066,7 @@ private:
         case Construct:
         case DirectConstruct:
         case CallVarargs:
+        case CallVarargsWithSpread:
         case CallDirectEval:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
@@ -1835,6 +1836,8 @@ private:
         case ExitOK:
         case VarargsLength:
         case LoadVarargs:
+        case VarargsLengthWithSpread:
+        case LoadVarargsWithSpread:
         case ForwardVarargs:
         case PutDynamicVar:
         case NukeStructureAndSetButterfly:
