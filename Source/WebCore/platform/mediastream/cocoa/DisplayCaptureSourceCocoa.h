@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceSettings.h>
 #include <WebCore/UserActivity.h>
@@ -71,7 +72,8 @@ public:
 class DisplayCaptureSourceCocoa final
     : public RealtimeMediaSource
     , public CapturerObserver
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop> {
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>
+    , protected OrientationNotifier::Observer {
     WTF_MAKE_TZONE_ALLOCATED(DisplayCaptureSourceCocoa);
 public:
     using DisplayFrameType = Variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>, RetainPtr<CMSampleBufferRef>>;
@@ -91,6 +93,8 @@ public:
         virtual void commitConfiguration(const RealtimeMediaSourceSettings&) = 0;
         virtual IntSize intrinsicSize() const = 0;
         virtual void whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback) { callback({ }); }
+        virtual void orientationChanged(IntDegrees) { }
+        virtual VideoFrameRotation videoFrameRotation() const { return { }; }
 
         virtual void setLogger(const Logger&, uint64_t);
         const Logger* loggerPtr() const { return m_logger.get(); }
@@ -154,6 +158,11 @@ private:
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
     double observedFrameRate() const final;
     void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
+    void monitorOrientation(OrientationNotifier&) final;
+    VideoFrameRotation videoFrameRotation() const final { return m_capturer->videoFrameRotation(); }
+
+    // OrientationNotifier::Observer
+    void orientationChanged(IntDegrees) final;
 
     ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }
     void setLogger(const Logger&, uint64_t) final;

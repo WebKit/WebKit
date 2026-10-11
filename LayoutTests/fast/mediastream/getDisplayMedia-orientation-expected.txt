@@ -1,0 +1,3 @@
+
+PASS getDisplayMedia stream continues delivering frames through device orientation changes
+
