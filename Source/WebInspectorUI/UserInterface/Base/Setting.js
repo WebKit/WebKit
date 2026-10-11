@@ -261,6 +261,7 @@ WI.settings = {
     engineeringShowInternalObjectsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-internal-objects-in-heap-snapshot", false),
     engineeringShowPrivateSymbolsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-private-symbols-in-heap-snapshot", false),
     engineeringAllowEditingUserAgentShadowTrees: new WI.EngineeringSetting("engineering-allow-editing-user-agent-shadow-trees", false),
+    engineeringEnableFrameTargetDomains: new WI.EngineeringSetting("engineering-enable-frame-target-domains", false),
 
     // Debug
     debugShowConsoleEvaluations: new WI.DebugSetting("debug-show-console-evaluations", false),

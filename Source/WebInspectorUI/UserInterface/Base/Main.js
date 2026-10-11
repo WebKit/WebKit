@@ -3239,6 +3239,10 @@ WI.engineeringSettingsAllowed = function() {
     return WI.isEngineeringBuild || WI.inspectorFrontendHostAllowsEngineeringSettings;
 }
 
+WI.isSiteIsolationEnabled = function() {
+    return WI.targets.some((t) => t.type === WI.TargetType.Frame);
+};
+
 // OpenResourceDialog delegate
 
 WI.dialogWasDismissedWithRepresentedObject = function(dialog, representedObject)
