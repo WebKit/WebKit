@@ -68,6 +68,8 @@ public:
     // For HTMLParserScheduler.
     void resumeParsingAfterYield();
 
+    bool isYieldingForFirstPaintBeforeDeferredScripts() const { return m_yieldBeforeDeferredScriptsState == YieldBeforeDeferredScriptsState::Yielding; }
+
     // For HTMLTreeBuilder.
     HTMLTokenizer& tokenizer() LIFETIME_BOUND;
     TextPosition textPosition() const final;
@@ -129,6 +131,9 @@ private:
     void attemptToEnd();
     void endIfDelayed();
     void attemptToRunDeferredScriptsAndEnd();
+    bool shouldTryToYieldForFirstPaintBeforeDeferredScripts() const;
+    bool wouldPaintAfterYielding() const;
+    void stopYieldingForFirstPaintBeforeDeferredScripts();
     void end();
 
     bool NODELETE isParsingFragment() const;
@@ -153,6 +158,8 @@ private:
     const RefPtr<HTMLResourcePreloader> m_preloader;
 
     bool m_endWasDelayed { false };
+    enum class YieldBeforeDeferredScriptsState : uint8_t { NotAttempted, DidNotYield, Yielding, DidYield };
+    YieldBeforeDeferredScriptsState m_yieldBeforeDeferredScriptsState { YieldBeforeDeferredScriptsState::NotAttempted };
     unsigned m_pumpSessionNestingLevel { 0 };
     bool m_shouldEmitTracePoints { false };
 };

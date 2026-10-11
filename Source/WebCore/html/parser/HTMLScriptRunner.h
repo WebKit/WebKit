@@ -55,6 +55,7 @@ public:
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
     void executeScriptsWaitingForStylesheets();
     bool executeScriptsWaitingForParsing();
+    bool isFirstScriptWaitingForParsingLoaded() const;
 
     bool NODELETE hasParserBlockingScript() const;
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
