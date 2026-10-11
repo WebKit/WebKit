@@ -29,6 +29,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class DOMWrapperWorld;
@@ -69,6 +70,7 @@ public:
     Inspector::CommandResult<void> disable() final;
 
     void setShowPaintRects(bool show) { m_showPaintRects = show; }
+    void setBootstrapScript(const String& source) { m_bootstrapScript = source; }
 
     void domContentEventFired() final;
     void loadEventFired() final;
@@ -93,6 +95,7 @@ private:
     WeakRef<WebPage> m_page;
 
     bool m_showPaintRects { false };
+    String m_bootstrapScript;
 };
 
 } // namespace WebKit

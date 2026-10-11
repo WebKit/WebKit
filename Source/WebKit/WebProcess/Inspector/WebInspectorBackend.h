@@ -119,6 +119,7 @@ public:
 
     // Fan the paint-rects toggle out to every per-frame PageAgentProxy this process hosts.
     void setShowPaintRects(bool);
+    void setBootstrapScript(const String&);
 
     // Set up / tear down every per-frame instrumentation agent for a frame. Callers
     // don't need to know which agents are frame-scoped; each helper no-ops unless its
@@ -172,6 +173,7 @@ private:
     // ensurePageInstrumentationForFrame starts in the correct state (the UIProcess replays state
     // only on the first (process, page) registration).
     bool m_showPaintRects { false };
+    String m_bootstrapScript;
 };
 
 } // namespace WebKit

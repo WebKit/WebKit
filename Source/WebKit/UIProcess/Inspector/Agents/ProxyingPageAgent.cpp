@@ -197,6 +197,11 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     // exactly once per (process, page) registration, guarded above.
     if (m_showPaintRects)
         webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { true }, pageID);
+
+    // Sent before the provisional frame's load is allowed to start (see WebFrameProxy::prepareForProvisionalLoadInProcess),
+    // so the first document committed in a new process already sees the script.
+    if (!m_bootstrapScript.isEmpty())
+        webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { m_bootstrapScript }, pageID);
 }
 
 void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
@@ -254,6 +259,7 @@ CommandResult<void> ProxyingPageAgent::disable()
     // Reset so a later frontend reconnect doesn't replay a stale "on" toggle via
     // enableInstrumentationForProcess. The processes are torn down below, so no "off" send is needed.
     m_showPaintRects = false;
+    m_bootstrapScript = { };
 
     // Force-teardown: disable all processes unconditionally, bypassing the
     // refcount discipline in disableInstrumentationForProcess(). This is
@@ -497,9 +503,19 @@ void ProxyingPageAgent::getResourceContent(const Protocol::Network::FrameId& fra
         *targetPageID);
 }
 
-// FIXME: <https://webkit.org/b/308897> Cross-process bootstrap script injection.
-CommandResult<void> ProxyingPageAgent::setBootstrapScript(const String&)
+// Only the frontend may set this: relaying the script from a WebContent process would let one site inject script into another site's process.
+CommandResult<void> ProxyingPageAgent::setBootstrapScript(const String& source)
 {
+    if (!m_enabled)
+        return { };
+
+    m_bootstrapScript = source;
+
+    Ref inspectedPage = m_inspectedPage.get();
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { source }, pageID);
+    });
+
     return { };
 }
 
