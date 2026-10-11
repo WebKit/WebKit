@@ -316,8 +316,8 @@ class TestPrintSwiftVersion(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git describe --tags'])
-            .log('stdio', stdout='swift-6.3-DEVELOPMENT-SNAPSHOT\n')
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -f {toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE} && echo "Installed Swift tag: $(cat {toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE})" || echo "Installed Swift tag is unknown"'])
+            .log('stdio', stdout='Installed Swift tag: swift-6.3-DEVELOPMENT-SNAPSHOT\n')
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
@@ -338,16 +338,16 @@ class TestPrintSwiftVersion(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('has_swift_toolchain', True)
         return rc
 
-    def test_no_git_repository(self):
+    def test_no_swift_toolchain(self):
         self.configureStep()
         toolchain_path = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
         self.expectRemoteCommands(
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git describe --tags'])
-            .log('stdio', stdout='fatal: not a git repository\n')
-            .exit(1),
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -f {toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE} && echo "Installed Swift tag: $(cat {toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE})" || echo "Installed Swift tag is unknown"'])
+            .log('stdio', stdout='Installed Swift tag is unknown\n')
+            .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
@@ -364,32 +364,32 @@ class TestPrintSwiftVersion(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string='Swift toolchain does not exist')
         return self.run_step()
 
-    def test_no_swift_toolchain(self):
+    def test_toolchain_without_tag_file(self):
         self.configureStep()
         toolchain_path = f'{USER_TOOLCHAINS_DIR}/{SWIFT_TOOLCHAIN_NAME}.xctoolchain'
         self.expectRemoteCommands(
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git describe --tags'])
-            .log('stdio', stdout='swift-6.3-DEVELOPMENT-SNAPSHOT\n')
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -f {toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE} && echo "Installed Swift tag: $(cat {toolchain_path}/{SWIFT_TOOLCHAIN_TAG_FILE})" || echo "Installed Swift tag is unknown"'])
+            .log('stdio', stdout='Installed Swift tag is unknown\n')
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'test -d {toolchain_path} && echo "Toolchain exists at {toolchain_path}" || echo "Toolchain does not exist"'])
-            .log('stdio', stdout='Toolchain does not exist\n')
+            .log('stdio', stdout=f'Toolchain exists at {toolchain_path}\n')
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'{toolchain_path}/usr/bin/swift --version'])
-            .log('stdio', stdout='No such file or directory\n')
-            .exit(1),
+            .log('stdio', stdout='Swift version 6.0.3 (swift-6.0.3-RELEASE)\nTarget: arm64-apple-macosx26.0\n')
+            .exit(0),
         )
-        self.expect_outcome(result=SUCCESS, state_string='Swift toolchain does not exist')
+        self.expect_outcome(result=SUCCESS, state_string='Current Swift tag is unknown (toolchain installed)')
         rc = self.run_step()
-        self.expect_property('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        self.expect_property('has_swift_toolchain', True)
         return rc
 
 
@@ -530,6 +530,19 @@ class TestUpdateSwiftCheckouts(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=WARNINGS, state_string='Failed to update swift, using previous checkout')
         return self.run_step()
 
+    def test_failure_with_previous_toolchain_without_tag(self):
+        self.configureStep()
+        self.setProperty('has_swift_toolchain', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/update-checkout --tag swift-6.3-DEVELOPMENT-SNAPSHOT --clone --skip-repository boringssl'])
+            .exit(1),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Failed to update swift, using previous checkout')
+        return self.run_step()
+
     def test_failure_without_previous_checkout(self):
         self.configureStep()
         self.expectRemoteCommands(
@@ -576,6 +589,7 @@ class TestInstallSwiftToolchain(BuildStepMixinAdditions, unittest.TestCase):
     def configureStep(self):
         self.setup_step(InstallSwiftToolchain())
         self.setProperty('builddir', '/Volumes/Data/worker/test-builder')
+        self.setProperty('canonical_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
 
     def test_success(self):
         self.configureStep()
@@ -598,6 +612,11 @@ class TestInstallSwiftToolchain(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=600,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'cp -a {source} {dest}'])
+            .exit(0),
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        timeout=600,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'echo swift-6.3-DEVELOPMENT-SNAPSHOT > {dest}/{SWIFT_TOOLCHAIN_TAG_FILE}'])
             .exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string=f'Installed {SWIFT_TOOLCHAIN_NAME} toolchain')
