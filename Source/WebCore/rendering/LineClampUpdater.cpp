@@ -163,15 +163,21 @@ void LineClampUpdater::resetLineClamp()
     layoutState->setLineClamp({ });
 }
 
-std::optional<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoint() const
+// "the block size the box would have if its automatic block size were infinite", from the line-clamp container's border box top edge.
+static std::optional<LayoutUnit> autoClampBlockSizeLimit(const RenderBlock& lineClampContainer)
 {
-    auto& lineClampContainer = m_blockContainer.get();
-    CheckedRef style = lineClampContainer.style();
-    // "the block size the box would have if its automatic block size were infinite"
-    auto maximumContentHeight = lineClampContainer.constrainContentBoxLogicalHeightByMinMax(lineClampContainer.computeContentLogicalHeight(style->logicalHeight(), std::nullopt).value_or(LayoutUnit::max()), std::nullopt);
+    auto maximumContentHeight = lineClampContainer.constrainContentBoxLogicalHeightByMinMax(lineClampContainer.computeContentLogicalHeight(lineClampContainer.style().logicalHeight(), std::nullopt).value_or(LayoutUnit::max()), std::nullopt);
     if (maximumContentHeight == LayoutUnit::max())
         return { };
-    auto blockSizeLimit = lineClampContainer.borderAndPaddingBefore() + maximumContentHeight;
+    return lineClampContainer.borderAndPaddingBefore() + maximumContentHeight;
+}
+
+std::optional<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoint() const
+{
+    if (!isAutoLineClampRoot() || !autoClampBlockSizeLimit(m_blockContainer))
+        return { };
+    auto& lineClampContainer = m_blockContainer.get();
+    auto blockSizeLimit = *autoClampBlockSizeLimit(lineClampContainer);
 
     // "The auto clamp point will be set to the last possible clamp point such that, for it and all previous possible clamp points,
     // the line-clamp container's automatic block size (as determined below) is not greater than the block size the box would have
@@ -238,6 +244,15 @@ std::optional<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoint
             clampPointAfterPreviousChild = AutoClampPoint { CheckedRef { *child } };
     }
     return { };
+}
+
+void LineClampUpdater::setAutoClampPoint(const AutoClampPoint& clampPoint)
+{
+    WTF::switchOn(clampPoint, [&](size_t maximumLines) {
+        setMaximumLines(maximumLines);
+    }, [&](const CheckedRef<const RenderBox>& clampAfterBox) {
+        setClampAfterBox(clampAfterBox);
+    });
 }
 
 // "Any absolutely positioned box which has an invisible box within its containing block chain, and all of its descendants."
