@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+
+window.addEventListener("message", (event) => {
+    log("https service worker: " + event.data);
+    finishSWTest();
+});
+
+(async () => {
+    const registration = await registerAndWaitForActive("resources/permissions-query-cross-scheme-same-domain-worker.js", "resources/");
+    navigator.serviceWorker.onmessage = (event) => {
+        log("http service worker: " + event.data);
+        window.open("https://127.0.0.1:8443/workers/service/resources/permissions-query-cross-scheme-same-domain-window.html");
+    };
+    registration.active.postMessage("query");
+})();
+</script>
+</body>
+</html>

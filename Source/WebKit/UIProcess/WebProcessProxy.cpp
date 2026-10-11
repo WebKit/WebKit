@@ -490,7 +490,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
 {
     Ref proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, crossOriginMode, lockdownMode, enhancedSecurity));
     proxy->m_committedSites.add(site);
-    proxy->m_remoteWorkerSites.add(site);
+    proxy->m_remoteWorkerDomains.add(site.domain());
     proxy->m_site = WTF::move(site);
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerForRemoteWorkers());
     proxy->didStartRunningProcess();
@@ -1231,9 +1231,10 @@ bool WebProcessProxy::hasCommittedClientOrigin(const WebCore::ClientOrigin& clie
     if (m_committedClientOrigins.contains(clientOrigin))
         return true;
 
-    // A remote-worker process is authenticated only for the top-site partitions it hosts workers
-    // for, not for those workers' own (possibly cross-site) origins, so validate the top site here.
-    return m_remoteWorkerSites.contains(Site { clientOrigin.topOrigin });
+    // A remote-worker process is authenticated only for the top-domain partitions it hosts workers
+    // for, not for those workers' own (possibly cross-site) origins, so validate the top domain here.
+    // The network process assigns workers to processes by registrable domain, regardless of scheme.
+    return m_remoteWorkerDomains.contains(RegistrableDomain { clientOrigin.topOrigin });
 }
 
 // Terminates only on positive evidence that no page this process participates in can speak for the
@@ -1291,7 +1292,7 @@ void WebProcessProxy::didCommitStorageClientOrigin(WebCore::ClientOrigin&& clien
 
 void WebProcessProxy::didBecomeRemoteWorkerHostForSite(const WebCore::Site& site)
 {
-    m_remoteWorkerSites.add(site);
+    m_remoteWorkerDomains.add(site.domain());
 }
 
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
