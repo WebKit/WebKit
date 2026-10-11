@@ -11775,7 +11775,9 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::WebkitInitialLetter",
-                "parser-grammar": "normal | <number [0,inf]>{1,2}@(type=CSSValuePair default=previous)",
+                "parser-function": "consumeWebkitInitialLetter",
+                "parser-grammar-unused": "normal | <number [0,inf]>{1,2} | [ <number [0,inf]> && [ drop | raise ] ]",
+                "parser-grammar-unused-reason": "The generated parser tries the <number [0,inf]>{1,2} branch first and does not backtrack, so '3 drop' would be rejected.",
                 "parser-grammar-comment": "Spec does not match our implementation. Spec is 'normal | [ <number [1,inf]> <integer [1,inf]> ] | [ <number [1,inf]> && [ drop | raise ]? ]'"
             },
             "status": {

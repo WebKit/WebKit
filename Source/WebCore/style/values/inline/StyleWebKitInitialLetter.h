@@ -25,11 +25,13 @@
 #pragma once
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StyleValueTypes.h>
+#include <cmath>
 
 namespace WebCore {
 namespace Style {
 
-// <'-webkit-initial-letter'> = normal | <number [0,∞]>{1,2}@(default=previous)
+// <'-webkit-initial-letter'> = normal | <number [0,∞]>{1,2}@(default=previous) | <number [0,∞]> && [ drop | raise ]
 // NOTE: There is a standard `initial-letter` property with a different grammar that is not yet implemented.
 // https://drafts.csswg.org/css-inline/#propdef-initial-letter
 struct WebkitInitialLetter {
@@ -47,7 +49,20 @@ struct WebkitInitialLetter {
     {
     }
 
-    constexpr bool isNormal() const { return m_value.first().isZero() && m_value.second().isZero(); }
+    // `drop` sinks the letter by its size floored to a whole number of lines; `raise` sinks it by one.
+    WebkitInitialLetter(Number<CSS::Nonnegative, float> height, CSS::Keyword::Drop)
+        : m_value { height, { std::floor(height.value) } }
+        , m_sinkKeyword { SinkKeyword::Drop }
+    {
+    }
+
+    constexpr WebkitInitialLetter(Number<CSS::Nonnegative, float> height, CSS::Keyword::Raise)
+        : m_value { height, { 1 } }
+        , m_sinkKeyword { SinkKeyword::Raise }
+    {
+    }
+
+    constexpr bool isNormal() const { return m_sinkKeyword == SinkKeyword::None && m_value.first().isZero() && m_value.second().isZero(); }
 
     constexpr float height() const { return m_value.first().value; }
     constexpr float drop() const { return m_value.second().value; }
@@ -58,13 +73,26 @@ struct WebkitInitialLetter {
 
         if (isNormal())
             return visitor(CSS::Keyword::Normal { });
-        return visitor(m_value);
+
+        switch (m_sinkKeyword) {
+        case SinkKeyword::None:
+            return visitor(m_value);
+        case SinkKeyword::Drop:
+            return visitor(SpaceSeparatedTuple { m_value.first(), CSS::Keyword::Drop { } });
+        case SinkKeyword::Raise:
+            return visitor(SpaceSeparatedTuple { m_value.first(), CSS::Keyword::Raise { } });
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     bool operator==(const WebkitInitialLetter&) const = default;
 
 private:
+    // Which keyword set the sink, so the value serializes the way it was written.
+    enum class SinkKeyword : uint8_t { None, Drop, Raise };
+
     MinimallySerializingSpaceSeparatedPair<Number<CSS::Nonnegative, float>> m_value { 0, 0 };
+    SinkKeyword m_sinkKeyword { SinkKeyword::None };
 };
 
 // MARK: - Conversion
