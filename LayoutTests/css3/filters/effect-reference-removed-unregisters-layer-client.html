@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .box {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: green;
+    }
+    #removed {
+        left: 300px;
+        top: 300px;
+        filter: url(#f1);
+    }
+    #removed.no-filter {
+        filter: none;
+    }
+    #switched {
+        left: 400px;
+        top: 300px;
+        filter: url(#f2);
+    }
+    #switched.other-filter {
+        filter: url(#f3);
+    }
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="f1"><feFlood id="flood1" flood-color="green"/></filter>
+    <filter id="f2"><feFlood id="flood2" flood-color="green"/></filter>
+    <filter id="f3"><feFlood id="flood3" flood-color="green"/></filter>
+</svg>
+<div id="removed" class="box"></div>
+<div id="switched" class="box"></div>
+<script>
+description("Tests that a layer is unregistered from an SVG filter it no longer references, and stays registered with the one it does reference.");
+
+window.jsTestIsAsync = true;
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
+function repaintRectsAfterChangingFloodColor(floodId)
+{
+    internals.startTrackingRepaints();
+    document.getElementById(floodId).setAttribute("flood-color", "red");
+    document.body.offsetHeight;
+    const rects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    return rects;
+}
+
+var repaintRects;
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires window.internals.");
+        finishJSTest();
+        return;
+    }
+
+    await nextFrame();
+
+    document.getElementById("removed").classList.add("no-filter");
+    document.getElementById("switched").classList.add("other-filter");
+    document.body.offsetHeight;
+    await nextFrame();
+
+    debug("Changing a filter that is no longer referenced should not repaint the element:");
+    repaintRects = repaintRectsAfterChangingFloodColor("flood1");
+    shouldBeFalse("repaintRects.includes('300 300 50 50')");
+
+    repaintRects = repaintRectsAfterChangingFloodColor("flood2");
+    shouldBeFalse("repaintRects.includes('400 300 50 50')");
+
+    debug("");
+    debug("Changing the newly referenced filter should repaint the element:");
+    repaintRects = repaintRectsAfterChangingFloodColor("flood3");
+    shouldBeTrue("repaintRects.includes('400 300 50 50')");
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>
