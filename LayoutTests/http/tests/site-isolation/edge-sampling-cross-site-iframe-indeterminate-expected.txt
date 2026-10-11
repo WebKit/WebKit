@@ -1,0 +1,8 @@
+PASS edgeSamplingFramesLoaded became true
+PASS edgeSamplingColors.top is "multiple"
+PASS edgeSamplingColors.bottom is "rgb(1, 2, 3)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

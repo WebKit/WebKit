@@ -1,0 +1,19 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The frame changes color after loading. The edge color follows it; with site isolation off the first sampled color is kept, so this test does not compare against it. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe data-src="http://localhost:8000/site-isolation/resources/solid-color.html?initialColor=ff7800&amp;color=00ff00&amp;changeColorAfter=1000"></iframe></div>
+<div class="tall"></div>
+<script>
+testFixedContainerEdges({ top: "rgb(0, 255, 0)" });
+</script>
+</body>
+</html>
