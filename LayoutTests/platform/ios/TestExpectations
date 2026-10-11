@@ -3189,6 +3189,7 @@ webkit.org/b/167619 css3/filters/backdrop/dynamic-with-clip-path.html [ ImageOnl
 
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
+webkit.org/b/327151 imported/w3c/web-platform-tests/svg/linking/scripted/a.target-dynamic-update.html [ Skip ] # Tapping a <use> instance of an SVG <a> does not navigate on iOS
 
 # rdar://problem/23643423
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]
