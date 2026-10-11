@@ -378,6 +378,7 @@ JSC_DECLARE_JIT_OPERATION(operationPushWithScope, JSCell*, (JSGlobalObject*, JSC
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPushWithScopeObject, JSCell*, (JSGlobalObject* globalObject, JSCell* currentScopeCell, JSObject* object));
 JSC_DECLARE_JIT_OPERATION(operationSizeFrameForForwardArguments, size_t, (JSGlobalObject*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationSizeFrameForVarargs, size_t, (JSGlobalObject*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset));
+JSC_DECLARE_JIT_OPERATION(operationThrowIfNotFunctionApplyCallee, void, (JSGlobalObject*, EncodedJSValue callee));
 JSC_DECLARE_JIT_OPERATION(operationSetupForwardArgumentsFrame, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t length));
 JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrame, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue arguments, int32_t firstVarArgOffset, int32_t length));
 

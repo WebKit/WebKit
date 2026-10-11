@@ -2163,6 +2163,9 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     switch (pc->opcodeID()) {
     case op_call_varargs: {
         auto bytecode = pc->as<OpCallVarargs>();
+        if (bytecode.m_isFunctionApply)
+            throwIfNotFunctionApplyCallee(globalObject, getOperand(callFrame, bytecode.m_callee));
+        LLINT_CALL_CHECK_EXCEPTION(globalObject);
         numUsedStackSlots = -bytecode.m_firstFree.offset();
         arguments = getOperand(callFrame, bytecode.m_arguments);
         firstVarArg = bytecode.m_firstVarArg;
@@ -2170,6 +2173,9 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     }
     case op_tail_call_varargs: {
         auto bytecode = pc->as<OpTailCallVarargs>();
+        if (bytecode.m_isFunctionApply)
+            throwIfNotFunctionApplyCallee(globalObject, getOperand(callFrame, bytecode.m_callee));
+        LLINT_CALL_CHECK_EXCEPTION(globalObject);
         numUsedStackSlots = -bytecode.m_firstFree.offset();
         arguments = getOperand(callFrame, bytecode.m_arguments);
         firstVarArg = bytecode.m_firstVarArg;

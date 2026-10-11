@@ -767,6 +767,13 @@ void SpeculativeJIT::emitCall(Node* node)
                 scratchGPR3 = selectScratchGPR(argumentsGPR, scratchGPR1, scratchGPR2, reservedGPR);
             };
             
+            if (data->isFunctionApply) {
+                JSValueOperand callee(this, node->child1());
+                GPRReg calleeGPR = callee.gpr();
+                flushRegisters();
+                callOperation(operationThrowIfNotFunctionApplyCallee, LinkableConstant::globalObject(*this, node), calleeGPR);
+            }
+
             loadArgumentsGPR(InvalidGPRReg);
             
             DFG_ASSERT(m_graph, node, isFlushed());
