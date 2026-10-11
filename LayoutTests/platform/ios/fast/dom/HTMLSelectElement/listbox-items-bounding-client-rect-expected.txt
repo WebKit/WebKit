@@ -1,0 +1,22 @@
+Tests getBoundingClientRect() on list box items when layout is out of date, and on an optgroup that follows an option.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL option1BoxAfterLayout.width should be > 0. Was 0 (of type number).
+PASS option1Box.left is option1BoxAfterLayout.left
+PASS option1Box.top is option1BoxAfterLayout.top
+PASS option1Box.width is option1BoxAfterLayout.width
+PASS option1Box.height is option1BoxAfterLayout.height
+FAIL groupClientRects.length should be 1. Was 0.
+PASS groupBox.left is option1BoxAfterLayout.left
+PASS groupBox.top is option1BoxAfterLayout.bottom
+PASS groupBox.width is option1BoxAfterLayout.width
+PASS groupBox.height is 2 * option1BoxAfterLayout.height
+FAIL groupClientRects[0].top should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupClientRects[0].top')
+FAIL groupClientRects[0].height should be 0. Threw exception TypeError: undefined is not an object (evaluating 'groupClientRects[0].height')
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+
