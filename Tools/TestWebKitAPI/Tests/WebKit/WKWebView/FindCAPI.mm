@@ -130,12 +130,7 @@ TEST_P(FindCAPI, FindStringMatchesAcrossCrossOriginFrames)
     FindTestPage page { FindTestFixtures::matchesInEveryFrame(), GetParam() };
     FindCAPITester find { page.webView() };
 
-    auto count = find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive).matchRects.size();
-    // FIXME(326399): findStringMatches is only sent to the main frame's process.
-    if (GetParam() == SiteIsolation::On)
-        EXPECT_EQ(count, 1u);
-    else
-        EXPECT_EQ(count, 4u);
+    EXPECT_EQ(find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive).matchRects.size(), 4u);
 }
 
 TEST_P(FindCAPI, StepAcrossCrossOriginFrames)
@@ -150,8 +145,34 @@ TEST_P(FindCAPI, StepAcrossCrossOriginFrames)
     }
 }
 
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326401, 326402): selectFindMatch and indicateFindMatch are only sent to the main frame's process.
+TEST_P(FindCAPI, FirstIndexAfterSelectionInCrossOriginFrame)
+{
+    FindTestPage page { FindTestFixtures::matchesInEveryFrame(), GetParam() };
+    FindCAPITester find { page.webView() };
+
+    find.findString(@"hello", caseInsensitiveWrap);
+    find.findString(@"hello", caseInsensitiveWrap);
+    ASSERT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { 0 } });
+
+    auto result = find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive);
+    EXPECT_EQ(result.matchRects.size(), 4u);
+    EXPECT_EQ(result.firstIndexAfterSelection, 2);
+}
+
+TEST_P(FindCAPI, FirstIndexAfterSelectionBackwardsInCrossOriginFrame)
+{
+    FindTestPage page { FindTestFixtures::matchesInEveryFrame(), GetParam() };
+    FindCAPITester find { page.webView() };
+
+    for (int i = 0; i < 3; ++i)
+        find.findString(@"hello", caseInsensitiveWrap);
+    ASSERT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { 1 } });
+
+    auto result = find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive | kWKFindOptionsBackwards);
+    EXPECT_EQ(result.matchRects.size(), 4u);
+    EXPECT_EQ(result.firstIndexAfterSelection, 1);
+}
+
 TEST_P(FindCAPI, SelectFindMatchInCrossOriginFrame)
 {
     FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
@@ -160,19 +181,23 @@ TEST_P(FindCAPI, SelectFindMatchInCrossOriginFrame)
     auto matchCount = find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive).matchRects.size();
     find.selectFindMatch(1);
 
+    EXPECT_EQ(matchCount, 2u);
     auto childFrame = FindStateSnapshot::capture(page.webView()).frame({ 0 });
     ASSERT_TRUE(childFrame);
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_EQ(matchCount, 1u);
-        EXPECT_WK_STREQ("", childFrame->selectedText);
-    } else {
-        EXPECT_EQ(matchCount, 2u);
-        EXPECT_WK_STREQ("hello", childFrame->selectedText);
-    }
+    EXPECT_WK_STREQ("hello", childFrame->selectedText);
 }
 
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326401, 326402): selectFindMatch and indicateFindMatch are only sent to the main frame's process.
+TEST_P(FindCAPI, SelectFindMatchBetweenSameOriginFrames)
+{
+    FindTestPage page { FindTestFixtures::nestedABA(), GetParam() };
+    FindCAPITester find { page.webView() };
+
+    EXPECT_EQ(find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive).matchRects.size(), 3u);
+    find.selectFindMatch(1);
+
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { 0 } });
+}
+
 TEST_P(FindCAPI, IndicateFindMatchInCrossOriginFrame)
 {
     FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
@@ -185,17 +210,59 @@ TEST_P(FindCAPI, IndicateFindMatchInCrossOriginFrame)
     auto snapshot = FindStateSnapshot::capture(page.webView());
     auto childFrame = snapshot.frame({ 0 });
     ASSERT_TRUE(childFrame);
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_WK_STREQ("", childFrame->selectedText);
-        EXPECT_TRUE(CGRectIsNull(snapshot.textIndicatorRect));
-    } else {
-        EXPECT_WK_STREQ("hello", childFrame->selectedText);
-        EXPECT_FALSE(CGRectIsNull(snapshot.textIndicatorRect));
-    }
+    EXPECT_WK_STREQ("hello", childFrame->selectedText);
+    EXPECT_FALSE(CGRectIsNull(snapshot.textIndicatorRect));
 }
 
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326403): getImageForFindMatch is only sent to the main frame's process.
+TEST_P(FindCAPI, FindStringMatchesKeepsSelectionInFrameWithoutMatches)
+{
+    FindTestPage page { { .body = "<p>hello</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>goodbye</p>"_s } } }, GetParam() };
+    FindCAPITester find { page.webView() };
+
+    find.findString(@"hello", caseInsensitiveWrap | kWKFindOptionsShowFindIndicator);
+    ASSERT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { } });
+
+    EXPECT_EQ(find.findStringMatches(@"goodbye", kWKFindOptionsCaseInsensitive | kWKFindOptionsShowFindIndicator).matchRects.size(), 1u);
+
+    auto snapshot = FindStateSnapshot::capture(page.webView());
+    EXPECT_EQ(snapshot.framesWithSelection(), Vector<Vector<unsigned>> { { } });
+    EXPECT_FALSE(CGRectIsNull(snapshot.textIndicatorRect));
+}
+
+TEST_P(FindCAPI, FindStringMatchesWithoutMatchesHidesIndicatorInCrossOriginFrame)
+{
+    FindTestPage page { FindTestFixtures::matchOnlyInChild(), GetParam() };
+    FindCAPITester find { page.webView() };
+
+    find.findString(@"hello", caseInsensitiveWrap | kWKFindOptionsShowFindIndicator);
+    ASSERT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { 0 } });
+    ASSERT_FALSE(CGRectIsNull(FindStateSnapshot::capture(page.webView()).textIndicatorRect));
+
+    EXPECT_TRUE(find.findStringMatches(@"missing", kWKFindOptionsCaseInsensitive | kWKFindOptionsShowFindIndicator).matchRects.isEmpty());
+
+    auto snapshot = FindStateSnapshot::capture(page.webView());
+    EXPECT_TRUE(snapshot.framesWithSelection().isEmpty());
+    EXPECT_TRUE(CGRectIsNull(snapshot.textIndicatorRect));
+}
+
+TEST_P(FindCAPI, FindStringMatchesShowsIndicatorForFirstFrameWithSelection)
+{
+    FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
+    FindCAPITester find { page.webView() };
+    double iframeTop = [[page.webView() objectByEvaluatingJavaScript:@"document.querySelector('iframe').getBoundingClientRect().top"] doubleValue];
+
+    find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive);
+    find.indicateFindMatch(1);
+    find.findString(@"hello", caseInsensitiveWrap | kWKFindOptionsShowFindIndicator);
+    ASSERT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), (Vector<Vector<unsigned>> { { }, { 0 } }));
+
+    find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive | kWKFindOptionsShowFindIndicator);
+
+    auto indicatorRect = FindStateSnapshot::capture(page.webView()).textIndicatorRect;
+    ASSERT_FALSE(CGRectIsNull(indicatorRect));
+    EXPECT_LT(CGRectGetMinY(indicatorRect), iframeTop);
+}
+
 TEST_P(FindCAPI, GetImageForFindMatchInCrossOriginFrame)
 {
     FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
@@ -204,13 +271,8 @@ TEST_P(FindCAPI, GetImageForFindMatchInCrossOriginFrame)
     auto matchCount = find.findStringMatches(@"hello", kWKFindOptionsCaseInsensitive).matchRects.size();
     auto image = find.getImageForFindMatch(1);
 
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_EQ(matchCount, 1u);
-        EXPECT_NULL(image.get());
-    } else {
-        EXPECT_EQ(matchCount, 2u);
-        EXPECT_NOT_NULL(image.get());
-    }
+    EXPECT_EQ(matchCount, 2u);
+    EXPECT_NOT_NULL(image.get());
 }
 
 } // namespace TestWebKitAPI

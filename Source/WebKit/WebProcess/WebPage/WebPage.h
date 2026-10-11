@@ -343,6 +343,7 @@ class HandleUserInputEventResult;
 struct AXFrameGeometry;
 struct InheritedFrameState;
 #endif
+struct ImageBufferParameters;
 struct InteractionRegion;
 struct KeypressCommand;
 struct LiveRegionAnnouncementData;
@@ -2613,11 +2614,12 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     void findStringIncludingImages(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 #endif
-    void findStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&&);
-    void getImageForFindMatch(uint32_t matchIndex);
+    void findStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FrameIdentifier>, int32_t)>&&);
+    void getImageForFindMatch(uint32_t matchIndex, CompletionHandler<void(std::optional<WebCore::ImageBufferParameters>&&, std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);
     void hideFindUI();
+    void updateFindUIAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, bool shouldUpdateFindIndicator);
     void countStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(uint32_t)>&&);
     void replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
 

@@ -611,6 +611,8 @@ public:
     struct MatchingRanges {
         Vector<SimpleRange> ranges;
         std::optional<uint32_t> indexForSelection;
+        std::optional<FrameIdentifier> frameWithSelection;
+        int32_t indexForSelectionInFrame { -1 };
     };
     WEBCORE_EXPORT MatchingRanges findTextMatches(const String&, FindOptions, unsigned maxCount, bool markMatches = true);
 

@@ -75,8 +75,9 @@ public:
 #if ENABLE(IMAGE_ANALYSIS)
     void findStringIncludingImages(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 #endif
-    void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&&);
-    void getImageForFindMatch(uint32_t matchIndex);
+    void scheduleFindUIUpdateAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, bool shouldUpdateFindIndicator = true);
+    void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FrameIdentifier>, int32_t)>&&);
+    void getImageForFindMatch(uint32_t matchIndex, CompletionHandler<void(std::optional<WebCore::ImageBufferParameters>&&, std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);
     void hideFindUI();
@@ -103,7 +104,7 @@ private:
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 
-    void updateFindUIAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
+    void updateFindUIAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, bool shouldUpdateFindIndicator);
     void updateFindUIAfterIncrementalFind(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 
     enum class ShouldReuseLastFoundRange : bool { No, Yes };

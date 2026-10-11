@@ -418,7 +418,7 @@ void FindController::updateMatchIndex(unsigned matchCount, OptionSet<FindOptions
     }
 }
 
-void FindController::updateFindUIAfterFindingAllMatches(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
+void FindController::updateFindUIAfterFindingAllMatches(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
 {
     RefPtr webPage { m_webPage.get() };
     RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get());
@@ -440,7 +440,8 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
         protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
 
     updateFindPageOverlay(shouldShowOverlay);
-    updateFindIndicatorIfNeeded(found, options, shouldShowOverlay);
+    if (shouldUpdateFindIndicator)
+        updateFindIndicatorIfNeeded(found, options, shouldShowOverlay);
 }
 
 void FindController::updateFindPageOverlay(bool shouldShowOverlay)
@@ -655,33 +656,43 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     });
 }
 
-void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&& completionHandler)
+void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FrameIdentifier>, int32_t)>&& completionHandler)
 {
     RefPtr webPage { m_webPage.get() };
     auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount);
     m_findMatches = WTF::move(result.ranges);
 
-    auto matchRects = m_findMatches.map([](auto& range) {
-        return RenderObject::absoluteTextRects(range);
-    });
-    completionHandler(matchRects, result.indexForSelection.value_or(-1));
+    Vector<std::pair<FrameIdentifier, Vector<Vector<IntRect>>>> matchRects;
+    for (auto& range : m_findMatches) {
+        auto frameID = protect(range.start.document().frame())->frameID();
+        if (matchRects.isEmpty() || matchRects.last().first != frameID)
+            matchRects.append({ frameID, { } });
+        matchRects.last().second.append(RenderObject::absoluteTextRects(range));
+    }
+
+    completionHandler(WTF::move(matchRects), result.frameWithSelection, result.indexForSelectionInFrame);
 
     if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))
         return;
 
-    bool found = !m_findMatches.isEmpty();
-    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount]() {
-        webPage->findController().updateFindUIAfterFindingAllMatches(found, string, options, maxMatchCount);
+    scheduleFindUIUpdateAfterFindingAllMatches(!m_findMatches.isEmpty(), string, options, maxMatchCount);
+}
+
+void FindController::scheduleFindUIUpdateAfterFindingAllMatches(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
+{
+    RefPtr webPage { m_webPage.get() };
+    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount, shouldUpdateFindIndicator] {
+        webPage->findController().updateFindUIAfterFindingAllMatches(found, string, options, maxMatchCount, shouldUpdateFindIndicator);
     });
 }
 
-void FindController::getImageForFindMatch(uint32_t matchIndex)
+void FindController::getImageForFindMatch(uint32_t matchIndex, CompletionHandler<void(std::optional<ImageBufferParameters>&&, std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
 {
     if (matchIndex >= m_findMatches.size())
-        return;
+        return completionHandler(std::nullopt, std::nullopt);
     RefPtr frame = m_findMatches[matchIndex].start.document().frame();
     if (!frame)
-        return;
+        return completionHandler(std::nullopt, std::nullopt);
 
     CheckedRef frameSelection = frame->selection();
     auto oldSelection = frameSelection->selection();
@@ -692,13 +703,13 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     frameSelection->setSelection(oldSelection);
 
     if (!selectionSnapshot)
-        return;
+        return completionHandler(std::nullopt, std::nullopt);
 
     auto handle = selectionSnapshot->createHandle();
     if (!handle || !selectionSnapshot->parameters())
-        return;
+        return completionHandler(std::nullopt, std::nullopt);
 
-    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(*selectionSnapshot->parameters(), WTF::move(*handle), matchIndex));
+    completionHandler(*selectionSnapshot->parameters(), WTF::move(*handle));
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)

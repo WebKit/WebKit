@@ -1339,6 +1339,27 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
         frame = incrementFrame(frame.get(), true, CanWrap::No);
     } while (frame);
 
+    if (frameWithSelection) {
+        result.frameWithSelection = frameWithSelection->frameID();
+        auto selectedRange = *frameWithSelection->selection().selection().firstRange();
+
+        bool backwards = options.contains(FindOption::Backwards);
+        result.indexForSelectionInFrame = backwards ? -1 : 0;
+
+        int32_t indexInFrame = 0;
+        for (auto& range : result.ranges) {
+            if (range.start.document().frame() != frameWithSelection.get())
+                continue;
+
+            bool isBeforeSelection = backwards ? is_gt(treeOrder<ComposedTree>(selectedRange.start, range.end)) : !is_lt(treeOrder<ComposedTree>(selectedRange.end, range.start));
+            if (!isBeforeSelection)
+                break;
+
+            result.indexForSelectionInFrame = backwards ? indexInFrame : indexInFrame + 1;
+            ++indexInFrame;
+        }
+    }
+
     if (result.ranges.isEmpty())
         return result;
 

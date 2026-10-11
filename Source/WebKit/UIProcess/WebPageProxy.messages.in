@@ -299,7 +299,6 @@ messages -> WebPageProxy {
     SetTextIndicatorFromFrame(WebCore::FrameIdentifier frameID, RefPtr<WebCore::TextIndicator> textIndicator, enum:uint8_t WebCore::TextIndicatorLifetime lifetime)
     UpdateTextIndicatorFromFrame(WebCore::FrameIdentifier frameID, RefPtr<WebCore::TextIndicator> textIndicator)
     ClearTextIndicator()
-    DidGetImageForFindMatch(struct WebCore::ImageBufferParameters parameters, WebCore::ShareableBitmapHandle contentImageHandle, uint32_t matchIndex)
 
     # PopupMenu messages
     ShowPopupMenuFromFrame(WebCore::FrameIdentifier frameID, WebCore::IntRect rectInMainFrameView, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)

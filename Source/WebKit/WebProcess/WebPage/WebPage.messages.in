@@ -385,11 +385,12 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if ENABLE(IMAGE_ANALYSIS)
     FindStringIncludingImages(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (std::optional<WebCore::FrameIdentifier> frameID, Vector<WebCore::IntRect> matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap)
 #endif
-    FindStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection)
-    GetImageForFindMatch(uint32_t matchIndex)
+    FindStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>> matches, std::optional<WebCore::FrameIdentifier> frameWithSelection, int32_t indexInFrameWithSelection)
+    GetImageForFindMatch(uint32_t matchIndex) -> (struct std::optional<WebCore::ImageBufferParameters> parameters, std::optional<WebCore::ShareableBitmapHandle> contentImageHandle)
     SelectFindMatch(uint32_t matchIndex)
     IndicateFindMatch(uint32_t matchIndex)
     HideFindUI()
+    UpdateFindUIAfterFindingAllMatches(bool found, String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount, bool shouldUpdateFindIndicator)
     CountStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (uint32_t matchCount)
     ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly) -> (uint64_t numberOfReplacements)
 
