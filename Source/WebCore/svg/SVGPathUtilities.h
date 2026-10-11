@@ -34,7 +34,7 @@ String buildStringFromPath(const Path&);
 
 // String/SVGPathByteStream -> Path
 Path buildPathFromString(StringView);
-Path buildPathFromByteStream(const SVGPathByteStream&);
+WEBCORE_EXPORT Path buildPathFromByteStream(const SVGPathByteStream&);
 
 // String -> SVGPathByteStream
 bool buildSVGPathByteStreamFromString(StringView, SVGPathByteStream&, PathParsingMode);
@@ -42,7 +42,7 @@ bool buildSVGPathByteStreamFromString(StringView, SVGPathByteStream&, PathParsin
 // SVGPathByteStream -> String
 bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode, bool checkForInitialMoveTo = true);
 
-bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
+WEBCORE_EXPORT bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
 
 bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& from, const SVGPathByteStream& to, SVGPathByteStream& result, float progress);
 bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathByteStream& from, unsigned repeatCount = 1);

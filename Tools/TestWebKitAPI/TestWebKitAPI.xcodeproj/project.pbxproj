@@ -907,6 +907,7 @@
 				WebCore/StringWithDirection.cpp,
 				WebCore/STUNMessageParsingTest.cpp,
 				WebCore/StyleGradient.cpp,
+				WebCore/SVGPathByteStreamTests.cpp,
 				WebCore/TestPlatformStrategies.cpp,
 				WebCore/TextBoundaries.cpp,
 				WebCore/TextCodec.cpp,
