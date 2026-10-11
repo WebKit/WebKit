@@ -72,6 +72,7 @@ public:
     void abandonFramesOwnedBy(WebCore::ProcessIdentifier);
     // Gives up on every frame still to come, so that the snapshot completes without them.
     void abandonUnresolvedFrames();
+    bool hasAbandonedFrames() const;
     // Completes every waiter unsuccessfully, for a snapshot that has been released before it completed.
     void fail();
     bool isComplete() const;
@@ -130,6 +131,7 @@ private:
     HashMap<WebCore::FrameIdentifier, WebCore::ProcessIdentifier> m_frameOwners WTF_GUARDED_BY_LOCK(m_lock);
     size_t m_unresolvedFrames WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     bool m_hasFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_hasAbandonedFrames WTF_GUARDED_BY_LOCK(m_lock) { false };
     Vector<CompletionHandler<void(bool)>> m_completionHandlers WTF_GUARDED_BY_LOCK(m_lock);
 };
 

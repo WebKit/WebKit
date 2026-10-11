@@ -808,7 +808,7 @@ public:
     WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
     bool hasWebPageInProcess(const WebProcessProxy&, WebCore::PageIdentifier);
 #if HAVE(IOSURFACE)
-    void completeDisplayOnlyImage(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, const WebCore::ColorSpace&, CompletionHandler<void(bool)>&&);
+    void completeDisplayOnlyImage(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, const WebCore::ColorSpace&, CompletionHandler<void(bool success, bool isMissingFrames)>&&);
     void releaseDisplayOnlyImage(RemoteSnapshotIdentifier);
 #endif
     RefPtr<WebProcessProxy> processForElementContext(const WebCore::ElementContext&);

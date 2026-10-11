@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-112; totalPixels=0-14400"/>
+<style>
+:root { view-transition-name: none; }
+body { margin: 0; }
+#withframe { view-transition-name: withframe; position: absolute; left: 10px; top: 10px; width: 100px; height: 100px; }
+iframe { display: block; width: 100px; height: 100px; border: none; }
+
+/* Hold the transition, showing only the old capture. */
+::view-transition-group(*) { animation-duration: 300s; }
+::view-transition-old(*) { animation: unset; opacity: 1; }
+::view-transition-new(*) { animation: unset; opacity: 0; }
+
+::view-transition-old(withframe) { box-shadow: 0 0 0 10px blue; }
+</style>
+</head>
+<body>
+<div id="withframe"><iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+onmessage = (event) => {
+    if (event.data != "onload")
+        return;
+
+    const transition = document.startViewTransition(() => { });
+    transition.ready.then(() => {
+        requestAnimationFrame(() => requestAnimationFrame(() => testRunner.notifyDone()));
+    }, () => testRunner.notifyDone());
+};
+</script>
+</body>
+</html>

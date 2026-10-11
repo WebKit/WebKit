@@ -1,0 +1,5 @@
+A cross-document view transition captures an iframe nested inside a cross-site iframe before the navigation replaces the old document.
+
+
+Old capture state when ready: remote-succeeded
+

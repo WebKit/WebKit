@@ -1607,15 +1607,15 @@ RefPtr<WebPageProxy> WebProcessProxy::pageHostedAs(WebCore::PageIdentifier pageI
     return nullptr;
 }
 
-void WebProcessProxy::completeDisplayOnlyImage(WebCore::PageIdentifier pageID, RemoteSnapshotIdentifier imageIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, const WebCore::ColorSpace& colorSpace, CompletionHandler<void(bool)>&& completionHandler)
+void WebProcessProxy::completeDisplayOnlyImage(WebCore::PageIdentifier pageID, RemoteSnapshotIdentifier imageIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, const WebCore::ColorSpace& colorSpace, CompletionHandler<void(bool, bool)>&& completionHandler)
 {
     // Otherwise a compromised process could cash in a rendering it did not ask for, and have this
     // page display it.
-    MESSAGE_CHECK_COMPLETION(imageIdentifier.processIdentifier() == coreProcessIdentifier(), completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(imageIdentifier.processIdentifier() == coreProcessIdentifier(), completionHandler(false, false));
 
     RefPtr page = pageHostedAs(pageID);
     if (!page) {
-        completionHandler(false);
+        completionHandler(false, false);
         return;
     }
     page->completeDisplayOnlyImage(imageIdentifier, rootFrameIdentifier, scale, colorSpace, WTF::move(completionHandler));

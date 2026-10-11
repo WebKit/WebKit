@@ -1,0 +1,5 @@
+A cross-document view transition waits for an old state capture that includes a cross-site iframe to be assembled before it starts.
+
+
+Old capture state when ready: remote-succeeded
+

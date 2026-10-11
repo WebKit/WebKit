@@ -498,6 +498,8 @@ public:
     // never sees, which only the compositor can display. Null when this page cannot record outside
     // this process.
     WEBCORE_EXPORT virtual RefPtr<NativePromise<Ref<NativeImage>, void>> createDisplayOnlyImage(FrameIdentifier, const FloatSize&, float scale, const ColorSpace&, NOESCAPE const Function<void(GraphicsContext&)>& paint);
+    // For testing.
+    virtual bool isDisplayOnlyImageMissingFrames(const NativeImage&) const { return false; }
 
 #if ENABLE(WEBGL)
     WEBCORE_EXPORT virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const;

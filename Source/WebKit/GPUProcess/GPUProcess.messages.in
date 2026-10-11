@@ -69,7 +69,7 @@ messages -> GPUProcess : AuxiliaryProcess {
 #endif
     SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
 #if HAVE(IOSURFACE)
-    SinkCompletedSnapshotToIOSurface(WebKit::RemoteSnapshotIdentifier identifier, float scale, WebCore::ColorSpace colorSpace, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebKit::ImageBufferBackendHandle> handle)
+    SinkCompletedSnapshotToIOSurface(WebKit::RemoteSnapshotIdentifier identifier, float scale, WebCore::ColorSpace colorSpace, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebKit::ImageBufferBackendHandle> handle, bool isMissingFrames)
 #endif
     ReleaseSnapshot(WebKit::RemoteSnapshotIdentifier identifier)
     AbandonSnapshotFrame(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier frameIdentifier)

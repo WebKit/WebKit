@@ -275,6 +275,7 @@
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
 #include "VideoConfiguration.h"
+#include "ViewTransition.h"
 #include "ViewportArguments.h"
 #include "ViewportConfiguration.h"
 #include "VoidCallback.h"
@@ -3771,6 +3772,27 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
     if (!document.frame() || !document.frame()->contentRenderer())
         return Exception { ExceptionCode::InvalidAccessError };
     return protect(protect(document.frame()->contentRenderer())->compositor())->layerTreeAsText(toLayerTreeAsTextOptions(flags));
+}
+
+String Internals::viewTransitionOldCaptureState(Document& document, const AtomString& name) const
+{
+    RefPtr viewTransition = document.activeViewTransition();
+    if (!viewTransition)
+        return "none"_s;
+    auto* capturedElement = viewTransition->namedElements().find(name);
+    if (!capturedElement || !capturedElement->capturedOldState())
+        return "none"_s;
+    if (!capturedElement->oldDisplayOnlyImage)
+        return "local"_s;
+    if (capturedElement->pendingOldDisplayOnlyImage)
+        return "remote-pending"_s;
+    RefPtr image = *capturedElement->oldDisplayOnlyImage;
+    if (!image)
+        return "remote-failed"_s;
+    RefPtr page = document.page();
+    if (page && page->chrome().client().isDisplayOnlyImageMissingFrames(*image))
+        return "remote-missing-frames"_s;
+    return "remote-succeeded"_s;
 }
 
 ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)

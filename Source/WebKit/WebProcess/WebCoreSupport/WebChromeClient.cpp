@@ -1265,6 +1265,12 @@ RefPtr<NativePromise<Ref<WebCore::NativeImage>, void>> WebChromeClient::createDi
         return nullptr;
     return DisplayOnlyImageProxy::create(*page, rootFrameIdentifier, size, scale, colorSpace, paint);
 }
+
+bool WebChromeClient::isDisplayOnlyImageMissingFrames(const WebCore::NativeImage& image) const
+{
+    RefPtr proxy = dynamicDowncast<DisplayOnlyImageProxy>(image);
+    return proxy && proxy->isMissingFrames();
+}
 #endif
 #endif
 

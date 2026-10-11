@@ -142,7 +142,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #endif
 
 #if HAVE(IOSURFACE)
-    [EnabledBy=RemoteSnapshottingEnabled] CompleteDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, WebCore::ColorSpace colorSpace) -> (bool success)
+    [EnabledBy=RemoteSnapshottingEnabled] CompleteDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, WebCore::ColorSpace colorSpace) -> (bool success, bool isMissingFrames)
     [EnabledBy=RemoteSnapshottingEnabled] ReleaseDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier)
 #endif
 }

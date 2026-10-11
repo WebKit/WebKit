@@ -1,0 +1,12 @@
+A view transition capture containing a cross-site iframe is assembled out of process, so that the iframe's own content is part of the captured image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS withFrameState is "remote-succeeded"
+PASS plainState is "local"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+changed

@@ -32,10 +32,12 @@
 #include "ImageBuffer.h"
 #include "LayoutRect.h"
 #include "MutableStyleProperties.h"
+#include "NativeImage.h"
 #include "Styleable.h"
 #include "ViewTransitionUpdateCallback.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/NativePromise.h>
 #include <wtf/OrderedHashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -82,7 +84,15 @@ public:
     // std::nullopt represents an non-capturable element.
     // nullptr represents an absent snapshot on an capturable element.
     std::optional<RefPtr<ImageBuffer>> oldImage;
+    // Instead of oldImage when the capture includes a frame hosted in another process.
+    std::optional<RefPtr<NativeImage>> oldDisplayOnlyImage;
+    // Here rather than on the transition, since a cross-document one may wait for it in the new
+    // document.
+    RefPtr<NativePromise<Ref<NativeImage>, void>> pendingOldDisplayOnlyImage;
+    bool isPendingOldDisplayOnlyImageWaitedFor { false };
     State oldState;
+
+    bool capturedOldState() const { return oldImage || oldDisplayOnlyImage; }
 
     WeakStyleable newElement;
     State newState;
@@ -242,6 +252,9 @@ private:
 
     void clearViewTransition();
 
+    bool waitForOldDisplayOnlyImages(Function<void()>&&);
+    void didSettleOldDisplayOnlyImage(const AtomString& name, RefPtr<NativeImage>&&);
+    bool hasPendingOldDisplayOnlyImages() const;
     void runOutboundPostCaptureSteps();
 
     // VisibilityChangeClient.
@@ -261,14 +274,17 @@ private:
     const RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
     bool m_isCrossDocument { false };
 
+    EventLoopTimerHandle m_oldDisplayOnlyImagesTimeout;
+    Function<void()> m_whenOldDisplayOnlyImagesSettle;
+
     using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;
     PromiseAndWrapper m_ready;
     PromiseAndWrapper m_updateCallbackDone;
     PromiseAndWrapper m_finished;
     EventLoopTimerHandle m_updateCallbackTimeout;
-
     // Set on the old document's transition while a cross-document navigation waits for it to capture.
     OutboundPostCaptureSteps m_outboundPostCaptureSteps;
+
 
     Ref<ViewTransitionTypeSet> m_types;
 };

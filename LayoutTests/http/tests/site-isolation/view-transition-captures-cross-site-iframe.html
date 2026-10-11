@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+#withframe { view-transition-name: withframe; }
+#plain { view-transition-name: plain; }
+iframe { width: 100px; height: 100px; border: none; }
+</style>
+<body>
+<div id="withframe"><iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe></div>
+<div id="plain">no frame here</div>
+<script>
+description("A view transition capture containing a cross-site iframe is assembled out of process, so that the iframe's own content is part of the captured image.");
+jsTestIsAsync = true;
+
+let withFrameState = null;
+let plainState = null;
+
+onmessage = (event) => {
+    if (event.data != "onload")
+        return;
+
+    const transition = document.startViewTransition(() => {
+        document.getElementById("plain").textContent = "changed";
+    });
+
+    transition.ready.then(() => {
+        // The captures are dropped once the transition finishes.
+        withFrameState = internals.viewTransitionOldCaptureState(document, "withframe");
+        plainState = internals.viewTransitionOldCaptureState(document, "plain");
+        transition.skipTransition();
+    }, (error) => {
+        testFailed("the transition was skipped: " + error);
+        finishJSTest();
+    });
+
+    transition.finished.then(() => {
+        shouldBeEqualToString("withFrameState", "remote-succeeded");
+        shouldBeEqualToString("plainState", "local");
+        finishJSTest();
+    });
+};
+</script>
+</body>

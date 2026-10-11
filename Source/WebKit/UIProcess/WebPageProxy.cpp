@@ -20653,20 +20653,21 @@ void WebPageProxy::reportMixedContentViolation(FrameIdentifier frameID, bool blo
 
 #if HAVE(IOSURFACE)
 
-void WebPageProxy::completeDisplayOnlyImage(RemoteSnapshotIdentifier imageIdentifier, FrameIdentifier rootFrameIdentifier, float scale, const ColorSpace& colorSpace, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::completeDisplayOnlyImage(RemoteSnapshotIdentifier imageIdentifier, FrameIdentifier rootFrameIdentifier, float scale, const ColorSpace& colorSpace, CompletionHandler<void(bool success, bool isMissingFrames)>&& completionHandler)
 {
     // Started now, so that a rendering that arrives after its process has gone or has left this page,
     // or after this page has moved to another drawing area, finds nothing to fill and is dropped.
     RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
     RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(this->drawingArea());
     if (!gpuProcess || !drawingArea || !drawingArea->startDisplayOnlyImage(imageIdentifier)) {
-        completionHandler(false);
+        completionHandler(false, false);
         return;
     }
 
-    gpuProcess->sinkCompletedSnapshotToIOSurface(imageIdentifier, scale, colorSpace, rootFrameIdentifier, [weakDrawingArea = WeakPtr { *drawingArea }, imageIdentifier, completionHandler = WTF::move(completionHandler)](std::optional<ImageBufferBackendHandle>&& handle) mutable {
+    gpuProcess->sinkCompletedSnapshotToIOSurface(imageIdentifier, scale, colorSpace, rootFrameIdentifier, [weakDrawingArea = WeakPtr { *drawingArea }, imageIdentifier, completionHandler = WTF::move(completionHandler)](std::optional<ImageBufferBackendHandle>&& handle, bool isMissingFrames) mutable {
         RefPtr drawingArea = weakDrawingArea.get();
-        completionHandler(handle && drawingArea && drawingArea->completeDisplayOnlyImage(imageIdentifier, WTF::move(*handle)));
+        bool success = handle && drawingArea && drawingArea->completeDisplayOnlyImage(imageIdentifier, WTF::move(*handle));
+        completionHandler(success, success && isMissingFrames);
     });
 }
 

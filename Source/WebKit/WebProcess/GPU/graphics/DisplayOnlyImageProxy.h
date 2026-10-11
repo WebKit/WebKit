@@ -54,6 +54,7 @@ public:
     ~DisplayOnlyImageProxy();
 
     RemoteSnapshotIdentifier identifier() const { return m_identifier; }
+    bool isMissingFrames() const { return m_isMissingFrames; }
 
 private:
     DisplayOnlyImageProxy(RemoteSnapshotIdentifier, WebCore::PageIdentifier, const WebCore::IntSize&, const WebCore::ColorSpace&);
@@ -68,6 +69,7 @@ private:
     const WebCore::PageIdentifier m_pageIdentifier;
     const WebCore::IntSize m_size;
     const WebCore::ColorSpace m_colorSpace;
+    bool m_isMissingFrames { false };
 };
 
 } // namespace WebKit

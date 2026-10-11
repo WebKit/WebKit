@@ -295,6 +295,7 @@ private:
 #endif
 #if HAVE(IOSURFACE)
     RefPtr<NativePromise<Ref<WebCore::NativeImage>, void>> createDisplayOnlyImage(WebCore::FrameIdentifier, const WebCore::FloatSize&, float scale, const WebCore::ColorSpace&, NOESCAPE const Function<void(WebCore::GraphicsContext&)>& paint) final;
+    bool isDisplayOnlyImageMissingFrames(const WebCore::NativeImage&) const final;
 #endif
 #endif
     std::unique_ptr<WebCore::WorkerClient> createWorkerClient(SerialFunctionDispatcher&) final;

@@ -66,7 +66,8 @@ RefPtr<NativePromise<Ref<NativeImage>, void>> DisplayOnlyImageProxy::create(WebP
     // connection.
     NativePromise<Ref<NativeImage>, void>::Producer producer;
     Ref promise = producer.promise();
-    connection->sendWithAsyncReply(Messages::WebProcessProxy::CompleteDisplayOnlyImage(page.identifier(), identifier, rootFrameIdentifier, scale, colorSpace), [image = WTF::move(image), producer = WTF::move(producer)](bool success) mutable {
+    connection->sendWithAsyncReply(Messages::WebProcessProxy::CompleteDisplayOnlyImage(page.identifier(), identifier, rootFrameIdentifier, scale, colorSpace), [image = WTF::move(image), producer = WTF::move(producer)](bool success, bool isMissingFrames) mutable {
+        image->m_isMissingFrames = isMissingFrames;
         if (success)
             producer.resolve(Ref<NativeImage> { WTF::move(image) });
         else

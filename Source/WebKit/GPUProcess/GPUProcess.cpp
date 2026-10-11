@@ -760,20 +760,20 @@ void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifi
 
 #if HAVE(IOSURFACE)
 
-void GPUProcess::sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier identifier, float scale, const ColorSpace& colorSpace, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier identifier, float scale, const ColorSpace& colorSpace, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&, bool isMissingFrames)>&& completionHandler)
 {
     takeSnapshotWhenComplete(identifier, rootFrameIdentifier, [identifier, scale, colorSpace, rootFrameIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
         if (!snapshot) {
-            completionHandler({ });
+            completionHandler({ }, false);
             return;
         }
         // The surface outlives this call in the UI process, so charge it to the process that asked for it.
         RefPtr connection = GPUProcess::singleton().webProcessConnection(identifier.processIdentifier());
         if (!connection) {
-            completionHandler({ });
+            completionHandler({ }, false);
             return;
         }
-        completionHandler(snapshot->drawToIOSurface(snapshot->size(), scale, colorSpace, rootFrameIdentifier, connection->webProcessIdentity()));
+        completionHandler(snapshot->drawToIOSurface(snapshot->size(), scale, colorSpace, rootFrameIdentifier, connection->webProcessIdentity()), snapshot->hasAbandonedFrames());
     });
 }
 

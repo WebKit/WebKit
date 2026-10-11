@@ -1033,7 +1033,7 @@ bool GPUProcessProxy::waitForSnapshot(RemoteSnapshotIdentifier identifier, Secon
 
 #if HAVE(IOSURFACE)
 
-void GPUProcessProxy::sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier identifier, float scale, const WebCore::ColorSpace& colorSpace, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&& completionHandler)
+void GPUProcessProxy::sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier identifier, float scale, const WebCore::ColorSpace& colorSpace, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&, bool isMissingFrames)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToIOSurface(identifier, scale, colorSpace, rootFrameIdentifier), WTF::move(completionHandler));
 }

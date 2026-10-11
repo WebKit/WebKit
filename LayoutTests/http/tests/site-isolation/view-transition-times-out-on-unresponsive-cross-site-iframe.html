@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+#withframe { view-transition-name: withframe; }
+iframe { width: 100px; height: 100px; border: none; }
+</style>
+<body>
+<div id="withframe"><iframe src="http://localhost:8000/site-isolation/resources/busy-on-message.html"></iframe></div>
+<script>
+description("A view transition whose capture includes a cross-site iframe that does not paint in time is skipped after a timeout, rather than keeping the page's rendering suppressed for as long as the iframe's process is busy.");
+jsTestIsAsync = true;
+
+let error = null;
+let transitionSettled = false;
+let iframeIdle = false;
+
+function finishIfDone()
+{
+    // Not before the iframe's process is free again, so that it does not hold up the next test.
+    if (transitionSettled && iframeIdle)
+        finishJSTest();
+}
+
+onmessage = (event) => {
+    if (event.data == "onload") {
+        // Longer than the view transition timeout.
+        frames[0].postMessage(6000, "*");
+        return;
+    }
+
+    if (event.data == "idle") {
+        iframeIdle = true;
+        finishIfDone();
+        return;
+    }
+
+    if (event.data != "busy")
+        return;
+
+    const transition = document.startViewTransition(() => { });
+    transition.ready.then(() => {
+        testFailed("the transition started without the iframe's rendering");
+    }, (e) => {
+        error = e;
+        shouldBeEqualToString("error.name", "TimeoutError");
+        shouldBeEqualToString("error.message", "View transition timed out waiting for the old state to be captured.");
+    }).finally(() => {
+        transitionSettled = true;
+        finishIfDone();
+    });
+};
+</script>
+</body>

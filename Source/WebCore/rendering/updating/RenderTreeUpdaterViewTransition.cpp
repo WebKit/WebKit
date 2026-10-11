@@ -152,7 +152,7 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
     if (pseudoElementType == PseudoElementType::ViewTransitionOld || pseudoElementType == PseudoElementType::ViewTransitionNew) {
         const auto* capturedElement = document->activeViewTransition()->namedElements().find(name);
         ASSERT(capturedElement);
-        if (pseudoElementType == PseudoElementType::ViewTransitionOld && !capturedElement->oldImage)
+        if (pseudoElementType == PseudoElementType::ViewTransitionOld && !capturedElement->capturedOldState())
             return nullptr;
         if (pseudoElementType == PseudoElementType::ViewTransitionNew && !capturedElement->newElement)
             return nullptr;
@@ -161,8 +161,10 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
 
         RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, Style::ComputedStyle::clone(*style), state.isRootElement);
         rendererViewTransition->setCapturedSize(state.size, state.overflowRect, state.layerToLayoutOffset);
-        if (pseudoElementType == PseudoElementType::ViewTransitionOld)
+        if (pseudoElementType == PseudoElementType::ViewTransitionOld) {
             rendererViewTransition->setImage(capturedElement->oldImage.value_or(nullptr));
+            rendererViewTransition->setDisplayOnlyImage(capturedElement->oldDisplayOnlyImage.value_or(nullptr));
+        }
         renderer = WTF::move(rendererViewTransition);
     } else
         renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, Style::ComputedStyle::clone(*style));

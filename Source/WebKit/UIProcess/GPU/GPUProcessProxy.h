@@ -193,7 +193,7 @@ public:
 #endif
     std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #if HAVE(IOSURFACE)
-    void sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier, float scale, const WebCore::ColorSpace&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&&);
+    void sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier, float scale, const WebCore::ColorSpace&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&, bool isMissingFrames)>&&);
 #endif
     void releaseSnapshot(RemoteSnapshotIdentifier);
     void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
