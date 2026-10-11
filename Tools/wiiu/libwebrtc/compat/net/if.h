@@ -7,6 +7,7 @@
 
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <ifaddrs.h>
 
 #ifndef IFNAMSIZ
 #define IFNAMSIZ 16
@@ -30,24 +31,6 @@
 #define IFF_MULTICAST 0x1000
 #endif
 
-#ifndef WKC_WIIU_WEBRTC_IFADDRS_DECLARED
-#define WKC_WIIU_WEBRTC_IFADDRS_DECLARED
-struct ifaddrs {
-    struct ifaddrs *ifa_next;
-    char *ifa_name;
-    unsigned int ifa_flags;
-    struct sockaddr *ifa_addr;
-    struct sockaddr *ifa_netmask;
-    union {
-        struct sockaddr *ifu_broadaddr;
-        struct sockaddr *ifu_dstaddr;
-    } ifa_ifu;
-    void *ifa_data;
-};
-#define ifa_broadaddr ifa_ifu.ifu_broadaddr
-#define ifa_dstaddr ifa_ifu.ifu_dstaddr
-int getifaddrs(struct ifaddrs **ifap);
-void freeifaddrs(struct ifaddrs *ifa);
-#endif
+/* The WKC stub <ifaddrs.h> owns the struct/prototypes. Reuse it to avoid duplicate definitions. */
 
 #endif /* WKC_WIIU_WEBRTC_COMPAT_NET_IF_H */
