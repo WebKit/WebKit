@@ -1,13 +1,2 @@
-[ macOS ] page/scrolling/ScrollingStateNode.h
-[ macOS ] platform/audio/cocoa/PlatformRawAudioDataCocoa.cpp
-[ macOS ] platform/cocoa/LocalCurrentGraphicsContext.h
-[ macOS ] platform/cocoa/SearchPopupMenuCocoa.mm
-[ macOS ] platform/graphics/cocoa/FontDatabase.cpp
-[ macOS ] platform/graphics/cocoa/WebCoreDecompressionSession.mm
-[ macOS ] platform/graphics/mac/ColorMac.mm
-[ macOS ] platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm
-[ macOS ] platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
-[ macOS ] platform/mediastream/cocoa/ScreenCaptureKitSharingSessionManager.mm
-rendering/AttachmentLayout.mm
+[ iOS ] rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
-[ macOS ] rendering/mac/RenderThemeMac.mm

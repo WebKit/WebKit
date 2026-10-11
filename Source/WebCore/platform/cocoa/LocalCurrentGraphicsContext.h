@@ -75,7 +75,7 @@ class LocalCurrentGraphicsContext {
 public:
     LocalCurrentGraphicsContext(GraphicsContext& context, bool isFlipped = true)
         : m_stateSaver(context)
-        , m_globalSaver(context.platformContext(), isFlipped)
+        , m_globalSaver(protect(context.platformContext()), isFlipped)
     {
     }
 

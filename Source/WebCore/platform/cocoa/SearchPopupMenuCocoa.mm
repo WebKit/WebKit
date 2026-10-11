@@ -51,9 +51,9 @@ static WallTime searchPopupWallTimeFromNSDate(NSDate *date)
     return WallTime::fromRawSeconds(date.timeIntervalSince1970);
 }
 
-static NSDate *toNSDateFromSystemClock(WallTime time)
+static RetainPtr<NSDate> toNSDateFromSystemClock(WallTime time)
 {
-    return [NSDate dateWithTimeIntervalSince1970:time.secondsSinceEpoch().seconds()];
+    return adoptNS([[NSDate alloc] initWithTimeIntervalSince1970:time.secondsSinceEpoch().seconds()]);
 }
 
 static NSMutableArray *typeCheckedRecentSearchesArray(NSMutableDictionary *itemsDictionary, NSString *name)
@@ -142,7 +142,7 @@ void saveRecentSearchesToFile(const String& name, const Vector<RecentSearch>& se
         [itemsDictionary removeObjectForKey:name.createNSString().get()];
     else {
         auto items = createNSArray(searchItems, [] (auto& item) {
-            return adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:item.string.createNSString().get(), searchStringKey, toNSDateFromSystemClock(item.time), dateKey, nil]);
+            return adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:item.string.createNSString().get(), searchStringKey, toNSDateFromSystemClock(item.time).get(), dateKey, nil]);
         });
         [itemsDictionary setObject:adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:items.get(), searchesKey, nil]).get() forKey:name.createNSString().get()];
     }

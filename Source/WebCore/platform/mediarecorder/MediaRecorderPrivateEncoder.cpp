@@ -591,7 +591,7 @@ void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
         }
         if (!m_hasStartedAudibleAudioFrame && sample->duration())
             m_hasStartedAudibleAudioFrame = true;
-        m_encodedAudioFrames.append(samplesBlockFromCMSampleBuffer(sample->sampleBuffer(), m_audioCompressedAudioInfo.get()));
+        m_encodedAudioFrames.append(samplesBlockFromCMSampleBuffer(protect(sample->sampleBuffer()), m_audioCompressedAudioInfo.get()));
         m_lastEncodedAudioSampleRange = { sample->presentationTime(), sample->presentationEndTime() };
         LOG(MediaStream, "enqueueCompressedAudioSampleBuffers: adding compressed audio: %f-%f", sample->presentationTime().toDouble(), sample->presentationEndTime().toDouble());
     };

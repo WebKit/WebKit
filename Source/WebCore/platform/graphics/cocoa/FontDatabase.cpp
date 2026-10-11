@@ -70,7 +70,7 @@ const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const
         if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), mandatoryAttributes.get()))) {
             auto count = CFArrayGetCount(matches.get());
             Vector<InstalledFont> result(count, [&](size_t i) {
-                return InstalledFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)));
+                return InstalledFont(protect(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i))));
             });
             return makeUnique<InstalledFontFamily>(WTF::move(result));
         }

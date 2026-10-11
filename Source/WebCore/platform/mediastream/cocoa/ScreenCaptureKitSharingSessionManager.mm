@@ -238,7 +238,7 @@ void ScreenCaptureKitSharingSessionManager::contentSharingPickerUpdatedFilterFor
     RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::contentSharingPickerUpdatedFilterForStream");
 
     auto index = m_activeSources.findIf([stream](auto activeSource) {
-        return activeSource && [stream isEqual:activeSource->stream()];
+        return activeSource && [stream isEqual:protect(activeSource->stream())];
     });
     if (index == notFound) {
         if (stream) {

@@ -458,7 +458,8 @@ static SRGBA<uint8_t> legacyMenuBackgroundColor()
         bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
 
     {
-        LocalCurrentCGContext localContext { [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext };
+        RetainPtr<CGContextRef> cgContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext;
+        LocalCurrentCGContext localContext { cgContext };
 
         [[NSColor clearColor] set];
 

@@ -331,7 +331,7 @@ void AttachmentLayout::buildWrappedLines(String& text, CTFontRef font, NSDiction
     CFIndex lineIndex = 0;
     auto nonTruncatedLineCount = std::min<CFIndex>(maximumLineCount - 1, lineCount);
     for (; lineIndex < nonTruncatedLineCount; ++lineIndex)
-        addLine(font, (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
+        addLine(font, retainPtr((CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex)));
     
     if (lineIndex == lineCount)
         return;
@@ -345,7 +345,7 @@ void AttachmentLayout::buildWrappedLines(String& text, CTFontRef font, NSDiction
     auto remainingFrame = adoptCF(CTFramesetterCreateFrame(framesetter.get(), remainingRange, remainingPath.get(), nullptr));
     auto ellipsisString = adoptNS([[NSAttributedString alloc] initWithString:@"\u2026" attributes:textAttributes]);
     auto ellipsisLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)ellipsisString.get()));
-    auto remainingLine = (CTLineRef)CFArrayGetValueAtIndex(CTFrameGetLines(remainingFrame.get()), 0);
+    auto remainingLine = (CTLineRef)CFArrayGetValueAtIndex(protect(CTFrameGetLines(remainingFrame.get())), 0);
     auto truncatedLine = adoptCF(CTLineCreateTruncatedLine(remainingLine, wrappingWidth, kCTLineTruncationMiddle, ellipsisLine.get()));
     
     if (!truncatedLine)

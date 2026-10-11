@@ -630,7 +630,7 @@ Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCo
 
                 auto presentationTime = PAL::toCMTime(MediaTime(result->timestamp, 1000000));
                 auto presentationDuration = PAL::toCMTime(MediaTime(result->duration.value_or(0), 1000000));
-                auto sampleResult = handleDecompressionOutput(protectedThis->m_pendingDecodeData->flags, noErr, 0, result->frame->pixelBuffer(), nullptr, presentationTime, presentationDuration, nullptr);
+                auto sampleResult = handleDecompressionOutput(protectedThis->m_pendingDecodeData->flags, noErr, 0, protect(result->frame->pixelBuffer()), nullptr, presentationTime, presentationDuration, nullptr);
                 if (!sampleResult)
                     protectedThis->m_lastDecodingError = sampleResult.error();
                 else

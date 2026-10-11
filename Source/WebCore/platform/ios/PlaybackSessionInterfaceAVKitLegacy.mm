@@ -179,7 +179,7 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
             return nil;
         }
 #endif
-        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName.createNSString().get() extendedLanguageTag:option.languageTag.createNSString().get() tag:index++]);
+        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:protect(toAVMediaType(option.mediaType)) displayName:option.displayName.createNSString().get() extendedLanguageTag:option.languageTag.createNSString().get() tag:index++]);
     });
 }
 

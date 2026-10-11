@@ -73,6 +73,10 @@ public:
         : m_data(PlatformLayerContainer { platformLayer })
     { }
 
+    LayerRepresentation(PlatformLayerContainer&& platformLayer)
+        : m_data(WTF::move(platformLayer))
+    { }
+
     LayerRepresentation(std::optional<PlatformLayerIdentifier> layerID)
         : m_data(Markable<PlatformLayerIdentifier> { layerID })
     { }
@@ -124,7 +128,7 @@ public:
             if (std::holds_alternative<GraphicsLayerData>(m_data)) {
                 auto& data = std::get<GraphicsLayerData>(m_data);
                 if (data.graphicsLayer)
-                    return platformLayerFromGraphicsLayer(Ref { *data.graphicsLayer });
+                    return PlatformLayerContainer { platformLayerFromGraphicsLayer(Ref { *data.graphicsLayer }) };
             }
             return static_cast<ScrollingPlatformLayer*>(nullptr);
         }

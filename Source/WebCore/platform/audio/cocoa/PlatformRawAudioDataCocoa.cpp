@@ -249,7 +249,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     auto& audioData = downcast<PlatformRawAudioDataCocoa>(*this);
 
     auto sourceFormat = format();
-    WebAudioBufferList sourceList(audioData.m_description, audioData.sampleBuffer());
+    WebAudioBufferList sourceList(audioData.m_description, protect(audioData.sampleBuffer()));
     bool destinationIsInterleaved = isAudioSampleFormatInterleaved(destinationFormat);
 
     // Copy memory when:
