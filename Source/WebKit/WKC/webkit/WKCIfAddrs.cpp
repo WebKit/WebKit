@@ -14,6 +14,8 @@
 
 #include "config.h"
 
+#if USE(LIBWEBRTC) && PLATFORM(WKC)
+
 #include <ifaddrs.h>
 #include <wkc/wkcsocket.h>
 
@@ -125,3 +127,5 @@ extern "C" void freeifaddrs(struct ifaddrs* entries)
         entries = next;
     }
 }
+
+#endif // USE(LIBWEBRTC) && PLATFORM(WKC)
