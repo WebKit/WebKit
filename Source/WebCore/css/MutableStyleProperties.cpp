@@ -261,11 +261,6 @@ bool MutableStyleProperties::addParsedProperties(const ParsedPropertyVector& pro
 
 bool MutableStyleProperties::addParsedProperty(const CSSProperty& property)
 {
-    if (property.id() == CSSPropertyID::Custom) {
-        if ((property.value() && !customPropertyIsImportant(downcast<CSSCustomPropertyValue>(*property.value()).name())) || property.isImportant())
-            return setProperty(property);
-        return false;
-    }
     return setProperty(property);
 }
 
