@@ -261,7 +261,11 @@ WI.Script = class Script extends WI.SourceCode
             return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        return this._target.DebuggerAgent.getScriptSource(this._id);
+        return this._target.DebuggerAgent.getScriptSource(this._id).catch((error) => {
+            if (!this._target.isDestroyed)
+                throw error;
+            return {error: error.message, scriptSource: ""};
+        });
     }
 
     createSourceCodeLocationForBytecodeOffset(bytecodeOffset)
