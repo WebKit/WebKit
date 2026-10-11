@@ -199,6 +199,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/short-simple-duration-and-fractional-repeatcount.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/single-values-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/slider-switch.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-clock-value-large-hours.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-clock-value-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-values-trailing-semicolon.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/spaces-at-end-of-path-data.html
