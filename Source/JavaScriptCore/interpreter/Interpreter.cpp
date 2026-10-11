@@ -1750,7 +1750,8 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
             WTFBreakpointTrap();
     }
 
-    Debugger* debugger = callFrame->lexicalGlobalObject(vm)->debugger();
+    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
+    Debugger* debugger = globalObject->debugger();
     if (!debugger)
         return;
 
@@ -1784,6 +1785,10 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
             break;
         case DidReachDebuggerStatement:
             debugger->didReachDebuggerStatement(callFrame);
+            break;
+        case WillReadProperty:
+            debugger->willReadProperty(globalObject, data);
+            RETURN_IF_EXCEPTION(scope, void());
             break;
     }
     scope.assertNoException();
@@ -1822,6 +1827,9 @@ void printInternal(PrintStream& out, JSC::DebugHookType type)
         return;
     case JSC::DidAwait:
         out.print("DidAwait");
+        return;
+    case JSC::WillReadProperty:
+        out.print("WillReadProperty");
         return;
     }
 }

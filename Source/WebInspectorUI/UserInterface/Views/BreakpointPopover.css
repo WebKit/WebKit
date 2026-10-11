@@ -82,6 +82,10 @@
     margin-inline-start: 8px;
 }
 
+.popover .edit-breakpoint-popover-content > table > tr.match > td > label + label {
+    margin-inline-start: 8px;
+}
+
 .popover .edit-breakpoint-popover-content input#edit-breakpoint-popover-ignore-count {
     width: 40px;
 }

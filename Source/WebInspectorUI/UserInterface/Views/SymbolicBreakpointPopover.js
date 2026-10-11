@@ -93,6 +93,8 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
         this.addRow("symbol", symbolLabelElement, content);
 
+        this._populateMatchOptions();
+
         // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
         setTimeout(() => {
             this._symbolCodeMirror.refresh();
@@ -112,11 +114,56 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
 
         options.caseSensitive = this._caseSensitiveCheckboxElement.checked;
         options.isRegex = this._isRegexCheckboxElement.checked;
+        if (this._matchFunctionCallsCheckboxElement)
+            options.matchFunctionCalls = this._matchFunctionCallsCheckboxElement.checked;
+        if (this._matchPropertyReadsCheckboxElement)
+            options.matchPropertyReads = this._matchPropertyReadsCheckboxElement.checked;
 
         return new WI.SymbolicBreakpoint(symbol, options);
     }
 
     // Private
+
+    _populateMatchOptions()
+    {
+        if (InspectorBackend.hasCommand("Debugger.addSymbolicBreakpoint", "matchPropertyReads")) {
+            let matchLabelElement = document.createElement("label");
+            matchLabelElement.textContent = WI.UIString("Match");
+
+            let matchContent = document.createDocumentFragment();
+
+            let createMatchCheckbox = (displayName) => {
+                let label = matchContent.appendChild(document.createElement("label"));
+                let checkbox = label.appendChild(document.createElement("input"));
+                checkbox.type = "checkbox";
+                checkbox.checked = true;
+                checkbox.addEventListener("change", () => {
+                    this._updateMatchCheckboxes();
+                });
+                label.append(displayName);
+                return checkbox;
+            };
+            this._matchFunctionCallsCheckboxElement = createMatchCheckbox(WI.UIString("Function Calls"));
+            this._matchPropertyReadsCheckboxElement = createMatchCheckbox(WI.UIString("Property Reads"));
+            this._updateMatchCheckboxes();
+
+            this.addRow("match", matchLabelElement, matchContent);
+        }
+    }
+
+    _updateMatchCheckboxes()
+    {
+        let checkedCheckboxes = [
+            this._matchFunctionCallsCheckboxElement,
+            this._matchPropertyReadsCheckboxElement,
+        ].filter((checkbox) => checkbox.checked);
+        if (checkedCheckboxes.length === 1)
+            checkedCheckboxes[0].disabled = true;
+        else {
+            for (let checkbox of checkedCheckboxes)
+                checkbox.disabled = false;
+        }
+    }
 
     _updateSymbolCodeMirrorMode()
     {
