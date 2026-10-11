@@ -2240,6 +2240,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionHasOwnLengthProperty);
 static JSC_DECLARE_HOST_FUNCTION(functionLineStartTableIsBuilt);
 static JSC_DECLARE_HOST_FUNCTION(functionRejectPromiseAsHandled);
 static JSC_DECLARE_HOST_FUNCTION(functionMarkPromiseAsHandled);
+static JSC_DECLARE_HOST_FUNCTION(functionLastExceptionHasCapturedStack);
 static JSC_DECLARE_HOST_FUNCTION(functionSetUserPreferredLanguages);
 static JSC_DECLARE_HOST_FUNCTION(functionICUVersion);
 static JSC_DECLARE_HOST_FUNCTION(functionICUMinorVersion);
@@ -4197,6 +4198,16 @@ JSC_DEFINE_HOST_FUNCTION(functionMarkPromiseAsHandled, (JSGlobalObject*, CallFra
     return JSValue::encode(jsUndefined());
 }
 
+// Returns undefined unless the most recent throw threw the argument.
+JSC_DEFINE_HOST_FUNCTION(functionLastExceptionHasCapturedStack, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    Exception* exception = globalObject->vm().lastException();
+    if (!exception || exception->value() != callFrame->argument(0))
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(jsBoolean(!exception->stack().isEmpty()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionSetUserPreferredLanguages, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -4812,6 +4823,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "hasOwnLengthProperty"_s, functionHasOwnLengthProperty, 1);
     addFunction(vm, allowIfNotFuzz, "rejectPromiseAsHandled"_s, functionRejectPromiseAsHandled, 1);
     addFunction(vm, allowIfNotFuzz, "markPromiseAsHandled"_s, functionMarkPromiseAsHandled, 1);
+    addFunction(vm, allowIfNotFuzz, "lastExceptionHasCapturedStack"_s, functionLastExceptionHasCapturedStack, 1);
 
     addFunction(vm, allowIfNotFuzz, "setUserPreferredLanguages"_s, functionSetUserPreferredLanguages, 1);
     addFunction(vm, allowIfNotFuzz, "icuVersion"_s, functionICUVersion, 0);

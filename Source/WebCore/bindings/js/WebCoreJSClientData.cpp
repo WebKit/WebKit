@@ -227,7 +227,7 @@ void JSVMClientData::initNormalWorld(VM* vm, WorkerThreadType type)
 
 String unmaskedSourceURLFromException(const JSC::Exception& exception, JSC::VM& vm)
 {
-    for (auto& frame : exception.stack()) {
+    for (auto& frame : exception.stackForReporting()) {
         String url = frame.sourceURL(vm, JSC::AllowURLOverride::No);
         if (!url.isEmpty() && url != "[native code]"_s)
             return url;

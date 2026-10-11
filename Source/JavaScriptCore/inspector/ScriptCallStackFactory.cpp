@@ -172,7 +172,7 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
 Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* globalObject, JSC::Exception* exception, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    auto& stackTrace = exception->stack();
+    auto& stackTrace = exception->stackForReporting();
     VM& vm = globalObject->vm();
     for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
         auto lineColumn = stackTrace[i].computeLineAndColumn();

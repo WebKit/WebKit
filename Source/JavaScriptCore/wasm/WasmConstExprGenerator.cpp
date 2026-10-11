@@ -448,7 +448,7 @@ private:
     }
 
     const size_t m_offsetInSource;
-    const ModuleInformation& m_info;
+    SUPPRESS_UNCOUNTED_MEMBER const ModuleInformation& m_info;
     JSWebAssemblyInstance* const m_instance;
     MarkedArgumentBufferWithSize<16> m_keepAlive;
 };

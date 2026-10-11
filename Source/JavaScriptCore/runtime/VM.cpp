@@ -1162,8 +1162,12 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
 Exception* VM::throwException(JSGlobalObject* globalObject, JSValue thrownValue)
 {
     Exception* exception = dynamicDowncast<Exception>(thrownValue);
-    if (!exception)
-        exception = Exception::create(*this, thrownValue);
+    if (!exception) {
+        auto action = Exception::StackCaptureAction::CaptureStack;
+        if (!globalObject->debugger() && interpreter.isExceptionCaughtByUserCatchClause())
+            action = Exception::StackCaptureAction::DoNotCaptureStack;
+        exception = Exception::create(*this, thrownValue, action);
+    }
 
     return throwException(globalObject, exception);
 }

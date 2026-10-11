@@ -62,6 +62,9 @@ public:
 
     JSValue value() const { return m_value.get(); }
     const Vector<StackFrame>& stack() const LIFETIME_BOUND { return m_stack; }
+    // The stack may be skipped when a user catch clause handles the throw, but vm.lastException()
+    // outlives the catch and can still be reported, so fall back to the Error's own stack.
+    JS_EXPORT_PRIVATE const Vector<StackFrame>& stackForReporting() const LIFETIME_BOUND;
 
     bool didNotifyInspectorOfThrow() const { return m_didNotifyInspectorOfThrow; }
     void setDidNotifyInspectorOfThrow() { m_didNotifyInspectorOfThrow = true; }

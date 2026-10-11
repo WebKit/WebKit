@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Exception.h"
 
+#include "ErrorInstance.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
 #include "JSObjectInlines.h"
@@ -87,6 +88,17 @@ void Exception::finishCreation(VM& vm, StackCaptureAction action)
         vm.interpreter.getStackTrace(this, stackTrace, 0, Options::exceptionStackTraceLimit());
     m_stack = WTF::move(stackTrace);
     vm.heap.reportExtraMemoryAllocated(this, m_stack.sizeInBytes());
+}
+
+const Vector<StackFrame>& Exception::stackForReporting() const
+{
+    if (m_stack.isEmpty()) {
+        if (auto* error = dynamicDowncast<ErrorInstance>(value())) {
+            if (auto* stackTrace = error->stackTrace())
+                return *stackTrace;
+        }
+    }
+    return m_stack;
 }
 
 #if ENABLE(WEBASSEMBLY)

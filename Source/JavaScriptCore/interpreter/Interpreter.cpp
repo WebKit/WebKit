@@ -745,6 +745,53 @@ private:
     mutable HandlerInfo* m_handler;
 };
 
+// Optimized CodeBlocks only record the innermost handler at each call site, and none at all for
+// exception checks that jump to an in-frame catch, so consult the bytecode's full handler table.
+static std::optional<bool> isCatchingHandlerUserCatchClause(UnlinkedCodeBlock* unlinkedCodeBlock, BytecodeIndex bytecodeIndex)
+{
+    unsigned offset = bytecodeIndex.offset();
+    // Handlers are ordered innermost first.
+    for (size_t i = 0; i < unlinkedCodeBlock->numberOfExceptionHandlers(); ++i) {
+        auto& handler = unlinkedCodeBlock->exceptionHandler(i);
+        if (offset < handler.start || offset >= handler.end)
+            continue;
+        switch (handler.type()) {
+        case HandlerType::Finally:
+        case HandlerType::SynthesizedFinally:
+            continue;
+        case HandlerType::Catch:
+            return !unlinkedCodeBlock->isBuiltinFunction();
+        case HandlerType::SynthesizedCatch:
+            return false;
+        }
+    }
+    return std::nullopt;
+}
+
+bool Interpreter::isExceptionCaughtByUserCatchClause()
+{
+    AssertNoGC assertNoGC;
+    VM& vm = this->vm();
+    bool result = false;
+    StackVisitor::visit(vm.topCallFrame, vm, [&](StackVisitor& visitor) ALWAYS_INLINE_LAMBDA {
+        if (visitor->isNativeCalleeFrame())
+            return IterationStatus::Done;
+
+        if (CodeBlock* codeBlock = visitor->codeBlock()) {
+            if (auto isUserCatchClause = isCatchingHandlerUserCatchClause(codeBlock->unlinkedCodeBlock(), visitor->bytecodeIndex())) {
+                result = *isUserCatchClause;
+                return IterationStatus::Done;
+            }
+        } else if (JSC::isRemoteFunction(visitor->callFrame()->jsCallee()))
+            return IterationStatus::Done;
+
+        if (visitor->isInlinedDFGFrame())
+            return IterationStatus::Continue;
+        return visitor->callerIsEntryFrame() ? IterationStatus::Done : IterationStatus::Continue;
+    });
+    return result;
+}
+
 CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)
 {
     m_valid = !!handler;
