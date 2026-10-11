@@ -81,3 +81,33 @@ requestOriginHeader("POST", "no-cors", true);
 requestOriginHeader("PUT", "same-origin", true);
 requestOriginHeader("TacO", "same-origin", true);
 requestOriginHeader("TacO", "cors", true);
+
+// A multipart/form-data body has a known length, so Content-Length is set. Its
+// value depends on the boundary the user agent generated, which is echoed back
+// in Content-Type.
+promise_test(async () => {
+  const formData = new FormData();
+  formData.append("name", "value");
+  formData.append("file", new File(["contents"], "f.txt", { type: "text/plain" }));
+  const response = await fetch(url + "?headers=content-length|content-type",
+                               { method: "POST", body: formData });
+  const contentType = response.headers.get("x-request-content-type");
+  const prefix = "multipart/form-data; boundary=";
+  assert_true(contentType.startsWith(prefix), `unexpected Content-Type: ${contentType}`);
+  const boundary = contentType.substring(prefix.length);
+  const body = [
+    `--${boundary}`,
+    `Content-Disposition: form-data; name="name"`,
+    "",
+    "value",
+    `--${boundary}`,
+    `Content-Disposition: form-data; name="file"; filename="f.txt"`,
+    "Content-Type: text/plain",
+    "",
+    "contents",
+    `--${boundary}--`,
+    "",
+  ].join("\r\n");
+  assert_equals(response.headers.get("x-request-content-length"),
+                String(new TextEncoder().encode(body).byteLength));
+}, "Fetch with POST with FormData body sets Content-Length");

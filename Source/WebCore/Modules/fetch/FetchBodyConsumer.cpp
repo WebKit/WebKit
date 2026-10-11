@@ -68,7 +68,11 @@ struct MimeType {
     HashMap<String, String> parameters;
 };
 
-static HashMap<String, String> parseParameters(StringView input, size_t position)
+// Part headers are UTF-8 decoded before parsing, so their parameter values can exceed the U+00FF
+// that isHTTPQuotedStringTokenCodePoint allows. Only CR and LF are disallowed, and the caller
+// rejects those before getting here.
+enum class ParameterValueCheck : bool { QuotedStringTokens, None };
+static HashMap<String, String> parseParameters(StringView input, size_t position, ParameterValueCheck valueCheck)
 {
     HashMap<String, String> parameters;
     while (position < input.length()) {
@@ -105,7 +109,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 
         if (parameterName.length()
             && isValidHTTPToken(parameterName)
-            && parameterValue.containsOnly<isHTTPQuotedStringTokenCodePoint>()) {
+            && (valueCheck == ParameterValueCheck::None || parameterValue.containsOnly<isHTTPQuotedStringTokenCodePoint>())) {
             parameters.ensure(parameterName.toString(), [&] { return parameterValue.toString(); });
         }
     }
@@ -129,7 +133,7 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
     if (!subtype.length() || !isValidHTTPToken(subtype))
         return std::nullopt;
 
-    return {{ WTF::move(type), WTF::move(subtype), parseParameters(StringView(input), semicolonIndex + 1) }};
+    return { { WTF::move(type), WTF::move(subtype), parseParameters(StringView(input), semicolonIndex + 1, ParameterValueCheck::QuotedStringTokens) } };
 }
 
 FetchBodyConsumer::FetchBodyConsumer(Type type)
@@ -145,7 +149,20 @@ FetchBodyConsumer& FetchBodyConsumer::operator=(FetchBodyConsumer&&) = default;
 RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* context, const String& contentType, std::span<const uint8_t> data)
 {
     static constexpr auto oneNewLine = "\r\n"_s;
-    auto parseMultipartPart = [context] (std::span<const uint8_t> part, DOMFormData& form) -> bool {
+    // Returns the value of the first part header with this name, or a null.
+    // The name has to include its colon.
+    auto partHeaderValue = [](const String& header, ASCIILiteral name) -> StringView {
+        size_t begin = header.findIgnoringASCIICase(name);
+        if (begin == notFound)
+            return { };
+        begin += name.length();
+        size_t end = header.find(oneNewLine, begin);
+        if (end == notFound)
+            end = header.length();
+        return StringView(header).substring(begin, end - begin);
+    };
+
+    auto parseMultipartPart = [context, &partHeaderValue](std::span<const uint8_t> part, DOMFormData& form) -> bool {
         static constexpr auto twoNewLines = "\r\n\r\n"_span;
         size_t headerEnd = find(part, twoNewLines);
         if (headerEnd == notFound)
@@ -154,82 +171,83 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
         auto body = part.subspan(headerBytes.size() + twoNewLines.size());
 
-        auto header = String::fromUTF8(headerBytes);
+        auto header = String::fromUTF8ReplacingInvalidSequences(headerBytes);
 
-        constexpr auto contentDispositionCharacters = "content-disposition:"_s;
-        size_t contentDispositionBegin = header.findIgnoringASCIICase(contentDispositionCharacters);
-        if (contentDispositionBegin == notFound)
+        // Header lines are CRLF separated, so a bare CR or LF is malformed rather than part of a
+        // value. Rejecting it here is what lets parameter values be taken verbatim below.
+        for (size_t i = 0; i < header.length(); ++i) {
+            if (header[i] == '\n')
+                return false;
+            if (header[i] == '\r') {
+                if (i + 1 == header.length() || header[i + 1] != '\n')
+                    return false;
+                ++i;
+            }
+        }
+
+        auto contentDisposition = partHeaderValue(header, "content-disposition:"_s);
+        if (contentDisposition.isNull())
             return false;
 
-        size_t contentDispositionEnd = header.find(oneNewLine, contentDispositionBegin);
-        size_t contentDispositionParametersBegin = header.find(';', contentDispositionBegin + contentDispositionCharacters.length());
-        if (contentDispositionParametersBegin != notFound)
-            contentDispositionParametersBegin++;
-
-        auto parameters = parseParameters(StringView(header).substring(contentDispositionParametersBegin, contentDispositionEnd - contentDispositionParametersBegin), 0);
+        size_t parametersBegin = contentDisposition.find(';');
+        auto parameters = parseParameters(contentDisposition, parametersBegin == notFound ? contentDisposition.length() : parametersBegin + 1, ParameterValueCheck::None);
         String name = parameters.get<HashTranslatorASCIILiteral>("name"_s);
         if (!name)
             return false;
         String filename = parameters.get<HashTranslatorASCIILiteral>("filename"_s);
         if (!filename)
-            form.append(name, String::fromUTF8(body));
+            form.append(name, String::fromUTF8ReplacingInvalidSequences(body));
         else {
-            String contentType = "text/plain"_s;
-
-            constexpr auto contentTypeCharacters = "content-type:"_s;
-            size_t contentTypePrefixLength = contentTypeCharacters.length();
-            size_t contentTypeBegin = header.findIgnoringASCIICase(contentTypeCharacters);
-            if (contentTypeBegin != notFound) {
-                size_t contentTypeEnd = header.find(oneNewLine, contentTypeBegin);
-                contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isASCIIWhitespaceWithoutFF<char16_t>).toString();
-            }
+            auto contentTypeValue = partHeaderValue(header, "content-type:"_s);
+            auto contentType = contentTypeValue.isNull() ? String { "text/plain"_s } : contentTypeValue.trim(isASCIIWhitespaceWithoutFF<char16_t>).toString();
 
             form.append(name, File::create(context, Blob::create(context, Vector(body), Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
         }
         return true;
     };
     
-    auto parseMultipartBoundary = [] (const std::optional<MimeType>& mimeType) -> std::optional<String> {
+    auto parseMultipartBoundary = [](const std::optional<MimeType>& mimeType) -> String {
         if (!mimeType)
-            return std::nullopt;
-        if (equalLettersIgnoringASCIICase(mimeType->type, "multipart"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "form-data"_s)) {
-            auto iterator = mimeType->parameters.find<HashTranslatorASCIILiteral>("boundary"_s);
-            if (iterator != mimeType->parameters.end())
-                return iterator->value;
-        }
-        return std::nullopt;
+            return { };
+        if (equalLettersIgnoringASCIICase(mimeType->type, "multipart"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "form-data"_s))
+            return mimeType->parameters.get<HashTranslatorASCIILiteral>("boundary"_s);
+        return { };
     };
 
     auto form = DOMFormData::create(context, PAL::UTF8Encoding());
     auto mimeType = parseMIMEType(contentType);
-    if (auto multipartBoundary = parseMultipartBoundary(mimeType)) {
-        auto boundaryWithDashes = makeString("--"_s, *multipartBoundary);
-        auto boundary = boundaryWithDashes.utf8();
-        size_t boundaryLength = boundary.length();
+    auto multipartBoundary = parseMultipartBoundary(mimeType);
+    if (!multipartBoundary.isEmpty()) {
+        // A part ends at CRLF followed by the dash-boundary; the dash-boundary alone can occur in a part.
+        auto delimiterString = makeString("\r\n--"_s, multipartBoundary).utf8();
+        auto delimiter = byteCast<uint8_t>(delimiterString.span());
+        auto dashBoundary = delimiter.subspan(oneNewLine.length());
 
-        size_t currentBoundaryIndex = find(data, byteCast<uint8_t>(boundary.span()));
-        if (currentBoundaryIndex == notFound)
+        if (!spanHasPrefix(data, dashBoundary))
             return nullptr;
+        skip(data, dashBoundary.size());
 
-        skip(data, currentBoundaryIndex + boundaryLength);
-        if (spanHasPrefix(data, "--\r\n"_span)) {
-            // FIXME: This is not valid as per RFC, but is consistent with how empty form data are serialized.
-            return form;
-        }
-        skipWhile<isTabOrSpace>(data);
-        if (!spanHasPrefix(data, "\r\n"_span))
-            return nullptr;
-
-        size_t nextBoundaryIndex;
-        while ((nextBoundaryIndex = find(data, byteCast<uint8_t>(boundary.span()))) != notFound) {
-            parseMultipartPart(data.first(nextBoundaryIndex - oneNewLine.length()), form.get());
-            currentBoundaryIndex = nextBoundaryIndex;
-            skip(data, nextBoundaryIndex + boundaryLength);
-            if (spanHasPrefix(data, "--"_span))
-                return form;
+        while (true) {
             skipWhile<isTabOrSpace>(data);
-            if (!spanHasPrefix(data, "\r\n"_span))
+
+            if (spanHasPrefix(data, "--"_span)) {
+                skip(data, 2);
+                skipWhile<isTabOrSpace>(data);
+                if (data.empty() || spanHasPrefix(data, oneNewLine.span()))
+                    return form;
                 return nullptr;
+            }
+
+            if (!spanHasPrefix(data, oneNewLine.span()))
+                return nullptr;
+            skip(data, oneNewLine.length());
+
+            size_t partEnd = find(data, delimiter);
+            if (partEnd == notFound)
+                return nullptr;
+            if (!parseMultipartPart(data.first(partEnd), form.get()))
+                return nullptr;
+            skip(data, partEnd + delimiter.size());
         }
     } else if (mimeType && equalLettersIgnoringASCIICase(mimeType->type, "application"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded"_s)) {
         auto dataString = String::fromUTF8(data);
