@@ -189,8 +189,12 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
                 contentArea.shiftMaxYEdgeTo(contentBlockEnd);
             else
                 contentArea.shiftMaxXEdgeTo(contentBlockEnd);
+            // The transforms of the children that depend on the size of their containing block (offset-path), before the overflow they extend.
+            blockFlow->updateInFlowDescendantTransformsAfterLayout();
             blockFlow->computeInFlowOverflow(contentArea, isHorizontalWritingMode ? RenderBox::ComputeOverflowOptions::MarginsExtendContentAreaX : RenderBox::ComputeOverflowOptions::MarginsExtendContentAreaY);
         }
+        // Like RenderBlockFlow::layoutBlock: the transform depends on the size of the box (transform-origin).
+        renderer->updateLayerTransform();
 
         // What RenderBlockFlow::layoutBlock invalidates: changes inside the box, at the place it had before it moved.
         auto damagedInlineContent = std::optional<PaintInvalidation::LogicalTopAndBottom> { };
