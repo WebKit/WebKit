@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationBlockCoverage.h"
 
+#include "BlockMarginCollapse.h"
 #include "Document.h"
 #include "HTMLButtonElement.h"
 #include "HTMLInputElement.h"
@@ -34,6 +35,7 @@
 #include "HTMLTextAreaElement.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
@@ -54,7 +56,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsFlexOrGridItem,
     RootHasInlineContent,
     RootHasUnsupportedWritingMode,
-    RootIsInQuirksModeDocument,
     RootIsPaginated,
     RootIsInLineClampContext,
     RootIsInTextBoxTrimContext,
@@ -66,6 +67,8 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasLayer,
     ContentHasInlineContent,
     ContentHasUnsupportedSize,
+    ContentHasQuirksModePercentageHeight,
+    ContentHasNestedQuirkContainer,
     ContentHasUnsupportedStyle
 };
 
@@ -92,8 +95,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootHasInlineContent;
     if (!rootContainer.writingMode().isHorizontal())
         return BlockAvoidanceReason::RootHasUnsupportedWritingMode;
-    if (rootContainer.document().inQuirksMode())
-        return BlockAvoidanceReason::RootIsInQuirksModeDocument;
     CheckedRef layoutContext = rootContainer.view().frameView().layoutContext();
     if (auto* layoutState = layoutContext->layoutState()) {
         if (layoutState->isPaginated())
@@ -149,6 +150,16 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         || (!style->logicalMaxHeight().isNone() && !isSupportedSize(style->logicalMaxHeight()))
         || style->aspectRatio().hasRatio() || blockContainer->shouldApplySizeContainment())
         return BlockAvoidanceReason::ContentHasUnsupportedSize;
+    // In quirks mode a percentage height resolves against the nearest ancestor with a height (RenderBox::computePercentageLogicalHeight).
+    if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isPercentOrCalculated() || style->logicalMinHeight().isPercentOrCalculated() || style->logicalMaxHeight().isPercentOrCalculated()))
+        return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
+    // Quirks mode: every body element is a quirk container (RenderBlockFlow::MarginInfo), but the block formatting context keeps track of only one.
+    if (Layout::BlockMarginCollapse::isQuirkContainer(*blockContainer)) {
+        for (CheckedRef ancestor : ancestorsOfType<RenderBlockFlow>(*blockContainer)) {
+            if (Layout::BlockMarginCollapse::isQuirkContainer(ancestor))
+                return BlockAvoidanceReason::ContentHasNestedQuirkContainer;
+        }
+    }
 
     // Empty editable boxes get a line (RenderBlock::hasLineIfEmpty).
     if (style->clear() != Clear::None || !style->marginTrim().isNone() || alignsBlockLevelChildren(style.get()) || blockContainer->hasLineIfEmpty())
