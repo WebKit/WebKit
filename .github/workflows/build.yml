@@ -12,6 +12,12 @@ on:
         required: false
         default: false
 
+# Every push used to start a full Wii U cross-build. Keep only the newest
+# run for a ref so rapid WKC-only commits do not waste runner time.
+concurrency:
+  group: webkit-wiiu-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
