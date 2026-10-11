@@ -422,6 +422,9 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         && paintInfo.phase != PaintPhase::Accessibility)
         return false;
 
+    if (hasDrawableContent() && paintInfo.phase != PaintPhase::Foreground)
+        return false;
+
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return false;
 

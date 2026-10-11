@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BufferSource.h"
+#include "CanvasElementImage.h"
 #include "EventTarget.h"
 #include "GPUCommandBuffer.h"
 #include "GPUExtent3DDict.h"
@@ -97,6 +98,11 @@ public:
 
 private:
     GPUQueue(Ref<WebGPU::Queue>&&, GPUDevice&);
+
+    ExceptionOr<void> drawSnapshotToTexture(
+        const CanvasElementSnapshot&,
+        const GPUDrawElementImageSource&,
+        const GPUDrawElementImageDestination&);
 
     const Ref<WebGPU::Queue> m_backing;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
