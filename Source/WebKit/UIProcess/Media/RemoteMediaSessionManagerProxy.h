@@ -28,7 +28,6 @@
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
 #include "MessageReceiver.h"
-#include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioHardwareListener.h>
 #include <WebCore/AudioSession.h>
 #include <WebCore/MediaSessionIdentifier.h>
@@ -132,22 +131,8 @@ private:
 #endif
 
 #if USE(AUDIO_SESSION)
-    void remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&&);
-
     // AudioSession
-    String routingContextUID() const final { return m_audioConfiguration.routingContextUID; }
-
-    float sampleRate() const final { return m_audioConfiguration.sampleRate; }
-    size_t bufferSize() const final { return m_audioConfiguration.bufferSize; }
-    size_t numberOfOutputChannels() const final { return m_audioConfiguration.numberOfOutputChannels; }
-    size_t maximumNumberOfOutputChannels() const final { return m_audioConfiguration.maximumNumberOfOutputChannels; }
-    size_t outputLatency() const final { return m_audioConfiguration.outputLatency; }
-
     Ref<SetActivePromise> tryToSetActiveInternal(bool) final;
-
-    size_t preferredBufferSize() const final { return m_audioConfiguration.preferredBufferSize; }
-    void setPreferredBufferSize(size_t) final;
-
 #endif
 
     RefPtr<WebCore::PlatformMediaSessionInterface> findAndUpdateSession(IPC::Connection&, const RemoteMediaSessionState&);
@@ -168,11 +153,6 @@ private:
 
 #if PLATFORM(COCOA)
     ThreadSafeWeakPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;
-#endif
-
-#if USE(AUDIO_SESSION)
-    mutable RemoteAudioSessionConfiguration m_audioConfiguration;
-
 #endif
 
     bool m_isInSetCurrentSession { false };

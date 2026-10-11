@@ -30,7 +30,6 @@
 
 #include "Logging.h"
 #include "MessageSenderInlines.h"
-#include "RemoteAudioSessionConfiguration.h"
 #include "RemoteMediaSessionManagerMessages.h"
 #include "RemoteMediaSessionManagerProxyMessages.h"
 #include "RemoteMediaSessionState.h"
@@ -58,25 +57,6 @@ RemoteMediaSessionManager::RemoteMediaSessionManager(WebPage& webPage)
     , m_webPageID(webPage.identifier())
 {
     WebProcess::singleton().addMessageReceiver(Messages::RemoteMediaSessionManager::messageReceiverName(), m_webPageID, *this);
-
-#if USE(AUDIO_SESSION)
-    Ref sharedSession = WebCore::AudioSession::singleton();
-    RemoteAudioSessionConfiguration configuration = {
-        sharedSession->routingContextUID(),
-        sharedSession->sampleRate(),
-        sharedSession->bufferSize(),
-        sharedSession->numberOfOutputChannels(),
-        sharedSession->maximumNumberOfOutputChannels(),
-        sharedSession->preferredBufferSize(),
-        sharedSession->outputLatency(),
-        sharedSession->isMuted(),
-        sharedSession->sceneIdentifier(),
-        sharedSession->soundStageSize(),
-        sharedSession->categoryOverride(),
-        sharedSession->isActive(),
-    };
-    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioConfigurationChanged(WTF::move(configuration)));
-#endif
 }
 
 RemoteMediaSessionManager::~RemoteMediaSessionManager()
@@ -239,13 +219,6 @@ void RemoteMediaSessionManager::audioOutputDeviceChanged()
     auto supportedBufferSizes = audioHardwareListener()->supportedBufferSizes();
     send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioOutputDeviceChanged(supportedBufferSizes.minimum, supportedBufferSizes.maximum));
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::audioOutputDeviceChanged();
-}
-#endif
-
-#if USE(AUDIO_SESSION)
-void RemoteMediaSessionManager::setAudioSessionPreferredBufferSize(uint64_t preferredBufferSize)
-{
-    WebCore::AudioSession::singleton().setPreferredBufferSize(preferredBufferSize);
 }
 #endif
 

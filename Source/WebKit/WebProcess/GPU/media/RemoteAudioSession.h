@@ -41,7 +41,6 @@ class Connection;
 namespace WebKit {
 
 class GPUProcessConnection;
-class WebProcess;
 
 class RemoteAudioSession final
     : public WebCore::AudioSession
@@ -51,14 +50,14 @@ class RemoteAudioSession final
     , IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSession);
 public:
-    static Ref<RemoteAudioSession> create(WebProcess&);
+    static Ref<RemoteAudioSession> create();
     ~RemoteAudioSession();
 
     // WebCore::AudioSession, GPUProcessConnection::Client.
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
 private:
-    RemoteAudioSession(WebProcess&);
+    RemoteAudioSession();
     IPC::Connection& ensureConnection();
 
     // IPC::MessageReceiver
@@ -119,13 +118,13 @@ private:
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(MayResume) final;
 
-    WeakRef<WebProcess> m_webProcess;
     WeakHashSet<WebCore::AudioSessionConfigurationChangeObserver> m_configurationChangeObservers;
     CategoryType m_category { CategoryType::None };
     Mode m_mode { Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     bool m_isPlayingToBluetoothOverrideChanged { false };
     std::optional<RemoteAudioSessionConfiguration> m_configuration;
+    std::optional<size_t> m_lastSentPreferredBufferSize { };
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     bool m_isInterruptedForTesting { false };
 

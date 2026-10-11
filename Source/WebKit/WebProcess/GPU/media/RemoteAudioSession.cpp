@@ -43,13 +43,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSession);
 
-Ref<RemoteAudioSession> RemoteAudioSession::create(WebProcess& webProcess)
+Ref<RemoteAudioSession> RemoteAudioSession::create()
 {
-    return adoptRef(*new RemoteAudioSession(webProcess));
+    return adoptRef(*new RemoteAudioSession);
 }
 
-RemoteAudioSession::RemoteAudioSession(WebProcess& webProcess)
-    : m_webProcess(webProcess)
+RemoteAudioSession::RemoteAudioSession()
 {
     AudioSession::addInterruptionObserver(*this);
 }
@@ -66,6 +65,7 @@ void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& conn
 {
     ASSERT(m_gpuProcessConnection.get() == &connection);
     m_gpuProcessConnection = nullptr;
+    m_lastSentPreferredBufferSize.reset();
     setActive(false);
     connection.messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
 }
@@ -119,6 +119,9 @@ void RemoteAudioSession::setCategory(CategoryType type, Mode mode, RouteSharingP
 
 void RemoteAudioSession::setPreferredBufferSize(size_t size)
 {
+    if (std::exchange(m_lastSentPreferredBufferSize, size) == size)
+        return;
+
     configuration().preferredBufferSize = size;
     protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
 }
@@ -253,18 +256,6 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
         if (routingContextUIDChanged)
             observer.routingContextUIDDidChange(*this);
     });
-
-    if (!mutedStateChanged && !bufferSizeChanged && !sampleRateChanged && !routingContextUIDChanged)
-        return;
-
-    RefPtr protectedProcess = m_webProcess.get();
-    if (!protectedProcess)
-        return;
-
-    if (!protectedProcess->sharedPreferencesForWebProcessValue().remoteMediaSessionManagerEnabled)
-        return;
-
-    protectedProcess->remoteAudioSessionConfigurationChanged(*m_configuration);
 }
 
 void RemoteAudioSession::beginInterruptionRemote()

@@ -75,10 +75,6 @@ protected:
     void clientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier, WebCore::PlatformMediaSessionRemoteControlCommandType, WebCore::PlatformMediaSessionRemoteCommandArgument);
     void setCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier>);
 
-#if USE(AUDIO_SESSION)
-    void setAudioSessionPreferredBufferSize(uint64_t);
-#endif
-
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     // IPC::MessageSender.

@@ -34,10 +34,6 @@ messages -> RemoteMediaSessionManager {
     void ClientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier identifier, bool shouldPlay)
 
     void SetCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier> identifier);
-
-#if USE(AUDIO_SESSION)
-    void SetAudioSessionPreferredBufferSize(uint64_t preferredBufferSize)
-#endif
 }
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

@@ -294,29 +294,11 @@ void RemoteMediaSessionManagerProxy::resetMediaSessionRestrictions()
 }
 
 #if USE(AUDIO_SESSION)
-void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
-{
-    // configuration.isActive is NOT trusted: it is relayed by the (untrusted) WebContent process. This
-    // message carries only the descriptive configuration (category, sample rate, buffer size, routing, ...).
-    m_audioConfiguration = WTF::move(configuration);
-}
-
 Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool)
 {
     // Each content process activates its own audio session with the GPU process, so the UI process has
     // no session of its own to activate.
     return SetActivePromise::createAndResolve();
-}
-
-void RemoteMediaSessionManagerProxy::setPreferredBufferSize(size_t size)
-{
-    if (m_audioConfiguration.preferredBufferSize == size)
-        return;
-
-    m_audioConfiguration.preferredBufferSize = size;
-
-    for (Ref session : m_sessionProxies.values())
-        session->send(Messages::RemoteMediaSessionManager::SetAudioSessionPreferredBufferSize(size));
 }
 #endif
 
