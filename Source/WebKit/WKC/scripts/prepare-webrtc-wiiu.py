@@ -141,6 +141,25 @@ inline bool hwaes_capable() { return false; }
     for relative_path, replacements in patches:
         changed += patch_file(root, str(vendor / relative_path), replacements)
 
+    # In this WebKit snapshot LibWebRTCUtils.h is not tracked. The only use in
+    # LibWebRTCProvider.cpp was for toRef(), already supplied by the included
+    # LibWebRTCProvider.h -> LibWebRTCRefWrappers.h chain. Remove the stale
+    # include in the temporary build checkout; never modify upstream files.
+    changed += patch_file(
+        root,
+        "Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCProvider.cpp",
+        [
+            (
+                '#include "LibWebRTCUtils.h"\\n',
+                '// WKC patch: toRef() is provided by LibWebRTCRefWrappers.h.\\n',
+            ),
+            (
+                '#include <dlfcn.h>\\n',
+                '// WKC patch: dlfcn.h is not needed by this provider on Wii U.\\n',
+            ),
+        ],
+    )
+
     print(f"Wii U WebRTC compatibility patches complete ({changed} files changed).")
     return 0
 
