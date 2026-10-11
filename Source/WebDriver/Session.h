@@ -58,14 +58,16 @@ public RefCounted<Session>
 #endif
 {
 public:
-    static Ref<Session> create(Ref<SessionHost>&& host)
+    enum class HasHTTPFlag : bool { No, Yes };
+
+    static Ref<Session> create(Ref<SessionHost>&& host, HasHTTPFlag hasHTTPFlag)
     {
-        return adoptRef(*new Session(WTF::move(host)));
+        return adoptRef(*new Session(WTF::move(host), hasHTTPFlag));
     }
 #if ENABLE(WEBDRIVER_BIDI)
-    static Ref<Session> create(Ref<SessionHost>&& host, WeakPtr<WebSocketServer> bidiServer)
+    static Ref<Session> create(Ref<SessionHost>&& host, WeakPtr<WebSocketServer> bidiServer, HasHTTPFlag hasHTTPFlag)
     {
-        return adoptRef(*new Session(WTF::move(host), WTF::move(bidiServer)));
+        return adoptRef(*new Session(WTF::move(host), WTF::move(bidiServer), hasHTTPFlag));
     }
 #endif
     virtual ~Session();
@@ -73,6 +75,7 @@ public:
     const String& id() const;
     const Capabilities& capabilities() const;
     bool isConnected() const;
+    bool hasHTTPFlag() const { return m_hasHTTPFlag; }
 #if ENABLE(WEBDRIVER_BIDI)
     bool hasBiDiEnabled() const { return m_hasBiDiEnabled; };
     void setHasBiDiEnabled(bool flag) { m_hasBiDiEnabled = flag; }
@@ -105,6 +108,7 @@ public:
 
     void waitForNavigationToComplete(Function<void(CommandResult&&)>&&);
     void createTopLevelBrowsingContext(Function<void(CommandResult&&)>&&);
+    void getUserAgent(Function<void(CommandResult&&)>&&);
     void close(Function<void(CommandResult&&)>&&);
     void getTimeouts(Function<void(CommandResult&&)>&&);
     void setTimeouts(const Timeouts&, Function<void(CommandResult&&)>&&);
@@ -166,9 +170,9 @@ public:
 #endif
 
 private:
-    Session(Ref<SessionHost>&&);
+    Session(Ref<SessionHost>&&, HasHTTPFlag);
 #if ENABLE(WEBDRIVER_BIDI)
-    Session(Ref<SessionHost>&&, WeakPtr<WebSocketServer>&&);
+    Session(Ref<SessionHost>&&, WeakPtr<WebSocketServer>&&, HasHTTPFlag);
 #endif
 
     String uncheckedTopLevelBrowsingContext() const;
@@ -265,6 +269,7 @@ private:
     InputSourceState& inputSourceState(const String& id);
 
     RefPtr<SessionHost> m_host;
+    bool m_hasHTTPFlag;
     double m_scriptTimeout;
     double m_pageLoadTimeout;
     double m_implicitWaitTimeout;

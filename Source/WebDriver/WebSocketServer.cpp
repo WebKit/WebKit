@@ -65,6 +65,18 @@ void WebSocketServer::removeStaticConnection(const WebSocketMessageHandler::Conn
     m_staticConnections.erase(std::ranges::find(m_staticConnections, connection));
 }
 
+bool WebSocketServer::associateConnectionWithSession(const WebSocketMessageHandler::Connection& connection, const String& sessionId)
+{
+    auto staticConnection = std::ranges::find(m_staticConnections, connection);
+    if (staticConnection == m_staticConnections.end() || m_connectionToSession.contains(connection))
+        return false;
+
+    auto protectedConnection = *staticConnection;
+    m_staticConnections.erase(staticConnection);
+    m_connectionToSession.add(WTF::move(protectedConnection), sessionId);
+    return true;
+}
+
 void WebSocketServer::removeConnection(const WebSocketMessageHandler::Connection& connection)
 {
     auto it = m_connectionToSession.find(connection);
