@@ -752,6 +752,27 @@ jobs:
           fi
           exit 0
 
+      # This independent diagnostic target previously bypassed ccache and had no
+      # build-directory cache, so every run recompiled 1,700+ WebRTC objects.
+      - name: Cache libwebrtc build
+        id: cache-webrtc
+        uses: actions/cache@v5.0.4
+        with:
+          path: build-webrtc
+          key: libwebrtc-wiiu-${{ hashFiles('Source/ThirdParty/libwebrtc/Source/**/*', 'Tools/wiiu/libwebrtc/**/*', 'Source/WebKit/WKC/cmake/WebRTCPlatform.cmake', 'Source/WebKit/WKC/cmake/WiiUToolchain.cmake', 'Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py') }}
+          restore-keys: |
+            libwebrtc-wiiu-
+
+      # On an exact cache hit the inputs/config are identical. Checkout restores
+      # fresh source mtimes, so re-stamp cached objects after the WKC-only patch
+      # script has run; partial cache restores are not touched and rebuild normally.
+      - name: Reuse cached libwebrtc objects
+        if: steps.cache-webrtc.outputs.cache-hit == 'true'
+        run: |
+          if [ -f build-webrtc/build.ninja ]; then
+            find build-webrtc -name '*.obj' -exec touch {} + 2>/dev/null || true
+          fi
+
       # Full WebCore is the feature build (DOM/HTML/CSS/rendering + Web Audio + WebRTC).
       # Keep its compile errors non-blocking while porting continues, but publish a
       # separately named engine bundle whenever the complete target and install pass.
@@ -831,6 +852,8 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WiiUToolchain.cmake" \
             -DLIBWEBRTC_DIR="$GITHUB_WORKSPACE/Source/ThirdParty/libwebrtc" \
             -DCMAKE_PROJECT_libwebrtc_wiiu_INCLUDE="$GITHUB_WORKSPACE/Source/WebKit/WKC/cmake/WebRTCPlatform.cmake" \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=Release \
             > webrtc-configure.log 2>&1
           if [ -f build-webrtc/build.ninja ]; then
@@ -845,6 +868,8 @@ jobs:
           if [ -f build-webrtc/build.ninja ]; then
             cmake --build build-webrtc --parallel "$(nproc)" -- -k 0 > webrtc-build.log 2>&1
             echo "===== libwebrtc FAILED objects: $(grep -c '^FAILED:' webrtc-build.log) ====="
+            echo "===== ccache stats after libwebrtc probe ====="
+            ccache --show-stats || true
             echo "----- distinct compile errors (top 60, normalized) -----"
             grep -hoE 'error: .*' webrtc-build.log \
               | sed -E 's/[0-9]+/N/g; s/0x[0-9a-fA-F]+/0xN/g' \

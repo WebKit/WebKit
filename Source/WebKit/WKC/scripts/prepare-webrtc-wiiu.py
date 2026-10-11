@@ -135,6 +135,58 @@ inline bool hwaes_capable() { return false; }
 ''',
             )],
         ),
+        (
+            "third_party/abseil-cpp/absl/random/internal/nanobenchmark.cc",
+            [
+                (
+                    "#if defined(ABSL_ARCH_PPC)\n#include <sys/platform/ppc.h>  // NOLINT\n#endif",
+                    "#if defined(ABSL_ARCH_PPC) && !defined(WKC_WIIU_WEBRTC)\n#include <sys/platform/ppc.h>  // NOLINT\n#endif",
+                ),
+                (
+                    "#if defined(ABSL_ARCH_ARM) || defined(ABSL_ARCH_AARCH64)\n#include <time.h>  // NOLINT\n#endif",
+                    "#if defined(ABSL_ARCH_ARM) || defined(ABSL_ARCH_AARCH64) || defined(WKC_WIIU_WEBRTC)\n#include <time.h>  // NOLINT\n#endif",
+                ),
+                (
+                    "#if defined(ABSL_ARCH_PPC)\n  asm volatile(\"mfspr %0, %1\" : \"=r\"(t) : \"i\"(268));",
+                    "#if defined(ABSL_ARCH_PPC) && !defined(WKC_WIIU_WEBRTC)\n  asm volatile(\"mfspr %0, %1\" : \"=r\"(t) : \"i\"(268));",
+                ),
+                (
+                    "#if defined(ABSL_ARCH_PPC)\n  return __ppc_get_timebase_freq();",
+                    "#if defined(ABSL_ARCH_PPC) && !defined(WKC_WIIU_WEBRTC)\n  return __ppc_get_timebase_freq();",
+                ),
+            ],
+        ),
+        (
+            "webrtc/rtc_base/physical_socket_server.cc",
+            [
+                (
+                    "  int received = 0;\n  iovec iov = {.iov_base = buffer, .iov_len = length};\n  msghdr msg = {.msg_iov = &iov, .msg_iovlen = 1};",
+                    """#if defined(WKC_WIIU_WEBRTC)
+  // devkitPPC/newlib exposes recv/recvfrom but not recvmsg ancillary data.
+  // Preserve IPv4 payload/address reads; timestamp and ECN metadata are unavailable.
+  if (out_addr)
+    out_addr->Clear();
+  if (timestamp)
+    *timestamp = -1;
+  if (ecn)
+    *ecn = EcnMarking::kNotEct;
+  const int received = out_addr
+      ? ::recvfrom(s_, buffer, length, 0, addr, &addr_len)
+      : ::recv(s_, buffer, length, 0);
+  if (received > 0 && out_addr)
+    SocketAddressFromSockAddrStorage(addr_storage, out_addr);
+  return received;
+#else
+  int received = 0;
+  iovec iov = {.iov_base = buffer, .iov_len = length};
+  msghdr msg = {.msg_iov = &iov, .msg_iovlen = 1};""",
+                ),
+                (
+                    "  return received;\n\n#else\n  int received = 0;",
+                    "  return received;\n#endif // WKC_WIIU_WEBRTC\n\n#else\n  int received = 0;",
+                ),
+            ],
+        ),
     ]
 
     changed = 0
