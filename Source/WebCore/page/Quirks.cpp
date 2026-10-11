@@ -117,13 +117,6 @@
     if (!needsQuirks()) [[unlikely]] \
         return returnValue
 
-namespace WTF {
-template<> struct EnumTraits<WebCore::QuirkBehaviorID> {
-    static constexpr int min = 0;
-    static constexpr int max = static_cast<int>(WebCore::QuirkBehaviorID::NumberOfIDs);
-};
-} // namespace WTF
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);

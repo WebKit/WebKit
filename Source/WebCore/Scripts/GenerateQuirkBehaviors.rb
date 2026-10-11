@@ -23,8 +23,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-# Generates QuirkBehaviorID, the QuirkBehaviors:: constants, and the QuirksAccessors base class of Quirks
-# from QuirkBehaviors.yaml.
+# Generates QuirkBehaviorID, the build conditions, the QuirkBehaviors:: constants, their lookup by ID for the
+# runtime quirk table parser, and the QuirksAccessors base class of Quirks from QuirkBehaviors.yaml and
+# QuirkBuildConditions.yaml.
 
 require "fileutils"
 require 'erb'
@@ -36,7 +37,7 @@ options = {
   :templates => [],
 }
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename($0)} [--outputDir <output>] --template <file> [--template <file>...] <QuirkBehaviors.yaml>"
+  opts.banner = "Usage: #{File.basename($0)} [--outputDir <output>] --template <file> [--template <file>...] <QuirkBehaviors.yaml> <QuirkBuildConditions.yaml>"
 
   opts.separator ""
 
@@ -47,15 +48,15 @@ end
 
 optparse.parse!
 
-if ARGV.size != 1
+if ARGV.size != 2
   puts optparse
   exit 1
 end
-behaviorsFile = ARGV.shift
+behaviorsFile, buildConditionsFile = ARGV
 
 FileUtils.mkdir_p(options[:outputDirectory])
 
-def loadBehaviors(path)
+def loadMapping(path, description)
   document = begin
     YAML.parse_file(path)
   rescue Psych::SyntaxError => e
@@ -64,10 +65,35 @@ def loadBehaviors(path)
   end
   root = document && document.children[0]
   if !root.is_a?(Psych::Nodes::Mapping)
-    STDERR.puts "error: Input file #{path} is not a mapping of QuirkBehaviorID names to their fields."
+    STDERR.puts "error: Input file #{path} is not a mapping of #{description}."
     exit(1)
   end
   root.children.each_slice(2).map { |key, value| [key.value, value.to_ruby] }
+end
+
+BuildCondition = Struct.new(:name, :guard)
+
+def loadBuildConditions(path)
+  failed = false
+  reject = Proc.new do |msg|
+    STDERR.puts("error: #{path}: " + msg)
+    failed = true
+  end
+
+  conditions = []
+  loadMapping(path, "BuildConditionID names to preprocessor conditions").each do |name, guard|
+    reject.call "#{name} is defined more than once." if conditions.any? { |condition| condition.name == name }
+    reject.call "#{name} is not a valid BuildConditionID name." if !(name =~ /\A[a-z]\w*\z/)
+    if guard == true
+      conditions << BuildCondition.new(name, nil)
+    elsif guard.is_a?(String) && guard =~ /\A[A-Z]+\([A-Z0-9_]+\)\z/
+      conditions << BuildCondition.new(name, guard)
+    else
+      reject.call "#{name} must map to true or a preprocessor condition such as ENABLE(FEATURE), not #{guard.inspect}."
+    end
+  end
+  exit 1 if failed
+  conditions
 end
 
 class QuirkBehavior
@@ -86,6 +112,10 @@ class QuirkBehavior
 
   def constantName
     @id[0].downcase + @id[1..-1]
+  end
+
+  def availableNames
+    @available.scan(/\b[A-Za-z_]\w*\b/)
   end
 
   def availableExpression
@@ -170,11 +200,13 @@ class QuirkBehaviors
   PARAMETERS = %w{ Script UserAgent ChromeCompatibilityVersion CookieNames }
   CONDITIONS = %w{ ElementSelector SecondaryURL DocumentSelector }
 
-  attr_reader :behaviors
+  attr_reader :behaviors, :buildConditions
 
-  def initialize(path)
+  def initialize(path, buildConditions)
     @behaviors = []
+    @buildConditions = buildConditions
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
+    buildConditionNames = buildConditions.map(&:name)
 
     failed = false
     reject = Proc.new do |msg|
@@ -184,7 +216,7 @@ class QuirkBehaviors
 
     seen = {}
     accessorNames = {}
-    loadBehaviors(path).each do |id, opts|
+    loadMapping(path, "QuirkBehaviorID names to their fields").each do |id, opts|
       if seen[id]
         reject.call "#{id} is defined more than once."
         next
@@ -197,6 +229,7 @@ class QuirkBehaviors
       ((opts["conditions"] || []) - CONDITIONS).each { |condition| reject.call "#{id} has unknown condition \"#{condition}\"." }
 
       behavior = QuirkBehavior.new(id, opts)
+      (behavior.availableNames - buildConditionNames).each { |name| reject.call "#{id} is available under \"#{name}\", which is not in QuirkBuildConditions.yaml." }
       generated = behavior.hasGeneratedAccessor?
       reject.call "#{id} has implementation \"#{opts["implementation"]}\"; the only value is \"custom\"." if opts["implementation"] && opts["implementation"] != "custom"
       (GENERATED_ONLY_FIELDS & opts.keys).each { |field| reject.call "#{id} has a custom implementation, so \"#{field}\" would be ignored." } if !generated
@@ -236,7 +269,7 @@ class QuirkBehaviors
   end
 end
 
-quirkBehaviors = QuirkBehaviors.new(behaviorsFile)
+quirkBehaviors = QuirkBehaviors.new(behaviorsFile, loadBuildConditions(buildConditionsFile))
 
 options[:templates].each do |template|
   quirkBehaviors.renderTemplate(template, options[:outputDirectory])

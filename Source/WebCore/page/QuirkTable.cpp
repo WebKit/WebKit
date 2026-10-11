@@ -1231,7 +1231,7 @@ RuntimeQuirkBehavior RuntimeQuirkBehavior::from(const QuirkBehavior& behavior)
     return result;
 }
 
-static RuntimeQuirk runtimeQuirkFromCompiledQuirk(const Quirk& quirk)
+RuntimeQuirk RuntimeQuirk::from(const Quirk& quirk)
 {
     return RuntimeQuirk {
         .matches = parseCompiledPatterns(quirk.matches),
@@ -1247,7 +1247,7 @@ static RuntimeQuirk runtimeQuirkFromCompiledQuirk(const Quirk& quirk)
 static const RuntimeQuirkTable& compiledQuirkTable()
 {
     static MainThreadNeverDestroyed<RuntimeQuirkTable> table { RuntimeQuirkTable {
-        .quirks = WTF::map(SiteSpecificQuirks::table, runtimeQuirkFromCompiledQuirk),
+        .quirks = WTF::map(SiteSpecificQuirks::table, RuntimeQuirk::from),
     } };
     return table.get();
 }

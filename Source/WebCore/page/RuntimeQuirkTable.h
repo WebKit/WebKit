@@ -44,12 +44,59 @@ struct RuntimeQuirk {
 
     Vector<RuntimeQuirkBehavior> behaviors;
 
+    WEBCORE_EXPORT static RuntimeQuirk from(const Quirk&);
+
     WEBCORE_EXPORT bool appliesTo(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument) const;
     void apply(QuirksData&) const;
+
+    friend bool operator==(const RuntimeQuirk&, const RuntimeQuirk&) = default;
 };
 
 struct RuntimeQuirkTable {
     Vector<RuntimeQuirk> quirks;
 };
+
+enum class QuirkTableParseErrorKind : uint8_t {
+    InvalidDocument,
+    InvalidRow,
+    InvalidBehavior,
+    UnknownField,
+    MissingField,
+    DisallowedField,
+    MissingMatches,
+    InvalidString,
+    InvalidStringArray,
+    InvalidMatchPattern,
+    InvalidEnvironment,
+    InvalidAvailableExpression,
+    InvalidBehaviors,
+    UnknownBehavior,
+    DuplicateBehavior,
+    InvalidBugs,
+    DuplicateBug,
+};
+
+struct QuirkTableParseError {
+    struct Location {
+        std::optional<size_t> row;
+        String rowPattern;
+        std::optional<size_t> behavior;
+        std::optional<QuirkBehaviorID> behaviorID;
+    };
+
+    Location location;
+    QuirkTableParseErrorKind kind;
+    String field;
+    String value;
+
+    WEBCORE_EXPORT String description() const;
+};
+
+struct QuirkTableParseResult {
+    RuntimeQuirkTable table;
+    Vector<QuirkTableParseError> errors;
+};
+
+WEBCORE_EXPORT QuirkTableParseResult parseQuirkTable(StringView json);
 
 } // namespace WebCore

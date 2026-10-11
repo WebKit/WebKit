@@ -2615,9 +2615,12 @@ $(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREF
 
 QUIRK_BEHAVIORS_INPUT_FILES = \
     $(WebCore)/page/QuirkBehaviors.yaml \
+    $(WebCore)/page/QuirkBuildConditions.yaml \
 #
 
 GENERATE_QUIRK_BEHAVIORS = \
+    QuirkBehaviorDeclarations.cpp \
+    QuirkBehaviorDeclarations.h \
     QuirkBehaviorDefinitions.h \
     QuirkBehaviorID.h \
     QuirksAccessors.cpp \

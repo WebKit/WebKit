@@ -1052,6 +1052,14 @@ _testwebkitapi_stage_resources("${TESTWEBKITAPI_DIR}/Resources" "^(cocoa|glib)/"
 # URLForResource:.
 _testwebkitapi_stage_resources("${TESTWEBKITAPI_DIR}/Resources/cocoa" "")
 
+# The shipped quirk table, which the Quirks tests parse.
+add_custom_command(OUTPUT "${_resources_dir}/QuirkTable.json"
+    COMMAND ${CMAKE_COMMAND} -E copy "${WEBCORE_DIR}/page/QuirkTable.json" "${_resources_dir}/QuirkTable.json"
+    MAIN_DEPENDENCY "${WEBCORE_DIR}/page/QuirkTable.json"
+    VERBATIM
+)
+list(APPEND _resources_dst_files "${_resources_dir}/QuirkTable.json")
+
 add_custom_target(TestWebKitAPIResources ALL DEPENDS ${_resources_dst_files})
 # Ensure all test targets depend on the resources bundle.
 foreach (_test_target TestWTF TestJavaScriptCore TestWebCore TestWebKitLegacy TestWebKit TestIPC TestWGSL)

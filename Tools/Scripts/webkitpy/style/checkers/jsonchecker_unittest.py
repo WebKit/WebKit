@@ -481,13 +481,13 @@ class JSONQuirkTableCheckerTest(fake_filesystem_unittest.TestCase):
         '  conditions: [ElementSelector]',
         '  conditionsRequired: true',
     ])
-    BUILD_CONDITIONS = '#if PLATFORM(MAC)\nconstexpr bool mac = true;\n#else\nconstexpr bool mac = false;\n#endif\nconstexpr bool iOS = false;\n'
+    BUILD_CONDITIONS = '# Comment.\n\nmac: PLATFORM(MAC)\niOS: PLATFORM(IOS)\n'
     ENVIRONMENTS = 'enum class URLEnvironment : uint8_t {\n    SmallScreen,\n};\n'
 
     def setUp(self):
         self.setUpPyfakefs()
         self.fs.create_file('/page/QuirkBehaviors.yaml', contents=self.BEHAVIORS_YAML)
-        self.fs.create_file('/page/QuirkBehaviors.h', contents=self.BUILD_CONDITIONS)
+        self.fs.create_file('/page/QuirkBuildConditions.yaml', contents=self.BUILD_CONDITIONS)
         self.fs.create_file('/page/QuirkMatchPattern.h', contents=self.ENVIRONMENTS)
 
     def errors_for(self, table):
@@ -520,6 +520,23 @@ class JSONQuirkTableCheckerTest(fake_filesystem_unittest.TestCase):
         self.fs.remove('/page/QuirkBehaviors.yaml')
         self.assertEqual(self.errors_for({'quirks': []}), ['Could not read QuirkBehaviors.yaml, which QuirkTable.json is checked against.'])
 
+    def assert_yaml_rejected(self, file_name, contents, expected):
+        self.fs.remove('/page/' + file_name)
+        self.fs.create_file('/page/' + file_name, contents=contents)
+        errors = self.errors_for({'quirks': []})
+        self.assertEqual(len(errors), 1, errors)
+        self.assertTrue(errors[0].startswith(expected), errors)
+
+    def test_non_flat_behaviors_yaml(self):
+        self.assert_yaml_rejected('QuirkBehaviors.yaml', 'ScriptQuirk:\n  parameters:\n    - Script\n', 'QuirkBehaviors.yaml:2: expected "BehaviorName:" or an indented "key: value"')
+        self.assert_yaml_rejected('QuirkBehaviors.yaml', '  parameters: [Script]\n', 'QuirkBehaviors.yaml:1: expected "BehaviorName:" or an indented "key: value"')
+        self.assert_yaml_rejected('QuirkBehaviors.yaml', 'ScriptQuirk:\n  parameters: Script\n', 'QuirkBehaviors.yaml:2: expected "parameters" to be an inline list')
+        self.assert_yaml_rejected('QuirkBehaviors.yaml', 'ScriptQuirk:\n  conditionsRequired: yes\n', 'QuirkBehaviors.yaml:2: expected "conditionsRequired" to be true or false')
+
+    def test_non_flat_build_conditions_yaml(self):
+        self.assert_yaml_rejected('QuirkBuildConditions.yaml', 'mac:\n  guard: PLATFORM(MAC)\n', 'QuirkBuildConditions.yaml:1: expected "name: condition"')
+        self.assert_yaml_rejected('QuirkBuildConditions.yaml', 'mac: PLATFORM(MAC)\n  iOS: PLATFORM(IOS)\n', 'QuirkBuildConditions.yaml:2: expected "name: condition"')
+
     def test_top_level(self):
         for table in ([], {'rows': []}, {'quirks': {}}, {'quirks': [], 'extra': 1}):
             self.assertEqual(self.errors_for(table), ['The top level must be an object whose only key is "quirks", an array of rows.'])
@@ -534,9 +551,13 @@ class JSONQuirkTableCheckerTest(fake_filesystem_unittest.TestCase):
 
     def test_available(self):
         self.assertEqual(self.errors_for_row(available='mac && iOS'), [])
+        for available in ('!mac', '!!mac', '!mac && iOS', '!(mac || iOS)', '(mac || iOS) && !iOS', '((mac))', 'mac||iOS'):
+            self.assertEqual(self.errors_for_row(available=available), [], available)
         self.assert_row_error('"available" must be', available='toaster')
         self.assert_row_error('"available" must be', available='mac ||')
         self.assert_row_error('"available" must be', available='')
+        for available in ('!', '(mac', 'mac)', '()', 'mac iOS', 'mac ! iOS', 'mac & iOS', 'mac &', 'mac |', '!toaster', '(' * 100 + 'mac' + ')' * 100):
+            self.assert_row_error('"available" must be', available=available)
 
     def test_bugs_and_comment(self):
         self.assert_row_error('"bugs" must be', bugs=[])
@@ -548,6 +569,11 @@ class JSONQuirkTableCheckerTest(fake_filesystem_unittest.TestCase):
 
     def test_behaviors(self):
         self.assert_row_error('"NoSuchQuirk" is not a behavior', behaviors=[{'id': 'NoSuchQuirk'}])
+        self.assert_row_error('a behavior must have an "id"', behaviors=[{'comment': 'No id.'}])
+        self.assert_row_error('"id" must be a non-empty string', behaviors=[{'id': 5}])
+        self.assert_row_error('"id" must be a non-empty string', behaviors=[{'id': ['PlainQuirk']}])
+        self.assert_row_error('"behaviors" lists PlainQuirk more than once', behaviors=[{'id': 'PlainQuirk'}, {'id': 'PlainQuirk'}])
+        self.assert_row_error('"behaviors" lists ScriptQuirk more than once', behaviors=[{'id': 'ScriptQuirk', 'script': 'a'}, {'id': 'ScriptQuirk', 'script': 'b'}])
         self.assert_row_error('unknown field "colour"', behaviors=[{'id': 'PlainQuirk', 'colour': 'red'}])
         self.assert_row_error('ScriptQuirk: needs "script"', behaviors=[{'id': 'ScriptQuirk'}])
         self.assert_row_error('PlainQuirk: does not take "script"', behaviors=[{'id': 'PlainQuirk', 'script': 'x'}])
