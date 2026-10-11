@@ -90,6 +90,9 @@ webkit_navigation_action_get_source_frame_info (WebKitNavigationAction *navigati
 WEBKIT_API WebKitFrameInfo *
 webkit_navigation_action_get_target_frame_info (WebKitNavigationAction *navigation);
 
+WEBKIT_API gboolean
+webkit_navigation_action_is_for_main_frame   (WebKitNavigationAction *navigation);
+
 G_END_DECLS
 
 #endif
