@@ -113,6 +113,7 @@ Tests/WebKit/WKWebView/ClipboardTests.mm @nonARC
 Tests/WebKit/WKWebView/CloseWebViewAfterEnterFullscreen.mm @nonARC
 Tests/WebKit/WKWebView/CloseWebViewDuringEnterFullscreen.mm @nonARC
 Tests/WebKit/WKWebView/CommandBackForward.mm @nonARC
+Tests/WebKit/WKWebView/CompressionDictionary.mm @nonARC
 Tests/WebKit/WKWebView/Configuration.mm @nonARC
 Tests/WebKit/WKWebView/ContentFiltering.mm @nonARC
 Tests/WebKit/WKWebView/ContentRuleListNotification.mm @nonARC

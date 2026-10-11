@@ -32,6 +32,7 @@
 #import "Download.h"
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
+#import "NetworkCache.h"
 #import "NetworkIssueReporter.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
@@ -47,6 +48,7 @@
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
@@ -117,6 +119,25 @@ static void applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, con
 {
     request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, credential.serializationForBasicAuthorizationHeader());
 }
+
+#if HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+// https://www.rfc-editor.org/rfc/rfc8941#name-serializing-a-string
+static String serializeStructuredFieldString(const String& value)
+{
+    return makeString('"', makeStringByReplacingAll(makeStringByReplacingAll(value, '\\', "\\\\"_s), '"', "\\\""_s), '"');
+}
+
+// https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch steps 10-11. CFNetwork adds dcb and dcz
+// to Accept-Encoding itself (step 12), and asks for the dictionary only if the server answers with one of them.
+static void setCompressionDictionaryHeaders(WebCore::ResourceRequest& request, const CompressionDictionaryParameters::Match& match)
+{
+    request.setHTTPHeaderField(WebCore::HTTPHeaderName::AvailableDictionary, makeString(':', base64EncodeToString(std::span { match.hash }), ':'));
+    if (match.id.isEmpty())
+        request.removeHTTPHeaderField(WebCore::HTTPHeaderName::DictionaryID);
+    else
+        request.setHTTPHeaderField(WebCore::HTTPHeaderName::DictionaryID, serializeStructuredFieldString(match.id));
+}
+#endif
 
 static float NODELETE toNSURLSessionTaskPriority(WebCore::ResourceLoadPriority priority)
 {
@@ -212,6 +233,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_navigationLosesFrameSpecificStorageAccess(parameters.navigationLosesFrameSpecificStorageAccess)
     , m_sourceOrigin(parameters.sourceOrigin)
     , m_requiredCookiesVersion(parameters.requiredCookiesVersion)
+#if HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+    , m_compressionDictionary(parameters.compressionDictionary)
+#endif
 {
     auto request = parameters.request;
     auto url = request.url();
@@ -241,6 +265,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     auto thirdPartyCookieBlockingDecision = requestThirdPartyCookieBlockingDecision(request);
     restrictRequestReferrerToOriginIfNeeded(request);
+
+#if HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+    if (m_compressionDictionary && m_compressionDictionary->match)
+        setCompressionDictionaryHeaders(request, *m_compressionDictionary->match);
+#endif
 
     if (RefPtr body = request.httpBody()) {
         if (RefPtr state = body->pendingStreamState())
@@ -504,6 +533,15 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https"_s) && WTF::protocolIs(request.httpReferrer(), "https"_s))
         request.clearHTTPReferrer();
+
+#if HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+    // CFNetwork carries Available-Dictionary and Dictionary-ID over to a same-origin redirect. They are for the old URL,
+    // and the client must not see them, so take them off here and rematch once the client has seen the request.
+    if (m_compressionDictionary && std::exchange(m_compressionDictionary->match, std::nullopt)) {
+        request.removeHTTPHeaderField(WebCore::HTTPHeaderName::AvailableDictionary);
+        request.removeHTTPHeaderField(WebCore::HTTPHeaderName::DictionaryID);
+    }
+#endif
     
     const auto& url = request.url();
     m_user = url.user();
@@ -558,12 +596,72 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
             if (!request.isNull()) {
                 protectedThis->restrictRequestReferrerToOriginIfNeeded(request);
                 updateTaskWithFirstPartyForSameSiteCookies(protectedThis->m_task.get(), request);
+#if HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+                protectedThis->updateCompressionDictionaryForRedirect(request);
+#endif
             }
             protectedThis->m_previousRequest = request;
             completionHandler(WTF::move(request));
         });
     });
 }
+
+#if HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+// A redirect is followed here rather than in NetworkResourceLoader, so the best match has to be recomputed for the
+// new URL. https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+void NetworkDataTaskCocoa::updateCompressionDictionaryForRedirect(WebCore::ResourceRequest& request)
+{
+    if (!m_compressionDictionary || !request.url().protocolIsInHTTPFamily() || !WebCore::shouldTreatAsPotentiallyTrustworthy(request.url()))
+        return;
+
+    // NetworkTaskCocoa::willPerformHTTPRedirection has already decided whether the new request blocks cookies.
+    if (hasBeenSetToUseStatelessCookieStorage())
+        return;
+
+    CheckedPtr session = networkSession();
+    RefPtr cache = session ? session->cache() : nullptr;
+    if (!cache)
+        return;
+
+    auto match = cache->bestCompressionDictionaryMatch(request, m_compressionDictionary->destination);
+    if (!match)
+        return;
+
+    m_compressionDictionary->match = CompressionDictionaryParameters::Match { WTF::move(match->key), match->hash, WTF::move(match->id) };
+    setCompressionDictionaryHeaders(request, *m_compressionDictionary->match);
+}
+
+void NetworkDataTaskCocoa::needsCompressionDictionary(std::span<const uint8_t> sha256, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    CheckedPtr session = networkSession();
+    RefPtr cache = session ? session->cache() : nullptr;
+    // CFNetwork reads the hash back from the Available-Dictionary header that setCompressionDictionaryHeaders wrote,
+    // so anything else is a dictionary this task never advertised.
+    if (!cache || !m_compressionDictionary || !m_compressionDictionary->match || !equalSpans(sha256, std::span { m_compressionDictionary->match->hash })) {
+        failForUnavailableCompressionDictionary();
+        return completionHandler(nullptr);
+    }
+
+    auto& match = *m_compressionDictionary->match;
+    cache->retrieveCompressionDictionary(match.key, match.hash, [weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)](RefPtr<WebCore::SharedBuffer>&& buffer) mutable {
+        if (!buffer) {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->failForUnavailableCompressionDictionary();
+        }
+        completionHandler(WTF::move(buffer));
+    });
+}
+
+// Without a dictionary, CFNetwork delivers the dcb or dcz body undecoded. NetworkResourceLoader would then remove
+// Content-Encoding and pass the compressed bytes on as if they were decoded, so fail the load instead.
+void NetworkDataTaskCocoa::failForUnavailableCompressionDictionary()
+{
+    RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::failForUnavailableCompressionDictionary: taskID=%lu", this, (unsigned long)[m_task taskIdentifier]);
+    cancel();
+    if (RefPtr client = m_client.get())
+        client->didCompleteWithError(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, URL { [m_task currentRequest].URL }, "The compression dictionary for the response is not available"_s }, { });
+}
+#endif // HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
 
 void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {

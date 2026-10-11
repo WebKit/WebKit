@@ -1,0 +1,5 @@
+
+PASS Browser supports link element with compression-dictionary rel.
+PASS Fetch same origin dictionary using link element
+PASS Fetch cross origin dictionary using link element
+

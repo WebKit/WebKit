@@ -1,0 +1,14 @@
+Description
+
+This test validates that PerformanceResourceTiming.decodedBodySize correctly reports the size of resources after removing content encoding (gzip, brotli, deflate, and compression dictionaries with dcb and dcz), and that it differs from encodedBodySize for compressed resources.
+
+
+PASS decodedBodySize for gzip-compressed XML resource
+PASS decodedBodySize for brotli-compressed text resource
+PASS decodedBodySize for gzip-compressed text resource
+PASS decodedBodySize for dynamically gzip-compressed JS resource
+PASS decodedBodySize for deflate-compressed JS resource
+PASS decodedBodySize equals encodedBodySize for uncompressed resource
+PASS decodedBodySize for dictionary-compressed brotli (dcb) resource
+PASS decodedBodySize for dictionary-compressed zstd (dcz) resource
+

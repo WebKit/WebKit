@@ -2666,3 +2666,6 @@ webkit.org/b/326899 [ Sequoia+ ] http/tests/cache/cancel-multiple-post-xhrs.html
 
 webkit.org/b/293973 [ Debug ] http/tests/ipc/cocoa/gpu-load-error-empty-user-info-crssh.html [ Skip ]
 [ Debug ] ipc/cocoa/media-containment-bypass-create-player.html [ Crash ]
+
+# Compression Dictionary Transport needs CFNetwork support for dcb and dcz, which macOS 27 has.
+[ GoldenGate+ ] imported/w3c/web-platform-tests/fetch/compression-dictionary [ Pass ]

@@ -2049,3 +2049,6 @@
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 270000))
 #define HAVE_AVPLAYER_DISCONNECTEDFROMSYSTEMAUDIO 1
 #endif
+
+// FIXME: Give this the correct protection and move to WebKitAdditions.
+#define HAVE_CFNETWORK_COMPRESSION_DICTIONARY 0

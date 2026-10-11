@@ -510,6 +510,11 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
 bool NetworkResourceLoader::shouldFetchWithCompressionDictionary(const ResourceRequest& request) const
 {
+#if !HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT) && !HAVE(CFNETWORK_COMPRESSION_DICTIONARY)
+    // The network layer can't decode dcb or dcz, so there is no point advertising a dictionary.
+    UNUSED_PARAM(request);
+    return false;
+#else
     if (!connectionToWebProcess().compressionDictionaryEnabled() || !canUseCache(request))
         return false;
 
@@ -527,6 +532,7 @@ bool NetworkResourceLoader::shouldFetchWithCompressionDictionary(const ResourceR
 
     // 5. If request's client is not a secure context, then return the result of running fallback.
     return shouldTreatAsPotentiallyTrustworthy(request.url());
+#endif
 }
 
 void NetworkResourceLoader::continueStartNetworkLoad(ResourceRequest&& request, NetworkLoadParameters&& parameters)
