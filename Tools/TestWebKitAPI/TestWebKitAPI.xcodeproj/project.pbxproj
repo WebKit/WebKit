@@ -1140,6 +1140,7 @@
 				WebKit/WKWebView/mac/JSWrapperForNodeInWebFrame.mm,
 				WebKit/WKWebView/mac/KeyboardEventTests.mm,
 				WebKit/WKWebView/mac/LegacyDragAndDropTests.mm,
+				WebKit/WKWebView/mac/LegacyWheelEventLatching.mm,
 				WebKit/WKWebView/mac/LimitTitleSize.mm,
 				WebKit/WKWebView/mac/LoadWebArchive.mm,
 				WebKit/WKWebView/mac/LoadWebViewWithEmptyAppName.mm,
