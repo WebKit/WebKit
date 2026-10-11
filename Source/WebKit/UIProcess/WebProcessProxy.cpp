@@ -4165,6 +4165,37 @@ void WebProcessProxy::commitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlace
 }
 #endif
 
+ProcessHostsFrameInPage::ProcessHostsFrameInPage(const WebProcessProxy& sender, const WebPageProxy& page)
+    : m_sender(sender)
+    , m_page(page)
+{
+}
+
+std::optional<IPC::ValidationFailure> ProcessHostsFrameInPage::checkUntrusted(const FrameIdentifier& frameID) const
+{
+    RefPtr sender { m_sender.get() };
+    RefPtr page { m_page.get() };
+    if (!sender || !page)
+        return IPC::ValidationFailure::Ignore;
+
+    RefPtr frame { WebFrameProxy::webFrame(frameID) };
+    if (!frame)
+        return IPC::ValidationFailure::Ignore;
+
+    RefPtr framePage { frame->page() };
+    if (!framePage)
+        return IPC::ValidationFailure::Ignore;
+
+    if (framePage.get() != page.get())
+        return IPC::ValidationFailure::Terminate;
+
+    // The frame's previous process can still send messages for it until it receives LoadDidCommitInAnotherProcess.
+    if (&frame->process() != sender.get())
+        return IPC::ValidationFailure::Ignore;
+
+    return std::nullopt;
+}
+
 } // namespace WebKit
 
 #undef EXTRACT_WITH_MESSAGE_CHECK
