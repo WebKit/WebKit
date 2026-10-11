@@ -738,11 +738,14 @@ Ref<const RTT> TypeInformation::canonicalizeSingleton(TypeSectionState* state, R
 
 Vector<Ref<const RTT>> TypeInformation::canonicalizeRecursionGroupImpl(TypeSectionState* state, const RecursionGroup* recursionGroup, Vector<Ref<const RTT>>&& candidateRTTs)
 {
-    // Size 1 is legal here: a `(rec (<single recursive type>))` -- typeCount==1
-    // with self-references -- takes the multi-member path because the singleton
-    // fast path in parseRecursionGroup only handles the non-recursive case.
-    // The loop/HashSet logic below is correct for any size >= 1.
-    ASSERT(!candidateRTTs.isEmpty());
+    // A one-type group is a singleton, same as the shorthand form. The
+    // recursion-group table is only groups of two or more.
+    if (candidateRTTs.size() == 1) {
+        Vector<Ref<const RTT>> canonicalRTTs;
+        canonicalRTTs.append(canonicalizeSingletonImpl(state, recursionGroup, candidateRTTs.takeLast()));
+        return canonicalRTTs;
+    }
+    ASSERT(candidateRTTs.size() > 1);
 
     auto candidateGroup = RTTGroup::create(WTF::move(candidateRTTs));
     for (uint32_t i = 0; i < candidateGroup->size(); ++i) {

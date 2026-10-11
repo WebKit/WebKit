@@ -294,6 +294,87 @@ function testRecDeclaration() {
     )
   `);
 
+  // A self-referential type written without rec is a one-type rec group.
+  {
+    const bytes = new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x11, 0x03, 0x5f, 0x01, 0x63, 0x00, 0x00, 0x4e, 0x01, 0x5f, 0x01, 0x63, 0x01, 0x00, 0x60, 0x00, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x02, 0x07, 0x07, 0x01, 0x03, 0x72, 0x75, 0x6e, 0x00, 0x00, 0x0a, 0x0c, 0x01, 0x0a, 0x00, 0xd0, 0x00, 0xfb, 0x00, 0x00, 0xfb, 0x14, 0x01, 0x0b]);
+    assert.eq(new WebAssembly.Instance(new WebAssembly.Module(bytes)).exports.run(), 1);
+  }
+
+  assert.eq(instantiate(`
+    (module
+      (type $l (struct (field (ref null $l))))
+      (rec (type $m (struct (field (ref null $m)))))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (struct.new $l (ref.null $l)))))
+  `).exports.run(), 1);
+
+  assert.eq(instantiate(`
+    (module
+      (rec (type $m (struct (field (ref null $m)))))
+      (type $l (struct (field (ref null $l))))
+      (func (export "run") (result i32)
+        (ref.test (ref $l) (struct.new $m (ref.null $m)))))
+  `).exports.run(), 1);
+
+  instantiate(`
+    (module
+      (type $l (struct (field (ref null $l))))
+      (rec (type $m (struct (field (ref null $m)))))
+      (func (param (ref null $l)) (result (ref null $m))
+        (local.get 0)))
+  `);
+
+  assert.eq(instantiate(`
+    (module
+      (type $l (array (ref null $l)))
+      (rec (type $m (array (ref null $m))))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (array.new $l (ref.null $l) (i32.const 1)))))
+  `).exports.run(), 1);
+
+  assert.eq(instantiate(`
+    (module
+      (type $l (func (param (ref null $l))))
+      (rec (type $m (func (param (ref null $m)))))
+      (elem declare funcref (ref.func $f))
+      (func $f (type $l))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (ref.func $f))))
+  `).exports.run(), 1);
+
+  assert.eq(instantiate(`
+    (module
+      (type $l (sub (struct (field (ref null $l)))))
+      (rec (type $m (sub (struct (field (ref null $m))))))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (struct.new $l (ref.null $l)))))
+  `).exports.run(), 1);
+
+  assert.eq(instantiate(`
+    (module
+      (type $base (sub (struct)))
+      (type $l (sub $base (struct (field (ref null $l)))))
+      (rec (type $m (sub $base (struct (field (ref null $m))))))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (struct.new $l (ref.null $l)))))
+  `).exports.run(), 1);
+
+  assert.eq(instantiate(`
+    (module
+      (type $l (struct (field (ref null $l))))
+      (rec (type $m (struct (field i32 (ref null $m)))))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (struct.new $l (ref.null $l)))))
+  `).exports.run(), 0);
+
+  assert.eq(instantiate(`
+    (module
+      (type $l (struct))
+      (rec (type $m (struct)))
+      (func (export "run") (result i32)
+        (ref.test (ref $m) (struct.new $l))))
+  `).exports.run(), 1);
+
   // Ensure implicit rec groups are accounted for, and treated
   // correctly with regards to equality.
   instantiate(`

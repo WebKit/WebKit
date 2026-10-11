@@ -1030,6 +1030,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position) -> PartialResult
 
     Vector<TypeIndex> types;
     WASM_ALLOCATOR_FAIL_IF(!types.tryReserveInitialCapacity(typeCount), "can't allocate enough memory for recursion group "_s, typeCount, " entries"_s);
+    // `types` holds raw pointers into these defs. Keep them alive until the group is canonicalized.
     Vector<ParsedDef> signatures;
     WASM_ALLOCATOR_FAIL_IF(!signatures.tryReserveInitialCapacity(typeCount), "can't allocate enough memory for recursion group "_s, typeCount, " entries"_s);
 
@@ -1103,6 +1104,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position) -> PartialResult
         TypeIndex memberIdx = recursionGroup->type(i);
         if (memberIdx & subtypeTagBit) {
             const Subtype* subtype = untagSubtype(memberIdx);
+            WASM_PARSER_FAIL_IF(canonicalRTTs[i]->displaySizeExcludingThis() > maxSubtypeDepth, "subtype depth for recursion group's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
             WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*subtype, canonicalRTTs[i].get()));
         }
     }
