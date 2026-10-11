@@ -1,0 +1,131 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/nested-blob-workers.js"></script>
+<script>
+let workers = [];
+
+function startWorkersInMainFrame() {
+    workers.push(startNestedBlobWorkers((urls) => {
+        TestPage.dispatchEventToFrontend("TestPage-NestedBlobWorkersReady", {frame: "main frame", urls});
+    }));
+}
+
+function startWorkersInCrossOriginIFrame() {
+    document.querySelector("iframe").contentWindow.postMessage("start-nested-blob-workers", "*");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data?.type === "nested-blob-workers-ready")
+        TestPage.dispatchEventToFrontend("TestPage-NestedBlobWorkersReady", {frame: "iframe", urls: event.data.urls});
+});
+
+function test()
+{
+    let labelForURL = new Map;
+    let addedWorkerTargets = [];
+    let parsedScriptURLs = new Set;
+
+    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+        if (event.data.target.type === WI.TargetType.Worker)
+            addedWorkerTargets.push(event.data.target);
+    });
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
+        parsedScriptURLs.add(event.data.script.url);
+    });
+
+    function label(url) {
+        return labelForURL.get(url) ?? "unexpected URL";
+    }
+
+    function parentLabel(target) {
+        let parentTarget = target.parentTarget;
+        if (parentTarget instanceof WI.WorkerTarget)
+            return label(parentTarget.name);
+
+        let frame = parentTarget.executionContext?.frame;
+        if (!frame)
+            return `${parentTarget.type} target without a frame`;
+        return `${parentTarget.type} target for the ${frame.isMainFrame() ? "main frame" : "iframe"}`;
+    }
+
+    async function startWorkers(expression) {
+        let [event] = await Promise.all([
+            InspectorTest.awaitEvent("TestPage-NestedBlobWorkersReady"),
+            InspectorTest.evaluateInPage(expression),
+        ]);
+
+        let urls = Object.entries(event.data.urls);
+        for (let [level, url] of urls)
+            labelForURL.set(url, `${event.data.frame} worker level ${level}`);
+
+        while (!urls.every(([level, url]) => parsedScriptURLs.has(url)))
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.ScriptAdded);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Worker.NestedWorkers");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Worker.NestedWorkers.StartInCrossOriginIFrame",
+        description: "Start three nested workers in the cross-origin iframe.",
+        async test() {
+            await startWorkers("startWorkersInCrossOriginIFrame()");
+            InspectorTest.pass("Started nested workers in the cross-origin iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Worker.NestedWorkers.StartInMainFrame",
+        description: "Start three nested workers in the main frame.",
+        async test() {
+            await startWorkers("startWorkersInMainFrame()");
+            InspectorTest.pass("Started nested workers in the main frame.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Worker.NestedWorkers.WorkerTargets",
+        description: "Each worker should have its own target, listed once under the right parent.",
+        async test() {
+            let identifiers = new Set(addedWorkerTargets.map((target) => target.identifier));
+            InspectorTest.expectEqual(identifiers.size, addedWorkerTargets.length, "Every worker target should have a distinct identifier.");
+
+            // These are the workers that the Sources navigation sidebar lists.
+            let listedWorkerTargets = WI.targets.filter((target) => target.type === WI.TargetType.Worker && target.mainResource);
+            InspectorTest.expectEqual(listedWorkerTargets.length, labelForURL.size, `Should list ${labelForURL.size} worker targets.`);
+
+            let lines = listedWorkerTargets.map((target) => `${label(target.name)}: parent is ${parentLabel(target)}`);
+            for (let line of lines.sort())
+                InspectorTest.log(line);
+
+            for (let [url, workerLabel] of Array.from(labelForURL).sort((a, b) => a[1].localeCompare(b[1]))) {
+                let count = listedWorkerTargets.filter((target) => target.name === url).length;
+                InspectorTest.expectEqual(count, 1, `Should list ${workerLabel} once.`);
+            }
+
+            let misplacedLines = [];
+            for (let target of listedWorkerTargets) {
+                let ownedURLs = [...Array.from(target.resourceCollection), ...Array.from(target.extraScriptCollection)].map((sourceCode) => sourceCode.url);
+                for (let url of ownedURLs) {
+                    if (labelForURL.has(url))
+                        misplacedLines.push(`${label(target.name)} lists ${label(url)}`);
+                }
+            }
+            for (let line of misplacedLines.sort())
+                InspectorTest.log(line);
+            InspectorTest.expectEqual(misplacedLines.length, 0, "No worker should list another worker's main script as its own resource.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that nested workers in the main frame and in a cross-origin iframe each get their own worker target, under the right parent.</p>
+<script>
+let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+let iframe = document.createElement("iframe");
+iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/worker/resources/iframe-with-nested-blob-workers.html?run=${Date.now()}-${Math.random()}`;
+document.body.appendChild(iframe);
+</script>
+</body>
