@@ -37,13 +37,14 @@ struct FrameInfoData;
 
 namespace WebCore {
 class SecurityOrigin;
+class SecurityOriginData;
 }
 
 @class WKWebView;
 
 @interface WKGeolocationProviderIOS : NSObject
 -(id)initWithProcessPool:(WebKit::WebProcessPool&)processPool;
--(void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView*)view;
+-(void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo topOrigin:(const WebCore::SecurityOriginData&)topOrigin completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView*)view;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -258,12 +258,10 @@ void ProvisionalPageProxy::cancel()
     ASSERT(mainFrame);
     auto error = WebKit::cancelledError(m_request);
     error.setType(WebCore::ResourceError::Type::Cancellation);
-    auto securityOriginData = SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url());
     FrameInfoData frameInfo {
         FrameType::Local,
         m_request,
-        securityOriginData,
-        securityOriginData,
+        SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url()),
         { },
         mainFrame->frameID(),
         m_page ? std::optional { m_page->identifier() } : std::nullopt,
