@@ -427,6 +427,11 @@ if (WKC_ENABLE_WEBRTC_API)
     # targets are built as a child project, so expose the source/generated
     # include roots explicitly to this static target.
     target_include_directories(WebKitWKC PRIVATE
+        # WebCore's provider and wrapper headers are stored in the platform
+        # directories, not all in the generated WebCore forwarding directory.
+        "${WEBCORE_DIR}/platform/mediastream"
+        "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
+        "${WEBCORE_DIR}/platform/audio"
         "${LIBWEBRTC_DIR}/Source"
         "${LIBWEBRTC_DIR}/Source/third_party/abseil-cpp"
         "${LIBWEBRTC_DIR}/Source/third_party/boringssl/src/include"
