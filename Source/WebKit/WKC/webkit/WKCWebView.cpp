@@ -2026,10 +2026,22 @@ void WKCWebView::cachedSize(unsigned int& dead_resource, unsigned int& live_reso
 void WKCWebView::clearCaches(bool clearhttpcache)
 {
     auto& cache = WebCore::MemoryCache::singleton();
-    cache.setCapacities(0, 0, 0);
+
+    // Do not set capacities to zero here: that permanently disables future
+    // resource caching until some unrelated caller resets them. Evict unused
+    // resources and drop decoded backing data from live resources instead,
+    // preserving the memory budget initialized by WKCWebKitInitialize().
+    cache.pruneDeadResourcesToSize(0);
+    cache.pruneLiveResourcesToSize(0, true);
+
 #if ENABLE(WKC_HTTPCACHE)
     if (WebCore::ResourceHandleManager::sharedInstance() && clearhttpcache)
         WebCore::ResourceHandleManager::sharedInstance()->clearHTTPCache();
+#else
+    // Modern WKC networking uses CurlContext rather than ResourceHandleManager.
+    // There is no separate HTTP response disk-cache implementation to flush here;
+    // a future persistent HTTP cache should expose its own real clearing API.
+    UNUSED_PARAM(clearhttpcache);
 #endif
     clearFontCache(true);
     clearCrossOriginPreflightResultCache();
