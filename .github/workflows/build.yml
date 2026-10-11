@@ -768,7 +768,7 @@ jobs:
               # A static WebKit archive does not absorb its linked static dependencies.
               # Include every archive produced by this full CMake graph, not only
               # libWebKitWKC.a, so the browser consumer can link the WebRTC stack too.
-              find build-full -type f -name '*.a' -exec cp -f {} "$GITHUB_WORKSPACE/dist-full/lib/" \\;
+              find build-full -type f -name '*.a' -exec cp -f {} "$GITHUB_WORKSPACE/dist-full/lib/" \;
               cp build-full-configure.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               cp build-full.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               {
@@ -779,7 +779,7 @@ jobs:
                 echo "Not yet verified: Wave Browser final executable link, hardware capture, or on-console runtime"
                 echo
                 echo "Static archives included:"
-                find "$GITHUB_WORKSPACE/dist-full/lib" -maxdepth 1 -type f -name '*.a' -printf '%f\\n' | sort
+                find "$GITHUB_WORKSPACE/dist-full/lib" -maxdepth 1 -type f -name '*.a' -printf '%f\n' | sort
               } > "$GITHUB_WORKSPACE/dist-full/BUILD_PROFILE.txt"
               echo "engine_ready=true" >> "$GITHUB_OUTPUT"
               echo "Full engine bundle ready at dist-full/."
