@@ -159,7 +159,7 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
         return super.removable;
     }
 
-    get editable()
+    get supportsOptions()
     {
         switch (this) {
         case WI.debuggerManager.debuggerStatementsBreakpoint:

@@ -38,4 +38,49 @@ WI.SymbolicBreakpointTreeElement = class SymbolicBreakpointTreeElement extends W
 
         super(breakpoint, {classNames, title});
     }
+
+    // Public
+
+    populateContextMenu(contextMenu, event)
+    {
+        WI.SymbolicBreakpointPopover.appendContextMenuItems(contextMenu, this.breakpoint, this.status, this);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        console.assert(popover instanceof WI.SymbolicBreakpointPopover, popover);
+
+        let breakpoint = popover.breakpoint;
+        if (!breakpoint || breakpoint === this.breakpoint)
+            return;
+
+        if (WI.debuggerManager.symbolicBreakpoints.some((existing) => existing !== this.breakpoint && existing.equals(breakpoint))) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let wasSelected = this.selected;
+        let treeOutline = this.treeOutline;
+
+        this.breakpoint.remove();
+        WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+        if (wasSelected) {
+            const omitFocus = true;
+            const selectedByUser = false;
+            const suppressNotification = true;
+            treeOutline?.findTreeElement(breakpoint)?.select(omitFocus, selectedByUser, suppressNotification);
+        }
+    }
+
+    // Private
+
+    _handleStatusImageElementDoubleClicked(event)
+    {
+        WI.SymbolicBreakpointPopover.show(this.breakpoint, this.status, this);
+    }
 };

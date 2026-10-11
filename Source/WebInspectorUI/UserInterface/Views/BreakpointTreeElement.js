@@ -125,13 +125,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
             this._removeProbeSet(this._probeSet);
     }
 
-    populateContextMenu(contextMenu, event)
-    {
-        WI.BreakpointPopover.appendContextMenuItems(contextMenu, this._breakpoint, this.status);
-
-        super.populateContextMenu(contextMenu, event);
-    }
-
     // Protected
 
     updateStatus()
@@ -141,7 +134,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
         this.status.classList.toggle("resolved", this._breakpoint.resolved);
         this.status.classList.toggle("disabled", this._breakpoint.disabled);
-        if (this._breakpoint.editable)
+        if (this._breakpoint.supportsOptions)
             this.status.classList.toggle("auto-continue", this._breakpoint.autoContinue);
     }
 
@@ -217,11 +210,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
     _statusImageElementClicked(event)
     {
         this._breakpoint.disabled = !this._breakpoint.disabled;
-    }
-
-    _handleStatusImageElementDoubleClicked(event)
-    {
-        WI.BreakpointPopover.show(this._breakpoint, this.status);
     }
 };
 
