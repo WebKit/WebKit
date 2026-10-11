@@ -605,12 +605,7 @@ void SQLiteFileSystem::registerSQLiteVFS()
 }
 
 } // namespace WebCore
-#else
-namespace WebCore {
-
-void SQLiteFileSystem::registerSQLiteVFS()
-{
-}
-
-} // namespace
+// ENABLE(SQL_DATABASE) is off for the current Wii U WKC profile. The legacy
+// fallback definition of SQLiteFileSystem::registerSQLiteVFS() is not declared
+// by the current upstream SQLiteFileSystem interface, so do not emit it.
 #endif // ENABLE(SQL_DATABASE)
