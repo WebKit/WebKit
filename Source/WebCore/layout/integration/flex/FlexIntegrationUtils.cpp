@@ -568,14 +568,15 @@ LayoutUnit FlexIntegrationUtils::maxContentMainAxisExtentForFlexItem(const FlexL
     return flexItem->maxContentLogicalWidthContribution() - mainAxisBorderAndPadding;
 }
 
-// The item's raw min-content main-axis contribution (border/padding included), measured under the cross-size override
-// — used to floor a table flex item's min main size.
-LayoutUnit FlexIntegrationUtils::minContentMainAxisContributionForFlexItem(const FlexLayoutItem& flexLayoutItem)
+// The item's min-content main size (border and padding excluded, like the flex algorithm's other main sizes), measured
+// under the cross-size override. Used to floor a table flex item's min main size.
+LayoutUnit FlexIntegrationUtils::minContentMainAxisExtentForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     auto definiteCrossSizeScope = FlexItemDefiniteCrossSizeScope { flexLayoutItem.renderer.get(), FlexItemDefiniteCrossSizeScope::InvalidateContentWidths::Yes };
     auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexLayoutItem.renderer.get() };
     CheckedRef flexItem = flexLayoutItem.renderer;
-    return flexItem->minContentLogicalWidthContribution();
+    auto minContentContribution = flexItem->minContentLogicalWidthContribution();
+    return minContentContribution - flexItem->borderAndPaddingLogicalWidth();
 }
 
 LayoutUnit FlexIntegrationUtils::flexItemIntrinsicLogicalHeight(const FlexLayoutItem& flexLayoutItem, bool needToStretchLogicalHeight) const
@@ -609,7 +610,7 @@ LayoutUnit FlexIntegrationUtils::flexItemIntrinsicLogicalWidth(const FlexLayoutI
     RenderBox::LogicalExtentComputedValues values;
     {
         // This is an intrinsic width measurement like the ones in maxContentMainAxisExtentForFlexItem and
-        // minContentMainAxisContributionForFlexItem: a percentage resolved against this item while measuring it
+        // minContentMainAxisExtentForFlexItem: a percentage resolved against this item while measuring it
         // answers from the item's cross-size definiteness, not from how far the flex algorithm has got.
         auto intrinsicWidthComputationScope = FlexItemIntrinsicWidthComputationScope { flexItem };
         flexItem->computeLogicalWidth(values);
