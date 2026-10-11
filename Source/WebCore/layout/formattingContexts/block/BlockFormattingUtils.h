@@ -35,6 +35,7 @@ class RenderBox;
 
 namespace Style {
 class ComputedStyle;
+struct PreferredSize;
 }
 
 namespace Layout {
@@ -53,6 +54,8 @@ public:
     static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7).
     static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
+    // A percentage block size behaves as auto when the block size of the containing block is not definite (CSS 2.2 §10.5).
+    static bool blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize);
     static std::optional<LayoutUnit> definiteContentBoxBlockSize(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
 };
 

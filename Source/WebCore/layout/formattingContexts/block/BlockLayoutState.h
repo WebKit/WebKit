@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AdjoiningMargins.h>
+#include <WebCore/BlockMarginCollapse.h>
 #include <WebCore/Font.h>
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutRange.h>
@@ -50,17 +51,15 @@ struct ContainingBlockState {
     BoxGeometry geometry;
     // The content box in the inline direction, from the inline start of the block container's border box (in its own direction).
     LayoutRange inlineRange;
-    // Block offsets are relative to the border box of the root (every box in the block formatting context has the same block flow direction).
-    LayoutUnit borderBoxLogicalTop;
-    LayoutUnit contentBoxLogicalTop;
+    // Block offsets are relative to the border box of the root (every box in the block formatting context has the same block flow
+    // direction). The top is unknown while the block-start margin can still collapse with the margins that follow it (CSS 2.2 §8.3.1).
+    std::optional<LayoutUnit> borderBoxLogicalTop;
+    LayoutUnit borderAndPaddingBefore;
     // Percentage block sizes of the children resolve against this, and behave as auto without it (CSS 2.2 §10.5).
     std::optional<LayoutUnit> contentBoxBlockSize;
-    // FIXME: With margin collapsing (CSS 2.2 §8.3.1) the next child starts at this border box bottom plus the collapsed margins.
-    std::optional<LayoutUnit> lastInFlowChildMarginBoxLogicalBottom;
+    BlockMarginCollapse::BlockContainer margins;
 
-    LayoutUnit logicalTopForNextChild() const { return lastInFlowChildMarginBoxLogicalBottom.value_or(contentBoxLogicalTop); }
-    // The auto height ends at the bottom margin edge of the last in-flow child (CSS 2.2 §10.6.3).
-    LayoutUnit intrinsicContentBlockSize() const { return logicalTopForNextChild() - contentBoxLogicalTop; }
+    LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };
 
 // This class holds block level information shared across child inline formatting contexts, and what the block formatting context changes
@@ -135,6 +134,7 @@ public:
 
     // The block containers whose content is being laid out, from the root to the innermost one.
     Vector<ContainingBlockState>& containingBlockStates() LIFETIME_BOUND { return m_containingBlockStates; }
+    BlockMarginCollapse& marginCollapse() LIFETIME_BOUND { return m_marginCollapse; }
 
 private:
     std::optional<LineClamp> m_lineClamp;
@@ -144,6 +144,7 @@ private:
     std::optional<LineGrid> m_lineGrid;
     MarginState m_marginState;
     Vector<ContainingBlockState> m_containingBlockStates;
+    BlockMarginCollapse m_marginCollapse;
 };
 
 inline BlockLayoutState::BlockLayoutState(MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
