@@ -1,0 +1,15 @@
+Tests that the Security tab's "Show full certificate" works for main-frame resources under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.MainFrame.ShowCertificate
+-- Running test case: SiteIsolation.Network.MainFrame.ShowCertificate.HTTPS
+PASS: Resource should belong to the main frame.
+PASS: showCertificate should succeed.
+PASS: Frontend host should receive a non-empty serialized certificate.
+
+-- Running test case: SiteIsolation.Network.MainFrame.ShowCertificate.HTTP
+PASS: Resource should belong to the main frame.
+ERROR: Error: Missing certificate of resource for given requestId
+PASS: showCertificate should fail.
+PASS: Frontend host should not receive a certificate.
+

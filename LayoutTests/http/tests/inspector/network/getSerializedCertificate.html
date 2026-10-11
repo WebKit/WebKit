@@ -18,6 +18,10 @@ function createInsecureRequest() {
 
 function test()
 {
+    function networkAgent() {
+        return WI.networkManager.enabledNetworkForSiteIsolation && WI.backendTarget ? WI.backendTarget.NetworkAgent : window.NetworkAgent;
+    }
+
     let suite = InspectorTest.createAsyncSuite("Network.getSerializedCertificate");
 
     suite.addTestCase({
@@ -25,7 +29,7 @@ function test()
         description: "Check if an insecure resource is able to serialize its certificate.",
         test(resolve, reject) {
             WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
-            .then((event) => InspectorTest.expectException(() => NetworkAgent.getSerializedCertificate(event.target.requestIdentifier)))
+            .then((event) => InspectorTest.expectException(() => networkAgent().getSerializedCertificate(event.target.requestIdentifier)))
             .then(resolve, reject);
 
             InspectorTest.evaluateInPage(`createInsecureRequest()`)
@@ -38,7 +42,7 @@ function test()
         description: "Check of a secure resource is able to serialize its certificate.",
         test(resolve, reject) {
             WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
-            .then((event) => NetworkAgent.getSerializedCertificate(event.target.requestIdentifier))
+            .then((event) => networkAgent().getSerializedCertificate(event.target.requestIdentifier))
             .then(({serializedCertificate}) => {
                 InspectorTest.expectGreaterThan(serializedCertificate.length, 0, "Request should have serializable certificate.");
             })
@@ -53,6 +57,7 @@ function test()
         name: "Network.getSerializedCertificate.Invalid",
         async test() {
             const invalidRequestIdentifier = "INVALID";
+            // The page target's agent, so the error text is the same with and without Site Isolation.
             await InspectorTest.expectException(() => NetworkAgent.getSerializedCertificate(invalidRequestIdentifier));
         }
     });

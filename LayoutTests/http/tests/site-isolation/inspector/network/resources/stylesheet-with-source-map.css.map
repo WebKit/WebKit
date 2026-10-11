@@ -1,0 +1,7 @@
+{
+"version": 3,
+"file": "stylesheet-with-source-map.css",
+"sources": ["stylesheet-with-source-map-original.scss"],
+"names": [],
+"mappings": "AAAA"
+}

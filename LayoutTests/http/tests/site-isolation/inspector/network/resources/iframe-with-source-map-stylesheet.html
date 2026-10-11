@@ -1,0 +1,7 @@
+<script>
+let link = document.createElement("link");
+link.rel = "stylesheet";
+link.href = "stylesheet-with-source-map.css" + location.search;
+document.head.appendChild(link);
+</script>
+<p>Cross-origin iframe that loads a stylesheet with a sourceMappingURL.</p>

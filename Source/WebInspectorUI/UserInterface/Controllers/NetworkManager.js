@@ -1802,7 +1802,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // (web-page) target, fanning the load out to the frame's owning process. Route there when
         // Network is enabled on the backend target; otherwise the main target handles it. Mirrors
         // Resource.requestContentFromBackend.
-        if (this._networkEnabledOnBackendTarget && WI.backendTarget && WI.backendTarget !== target && WI.backendTarget.hasCommand("Network.loadResource"))
+        if (this._enabledNetworkForSiteIsolation && WI.backendTarget && WI.backendTarget !== target && WI.backendTarget.hasCommand("Network.loadResource"))
             target = WI.backendTarget;
 
         if (!target.hasCommand("Network.loadResource")) {

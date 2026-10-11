@@ -1,0 +1,3 @@
+<FilesMatch "^stylesheet-with-source-map.*\.(css|map|scss)$">
+    Header set Cache-Control "no-store"
+</FilesMatch>
