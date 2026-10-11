@@ -85,6 +85,26 @@ void HTMLSlotElement::removingSteps(RemovalType removalType, ContainerNode& oldP
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
+void HTMLSlotElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+
+    RefPtr oldShadowRoot = movingType.didRemoveFromOldTreeScope && oldParent.isInShadowTree() ? oldParent.containingShadowRoot() : nullptr;
+    RefPtr newShadowRoot = movingType.didInsertIntoNewTreeScope && isInShadowTree() ? containingShadowRoot() : nullptr;
+
+    if (oldShadowRoot == newShadowRoot) {
+        if (newShadowRoot)
+            newShadowRoot->slotElementDidMoveWithinShadowTree(*this);
+        return;
+    }
+
+    auto& name = attributeWithoutSynchronization(nameAttr);
+    if (oldShadowRoot)
+        oldShadowRoot->removeSlotElementByName(name, *this, oldParent);
+    if (newShadowRoot)
+        newShadowRoot->addSlotElementByName(name, *this);
+}
+
 void HTMLSlotElement::childrenChanged(const ChildChange& childChange)
 {
     HTMLElement::childrenChanged(childChange);

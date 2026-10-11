@@ -163,6 +163,31 @@ void HTMLOptGroupElement::removingSteps(RemovalType removalType, ContainerNode& 
     }
 }
 
+void HTMLOptGroupElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+
+    if (!document().settings().htmlEnhancedSelectParsingEnabled())
+        return;
+
+    RefPtr oldSelect = m_ownerSelect;
+    RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes);
+    if (oldSelect == newSelect) {
+        if (newSelect)
+            newSelect->setRecalcListItems();
+        return;
+    }
+
+    m_ownerSelect = newSelect.get();
+
+    if (oldSelect)
+        oldSelect->setRecalcListItems();
+    if (newSelect)
+        newSelect->setRecalcListItems();
+
+    invalidateShadowTree();
+}
+
 bool HTMLOptGroupElement::isDisabledFormControl() const
 {
     return m_isDisabled;

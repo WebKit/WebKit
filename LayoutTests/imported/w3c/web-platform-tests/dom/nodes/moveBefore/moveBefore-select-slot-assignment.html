@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<title>moveBefore() updates which children a base appearance select shows</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore">
+<link rel="help" href="https://html.spec.whatwg.org/#the-select-element">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>select, ::picker(select) { appearance: base-select; }</style>
+<body>
+<div id="container"></div>
+<script>
+function setUp(t, html) {
+  container.innerHTML = html;
+  t.add_cleanup(() => container.replaceChildren());
+  document.body.offsetTop;
+  return id => document.getElementById(id);
+}
+
+// A select's button is display: contents, so the checks below look at its content instead.
+
+test(t => {
+  const get = setUp(t, `<button id=moved><span id=label>Button</span></button><select id=select><option>a</option></select>`);
+  assert_true(get("label").checkVisibility());
+  get("select").moveBefore(get("moved"), get("select").firstChild);
+  assert_true(get("label").checkVisibility(), "shown as the select's button");
+  container.moveBefore(get("moved"), null);
+  assert_true(get("label").checkVisibility(), "shown again outside the select");
+}, "Moving a button into and out of a select");
+
+test(t => {
+  const get = setUp(t, `<select id=select><button id=moved><span id=label>Button</span></button><option id=option>a</option></select>`);
+  assert_true(get("label").checkVisibility());
+  get("select").moveBefore(get("moved"), null);
+  assert_false(get("label").checkVisibility(), "in the closed picker once the button isn't the first child");
+  get("select").moveBefore(get("moved"), get("option"));
+  assert_true(get("label").checkVisibility(), "the select's button again as the first child");
+}, "Reordering a select's button after its options and back");
+
+test(t => {
+  const get = setUp(t, `<select id=first><button id=moved><span id=label>Button</span></button><option>a</option></select>
+    <select id=second><option id=option>b</option></select>`);
+  get("second").moveBefore(get("moved"), get("option"));
+  assert_true(get("label").checkVisibility(), "shown as the other select's button");
+  assert_true(get("first").checkVisibility(), "the old select is still shown");
+}, "Moving a select's button to another select");
+
+promise_test(async t => {
+  const get = setUp(t, `<select id=first><button><selectedcontent id=moved></selectedcontent></button><option>a</option></select>
+    <select id=second><button id=button></button><option>b</option></select>`);
+  assert_true(get("moved").checkVisibility());
+  get("button").moveBefore(get("moved"), null);
+  await new Promise(queueMicrotask);
+  assert_true(get("moved").checkVisibility(), "shown in the other select's button");
+  assert_equals(get("moved").textContent, "b");
+}, "Moving a selectedcontent into another select's button");
+
+test(t => {
+  const get = setUp(t, `<select id=select><option id=first>a</option></select><div id=destination><option id=moved>b</option></div>`);
+  assert_true(get("moved").checkVisibility());
+  get("select").moveBefore(get("moved"), null);
+  assert_false(get("moved").checkVisibility(), "in the closed picker");
+  get("destination").moveBefore(get("moved"), null);
+  assert_true(get("moved").checkVisibility(), "shown again outside the select");
+}, "Moving an option into and out of a select");
+
+test(t => {
+  const get = setUp(t, `<select id=first><option id=option>a</option><option>b</option></select>
+    <select id=second><option>c</option></select>`);
+  get("second").moveBefore(get("option"), null);
+  assert_false(get("option").checkVisibility(), "in the other select's closed picker");
+  assert_array_equals([...get("first").options].map(option => option.textContent), ["b"]);
+  assert_array_equals([...get("second").options].map(option => option.textContent), ["c", "a"]);
+}, "Moving an option between selects");
+
+test(t => {
+  const get = setUp(t, `<select id=select><optgroup id=moved label=group><option id=option>a</option></optgroup></select>
+    <div id=destination></div>`);
+  assert_false(get("option").checkVisibility());
+  get("destination").moveBefore(get("moved"), null);
+  assert_true(get("option").checkVisibility(), "shown outside the select");
+  get("select").moveBefore(get("moved"), null);
+  assert_false(get("option").checkVisibility(), "in the closed picker again");
+}, "Moving an optgroup out of and back into a select");
+
+test(t => {
+  const get = setUp(t, `<select id=select><option>a</option><hr id=moved><option>b</option></select>
+    <div id=destination></div>`);
+  assert_false(get("moved").checkVisibility());
+  get("destination").moveBefore(get("moved"), null);
+  assert_true(get("moved").checkVisibility(), "shown outside the select");
+  get("select").moveBefore(get("moved"), null);
+  assert_false(get("moved").checkVisibility(), "in the closed picker again");
+}, "Moving an hr out of and back into a select");
+</script>

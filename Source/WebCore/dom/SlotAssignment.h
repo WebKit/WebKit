@@ -59,6 +59,7 @@ public:
     virtual void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&) = 0;
     virtual void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) = 0;
     virtual void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&) = 0;
+    virtual void slotElementDidMoveWithinShadowTree(HTMLSlotElement&, ShadowRoot&) = 0;
     virtual void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot&) = 0;
     virtual void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) = 0;
     virtual void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) = 0;
@@ -96,6 +97,7 @@ private:
     void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName, ShadowRoot&) final;
     void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
     void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot&) final;
+    void slotElementDidMoveWithinShadowTree(HTMLSlotElement&, ShadowRoot&) final;
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot&) final;
     void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) final;
     void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
@@ -153,6 +155,7 @@ public:
     void renameSlotElement(HTMLSlotElement&, const AtomString&, const AtomString&, ShadowRoot&) final;
     void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
     void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode*, ShadowRoot&) final;
+    void slotElementDidMoveWithinShadowTree(HTMLSlotElement&, ShadowRoot&) final;
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot&) final;
     void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) final;
     void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore">
+<p>Passes if no crash</p>
+<p id="source">Before <span id="moved">moved text</span> after</p>
+<div id="destination">Destination</div>
+
+<p id="displayContentsSource">Before <span id="displayContentsMoved" style="display: contents"><b>bold</b> text</span> after</p>
+<div id="displayContentsDestination">Destination</div>
+
+<p id="textSource">Before <span>span</span>moved text after</p>
+<div id="textDestination">Destination</div>
+
+<p id="nestedSource">Before <span id="nestedMoved">moved text</span> after</p>
+<div id="nestedWrapper">Wrapper</div>
+<div id="nestedDestination">Destination</div>
+
+<p id="slottedSource">Before <span id="slottedMoved">moved text</span> after</p>
+<div id="host">
+  <template shadowrootmode="open"><div id="slotContainer"><slot></slot></div></template>
+</div>
+<script>
+  document.body.offsetTop;
+
+  // The new parent of a moved element becomes display: none before the moved element's renderers are rebuilt.
+  destination.moveBefore(moved, null);
+  destination.style.display = "none";
+
+  // Same, for a display: contents element, whose children's renderers are at its old position.
+  displayContentsDestination.moveBefore(displayContentsMoved, null);
+  displayContentsDestination.style.display = "none";
+
+  // Same, for a Text node.
+  textDestination.moveBefore(textSource.lastChild, null);
+  textDestination.style.display = "none";
+
+  // The new parent is itself moved before the moved element's renderers are rebuilt.
+  nestedWrapper.moveBefore(nestedMoved, null);
+  nestedDestination.moveBefore(nestedWrapper, null);
+  nestedDestination.style.display = "none";
+
+  // The moved element is slotted into a slot whose container becomes display: none.
+  host.moveBefore(slottedMoved, null);
+  host.shadowRoot.getElementById("slotContainer").style.display = "none";
+
+  document.body.offsetTop;
+</script>

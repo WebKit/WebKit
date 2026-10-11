@@ -354,6 +354,9 @@ public:
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
     Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
     bool hasInvalidRenderer() const { return hasStateFlag(StateFlag::HasInvalidRenderer); }
+    // Set by moveBefore(), which leaves the moved node's renderers at its old position until they're rebuilt.
+    bool hasRenderersFromBeforeMove() const { return hasStateFlag(StateFlag::HasRenderersFromBeforeMove); }
+    void setHasRenderersFromBeforeMove(bool value) { setStateFlag(StateFlag::HasRenderersFromBeforeMove, value); }
     bool styleResolutionShouldRecompositeLayer() const { return hasStateFlag(StateFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStateFlag(StateFlag::DescendantNeedsStyleResolution); }
     bool isEditingText() const { return isTextNode() && hasTypeFlag(TypeFlag::IsPseudoElementOrSpecialInternalNode); }
@@ -672,7 +675,8 @@ protected:
         ShouldNotifyTextManipulationControllerIfDisplayed = 1 << 23,
         DescendantNeedsStyleResolution = 1 << 24,
         DirectChildNeedsStyleResolution = 1 << 25,
-        // 6 bits free.
+        HasRenderersFromBeforeMove = 1 << 26,
+        // 5 bits free.
     };
 
     enum class TabIndexState : uint8_t {

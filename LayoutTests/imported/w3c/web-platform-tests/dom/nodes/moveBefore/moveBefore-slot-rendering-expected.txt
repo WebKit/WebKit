@@ -1,0 +1,5 @@
+
+PASS Moving a slot within its shadow root updates the rendering of its assigned nodes
+PASS Moving a slottable out of and back into a shadow host updates its rendering
+PASS Moving a node into a shadow host without a matching slot stops rendering it
+

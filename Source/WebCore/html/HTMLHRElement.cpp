@@ -88,6 +88,29 @@ void HTMLHRElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
         select->setRecalcListItems();
 }
 
+void HTMLHRElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+
+    if (!document().settings().htmlEnhancedSelectParsingEnabled())
+        return;
+
+    RefPtr oldSelect = m_ownerSelect;
+    RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::Yes);
+    if (oldSelect == newSelect) {
+        if (newSelect)
+            newSelect->setRecalcListItems();
+        return;
+    }
+
+    m_ownerSelect = newSelect.get();
+
+    if (oldSelect)
+        oldSelect->setRecalcListItems();
+    if (newSelect)
+        newSelect->setRecalcListItems();
+}
+
 bool HTMLHRElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     switch (name.nodeName()) {

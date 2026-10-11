@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<title>moveBefore() updates the rendering of slotted content</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#move">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+function createHost(t, shadowContent) {
+  const host = document.body.appendChild(document.createElement("div"));
+  t.add_cleanup(() => host.remove());
+  const shadowRoot = host.attachShadow({ mode: "open" });
+  shadowRoot.innerHTML = shadowContent;
+  const span = host.appendChild(document.createElement("span"));
+  span.textContent = "Slotted content";
+  return { host, shadowRoot, span };
+}
+
+test(t => {
+  const { shadowRoot, span } = createHost(t, `<div id=hidden style="display: none"></div><div id=visible><slot></slot></div>`);
+  const slot = shadowRoot.querySelector("slot");
+  assert_greater_than(span.getBoundingClientRect().width, 0, "Initially rendered");
+
+  shadowRoot.getElementById("hidden").moveBefore(slot, null);
+  assert_equals(span.getBoundingClientRect().width, 0, "Not rendered after moving the slot into a display: none container");
+
+  shadowRoot.getElementById("visible").moveBefore(slot, null);
+  assert_greater_than(span.getBoundingClientRect().width, 0, "Rendered after moving the slot back");
+}, "Moving a slot within its shadow root updates the rendering of its assigned nodes");
+
+test(t => {
+  const { host, span } = createHost(t, `<div style="display: none"><slot name=hidden></slot></div><slot name=visible></slot>`);
+  span.slot = "visible";
+  assert_greater_than(span.getBoundingClientRect().width, 0, "Initially rendered");
+
+  const lightContainer = document.body.appendChild(document.createElement("div"));
+  t.add_cleanup(() => lightContainer.remove());
+  lightContainer.moveBefore(span, null);
+  assert_greater_than(span.getBoundingClientRect().width, 0, "Rendered in the light tree");
+
+  host.moveBefore(span, null);
+  span.slot = "hidden";
+  assert_equals(span.getBoundingClientRect().width, 0, "Not rendered when assigned to a slot in a display: none container");
+}, "Moving a slottable out of and back into a shadow host updates its rendering");
+
+test(t => {
+  const { host, span } = createHost(t, `<slot name=other></slot>`);
+  const lightContainer = document.body.appendChild(document.createElement("div"));
+  t.add_cleanup(() => lightContainer.remove());
+  lightContainer.moveBefore(span, null);
+  assert_greater_than(span.getBoundingClientRect().width, 0, "Rendered in the light tree");
+
+  host.moveBefore(span, null);
+  assert_equals(span.getBoundingClientRect().width, 0, "Not rendered when there is no slot to assign it to");
+}, "Moving a node into a shadow host without a matching slot stops rendering it");
+</script>

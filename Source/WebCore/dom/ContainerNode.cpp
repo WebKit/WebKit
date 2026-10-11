@@ -1505,13 +1505,19 @@ static void runMovingStepsForShadowIncludingInclusiveDescendants(Node& root, Nod
 
 static bool renderTreeUpdateCanReachMovedNode(const Node& node)
 {
-    for (RefPtr ancestor = node.parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+    RefPtr<const Node> current = &node;
+    while (true) {
+        if (RefPtr parent = current->parentElement(); parent && parent->shadowRoot() && !current->assignedSlot())
+            return false;
+        RefPtr ancestor = current->parentElementInComposedTree();
+        if (!ancestor)
+            return false;
         if (ancestor->renderer())
             return true;
         if (!ancestor->hasDisplayContents())
             return false;
+        current = ancestor;
     }
-    return false;
 }
 
 // https://dom.spec.whatwg.org/#dom-parentnode-movebefore
@@ -1567,6 +1573,15 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         ChildListMutationScope(*oldParent).willRemoveChild(node);
         nodeDocument->nodeWillBeMoved(node);
 
+        if (oldParent->isShadowRoot() || oldParent->isInShadowTree()) [[unlikely]]
+            oldParent->containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+
+        if (oldParent->hasShadowRootContainingSlots()) [[unlikely]]
+            protect(oldParent->shadowRoot())->willRemoveAssignedNode(node);
+
+        if (RefPtr element = dynamicDowncast<Element>(node); node.renderer() || (element && element->hasDisplayContents()))
+            node.setHasRenderersFromBeforeMove(true);
+
         {
             Style::ChildChangeInvalidation styleInvalidation(*oldParent, removalChildChange);
 
@@ -1592,7 +1607,8 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
             node.setParentNode(nullptr);
         }
 
-        // FIXME(281223): Handle slot assignments and live ranges.
+        if (isShadowRoot() || isInShadowTree()) [[unlikely]]
+            containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
 
         insertionChildChange.emplace(makeChildChangeForMoveInsertion(*this, node, refChild.get()));
         {
