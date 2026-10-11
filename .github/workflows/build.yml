@@ -767,6 +767,14 @@ jobs:
         shell: bash
         run: |
           set +e
+          python3 -m py_compile "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
+            > webrtc-pycompile.log 2>&1
+          PY_COMPILE_STATUS=$?
+          cat webrtc-pycompile.log
+          if [ "$PY_COMPILE_STATUS" -ne 0 ]; then
+            echo "ERROR: Wii U WebRTC patch script has a Python syntax error."
+            exit 0
+          fi
           python3 "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
             --repo-root "$GITHUB_WORKSPACE" > webrtc-patches.log 2>&1
           PATCH_STATUS=$?
@@ -811,7 +819,14 @@ jobs:
 
       - name: Collect output
         run: |
-          mkdir -p dist/lib dist/include
+          mkdir -p dist/lib dist/include dist/diagnostics
+          # Preserve build logs with the library artifact so porting errors can be
+          # inspected without relying on truncated Actions console output.
+          for log in build.log build-full-configure.log build-full.log \
+                     webrtc-pycompile.log webrtc-patches.log \
+                     webrtc-configure.log webrtc-build.log; do
+            if [ -f "$log" ]; then cp "$log" dist/diagnostics/; fi
+          done
 
           # Find all object files that actually exist (only successfully compiled
           # ones). NOTE: the devkitPPC/CMake (CMAKE_SYSTEM_NAME=Generic) toolchain
