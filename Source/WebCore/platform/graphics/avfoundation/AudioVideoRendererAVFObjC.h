@@ -246,6 +246,11 @@ private:
     void flushAudio();
     void flushAudioTrack(TrackIdentifier);
     void notifyRequiresFlushToResume();
+    void requestVideoDataWhenReady(TrackIdentifier);
+    void cancelVideoDataRequest();
+    void requestAudioDataWhenReady(TrackIdentifier);
+    void setReadyToRequestVideoData();
+    void setReadyToRequestAudioData(TrackIdentifier);
 
     void cancelSeekingPromiseIfNeeded();
     void cancelPerformTaskAtTimeObserverIfNeeded();
@@ -332,6 +337,7 @@ private:
 
     HashMap<TrackIdentifier, AudioTrackProperties> m_audioTracksMap;
     std::optional<RequestPromise::AutoRejectProducer> m_requestVideoPromise;
+    const Ref<NativePromiseRequest> m_videoDataRequest { NativePromiseRequest::create() };
     bool m_readyToRequestVideoData { true };
     bool m_hasEverSubmittedVideoSample { false };
 
