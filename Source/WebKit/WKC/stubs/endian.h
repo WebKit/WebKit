@@ -60,31 +60,68 @@
 #endif
 
 #if __BYTE_ORDER == __BIG_ENDIAN
-# define htobe16(x) ((uint16_t)(x))
-# define be16toh(x) ((uint16_t)(x))
-# define htobe32(x) ((uint32_t)(x))
-# define be32toh(x) ((uint32_t)(x))
-# define htobe64(x) ((uint64_t)(x))
-# define be64toh(x) ((uint64_t)(x))
-# define htole16(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
-# define le16toh(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
-# define htole32(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
-# define le32toh(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
-# define htole64(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
-# define le64toh(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
+# define WKC_HTOBE16(x) ((uint16_t)(x))
+# define WKC_BE16TOH(x) ((uint16_t)(x))
+# define WKC_HTOBE32(x) ((uint32_t)(x))
+# define WKC_BE32TOH(x) ((uint32_t)(x))
+# define WKC_HTOBE64(x) ((uint64_t)(x))
+# define WKC_BE64TOH(x) ((uint64_t)(x))
+# define WKC_HTOLE16(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
+# define WKC_LE16TOH(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
+# define WKC_HTOLE32(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
+# define WKC_LE32TOH(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
+# define WKC_HTOLE64(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
+# define WKC_LE64TOH(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
 #else
-# define htole16(x) ((uint16_t)(x))
-# define le16toh(x) ((uint16_t)(x))
-# define htole32(x) ((uint32_t)(x))
-# define le32toh(x) ((uint32_t)(x))
-# define htole64(x) ((uint64_t)(x))
-# define le64toh(x) ((uint64_t)(x))
-# define htobe16(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
-# define be16toh(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
-# define htobe32(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
-# define be32toh(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
-# define htobe64(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
-# define be64toh(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
+# define WKC_HTOLE16(x) ((uint16_t)(x))
+# define WKC_LE16TOH(x) ((uint16_t)(x))
+# define WKC_HTOLE32(x) ((uint32_t)(x))
+# define WKC_LE32TOH(x) ((uint32_t)(x))
+# define WKC_HTOLE64(x) ((uint64_t)(x))
+# define WKC_LE64TOH(x) ((uint64_t)(x))
+# define WKC_HTOBE16(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
+# define WKC_BE16TOH(x) ((uint16_t)__builtin_bswap16((uint16_t)(x)))
+# define WKC_HTOBE32(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
+# define WKC_BE32TOH(x) ((uint32_t)__builtin_bswap32((uint32_t)(x)))
+# define WKC_HTOBE64(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
+# define WKC_BE64TOH(x) ((uint64_t)__builtin_bswap64((uint64_t)(x)))
+#endif
+
+#ifndef htobe16
+#define htobe16(x) WKC_HTOBE16(x)
+#endif
+#ifndef be16toh
+#define be16toh(x) WKC_BE16TOH(x)
+#endif
+#ifndef htobe32
+#define htobe32(x) WKC_HTOBE32(x)
+#endif
+#ifndef be32toh
+#define be32toh(x) WKC_BE32TOH(x)
+#endif
+#ifndef htobe64
+#define htobe64(x) WKC_HTOBE64(x)
+#endif
+#ifndef be64toh
+#define be64toh(x) WKC_BE64TOH(x)
+#endif
+#ifndef htole16
+#define htole16(x) WKC_HTOLE16(x)
+#endif
+#ifndef le16toh
+#define le16toh(x) WKC_LE16TOH(x)
+#endif
+#ifndef htole32
+#define htole32(x) WKC_HTOLE32(x)
+#endif
+#ifndef le32toh
+#define le32toh(x) WKC_LE32TOH(x)
+#endif
+#ifndef htole64
+#define htole64(x) WKC_HTOLE64(x)
+#endif
+#ifndef le64toh
+#define le64toh(x) WKC_LE64TOH(x)
 #endif
 
 #ifndef bswap_16
