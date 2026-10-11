@@ -1,0 +1,43 @@
+Testing all methods of MapOfMaps.
+
+
+== Running test suite: MapOfMaps
+-- Running test case: MapOfMaps.prototype.has
+PASS: has should return true if a first-level key exists.
+PASS: has should return true if both keys exist.
+PASS: has should return false if the second-level key doesn't exist for the first-level key.
+PASS: has should return false if the first-level key doesn't exist.
+PASS: has should support undefined as a second-level key.
+
+-- Running test case: MapOfMaps.prototype.set
+PASS: set should return the MapOfMaps.
+PASS: set should reuse an existing inner map.
+PASS: set should replace an existing value.
+
+-- Running test case: MapOfMaps.prototype.getOrInsert
+PASS: getOrInsert should insert and return a missing value.
+PASS: getOrInsert should return an existing value without replacing it.
+PASS: getOrInsert should preserve the existing value.
+
+-- Running test case: MapOfMaps.prototype.delete
+PASS: delete should return false for a missing second-level key.
+PASS: delete should remove an existing value.
+PASS: delete should preserve a nonempty inner map.
+PASS: delete should remove the last value in an inner map.
+PASS: delete should remove an empty inner map.
+PASS: delete with one key should remove an entire inner map.
+PASS: delete should leave no first-level keys.
+
+-- Running test case: MapOfMaps.prototype.take
+PASS: take should return undefined for a missing second-level key.
+PASS: take should return and remove an existing value.
+PASS: take should preserve a nonempty inner map.
+PASS: take should return and remove the last value in an inner map.
+PASS: take should remove an empty inner map.
+PASS: take with one key should return the inner map.
+PASS: The returned inner map should contain its values.
+PASS: take should leave no first-level keys.
+
+-- Running test case: MapOfMaps.prototype.clear
+PASS: clear should remove every inner map.
+

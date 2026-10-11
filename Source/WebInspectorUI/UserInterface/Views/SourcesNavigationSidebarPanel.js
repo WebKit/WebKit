@@ -1816,7 +1816,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         case WI.DebuggerManager.PauseReason.BlackboxedScript: {
             console.assert(pauseData);
             if (pauseData)
-                this._updatePauseReasonSection(target, WI.DebuggerManager.pauseReasonFromPayload(pauseData.originalReason), pauseData.originalData);
+                this._updatePauseReasonSection(target, pauseData.originalReason, pauseData.originalData);
 
             // Don't use `_pauseReasonTextRow` as it may have already been set.
             let blackboxReasonTextRow = new WI.DetailsSectionTextRow(WI.UIString("Deferred pause from blackboxed script"));
@@ -2001,7 +2001,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!pauseData)
                 break;
 
-            let symbolicBreakpoint = WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name)[0];
+            let symbolicBreakpoint = pauseData.symbolicBreakpoint || WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name)[0];
             console.assert(symbolicBreakpoint, "Expected Symbolic breakpoint for function name.", pauseData.name);
             if (!symbolicBreakpoint)
                 break;

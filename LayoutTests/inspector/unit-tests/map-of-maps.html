@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("MapOfMaps");
+
+    suite.addTestCase({
+        name: "MapOfMaps.prototype.has",
+        test() {
+            let map = new MapOfMaps;
+            map.set("zero", "one", 1);
+            map.set("two", "three", 3);
+            map.set("undefined", undefined, 4);
+
+            InspectorTest.expectThat(map.has("zero"), "has should return true if a first-level key exists.");
+            InspectorTest.expectThat(map.has("zero", "one"), "has should return true if both keys exist.");
+            InspectorTest.expectFalse(map.has("zero", "three"), "has should return false if the second-level key doesn't exist for the first-level key.");
+            InspectorTest.expectFalse(map.has("one"), "has should return false if the first-level key doesn't exist.");
+            InspectorTest.expectThat(map.has("undefined", undefined), "has should support undefined as a second-level key.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "MapOfMaps.prototype.set",
+        test() {
+            let map = new MapOfMaps;
+
+            InspectorTest.expectEqual(map.set("zero", "one", 1), map, "set should return the MapOfMaps.");
+            map.set("zero", "two", 2);
+            map.set("zero", "one", 3);
+
+            InspectorTest.expectEqual(map.size, 1, "set should reuse an existing inner map.");
+            InspectorTest.expectEqual(map.get("zero", "one"), 3, "set should replace an existing value.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "MapOfMaps.prototype.getOrInsert",
+        test() {
+            let map = new MapOfMaps;
+
+            InspectorTest.expectEqual(map.getOrInsert("zero", "one", 1), 1, "getOrInsert should insert and return a missing value.");
+            InspectorTest.expectEqual(map.getOrInsert("zero", "one", 2), 1, "getOrInsert should return an existing value without replacing it.");
+            InspectorTest.expectEqual(map.get("zero", "one"), 1, "getOrInsert should preserve the existing value.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "MapOfMaps.prototype.delete",
+        test() {
+            let map = new MapOfMaps;
+            map.set("zero", "one", 1);
+            map.set("zero", "two", 2);
+            map.set("three", "four", 4);
+
+            InspectorTest.expectFalse(map.delete("zero", "three"), "delete should return false for a missing second-level key.");
+            InspectorTest.expectThat(map.delete("zero", "one"), "delete should remove an existing value.");
+            InspectorTest.expectThat(map.has("zero"), "delete should preserve a nonempty inner map.");
+            InspectorTest.expectThat(map.delete("zero", "two"), "delete should remove the last value in an inner map.");
+            InspectorTest.expectFalse(map.has("zero"), "delete should remove an empty inner map.");
+            InspectorTest.expectThat(map.delete("three"), "delete with one key should remove an entire inner map.");
+            InspectorTest.expectEqual(map.size, 0, "delete should leave no first-level keys.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "MapOfMaps.prototype.take",
+        test() {
+            let map = new MapOfMaps;
+            map.set("zero", "one", 1);
+            map.set("zero", "two", 2);
+            map.set("three", "four", 4);
+
+            InspectorTest.expectEqual(map.take("zero", "three"), undefined, "take should return undefined for a missing second-level key.");
+            InspectorTest.expectEqual(map.take("zero", "one"), 1, "take should return and remove an existing value.");
+            InspectorTest.expectThat(map.has("zero"), "take should preserve a nonempty inner map.");
+            InspectorTest.expectEqual(map.take("zero", "two"), 2, "take should return and remove the last value in an inner map.");
+            InspectorTest.expectFalse(map.has("zero"), "take should remove an empty inner map.");
+
+            let valueMap = map.take("three");
+            InspectorTest.expectThat(valueMap instanceof Map, "take with one key should return the inner map.");
+            InspectorTest.expectEqual(valueMap.get("four"), 4, "The returned inner map should contain its values.");
+            InspectorTest.expectEqual(map.size, 0, "take should leave no first-level keys.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "MapOfMaps.prototype.clear",
+        test() {
+            let map = new MapOfMaps;
+            map.set("zero", "one", 1);
+            map.set("two", "three", 3);
+            map.set("zero", "four", 4);
+
+            map.clear();
+            InspectorTest.expectEqual(map.size, 0, "clear should remove every inner map.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of MapOfMaps.</p>
+</body>
+</html>
