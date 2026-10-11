@@ -48,10 +48,12 @@ struct BlockLayoutResult {
         BoxGeometry geometry;
         // The content box block size the box would have with an auto height (CSS 2.2 §10.6.3).
         LayoutUnit intrinsicContentBlockSize;
-        // The margins that collapse with each block-axis edge of the box, its own included: a parent laid out by the render tree path
-        // reads them from a box it does not lay out again (RenderBlockFlow::maxPositiveMarginBefore and friends).
+        // The margins that collapse with each block-axis edge of the box, its own included, and whether they are quirky: a parent laid out
+        // by the render tree path reads them from a box it does not lay out again (RenderBlockFlow::maxPositiveMarginBefore and friends).
         AdjoiningMargins collapsedMarginsBefore;
         AdjoiningMargins collapsedMarginsAfter;
+        bool marginBeforeIsQuirky { false };
+        bool marginAfterIsQuirky { false };
     };
     // Post-order: a box is added once its content is laid out, after its descendants.
     Vector<Box> boxes;
@@ -78,6 +80,7 @@ private:
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     void computeLogicalLeft(const ContainingBlockState&, BoxGeometry&) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
+    LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
 
