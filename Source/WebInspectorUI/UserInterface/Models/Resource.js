@@ -391,7 +391,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     get displayName()
     {
-        return this.scripts.find((script) => script.customName)?.customName || WI.displayNameForURL(this._url, this.urlComponents);
+        return this.scripts.find((script) => script.customName)?.customName || this.displayNameWithAffix();
     }
 
     get displayURL()
