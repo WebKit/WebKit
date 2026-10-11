@@ -25,6 +25,21 @@ else ()
     set(_WKC_WEB_AUDIO_DEFINE 0)
 endif ()
 
+# Turn on WebRTC API source compilation only in the experimental full-WebCore
+# porting mode. This enables compilation coverage, but is not a claim that the
+# WebRTC backend is runtime-integrated yet.
+if (WKC_ENABLE_FULL_WEBCORE)
+    set(_WKC_WEBRTC_API_DEFAULT ON)
+else ()
+    set(_WKC_WEBRTC_API_DEFAULT OFF)
+endif ()
+option(WKC_ENABLE_WEBRTC_API "Compile WebRTC API support in full WebCore porting mode" ${_WKC_WEBRTC_API_DEFAULT})
+if (WKC_ENABLE_WEBRTC_API)
+    set(_WKC_WEBRTC_API_DEFINE 1)
+else ()
+    set(_WKC_WEBRTC_API_DEFINE 0)
+endif ()
+
 include_directories(
     ${WKC_DIR}/stubs
     ${SOURCE_DIR}
@@ -113,7 +128,7 @@ add_definitions(
     -DENABLE_WEBGL=1
     -DENABLE_WEB_AUDIO=${_WKC_WEB_AUDIO_DEFINE}
     -DENABLE_MEDIA_STREAM=1
-    -DENABLE_WEB_RTC=0
+    -DENABLE_WEB_RTC=${_WKC_WEBRTC_API_DEFINE}
     -DENABLE_NOTIFICATIONS=0
     -DENABLE_FULLSCREEN_API=0
     -DENABLE_INDEXED_DATABASE=0
