@@ -76,7 +76,6 @@ void Signal::signal()
     auto ret = mach_msg(&message, MACH_SEND_MSG | MACH_SEND_TIMEOUT, sizeof(message), 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
     if (ret == MACH_SEND_INVALID_DEST) {
         m_peerDied = true;
-        RELEASE_LOG_ERROR(Process, "IPC::Signal::signal peer died, suppressing further signals");
         return;
     }
     if (ret != KERN_SUCCESS && ret != MACH_SEND_TIMED_OUT)
