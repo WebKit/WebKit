@@ -21,10 +21,12 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFAULT OFF)
 endif ()
 
-# The portable JavaScriptCore IPInt interpreter does not require full WebCore.
-# Enable WebAssembly in the base WKC engine too; all JIT tiers remain disabled on
-# Wii U, and build.yml generates the opcode and lookup headers needed by these TUs.
-set(_WKC_WEBASSEMBLY_DEFAULT ON)
+# Keep WebAssembly opt-in until JavaScriptCore has a PowerPC register/ABI path.
+# The upstream WasmValueLocation/WasmCallingConvention headers currently depend
+# on JIT register types that are unavailable for Wii U's PowerPC CLoop build;
+# enabling the feature breaks even otherwise unrelated JavaScriptCore TUs.
+# build.yml may still generate the metadata headers without enabling the feature.
+set(_WKC_WEBASSEMBLY_DEFAULT OFF)
 
 option(WKC_ENABLE_WEB_AUDIO "Compile Web Audio against the WKC audio backend" ${_WKC_WEB_AUDIO_DEFAULT})
 if (WKC_ENABLE_WEB_AUDIO)
