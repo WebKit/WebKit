@@ -1,5 +1,7 @@
 My container is snapped
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check scroll-state(snapped) initially matching
+PASS Check scroll-state(snapped) not matching when scroll-snap-align is removed
+PASS Check scroll-state(snapped) not matching when scroll-snap-type is removed
+PASS Check scroll-state(snapped) not matching when container-type is removed
 

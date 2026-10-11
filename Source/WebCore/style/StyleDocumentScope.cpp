@@ -347,6 +347,65 @@ static RectEdges<bool> scrollableEdges(const RenderBox& containerRenderer)
     };
 }
 
+// The scroll container a snap candidate snaps to, which is how updateSnapOffsetsForScrollableArea()
+// decides which candidates belong to which scroller.
+static const ScrollableArea* scrollSnapContainerFor(const RenderBox& candidateRenderer)
+{
+    CheckedPtr container = candidateRenderer.enclosingScrollableContainer();
+    if (!container)
+        return nullptr;
+
+    // The document element scrolls the viewport, which the frame view drives rather than the
+    // element's own layer.
+    if (container->isDocumentElementRenderer())
+        return &candidateRenderer.view().frameView();
+
+    if (CheckedPtr layer = container->layer())
+        return layer->scrollableArea();
+
+    return nullptr;
+}
+
+// Axes in which the container is the snap target its scroll container is snapped to.
+static DocumentScope::ScrollState::SnappedAxes snappedAxes(const RenderBox& containerRenderer)
+{
+    if (containerRenderer.style().scrollSnapAlign().isNone())
+        return { };
+
+    CheckedPtr scrollSnapContainer = scrollSnapContainerFor(containerRenderer);
+    if (!scrollSnapContainer)
+        return { };
+
+    auto* snapOffsetsInfo = scrollSnapContainer->snapOffsetsInfo();
+    if (!snapOffsetsInfo)
+        return { };
+
+    RefPtr containerElement = containerRenderer.element();
+    if (!containerElement)
+        return { };
+    auto containerNodeID = containerElement->nodeIdentifier();
+
+    // Several areas can share one snap offset, so the offset the scroller is snapped to names one of
+    // them as its representative and lists the rest. The container is snapped if it is either.
+    auto isSnappedInAxis = [&](const Vector<SnapOffset<LayoutUnit>>& offsets, std::optional<unsigned> activeIndex) {
+        if (!activeIndex || *activeIndex >= offsets.size())
+            return false;
+
+        const auto& offset = offsets[*activeIndex];
+        if (offset.snapTargetID == containerNodeID)
+            return true;
+
+        return offset.snapAreaIndices.containsIf([&](auto areaIndex) {
+            return areaIndex < snapOffsetsInfo->snapAreasIDs.size() && snapOffsetsInfo->snapAreasIDs[areaIndex] == containerNodeID;
+        });
+    };
+
+    return {
+        isSnappedInAxis(snapOffsetsInfo->horizontalSnapOffsets, scrollSnapContainer->currentHorizontalSnapPointIndex()),
+        isSnappedInAxis(snapOffsetsInfo->verticalSnapOffsets, scrollSnapContainer->currentVerticalSnapPointIndex())
+    };
+}
+
 // https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
 // Reading live scroll state during style resolution would allow layout cycles, since a scroll-state
 // query can change style, which changes layout, which changes the scroll state. Instead the state is
@@ -367,7 +426,7 @@ void DocumentScope::updateScrollStateSnapshots()
         if (!containerElement)
             continue;
 
-        auto scrollState = ScrollState { scrollableEdges(containerRenderer) };
+        auto scrollState = ScrollState { scrollableEdges(containerRenderer), snappedAxes(containerRenderer) };
 
         auto it = previousScrollStates.find(*containerElement);
         // A container seen for the first time is always invalidated, even when its state matches the

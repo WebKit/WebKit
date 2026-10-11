@@ -82,6 +82,14 @@ public:
     struct ScrollState {
         // Edges the container can currently be scrolled further toward.
         RectEdges<bool> scrollableEdges { false, false, false, false };
+        // Axes the container is the snap target its scroll container is snapped to.
+        struct SnappedAxes {
+            bool horizontal { false };
+            bool vertical { false };
+
+            bool operator==(const SnappedAxes&) const = default;
+        };
+        SnappedAxes snappedAxes;
 
         bool operator==(const ScrollState&) const = default;
     };

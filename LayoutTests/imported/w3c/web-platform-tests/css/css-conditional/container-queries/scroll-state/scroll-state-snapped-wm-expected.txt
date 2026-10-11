@@ -1,5 +1,5 @@
 My container is snapped
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check scroll-state(snapped) matching for vertical writing-mode
+PASS Check scroll-state(snapped) matching dynamically changing to horizontal writing-mode
 

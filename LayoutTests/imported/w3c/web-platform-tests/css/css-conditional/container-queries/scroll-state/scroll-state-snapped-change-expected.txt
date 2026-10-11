@@ -1,4 +1,4 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check that scroll-state(snapped: block) matches on #target1 before scroll
+PASS Check that scroll-state(snapped: block) matches on #target2 after scroll
 
