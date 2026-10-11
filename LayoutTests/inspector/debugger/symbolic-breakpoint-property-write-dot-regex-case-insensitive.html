@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
+<script src="resources/symbolic-breakpoint-property-write.js"></script>
+<script>
+function test()
+{
+    InspectorTest.runSymbolicBreakpointPropertyWriteTest({
+        operation: "dot",
+        isRegex: true,
+        caseSensitive: false,
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for property-write-matching Symbolic Breakpoints.</p>
+</body>
+</html>
+
