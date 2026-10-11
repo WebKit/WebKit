@@ -9,8 +9,8 @@ get_filename_component(WKC_WIIU_REPO_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../..
 # Use the existing toolchain compatibility headers first. They are outside
 # upstream-shared WebKit sources and are consumed only by this Wii U build.
 include_directories(BEFORE
-    "${WKC_WIIU_REPO_ROOT}/Tools/wiiu/libwebrtc/compat"
     "${WKC_WIIU_ROOT}/stubs"
+    "${WKC_WIIU_REPO_ROOT}/Tools/wiiu/libwebrtc/compat"
 )
 
 # The Espresso CPU has no supported Abseil cycle-clock implementation. Disable
