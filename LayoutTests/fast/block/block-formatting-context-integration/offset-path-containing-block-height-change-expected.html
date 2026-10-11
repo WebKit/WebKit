@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 400px; background: lightgray; }
+.container { height: 100px; background: rgba(0, 0, 255, 0.2); margin: 10px; }
+.moved { offset-path: ray(135deg closest-side); width: 20px; height: 20px; background: green; }
+</style>
+<div class="root">
+  <div class="container" style="height: 200px"><div class="moved"></div></div>
+  <div class="container" style="height: 50px"><div class="moved" style="offset-path: ray(45deg farthest-side)"></div></div>
+</div>
