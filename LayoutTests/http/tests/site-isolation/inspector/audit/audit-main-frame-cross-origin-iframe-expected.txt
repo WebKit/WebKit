@@ -1,0 +1,30 @@
+Test that an audit runs against the main frame's document on a page with a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.Audit.MainFrameCrossOriginIFrame
+-- Running test case: SiteIsolation.Audit.MainFrameCrossOriginIFrame.RunInMainDocument
+PASS: Audit should not throw an exception.
+{
+  "pathname": "audit-main-frame-cross-origin-iframe.html",
+  "iframeCount": 1,
+  "auditedCount": 1,
+  "frameMarkerCount": 0,
+  "contentDocumentIsNull": true,
+  "resourceURLs": [
+    "audit-main-frame-cross-origin-iframe.html",
+    "audit-main.css",
+    "inspector-test.js"
+  ]
+}
+
+-- Running test case: SiteIsolation.Audit.MainFrameCrossOriginIFrame.DOMNodes
+PASS: There should be 1 result.
+PASS: Result should be "fail".
+PASS: Audit should not find the iframe's content.
+PASS: Should resolve 2 DOM nodes.
+div#main-marker.audited
+PASS: Node should belong to the main document.
+iframe#cross-origin-frame
+PASS: Node should belong to the main document.
+
