@@ -45,7 +45,7 @@ static pas_aligned_allocation_result bootstrap_source_allocate_aligned(size_t si
     if (verbose)
         pas_log("small/medium bootstrap heap allocating %zu\n", size);
 
-    pas_aligned_allocation_result retval = pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment, true);
+    pas_aligned_allocation_result retval = pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment, pas_memory_flavor_mte);
 
     if (verbose)
         pas_log("small/medium bootstrap heap done allocating, returning %p.\n", retval.result);

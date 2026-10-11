@@ -86,7 +86,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_zeroed_flex_inline(
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_try_allocate_flex_impl(heap_ref, size, 1),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_zeroed_flex_inline(
@@ -94,7 +94,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_allocate_zeroed_flex_inline(
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_allocate_flex_impl(heap_ref, size, 1),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_flex_with_alignment_inline(
