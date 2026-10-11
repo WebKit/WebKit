@@ -916,10 +916,10 @@ jobs:
             exit 1
           fi
 
-          WEBRTC_ARCHIVE=$(find build-webrtc -type f \\( -name 'libwebrtc.a' -o -name 'webrtc.a' \\) -size +0c -print -quit)
+          WEBRTC_ARCHIVE=$(find build-webrtc -type f \( -name 'libwebrtc.a' -o -name 'webrtc.a' \) -size +0c -print -quit)
           if [ -z "$WEBRTC_ARCHIVE" ]; then
             echo "::error::All libwebrtc compile steps passed but the required non-empty libwebrtc.a archive was not produced. Stopping before output collection."
-            find build-webrtc -type f -name '*.a' -printf 'Found archive candidate: %p (%s bytes)\\n' | head -80 || true
+            find build-webrtc -type f -name '*.a' -printf 'Found archive candidate: %p (%s bytes)\n' | head -80 || true
             exit 1
           fi
           AR="$DEVKITPPC/bin/powerpc-eabi-ar"
@@ -948,7 +948,7 @@ jobs:
             echo "Runtime status: hardware networking/ICE/capture not verified; the WKC ifaddrs declarations are not themselves an interface-enumeration implementation"
             echo
             echo "Static archives included:"
-            find dist-webrtc/lib -type f -name '*.a' -printf '%P\\n' | sort
+            find dist-webrtc/lib -type f -name '*.a' -printf '%P\n' | sort
           } > dist-webrtc/BUILD_PROFILE.txt
           echo "===== libwebrtc archive verified: $WEBRTC_ARCHIVE ($MEMBER_COUNT members) ====="
 
