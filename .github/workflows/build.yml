@@ -723,6 +723,30 @@ jobs:
             exit "$BUILD_STATUS"
           fi
 
+      # Apply port-only patches before either full WebCore+WebRTC or the standalone
+      # WebRTC diagnostic build. The script only edits the ephemeral CI checkout; the
+      # tracked vendored upstream source is left unchanged.
+      - name: Apply Wii U-only WebRTC compatibility patches (temporary checkout)
+        shell: bash
+        run: |
+          set +e
+          python3 -m py_compile "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
+            > webrtc-pycompile.log 2>&1
+          PY_COMPILE_STATUS=$?
+          cat webrtc-pycompile.log
+          if [ "$PY_COMPILE_STATUS" -ne 0 ]; then
+            echo "ERROR: Wii U WebRTC patch script has a Python syntax error."
+            exit 0
+          fi
+          python3 "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
+            --repo-root "$GITHUB_WORKSPACE" > webrtc-patches.log 2>&1
+          PATCH_STATUS=$?
+          cat webrtc-patches.log
+          if [ "$PATCH_STATUS" -ne 0 ]; then
+            echo "Wii U compatibility patching was incomplete; continue to capture compiler diagnostics."
+          fi
+          exit 0
+
       # Full WebCore is large and not yet part of the default WKC bootstrap
       # target. Opt into this diagnostic from the Actions UI while porting core
       # DOM/HTML/CSS/rendering sources; it reports failures but preserves the
@@ -796,27 +820,6 @@ jobs:
       # separately, only to surface its Wii U porting errors as a scoreboard (the
       # same error-by-error method used to bring up the port library). This step
       # never fails the job, so it cannot regress the green port build.
-      - name: Apply Wii U-only WebRTC compatibility patches (temporary checkout)
-        shell: bash
-        run: |
-          set +e
-          python3 -m py_compile "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
-            > webrtc-pycompile.log 2>&1
-          PY_COMPILE_STATUS=$?
-          cat webrtc-pycompile.log
-          if [ "$PY_COMPILE_STATUS" -ne 0 ]; then
-            echo "ERROR: Wii U WebRTC patch script has a Python syntax error."
-            exit 0
-          fi
-          python3 "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/prepare-webrtc-wiiu.py" \
-            --repo-root "$GITHUB_WORKSPACE" > webrtc-patches.log 2>&1
-          PATCH_STATUS=$?
-          cat webrtc-patches.log
-          if [ "$PATCH_STATUS" -ne 0 ]; then
-            echo "Wii U compatibility patching was incomplete; continue to capture compiler diagnostics."
-          fi
-          exit 0
-
       - name: Attempt libwebrtc cross-compile for Wii U (PPC) [informational]
         run: |
           set +e
