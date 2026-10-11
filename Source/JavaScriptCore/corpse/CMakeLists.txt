@@ -10,7 +10,9 @@ set(JavaScriptCoreTools_SOURCES
     CorpseProcess.cpp
     CorpseRegion.cpp
     CorpseSnapshot.cpp
+    CorpseSnapshotDebugInfo.cpp
     CorpseSymbol.cpp
+    CorpseTargetType.cpp
     CorpseThread.cpp
 )
 

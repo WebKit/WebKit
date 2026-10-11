@@ -57,13 +57,9 @@
 #include <unistd.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashSet.h>
-#include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#if ENABLE(MYA_HEAP)
-#include <lldb/API/LLDB.h>
-#endif
 
 namespace JSCToolsTest {
 
@@ -103,55 +99,6 @@ static bool listsEachImageOnce(const Vector<Image>& images)
         return headers.add(image.loadAddress().toTargetVMAddress()).isNewEntry;
     });
 }
-
-#if ENABLE(MYA_HEAP)
-// What Image's comment says liblldb needs: each image loads by its path and UUID at
-// its slide, and the functions this process calls resolve to their symbols.
-static void testImagesLoadIntoLLDB(const Vector<Image>& images)
-{
-    lldb::SBDebugger::Initialize();
-    auto terminateLLDB = makeScopeExit([] {
-        lldb::SBDebugger::Terminate();
-    });
-    lldb::SBDebugger debugger = lldb::SBDebugger::Create();
-    auto destroyDebugger = makeScopeExit([&] {
-        lldb::SBDebugger::Destroy(debugger);
-    });
-    lldb::SBTarget target = debugger.CreateTarget("");
-    TEST_ASSERT(target.IsValid(), "liblldb makes an empty target");
-    if (!target.IsValid())
-        return;
-    auto deleteTarget = makeScopeExit([&] {
-        debugger.DeleteTarget(target);
-    });
-
-    unsigned notLoaded = 0;
-    for (const Image& image : images) {
-        StringBuilder uuid;
-        for (uint8_t byte : image.uuid())
-            uuid.append(hex(byte, 2));
-        lldb::SBModule module = target.AddModule(image.path().legacyCStringPointer(), nullptr, uuid.isEmpty() ? nullptr : uuid.toString().utf8().legacyCStringPointer());
-        lldb::addr_t headerFileAddress = module.IsValid() ? module.GetObjectFileHeaderAddress().GetFileAddress() : LLDB_INVALID_ADDRESS;
-        if (headerFileAddress == LLDB_INVALID_ADDRESS
-            || !target.SetModuleLoadAddress(module, image.loadAddress().toTargetVMAddress() - headerFileAddress).Success()) {
-            dataLogLn("    liblldb did not load ", image.path().legacyCStringPointer());
-            ++notLoaded;
-        }
-    }
-    TEST_ASSERT_EQ(notLoaded, 0u, "liblldb loads every image at its slide");
-
-    auto symbolAt = [&](const void* function) {
-        lldb::SBAddress address = target.ResolveLoadAddress(Address { function }.stripped().toTargetVMAddress());
-        const char* name = address.GetSymbol().GetName();
-        return std::string_view { name ? name : "" };
-    };
-    TEST_ASSERT(symbolAt(reinterpret_cast<const void*>(&testSnapshot)).contains("testSnapshot"), "liblldb resolves a function of this executable");
-    TEST_ASSERT(symbolAt(reinterpret_cast<const void*>(&JSGlobalContextCreate)).contains("JSGlobalContextCreate"), "and of JavaScriptCore");
-#if !OS(DARWIN)
-    TEST_ASSERT(symbolAt(reinterpret_cast<const void*>(&getpid)).contains("getpid"), "and of libc");
-#endif
-}
-#endif
 
 static void testImages(RefPtr<Process> process)
 {
@@ -232,24 +179,19 @@ static void testImages(RefPtr<Process> process)
 #if OS(DARWIN)
     unsigned withoutUUID = 0;
     for (const Image& image : images) {
-        if (std::ranges::all_of(image.uuid(), [](uint8_t byte) { return !byte; }))
+        if (std::ranges::all_of(image.uuid().span(), [](char8_t digit) { return digit == '0'; }))
             ++withoutUUID;
     }
     TEST_ASSERT_EQ(withoutUUID, 0u, "every image has a UUID");
     if (executable && javaScriptCore)
-        TEST_ASSERT(!std::ranges::equal(executable->uuid(), javaScriptCore->uuid()), "two images have two UUIDs");
+        TEST_ASSERT(executable->uuid() != javaScriptCore->uuid(), "two images have two UUIDs");
     TEST_ASSERT(!imageContaining(images, reinterpret_cast<const void*>(&malloc)),
         "a shared-cache image is not listed");
 #else
-    TEST_ASSERT(std::ranges::all_of(images, [](const Image& image) { return image.uuid().empty(); }),
+    TEST_ASSERT(std::ranges::all_of(images, [](const Image& image) { return image.uuid().isNull(); }),
         "a Linux image has no UUID: liblldb reads the build-id from the file");
     TEST_ASSERT(imageContaining(images, reinterpret_cast<const void*>(&malloc)),
         "the image list has libc");
-#endif
-#if ENABLE(MYA_HEAP)
-    testImagesLoadIntoLLDB(images);
-#else
-    dataLogLn("SKIP: Snapshot images in liblldb: built without liblldb");
 #endif
 }
 
@@ -284,7 +226,7 @@ static void analyzeReplacedExecutable(Snapshot& snapshot, Address)
     const Image* original = self ? imageContaining(self->images(), reinterpret_cast<const void*>(&testSnapshot)) : nullptr;
     const Vector<Image>& images = snapshot.images();
     auto replaced = std::ranges::find_if(images, isReplacedCopy);
-    TEST_ASSERT(original && replaced != images.end() && std::ranges::equal(replaced->uuid(), original->uuid()),
+    TEST_ASSERT(original && replaced != images.end() && replaced->uuid() == original->uuid(),
         "a replaced executable is listed, with the UUID it was loaded with");
 #else
     ExpectedErrors expectedErrors;

@@ -84,6 +84,7 @@ void testSnapshot();
 void testThreads();
 void fuzzExportsTrie(uint64_t seed, unsigned iterations);
 void testTypeinfo();
+void testDebugInfo();
 
 #if ENABLE(MYA_HEAP)
 // Each compile unit that includes this header has its own copy, so a heap walk
