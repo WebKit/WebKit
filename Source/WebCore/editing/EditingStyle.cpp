@@ -1333,7 +1333,9 @@ void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement& element, 
     }
 }
 
-Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, bool shouldAnnotate, StandardFontFamilySerializationMode standardFontFamilySerializationMode)
+static constexpr std::array whiteSpaceProperties { CSSPropertyWhiteSpaceCollapse, CSSPropertyTextWrapMode, CSSPropertyWhiteSpaceTrim };
+
+Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, bool shouldAnnotate, StandardFontFamilySerializationMode standardFontFamilySerializationMode, bool shouldPreserveWhiteSpace)
 {
     if (shouldAnnotate) {
         auto wrappingStyle = EditingStyle::create(&context, PropertiesToInclude::EditingPropertiesInEffect);
@@ -1360,6 +1362,11 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, boo
     for (RefPtr node = context; node && !node->isDocumentNode(); node = node->parentNode()) {
         if (auto* element = dynamicDowncast<StyledElement>(*node); element && !isMailBlockquote(*element))
             wrappingStyle->mergeInlineAndImplicitStyleOfElement(*element, CSSPropertyOverrideMode::DoNotOverrideValues, PropertiesToInclude::EditingPropertiesInEffect, standardFontFamilySerializationMode);
+    }
+
+    if (shouldPreserveWhiteSpace) {
+        Style::Extractor computedStyle(&context);
+        wrappingStyle->mergeStyle(computedStyle.copyProperties(whiteSpaceProperties).ptr(), CSSPropertyOverrideMode::DoNotOverrideValues);
     }
 
     return wrappingStyle;
@@ -1423,6 +1430,32 @@ static Ref<MutableStyleProperties> styleFromMatchedRulesForElement(Element& elem
         style->mergeAndOverrideOnConflict(protect(matchedRule->properties()));
     
     return style;
+}
+
+static bool hasWhiteSpaceProperty(const StyleProperties& style)
+{
+    for (auto property : whiteSpaceProperties) {
+        if (style.getPropertyCSSValue(property))
+            return true;
+    }
+    return false;
+}
+
+bool EditingStyle::hasAuthorSpecifiedWhiteSpace(Node& node)
+{
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
+        element = node.parentElement();
+
+    for (; element; element = element->parentElement()) {
+        if (RefPtr styledElement = dynamicDowncast<StyledElement>(*element)) {
+            if (RefPtr inlineStyle = styledElement->inlineStyle(); inlineStyle && hasWhiteSpaceProperty(*inlineStyle))
+                return true;
+        }
+        if (hasWhiteSpaceProperty(styleFromMatchedRulesForElement(*element, Style::Resolver::AuthorCSSRules)))
+            return true;
+    }
+    return false;
 }
 
 void EditingStyle::mergeStyleFromRules(StyledElement& element)
