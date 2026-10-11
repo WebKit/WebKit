@@ -29,6 +29,8 @@
 #include "BlockFormattingUtils.h"
 #include "BlockItemsBuilder.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
+#include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
@@ -56,6 +58,7 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
 
     auto result = BlockLayoutResult { };
     m_blockLayoutState.containingBlockStates().append(containingBlockStateForRoot(constraints));
+    m_blockLayoutState.marginCollapse().startBlockFormattingContextRoot(m_blockLayoutState.containingBlockStates().last());
     // The margins of a box that establishes a block formatting context do not collapse with its children's (CSS 2.2 §8.3.1).
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.containingBlockStates().last().contentBoxLogicalTop());
 
@@ -72,9 +75,12 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
     }
 
     ASSERT(m_blockLayoutState.containingBlockStates().size() == 1);
-    // The content of the root ends at the bottom margin edge of its last in-flow child (CSS 2.2 §10.6.7). Negative margins may pull that
-    // above its content box top.
-    result.intrinsicContentBlockSize = std::max(0_lu, m_blockLayoutState.marginCollapse().collapsedLogicalBottom() - m_blockLayoutState.containingBlockStates().last().contentBoxLogicalTop());
+    // The content of the root ends at the bottom margin edge of its last in-flow child (CSS 2.2 §10.6.7), except for a quirky one in a
+    // quirk container. Negative margins may pull that above its content box top.
+    auto& rootState = m_blockLayoutState.containingBlockStates().last();
+    m_blockLayoutState.marginCollapse().endBlockFormattingContextRoot(rootState);
+    auto contentLogicalBottom = BlockMarginCollapse::isQuirkContainer(root()) && m_blockLayoutState.marginCollapse().endsWithQuirk() ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+    result.intrinsicContentBlockSize = std::max(0_lu, contentLogicalBottom - rootState.contentBoxLogicalTop());
     m_blockLayoutState.containingBlockStates().clear();
     return result;
 }
@@ -101,7 +107,17 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     m_blockLayoutState.marginCollapse().endBlockContainer(blockContainerState, containingBlockState);
     // Nothing in its content separated the block-start margin from the block-end margin. Unless the box's own height, block-end
     // border or padding does, the margins collapse through it.
-    if (!blockContainerState.borderBoxLogicalTop && !BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, root().writingMode()))
+    auto marginsCollapseThrough = [&] {
+        if (blockContainer.stretchesToViewport()) {
+            // Quirks mode: an empty body still stretches to the viewport (RenderBlock::isSelfCollapsingBlock checks the height it gets).
+            auto margins = m_blockLayoutState.marginCollapse().adjoiningMargins();
+            margins.add(blockContainerState.geometry.marginAfter());
+            if (viewportStretchedBorderBoxBlockSize(blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins.collapsedValue()) > 0)
+                return false;
+        }
+        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, root().writingMode());
+    };
+    if (!blockContainerState.borderBoxLogicalTop && !marginsCollapseThrough())
         resolveBorderBoxLogicalTops(blockContainerState);
     placeInContainingBlock(blockContainer, WTF::move(blockContainerState), result);
 }
@@ -188,6 +204,15 @@ void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit i
     geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
 }
 
+// Quirks mode: body is at least as tall as the viewport leaves it inside html (RenderBox::computeLogicalHeight).
+LayoutUnit BlockFormattingContext::viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const
+{
+    auto& html = root();
+    auto spaceAround = collapsedMarginBefore + collapsedMarginAfter + html.marginBefore(html.writingMode()) + html.marginAfter(html.writingMode()) + html.borderAndPaddingLogicalHeight();
+    CheckedRef view = html.view();
+    return view->pageOrViewLogicalHeight() - spaceAround;
+}
+
 void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, ContainingBlockState&& blockContainerState, BlockLayoutResult& result)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
@@ -202,13 +227,13 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
         computeBlockSize(box, { }, containingBlockState, geometry);
         ASSERT(!geometry.borderBoxHeight());
         if (containingBlockState.borderBoxLogicalTop)
-            geometry.setTop(m_blockLayoutState.marginCollapse().collapsedLogicalBottom() - *containingBlockState.borderBoxLogicalTop);
+            geometry.setTop(m_blockLayoutState.marginCollapse().collapsedLogicalBottomForCollapsedThroughBox() - *containingBlockState.borderBoxLogicalTop);
         else
             geometry.setTop({ });
         m_blockLayoutState.marginCollapse().addCollapsedThroughBlockEndMargin(blockContainerState, containingBlockState, geometry.marginAfter());
         auto collapsedMarginsAfter = AdjoiningMargins { };
         collapsedMarginsAfter.add(geometry.marginAfter());
-        result.boxes.append({ box, WTF::move(geometry), { }, collapsedMarginsBefore, collapsedMarginsAfter });
+        result.boxes.append({ box, WTF::move(geometry), { }, collapsedMarginsBefore, collapsedMarginsAfter, blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), box.style().marginAfter().hasQuirk() });
         return;
     }
 
@@ -217,20 +242,30 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     CheckedRef style = box.style();
     auto writingMode = root().writingMode();
     auto marginAfterCollapsesWithChildren = !geometry.borderAndPaddingAfter() && BlockFormattingUtils::blockSizeBehavesAsAuto(style->logicalHeight(writingMode), containingBlockState.contentBoxBlockSize);
-    auto contentBoxLogicalBottom = marginAfterCollapsesWithChildren ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+    // A quirk container leaves out a quirky margin after its last child (RenderBlockFlow::handleAfterSideOfBlock).
+    auto contentBoxLogicalBottom = marginAfterCollapsesWithChildren || (BlockMarginCollapse::isQuirkContainer(box) && m_blockLayoutState.marginCollapse().endsWithQuirk()) ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
     // Negative margins may pull that above the content box top.
     auto intrinsicContentBlockSize = std::max(0_lu, contentBoxLogicalBottom - blockContainerState.contentBoxLogicalTop());
     computeBlockSize(box, intrinsicContentBlockSize, containingBlockState, geometry);
+    if (box.stretchesToViewport()) {
+        auto collapsedMarginAfter = geometry.marginAfter();
+        if (marginAfterCollapsesWithChildren) {
+            auto margins = m_blockLayoutState.marginCollapse().adjoiningMargins();
+            margins.add(geometry.marginAfter());
+            collapsedMarginAfter = margins.collapsedValue();
+        }
+        geometry.setContentBoxHeight(std::max(geometry.contentBoxHeight(), viewportStretchedBorderBoxBlockSize(collapsedMarginsBefore.collapsedValue(), collapsedMarginAfter) - geometry.verticalBorderAndPadding()));
+    }
 
     // WebKit compatibility (RenderBlockFlow::layoutBlock): the block-end margin still collapses with the last child's when min-height is
     // not zero, unless it made the box taller than its content.
     auto minimumBlockSizeSeparatesMargins = style->logicalHeight(writingMode).isAuto() && !style->logicalMinHeight(writingMode).isPossiblyZero() && geometry.contentBoxHeight() > intrinsicContentBlockSize;
     // What follows is placed below the bottom border edge, also when min/max-height moved that away from where the content ends.
     auto borderBoxLogicalTop = *blockContainerState.borderBoxLogicalTop;
-    m_blockLayoutState.marginCollapse().addBlockEndMargin(geometry.marginAfter(), marginAfterCollapsesWithChildren && !minimumBlockSizeSeparatesMargins, borderBoxLogicalTop + geometry.borderBoxHeight());
+    auto marginAfterIsQuirky = m_blockLayoutState.marginCollapse().addBlockEndMargin(geometry.marginAfter(), style->marginAfter().hasQuirk(), marginAfterCollapsesWithChildren && !minimumBlockSizeSeparatesMargins, borderBoxLogicalTop + geometry.borderBoxHeight());
 
     geometry.setTop(borderBoxLogicalTop - *containingBlockState.borderBoxLogicalTop);
-    result.boxes.append({ box, WTF::move(geometry), intrinsicContentBlockSize, collapsedMarginsBefore, m_blockLayoutState.marginCollapse().adjoiningMargins() });
+    result.boxes.append({ box, WTF::move(geometry), intrinsicContentBlockSize, collapsedMarginsBefore, m_blockLayoutState.marginCollapse().adjoiningMargins(), blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), marginAfterIsQuirky });
 }
 
 // The block container separates the adjoining margins from the margins that follow (CSS 2.2 §8.3.1), so they collapse into one margin. It
@@ -239,6 +274,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
 void BlockFormattingContext::resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState)
 {
     ASSERT(!blockContainerState.borderBoxLogicalTop);
+    m_blockLayoutState.marginCollapse().endQuirkContainerBlockStartSide(blockContainerState);
     auto borderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
     for (auto& containingBlockState : m_blockLayoutState.containingBlockStates() | std::views::reverse) {
         if (containingBlockState.borderBoxLogicalTop)
