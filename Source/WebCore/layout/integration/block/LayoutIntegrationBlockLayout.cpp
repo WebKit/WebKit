@@ -105,6 +105,12 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result)
         renderer->setMarginAfter(geometry.marginAfter(), containingBlockWritingMode);
         renderer->setLogicalWidth(geometry.borderBoxWidth());
         renderer->setLogicalHeight(geometry.borderBoxHeight());
+        // What RenderBlockFlow::layoutBlock leaves for the parent to collapse with, when the parent is laid out by the render tree path
+        // and this box is not laid out again.
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+            blockFlow->setMaxMarginBeforeValues(box.collapsedMarginsBefore.positive, box.collapsedMarginsBefore.negative);
+            blockFlow->setMaxMarginAfterValues(box.collapsedMarginsAfter.positive, box.collapsedMarginsAfter.negative);
+        }
     }
 
     // The render tree measures the logical left from the left (top in vertical writing modes) edge of the containing block in
