@@ -53,6 +53,7 @@
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/MakeString.h>
@@ -204,6 +205,40 @@
 
 @end
 #endif // ENABLE(APP_HIGHLIGHTS)
+
+#if ENABLE(WRITING_TOOLS)
+@interface SiteIsolationProofreadingDetailsObserver : NSObject <WTTextViewDelegate>
+- (std::optional<CGRect>)detailsRect;
+@end
+
+@implementation SiteIsolationProofreadingDetailsObserver {
+    std::optional<CGRect> _detailsRect;
+}
+
+- (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID
+{
+}
+
+#if PLATFORM(MAC)
+- (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)suggestionUUID relativeToRect:(CGRect)rect inView:(NSView *)sourceView
+#else
+- (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)suggestionUUID relativeToRect:(CGRect)rect inView:(UIView *)sourceView
+#endif
+{
+    _detailsRect = rect;
+}
+
+- (void)textSystemWillBeginEditingDuringSessionWithUUID:(NSUUID *)sessionUUID
+{
+}
+
+- (std::optional<CGRect>)detailsRect
+{
+    return _detailsRect;
+}
+
+@end
+#endif // ENABLE(WRITING_TOOLS)
 
 namespace TestWebKitAPI {
 
@@ -2311,5 +2346,120 @@ TEST(SiteIsolation, AccessibilitySettingsChangeReachesCrossOriginIframe)
         return [targetColorInFrame(childFrame.get()) isEqualToString:@"rgb(0, 128, 0)"];
     }));
 }
+
+#if ENABLE(WRITING_TOOLS)
+
+// Writing Tools sessions go to the main frame's process, so the editor is same-site with the main frame.
+// It's nested in a cross-origin iframe, which makes it a local root in that process.
+static void checkProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe(int mainFrameScrollY, int crossOriginIframeScrollY)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 2000px'><iframe style='position: absolute; left: 100px; top: 150px; width: 500px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0; height: 1000px'><iframe style='position: absolute; left: 30px; top: 40px; width: 400px; height: 200px; border: none;' src='https://example.com/editor'></iframe></body>"_s } },
+        { "/editor"_s, { "<body contenteditable style='margin: 0; font-family: monospace'>AAAA BBBB CCCC</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKFrameInfo> crossOriginIframe;
+    RetainPtr<WKFrameInfo> editorFrame;
+    ASSERT_TRUE(Util::waitFor([&] {
+        RetainPtr crossOriginIframeNode = [webView mainFrame].childFrames.firstObject;
+        crossOriginIframe = [crossOriginIframeNode info];
+        editorFrame = [crossOriginIframeNode childFrames].firstObject.info;
+        return editorFrame && [[webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:editorFrame.get()] isEqualToString:@"AAAA BBBB CCCC"];
+    }));
+
+    auto scrollFrame = [&](WKFrameInfo *frame, int scrollY) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", scrollY] inFrame:frame];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:frame] intValue] == scrollY;
+        }));
+        [webView waitForNextPresentationUpdate];
+    };
+    if (mainFrameScrollY)
+        scrollFrame(nil, mainFrameScrollY);
+    if (crossOriginIframeScrollY)
+        scrollFrame(crossOriginIframe.get(), crossOriginIframeScrollY);
+
+    NSArray<NSNumber *> *textRect = [webView objectByEvaluatingJavaScript:@"(() => {"
+        "document.body.focus();"
+        "const text = document.body.firstChild;"
+        "getSelection().setBaseAndExtent(text, 0, text, text.length);"
+        "const range = document.createRange();"
+        "range.setStart(text, 5);"
+        "range.setEnd(text, 9);"
+        "const rect = range.getBoundingClientRect();"
+        "return [rect.x, rect.y, rect.width, rect.height];"
+        "})()" inFrame:editorFrame.get()];
+    auto textRectInEditor = CGRectMake([textRect[0] doubleValue], [textRect[1] doubleValue], [textRect[2] doubleValue], [textRect[3] doubleValue]);
+#if PLATFORM(IOS_FAMILY)
+    // The popover is placed in the content view, which scrolls with the main frame.
+    int mainFrameScrollOffset = 0;
+#else
+    int mainFrameScrollOffset = mainFrameScrollY;
+#endif
+    auto expectedRect = CGRectOffset(textRectInEditor, 100 + 30, 150 + 40 - mainFrameScrollOffset - crossOriginIframeScrollY);
+
+    RetainPtr observer = adoptNS([[SiteIsolationProofreadingDetailsObserver alloc] init]);
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:observer.get()]);
+    RetainPtr suggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(5, 4) replacement:@"YYYY"]);
+#if PLATFORM(IOS_FAMILY)
+    auto writingToolsDelegate = (id<WTWritingToolsDelegate>)[webView textInputContentView];
+#else
+    auto writingToolsDelegate = (id<WTWritingToolsDelegate>)webView.get();
+#endif
+
+    __block RetainPtr<WTContext> context;
+    __block bool didReceiveContexts = false;
+    [writingToolsDelegate willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        context = contexts.firstObject;
+        didReceiveContexts = true;
+    }];
+    ASSERT_TRUE(Util::runFor(&didReceiveContexts, 5_s));
+    ASSERT_NOT_NULL(context.get());
+    EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [context attributedText].string);
+
+    [writingToolsDelegate didBeginWritingToolsSession:session.get() contexts:@[ context.get() ]];
+    [writingToolsDelegate proofreadingSession:session.get() didReceiveSuggestions:@[ suggestion.get() ] processedRange:NSMakeRange(0, 14) inContext:context.get() finished:YES];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:editorFrame.get()] containsString:@"YYYY"];
+    }));
+
+    [writingToolsDelegate proofreadingSession:session.get() didUpdateState:WTTextSuggestionStateReviewing forSuggestionWithUUID:[suggestion uuid] inContext:context.get()];
+    ASSERT_TRUE(Util::waitFor([&] {
+        return [observer detailsRect].has_value();
+    }));
+
+    auto detailsRect = *[observer detailsRect];
+    EXPECT_NEAR(CGRectGetMinX(detailsRect), CGRectGetMinX(expectedRect), 2);
+    EXPECT_NEAR(CGRectGetWidth(detailsRect), CGRectGetWidth(expectedRect), 2);
+    EXPECT_GE(CGRectGetMinY(detailsRect), CGRectGetMinY(expectedRect) - 1);
+    EXPECT_LT(CGRectGetMinY(detailsRect), CGRectGetMaxY(expectedRect));
+}
+
+TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe)
+{
+    checkProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe(0, 0);
+}
+
+TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInCrossOriginIframeWithScrolledMainFrame)
+{
+    checkProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe(100, 0);
+}
+
+TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInScrolledCrossOriginIframe)
+{
+    checkProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe(0, 30);
+}
+
+TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInScrolledCrossOriginIframeWithScrolledMainFrame)
+{
+    checkProofreadingDetailsPopoverInFrameNestedInCrossOriginIframe(100, 30);
+}
+
+#endif // ENABLE(WRITING_TOOLS)
 
 } // namespace TestWebKitAPI

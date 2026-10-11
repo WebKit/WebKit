@@ -522,7 +522,7 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
 
         // Ensure that the details popover is moved down a tiny bit so that it does not overlap the suggestion underline.
 
-        auto rect = protect(protect(document)->view())->contentsToRootView(unionRect(RenderObject::absoluteTextRects(rangeToReplace)));
+        auto rect = protect(protect(document)->view())->contentsToMainFrameView(unionRect(RenderObject::absoluteTextRects(rangeToReplace)));
 
         if (CheckedPtr renderStyle = node.renderStyle()) {
             CheckedRef font = renderStyle->fontCascadeOutOfLine();
