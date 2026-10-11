@@ -30,7 +30,6 @@
 #if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
-#include <span>
 #include <stdint.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -47,14 +46,14 @@ public:
     Address loadAddress() const { return m_loadAddress; }
     const UTF8CString& path() const { return m_path; }
 
-    // empty on linux
-    std::span<const uint8_t> uuid() const { return m_uuid.span(); }
+    // In hex, as liblldb's AddModule takes it. Null on Linux.
+    const UTF8CString& uuid() const { return m_uuid; }
 
 private:
     friend class Snapshot;
     static Vector<Image> collect(Snapshot&);
 
-    Image(Address loadAddress, UTF8CString&& path, Vector<uint8_t>&& uuid)
+    Image(Address loadAddress, UTF8CString&& path, UTF8CString&& uuid)
         : m_loadAddress(loadAddress)
         , m_path(WTF::move(path))
         , m_uuid(WTF::move(uuid))
@@ -63,7 +62,7 @@ private:
 
     Address m_loadAddress;
     UTF8CString m_path;
-    Vector<uint8_t> m_uuid;
+    UTF8CString m_uuid;
 };
 
 } // namespace Corpse

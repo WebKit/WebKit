@@ -38,6 +38,8 @@
 #include <mach-o/dyld_images.h>
 #include <mach-o/loader.h>
 #include <wtf/HashMap.h>
+#include <wtf/HexNumber.h>
+#include <wtf/text/StringBuilder.h>
 #else
 #include <elf.h>
 #include <string_view>
@@ -103,7 +105,10 @@ Vector<Image> Image::collect(Snapshot& snapshot)
                 loadAddress.toTargetVMAddress(), static_cast<int>(snapshot.process()->pid()));
             continue;
         }
-        result.append(Image { loadAddress, WTF::move(*path), Vector<uint8_t> { std::span { entry.imageUUID } } });
+        StringBuilder uuid;
+        for (uint8_t byte : std::span { entry.imageUUID })
+            uuid.append(hex(byte, 2));
+        result.append(Image { loadAddress, WTF::move(*path), uuid.toString().utf8() });
     }
     return result;
 }

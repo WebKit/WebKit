@@ -1676,7 +1676,9 @@ if (ENABLE_MYA)
         corpse/CorpseProcess.h
         corpse/CorpseRegion.h
         corpse/CorpseSnapshot.h
+        corpse/CorpseSnapshotDebugInfo.h
         corpse/CorpseSymbol.h
+        corpse/CorpseTargetType.h
         corpse/CorpseThread.h
     )
 endif ()
