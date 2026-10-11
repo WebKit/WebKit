@@ -280,7 +280,7 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& re
         ts << " clipped"_s;
     }
 
-    ts << ' ' << enclosingIntRect(renderer.absoluteClippedOverflowRectForRenderTreeAsText());
+    ts << ' ' << enclosingIntRect(renderer.absoluteClippedOverflowRectForTextRepresentation());
 
     writeSVGPaintingFeatures(ts, renderer, behavior);
     return ts;

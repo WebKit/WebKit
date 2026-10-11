@@ -112,6 +112,7 @@ struct Request {
     bool includeOffscreenPasswordFields { false };
     bool includeTagName { false };
     bool includeSameOriginSubframes { true };
+    bool includeClippedContent { true };
 #if ENABLE(DATA_DETECTION)
     OptionSet<DataDetectorType> dataDetectorTypes;
 #endif

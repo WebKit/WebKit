@@ -57,6 +57,7 @@
     _includeAccessibilityAttributes = YES;
     _includeTextInAutoFilledControls = NO;
     _includeSameOriginSubframes = YES;
+    _includeClippedContent = YES;
     _skipNearlyTransparentContent = YES;
     _targetRect = CGRectNull;
     _maxWordsPerParagraph = NSUIntegerMax;

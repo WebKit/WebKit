@@ -5033,6 +5033,7 @@ header: <WebCore/TextExtractionTypes.h>
     bool includeOffscreenPasswordFields;
     bool includeTagName;
     bool includeSameOriginSubframes;
+    bool includeClippedContent;
 #if ENABLE(DATA_DETECTION)
     OptionSet<WebCore::DataDetectorType> dataDetectorTypes;
 #endif

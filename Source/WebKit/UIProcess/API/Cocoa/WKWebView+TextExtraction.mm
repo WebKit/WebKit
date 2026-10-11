@@ -892,6 +892,7 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             .includeOffscreenPasswordFields = !!configuration.includeOffscreenPasswordFields,
             .includeTagName = !!configuration.includeTagName,
             .includeSameOriginSubframes = !!configuration.includeSameOriginSubframes,
+            .includeClippedContent = !!configuration.includeClippedContent,
 #if ENABLE(DATA_DETECTION)
             .dataDetectorTypes = coreDataDetectorTypes(configuration.dataDetectorTypes),
 #endif
