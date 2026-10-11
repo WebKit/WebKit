@@ -1939,6 +1939,7 @@ $(PROJECT_DIR)/page/DOMWindow+DeviceMotion.idl
 $(PROJECT_DIR)/page/DOMWindow+DeviceOrientation.idl
 $(PROJECT_DIR)/page/DOMWindow+RequestIdleCallback.idl
 $(PROJECT_DIR)/page/DOMWindow+Selection.idl
+$(PROJECT_DIR)/page/DOMWindow+Viewport.idl
 $(PROJECT_DIR)/page/DOMWindow+VisualViewport.idl
 $(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/DocumentSyncData.in
@@ -2033,6 +2034,7 @@ $(PROJECT_DIR)/page/UndoItem.idl
 $(PROJECT_DIR)/page/UndoManager.idl
 $(PROJECT_DIR)/page/UserMessageHandler.idl
 $(PROJECT_DIR)/page/UserMessageHandlersNamespace.idl
+$(PROJECT_DIR)/page/Viewport.idl
 $(PROJECT_DIR)/page/VisualViewport.idl
 $(PROJECT_DIR)/page/WebKitBuffer.idl
 $(PROJECT_DIR)/page/WebKitBufferNamespace.idl

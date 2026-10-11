@@ -213,6 +213,8 @@
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 #include "ValidationMessageClient.h"
+#include "Viewport.h"
+#include "ViewportSegments.h"
 #include "VisibilityState.h"
 #include "VisitedLinkState.h"
 #include "VisitedLinkStore.h"
@@ -4615,6 +4617,25 @@ void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
 
     forEachDocument([&] (Document& document) {
         document.styleScope().environmentVariables().didChangeSafeAreaInsets();
+    });
+}
+
+void Page::setViewportSegments(const ViewportSegments& segments)
+{
+    if (m_viewportSegments == segments)
+        return;
+
+    m_viewportSegments = segments;
+
+    forEachDocument([&](Document& document) {
+        document.styleScope().environmentVariables().didChangeViewportSegments();
+        document.styleScope().didChangeStyleSheetEnvironment();
+        document.styleScope().evaluateMediaQueriesForAppearanceChange();
+        document.updateElementsAffectedByMediaQueries();
+        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
+
+        if (RefPtr window = document.window())
+            protect(window->viewport())->invalidateSegments();
     });
 }
 

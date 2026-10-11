@@ -142,6 +142,7 @@
 #include "TiledBacking.h"
 #include "TransformState.h"
 #include "VelocityData.h"
+#include "Viewport.h"
 #include "VisualViewport.h"
 #include "WheelEventTestMonitor.h"
 #include <span>
@@ -4301,6 +4302,11 @@ void LocalFrameView::layoutOrVisualViewportChanged()
 
         if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewVisualViewportChanged(*this);
+    }
+
+    if (m_frame->settings().viewportSegmentsAPIEnabled()) {
+        if (RefPtr window = m_frame->window())
+            protect(window->viewport())->invalidateSegments();
     }
 
     if (RefPtr page = m_frame->page())

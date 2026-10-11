@@ -44,6 +44,7 @@
 #include "Settings.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include "Theme.h"
+#include "ViewportSegments.h"
 #include <wtf/Function.h>
 
 namespace WebCore::MQ {
@@ -83,6 +84,27 @@ struct IntegerSchema : public FeatureSchema {
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
         return evaluateIntegerFeature(feature, valueFunction(context), context.conversionData);
+    }
+
+private:
+    ValueFunction valueFunction;
+};
+
+struct OptionalIntegerSchema : public FeatureSchema {
+    using ValueFunction = Function<std::optional<int>(const FeatureEvaluationContext&)>;
+
+    OptionalIntegerSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
+        : FeatureSchema(name, FeatureSchema::Type::Range, FeatureSchema::ValueType::Integer, dependencies)
+        , valueFunction(WTF::move(valueFunction))
+    {
+    }
+
+    EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        auto value = valueFunction(context);
+        if (!value)
+            return EvaluationResult::Unknown;
+        return evaluateIntegerFeature(feature, *value, context.conversionData);
     }
 
 private:
@@ -762,6 +784,36 @@ static const LengthSchema& widthFeatureSchema()
     return schema;
 }
 
+static const OptionalIntegerSchema& horizontalViewportSegmentsFeatureSchema()
+{
+    static MainThreadNeverDestroyed<OptionalIntegerSchema> schema {
+        "horizontal-viewport-segments"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
+        [](auto& context) -> std::optional<int> {
+            if (!context.document->settings().viewportSegmentsAPIEnabled())
+                return std::nullopt;
+            RefPtr page = context.document->frame()->page();
+            return page ? static_cast<int>(page->viewportSegments().columns) : 1;
+        }
+    };
+    return schema;
+}
+
+static const OptionalIntegerSchema& verticalViewportSegmentsFeatureSchema()
+{
+    static MainThreadNeverDestroyed<OptionalIntegerSchema> schema {
+        "vertical-viewport-segments"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
+        [](auto& context) -> std::optional<int> {
+            if (!context.document->settings().viewportSegmentsAPIEnabled())
+                return std::nullopt;
+            RefPtr page = context.document->frame()->page();
+            return page ? static_cast<int>(page->viewportSegments().rows) : 1;
+        }
+    };
+    return schema;
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 static const IdentifierSchema& displayModeFeatureSchema()
 {
@@ -1044,6 +1096,16 @@ const FeatureSchema& width()
     return widthFeatureSchema();
 }
 
+const FeatureSchema& horizontalViewportSegments()
+{
+    return horizontalViewportSegmentsFeatureSchema();
+}
+
+const FeatureSchema& verticalViewportSegments()
+{
+    return verticalViewportSegmentsFeatureSchema();
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 const FeatureSchema& displayMode()
 {
@@ -1106,6 +1168,8 @@ Vector<const FeatureSchema*> allSchemas()
         &update(),
         &videoPlayableInline(),
         &width(),
+        &horizontalViewportSegments(),
+        &verticalViewportSegments(),
 #if ENABLE(APPLICATION_MANIFEST)
         &displayMode(),
 #endif

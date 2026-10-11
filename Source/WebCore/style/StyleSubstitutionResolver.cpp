@@ -71,6 +71,7 @@
 #include <wtf/IndexedRange.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -218,6 +219,18 @@ bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vect
     if (range.peek().type() != IdentToken)
         return false;
     auto name = range.consumeIncludingWhitespace().value().toAtomString();
+
+    // viewport-segment-* env() variables are looked up with composite names of the form
+    // "viewport-segment-<prop> <col> <row>" — consume the two integer indices here.
+    if (context.viewportSegmentsAPIEnabled && name.startsWith("viewport-segment-"_s)) {
+        if (range.peek().type() == NumberToken) {
+            int col = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
+            if (range.peek().type() == NumberToken) {
+                int row = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
+                name = makeAtomString(name, ' ', col, ' ', row);
+            }
+        }
+    }
 
     std::optional<CSSParserTokenRange> fallbackRange;
     if (!range.atEnd()) {

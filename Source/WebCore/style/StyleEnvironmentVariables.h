@@ -70,6 +70,7 @@ public:
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
     void setFullscreenAutoHideDuration(Seconds);
+    void didChangeViewportSegments();
 
     void setLinkParameters(const LinkParameters&);
 
@@ -79,9 +80,11 @@ private:
 
     const AtomString& nameForVariable(UADefinedVariable) const;
     void setValueForVariable(UADefinedVariable, Ref<CSSVariableData>&&);
+    void setValueForName(const AtomString&, Ref<CSSVariableData>&&);
 
     void updateSafeAreaInsetVariables();
     void updateFullscreenVariables();
+    void updateViewportSegmentVariables();
 
 
     std::optional<Values> m_values;

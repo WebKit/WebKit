@@ -149,6 +149,7 @@
 #include "SuddenTermination.h"
 #include "UserContentProvider.h"
 #include "UserGestureIndicator.h"
+#include "Viewport.h"
 #include "VisualViewport.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebKitPoint.h"
@@ -870,6 +871,13 @@ void LocalDOMWindow::unfreezeNowTimestamp()
 ReducedResolutionSeconds LocalDOMWindow::frozenNowTimestamp() const
 {
     return m_frozenNowTimestamp.value_or(nowTimestamp());
+}
+
+Viewport& LocalDOMWindow::viewport()
+{
+    if (!m_viewport)
+        m_viewport = Viewport::create(*this);
+    return *m_viewport;
 }
 
 VisualViewport& LocalDOMWindow::visualViewport()

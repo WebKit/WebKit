@@ -36,8 +36,10 @@
 #include "StyleDocumentScope.h"
 #include "StyleLinkParameters.h"
 #include "StyleScope.h"
+#include "ViewportSegments.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -108,6 +110,14 @@ void EnvironmentVariables::setValueForVariable(UADefinedVariable variable, Ref<C
     m_values->set(name, CustomProperty::createForVariableData(name, WTF::move(data)));
 }
 
+void EnvironmentVariables::setValueForName(const AtomString& name, Ref<CSSVariableData>&& data)
+{
+    if (!m_values)
+        buildValues();
+
+    m_values->set(name, CustomProperty::createForVariableData(name, WTF::move(data)));
+}
+
 void EnvironmentVariables::setLinkParameters(const LinkParameters& parameters)
 {
     m_linkParameterValues.clear();
@@ -137,6 +147,7 @@ void EnvironmentVariables::buildValues()
 
     updateSafeAreaInsetVariables();
     updateFullscreenVariables();
+    updateViewportSegmentVariables();
 }
 
 static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
@@ -201,6 +212,47 @@ void EnvironmentVariables::didChangeFullscreenInsets()
 void EnvironmentVariables::setFullscreenAutoHideDuration(Seconds duration)
 {
     setValueForVariable(UADefinedVariable::FullscreenAutoHideDuration, variableDataForPositiveDuration(duration));
+    protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+}
+
+void EnvironmentVariables::updateViewportSegmentVariables()
+{
+    if (!m_values)
+        return;
+
+    m_values->removeIf([](auto& entry) {
+        return entry.key.startsWith("viewport-segment-"_s);
+    });
+
+    RefPtr page = m_document->page();
+    if (!page)
+        return;
+
+    const auto& segments = page->viewportSegments();
+
+    // Not segmented; env() variables are undefined.
+    if (segments.columns == 1 && segments.rows == 1)
+        return;
+
+    for (unsigned y = 0; y < segments.rows; ++y) {
+        for (unsigned x = 0; x < segments.columns; ++x) {
+            const FloatRect& rect = segments.segmentRects[y * segments.columns + x];
+            auto makeName = [&](ASCIILiteral base) {
+                return makeAtomString(base, ' ', x, ' ', y);
+            };
+            setValueForName(makeName("viewport-segment-width"_s), variableDataForPositivePixelLength(rect.width()));
+            setValueForName(makeName("viewport-segment-height"_s), variableDataForPositivePixelLength(rect.height()));
+            setValueForName(makeName("viewport-segment-top"_s), variableDataForPositivePixelLength(rect.y()));
+            setValueForName(makeName("viewport-segment-right"_s), variableDataForPositivePixelLength(rect.maxX()));
+            setValueForName(makeName("viewport-segment-bottom"_s), variableDataForPositivePixelLength(rect.maxY()));
+            setValueForName(makeName("viewport-segment-left"_s), variableDataForPositivePixelLength(rect.x()));
+        }
+    }
+}
+
+void EnvironmentVariables::didChangeViewportSegments()
+{
+    updateViewportSegmentVariables();
     protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 

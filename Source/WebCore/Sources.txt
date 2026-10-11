@@ -2428,6 +2428,7 @@ page/UserScript.cpp
 page/UserStyleSheet.cpp
 page/ViewportProximityInfo.cpp
 page/VisitedLinkStore.cpp
+page/Viewport.cpp
 page/VisualViewport.cpp
 page/WebKitJSHandle.cpp
 page/WebKitNodeSnapshot.cpp
@@ -5320,6 +5321,7 @@ JSViewTransitionUpdateCallback.cpp
 JSVisibilityState.cpp
 JSVisitorCallback.cpp
 JSVisualViewport.cpp
+JSViewport.cpp
 JSVoidCallback.cpp
 JSWGSLLanguageFeatures.cpp
 JSWakeLock.cpp

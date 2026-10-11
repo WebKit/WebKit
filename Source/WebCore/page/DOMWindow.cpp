@@ -60,6 +60,7 @@
 #include "SecurityOrigin.h"
 #include "Site.h"
 #include "StyleMedia.h"
+#include "Viewport.h"
 #include "VisualViewport.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebKitPoint.h"
@@ -472,6 +473,14 @@ ExceptionOr<StyleMedia&> DOMWindow::styleMedia()
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->styleMedia();
+}
+
+ExceptionOr<Viewport&> DOMWindow::viewport()
+{
+    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    if (!localThis)
+        return Exception { ExceptionCode::SecurityError };
+    return localThis->viewport();
 }
 
 ExceptionOr<VisualViewport&> DOMWindow::visualViewport()

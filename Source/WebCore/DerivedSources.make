@@ -1585,6 +1585,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/DOMWindow+DeviceOrientation.idl \
     $(WebCore)/page/DOMWindow+RequestIdleCallback.idl \
     $(WebCore)/page/DOMWindow+Selection.idl \
+    $(WebCore)/page/DOMWindow+Viewport.idl \
     $(WebCore)/page/DOMWindow+VisualViewport.idl \
     $(WebCore)/page/EventCounts.idl \
     $(WebCore)/page/EventSource.idl \
@@ -1672,6 +1673,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/UndoManager.idl \
     $(WebCore)/page/UserMessageHandler.idl \
     $(WebCore)/page/UserMessageHandlersNamespace.idl \
+    $(WebCore)/page/Viewport.idl \
     $(WebCore)/page/VisualViewport.idl \
     $(WebCore)/page/WebKitJSHandle.idl \
     $(WebCore)/page/WebKitNamespace.idl \

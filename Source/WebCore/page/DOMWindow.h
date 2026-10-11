@@ -74,6 +74,7 @@ class Screen;
 class SecurityOrigin;
 class Storage;
 class StyleMedia;
+class Viewport;
 class VisualViewport;
 class WebCoreOpaqueRoot;
 class WebKitNamespace;
@@ -166,6 +167,7 @@ public:
     ExceptionOr<double> devicePixelRatio() const;
     ExceptionOr<StyleMedia&> styleMedia();
     ExceptionOr<VisualViewport&> visualViewport();
+    ExceptionOr<Viewport&> viewport();
     ExceptionOr<Storage*> localStorage();
     ExceptionOr<Storage*> sessionStorage();
     ExceptionOr<String> origin() const;

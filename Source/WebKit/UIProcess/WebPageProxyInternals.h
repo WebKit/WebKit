@@ -63,6 +63,7 @@
 #include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/ViewportSegments.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/UUID.h>
 
@@ -301,6 +302,7 @@ public:
     HashMap<WebURLSchemeHandlerIdentifier, Ref<WebURLSchemeHandler>> urlSchemeHandlersByIdentifier;
     std::optional<WebCore::FloatRect> viewExposedRect;
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
+    WebCore::ViewportSegments viewportSegments;
     VisibleWebPageToken visiblePageToken;
     WebCore::IntRect visibleScrollerThumbRect;
     WindowKind windowKind { WindowKind::Unparented };

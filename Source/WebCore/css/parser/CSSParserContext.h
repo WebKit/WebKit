@@ -101,6 +101,7 @@ struct CSSParserContext {
     bool cssInheritFunctionEnabled : 1 { false };
     bool cssFontPaletteMixFunctionEnabled : 1 { false };
     bool cssSymbolsFunctionEnabled : 1 { false };
+    bool viewportSegmentsAPIEnabled : 1 { false };
 
     // Enabled only for the legacy <font face> attribute: allows a numeric token within a family
     // name (e.g. "Bodoni 72"). Regular CSS font-family parsing stays strict.
