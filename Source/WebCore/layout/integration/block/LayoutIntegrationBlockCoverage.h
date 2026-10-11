@@ -28,10 +28,19 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderView;
 
 namespace LayoutIntegration {
 
 bool canUseForBlockLayout(const RenderBlockFlow&);
+
+struct BlockLayoutCoverage {
+    unsigned coveredBoxes { 0 };
+    unsigned boxes { 0 };
+
+    bool operator==(const BlockLayoutCoverage&) const = default;
+};
+BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView&);
 
 } // namespace LayoutIntegration
 } // namespace WebCore
