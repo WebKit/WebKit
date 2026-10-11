@@ -46,14 +46,14 @@ BlobBuilder::BlobBuilder(EndingType endings)
 {
 }
 
-void BlobBuilder::append(Ref<ArrayBuffer>&& arrayBuffer)
+bool BlobBuilder::append(Ref<ArrayBuffer>&& arrayBuffer)
 {
-    m_appendableData.append(arrayBuffer->span());
+    return m_appendableData.tryAppend(arrayBuffer->span());
 }
 
-void BlobBuilder::append(Ref<ArrayBufferView>&& arrayBufferView)
+bool BlobBuilder::append(Ref<ArrayBufferView>&& arrayBufferView)
 {
-    m_appendableData.append(arrayBufferView->span());
+    return m_appendableData.tryAppend(arrayBufferView->span());
 }
 
 void BlobBuilder::append(Ref<Blob>&& blob)
@@ -63,19 +63,22 @@ void BlobBuilder::append(Ref<Blob>&& blob)
     m_items.append(blob->url());
 }
 
-void BlobBuilder::append(const String& text)
+bool BlobBuilder::append(const String& text)
 {
-    auto bytes = PAL::TextCodecUTF8::encodeUTF8(text);
+    auto bytes = PAL::TextCodecUTF8::tryEncodeUTF8(text);
+    if (!bytes)
+        return false;
 
     if (m_endings == EndingType::Native)
-        bytes = normalizeLineEndingsToNative(WTF::move(bytes));
+        bytes = normalizeLineEndingsToNative(WTF::move(*bytes));
 
-    if (m_appendableData.isEmpty())
-        m_appendableData = WTF::move(bytes);
-    else {
-        // FIXME: Would it be better to move multiple vectors into m_items instead of merging them into one?
-        m_appendableData.appendVector(bytes);
+    if (m_appendableData.isEmpty()) {
+        m_appendableData = WTF::move(*bytes);
+        return true;
     }
+
+    // FIXME: Would it be better to move multiple vectors into m_items instead of merging them into one?
+    return m_appendableData.tryAppend(bytes->span());
 }
 
 void BlobBuilder::append(Ref<FragmentedSharedBuffer>&& buffer)

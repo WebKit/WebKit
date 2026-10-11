@@ -139,7 +139,7 @@ Blob::Blob(ScriptExecutionContext* context)
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { }, { });
 }
 
-static size_t computeMemoryCost(const std::optional<Vector<BlobPartVariant>>& blobPartVariants)
+size_t Blob::memoryCostForParts(const std::optional<Vector<BlobPartVariant>>& blobPartVariants)
 {
     size_t memoryCost = 0;
     if (blobPartVariants) {
@@ -163,28 +163,55 @@ static size_t computeMemoryCost(const std::optional<Vector<BlobPartVariant>>& bl
     return memoryCost;
 }
 
-static Vector<BlobPart> buildBlobData(std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+static std::optional<Vector<BlobPart>> buildBlobData(std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
 {
     BlobBuilder builder(propertyBag.endings);
     if (blobPartVariants) {
         for (auto& blobPartVariant : *blobPartVariants) {
+            bool success = true;
             WTF::switchOn(WTF::move(blobPartVariant),
-                [&](auto&& part) {
+                [&](Ref<Blob>&& part) {
                     builder.append(WTF::move(part));
+                },
+                [&](auto&& part) {
+                    success = builder.append(WTF::move(part));
                 }
             );
+            // A blob part can be larger than the buffer we are able to allocate for it.
+            if (!success)
+                return std::nullopt;
         }
     }
     return builder.finalize();
 }
 
-Blob::Blob(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+ExceptionOr<Vector<BlobPart>> Blob::blobDataForParts(std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+{
+    auto blobData = buildBlobData(WTF::move(blobPartVariants), propertyBag);
+    if (!blobData)
+        return Exception { ExceptionCode::OutOfMemoryError, "Blob parts are too large"_s };
+    return WTF::move(*blobData);
+}
+
+ExceptionOr<Ref<Blob>> Blob::create(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+{
+    auto memoryCost = memoryCostForParts(blobPartVariants);
+    auto blobData = blobDataForParts(WTF::move(blobPartVariants), propertyBag);
+    if (blobData.hasException())
+        return blobData.releaseException();
+
+    Ref blob = adoptRef(*new Blob(context, blobData.releaseReturnValue(), memoryCost, propertyBag));
+    blob->suspendIfNeeded();
+    return blob;
+}
+
+Blob::Blob(ScriptExecutionContext& context, Vector<BlobPart>&& blobData, size_t memoryCost, const BlobPropertyBag& propertyBag)
     : ActiveDOMObject(&context)
     , m_type(normalizedContentType(propertyBag.type))
-    , m_memoryCost(computeMemoryCost(blobPartVariants))
+    , m_memoryCost(memoryCost)
     , m_internalURL(BlobURL::createInternalURL())
 {
-    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, buildBlobData(WTF::move(blobPartVariants), propertyBag), m_type);
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, WTF::move(blobData), m_type);
 }
 
 Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
