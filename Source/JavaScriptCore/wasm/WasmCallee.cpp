@@ -306,11 +306,12 @@ RestoreFrameCallee& RestoreFrameCallee::singleton()
     return callee.get().get();
 }
 
-IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&& name)
+IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&& name, size_t functionStartInModule)
     : Callee(Wasm::CompilationMode::IPIntMode, index, WTF::move(name))
     , m_functionIndex(generator.m_functionIndex)
     , m_bytecode(generator.m_bytecode.data() + generator.m_bytecodeOffset)
     , m_bytecodeEnd(m_bytecode + (generator.m_bytecode.size() - generator.m_bytecodeOffset - 1))
+    , m_moduleBytecodeOffsetBase(static_cast<uint32_t>(functionStartInModule + generator.m_bytecodeOffset))
     , m_metadata(WTF::move(generator.m_metadata))
     , m_localInitBytecode(WTF::move(generator.m_localInitBytecode))
     , m_signatureRTT(&signatureRTT)
