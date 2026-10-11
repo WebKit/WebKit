@@ -673,22 +673,29 @@ public:
         return true;
     }
 
-    static bool isEquivalentForPainting(const BackgroundData& a, const BackgroundData& b, bool currentColorDiffers)
+    static bool backgroundIsEquivalentForPainting(const Style::ComputedStyle& a, const Style::ComputedStyle& b, bool currentColorDiffers)
     {
+        SUPPRESS_UNCOUNTED_LOCAL auto& backgroundA = *a.nonInheritedData().backgroundData;
+        SUPPRESS_UNCOUNTED_LOCAL const auto& backgroundB = *b.nonInheritedData().backgroundData;
+
+        Color usedBackgroundColorA = a.usedBackgroundColor();
+        Color usedBackgroundColorB = b.usedBackgroundColor();
+
         if (&a == &b) {
             ASSERT(currentColorDiffers);
-            return !a.containsCurrentColor();
+            return !usedBackgroundColorA.containsCurrentColor();
         }
 
-        if (a.background != b.background || a.backgroundColor != b.backgroundColor)
+        if (backgroundA.background != backgroundB.background || usedBackgroundColorA != usedBackgroundColorB)
             return false;
-        if (currentColorDiffers && a.backgroundContainsCurrentColor())
+        if (currentColorDiffers && (backgroundA.backgroundContainsCurrentColor() || usedBackgroundColorA.containsCurrentColor()))
             return false;
-        if (!a.outline.isVisible() && !b.outline.isVisible())
+
+        if (!backgroundA.outline.isVisible() && !backgroundB.outline.isVisible())
             return true;
-        if (currentColorDiffers && a.outline.outlineColor.containsCurrentColor())
+        if (currentColorDiffers && backgroundA.outline.outlineColor.containsCurrentColor())
             return false;
-        return a.outline == b.outline;
+        return backgroundA.outline == backgroundB.outline;
     }
 
     static bool isEquivalentForPainting(const BorderData& a, const BorderData& b, bool currentColorDiffers)
@@ -871,7 +878,7 @@ public:
 
         if (currentColorDiffers || &a.nonInheritedData() != &b.nonInheritedData()) {
             if (currentColorDiffers || a.nonInheritedData().backgroundData.ptr() != b.nonInheritedData().backgroundData.ptr()) {
-                SUPPRESS_UNCOUNTED_ARG if (!isEquivalentForPainting(*a.nonInheritedData().backgroundData, *b.nonInheritedData().backgroundData, currentColorDiffers))
+                SUPPRESS_UNCOUNTED_ARG if (!backgroundIsEquivalentForPainting(a, b, currentColorDiffers))
                     return true;
             }
 

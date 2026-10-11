@@ -72,7 +72,7 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
         return;
 
     CheckedRef checkedPseudoElementStyle = *pseudoElementStyle;
-    style.backgroundColor = checkedPseudoElementStyle->visitedDependentBackgroundColorApplyingColorFilter(paintInfo.paintBehavior);
+    style.backgroundColor = checkedPseudoElementStyle->visitedDependentUsedBackgroundColorApplyingColorFilter(paintInfo.paintBehavior);
     style.textStyles.fillColor = checkedPseudoElementStyle->visitedDependentTextFillColorApplyingColorFilter(paintInfo.paintBehavior);
     // Highlight pseudos apply only the unprefixed stroke properties; the legacy -webkit-text-stroke pair does not apply, so don't inherit the originating element's text stroke.
     if (checkedPseudoElementStyle->hasExplicitlySetStrokeColor()) {

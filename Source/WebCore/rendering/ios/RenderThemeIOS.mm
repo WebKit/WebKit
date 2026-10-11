@@ -162,7 +162,7 @@ bool RenderThemeIOS::isControlStyled(const Style::ComputedStyle& style) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
     if (style.usedAppearance() == StyleAppearance::PushButton || style.usedAppearance() == StyleAppearance::MenulistButton)
-        return !style.visitedDependentBackgroundColor().isVisible() || Style::hasImageInAnyLayer(style.backgroundLayers());
+        return !style.visitedDependentUsedBackgroundColor().isVisible() || Style::hasImageInAnyLayer(style.backgroundLayers());
 
     if (style.usedAppearance() == StyleAppearance::TextField || style.usedAppearance() == StyleAppearance::TextArea || style.usedAppearance() == StyleAppearance::SearchField)
         return style.nativeAppearanceDisabled();
@@ -949,7 +949,7 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(Style::ComputedStyle& style, c
     if (textColor.isValid())
         style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 
-    auto backgroundColor = style.backgroundColorResolvingCurrentColor();
+    auto backgroundColor = style.usedBackgroundColorResolvingCurrentColor();
     if (backgroundColor.isValid())
         style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 }

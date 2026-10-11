@@ -105,6 +105,7 @@ NonInheritedRareData::NonInheritedRareData()
     , positionTryFallbacks(ComputedStyle::initialPositionTryFallbacks())
     , usedPositionOptionIndex()
     , overrideBlendMode()
+    , overrideBackgroundColor()
     , blockStepSize(ComputedStyle::initialBlockStepSize())
     , blockStepAlign(static_cast<unsigned>(ComputedStyle::initialBlockStepAlign()))
     , blockStepInsert(static_cast<unsigned>(ComputedStyle::initialBlockStepInsert()))
@@ -224,6 +225,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , positionTryFallbacks(o.positionTryFallbacks)
     , usedPositionOptionIndex(o.usedPositionOptionIndex)
     , overrideBlendMode(o.overrideBlendMode)
+    , overrideBackgroundColor(o.overrideBackgroundColor)
     , blockStepSize(o.blockStepSize)
     , blockStepAlign(o.blockStepAlign)
     , blockStepInsert(o.blockStepInsert)
@@ -350,6 +352,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && positionTryFallbacks == o.positionTryFallbacks
         && usedPositionOptionIndex == o.usedPositionOptionIndex
         && overrideBlendMode == o.overrideBlendMode
+        && overrideBackgroundColor == o.overrideBackgroundColor
         && blockStepSize == o.blockStepSize
         && blockStepAlign == o.blockStepAlign
         && blockStepInsert == o.blockStepInsert
@@ -501,6 +504,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(positionArea);
     LOG_IF_DIFFERENT(positionTryFallbacks);
     LOG_IF_DIFFERENT(usedPositionOptionIndex);
+    LOG_IF_DIFFERENT(overrideBackgroundColor);
 
     LOG_IF_DIFFERENT(overrideBlendMode);
 

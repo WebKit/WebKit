@@ -558,6 +558,7 @@ enum ContentsFormat {
     float usedOutlineOffset(Element element);
 
     DOMString computedAppleColorFilter(Element element);
+    DOMString usedBackgroundColorResolvingCurrentColor(Element element);
 
     Node ensureUserAgentShadowRoot(Element host);
     Node? shadowRoot(Element host);

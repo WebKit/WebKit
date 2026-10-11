@@ -160,6 +160,14 @@ public:
     WebCore::Color usedAccentColor(OptionSet<StyleColorOptions>) const;
     BlendMode usedBlendMode() const;
 
+    // MARK: -- Used background color
+
+    Color usedBackgroundColor() const;
+    WEBCORE_EXPORT WebCore::Color usedBackgroundColorResolvingCurrentColor() const;
+    WebCore::Color usedBackgroundColorResolvingCurrentColorApplyingColorFilter() const;
+    WebCore::Color visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> = { }) const;
+    WEBCORE_EXPORT WebCore::Color visitedDependentUsedBackgroundColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
+
     Style::LineWidth NODELETE usedColumnRuleWidth() const;
 
     WEBCORE_EXPORT Style::UsedOutlineOffset usedOutlineOffset() const;

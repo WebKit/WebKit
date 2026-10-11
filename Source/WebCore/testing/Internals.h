@@ -315,6 +315,7 @@ public:
     float usedOutlineOffset(Element&);
 
     String computedAppleColorFilter(Element&);
+    String usedBackgroundColorResolvingCurrentColor(Element&);
 
     Node& ensureUserAgentShadowRoot(Element& host);
     Node* shadowRoot(Element& host);

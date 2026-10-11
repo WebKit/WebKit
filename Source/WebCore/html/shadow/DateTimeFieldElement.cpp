@@ -67,7 +67,7 @@ std::optional<Style::UnadjustedStyle> DateTimeFieldElement::resolveCustomStyle(c
 
     if (!hasValue() && shadowHostStyle) {
         auto textColor = shadowHostStyle->visitedDependentColorApplyingColorFilter();
-        auto backgroundColor = shadowHostStyle->visitedDependentBackgroundColorApplyingColorFilter();
+        auto backgroundColor = shadowHostStyle->visitedDependentUsedBackgroundColorApplyingColorFilter();
         elementStyleStyle->setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
     }
 

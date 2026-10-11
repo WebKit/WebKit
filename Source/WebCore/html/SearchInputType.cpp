@@ -126,7 +126,7 @@ PopupMenuStyle SearchInputType::menuStyle() const
     CheckedRef style = renderer ? renderer->style() : defaultStyle;
     return PopupMenuStyle(
         style->visitedDependentColorApplyingColorFilter(),
-        style->visitedDependentBackgroundColorApplyingColorFilter(),
+        style->visitedDependentUsedBackgroundColorApplyingColorFilter(),
         style->fontCascade(),
         nullString(),
         renderer ? renderer->usedStyle().visibility() == UsedVisibility::Visible : style->visibility() == Visibility::Visible,

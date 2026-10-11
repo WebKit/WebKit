@@ -1689,6 +1689,11 @@ String Internals::computedAppleColorFilter(Element& element)
     return Style::Extractor::appleColorFilterSerializationForTesting(element);
 }
 
+String Internals::usedBackgroundColorResolvingCurrentColor(Element& element)
+{
+    return serializationForCSS(element.computedStyle()->usedBackgroundColorResolvingCurrentColor());
+}
+
 Node& Internals::ensureUserAgentShadowRoot(Element& host)
 {
     return host.ensureUserAgentShadowRoot();

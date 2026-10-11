@@ -5717,9 +5717,9 @@ Color LocalFrameView::documentBackgroundColor() const
     Color htmlBackgroundColor;
     Color bodyBackgroundColor;
     if (CheckedPtr htmlRenderer = htmlElement ? htmlElement->renderer() : nullptr)
-        htmlBackgroundColor = protect(htmlRenderer->style())->visitedDependentBackgroundColorApplyingColorFilter();
+        htmlBackgroundColor = protect(htmlRenderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (CheckedPtr bodyRenderer = bodyElement ? bodyElement->renderer() : nullptr)
-        bodyBackgroundColor = protect(bodyRenderer->style())->visitedDependentBackgroundColorApplyingColorFilter();
+        bodyBackgroundColor = protect(bodyRenderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
 
 #if ENABLE(FULLSCREEN_API)
     Color fullscreenBackgroundColor = [&] () -> Color {
@@ -5735,7 +5735,7 @@ Color LocalFrameView::documentBackgroundColor() const
         if (!fullscreenRenderer)
             return { };
 
-        auto fullscreenElementColor = protect(fullscreenRenderer->style())->visitedDependentBackgroundColorApplyingColorFilter();
+        auto fullscreenElementColor = protect(fullscreenRenderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
 
         CheckedPtr backdropRenderer = fullscreenRenderer->pseudoElementRenderer(PseudoElementType::Backdrop);
         if (!backdropRenderer)
@@ -5743,7 +5743,7 @@ Color LocalFrameView::documentBackgroundColor() const
 
         // Do not blend the fullscreenElementColor atop the backdrop color. The backdrop should
         // intentionally be visible underneath (and around) the fullscreen element.
-        return protect(backdropRenderer->style())->visitedDependentBackgroundColorApplyingColorFilter();
+        return protect(backdropRenderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
     }();
 
     // Replace or blend the fullscreen background color with the body background color, if present.
