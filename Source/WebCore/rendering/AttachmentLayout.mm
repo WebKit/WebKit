@@ -46,8 +46,8 @@ namespace WebCore {
 static Color titleTextColorForAttachment(const RenderAttachment& attachment, AttachmentLayoutStyle style)
 {
     if (style == AttachmentLayoutStyle::Selected && attachment.frame().selection().isFocusedAndActive())
-        return RenderTheme::singleton().systemColor(CSSValueAppleSystemAlternateSelectedText, attachment.styleColorOptions());
-    return RenderTheme::singleton().systemColor(CSSValueCanvastext, attachment.styleColorOptions());
+        return RenderTheme::singleton().systemColor(CSSValueAppleSystemAlternateSelectedText, attachment.styleColorOptions(StyleColorOptionsPurpose::Rendering));
+    return RenderTheme::singleton().systemColor(CSSValueCanvastext, attachment.styleColorOptions(StyleColorOptionsPurpose::Rendering));
 }
 
 void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
@@ -202,7 +202,7 @@ static RetainPtr<CTFontRef> attachmentTitleFont()
 
 static UIColor *attachmentTitleColor(const RenderAttachment& renderer)
 {
-    return cocoaColor(RenderTheme::singleton().systemColor(CSSValueAppleSystemGray, renderer.styleColorOptions())).autorelease();
+    return cocoaColor(RenderTheme::singleton().systemColor(CSSValueAppleSystemGray, renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering))).autorelease();
 }
 
 static RetainPtr<CTFontRef> attachmentSubtitleFont() { return attachmentTitleFont(); }

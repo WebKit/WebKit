@@ -47,11 +47,14 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
     case CSSValueInternalDocumentTextColor:
         return { state.document->textColor() };
     case CSSValueWebkitLink:
-        return { state.forVisitedLink == ForVisitedLink::Yes ? state.document->visitedLinkColor(state.style) : state.document->linkColor(state.style) };
+        // FIXME: resolve differently based on purpose (Style vs Rendering)
+        return { state.forVisitedLink == ForVisitedLink::Yes ? state.document->visitedLinkColor(state.style, StyleColorOptionsPurpose::Rendering) : state.document->linkColor(state.style, StyleColorOptionsPurpose::Rendering) };
     case CSSValueWebkitActivelink:
-        return { state.document->activeLinkColor(state.style) };
+        // FIXME: resolve differently based on purpose (Style vs Rendering)
+        return { state.document->activeLinkColor(state.style, StyleColorOptionsPurpose::Rendering) };
     case CSSValueWebkitFocusRingColor:
-        return { RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr())) };
+        // FIXME: resolve differently based on purpose (Style vs Rendering)
+        return { RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr(), StyleColorOptionsPurpose::Rendering)) };
     case CSSValueCurrentcolor:
         return { CurrentColor() };
     case CSSValueAccentcolor:
@@ -59,7 +62,8 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
     case CSSValueAccentcolortext:
         return { ContrastColor { CurrentAccentColor() } };
     default:
-        return { CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr())) };
+        // FIXME: resolve differently based on purpose (Style vs Rendering)
+        return { CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr(), StyleColorOptionsPurpose::Rendering)) };
     }
 }
 

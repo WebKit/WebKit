@@ -838,7 +838,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderElement& re
         extractControlStyleStatesForRendererInternal(*renderer),
         style->usedFontSize(),
         style->usedZoom(),
-        style->usedAccentColor(renderObject.styleColorOptions()),
+        style->usedAccentColor(renderObject.styleColorOptions(StyleColorOptionsPurpose::Rendering)),
         style->visitedDependentColorApplyingColorFilter(),
         Style::evaluate<FloatBoxExtent>(style->usedBorderWidths().to<Style::LineWidthBox>(), style->usedZoomForLength(), style->deviceScaleFactor())
     };
@@ -2118,7 +2118,7 @@ Color RenderTheme::platformDictationAlternativesMarkerColor(OptionSet<StyleColor
 
 Color RenderTheme::autocorrectionReplacementMarkerColor(const RenderText& renderer) const
 {
-    auto options = renderer.styleColorOptions();
+    auto options = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     auto& cache = colorCache(options);
     if (!cache.autocorrectionReplacementMarkerColor.isValid())
         cache.autocorrectionReplacementMarkerColor = platformAutocorrectionReplacementMarkerColor(options);
@@ -2145,7 +2145,7 @@ Color RenderTheme::platformGrammarMarkerColor(OptionSet<StyleColorOptions>) cons
 
 Color RenderTheme::documentMarkerLineColor(const RenderText& renderer, DocumentMarkerLineStyleMode mode) const
 {
-    auto options = renderer.styleColorOptions();
+    auto options = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
     switch (mode) {
     case DocumentMarkerLineStyleMode::Spelling:

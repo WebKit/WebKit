@@ -406,7 +406,7 @@ public:
     RenderFragmentedFlow* enclosingFragmentedFlow() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const;
-    WEBCORE_EXPORT OptionSet<StyleColorOptions> styleColorOptions() const;
+    WEBCORE_EXPORT OptionSet<StyleColorOptions> styleColorOptions(StyleColorOptionsPurpose) const;
 
     // Creates a scope where this object will assert on calls to setNeedsLayout().
     class SetLayoutNeededForbiddenScope;

@@ -87,4 +87,14 @@ enum class AcceptChildOperation : uint8_t {
     InsertOrAdd
 };
 
+enum class StyleColorOptionsPurpose : bool {
+    Style,
+
+    // The returned StyleColorOptions will be used for rendering purpose
+    // e.g for getting a system color to paint to the webpage.
+    // It should NOT be used if the value is used for other purposes
+    // e.g for getting a system color to return to the webpage as computed style.
+    Rendering,
+};
+
 } // namespace WebCore

@@ -284,7 +284,7 @@ void RenderThemeIOS::adjustTextFieldStyle(Style::ComputedStyle& style, const Ele
     }
 
     auto adjustBackgroundColor = [&] {
-        auto styleColorOptions = protect(element->document())->styleColorOptions(&style);
+        auto styleColorOptions = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
         if (style.backgroundColor() != systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions))
             return;
 
@@ -652,7 +652,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     if (isEnabled(box))
         context.setFillColor(style->color());
     else
-        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
+        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions(StyleColorOptionsPurpose::Rendering)));
 
     context.fillPath(glyphPath);
 }
@@ -720,7 +720,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderElement& box, const PaintInfo&
         ASSERT_NOT_REACHED();
     }
 
-    auto styleColorOptions = box.styleColorOptions();
+    auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
     auto cornerWidth = trackClip.width() < defaultTrackThickness ? trackClip.width() / 2.0f : defaultTrackRadius;
     auto cornerHeight = trackClip.height() < defaultTrackThickness ? trackClip.height() / 2.0f : defaultTrackRadius;
@@ -799,7 +799,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderElement& renderer, const Paint
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto styleColorOptions = renderer.styleColorOptions();
+    auto styleColorOptions = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
     constexpr auto barBlockSize = 4.0f;
@@ -935,7 +935,8 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(Style::ComputedStyle& style, c
         return;
 
     if (!style.accentColor().isAuto()) {
-        auto tintColor = style.usedAccentColor(protect(element.document())->styleColorOptions(&style));
+        auto tintColor = style.usedAccentColor(protect(element.document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering));
+        // FIXME: exposed in style.
         if (isSubmitStyleButton(&element))
             style.setBackgroundColor(WTF::move(tintColor));
         else
@@ -1054,7 +1055,7 @@ Color RenderThemeIOS::autocorrectionReplacementMarkerColor(const RenderText& ren
     auto hsla = caretColor.toColorTypeLossy<HSLA<float>>().resolved();
     if (hsla.hue) {
         hsla.saturation = 100;
-        if (renderer.styleColorOptions().contains(StyleColorOptions::UseDarkAppearance)) {
+        if (renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering).contains(StyleColorOptions::UseDarkAppearance)) {
             hsla.lightness = 50;
             hsla.alpha = 0.5f;
         } else {
@@ -1576,7 +1577,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderElement& box, const PaintInfo& pa
     FloatRoundedRect checkboxRect(rect, CornerRadii(checkboxCornerRadius * rect.height() / checkboxHeight));
 
     auto controlStates = extractControlStyleStatesForRenderer(box);
-    auto styleColorOptions = box.styleColorOptions();
+    auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
     auto backgroundColor = checkboxRadioBackgroundColor(box.style(), controlStates, styleColorOptions);
 
@@ -1661,7 +1662,7 @@ bool RenderThemeIOS::paintRadio(const RenderElement& box, const PaintInfo& paint
     GraphicsContextStateSaver stateSaver(context);
 
     auto controlStates = extractControlStyleStatesForRenderer(box);
-    auto styleColorOptions = box.styleColorOptions();
+    auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
     auto backgroundColor = checkboxRadioBackgroundColor(box.style(), controlStates, styleColorOptions);
 
@@ -1726,7 +1727,7 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto styleColorOptions = renderer.styleColorOptions();
+    auto styleColorOptions = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
@@ -1814,7 +1815,7 @@ bool RenderThemeIOS::paintListButton(const RenderElement& box, const PaintInfo& 
     transform.scale(scale);
     path.transform(transform);
 
-    context.setFillColor(controlTintColor(style, box.styleColorOptions()));
+    context.setFillColor(controlTintColor(style, box.styleColorOptions(StyleColorOptionsPurpose::Rendering)));
     context.fillPath(path);
 
     return false;
@@ -1858,7 +1859,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderElement& box, const PaintInfo&
 
     auto value = input->valueAsNumber();
     auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
-    auto styleColorOptions = box.styleColorOptions();
+    auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
     bool isInlineFlipped = (!isHorizontal && box.writingMode().isHorizontal()) || box.writingMode().isInlineFlipped();
     for (Ref optionElement : dataList->suggestions()) {
@@ -1978,7 +1979,7 @@ bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderElement& box, co
     transform.scale(scale);
     glyphPath.transform(transform);
 
-    context.setFillColor(systemColor(CSSValueAppleSystemSecondaryLabel, box.styleColorOptions()));
+    context.setFillColor(systemColor(CSSValueAppleSystemSecondaryLabel, box.styleColorOptions(StyleColorOptionsPurpose::Rendering)));
     context.fillPath(glyphPath);
 
     return false;

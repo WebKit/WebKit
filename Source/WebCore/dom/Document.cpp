@@ -1473,25 +1473,25 @@ const Color& Document::themeColor()
     return m_cachedThemeColor;
 }
 
-Color Document::linkColor(const Style::ComputedStyle& style) const
+Color Document::linkColor(const Style::ComputedStyle& style, StyleColorOptionsPurpose purpose) const
 {
     if (m_linkColor.isValid())
         return m_linkColor;
-    return CSS::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style));
+    return CSS::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style, purpose));
 }
 
-Color Document::visitedLinkColor(const Style::ComputedStyle& style) const
+Color Document::visitedLinkColor(const Style::ComputedStyle& style, StyleColorOptionsPurpose purpose) const
 {
     if (m_visitedLinkColor.isValid())
         return m_visitedLinkColor;
-    return CSS::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style) | StyleColorOptions::ForVisitedLink);
+    return CSS::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style, purpose) | StyleColorOptions::ForVisitedLink);
 }
 
-Color Document::activeLinkColor(const Style::ComputedStyle& style) const
+Color Document::activeLinkColor(const Style::ComputedStyle& style, StyleColorOptionsPurpose purpose) const
 {
     if (m_activeLinkColor.isValid())
         return m_activeLinkColor;
-    return CSS::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions(&style));
+    return CSS::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions(&style, purpose));
 }
 
 void Document::resetLinkColor()
@@ -10312,7 +10312,7 @@ bool Document::isAXCustomColorModeActive() const
 
 #endif // ENABLE(AX_CUSTOM_COLOR_MODE)
 
-OptionSet<StyleColorOptions> Document::styleColorOptions(const Style::ComputedStyle* style) const
+OptionSet<StyleColorOptions> Document::styleColorOptions(const Style::ComputedStyle* style, StyleColorOptionsPurpose purpose) const
 {
     OptionSet<StyleColorOptions> options;
     if (settings().useSystemAppearance())
@@ -10322,7 +10322,9 @@ OptionSet<StyleColorOptions> Document::styleColorOptions(const Style::ComputedSt
     if (useElevatedUserInterfaceLevel())
         options.add(StyleColorOptions::UseElevatedUserInterfaceLevel);
 
-    adjustStyleColorOptionsIfNeeded(options);
+    if (purpose == StyleColorOptionsPurpose::Rendering)
+        adjustStyleColorOptionsIfNeeded(options);
+
     return options;
 }
 

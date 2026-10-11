@@ -588,7 +588,7 @@ public:
     bool NODELETE shouldSetCursor() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const final;
-    OptionSet<StyleColorOptions> styleColorOptions() const;
+    OptionSet<StyleColorOptions> styleColorOptions(StyleColorOptionsPurpose) const;
 
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
