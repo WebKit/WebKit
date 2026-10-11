@@ -804,7 +804,7 @@ jobs:
       # separately named engine bundle whenever the complete target and install pass.
       - name: Build full WebCore + Web Audio + WebRTC (manual feature profile)
         id: full-engine-probe
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore }}
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore) }}
         shell: bash
         run: |
           echo "engine_ready=false" >> "$GITHUB_OUTPUT"
@@ -818,6 +818,9 @@ jobs:
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
             -DWKC_ENABLE_WEB_AUDIO=ON \
+            -DWKC_ENABLE_INDEXED_DATABASE=ON \
+            -DWKC_ENABLE_GAMEPAD=ON \
+            -DWKC_ENABLE_WEBASSEMBLY=ON \
             -DWKC_ENABLE_WEBRTC_API=ON > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
           if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-full/build.ninja ]; then
