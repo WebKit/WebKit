@@ -36,14 +36,17 @@
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
+#include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
+#include "ProcessingInstruction.h"
 #include "SerializedNode.h"
 #include "ShadowRoot.h"
 #include "ShadowRootInit.h"
 #include "ShadowRootMode.h"
 #include "SlotAssignmentMode.h"
 #include "TemplateContentDocumentFragment.h"
+#include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
 #include "markup.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -81,6 +84,81 @@ DocumentFragment& HTMLTemplateElement::fragmentForInsertion() const
     return content();
 }
 
+ContainerNode& HTMLTemplateElement::insertionTarget() const
+{
+    if (m_insertionTarget)
+        return *m_insertionTarget;
+    return fragmentForInsertion();
+}
+
+Node* HTMLTemplateElement::insertionNextChild() const
+{
+    if (m_insertionEndMarker && m_insertionEndMarker->parentNode() == m_insertionTarget)
+        return m_insertionEndMarker.get();
+    return nullptr;
+}
+
+bool HTMLTemplateElement::prepareContentPatching(ContainerNode& scope)
+{
+    auto markerName = attributeWithoutSynchronization(forAttr);
+    if (markerName.isEmpty())
+        return false;
+
+    for (RefPtr node = scope.firstChild(); node; node = NodeTraversal::next(*node, &scope)) {
+        RefPtr instruction = dynamicDowncast<ProcessingInstruction>(*node);
+        if (!instruction || instruction->getAttribute("name"_s) != markerName)
+            continue;
+
+        if (instruction->target() == "marker"_s) {
+            m_insertionTarget = instruction->parentNode();
+            m_insertionStartMarker = instruction;
+            m_insertionEndMarker = instruction;
+            return true;
+        }
+
+        if (instruction->target() != "start"_s)
+            continue;
+
+        RefPtr parent = instruction->parentNode();
+        if (!parent)
+            return false;
+
+        unsigned nestingLevel = 0;
+        Vector<Ref<Node>> nodesToRemove;
+        RefPtr<ProcessingInstruction> endMarker;
+        for (RefPtr sibling = instruction->nextSibling(); sibling; sibling = sibling->nextSibling()) {
+            if (RefPtr siblingInstruction = dynamicDowncast<ProcessingInstruction>(*sibling)) {
+                if (siblingInstruction->target() == "start"_s)
+                    ++nestingLevel;
+                else if (siblingInstruction->target() == "end"_s) {
+                    if (!nestingLevel) {
+                        endMarker = WTF::move(siblingInstruction);
+                        break;
+                    }
+                    --nestingLevel;
+                }
+            }
+            nodesToRemove.append(*sibling);
+        }
+
+        m_insertionTarget = WTF::move(parent);
+        m_insertionStartMarker = WTF::move(instruction);
+        m_insertionEndMarker = WTF::move(endMarker);
+
+        {
+            // These removals fire pagehide in removed iframes, and mutation events where
+            // they are enabled, all of this from inside the tree builder. Without the
+            // incrementer a handler calling document.write() re-enters the tree builder,
+            // which the parser otherwise prevents for custom element constructors.
+            ThrowOnDynamicMarkupInsertionCountIncrementer incrementer(protect(document()));
+            for (Ref nodeToRemove : nodesToRemove)
+                nodeToRemove->remove();
+        }
+        return true;
+    }
+    return false;
+}
+
 DocumentFragment& HTMLTemplateElement::content() const
 {
     ASSERT(!m_declarativeShadowRoot);
@@ -112,6 +190,56 @@ const AtomString& HTMLTemplateElement::shadowRootSlotAssignment() const
 void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
 {
     m_declarativeShadowRoot = shadowRoot;
+}
+
+// Patched content is inserted into a parent that has already finished parsing, and
+// before existing siblings, so the sibling and positional selectors that the parser
+// normally gets right the first time can be left stale. ChildChangeInvalidation skips
+// parser insertions for that reason, so invalidate here instead, and only when the
+// target actually has rules that depend on sibling position.
+void HTMLTemplateElement::invalidateSiblingAndPositionalStyles(ContainerNode& target)
+{
+    RefPtr element = dynamicDowncast<Element>(target);
+    if (!element)
+        return;
+
+    bool dependsOnSiblingPosition = element->childrenAffectedByFirstChildRules()
+        || element->childrenAffectedByLastChildRules()
+        || element->childrenAffectedByForwardPositionalRules()
+        || element->childrenAffectedByBackwardPositionalRules();
+
+    if (!dependsOnSiblingPosition) {
+        for (RefPtr child = ElementTraversal::firstChild(*element); child; child = ElementTraversal::nextSibling(*child)) {
+            if (child->affectsNextSiblingElementStyle() || child->styleIsAffectedByPreviousSibling()) {
+                dependsOnSiblingPosition = true;
+                break;
+            }
+        }
+    }
+
+    if (dependsOnSiblingPosition)
+        element->invalidateStyleForSubtree();
+}
+
+void HTMLTemplateElement::finishParsingChildren()
+{
+    HTMLElement::finishParsingChildren();
+
+    RefPtr insertionTarget = std::exchange(m_insertionTarget, nullptr);
+    RefPtr startMarker = std::exchange(m_insertionStartMarker, nullptr);
+    RefPtr endMarker = std::exchange(m_insertionEndMarker, nullptr);
+    if (!insertionTarget || !startMarker)
+        return;
+
+    // The specification removes the markers, and a processing instruction has no
+    // subframes, so use remove() here. parserRemoveChild() would disconnect every
+    // subframe under the parent, which takes out iframes in the patched content and
+    // iframes that merely sit beside it.
+    startMarker->remove();
+    if (endMarker && endMarker != startMarker)
+        endMarker->remove();
+
+    invalidateSiblingAndPositionalStyles(*insertionTarget);
 }
 
 Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const

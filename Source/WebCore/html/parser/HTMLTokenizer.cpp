@@ -136,6 +136,25 @@ inline bool HTMLTokenizer::emitAndResumeInDataState(SegmentedString& source)
     return true;
 }
 
+inline bool HTMLTokenizer::emitProcessingInstruction(SegmentedString& source)
+{
+    m_state = DataState;
+    source.advancePastNonNewline();
+    return true;
+}
+
+// Turns the processing instruction being tokenized back into the bogus comment that
+// this input produced before processing instructions were parsed, reusing the target
+// characters already collected in the token.
+inline void HTMLTokenizer::rewindToBogusCommentForProcessingInstructionTarget()
+{
+    auto target = m_token.processingInstructionTarget();
+    m_token.clear();
+    m_token.beginComment();
+    m_token.appendToComment("?"_s);
+    m_token.appendToComment(target.span());
+}
+
 inline bool HTMLTokenizer::emitAndReconsumeInDataState()
 {
     saveEndTagNameIfNeeded();
@@ -337,6 +356,8 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_PAST_NON_NEWLINE_TO(TagNameState);
         }
         if (character == '?') {
+            if (m_options.processingInstructionEnabled)
+                ADVANCE_PAST_NON_NEWLINE_TO(ProcessingInstructionOpenState);
             parseError();
             // The spec consumes the current character before switching
             // to the bogus comment state, but it's easier to implement
@@ -986,6 +1007,89 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         RECONSUME_IN(BeforeAttributeNameState);
     END_STATE()
 
+    BEGIN_STATE(ProcessingInstructionOpenState)
+        ASSERT(m_options.processingInstructionEnabled);
+        if (character == '_' || isASCIIAlpha(character)) {
+            m_token.beginProcessingInstruction();
+            RECONSUME_IN(ProcessingInstructionTargetState);
+        }
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        parseError();
+        m_token.beginComment();
+        m_token.appendToComment("?"_s);
+        RECONSUME_IN(ContinueBogusCommentState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionTargetState)
+        ASSERT(m_options.processingInstructionEnabled);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        if (character == '-' || character == '_' || isASCIIAlphanumeric(character)) {
+            m_token.appendToProcessingInstructionTarget(character);
+            ADVANCE_TO(ProcessingInstructionTargetState);
+        }
+        if (!(isTokenizerWhitespace(character) || character == '>' || character == '?')) {
+            parseError();
+            rewindToBogusCommentForProcessingInstructionTarget();
+            RECONSUME_IN(ContinueBogusCommentState);
+        }
+        // `<?xml` and `<?xml-stylesheet` stay bogus comments, as they were before
+        // processing instructions were parsed at all.
+        if (equalLettersIgnoringASCIICase(StringView { m_token.processingInstructionTarget().span() }, "xml"_s)
+            || equalLettersIgnoringASCIICase(StringView { m_token.processingInstructionTarget().span() }, "xml-stylesheet"_s)) {
+            parseError();
+            rewindToBogusCommentForProcessingInstructionTarget();
+            RECONSUME_IN(ContinueBogusCommentState);
+        }
+        RECONSUME_IN(AfterProcessingInstructionTargetState);
+    END_STATE()
+
+    BEGIN_STATE(AfterProcessingInstructionTargetState)
+        ASSERT(m_options.processingInstructionEnabled);
+        if (isTokenizerWhitespace(character))
+            ADVANCE_TO(AfterProcessingInstructionTargetState);
+        if (character == '?')
+            ADVANCE_PAST_NON_NEWLINE_TO(ProcessingInstructionQuestionMarkState);
+        if (character == '>')
+            return emitProcessingInstruction(source);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        RECONSUME_IN(ProcessingInstructionDataState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionDataState)
+        ASSERT(m_options.processingInstructionEnabled);
+        if (character == '?')
+            ADVANCE_PAST_NON_NEWLINE_TO(ProcessingInstructionQuestionMarkState);
+        if (character == '>')
+            return emitProcessingInstruction(source);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        m_token.appendToProcessingInstructionData(character);
+        ADVANCE_TO(ProcessingInstructionDataState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionQuestionMarkState)
+        ASSERT(m_options.processingInstructionEnabled);
+        if (character == '>')
+            return emitProcessingInstruction(source);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        m_token.appendToProcessingInstructionData('?');
+        RECONSUME_IN(ProcessingInstructionDataState);
+    END_STATE()
+
     BEGIN_STATE(BogusCommentState)
         m_token.beginComment();
         RECONSUME_IN(ContinueBogusCommentState);
@@ -996,7 +1100,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndResumeInDataState(source);
         if (character == kEndOfFileMarker)
             return emitAndReconsumeInDataState();
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(ContinueBogusCommentState);
     END_STATE()
 
@@ -1037,7 +1141,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             parseError();
             return emitAndReconsumeInDataState();
         }
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(CommentState);
     END_STATE()
 
@@ -1053,7 +1157,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         m_token.appendToComment('-');
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(CommentState);
     END_STATE()
 
@@ -1064,7 +1168,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             parseError();
             return emitAndReconsumeInDataState();
         }
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(CommentState);
     END_STATE()
 
@@ -1076,7 +1180,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         m_token.appendToComment('-');
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(CommentState);
     END_STATE()
 
@@ -1098,7 +1202,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         m_token.appendToComment("--"_s);
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(CommentState);
     END_STATE()
 
@@ -1114,7 +1218,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             return emitAndReconsumeInDataState();
         }
         m_token.appendToComment("--!"_s);
-        m_token.appendToComment(character);
+        m_token.appendToComment(static_cast<char16_t>(character));
         ADVANCE_TO(CommentState);
     END_STATE()
 
