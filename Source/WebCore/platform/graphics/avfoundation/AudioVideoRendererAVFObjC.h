@@ -245,6 +245,7 @@ private:
     void flushVideo();
     void flushAudio();
     void flushAudioTrack(TrackIdentifier);
+    void removeBlockedSamples(NOESCAPE const Function<bool(TrackIdentifier)>&);
     void notifyRequiresFlushToResume();
 
     void cancelSeekingPromiseIfNeeded();

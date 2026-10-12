@@ -734,6 +734,9 @@ Ref<MediaTimePromise> AudioVideoRendererAVFObjC::prepareToSeek(const MediaTime& 
         properties.hasAudibleSample = false;
         properties.readyToRequestAudioData = false;
     }
+    removeBlockedSamples([](auto) {
+        return true;
+    });
 
     setTimeFloor(seekTime);
     m_isSynchronizerSeeking = isSynchronizerSeeking;
@@ -2078,6 +2081,9 @@ void AudioVideoRendererAVFObjC::flushVideo()
     m_readyToRequestVideoData = true;
     if (RefPtr videoRenderer = m_videoRenderer)
         videoRenderer->flush();
+    removeBlockedSamples([&](auto trackId) {
+        return typeOf(trackId) == TrackType::Video;
+    });
     flushPendingSizeChanges();
     m_keyframeNeeded = true;
 }
@@ -2093,6 +2099,9 @@ void AudioVideoRendererAVFObjC::flushAudio()
     applyOnAudioRenderers([&](auto *renderer) {
         [renderer flush];
     });
+    removeBlockedSamples([&](auto trackId) {
+        return typeOf(trackId) == TrackType::Audio;
+    });
 }
 
 void AudioVideoRendererAVFObjC::flushAudioTrack(TrackIdentifier trackId)
@@ -2103,7 +2112,21 @@ void AudioVideoRendererAVFObjC::flushAudioTrack(TrackIdentifier trackId)
         return;
     audioTrackPropertiesFor(trackId).readyToRequestAudioData = true;
     [audioRenderer flush];
+    removeBlockedSamples([&](auto blockedTrackId) {
+        return blockedTrackId == trackId;
+    });
     setHasAvailableAudioSample(trackId, false);
+}
+
+void AudioVideoRendererAVFObjC::removeBlockedSamples(NOESCAPE const Function<bool(TrackIdentifier)>& predicate)
+{
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    m_blockedSamples.removeAllMatching([&](auto& blockedSample) {
+        return predicate(blockedSample.first);
+    });
+#else
+    UNUSED_PARAM(predicate);
+#endif
 }
 
 void AudioVideoRendererAVFObjC::notifyRequiresFlushToResume()
