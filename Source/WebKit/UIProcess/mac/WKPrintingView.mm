@@ -147,7 +147,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // those stashed-away values on subsequent calls.
     double originalTopMargin;
     double originalBottomMargin;
-    RetainPtr<NSNumber> originalTopMarginNumber = [infoDictionary objectForKey:WebKitOriginalTopPrintingMarginKey];
+    RetainPtr originalTopMarginNumber = dynamic_objc_cast<NSNumber>([infoDictionary objectForKey:WebKitOriginalTopPrintingMarginKey]);
     if (!originalTopMarginNumber) {
         ASSERT(![infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey]);
         originalTopMargin = [info topMargin];

@@ -610,7 +610,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
     return nullptr;
 }
 
-RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
+RefPtr<API::Object> Object::fromNSObject(id object)
 {
     if (auto *str = dynamic_objc_cast<NSString>(object))
         return API::String::create(str);

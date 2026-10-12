@@ -32,6 +32,7 @@
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -267,31 +268,31 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    String rawJSON = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"raw_json"];
+    String rawJSON = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"raw_json"]);
     NSInteger dir = [aDecoder decodeIntegerForKey:@"dir"];
     // FIXME: <https://webkit.org/b/278619> Remove this assert after further manifest IPC hardening.
     RELEASE_ASSERT(dir >= 0 && dir <= 2);
-    String lang = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"lang"];
-    String name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
-    String shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
-    String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
-    URL scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
+    String lang = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"lang"]);
+    String name = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"]);
+    String shortName = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"]);
+    String description = checked_objc_cast<NSString>([aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"]);
+    URL scopeURL = checked_objc_cast<NSURL>([aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"]);
     bool isDefaultScope = [aDecoder decodeBoolForKey:@"is_default_scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     NSInteger orientation = [aDecoder decodeIntegerForKey:@"orientation"];
     std::optional<WebCore::ScreenOrientationLockType> orientationValue;
     if (orientation != NSNotFound)
         orientationValue = static_cast<WebCore::ScreenOrientationLockType>(orientation);
-    URL manifestURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifest_url"];
-    URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
-    URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
-    RetainPtr<NSArray<NSString *>> categories = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"];
-    RetainPtr<NSArray<_WKApplicationManifestIcon *>> icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
-    RetainPtr<NSArray<_WKApplicationManifestIcon *>> shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
-    RetainPtr<WebCore::CocoaColor> backgroundColorLight = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color_light"];
-    RetainPtr<WebCore::CocoaColor> backgroundColorDark = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color_dark"];
-    RetainPtr<WebCore::CocoaColor> themeColorLight = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color_light"];
-    RetainPtr<WebCore::CocoaColor> themeColorDark = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color_dark"];
+    URL manifestURL = checked_objc_cast<NSURL>([aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifest_url"]);
+    URL startURL = checked_objc_cast<NSURL>([aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"]);
+    URL manifestId = checked_objc_cast<NSURL>([aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"]);
+    RetainPtr<NSArray<NSString *>> categories = dynamic_objc_cast<NSArray>([aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"]);
+    RetainPtr<NSArray<_WKApplicationManifestIcon *>> icons = dynamic_objc_cast<NSArray>([aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"]);
+    RetainPtr<NSArray<_WKApplicationManifestIcon *>> shortcuts = dynamic_objc_cast<NSArray>([aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"]);
+    RetainPtr<WebCore::CocoaColor> backgroundColorLight = checked_objc_cast<WebCore::CocoaColor>([aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color_light"]);
+    RetainPtr<WebCore::CocoaColor> backgroundColorDark = checked_objc_cast<WebCore::CocoaColor>([aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color_dark"]);
+    RetainPtr<WebCore::CocoaColor> themeColorLight = checked_objc_cast<WebCore::CocoaColor>([aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color_light"]);
+    RetainPtr<WebCore::CocoaColor> themeColorDark = checked_objc_cast<WebCore::CocoaColor>([aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color_dark"]);
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTF::move(rawJSON),

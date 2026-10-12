@@ -922,7 +922,7 @@ ServiceWorkerFetchTask* NetworkSession::navigationPreloaderTaskFromFetchIdentifi
 
 WebSWOriginStore* NetworkSession::swOriginStore() const
 {
-    return m_swServer ? &static_cast<WebSWOriginStore&>(m_swServer->originStore()) : nullptr;
+    return m_swServer ? &downcast<WebSWOriginStore>(m_swServer->originStore()) : nullptr;
 }
 
 void NetworkSession::registerSWServerConnection(WebSWServerConnection& connection)

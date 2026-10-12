@@ -93,7 +93,7 @@ MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation()
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::currentRenderingMode() const
 {
-    if (platformLayer())
+    if (hasVideoInlineLayer())
         return MediaRenderingMode::MediaRenderingToLayer;
 
     if (hasContextRenderer())

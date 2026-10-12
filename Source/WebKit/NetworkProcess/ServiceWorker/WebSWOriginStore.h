@@ -28,6 +28,7 @@
 #include "SharedStringHashStore.h"
 #include <WebCore/SWOriginStore.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
@@ -44,6 +45,8 @@ public:
     void importComplete() final;
 
 private:
+    bool isWebSWOriginStore() const final { return true; }
+
     void sendStoreHandle(WebSWServerConnection&);
 
     void addToStore(const WebCore::SecurityOriginData&) final;
@@ -59,3 +62,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebSWOriginStore)
+    static bool isType(const WebCore::SWOriginStore& store) { return store.isWebSWOriginStore(); }
+SPECIALIZE_TYPE_TRAITS_END()

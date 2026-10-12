@@ -151,7 +151,7 @@ public:
 
     String engineDescription() const final { return "NullMediaPlayer"_s; }
 
-    PlatformLayer* platformLayer() const final { return nullptr; }
+    PlatformLayer* platformLayer() final { return nullptr; }
     FloatSize naturalSize() const final { return FloatSize(); }
 
     bool hasVideo() const final { return false; }

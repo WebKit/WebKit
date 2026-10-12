@@ -60,6 +60,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewMacAdditionsBefore.mm>)
 #import <WebKitAdditions/WKWebViewMacAdditionsBefore.mm>
@@ -906,7 +907,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (self.enclosingScrollView)
         return [super _cornerConfiguration];
 
-    return [NSViewCornerConfiguration configurationWithRadius:(id)_NSCornerRadius.containerConcentricRadius];
+    // Newer SDKs type this parameter as NSViewCornerRadius, but it must receive an _NSCornerRadius.
+    SUPPRESS_MEMORY_UNSAFE_CAST return [NSViewCornerConfiguration configurationWithRadius:(id)_NSCornerRadius.containerConcentricRadius];
 }
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 

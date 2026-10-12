@@ -166,7 +166,7 @@ void BackgroundProcessResponsivenessTimer::scheduleNextResponsivenessCheck()
 
 ResponsivenessTimer::Client& BackgroundProcessResponsivenessTimer::client() const
 {
-    return const_cast<WebProcessProxy&>(m_webProcessProxy.get());
+    return m_webProcessProxy.get();
 }
 
 } // namespace WebKit

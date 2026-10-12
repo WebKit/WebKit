@@ -148,15 +148,15 @@ static NSString * const portsKey = @"ports";
         break;
 
     case PredicateTypeURLMatches:
-    case PredicateTypeOriginAndPathMatches:
-        ASSERT([rawValue isKindOfClass:NSString.class]);
-
-        if (!(_value = [NSRegularExpression regularExpressionWithPattern:rawValue options:0 error:nil])) {
-            *outErrorMessage = toErrorString(nullString(), originAndPathMatchesKey, makeString("'"_s, String(rawValue), "' is not a valid regular expression"_s)).createNSString().autorelease();
+    case PredicateTypeOriginAndPathMatches: {
+        NSString *pattern = checked_objc_cast<NSString>(rawValue);
+        if (!(_value = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil])) {
+            *outErrorMessage = toErrorString(nullString(), originAndPathMatchesKey, makeString("'"_s, String(pattern), "' is not a valid regular expression"_s)).createNSString().autorelease();
             return nil;
         }
 
         break;
+    }
 
     case PredicateTypeSchemes:
         ASSERT([rawValue isKindOfClass:[NSArray class]]);
@@ -174,7 +174,7 @@ static NSString * const portsKey = @"ports";
         NSUInteger count = dynamic_objc_cast<NSArray>(rawValue).count;
         for (NSUInteger i = 0; i < count; ++i) {
             id portOrRange = rawValue[i];
-            if (!validateObject(portOrRange, adoptNS([[NSString alloc] initWithFormat:@"%@[%lu]", portsKey, i]).get(), expectedPortOrRangeTypes, outErrorMessage))
+            if (!validateObject(dynamic_objc_cast<NSObject>(portOrRange), adoptNS([[NSString alloc] initWithFormat:@"%@[%lu]", portsKey, i]).get(), expectedPortOrRangeTypes, outErrorMessage))
                 return nil;
 
             if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {

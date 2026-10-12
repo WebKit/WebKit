@@ -845,7 +845,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const IPC::Encoder& encoder)
         if (loadParameters && resourceDirectoryURL && pageID && checkAssumedReadAccessToResourceURL) {
             if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
                 auto url = loadParameters->request.url();
-                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), url, *resourceDirectoryURL,  *checkAssumedReadAccessToResourceURL, [weakThis = WeakPtr { *this }, destinationID, loadParameters = WTF::move(loadParameters)] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
+                page->maybeInitializeSandboxExtensionHandle(*this, url, *resourceDirectoryURL,  *checkAssumedReadAccessToResourceURL, [weakThis = WeakPtr { *this }, destinationID, loadParameters = WTF::move(loadParameters)](std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
                     RefPtr protectedThis = weakThis;
                     if (!protectedThis)
                         return;
@@ -882,7 +882,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const IPC::Encoder& encoder)
         };
         if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
             if (RefPtr item = WebBackForwardListItem::itemForID(*frameState->itemID))
-                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), true, WTF::move(completionHandler));
+                page->maybeInitializeSandboxExtensionHandle(*this, URL { item->url() }, item->resourceDirectoryURL(), true, WTF::move(completionHandler));
         } else
             completionHandler(std::nullopt);
         return false;

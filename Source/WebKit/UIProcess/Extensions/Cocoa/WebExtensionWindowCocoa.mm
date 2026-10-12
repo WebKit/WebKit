@@ -41,6 +41,7 @@
 #import "WebExtensionUtilities.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
@@ -183,7 +184,7 @@ WebExtensionWindow::TabVector WebExtensionWindow::tabs(SkipValidation skipValida
     result.reserveInitialCapacity(tabs.count);
 
     for (id tab in tabs)
-        result.append(extensionContext->getOrCreateTab(tab));
+        result.append(extensionContext->getOrCreateTab(checked_objc_cast<WKWebExtensionTab>(tab)));
 
     if (skipValidation == SkipValidation::No) {
         // SkipValidation::Yes is needed to avoid reentry, since activeTab() calls tabs().

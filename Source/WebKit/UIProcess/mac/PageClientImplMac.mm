@@ -92,6 +92,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -1246,7 +1247,7 @@ bool PageClientImpl::appUsesCustomAccentColor()
     static BOOL usesCustomAppAccentColor = [] {
         RetainPtr bundleForAccentColor = [NSBundle mainBundle];
         RetainPtr info = [bundleForAccentColor infoDictionary];
-        RetainPtr<NSString> accentColorName = info.get()[@"NSAccentColorName"];
+        RetainPtr accentColorName = dynamic_objc_cast<NSString>(info.get()[@"NSAccentColorName"]);
         BOOL usesCustomAppAccentColor = NO;
         if ([accentColorName length])
             usesCustomAppAccentColor = !![NSColor colorNamed:accentColorName.get() bundle:bundleForAccentColor.get()];

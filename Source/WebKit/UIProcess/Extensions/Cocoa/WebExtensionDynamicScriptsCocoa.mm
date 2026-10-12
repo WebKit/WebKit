@@ -53,6 +53,7 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -159,7 +160,7 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
                 RetainPtr javaScript = adoptNS([[NSString alloc] initWithFormat:@"return (%@)(...arguments)", parameters.function.value().createNSString().get()]);
                 NSArray *arguments = parameters.arguments ? parseJSON(protect(parameters.arguments.value()), JSONOptions::FragmentsAllowed) : @[ ];
 
-                [webView _callAsyncJavaScript:javaScript.get() arguments:@{ @"arguments": arguments } inFrame:frameInfo inContentWorld:executionWorld->wrapper() withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
+                [webView _callAsyncJavaScript:javaScript.get() arguments:@{ @"arguments": arguments } inFrame:frameInfo inContentWorld:checked_objc_cast<WKContentWorld>(executionWorld->wrapper()) withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
                 }).get()];
 
@@ -167,7 +168,7 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
             }
 
             for (auto& script : scriptPairs) {
-                [webView _evaluateJavaScript:script.first.createNSString().get() withSourceURL:script.second.createNSURL().get() inFrame:frameInfo inContentWorld:executionWorld->wrapper() withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
+                [webView _evaluateJavaScript:script.first.createNSString().get() withSourceURL:script.second.createNSURL().get() inFrame:frameInfo inContentWorld:checked_objc_cast<WKContentWorld>(executionWorld->wrapper()) withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
                 }).get()];
             }

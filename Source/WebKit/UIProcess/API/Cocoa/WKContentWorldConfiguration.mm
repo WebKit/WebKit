@@ -28,6 +28,7 @@
 
 #include "_WKContentWorldConfiguration.h"
 #include <WebCore/WebCoreObjCExtras.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation WKContentWorldConfiguration
 
@@ -88,7 +89,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
     Ref<API::ContentWorldConfiguration> configuration = *_worldConfiguration;
 
-    configuration->setName([coder decodeObjectOfClass:[NSString class] forKey:@"name"]);
+    configuration->setName(checked_objc_cast<NSString>([coder decodeObjectOfClass:[NSString class] forKey:@"name"]));
     configuration->setAllowAccessToClosedShadowRoots([coder decodeBoolForKey:@"allowAccessToClosedShadowRoots"]);
     configuration->setAllowAutofill([coder decodeBoolForKey:@"allowAutofill"]);
     configuration->setAllowElementUserInfo([coder decodeBoolForKey:@"allowElementUserInfo"]);

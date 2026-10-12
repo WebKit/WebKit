@@ -86,7 +86,7 @@ public:
     }
 
     virtual void prepareToPlay() { }
-    virtual PlatformLayer* platformLayer() const { return nullptr; }
+    virtual PlatformLayer* platformLayer() { return nullptr; }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     virtual RetainPtr<PlatformLayer> createVideoFullscreenLayer() { return nullptr; }

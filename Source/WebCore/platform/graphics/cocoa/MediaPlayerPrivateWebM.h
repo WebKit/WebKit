@@ -113,7 +113,7 @@ private:
 
     void cancelLoad() final;
 
-    PlatformLayer* platformLayer() const final;
+    PlatformLayer* platformLayer() final;
 
     bool supportsPictureInPicture() const final { return true; }
     bool supportsFullscreen() const final { return true; }

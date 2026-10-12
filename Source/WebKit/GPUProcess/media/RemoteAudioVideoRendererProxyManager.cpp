@@ -304,7 +304,7 @@ MediaSampleConverter& RemoteAudioVideoRendererProxyManager::converterFor(Rendere
     }).iterator->value;
 }
 
-void RemoteAudioVideoRendererProxyManager::newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, Ref<WebCore::TrackInfo>&& info)
+void RemoteAudioVideoRendererProxyManager::newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, Ref<const WebCore::TrackInfo>&& info)
 {
     ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
 

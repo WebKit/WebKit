@@ -4262,7 +4262,7 @@ static RetainPtr<PDFAnnotation> findFirstTextAnnotationStartingAtIndex(const Ret
         return annotationIsWidgetOfType(annotation, WidgetType::Text) && ![annotation isReadOnly] && [annotation shouldDisplay];
     }];
 
-    return searchResult != NSNotFound ? [annotations objectAtIndex:searchResult] : nullptr;
+    return searchResult != NSNotFound ? checked_objc_cast<PDFAnnotation>([annotations objectAtIndex:searchResult]) : nullptr;
 }
 
 RetainPtr<PDFAnnotation> UnifiedPDFPlugin::nextTextAnnotation(AnnotationSearchDirection searchDirection) const

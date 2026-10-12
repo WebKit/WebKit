@@ -105,7 +105,7 @@ private:
     void addTrack(RemoteAudioVideoRendererIdentifier, WebCore::TrackInfo::TrackType, CompletionHandler<void(std::expected<TrackIdentifier, WebCore::PlatformMediaError>)>&&);
     void removeTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier);
 
-    void newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier, Ref<WebCore::TrackInfo>&&);
+    void newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier, Ref<const WebCore::TrackInfo>&&);
     void enqueueSample(RemoteAudioVideoRendererIdentifier, TrackIdentifier, WebCore::MediaSamplesBlock&&, std::optional<MediaTime>, CompletionHandler<void(bool)>&&);
     void requestMediaDataWhenReady(RemoteAudioVideoRendererIdentifier, TrackIdentifier);
 

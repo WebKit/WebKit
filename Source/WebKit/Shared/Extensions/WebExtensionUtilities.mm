@@ -41,6 +41,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/LocalFrameInlines.h>
 #import <objc/runtime.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -220,7 +221,7 @@ static bool validateSet(NSString *key, NSObject *value, NSOrderedSet *validClass
         arrayIsValid = true;
 
         addExpectedValueString(NSArray.class, [classOrArray firstObject]);
-        if (validateArray(key, value, classOrArray, nullptr))
+        if (validateArray(key, value, checked_objc_cast<NSArray>(classOrArray), nullptr))
             return true;
     }
 

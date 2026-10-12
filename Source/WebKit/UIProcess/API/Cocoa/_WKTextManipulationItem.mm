@@ -28,6 +28,7 @@
 
 #import "_WKTextManipulationToken.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 NSString * const _WKTextManipulationItemErrorDomain = @"WKTextManipulationItemErrorDomain";
 NSString * const _WKTextManipulationItemErrorItemKey = @"item";
@@ -126,7 +127,7 @@ static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRe
     if (![object isKindOfClass:[self class]])
         return NO;
 
-    return [self isEqualToTextManipulationItem:object includingContentEquality:YES];
+    return [self isEqualToTextManipulationItem:checked_objc_cast<_WKTextManipulationItem>(object) includingContentEquality:YES];
 }
 
 - (BOOL)isEqualToTextManipulationItem:(_WKTextManipulationItem *)otherItem includingContentEquality:(BOOL)includingContentEquality

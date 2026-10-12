@@ -27,6 +27,7 @@
 #import "_WKTextManipulationToken.h"
 
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 NSString * const _WKTextManipulationTokenUserInfoDocumentURLKey = @"_WKTextManipulationTokenUserInfoDocumentURLKey";
 NSString * const _WKTextManipulationTokenUserInfoTagNameKey = @"_WKTextManipulationTokenUserInfoTagNameKey";
@@ -76,7 +77,7 @@ static BOOL isEqualOrBothNil(id a, id b)
     if (![object isKindOfClass:[self class]])
         return NO;
 
-    return [self isEqualToTextManipulationToken:object includingContentEquality:YES];
+    return [self isEqualToTextManipulationToken:checked_objc_cast<_WKTextManipulationToken>(object) includingContentEquality:YES];
 }
 
 - (BOOL)isEqualToTextManipulationToken:(_WKTextManipulationToken *)otherToken includingContentEquality:(BOOL)includingContentEquality

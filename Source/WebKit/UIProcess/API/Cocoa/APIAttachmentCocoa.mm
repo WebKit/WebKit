@@ -215,8 +215,8 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
         return;
 
     RetainPtr classes = pageClient->serializableFileWrapperClasses();
-    RetainPtr fileWrapper = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes.get() fromData:serializedData.get() error:nullptr];
-    if (![fileWrapper isKindOfClass:NSFileWrapper.class])
+    RetainPtr fileWrapper = dynamic_objc_cast<NSFileWrapper>([NSKeyedUnarchiver unarchivedObjectOfClasses:classes.get() fromData:serializedData.get() error:nullptr]);
+    if (!fileWrapper)
         return;
 
     m_isCreatedFromSerializedRepresentation = true;

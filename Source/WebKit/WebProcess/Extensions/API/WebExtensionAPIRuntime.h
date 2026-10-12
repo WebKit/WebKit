@@ -56,7 +56,7 @@ class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtension
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIRuntime, runtime, runtime);
 
 public:
-    WebExtensionAPIRuntime& runtime() const final { return const_cast<WebExtensionAPIRuntime&>(*this); }
+    WebExtensionAPIRuntime& runtime() final { return *this; }
 
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
@@ -107,7 +107,7 @@ class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebEx
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageRuntime, webPageRuntime, webPageRuntime);
 
 public:
-    WebExtensionAPIWebPageRuntime& runtime() const final { return const_cast<WebExtensionAPIWebPageRuntime&>(*this); }
+    WebExtensionAPIWebPageRuntime& runtime() final { return *this; }
 
     void sendMessage(WebPage&, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebPage&, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);

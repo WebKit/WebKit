@@ -126,8 +126,7 @@ RetainPtr<id> CoreIPCError::toID() const
 }
 
 #define EXTRACT_STRING_VALUE(key, target) { \
-    RetainPtr<id> extractedValue = [userInfo objectForKey:key];\
-    if ([extractedValue isKindOfClass:[NSString class]])\
+    if (RetainPtr extractedValue = dynamic_objc_cast<NSString>([userInfo objectForKey:key]))\
         target = String(extractedValue.get());\
 }
 
@@ -137,30 +136,28 @@ CoreIPCError::CoreIPCError(NSError *nsError)
 {
     RetainPtr<NSDictionary> userInfo = [nsError userInfo];
 
-    if (RetainPtr<NSArray> clientIdentityAndCertificates = [userInfo objectForKey:@"NSErrorClientCertificateChainKey"]) {
-        if ([clientIdentityAndCertificates isKindOfClass:[NSArray class]]) {
-            m_clientCertificateChain = Vector<RetainPtr<SecCertificateRef>> { };
-            // Turn SecIdentity members into SecCertificate to strip out private key information.
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL id object in clientIdentityAndCertificates.get()) {
-                // Only SecIdentity or SecCertificate types are expected in clientIdentityAndCertificates
-                if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID() && CFGetTypeID((__bridge CFTypeRef)object) != SecCertificateGetTypeID())
-                    continue;
-                if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID()) {
-                    m_clientCertificateChain->append((__bridge SecCertificateRef)object);
-                    continue;
-                }
-                SecCertificateRef certificate = nil;
-                OSStatus status = SecIdentityCopyCertificate((SecIdentityRef)object, &certificate);
-                // The SecIdentity member is the key information of this attribute. Without it, we should nil
-                // the attribute.
-                if (status != errSecSuccess) {
-                    LOG_ERROR("Failed to encode nsError.userInfo[NSErrorClientCertificateChainKey]: %ld", static_cast<long>(status));
-                    m_clientCertificateChain = std::nullopt;
-                    break;
-                }
-                m_clientCertificateChain->append(adoptCF(certificate));
+    if (RetainPtr clientIdentityAndCertificates = dynamic_objc_cast<NSArray>([userInfo objectForKey:@"NSErrorClientCertificateChainKey"])) {
+        m_clientCertificateChain = Vector<RetainPtr<SecCertificateRef>> { };
+        // Turn SecIdentity members into SecCertificate to strip out private key information.
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL id object in clientIdentityAndCertificates.get()) {
+            // Only SecIdentity or SecCertificate types are expected in clientIdentityAndCertificates
+            if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID() && CFGetTypeID((__bridge CFTypeRef)object) != SecCertificateGetTypeID())
+                continue;
+            if (CFGetTypeID((__bridge CFTypeRef)object) != SecIdentityGetTypeID()) {
+                m_clientCertificateChain->append((__bridge SecCertificateRef)object);
+                continue;
             }
+            SecCertificateRef certificate = nil;
+            OSStatus status = SecIdentityCopyCertificate((SecIdentityRef)object, &certificate);
+            // The SecIdentity member is the key information of this attribute. Without it, we should nil
+            // the attribute.
+            if (status != errSecSuccess) {
+                LOG_ERROR("Failed to encode nsError.userInfo[NSErrorClientCertificateChainKey]: %ld", static_cast<long>(status));
+                m_clientCertificateChain = std::nullopt;
+                break;
+            }
+            m_clientCertificateChain->append(adoptCF(certificate));
         }
     }
 

@@ -451,7 +451,7 @@ void MediaPlayerPrivateWebM::cancelLoad()
     }
 }
 
-PlatformLayer* MediaPlayerPrivateWebM::platformLayer() const
+PlatformLayer* MediaPlayerPrivateWebM::platformLayer()
 {
     return m_renderer->platformVideoLayer();
 }

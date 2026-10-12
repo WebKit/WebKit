@@ -61,6 +61,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 #import "AuthenticationServicesCoreSoftLink.h"
@@ -682,15 +683,15 @@ void WebAuthenticatorCoordinatorProxy::performRequestWithValidatedRelyingPartyId
             WebCore::ExceptionData exceptionData = { ExceptionCode::NotAllowedError, @"" };
             WebCore::AuthenticatorAttachment attachment = AuthenticatorAttachment::Platform;
             if ([error.get().domain isEqualToString:WKErrorDomain])
-                exceptionData = { toExceptionCode(error.get().code), error.get().userInfo[NSLocalizedDescriptionKey] };
+                exceptionData = { toExceptionCode(error.get().code), dynamic_objc_cast<NSString>(error.get().userInfo[NSLocalizedDescriptionKey]) };
             else if ([error.get().domain isEqualToString:ASAuthorizationErrorDomain]) {
                 switch (error.get().code) {
                 case ASAuthorizationErrorFailed: {
                     RetainPtr<NSError> underlyingError = retainPtr(error.get().userInfo[NSUnderlyingErrorKey]);
                     if ([underlyingError.get().domain isEqualToString:ASCAuthorizationErrorDomain] && underlyingError.get().code == ASCAuthorizationErrorSecurityError)
-                        exceptionData = { ExceptionCode::SecurityError, underlyingError.get().userInfo[NSLocalizedFailureReasonErrorKey] };
+                        exceptionData = { ExceptionCode::SecurityError, dynamic_objc_cast<NSString>(underlyingError.get().userInfo[NSLocalizedFailureReasonErrorKey]) };
                     else if ([underlyingError.get().domain isEqualToString:WKErrorDomain])
-                        exceptionData = { toExceptionCode(underlyingError.get().code), underlyingError.get().userInfo[NSLocalizedDescriptionKey] };
+                        exceptionData = { toExceptionCode(underlyingError.get().code), dynamic_objc_cast<NSString>(underlyingError.get().userInfo[NSLocalizedDescriptionKey]) };
                     break;
                 }
                 case ASAuthorizationErrorMatchedExcludedCredential:

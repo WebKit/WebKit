@@ -561,7 +561,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
     INFO_LOG(LOGIDENTIFIER);
 }
 
-PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
+PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer()
 {
     RefPtr sampleBufferDisplayLayer = m_sampleBufferDisplayLayer;
     if (!sampleBufferDisplayLayer || !sampleBufferDisplayLayer->rootLayer() || m_displayMode == None)

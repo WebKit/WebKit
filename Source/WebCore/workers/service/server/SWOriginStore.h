@@ -43,6 +43,8 @@ public:
 
     virtual void importComplete() = 0;
 
+    virtual bool isWebSWOriginStore() const { return false; }
+
 private:
     virtual void addToStore(const SecurityOriginData&) = 0;
     virtual void removeFromStore(const SecurityOriginData&) = 0;

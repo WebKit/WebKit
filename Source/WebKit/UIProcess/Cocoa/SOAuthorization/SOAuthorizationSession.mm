@@ -49,6 +49,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import <pal/cocoa/AppSSOSoftLink.h>
 
@@ -404,7 +405,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 
     dismissModalSheetIfNecessary();
 
-    m_sheetWindow = [NSWindow windowWithContentViewController:m_viewController.get()];
+    m_sheetWindow = [NSWindow windowWithContentViewController:checked_objc_cast<NSViewController>(m_viewController.get())];
 
     m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = ThreadSafeWeakPtr { *this }] (NSNotification *) {
         auto protectedThis = weakThis.get();

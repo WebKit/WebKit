@@ -56,9 +56,9 @@ void WebExtensionAPIOffscreen::createDocument(NSDictionary *details, Ref<WebExte
         return;
 
     WebExtensionOffscreenDocumentParameters parameters;
-    parameters.justification = details[justificationKey];
-    parameters.url = details[urlKey];
-    parameters.reasons = makeVector<String>(details[reasonsKey]);
+    parameters.justification = checked_objc_cast<NSString>(details[justificationKey]);
+    parameters.url = checked_objc_cast<NSString>(details[urlKey]);
+    parameters.reasons = makeVector<String>(checked_objc_cast<NSArray>(details[reasonsKey]));
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::OffscreenCreateDocument(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
