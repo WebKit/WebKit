@@ -29,7 +29,9 @@
 #if ENABLE(JIT)
 
 #include "Interpreter.h"
+#include "JSArray.h"
 #include "JSCJSValueInlines.h"
+#include "JSCellButterfly.h"
 #include "StackAlignment.h"
 
 namespace JSC {
@@ -56,16 +58,8 @@ void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthInclude
     jit.getEffectiveAddress(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, resultGPR, CCallHelpers::TimesEight), resultGPR);
 }
 
-static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+static void emitSkipFirstVarArgs(CCallHelpers& jit, GPRReg scratchGPR1, unsigned firstVarArgOffset)
 {
-    CCallHelpers::JumpList end;
-    
-    if (argCountRecovery.isConstant()) {
-        // FIXME: We could constant-fold a lot of the computation below in this case.
-        // https://bugs.webkit.org/show_bug.cgi?id=141486
-        jit.move(CCallHelpers::TrustedImm32(argCountRecovery.constant().asInt32()), scratchGPR1);
-    } else
-        jit.load32(CCallHelpers::lowWordFor(argCountRecovery.virtualRegister()), scratchGPR1);
     if (firstVarArgOffset) {
         CCallHelpers::Jump sufficientArguments = jit.branch32(CCallHelpers::GreaterThan, scratchGPR1, CCallHelpers::TrustedImm32(firstVarArgOffset + 1));
         jit.move(CCallHelpers::TrustedImm32(1), scratchGPR1);
@@ -74,8 +68,10 @@ static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numU
         jit.sub32(CCallHelpers::TrustedImm32(firstVarArgOffset), scratchGPR1);
         endVarArgs.link(&jit);
     }
-    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(JSC::maxArguments + 1)));
-    
+}
+
+static void emitSizeVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, CCallHelpers::JumpList& slowCase)
+{
     emitSetVarargsFrame(jit, scratchGPR1, true, numUsedSlotsGPR, scratchGPR2);
 
     slowCase.append(jit.branchPtr(CCallHelpers::GreaterThan, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR2));
@@ -86,18 +82,37 @@ static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numU
     // Initialize ArgumentCount.
     jit.store32(scratchGPR1, CCallHelpers::Address(scratchGPR2, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset));
 
-    // Copy arguments.
     jit.signExtend32ToPtr(scratchGPR1, scratchGPR1);
+}
+
+static void emitLoadVarargs(CCallHelpers& jit, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, CCallHelpers::Address firstArgument, unsigned firstVarArgOffset)
+{
+    // Copy arguments.
     CCallHelpers::Jump done = jit.branchSubPtr(CCallHelpers::Zero, CCallHelpers::TrustedImm32(1), scratchGPR1);
     // scratchGPR1: argumentCount
 
     CCallHelpers::Label copyLoop = jit.label();
-    int argOffset = (firstArgumentReg.offset() - 1 + firstVarArgOffset) * static_cast<int>(sizeof(Register));
-    jit.load64(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight, argOffset), scratchGPR3);
+    int argOffset = firstArgument.offset + (static_cast<int>(firstVarArgOffset) - 1) * static_cast<int>(sizeof(Register));
+    jit.load64(CCallHelpers::BaseIndex(firstArgument.base, scratchGPR1, CCallHelpers::TimesEight, argOffset), scratchGPR3);
     jit.store64(scratchGPR3, CCallHelpers::BaseIndex(scratchGPR2, scratchGPR1, CCallHelpers::TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
     jit.branchSubPtr(CCallHelpers::NonZero, CCallHelpers::TrustedImm32(1), scratchGPR1).linkTo(copyLoop, &jit);
     
     done.link(&jit);
+}
+
+static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    if (argCountRecovery.isConstant()) {
+        // FIXME: We could constant-fold a lot of the computation below in this case.
+        // https://bugs.webkit.org/show_bug.cgi?id=141486
+        jit.move(CCallHelpers::TrustedImm32(argCountRecovery.constant().asInt32()), scratchGPR1);
+    } else
+        jit.load32(CCallHelpers::lowWordFor(argCountRecovery.virtualRegister()), scratchGPR1);
+    emitSkipFirstVarArgs(jit, scratchGPR1, firstVarArgOffset);
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(JSC::maxArguments + 1)));
+
+    emitSizeVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, slowCase);
+    emitLoadVarargs(jit, scratchGPR1, scratchGPR2, scratchGPR3, CCallHelpers::addressFor(firstArgumentReg), firstVarArgOffset);
 }
 
 void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame* inlineCallFrame, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
@@ -121,6 +136,76 @@ void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlot
         firstArgumentReg = VirtualRegister(CallFrame::argumentOffset(0));
     }
     emitSetupVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, scratchGPR3, argumentCountRecovery, firstArgumentReg, firstVarArgOffset, slowCase);
+}
+
+void emitSetupVarargsFrameFromCellButterfly(VM& vm, CCallHelpers& jit, GPRReg cellButterflyGPR, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    jit.load32(CCallHelpers::Address(cellButterflyGPR, JSCellButterfly::offsetOfPublicLength()), scratchGPR1);
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(JSC::maxArguments)));
+    jit.add32(CCallHelpers::TrustedImm32(1), scratchGPR1);
+    emitSkipFirstVarArgs(jit, scratchGPR1, firstVarArgOffset);
+
+    emitSizeVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, slowCase);
+    emitLoadVarargs(jit, scratchGPR1, scratchGPR2, scratchGPR3, CCallHelpers::Address(cellButterflyGPR, JSCellButterfly::offsetOfData()), firstVarArgOffset);
+}
+
+void emitLoadVarargsLengthFromArray(CCallHelpers& jit, GPRReg arrayGPR, GPRReg butterflyGPR, GPRReg indexingShapeGPR, GPRReg lengthGPR, CCallHelpers::JumpList& slowCase)
+{
+    static_assert(UndecidedShape < Int32Shape && Int32Shape < DoubleShape && DoubleShape < ContiguousShape);
+    jit.load8(CCallHelpers::Address(arrayGPR, JSCell::indexingTypeAndMiscOffset()), indexingShapeGPR);
+    jit.and32(CCallHelpers::TrustedImm32(IndexingShapeMask), indexingShapeGPR);
+    jit.sub32(indexingShapeGPR, CCallHelpers::TrustedImm32(UndecidedShape), lengthGPR);
+    slowCase.append(jit.branch32(CCallHelpers::Above, lengthGPR, CCallHelpers::TrustedImm32(ContiguousShape - UndecidedShape)));
+
+    jit.loadPtr(CCallHelpers::Address(arrayGPR, JSObject::butterflyOffset()), butterflyGPR);
+    jit.load32(CCallHelpers::Address(butterflyGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
+}
+
+void emitLoadVarargsFromArray(CCallHelpers& jit, GPRReg butterflyGPR, GPRReg indexingShapeGPR, GPRReg lengthGPR, FPRReg scratchFPR, unsigned firstVarArgOffset, CCallHelpers::Address destination, CCallHelpers::JumpList& slowCase)
+{
+    CCallHelpers::BaseIndex source(butterflyGPR, lengthGPR, CCallHelpers::TimesEight, firstVarArgOffset * sizeof(EncodedJSValue));
+    CCallHelpers::BaseIndex target(destination.base, lengthGPR, CCallHelpers::TimesEight, destination.offset);
+
+    CCallHelpers::JumpList done;
+    done.append(jit.branchTestPtr(CCallHelpers::Zero, lengthGPR));
+    CCallHelpers::Jump isDouble = jit.branch32(CCallHelpers::Equal, indexingShapeGPR, CCallHelpers::TrustedImm32(DoubleShape));
+    slowCase.append(jit.branch32(CCallHelpers::Equal, indexingShapeGPR, CCallHelpers::TrustedImm32(UndecidedShape)));
+
+    GPRReg valueGPR = indexingShapeGPR;
+    CCallHelpers::Label copyLoop = jit.label();
+    jit.subPtr(CCallHelpers::TrustedImm32(1), lengthGPR);
+    jit.load64(source, valueGPR);
+    slowCase.append(jit.branchIfEmpty(valueGPR));
+    jit.store64(valueGPR, target);
+    jit.branchTestPtr(CCallHelpers::NonZero, lengthGPR).linkTo(copyLoop, &jit);
+    done.append(jit.jump());
+
+    isDouble.link(&jit);
+    CCallHelpers::Label copyDoubleLoop = jit.label();
+    jit.subPtr(CCallHelpers::TrustedImm32(1), lengthGPR);
+    jit.loadDouble(source, scratchFPR);
+    slowCase.append(jit.branchIfNaN(scratchFPR));
+    jit.boxDouble(scratchFPR, valueGPR);
+    jit.store64(valueGPR, target);
+    jit.branchTestPtr(CCallHelpers::NonZero, lengthGPR).linkTo(copyDoubleLoop, &jit);
+
+    done.link(&jit);
+}
+
+void emitSetupVarargsFrameFromArray(VM& vm, CCallHelpers& jit, GPRReg arrayGPR, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, GPRReg scratchGPR4, FPRReg scratchFPR, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)
+{
+    GPRReg indexingShapeGPR = scratchGPR3;
+    GPRReg butterflyGPR = scratchGPR4;
+
+    emitLoadVarargsLengthFromArray(jit, arrayGPR, butterflyGPR, indexingShapeGPR, scratchGPR1, slowCase);
+    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR1, CCallHelpers::TrustedImm32(JSC::maxArguments)));
+    jit.add32(CCallHelpers::TrustedImm32(1), scratchGPR1);
+    emitSkipFirstVarArgs(jit, scratchGPR1, firstVarArgOffset);
+
+    emitSizeVarargsFrameFastCase(vm, jit, numUsedSlotsGPR, scratchGPR1, scratchGPR2, slowCase);
+    jit.subPtr(CCallHelpers::TrustedImm32(1), scratchGPR1);
+    jit.addPtr(CCallHelpers::TrustedImm32(CallFrame::argumentOffset(0) * static_cast<int>(sizeof(Register))), scratchGPR2);
+    emitLoadVarargsFromArray(jit, butterflyGPR, indexingShapeGPR, scratchGPR1, scratchFPR, firstVarArgOffset, CCallHelpers::Address(scratchGPR2), slowCase);
 }
 
 } // namespace JSC

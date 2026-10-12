@@ -48,6 +48,7 @@
 #include "FunctionExecutableDump.h"
 #include "GetterSetter.h"
 #include "JIT.h"
+#include "JSCellButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
@@ -2141,6 +2142,33 @@ bool Graph::canDoFastSpreadWithStructureCheck(Node* node)
         return false;
 
     return node->child1().useKind() == ArrayUse;
+}
+
+bool Graph::isContiguousCellButterfly(const AbstractValue& value)
+{
+    if (!value.isType(SpecCellOther))
+        return false;
+
+    auto& structureSet = value.m_structure;
+    if (!structureSet.isFinite() || structureSet.isClear())
+        return false;
+
+    bool allAreContiguousCellButterfly = true;
+    structureSet.forEach(
+        [&](RegisteredStructure structure) {
+            if (structure->classInfoForCells() != JSCellButterfly::info() || !hasContiguous(structure->indexingType()))
+                allAreContiguousCellButterfly = false;
+        });
+    return allAreContiguousCellButterfly;
+}
+
+bool Graph::isLikelyArray(Edge edge, const AbstractValue& value)
+{
+    if (value.isClear())
+        return false;
+    if (value.isType(SpecArray))
+        return true;
+    return edge->shouldSpeculateArray() && value.couldBeType(SpecArray);
 }
 
 bool Graph::isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue& value)

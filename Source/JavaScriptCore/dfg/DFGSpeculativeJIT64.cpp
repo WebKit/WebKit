@@ -747,6 +747,42 @@ void SpeculativeJIT::emitCall(Node* node)
             callOperation(operationThrowStackOverflowForVarargs, LinkableConstant::globalObject(*this, node));
             abortWithReason(DFGVarargsThrowingPathDidNotThrow);
             done.link(this);
+        } else if (m_graph.isContiguousCellButterfly(m_state.forNode(node->child3())) || m_graph.isLikelyArray(node->child3(), m_state.forNode(node->child3()))) {
+            JSValueOperand arguments(this, node->child3());
+            GPRReg argumentsGPR = arguments.gpr();
+            Vector<SilentRegisterSavePlan, 1> argumentsSavePlan;
+            argumentsSavePlan.append(silentSavePlanForGPR(node->child3()->virtualRegister(), argumentsGPR));
+            flushRegisters();
+
+            GPRReg scratchGPR1 = selectScratchGPR(argumentsGPR);
+            GPRReg scratchGPR2 = selectScratchGPR(argumentsGPR, scratchGPR1);
+            GPRReg scratchGPR3 = selectScratchGPR(argumentsGPR, scratchGPR1, scratchGPR2);
+            GPRReg scratchGPR4 = selectScratchGPR(argumentsGPR, scratchGPR1, scratchGPR2, scratchGPR3);
+
+            JumpList slowCases;
+            move(TrustedImm32(numUsedStackSlots), scratchGPR2);
+            if (m_graph.isContiguousCellButterfly(m_state.forNode(node->child3())))
+                emitSetupVarargsFrameFromCellButterfly(vm(), *this, argumentsGPR, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, data->firstVarArgOffset, slowCases);
+            else {
+                if (needsTypeCheck(node->child3(), SpecCell))
+                    slowCases.append(branchIfNotCell(argumentsGPR));
+                if (needsTypeCheck(node->child3(), SpecArray))
+                    slowCases.append(branchIfNotType(argumentsGPR, ArrayType));
+                emitSetupVarargsFrameFromArray(vm(), *this, argumentsGPR, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, scratchGPR4, FPRInfo::fpRegT0, data->firstVarArgOffset, slowCases);
+            }
+            Label done = label();
+
+            int firstVarArgOffset = data->firstVarArgOffset;
+            addSlowPathGeneratorLambda([=, this, argumentsSavePlan = WTF::move(argumentsSavePlan), slowCases = WTF::move(slowCases)]() {
+                slowCases.link(this);
+                callOperationWithSilentSpill(argumentsSavePlan.span(), operationSizeFrameForVarargs, scratchGPR1, LinkableConstant::globalObject(*this, node), argumentsGPR, numUsedStackSlots, firstVarArgOffset);
+                move(TrustedImm32(numUsedStackSlots), scratchGPR2);
+                emitSetVarargsFrame(*this, scratchGPR1, false, scratchGPR2, scratchGPR2);
+                addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), scratchGPR2, stackPointerRegister);
+                callOperation(operationSetupVarargsFrame, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), scratchGPR2, argumentsGPR, firstVarArgOffset, scratchGPR1);
+                addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, stackPointerRegister);
+                jump().linkTo(done, this);
+            });
         } else {
             GPRReg argumentsGPR;
             GPRReg scratchGPR1;
