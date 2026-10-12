@@ -59,7 +59,7 @@ class Git(Scm):
                     self._ordered_revisions = content['revisions']
 
                 self._fill(self.repo.default_branch)
-                for branch in self._ordered_commits.keys():
+                for branch in list(self._ordered_commits.keys()):
                     if branch == self.repo.default_branch:
                         continue
                     if not self._ordered_commits[branch]:
@@ -68,15 +68,28 @@ class Git(Scm):
                                 del d[branch]
                         continue
                     self._fill(branch)
-            except BaseException:
-                pass
+            except (IOError, OSError, ValueError, KeyError):
+                self.repo.log("Failed to load identifier cache from '{}'".format(self.path))
 
         @property
         def path(self):
             return os.path.join(self.repo.common_directory, 'identifiers.json')
 
-        def _fill(self, branch):
+        def _fill(self, branch=None):
             default_branch = self.repo.default_branch
+
+            # Without a branch, rebuild identifiers for every branch from scratch
+            if branch is None:
+                self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
+                self._revisions_to_identifiers = {}
+                if default_branch not in self._ordered_commits:
+                    return
+                self._fill(default_branch)
+                for branch in self._ordered_commits.keys():
+                    if branch != default_branch:
+                        self._fill(branch)
+                return
+
             if branch == default_branch:
                 branch_point = None
             elif self._ordered_commits[branch] and self._ordered_commits[branch][0] in self._hash_to_identifiers:
@@ -170,7 +183,11 @@ class Git(Scm):
                 finally:
                     log.kill()
 
-            if not hashes or intersected and len(hashes) <= 1:
+            if not hashes:
+                return
+            # Only bail early if the branch hasn't moved. If our tip is a cached commit which isn't the last
+            # one we know of, the branch was moved backwards (reset, rebase) and the cache must be truncated.
+            if intersected and len(hashes) <= 1 and self._ordered_commits[branch] and self._ordered_commits[branch][-1] == hashes[0]:
                 return
 
             hashes.reverse()
@@ -184,13 +201,22 @@ class Git(Scm):
                     intersected = True
                     break
                 order -= 1
+            if intersected:
+                dropped = self._ordered_commits[branch][order + 2:]
+            elif branch == self.repo.default_branch:
+                dropped = self._ordered_commits[branch][1:]
+            else:
+                dropped = self._ordered_commits[branch]
+
             if intersected or branch == self.repo.default_branch:
                 self._ordered_commits[branch] = self._ordered_commits[branch][:order + 1] + hashes
                 self._ordered_revisions[branch] = self._ordered_revisions[branch][:order + 1] + revisions
             else:
                 self._ordered_commits[branch] = hashes
                 self._ordered_revisions[branch] = revisions
-            self._fill(branch)
+
+            # Commits which are no longer on this branch (and anything branched from them) have stale identifiers
+            self._fill(None if dropped else branch)
 
             try:
                 with open(self.path, 'w') as file:
@@ -206,16 +232,9 @@ class Git(Scm):
                 if branch in d:
                     del d[branch]
 
-            self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
-            self._revisions_to_identifiers = {}
-
+            self._fill()
             if self.repo.default_branch not in self._ordered_commits:
                 return
-            self._fill(self.repo.default_branch)
-            for branch in self._ordered_commits.keys():
-                if branch == self.repo.default_branch:
-                    continue
-                self._fill(branch)
 
             try:
                 with open(self.path, 'w') as file:
@@ -400,8 +419,8 @@ class Git(Scm):
             classifier=classifier,
         )
         self._branch = None
-        self.cache = self.Cache(self) if self.root_path and cached else None
         self.default_remote = 'origin'
+        self.cache = self.Cache(self) if self.root_path and cached else None
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
