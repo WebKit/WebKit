@@ -29,17 +29,20 @@
 #include "MessageSender.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Timer.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-struct ClientOrigin;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class StoredCredentialsPolicy : uint8_t;
 class ResourceRequest;
@@ -62,7 +65,15 @@ class NetworkSession;
 class NetworkSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public RefCounted<NetworkSocketChannel> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSocketChannel);
 public:
-    static RefPtr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
+    struct LocalNetworkAccessClaims {
+        std::optional<WebCore::FrameIdentifier> parentFrameID;
+        WebCore::IPAddressSpace clientAddressSpace;
+        bool clientIsSecureContext;
+        bool localNetworkAllowedByPermissionsPolicy;
+        bool loopbackNetworkAllowedByPermissionsPolicy;
+    };
+
+    static RefPtr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker, LocalNetworkAccessClaims&&);
     ~NetworkSocketChannel();
 
     void ref() const final { RefCounted::ref(); }
@@ -75,9 +86,9 @@ public:
     friend class WebSocketTask;
 
 private:
-    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker);
+    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker, LocalNetworkAccessClaims&&);
 
-    void didConnect(const String& subprotocol, const String& extensions);
+    void didConnect(const String& subprotocol, const String& extensions, WebCore::IPAddressSpace connectionAddressSpace);
     void didReceiveText(const String&);
     void didReceiveBinaryData(std::span<const uint8_t>);
     void didClose(unsigned short code, const String& reason);
@@ -96,6 +107,9 @@ private:
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     void finishClosingIfPossible();
+    bool isHeldForLocalNetworkAccess() const;
+    void holdForLocalNetworkAccess(Function<void()>&&);
+    void refuseLocalNetworkAccess(const String& errorMessage);
 
     WeakRef<NetworkConnectionToWebProcess> m_connectionToWebProcess;
     WebCore::WebSocketIdentifier m_identifier;
@@ -108,6 +122,12 @@ private:
     String m_errorMessage;
     std::optional<std::pair<unsigned short, String>> m_closeInfo;
     WebPageProxyIdentifier m_webPageProxyID;
+    URL m_url;
+    std::optional<WebCore::FrameIdentifier> m_frameID;
+    WebCore::ClientOrigin m_clientOrigin;
+    LocalNetworkAccessClaims m_localNetworkAccessClaims;
+    std::optional<Vector<Function<void()>>> m_messagesAwaitingLocalNetworkAccess;
+    bool m_localNetworkAccessRefused { false };
 };
 
 } // namespace WebKit

@@ -152,7 +152,7 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
     g_signal_connect_swapped(m_connection.get(), "closed", reinterpret_cast<GCallback>(didCloseCallback), this);
 
     if (RefPtr channel = m_channel.get()) {
-        channel->didConnect(String::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions());
+        channel->didConnect(String::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions(), WebCore::IPAddressSpace::Unknown);
         channel->didReceiveHandshakeResponse(m_handshakeMessage.get());
     }
     g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);

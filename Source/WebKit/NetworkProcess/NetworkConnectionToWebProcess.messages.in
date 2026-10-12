@@ -79,7 +79,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
-    [EnabledBy=WebSocketEnabled] CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier, WebKit::WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct WebCore::ClientOrigin clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> protections, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+    [EnabledBy=WebSocketEnabled] CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier, WebKit::WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct WebCore::ClientOrigin clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> protections, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker, std::optional<WebCore::FrameIdentifier> parentFrameID, enum:uint8_t WebCore::IPAddressSpace clientAddressSpace, bool clientIsSecureContext, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy)
 
     CountWebSocketChannelsForTesting() -> (uint32_t count)
 

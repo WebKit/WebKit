@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// A WebSocket to the local network is only checked once its handshake has completed, so the server can
+// already be sending by the time the permission is decided. The page must not see any of it first:
+// a granted connection reports open before the server's first message, and a refused one reports
+// neither.
+//
+// The frame is on port 9446, which the address-space overrides map to public, so its WebSocket to the
+// loopback WPT server needs permission. loopback-network is delegated to the frame because the feature's
+// default allowlist is 'self'.
+
+const PUBLIC_ORIGIN = 'https://web-platform.test:9446';
+
+function runPublicFrame(t)
+{
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network';
+    frame.src = new URL('resources/lna-websocket-frame.html', location.href).href.replace(location.origin, PUBLIC_ORIGIN);
+    document.body.appendChild(frame);
+    t.add_cleanup(() => frame.remove());
+
+    return new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+    });
+}
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_ORIGIN);
+
+    assert_array_equals(await runPublicFrame(t), ['open', 'message', 'close 1000']);
+}, 'a granted WebSocket reports open before the message the server sent while access was being decided');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(false, true, PUBLIC_ORIGIN);
+
+    assert_array_equals(await runPublicFrame(t), ['error', 'close 1006']);
+}, 'a refused WebSocket never reports open or the server\'s message');
+
+</script>
+</body>
+</html>
