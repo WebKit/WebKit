@@ -619,10 +619,14 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
             auto identifier = channel->progressIdentifier();
             didCreateWebSocket(identifier, webSocket->url());
 
-            auto cookieRequestHeaderFieldValue = [document = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }](const URL& url) -> String {
-                if (!document || !document->page())
+            auto cookieRequestHeaderFieldValue = [weakDocument = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }](const URL& url) -> String {
+                RefPtr protectedDocument = weakDocument;
+                if (!protectedDocument)
                     return { };
-                return document->page()->cookieJar().cookieRequestHeaderFieldValue(*document, url);
+                RefPtr page = protectedDocument->page();
+                if (!page)
+                    return { };
+                return protect(page->cookieJar())->cookieRequestHeaderFieldValue(*protectedDocument, url);
             };
             didSendWebSocketHandshakeRequest(identifier, channel->clientHandshakeRequest(WTF::move(cookieRequestHeaderFieldValue)));
 

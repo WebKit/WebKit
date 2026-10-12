@@ -310,7 +310,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     UserGestureIndicator indicator { IsProcessingUserGesture::Yes, mainFrameDocument.get() };
 
-    FrameLoadRequest frameLoadRequest { *mainFrameDocument, mainFrameDocument->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *mainFrameDocument, protect(mainFrameDocument->securityOrigin()), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 
     auto [frame, created] = WebCore::createWindow(mainFrame, WTF::move(frameLoadRequest), { });
     if (!frame)
@@ -326,7 +326,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
     ResourceRequest resourceRequest { protect(localFrame->document())->encodingParseURL(url) };
-    FrameLoadRequest frameLoadRequest2 { *mainFrameDocument, mainFrameDocument->securityOrigin(), WTF::move(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest2 { *mainFrameDocument, protect(mainFrameDocument->securityOrigin()), WTF::move(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
     localFrame->loader().changeLocation(WTF::move(frameLoadRequest2));
 }
 

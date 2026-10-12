@@ -4891,7 +4891,7 @@ void LocalFrameView::updateEmbeddedObject(const SingleThreadWeakPtr<RenderEmbedd
     if (!embeddedObject)
         return;
 
-    auto ignoreWidgetState = embeddedObject->updateWidgetPosition();
+    auto ignoreWidgetState = protect(*embeddedObject)->updateWidgetPosition();
     UNUSED_PARAM(ignoreWidgetState);
 }
 

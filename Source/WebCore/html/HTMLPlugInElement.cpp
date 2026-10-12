@@ -526,7 +526,7 @@ void HTMLPlugInElement::scheduleUpdateForAfterStyleResolution()
 bool HTMLPlugInElement::shouldBypassCSPForPDFPlugin(const String& contentType) const
 {
 #if ENABLE(PDF_PLUGIN)
-    return document().frame()->loader().client().shouldUsePDFPlugin(contentType, protect(document())->url().path());
+    return protect(document().frame()->loader().client())->shouldUsePDFPlugin(contentType, protect(document())->url().path());
 #else
     UNUSED_PARAM(contentType);
     return false;
@@ -580,7 +580,7 @@ bool HTMLPlugInElement::wouldLoadAsPlugIn(const String& relativeURL, const Strin
     URL completedURL;
     if (!relativeURL.isEmpty())
         completedURL = document->encodingParseURL(relativeURL);
-    return document->frame()->loader().client().objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn;
+    return protect(document->frame()->loader().client())->objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn;
 }
 
 bool HTMLPlugInElement::isImageType()

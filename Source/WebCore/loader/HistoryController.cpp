@@ -989,7 +989,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
 void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
 {
     if (!itemsAreClones(item, fromItem))
-        return m_frame->loader().loadItem(item, fromItem, type, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache);
+        return protect(m_frame->loader())->loadItem(item, fromItem, type, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache);
 
     // Just iterate over the rest, looking for frames to navigate.
     for (Ref childItem : copyToVector(item.children())) {

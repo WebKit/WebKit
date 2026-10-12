@@ -1926,7 +1926,7 @@ void HTMLMediaElement::selectMediaResource()
                 return;
             }
 
-            auto absoluteURL = element.document().encodingParseURL(srcValue);
+            auto absoluteURL = protect(element.document())->encodingParseURL(srcValue);
             if (!element.isSafeToLoadURL(absoluteURL, InvalidURLAction::Complain)) {
                 element.mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
                 return;
@@ -2138,7 +2138,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
 #if ENABLE(MEDIA_SOURCE)
 #if USE(AVFOUNDATION)
     if (document().settings().mediaSourcePrefersDecompressionSession())
-        options.videoRendererPreferences = videoRendererPreferences(document().settings(), m_forceStereoDecoding);
+        options.videoRendererPreferences = videoRendererPreferences(protect(document().settings()), m_forceStereoDecoding);
 #endif
     if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration) {
         if (RefPtr mediaSource = MediaSource::lookup(url.string()))
@@ -3647,9 +3647,10 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
             // 5.2.4. If the preceding step failed, let this object's attaching media keys value be false and reject promise with the appropriate error name.
             // FIXME: ^
 
-            element.m_mediaKeys->detachCDMClient(element);
+            Ref oldMediaKeys = *element.m_mediaKeys;
+            oldMediaKeys->detachCDMClient(element);
             if (RefPtr player = element.m_player)
-                player->cdmInstanceDetached(element.m_mediaKeys->cdmInstance());
+                player->cdmInstanceDetached(protect(oldMediaKeys->cdmInstance()));
         }
 
         // 5.3. If mediaKeys is not null, run the following steps:
@@ -6575,12 +6576,12 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (RefPtr player = m_player; player && m_mediaKeys)
-        player->cdmInstanceAttached(m_mediaKeys->cdmInstance());
+        player->cdmInstanceAttached(protect(m_mediaKeys->cdmInstance()));
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (RefPtr player = m_player; player && m_webKitMediaKeys)
-        player->setCDM(&m_webKitMediaKeys->cdm());
+        player->setCDM(protect(m_webKitMediaKeys->cdm()).ptr());
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -7546,7 +7547,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
         if (element.isContextStopped())
             return;
 
-        auto newValue = isPlayingToWirelessTarget && element.m_player && element.m_player->isCurrentPlaybackTargetWireless();
+        auto newValue = isPlayingToWirelessTarget && element.m_player && protect(element.m_player)->isCurrentPlaybackTargetWireless();
         if (newValue == element.m_isPlayingToWirelessTarget)
             return;
 
@@ -7556,7 +7557,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
         Ref { element.m_remote }->isPlayingToRemoteTargetChanged(element.m_isPlayingToWirelessTarget);
         ALWAYS_LOG_WITH_THIS(&element, logSiteIdentifier, element.m_isPlayingToWirelessTarget);
         element.configureMediaControls();
-        element.mediaSession().isPlayingToWirelessPlaybackTargetChanged(element.m_isPlayingToWirelessTarget);
+        protect(element.mediaSession())->isPlayingToWirelessPlaybackTargetChanged(element.m_isPlayingToWirelessTarget);
         element.canProduceAudioChanged();
         element.scheduleUpdateMediaState();
 
@@ -7955,7 +7956,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         if (element.isContextStopped())
             return;
 
-        if (element.document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
+        if (protect(element.document())->hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
             ALWAYS_LOG_WITH_THIS(&element, logIdentifier, " returning because document is hidden");
             element.setChangingVideoFullscreenMode(false);
             return;
@@ -9245,9 +9246,9 @@ void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
 
             track->removeCuesNotInTimeRanges(
 #if ENABLE(MEDIA_SOURCE)
-                element.m_mediaSource ? element.m_mediaSource->buffered() :
+                element.m_mediaSource ? protect(element.m_mediaSource)->buffered() :
 #endif
-                element.m_player->buffered());
+                protect(element.m_player)->buffered());
         }
     });
 }
@@ -9688,7 +9689,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
 {
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
-    UserGestureIndicator remoteControlUserGesture(IsProcessingUserGesture::Yes, &document());
+    UserGestureIndicator remoteControlUserGesture(IsProcessingUserGesture::Yes, protect(document()).ptr());
     const double defaultSkipAmount = 15;
     switch (command) {
     case PlatformMediaSession::RemoteControlCommandType::PlayCommand:
@@ -10148,7 +10149,7 @@ void HTMLMediaElement::isVisibleInViewportChanged()
     queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& element) {
         if (element.isContextStopped())
             return;
-        element.mediaSession().isVisibleInViewportChanged();
+        protect(element.mediaSession())->isVisibleInViewportChanged();
         element.updateShouldAutoplay();
         element.schedulePlaybackControlsManagerUpdate();
     });

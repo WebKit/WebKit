@@ -618,7 +618,7 @@ bool MediaElementSession::autoplayPermitted() const
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is not visible");
         return false;
     }
-    if (renderer->view().frameView().isOffscreen()) {
+    if (protect(renderer->view().frameView())->isOffscreen()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because frame is offscreen");
         return false;
     }

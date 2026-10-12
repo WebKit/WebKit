@@ -107,38 +107,12 @@ dom/ViewTransition.cpp
 [ macOS ] fileapi/Blob.cpp
 [ macOS ] history/CachedFrame.cpp
 [ macOS ] html/BaseDateAndTimeInputType.cpp
-[ macOS ] html/CachedHTMLCollectionInlines.h
-[ macOS ] html/DOMFormData.cpp
 [ macOS ] html/HTMLFormControlElement.cpp
-[ macOS ] html/HTMLFormElement.cpp
-[ macOS ] html/HTMLImageElement.cpp
-[ macOS ] html/HTMLInputElement.cpp
-[ macOS ] html/HTMLLinkElement.cpp
-[ macOS ] html/HTMLMediaElement.cpp
 [ macOS ] html/HTMLSelectElement.cpp
-[ macOS ] html/HTMLSlotElement.cpp
-[ macOS ] html/HTMLTextFormControlElement.cpp
-[ macOS ] html/MediaElementSession.cpp
 [ macOS ] html/SearchInputType.cpp
-[ macOS ] html/TextFieldInputType.cpp
-[ macOS ] html/ValidatedFormListedElement.cpp
 [ macOS ] html/canvas/CanvasRenderingContext2DBase.cpp
-[ macOS ] html/canvas/GPUBasedCanvasRenderingContext.cpp
-[ macOS ] html/canvas/WebGLProgram.cpp
-[ macOS ] html/parser/HTMLDocumentParser.cpp
-[ macOS ] html/shadow/MediaControlTextTrackContainerElement.cpp
-[ macOS ] html/shadow/TextControlInnerElements.cpp
-[ macOS ] inspector/InspectorFrontendAPIDispatcher.cpp
-[ macOS ] inspector/InspectorFrontendHost.cpp
 [ macOS ] inspector/agents/InspectorCSSAgent.cpp
-[ macOS ] inspector/agents/InspectorDOMAgent.cpp
-[ macOS ] inspector/agents/InspectorNetworkAgent.cpp
 [ macOS ] inspector/agents/frame/FrameCSSAgent.cpp
-[ macOS ] inspector/agents/frame/FrameDOMAgent.cpp
-[ macOS ] inspector/agents/frame/FrameDebuggerAgent.cpp
-[ macOS ] inspector/agents/frame/FrameRuntimeAgent.cpp
-[ macOS ] inspector/agents/page/PageDebuggerAgent.cpp
-[ macOS ] inspector/agents/page/PageRuntimeAgent.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp
 layout/formattingContexts/FormattingGeometry.cpp
@@ -195,10 +169,8 @@ layout/layouttree/LayoutTreeBuilder.cpp
 [ macOS ] loader/PolicyChecker.cpp
 [ macOS ] page/ElementTargetingController.cpp
 [ macOS ] page/EventHandler.cpp
-[ macOS ] page/IntelligenceTextEffectsSupport.cpp
 [ macOS ] page/LocalFrameView.cpp
 [ macOS ] page/LocalFrameViewLayoutContext.cpp
-[ macOS ] page/ResizeObserver.cpp
 [ macOS ] page/csp/ContentSecurityPolicyMediaListDirective.cpp
 [ macOS ] page/csp/ContentSecurityPolicyTrustedTypesDirective.cpp
 [ macOS ] page/mac/EventHandlerMac.mm

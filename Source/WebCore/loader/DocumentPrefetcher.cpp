@@ -138,7 +138,7 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     if (url.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(url, document->url()))
         return;
 
-    ResourceRequest request = makePrefetchRequest(URL { url }, tags, referrerPolicy, m_frame->loader().outgoingReferrerURL(), *document);
+    ResourceRequest request = makePrefetchRequest(URL { url }, tags, referrerPolicy, protect(m_frame->loader())->outgoingReferrerURL(), *document);
 
     ResourceLoaderOptions prefetchOptions(
         SendCallbackPolicy::SendCallbacks,

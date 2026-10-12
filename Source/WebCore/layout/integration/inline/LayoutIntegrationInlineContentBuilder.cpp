@@ -73,7 +73,7 @@ static std::tuple<float, float> glyphOverflowInInlineDirection(size_t firstTextB
         auto character = isLeading ? textContent[0] : textContent[textContent.length() - 1];
         auto& fontCascade = textBox.style().fontCascade();
         auto glyphData = fontCascade.glyphDataForCharacter(character, !isLeftToRightDirection);
-        return (glyphData.font ? *glyphData.font : fontCascade.primaryFont()).boundsForGlyph(glyphData.glyph);
+        return protect(glyphData.font ? *glyphData.font : fontCascade.primaryFont())->boundsForGlyph(glyphData.glyph);
     };
 
     auto leadingOverflow = [&] {

@@ -128,7 +128,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass>::namedItem(const AtomString& 
         } else
             return nullptr;
 
-        if (candidate && static_cast<const HTMLCollectionClass&>(*this).elementMatches(*candidate)) {
+        if (candidate && static_cast<const HTMLCollectionClass&>(*this).elementMatches(protect(*candidate))) {
             if (traversalType == CollectionTraversalType::ChildrenOnly ? candidate->parentNode() == root.ptr() : candidate->isDescendantOf(root))
                 return candidate.get();
         }

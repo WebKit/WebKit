@@ -246,7 +246,8 @@ LineLayout::~LineLayout()
     m_lineDamage = { };
     m_rootLayoutBox = nullptr;
 
-    BoxTreeUpdater { rootRenderer, *m_document }.tearDown();
+    // This runs from the destructor, possibly while the document's render tree is being destroyed as part of document teardown, so don't ref the document.
+    SUPPRESS_UNCOUNTED_ARG BoxTreeUpdater { rootRenderer, *m_document }.tearDown();
 }
 
 static inline bool NODELETE isContentRenderer(const RenderObject& renderer)

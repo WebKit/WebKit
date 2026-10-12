@@ -978,7 +978,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setOuterHTML(Inspect
     Inspector::Protocol::ErrorString errorString;
 
     if (!nodeId) {
-        DOMPatchSupport { *m_domEditor, *m_document }.patchDocument(outerHTML);
+        DOMPatchSupport { *m_domEditor, protect(*m_document) }.patchDocument(outerHTML);
         return { };
     }
 

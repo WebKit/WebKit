@@ -129,7 +129,7 @@ HTMLFormElement::~HTMLFormElement()
         listedElement->formWillBeDestroyed();
     }
     for (auto& imageElement : m_imageElements)
-        imageElement->formWillBeDestroyed();
+        protect(imageElement)->formWillBeDestroyed();
 }
 
 Node::NeedsPostConnectionSteps HTMLFormElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -795,7 +795,7 @@ void HTMLFormElement::resetDefaultButton()
     defaultButton();
     if (m_defaultButton != oldDefault) {
         if (oldDefault)
-            oldDefault->invalidateStyleForSubtree();
+            protect(oldDefault)->invalidateStyleForSubtree();
         if (m_defaultButton)
             protect(m_defaultButton)->invalidateStyleForSubtree();
     }

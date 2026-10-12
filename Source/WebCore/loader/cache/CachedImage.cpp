@@ -265,7 +265,7 @@ void CachedImage::checkShouldPaintBrokenImage()
     if (!m_loader || m_loader->reachedTerminalState() || !m_loader->frameLoader())
         return;
 
-    m_shouldPaintBrokenImage = m_loader->frameLoader()->client().shouldPaintBrokenImage(url());
+    m_shouldPaintBrokenImage = protect(m_loader->frameLoader()->client())->shouldPaintBrokenImage(url());
 }
 
 void CachedImage::clear()

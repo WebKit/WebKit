@@ -2261,8 +2261,8 @@ ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomString& id, H
 void ListAttributeTargetObserver::idTargetChanged(Element&)
 {
     protect(protect(m_element->document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [element = m_element] {
-        if (element)
-            element->dataListMayHaveChanged();
+        if (RefPtr protectedElement = element.get())
+            protectedElement->dataListMayHaveChanged();
     });
 }
 

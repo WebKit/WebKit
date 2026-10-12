@@ -37,7 +37,7 @@
 namespace WebCore {
 
 inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger, HTMLFormControlElement* submitter)
-    : FrameDestructionObserver(sourceDocument.frame())
+    : FrameDestructionObserver(protect(sourceDocument.frame()))
     , m_form(form)
     , m_textFieldValues(WTF::move(textFieldValues))
     , m_sourceDocument(sourceDocument)

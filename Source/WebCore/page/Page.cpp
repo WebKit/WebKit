@@ -5129,7 +5129,7 @@ void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& medi
     RefPtr localMainFrame = this->localMainFrame();
     RefPtr window = localMainFrame ? localMainFrame->window() : nullptr;
     if (RefPtr navigator = window ? window->optionalNavigator() : nullptr)
-        NavigatorMediaSession::mediaSession(*navigator).coordinator().setMediaSessionCoordinatorPrivate(*m_mediaSessionCoordinator);
+        protect(NavigatorMediaSession::mediaSession(*navigator).coordinator())->setMediaSessionCoordinatorPrivate(*m_mediaSessionCoordinator);
 }
 
 void Page::invalidateMediaSessionCoordinator()
@@ -5144,7 +5144,7 @@ void Page::invalidateMediaSessionCoordinator()
     if (!navigator)
         return;
 
-    NavigatorMediaSession::mediaSession(*navigator).coordinator().close();
+    protect(NavigatorMediaSession::mediaSession(*navigator).coordinator())->close();
 }
 #endif
 

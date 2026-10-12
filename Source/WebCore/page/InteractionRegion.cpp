@@ -202,7 +202,8 @@ static bool elementMatchesHoverRules(Element& element)
 
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
             element.document().userActionElements().setHovered(element, invalidationRuleSet.isNegation == Style::IsNegation::No);
-            Style::ElementRuleCollector ruleCollector(element, *invalidationRuleSet.ruleSet, nullptr, SelectorChecker::Mode::StyleInvalidation);
+            Ref ruleSet = *invalidationRuleSet.ruleSet;
+            Style::ElementRuleCollector ruleCollector(element, ruleSet, nullptr, SelectorChecker::Mode::StyleInvalidation);
             if (ruleCollector.matchesAnyAuthorRules()) {
                 foundHoverRules = true;
                 break;

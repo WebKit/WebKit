@@ -264,7 +264,7 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     ASSERT(!m_suspended);
     ASSERT(m_queuedEvaluations.isEmpty());
 
-    JSC::SuspendExceptionScope scope(m_frontendPage->inspectorController().vm());
+    JSC::SuspendExceptionScope scope(protect(m_frontendPage->inspectorController())->vm());
 
     RefPtr localMainFrame = m_frontendPage->localMainFrame();
     return protect(localMainFrame->script())->evaluateInWorld(ScriptSourceCode(expression, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorldSingleton());

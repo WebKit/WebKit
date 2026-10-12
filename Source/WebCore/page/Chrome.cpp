@@ -248,7 +248,7 @@ void Chrome::runModal()
 {
     // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
-    PageGroupLoadDeferrer deferrer(m_page, false);
+    PageGroupLoadDeferrer deferrer(protect(m_page), false);
 
     // JavaScript that runs within the nested event loop must not be run in the context of the
     // script that called showModalDialog. Null out entryScope to break the connection.
@@ -282,7 +282,7 @@ bool Chrome::runBeforeUnloadConfirmPanel(String&& message, LocalFrame& frame)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(protect(m_page), true);
 
     return m_client->runBeforeUnloadConfirmPanel(WTF::move(message), frame);
 }
@@ -296,7 +296,7 @@ void Chrome::runJavaScriptAlert(LocalFrame& frame, const String& message)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(protect(m_page), true);
 
     notifyPopupOpeningObservers();
     String displayMessage = frame.displayStringModifiedByEncoding(message);

@@ -285,7 +285,7 @@ void Navigation::setActivation(HistoryItem* previousItem, std::optional<Navigati
         return;
 
     ASSERT(m_currentEntryIndex);
-    if (currentEntry()->associatedHistoryItem().url().isAboutBlank())
+    if (protect(currentEntry()->associatedHistoryItem())->url().isAboutBlank())
         return;
 
     bool wasAboutBlank = previousItem && previousItem->url().isAboutBlank(); // FIXME: *Initial* about:blank
@@ -374,7 +374,7 @@ enum EventTargetInterfaceType Navigation::eventTargetInterface() const
 
 static Ref<DOMPromise> createDOMPromise(const DeferredPromise& deferredPromise)
 {
-    Locker<JSC::JSLock> locker(commonVM().apiLock());
+    JSC::JSLockHolder locker(commonVM());
 
     auto promiseValue = deferredPromise.promise();
     auto& jsPromise = *downcast<JSC::JSPromise>(promiseValue);
@@ -471,7 +471,7 @@ Navigation::Result Navigation::reload(JSC::JSGlobalObject& globalObject, Navigat
     RefPtr frame = this->frame();
     RefPtr document = frame->document();
     ResourceRequest resourceRequest { URL { document->url() }, frame->loader().outgoingReferrer(), ResourceRequestCachePolicy::ReloadIgnoringCacheData };
-    FrameLoadRequest frameLoadRequest { *document, document->securityOrigin(), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
+    FrameLoadRequest frameLoadRequest { *document, protect(document->securityOrigin()), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
     frameLoadRequest.setLockHistory(LockHistory::Yes);
     frameLoadRequest.setLockBackForwardList(LockBackForwardList::Yes);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(document->shouldOpenExternalURLsPolicyToPropagate());
@@ -507,10 +507,11 @@ Navigation::Result Navigation::navigate(JSC::JSGlobalObject& globalObject, const
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(options.info), serializedState.releaseReturnValue());
 
-    auto request = FrameLoadRequest(*frame(), WTF::move(newURL));
+    RefPtr frame = this->frame();
+    auto request = FrameLoadRequest(*frame, WTF::move(newURL));
     request.setNavigationHistoryBehavior(options.history);
     request.setIsFromNavigationAPI(true);
-    frame()->loader().loadFrameRequest(WTF::move(request), nullptr, { });
+    frame->loader().loadFrameRequest(WTF::move(request), nullptr, { });
 
     // If the load() call never made it to the point that NavigateEvent was emitted, thus the upcoming-non-traverse slot was never promoted, this returns the tracker so we can reject it.
     if (RefPtr aborted = m_methodTrackers.takeUpcomingNonTraverseIfEquals(*apiMethodTracker))
@@ -1233,7 +1234,7 @@ void Navigation::setupInterceptionState(NavigateEvent& event, NavigationNavigati
         updateForNavigation(currentEntry()->associatedHistoryItem(), navigationType);
     } else if (navigationType == NavigationNavigationType::Push || navigationType == NavigationNavigationType::Replace) {
         auto historyHandling = navigationType == NavigationNavigationType::Replace ? NavigationHistoryBehavior::Replace : NavigationHistoryBehavior::Push;
-        frame()->loader().updateURLAndHistory(destination.url(), classicHistoryAPIState, historyHandling);
+        protect(frame()->loader())->updateURLAndHistory(destination.url(), classicHistoryAPIState, historyHandling);
     }
 
     if (RefPtr transition = m_transition)

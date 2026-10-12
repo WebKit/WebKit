@@ -116,7 +116,7 @@ LeafBoxIterator LineBox::lineRightmostLeafBox() const
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float horizontalPosition, bool editableOnly)
 {
     auto isEditable = [&](auto box) {
-        return box && box->renderer().node() && box->renderer().node()->hasEditableStyle();
+        return box && box->renderer().node() && protect(box->renderer().node())->hasEditableStyle();
     };
 
     auto firstBox = lineBox.logicalLeftmostLeafBox();

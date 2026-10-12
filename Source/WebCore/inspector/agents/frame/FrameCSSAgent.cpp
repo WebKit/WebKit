@@ -907,7 +907,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> FrameCSSAgent::buildArra
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
     if (pseudoElementIdentifier)
         context.setRequestedPseudoElement(*pseudoElementIdentifier);
-    SelectorChecker selectorChecker(element.document());
+    SelectorChecker selectorChecker(protect(element.document()));
 
     for (auto& matchedRule : matchedRules) {
         RefPtr ruleObject = buildObjectForRule(matchedRule.ptr(), styleResolver, element);

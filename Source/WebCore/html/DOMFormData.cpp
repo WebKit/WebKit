@@ -77,7 +77,7 @@ Ref<DOMFormData> DOMFormData::create(ScriptExecutionContext* context, const PAL:
 
 Ref<DOMFormData> DOMFormData::clone() const
 {
-    auto newFormData = adoptRef(*new DOMFormData(scriptExecutionContext(), this->encoding()));
+    auto newFormData = adoptRef(*new DOMFormData(protect(scriptExecutionContext()), this->encoding()));
     newFormData->m_items = m_items;
     
     return newFormData;

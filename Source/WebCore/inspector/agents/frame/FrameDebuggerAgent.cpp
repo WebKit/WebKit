@@ -78,7 +78,7 @@ CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<b
     if (!page)
         return makeUnexpected("Frame or page not available"_s);
 
-    UserGestureEmulationScope userGestureScope(*page, emulateUserGesture.value_or(false), dynamicDowncast<Document>(executionContext(injectedScript.globalObject())));
+    UserGestureEmulationScope userGestureScope(*page, emulateUserGesture.value_or(false), protect(dynamicDowncast<Document>(executionContext(injectedScript.globalObject()))));
     return WebDebuggerAgent::evaluateOnCallFrame(injectedScript, callFrameId, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 

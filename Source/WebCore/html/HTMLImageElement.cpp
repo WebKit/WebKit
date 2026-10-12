@@ -308,7 +308,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         }
 
         Ref document = this->document();
-        MQ::MediaQueryEvaluator evaluator { document->printing() ? printAtom() : screenAtom(), document.get() };
+        MQ::MediaQueryEvaluator evaluator { document->printing() ? printAtom() : screenAtom(), document };
         auto& queries = source->parsedMediaAttribute(document.get());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
@@ -353,7 +353,8 @@ void HTMLImageElement::setIsUserAgentShadowRootResource()
 
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
-    MQ::MediaQueryEvaluator evaluator { protect(document())->printing() ? printAtom() : screenAtom(), document() };
+    Ref document = this->document();
+    MQ::MediaQueryEvaluator evaluator { document->printing() ? printAtom() : screenAtom(), document };
 
     auto hasChanges = [&] {
         for (auto& results : m_dynamicMediaQueryResults) {

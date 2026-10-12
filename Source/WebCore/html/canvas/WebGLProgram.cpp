@@ -70,7 +70,7 @@ Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& context)
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context, PlatformGLObject object)
     : WebGLObject(context, object)
-    , ContextDestructionObserver(context.scriptExecutionContext())
+    , ContextDestructionObserver(protect(context.scriptExecutionContext()))
 {
     ASSERT(scriptExecutionContext());
 
@@ -81,7 +81,7 @@ WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context, PlatformGLObject 
 }
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context)
-    : ContextDestructionObserver(context.scriptExecutionContext())
+    : ContextDestructionObserver(protect(context.scriptExecutionContext()))
 {
     ASSERT(scriptExecutionContext());
     {

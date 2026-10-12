@@ -555,7 +555,7 @@ ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(cons
     auto context = ImageBitmapRenderingContext::create(*this, WTF::move(settings));
     WeakPtr weakContext = *context;
     m_context = WTF::move(context);
-    weakContext->transferFromImageBitmap(nullptr);
+    protect(weakContext)->transferFromImageBitmap(nullptr);
 
 #if USE(CA) || USE(SKIA)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.

@@ -185,15 +185,15 @@ void ResizeObserver::deliverObservations()
     {
         Locker locker { m_observationTargetsLock };
         activeObservationTargets = WTF::compactMap(m_activeObservationTargets, [](auto& weakTarget) -> std::optional<GCReachableRef<Element>> {
-            if (weakTarget)
-                return GCReachableRef<Element> { *weakTarget };
+            if (RefPtr target = weakTarget)
+                return GCReachableRef<Element> { *target };
             ASSERT_NOT_REACHED(); // Targets are supposed to be kept alive via JSResizeObserver::visitAdditionalChildrenInGCThread().
             return std::nullopt;
         });
         m_activeObservationTargets = { };
         targetsWaitingForFirstObservation = WTF::compactMap(m_targetsWaitingForFirstObservation, [](auto& weakTarget) -> std::optional<GCReachableRef<Element>> {
-            if (weakTarget)
-                return GCReachableRef<Element> { *weakTarget };
+            if (RefPtr target = weakTarget)
+                return GCReachableRef<Element> { *target };
             ASSERT_NOT_REACHED(); // Targets are supposed to be kept alive via JSResizeObserver::visitAdditionalChildrenInGCThread().
             return std::nullopt;
         });

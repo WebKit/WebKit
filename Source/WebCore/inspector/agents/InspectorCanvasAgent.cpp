@@ -188,7 +188,7 @@ void InspectorCanvasAgent::internalEnable()
     }
     for (auto& device : devices) {
         if (device)
-            bindCanvas(*device, false);
+            bindCanvas(protect(*device), false);
     }
 
 #if ENABLE(WEBGL)
@@ -220,7 +220,7 @@ void InspectorCanvasAgent::internalEnable()
     }
     for (auto& [pipeline, device] : computePipelines) {
         if (pipeline && device)
-            didCreateWebGPUComputePipeline(*device, *pipeline);
+            didCreateWebGPUComputePipeline(protect(*device), protect(*pipeline));
     }
 
     Vector<std::pair<WeakPtr<GPURenderPipeline>, WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData>>> renderPipelines;
@@ -238,7 +238,7 @@ void InspectorCanvasAgent::internalEnable()
     }
     for (auto& [pipeline, device] : renderPipelines) {
         if (pipeline && device)
-            didCreateWebGPURenderPipeline(*device, *pipeline);
+            didCreateWebGPURenderPipeline(protect(*device), protect(*pipeline));
     }
 }
 
@@ -428,8 +428,8 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContex
 void InspectorCanvasAgent::didChangeCanvasSize(CanvasRenderingContext& context)
 {
     RefPtr<InspectorCanvas> inspectorCanvas;
-    if (WeakPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(context)) {
-        WeakPtr device = gpuCanvasContext->device();
+    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(context)) {
+        RefPtr device = gpuCanvasContext->device();
         if (!device)
             return;
         inspectorCanvas = findInspectorCanvas(*device);
@@ -446,8 +446,8 @@ void InspectorCanvasAgent::didChangeCanvasSize(CanvasRenderingContext& context)
 void InspectorCanvasAgent::didChangeCanvasMemory(const CanvasRenderingContext& context)
 {
     RefPtr<InspectorCanvas> inspectorCanvas;
-    if (WeakPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(context)) {
-        WeakPtr device = gpuCanvasContext->device();
+    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(context)) {
+        RefPtr device = gpuCanvasContext->device();
         if (!device)
             return;
         inspectorCanvas = findInspectorCanvas(*device);
@@ -470,8 +470,8 @@ void InspectorCanvasAgent::didChangeCSSCanvasClientNodes(CanvasBase& canvasBase)
     }
 
     RefPtr<InspectorCanvas> inspectorCanvas;
-    if (WeakPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context)) {
-        WeakPtr device = gpuCanvasContext->device();
+    if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context)) {
+        RefPtr device = gpuCanvasContext->device();
         if (!device)
             return;
         inspectorCanvas = findInspectorCanvas(*device);

@@ -56,12 +56,12 @@ ResourceLoadNotifier::ResourceLoadNotifier(LocalFrame& frame)
 
 void ResourceLoadNotifier::didReceiveAuthenticationChallenge(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    m_frame->loader().client().dispatchDidReceiveAuthenticationChallenge(loader, identifier, currentWebChallenge);
+    protect(m_frame->loader().client())->dispatchDidReceiveAuthenticationChallenge(loader, identifier, currentWebChallenge);
 }
 
 void ResourceLoadNotifier::willSendRequest(ResourceLoader& loader, ResourceLoaderIdentifier identifier, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
-    m_frame->loader().applyUserAgentIfNeeded(clientRequest);
+    protect(m_frame->loader())->applyUserAgentIfNeeded(clientRequest);
 
     dispatchWillSendRequest(protect(loader.documentLoader()), identifier, clientRequest, redirectResponse, protect(loader.cachedResource()).get(), &loader);
 }
@@ -117,7 +117,7 @@ void ResourceLoadNotifier::assignIdentifierToInitialRequest(ResourceLoaderIdenti
     if (pageIsProvisionallyLoading)
         m_initialRequestIdentifier = identifier;
 
-    m_frame->loader().client().assignIdentifierToInitialRequest(identifier, loader, request);
+    protect(m_frame->loader().client())->assignIdentifierToInitialRequest(identifier, loader, request);
 }
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)

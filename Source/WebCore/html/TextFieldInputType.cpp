@@ -828,7 +828,8 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
     innerBlock->appendChild(Ref { *m_innerText });
 
     if (selectionState) {
-        protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, element = WeakPtr { element }] {
+        protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [selectionState = *selectionState, weakElement = WeakPtr { element }] {
+            RefPtr element = weakElement.get();
             if (!element || !element->focused())
                 return;
 

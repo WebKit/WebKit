@@ -539,7 +539,7 @@ void ValidatedFormListedElement::setInteractedWithSinceLastFormSubmitEvent(bool 
     if (m_wasInteractedWithSinceLastFormSubmitEvent == interactedWith)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(asHTMLElement(), {
+    Style::PseudoClassChangeInvalidation styleInvalidation(protect(asHTMLElement()), {
         { CSSSelector::PseudoClass::UserValid, interactedWith && matchesValidPseudoClass() },
         { CSSSelector::PseudoClass::UserInvalid, interactedWith && matchesInvalidPseudoClass() },
     });

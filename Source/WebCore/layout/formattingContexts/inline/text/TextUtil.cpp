@@ -160,9 +160,10 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
                 // "Unsupported Default_ignorable characters must be ignored for text rendering."
                 auto isIgnored = isDefaultIgnorableCodePoint(character);
 
-                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph)) {
+                Ref font = *glyphData.font;
+                if (isNonSpacingMark || font->widthForGlyph(glyphData.glyph)) {
                     if (!isIgnored)
-                        fallbackFonts.add(*glyphData.font);
+                        fallbackFonts.add(font);
                 }
             }
         };

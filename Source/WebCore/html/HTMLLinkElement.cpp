@@ -199,7 +199,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
     case AttributeNames::relAttr: {
         if (equalLettersIgnoringASCIICase(newValue, "spatial-backdrop"_s))
             protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Error, "The \"spatial-backdrop\" link rel value is no longer supported and was ignored. Use the <model> immersive API instead."_s);
-        auto parsedRel = LinkRelAttribute(document(), newValue);
+        auto parsedRel = LinkRelAttribute(protect(document()), newValue);
         auto didMutateRel = parsedRel != m_relAttribute;
         m_relAttribute = WTF::move(parsedRel);
         if (m_relList)

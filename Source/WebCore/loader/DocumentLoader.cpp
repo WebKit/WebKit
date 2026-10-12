@@ -497,7 +497,7 @@ void DocumentLoader::finishedLoading()
                 MemoryCache::singleton().remove(*resource);
         }
         Ref document = *frame->document();
-        FrameLoadRequest frameLoadRequest { document.copyRef(), document->securityOrigin(), WTF::move(request), { }, InitiatedByMainFrame::Unknown };
+        FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), WTF::move(request), { }, InitiatedByMainFrame::Unknown };
         frameLoadRequest.setIsRequestFromClientOrUserInput();
         frameLoadRequest.setShouldTreatAsContinuingLoad(ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
         frame->loader().load(WTF::move(frameLoadRequest));
@@ -783,7 +783,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         // We shouldn't check for mixed content against the current frame when navigating; we only need to be concerned with the ancestor frames.
         RefPtr parentFrame = frame->tree().parent();
         if (!parentFrame)
-            parentFrame = frameLoader()->client().provisionalParentFrame();
+            parentFrame = protect(frameLoader()->client())->provisionalParentFrame();
 
         if (!parentFrame)
             return completionHandler(WTF::move(newRequest));
@@ -1558,7 +1558,7 @@ void DocumentLoader::applyPoliciesToSettings()
     if (!m_frame->isMainFrame())
         return;
 
-    m_frame->settings().applyMainFrameWebsitePolicies({
+    protect(m_frame->settings())->applyMainFrameWebsitePolicies({
         m_mediaSourcePolicy,
         m_legacyOverflowScrollingTouchPolicy,
         m_pushAndNotificationsEnabledPolicy,
@@ -2505,8 +2505,8 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader& loa
     }
 
     checkLoadComplete();
-    if (m_frame)
-        m_frame->loader().checkLoadComplete();
+    if (RefPtr frame = m_frame)
+        protect(frame->loader())->checkLoadComplete();
 }
 
 void DocumentLoader::maybeFinishLoadingMultipartContent()
@@ -2546,7 +2546,7 @@ void DocumentLoader::startIconLoading()
         auto result = m_iconsPendingLoadDecision.add(nextIconCallbackID++, icon);
         return { icon, result.iterator->key };
     });
-    m_frame->loader().client().getLoadDecisionForIcons(WTF::move(iconDecisions));
+    protect(m_frame->loader().client())->getLoadDecisionForIcons(WTF::move(iconDecisions));
 }
 
 void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(FragmentedSharedBuffer*)>&& completionHandler)
@@ -2717,7 +2717,7 @@ ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler&
 
 void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&& substituteData)
 {
-    protect(frameLoader())->load(FrameLoadRequest(*frame(), URL { blockedPageURL }, WTF::move(substituteData)));
+    protect(frameLoader())->load(FrameLoadRequest(protect(*frame()), URL { blockedPageURL }, WTF::move(substituteData)));
 }
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -2754,7 +2754,7 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
             }
         });
     }
-    frameLoader()->client().contentFilterDidBlockLoad(WTF::move(unblockHandler));
+    protect(frameLoader()->client())->contentFilterDidBlockLoad(WTF::move(unblockHandler));
     auto error = protect(frameLoader())->blockedByContentFilterError(request());
 
     m_blockedByContentFilter = true;

@@ -54,7 +54,7 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
 
         auto markerRange = makeSimpleRange(node, marker);
 
-        auto rect = document->view()->contentsToRootView(unionRect(RenderObject::absoluteTextRects(markerRange, { })));
+        auto rect = protect(document->view())->contentsToRootView(unionRect(RenderObject::absoluteTextRects(markerRange, { })));
         textRectsInRootViewCoordinates.append(WTF::move(rect));
 
         return false;

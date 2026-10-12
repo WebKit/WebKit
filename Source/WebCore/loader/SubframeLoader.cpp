@@ -110,7 +110,7 @@ void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& 
         return;
     if (!canCreateSubFrame())
         return;
-    m_frame->loader().client().createFrame(frameName, ownerElement);
+    protect(m_frame->loader().client())->createFrame(frameName, ownerElement);
     if (!ownerElement.contentFrame())
         return;
 
@@ -284,9 +284,9 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
                 page->willChangeLocationInCompletelyLoadedSubframe();
         }
 
-        protect(frame->navigationScheduler())->scheduleLocationChange(initiatingDocument, protect(initiatingDocument->securityOrigin()), upgradedRequestURL, m_frame->loader().outgoingReferrer(), lockHistory, lockBackForwardList, NavigationHistoryBehavior::Auto, WTF::move(stopDelayingLoadEvent));
+        protect(frame->navigationScheduler())->scheduleLocationChange(initiatingDocument, protect(initiatingDocument->securityOrigin()), upgradedRequestURL, protect(m_frame->loader())->outgoingReferrer(), lockHistory, lockBackForwardList, NavigationHistoryBehavior::Auto, WTF::move(stopDelayingLoadEvent));
     } else
-        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame->loader().outgoingReferrerURL());
+        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, protect(m_frame->loader())->outgoingReferrerURL());
 
     if (!frame)
         return nullptr;
@@ -425,7 +425,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInElement& pluginElement, c
     if (document->ownerElement() && document->settings().useImageDocumentForSubframePDF())
         loadManually = false;
 
-    auto widget = m_frame->loader().client().createPlugin(pluginElement, url, paramNames, paramValues, mimeType, loadManually);
+    auto widget = protect(m_frame->loader().client())->createPlugin(pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     // The call to createPlugin *may* cause this renderer to disappear from underneath.
     if (!renderer)

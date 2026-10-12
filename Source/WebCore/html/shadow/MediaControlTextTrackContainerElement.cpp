@@ -464,8 +464,8 @@ void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
         protect(activeCue.data())->recalculateStyles();
 
     protect(document->eventLoop())->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }] () {
-        if (weakThis)
-            weakThis->updateDisplay();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->updateDisplay();
     });
 }
 

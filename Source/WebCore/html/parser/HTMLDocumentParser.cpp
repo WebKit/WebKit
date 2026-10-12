@@ -84,8 +84,8 @@ Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document, Optio
 }
 
 inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy, CustomElementRegistry* registry)
-    : ScriptableDocumentParser(fragment.document(), rawPolicy)
-    , m_options(fragment.document())
+    : ScriptableDocumentParser(protect(fragment.document()), rawPolicy)
+    , m_options(protect(fragment.document()))
     , m_tokenizer(m_options)
     , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options, registry))
     , m_shouldEmitTracePoints(false) // Avoid emitting trace points when parsing fragments like outerHTML.
@@ -315,7 +315,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // This is an attempt to check that this object is both attached to the Document and protected by something.
     ASSERT(refCount() >= 2);
 
-    PumpSession session(m_pumpSessionNestingLevel, contextForParsingSession());
+    PumpSession session(m_pumpSessionNestingLevel, protect(contextForParsingSession()));
 
     auto emitTracePoint = [this](TracePointCode code) {
         if (!m_shouldEmitTracePoints)

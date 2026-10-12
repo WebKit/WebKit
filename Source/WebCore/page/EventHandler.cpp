@@ -2156,7 +2156,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->page()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mouseupEvent);
+        protect(frame->page()->pointerLockController())->dispatchLockedMouseEvent(platformMouseEvent, eventNames().mouseupEvent);
         return true;
     }
 #endif
@@ -2324,7 +2324,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->page()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousemoveEvent);
+        protect(frame->page()->pointerLockController())->dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousemoveEvent);
         return true;
     }
 #endif
@@ -3188,7 +3188,8 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
             if (auto elementUnderMouse = m_elementUnderMouse)
                 elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames.mouseoverEvent, 0, m_lastElementUnderMouse);
 
-            for (auto& chain : enteredElementsChain | std::views::reverse) {
+            for (auto& weakChain : enteredElementsChain | std::views::reverse) {
+                RefPtr chain = weakChain;
                 if (!chain)
                     continue;
 
@@ -3622,7 +3623,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->page()->pointerLockController().dispatchLockedWheelEvent(event);
+        protect(frame->page()->pointerLockController())->dispatchLockedWheelEvent(event);
         return true;
     }
 #endif
@@ -4282,7 +4283,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 
 #if ENABLE(POINTER_LOCK)
     if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE && frame->page()->pointerLockController().element()) {
-        frame->page()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
+        protect(frame->page()->pointerLockController())->requestPointerUnlockAndForceCursorVisible();
     }
 #endif
 

@@ -62,7 +62,7 @@ NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, const AtomString
     , m_hasUAVisualTransition(init.hasUAVisualTransition)
     , m_abortController(abortController)
 {
-    Locker<JSC::JSLock> locker(commonVM().apiLock());
+    JSC::JSLockHolder lock(commonVM());
     m_info.set(globalObject, wrapper(), init.info);
 }
 
@@ -80,7 +80,7 @@ NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& 
     , m_hasUAVisualTransition(init.hasUAVisualTransition)
     , m_abortController(abortController)
 {
-    Locker<JSC::JSLock> locker(commonVM().apiLock());
+    JSC::JSLockHolder lock(commonVM());
     m_info.setWeakly(WTF::move(world), init.info);
 }
 
@@ -117,7 +117,7 @@ JSC::JSValue NavigateEvent::info()
 
 void NavigateEvent::setInfo(JSC::JSGlobalObject& globalObject, JSC::JSValue info)
 {
-    Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+    JSC::JSLockHolder lock(globalObject.vm());
     m_info.set(globalObject, wrapper(), info);
 }
 
@@ -167,7 +167,7 @@ void NavigateEvent::processScrollBehavior(Document& document)
     m_interceptionState = InterceptionState::Scrolled;
 
     if (m_navigationType == NavigationNavigationType::Traverse) {
-        document.frame()->loader().history().restoreScrollPositionAndViewState();
+        protect(document.frame()->loader().history())->restoreScrollPositionAndViewState();
         return;
     }
 
@@ -188,7 +188,7 @@ void NavigateEvent::processScrollBehavior(Document& document)
     document.setCSSTarget(nullptr);
 
     if (m_navigationType == NavigationNavigationType::Reload)
-        document.frame()->loader().history().restoreScrollPositionAndViewState();
+        protect(document.frame()->loader().history())->restoreScrollPositionAndViewState();
     else
         protect(protect(document)->frame()->view())->setScrollPosition({ 0, 0 });
 }

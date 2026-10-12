@@ -181,7 +181,7 @@ RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, const 
         if (auto factory = findFactory(typeName); factory.second) [[likely]] {
             if (factory.first == currentTypeName)
                 return nullptr;
-            if (!factory.second->conditionalFunction || std::invoke(factory.second->conditionalFunction, element.document().settings()))
+            if (!factory.second->conditionalFunction || std::invoke(factory.second->conditionalFunction, protect(element.document().settings()).get()))
                 return factory.second->factoryFunction(element);
         }
     }

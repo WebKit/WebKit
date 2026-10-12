@@ -1433,7 +1433,7 @@ Inspector::CommandResult<void> FrameDOMAgent::setOuterHTML(int nodeId, const Str
     if (!nodeId) {
         if (!m_document)
             return makeUnexpected("Internal error: missing document"_s);
-        DOMPatchSupport { *m_domEditor, *m_document }.patchDocument(outerHTML);
+        DOMPatchSupport { *m_domEditor, protect(*m_document) }.patchDocument(outerHTML);
         return { };
     }
 

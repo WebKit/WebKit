@@ -436,7 +436,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
 
         for (auto& url : allResourcesURLsForFrame(localFrame)) {
             Vector<Cookie> rawCookiesForURLInDocument;
-            if (!document->page()->cookieJar().getRawCookies(*document, url, rawCookiesForURLInDocument))
+            if (!protect(document->page()->cookieJar())->getRawCookies(*document, url, rawCookiesForURLInDocument))
                 continue;
 
             for (auto& rawCookieForURLInDocument : rawCookiesForURLInDocument)
