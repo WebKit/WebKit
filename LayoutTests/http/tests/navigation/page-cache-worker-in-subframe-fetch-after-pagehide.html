@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description('Tests that a load started by a dedicated worker in a subframe while its owning document is in the page cache is cancelled.');
+window.jsTestIsAsync = true;
+
+window.addEventListener("pageshow", async function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (!event.persisted)
+        return;
+
+    testPassed("Page did enter and was restored from the page cache");
+
+    var result = await frames[0].workerLoadResult;
+    if (result === "rejected")
+        testPassed("The load the worker started while the document was in the page cache was cancelled");
+    else
+        testFailed("The load the worker started while the document was in the page cache was not cancelled: " + result);
+
+    setTimeout(finishJSTest, 0);
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+        return;
+    }
+
+    frames[0].startFetch();
+}, false);
+
+window.addEventListener("message", function(event) {
+    if (event.data !== "ready")
+        return;
+    setTimeout(function() {
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+window.addEventListener('load', function() {
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/page-cache-worker-in-subframe-fetch-after-pagehide-frame.html";
+    document.body.appendChild(iframe);
+}, false);
+
+</script>
+</body>
+</html>
