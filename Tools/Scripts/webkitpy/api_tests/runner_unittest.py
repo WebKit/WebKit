@@ -61,6 +61,35 @@ class RunnerTest(unittest.TestCase):
         self.assertEqual(runnable, supplied)
         self.assertEqual(disabled, [])
 
+    def test_shard_tests_leaves_small_suites_alone(self):
+        tests = [f'TestWebKitAPI.Small.Test{i}' for i in range(10)]
+        shards = Runner._shard_tests(tests, fully_parallel=False)
+        self.assertEqual(set(shards.keys()), {'TestWebKitAPI.Small'})
+        self.assertEqual(len(shards['TestWebKitAPI.Small']), 10)
+
+    def test_shard_tests_splits_oversized_suites(self):
+        tests = [f'TestWebKitAPI.Big.Test{i}' for i in range(250)]
+        shards = Runner._shard_tests(tests, fully_parallel=False)
+        # 250 tests, cap 100 → three parts: 100, 100, 50
+        self.assertEqual(set(shards.keys()), {
+            'TestWebKitAPI.Big.part0',
+            'TestWebKitAPI.Big.part1',
+            'TestWebKitAPI.Big.part2',
+        })
+        self.assertEqual(len(shards['TestWebKitAPI.Big.part0']), Runner.MAX_SHARD_SIZE)
+        self.assertEqual(len(shards['TestWebKitAPI.Big.part1']), Runner.MAX_SHARD_SIZE)
+        self.assertEqual(len(shards['TestWebKitAPI.Big.part2']), 50)
+        # All original tests are present somewhere
+        all_shard_tests = set(sum(shards.values(), []))
+        self.assertEqual(all_shard_tests, set(tests))
+
+    def test_shard_tests_fully_parallel_unchanged(self):
+        tests = [f'TestWebKitAPI.Big.Test{i}' for i in range(5)]
+        shards = Runner._shard_tests(tests, fully_parallel=True)
+        self.assertEqual(len(shards), 5)
+        for test in tests:
+            self.assertTrue(any(group == [test] for group in shards.values()))
+
 
 class ReportResultEarlyExitTest(unittest.TestCase):
     def setUp(self):

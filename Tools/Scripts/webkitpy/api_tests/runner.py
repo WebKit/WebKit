@@ -116,6 +116,7 @@ class Runner(object):
     STATUS_RUNNING = 5
 
     ELAPSED_THRESHOLD = 3
+    MAX_SHARD_SIZE = 100   # tests per shard; splits oversized suites so one worker doesn't run alone for a long tail
 
     NAME_FOR_STATUS = [
         'Passed',
@@ -175,7 +176,18 @@ class Runner(object):
             shards = {}
             for i, test in enumerate(tests):
                 shards[f"{test}.{i}"] = [test]
-        return shards
+            return shards
+
+        # Split oversized shards so no single worker gets stuck running a 400-test suite alone.
+        # Suite grouping is preserved (same prefix + .partN suffix), fixtures/state still coherent.
+        rebalanced = {}
+        for prefix, group in shards.items():
+            if len(group) <= Runner.MAX_SHARD_SIZE:
+                rebalanced[prefix] = group
+                continue
+            for i in range(0, len(group), Runner.MAX_SHARD_SIZE):
+                rebalanced[f'{prefix}.part{i // Runner.MAX_SHARD_SIZE}'] = group[i:i + Runner.MAX_SHARD_SIZE]
+        return rebalanced
 
     @staticmethod
     def _is_disabled_test(test_name):
