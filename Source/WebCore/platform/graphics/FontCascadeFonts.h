@@ -82,6 +82,11 @@ static constexpr int minInterval = -3; // After a hit, cache the next 3 attempts
 static constexpr int maxInterval = -3; // Never ramp up sampling, stay aggressive
 static constexpr unsigned maxSize = 3000; // Shaped text entries are large due to GlyphBuffer
 static constexpr unsigned maxTextLength = 128; // Larger than default to cache longer canvas text
+#if PLATFORM(WPE)
+static constexpr unsigned maxSharedSize = maxSize * 2; // All instances are limited to 2 * individual cache size.
+#else
+static constexpr unsigned maxSharedSize = maxSize * 1024; // Virtually infinity.
+#endif
 }
 
 } // namespace WebCore
@@ -213,6 +218,11 @@ private:
     std::optional<uint32_t> m_creationThreadID;
 #endif
 };
+
+template<>
+WEBCORE_EXPORT WTF::SharedCacheBudget FontCascadeFonts::GlyphGeometryCache::s_budget;
+template<>
+WEBCORE_EXPORT WTF::SharedCacheBudget FontCascadeFonts::ShapedTextCache::s_budget;
 
 inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& description, FontSelector* fontSelector)
 {

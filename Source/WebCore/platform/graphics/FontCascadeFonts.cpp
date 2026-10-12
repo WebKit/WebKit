@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+template<>
+WTF::SharedCacheBudget FontCascadeFonts::GlyphGeometryCache::s_budget(TextMeasurementCacheDefaults::maxSharedSize);
+template<>
+WTF::SharedCacheBudget FontCascadeFonts::ShapedTextCache::s_budget(ShapedTextCacheDefaults::maxSharedSize);
+
 class MixedFontGlyphPage {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MixedFontGlyphPage);
 public:

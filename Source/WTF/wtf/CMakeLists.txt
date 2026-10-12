@@ -317,6 +317,7 @@ set(WTF_PUBLIC_HEADERS
     SequesteredImmortalHeap.h
     SequesteredMalloc.h
     SetForScope.h
+    SharedCacheBudget.h
     SharedTask.h
     SignedPtr.h
     SimpleStats.h
@@ -625,6 +626,7 @@ set(WTF_SOURCES
     SequesteredAutomaticThread.cpp
     SequesteredImmortalHeap.cpp
     SequesteredMalloc.cpp
+    SharedCacheBudget.cpp
     SixCharacterHash.cpp
     SmallSet.cpp
     StackBounds.cpp
