@@ -56,6 +56,7 @@ OBJC_CLASS NSArray;
 
 #if PLATFORM(WIN)
 #include "COMPtr.h"
+#include "ShareableBitmap.h"
 #include "WCDataObject.h"
 #include <objidl.h>
 #include <windows.h>
@@ -126,10 +127,13 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
-    RefPtr<Image> image;
 #if PLATFORM(MAC)
+    RefPtr<SharedBuffer> dataInTIFFFormat;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     String dataInHTMLFormat;
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+    RefPtr<ShareableBitmap> bitmap;
 #endif
 #if !PLATFORM(WIN)
     PasteboardURL url;
@@ -139,8 +143,10 @@ struct PasteboardImage {
     String resourceMIMEType;
     Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
 #endif
+#if PLATFORM(IOS_FAMILY)
     String suggestedName;
-    FloatSize imageSize;
+    FloatSize preferredPresentationSize;
+#endif
 };
 
 struct PasteboardBuffer {
@@ -243,7 +249,7 @@ public:
     virtual WEBCORE_EXPORT void write(const Color&);
     virtual WEBCORE_EXPORT void write(const PasteboardURL&);
     virtual WEBCORE_EXPORT void writeTrustworthyWebURLsPboardType(const PasteboardURL&);
-    virtual WEBCORE_EXPORT void write(const PasteboardImage&);
+    virtual WEBCORE_EXPORT void write(PasteboardImage&&);
     virtual WEBCORE_EXPORT void write(const PasteboardBuffer&);
     virtual WEBCORE_EXPORT void write(const PasteboardWebContent&);
 
@@ -266,7 +272,6 @@ public:
 
 #if PLATFORM(WIN)
     RefPtr<DocumentFragment> documentFragment(LocalFrame&, const SimpleRange&, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-    void writeImage(Element&, const URL&, const String& title); // FIXME: Layering violation.
     void writeSelection(const std::optional<SimpleRange>&, bool canSmartCopyOrDelete, LocalFrame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 

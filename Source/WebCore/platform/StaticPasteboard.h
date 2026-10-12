@@ -61,7 +61,7 @@ public:
     void read(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<size_t> = std::nullopt) final { }
 
     void write(const PasteboardURL&) final;
-    void write(const PasteboardImage&) final;
+    void write(PasteboardImage&&) final;
     void write(const PasteboardWebContent&) final;
     void writeMarkup(const String&) final;
     void writePlainText(const String&, SmartReplaceOption) final;

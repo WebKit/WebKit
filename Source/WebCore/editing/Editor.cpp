@@ -1642,14 +1642,9 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
         if (action == CopyAction && !isSelectionInImageOverlay)
             imageElement = imageElementFromImageDocument(document);
 
-        if (imageElement) {
-#if !PLATFORM(WIN)
+        if (imageElement)
             writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document->pageID())), *imageElement, document->url(), document->title());
-#else
-            // FIXME: Delete after <http://webkit.org/b/177618> lands.
-            Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document->pageID()))->writeImage(*imageElement, document->url(), document->title());
-#endif
-        } else {
+        else {
 #if !PLATFORM(WIN)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document->pageID())));
 #else
@@ -1826,8 +1821,6 @@ PasteboardWriterData::URLData Editor::pasteboardWriterURL(const URL& url, const 
     return result;
 }
 
-#if !PLATFORM(IOS_FAMILY)
-
 void Editor::copyImage(const HitTestResult& result)
 {
     RefPtr element { result.innerNonSharedElement() };
@@ -1838,15 +1831,8 @@ void Editor::copyImage(const HitTestResult& result)
     if (url.isEmpty())
         url = result.absoluteImageURL();
 
-#if !PLATFORM(WIN)
     writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document().pageID())), *element, url, result.altDisplayString());
-#else
-    // FIXME: Delete after <http://webkit.org/b/177618> lands.
-    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document().pageID()))->writeImage(*element, url, result.altDisplayString());
-#endif
 }
-
-#endif
 
 void Editor::revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement& element)
 {

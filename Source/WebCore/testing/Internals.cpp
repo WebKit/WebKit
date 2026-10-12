@@ -9242,10 +9242,8 @@ String Internals::volumetricScenePresentationMode(Element& element)
 }
 #endif
 
-// FIXME: Implement this method for iOS.
 ExceptionOr<void> Internals::copyImageAtLocation(int x, int y)
 {
-#if !PLATFORM(IOS_FAMILY)
     RefPtr document = contextDocument();
     if (!document || !document->frame())
         return Exception { ExceptionCode::InvalidAccessError };
@@ -9260,9 +9258,6 @@ ExceptionOr<void> Internals::copyImageAtLocation(int x, int y)
 
     auto hitTestResult = localFrame->eventHandler().hitTestResultAtPoint(IntPoint(x, y), hitType);
     protect(localFrame->editor())->copyImage(hitTestResult);
-#endif
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
     return { };
 }
 

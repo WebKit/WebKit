@@ -382,6 +382,20 @@ std::optional<FloatSize> RenderImage::usedImageSize() const
     return imageResource().usedImageSize(imageContainerSize());
 }
 
+ConcreteObjectSize RenderImage::concreteObjectSizeForPasteboard() const
+{
+    static constexpr float maximumLength = 4096;
+
+    RefPtr cachedImage = this->cachedImage();
+    RefPtr image = cachedImage ? cachedImage->image() : nullptr;
+    auto naturalDimensions = image ? image->naturalDimensions() : NaturalDimensions::none();
+
+    auto size = DefaultSizing { usedImageSize() }.resolve(naturalDimensions).size();
+    if (auto scale = maximumLength / size.maxDimension(); scale < 1)
+        size.scale(scale);
+    return ConcreteObjectSize::fixed(size);
+}
+
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareableBitmapFromImageOptions& options) const
 {
     Ref frame = this->frame();

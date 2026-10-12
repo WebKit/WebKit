@@ -25,6 +25,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -228,15 +229,13 @@ GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOperation> coreAc
 
 GRefPtr<GdkPixbuf> selectionDataImageAsGdkPixbuf(const SelectionData& selectionData)
 {
-    auto image = selectionData.image();
-    if (!image)
+    RefPtr bitmap = selectionData.image();
+    if (!bitmap)
         return nullptr;
 
-    RefPtr nativeImage = image->currentNativeImage(WebCore::ConcreteObjectSize::fixed(image->size()));
-    if (!nativeImage)
+    auto platformImage = bitmap->createPlatformImage();
+    if (!platformImage)
         return nullptr;
-
-    auto platformImage = nativeImage->platformImage();
     return skiaImageToGdkPixbuf(*platformImage.get());
 }
 

@@ -126,7 +126,7 @@ String Pasteboard::resourceMIMEType(NSString *mimeType)
     return UTIFromMIMEType(mimeType);
 }
 
-void Pasteboard::write(const PasteboardImage& pasteboardImage)
+void Pasteboard::write(PasteboardImage&& pasteboardImage)
 {
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(pasteboardImage, m_pasteboardName, context());
 }

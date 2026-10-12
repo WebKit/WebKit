@@ -173,6 +173,15 @@ void View::willExitFullScreen(CompletionHandler<void()>&& completionHandler)
 #if ENABLE(DRAG_SUPPORT)
 void View::setDragData(WebCore::SelectionData&& selectionData, OptionSet<WebCore::DragOperation> dragOperationMask)
 {
+    if (RefPtr image = selectionData.image()) {
+        RefPtr copy = WebCore::ShareableBitmap::create({ image->size(), image->colorSpace(), image->pixelFormat() });
+        if (copy && copy->sizeInBytes() == image->sizeInBytes())
+            memcpySpan(copy->mutableSpan(), image->span());
+        else
+            copy = nullptr;
+        selectionData.setImage(WTF::move(copy));
+    }
+
     m_dragData = WTF::move(selectionData);
     m_dragMask = dragOperationMask;
 }

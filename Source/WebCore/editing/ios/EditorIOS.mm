@@ -81,33 +81,21 @@ void Editor::removeUnchangeableStyles()
     applyStyleToSelection(defaultStyle.ptr(), EditAction::ChangeAttributes);
 }
 
-static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)
         return;
 
-    RefPtr tentativeCachedImage = renderImage->cachedImage();
-    if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
         return;
 
-    image = tentativeCachedImage->image();
+    RefPtr image = cachedImage->image();
     if (!image)
         return;
 
-    cachedImage = tentativeCachedImage.get();
-}
-
-void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
-{
     PasteboardImage pasteboardImage;
-
-    RefPtr<Image> image;
-    CachedImage* cachedImage = nullptr;
-    getImage(imageElement, image, cachedImage);
-    if (!image)
-        return;
-    ASSERT(cachedImage);
 
     auto imageSourceURL = protect(imageElement.document())->encodingParseURL(imageElement.imageSourceURL());
 
@@ -117,7 +105,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         pasteboardImage.url.title = title;
     }
     pasteboardImage.suggestedName = imageSourceURL.lastPathComponent().toString();
-    pasteboardImage.imageSize = image->size();
+    pasteboardImage.preferredPresentationSize = renderImage->concreteObjectSizeForPasteboard().size();
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType().createNSString().get());
     if (RefPtr buffer = cachedImage->resourceBuffer())
         pasteboardImage.resourceData = buffer->makeContiguous();
@@ -125,7 +113,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     if (!pasteboard.isStatic())
         protect(client())->getClientPasteboardData(makeRangeSelectingNode(imageElement), pasteboardImage.clientTypesAndData);
 
-    pasteboard.write(pasteboardImage);
+    pasteboard.write(WTF::move(pasteboardImage));
 }
 
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> options)

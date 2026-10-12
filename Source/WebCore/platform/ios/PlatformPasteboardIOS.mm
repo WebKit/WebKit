@@ -534,7 +534,7 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
 
         auto imageData = protect(pasteboardImage.resourceData)->makeContiguous()->createNSData();
         [representationsToRegister addData:imageData.get() forType:utiOrMIMEType.createNSString().get()];
-        [representationsToRegister setPreferredPresentationSize:pasteboardImage.imageSize];
+        [representationsToRegister setPreferredPresentationSize:pasteboardImage.preferredPresentationSize];
         [representationsToRegister setSuggestedName:pasteboardImage.suggestedName.createNSString().get()];
     }
 

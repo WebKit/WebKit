@@ -255,9 +255,8 @@ public:
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
     PasteboardWriterData::URLData pasteboardWriterURL(const URL&, const String& title);
-#if !PLATFORM(IOS_FAMILY)
+
     WEBCORE_EXPORT void copyImage(const HitTestResult&);
-#endif
 
     void renderLayerDidScroll(const RenderLayer&);
     void revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement&);
@@ -621,9 +620,10 @@ public:
 
     bool canCopyExcludingStandaloneImages() const;
 
+    WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
+
 #if !PLATFORM(WIN)
     WEBCORE_EXPORT void writeSelectionToPasteboard(Pasteboard&);
-    WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
     void writeSelection(PasteboardWriterData&);
 #endif
 
