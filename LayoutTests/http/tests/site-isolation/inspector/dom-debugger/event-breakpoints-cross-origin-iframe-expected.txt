@@ -1,0 +1,67 @@
+Test that event listener breakpoints pause in cross-origin iframes, and that $event is set there.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.Event
+-- Running test case: SiteIsolation.DOMDebugger.Event.Setup
+PASS: Should find the cross-origin frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.Listener.Click
+Adding "listener:click" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "listener".
+PASS: Pause data eventName should be "click".
+PASS: Top call frame should be "handleClick".
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.Listener.Disabled
+Adding "listener:click" Event Breakpoint...
+Disabling "listener:click" Event Breakpoint...
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.Listener.Removed
+Adding "listener:click" Event Breakpoint...
+Removing "listener:click" Event Breakpoint...
+PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.Listener.CaseInsensitive
+Adding "listener:CLICK" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "listener".
+PASS: Pause data eventName should be "click".
+PASS: Top call frame should be "handleClick".
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.Listener.Regex
+Adding "listener:^frame-custom" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "listener".
+PASS: Pause data eventName should be "frame-custom-event".
+PASS: Top call frame should be "handleCustomEvent".
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.AllListeners
+Adding "listener" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "listener".
+PASS: Pause data eventName should be "frame-custom-event".
+PASS: Top call frame should be "handleCustomEvent".
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.BreakpointsInactive
+Adding "listener:click" Event Breakpoint...
+Deactivating breakpoints in the frame target...
+PASS: Should not pause while breakpoints are inactive.
+Reactivating breakpoints in the frame target...
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Event.CommandLineAPI.$event
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "debugger-statement".
+PASS: Evaluating $event should not throw.
+PASS: $event.type should be "frame-debugger-event".
+-- Running test teardown.
+

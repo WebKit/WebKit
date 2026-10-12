@@ -36,6 +36,7 @@
 #include "FrameCanvasAgent.h"
 #include "FrameConsoleAgent.h"
 #include "FrameDOMAgent.h"
+#include "FrameDOMDebuggerAgent.h"
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebugger.h"
 #include "FrameDebuggerAgent.h"
@@ -193,12 +194,15 @@ void FrameInspectorController::createLazyAgents()
         scriptProfilerAgent->installProfilingClientIfTracking(*m_debugger);
 
     auto context = frameAgentContext();
-    m_agents.append(makeUniqueRef<FrameDebuggerAgent>(context));
+    auto debuggerAgent = makeUniqueRef<FrameDebuggerAgent>(context);
+    CheckedPtr debuggerAgentPtr = debuggerAgent.ptr();
+    m_agents.append(WTF::move(debuggerAgent));
 
     auto domAgent = makeUniqueRef<FrameDOMAgent>(context, m_overlay.get());
     m_domAgent = domAgent.ptr();
     m_agents.append(WTF::move(domAgent));
 
+    m_agents.append(makeUniqueRef<FrameDOMDebuggerAgent>(context, debuggerAgentPtr));
     m_agents.append(makeUniqueRef<FrameDOMStorageAgent>(context));
     m_agents.append(makeUniqueRef<FrameIndexedDBAgent>(context));
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));

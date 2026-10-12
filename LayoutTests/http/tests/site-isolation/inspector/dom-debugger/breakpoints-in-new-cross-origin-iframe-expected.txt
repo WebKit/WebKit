@@ -1,0 +1,15 @@
+Test that event breakpoints are sent to a cross-origin iframe's frame target before the iframe runs any script.
+
+
+== Running test suite: SiteIsolation.DOMDebugger.NewFrame
+-- Running test case: SiteIsolation.DOMDebugger.NewFrame.DOMContentLoaded
+Adding "listener:DOMContentLoaded" Event Breakpoint...
+Adding cross-origin iframe...
+PASS: Should pause in a frame target.
+PASS: Should not pause in the main frame's target.
+PASS: Pause reason should be "listener".
+PASS: Pause data eventName should be "DOMContentLoaded".
+PASS: Top call frame should be "handleDOMContentLoaded".
+PASS: DOMContentLoaded listener should run after resuming.
+-- Running test teardown.
+

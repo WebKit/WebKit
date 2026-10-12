@@ -1,0 +1,49 @@
+Test that event, timer and URL breakpoints pause exactly once in the main frame and in a same-process iframe, even though they are sent to the page target and to every frame target.
+
+Main Button
+
+== Running test suite: SiteIsolation.DOMDebugger.SingleProcess
+-- Running test case: SiteIsolation.DOMDebugger.SingleProcess.Setup
+PASS: Should find the same-origin iframe's frame target.
+PASS: Should find the main frame's frame target.
+PASS: The iframe should have its own frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.SingleProcess.BreakpointIsMirrored
+Adding "listener:click" Event Breakpoint...
+Setting the same breakpoint again on the page target...
+PASS: Should produce an exception.
+Error: Breakpoint with given eventName, given caseSensitive, and given isRegex already exists
+Setting the same breakpoint again on the main frame's target...
+PASS: Should produce an exception.
+Error: Breakpoint with given eventName, given caseSensitive, and given isRegex already exists
+Setting the same breakpoint again on the iframe's target...
+PASS: Should produce an exception.
+Error: Breakpoint with given eventName, given caseSensitive, and given isRegex already exists
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.SingleProcess.Listener.SameProcessFrame
+Adding "listener:click" Event Breakpoint...
+PASS: Should pause exactly once.
+PASS: Should pause in the same-origin iframe's frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.SingleProcess.Listener.MainFrame
+Adding "listener:click" Event Breakpoint...
+PASS: Should pause exactly once.
+PASS: Should pause in the main frame's target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.SingleProcess.Timeout.SameProcessFrame
+Adding "timeout" Event Breakpoint...
+PASS: Timeout callback should run.
+PASS: Should pause exactly once.
+PASS: Should pause in the same-origin iframe's frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.SingleProcess.URL.SameProcessFrame
+Adding "text:dom-debugger-data" URL Breakpoint...
+PASS: Should pause exactly once.
+PASS: Should pause in the same-origin iframe's frame target.
+-- Running test teardown.
+

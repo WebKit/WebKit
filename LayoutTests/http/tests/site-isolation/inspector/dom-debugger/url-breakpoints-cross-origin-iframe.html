@@ -1,0 +1,114 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.URL");
+
+    let crossOriginTarget;
+
+    function addTestCase({name, description, test}) {
+        suite.addTestCase({
+            name,
+            description,
+            test,
+            async teardown() {
+                await removeAllDOMDebuggerBreakpoints();
+            },
+        });
+    }
+
+    function expectRequestURL(pauseData) {
+        let url = new URL(pauseData.url);
+        InspectorTest.expectEqual(url.hostname, "localhost", "Pause data url should be on the cross-origin iframe's host.");
+        InspectorTest.expectThat(url.pathname.endsWith("/resources/dom-debugger-data.json"), "Pause data url should be the requested resource.");
+    }
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.URL.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            crossOriginTarget = await frameTargetForURLContaining("dom-debugger-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame target.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.URL.Text.Fetch",
+        description: "A text URL breakpoint should pause on fetch() in a cross-origin iframe.",
+        async test() {
+            await addURLBreakpoint(WI.URLBreakpoint.Type.Text, "dom-debugger-data");
+
+            let pauseData = await expectPauseInFrameTarget(crossOriginTarget, "triggerFetch()", {
+                pauseReason: WI.DebuggerManager.PauseReason.URL,
+                breakpointURL: "dom-debugger-data",
+                functionName: "triggerFetch",
+            });
+            expectRequestURL(pauseData);
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.URL.Text.XHR",
+        description: "A text URL breakpoint should pause on XMLHttpRequest.send() in a cross-origin iframe.",
+        async test() {
+            await addURLBreakpoint(WI.URLBreakpoint.Type.Text, "dom-debugger-data");
+
+            let pauseData = await expectPauseInFrameTarget(crossOriginTarget, "triggerXHR()", {
+                pauseReason: WI.DebuggerManager.PauseReason.URL,
+                breakpointURL: "dom-debugger-data",
+                functionName: "triggerXHR",
+            });
+            expectRequestURL(pauseData);
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.URL.Regex.Fetch",
+        description: "A regular expression URL breakpoint should pause on fetch() in a cross-origin iframe.",
+        async test() {
+            await addURLBreakpoint(WI.URLBreakpoint.Type.RegularExpression, "dom-debugger-.*\\.json");
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerFetch()", {
+                pauseReason: WI.DebuggerManager.PauseReason.URL,
+                breakpointURL: "dom-debugger-.*\\.json",
+                functionName: "triggerFetch",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.URL.AllRequests.Fetch",
+        description: "The All Requests breakpoint should pause on fetch() in a cross-origin iframe.",
+        async test() {
+            await addURLBreakpoint(WI.URLBreakpoint.Type.Text, "");
+
+            let pauseData = await expectPauseInFrameTarget(crossOriginTarget, "triggerFetch()", {
+                pauseReason: WI.DebuggerManager.PauseReason.URL,
+                breakpointURL: "",
+                functionName: "triggerFetch",
+            });
+            expectRequestURL(pauseData);
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.URL.NotContaining",
+        description: "A text URL breakpoint should not pause on requests in a cross-origin iframe whose URL doesn't contain it.",
+        async test() {
+            await addURLBreakpoint(WI.URLBreakpoint.Type.Text, "nonexistent-url");
+
+            let pausedTargets = await collectPausesDuring(() => evaluateInFrameTarget(crossOriginTarget, "triggerFetch()"));
+            InspectorTest.expectEqual(pausedTargets.length, 0, "Should not pause for a URL that doesn't match.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that URL breakpoints pause on fetch() and XMLHttpRequest in cross-origin iframes.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-debugger-frame.html"></iframe>
+</body>

@@ -1,0 +1,116 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script>
+function handleMainClick(event) { window.lastEventType = event.type; }
+function triggerMainClick() { document.getElementById("mainButton").click(); return true; }
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.SingleProcess");
+
+    let sameProcessTarget;
+    let mainFrameTarget;
+
+    function addTestCase({name, description, test}) {
+        suite.addTestCase({
+            name,
+            description,
+            test,
+            async teardown() {
+                await removeAllDOMDebuggerBreakpoints();
+            },
+        });
+    }
+
+    function expectSinglePause(pausedTargets, expectedTarget, targetDescription) {
+        InspectorTest.expectEqual(pausedTargets.length, 1, "Should pause exactly once.");
+        InspectorTest.expectThat(pausedTargets[0] === expectedTarget, `Should pause in the ${targetDescription}.`);
+    }
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.SingleProcess.Setup",
+        description: "Find the same-origin iframe's frame target and the main frame's target.",
+        async test() {
+            sameProcessTarget = await frameTargetForURLContaining("dom-debugger-frame.html");
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+
+            InspectorTest.expectNotNull(sameProcessTarget, "Should find the same-origin iframe's frame target.");
+            InspectorTest.expectEqual(mainFrameTarget.type, WI.TargetType.Frame, "Should find the main frame's frame target.");
+            InspectorTest.expectThat(sameProcessTarget !== mainFrameTarget, "The iframe should have its own frame target.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.SingleProcess.BreakpointIsMirrored",
+        description: "An event breakpoint should be sent to the page target and to every frame target in the same process.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            let breakpoint = {breakpointType: WI.EventBreakpoint.Type.Listener, eventName: "click", caseSensitive: true, isRegex: false};
+            for (let [target, description] of [[WI.mainTarget, "page target"], [mainFrameTarget, "main frame's target"], [sameProcessTarget, "iframe's target"]]) {
+                InspectorTest.log(`Setting the same breakpoint again on the ${description}...`);
+                await InspectorTest.expectException(async () => {
+                    await target.DOMDebuggerAgent.setEventBreakpoint.invoke(breakpoint);
+                });
+            }
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.SingleProcess.Listener.SameProcessFrame",
+        description: "A listener breakpoint should pause once for a listener in a same-process iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            let pausedTargets = await collectPausesDuring(() => evaluateInFrameTarget(sameProcessTarget, "triggerClick()"));
+            expectSinglePause(pausedTargets, sameProcessTarget, "same-origin iframe's frame target");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.SingleProcess.Listener.MainFrame",
+        description: "A listener breakpoint should pause once for a listener in the main frame.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"});
+
+            let pausedTargets = await collectPausesDuring(() => InspectorTest.evaluateInPage("triggerMainClick()"));
+            expectSinglePause(pausedTargets, mainFrameTarget, "main frame's target");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.SingleProcess.Timeout.SameProcessFrame",
+        description: "The All Timeouts breakpoint should pause once for a timeout in a same-process iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Timeout);
+
+            let pausedTargets = await collectPausesDuring(async () => {
+                await evaluateInFrameTarget(sameProcessTarget, "triggerTimeout()");
+                InspectorTest.expectThat(await waitForExpressionInTarget(sameProcessTarget, "window.timeoutFired"), "Timeout callback should run.");
+            });
+            expectSinglePause(pausedTargets, sameProcessTarget, "same-origin iframe's frame target");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.SingleProcess.URL.SameProcessFrame",
+        description: "A URL breakpoint should pause once for a request in a same-process iframe.",
+        async test() {
+            await addURLBreakpoint(WI.URLBreakpoint.Type.Text, "dom-debugger-data");
+
+            let pausedTargets = await collectPausesDuring(() => evaluateInFrameTarget(sameProcessTarget, "triggerFetch()"));
+            expectSinglePause(pausedTargets, sameProcessTarget, "same-origin iframe's frame target");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that event, timer and URL breakpoints pause exactly once in the main frame and in a same-process iframe, even though they are sent to the page target and to every frame target.</p>
+<button id="mainButton">Main Button</button>
+<script>document.getElementById("mainButton").addEventListener("click", handleMainClick);</script>
+<iframe src="resources/dom-debugger-frame.html"></iframe>
+</body>

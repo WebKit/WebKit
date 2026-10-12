@@ -1,0 +1,30 @@
+Test that cross-origin frame targets expose the DOMDebugger domain for event and URL breakpoints, but not DOM breakpoints.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.FrameTarget
+-- Running test case: SiteIsolation.DOMDebugger.FrameTarget.Setup
+PASS: Should find the cross-origin frame target.
+
+-- Running test case: SiteIsolation.DOMDebugger.FrameTarget.DomainAvailability
+PASS: Frame target should have the DOMDebugger domain.
+PASS: Frame target should support DOMDebugger.setEventBreakpoint.
+PASS: Frame target should support DOMDebugger.removeEventBreakpoint.
+PASS: Frame target should support DOMDebugger.setURLBreakpoint.
+PASS: Frame target should support DOMDebugger.removeURLBreakpoint.
+PASS: Frame target should not support DOMDebugger.setDOMBreakpoint.
+PASS: Frame target should not support DOMDebugger.removeDOMBreakpoint.
+PASS: Page target should still support DOMDebugger.setDOMBreakpoint.
+
+-- Running test case: SiteIsolation.DOMDebugger.FrameTarget.EventBreakpointState
+PASS: Should produce an exception.
+Error: Breakpoint with given eventName, given caseSensitive, and given isRegex already exists
+PASS: Should produce an exception.
+Error: Breakpoint for given eventName, given caseSensitive, and given isRegex missing
+
+-- Running test case: SiteIsolation.DOMDebugger.FrameTarget.URLBreakpointState
+PASS: Should produce an exception.
+Error: Breakpoint for given url and given isRegex already exists
+PASS: Should produce an exception.
+Error: Missing breakpoint for given url and isRegex
+

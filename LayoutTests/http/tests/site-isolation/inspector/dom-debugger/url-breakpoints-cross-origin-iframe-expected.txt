@@ -1,0 +1,52 @@
+Test that URL breakpoints pause on fetch() and XMLHttpRequest in cross-origin iframes.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.URL
+-- Running test case: SiteIsolation.DOMDebugger.URL.Setup
+PASS: Should find the cross-origin frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.URL.Text.Fetch
+Adding "text:dom-debugger-data" URL Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "url".
+PASS: Pause data breakpointURL should be "dom-debugger-data".
+PASS: Top call frame should be "triggerFetch".
+PASS: Pause data url should be on the cross-origin iframe's host.
+PASS: Pause data url should be the requested resource.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.URL.Text.XHR
+Adding "text:dom-debugger-data" URL Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "url".
+PASS: Pause data breakpointURL should be "dom-debugger-data".
+PASS: Top call frame should be "triggerXHR".
+PASS: Pause data url should be on the cross-origin iframe's host.
+PASS: Pause data url should be the requested resource.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.URL.Regex.Fetch
+Adding "regex:dom-debugger-.*\.json" URL Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "url".
+PASS: Pause data breakpointURL should be "dom-debugger-.*\.json".
+PASS: Top call frame should be "triggerFetch".
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.URL.AllRequests.Fetch
+Adding All Requests URL Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "url".
+PASS: Pause data breakpointURL should be "".
+PASS: Top call frame should be "triggerFetch".
+PASS: Pause data url should be on the cross-origin iframe's host.
+PASS: Pause data url should be the requested resource.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.URL.NotContaining
+Adding "text:nonexistent-url" URL Breakpoint...
+PASS: Should not pause for a URL that doesn't match.
+-- Running test teardown.
+
