@@ -1625,6 +1625,12 @@ struct WebCore::ClientOrigin {
     [Validator='!clientOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
 };
 
+header: <WebCore/Page.h>
+[CustomHeader] struct WebCore::FindSelectionInFrame {
+    WebCore::FrameIdentifier frame;
+    int32_t indexInFrame;
+};
+
 enum class WebCore::AlphaPremultiplication : uint8_t {
     Premultiplied,
     Unpremultiplied

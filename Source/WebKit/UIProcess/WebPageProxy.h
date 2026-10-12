@@ -1790,7 +1790,6 @@ public:
     void getImageForFindMatch(int32_t matchIndex);
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
-    void didGetImageForFindMatch(WebCore::ImageBufferParameters&&, WebCore::ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
@@ -3920,6 +3919,13 @@ private:
     std::unique_ptr<API::UIClient> m_uiClient;
     std::unique_ptr<API::FindClient> m_findClient;
     std::unique_ptr<API::FindMatchesClient> m_findMatchesClient;
+
+    struct FindMatchLocation {
+        WebCore::FrameIdentifier frameID;
+        uint32_t indexInProcess;
+    };
+    Vector<FindMatchLocation> m_findMatchLocations;
+    const FindMatchLocation* findMatchLocation(int32_t matchIndex) const;
     std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<API::ResourceLoadClient> m_resourceLoadClient;
 #if ENABLE(CONTEXT_MENUS)

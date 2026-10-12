@@ -391,6 +391,13 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | perRootFrameRend
 
 using WeakElementEdges = RectEdges<WeakPtr<Element, WeakPtrImplWithEventTargetData>>;
 
+// indexInFrame is relative to the frame's own matches: going forward, the index of the first match
+// after the selection; going backwards, the index of the last match before it (-1 if none).
+struct FindSelectionInFrame {
+    FrameIdentifier frame;
+    int32_t indexInFrame;
+};
+
 class Page : public RefCountedAndCanMakeWeakPtr<Page>, public Supplementable<Page> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Page, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(Page);
@@ -612,6 +619,7 @@ public:
     struct MatchingRanges {
         Vector<SimpleRange> ranges;
         std::optional<uint32_t> indexForSelection;
+        std::optional<FindSelectionInFrame> selectionInFrame;
     };
     WEBCORE_EXPORT MatchingRanges findTextMatches(const String&, FindOptions, unsigned maxCount, bool markMatches = true);
 

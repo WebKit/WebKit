@@ -133,12 +133,7 @@ TEST_P(FindTextFinder, FindAllAcrossCrossOriginFrames)
     FindTestPage page { FindTestFixtures::matchesInEveryFrame(), GetParam() };
     TextFinderTester find { page.webView() };
 
-    auto count = [find.findMatches(@"hello", caseInsensitive).matches count];
-    // FIXME(326399): findStringMatches is only sent to the main frame's process.
-    if (GetParam() == SiteIsolation::On)
-        EXPECT_EQ(count, 1u);
-    else
-        EXPECT_EQ(count, 4u);
+    EXPECT_EQ([find.findMatches(@"hello", caseInsensitive).matches count], 4u);
 }
 
 TEST_P(FindTextFinder, FindAllInSameOriginChild)
@@ -189,8 +184,6 @@ TEST_P(FindTextFinder, MatchRemovedAfterFindAll)
     EXPECT_WK_STREQ([page.webView() objectByEvaluatingJavaScript:@"document.querySelector('[contenteditable]').innerHTML"], "goodbye<br>");
 }
 
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326401): selectFindMatch is only sent to the main frame's process.
 TEST_P(FindTextFinder, SelectMatchInCrossOriginFrame)
 {
     FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
@@ -201,18 +194,11 @@ TEST_P(FindTextFinder, SelectMatchInCrossOriginFrame)
 
     auto childFrame = FindStateSnapshot::capture(page.webView()).frame({ 0 });
     ASSERT_TRUE(childFrame);
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_EQ([result.matches count], 1u);
-        EXPECT_WK_STREQ("", childFrame->selectedText);
-    } else {
-        EXPECT_EQ([result.matches count], 2u);
-        EXPECT_WK_STREQ("hello", childFrame->selectedText);
-    }
+    EXPECT_EQ([result.matches count], 2u);
+    EXPECT_WK_STREQ("hello", childFrame->selectedText);
 }
 
 // scrollFindMatchToVisible calls indicateFindMatch, but only when WebKit draws the find UI.
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326402): indicateFindMatch is only sent to the main frame's process.
 TEST_P(FindTextFinder, ScrollMatchToVisibleInCrossOriginFrame)
 {
     FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
@@ -224,35 +210,20 @@ TEST_P(FindTextFinder, ScrollMatchToVisibleInCrossOriginFrame)
 
     auto childFrame = FindStateSnapshot::capture(page.webView()).frame({ 0 });
     ASSERT_TRUE(childFrame);
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_EQ([result.matches count], 1u);
-        EXPECT_WK_STREQ("", childFrame->selectedText);
-    } else {
-        EXPECT_EQ([result.matches count], 2u);
-        EXPECT_WK_STREQ("hello", childFrame->selectedText);
-    }
+    EXPECT_EQ([result.matches count], 2u);
+    EXPECT_WK_STREQ("hello", childFrame->selectedText);
 }
 
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326403): getImageForFindMatch is only sent to the main frame's process.
 TEST_P(FindTextFinder, ImageForMatchInCrossOriginFrame)
 {
     FindTestPage page { FindTestFixtures::crossOriginChild(), GetParam() };
     TextFinderTester find { page.webView() };
 
     auto result = find.findMatches(@"hello", caseInsensitive);
-
-    if (GetParam() == SiteIsolation::On) {
-        // The only match is the main frame's, so this can't reach the child frame.
-        EXPECT_EQ([result.matches count], 1u);
-    } else {
-        EXPECT_EQ([result.matches count], 2u);
-        EXPECT_NOT_NULL(find.imageForMatch([result.matches lastObject]).get());
-    }
+    EXPECT_EQ([result.matches count], 2u);
+    EXPECT_NOT_NULL(find.imageForMatch([result.matches lastObject]).get());
 }
 
-// FIXME(326399): With site isolation, findStringMatches never indexes the child frame's match.
-// FIXME(326404): replaceMatches is only sent to the main frame's process.
 TEST_P(FindTextFinder, ReplaceMatchesInCrossOriginFrame)
 {
     FindTestPage page { { .body = "<div contenteditable>hello</div>"_s, .children = { { .host = "b.com"_s, .body = "<div contenteditable>hello</div>"_s } } }, GetParam() };
@@ -262,18 +233,11 @@ TEST_P(FindTextFinder, ReplaceMatchesInCrossOriginFrame)
     auto replacementCount = find.replaceMatches(result.matches.get(), @"goodbye");
 
     NSString *childText = [page.webView() objectByEvaluatingJavaScript:@"document.body.textContent" inFrame:[page.webView() firstChildFrame]];
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_EQ([result.matches count], 1u);
-        EXPECT_EQ(replacementCount, 1u);
-        EXPECT_WK_STREQ(childText, "hello");
-    } else {
-        EXPECT_EQ([result.matches count], 2u);
-        EXPECT_EQ(replacementCount, 2u);
-        EXPECT_WK_STREQ(childText, "goodbye");
-    }
+    EXPECT_EQ([result.matches count], 2u);
+    EXPECT_EQ(replacementCount, 2u);
+    EXPECT_WK_STREQ(childText, "goodbye");
 }
 
-// FIXME(326404): With site isolation, replaceMatches is only sent to the main frame's process, which has no selection.
 TEST_P(FindTextFinder, ReplaceSelectionInCrossOriginFrame)
 {
     FindTestPage page { { .body = "<p>nothing here</p>"_s, .children = { { .host = "b.com"_s, .body = "<div contenteditable>hello</div>"_s } } }, GetParam() };
@@ -284,13 +248,8 @@ TEST_P(FindTextFinder, ReplaceSelectionInCrossOriginFrame)
     auto replacementCount = find.replaceMatches(@[ ], @"goodbye");
 
     NSString *childText = [page.webView() objectByEvaluatingJavaScript:@"document.body.textContent" inFrame:[page.webView() firstChildFrame]];
-    if (GetParam() == SiteIsolation::On) {
-        EXPECT_EQ(replacementCount, 0u);
-        EXPECT_WK_STREQ(childText, "hello");
-    } else {
-        EXPECT_EQ(replacementCount, 1u);
-        EXPECT_WK_STREQ(childText, "goodbye");
-    }
+    EXPECT_EQ(replacementCount, 1u);
+    EXPECT_WK_STREQ(childText, "goodbye");
 }
 
 #if ENABLE(UNIFIED_PDF)

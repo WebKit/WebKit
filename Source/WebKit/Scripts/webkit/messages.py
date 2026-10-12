@@ -1475,6 +1475,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::FontInternalAttributes': ['<WebCore/Font.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],
         'WebCore::FillLightMode': ['<WebCore/FillLightMode.h>'],
+        'WebCore::FindSelectionInFrame': ['<WebCore/Page.h>'],
         'WebCore::FileSystemHandleGlobalIdentifier': ['<WebCore/FileSystemHandleGlobalIdentifier.h>'],
         'WebCore::FirstPartyWebsiteDataRemovalMode': ['<WebCore/TrackingPreventionTypes.h>'],
         'WebCore::FontChanges': ['<WebCore/FontAttributeChanges.h>'],

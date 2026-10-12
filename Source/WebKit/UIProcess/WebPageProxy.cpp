@@ -276,6 +276,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/OriginAgentClusterPolicy.h>
+#include <WebCore/Page.h>
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PermissionDescriptor.h>
 #include <WebCore/PermissionState.h>
@@ -7856,11 +7857,131 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
-        if (matches.isEmpty())
-            m_findClient->didFailToFindString(this, string);
-        else
-            m_findMatchesClient->didFindStringMatches(this, string, matches, firstIndexAfterSelection);
+    class FindStringMatchesCallbackAggregator : public RefCounted<FindStringMatchesCallbackAggregator> {
+    public:
+        static Ref<FindStringMatchesCallbackAggregator> create(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindUI) { return adoptRef(*new FindStringMatchesCallbackAggregator(page, string, options, maxMatchCount, shouldUpdateFindUI)); }
+
+        void didFindStringMatches(Vector<std::pair<FrameIdentifier, Vector<Vector<IntRect>>>>&& matches, std::optional<FindSelectionInFrame> selectionInFrame)
+        {
+            uint32_t indexInProcess = 0;
+            for (auto& [frameID, frameMatches] : matches) {
+                auto matchCount = frameMatches.size();
+                m_frameMatches.set(frameID, FrameMatches { WTF::move(frameMatches), indexInProcess });
+                indexInProcess += matchCount;
+            }
+
+            if (selectionInFrame)
+                m_selectionIndices.set(selectionInFrame->frame, selectionInFrame->indexInFrame);
+        }
+
+        ~FindStringMatchesCallbackAggregator()
+        {
+            RefPtr page = m_page.get();
+            if (!page)
+                return;
+
+            auto result = collectMatchesInFrameTreeOrder(*page);
+            page->m_findMatchLocations = WTF::move(result.locations);
+
+            if (m_shouldUpdateFindUI)
+                updateFindUIInEachProcess(*page, result);
+
+            if (result.matches.isEmpty()) {
+                page->findClient().didFailToFindString(page.get(), m_string);
+                return;
+            }
+
+            page->findMatchesClient().didFindStringMatches(page.get(), m_string, result.matches, firstIndexAfterSelection(result));
+        }
+
+    private:
+        struct Selection {
+            Ref<WebFrameProxy> frame;
+            int64_t matchIndexAfterSelection;
+        };
+
+        struct OrderedMatches {
+            Vector<Vector<IntRect>> matches;
+            Vector<FindMatchLocation> locations;
+            std::optional<Selection> selection;
+        };
+
+        OrderedMatches collectMatchesInFrameTreeOrder(WebPageProxy& page)
+        {
+            OrderedMatches result;
+            for (RefPtr frame = page.mainFrame(); frame; frame = frame->traverseNext().frame) {
+                auto frameID = frame->frameID();
+                if (!result.selection) {
+                    if (auto indexInFrame = m_selectionIndices.getOptional(frameID))
+                        result.selection = Selection { *frame, static_cast<int64_t>(result.matches.size()) + *indexInFrame };
+                }
+
+                auto frameMatches = m_frameMatches.takeOptional(frameID);
+                if (!frameMatches)
+                    continue;
+                for (uint32_t i = 0; i < frameMatches->rects.size(); ++i)
+                    result.locations.append({ frameID, frameMatches->firstIndexInProcess + i });
+                result.matches.appendVector(WTF::move(frameMatches->rects));
+            }
+
+            if (m_maxMatchCount && result.matches.size() > m_maxMatchCount) {
+                result.matches.shrink(m_maxMatchCount);
+                result.locations.shrink(m_maxMatchCount);
+            }
+            return result;
+        }
+
+        int32_t firstIndexAfterSelection(const OrderedMatches& result) const
+        {
+            if (!result.selection)
+                return m_options.contains(FindOptions::Backwards) ? static_cast<int32_t>(result.matches.size()) - 1 : 0;
+
+            auto index = result.selection->matchIndexAfterSelection;
+            if (index < 0 || index >= static_cast<int64_t>(result.matches.size()))
+                return -1;
+            return static_cast<int32_t>(index);
+        }
+
+        void updateFindUIInEachProcess(WebPageProxy& page, const OrderedMatches& result)
+        {
+            bool found = !result.matches.isEmpty();
+            page.forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                bool shouldUpdateFindIndicator = !found || !result.selection || &result.selection->frame->process() == &webProcess;
+                webProcess.send(Messages::WebPage::UpdateFindUIAfterFindingAllMatches(found, m_string, m_options, m_maxMatchCount, shouldUpdateFindIndicator), pageID);
+            });
+        }
+
+        FindStringMatchesCallbackAggregator(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, bool shouldUpdateFindUI)
+            : m_page(page)
+            , m_string(string)
+            , m_options(options)
+            , m_maxMatchCount(maxMatchCount)
+            , m_shouldUpdateFindUI(shouldUpdateFindUI)
+        {
+        }
+
+        WeakPtr<WebPageProxy> m_page;
+        String m_string;
+        OptionSet<FindOptions> m_options;
+        unsigned m_maxMatchCount;
+        bool m_shouldUpdateFindUI;
+        struct FrameMatches {
+            Vector<Vector<IntRect>> rects;
+            uint32_t firstIndexInProcess;
+        };
+        HashMap<FrameIdentifier, FrameMatches> m_frameMatches;
+        HashMap<FrameIdentifier, int32_t> m_selectionIndices;
+    };
+
+    static constexpr OptionSet findUIOptions { FindOptions::ShowOverlay, FindOptions::ShowFindIndicator };
+    bool shouldUpdateFindUI = options.containsAny(findUIOptions) && protect(browsingContextGroup())->hasRemotePages(*this);
+    auto optionsForEachProcess = shouldUpdateFindUI ? options - findUIOptions : options;
+
+    Ref callbackAggregator = FindStringMatchesCallbackAggregator::create(*this, string, options, maxMatchCount, shouldUpdateFindUI);
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, optionsForEachProcess, maxMatchCount), [callbackAggregator](Vector<std::pair<FrameIdentifier, Vector<Vector<IntRect>>>>&& matches, std::optional<FindSelectionInFrame> selectionInFrame) {
+            callbackAggregator->didFindStringMatches(WTF::move(matches), selectionInFrame);
+        }, pageID);
     });
 }
 
@@ -7986,19 +8107,41 @@ void WebPageProxy::removeLayerForFindOverlay(CompletionHandler<void()>&& callbac
     sendWithAsyncReply(Messages::WebPage::RemoveLayerForFindOverlay(), WTF::move(callbackFunction));
 }
 
+const WebPageProxy::FindMatchLocation* WebPageProxy::findMatchLocation(int32_t matchIndex) const
+{
+    if (matchIndex < 0 || static_cast<size_t>(matchIndex) >= m_findMatchLocations.size())
+        return nullptr;
+    return &m_findMatchLocations[matchIndex];
+}
+
 void WebPageProxy::getImageForFindMatch(int32_t matchIndex)
 {
-    send(Messages::WebPage::GetImageForFindMatch(matchIndex));
+    auto* location = findMatchLocation(matchIndex);
+    if (!location)
+        return;
+    sendWithAsyncReplyToProcessContainingFrame(location->frameID, Messages::WebPage::GetImageForFindMatch(location->indexInProcess), [weakThis = WeakPtr { *this }, matchIndex](std::optional<ImageBufferParameters>&& parameters, std::optional<ShareableBitmap::Handle>&& contentImageHandle) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !parameters || !contentImageHandle)
+            return;
+        Ref image = WebImage::create({ { WTF::move(*parameters), WTF::move(*contentImageHandle) } });
+        if (image->isEmpty()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        protectedThis->m_findMatchesClient->didGetImageForMatchResult(protectedThis.get(), image.ptr(), matchIndex);
+    });
 }
 
 void WebPageProxy::selectFindMatch(int32_t matchIndex)
 {
-    send(Messages::WebPage::SelectFindMatch(matchIndex));
+    if (auto* location = findMatchLocation(matchIndex))
+        sendToProcessContainingFrame(location->frameID, Messages::WebPage::SelectFindMatch(location->indexInProcess));
 }
 
 void WebPageProxy::indicateFindMatch(int32_t matchIndex)
 {
-    send(Messages::WebPage::IndicateFindMatch(matchIndex));
+    if (auto* location = findMatchLocation(matchIndex))
+        sendToProcessContainingFrame(location->frameID, Messages::WebPage::IndicateFindMatch(location->indexInProcess));
 }
 
 void WebPageProxy::hideFindUI()
@@ -8060,7 +8203,31 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
 
 void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::ReplaceMatches(WTF::move(matchIndices), replacementText, selectionOnly), WTF::move(callback));
+    if (matchIndices.isEmpty()) {
+        sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::ReplaceMatches({ }, replacementText, selectionOnly), WTF::move(callback));
+        return;
+    }
+
+    HashMap<Ref<WebProcessProxy>, Vector<uint32_t>> matchIndicesByProcess;
+    for (auto matchIndex : matchIndices) {
+        auto* location = findMatchLocation(matchIndex);
+        if (!location)
+            continue;
+        RefPtr frame = WebFrameProxy::webFrame(location->frameID);
+        if (!frame)
+            continue;
+        matchIndicesByProcess.add(frame->process(), Vector<uint32_t> { }).iterator->value.append(location->indexInProcess);
+    }
+
+    auto replacementCount = Box<uint64_t>::create(0);
+    Ref callbackAggregator = CallbackAggregator::create([replacementCount, callback = WTF::move(callback)] mutable {
+        callback(*replacementCount);
+    });
+    for (auto& [process, matchIndicesInProcess] : matchIndicesByProcess) {
+        protect(process)->sendWithAsyncReply(Messages::WebPage::ReplaceMatches(WTF::move(matchIndicesInProcess), replacementText, selectionOnly), [replacementCount, callbackAggregator](uint64_t count) {
+            *replacementCount += count;
+        }, webPageIDInProcess(process));
+    }
 }
 
 void WebPageProxy::launchInitialProcessIfNecessary()
@@ -13437,16 +13604,6 @@ void WebPageProxy::convertToSimplifiedChinese()
     sendToProcessContainingFrame(targetFrameID, Messages::WebPage::ConvertToSimplifiedChinese(*targetFrameID));
 }
 #endif
-
-void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
-{
-    Ref image = WebImage::create({ { WTF::move(parameters), WTF::move(contentImageHandle) } });
-    if (image->isEmpty()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    m_findMatchesClient->didGetImageForMatchResult(this, image.ptr(), matchIndex);
-}
 
 #if !PLATFORM(COCOA)
 void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, RefPtr<WebCore::TextIndicator>&& textIndicator, WebCore::TextIndicatorLifetime lifetime)

@@ -270,6 +270,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/ImageAnalysisQueue.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageBufferParameters.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/ImageUtilities.h>
 #include <WebCore/JSDOMExceptionHandling.h>
@@ -6496,7 +6497,7 @@ void WebPage::findStringIncludingImages(const String& string, OptionSet<FindOpti
 }
 #endif
 
-void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&& completionHandler)
+void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Vector<Vector<WebCore::IntRect>>>>&&, std::optional<WebCore::FindSelectionInFrame>)>&& completionHandler)
 {
     findController().findStringMatches(string, options, maxMatchCount, WTF::move(completionHandler));
 }
@@ -6548,9 +6549,9 @@ void WebPage::removeLayerForFindOverlay(CompletionHandler<void()>&& completionHa
     completionHandler();
 }
 
-void WebPage::getImageForFindMatch(uint32_t matchIndex)
+void WebPage::getImageForFindMatch(uint32_t matchIndex, CompletionHandler<void(std::optional<ImageBufferParameters>&&, std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
 {
-    findController().getImageForFindMatch(matchIndex);
+    findController().getImageForFindMatch(matchIndex, WTF::move(completionHandler));
 }
 
 void WebPage::selectFindMatch(uint32_t matchIndex)
@@ -6566,6 +6567,11 @@ void WebPage::indicateFindMatch(uint32_t matchIndex)
 void WebPage::hideFindUI()
 {
     findController().hideFindUI();
+}
+
+void WebPage::updateFindUIAfterFindingAllMatches(bool found, const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, bool shouldUpdateFindIndicator)
+{
+    findController().scheduleFindUIUpdateAfterFindingAllMatches(found, string, options, maxMatchCount, shouldUpdateFindIndicator);
 }
 
 void WebPage::countStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler)
