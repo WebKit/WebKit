@@ -504,7 +504,8 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     } else
         cgColorSpace = createCGColorSpaceForCVPixelBuffer(source.get());
 
-    return NativeImage::create(WTF::move(bgraSource), kCGImageAlphaFirst, cgColorSpace.get());
+    auto alphaInfo = alphaInfoForCVPixelBuffer(bgraSource.get());
+    return NativeImage::create(WTF::move(bgraSource), alphaInfo, cgColorSpace.get());
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)

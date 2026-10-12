@@ -136,6 +136,7 @@ private:
     void audioOutputDeviceChanged() final;
 
     bool hasVideo() const final { return m_hasVideo.load(std::memory_order_relaxed); }
+    bool videoFrameHasAlpha() const final { return m_videoFrameHasAlpha.load(std::memory_order_relaxed); }
     bool hasAudio() const final { return m_hasAudio.load(std::memory_order_relaxed); }
 
     void setPageIsVisible(bool) final;
@@ -365,6 +366,7 @@ private:
 #endif
     std::atomic<bool> m_hasAudio { false };
     std::atomic<bool> m_hasVideo { false };
+    std::atomic<bool> m_videoFrameHasAlpha { false };
     bool m_hasAvailableVideoFrame WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     bool m_readyStateIsWaitingForAvailableFrame WTF_GUARDED_BY_CAPABILITY(mainThread) { true };
     bool m_visible WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
