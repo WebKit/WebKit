@@ -936,23 +936,18 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         auto hasLineClamp = layoutState && layoutState->lineClamp();
         layoutChildren(hasLineClamp ? RelayoutChildren::Yes : relayoutChildren);
 
-        auto autoClamp = lineClampUpdater.isAutoLineClampRoot() ? lineClampUpdater.autoClampPoint() : std::nullopt;
-        auto ellipsisIsOnLastLine = lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this);
-        if (autoClamp) {
-            WTF::switchOn(*autoClamp, [&](size_t maximumLines) {
-                lineClampUpdater.setMaximumLines(maximumLines);
-            }, [&](const CheckedRef<const RenderBox>& clampAfterBox) {
-                lineClampUpdater.setClampAfterBox(clampAfterBox);
-            });
-        } else if (ellipsisIsOnLastLine)
-            lineClampUpdater.resetLineClamp();
-
-        auto contentNeedsRelayout = autoClamp || ellipsisIsOnLastLine;
-        if (contentNeedsRelayout) {
+        auto relayoutContent = [&] {
             rebuildFloatingObjectSetFromIntrudingFloats();
             for (CheckedRef descendant : descendantsOfType<RenderBox>(*this))
                 descendant->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
             layoutChildren(RelayoutChildren::Yes);
+        };
+        if (auto autoClampPoint = lineClampUpdater.autoClampPoint()) {
+            lineClampUpdater.setAutoClampPoint(*autoClampPoint);
+            relayoutContent();
+        } else if (lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
+            lineClampUpdater.resetLineClamp();
+            relayoutContent();
         }
     }
 
