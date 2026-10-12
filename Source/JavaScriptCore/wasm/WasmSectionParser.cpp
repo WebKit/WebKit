@@ -1103,6 +1103,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position) -> PartialResult
         TypeIndex memberIdx = recursionGroup->type(i);
         if (memberIdx & subtypeTagBit) {
             const Subtype* subtype = untagSubtype(memberIdx);
+            WASM_PARSER_FAIL_IF(canonicalRTTs[i]->displaySizeExcludingThis() > maxSubtypeDepth, "subtype depth for recursion group's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
             WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*subtype, canonicalRTTs[i].get()));
         }
     }
