@@ -97,6 +97,16 @@ open(my $fh, '<', $idlFilesList) or die "Cannot open $idlFilesList";
 @idlFiles = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
 close($fh) or die;
 
+# CodeGenerator::UpdateFile() does not rewrite generated files whose contents did not change, so that
+# the build does not recompile everything that depends on them. Their modification times therefore do not
+# tell whether they are up to date. Instead, this file is touched with the start time of every run that
+# successfully generated all the bindings that needed updating, and generated files are considered to be at
+# least as new as it. Modification times have a granularity of one second here, so back the run start time
+# off by a second to make sure that input files changed while the run was starting are processed again.
+my $lastSuccessfulRunFile = File::Spec->catfile($outputDirectory, basename($idlFilesList) . ".last-generate-bindings-run");
+my $lastSuccessfulRunTime = -f $lastSuccessfulRunFile ? mtime($lastSuccessfulRunFile) : undef;
+my $runStartTime = time() - 1;
+
 if (@exclude) {
     my %excluded = map { $_ => 1 } @exclude;
     @idlFiles = grep { !$excluded{basename($_)} } @idlFiles;
@@ -115,7 +125,7 @@ if ($supplementalDependencyFile) {
     if ($ppIDLFilesList) {
         my @output = ($supplementalDependencyFile, @ppExtraOutput);
         my @deps = ($ppIDLFilesList, @ppIDLFiles, @generatorDependency);
-        if (needsUpdate(\@output, \@deps)) {
+        if (needsUpdate(\@output, \@deps, $lastSuccessfulRunTime)) {
             readSupplementalDependencyFile($supplementalDependencyFile, \%oldSupplements) if -e $supplementalDependencyFile;
             my @args = (File::Spec->catfile($scriptDir, 'preprocess-idls.pl'),
                         '--defines', $defines,
@@ -151,7 +161,7 @@ my @idlFilesToUpdate = grep &{sub {
                 @generatorDependency,
                 @{$newSupplements{$absPath} or []},
                 implicitDependencies($depFile));
-    needsUpdate(\@output, \@deps);
+    needsUpdate(\@output, \@deps, $lastSuccessfulRunTime);
 }}, @idlFiles;
 
 # Pre-parse shared data once in the parent process so forked children inherit it.
@@ -205,11 +215,16 @@ while (waitpid(-1, 0) != -1) {
     }
     spawnGenerateBindingsIfNeeded();
 }
+if (!$abort) {
+    open(my $runFh, '>', $lastSuccessfulRunFile) or die "Cannot write $lastSuccessfulRunFile: $!";
+    close($runFh);
+    utime($runStartTime, $runStartTime, $lastSuccessfulRunFile) or die "Cannot set the time of $lastSuccessfulRunFile: $!";
+}
 exit $abort;
 
 sub needsUpdate
 {
-    my ($objects, $depends) = @_;
+    my ($objects, $depends, $minimumObjectTime) = @_;
     my $oldestObjectTime;
     for (@$objects) {
         return 1 if !-f;
@@ -217,6 +232,9 @@ sub needsUpdate
         if (!defined $oldestObjectTime || $m < $oldestObjectTime) {
             $oldestObjectTime = $m;
         }
+    }
+    if (defined $minimumObjectTime && $oldestObjectTime < $minimumObjectTime) {
+        $oldestObjectTime = $minimumObjectTime;
     }
     for (@$depends) {
         die "Missing required dependency: $_" if !-f;

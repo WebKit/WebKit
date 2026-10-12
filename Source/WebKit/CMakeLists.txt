@@ -1077,15 +1077,11 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
         ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
     )
 
-    set(_messages_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.messages-stage)
-    # copy_if_different (rather than copy_directory_if_different, which is unavailable on
-    # older CMake versions) copies only changed files back, leaving the timestamps of
-    # unchanged outputs untouched so downstream C++ is not needlessly rebuilt.
+    # --write-if-changed leaves the timestamps of unchanged outputs untouched so that downstream C++
+    # is not needlessly rebuilt (CMake's Ninja generator uses restat for custom commands).
     unset(_absolute_outputs)
-    unset(_messages_copy_commands)
     foreach (_rel IN LISTS _outputs)
         list(APPEND _absolute_outputs ${WebKit_DERIVED_SOURCES_DIR}/${_rel})
-        list(APPEND _messages_copy_commands COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_messages_stage_dir}/${_rel} ${WebKit_DERIVED_SOURCES_DIR}/${_rel})
     endforeach ()
     add_custom_command(
         OUTPUT
@@ -1101,9 +1097,7 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
             ${WEBKIT_DIR}/Scripts/webkit/untrusted_origins.py
             ${_input_files}
             ${WebKitAdditions_MESSAGES_IN_FILES}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${_messages_stage_dir}
-        COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py --preserve-subdirs ${WEBKIT_DIR} ${_inputs} ${WebKitAdditions_MESSAGES_IN_ARGS} --output-dir ${_messages_stage_dir}
-        ${_messages_copy_commands}
+        COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py --preserve-subdirs --write-if-changed ${WEBKIT_DIR} ${_inputs} ${WebKitAdditions_MESSAGES_IN_ARGS} --output-dir ${WebKit_DERIVED_SOURCES_DIR}
         WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
         VERBATIM
     )
@@ -1212,7 +1206,6 @@ list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/JSWebExtensionAPIUnified.cpp
 )
 
-set(_serializers_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.serializers-stage)
 set(_serializers_outputs
     GeneratedSerializers.h
     GeneratedSerializersShared.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
@@ -1235,29 +1228,21 @@ set(_serializers_outputs
     SerializedTypeInfo.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
 )
-# copy_if_different (rather than copy_directory_if_different, which is unavailable on
-# older CMake versions) copies only changed files back, leaving the timestamps of
-# unchanged outputs untouched so downstream C++ is not needlessly rebuilt.
-unset(_serializers_absolute_outputs)
-unset(_serializers_copy_commands)
-foreach (_rel IN LISTS _serializers_outputs)
-    list(APPEND _serializers_absolute_outputs ${WebKit_DERIVED_SOURCES_DIR}/${_rel})
-    list(APPEND _serializers_copy_commands COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_serializers_stage_dir}/${_rel} ${WebKit_DERIVED_SOURCES_DIR}/${_rel})
-endforeach ()
+list(TRANSFORM _serializers_outputs PREPEND ${WebKit_DERIVED_SOURCES_DIR}/)
 set(_serializers_input_files_rsp ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersInputFiles.rsp)
 string(JOIN "\n" _serializers_input_files_rsp_content ${WebKit_SERIALIZATION_DEPENDENCIES})
 file(GENERATE OUTPUT ${_serializers_input_files_rsp} CONTENT "${_serializers_input_files_rsp_content}\n")
+# --write-if-changed leaves the timestamps of unchanged outputs untouched so that downstream C++
+# is not needlessly rebuilt (CMake's Ninja generator uses restat for custom commands).
 add_custom_command(
     OUTPUT
-        ${_serializers_absolute_outputs}
+        ${_serializers_outputs}
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
         ${WEBKIT_DIR}/Scripts/webkit/opaque_ipc_types.py
         ${WebKit_SERIALIZATION_DEPENDENCIES}
         ${_serializers_input_files_rsp}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${_serializers_stage_dir}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py ${WebKit_GENERATED_SERIALIZERS_SUFFIX} --split-by-directory @${_serializers_input_files_rsp} --output-dir ${_serializers_stage_dir}
-    ${_serializers_copy_commands}
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py ${WebKit_GENERATED_SERIALIZERS_SUFFIX} --split-by-directory --write-if-changed @${_serializers_input_files_rsp} --output-dir ${WebKit_DERIVED_SOURCES_DIR}
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )
