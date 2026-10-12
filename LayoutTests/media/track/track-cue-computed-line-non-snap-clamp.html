@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>track-cue-computed-line-non-snap-clamp</title>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script>
+
+    function cueBox() {
+        return internals.shadowRoot(video).querySelector('[useragentpart="cue"]');
+    }
+
+    // Text track layout happens asynchronously, so wait until the cue box "top"
+    // stops changing before asserting. This converges to whatever value the
+    // engine produces (correct or buggy), so a regression fails with a clean text
+    // diff rather than spinning until the harness times out.
+    async function settledTop() {
+        let previous = null;
+        for (let i = 0; i < 120; ++i) {
+            let box = cueBox();
+            let current = box ? box.style.top : null;
+            if (current && current === previous)
+                return current;
+            previous = current;
+            await new Promise(resolve => requestAnimationFrame(resolve));
+        }
+        let box = cueBox();
+        return box ? box.style.top : null;
+    }
+
+    async function checkLine(line, expectedTop) {
+        run(`cue.line = ${line}`);
+        window.observedTop = await settledTop();
+        testExpected('observedTop', expectedTop);
+    }
+
+    async function runTest() {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'canplay');
+
+        window.textTrack = video.addTextTrack("captions");
+        textTrack.mode = 'showing';
+
+        run('cue = new VTTCue(0, 100, "Lorem")');
+        run('cue.snapToLines = false');
+        run('textTrack.addCue(cue)');
+
+        if (!window.testRunner) {
+            consoleWrite('Test requires internals.');
+            return;
+        }
+
+        await testExpectedEventually('cueBox()', null, '!=', 4000);
+
+        // A line within 0..100 is used unchanged (control: not clamped either way).
+        await checkLine(50, '50cqh');
+
+        // A line greater than 100 clamps to 100 (this was the dead && branch).
+        await checkLine(200, '100cqh');
+
+        // A negative line also clamps to 100.
+        await checkLine(-25, '100cqh');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>
