@@ -284,7 +284,7 @@ bool ResourceHandle::start()
         return true;
 
     auto curlClient = adoptRef(*new WKCResourceHandleCurlClient(*this, d->m_user, d->m_password));
-    auto request = CurlRequest::create(firstRequest(), curlClient.get(), CurlRequest::CaptureNetworkLoadMetrics::Extended);
+    auto request = CurlRequest::create(firstRequest(), *curlClient, CurlRequest::CaptureNetworkLoadMetrics::Extended);
     if (!d->m_user.isEmpty() || !d->m_password.isEmpty())
         request->setUserPass(d->m_user, d->m_password);
 
