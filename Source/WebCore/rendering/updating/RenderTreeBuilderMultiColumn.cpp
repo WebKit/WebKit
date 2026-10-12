@@ -27,6 +27,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderInline.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMultiColumnFlow.h"
@@ -138,7 +139,13 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
             }
         }
         ASSERT(ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor));
-        if (ancestor->isUnsplittableForPagination())
+        // A spanner cannot escape an ancestor that establishes an independent formatting context or
+        // forms a containing block for fixed-position descendants (transform, filter, containment):
+        // such an ancestor traps the box. Matches Blink/Gecko.
+        // https://drafts.csswg.org/css-multicol-1/#column-span
+        if (ancestor->isUnsplittableForPagination()
+            || ancestor->createsNewFormattingContext()
+            || ancestor->canContainFixedPositionObjects())
             return false;
     }
     ASSERT_NOT_REACHED();
