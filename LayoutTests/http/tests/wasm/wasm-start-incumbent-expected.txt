@@ -1,0 +1,14 @@
+Wasm start host imports should see the instantiate incumbent, not the WebAssembly realm.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS instantiate(bytes) start-is-import via other realm
+PASS instantiate(bytes) start-calls-import via other realm
+PASS instantiate(Module) via other realm
+PASS new Instance via other realm
+PASS instantiateStreaming via other realm
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

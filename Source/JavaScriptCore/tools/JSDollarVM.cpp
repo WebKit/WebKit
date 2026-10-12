@@ -2042,7 +2042,7 @@ public:
     WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL = { })
         : Base(vm, structure)
         , m_promise(promise, WriteBarrierEarlyInit)
-        , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL)))
+        , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, globalObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL)))
     {
         DollarVMAssertScope assertScope;
     }
