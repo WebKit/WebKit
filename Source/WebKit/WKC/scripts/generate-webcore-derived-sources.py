@@ -42,23 +42,32 @@ def run(args: list[str], *, cwd: Path | None = None) -> None:
 
 
 def parse_cmake_list(source: str, variable: str) -> list[str]:
-    match = re.search(
-        rf"(?ms)^set\(\s*{re.escape(variable)}\s+(.*?)^\)",
-        source,
+    """Read literal IDL paths from the variable's set() and list(APPEND) blocks.
+
+    WebCore's CMake file builds these lists in several stages. Reading only the
+    initial set() silently drops later platform-independent interface entries;
+    that can leave supplemental IDLs in the list whose base interface was
+    declared by one of those appends (for example, GPUDevice.idl).
+    """
+    block_pattern = re.compile(
+        rf"(?ms)^(?:set\(\s*{re.escape(variable)}\s+|"
+        rf"list\(\s*APPEND\s+{re.escape(variable)}\s+)(.*?)^\)"
     )
-    if not match:
+    matches = list(block_pattern.finditer(source))
+    if not matches:
         raise RuntimeError(f"Could not find upstream CMake list {variable}")
+
     values: list[str] = []
-    for line in match.group(1).splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        # This intentionally accepts only literal, relative IDL paths. The
-        # normal upstream lists contain those; platform-injected variables are
-        # added by the native CMake build and are not needed by the Wii U port.
-        if re.fullmatch(r"[A-Za-z0-9_+./-]+\.idl", line):
-            values.append(line)
-    return values
+    for match in matches:
+        for line in match.group(1).splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            # Accept literal relative IDL paths. Platform-injected paths are
+            # supplied by the native CMake build and are not part of this port.
+            if re.fullmatch(r"[A-Za-z0-9_+./-]+\.idl", line):
+                values.append(line)
+    return list(dict.fromkeys(values))
 
 
 def parse_literal_paths(source: str, variable: str, suffix: str) -> list[Path]:
