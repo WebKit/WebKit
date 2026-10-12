@@ -7902,6 +7902,7 @@
 		054E3A35256C3BD90072C5BF /* GetHTMLOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetHTMLOptions.idl; sourceTree = "<group>"; };
 		0562F9601573F88F0031CA16 /* PlatformLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformLayer.h; sourceTree = "<group>"; };
 		05D4770AFFB4C18C6BA6928B /* QuirkTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuirkTable.cpp; sourceTree = "<group>"; };
+		7A1C4E2F2E8B9D0100A1B2C3 /* QuirkTable.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = QuirkTable.json; sourceTree = "<group>"; };
 		05D4770BFFB4C18C6BA6928C /* QuirkTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirkTable.h; sourceTree = "<group>"; };
 		05D4770DFFB4C18C6BA6928D /* QuirkMatchPattern.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuirkMatchPattern.cpp; sourceTree = "<group>"; };
 		05D4770EFFB4C18C6BA6928E /* QuirkMatchPattern.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirkMatchPattern.h; sourceTree = "<group>"; };
@@ -31781,6 +31782,7 @@
 				05D4770EFFB4C18C6BA6928C /* QuirkSelectors.h */,
 				05D4770AFFB4C18C6BA6928B /* QuirkTable.cpp */,
 				05D4770BFFB4C18C6BA6928C /* QuirkTable.h */,
+				7A1C4E2F2E8B9D0100A1B2C3 /* QuirkTable.json */,
 				46B9518D207D632A00A7D2DD /* RemoteDOMWindow.cpp */,
 				46B9518E207D632A00A7D2DD /* RemoteDOMWindow.h */,
 				46B9518C207D632900A7D2DD /* RemoteFrame.cpp */,

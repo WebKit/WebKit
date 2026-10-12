@@ -3912,6 +3912,7 @@ JSHTMLElementWrapperFactory.cpp
 JSMathMLElementWrapperFactory.cpp
 JSSVGElementWrapperFactory.cpp
 MathMLElementFactory.cpp
+QuirkBehaviorDeclarations.cpp
 QuirksAccessors.cpp
 SVGElementFactory.cpp @cost:4
 StyleBuilderGenerated.cpp @cost:13

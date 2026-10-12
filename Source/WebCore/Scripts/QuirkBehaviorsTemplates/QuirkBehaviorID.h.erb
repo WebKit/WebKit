@@ -27,7 +27,9 @@
 
 #pragma once
 
+#include <wtf/Assertions.h>
 #include <wtf/BitSet.h>
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -41,4 +43,43 @@ enum class QuirkBehaviorID {
 
 using QuirkBitSet = WTF::BitSet<static_cast<size_t>(QuirkBehaviorID::NumberOfIDs)>;
 
+namespace BuildCondition {
+
+<%- @buildConditions.each do |condition| -%>
+<%- if condition.guard -%>
+#if <%= condition.guard %>
+constexpr bool <%= condition.name %> = true;
+#else
+constexpr bool <%= condition.name %> = false;
+#endif
+<%- else -%>
+constexpr bool <%= condition.name %> = true;
+<%- end -%>
+<%- end -%>
+
+} // namespace BuildCondition
+
+enum class BuildConditionID : uint8_t {
+<%- @buildConditions.each do |condition| -%>
+    <%= condition.name %>,
+<%- end -%>
+};
+
+constexpr bool isEnabled(BuildConditionID condition)
+{
+    switch (condition) {
+<%- @buildConditions.each do |condition| -%>
+    case BuildConditionID::<%= condition.name %>: return BuildCondition::<%= condition.name %>;
+<%- end -%>
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::QuirkBehaviorID> {
+    static constexpr int min = 0;
+    static constexpr int max = static_cast<int>(WebCore::QuirkBehaviorID::NumberOfIDs) - 1;
+};
+} // namespace WTF

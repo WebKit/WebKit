@@ -23,7 +23,7 @@
 
 # Each key is a QuirkBehaviorID
 
-#   available           BuildCondition expression; the table drops the behavior when false. Default: always.
+#   available           Expression over the names in QuirkBuildConditions.yaml; the table drops the behavior when false. Default: always.
 #   conditions          QuirkConditionsSupported that .when() may add.
 #   conditionsRequired  Every row must add all of the behavior's conditions.
 #
