@@ -64,11 +64,12 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
-# WebRTC remains independently opt-in: it is not required for ordinary
-# page loading, and the Wii U RTC backend still needs runtime integration.
-# Keep it out of the default browser profile until that work is complete.
-set(_WKC_WEBRTC_API_DEFAULT OFF)
-option(WKC_ENABLE_WEBRTC_API "Compile experimental WebRTC API support for Wii U" ${_WKC_WEBRTC_API_DEFAULT})
+# Enable WebRTC API support in the default full-WebCore Wii U profile.
+# The WebRTC backend still needs final consumer-link and on-console runtime
+# integration, so this option enables the build path rather than claiming RTC
+# is already production-ready. Set WKC_ENABLE_WEBRTC_API=OFF to disable it.
+set(_WKC_WEBRTC_API_DEFAULT ON)
+option(WKC_ENABLE_WEBRTC_API "Compile WebRTC API support for Wii U" ${_WKC_WEBRTC_API_DEFAULT})
 if (WKC_ENABLE_WEBRTC_API)
     set(_WKC_WEBRTC_API_DEFINE 1)
 else ()
