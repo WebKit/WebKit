@@ -34,6 +34,7 @@
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "MediaQueryParser.h"
+#include "NameValidation.h"
 #include "NodeDocument.h"
 #include "NodeInlines.h"
 #include "SerializedNode.h"
@@ -43,6 +44,7 @@
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
 #include <wtf/SetForScope.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/TZoneMallocInlines.h>
 #include "CachedResourceLoader.h"
 #include "HTMLParserIdioms.h"
@@ -57,9 +59,20 @@ inline ProcessingInstruction::ProcessingInstruction(Document& document, String&&
 {
 }
 
-Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, String&& target, String&& data)
+Ref<ProcessingInstruction> ProcessingInstruction::createWithoutValidation(Document& document, String&& target, String&& data)
 {
     return adoptRef(*new ProcessingInstruction(document, WTF::move(target), WTF::move(data)));
+}
+
+ExceptionOr<Ref<ProcessingInstruction>> ProcessingInstruction::create(Document& document, String&& target, String&& data)
+{
+    if (!NameValidation::isValidXMLName(target))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid processing instruction target: '"_s, target, '\'') };
+
+    if (data.contains("?>"_s))
+        return Exception { ExceptionCode::InvalidCharacterError };
+
+    return createWithoutValidation(document, WTF::move(target), WTF::move(data));
 }
 
 ProcessingInstruction::~ProcessingInstruction()
@@ -83,12 +96,296 @@ Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOp
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(document, String { m_target }, String { data() });
+    return createWithoutValidation(document, String { m_target }, String { data() });
 }
 
 SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
 {
     return { SerializedNode::ProcessingInstruction { { data() }, m_target } };
+}
+
+// MARK: - Pseudo attributes
+//
+// PseudoAtts     ::= (S PseudoAtt)* S?
+// PseudoAtt      ::= Name S? '=' S? PseudoAttValue
+// PseudoAttValue ::= '"' ([^"<&] | Reference)* '"' | "'" ([^'<&] | Reference)* "'"
+//
+// https://www.w3.org/TR/xml-stylesheet/ defines this for xml-stylesheet, and
+// https://dom.spec.whatwg.org/ references it for the attribute API. Parsing it here
+// rather than through libxml2 keeps the grammar conformant, preserves whitespace
+// inside values, and keeps libxml2 out of reach of arbitrary strings from any page.
+
+// The pseudo attribute name production the DOM Standard is settling on is laxer than an
+// XML Name: anything is allowed except whitespace and the characters that would make the
+// serialized data reparse differently. See https://github.com/whatwg/dom/issues/1504.
+static bool isValidPseudoAttributeName(StringView name)
+{
+    if (name.isEmpty())
+        return false;
+    for (auto character : name.codeUnits()) {
+        switch (character) {
+        case ' ':
+        case '\t':
+        case '\r':
+        case '\n':
+        case '=':
+        case '>':
+        case '/':
+        case '<':
+        case '"':
+        case '\'':
+        case '&':
+            return false;
+        default:
+            break;
+        }
+    }
+    return true;
+}
+
+static bool parsePseudoAttributeReference(StringView source, unsigned& position, StringBuilder& value)
+{
+    ASSERT(source[position] == '&');
+    auto semicolon = source.find(';', position);
+    if (semicolon == notFound)
+        return false;
+    auto reference = source.substring(position + 1, semicolon - position - 1);
+    position = semicolon + 1;
+
+    if (reference == "amp"_s) {
+        value.append('&');
+        return true;
+    }
+    if (reference == "lt"_s) {
+        value.append('<');
+        return true;
+    }
+    if (reference == "gt"_s) {
+        value.append('>');
+        return true;
+    }
+    if (reference == "apos"_s) {
+        value.append('\'');
+        return true;
+    }
+    if (reference == "quot"_s) {
+        value.append('"');
+        return true;
+    }
+    if (reference.startsWith('#')) {
+        auto digits = reference.substring(1);
+        bool isHex = digits.startsWith('x') || digits.startsWith('X');
+        auto parsed = isHex ? parseInteger<char32_t>(digits.substring(1), 16) : parseInteger<char32_t>(digits, 10);
+        if (!parsed || !U_IS_UNICODE_CHAR(*parsed))
+            return false;
+        if (U_IS_BMP(*parsed))
+            value.append(static_cast<char16_t>(*parsed));
+        else {
+            value.append(U16_LEAD(*parsed));
+            value.append(U16_TRAIL(*parsed));
+        }
+        return true;
+    }
+    return false;
+}
+
+std::optional<Vector<ProcessingInstruction::PseudoAttribute>> ProcessingInstruction::parsePseudoAttributes(StringView source)
+{
+    Vector<PseudoAttribute> attributes;
+    unsigned position = 0;
+    // XML S is space, tab, carriage return and line feed only.
+    auto isXMLWhitespace = [](char16_t character) {
+        return character == ' ' || character == '\t' || character == '\r' || character == '\n';
+    };
+    auto skipWhitespace = [&] {
+        while (position < source.length() && isXMLWhitespace(source[position]))
+            ++position;
+    };
+
+    skipWhitespace();
+    while (position < source.length()) {
+        auto nameStart = position;
+        while (position < source.length() && !isXMLWhitespace(source[position]) && source[position] != '=')
+            ++position;
+        auto nameSource = source.substring(nameStart, position - nameStart);
+        if (!isValidPseudoAttributeName(nameSource))
+            return std::nullopt;
+        AtomString name { nameSource.toString() };
+
+        skipWhitespace();
+        if (position == source.length() || source[position] != '=')
+            return std::nullopt;
+        ++position;
+        skipWhitespace();
+
+        if (position == source.length())
+            return std::nullopt;
+        auto quote = source[position];
+        if (quote != '"' && quote != '\'')
+            return std::nullopt;
+        ++position;
+
+        StringBuilder value;
+        bool closed = false;
+        while (position < source.length()) {
+            auto character = source[position];
+            if (character == quote) {
+                ++position;
+                closed = true;
+                break;
+            }
+            if (character == '<')
+                return std::nullopt;
+            if (character == '&') {
+                if (!parsePseudoAttributeReference(source, position, value))
+                    return std::nullopt;
+                continue;
+            }
+            value.append(character);
+            ++position;
+        }
+        if (!closed)
+            return std::nullopt;
+
+        attributes.append({ WTF::move(name), AtomString { value.toString() } });
+
+        // Attributes have to be separated by whitespace.
+        auto beforeTrailingWhitespace = position;
+        skipWhitespace();
+        if (position < source.length() && position == beforeTrailingWhitespace)
+            return std::nullopt;
+    }
+    return attributes;
+}
+
+void ProcessingInstruction::updateAttributesIfNeeded()
+{
+    if (!m_attributesDirty)
+        return;
+    m_attributesDirty = false;
+    m_attributes.clear();
+
+    if (auto parsed = parsePseudoAttributes(data()))
+        m_attributes = WTF::move(*parsed);
+}
+
+void ProcessingInstruction::updateDataFromAttributes()
+{
+    StringBuilder builder;
+    for (auto& attribute : m_attributes) {
+        if (!builder.isEmpty())
+            builder.append(' ');
+        builder.append(attribute.name, "=\""_s);
+        for (auto character : StringView { attribute.value }.codeUnits()) {
+            switch (character) {
+            case '&':
+                builder.append("&amp;"_s);
+                break;
+            case '<':
+                builder.append("&lt;"_s);
+                break;
+            case '>':
+                builder.append("&gt;"_s);
+                break;
+            case '"':
+                builder.append("&quot;"_s);
+                break;
+            default:
+                builder.append(character);
+                break;
+            }
+        }
+        builder.append('"');
+    }
+
+    // Keeps the attributes we just serialized, rather than reparsing our own output.
+    auto attributes = WTF::move(m_attributes);
+    setData(builder.toString());
+    m_attributes = WTF::move(attributes);
+    m_attributesDirty = false;
+}
+
+void ProcessingInstruction::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)
+{
+    m_attributesDirty = true;
+    CharacterData::setDataAndUpdate(newData, offsetOfReplacedData, oldLength, newLength, shouldUpdateLiveRanges);
+}
+
+bool ProcessingInstruction::hasPseudoAttributes()
+{
+    updateAttributesIfNeeded();
+    return !m_attributes.isEmpty();
+}
+
+Vector<AtomString> ProcessingInstruction::getAttributeNames()
+{
+    updateAttributesIfNeeded();
+    return m_attributes.map([](auto& attribute) {
+        return attribute.name;
+    });
+}
+
+String ProcessingInstruction::getAttribute(const AtomString& name)
+{
+    updateAttributesIfNeeded();
+    auto index = m_attributes.findIf([&name](auto& attribute) {
+        return attribute.name == name;
+    });
+    if (index == notFound)
+        return { };
+    return m_attributes[index].value;
+}
+
+ExceptionOr<void> ProcessingInstruction::setAttribute(const AtomString& name, const AtomString& value)
+{
+    if (!isValidPseudoAttributeName(name))
+        return Exception { ExceptionCode::InvalidCharacterError };
+
+    updateAttributesIfNeeded();
+    auto index = m_attributes.findIf([&name](auto& attribute) {
+        return attribute.name == name;
+    });
+    if (index == notFound)
+        m_attributes.append({ name, value });
+    else
+        m_attributes[index].value = value;
+    updateDataFromAttributes();
+    return { };
+}
+
+void ProcessingInstruction::removeAttribute(const AtomString& name)
+{
+    updateAttributesIfNeeded();
+    if (!m_attributes.removeAllMatching([&name](auto& attribute) { return attribute.name == name; }))
+        return;
+    updateDataFromAttributes();
+}
+
+ExceptionOr<bool> ProcessingInstruction::toggleAttribute(const AtomString& name, std::optional<bool> force)
+{
+    if (!isValidPseudoAttributeName(name))
+        return Exception { ExceptionCode::InvalidCharacterError };
+
+    if (hasAttribute(name)) {
+        if (force && *force)
+            return true;
+        removeAttribute(name);
+        return false;
+    }
+    if (force && !*force)
+        return false;
+    auto result = setAttribute(name, emptyAtom());
+    if (result.hasException())
+        return result.releaseException();
+    return true;
+}
+
+bool ProcessingInstruction::hasAttribute(const AtomString& name)
+{
+    updateAttributesIfNeeded();
+    return m_attributes.containsIf([&name](auto& attribute) {
+        return attribute.name == name;
+    });
 }
 
 void ProcessingInstruction::checkStyleSheet()

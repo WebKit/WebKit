@@ -37,7 +37,10 @@ class ProcessingInstruction final : public CharacterData, private CachedStyleShe
 public:
     USING_CAN_MAKE_WEAKPTR(CharacterData);
 
-    static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
+    // Validates the target and data, for the constructor and document.createProcessingInstruction().
+    static ExceptionOr<Ref<ProcessingInstruction>> create(Document&, String&& target, String&& data);
+    // For callers whose target and data are already known to be well formed, such as the parsers.
+    static Ref<ProcessingInstruction> createWithoutValidation(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();
 
     // CachedResourceClient.
@@ -47,6 +50,16 @@ public:
     const String& target() const LIFETIME_BOUND { return m_target; }
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+
+    // https://dom.spec.whatwg.org/#processinginstruction and the pseudo attribute
+    // grammar that https://www.w3.org/TR/xml-stylesheet/ defines.
+    bool hasPseudoAttributes();
+    Vector<AtomString> getAttributeNames();
+    String getAttribute(const AtomString&);
+    ExceptionOr<void> setAttribute(const AtomString&, const AtomString&);
+    void removeAttribute(const AtomString&);
+    ExceptionOr<bool> toggleAttribute(const AtomString&, std::optional<bool> force);
+    bool hasAttribute(const AtomString&);
 
     const String& localHref() const LIFETIME_BOUND { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
@@ -81,10 +94,24 @@ private:
 
     void parseStyleSheet(const String& sheet);
 
+    struct PseudoAttribute {
+        AtomString name;
+        AtomString value;
+    };
+    static std::optional<Vector<PseudoAttribute>> parsePseudoAttributes(StringView);
+
+    // Invalidated whenever the data changes, so insertion does not throw away
+    // attributes that script set.
+    void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) override;
+    void updateAttributesIfNeeded();
+    void updateDataFromAttributes();
+
     String m_target;
     String m_localHref;
     String m_title;
     String m_media;
+    Vector<PseudoAttribute> m_attributes;
+    bool m_attributesDirty { true };
     CachedResourceHandle<CachedResource> m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading { false };

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+
+description('Tests the HTML processing instruction parser setting. It ships off, but test runners turn testable settings on, so this starts by turning it off explicitly.');
+
+function parseProcessingInstruction(markup)
+{
+    const container = document.createElement('div');
+    container.innerHTML = markup;
+    return container.firstChild;
+}
+
+debug('With the setting off, the input is a bogus comment, as it was before processing instructions were parsed.');
+internals.settings.setHTMLProcessingInstructionEnabled(false);
+var node = parseProcessingInstruction('<?target data?>');
+shouldBe('node.nodeType', 'Node.COMMENT_NODE');
+shouldBeEqualToString('node.data', '?target data?');
+
+debug('');
+debug('With the setting on, it is a processing instruction.');
+internals.settings.setHTMLProcessingInstructionEnabled(true);
+node = parseProcessingInstruction('<?target data?>');
+shouldBe('node.nodeType', 'Node.PROCESSING_INSTRUCTION_NODE');
+shouldBeEqualToString('node.target', 'target');
+shouldBeEqualToString('node.data', 'data');
+
+debug('');
+debug('Whitespace ends the target, the rest is data.');
+node = parseProcessingInstruction('<?tar get?>');
+shouldBe('node.nodeType', 'Node.PROCESSING_INSTRUCTION_NODE');
+shouldBeEqualToString('node.target', 'tar');
+shouldBeEqualToString('node.data', 'get');
+
+debug('');
+debug('A character that cannot appear in a target makes it a bogus comment again, keeping the characters already consumed.');
+node = parseProcessingInstruction('<?ta=rget?>');
+shouldBe('node.nodeType', 'Node.COMMENT_NODE');
+shouldBeEqualToString('node.data', '?ta=rget?');
+
+debug('');
+debug('The xml and xml-stylesheet targets stay bogus comments.');
+node = parseProcessingInstruction('<?xml version="1.0"?>');
+shouldBe('node.nodeType', 'Node.COMMENT_NODE');
+shouldBeEqualToString('node.data', '?xml version="1.0"?');
+node = parseProcessingInstruction('<?xml-stylesheet href="style.css"?>');
+shouldBe('node.nodeType', 'Node.COMMENT_NODE');
+shouldBeEqualToString('node.data', '?xml-stylesheet href="style.css"?');
+
+debug('');
+debug('Data is optional, and a null character in the data is replaced.');
+node = parseProcessingInstruction('<?target?>');
+shouldBe('node.nodeType', 'Node.PROCESSING_INSTRUCTION_NODE');
+shouldBeEqualToString('node.target', 'target');
+shouldBeEqualToString('node.data', '');
+node = parseProcessingInstruction('<?target a\0b?>');
+shouldBe('node.nodeType', 'Node.PROCESSING_INSTRUCTION_NODE');
+shouldBeEqualToString('node.data', 'a\uFFFDb');
+
+internals.settings.setHTMLProcessingInstructionEnabled(false);
+
+</script>
+</body>
+</html>
