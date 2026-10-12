@@ -36,6 +36,13 @@ void EventLoop_setCycleProc(bool(*proc)(void*), void* opaque)
 
 void wkcRunLoopCycle()
 {
+    // Modern networking callbacks are dispatched onto WTF's main RunLoop.
+    // The legacy WKC embedder drives this cycle explicitly, so drain one
+    // RunLoop iteration here before handing control to the platform cycle
+    // callback. Without this, asynchronous cURL responses can arrive on the
+    // worker thread but never reach WebCore's loader on the main thread.
+    WTF::RunLoop::cycle();
+
     if (gCycleProc)
         gCycleProc(gCycleOpaque);
 }
