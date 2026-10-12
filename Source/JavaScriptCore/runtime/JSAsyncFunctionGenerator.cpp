@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSAsyncFunctionGenerator.h"
 
+#include "CodeBlock.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
@@ -64,6 +65,19 @@ void JSAsyncFunctionGenerator::finishCreation(VM& vm)
     ASSERT(values.size() == numberOfInternalFields);
     for (unsigned index = 0; index < values.size(); ++index)
         internalField(index).set(vm, this, values[index]);
+}
+
+std::optional<BytecodeIndex> JSAsyncFunctionGenerator::suspendedBytecodeIndex(CodeBlock& codeBlock) const
+{
+    if (int32_t suspendedState = state(); suspendedState > 0) {
+        if (size_t numberOfJumpTables = codeBlock.numberOfUnlinkedSwitchJumpTables()) {
+            const auto& jumpTable = codeBlock.unlinkedSwitchJumpTable(numberOfJumpTables - 1);
+            if (int32_t offset = jumpTable.offsetForValue(suspendedState))
+                return BytecodeIndex(offset);
+        }
+    }
+
+    return std::nullopt;
 }
 
 template<typename Visitor>
