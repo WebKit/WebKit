@@ -344,6 +344,10 @@ https://twitter.com/
 https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+https://news.yahoo.co.jp/
+    NeedsYahooVolumeSliderQuirk
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldDisableCSSSizeShorthandQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/

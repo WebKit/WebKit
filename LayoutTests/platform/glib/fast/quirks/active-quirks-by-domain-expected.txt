@@ -334,6 +334,11 @@ https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldPreventTouchEndDispatchQuirk
+https://news.yahoo.co.jp/
+    NeedsYahooVolumeSliderQuirk
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldDisableCSSSizeShorthandQuirk
+    ShouldPreventTouchEndDispatchQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/

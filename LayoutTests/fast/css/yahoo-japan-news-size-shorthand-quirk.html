@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<!-- Test for the news.yahoo.co.jp size shorthand quirk (rdar://189631518). -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+window.internals?.setTopDocumentURLForQuirks("https://news.yahoo.co.jp/");
+</script>
+</head>
+<body>
+<script>
+test_valid_rule("#target { size: 0.75rem; }", "#target { }");
+test_valid_rule("#target { min-size: 12px; max-size: 12px; }", "#target { }");
+test_valid_rule("@page { size: a4; }");
+</script>
+</body>
+</html>

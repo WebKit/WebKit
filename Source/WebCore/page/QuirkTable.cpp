@@ -1032,6 +1032,10 @@ static constexpr Quirk fullTable[] = {
         .behaviors = { shouldPreventTouchEndDispatchQuirk.when(elementMatchesSelector(onYahooButton)) },
         .isAvailable = touchEvents },
 
+    // news.yahoo.co.jp rdar://189631518
+    { .matches = "*://news.yahoo.co.jp/*"_s,
+        .behaviors = { shouldDisableCSSSizeShorthandQuirk } },
+
     // news.ycombinator.com: rdar://127246368
     { .matches = "*://news.ycombinator.com/*"_s,
         .behaviors = { shouldIgnoreTextAutoSizingQuirk } },
