@@ -43,6 +43,7 @@
 #include "Microtask.h"
 #include "MicrotaskQueueInlines.h"
 #include "ObjectConstructor.h"
+#include "PropertyNameArray.h"
 #include "VMInlines.h"
 
 namespace JSC {
@@ -55,6 +56,8 @@ static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncAny);
 static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncRace);
 static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncAll);
 static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncAllSettled);
+static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncAllKeyed);
+static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncAllSettledKeyed);
 static JSC_DECLARE_HOST_FUNCTION(promiseConstructorFuncIsPromise);
 
 }
@@ -108,6 +111,11 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
 
     if (Options::usePromiseIsPromise())
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isPromise"_s, promiseConstructorFuncIsPromise, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+
+    if (Options::usePromiseAllKeyed()) {
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("allKeyed"_s, promiseConstructorFuncAllKeyed, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("allSettledKeyed"_s, promiseConstructorFuncAllSettledKeyed, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    }
 }
 
 JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncResolve, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -565,17 +573,40 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAll, (JSGlobalObject* globalObjec
     return JSValue::encode(promise);
 }
 
+static JSPromiseCombinatorsContext* takePromiseAllElementContext(VM& vm, JSFunctionWithFields* callee)
+{
+    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllContext));
+    if (!context) [[unlikely]]
+        return nullptr;
+    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, jsNull());
+    return context;
+}
+
+static JSPromiseCombinatorsContext* takePromiseAllSettledElementContext(VM& vm, JSFunctionWithFields* callee)
+{
+    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    if (!context) [[unlikely]]
+        return nullptr;
+
+    auto* other = dynamicDowncast<JSFunctionWithFields>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
+    if (!other) [[unlikely]]
+        return nullptr;
+
+    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
+    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
+    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
+    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
+    return context;
+}
+
 JSC_DEFINE_HOST_FUNCTION(promiseAllFulfillFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllContext));
+    auto* context = takePromiseAllElementContext(vm, uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
-
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, jsNull());
 
     auto* globalContext = context->globalContext();
     auto* promise = uncheckedDowncast<JSPromise>(globalContext->promise());
@@ -882,19 +913,9 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledFulfillFunction, (JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* context = takePromiseAllSettledElementContext(vm, uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
-
-    auto* other = dynamicDowncast<JSFunctionWithFields>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
-    if (!other) [[unlikely]]
-        return JSValue::encode(jsUndefined());
-
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
     auto* globalContext = context->globalContext();
     auto* promise = uncheckedDowncast<JSPromise>(globalContext->promise());
@@ -923,19 +944,9 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledRejectFunction, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* context = takePromiseAllSettledElementContext(vm, uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
-
-    auto* other = dynamicDowncast<JSFunctionWithFields>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
-    if (!other) [[unlikely]]
-        return JSValue::encode(jsUndefined());
-
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
     auto* globalContext = context->globalContext();
     auto* promise = uncheckedDowncast<JSPromise>(globalContext->promise());
@@ -964,19 +975,9 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowFulfillFunction, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* context = takePromiseAllSettledElementContext(vm, uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
-
-    auto* other = dynamicDowncast<JSFunctionWithFields>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
-    if (!other) [[unlikely]]
-        return JSValue::encode(jsUndefined());
-
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
     auto* globalContext = context->globalContext();
     auto* values = uncheckedDowncast<JSArray>(globalContext->values());
@@ -1009,19 +1010,9 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowRejectFunction, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-    auto* context = dynamicDowncast<JSPromiseCombinatorsContext>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* context = takePromiseAllSettledElementContext(vm, uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
-
-    auto* other = dynamicDowncast<JSFunctionWithFields>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
-    if (!other) [[unlikely]]
-        return JSValue::encode(jsUndefined());
-
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    callee->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
-    other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
     auto* globalContext = context->globalContext();
     auto* values = uncheckedDowncast<JSArray>(globalContext->values());
@@ -1398,6 +1389,443 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnySlowRejectFunction, (JSGlobalObject* globalOb
         call(globalObject, reject, rejectCallData, jsUndefined(), ArgList { rejectArguments.data(), rejectArguments.size() });
     }
 
+    return JSValue::encode(jsUndefined());
+}
+
+// Promise.allKeyed / Promise.allSettledKeyed implementation
+// https://tc39.es/proposal-await-dictionary/
+
+enum class PromiseKeyedCombinatorVariant : uint8_t { All, AllSettled };
+
+static constexpr uint64_t elementKeyIsIndexFlag = 1ULL << 32;
+static_assert(static_cast<uint64_t>(MAX_ARRAY_INDEX) < elementKeyIsIndexFlag);
+
+static constexpr ASCIILiteral promiseKeyedCombinatorNotObjectMessage(PromiseKeyedCombinatorVariant variant)
+{
+    return variant == PromiseKeyedCombinatorVariant::All ? "Promise.allKeyed requires that the first argument be an object"_s : "Promise.allSettledKeyed requires that the first argument be an object"_s;
+}
+
+static ALWAYS_INLINE uint64_t defineKeyedPromiseCombinatorElement(JSGlobalObject* globalObject, JSObject* resultObject, PropertyName propertyName)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        resultObject->putDirectIndex(globalObject, index.value(), jsUndefined());
+        RETURN_IF_EXCEPTION(scope, 0);
+        return elementKeyIsIndexFlag | index.value();
+    }
+
+    PutPropertySlot slot(resultObject);
+    resultObject->putDirect(vm, propertyName, jsUndefined(), slot);
+    ASSERT(slot.type() == PutPropertySlot::NewProperty);
+    PropertyOffset offset = slot.cachedOffset();
+    ASSERT(isValidOffset(offset));
+    ASSERT(static_cast<uint64_t>(offset) < elementKeyIsIndexFlag);
+    return static_cast<uint64_t>(offset);
+}
+
+static ALWAYS_INLINE void storeKeyedPromiseCombinatorElement(JSGlobalObject* globalObject, JSObject* resultObject, uint64_t elementKey, JSValue settled)
+{
+    VM& vm = globalObject->vm();
+    if (elementKey & elementKeyIsIndexFlag) {
+        resultObject->putDirectIndex(globalObject, static_cast<uint32_t>(elementKey), settled);
+        return;
+    }
+    resultObject->putDirectOffset(vm, static_cast<PropertyOffset>(elementKey), settled);
+}
+
+void resolveKeyedPromiseCombinatorElement(JSGlobalObject* globalObject, JSPromiseCombinatorsGlobalContext* globalContext, uint64_t elementKey, JSValue settled)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* resultObject = asObject(globalContext->values());
+    storeKeyedPromiseCombinatorElement(globalObject, resultObject, elementKey, settled);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    uint64_t count = globalContext->remainingElementsCount() - 1;
+    globalContext->setRemainingElementsCount(count);
+    if (count)
+        return;
+
+    auto* promise = uncheckedDowncast<JSPromise>(globalContext->promise());
+    scope.release();
+    promise->resolve(globalObject, vm, resultObject);
+}
+
+static void resolveKeyedPromiseCombinatorElementSlow(JSGlobalObject* globalObject, JSPromiseCombinatorsGlobalContext* globalContext, uint64_t elementKey, JSValue settled)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* resultObject = asObject(globalContext->values());
+    storeKeyedPromiseCombinatorElement(globalObject, resultObject, elementKey, settled);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    uint64_t count = globalContext->remainingElementsCount() - 1;
+    globalContext->setRemainingElementsCount(count);
+    if (count)
+        return;
+
+    JSValue resolve = globalContext->promise();
+    MarkedArgumentBuffer resolveArguments;
+    resolveArguments.append(resultObject);
+    ASSERT(!resolveArguments.hasOverflowed());
+    auto resolveCallData = getCallDataInline(resolve);
+    scope.release();
+    call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+}
+
+// https://tc39.es/proposal-await-dictionary/#sec-performpromiseallkeyed steps 1 and 5.a-5.b.ii.
+static ALWAYS_INLINE void forEachKeyedPromiseCombinatorElement(JSGlobalObject* globalObject, JSObject* promises, JSObject* resultObject, NOESCAPE const Invocable<void(JSValue, uint64_t)> auto& callback)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    PropertyNameArrayBuilder propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
+    promises->methodTable()->getOwnPropertyNames(promises, globalObject, propertyNames, DontEnumPropertiesMode::Include);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    for (const auto& propertyName : propertyNames) {
+        PropertySlot slot(promises, PropertySlot::InternalMethodType::GetOwnProperty);
+        bool hasProperty = promises->getOwnPropertySlotInline(globalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!hasProperty || (slot.attributes() & PropertyAttribute::DontEnum))
+            continue;
+
+        JSValue value;
+        if (!slot.isTaintedByOpaqueObject()) [[likely]]
+            value = slot.getValue(globalObject, propertyName);
+        else
+            value = promises->get(globalObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        uint64_t elementKey = defineKeyedPromiseCombinatorElement(globalObject, resultObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        callback(value, elementKey);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
+static std::tuple<JSFunctionWithFields*, JSFunctionWithFields*> createPromiseAllSettledKeyedElementFunctions(VM& vm, JSGlobalObject* globalObject, JSPromiseCombinatorsContext* context, NativeExecutable* fulfillExecutable, NativeExecutable* rejectExecutable)
+{
+    auto* onFulfilled = JSFunctionWithFields::create(vm, globalObject, fulfillExecutable);
+    onFulfilled->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, context);
+
+    auto* onRejected = JSFunctionWithFields::create(vm, globalObject, rejectExecutable);
+    onRejected->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, context);
+
+    onFulfilled->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, onRejected);
+    onRejected->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, onFulfilled);
+    return { onFulfilled, onRejected };
+}
+
+template<PromiseKeyedCombinatorVariant variant>
+static JSObject* promiseAllKeyedSlow(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue thisValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto [promise, resolve, reject] = JSPromise::newPromiseCapability(globalObject, thisValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto callReject = [&](JSValue exception) -> void {
+        MarkedArgumentBuffer rejectArguments;
+        rejectArguments.append(exception);
+        ASSERT(!rejectArguments.hasOverflowed());
+        auto rejectCallData = getCallDataInline(reject);
+        scope.release();
+        call(globalObject, reject, rejectCallData, jsUndefined(), rejectArguments);
+    };
+    auto callRejectWithScopeException = [&]() -> void {
+        Exception* exception = scope.exception();
+        ASSERT(exception);
+        TRY_CLEAR_EXCEPTION(scope, void());
+        callReject(exception->value());
+    };
+
+    JSValue promiseResolveValue = thisValue.get(globalObject, vm.propertyNames->resolve);
+    if (scope.exception()) [[unlikely]] {
+        callRejectWithScopeException();
+        return promise;
+    }
+
+    if (!promiseResolveValue.isCallable()) [[unlikely]] {
+        callReject(createTypeError(globalObject, "Promise resolve is not a function"_s));
+        return promise;
+    }
+    CallData promiseResolveCallData = getCallDataInline(promiseResolveValue);
+    ASSERT(promiseResolveCallData.type != CallData::Type::None);
+
+    JSValue promisesValue = callFrame->argument(0);
+    if (!promisesValue.isObject()) [[unlikely]] {
+        callReject(createTypeError(globalObject, promiseKeyedCombinatorNotObjectMessage(variant)));
+        return promise;
+    }
+    JSObject* promises = asObject(promisesValue);
+
+    std::optional<CachedCall> cachedCallHolder;
+    CachedCall* cachedCall = nullptr;
+    if (promiseResolveCallData.type == CallData::Type::JS) [[likely]] {
+        cachedCallHolder.emplace(globalObject, uncheckedDowncast<JSFunction>(promiseResolveValue), 1);
+        if (scope.exception()) [[unlikely]] {
+            callRejectWithScopeException();
+            return promise;
+        }
+        cachedCall = &cachedCallHolder.value();
+    }
+
+    JSObject* resultObject = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+
+    // As in promiseAllSettledSlow, the promise slot of the global context holds |resolve| for the element closures.
+    JSPromiseCombinatorsGlobalContext* globalContext = JSPromiseCombinatorsGlobalContext::create(vm, resolve, resultObject, 1);
+
+    forEachKeyedPromiseCombinatorElement(globalObject, promises, resultObject, [&](JSValue value, uint64_t elementKey) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        JSValue nextPromise;
+        if (cachedCall) [[likely]] {
+            nextPromise = cachedCall->callWithArguments(globalObject, thisValue, value);
+            RETURN_IF_EXCEPTION(scope, void());
+        } else {
+            MarkedArgumentBuffer arguments;
+            arguments.append(value);
+            ASSERT(!arguments.hasOverflowed());
+            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, arguments);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+        ASSERT(nextPromise);
+
+        globalContext->setRemainingElementsCount(globalContext->remainingElementsCount() + 1);
+
+        JSPromiseCombinatorsContext* context = JSPromiseCombinatorsContext::create(vm, globalContext, elementKey);
+
+        JSObject* onFulfilled;
+        JSObject* onRejected;
+        if constexpr (variant == PromiseKeyedCombinatorVariant::All) {
+            auto* resolveElement = JSFunctionWithFields::create(vm, globalObject, vm.promiseAllKeyedSlowFulfillFunctionExecutable());
+            resolveElement->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, context);
+            onFulfilled = resolveElement;
+            onRejected = reject;
+        } else
+            std::tie(onFulfilled, onRejected) = createPromiseAllSettledKeyedElementFunctions(vm, globalObject, context, vm.promiseAllSettledKeyedSlowFulfillFunctionExecutable(), vm.promiseAllSettledKeyedSlowRejectFunctionExecutable());
+
+        JSValue then = nextPromise.get(globalObject, vm.propertyNames->then);
+        RETURN_IF_EXCEPTION(scope, void());
+        CallData thenCallData = getCallDataInline(then);
+        if (thenCallData.type == CallData::Type::None) [[unlikely]] {
+            throwTypeError(globalObject, scope, "then is not a function"_s);
+            return;
+        }
+
+        MarkedArgumentBuffer thenArguments;
+        thenArguments.append(onFulfilled);
+        thenArguments.append(onRejected);
+        ASSERT(!thenArguments.hasOverflowed());
+        scope.release();
+        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+    });
+
+    if (scope.exception()) [[unlikely]] {
+        callRejectWithScopeException();
+        return promise;
+    }
+
+    uint64_t count = globalContext->remainingElementsCount() - 1;
+    globalContext->setRemainingElementsCount(count);
+    if (!count) {
+        MarkedArgumentBuffer resolveArguments;
+        resolveArguments.append(resultObject);
+        ASSERT(!resolveArguments.hasOverflowed());
+        auto resolveCallData = getCallDataInline(resolve);
+        scope.release();
+        call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+        if (scope.exception()) [[unlikely]] {
+            callRejectWithScopeException();
+            return promise;
+        }
+    }
+
+    return promise;
+}
+
+template<PromiseKeyedCombinatorVariant variant>
+static ALWAYS_INLINE EncodedJSValue promiseAllKeyedImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    constexpr InternalMicrotask resolveJob = variant == PromiseKeyedCombinatorVariant::All ? InternalMicrotask::PromiseAllKeyedResolveJob : InternalMicrotask::PromiseAllSettledKeyedResolveJob;
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "|this| is not an object"_s);
+
+    if (!isFastPromiseConstructor(globalObject, thisValue)) [[unlikely]]
+        RELEASE_AND_RETURN(scope, JSValue::encode(promiseAllKeyedSlow<variant>(globalObject, callFrame, thisValue)));
+
+    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
+    auto callReject = [&]() -> void {
+        Exception* exception = scope.exception();
+        ASSERT(exception);
+        TRY_CLEAR_EXCEPTION(scope, void());
+        scope.release();
+        promise->reject(vm, exception);
+    };
+
+    JSValue promisesValue = callFrame->argument(0);
+    if (!promisesValue.isObject()) [[unlikely]] {
+        throwTypeError(globalObject, scope, promiseKeyedCombinatorNotObjectMessage(variant));
+        callReject();
+        return JSValue::encode(promise);
+    }
+    JSObject* promises = asObject(promisesValue);
+
+    JSObject* resultObject = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+
+    JSPromiseCombinatorsGlobalContext* globalContext = JSPromiseCombinatorsGlobalContext::create(vm, promise, resultObject, 1);
+
+    JSFunction* firstRejectFunction = nullptr;
+
+    forEachKeyedPromiseCombinatorElement(globalObject, promises, resultObject, [&](JSValue value, uint64_t elementKey) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        if (canSkipIntermediatePromise(globalObject, value)) {
+            globalContext->setRemainingElementsCount(globalContext->remainingElementsCount() + 1);
+            scope.release();
+            globalObject->queueMicrotask(vm, resolveJob, static_cast<uint8_t>(JSPromise::Status::Fulfilled), globalContext, value, jsNumber(elementKey));
+            return;
+        }
+
+        JSPromise* nextPromise = JSPromise::resolvedPromise(globalObject, value);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        globalContext->setRemainingElementsCount(globalContext->remainingElementsCount() + 1);
+
+        if (nextPromise->isThenFastAndNonObservable()) [[likely]] {
+            auto* constructor = promiseSpeciesConstructor(globalObject, nextPromise);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (constructor == globalObject->promiseConstructor()) [[likely]] {
+                scope.release();
+                nextPromise->performPromiseThenWithInternalMicrotask(vm, resolveJob, globalContext, jsNumber(elementKey));
+                return;
+            }
+        }
+
+        JSValue then = nextPromise->get(globalObject, vm.propertyNames->then);
+        RETURN_IF_EXCEPTION(scope, void());
+        CallData thenCallData = getCallDataInline(then);
+        if (thenCallData.type == CallData::Type::None) [[unlikely]] {
+            throwTypeError(globalObject, scope, "then is not a function"_s);
+            return;
+        }
+
+        JSPromiseCombinatorsContext* context = JSPromiseCombinatorsContext::create(vm, globalContext, elementKey);
+
+        JSObject* onFulfilled;
+        JSObject* onRejected;
+        if constexpr (variant == PromiseKeyedCombinatorVariant::All) {
+            auto* resolveElement = JSFunctionWithFields::create(vm, globalObject, vm.promiseAllKeyedFulfillFunctionExecutable());
+            resolveElement->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, context);
+            onFulfilled = resolveElement;
+            if (!firstRejectFunction)
+                firstRejectFunction = promise->createFirstRejectFunction(vm, globalObject);
+            onRejected = firstRejectFunction;
+        } else
+            std::tie(onFulfilled, onRejected) = createPromiseAllSettledKeyedElementFunctions(vm, globalObject, context, vm.promiseAllSettledKeyedFulfillFunctionExecutable(), vm.promiseAllSettledKeyedRejectFunctionExecutable());
+
+        MarkedArgumentBuffer thenArguments;
+        thenArguments.append(onFulfilled);
+        thenArguments.append(onRejected);
+        ASSERT(!thenArguments.hasOverflowed());
+        scope.release();
+        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+    });
+
+    if (scope.exception()) [[unlikely]] {
+        callReject();
+        return JSValue::encode(promise);
+    }
+
+    uint64_t count = globalContext->remainingElementsCount() - 1;
+    globalContext->setRemainingElementsCount(count);
+    if (!count) {
+        scope.release();
+        promise->resolve(globalObject, vm, resultObject);
+        if (scope.exception()) [[unlikely]] {
+            callReject();
+            return JSValue::encode(promise);
+        }
+    }
+
+    return JSValue::encode(promise);
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAllKeyed, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return promiseAllKeyedImpl<PromiseKeyedCombinatorVariant::All>(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAllSettledKeyed, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return promiseAllKeyedImpl<PromiseKeyedCombinatorVariant::AllSettled>(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseAllKeyedFulfillFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* context = takePromiseAllElementContext(globalObject->vm(), uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
+    if (!context) [[unlikely]]
+        return JSValue::encode(jsUndefined());
+    resolveKeyedPromiseCombinatorElement(globalObject, context->globalContext(), context->index(), callFrame->argument(0));
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseAllKeyedSlowFulfillFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* context = takePromiseAllElementContext(globalObject->vm(), uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
+    if (!context) [[unlikely]]
+        return JSValue::encode(jsUndefined());
+    resolveKeyedPromiseCombinatorElementSlow(globalObject, context->globalContext(), context->index(), callFrame->argument(0));
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseAllSettledKeyedFulfillFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* context = takePromiseAllSettledElementContext(globalObject->vm(), uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
+    if (!context) [[unlikely]]
+        return JSValue::encode(jsUndefined());
+    resolveKeyedPromiseCombinatorElement(globalObject, context->globalContext(), context->index(), createPromiseAllSettledFulfilledResult(globalObject, callFrame->argument(0)));
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseAllSettledKeyedRejectFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* context = takePromiseAllSettledElementContext(globalObject->vm(), uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
+    if (!context) [[unlikely]]
+        return JSValue::encode(jsUndefined());
+    resolveKeyedPromiseCombinatorElement(globalObject, context->globalContext(), context->index(), createPromiseAllSettledRejectedResult(globalObject, callFrame->argument(0)));
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseAllSettledKeyedSlowFulfillFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* context = takePromiseAllSettledElementContext(globalObject->vm(), uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
+    if (!context) [[unlikely]]
+        return JSValue::encode(jsUndefined());
+    resolveKeyedPromiseCombinatorElementSlow(globalObject, context->globalContext(), context->index(), createPromiseAllSettledFulfilledResult(globalObject, callFrame->argument(0)));
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(promiseAllSettledKeyedSlowRejectFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    auto* context = takePromiseAllSettledElementContext(globalObject->vm(), uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee()));
+    if (!context) [[unlikely]]
+        return JSValue::encode(jsUndefined());
+    resolveKeyedPromiseCombinatorElementSlow(globalObject, context->globalContext(), context->index(), createPromiseAllSettledRejectedResult(globalObject, callFrame->argument(0)));
     return JSValue::encode(jsUndefined());
 }
 
