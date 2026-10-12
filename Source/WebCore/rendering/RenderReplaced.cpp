@@ -684,17 +684,29 @@ static LayoutRect placeConcreteObject(const Style::ComputedStyle& style, const L
     return { contentRect.location() + LayoutSize { xOffset, yOffset }, concreteObjectSize };
 }
 
-LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) const
+NaturalDimensions RenderReplaced::zoomedNaturalDimensions() const
+{
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+}
+
+LayoutRect RenderReplaced::replacedContentRect() const
+{
+    return replacedContentRect(zoomedNaturalDimensions());
+}
+
+LayoutRect RenderReplaced::replacedContentRect(NaturalDimensions zoomedNaturalDimensions) const
 {
     LayoutRect contentRect = contentBoxRect();
-    if (intrinsicSize.isEmpty())
-        return contentRect;
+    if (zoomedNaturalDimensions.width && zoomedNaturalDimensions.height) {
+        FloatSize naturalSize { *zoomedNaturalDimensions.width, *zoomedNaturalDimensions.height };
+        if (naturalSize.isEmpty())
+            return contentRect;
 
-    LayoutSize effectiveIntrinsicSize = intrinsicSize;
-    if (auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize)))
-        effectiveIntrinsicSize = LayoutSize(viewBox->size());
+        if (auto viewBox = resolvedObjectViewBox(naturalSize))
+            zoomedNaturalDimensions = NaturalDimensions::fixed(FloatSize { LayoutSize(viewBox->size()) });
+    }
 
-    auto concreteObjectSize = ReplacedElementSizing { contentRect.size(), style().objectFit() }.resolve(NaturalDimensions::fixed(FloatSize { effectiveIntrinsicSize }));
+    auto concreteObjectSize = ReplacedElementSizing { contentRect.size(), style().objectFit() }.resolve(zoomedNaturalDimensions);
 
     return placeConcreteObject(style(), contentRect, LayoutSize { concreteObjectSize.size() });
 }

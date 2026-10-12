@@ -118,6 +118,7 @@ protected:
 #endif
 
     bool shouldInvalidateContentWidths() const final;
+    NaturalDimensions zoomedNaturalDimensions() const override;
     RenderReplaced* embeddedSVGRoot() const final;
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 

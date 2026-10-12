@@ -38,6 +38,7 @@
 #include "LocalFrameView.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerEnums.h"
+#include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
@@ -205,6 +206,13 @@ LayoutSize RenderVideo::posterAwareIntrinsicSize() const
     return intrinsicSize();
 }
 
+NaturalDimensions RenderVideo::zoomedNaturalDimensions() const
+{
+    if (protect(videoElement())->shouldDisplayPosterImage())
+        return RenderImage::zoomedNaturalDimensions();
+    return RenderReplaced::zoomedNaturalDimensions();
+}
+
 IntRect RenderVideo::videoBox() const
 {
     Ref videoElement = this->videoElement();
@@ -223,7 +231,7 @@ IntRect RenderVideo::videoBox() const
     if (!style().objectViewBox().isNone() && videoElement->isFullscreen() && !videoElement->isChangingVideoFullscreenMode())
         return snappedIntRect(contentBoxRect());
 
-    return snappedIntRect(replacedContentRect(intrinsicSize));
+    return snappedIntRect(replacedContentRect());
 }
 
 bool RenderVideo::isBypassingObjectViewBoxForPictureInPicture() const
@@ -319,8 +327,6 @@ LayoutRect RenderVideo::inlineVideoBox() const
     if (mediaPlayer && mediaPlayer->shouldIgnoreIntrinsicSize())
         return contentBoxRect();
 
-    LayoutSize intrinsicSize = posterAwareIntrinsicSize();
-
     // For object-fit: cover, replacedContentRect() intentionally returns a rect larger
     // than contentBoxRect() (grown/centered to crop-to-fill) — correct for painting/
     // compositing, where the overflow is clipped separately, but wrong as a transition
@@ -328,7 +334,7 @@ LayoutRect RenderVideo::inlineVideoBox() const
     // frame with no clip layer of its own. Intersecting with contentBoxRect() clamps cover's
     // overshoot to the true visible box; it's a no-op for fill/contain/none, whose rects
     // are already contained within (or equal to) contentBoxRect().
-    LayoutRect result = replacedContentRect(intrinsicSize);
+    LayoutRect result = replacedContentRect();
     result.intersect(contentBoxRect());
 
     // Snap to the same integer CSS-pixel grid as videoBox() (which bounds the steady-state
