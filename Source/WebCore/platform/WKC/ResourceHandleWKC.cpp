@@ -9,6 +9,7 @@
 #include "config.h"
 #include "SecurityOrigin.h"
 #include "ResourceHandle.h"
+#include "FormData.h"
 
 #if USE(CURL)
 
@@ -315,9 +316,20 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const
     data.clear();
     response = ResourceResponse();
 
-    if (request.httpBody()) {
-        error = ResourceError(CURLE_UNSUPPORTED_PROTOCOL, request.url(), ResourceError::Type::General);
-        return;
+    // Synchronous XHR and form-backed requests can carry a request body too.
+    // Support in-memory body elements here. File/blob-backed elements still need
+    // an asynchronous upload stream, so fail explicitly rather than silently
+    // flattening them into an incomplete request.
+    Vector<uint8_t> requestBodyBytes;
+    auto requestBody = request.httpBody();
+    if (requestBody) {
+        for (const auto& element : requestBody->elements()) {
+            if (!std::get_if<Vector<uint8_t>>(&element.data)) {
+                error = ResourceError(CURLE_READ_ERROR, request.url(), ResourceError::Type::General);
+                return;
+            }
+        }
+        requestBodyBytes = requestBody->flatten();
     }
 
     CurlHandle curl;
@@ -332,6 +344,20 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const
         curl.enableHttpHeadRequest();
     else
         curl.setHttpCustomRequest(method);
+
+    if (requestBody) {
+        const char* bodyData = requestBodyBytes.isEmpty()
+            ? ""
+            : reinterpret_cast<const char*>(requestBodyBytes.data());
+        auto optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDS, bodyData);
+        if (optionResult == CURLE_OK)
+            optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDSIZE_LARGE, static_cast<curl_off_t>(requestBodyBytes.size()));
+        if (optionResult != CURLE_OK) {
+            data.clear();
+            error = ResourceError(static_cast<int>(optionResult), request.url(), ResourceError::Type::General);
+            return;
+        }
+    }
 
     SynchronousLoadContext context { &data, { } };
     curl.setWriteCallbackFunction(synchronousWriteCallback, &context);
