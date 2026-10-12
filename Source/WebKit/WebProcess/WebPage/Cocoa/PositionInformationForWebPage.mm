@@ -84,7 +84,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
-#if ENABLE(SPATIAL_PORTAL)
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
 #import <WebCore/SpatialPortalController.h>
 #endif
 
@@ -842,7 +842,7 @@ Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData> pos
         info.isInteractiveModel = modelElement->model() && modelElement->isInteractive();
 #endif
 
-#if ENABLE(SPATIAL_PORTAL)
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
     if (!info.isInteractiveModel) {
         RefPtr element = dynamicDowncast<WebCore::Element>(hitTestNode);
         info.isInteractiveModel = !!WebCore::SpatialPortalController::interactiveControllerForHitTestedElement(element);
