@@ -77,7 +77,7 @@ public:
     }
 
     // Called with the lock held.
-    void NODELETE threadIsStopping(const AbstractLocker&) final
+    void LEGACY_NODELETE threadIsStopping(const AbstractLocker&) final
     {
         ASSERT(m_pool);
         m_pool->m_numberOfActiveWorkers--;
@@ -90,7 +90,7 @@ public:
         return Ref { *m_pool }->shouldSleep(locker);
     }
 
-    ASCIILiteral NODELETE name() const final
+    ASCIILiteral LEGACY_NODELETE name() const final
     {
         ASSERT(m_pool);
         return m_pool->name();

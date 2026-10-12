@@ -53,7 +53,7 @@ public:
     }
 
     // Deleting ThreadSafeWeakPtrControlBlock does not delete a user object.
-    SUPPRESS_NODELETE void NODELETE weakDeref()
+    SUPPRESS_NODELETE void LEGACY_NODELETE weakDeref()
     {
         bool shouldDeleteControlBlock { false };
         {
@@ -396,7 +396,7 @@ public:
 protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
     // Creating & destroying ThreadSafeWeakPtrControlBlock does not delete an user object.
-    SUPPRESS_NODELETE ThreadSafeWeakPtrControlBlock& NODELETE controlBlock() const
+    SUPPRESS_NODELETE ThreadSafeWeakPtrControlBlock& LEGACY_NODELETE controlBlock() const
     {
         // If we ever decided there was a lot of contention here we could have some lock bits in m_bits but
         // that seems unlikely since this is a one-way street. Once we add a controlBlock we don't go back

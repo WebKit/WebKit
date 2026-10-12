@@ -180,7 +180,7 @@ static void initMachExceptionHandlerThread()
     dispatch_resume(source);
 }
 
-static exception_mask_t NODELETE toMachMask(Signal signal)
+static exception_mask_t LEGACY_NODELETE toMachMask(Signal signal)
 {
     switch (signal) {
     case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
@@ -192,7 +192,7 @@ static exception_mask_t NODELETE toMachMask(Signal signal)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Signal NODELETE fromMachException(exception_type_t type)
+static Signal LEGACY_NODELETE fromMachException(exception_type_t type)
 {
     switch (type) {
     case EXC_BAD_ACCESS: return Signal::AccessFault;
@@ -423,7 +423,7 @@ inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline Signal NODELETE fromSystemSignal(int signal)
+inline Signal LEGACY_NODELETE fromSystemSignal(int signal)
 {
     switch (signal) {
     case SIGSEGV: return Signal::AccessFault;
@@ -439,7 +439,7 @@ inline Signal NODELETE fromSystemSignal(int signal)
     }
 }
 
-inline size_t NODELETE offsetForSystemSignal(int sig)
+inline size_t LEGACY_NODELETE offsetForSystemSignal(int sig)
 {
     Signal signal = fromSystemSignal(sig);
     return static_cast<size_t>(signal) + (sig == SIGBUS);

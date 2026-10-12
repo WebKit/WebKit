@@ -271,7 +271,7 @@ public:
 
     size_t length() const { return m_map.size(); }
 
-    Ref<Value> NODELETE get(size_t index) const;
+    Ref<Value> LEGACY_NODELETE get(size_t index) const;
 
 protected:
     ~ArrayBase();

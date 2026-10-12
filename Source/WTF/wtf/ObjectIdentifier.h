@@ -39,7 +39,7 @@ struct ObjectIdentifierThreadSafeAccessTraits {
 };
 
 struct ObjectIdentifierMainThreadAccessTraits {
-    WTF_EXPORT_PRIVATE static uint64_t NODELETE generateIdentifierInternal();
+    WTF_EXPORT_PRIVATE static uint64_t LEGACY_NODELETE generateIdentifierInternal();
 };
 
 // Extracted from ObjectIdentifierGeneric to avoid binary bloat.

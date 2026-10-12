@@ -80,22 +80,22 @@ public:
 
     bool contains(char16_t character) const { return m_string.contains(character); }
     bool contains(ASCIILiteral literal) const { return m_string.contains(literal); }
-    bool NODELETE contains(StringView) const;
-    bool NODELETE containsIgnoringASCIICase(StringView) const;
+    bool LEGACY_NODELETE contains(StringView) const;
+    bool LEGACY_NODELETE containsIgnoringASCIICase(StringView) const;
 
     size_t find(char16_t character, size_t start = 0) const { return m_string.find(character, start); }
     size_t find(ASCIILiteral literal, size_t start = 0) const { return m_string.find(literal, start); }
-    size_t NODELETE find(StringView, size_t start = 0) const;
-    size_t NODELETE findIgnoringASCIICase(StringView) const;
-    size_t NODELETE findIgnoringASCIICase(StringView, size_t start) const;
+    size_t LEGACY_NODELETE find(StringView, size_t start = 0) const;
+    size_t LEGACY_NODELETE findIgnoringASCIICase(StringView) const;
+    size_t LEGACY_NODELETE findIgnoringASCIICase(StringView, size_t start) const;
     size_t find(CodeUnitMatchFunction matchFunction, size_t start = 0) const { return m_string.find(matchFunction, start); }
 
-    bool NODELETE startsWith(StringView) const;
-    bool NODELETE startsWithIgnoringASCIICase(StringView) const;
+    bool LEGACY_NODELETE startsWith(StringView) const;
+    bool LEGACY_NODELETE startsWithIgnoringASCIICase(StringView) const;
     bool startsWith(char16_t character) const { return m_string.startsWith(character); }
 
-    bool NODELETE endsWith(StringView) const;
-    bool NODELETE endsWithIgnoringASCIICase(StringView) const;
+    bool LEGACY_NODELETE endsWith(StringView) const;
+    bool LEGACY_NODELETE endsWithIgnoringASCIICase(StringView) const;
     bool endsWith(char16_t character) const { return m_string.endsWith(character); }
 
     WTF_EXPORT_PRIVATE AtomString convertToASCIILowercase() const;
@@ -150,10 +150,10 @@ inline bool operator==(const AtomString& a, ASCIILiteral b) { return WTF::equal(
 inline bool operator==(const AtomString& a, const Vector<char16_t>& b) { return a.impl() && equal(a.impl(), b.span()); }
 inline bool operator==(const AtomString& a, const String& b) { return equal(a.impl(), b.impl()); }
 
-bool NODELETE equalIgnoringASCIICase(const AtomString&, const AtomString&);
-bool NODELETE equalIgnoringASCIICase(const AtomString&, const String&);
-bool NODELETE equalIgnoringASCIICase(const String&, const AtomString&);
-bool NODELETE equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
+bool LEGACY_NODELETE equalIgnoringASCIICase(const AtomString&, const AtomString&);
+bool LEGACY_NODELETE equalIgnoringASCIICase(const AtomString&, const String&);
+bool LEGACY_NODELETE equalIgnoringASCIICase(const String&, const AtomString&);
+bool LEGACY_NODELETE equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
 
 bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 bool startsWithLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
@@ -299,22 +299,22 @@ inline bool startsWithLettersIgnoringASCIICase(const AtomString& string, ASCIILi
     return startsWithLettersIgnoringASCIICase(string.string(), literal);
 }
 
-inline bool NODELETE equalIgnoringASCIICase(const AtomString& a, const AtomString& b)
+inline bool LEGACY_NODELETE equalIgnoringASCIICase(const AtomString& a, const AtomString& b)
 {
     return equalIgnoringASCIICase(a.string(), b.string());
 }
 
-inline bool NODELETE equalIgnoringASCIICase(const AtomString& a, const String& b)
+inline bool LEGACY_NODELETE equalIgnoringASCIICase(const AtomString& a, const String& b)
 {
     return equalIgnoringASCIICase(a.string(), b);
 }
 
-inline bool NODELETE equalIgnoringASCIICase(const String& a, const AtomString& b)
+inline bool LEGACY_NODELETE equalIgnoringASCIICase(const String& a, const AtomString& b)
 {
     return equalIgnoringASCIICase(a, b.string());
 }
 
-inline bool NODELETE equalIgnoringASCIICase(const AtomString& a, ASCIILiteral b)
+inline bool LEGACY_NODELETE equalIgnoringASCIICase(const AtomString& a, ASCIILiteral b)
 {
     return equalIgnoringASCIICase(a.string(), b);
 }

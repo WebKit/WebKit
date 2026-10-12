@@ -36,7 +36,7 @@
 namespace WTF {
 
 class ThreadLikeAssertion;
-WTF_EXPORT_PRIVATE bool NODELETE isMainThread();
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isMainThread();
 
 struct MainThreadLike {
     constexpr operator uint32_t() const { return -3; }

@@ -71,7 +71,7 @@ URL::URL(String&& absoluteURL, const URLTextEncoding* encoding)
     *this = URLParser(WTF::move(absoluteURL), URL(), encoding).result();
 }
 
-static bool NODELETE shouldTrimFromURL(char16_t character)
+static bool LEGACY_NODELETE shouldTrimFromURL(char16_t character)
 {
     // Ignore leading/trailing whitespace and control characters.
     return character <= ' ';
@@ -194,7 +194,7 @@ String URL::protocolHostAndPort() const
     );
 }
 
-static std::optional<Latin1Character> NODELETE decodeEscapeSequence(StringView input, unsigned index, unsigned length)
+static std::optional<Latin1Character> LEGACY_NODELETE decodeEscapeSequence(StringView input, unsigned index, unsigned length)
 {
     if (index + 3 > length || input[index] != '%')
         return std::nullopt;
@@ -308,7 +308,7 @@ String URL::fileSystemPath() const
 
 #if !ASSERT_ENABLED
 
-static inline void NODELETE assertProtocolIsGood(StringView)
+static inline void LEGACY_NODELETE assertProtocolIsGood(StringView)
 {
 }
 
@@ -332,13 +332,13 @@ static void assertProtocolIsGood(StringView protocol)
 static Lock defaultPortForProtocolMapForTestingLock;
 
 using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
-static DefaultPortForProtocolMapForTesting*& NODELETE defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
+static DefaultPortForProtocolMapForTesting*& LEGACY_NODELETE defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     static DefaultPortForProtocolMapForTesting* defaultPortForProtocolMap;
     return defaultPortForProtocolMap;
 }
 
-static DefaultPortForProtocolMapForTesting& NODELETE ensureDefaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
+static DefaultPortForProtocolMapForTesting& LEGACY_NODELETE ensureDefaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMap = defaultPortForProtocolMapForTesting();
     if (!defaultPortForProtocolMap)
@@ -481,14 +481,14 @@ unsigned URL::credentialsEnd() const
     return end;
 }
 
-static bool NODELETE forwardSlashHashOrQuestionMark(char16_t c)
+static bool LEGACY_NODELETE forwardSlashHashOrQuestionMark(char16_t c)
 {
     return c == '/'
         || c == '#'
         || c == '?';
 }
 
-static bool NODELETE slashHashOrQuestionMark(char16_t c)
+static bool LEGACY_NODELETE slashHashOrQuestionMark(char16_t c)
 {
     return forwardSlashHashOrQuestionMark(c) || c == '\\';
 }
@@ -540,7 +540,7 @@ void URL::setPort(std::optional<uint16_t> port)
     ));
 }
 
-static unsigned NODELETE countASCIIDigits(StringView string)
+static unsigned LEGACY_NODELETE countASCIIDigits(StringView string)
 {
     unsigned length = string.length();
     for (unsigned count = 0; count < length; ++count) {
@@ -862,7 +862,7 @@ String percentEncodeFragmentDirectiveSpecialCharacters(const String& input)
     return percentEncodeCharacters(input, URLParser::isSpecialCharacterForFragmentDirective);
 }
 
-static bool NODELETE protocolIsInternal(StringView string, ASCIILiteral protocol)
+static bool LEGACY_NODELETE protocolIsInternal(StringView string, ASCIILiteral protocol)
 {
     assertProtocolIsGood(protocol);
     size_t protocolIndex = 0;
@@ -1167,7 +1167,7 @@ bool URL::isAboutSrcDoc() const
     return protocolIsAbout() && path() == "srcdoc"_s;
 }
 
-static bool NODELETE isIPv4Address(StringView string)
+static bool LEGACY_NODELETE isIPv4Address(StringView string)
 {
     auto count = 0;
 
@@ -1320,7 +1320,7 @@ Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstUR
     return differingQueryParameters;
 }
 
-static StringView NODELETE substringIgnoringQueryAndFragments(const URL& url LIFETIME_BOUND)
+static StringView LEGACY_NODELETE substringIgnoringQueryAndFragments(const URL& url LIFETIME_BOUND)
 {
     if (!url.isValid())
         return StringView(url.string());

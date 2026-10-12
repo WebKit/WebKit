@@ -110,14 +110,14 @@ public:
     bool isInfinity() const { return std::isinf(m_value); }
     bool isFinite() const { return std::isfinite(m_value); }
 
-    explicit constexpr NODELETE operator bool() const { return !!m_value; }
+    explicit constexpr LEGACY_NODELETE operator bool() const { return !!m_value; }
     
-    constexpr Seconds NODELETE operator+(Seconds other) const
+    constexpr Seconds LEGACY_NODELETE operator+(Seconds other) const
     {
         return Seconds(value() + other.value());
     }
     
-    constexpr Seconds NODELETE operator-(Seconds other) const
+    constexpr Seconds LEGACY_NODELETE operator-(Seconds other) const
     {
         return Seconds(value() - other.value());
     }

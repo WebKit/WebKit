@@ -37,11 +37,11 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE void NODELETE setLegacyPresentingApplicationPID(int);
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE setLegacyPresentingApplicationPID(int);
 WTF_EXPORT_PRIVATE int legacyPresentingApplicationPID();
 
 #if HAVE(AUDIT_TOKEN)
-WTF_EXPORT_PRIVATE ProcessID NODELETE pidFromAuditToken(const audit_token_t&);
+WTF_EXPORT_PRIVATE ProcessID LEGACY_NODELETE pidFromAuditToken(const audit_token_t&);
 #endif
 
 enum class AuxiliaryProcessType : uint8_t {
@@ -56,13 +56,13 @@ enum class AuxiliaryProcessType : uint8_t {
 #endif
 };
 
-WTF_EXPORT_PRIVATE void NODELETE setAuxiliaryProcessType(AuxiliaryProcessType);
-WTF_EXPORT_PRIVATE void NODELETE setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType>);
-WTF_EXPORT_PRIVATE bool NODELETE checkAuxiliaryProcessType(AuxiliaryProcessType);
-WTF_EXPORT_PRIVATE std::optional<AuxiliaryProcessType> NODELETE processType();
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE setAuxiliaryProcessType(AuxiliaryProcessType);
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE setAuxiliaryProcessTypeForTesting(std::optional<AuxiliaryProcessType>);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE checkAuxiliaryProcessType(AuxiliaryProcessType);
+WTF_EXPORT_PRIVATE std::optional<AuxiliaryProcessType> LEGACY_NODELETE processType();
 WTF_EXPORT_PRIVATE ASCIILiteral processTypeDescription(std::optional<AuxiliaryProcessType>);
 
-WTF_EXPORT_PRIVATE bool NODELETE isInAuxiliaryProcess();
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isInAuxiliaryProcess();
 inline bool isInWebProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::WebContent); }
 inline bool isInNetworkProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::Network); }
 inline bool isInGPUProcess()

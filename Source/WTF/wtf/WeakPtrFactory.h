@@ -85,7 +85,7 @@ public:
         return m_impl.get();
     }
 
-    SUPPRESS_NODELETE void NODELETE initializeIfNeeded(const T& object) const
+    SUPPRESS_NODELETE void LEGACY_NODELETE initializeIfNeeded(const T& object) const
     {
         if (m_impl)
             return;
@@ -161,7 +161,7 @@ public:
         return m_impl.pointer();
     }
 
-    SUPPRESS_NODELETE void NODELETE initializeIfNeeded(const T& object) const
+    SUPPRESS_NODELETE void LEGACY_NODELETE initializeIfNeeded(const T& object) const
     {
         if (m_impl.pointer())
             return;

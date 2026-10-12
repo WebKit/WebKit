@@ -80,7 +80,7 @@ protected:
     uint32_t m_threadID { 0 };
 private:
     void platformInitialize(ASCIILiteral name, Type, QOS);
-    void NODELETE platformInvalidate();
+    void LEGACY_NODELETE platformInvalidate();
 };
 
 /**

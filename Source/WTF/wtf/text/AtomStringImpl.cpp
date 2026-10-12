@@ -98,7 +98,7 @@ static inline Ref<AtomStringImpl> addToStringTable(const T& value)
 
 using UTF16Buffer = HashTranslatorCharBuffer<char16_t>;
 struct UTF16BufferTranslator {
-    static unsigned NODELETE hash(const UTF16Buffer& buf)
+    static unsigned LEGACY_NODELETE hash(const UTF16Buffer& buf)
     {
         return buf.hash;
     }
@@ -203,7 +203,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(StringImpl* baseString, unsigned star
     
 using Latin1Buffer = HashTranslatorCharBuffer<Latin1Character>;
 struct Latin1BufferTranslator {
-    static unsigned NODELETE hash(const Latin1Buffer& buf)
+    static unsigned LEGACY_NODELETE hash(const Latin1Buffer& buf)
     {
         return buf.hash;
     }
@@ -225,7 +225,7 @@ struct Latin1BufferTranslator {
 template<typename CharType>
 struct BufferFromStaticDataTranslator {
     using Buffer = HashTranslatorCharBuffer<CharType>;
-    static unsigned NODELETE hash(const Buffer& buf)
+    static unsigned LEGACY_NODELETE hash(const Buffer& buf)
     {
         return buf.hash;
     }
@@ -259,7 +259,7 @@ template<typename CharType>
 struct StaticStringAtomTranslator {
     using Buffer = StaticStringAtomBuffer<CharType>;
 
-    static unsigned NODELETE hash(const Buffer& buf)
+    static unsigned LEGACY_NODELETE hash(const Buffer& buf)
     {
         return buf.hash;
     }

@@ -61,10 +61,10 @@ public:
     void randomValues(std::span<uint8_t>);
 
 private:
-    inline void NODELETE addRandomData(std::span<const uint8_t, 128>) WTF_REQUIRES_LOCK(m_lock);
+    inline void LEGACY_NODELETE addRandomData(std::span<const uint8_t, 128>) WTF_REQUIRES_LOCK(m_lock);
     void stir() WTF_REQUIRES_LOCK(m_lock);
     void stirIfNeeded() WTF_REQUIRES_LOCK(m_lock);
-    inline uint8_t NODELETE getByte() WTF_REQUIRES_LOCK(m_lock);
+    inline uint8_t LEGACY_NODELETE getByte() WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     ARC4Stream m_stream WTF_GUARDED_BY_LOCK(m_lock);
@@ -146,7 +146,7 @@ void ARC4RandomNumberGenerator::randomValues(std::span<uint8_t> buffer)
     }
 }
 
-ARC4RandomNumberGenerator& NODELETE sharedRandomNumberGenerator()
+ARC4RandomNumberGenerator& LEGACY_NODELETE sharedRandomNumberGenerator()
 {
     static NeverDestroyed<ARC4RandomNumberGenerator> randomNumberGenerator;
     return randomNumberGenerator;

@@ -41,7 +41,7 @@ class UInt128 {
   UInt128() : high_bits_(0), low_bits_(0) { }
   UInt128(uint64_t high, uint64_t low) : high_bits_(high), low_bits_(low) { }
 
-  void NODELETE Multiply(uint32_t multiplicand) {
+  void LEGACY_NODELETE Multiply(uint32_t multiplicand) {
     uint64_t accumulator;
 
     accumulator = (low_bits_ & kMask32) * multiplicand;
@@ -58,7 +58,7 @@ class UInt128 {
     ASSERT((accumulator >> 32) == 0);
   }
 
-  void NODELETE Shift(int shift_amount) {
+  void LEGACY_NODELETE Shift(int shift_amount) {
     ASSERT(-64 <= shift_amount && shift_amount <= 64);
     if (shift_amount == 0) {
       return;
@@ -81,7 +81,7 @@ class UInt128 {
 
   // Modifies *this to *this MOD (2^power).
   // Returns *this DIV (2^power).
-  int NODELETE DivModPowerOf2(int power) {
+  int LEGACY_NODELETE DivModPowerOf2(int power) {
     if (power >= 64) {
       int result = static_cast<int>(high_bits_ >> (power - 64));
       high_bits_ -= static_cast<uint64_t>(result) << (power - 64);
@@ -96,11 +96,11 @@ class UInt128 {
     }
   }
 
-  bool NODELETE IsZero() const {
+  bool LEGACY_NODELETE IsZero() const {
     return high_bits_ == 0 && low_bits_ == 0;
   }
 
-  int NODELETE BitAt(int position) const {
+  int LEGACY_NODELETE BitAt(int position) const {
     if (position >= 64) {
       return static_cast<int>(high_bits_ >> (position - 64)) & 1;
     } else {
@@ -119,7 +119,7 @@ class UInt128 {
 static const int kDoubleSignificandSize = 53;  // Includes the hidden bit.
 
 
-static void NODELETE FillDigits32FixedLength(uint32_t number, int requested_length, BufferReference<char> buffer, int& length)
+static void LEGACY_NODELETE FillDigits32FixedLength(uint32_t number, int requested_length, BufferReference<char> buffer, int& length)
 {
   for (int i = requested_length - 1; i >= 0; --i) {
     buffer[length + i] = '0' + number % 10;
@@ -129,7 +129,7 @@ static void NODELETE FillDigits32FixedLength(uint32_t number, int requested_leng
 }
 
 
-static void NODELETE FillDigits32(uint32_t number, BufferReference<char> buffer, int& length)
+static void LEGACY_NODELETE FillDigits32(uint32_t number, BufferReference<char> buffer, int& length)
 {
   int number_length = 0;
   // We fill the digits in reverse order and exchange them afterwards.
@@ -153,7 +153,7 @@ static void NODELETE FillDigits32(uint32_t number, BufferReference<char> buffer,
 }
 
 
-static void NODELETE FillDigits64FixedLength(uint64_t number, BufferReference<char> buffer, int& length)
+static void LEGACY_NODELETE FillDigits64FixedLength(uint64_t number, BufferReference<char> buffer, int& length)
 {
   const uint32_t kTen7 = 10000000;
   // For efficiency cut the number into 3 uint32_t parts, and print those.
@@ -168,7 +168,7 @@ static void NODELETE FillDigits64FixedLength(uint64_t number, BufferReference<ch
 }
 
 
-static void NODELETE FillDigits64(uint64_t number, BufferReference<char> buffer, int& length)
+static void LEGACY_NODELETE FillDigits64(uint64_t number, BufferReference<char> buffer, int& length)
 {
   const uint32_t kTen7 = 10000000;
   // For efficiency cut the number into 3 uint32_t parts, and print those.
@@ -190,7 +190,7 @@ static void NODELETE FillDigits64(uint64_t number, BufferReference<char> buffer,
 }
 
 
-static void NODELETE RoundUp(BufferReference<char> buffer, int& length, int& decimal_point) {
+static void LEGACY_NODELETE RoundUp(BufferReference<char> buffer, int& length, int& decimal_point) {
   // An empty buffer represents 0.
   if (length == 0) {
     buffer[0] = '1';
@@ -231,7 +231,7 @@ static void NODELETE RoundUp(BufferReference<char> buffer, int& length, int& dec
 // might be updated. If this function generates the digits 99 and the buffer
 // already contained "199" (thus yielding a buffer of "19999") then a
 // rounding-up will change the contents of the buffer to "20000".
-static void NODELETE FillFractionals(uint64_t fractionals, int exponent,
+static void LEGACY_NODELETE FillFractionals(uint64_t fractionals, int exponent,
                             int fractional_count, BufferReference<char> buffer,
                             int& length, int& decimal_point) {
   ASSERT(-128 <= exponent && exponent <= 0);
@@ -289,7 +289,7 @@ static void NODELETE FillFractionals(uint64_t fractionals, int exponent,
 
 // Removes leading and trailing zeros.
 // If leading zeros are removed then the decimal point position is adjusted.
-static void NODELETE TrimZeros(BufferReference<char> buffer, int& length, int& decimal_point) {
+static void LEGACY_NODELETE TrimZeros(BufferReference<char> buffer, int& length, int& decimal_point) {
   while (length > 0 && buffer[length - 1] == '0') {
     length--;
   }

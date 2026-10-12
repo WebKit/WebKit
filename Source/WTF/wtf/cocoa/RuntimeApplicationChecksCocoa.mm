@@ -66,7 +66,7 @@ static bool linkedBefore(dyld_build_version_t version, uint32_t fallbackIOSVersi
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RuntimeApplicationChecksCocoaAdditions.cpp>)
 #import <WebKitAdditions/RuntimeApplicationChecksCocoaAdditions.cpp>
 #else
-static void NODELETE disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
+static void LEGACY_NODELETE disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
 {
 }
 #endif
@@ -264,7 +264,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     return behaviors;
 }
 
-static std::optional<SDKAlignedBehaviors>& NODELETE sdkAlignedBehaviorsValue()
+static std::optional<SDKAlignedBehaviors>& LEGACY_NODELETE sdkAlignedBehaviorsValue()
 {
     static NeverDestroyed<std::optional<SDKAlignedBehaviors>> behaviors;
     return behaviors.get();
@@ -306,7 +306,7 @@ bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior behavior)
     return sdkAlignedBehaviors().get(static_cast<size_t>(behavior));
 }
 
-static bool& NODELETE processIsExtensionValue()
+static bool& LEGACY_NODELETE processIsExtensionValue()
 {
     static bool processIsExtension;
     return processIsExtension;
@@ -328,7 +328,7 @@ static bool applicationBundleIdentifierOverrideWasQueried;
 
 // The application bundle identifier gets set to the UIProcess bundle identifier by the WebProcess and
 // the Networking upon initialization. It is unset otherwise.
-static String& NODELETE bundleIdentifierOverride()
+static String& LEGACY_NODELETE bundleIdentifierOverride()
 {
     static NeverDestroyed<String> identifierOverride;
 #if !ASSERT_MSG_DISABLED
@@ -337,7 +337,7 @@ static String& NODELETE bundleIdentifierOverride()
     return identifierOverride;
 }
 
-static String& NODELETE bundleIdentifier()
+static String& LEGACY_NODELETE bundleIdentifier()
 {
     static NeverDestroyed<String> identifier;
     return identifier;

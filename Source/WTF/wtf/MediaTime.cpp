@@ -43,7 +43,7 @@ namespace WTF {
 
 static_assert(std::is_trivially_destructible_v<MediaTime>, "MediaTime should be trivially destructible.");
 
-static uint32_t NODELETE greatestCommonDivisor(uint32_t a, uint32_t b)
+static uint32_t LEGACY_NODELETE greatestCommonDivisor(uint32_t a, uint32_t b)
 {
     ASSERT(a);
     ASSERT(b);
@@ -59,7 +59,7 @@ static uint32_t NODELETE greatestCommonDivisor(uint32_t a, uint32_t b)
     return a;
 }
 
-static bool NODELETE leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& result)
+static bool LEGACY_NODELETE leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& result)
 {
     if (a == b) {
         result = a;
@@ -68,7 +68,7 @@ static bool NODELETE leastCommonMultiple(uint32_t a, uint32_t b, uint32_t& resul
     return safeMultiply(a, b / greatestCommonDivisor(a, b), result);
 }
 
-static int64_t NODELETE signum(int64_t val)
+static int64_t LEGACY_NODELETE signum(int64_t val)
 {
     return (0 < val) - (val < 0);
 }

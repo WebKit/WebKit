@@ -253,7 +253,7 @@ const unsigned maxLoadFactor = 3;
 
 const unsigned growthFactor = 2;
 
-unsigned NODELETE hashAddress(const void* address)
+unsigned LEGACY_NODELETE hashAddress(const void* address)
 {
     return WTF::PtrHash<const void*>::hash(address);
 }

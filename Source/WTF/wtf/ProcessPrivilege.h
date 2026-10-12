@@ -35,10 +35,10 @@ enum class ProcessPrivilege {
     CanCommunicateWithWindowServer = 1 << 2,
 };
 
-WTF_EXPORT_PRIVATE void NODELETE setProcessPrivileges(OptionSet<ProcessPrivilege>);
-WTF_EXPORT_PRIVATE void NODELETE addProcessPrivilege(ProcessPrivilege);
-WTF_EXPORT_PRIVATE void NODELETE removeProcessPrivilege(ProcessPrivilege);
-WTF_EXPORT_PRIVATE bool NODELETE hasProcessPrivilege(ProcessPrivilege);
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE setProcessPrivileges(OptionSet<ProcessPrivilege>);
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE addProcessPrivilege(ProcessPrivilege);
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE removeProcessPrivilege(ProcessPrivilege);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE hasProcessPrivilege(ProcessPrivilege);
 WTF_EXPORT_PRIVATE OptionSet<ProcessPrivilege> allPrivileges();
 
 } // namespace WTF

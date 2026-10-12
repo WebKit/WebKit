@@ -148,20 +148,20 @@ public:
     // Unlike user() and password(), encodedUser() and encodedPassword() don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
 
-    WTF_EXPORT_PRIVATE StringView NODELETE protocol() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE encodedUser() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE encodedPassword() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE host() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE protocol() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE encodedUser() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE encodedPassword() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE host() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE std::optional<uint16_t> port() const;
-    WTF_EXPORT_PRIVATE StringView NODELETE path() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE lastPathComponent() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE query() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE fragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE path() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE lastPathComponent() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE query() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE fragmentIdentifier() const LIFETIME_BOUND;
 
-    WTF_EXPORT_PRIVATE StringView NODELETE queryWithLeadingQuestionMark() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE StringView NODELETE viewWithoutFragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE queryWithLeadingQuestionMark() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE fragmentIdentifierWithLeadingNumberSign() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE viewWithoutQueryOrFragmentIdentifier() const LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE viewWithoutFragmentIdentifier() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE String stringWithoutFragmentIdentifier() const;
 
     WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
@@ -180,7 +180,7 @@ public:
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
-    WTF_EXPORT_PRIVATE bool NODELETE protocolIs(StringView) const;
+    WTF_EXPORT_PRIVATE bool LEGACY_NODELETE protocolIs(StringView) const;
     bool protocolIsAbout() const { return protocolIs("about"_s); }
     bool protocolIsBlob() const { return protocolIs("blob"_s); }
     bool protocolIsData() const { return protocolIs("data"_s); }
@@ -194,7 +194,7 @@ public:
     WTF_EXPORT_PRIVATE bool isAboutBlank() const;
     WTF_EXPORT_PRIVATE bool isAboutSrcDoc() const;
 
-    WTF_EXPORT_PRIVATE bool NODELETE isMatchingDomain(StringView) const;
+    WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isMatchingDomain(StringView) const;
 
     WTF_EXPORT_PRIVATE bool setProtocol(StringView);
     WTF_EXPORT_PRIVATE bool setHost(StringView);
@@ -223,9 +223,9 @@ public:
     WTF_EXPORT_PRIVATE void removeQueryAndFragmentIdentifier();
 
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
-    WTF_EXPORT_PRIVATE static bool NODELETE isIPv6Address(StringView);
+    WTF_EXPORT_PRIVATE static bool LEGACY_NODELETE isIPv6Address(StringView);
 
-    WTF_EXPORT_PRIVATE unsigned NODELETE pathStart() const;
+    WTF_EXPORT_PRIVATE unsigned LEGACY_NODELETE pathStart() const;
     unsigned pathEnd() const;
     unsigned pathAfterLastSlash() const;
 
@@ -259,9 +259,9 @@ public:
 private:
     friend class URLParser;
 
-    WTF_EXPORT_PRIVATE void NODELETE invalidate();
-    unsigned NODELETE hostStart() const;
-    unsigned NODELETE credentialsEnd() const;
+    WTF_EXPORT_PRIVATE void LEGACY_NODELETE invalidate();
+    unsigned LEGACY_NODELETE hostStart() const;
+    unsigned LEGACY_NODELETE credentialsEnd() const;
     void remove(unsigned start, unsigned length);
     void parse(String&&);
     void parseAllowingC0AtEnd(String&&);
@@ -298,18 +298,18 @@ static_assert(sizeof(URL) == sizeof(String) + 8 * sizeof(unsigned), "URL should 
 bool operator==(const URL&, const URL&);
 bool operator==(const URL&, const String&);
 
-WTF_EXPORT_PRIVATE bool NODELETE equalIgnoringFragmentIdentifier(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE equalIgnoringFragmentIdentifier(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> differingQueryParameters(const URL&, const URL&);
 WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> queryParameters(const URL&);
-WTF_EXPORT_PRIVATE bool NODELETE isEqualIgnoringQueryAndFragments(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isEqualIgnoringQueryAndFragments(const URL&, const URL&);
 
 // Returns the parameters that were removed (including duplicates), in the order that they appear in the URL.
 WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, const HashSet<String>&);
 WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, NOESCAPE const Function<bool(const String&, const String&)>&);
 
-WTF_EXPORT_PRIVATE const URL& NODELETE aboutBlankURL();
-WTF_EXPORT_PRIVATE const URL& NODELETE aboutSrcDocURL();
+WTF_EXPORT_PRIVATE const URL& LEGACY_NODELETE aboutBlankURL();
+WTF_EXPORT_PRIVATE const URL& LEGACY_NODELETE aboutSrcDocURL();
 
 WTF_EXPORT_PRIVATE bool isValidJavaScriptURL(StringView url);
 
@@ -318,7 +318,7 @@ WTF_EXPORT_PRIVATE bool isValidJavaScriptURL(StringView url);
 // These are also different from the WTF::URL functions in that they don't require the string to be a valid and parsable URL.
 
 WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
-WTF_EXPORT_PRIVATE bool NODELETE protocolIsInHTTPFamily(StringView url);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
 WTF_EXPORT_PRIVATE bool isDefaultPortForProtocol(uint16_t port, StringView protocol);

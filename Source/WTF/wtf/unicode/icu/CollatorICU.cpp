@@ -149,7 +149,7 @@ Collator::~Collator()
     cachedCollatorShouldSortLowercaseFirst = m_shouldSortLowercaseFirst;
 }
 
-static int32_t NODELETE getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origin)
+static int32_t LEGACY_NODELETE getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origin)
 {
     switch (origin) {
     case UITER_START:
@@ -167,23 +167,23 @@ static int32_t NODELETE getIndexLatin1(UCharIterator* iterator, UCharIteratorOri
     return U_SENTINEL;
 }
 
-static int32_t NODELETE moveLatin1(UCharIterator* iterator, int32_t delta, UCharIteratorOrigin origin)
+static int32_t LEGACY_NODELETE moveLatin1(UCharIterator* iterator, int32_t delta, UCharIteratorOrigin origin)
 {
     return iterator->index = getIndexLatin1(iterator, origin) + delta;
 }
 
-static UBool NODELETE hasNextLatin1(UCharIterator* iterator)
+static UBool LEGACY_NODELETE hasNextLatin1(UCharIterator* iterator)
 {
     return iterator->index < iterator->limit;
 }
 
-static UBool NODELETE hasPreviousLatin1(UCharIterator* iterator)
+static UBool LEGACY_NODELETE hasPreviousLatin1(UCharIterator* iterator)
 {
     return iterator->index > iterator->start;
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static UChar32 NODELETE currentLatin1(UCharIterator* iterator)
+static UChar32 LEGACY_NODELETE currentLatin1(UCharIterator* iterator)
 {
     ASSERT(iterator->index >= iterator->start);
     if (iterator->index >= iterator->limit)
@@ -191,7 +191,7 @@ static UChar32 NODELETE currentLatin1(UCharIterator* iterator)
     return static_cast<const Latin1Character*>(iterator->context)[iterator->index];
 }
 
-static UChar32 NODELETE nextLatin1(UCharIterator* iterator)
+static UChar32 LEGACY_NODELETE nextLatin1(UCharIterator* iterator)
 {
     ASSERT(iterator->index >= iterator->start);
     if (iterator->index >= iterator->limit)
@@ -199,7 +199,7 @@ static UChar32 NODELETE nextLatin1(UCharIterator* iterator)
     return static_cast<const Latin1Character*>(iterator->context)[iterator->index++];
 }
 
-static UChar32 NODELETE previousLatin1(UCharIterator* iterator)
+static UChar32 LEGACY_NODELETE previousLatin1(UCharIterator* iterator)
 {
     if (iterator->index <= iterator->start)
         return U_SENTINEL;
@@ -207,17 +207,17 @@ static UChar32 NODELETE previousLatin1(UCharIterator* iterator)
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-static uint32_t NODELETE getStateLatin1(const UCharIterator* iterator)
+static uint32_t LEGACY_NODELETE getStateLatin1(const UCharIterator* iterator)
 {
     return iterator->index;
 }
 
-static void NODELETE setStateLatin1(UCharIterator* iterator, uint32_t state, UErrorCode*)
+static void LEGACY_NODELETE setStateLatin1(UCharIterator* iterator, uint32_t state, UErrorCode*)
 {
     iterator->index = state;
 }
 
-static UCharIterator NODELETE createLatin1Iterator(std::span<const Latin1Character> characters)
+static UCharIterator LEGACY_NODELETE createLatin1Iterator(std::span<const Latin1Character> characters)
 {
     UCharIterator iterator;
     iterator.context = characters.data();

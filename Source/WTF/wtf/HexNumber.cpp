@@ -31,7 +31,7 @@ namespace WTF {
 
 namespace Internal {
 
-static const std::array<Latin1Character, 16>& NODELETE hexDigitsForMode(HexConversionMode mode)
+static const std::array<Latin1Character, 16>& LEGACY_NODELETE hexDigitsForMode(HexConversionMode mode)
 {
     static constexpr std::array<Latin1Character, 16> lowercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     static constexpr std::array<Latin1Character, 16> uppercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
@@ -61,7 +61,7 @@ void printInternal(PrintStream& out, HexNumberBuffer buffer)
     out.print(StringView(buffer.span()));
 }
 
-static void NODELETE toHexInternal(std::span<const uint8_t> values, std::span<Latin1Character> hexadecimalOutput)
+static void LEGACY_NODELETE toHexInternal(std::span<const uint8_t> values, std::span<Latin1Character> hexadecimalOutput)
 {
     for (auto [i, digestValue] : indexedRange(values)) {
         hexadecimalOutput[i * 2] = upperNibbleToASCIIHexDigit(digestValue);

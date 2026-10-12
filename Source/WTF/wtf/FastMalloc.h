@@ -199,7 +199,7 @@ struct FastMallocStatistics {
 };
 WTF_EXPORT_PRIVATE FastMallocStatistics fastMallocStatistics();
 
-WTF_EXPORT_PRIVATE void NODELETE fastMallocDumpMallocStats();
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE fastMallocDumpMallocStats();
 
 // This defines a type which holds an unsigned integer and is the same
 // size as the minimally aligned memory allocation.

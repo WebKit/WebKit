@@ -611,7 +611,7 @@ void WTFLogAlwaysAndCrash(const char* format, ...)
     CRASH();
 }
 
-static void NODELETE setStateOfAllChannels(WTFLogChannel* channels[], size_t channelCount, WTFLogChannelState state)
+static void LEGACY_NODELETE setStateOfAllChannels(WTFLogChannel* channels[], size_t channelCount, WTFLogChannelState state)
 {
     for (size_t i = 0; i < channelCount; ++i)
         channels[i]->state = state;

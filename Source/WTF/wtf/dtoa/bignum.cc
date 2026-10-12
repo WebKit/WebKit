@@ -92,7 +92,7 @@ void Bignum::AssignBignum(const Bignum& other) {
 }
 
 
-static uint64_t NODELETE ReadUInt64(BufferReference<const char> buffer,
+static uint64_t LEGACY_NODELETE ReadUInt64(BufferReference<const char> buffer,
                            int from,
                            int digits_to_read) {
   uint64_t result = 0;
@@ -550,7 +550,7 @@ uint16_t Bignum::DivideModuloIntBignum(const Bignum& other) {
 
 
 template<typename S>
-static int NODELETE SizeInHexChars(S number) {
+static int LEGACY_NODELETE SizeInHexChars(S number) {
   ASSERT(number > 0);
   int result = 0;
   while (number != 0) {
@@ -561,7 +561,7 @@ static int NODELETE SizeInHexChars(S number) {
 }
 
 
-static char NODELETE HexCharOfValue(int value) {
+static char LEGACY_NODELETE HexCharOfValue(int value) {
   ASSERT(0 <= value && value <= 16);
   if (value < 10) return static_cast<char>(value + '0');
   return static_cast<char>(value - 10 + 'A');

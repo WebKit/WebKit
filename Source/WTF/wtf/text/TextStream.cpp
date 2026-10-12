@@ -40,7 +40,7 @@ namespace WTF {
 
 static constexpr size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
 
-static inline bool NODELETE hasFractions(double val)
+static inline bool LEGACY_NODELETE hasFractions(double val)
 {
     static constexpr double s_epsilon = 0.0001;
     int ival = truncateDoubleToInt32(val);

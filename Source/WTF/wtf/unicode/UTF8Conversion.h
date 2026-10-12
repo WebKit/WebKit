@@ -47,11 +47,11 @@ template<typename CharacterType> struct ConversionResult {
 
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convert(std::span<const char8_t>, std::span<char16_t>);
 WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const char16_t>, std::span<char8_t>);
-WTF_EXPORT_PRIVATE ConversionResult<char8_t> NODELETE convert(std::span<const Latin1Character>, std::span<char8_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> LEGACY_NODELETE convert(std::span<const Latin1Character>, std::span<char8_t>);
 
 // Invalid sequences are converted to the replacement character.
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
-WTF_EXPORT_PRIVATE ConversionResult<char8_t> NODELETE convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
+WTF_EXPORT_PRIVATE ConversionResult<char8_t> LEGACY_NODELETE convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
 
 WTF_EXPORT_PRIVATE bool equal(std::span<const char16_t>, std::span<const char8_t>);
 WTF_EXPORT_PRIVATE bool equal(std::span<const Latin1Character>, std::span<const char8_t>);

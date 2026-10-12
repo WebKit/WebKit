@@ -140,7 +140,7 @@ public:
     static Thread& currentSingleton();
 
     // Set of all WTF::Thread created threads.
-    WTF_EXPORT_PRIVATE static ThreadSafeWeakHashSet<Thread>& NODELETE allThreads();
+    WTF_EXPORT_PRIVATE static ThreadSafeWeakHashSet<Thread>& LEGACY_NODELETE allThreads();
 
     WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
 
@@ -228,7 +228,7 @@ public:
     // Called in the thread during initialization.
     // Helpful for platforms where the thread name must be set from within the thread.
     static void initializeCurrentThreadInternal(const char* threadName);
-    static void NODELETE initializeCurrentThreadEvenIfNonWTFCreated();
+    static void LEGACY_NODELETE initializeCurrentThreadEvenIfNonWTFCreated();
 
     WTF_EXPORT_PRIVATE static void yield();
 
@@ -236,7 +236,7 @@ public:
     WTF_EXPORT_PRIVATE static void registerGCThread(GCThreadType);
     WTF_EXPORT_PRIVATE static bool mayBeGCThread();
 
-    WTF_EXPORT_PRIVATE static void NODELETE registerJSThread(Thread&);
+    WTF_EXPORT_PRIVATE static void LEGACY_NODELETE registerJSThread(Thread&);
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
@@ -341,7 +341,7 @@ protected:
     static qos_class_t adjustedQOSClass(qos_class_t);
 #endif
 
-    static const char* NODELETE normalizeThreadName(const char* threadName);
+    static const char* LEGACY_NODELETE normalizeThreadName(const char* threadName);
 
     enum JoinableState : uint8_t {
         // The default thread state. The thread can be joined on.

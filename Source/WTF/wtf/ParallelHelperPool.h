@@ -87,8 +87,8 @@ private:
 
     void didMakeWorkAvailable(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
-    bool NODELETE hasClientWithTask() WTF_REQUIRES_LOCK(m_lock);
-    ParallelHelperClient* NODELETE getClientWithTask() WTF_REQUIRES_LOCK(m_lock);
+    bool LEGACY_NODELETE hasClientWithTask() WTF_REQUIRES_LOCK(m_lock);
+    ParallelHelperClient* LEGACY_NODELETE getClientWithTask() WTF_REQUIRES_LOCK(m_lock);
     
     Box<Lock> m_lock; // AutomaticThread wants this in a box for safety.
     const Ref<AutomaticThreadCondition> m_workAvailableCondition;
@@ -208,7 +208,7 @@ private:
     friend class ParallelHelperPool;
 
     void finishWithLock() WTF_REQUIRES_LOCK(*m_pool->m_lock);
-    RefPtr<SharedTask<void()>> NODELETE claimTask() WTF_REQUIRES_LOCK(*m_pool->m_lock);
+    RefPtr<SharedTask<void()>> LEGACY_NODELETE claimTask() WTF_REQUIRES_LOCK(*m_pool->m_lock);
     void runTask(const RefPtr<SharedTask<void ()>>&);
 
     const RefPtr<ParallelHelperPool> m_pool;

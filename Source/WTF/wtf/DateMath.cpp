@@ -96,7 +96,7 @@
 namespace WTF {
 
 static Lock innerTimeZoneOverrideLock;
-static Vector<char16_t>& NODELETE innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
+static Vector<char16_t>& LEGACY_NODELETE innerTimeZoneOverride() WTF_REQUIRES_LOCK(innerTimeZoneOverrideLock)
 {
     static NeverDestroyed<Vector<char16_t>> timeZoneOverride;
     return timeZoneOverride;
@@ -148,7 +148,7 @@ static inline double msToMilliseconds(double ms)
 
 // There is a hard limit at 2038 that we currently do not have a workaround
 // for (rdar://problem/5052975).
-static inline int NODELETE maximumYearForDST()
+static inline int LEGACY_NODELETE maximumYearForDST()
 {
     return 2037;
 }
@@ -389,7 +389,7 @@ static constexpr auto knownZones = WTF::toArray<KnownZone>({
     { "pdt"_s, -420 }
 });
 
-inline static void NODELETE skipSpacesAndComments(std::span<const Latin1Character>& s)
+inline static void LEGACY_NODELETE skipSpacesAndComments(std::span<const Latin1Character>& s)
 {
     int nesting = 0;
     while (!s.empty()) {

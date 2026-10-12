@@ -2213,7 +2213,7 @@ void URLParser::serializeIPv4(IPv4Address address)
     appendNumberToASCIIBuffer<uint8_t>(address);
 }
     
-static size_t NODELETE zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t begin)
+static size_t LEGACY_NODELETE zeroSequenceLength(const std::array<uint16_t, 8>& address, size_t begin)
 {
     size_t end = begin;
     for (; end < 8; end++) {
@@ -2223,7 +2223,7 @@ static size_t NODELETE zeroSequenceLength(const std::array<uint16_t, 8>& address
     return end - begin;
 }
 
-static std::optional<size_t> NODELETE findLongestZeroSequence(const std::array<uint16_t, 8>& address)
+static std::optional<size_t> LEGACY_NODELETE findLongestZeroSequence(const std::array<uint16_t, 8>& address)
 {
     std::optional<size_t> longest;
     size_t longestLength = 0;

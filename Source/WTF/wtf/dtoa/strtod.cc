@@ -94,7 +94,7 @@ static constexpr int kExactPowersOfTenSize = exact_powers_of_ten.size();
 // we round up to 780.
 static constexpr int kMaxSignificantDecimalDigits = 780;
 
-static BufferReference<const char> NODELETE TrimLeadingZeros(BufferReference<const char> buffer) {
+static BufferReference<const char> LEGACY_NODELETE TrimLeadingZeros(BufferReference<const char> buffer) {
   for (size_t i = 0; i < buffer.length(); ++i) {
     if (buffer[i] != '0') {
       return buffer.SubBufferReference(i, buffer.length());
@@ -104,7 +104,7 @@ static BufferReference<const char> NODELETE TrimLeadingZeros(BufferReference<con
 }
 
 
-static BufferReference<const char> NODELETE TrimTrailingZeros(BufferReference<const char> buffer) {
+static BufferReference<const char> LEGACY_NODELETE TrimTrailingZeros(BufferReference<const char> buffer) {
   for (int i = buffer.length() - 1; i >= 0; --i) {
     if (buffer[i] != '0') {
       return buffer.SubBufferReference(0, i + 1);
@@ -114,7 +114,7 @@ static BufferReference<const char> NODELETE TrimTrailingZeros(BufferReference<co
 }
 
 
-static void NODELETE CutToMaxSignificantDigits(BufferReference<const char> buffer,
+static void LEGACY_NODELETE CutToMaxSignificantDigits(BufferReference<const char> buffer,
                                        int exponent,
                                        std::span<char> significant_buffer,
                                        int& significant_exponent) {
@@ -135,7 +135,7 @@ static void NODELETE CutToMaxSignificantDigits(BufferReference<const char> buffe
 // If possible the input-buffer is reused, but if the buffer needs to be
 // modified (due to cutting), then the input needs to be copied into the
 // buffer_copy_space.
-static void NODELETE TrimAndCut(BufferReference<const char> buffer, int exponent,
+static void LEGACY_NODELETE TrimAndCut(BufferReference<const char> buffer, int exponent,
                        std::span<char> buffer_copy_space, int space_size,
                        BufferReference<const char>& trimmed, int& updated_exponent) {
   BufferReference<const char> left_trimmed = TrimLeadingZeros(buffer);
@@ -158,7 +158,7 @@ static void NODELETE TrimAndCut(BufferReference<const char> buffer, int exponent
 // When the string starts with "1844674407370955161" no further digit is read.
 // Since 2^64 = 18446744073709551616 it would still be possible read another
 // digit if it was less or equal than 6, but this would complicate the code.
-static uint64_t NODELETE ReadUint64(BufferReference<const char> buffer, size_t& number_of_read_digits) {
+static uint64_t LEGACY_NODELETE ReadUint64(BufferReference<const char> buffer, size_t& number_of_read_digits) {
   uint64_t result = 0;
   size_t i = 0;
   while (i < buffer.length() && result <= (kMaxUint64 / 10 - 1)) {
@@ -175,7 +175,7 @@ static uint64_t NODELETE ReadUint64(BufferReference<const char> buffer, size_t& 
 // The returned DiyFp is not necessarily normalized.
 // If remaining_decimals is zero then the returned DiyFp is accurate.
 // Otherwise it has been rounded and has error of at most 1/2 ulp.
-static void NODELETE ReadDiyFp(BufferReference<const char> buffer,
+static void LEGACY_NODELETE ReadDiyFp(BufferReference<const char> buffer,
                       DiyFp& result,
                       int& remaining_decimals) {
   size_t read_digits;
@@ -196,7 +196,7 @@ static void NODELETE ReadDiyFp(BufferReference<const char> buffer,
 }
 
 
-static bool NODELETE DoubleStrtod(BufferReference<const char> trimmed,
+static bool LEGACY_NODELETE DoubleStrtod(BufferReference<const char> trimmed,
                          int exponent,
                          double& result) {
 #if !defined(DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS)

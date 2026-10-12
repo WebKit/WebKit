@@ -120,7 +120,7 @@ inline bool containsOnlyASCII(MachineWord word)
 }
 
 template<typename CharacterType>
-SUPPRESS_NODELETE inline bool NODELETE charactersAreAllASCII(std::span<const CharacterType> span)
+SUPPRESS_NODELETE inline bool LEGACY_NODELETE charactersAreAllASCII(std::span<const CharacterType> span)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     using UnsignedType = SameSizeUnsignedInteger<CharacterType>;

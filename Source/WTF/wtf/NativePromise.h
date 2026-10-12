@@ -256,7 +256,7 @@ public:
     virtual void assertIsDead() = 0;
     virtual ~NativePromiseBase() = default;
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WTF_EXPORT_PRIVATE static WTFLogChannel& NODELETE logChannel();
+    WTF_EXPORT_PRIVATE static WTFLogChannel& LEGACY_NODELETE logChannel();
 #endif
     template<typename... Args>
     static inline void log(UNUSED_VARIADIC_PARAMS const Args&... arguments)

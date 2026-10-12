@@ -68,7 +68,7 @@ void loadIDNAllowedScriptList()
 
 template<UScriptCode> bool isLookalikeCharacterOfScriptType(char32_t);
 
-template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(char32_t codePoint)
+template<> bool LEGACY_NODELETE isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x0548: /* ARMENIAN CAPITAL LETTER VO */
@@ -85,7 +85,7 @@ template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(char
     }
 }
 
-template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(char32_t codePoint)
+template<> bool LEGACY_NODELETE isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x0BE6: /* TAMIL DIGIT ZERO */
@@ -95,7 +95,7 @@ template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(char32_
     }
 }
 
-template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(char32_t codePoint)
+template<> bool LEGACY_NODELETE isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x146D: /* CANADIAN SYLLABICS KI */
@@ -119,7 +119,7 @@ template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORI
     }
 }
 
-template<> bool NODELETE isLookalikeCharacterOfScriptType<USCRIPT_THAI>(char32_t codePoint)
+template<> bool LEGACY_NODELETE isLookalikeCharacterOfScriptType<USCRIPT_THAI>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x0E01: // THAI CHARACTER KO KAI
@@ -141,7 +141,7 @@ bool isOfScriptType(char32_t codePoint)
     return script == ScriptType;
 }
 
-template<typename CharacterType> inline bool NODELETE isASCIIDigitOrValidHostCharacter(CharacterType charCode)
+template<typename CharacterType> inline bool LEGACY_NODELETE isASCIIDigitOrValidHostCharacter(CharacterType charCode)
 {
     if (!isASCIIDigitOrPunctuation(charCode))
         return false;
@@ -359,7 +359,7 @@ static bool isLookalikeCharacter(const std::optional<char32_t>& previousCodePoin
     }
 }
 
-static void NODELETE addScriptToIDNAllowedScriptList(int32_t script)
+static void LEGACY_NODELETE addScriptToIDNAllowedScriptList(int32_t script)
 {
     if (script >= 0 && script < scriptCodeLimit) {
         size_t index = script / 32;
@@ -368,7 +368,7 @@ static void NODELETE addScriptToIDNAllowedScriptList(int32_t script)
     }
 }
 
-static void NODELETE addScriptToIDNAllowedScriptList(UScriptCode script)
+static void LEGACY_NODELETE addScriptToIDNAllowedScriptList(UScriptCode script)
 {
     addScriptToIDNAllowedScriptList(static_cast<int32_t>(script));
 }
@@ -464,7 +464,7 @@ static inline bool isSecondLevelDomainNameAllowedByTLDRules(std::span<const char
             return isSecondLevelDomainNameAllowedByTLDRules(buffer.first(buffer.size() - suffixLength), function); \
     }
 
-static bool NODELETE isRussianDomainNameCharacter(char16_t ch)
+static bool LEGACY_NODELETE isRussianDomainNameCharacter(char16_t ch)
 {
     // Only modern Russian letters, digits and dashes are allowed.
     return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || isASCIIDigit(ch) || ch == '-';

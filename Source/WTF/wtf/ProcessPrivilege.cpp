@@ -39,7 +39,7 @@ OptionSet<ProcessPrivilege> allPrivileges()
     };
 }
 
-static OptionSet<ProcessPrivilege>& NODELETE processPrivileges()
+static OptionSet<ProcessPrivilege>& LEGACY_NODELETE processPrivileges()
 {
     static OptionSet<ProcessPrivilege> privileges = { };
     return privileges;

@@ -34,11 +34,11 @@ namespace WTF {
 // Takes a six-character string that encodes a 32-bit integer, and returns that
 // integer. RELEASE_ASSERT's that the string represents a valid six-character
 // hash.
-WTF_EXPORT_PRIVATE unsigned NODELETE sixCharacterHashStringToInteger(std::span<const char, 6>);
+WTF_EXPORT_PRIVATE unsigned LEGACY_NODELETE sixCharacterHashStringToInteger(std::span<const char, 6>);
 
 // Takes a 32-bit integer and constructs a six-character string that contains
 // the character hash.
-WTF_EXPORT_PRIVATE std::array<char, 6> NODELETE integerToSixCharacterHashString(unsigned);
+WTF_EXPORT_PRIVATE std::array<char, 6> LEGACY_NODELETE integerToSixCharacterHashString(unsigned);
 
 } // namespace WTF
 

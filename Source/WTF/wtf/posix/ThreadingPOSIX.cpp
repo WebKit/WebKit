@@ -281,7 +281,7 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 #endif
 
 #if HAVE(SCHEDULING_POLICIES)
-static int NODELETE schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
+static int LEGACY_NODELETE schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
 {
     switch (schedulingPolicy) {
     case Thread::SchedulingPolicy::FIFO:
@@ -632,7 +632,7 @@ struct ThreadStateMetadata {
     thread_state_flavor_t flavor;
 };
 
-static ThreadStateMetadata NODELETE threadStateMetadata()
+static ThreadStateMetadata LEGACY_NODELETE threadStateMetadata()
 {
 #if CPU(X86)
     unsigned userCount = sizeof(PlatformRegisters) / sizeof(int);
