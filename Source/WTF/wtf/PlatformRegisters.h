@@ -89,6 +89,58 @@ inline PlatformRegisters& registersFromUContext(ucontext_t* ucontext)
 #endif
 }
 
+inline void* stackPointerFromRegisters(const PlatformRegisters& regs)
+{
+#if OS(HAIKU)
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.machineContext.rsp);
+#else
+    return nullptr;
+#endif
+#elif OS(FREEBSD)
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.machineContext.mc_rsp);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>(regs.machineContext.__gregs[_REG_SP]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>(regs.machineContext.mc_gpregs.gp_sp);
+#else
+    return nullptr;
+#endif
+#elif OS(QNX)
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.machineContext.cpu.rsp);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>(regs.machineContext.cpu.gpr[AARCH64_REG_SP]);
+#else
+    return nullptr;
+#endif
+#elif OS(NETBSD)
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.machineContext.__gregs[_REG_RSP]);
+#elif CPU(ARM) || CPU(ARM64)
+    return reinterpret_cast<void*>(regs.machineContext.__gregs[_REG_SP]);
+#else
+    return nullptr;
+#endif
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.machineContext.gregs[REG_RSP]);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>(regs.machineContext.arm_sp);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>(regs.machineContext.sp);
+#elif CPU(RISCV64)
+    return reinterpret_cast<void*>(regs.machineContext.__gregs[REG_SP]);
+#else
+    return nullptr;
+#endif
+#else
+    UNUSED_PARAM(regs);
+    return nullptr;
+#endif
+}
+
 #else
 
 struct PlatformRegisters {
