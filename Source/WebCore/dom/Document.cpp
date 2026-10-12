@@ -666,6 +666,21 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
+struct QuerySelectorResults {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(QuerySelectorResults);
+public:
+    static constexpr unsigned maxSize = 8;
+
+    struct Entry {
+        String selector;
+        WeakPtr<Element, WeakPtrImplWithEventTargetData> firstElement;
+        AtomString classNameToMatch;
+        bool hasMatch { false };
+    };
+
+    Vector<Entry, maxSize> entries;
+};
+
 static inline IntDegrees currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
@@ -963,6 +978,7 @@ void Document::removedLastRef()
         // stale references in the map.
 
         destroyTreeScopeData();
+        clearQuerySelectorAllResults();
         removeDetachedChildren();
         RELEASE_ASSERT(m_topLayerElements.isEmpty());
         m_formController = nullptr;
@@ -1359,8 +1375,52 @@ void Document::addResultForSelectorAll(ContainerNode& context, const String& sel
     entries.append({ selectorString, nodeList, classNameToMatch });
 }
 
+std::optional<Element*> Document::resultForSelector(const String& selectorString)
+{
+    auto isInThisDocumentTree = [&](Element& element) {
+        return element.isInDocumentTree() && &element.document() == this;
+    };
+    if (RefPtr nodeList = resultForSelectorAll(*this, selectorString)) {
+        RefPtr firstElement = downcast<Element>(nodeList->item(0));
+        if (!firstElement || isInThisDocumentTree(*firstElement))
+            return firstElement.get();
+    }
+    if (!m_querySelectorResults)
+        return std::nullopt;
+    auto& entries = m_querySelectorResults->entries;
+    auto index = entries.findIf([&](auto& entry) {
+        return entry.selector == selectorString;
+    });
+    if (index == notFound)
+        return std::nullopt;
+    auto& entry = entries[index];
+    if (!entry.hasMatch)
+        return nullptr;
+    if (RefPtr element = entry.firstElement.get(); element && isInThisDocumentTree(*element))
+        return element.get();
+    entries.removeAt(index);
+    return std::nullopt;
+}
+
+void Document::addResultForSelector(const String& selectorString, Element* firstElement, const AtomString& classNameToMatch)
+{
+    if (!m_querySelectorResults)
+        m_querySelectorResults = makeUnique<QuerySelectorResults>();
+    auto& entries = m_querySelectorResults->entries;
+    if (entries.size() >= QuerySelectorResults::maxSize)
+        entries.removeAt(weakRandomNumber<uint32_t>() % entries.size());
+    entries.append({ selectorString, firstElement, classNameToMatch, !!firstElement });
+}
+
+static bool isAffectedByClassChange(const AtomString& classNameToMatch, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+{
+    return !classNameToMatch.isNull() && oldClasses.contains(classNameToMatch) != newClasses.contains(classNameToMatch);
+}
+
 void Document::invalidateQuerySelectorAllResults(Node& startingNode)
 {
+    if (m_querySelectorResults && startingNode.isInDocumentTree())
+        m_querySelectorResults->entries.shrink(0);
     if (m_querySelectorAllResults.isEmptyIgnoringNullReferences())
         return;
     for (RefPtr currentNode = startingNode; currentNode; currentNode = currentNode->parentNode()) {
@@ -1373,6 +1433,11 @@ void Document::invalidateQuerySelectorAllResults(Node& startingNode)
 
 void Document::invalidateQuerySelectorAllResultsForClassAttributeChange(Node& startingNode, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
+    if (m_querySelectorResults && startingNode.isInDocumentTree()) {
+        m_querySelectorResults->entries.removeAllMatching([&](auto& entry) {
+            return isAffectedByClassChange(entry.classNameToMatch, oldClasses, newClasses);
+        });
+    }
     if (m_querySelectorAllResults.isEmptyIgnoringNullReferences())
         return;
     for (RefPtr currentNode = startingNode; currentNode; currentNode = currentNode->parentNode()) {
@@ -1386,7 +1451,7 @@ void Document::invalidateQuerySelectorAllResultsForClassAttributeChange(Node& st
         unsigned index = 0;
         while (index < entries.size()) {
             auto& entry = entries[index];
-            if (!entry.classNameToMatch.isNull() && oldClasses.contains(entry.classNameToMatch) != newClasses.contains(entry.classNameToMatch))
+            if (isAffectedByClassChange(entry.classNameToMatch, oldClasses, newClasses))
                 entries.removeAt(index);
             else
                 ++index;
@@ -1406,6 +1471,7 @@ void Document::clearQuerySelectorAllResults()
     for (auto entry : m_querySelectorAllResults)
         entry.key.setHasValidQuerySelectorAllResults(false);
     m_querySelectorAllResults.clear();
+    m_querySelectorResults = nullptr;
 }
 
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)

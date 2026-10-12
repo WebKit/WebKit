@@ -309,6 +309,7 @@ struct ImportNodeOptions;
 struct IntersectionObserverData;
 struct OwnerPermissionsPolicyData;
 struct QuerySelectorAllResults;
+struct QuerySelectorResults;
 struct SecurityPolicyViolationEventInit;
 struct StartViewTransitionOptions;
 struct ViewTransitionParams;
@@ -546,6 +547,8 @@ public:
 
     RefPtr<NodeList> resultForSelectorAll(ContainerNode&, const String&);
     void addResultForSelectorAll(ContainerNode&, const String&, NodeList&, const AtomString& classNameToMatch);
+    std::optional<Element*> resultForSelector(const String&);
+    void addResultForSelector(const String&, Element*, const AtomString& classNameToMatch);
     void invalidateQuerySelectorAllResults(Node&);
     void invalidateQuerySelectorAllResultsForClassAttributeChange(Node&, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
     void clearQuerySelectorAllResults();
@@ -2557,6 +2560,7 @@ private:
     CompletionHandler<void()> m_whenWindowLoadEventOrDestroyed;
 
     WeakHashMap<Node, std::unique_ptr<QuerySelectorAllResults>, WeakPtrImplWithEventTargetData> m_querySelectorAllResults;
+    std::unique_ptr<QuerySelectorResults> m_querySelectorResults;
 
     ViewportArguments m_viewportArguments;
     SafeAreaInsetOptIn m_safeAreaInsetOptIn { SafeAreaInsetOptIn::Undetermined };
