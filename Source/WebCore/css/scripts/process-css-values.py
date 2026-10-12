@@ -57,8 +57,8 @@ class Value:
 
     def __str__(self):
         if self.conditional:
-            return f"Value [{self.name}, id={self.id_without_scope}, conditional={self.conditional}]"
-        return f"Value [{self.name}, id={self.id_without_scope}]"
+            return f"Value [{self.name}, id={self.id}, conditional={self.conditional}]"
+        return f"Value [{self.name}, id={self.id}]"
 
     def __repr__(self):
         return self.__str__()
@@ -70,10 +70,6 @@ class Value:
     @property
     def name_lowercase(self):
         return self.name.lower()
-
-    @property
-    def id_without_scope(self):
-        return f"CSSValue{self.id_without_prefix}"
 
     @property
     def id(self):
@@ -336,12 +332,6 @@ class GenerationContext:
         last = count - 1
 
         to.write(f"}};\n\n")
-
-        to.write(f"// FIXME: These legacy constants are transitional. Use CSSValueID::Foo instead of CSSValueFoo in new code.\n")
-        to.write(f"inline constexpr CSSValueID CSSValueInvalid = CSSValueID::Invalid;\n")
-        for value in self.values:
-            to.write(f"inline constexpr CSSValueID {value.id_without_scope} = {value.id};\n")
-        to.write(f"\n")
 
         to.write(f"constexpr uint16_t numCSSValueKeywords = {count};\n")
         to.write(f"constexpr uint16_t lastCSSValueKeyword = {last};\n")

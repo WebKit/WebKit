@@ -6405,42 +6405,6 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_to_array] [4]",
             'foo.cpp')
 
-    def test_css_value_id(self):
-        self.assert_lint(
-            'if (valueID == CSSValueID::Auto)',
-            '',
-            'foo.cpp')
-
-        self.assert_lint(
-            'if (valueID == CSSValueAuto)',
-            "Use 'CSSValueID::Auto' instead of 'CSSValueAuto'."
-            "  [runtime/css_value_id] [4]",
-            'foo.cpp')
-
-        self.assert_lint(
-            'return CSSValueInvalid;',
-            "Use 'CSSValueID::Invalid' instead of 'CSSValueInvalid'."
-            "  [runtime/css_value_id] [4]",
-            'foo.mm')
-
-        self.assert_lint(
-            'auto id = CSSValueWebkitBox;',
-            "Use 'CSSValueID::WebkitBox' instead of 'CSSValueWebkitBox'."
-            "  [runtime/css_value_id] [4]",
-            'foo.h')
-
-        # Types and functions starting with 'CSSValue' are not keywords.
-        self.assert_lint(
-            'auto value = CSSValuePool::singleton().createIdentifierValue(CSSValueID::Auto);',
-            '',
-            'foo.cpp')
-
-        # Comments and strings are ignored.
-        self.assert_lint(
-            'auto name = "CSSValueAuto"_s; // CSSValueAuto',
-            '',
-            'foo.cpp')
-
     def test_utf8cstring_from_utf8(self):
         message = ("Use 'UTF8CString::unsafeFromUTF8()' or 'UTF8CString::fromUTF8()' instead of constructing a UTF8CString from 'byteCast<char8_t>()'."
                    "  [runtime/utf8cstring_from_utf8] [4]")

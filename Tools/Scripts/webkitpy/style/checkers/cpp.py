@@ -3027,51 +3027,6 @@ def check_wtf_to_array(clean_lines, line_number, file_state, error):
         error(line_number, 'runtime/wtf_to_array', 4, "Use 'WTF::toArray()' instead of 'std::to_array()'.")
 
 
-@memoized
-def _css_value_id_enumerator_names():
-    """Returns the set of CSSValueID enumerator names (e.g. 'Auto'), derived from CSSValueKeywords.in and SVGCSSValueKeywords.in."""
-    css_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..', '..', 'Source', 'WebCore', 'css')
-    names = {'Invalid'}
-    for file_name in ('CSSValueKeywords.in', 'SVGCSSValueKeywords.in'):
-        try:
-            with codecs.open(os.path.join(css_directory, file_name), 'r', 'utf-8') as keywords_file:
-                lines = keywords_file.readlines()
-        except (IOError, OSError):
-            continue
-
-        # Must match the parsing in Source/WebCore/css/scripts/process-css-values.py.
-        for line in lines:
-            parts = line.split('//')[0].split()
-            if not parts:
-                continue
-            name = next((attribute[len('id='):] for attribute in parts[1:] if attribute.startswith('id=')), None)
-            names.add(name or re.sub(r'(^[^-])|-(.)', lambda m: (m.group(1) or m.group(2)).upper(), parts[0]))
-    return frozenset(names)
-
-
-def check_css_value_id(clean_lines, line_number, file_state, error):
-    """Looks for use of the deprecated 'CSSValueFoo' constants, which should be replaced with 'CSSValueID::Foo'.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_state: A _FileState instance which maintains information about
-                  the state of things in the file.
-      error: The function to call with any errors found.
-    """
-
-    # This check doesn't apply to C or Objective-C implementation files.
-    if file_state.is_c_or_objective_c():
-        return
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-
-    for matched in re.finditer(r'\bCSSValue([A-Z]\w*)\b', line):
-        name = matched.group(1)
-        if name in _css_value_id_enumerator_names():
-            error(line_number, 'runtime/css_value_id', 4, "Use 'CSSValueID::%s' instead of 'CSSValue%s'." % (name, name))
-
-
 def check_utf8cstring_from_utf8(clean_lines, line_number, file_state, error):
     """Looks for a UTF8CString constructed from 'byteCast<char8_t>()', which should use
     'UTF8CString::unsafeFromUTF8()' or 'UTF8CString::fromUTF8()' instead.
@@ -4734,7 +4689,6 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_to_array(clean_lines, line_number, file_state, error)
-    check_css_value_id(clean_lines, line_number, file_state, error)
     check_utf8cstring_from_utf8(clean_lines, line_number, file_state, error)
     check_construct_and_append(clean_lines, line_number, file_state, error)
     check_unsafe_get(clean_lines, line_number, file_state, error)
@@ -6045,7 +5999,6 @@ class CppChecker(object):
         'runtime/bitfields',
         'runtime/callonmainthread',
         'runtime/casting',
-        'runtime/css_value_id',
         'runtime/construct_and_append',
         'runtime/ctype_function',
         'runtime/darwin_string_wrappers',

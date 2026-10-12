@@ -234,10 +234,6 @@ class ValueKeywordName(Name):
         return ValueKeywordName(json_value)
 
     @property
-    def id_without_scope(self):
-        return f"CSSValue{self.id_without_prefix}"
-
-    @property
     def id(self):
         return f"CSSValueID::{self.id_without_prefix}"
 
@@ -471,10 +467,6 @@ class Value:
     @property
     def id_without_prefix_with_lowercase_first_letter(self):
         return self.value_keyword_name.id_without_prefix_with_lowercase_first_letter
-
-    @property
-    def id_without_scope(self):
-        return self.value_keyword_name.id_without_scope
 
     @property
     def id(self):
