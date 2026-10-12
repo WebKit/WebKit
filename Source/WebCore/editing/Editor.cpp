@@ -2739,6 +2739,30 @@ void Editor::learnSpelling()
     textChecker()->learnWord(text);
 }
 
+void Editor::ignoreSpelling(const SimpleRange& range)
+{
+    if (!client())
+        return;
+
+    removeMarkers(range, DocumentMarkerType::Spelling);
+
+    String text = plainText(range);
+    ASSERT(text.length());
+    textChecker()->ignoreWordInSpellDocument(text);
+}
+
+void Editor::learnSpelling(const SimpleRange& range)
+{
+    if (!client())
+        return;
+
+    removeMarkers(range, DocumentMarkerType::Spelling);
+
+    String text = plainText(range);
+    ASSERT(text.length());
+    textChecker()->learnWord(text);
+}
+
 #if !PLATFORM(IOS_FAMILY)
 
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
@@ -2979,6 +3003,14 @@ TextCheckingGuesses Editor::guessesForMisspelledOrUngrammatical()
     if (misspelledWord.isEmpty())
         return { };
     return { guessesForMisspelledWord(misspelledWord), true, false };
+}
+
+TextCheckingGuesses Editor::guessesForMisspelledOrUngrammatical(const SimpleRange& range)
+{
+    CheckedPtr client = this->client();
+    if (!client)
+        return { };
+    return TextCheckingHelper(*client, range).guessesForMisspelledWordOrUngrammaticalPhrase(isGrammarCheckingEnabled());
 }
 
 void Editor::showSpellingGuessPanel()

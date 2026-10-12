@@ -1766,6 +1766,78 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func clickingTwiceAtCaretInMisspelledWordOpensContextMenuWithSpellingItems() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let endOfCrazy = try await pointJustInsideEndOfText("crazy")
+        let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: [])
+
+        let (caretSelection, menuItems) = try await contextMenuAfterClickingTwiceInMisspelledWord(
+            at: endOfCrazy,
+            spellChecker: spellChecker
+        )
+
+        let spellingItemTitles: Set = ["No Guesses Found", "Ignore Spelling", "Learn Spelling"]
+        #expect(
+            menuItems.filter { spellingItemTitles.contains($0.title) } == [
+                PresentedMenuItem(title: "No Guesses Found", isEnabled: false),
+                PresentedMenuItem(title: "Ignore Spelling", isEnabled: true),
+                PresentedMenuItem(title: "Learn Spelling", isEnabled: true),
+            ]
+        )
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(selection == caretSelection)
+    }
+
+    @Test
+    func choosingLearnSpellingAtCaretLearnsMisspelledWord() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let endOfCrazy = try await pointJustInsideEndOfText("crazy")
+        let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: [])
+
+        let (caretSelection, _) = try await contextMenuAfterClickingTwiceInMisspelledWord(
+            at: endOfCrazy,
+            spellChecker: spellChecker,
+            choosingItemTitled: "Learn Spelling"
+        )
+
+        #expect(spellChecker.learnedWords == ["crazy"])
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(selection == caretSelection)
+    }
+
+    @Test
+    func choosingSpellingGuessAtCaretReplacesMisspelledWord() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let endOfCrazy = try await pointJustInsideEndOfText("crazy")
+        let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: ["crazier"])
+
+        _ = try await contextMenuAfterClickingTwiceInMisspelledWord(
+            at: endOfCrazy,
+            spellChecker: spellChecker,
+            choosingItemTitled: "crazier"
+        )
+
+        let textAndCaret = try await page.callJavaScript(returning: String.self) {
+            """
+            const div = document.getElementById("div");
+            const selection = getSelection();
+            const range = document.createRange();
+            range.setStart(div, 0);
+            range.setEnd(selection.focusNode, selection.focusOffset);
+            return `${div.textContent}|${selection.isCollapsed}|${range.toString().length}`;
+            """
+        }
+
+        #expect(textAndCaret == "Here's to the crazier ones.|true|\(crazyRange.lowerBound + "crazier".utf16.count)")
+    }
+
+    @Test
     func scrollingDoesNotRemoveTextSelection() async throws {
         try await loadHTML()
 
@@ -3806,13 +3878,36 @@ extension AppKitGesturesTests.Basic {
 private let coalescedFlickEventFrequency = 20
 private let coalescedFlickDuration = Duration.seconds(0.1)
 
-nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () async -> Void) async {
+private struct PresentedMenuItem: Sendable, Equatable {
+    let title: String
+    let isEnabled: Bool
+}
+
+/// Captures the items of the context menu that `body` presents instead of showing it, choosing the item titled
+/// `itemTitle`, if any, as if it were picked from the menu.
+@discardableResult
+nonisolated(nonsending) private func withSwizzledContextMenu(
+    choosingItemTitled itemTitle: String? = nil,
+    perform body: () async -> Void
+) async -> [PresentedMenuItem] {
     typealias CompletionHandler = @convention(block) () -> Void
     typealias ObjCImplementation = @convention(block) (NSMenu.Type, NSMenu, _NSViewMenuContext, NSView, CompletionHandler?) -> Void
 
     let future = Future()
+    let presentedItems = Mutex<[PresentedMenuItem]>([])
 
-    let implementation: ObjCImplementation = { _, _, _, _, completion in
+    let implementation: ObjCImplementation = { _, menu, _, _, completion in
+        let items = MainActor.assumeIsolated {
+            let items = menu.items.filter { !$0.isSeparatorItem }.map { PresentedMenuItem(title: $0.title, isEnabled: $0.isEnabled) }
+
+            if let itemTitle, let index = menu.items.firstIndex(where: { $0.title == itemTitle }) {
+                menu.performActionForItem(at: index)
+            }
+
+            return items
+        }
+        presentedItems.withLock { $0 = items }
+
         completion?()
 
         future.signal()
@@ -3827,6 +3922,8 @@ nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () as
 
         await future.wait()
     }
+
+    return presentedItems.withLock { $0 }
 }
 
 @discardableResult
@@ -3854,6 +3951,68 @@ nonisolated(nonsending) private func withSwizzledDraggingSession(perform body: (
     }
 
     return gestureState.withLock { $0 }
+}
+
+private final class SpellCheckerStub: Sendable {
+    let misspelledWord: String
+    let guesses: [String]
+    private let learnedWordsStorage = Mutex<[String]>([])
+
+    init(misspelledWord: String, guesses: [String]) {
+        self.misspelledWord = misspelledWord
+        self.guesses = guesses
+    }
+
+    var learnedWords: [String] {
+        learnedWordsStorage.withLock { $0 }
+    }
+
+    fileprivate func recordLearnedWord(_ word: String) {
+        learnedWordsStorage.withLock { $0.append(word) }
+    }
+}
+
+nonisolated(nonsending) private func withSpellChecker(_ stub: SpellCheckerStub, perform body: () async -> Void) async {
+    typealias CheckString =
+        @convention(block) (AnyObject, NSString, NSRange, NSTextCheckingTypes, NSDictionary?, Int, Int, Int) -> NSArray
+    typealias GuessesForWordRange = @convention(block) (AnyObject, NSRange, NSString, NSString?, Int) -> NSArray
+    typealias LearnWord = @convention(block) (AnyObject, NSString) -> Void
+
+    let checkString: CheckString = { _, string, _, types, _, _, _, _ in
+        let misspelledRange = string.range(of: stub.misspelledWord)
+        guard misspelledRange.location != NSNotFound, types & NSTextCheckingResult.CheckingType.spelling.rawValue != 0 else {
+            return [] as NSArray
+        }
+        return [NSTextCheckingResult.spellCheckingResult(range: misspelledRange)] as NSArray
+    }
+
+    let guessesForWordRange: GuessesForWordRange = { _, _, _, _, _ in
+        stub.guesses as NSArray
+    }
+
+    let learnWord: LearnWord = { _, word in
+        stub.recordLearnedWord(word as String)
+    }
+
+    await withSwizzledObjectiveCInstanceMethod(
+        replacing: NSSpellChecker.self,
+        name: NSSelectorFromString("checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:"),
+        with: checkString
+    ) {
+        await withSwizzledObjectiveCInstanceMethod(
+            replacing: NSSpellChecker.self,
+            name: NSSelectorFromString("guessesForWordRange:inString:language:inSpellDocumentWithTag:"),
+            with: guessesForWordRange
+        ) {
+            await withSwizzledObjectiveCInstanceMethod(
+                replacing: NSSpellChecker.self,
+                name: NSSelectorFromString("learnWord:"),
+                with: learnWord
+            ) {
+                await body()
+            }
+        }
+    }
 }
 
 extension ImageAnalysisResult.Quad {
@@ -3949,6 +4108,46 @@ extension AppKitGesturesTests.Basic {
         return try await page.callJavaScript(returning: Int.self) {
             "return window.contextMenuEventCount;"
         }
+    }
+
+    private func pointJustInsideEndOfText(_ text: String) async throws -> CGPoint {
+        let bounds = try await screenBoundsOfText(text)
+        return CGPoint(x: bounds.maxX - 2, y: bounds.midY)
+    }
+
+    private func contextMenuAfterClickingTwiceInMisspelledWord(
+        at point: CGPoint,
+        spellChecker: SpellCheckerStub,
+        choosingItemTitled itemTitle: String? = nil
+    ) async throws -> (caretSelection: JavaScriptSelection, menuItems: [PresentedMenuItem]) {
+        await recap.play { composer in
+            composer._wk_click(at: point, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let caretSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        guard case .collapsed = caretSelection else {
+            Issue.record("expected the click to place the caret, got \(caretSelection)")
+            return (caretSelection, [])
+        }
+
+        // Wait until the next click can no longer complete a double click.
+        try await Task.sleep(for: .seconds(1))
+
+        var menuItems: [PresentedMenuItem] = []
+        await withSpellChecker(spellChecker) {
+            menuItems = await withSwizzledContextMenu(choosingItemTitled: itemTitle) {
+                await recap.play { composer in
+                    composer._wk_click(at: point, for: .seconds(0.05))
+                }
+            }
+
+            await page.waitForNextPresentationUpdate()
+        }
+
+        return (caretSelection, menuItems)
     }
 
     private func waitForVideoToLoadData(elementID: String) async throws {

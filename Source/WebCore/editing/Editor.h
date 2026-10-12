@@ -371,13 +371,16 @@ public:
     bool isGrammarCheckingEnabled();
     void toggleGrammarChecking();
     void ignoreSpelling();
+    void ignoreSpelling(const SimpleRange&);
     void learnSpelling();
+    void learnSpelling(const SimpleRange&);
     int spellCheckerDocumentTag();
     WEBCORE_EXPORT bool isSelectionUngrammatical();
     String misspelledSelectionString() const;
     String misspelledWordAtCaretOrRange(Node* clickedNode) const;
     Vector<String> guessesForMisspelledWord(const String&) const;
     TextCheckingGuesses guessesForMisspelledOrUngrammatical();
+    TextCheckingGuesses guessesForMisspelledOrUngrammatical(const SimpleRange&);
     bool isSpellCheckingEnabledInFocusedNode() const;
     bool isSpellCheckingEnabledFor(Node*) const;
     WEBCORE_EXPORT void markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart, const VisibleSelection& selectionAfterTyping, AllowTextReplacement);

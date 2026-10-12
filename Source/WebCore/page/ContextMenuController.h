@@ -43,6 +43,8 @@ class ContextMenuProvider;
 class Event;
 class HitTestResult;
 class Page;
+class Range;
+struct TextCheckingGuesses;
 
 class ContextMenuController {
     WTF_MAKE_TZONE_ALLOCATED(ContextMenuController);
@@ -101,6 +103,8 @@ private:
 
     bool shouldEnableCopyLinkWithHighlight() const;
 
+    TextCheckingGuesses guessesForSpellingAndGrammarItems(LocalFrame&);
+
 #if ENABLE(PDFJS)
     void performPDFJSAction(LocalFrame&, const String& action);
 #endif
@@ -110,6 +114,9 @@ private:
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;
     ContextMenuContext m_context;
+    // The unselected word that spelling and grammar items act on.
+    RefPtr<Range> m_spellingAndGrammarTargetRange;
+    String m_spellingAndGrammarTargetText;
     bool m_isHandlingContextMenuEvent { false };
 };
 
