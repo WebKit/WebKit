@@ -36,7 +36,7 @@
 namespace WebCore {
 
 UsedStyle::UsedStyle(const Layout::Box& layoutBox)
-    : UsedStyleProperties(downcast<RenderElement>(*layoutBox.rendererForIntegration()))
+    : UsedStyle(downcast<RenderElement>(*layoutBox.rendererForIntegration()))
 {
 }
 

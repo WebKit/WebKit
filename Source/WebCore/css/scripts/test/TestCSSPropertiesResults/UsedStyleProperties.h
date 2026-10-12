@@ -13,11 +13,12 @@ namespace WebCore {
 
 class UsedStyleProperties {
 public:
-    const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND { return m_renderer->style(); }
+    const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND { return m_computedStyle.get(); }
 
 protected:
-    explicit UsedStyleProperties(const RenderElement& renderer LIFETIME_BOUND)
+    UsedStyleProperties(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& computedStyle LIFETIME_BOUND)
         : m_renderer(renderer)
+        , m_computedStyle(computedStyle)
     {
     }
 
@@ -25,8 +26,10 @@ protected:
     // block inline size). Renderer-derived, so hand-written out-of-line in UsedStyle.cpp.
     LayoutUnit resolveReferenceSize(ReferenceSize) const;
 
-    // const: a UsedStyle view never rebinds its renderer, so it can be read without a stack-local guard.
+    // const: a UsedStyle view never rebinds its members, so they can be read without a stack-local guard.
     const CheckedRef<const RenderElement> m_renderer;
+    // The renderer's style, or one of its pseudo-element styles.
+    const CheckedRef<const Style::ComputedStyle> m_computedStyle;
 };
 
 } // namespace WebCore

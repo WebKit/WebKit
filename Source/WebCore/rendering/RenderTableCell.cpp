@@ -1667,7 +1667,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
         return;
 
     BorderPainter borderPainter { *this, paintInfo };
-    borderPainter.paintBorder(paintRect, style());
+    borderPainter.paintBorder(paintRect, usedStyle());
 }
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

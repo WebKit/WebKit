@@ -33,6 +33,7 @@ namespace WebCore {
 
 class Color;
 class RenderBoxModelObject;
+class UsedStyle;
 struct PaintInfo;
 template<typename> struct FillLayerToPaint;
 
@@ -62,6 +63,7 @@ private:
     void paintBoxShadow(Style::ShadowStyle, const LayoutRect& paintRect);
 
     const Style::ComputedStyle& style() const;
+    UsedStyle usedStyle() const;
     // FIXME: Make RenderBoxModelObject functions const.
     RenderBoxModelObject& renderer() const { return const_cast<RenderBoxModelObject&>(m_renderer); }
     bool isHorizontal() const { return m_isHorizontal; }

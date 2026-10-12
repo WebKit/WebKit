@@ -71,7 +71,6 @@ rendering/TextDecorationPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathMLStyle.cpp
-rendering/mathml/MathOperator.cpp
 rendering/mathml/RenderMathMLBlock.cpp
 rendering/mathml/RenderMathMLRow.cpp
 rendering/mathml/RenderMathMLScripts.cpp

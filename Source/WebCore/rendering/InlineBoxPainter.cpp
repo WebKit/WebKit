@@ -267,7 +267,7 @@ void InlineBoxPainter::paintDecorations()
 
     if (!hasBorderImage || !m_inlineBox.isSplit()) {
         auto closedEdges = m_inlineBox.closedEdges();
-        borderPainter.paintBorder(paintRect, style, BleedAvoidance::None, closedEdges);
+        borderPainter.paintBorder(paintRect, usedStyle(), BleedAvoidance::None, closedEdges);
         return;
     }
 
@@ -276,7 +276,7 @@ void InlineBoxPainter::paintDecorations()
     LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, borderImage, paintRect);
     GraphicsContextStateSaver stateSaver(context);
     context.clip(clipRect);
-    borderPainter.paintBorder(imageStrip, style);
+    borderPainter.paintBorder(imageStrip, usedStyle());
 }
 
 template<typename Layers> void InlineBoxPainter::paintFillLayers(const Color& color, const Layers& fillLayers, Style::ZoomFactor zoom, const LayoutRect& rect, CompositeOperator op)
@@ -356,6 +356,11 @@ void InlineBoxPainter::paintBoxShadow(Style::ShadowStyle shadowStyle, const Layo
 const Style::ComputedStyle& InlineBoxPainter::style() const
 {
     return m_isFirstLineBox ? renderer().firstLineStyle() : renderer().style();
+}
+
+UsedStyle InlineBoxPainter::usedStyle() const
+{
+    return m_isFirstLineBox ? renderer().firstLineUsedStyle() : renderer().usedStyle();
 }
 
 }
