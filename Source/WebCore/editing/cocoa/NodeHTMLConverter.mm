@@ -27,6 +27,7 @@
 #import "config.h"
 #import "NodeHTMLConverter.h"
 
+#import "AccessibilityObject.h"
 #import "ArchiveResource.h"
 #import "BoundaryPointInlines.h"
 #import "CSSColorValue.h"
@@ -65,6 +66,7 @@
 #import "HTMLMetaElement.h"
 #import "HTMLNames.h"
 #import "HTMLOListElement.h"
+#import "HTMLParserIdioms.h"
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "ImageAdapter.h"
@@ -74,7 +76,9 @@
 #import "NodeName.h"
 #import "RemoteFrame.h"
 #import "RenderImage.h"
+#import "RenderListItem.h"
 #import "RenderText.h"
+#import "SpaceSplitString.h"
 #import "StyleComputedStyle+GettersInlines.h"
 #import "StyleExtractor.h"
 #import "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
@@ -139,6 +143,7 @@ enum {
 
 // Additional control Unicode characters
 const unichar WebNextLineCharacter = 0x0085;
+const unichar WebThematicBreakCharacter = 0x2E3B; // Horizontal Rule
 
 static const CGFloat defaultFontSize = 12;
 static const CGFloat minimumFontSize = 1;
@@ -176,6 +181,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLConverterCaches);
 + (void)document:(NSObject **)outDocument attachment:(NSTextAttachment **)outAttachment forURL:(NSURL *)url;
 @end
 
+static bool presentationIntentHTMLInterchangeEnabled()
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"__NSPresentationIntentHTMLInterchange"];
+}
+
 class HTMLConverter {
 public:
     explicit HTMLConverter(const SimpleRange&, IgnoreUserSelectNone, MarkRemoteFrameContentPositions);
@@ -192,9 +202,13 @@ private:
     HashMap<Ref<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
     HashMap<RetainPtr<CFTypeRef>, Ref<Element>> m_textTableFooters;
     HashMap<Ref<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
+    HashMap<Ref<Element>, RetainPtr<NSPresentationIntent>> m_presentationIntentsForElements;
+    HashMap<Ref<Element>, NSInlinePresentationIntent> m_inlinePresentationIntentsForElements;
 
     UserSelectNoneStateCache m_userSelectNoneStateCache;
     bool m_ignoreUserSelectNoneContent { false };
+    const bool m_readsAllPresentationIntents;
+    NSInteger m_lastPresentationIntentIdentity { 0 };
 
     RetainPtr<NSMutableAttributedString> _attrStr;
     RetainPtr<NSMutableDictionary> _documentAttrs;
@@ -251,6 +265,9 @@ private:
     void _fillInBlock(NSTextBlock *block, Element&, PlatformColor *backgroundColor, CGFloat extraMargin, CGFloat extraPadding, BOOL isTable);
     void _enterBlockquote();
     void _exitBlockquote();
+    RetainPtr<NSPresentationIntent> _createPresentationIntentForElement(Element&, NSPresentationIntent *parentIntent);
+    RetainPtr<NSPresentationIntent> _presentationIntentForElement(Element&);
+    NSInlinePresentationIntent _inlinePresentationIntentForElement(Element&);
 
     BOOL _enterElement(Element&, BOOL embedded);
     BOOL _processElement(Element&, NSInteger depth);
@@ -262,7 +279,7 @@ private:
     void _addLinkForElement(Element&, NSRange);
     void _addTableForElement(Element* tableElement);
     void _addTableCellForElement(Element* tableCellElement);
-    void _addMarkersToList(NSTextList *list, NSRange range);
+    void _addMarkersToList(NSTextList *, NSRange, NSPresentationIntent *listIntent);
     void _processText(Text&);
     void _adjustTrailingNewline();
 };
@@ -273,6 +290,7 @@ HTMLConverter::HTMLConverter(const SimpleRange& range, IgnoreUserSelectNone trea
     , m_markRemoteFrameContentPositions(markRemoteFrameContentPositions)
     , m_userSelectNoneStateCache(ComposedTree)
     , m_ignoreUserSelectNoneContent(treatment == IgnoreUserSelectNone::Yes && !protect(range.start.document())->quirks().needsToCopyUserSelectNoneQuirk())
+    , m_readsAllPresentationIntents(presentationIntentHTMLInterchangeEnabled())
 {
     _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
     _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
@@ -1016,13 +1034,20 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (&element != blockElement && [_writingDirectionArray count] > 0)
         [attrs setObject:[NSArray arrayWithArray:_writingDirectionArray.get()] forKey:NSWritingDirectionAttributeName];
 
+    if (m_readsAllPresentationIntents) {
+        if (RetainPtr presentationIntent = _presentationIntentForElement(element))
+            [attrs setObject:presentationIntent.get() forKey:NSPresentationIntentAttributeName];
+        if (auto inlinePresentationIntent = _inlinePresentationIntentForElement(element))
+            [attrs setObject:@(inlinePresentationIntent) forKey:NSInlinePresentationIntentAttributeName];
+    }
+
     if (blockElement) {
         Element& coreBlockElement = *blockElement;
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([defaultParagraphStyle() mutableCopy]);
         unsigned heading = 0;
         if (RefPtr headingElement = dynamicDowncast<HTMLHeadingElement>(coreBlockElement))
             heading = headingElement->level();
-        else if (coreBlockElement.hasTagName(blockquoteTag) && _topPresentationIntent)
+        else if (!m_readsAllPresentationIntents && coreBlockElement.hasTagName(blockquoteTag) && _topPresentationIntent)
             [attrs setObject:_topPresentationIntent.get() forKey:NSPresentationIntentAttributeName];
         bool isParagraph = coreBlockElement.hasTagName(pTag) || coreBlockElement.hasTagName(liTag) || heading || coreBlockElement.hasTagName(blockquoteTag);
 
@@ -1140,6 +1165,19 @@ void HTMLConverter::_newParagraphForElement(Element& element, NSString *tag, BOO
         RetainPtr<NSDictionary> attrs = attributesForElement(element);
         if (rangeToReplace.length > 0)
             [_attrStr setAttributes:attrs range:rangeToReplace];
+        if (m_readsAllPresentationIntents && rangeToReplace.length > 0 && rangeToReplace.location > 0 && [[_attrStr string] characterAtIndex:rangeToReplace.location - 1] != '\n') {
+            // A paragraph separator belongs to the paragraph it ends. A separator that follows another
+            // one is an empty paragraph of its own, so it keeps the element's attributes.
+            NSUInteger previousIndex = rangeToReplace.location - 1;
+            auto copyAttributeFromPreviousCharacter = [&](NSAttributedStringKey key) {
+                if (id value = [_attrStr attribute:key atIndex:previousIndex effectiveRange:nil])
+                    [_attrStr addAttribute:key value:value range:rangeToReplace];
+                else
+                    [_attrStr removeAttribute:key range:rangeToReplace];
+            };
+            copyAttributeFromPreviousCharacter(NSPresentationIntentAttributeName);
+            copyAttributeFromPreviousCharacter(NSInlinePresentationIntentAttributeName);
+        }
         _flags.isSoft = YES;
     }
 }
@@ -1619,17 +1657,266 @@ void HTMLConverter::_exitBlockquote()
         _topPresentationIntent = [_topPresentationIntent parentIntent];
 }
 
+static std::optional<NSPresentationIntentKind> presentationIntentKindForElement(const Element& element)
+{
+    using namespace ElementNames;
+
+    if (element.hasAttributeWithoutSynchronization(roleAttr)) {
+        switch (AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(roleAttr))) {
+        case AccessibilityRole::Unknown:
+            break;
+        case AccessibilityRole::Paragraph:
+            return NSPresentationIntentKindParagraph;
+        case AccessibilityRole::Heading:
+            return NSPresentationIntentKindHeader;
+        case AccessibilityRole::List:
+            return element.hasTagName(olTag) ? NSPresentationIntentKindOrderedList : NSPresentationIntentKindUnorderedList;
+        case AccessibilityRole::ListItem:
+            return NSPresentationIntentKindListItem;
+        case AccessibilityRole::Blockquote:
+            return NSPresentationIntentKindBlockQuote;
+        case AccessibilityRole::Splitter:
+            return NSPresentationIntentKindThematicBreak;
+        default:
+            // Any other role, including presentation and none, replaces the meaning of the tag.
+            return std::nullopt;
+        }
+    }
+
+    switch (element.elementName()) {
+    case HTML::p:
+        return NSPresentationIntentKindParagraph;
+    case HTML::h1:
+    case HTML::h2:
+    case HTML::h3:
+    case HTML::h4:
+    case HTML::h5:
+    case HTML::h6:
+        return NSPresentationIntentKindHeader;
+    case HTML::ol:
+        return NSPresentationIntentKindOrderedList;
+    case HTML::ul:
+        return NSPresentationIntentKindUnorderedList;
+    case HTML::li:
+        return NSPresentationIntentKindListItem;
+    case HTML::blockquote:
+        return NSPresentationIntentKindBlockQuote;
+    case HTML::pre:
+        return NSPresentationIntentKindCodeBlock;
+    case HTML::hr:
+        return NSPresentationIntentKindThematicBreak;
+    default:
+        return std::nullopt;
+    }
+}
+
+static NSInteger headerLevelForElement(const Element& element)
+{
+    if (auto level = parseHTMLInteger(element.attributeWithoutSynchronization(aria_levelAttr)); level && *level > 0)
+        return std::min(*level, 6);
+    if (RefPtr headingElement = dynamicDowncast<HTMLHeadingElement>(element))
+        return headingElement->level();
+    // The default level for role="heading".
+    return 2;
+}
+
+static bool isListItemElement(const Element& element)
+{
+    return presentationIntentKindForElement(element) == NSPresentationIntentKindListItem;
+}
+
+static std::optional<int> listItemValueForElement(const Element& element)
+{
+    if (!element.hasTagName(liTag))
+        return std::nullopt;
+    if (auto value = parseHTMLInteger(element.attributeWithoutSynchronization(valueAttr)))
+        return *value;
+    return std::nullopt;
+}
+
+static NSInteger listItemOrdinalForElement(const Element& element)
+{
+    if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(element.renderer()))
+        return listItemRenderer->value();
+
+    // Without a list item renderer, number the item as RenderListItem does: from the closest
+    // preceding item with a value, or else from the start of the enclosing list.
+    if (auto value = listItemValueForElement(element))
+        return *value;
+
+    RefPtr orderedList = dynamicDowncast<HTMLOListElement>(element.parentElement());
+    NSInteger increment = orderedList && orderedList->isReversed() ? -1 : 1;
+
+    NSInteger itemsBefore = 0;
+    for (RefPtr sibling = element.previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+        if (!isListItemElement(*sibling))
+            continue;
+        ++itemsBefore;
+        if (auto value = listItemValueForElement(*sibling))
+            return *value + itemsBefore * increment;
+    }
+
+    NSInteger start = 1;
+    if (orderedList && orderedList->hasExplicitStart())
+        start = orderedList->start();
+    else if (orderedList && orderedList->isReversed()) {
+        // HTMLOListElement::start() counts list item renderers, which this item does not have.
+        start = itemsBefore + 1;
+        for (RefPtr sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+            if (isListItemElement(*sibling))
+                ++start;
+        }
+    }
+    return start + itemsBefore * increment;
+}
+
+static constexpr auto languageClassPrefix = "language-"_s;
+
+static String languageHintFromClassAttribute(const Element& element)
+{
+    // Element::classNames() folds case in quirks mode, so read the attribute to keep the hint as written.
+    for (auto& classToken : SpaceSplitString { element.attributeWithoutSynchronization(classAttr), SpaceSplitString::ShouldFoldCase::No }) {
+        StringView className = classToken;
+        if (className.length() > languageClassPrefix.length() && className.startsWith(languageClassPrefix))
+            return className.substring(languageClassPrefix.length()).toString();
+    }
+    return { };
+}
+
+static String languageHintForCodeBlockElement(const Element& element)
+{
+    if (auto languageHint = languageHintFromClassAttribute(element); !languageHint.isEmpty())
+        return languageHint;
+
+    // <pre><code class="language-x"> is the CommonMark form.
+    if (RefPtr child = ElementTraversal::firstChild(element); child && child->hasTagName(codeTag))
+        return languageHintFromClassAttribute(*child);
+    return { };
+}
+
+RetainPtr<NSPresentationIntent> HTMLConverter::_createPresentationIntentForElement(Element& element, NSPresentationIntent *parentIntent)
+{
+    auto kind = presentationIntentKindForElement(element);
+    if (!kind)
+        return nil;
+
+    NSInteger identity = ++m_lastPresentationIntentIdentity;
+    switch (*kind) {
+    case NSPresentationIntentKindParagraph:
+        return [NSPresentationIntent paragraphIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindHeader:
+        return [NSPresentationIntent headerIntentWithIdentity:identity level:headerLevelForElement(element) nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindOrderedList:
+        return [NSPresentationIntent orderedListIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindUnorderedList:
+        return [NSPresentationIntent unorderedListIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindListItem:
+        return [NSPresentationIntent listItemIntentWithIdentity:identity ordinal:listItemOrdinalForElement(element) nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindCodeBlock: {
+        auto languageHint = languageHintForCodeBlockElement(element);
+        return [NSPresentationIntent codeBlockIntentWithIdentity:identity languageHint:languageHint.isEmpty() ? nil : languageHint.createNSString().get() nestedInsideIntent:parentIntent];
+    }
+    case NSPresentationIntentKindBlockQuote:
+        return [NSPresentationIntent blockQuoteIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindThematicBreak:
+        return [NSPresentationIntent thematicBreakIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case NSPresentationIntentKindTable:
+    case NSPresentationIntentKindTableHeaderRow:
+    case NSPresentationIntentKindTableRow:
+    case NSPresentationIntentKindTableCell:
+        // presentationIntentKindForElement() does not return table kinds.
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+// An element's intent is its own intent nested inside its parent's, or its parent's if the element has none.
+RetainPtr<NSPresentationIntent> HTMLConverter::_presentationIntentForElement(Element& element)
+{
+    if (auto iterator = m_presentationIntentsForElements.find(element); iterator != m_presentationIntentsForElements.end())
+        return iterator->value;
+
+    RetainPtr<NSPresentationIntent> parentIntent;
+    if (RefPtr parent = element.parentElementInComposedTree())
+        parentIntent = _presentationIntentForElement(*parent);
+
+    RetainPtr intent = _createPresentationIntentForElement(element, parentIntent.get());
+    if (!intent)
+        intent = parentIntent;
+    m_presentationIntentsForElements.add(element, intent);
+    return intent;
+}
+
+static NSInlinePresentationIntent inlinePresentationIntentForElement(const Element& element)
+{
+    using namespace ElementNames;
+
+    if (element.hasAttributeWithoutSynchronization(roleAttr)) {
+        switch (AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(roleAttr))) {
+        case AccessibilityRole::Unknown:
+            break;
+        case AccessibilityRole::Emphasis:
+            return NSInlinePresentationIntentEmphasized;
+        case AccessibilityRole::Strong:
+            return NSInlinePresentationIntentStronglyEmphasized;
+        case AccessibilityRole::Code:
+            return NSInlinePresentationIntentCode;
+        case AccessibilityRole::Deletion:
+            return NSInlinePresentationIntentStrikethrough;
+        default:
+            return 0;
+        }
+    }
+
+    switch (element.elementName()) {
+    case HTML::em:
+        return NSInlinePresentationIntentEmphasized;
+    case HTML::strong:
+        return NSInlinePresentationIntentStronglyEmphasized;
+    case HTML::code:
+        return NSInlinePresentationIntentCode;
+    case HTML::del:
+        return NSInlinePresentationIntentStrikethrough;
+    default:
+        return 0;
+    }
+}
+
+// An element's inline intent combines its own inline intent with its ancestors'.
+NSInlinePresentationIntent HTMLConverter::_inlinePresentationIntentForElement(Element& element)
+{
+    if (auto iterator = m_inlinePresentationIntentsForElements.find(element); iterator != m_inlinePresentationIntentsForElements.end())
+        return iterator->value;
+
+    NSInlinePresentationIntent intent = 0;
+    if (RefPtr parent = element.parentElementInComposedTree())
+        intent = _inlinePresentationIntentForElement(*parent);
+
+    auto elementIntent = inlinePresentationIntentForElement(element);
+    if (elementIntent & NSInlinePresentationIntentCode) {
+        // The <code> in <pre><code> is part of the code block, not inline code.
+        RetainPtr presentationIntent = _presentationIntentForElement(element);
+        if (presentationIntent && [presentationIntent intentKind] == NSPresentationIntentKindCodeBlock)
+            elementIntent &= ~NSInlinePresentationIntentCode;
+    }
+    intent |= elementIntent;
+    m_inlinePresentationIntentsForElements.add(element, intent);
+    return intent;
+}
+
 BOOL HTMLConverter::_enterElement(Element& element, BOOL embedded)
 {
     String displayValue = _caches->propertyValueForNode(element, CSSPropertyDisplay);
-    if (element.hasTagName(blockquoteTag))
+    if (!m_readsAllPresentationIntents && element.hasTagName(blockquoteTag))
         _enterBlockquote();
 
     if (element.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
     else if ((!m_ignoreUserSelectNoneContent || !m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(element)) && (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s))) {
         if (_caches->isBlockElement(element) && !element.hasTagName(brTag) && !(displayValue == "table-cell"_s && ![_textTables count])
-            && !([_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
+            && !(!m_readsAllPresentationIntents && [_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
             _newParagraphForElement(element, element.tagName().createNSString().get(), NO, YES);
         return YES;
     }
@@ -1902,11 +2189,26 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
                 _addValue(value.get(), element);
         }
         retval = NO;
+    } else if (m_readsAllPresentationIntents && !element.hasChildNodes() && presentationIntentKindForElement(element) == NSPresentationIntentKindThematicBreak) {
+        // Only a childless element like <hr> gets the break character, so it never lands among other content.
+        _addValue(adoptNS([[NSString alloc] initWithCharacters:&WebThematicBreakCharacter length:1]).get(), element);
     }
     return retval;
 }
 
-void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
+// The item of the given list that contains the intent, skipping items of lists nested inside it.
+static RetainPtr<NSPresentationIntent> listItemIntentInList(NSPresentationIntent *intent, NSPresentationIntent *listIntent)
+{
+    if (!listIntent)
+        return nil;
+    for (; intent; intent = intent.parentIntent) {
+        if (intent.intentKind == NSPresentationIntentKindListItem && intent.parentIntent && intent.parentIntent.identity == listIntent.identity)
+            return intent;
+    }
+    return nil;
+}
+
+void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range, NSPresentationIntent *listIntent)
 {
     NSInteger itemNum = [list startingItemNumber];
     NSString *string = [_attrStr string];
@@ -1925,6 +2227,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     NSArray *textLists;
     CGFloat markerLocation;
     CGFloat listLocation;
+    RetainPtr<NSPresentationIntent> previousListItemIntent;
 
     if (range.length == 0 || range.location >= textLength)
         return;
@@ -1939,12 +2242,32 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                 paragraphRange = [string paragraphRangeForRange:NSMakeRange(idx, 0)];
                 paragraphStyle = [_attrStr attribute:NSParagraphStyleAttributeName atIndex:idx effectiveRange:&styleRange];
                 if ([[paragraphStyle textLists] count] == listIndex + 1) {
+                    if (m_readsAllPresentationIntents) {
+                        // Each block in a list item is its own paragraph, but only the item's first paragraph gets a marker.
+                        RetainPtr listItemIntent = listItemIntentInList([_attrStr attribute:NSPresentationIntentAttributeName atIndex:paragraphRange.location effectiveRange:NULL], listIntent);
+                        if (listItemIntent && previousListItemIntent && [listItemIntent identity] == [previousListItemIntent identity]) {
+                            RetainPtr newStyle = adoptNS([paragraphStyle mutableCopy]);
+                            listLocation = (listIndex + 1) * 36;
+                            [newStyle setFirstLineHeadIndent:listLocation];
+                            [newStyle setHeadIndent:listLocation];
+                            [_attrStr addAttribute:NSParagraphStyleAttributeName value:newStyle.get() range:paragraphRange];
+                            idx = NSMaxRange(paragraphRange);
+                            continue;
+                        }
+                        previousListItemIntent = WTF::move(listItemIntent);
+                    }
                     stringToInsert = [NSString stringWithFormat:@"\t%@\t", [list markerForItemNumber:itemNum++]];
                     insertLength = [stringToInsert length];
                     attrsToInsert = [PlatformNSTextList _standardMarkerAttributesForAttributes:[_attrStr attributesAtIndex:paragraphRange.location effectiveRange:NULL]];
+                    RetainPtr<NSPresentationIntent> paragraphIntent;
+                    if (m_readsAllPresentationIntents)
+                        paragraphIntent = [_attrStr attribute:NSPresentationIntentAttributeName atIndex:paragraphRange.location effectiveRange:NULL];
 
                     [_attrStr replaceCharactersInRange:NSMakeRange(paragraphRange.location, 0) withString:stringToInsert];
                     [_attrStr setAttributes:attrsToInsert range:NSMakeRange(paragraphRange.location, insertLength)];
+                    // _standardMarkerAttributesForAttributes: is not known to keep other attributes, so give the marker the intent of the paragraph it starts.
+                    if (paragraphIntent)
+                        [_attrStr addAttribute:NSPresentationIntentAttributeName value:paragraphIntent.get() range:NSMakeRange(paragraphRange.location, insertLength)];
                     range.length += insertLength;
                     paragraphRange.length += insertLength;
                     if (paragraphRange.location < _domRangeStartIndex)
@@ -1990,7 +2313,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         [_writingDirectionArray removeAllObjects];
         if (displayValue == "table-cell"_s && ![_textBlocks count]) {
             _newTabForElement(element);
-        } else if ([_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)) {
+        } else if (!m_readsAllPresentationIntents && [_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)) {
             _newLineForElement(element);
         } else {
             _newParagraphForElement(element, element.tagName().createNSString().get(), !range.length, YES);
@@ -2063,7 +2386,10 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         [_textBlocks removeLastObject];
     } else if ((element.hasTagName(ulTag) || element.hasTagName(olTag)) && [_textLists count] > 0) {
         NSTextList *list = [_textLists lastObject];
-        _addMarkersToList(list, range);
+        RetainPtr<NSPresentationIntent> listIntent;
+        if (m_readsAllPresentationIntents)
+            listIntent = _presentationIntentForElement(element);
+        _addMarkersToList(list, range, listIntent.get());
         [_textLists removeLastObject];
     } else if (element.hasTagName(qTag)) {
         _addQuoteForElement(element, NO, --_quoteLevel);
@@ -2107,7 +2433,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         }
     }
 
-    if (element.hasTagName(blockquoteTag))
+    if (!m_readsAllPresentationIntents && element.hasTagName(blockquoteTag))
         _exitBlockquote();
 }
 

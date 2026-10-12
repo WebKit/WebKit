@@ -261,6 +261,7 @@ list(APPEND TestWebKitLegacy_SOURCES
     Tests/WebKitLegacy/mac/EarlyKVOCrash.mm
     Tests/WebKitLegacy/mac/EmbeddedPrintPagination.mm
     Tests/WebKitLegacy/mac/PDFEmbeddedPrintScript.mm
+    Tests/WebKitLegacy/mac/PresentationIntents.mm
     Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm
     Tests/WebKitLegacy/mac/URLExtras.mm
     Tests/WebKitLegacy/mac/UserContentTest.mm
