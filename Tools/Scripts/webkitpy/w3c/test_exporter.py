@@ -39,7 +39,7 @@ from webkitscmpy.program.pull_request import PullRequest as PullRequestProgram
 from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.w3c.wpt_linter import WPTLinter
-from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
+from webkitpy.w3c.common import TEMPLATED_TEST_WRAPPER_SUFFIXES, WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
 from webkitpy.common.memoized import memoized
 
 
@@ -49,7 +49,7 @@ WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
 WPT_PR_URL = f'{WPT_GH_URL}/pull/'
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
-EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected.htm', '-expected.xht', '-expected.xhtml', '-expected.xml', '-expected.svg', '-expected-mismatch.html', '-expected-mismatch.xht', '-expected-mismatch.xhtml', '-expected-mismatch.svg', '.worker.html', '.any.html', '.any.worker.html', '.any.serviceworker.html', '.any.sharedworker.html', 'w3c-import.log']
+EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected.htm', '-expected.xht', '-expected.xhtml', '-expected.xml', '-expected.svg', '-expected-mismatch.html', '-expected-mismatch.xht', '-expected-mismatch.xhtml', '-expected-mismatch.svg', 'w3c-import.log', *TEMPLATED_TEST_WRAPPER_SUFFIXES]
 
 REVIEW_RE = re.compile(r'^(Reviewed by |Unreviewed\b)')
 TESTS_RE = re.compile(r'^Tests?:')

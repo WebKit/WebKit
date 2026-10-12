@@ -1251,6 +1251,43 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/w3c-i
             exporter = WebPlatformTestExporter(host, options)
         self.assertFalse(exporter.has_wpt_changes())
 
+    def test_ignore_changes_to_templated_test_wrappers(self):
+        host = TestExporterTest.MyMockHost()
+        host.filesystem.maybe_make_directory(self.path)
+        host._mockSCM.mock_format_patch_result = b"""
+Subversion Revision: 231920
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-frames.https.window.html b/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-frames.https.window.html
+
++change to window
+
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-workers.https.worker.html b/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-postMessage-workers.https.worker.html
+
++change to worker
+
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.html b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.html
+
++change to any
+
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.worker.html b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.worker.html
+
++change to any.worker
+
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.serviceworker-module.html b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.serviceworker-module.html
+
++change to any.serviceworker-module
+"""
+        options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
+        with mocks.local.Git(self.path) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ):
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            exporter = WebPlatformTestExporter(host, options)
+        self.assertFalse(exporter.has_wpt_changes())
+
 
 class WPTCommitMessageTest(unittest.TestCase):
     BUGZILLA_URL = 'https://bugs.example.com'

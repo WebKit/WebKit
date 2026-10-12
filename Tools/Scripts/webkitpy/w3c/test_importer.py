@@ -80,7 +80,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
-from webkitpy.w3c.common import TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths
+from webkitpy.w3c.common import TEMPLATED_TEST_GLOBAL_SUFFIXES, TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
 from webkitpy.w3c.test_parser import TestParser
@@ -194,15 +194,6 @@ class TestImporter(object):
         self._slow_tests = []
 
         self._to_skip_new_directories = set()
-
-        self.globalToSuffixes = {
-            'window': ('html',),
-            'worker': ('worker.html', 'serviceworker.html', 'sharedworker.html'),
-            'dedicatedworker': ('worker.html',),
-            'serviceworker': ('serviceworker.html',),
-            'serviceworker-module': ('serviceworker-module.html',),
-            'sharedworker': ('sharedworker.html',)
-        }
 
     def do_import(self):
         finder = WebKitFinder(self.filesystem)
@@ -545,7 +536,7 @@ class TestImporter(object):
                 items = line.split('META: global=', 1)[1].split(',')
                 suffixes = set()
                 for item in items:
-                    suffixes_for_item = self.globalToSuffixes.get(item.strip(), ())
+                    suffixes_for_item = TEMPLATED_TEST_GLOBAL_SUFFIXES.get(item.strip(), ())
                     if len(suffixes_for_item) == 0:
                         suffixes.add('')
                     else:
