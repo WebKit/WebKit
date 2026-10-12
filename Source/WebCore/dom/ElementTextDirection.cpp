@@ -333,6 +333,11 @@ void updateEffectiveTextDirectionOfDescendants(Element& element, std::optional<T
             continue;
         }
 
+        if (is<HTMLBDIElement>(child)) {
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+
         updateEffectiveTextDirectionOfElementAndShadowTree(child, direction);
         it.traverseNext();
     }
