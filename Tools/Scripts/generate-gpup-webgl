@@ -469,9 +469,10 @@ class cpp_arg(object):
     name: str
     type: cpp_type
 
-    def __init__(self, type: cpp_type, name: str):
+    def __init__(self, type: cpp_type, name: str, unsafe_span: bool = False):
         self.name = name
         self.type = type
+        self.unsafe_span = unsafe_span
 
     def get_declaration(self):
         if self.name == "completionHandler":
@@ -672,6 +673,10 @@ def webkit_ipc_msg_arg_type(cpp_type: cpp_type) -> cpp_type:
     return ipc_type
 
 
+def webkit_ipc_msg_arg_declaration(arg: cpp_arg) -> str:
+    return f"[UnsafeSpan] {arg}" if arg.unsafe_span else str(arg)
+
+
 # FIXME: these should be removed and IPC should know this.
 non_stream_types = set({"WebCore::GraphicsContextGL::ExternalImageSource&&", "WebCore::GraphicsContextGL::ExternalSyncSource&&"})
 
@@ -824,7 +829,7 @@ class webkit_ipc_msg(object):
         self.enabled_by = func.enabled_by
         self.name = webkit_ipc_msg_name(func)
         in_args, out_args = func.get_args_categories()
-        ipc_in_args = [cpp_arg(webkit_ipc_msg_arg_type(a.type), a.name) for a in in_args]
+        ipc_in_args = [cpp_arg(webkit_ipc_msg_arg_type(a.type), a.name, a.unsafe_span) for a in in_args]
         ipc_out_args = []
         if is_create_func(func):
             name = get_create_func_object_name(func.name)
@@ -832,7 +837,7 @@ class webkit_ipc_msg(object):
         elif not func.return_type.is_void():
             ipc_out_args += [cpp_arg(webkit_ipc_types[func.return_type], "returnValue")]
         for a in out_args:
-            ipc_out_args += [cpp_arg(webkit_ipc_types[a.type], a.name)]
+            ipc_out_args += [cpp_arg(webkit_ipc_types[a.type], a.name, a.unsafe_span)]
             if a.type.is_dynamic_span():
                 ipc_in_args += [cpp_arg(get_cpp_type("uint64_t"), f"{a.name}Size")]
         self.in_args = cpp_arg_list(ipc_in_args)
@@ -846,9 +851,11 @@ class webkit_ipc_msg(object):
     def __str__(self):
         tags = f" {' '.join(self.tags)}" if self.tags else ""
         enabled_by = f"[EnabledBy={self.enabled_by}] " if self.enabled_by else ""
+        in_args = ", ".join(webkit_ipc_msg_arg_declaration(a) for a in self.in_args.args)
+        out_args = ", ".join(webkit_ipc_msg_arg_declaration(a) for a in self.out_args.args)
         if len(self.out_args.args):
-            return f"\n    {enabled_by}void {self.name}({str(self.in_args)}) -> ({str(self.out_args)}) Synchronous{tags}"
-        return f"\n    {enabled_by}void {self.name}({str(self.in_args)}){tags}"
+            return f"\n    {enabled_by}void {self.name}({in_args}) -> ({out_args}) Synchronous{tags}"
+        return f"\n    {enabled_by}void {self.name}({in_args}){tags}"
 
 
 class webkit_ipc_cpp_proxy_impl(object):
@@ -1285,6 +1292,10 @@ class context_msg_webkit_ipc_generator(object):
 
 
 def create_cpp_arg(arg_spec: str, arg_index: int):
+    unsafe_span = False
+    if arg_spec.startswith("IPC_UNSAFE_SPAN "):
+        unsafe_span = True
+        arg_spec = arg_spec[len("IPC_UNSAFE_SPAN ") :].strip()
     r = arg_spec.rsplit(" ", 1)
     name = ""
     type = None
@@ -1294,7 +1305,7 @@ def create_cpp_arg(arg_spec: str, arg_index: int):
     else:
         name = "arg{}".format(arg_index)
         type = get_cpp_type(arg_spec)
-    return cpp_arg(type, name)
+    return cpp_arg(type, name, unsafe_span)
 
 
 def create_cpp_arg_list(args_specs: Iterable[str]):
