@@ -1587,15 +1587,6 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-legacy
 
 media/media-source/media-source-webm-vp8-malformed-header.html [ Pass ]
 
-# rdar://66641405 (REGRESSION (20A2327-20A2348b?): 7 http/tests/media/hls/ tests are timing out)
-http/tests/media/hls/hls-accessibility-describes-video.html [ Skip ]
-http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
-http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ]
-http/tests/media/hls/hls-audio-tracks.html [ Skip ]
-http/tests/media/hls/hls-webvtt-tracks.html [ Skip ]
-http/tests/media/hls/range-request.html [ Skip ]
-http/tests/media/hls/video-cookie.html [ Skip ]
-
 webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
 
 webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pass Failure ]
