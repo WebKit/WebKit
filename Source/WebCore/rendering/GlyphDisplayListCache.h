@@ -101,7 +101,7 @@ public:
 
     RefPtr<const DisplayList::DisplayList> getIfExists(const InlineDisplay::Box&);
 
-    void remove(const InlineDisplay::Box& run) { remove(&run); }
+    void remove(const InlineDisplay::Box& box) { m_entriesForBox.remove(&box); }
 
     void clear();
     unsigned NODELETE size() const;
@@ -114,13 +114,7 @@ public:
 private:
     static bool NODELETE canShareDisplayList(const DisplayList::DisplayList&);
 
-    template<typename LayoutRun>
-    RefPtr<const DisplayList::DisplayList> getDisplayList(const LayoutRun&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
-    template<typename LayoutRun>
-    RefPtr<const DisplayList::DisplayList> getIfExistsImpl(const LayoutRun&);
-    void remove(const void* run);
-
-    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
+    HashMap<const InlineDisplay::Box*, Ref<GlyphDisplayListCacheEntry>> m_entriesForBox;
     Deque<WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
     static constexpr unsigned s_maxDeduplicationCacheSize { 20 };

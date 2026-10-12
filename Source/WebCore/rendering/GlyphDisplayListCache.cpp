@@ -84,7 +84,7 @@ GlyphDisplayListCache& GlyphDisplayListCache::singleton()
 
 void GlyphDisplayListCache::clear()
 {
-    m_entriesForLayoutRun.clear();
+    m_entriesForBox.clear();
     m_entries.clear();
 }
 
@@ -93,8 +93,7 @@ unsigned GlyphDisplayListCache::size() const
     return m_entries.size();
 }
 
-template<typename LayoutRun>
-RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getDisplayList(const LayoutRun& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun, const PaintInfo& paintInfo)
+RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::get(const InlineDisplay::Box& box, const FontCascade& font, GraphicsContext& context, const TextRun& textRun, const PaintInfo& paintInfo)
 {
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         if (!m_entries.isEmpty()) {
@@ -107,14 +106,14 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getDisplayList(con
     if (font.isLoadingCustomFonts() || !font.fonts())
         return nullptr;
 
-    if (RefPtr result = getIfExists(run))
+    if (RefPtr result = getIfExists(box))
         return result;
 
     bool isFrequentlyPainted = paintInfo.enclosingSelfPaintingLayer()->paintingFrequently();
     if (!isFrequentlyPainted && !m_forceUseGlyphDisplayListForTesting) {
         // Now, all cache entries are actively used.
         constexpr size_t maximumCacheSize = 2048;
-        if (m_entriesForLayoutRun.size() >= maximumCacheSize)
+        if (m_entriesForBox.size() >= maximumCacheSize)
             return nullptr;
     }
 
@@ -125,9 +124,9 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getDisplayList(con
         if (!entry)
             m_entries.remove(iterator);
         else {
-            const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
+            const_cast<InlineDisplay::Box&>(box).setIsInGlyphDisplayListCache();
             RefPtr result = &entry->displayList();
-            m_entriesForLayoutRun.add(&run, entry.releaseNonNull());
+            m_entriesForBox.add(&box, entry.releaseNonNull());
             return result;
         }
     }
@@ -140,37 +139,21 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getDisplayList(con
             if (m_entries.size() > s_maxDeduplicationCacheSize)
                 m_entries.removeFirst();
         }
-        const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
-        m_entriesForLayoutRun.add(&run, WTF::move(entry));
+        const_cast<InlineDisplay::Box&>(box).setIsInGlyphDisplayListCache();
+        m_entriesForBox.add(&box, WTF::move(entry));
         return result;
     }
 
     return nullptr;
 }
 
-RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::get(const InlineDisplay::Box& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun, const PaintInfo& paintInfo)
+RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getIfExists(const InlineDisplay::Box& box)
 {
-    return getDisplayList(run, font, context, textRun, paintInfo);
-}
-
-template<typename LayoutRun>
-RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getIfExistsImpl(const LayoutRun& run)
-{
-    if (!run.isInGlyphDisplayListCache())
+    if (!box.isInGlyphDisplayListCache())
         return nullptr;
-    if (auto entry = m_entriesForLayoutRun.get(&run))
+    if (auto entry = m_entriesForBox.get(&box))
         return &entry->displayList();
     return nullptr;
-}
-
-RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getIfExists(const InlineDisplay::Box& run)
-{
-    return getIfExistsImpl(run);
-}
-
-void GlyphDisplayListCache::remove(const void* run)
-{
-    m_entriesForLayoutRun.remove(run);
 }
 
 bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& displayList)
