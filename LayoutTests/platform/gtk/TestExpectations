@@ -1314,3 +1314,7 @@ webkit.org/b/326560 [ Debug ] imported/w3c/web-platform-tests/uievents/textInput
 webkit.org/b/326563 compositing/backface-visibility/backface-visibility-3d.html [ Pass Timeout ]
 
 webkit.org/b/325943 webgl/default-framebuffer-resize-applied-at-use.html [ Failure ]
+
+webkit.org/b/327256 editing/editability/contenteditable-false-in-editable-view.html [ Pass Timeout ]
+webkit.org/b/327258 fast/css-grid-layout/grid-auto-columns-rows-get-set.html [ Failure Pass ]
+webkit.org/b/327259 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-new-document-navigation-iframe.html [ Failure Pass ]
