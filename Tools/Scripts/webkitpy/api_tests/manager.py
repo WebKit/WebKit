@@ -58,6 +58,31 @@ class Manager(object):
         self._expectations = None
 
     @staticmethod
+    def _merge_retry_results(first_run_results, retry_results):
+        """Merge a retry pass into first-run results.
+
+        A test that failed in first_run_results and passed in retry_results is a flake:
+        promoted to PASSED in the final results, recorded in the returned flakies dict
+        with its first-run failure data preserved.
+
+        A test with no entry in retry_results keeps its first-run result verbatim.
+        A test that failed both runs keeps the retry (most recent) result, not a flake.
+        """
+        from webkitpy.api_tests.runner import Runner
+
+        final = dict(first_run_results)
+        flakies = {}
+        for test, retry_result in retry_results.items():
+            first_result = first_run_results.get(test)
+            if first_result is None:
+                final[test] = retry_result
+                continue
+            if first_result[0] != Runner.STATUS_PASSED and retry_result[0] == Runner.STATUS_PASSED:
+                flakies[test] = first_result
+            final[test] = retry_result
+        return final, flakies
+
+    @staticmethod
     def _test_list_from_output(output: str, prefix='') -> list[str]:
         result = []
         current_test_suite = None
@@ -357,6 +382,7 @@ class Manager(object):
             _log.debug(f'Repeating each test {self._options.iterations} times')
 
         runner = None
+        flakies = {}
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream, expectations=self._expectations)
@@ -364,6 +390,24 @@ class Manager(object):
             for i in range(self._options.iterations):
                 _log.debug(f'\nIteration {i + 1}')
                 runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None)
+
+            if getattr(self._options, 'retry_failures', True):
+                failing_tests = [
+                    t for t, result in iteritems(runner.results)
+                    if result[0] in (Runner.STATUS_FAILED, Runner.STATUS_CRASHED, Runner.STATUS_TIMEOUT)
+                ]
+                if failing_tests:
+                    _log.info(f'\nRetrying {len(failing_tests)} failing test(s)')
+                    first_run_results = dict(runner.results)
+                    runner.results = {}
+                    runner._failure_count = 0
+                    try:
+                        runner.run(failing_tests, int(self._options.child_processes) if self._options.child_processes else None)
+                    except EarlyExitException as e:
+                        self._stream.writeln(f'\nRetry exited early after {e.failure_count} failures.')
+                    runner.results, flakies = Manager._merge_retry_results(first_run_results, dict(runner.results))
+                    if flakies:
+                        _log.info(f'Flaky test(s): {", ".join(sorted(flakies))}')
         except EarlyExitException as e:
             self._stream.writeln(f'\nExiting early after {e.failure_count} failures.')
         except KeyboardInterrupt:
@@ -419,6 +463,7 @@ class Manager(object):
             'Failed': [],
             'Crashed': [],
             'Timedout': [],
+            'Flakies': [],
             'UnexpectedFailures': [],
             'ExpectedFailures': [],
             'UnexpectedPasses': [],
@@ -493,6 +538,19 @@ class Manager(object):
                 result_dictionary['UnexpectedPasses'].append({'name': test})
             self._stream.writeln('')
 
+        # Flakies were computed in the retry pass; record each with its first-run failure output.
+        for test, flaky_result in iteritems(flakies):
+            status_str = {
+                runner.STATUS_FAILED: 'Failed',
+                runner.STATUS_CRASHED: 'Crashed',
+                runner.STATUS_TIMEOUT: 'Timedout',
+            }.get(flaky_result[0], 'Failed')
+            result_dictionary['Flakies'].append({
+                'name': test,
+                'output': flaky_result[1],
+                'status': status_str,
+            })
+
         status_to_test_result = {
             runner.STATUS_PASSED: None,
             runner.STATUS_FAILED: Upload.Expectations.FAIL,
@@ -511,6 +569,19 @@ class Manager(object):
 
         # A passing test has no 'actual' and passing tests are not worth the size when reporting.
         result_dictionary['results'] = {test: test_result for test, test_result in upload_results.items() if test_result.get('actual')}
+
+        # flaky_results carries each flake's first-run failure in the same shape as `results`,
+        # so EWS can report them to results-db as WithinStepDirtyTree evidence even though
+        # runner.results shows them as PASSED after the retry pass.
+        result_dictionary['flaky_results'] = {
+            test: Upload.create_test_result(
+                expected=self._expected_results_for_upload(self._expectations.get_expectation(test, current_config)),
+                actual=status_to_test_result[flaky_result[0]],
+                time=int(flaky_result[2] * 1000),
+            )
+            for test, flaky_result in iteritems(flakies)
+            if flaky_result[0] in status_to_test_result and status_to_test_result[flaky_result[0]]
+        }
 
         if json_output:
             self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
