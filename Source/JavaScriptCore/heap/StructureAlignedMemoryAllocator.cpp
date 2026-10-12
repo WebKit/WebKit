@@ -125,6 +125,9 @@ public:
         m_useSystemHeap = !bmalloc::api::isEnabled();
 #if USE(LIBPAS)
         if (!m_useSystemHeap) [[likely]] {
+#if OS(LINUX)
+            OSAllocator::excludeFromCoreDump(reinterpret_cast<void*>(g_jscConfig.startOfStructureHeap), g_jscConfig.sizeOfStructureHeap);
+#endif
 #if PLATFORM(PLAYSTATION)
             // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
             // https://bugs.webkit.org/show_bug.cgi?id=292771

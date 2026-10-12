@@ -30,3 +30,9 @@
 #define SYSCALL(x) do { \
     while ((x) == -1 && errno == EAGAIN) { } \
 } while (0);
+
+// For advisory syscalls where retrying on EAGAIN is wrong: madvise() reports a failed
+// VMA split as EAGAIN, and that failure is permanent at vm.max_map_count.
+#define SYSCALL_NO_RETRY(x) do { \
+    (void)(x); \
+} while (0);

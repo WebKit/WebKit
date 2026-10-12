@@ -230,6 +230,17 @@ inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
     vmAllocatePhysicalPages(begin, end - begin);
 }
 
+inline void vmExcludeFromCoreDump(void* p, size_t vmSize)
+{
+    vmValidate(p, vmSize);
+#if BOS(LINUX)
+    SYSCALL_NO_RETRY(madvise(p, vmSize, MADV_DONTDUMP));
+#else
+    BUNUSED(p);
+    BUNUSED(vmSize);
+#endif
+}
+
 
 #if !BOS(WINDOWS)
 // POSIX
@@ -325,9 +336,6 @@ inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
     SYSCALL(madvise(p, vmSize, MADV_FREE));
 #else
     SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
-#if BOS(LINUX)
-    SYSCALL(madvise(p, vmSize, MADV_DONTDUMP));
-#endif
 #endif
 }
 
@@ -343,7 +351,7 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 #else
     SYSCALL(madvise(p, vmSize, MADV_NORMAL));
 #if BOS(LINUX)
-    SYSCALL(madvise(p, vmSize, MADV_DODUMP));
+    SYSCALL_NO_RETRY(madvise(p, vmSize, MADV_DODUMP));
 #endif
 #endif
 }

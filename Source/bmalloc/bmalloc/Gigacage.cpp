@@ -143,6 +143,7 @@ void ensureGigacage()
                 BCRASH();
             }
             vmDeallocatePhysicalPages(base, totalSize);
+            vmExcludeFromCoreDump(base, totalSize);
 
             size_t nextCage = 0;
             size_t sliceSize = vmPageSize();
