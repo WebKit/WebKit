@@ -2173,6 +2173,11 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawSnapshot(const CanvasElement
 
     auto scale = normalizedDstRect.size() / normalizedSrcRect.size();
 
+    if (rectContainsCanvas(normalizedDstRect))
+        willUpdateEntireContents();
+    else
+        willUpdateContents(normalizedDstRect);
+
     c->save();
     c->clip(normalizedDstRect);
     c->translate(dstRect.location() - toFloatSize(normalizedSrcRect.location()) * scale);

@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<body>
+<canvas id="canvas" width="100" height="100" content="drawable">
+    <div id="box" drawable style="width: 100px; height: 100px; background-color: red;"></div>
+</canvas>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function nextFrames() {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    const canvas = document.getElementById('canvas');
+    const box = document.getElementById('box');
+    const ctx = canvas.getContext('2d');
+    canvas.onpaint = () => ctx.drawElementImage(box, 0, 0);
+
+    (async () => {
+        await nextFrames();
+        canvas.requestPaint();
+        await nextFrames();
+
+        box.style.backgroundColor = 'green';
+        await nextFrames();
+        canvas.requestPaint();
+        await nextFrames();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    })();
+</script>
+</body>
+</html>
