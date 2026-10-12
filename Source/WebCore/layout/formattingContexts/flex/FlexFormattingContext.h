@@ -87,11 +87,11 @@ struct FlexLayoutConstraints {
     bool isColumnOrRowReverse { false };
     bool isLeftToRightFlow { false };
     FlowDirection crossAxisDirection { };
-    // Flow-relative border/padding, each as an inline {start, end} pair and its block-before edge.
-    std::pair<LayoutUnit, LayoutUnit> flowAwareBorderInline;
-    LayoutUnit flowAwareBorderBefore;
-    std::pair<LayoutUnit, LayoutUnit> flowAwarePaddingInline;
-    LayoutUnit flowAwarePaddingBefore;
+    // The border and padding at the edges the items are laid out forwards between (start, end) and the lines are
+    // stacked from (before). These ignore column-reverse and wrap-reverse, which computeFlexItemRects flips afterwards.
+    LayoutUnit flowAwareBorderAndPaddingStart;
+    LayoutUnit flowAwareBorderAndPaddingEnd;
+    LayoutUnit flowAwareBorderAndPaddingBefore;
     LayoutUnit mainAxisAvailableSpace;
     LayoutUnit mainAxisSizeForLengthResolution;
     LayoutUnit mainAxisBorderBoxExtent;
