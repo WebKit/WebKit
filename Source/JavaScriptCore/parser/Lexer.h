@@ -329,7 +329,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::scanSimpleArrayElementFollowedByComma(double
         return ERRORTOK;
 
     m_code = ptr + 1;
-    m_current = m_code < m_codeEnd ? *m_code : 0;
+    m_current = m_code < m_codeEnd ? *m_code : T { };
     m_hasLineTerminatorBeforeToken = false;
     return type;
 }

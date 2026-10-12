@@ -31,7 +31,7 @@ webkit_platform_header: <wtf/RuntimeApplicationChecks.h>
     WebCore::SharedMemoryHandle dataHandle;
 };
 
-using IPC::TransferString::IPCData = Variant<std::monostate, std::span<const uint8_t>, std::span<const char16_t>, IPC::TransferString::SharedSpan8, IPC::TransferString::SharedSpan16>;
+using IPC::TransferString::IPCData = Variant<std::monostate, std::span<const Latin1Character>, std::span<const char16_t>, IPC::TransferString::SharedSpan8, IPC::TransferString::SharedSpan16>;
 
 [CustomHeader, WebKitPlatform] class IPC::TransferString {
     IPC::TransferString::IPCData toIPCData();

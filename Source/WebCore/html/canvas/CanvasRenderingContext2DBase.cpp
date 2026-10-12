@@ -3076,7 +3076,7 @@ static inline String createStringByNormalizingSpaces(std::span<const CharacterTy
     memcpySpan(normalized, characters.first(indexOfFirstSpace));
     for (size_t i = indexOfFirstSpace; i != characters.size(); ++i) {
         auto character = characters[i];
-        normalized[i] = isSpaceThatNeedsReplacing(character) ? ' ' : character;
+        normalized[i] = isSpaceThatNeedsReplacing(character) ? CharacterType { ' ' } : character;
     }
     return result;
 }

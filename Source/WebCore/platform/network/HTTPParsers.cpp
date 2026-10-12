@@ -321,6 +321,11 @@ static String trimInputSample(std::span<const CharType> input)
     return makeString(input.first(maxInputSampleSize), horizontalEllipsis);
 }
 
+static String trimInputSample(std::span<const uint8_t> input)
+{
+    return trimInputSample(byteCast<Latin1Character>(input));
+}
+
 std::optional<WallTime> parseHTTPDate(const String& value)
 {
     // FIXME: parseDate() requires Latin1, but we're passing it UTF-8.
@@ -746,7 +751,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
     }
 
     nameSize = name.size();
-    nameStr = namePtr.first(nameSize);
+    nameStr = byteCast<Latin1Character>(namePtr.first(nameSize));
 
     WTF::skipWhile(p, ' ');
 

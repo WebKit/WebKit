@@ -106,7 +106,7 @@ public:
 
     static String adopt(StringBuffer<Latin1Character>&& buffer) { return StringImpl::adopt(WTF::move(buffer)); }
     static String adopt(StringBuffer<char16_t>&& buffer) { return StringImpl::adopt(WTF::move(buffer)); }
-    template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+    template<IsStringStorageCharacter CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
     static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector) { return StringImpl::adopt(WTF::move(vector)); }
 
     bool isNull() const { return !m_impl; }
@@ -120,7 +120,7 @@ public:
     std::span<const char16_t> span16() const LIFETIME_BOUND { return m_impl ? m_impl->span16() : std::span<const char16_t>(); }
 
     // Return span8() or span16() depending on CharacterType.
-    template<typename CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
+    template<IsStringStorageCharacter CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
 
     bool is8Bit() const { return !m_impl || m_impl->is8Bit(); }
 
@@ -286,17 +286,20 @@ public:
     // FIXME: Deprecated: Use constructor that takes span<const char8_t>.
     WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const char8_t>);
     static String fromUTF8(std::span<const Latin1Character> characters) { return byteCast<char8_t>(characters); }
+    static String fromUTF8(std::span<const uint8_t> characters) { return byteCast<char8_t>(characters); }
     static String fromUTF8(std::span<const char> characters) { return byteCast<char8_t>(characters); }
     static String fromUTF8(const char* string) { return byteCast<char8_t>(unsafeSpan(string)); }
 
     // Convert each invalid UTF-8 sequence into a replacement character.
     WTF_EXPORT_PRIVATE static String fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
     static String fromUTF8ReplacingInvalidSequences(std::span<const Latin1Character> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
+    static String fromUTF8ReplacingInvalidSequences(std::span<const uint8_t> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     // FIXME: Deprecated: Use fromUTF8ReplacingInvalidSequences.
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const char8_t>);
     static String fromUTF8WithLatin1Fallback(std::span<const Latin1Character> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
+    static String fromUTF8WithLatin1Fallback(std::span<const uint8_t> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
     static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
 
     WTF_EXPORT_PRIVATE static String fromCodePoint(char32_t codePoint);

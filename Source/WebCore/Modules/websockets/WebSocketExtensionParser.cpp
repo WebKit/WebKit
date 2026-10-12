@@ -72,7 +72,7 @@ bool WebSocketExtensionParser::consumeToken()
     while (tokenLength < m_data.size() && isASCIIPrintable(m_data[tokenLength]) && !isSeparator(m_data[tokenLength]))
         ++tokenLength;
     if (tokenLength) {
-        m_currentToken = String(consumeSpan(start, tokenLength));
+        m_currentToken = String(byteCast<Latin1Character>(consumeSpan(start, tokenLength)));
         return true;
     }
     return false;

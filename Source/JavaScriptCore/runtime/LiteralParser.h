@@ -219,7 +219,7 @@ private:
         TokenType nextAfterValue();
         bool consumeColon();
         void skipWhitespaceBeforeKey();
-        CharType peek() const { return m_ptr < m_end ? *m_ptr : 0; }
+        CharType peek() const { return m_ptr < m_end ? *m_ptr : CharType { }; }
         TokenType nextString();
         TokenType nextNumber();
         bool tryConsumeStringEqualTo(std::span<const Latin1Character>);

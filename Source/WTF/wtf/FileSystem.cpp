@@ -210,7 +210,7 @@ String decodeFromFilename(const String& inputString)
                 return { };
             if (!isASCIIHexDigit(inputString[i + 2]))
                 return { };
-            result.append(toASCIIHexValue(inputString[i + 1], inputString[i + 2]));
+            result.append(byteCast<Latin1Character>(toASCIIHexValue(inputString[i + 1], inputString[i + 2])));
             i += 2;
             continue;
         }

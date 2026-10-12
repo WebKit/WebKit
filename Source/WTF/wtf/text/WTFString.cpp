@@ -409,7 +409,7 @@ Latin1CString String::latin1() const
 
     size_t characterBufferIndex = 0;
     for (auto character : characters)
-        characterBuffer[characterBufferIndex++] = !isLatin1(character) ? '?' : static_cast<Latin1Character>(character);
+        characterBuffer[characterBufferIndex++] = !isLatin1(character) ? Latin1Character { '?' } : static_cast<Latin1Character>(character);
 
     return result;
 }

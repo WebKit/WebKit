@@ -1128,7 +1128,9 @@ SUPPRESS_NODELETE ALWAYS_INLINE const char16_t* NODELETE find16NonASCII(std::spa
 }
 #endif
 
-template<std::integral CharacterType1, std::integral CharacterType2>
+template<typename T> concept IsFindableCharacter = std::is_integral_v<T> || std::same_as<T, Latin1Character>;
+
+template<IsFindableCharacter CharacterType1, IsFindableCharacter CharacterType2>
     requires (sizeof(CharacterType1) == sizeof(CharacterType2))
 inline size_t NODELETE find(std::span<const CharacterType1> characters, CharacterType2 matchCharacter, size_t index = 0)
 {
@@ -1178,7 +1180,7 @@ inline size_t NODELETE find(std::span<const CharacterType> characters, ASCIILite
     return find(characters, byteCast<CharacterType>(matchCharacters.span()));
 }
 
-template<std::integral CharacterType1, std::integral CharacterType2>
+template<IsFindableCharacter CharacterType1, IsFindableCharacter CharacterType2>
 inline bool NODELETE contains(std::span<const CharacterType1> characters, CharacterType2 matchCharacter, size_t index = 0)
 {
     return find(characters, matchCharacter, index) != notFound;
