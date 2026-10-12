@@ -56,7 +56,7 @@ class ServoBrowserDriver(LinuxBrowserDriver):
         return screen_size
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._default_browser_arguments = ['--no-native-titlebar']
+        self._default_browser_arguments = ["--enable-experimental-web-platform-features", '--no-native-titlebar']
         screen_size = self._screen_size()
         if screen_size:
             self._default_browser_arguments.append(f'--window-size={screen_size}')
