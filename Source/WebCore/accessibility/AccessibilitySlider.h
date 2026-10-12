@@ -40,6 +40,8 @@ public:
     static Ref<AccessibilitySlider> create(AXID, RenderObject&, AXObjectCache&);
     virtual ~AccessibilitySlider() = default;
 
+    bool isAccessibilitySliderInstance() const final { return true; }
+
 private:
     explicit AccessibilitySlider(AXID, RenderObject&, AXObjectCache&);
 
