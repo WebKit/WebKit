@@ -73,7 +73,7 @@ public:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframes; }
     String cssText() const final;
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
 
     const AtomString& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
     void setName(const AtomString&);

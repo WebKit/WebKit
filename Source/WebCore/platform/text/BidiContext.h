@@ -32,7 +32,7 @@ enum BidiEmbeddingSource { FromStyleOrDOM, FromUnicode };
 // Used to keep track of explicit embeddings.
 class BidiContext : public ThreadSafeRefCounted<BidiContext> {
 public:
-    WEBCORE_EXPORT static Ref<BidiContext> NODELETE create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = nullptr);
+    WEBCORE_EXPORT static Ref<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = nullptr);
 
     BidiContext* parent() const { return m_parent.get(); }
     unsigned char level() const { return m_level; }

@@ -533,7 +533,7 @@ public:
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(CodeBlock, m_globalObject); }
 
-    JSGlobalObject* NODELETE globalObjectFor(CodeOrigin);
+    JSGlobalObject* globalObjectFor(CodeOrigin);
 
     BytecodeLivenessAnalysis& livenessAnalysis()
     {

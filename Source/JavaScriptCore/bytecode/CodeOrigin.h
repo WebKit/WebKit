@@ -160,9 +160,9 @@ public:
 
     // This checks if the two code origins correspond to the same stack trace snippets,
     // but ignore whether the InlineCallFrame's are identical.
-    bool NODELETE isApproximatelyEqualTo(const CodeOrigin& other, InlineCallFrame* terminal = nullptr) const;
+    bool isApproximatelyEqualTo(const CodeOrigin& other, InlineCallFrame* terminal = nullptr) const;
     
-    unsigned NODELETE approximateHash(InlineCallFrame* terminal = nullptr) const;
+    unsigned approximateHash(InlineCallFrame* terminal = nullptr) const;
 
     template <typename Function>
     void walkUpInlineStack(NOESCAPE const Function&) const;

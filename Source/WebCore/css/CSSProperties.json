@@ -650,6 +650,7 @@
                 "style-extractor-custom": true,
                 "style-builder-custom": "All",
                 "high-priority": true,
+                "computed-style-getter-nodelete": false,
                 "skip-computed-style-initial": true,
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
