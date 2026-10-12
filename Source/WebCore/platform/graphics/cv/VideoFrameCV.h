@@ -41,7 +41,7 @@ class PixelBuffer;
 class VideoFrameCV : public VideoFrame {
 public:
     // Create a VideoFrameCV in specific color space with data from CVPixelBuffer. Intended for constructing VideoFrameCV from new pixel data.
-    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&);
+    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&, bool shouldIgnoreAlpha = false);
     // Create a VideoFrameCV in with data data and color space from CVPixelBuffer. Intended for constructing VideoFrameCV from a buffer created by
     // a component that already set the color space properties to the buffer.
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
@@ -60,8 +60,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<VideoFrameCV>;
-    WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, std::optional<PlatformVideoColorSpace>&&);
-    VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&);
+    VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&, bool shouldIgnoreAlpha = false);
 
     Ref<VideoFrame> clone() final;
 

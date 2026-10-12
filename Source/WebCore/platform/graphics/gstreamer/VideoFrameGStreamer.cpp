@@ -150,14 +150,15 @@ RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuf
     return VideoFrameGStreamer::createFromPixelBuffer(WTF::move(pixelBuffer), { }, 1, { }, { });
 }
 
-static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sample, const GstVideoInfo& videoInfo)
+static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sample, const GstVideoInfo& videoInfo, bool shouldIgnoreAlpha)
 {
+    bool hasAlpha = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) && !shouldIgnoreAlpha;
     // These caps must match the internal format of a cairo surface with CAIRO_FORMAT_ARGB32,
     // so we don't need to perform color conversions when painting the video frame.
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    auto format = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "BGRA"_s : "BGRx"_s;
+    auto format = hasAlpha ? "BGRA"_s : "BGRx"_s;
 #else
-    auto format = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "ARGB"_s : "xRGB"_s;
+    auto format = hasAlpha ? "ARGB"_s : "xRGB"_s;
 #endif
     GRefPtr caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, format.characters(), "framerate", GST_TYPE_FRACTION, GST_VIDEO_INFO_FPS_N(&videoInfo), GST_VIDEO_INFO_FPS_D(&videoInfo), "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&videoInfo), "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&videoInfo), nullptr));
     auto convertedSample = GStreamerVideoFrameConverter::singleton().convert(sample, caps);
@@ -272,7 +273,7 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace));
 }
 
-#define CREATE_RGBA_FRAME(format)                                                                   \
+#define CREATE_RGBA_FRAME(format, shouldIgnoreAlpha)                                                \
     GstVideoInfo info;                                                                              \
     gst_video_info_set_format(&info, format, width, height);                                        \
     fillVideoInfoColorimetryFromColorSpace(&info, colorSpace);                                      \
@@ -281,20 +282,35 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);      \
     GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));                                           \
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));            \
-    return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace))
+    return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace), shouldIgnoreAlpha)
 
 RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from RGBA raw buffer");
-    CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_RGBA);
+    CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_RGBA, false);
 }
 
 RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from BGRA raw buffer");
-    CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_BGRA);
+    CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_BGRA, false);
+}
+
+// The fourth byte of RGBX and BGRX is padding: it is kept as is but ignored, frames are always opaque.
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    ensureVideoFrameDebugCategoryInitialized();
+    GST_TRACE("Creating VideoFrame from RGBX raw buffer");
+    CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_RGBx, true);
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    ensureVideoFrameDebugCategoryInitialized();
+    GST_TRACE("Creating VideoFrame from BGRX raw buffer");
+    CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_BGRx, true);
 }
 
 #undef CREATE_RGBA_FRAME
@@ -371,7 +387,7 @@ static MediaTime presentationTimeFromSample(const GRefPtr<GstSample>& sample)
     return MediaTime::invalidTime();
 }
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace, bool shouldIgnoreAlpha)
 {
     CreateOptions newOptions = options;
     auto caps = gst_sample_get_caps(sample.get());
@@ -381,10 +397,10 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample
     if (options.presentationTime.isInvalid())
         newOptions.presentationTime = presentationTimeFromSample(sample);
 
-    return adoptRef(*new VideoFrameGStreamer(WTF::move(sample), newOptions, WTF::move(colorSpace)));
+    return adoptRef(*new VideoFrameGStreamer(WTF::move(sample), newOptions, WTF::move(colorSpace), shouldIgnoreAlpha));
 }
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<GstSample>& sample, std::optional<CreateOptions> options)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<GstSample>& sample, std::optional<CreateOptions> options, bool shouldIgnoreAlpha)
 {
     auto createOptions = options.value_or(CreateOptions { });
     auto caps = gst_sample_get_caps(sample.get());
@@ -398,7 +414,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<
     if (createOptions.presentationTime.isInvalid())
         createOptions.presentationTime = presentationTimeFromSample(sample);
 
-    return adoptRef(*new VideoFrameGStreamer(sample, createOptions, videoColorSpaceFromCaps(caps)));
+    return adoptRef(*new VideoFrameGStreamer(sample, createOptions, videoColorSpaceFromCaps(caps), shouldIgnoreAlpha));
 }
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, const IntSize& destinationSize, double frameRate, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace)
@@ -499,11 +515,11 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
     CreateOptions newOptions = options;
     newOptions.info = WTF::move(info);
     newOptions.presentationSize = IntSize(width, height);
-    return adoptRef(*new VideoFrameGStreamer(WTF::move(sample), newOptions, WTF::move(colorSpace)));
+    return adoptRef(*new VideoFrameGStreamer(WTF::move(sample), newOptions, WTF::move(colorSpace), false));
 }
 
-VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace)
-    : VideoFrame(options.presentationTime, options.isMirrored, options.rotation, WTF::move(colorSpace))
+VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace, bool shouldIgnoreAlpha)
+    : VideoFrame(options.presentationTime, options.isMirrored, options.rotation, WTF::move(colorSpace), shouldIgnoreAlpha)
     , m_sample(WTF::move(sample))
     , m_presentationSize(options.presentationSize)
 {
@@ -520,8 +536,8 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const Crea
     setMetadata(options.timeMetadata, options.contentHint, options.colorSpace);
 }
 
-VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace)
-    : VideoFrame(options.presentationTime, false, options.rotation, WTF::move(colorSpace))
+VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace, bool shouldIgnoreAlpha)
+    : VideoFrame(options.presentationTime, false, options.rotation, WTF::move(colorSpace), shouldIgnoreAlpha)
     , m_sample(sample)
     , m_presentationSize(options.presentationSize)
 {
@@ -729,7 +745,7 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     ensureVideoFrameDebugCategoryInitialized();
     GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Copying native image");
     auto& gstFrame = downcast<VideoFrameGStreamer>(*this);
-    auto image = convertSampleToImage(gstFrame.sample(), gstFrame.info());
+    auto image = convertSampleToImage(gstFrame.sample(), gstFrame.info(), gstFrame.shouldIgnoreAlpha());
     if (!image)
         return nullptr;
     return NativeImage::create(image->image());
@@ -786,7 +802,7 @@ RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Converting sample to image");
-    return convertSampleToImage(m_sample, m_info.info);
+    return convertSampleToImage(m_sample, m_info.info, shouldIgnoreAlpha());
 }
 
 Ref<VideoFrame> VideoFrameGStreamer::clone()
@@ -795,7 +811,7 @@ Ref<VideoFrame> VideoFrameGStreamer::clone()
     options.info = m_info;
     options.presentationTime = presentationTime();
     options.rotation = rotation();
-    return createWrappedSample(m_sample, options);
+    return createWrappedSample(m_sample, options, shouldIgnoreAlpha());
 }
 
 void VideoFrameGStreamer::setMemoryTypeFromCaps()
