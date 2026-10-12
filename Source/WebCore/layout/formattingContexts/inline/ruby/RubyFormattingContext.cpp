@@ -119,7 +119,7 @@ static bool annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox,
     CheckedRef adjacentLayoutBox = adjacentDisplayBox.layoutBox();
     // Adjacent ruby may have overlapping annotation.
     if (adjacentLayoutBox->isRubyBase() && adjacentLayoutBox->associatedRubyAnnotationBox())
-        return annotationMarginBoxVisualRect(*adjacentLayoutBox->associatedRubyAnnotationBox(), lineLogicalHeight, inlineFormattingContext).intersects(overhangingRect);
+        return annotationMarginBoxVisualRect(protect(*adjacentLayoutBox->associatedRubyAnnotationBox()), lineLogicalHeight, inlineFormattingContext).intersects(overhangingRect);
     return false;
 }
 
@@ -185,7 +185,7 @@ static InlineLayoutUnit overhangableSpaceAdvance(const InlineDisplay::Box& adjac
             ++end;
         return { displayText.start(), end };
     }();
-    return TextUtil::width(*adjacentTextBox, adjacentDisplayBox.style().fontCascade(), whitespaceStart, whitespaceEnd, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+    return TextUtil::width(*adjacentTextBox, protect(adjacentDisplayBox.style().fontCascade()), whitespaceStart, whitespaceEnd, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
 InlineLayoutUnit RubyFormattingContext::annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, InlineFormattingContext& inlineFormattingContext)
@@ -409,7 +409,7 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
         auto extraSpaceForAnnotation = InlineLayoutUnit { };
         if (!isFirstFormattedLine) {
             // Note that annotation may leak into the half leading space (gap between lines).
-            auto lineGap = rubyBaseLayoutBox->style().metricsOfPrimaryFont().lineSpacing();
+            auto lineGap = protect(rubyBaseLayoutBox->style())->metricsOfPrimaryFont().lineSpacing();
             extraSpaceForAnnotation = std::max(0.f, (lineGap - (ascent + descent)) / 2);
         }
         auto ascentWithAnnotation = (ascent + over) - extraSpaceForAnnotation;

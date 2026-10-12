@@ -43,7 +43,7 @@ SVGTextBox::SVGTextBox(BoxPath&& path)
 
 FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform() const
 {
-    return calculateBoundariesIncludingSVGTransform(renderer(), textFragments());
+    return calculateBoundariesIncludingSVGTransform(protect(renderer()), textFragments());
 }
 
 FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform(const RenderSVGInlineText& text, std::span<const SVGTextFragment> fragments)
@@ -53,7 +53,7 @@ FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform(const RenderSVGIn
     float scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
 
-    float baseline = text.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
+    float baseline = protect(text.scaledFont())->metricsOfPrimaryFont().ascent() / scalingFactor;
     for (auto& fragment : fragments) {
         auto fragmentRect = FloatRect { fragment.x, fragment.y - baseline, fragment.width, fragment.height };
 
@@ -87,7 +87,7 @@ LayoutRect SVGTextBox::localSelectionRect(unsigned start, unsigned end) const
         if (!mapStartEndPositionsIntoFragmentCoordinates(this->start(), fragment, fragmentStartPosition, fragmentEndPosition))
             continue;
 
-        FloatRect fragmentRect = selectionRectForTextFragment(renderer(), direction(), fragment, fragmentStartPosition, fragmentEndPosition, style);
+        FloatRect fragmentRect = selectionRectForTextFragment(protect(renderer()), direction(), fragment, fragmentStartPosition, fragmentEndPosition, style);
         fragment.buildFragmentTransform(fragmentTransform);
         if (!fragmentTransform.isIdentity())
             fragmentRect = fragmentTransform.mapRect(fragmentRect);

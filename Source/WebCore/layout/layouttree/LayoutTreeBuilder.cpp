@@ -97,7 +97,8 @@ static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const Character
 
 static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
 {
-    if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
+    TextRun textRun { content };
+    if (fontCascade.codePath(textRun) == FontCascade::CodePath::Complex)
         return false;
 
     if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
@@ -170,11 +171,12 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
         return { Box::NodeType::GenericElement, Box::IsAnonymous::Yes };
     };
 
+    CheckedRef parentStyle = parentContainer.style();
     std::unique_ptr<Box> childLayoutBox = nullptr;
     if (auto* textRenderer = dynamicDowncast<RenderText>(childRenderer)) {
         // RenderText::text() has already applied text-transform and text-security properties.
         String text = textRenderer->text();
-        auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace());
+        auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, protect(parentStyle->fontCascade()), parentStyle->collapseWhiteSpace());
         auto hasPositionDependentContentWidth = textRenderer->hasPositionDependentContentWidth();
         if (!hasPositionDependentContentWidth) {
             hasPositionDependentContentWidth = TextUtil::hasPositionDependentContentWidth(text);
@@ -185,10 +187,8 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             hasStrongDirectionalityContent = TextUtil::containsStrongDirectionalityText(text);
             const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
         }
-        if (parentContainer.style().display() == Style::DisplayType::InlineFlow)
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, Style::ComputedStyle::clone(parentContainer.style()));
-        else
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, Style::ComputedStyle::createAnonymousStyleWithDisplay(parentContainer.style(), Style::DisplayType::InlineFlow));
+        auto textBoxStyle = parentStyle->display() == Style::DisplayType::InlineFlow ? Style::ComputedStyle::clone(parentStyle) : Style::ComputedStyle::createAnonymousStyleWithDisplay(parentStyle, Style::DisplayType::InlineFlow);
+        childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, WTF::move(textBoxStyle));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
@@ -205,7 +205,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             // The computed values of properties 'position', 'float', 'margin-*', 'top', 'right', 'bottom', and 'left' on the table element
             // are used on the table wrapper box and not the table box; all other values of non-inheritable properties are used
             // on the table box and not the table wrapper box.
-            auto tableWrapperBoxStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(parentContainer.style(), renderer.style().display() == Style::DisplayType::BlockTable ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
+            auto tableWrapperBoxStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(parentStyle, renderer.style().display() == Style::DisplayType::BlockTable ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
             tableWrapperBoxStyle.setPosition(renderer.style().position());
             tableWrapperBoxStyle.setFloating(renderer.style().floating());
 
@@ -332,8 +332,10 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, ElementB
         for (auto& rowBox : childrenOfType<ElementBox>(tableBody)) {
             ASSERT(maximumColumns >= numberOfCellsPerRow[rowIndex]);
             auto numberOfMissingCells = maximumColumns - numberOfCellsPerRow[rowIndex++];
-            for (size_t i = 0; i < numberOfMissingCells; ++i)
-                appendChild(const_cast<ElementBox&>(rowBox), createContainer({ }, Style::ComputedStyle::createAnonymousStyleWithDisplay(rowBox.style(), Style::DisplayType::TableCell)));
+            for (size_t i = 0; i < numberOfMissingCells; ++i) {
+                auto cellStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(rowBox.style()), Style::DisplayType::TableCell);
+                appendChild(const_cast<ElementBox&>(rowBox), createContainer({ }, WTF::move(cellStyle)));
+            }
         }
     };
 

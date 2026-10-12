@@ -591,7 +591,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             if (!inlineLevelBox.isInlineBox())
                 continue;
-            auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(protect(inlineLevelBox.layoutBox()));
             auto ascent = inlineLevelBox.ascent() + inlineBoxGeometry.marginBorderAndPaddingBefore();
             auto descent = inlineLevelBox.descent() + inlineBoxGeometry.marginBorderAndPaddingAfter();
             inlineBoxBoundsMap.set(&inlineLevelBox, TextUtil::EnclosingAscentDescent { ascent, descent });
@@ -629,10 +629,10 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             if (!run.isText())
                 continue;
 
-            auto& textBox = downcast<InlineTextBox>(run.layoutBox());
+            CheckedRef textBox = downcast<InlineTextBox>(run.layoutBox());
             auto& textContent = run.textContent();
-            auto& style = isFirstFormattedLine() ? textBox.firstLineStyle() : textBox.style();
-            auto enclosingAscentDescentForRun = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent.start, textContent.length), style, textBox.shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
+            CheckedRef style = isFirstFormattedLine() ? textBox->firstLineStyle() : textBox->style();
+            auto enclosingAscentDescentForRun = TextUtil::enclosingGlyphBoundsForText(StringView(textBox->content()).substring(textContent.start, textContent.length), style, textBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
 
             auto& parentInlineBox = lineBox.parentInlineBox(run);
             auto enclosingAscentDescentForInlineBox = inlineBoxBoundsMap.get(&parentInlineBox);
@@ -655,10 +655,10 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             if (!run.isText())
                 continue;
 
-            auto& textBox = downcast<InlineTextBox>(run.layoutBox());
+            CheckedRef textBox = downcast<InlineTextBox>(run.layoutBox());
             auto& textContent = run.textContent();
-            auto& style = isFirstFormattedLine() ? textBox.firstLineStyle() : textBox.style();
-            auto ascentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(textBox.content()).substring(textContent.start, textContent.length), style, textBox.shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
+            CheckedRef style = isFirstFormattedLine() ? textBox->firstLineStyle() : textBox->style();
+            auto ascentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(textBox->content()).substring(textContent.start, textContent.length), style, textBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
 
             initialLetterDescent = ascentAndDescent.descent;
             if (lineBox.baselineType() != FontBaseline::Alphabetic)
@@ -695,14 +695,14 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
         if (rootInlineBoxStyle.writingMode().isHorizontal())
             return false;
 
-        auto primaryFontRequiresIdeographicBaseline = [&] (auto& style) {
+        auto primaryFontRequiresIdeographicBaseline = [&](const Style::ComputedStyle& style) {
             return style.fontDescription().orientation() == FontOrientation::Vertical || style.fontCascade().primaryFont().hasVerticalGlyphs();
         };
 
         if (m_fallbackFontRequiresIdeographicBaseline || primaryFontRequiresIdeographicBaseline(rootInlineBoxStyle))
             return true;
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (inlineLevelBox.isInlineBox() && primaryFontRequiresIdeographicBaseline(styleToUse(inlineLevelBox)))
+            if (inlineLevelBox.isInlineBox() && primaryFontRequiresIdeographicBaseline(protect(styleToUse(inlineLevelBox))))
                 return true;
         }
         return false;

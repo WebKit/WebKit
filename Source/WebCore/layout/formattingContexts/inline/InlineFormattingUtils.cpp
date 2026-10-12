@@ -612,7 +612,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
             return { };
         }
     }
-    auto annotationSize = style->fontCascade().floatEmphasisMarkHeight(style->textEmphasisStyle().markString());
+    auto annotationSize = protect(style->fontCascade())->floatEmphasisMarkHeight(style->textEmphasisStyle().markString());
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
@@ -699,7 +699,7 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
     // "The ellipsis is subject to the effects of the 'hanging punctuation' property."
     // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
     CheckedRef rootStyle = root->style();
-    auto logicalWidth = std::max(0.f, rootStyle->fontCascade().width(ellipsisText.string()));
+    auto logicalWidth = std::max(0.f, protect(rootStyle->fontCascade())->width(ellipsisText.string()));
     auto hangingWidth = TextUtil::hangablePunctuationEndWidth(ellipsisText.string(), rootStyle);
     return BlockOverflowEllipsis { ellipsisText, logicalWidth - hangingWidth, hangingWidth };
 }

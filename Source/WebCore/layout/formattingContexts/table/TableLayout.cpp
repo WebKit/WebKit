@@ -171,7 +171,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
         //      [    9   ][ 1 ]
         // The initial widths are: [ 2 ][ 7 ][ 1 ]
         for (auto spanningCell : spanningCells) {
-            auto& cell = grid.slot(spanningCell.position)->cell();
+            CheckedRef cell = grid.slot(spanningCell.position)->cell();
             auto unresolvedSpanningSpace = spanningCell.unresolvedSpace;
             if (!resolvedItems[SpanType::startSpan(cell)] || !resolvedItems[SpanType::endSpan(cell) - 1]) {
                 // <td colspan=4>#a</td><td>#b</td>
@@ -180,7 +180,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
                 // 1. Take colspan=2 (shortest span) and resolve column 1 and 2
                 // 2. Take colspan=3 and resolve column 3 and 4 (5 is resolved because it already has a non-spanning cell).
                 // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
-                auto unresolvedColumnCount = cell.columnSpan();
+                auto unresolvedColumnCount = cell->columnSpan();
                 for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
                     if (!resolvedItems[spanIndex])
                         continue;
@@ -404,7 +404,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         auto maximumColumnAscent = InlineLayoutUnit { };
         auto maximumColumnDescent = InlineLayoutUnit { };
         // Initial minimum height is the computed height if available <tr style="height: 100px"><td></td></tr>
-        rowHeight[rowIndex] = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), availableVerticalSpace).value_or(0_lu);
+        rowHeight[rowIndex] = formattingContext().formattingGeometry().computedHeight(protect(rows.list()[rowIndex].box()), availableVerticalSpace).value_or(0_lu);
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& slot = *m_grid.slot({ columnIndex, rowIndex });
             if (slot.isRowSpanned())
@@ -432,11 +432,11 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
     return distributeAvailableSpace<RowSpan>(m_grid, availableSpace, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan()) {
-            auto borderBoxHeight = formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight();
+            auto borderBoxHeight = formattingContext().geometryForBox(protect(slot.cell().box())).borderBoxHeight();
             return GridSpace { { }, borderBoxHeight, borderBoxHeight, borderBoxHeight };
         }
         auto& rows = m_grid.rows();
-        auto computedRowHeight = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), { });
+        auto computedRowHeight = formattingContext().formattingGeometry().computedHeight(protect(rows.list()[rowIndex].box()), { });
         auto height = std::max<float>(rowHeight[rowIndex], computedRowHeight.value_or(0_lu));
         return GridSpace { { }, height, height, height };
     });
