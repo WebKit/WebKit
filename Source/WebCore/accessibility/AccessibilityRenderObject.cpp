@@ -578,6 +578,9 @@ String AccessibilityRenderObject::stringValue() const
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && selectElement->isDropdownBox())
         return selectElement->buttonText(HTMLSelectElement::ForAccessibility::Yes);
 
+    if (RefPtr optGroup = optGroupForLabel(); optGroup && role() == AccessibilityRole::ListBoxOption)
+        return optGroup->groupLabelText();
+
 #if PLATFORM(COCOA)
     if (is<RenderListItem>(m_renderer.get()))
         return textUnderElement();
@@ -2488,6 +2491,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_ariaRole != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
         return m_ariaRole;
 
+    // An optgroup with base appearance is represented by its label, as an item of the list box or picker.
+    if (RefPtr optGroup = optGroupForLabel())
+        return protect(optGroup->ownerSelectElement())->usesBaseAppearancePicker() ? AccessibilityRole::MenuItem : AccessibilityRole::ListBoxOption;
+
     if (isExposableTable())
         return AccessibilityRole::Table;
 
@@ -2536,10 +2543,6 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(node)) {
         if (RefPtr select = option->ownerSelectElement(); select && select->usesBaseAppearancePicker())
             return AccessibilityRole::MenuItem;
-    }
-    if (RefPtr optGroup = dynamicDowncast<HTMLOptGroupElement>(node)) {
-        if (RefPtr select = optGroup->ownerSelectElement(); select && select->usesBaseAppearancePicker())
-            return AccessibilityRole::Group;
     }
 
     if (m_renderer->isRenderOrLegacyRenderSVGRoot())

@@ -298,6 +298,15 @@ String HTMLOptGroupElement::groupLabelText() const
     return protect(document())->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr)).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
 }
 
+HTMLOptGroupElement* HTMLOptGroupElement::optGroupForLabel(const Element& element)
+{
+    if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(element.shadowHost()); optGroup && optGroup->m_labelContainer == &element)
+        return optGroup;
+    if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(element.parentElement()); optGroup && optGroup->legendElement() == &element)
+        return optGroup;
+    return nullptr;
+}
+
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
     if (!document().settings().htmlEnhancedSelectParsingEnabled())

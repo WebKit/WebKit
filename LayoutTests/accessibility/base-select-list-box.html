@@ -20,19 +20,20 @@ select, select::picker(select) {
 </select>
 
 <script>
-var output = "This test verifies that a base-appearance list box exposes its options as list box options and its optgroup as a group, also after size changes.\n\n";
+var output = "This test verifies that a base-appearance list box exposes its options as list box options and the label of its optgroup as an item, as a native list box does, also after size changes.\n\n";
 
 function expectListBox()
 {
     window.axSelect = accessibilityController.accessibleElementById("select");
     var result = expect("axSelect.role", "'AXRole: AXList'");
-    result += expect("axSelect.childrenCount", "3");
+    result += expect("axSelect.childrenCount", "4");
     result += expect("platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple')", "true");
     result += expect("axSelect.childAtIndex(1).isSelected", "true");
-    result += expect("axSelect.childAtIndex(2).role", "'AXRole: AXGroup'");
+    result += expect("axSelect.childAtIndex(2)?.stringValue", "'AXValue: More'");
+    result += expect("axSelect.childAtIndex(2)?.isEnabled", "false");
     window.axCherry = accessibilityController.accessibleElementById("cherry");
     result += expect("platformTextAlternatives(axCherry).includes('Cherry')", "true");
-    result += expect("axCherry.parentElement().isEqual(axSelect.childAtIndex(2))", "true");
+    result += expect("axCherry.parentElement().isEqual(axSelect)", "true");
     return result;
 }
 

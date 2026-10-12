@@ -42,6 +42,7 @@ public:
     WEBCORE_EXPORT HTMLSelectElement* NODELETE ownerSelectElement() const;
 
     WEBCORE_EXPORT String groupLabelText() const;
+    static HTMLOptGroupElement* NODELETE optGroupForLabel(const Element&);
 
     void updateUserAgentShadowTree() final;
 

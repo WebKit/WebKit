@@ -76,6 +76,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParagraphElement.h"
 #include "HTMLParserIdioms.h"
@@ -923,6 +924,9 @@ bool AccessibilityNodeObject::canHaveChildren() const
     if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer()))
         return listMarker->hasContentProperty();
 
+    if (optGroupForLabel())
+        return false;
+
     // If this is an AccessibilityRenderObject, then it's okay if this object
     // doesn't have a node - there are some renderers that don't have associated
     // nodes, like scroll areas and css-generated text.
@@ -1182,8 +1186,22 @@ bool AccessibilityNodeObject::isEnabled() const
     if (role() == AccessibilityRole::HorizontalRule)
         return false;
 
+    // Like the optgroup of a native list box, the label of an optgroup cannot be selected.
+    if (optGroupForLabel())
+        return false;
+
     RefPtr element = dynamicDowncast<Element>(node());
     return !element || !element->isDisabledFormControl();
+}
+
+RefPtr<HTMLOptGroupElement> AccessibilityNodeObject::optGroupForLabel() const
+{
+    RefPtr element = this->element();
+    RefPtr optGroup = element ? HTMLOptGroupElement::optGroupForLabel(*element) : nullptr;
+    RefPtr select = optGroup ? optGroup->ownerSelectElement() : nullptr;
+    if (!select || !select->optionsAreRenderedWithBaseAppearance())
+        return nullptr;
+    return optGroup;
 }
 
 bool AccessibilityNodeObject::isIndeterminate() const

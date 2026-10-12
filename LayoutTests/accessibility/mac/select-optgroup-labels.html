@@ -1,0 +1,69 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="native" size="7">
+    <optgroup label="Fruit"><option>Apple</option></optgroup>
+    <optgroup><legend>Nuts</legend><option>Almond</option></optgroup>
+    <optgroup label="Gone" disabled><option>Durian</option></optgroup>
+</select>
+
+<select id="base" class="base" size="7">
+    <optgroup label="Fruit"><option>Apple</option></optgroup>
+    <optgroup><legend>Nuts</legend><option>Almond</option></optgroup>
+    <optgroup label="Gone" disabled><option>Durian</option></optgroup>
+</select>
+
+<select id="picker" class="base">
+    <optgroup label="Fruit"><option>Apple</option></optgroup>
+    <optgroup><legend>Nuts</legend><option>Almond</option></optgroup>
+    <optgroup label="Gone" disabled><option>Durian</option></optgroup>
+</select>
+
+<script>
+var output = "This test ensures that the label of an optgroup is exposed as a disabled item before its options, regardless of appearance.\n\n";
+
+function items(object)
+{
+    const result = [];
+    for (let i = 0; i < (object?.childrenCount ?? 0); i++) {
+        const child = object.childAtIndex(i);
+        const label = child?.title.replace("AXTitle: ", "") || child?.stringValue.replace("AXValue: ", "");
+        result.push(`${child?.role.replace("AXRole: ", "")} ${label}${child?.isEnabled ? "" : " (disabled)"}`);
+    }
+    return result.join(", ");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        const listBoxItems = "AXStaticText Fruit (disabled), AXStaticText Apple, AXStaticText Nuts (disabled), AXStaticText Almond, AXStaticText Gone (disabled), AXStaticText Durian (disabled)";
+        window.axNative = await waitForElementById("native");
+        output += await expectAsync("items(axNative)", `'${listBoxItems}'`);
+        window.axBase = await waitForElementById("base");
+        output += await expectAsync("items(axBase)", `'${listBoxItems}'`);
+
+        window.axPicker = await waitForElementById("picker");
+        axPicker.press();
+        output += await expectAsync("axPicker.isExpanded", "true");
+        output += await expectAsync("items(findBaseSelectMenu(axPicker))", "'AXMenuItem Fruit (disabled), AXMenuItem Apple, AXMenuItem Nuts (disabled), AXMenuItem Almond, AXMenuItem Gone (disabled), AXMenuItem Durian (disabled)'");
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -70,6 +70,7 @@ public:
 
     bool isChecked() const final;
     bool isEnabled() const override;
+    RefPtr<HTMLOptGroupElement> optGroupForLabel() const;
     bool isIndeterminate() const override;
     bool isPressed() const final;
     bool isRequired() const final;

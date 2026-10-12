@@ -43,14 +43,12 @@ if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
     window.axSelect = accessibilityController.accessibleElementById("select");
-    window.axGroup = accessibilityController.accessibleElementById("group");
     output += expect("axSelect.role", "'AXRole: AXList'");
     output += expect("parentMismatches(axSelect).join()", "''");
     output += expect("accessibilityController.accessibleElementById('apple').parentElement().isEqual(axSelect)", "true");
     output += expect("accessibilityController.accessibleElementById('separator').role", "'AXRole: AXSplitter'");
-    output += expect("axGroup.role", "'AXRole: AXGroup'");
-    output += expect("axGroup.parentElement().isEqual(axSelect)", "true");
-    output += expect("accessibilityController.accessibleElementById('banana').parentElement().isEqual(axGroup)", "true");
+    output += expect("axSelect.childAtIndex(2)?.stringValue", "'AXValue: More'");
+    output += expect("accessibilityController.accessibleElementById('banana').parentElement().isEqual(axSelect)", "true");
     output += expect("accessibilityController.accessibleElementById('cherry').parentElement().isEqual(axSelect)", "true");
     output += expect("accessibilityController.accessibleElementById('date').parentElement().isEqual(axSelect)", "true");
     output += expect("axSelect.selectedChildrenCount", "1");

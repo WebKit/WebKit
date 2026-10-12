@@ -1,12 +1,13 @@
-This test verifies that a base-appearance list box exposes its options as list box options and its optgroup as a group, also after size changes.
+This test verifies that a base-appearance list box exposes its options as list box options and the label of its optgroup as an item, as a native list box does, also after size changes.
 
 PASS: axSelect.role === 'AXRole: AXList'
-PASS: axSelect.childrenCount === 3
+PASS: axSelect.childrenCount === 4
 PASS: platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple') === true
 PASS: axSelect.childAtIndex(1).isSelected === true
-PASS: axSelect.childAtIndex(2).role === 'AXRole: AXGroup'
+PASS: axSelect.childAtIndex(2)?.stringValue === 'AXValue: More'
+PASS: axSelect.childAtIndex(2)?.isEnabled === false
 PASS: platformTextAlternatives(axCherry).includes('Cherry') === true
-PASS: axCherry.parentElement().isEqual(axSelect.childAtIndex(2)) === true
+PASS: axCherry.parentElement().isEqual(axSelect) === true
 
 size=1
 PASS: accessibilityController.accessibleElementById('select').role.toLowerCase().includes('popup') === true
@@ -18,12 +19,13 @@ PASS: axSelect.isExpanded === false
 size=4
 PASS: accessibilityController.accessibleElementById('select').role === 'AXRole: AXList'
 PASS: axSelect.role === 'AXRole: AXList'
-PASS: axSelect.childrenCount === 3
+PASS: axSelect.childrenCount === 4
 PASS: platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple') === true
 PASS: axSelect.childAtIndex(1).isSelected === true
-PASS: axSelect.childAtIndex(2).role === 'AXRole: AXGroup'
+PASS: axSelect.childAtIndex(2)?.stringValue === 'AXValue: More'
+PASS: axSelect.childAtIndex(2)?.isEnabled === false
 PASS: platformTextAlternatives(axCherry).includes('Cherry') === true
-PASS: axCherry.parentElement().isEqual(axSelect.childAtIndex(2)) === true
+PASS: axCherry.parentElement().isEqual(axSelect) === true
 
 PASS successfullyParsed is true
 

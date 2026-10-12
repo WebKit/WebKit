@@ -76,10 +76,6 @@ AccessibilityRole AccessibilityListBoxOption::determineAccessibilityRole()
         if (RefPtr select = option->ownerSelectElement(); select && select->usesBaseAppearancePicker())
             return AccessibilityRole::MenuItem;
     }
-    if (RefPtr optGroup = dynamicDowncast<HTMLOptGroupElement>(m_node.get())) {
-        if (RefPtr select = optGroup->ownerSelectElement(); select && !listItemsAreChildrenOfSelect(*select))
-            return AccessibilityRole::Group;
-    }
     return AccessibilityRole::ListBoxOption;
 }
 
@@ -92,9 +88,11 @@ Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(AXID axID, HT
 
 bool AccessibilityListBoxOption::isEnabled() const
 {
-    return !(is<HTMLOptGroupElement>(m_node.get())
-        || equalLettersIgnoringASCIICase(getAttribute(aria_disabledAttr), "true"_s)
-        || hasAttribute(disabledAttr));
+    if (is<HTMLOptGroupElement>(m_node) || equalLettersIgnoringASCIICase(getAttribute(aria_disabledAttr), "true"_s))
+        return false;
+
+    RefPtr element = dynamicDowncast<Element>(m_node);
+    return !element || !element->isDisabledFormControl();
 }
 
 bool AccessibilityListBoxOption::isSelected() const
@@ -140,6 +138,10 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
 bool AccessibilityListBoxOption::computeIsIgnored() const
 {
     if (!m_node || isIgnoredByDefault())
+        return true;
+
+    // An optgroup that renders its own content is represented by its label instead.
+    if (canHaveChildren())
         return true;
 
     RefPtr select = listBoxOptionParentNode();
