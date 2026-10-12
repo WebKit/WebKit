@@ -597,6 +597,7 @@
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/SiteIsolationEditingTests.swift,
 				WebKit/WKWebView/SiteIsolationNavigationTests.swift,
+				WebKit/WKWebView/SiteIsolationPositionInformationTests.swift,
 				WebKit/WKWebView/SiteIsolationUserAgentTests.swift,
 				WebKit/WKWebView/TextExtractionTests.swift,
 				WebKit/WKWebView/TextFragments.swift,
