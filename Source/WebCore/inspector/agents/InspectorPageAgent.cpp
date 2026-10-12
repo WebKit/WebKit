@@ -1044,18 +1044,22 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int 
 }
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
+void InspectorPageAgent::archive(Ref<ArchiveCallback>&& callback)
 {
     RefPtr localMainFrame = m_inspectedPage->localMainFrame();
-    if (!localMainFrame)
-        return makeUnexpected("Main frame isn't local"_s);
+    if (!localMainFrame) {
+        callback->sendFailure("Main frame isn't local"_s);
+        return;
+    }
 
     auto archive = LegacyWebArchive::create(*localMainFrame);
-    if (!archive)
-        return makeUnexpected("Could not create web archive for main frame"_s);
+    if (!archive) {
+        callback->sendFailure("Could not create web archive for main frame"_s);
+        return;
+    }
 
     RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
-    return base64EncodeToString(span(buffer.get()));
+    callback->sendSuccess(base64EncodeToString(span(buffer.get())));
 }
 #endif
 

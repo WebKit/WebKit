@@ -99,7 +99,7 @@ public:
     CommandResult<String> snapshotNode(Protocol::DOM::NodeId) final;
     CommandResult<String> snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem) final;
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    CommandResult<String> archive() final;
+    void archive(Ref<ArchiveCallback>&&) final;
 #endif
 #if !PLATFORM(COCOA)
     CommandResult<void> setScreenSizeOverride(std::optional<int>&& width, std::optional<int>&& height) final;

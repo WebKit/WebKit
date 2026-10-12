@@ -3086,26 +3086,39 @@ WI.archiveMainFrame = function()
     WI._downloadingPage = true;
     WI._updateDownloadTabBarButton();
 
+    // Under Site Isolation only the backend target's PageAgent archives frames in every process.
     let target = WI.assumingMainTarget();
-    target.PageAgent.archive((error, data) => {
-        WI._downloadingPage = false;
-        WI._updateDownloadTabBarButton();
+    if (WI.backendTarget && WI.networkManager.enabledPageForSiteIsolation && WI.backendTarget.hasCommand("Page.archive"))
+        target = WI.backendTarget;
 
-        if (error) {
-            WI.reportInternalError(error);
-            return;
+    let requested = false;
+    try {
+        target.PageAgent.archive((error, data) => {
+            WI._downloadingPage = false;
+            WI._updateDownloadTabBarButton();
+
+            if (error) {
+                WI.reportInternalError(error);
+                return;
+            }
+
+            let mainFrame = WI.networkManager.mainFrame;
+            let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
+
+            const forceSaveAs = true;
+            WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
+                suggestedName: archiveName + ".webarchive",
+                content: data,
+                base64Encoded: true,
+            }, forceSaveAs);
+        });
+        requested = true;
+    } finally {
+        if (!requested) {
+            WI._downloadingPage = false;
+            WI._updateDownloadTabBarButton();
         }
-
-        let mainFrame = WI.networkManager.mainFrame;
-        let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
-
-        const forceSaveAs = true;
-        WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
-            suggestedName: archiveName + ".webarchive",
-            content: data,
-            base64Encoded: true,
-        }, forceSaveAs);
-    });
+    }
 };
 
 WI.canArchiveMainFrame = function()
