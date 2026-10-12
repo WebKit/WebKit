@@ -1,0 +1,10 @@
+Tests that a client-side accessibility notification listener receives AXFocusedUIElementChanged as focus moves.
+
+PASS: accessibilityController.addNotificationListener(notificationCallback) === true
+PASS: Received AXFocusedUIElementChanged for #first
+PASS: Received AXFocusedUIElementChanged for #second
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

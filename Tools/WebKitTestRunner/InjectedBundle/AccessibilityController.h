@@ -27,6 +27,7 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefPtr.h>
 #include <wtf/Condition.h>
 #include <wtf/FastMalloc.h>
@@ -84,6 +85,10 @@ public:
 
     bool addNotificationListener(JSContextRef, JSValueRef functionCallback);
     bool removeNotificationListener();
+#if PLATFORM(MAC)
+    // Called when the UI process forwards a notification it observed in client accessibility mode.
+    void clientNotificationReceived(uint64_t elementToken, JSStringRef notificationName);
+#endif
     void injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value);
 
     void printToStderr(JSStringRef) const;
@@ -106,6 +111,14 @@ private:
     AccessibilityController();
     void platformInitialize();
     void platformInitializeClientAccessibility();
+
+#if PLATFORM(MAC)
+    bool addClientNotificationListener(JSContextRef, JSValueRef functionCallback);
+    bool removeClientNotificationListener();
+
+    JSRetainPtr<JSGlobalContextRef> m_clientNotificationContext;
+    JSValueRef m_clientNotificationCallback { nullptr };
+#endif
 
 #if PLATFORM(COCOA)
     RetainPtr<id> m_globalNotificationHandler;
