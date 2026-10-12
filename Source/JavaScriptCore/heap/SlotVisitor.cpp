@@ -141,6 +141,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         return;
     
     ASSERT(!m_isCheckingForDefaultMarkViolation);
+    ASSERT(m_collector.hasHeap(*heapCell->heap()));
     
     auto validateCell = [&] (JSCell* jsCell) {
         StructureID structureID = jsCell->structureID();
@@ -203,7 +204,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     
         JSCell* jsCell = static_cast<JSCell*>(heapCell);
         validateCell(jsCell);
-        Integrity::auditCell(m_collector.heap().vm(), jsCell);
+        Integrity::auditCell(jsCell->vm(), jsCell);
         
         jsCell->setCellState(CellState::PossiblyGrey);
 
@@ -292,7 +293,7 @@ void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = std::bit_cast<HeapCell*>(base);
     
-    ASSERT(cell->heap() == &m_collector.heap());
+    ASSERT(m_collector.hasHeap(*cell->heap()));
     
     if (Heap::testAndSetMarked(m_markingVersion, cell))
         return;
@@ -310,7 +311,7 @@ void SlotVisitor::noteLiveAuxiliaryCell(HeapCell* cell)
     
     CellContainer container = cell->cellContainer();
     
-    container.assertValidCell(m_collector.heap().vm(), cell);
+    container.assertValidCell(cell->vm(), cell);
     container.noteMarked();
     
     m_visitCount++;
