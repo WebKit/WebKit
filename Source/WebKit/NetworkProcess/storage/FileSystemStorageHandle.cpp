@@ -219,7 +219,7 @@ std::expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> FileSystem
 
     bool acquired = manager->acquireLockForFile(m_path, FileSystemStorageManager::LockType::Exclusive);
     if (!acquired)
-        return makeUnexpected(FileSystemStorageError::InvalidState);
+        return makeUnexpected(FileSystemStorageError::NoModificationAllowed);
 
     bool isLockReleaseNeeded = true;
     auto lockReleaser = makeScopeExit([&] {
