@@ -80,4 +80,39 @@ TEST(MemoryCache, FontFromUserStyleSheetKeepsCachePartition)
     });
 }
 
+TEST(MemoryCache, DeferredLazyImageDoesNotEvictCachedImage)
+{
+    RetainPtr imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    HTTPServer server({
+        { "/index.html"_s, { "<!DOCTYPE html><body><img id='eager' src='image.png' onload='window.eagerLoaded = true'><div style='height: 5000px'></div></body>"_s } },
+        { "/image.png"_s, { { { "Content-Type"_s, "image/png"_s }, { "Cache-Control"_s, "no-store"_s } }, imageData.get() } },
+    });
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration preferences] _setStorageBlockingPolicy:_WKStorageBlockingPolicyBlockThirdParty];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.eagerLoaded"] boolValue];
+    }));
+    EXPECT_EQ(server.totalRequests(), 2u);
+
+    [webView objectByEvaluatingJavaScript:@"let lazy = document.createElement('img'); lazy.id = 'lazy'; lazy.loading = 'lazy'; lazy.onload = () => window.lazyLoaded = true; lazy.src = 'image.png'; document.body.appendChild(lazy); true"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView objectByEvaluatingJavaScript:@"let secondEager = document.createElement('img'); secondEager.onload = () => window.secondEagerLoaded = true; secondEager.src = 'image.png'; document.body.prepend(secondEager); true"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.secondEagerLoaded"] boolValue];
+    }));
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!window.lazyLoaded"] boolValue]);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('lazy').scrollIntoView(); true"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.lazyLoaded"] boolValue];
+    }));
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"document.getElementById('lazy').naturalWidth"] intValue], [[webView objectByEvaluatingJavaScript:@"document.getElementById('eager').naturalWidth"] intValue]);
+    EXPECT_EQ(server.totalRequests(), 2u);
+}
+
 } // namespace TestWebKitAPI

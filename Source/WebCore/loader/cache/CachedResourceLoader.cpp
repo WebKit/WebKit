@@ -1325,6 +1325,8 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
 
     bool ignoreForRequestCount = request.ignoreForRequestCount();
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
+    if (imageLoading == ImageLoading::DeferredUntilVisible && m_imagesEnabled)
+        mayAddToMemoryCache = MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
     case Reload:
