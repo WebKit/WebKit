@@ -45,11 +45,13 @@ static Property drmPropertyForName(int fd, drmModeObjectProperties* properties, 
 {
     Property property = { 0, 0 };
     for (uint32_t i = 0; i < properties->count_props && !property.first; ++i) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         WPE::DRM::UniquePtr<drmModePropertyRes> info(drmModeGetProperty(fd, properties->props[i]));
         if (!g_strcmp0(info->name, name)) {
             property.first = info->prop_id;
             property.second = properties->prop_values[i];
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     return property;
 }
@@ -83,7 +85,7 @@ bool Crtc::modeIsCurrent(drmModeModeInfo* mode) const
     if (!m_currentMode)
         return false;
 
-    return !memcmp(&m_currentMode.value(), mode, sizeof(drmModeModeInfo));
+    return equalSpans(singleElementSpan(m_currentMode.value()), singleElementSpan(*mode));
 }
 
 void Crtc::setCurrentMode(drmModeModeInfo* mode)
@@ -109,10 +111,10 @@ Connector::Connector(drmModeConnector* connector, Properties&& properties)
     , m_properties(WTF::move(properties))
 {
     m_modes.reserveInitialCapacity(connector->count_modes);
-    for (int i = 0; i < connector->count_modes; ++i) {
-        if (connector->modes[i].type & DRM_MODE_TYPE_PREFERRED)
+    for (const auto& [i, mode] : unsafeMakeSpan(connector->modes, connector->count_modes) | std::views::enumerate) {
+        if (mode.type & DRM_MODE_TYPE_PREFERRED)
             m_preferredModeIndex = i;
-        m_modes.append(connector->modes[i]);
+        m_modes.append(mode);
     }
 }
 
@@ -137,6 +139,7 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
                 useFallback = false;
 
                 auto* formatModifierBlob = static_cast<struct drm_format_modifier_blob*>(blob->data);
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                 auto* blobFormats = reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(formatModifierBlob) + formatModifierBlob->formats_offset);
                 auto* blobModifiers = reinterpret_cast<struct drm_format_modifier*>(reinterpret_cast<char*>(formatModifierBlob) + formatModifierBlob->modifiers_offset);
                 RELEASE_ASSERT(plane->count_formats == formatModifierBlob->count_formats);
@@ -161,13 +164,14 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
 
                     formats.append({ blobFormats[i], WTF::move(modifiers) });
                 }
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
         }
     }
 
     if (useFallback) {
-        for (uint32_t i = 0; i < plane->count_formats; ++i)
-            formats.append({ plane->formats[i], { DRM_FORMAT_MOD_LINEAR } });
+        for (const auto& format : unsafeMakeSpan(plane->formats, plane->count_formats))
+            formats.append({ format, { DRM_FORMAT_MOD_LINEAR } });
     }
 
     Properties props = {
@@ -215,10 +219,10 @@ bool Plane::supportsFormat(uint32_t format, uint64_t modifier) const
 
 static std::optional<uint32_t> drmAddFrameBuffer(struct gbm_bo* bo)
 {
-    uint32_t handles[GBM_MAX_PLANES] = { 0, };
-    uint32_t strides[GBM_MAX_PLANES] = { 0, };
-    uint32_t offsets[GBM_MAX_PLANES] = { 0, };
-    uint64_t modifiers[GBM_MAX_PLANES] = { 0, };
+    std::array<uint32_t, GBM_MAX_PLANES> handles = { 0, };
+    std::array<uint32_t, GBM_MAX_PLANES> strides = { 0, };
+    std::array<uint32_t, GBM_MAX_PLANES> offsets = { 0, };
+    std::array<uint64_t, GBM_MAX_PLANES> modifiers = { 0, };
     if (gbm_bo_get_handle_for_plane(bo, 0).s32 == -1) {
         handles[0] = gbm_bo_get_handle(bo).u32;
         strides[0] = gbm_bo_get_stride(bo);
@@ -236,9 +240,9 @@ static std::optional<uint32_t> drmAddFrameBuffer(struct gbm_bo* bo)
     auto* device = gbm_bo_get_device(bo);
     uint32_t frameBufferID;
     if (modifiers[0] && modifiers[0] != DRM_FORMAT_MOD_INVALID) {
-        if (drmModeAddFB2WithModifiers(gbm_device_get_fd(device), gbm_bo_get_width(bo), gbm_bo_get_height(bo), gbm_bo_get_format(bo), handles, strides, offsets, modifiers, &frameBufferID, DRM_MODE_FB_MODIFIERS))
+        if (drmModeAddFB2WithModifiers(gbm_device_get_fd(device), gbm_bo_get_width(bo), gbm_bo_get_height(bo), gbm_bo_get_format(bo), handles.data(), strides.data(), offsets.data(), modifiers.data(), &frameBufferID, DRM_MODE_FB_MODIFIERS))
             return std::nullopt;
-    } else if (drmModeAddFB2(gbm_device_get_fd(device), gbm_bo_get_width(bo), gbm_bo_get_height(bo), gbm_bo_get_format(bo), handles, strides, offsets, &frameBufferID, 0))
+    } else if (drmModeAddFB2(gbm_device_get_fd(device), gbm_bo_get_width(bo), gbm_bo_get_height(bo), gbm_bo_get_format(bo), handles.data(), strides.data(), offsets.data(), &frameBufferID, 0))
         return std::nullopt;
 
     return frameBufferID;

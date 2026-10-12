@@ -39,6 +39,8 @@
 #include <wtf/text/StringCommon.h>
 #include <xkbcommon/xkbcommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 typedef struct _TextInputV3Global TextInputV3Global;
 typedef struct _Preedit Preedit;
 
@@ -641,3 +643,5 @@ WPEInputMethodContext* wpe_im_context_wayland_v3_new(WPEDisplayWayland* display,
     textInputV3GetGlobalByDisplay(display); // ensure creation of listener
     return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_IM_CONTEXT_WAYLAND_V3, "view", view, nullptr));
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

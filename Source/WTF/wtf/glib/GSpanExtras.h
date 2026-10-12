@@ -75,7 +75,9 @@ GMallocSpan<T, Malloc> dupGMallocSpan(std::span<const T> span)
 }
 
 WTF_EXPORT_PRIVATE std::expected<GMallocSpan<char>, GUniquePtr<GError>> gFileGetContents(UTF8CStringView);
+WTF_EXPORT_PRIVATE GMallocSpan<char*, GMallocStrv> gKeyFileGetGroups(GKeyFile*);
 WTF_EXPORT_PRIVATE std::expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetKeys(GKeyFile*, UTF8CStringView groupName);
+WTF_EXPORT_PRIVATE std::expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetStringList(GKeyFile*, UTF8CStringView groupName, UTF8CStringView key);
 WTF_EXPORT_PRIVATE GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass*);
 WTF_EXPORT_PRIVATE GMallocSpan<const char*> gVariantGetStrv(const GRefPtr<GVariant>&);
 
@@ -171,7 +173,9 @@ inline std::span<T> span(GRefPtr<GPtrArray>& array LIFETIME_BOUND)
 using WTF::GMallocSpan;
 using WTF::adoptGMallocSpan;
 using WTF::gFileGetContents;
+using WTF::gKeyFileGetGroups;
 using WTF::gKeyFileGetKeys;
+using WTF::gKeyFileGetStringList;
 using WTF::gObjectClassGetProperties;
 using WTF::gVariantGetStrv;
 using WTF::span;

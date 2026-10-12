@@ -151,7 +151,7 @@ static struct DisplayDevice findTargetDevice(struct udev* udev, const char* seat
         bool isBootVGA = false;
         if (auto* pciDevice = udev_device_get_parent_with_subsystem_devtype(udevDevice.get(), "pci", nullptr)) {
             const char* id = udev_device_get_sysattr_value(pciDevice, "boot_vga");
-            isBootVGA = id && !strcmp(id, "1");
+            isBootVGA = id && UTF8CStringView::unsafeFromUTF8(id) == "1"_s;
         }
 
         if (!isBootVGA && !displayDevice.isNull())
@@ -232,8 +232,8 @@ static bool wpeDisplayDRMInitializeCapabilities(WPEDisplayDRM* display, int fd, 
 
 static std::unique_ptr<WPE::DRM::Connector> chooseConnector(int fd, drmModeRes* resources, GError** error)
 {
-    for (int i = 0; i < resources->count_connectors; ++i) {
-        WPE::DRM::UniquePtr<drmModeConnector> connector(drmModeGetConnector(fd, resources->connectors[i]));
+    for (const auto& connectorId : unsafeMakeSpan(resources->connectors, resources->count_connectors)) {
+        WPE::DRM::UniquePtr<drmModeConnector> connector(drmModeGetConnector(fd, connectorId));
         if (!connector || connector->connection != DRM_MODE_CONNECTED || connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
             continue;
 
@@ -250,25 +250,25 @@ static std::unique_ptr<WPE::DRM::Crtc> chooseCrtcForConnector(int fd, drmModeRes
     // Try the currently connected encoder+crtc.
     WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, connector.encoderID()));
     if (encoder) {
-        for (int i = 0; i < resources->count_crtcs; ++i) {
-            if (resources->crtcs[i] == encoder->crtc_id) {
-                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[i]));
+        for (const auto& [i, crtcId] : unsafeMakeSpan(resources->crtcs, resources->count_crtcs) | std::views::enumerate) {
+            if (crtcId == encoder->crtc_id) {
+                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, crtcId));
                 return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
             }
         }
     }
 
     // If no active crtc was found, pick the first possible crtc, then try the first possible for crtc.
-    for (int i = 0; i < resources->count_encoders; ++i) {
-        WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, resources->encoders[i]));
+    for (const auto& encoderId : unsafeMakeSpan(resources->encoders, resources->count_encoders)) {
+        WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, encoderId));
         if (!encoder)
             continue;
 
-        for (int j = 0; j < resources->count_crtcs; ++j) {
-            const uint32_t crtcMask = 1 << j;
+        for (const auto& [i, crtcId] : unsafeMakeSpan(resources->crtcs, resources->count_crtcs) | std::views::enumerate) {
+            const uint32_t crtcMask = 1 << i;
             if (encoder->possible_crtcs & crtcMask) {
-                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[j]));
-                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), j);
+                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, crtcId));
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
             }
         }
     }
@@ -285,8 +285,8 @@ static std::unique_ptr<WPE::DRM::Plane> choosePlaneForCrtc(int fd, WPE::DRM::Pla
         return nullptr;
     }
 
-    for (uint32_t i = 0; i < planeResources->count_planes; ++i) {
-        WPE::DRM::UniquePtr<drmModePlane> drmPlane(drmModeGetPlane(fd, planeResources->planes[i]));
+    for (const auto planeId : unsafeMakeSpan(planeResources->planes, planeResources->count_planes)) {
+        WPE::DRM::UniquePtr<drmModePlane> drmPlane(drmModeGetPlane(fd, planeId));
         auto plane = WPE::DRM::Plane::create(fd, type, drmPlane.get(), modifiersSupported);
         if (!plane)
             continue;

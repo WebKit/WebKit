@@ -29,6 +29,7 @@
 #include "WPEDisplay.h"
 #include <gio/gio.h>
 #include <mutex>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if ENABLE(WPE_PLATFORM_DRM)
@@ -59,11 +60,11 @@ void wpeEnsureExtensionPointsLoaded()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         GIOModuleScope* scope = g_io_module_scope_new(G_IO_MODULE_SCOPE_BLOCK_DUPLICATES);
-        const char* path = g_getenv("WPE_PLATFORMS_PATH");
-        if (path && *path) {
-            GUniquePtr<char*> paths(g_strsplit(path, G_SEARCHPATH_SEPARATOR_S, 0));
-            for (size_t i = 0; paths.get()[i]; ++i)
-                g_io_modules_scan_all_in_directory_with_scope(paths.get()[i], scope);
+        const char* pathList = g_getenv("WPE_PLATFORMS_PATH");
+        if (pathList && *pathList) {
+            GUniquePtr<char*> paths(g_strsplit(pathList, G_SEARCHPATH_SEPARATOR_S, 0));
+            for (const char* path : span(paths))
+                g_io_modules_scan_all_in_directory_with_scope(path, scope);
         }
 
         g_io_modules_scan_all_in_directory_with_scope(WPE_PLATFORM_MODULE_DIR, scope);

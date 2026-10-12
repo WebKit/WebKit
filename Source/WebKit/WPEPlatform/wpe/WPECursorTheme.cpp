@@ -39,16 +39,19 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CursorTheme);
 
 static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& inherited)
 {
-    auto inheritedThemes = [&]() -> GUniquePtr<char*> {
+    auto inheritedThemes = [&basePath] -> GMallocSpan<char*, WTF::GMallocStrv> {
         auto index = gBuildFilename(basePath, "index.theme");
         if (!g_file_test(index.utf8(), G_FILE_TEST_EXISTS))
-            return nullptr;
+            return { };
 
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
         if (!g_key_file_load_from_file(keyFile.get(), index.utf8(), G_KEY_FILE_NONE, nullptr))
-            return nullptr;
+            return { };
 
-        return GUniquePtr<char*>(g_key_file_get_string_list(keyFile.get(), "Icon Theme", "Inherits", nullptr, nullptr));
+        if (auto result = gKeyFileGetStringList(keyFile.get(), "Icon Theme"_s, "Inherits"_s))
+            return WTF::move(*result);
+
+        return { };
     };
 
     String pathOfIndex = FileSystem::pathByAppendingComponent(String::fromUTF8(basePath.span()), "index.theme"_s);
@@ -58,9 +61,9 @@ static UTF8CString cursorsPath(UTF8CStringView basePath, Vector<UTF8CString>& in
     auto baseCursorsPath = gBuildFilename(actualBasePath, "cursors");
 
     if (auto inherits = inheritedThemes()) {
-        for (unsigned i = 0; inherits.get()[i]; ++i) {
+        for (const char* themeName : inherits.span()) {
             GUniquePtr<char> parentPath(g_path_get_dirname(actualBasePath.utf8()));
-            auto inheritedBasePath = gBuildFilename(parentPath.get(), inherits.get()[i]);
+            auto inheritedBasePath = gBuildFilename(parentPath.get(), themeName);
             auto path = cursorsPath(inheritedBasePath, inherited);
             auto exists = !path.isNull() && inherited.containsIf([&](const auto& item) {
                 return item == path;
@@ -98,18 +101,17 @@ static std::unique_ptr<CursorTheme> tryCreateTheme(UTF8CStringView basePath, uin
 std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size)
 {
     auto tryLoadTheme = [](const char* name, uint32_t size) -> std::unique_ptr<CursorTheme> {
-        GUniquePtr<char> path(g_build_filename(g_get_user_data_dir(), "icons", name, nullptr));
-        if (auto theme = tryCreateTheme(UTF8CStringView::unsafeFromUTF8(path.get()), size))
+        auto path = gBuildFilename(g_get_user_data_dir(), "icons", name);
+        if (auto theme = tryCreateTheme(path, size))
             return theme;
 
-        path.reset(g_build_filename(g_get_home_dir(), ".icons", name, nullptr));
-        if (auto theme = tryCreateTheme(UTF8CStringView::unsafeFromUTF8(path.get()), size))
+        path = gBuildFilename(g_get_home_dir(), ".icons", name);
+        if (auto theme = tryCreateTheme(path, size))
             return theme;
 
-        auto* dataDirs = g_get_system_data_dirs();
-        for (unsigned i = 0; dataDirs[i]; ++i) {
-            path.reset(g_build_filename(dataDirs[i], "icons", name, nullptr));
-            if (auto theme = tryCreateTheme(UTF8CStringView::unsafeFromUTF8(path.get()), size))
+        for (const char* dataDir : span(g_get_system_data_dirs())) {
+            path = gBuildFilename(dataDir, "icons", name);
+            if (auto theme = tryCreateTheme(path, size))
                 return theme;
         }
 
@@ -173,8 +175,10 @@ struct XcursorChunkHeader {
 static bool readUint32(FILE* file, uint32_t* value)
 {
     std::array<unsigned char, 4> bytes;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (fread(bytes.data(), 1, 4, file) != 4)
         return false;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     *value = ((bytes[0] << 0) | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
     return true;
@@ -264,7 +268,9 @@ static std::optional<CursorTheme::CursorImage> readImage(FILE* file, const Xcuso
     while (imageSize--) {
         if (!readUint32(file, pixels))
             return std::nullopt;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         pixels++;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     return image;

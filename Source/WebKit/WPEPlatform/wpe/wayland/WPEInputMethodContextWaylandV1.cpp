@@ -38,6 +38,8 @@
 #include <wtf/text/StringView.h>
 #include <xkbcommon/xkbcommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 typedef struct _TextInputV1Global TextInputV1Global;
 
 struct _TextInputV1Global {
@@ -650,3 +652,5 @@ WPEInputMethodContext* wpe_im_context_wayland_v1_new(WPEDisplayWayland* display,
     textInputV1GetGlobalByDisplay(display); // ensure creation of listener
     return WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_IM_CONTEXT_WAYLAND_V1, "view", view, nullptr));
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

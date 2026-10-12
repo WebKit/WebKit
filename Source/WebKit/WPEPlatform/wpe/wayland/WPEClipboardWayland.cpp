@@ -34,6 +34,7 @@
 #include <glib-unix.h>
 #include <wayland-client.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -225,8 +226,8 @@ static void wpeClipboardWaylandChanged(WPEClipboard* clipboard, GPtrArray* forma
         wl_data_source_add_listener(priv->source, &wlDataSourceListener, clipboard);
 
         if (formats) {
-            for (unsigned i = 0; formats->pdata[i]; ++i)
-                wl_data_source_offer(priv->source, static_cast<const char*>(formats->pdata[i]));
+            for (const char* format : span<const char*>(formats))
+                wl_data_source_offer(priv->source, format);
         }
 
         auto* seat = wpeDisplayWaylandGetSeat(display);

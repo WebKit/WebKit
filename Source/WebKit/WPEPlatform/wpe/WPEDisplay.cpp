@@ -661,13 +661,13 @@ static bool isSotfwareRast()
     static bool swrast;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        const char* envAlwaysSoftware = getenv("LIBGL_ALWAYS_SOFTWARE");
+        const auto envAlwaysSoftware = UTF8CStringView::unsafeFromUTF8(getenv("LIBGL_ALWAYS_SOFTWARE"));
         if (envAlwaysSoftware
-            && (!strcmp(envAlwaysSoftware, "1")
-                || !strcasecmp(envAlwaysSoftware, "y")
-                || !strcasecmp(envAlwaysSoftware, "yes")
-                || !strcasecmp(envAlwaysSoftware, "t")
-                || !strcasecmp(envAlwaysSoftware, "true"))) {
+            && (envAlwaysSoftware == "1"_s
+                || equalIgnoringASCIICase(envAlwaysSoftware.span(), "y"_s)
+                || equalIgnoringASCIICase(envAlwaysSoftware.span(), "yes"_s)
+                || equalIgnoringASCIICase(envAlwaysSoftware.span(), "t"_s)
+                || equalIgnoringASCIICase(envAlwaysSoftware.span(), "true"_s))) {
             swrast = true;
         }
     });
@@ -722,8 +722,10 @@ gboolean wpe_display_use_explicit_sync(WPEDisplay* display)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), FALSE);
 
-    static const char* envExplicitSync = getenv("WPE_USE_EXPLICIT_SYNC");
-    if (envExplicitSync && !strcmp(envExplicitSync, "0"))
+    static const bool envDisableExplicitSync =
+        UTF8CStringView::unsafeFromUTF8(getenv("WPE_USE_EXPLICIT_SYNC")) == "0"_s;
+
+    if (envDisableExplicitSync)
         return false;
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);

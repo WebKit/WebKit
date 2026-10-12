@@ -204,6 +204,7 @@ target_include_directories(WPEPlatformWayland PRIVATE ${WPEPlatformWayland_PRIVA
 target_include_directories(WPEPlatformWayland SYSTEM PRIVATE ${WPEPlatformWayland_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEPlatformWayland ${WPEPlatformWayland_LIBRARIES})
 add_dependencies(WPEPlatformWayland WPEPlatformGeneratedEnumTypesHeader)
+WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS(WPEPlatformWayland)
 
 set_target_properties(WPEPlatformWayland PROPERTIES
     SOURCES_FOR_INTROSPECTION "${WPEPlatformWayland_SOURCES_FOR_INTROSPECTION}"

@@ -892,17 +892,11 @@ guint32 wpe_keyval_to_unicode(guint keyval)
     if ((keyval & 0xff000000) == 0x01000000)
         return keyval & 0x00ffffff;
 
-    int min = 0;
-    int max = G_N_ELEMENTS(keysymToUnicodeTable) - 1;
-    while (max >= min) {
-        int mid = (min + max) / 2;
-        if (keysymToUnicodeTable[mid].keysym < keyval)
-            min = mid + 1;
-        else if (keysymToUnicodeTable[mid].keysym > keyval)
-            max = mid - 1;
-        else
-            return keysymToUnicodeTable[mid].ucs;
-    }
+    const auto result = std::ranges::lower_bound(keysymToUnicodeTable, keyval, { }, [](const auto& entry) {
+        return entry.keysym;
+    });
+    if (result != std::end(keysymToUnicodeTable) && result->keysym == keyval)
+        return result->ucs;
 
     return 0;
 }
@@ -1698,17 +1692,11 @@ guint wpe_unicode_to_keyval(guint32 wc)
     if ((wc >= 0x0020 && wc <= 0x007e) || (wc >= 0x00a0 && wc <= 0x00ff))
         return wc;
 
-    int min = 0;
-    int max = G_N_ELEMENTS(unicodeToKeysymTable) - 1;
-    while (max >= min) {
-        int mid = (min + max) / 2;
-        if (unicodeToKeysymTable[mid].ucs < wc)
-            min = mid + 1;
-        else if (unicodeToKeysymTable[mid].ucs > wc)
-            max = mid - 1;
-        else
-            return unicodeToKeysymTable[mid].keysym;
-    }
+    const auto result = std::ranges::lower_bound(unicodeToKeysymTable, wc, { }, [](const auto& entry) {
+        return entry.ucs;
+    });
+    if (result != std::end(unicodeToKeysymTable) && result->ucs == wc)
+        return result->keysym;
 
     // No matching keysym value found, return Unicode value plus 0x01000000
     // (a convention introduced in the UTF-8 work on xterm).
