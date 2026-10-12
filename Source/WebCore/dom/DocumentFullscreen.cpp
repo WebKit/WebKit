@@ -236,7 +236,7 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
 
     m_pendingFullscreenElement = element.ptr();
 
-    protect(document())->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, element = WTF::move(element), scope = CompletionHandlerScope(WTF::move(completionHandler)), hasKeyboardAccess, checkType, handleError, identifier, mode]() mutable {
+    protect(protect(document())->eventLoop())->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, element = WTF::move(element), scope = CompletionHandlerScope(WTF::move(completionHandler)), hasKeyboardAccess, checkType, handleError, identifier, mode] mutable {
         auto completionHandler = scope.release();
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -388,7 +388,7 @@ void DocumentFullscreen::elementEnterFullscreen(Element& element)
 
     queueFullscreenChangeEventForDocument(document);
 
-    RenderElement::markRendererDirtyAfterTopLayerChange(protect(element.renderer()).get(), containingBlockBeforeStyleResolution.get());
+    RenderElement::markRendererDirtyAfterTopLayerChange(protect(element.renderer()).get(), protect(containingBlockBeforeStyleResolution));
 }
 
 bool DocumentFullscreen::didEnterFullscreen()
@@ -698,7 +698,7 @@ void DocumentFullscreen::fullyExitFullscreen()
             rawThis->m_pendingExitFullscreen = false;
     });
 
-    protect(document())->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, resetPendingExitFullscreenScope = WTF::move(resetPendingExitFullscreenScope), rootFrameDocument = WTF::move(rootFrameDocument), identifier = LOGIDENTIFIER] mutable {
+    protect(protect(document())->eventLoop())->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, resetPendingExitFullscreenScope = WTF::move(resetPendingExitFullscreenScope), rootFrameDocument = WTF::move(rootFrameDocument), identifier = LOGIDENTIFIER] mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

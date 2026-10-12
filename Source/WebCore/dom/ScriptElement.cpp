@@ -276,7 +276,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 
     m_preparationTimeDocumentIdentifier = document->identifier();
 
-    if (!document->frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
+    if (!protect(document->frame()->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
         return false;
 
     if (scriptType == ScriptType::Classic && isScriptPreventedByAttributes())
@@ -581,7 +581,7 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, ExecuteScriptElement, "executing module script");
-    frame->script().linkAndEvaluateModuleScript(loadableModuleScript);
+    protect(frame->script())->linkAndEvaluateModuleScript(loadableModuleScript);
     WTFEndSignpost(this, ExecuteScriptElement, "executing module script");
 }
 

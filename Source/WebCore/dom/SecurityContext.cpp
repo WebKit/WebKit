@@ -53,7 +53,7 @@ void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& sec
         securityOriginDidChange();
 }
 
-ContentSecurityPolicy* SecurityContext::contentSecurityPolicy()
+SUPPRESS_NODELETE ContentSecurityPolicy* SecurityContext::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_hasEmptyContentSecurityPolicy)
         m_contentSecurityPolicy = makeEmptyContentSecurityPolicy();

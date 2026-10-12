@@ -2157,7 +2157,7 @@ Ref<DOMRectList> Element::getClientRects()
     if (quads.isEmpty())
         return DOMRectList::create();
 
-    protect(document())->convertAbsoluteToClientQuads(quads, renderer->style());
+    protect(document())->convertAbsoluteToClientQuads(quads, protect(renderer->style()));
     return DOMRectList::create(quads);
 }
 
@@ -2193,7 +2193,7 @@ FloatRect Element::boundingClientRect()
         return { };
     CheckedPtr renderer = WTF::move(pair->first);
     FloatRect result = pair->second;
-    document->convertAbsoluteToClientRect(result, renderer->style());
+    document->convertAbsoluteToClientRect(result, protect(renderer->style()));
     return result;
 }
 
@@ -2445,7 +2445,7 @@ void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString
             cache->deferAttributeChangeIfNeeded(*this, name, oldValue, newValue);
 
         if (isConnected() && oldValue == nullAtom())
-            document().attributeAddedToElement(name);
+            protect(document())->attributeAddedToElement(name);
     }
 }
 
@@ -2751,15 +2751,15 @@ void Element::classAttributeChanged(const AtomString& newClassString, AttributeM
             return;
         auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
         SpaceSplitString newClassNames(newClassString, shouldFoldCase);
-        elementData()->setClassNames(WTF::move(newClassNames));
+        protect(m_elementData)->setClassNames(WTF::move(newClassNames));
         return;
     }
 
     auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
     SpaceSplitString newClassNames(newClassString, shouldFoldCase);
     Style::ClassChangeInvalidation styleInvalidation(*this, elementData()->classNames(), newClassNames);
-    document().invalidateQuerySelectorAllResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
-    elementData()->setClassNames(WTF::move(newClassNames));
+    protect(document())->invalidateQuerySelectorAllResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
+    protect(m_elementData)->setClassNames(WTF::move(newClassNames));
 }
 
 void Element::partAttributeChanged(const AtomString& newValue)
@@ -2821,14 +2821,14 @@ bool Element::allowsDoubleTapGesture() const
 Style::Resolver& Element::styleResolver()
 {
     if (RefPtr shadowRoot = containingShadowRoot())
-        return shadowRoot->styleScope().resolver();
+        return protect(shadowRoot->styleScope())->resolver();
 
     return document().styleScope().resolver();
 }
 
 Style::UnadjustedStyle Element::resolveStyle(const Style::ResolutionContext& resolutionContext)
 {
-    return styleResolver().unadjustedStyleForElement(*this, resolutionContext);
+    return protect(styleResolver())->unadjustedStyleForElement(*this, resolutionContext);
 }
 
 void Element::invalidateStyle()
@@ -3223,8 +3223,9 @@ Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionTy
         }
 
         if (hasAttributesWithoutUpdate()) {
+            Ref document = this->document();
             for (auto& attribute : attributes())
-                document().attributeAddedToElement(attribute.name());
+                document->attributeAddedToElement(attribute.name());
         }
     }
 
@@ -4125,14 +4126,14 @@ void Element::removeAttributeInternal(unsigned index, InSynchronizationOfLazyAtt
 void Element::addAttributeInternal(const QualifiedName& name, const AtomString& value, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     if (inSynchronizationOfLazyAttribute == InSynchronizationOfLazyAttribute::Yes) {
-        ensureUniqueElementData().addAttribute(name, value);
+        protect(ensureUniqueElementData())->addAttribute(name, value);
         return;
     }
 
     willModifyAttribute(name, nullAtom(), value);
     {
         Style::AttributeChangeInvalidation styleInvalidation(*this, name, nullAtom(), value);
-        ensureUniqueElementData().addAttribute(name, value);
+        protect(ensureUniqueElementData())->addAttribute(name, value);
     }
     didAddAttribute(name, value);
 }
@@ -4397,19 +4398,20 @@ void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMod
         RefPtr frame { document().frame() };
         if (!frame)
             return;
-        
+
+        CheckedRef selection = frame->selection();
         // When focusing an editable element in an iframe, don't reset the selection if it already contains a selection.
-        if (this == frame->selection().selection().rootEditableElement()) {
-            frame->selection().revealSelection();
+        if (this == selection->selection().rootEditableElement()) {
+            selection->revealSelection();
             return;
         }
 
         // FIXME: We should restore the previous selection if there is one.
         VisibleSelection newSelection = VisibleSelection(firstPositionInOrBeforeNode(this));
         
-        if (frame->selection().shouldChangeSelection(newSelection)) {
-            frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), Element::defaultFocusTextStateChangeIntent());
-            frame->selection().revealSelection({ revealMode });
+        if (selection->shouldChangeSelection(newSelection)) {
+            selection->setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), Element::defaultFocusTextStateChangeIntent());
+            selection->revealSelection({ revealMode });
             return;
         }
     }
@@ -4610,7 +4612,7 @@ ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html
 
     RefPtr contextElement = dynamicDowncast<Element>(parent);
     if (!contextElement)
-        contextElement = HTMLBodyElement::create(document());
+        contextElement = HTMLBodyElement::create(protect(document()));
 
     RefPtr previous = previousSibling();
     RefPtr next = nextSibling();
@@ -4658,7 +4660,7 @@ String Element::innerText()
         return textContent(true);
     }
 
-    if (renderer()->isSkippedContent())
+    if (CheckedPtr renderer = this->renderer(); renderer->isSkippedContent())
         return String();
 
     // When innerText is called directly on a <select>, we must collect option
@@ -5199,7 +5201,8 @@ ExceptionOr<RefPtr<Element>> Element::closest(const String& selector)
 
 bool Element::mayCauseRepaintInsideViewport(const IntRect* visibleRect) const
 {
-    return renderer() && renderer()->mayCauseRepaintInsideViewport(visibleRect);
+    CheckedPtr renderer = this->renderer();
+    return renderer && renderer->mayCauseRepaintInsideViewport(visibleRect);
 }
 
 DOMTokenList& Element::classList()
@@ -5335,7 +5338,7 @@ void Element::requestFullscreen(FullscreenOptions&& options, RefPtr<DeferredProm
         }
     }
 
-    protect(document())->fullscreen().requestFullscreen(*this, DocumentFullscreen::FullscreenCheckType::EnforceIFrameAllowFullscreenRequirement, [promise = WTF::move(promise)](auto result) {
+    protect(protect(document())->fullscreen())->requestFullscreen(*this, DocumentFullscreen::FullscreenCheckType::EnforceIFrameAllowFullscreenRequirement, [promise = WTF::move(promise)](auto result) {
         if (!promise)
             return;
         if (result.hasException())
