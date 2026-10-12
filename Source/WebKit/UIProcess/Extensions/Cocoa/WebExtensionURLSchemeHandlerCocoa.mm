@@ -66,7 +66,15 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         URL frameDocumentURL = task->frameInfo().request().url();
         URL requestURL = task->request().url();
 
-        if (task->frameInfo().request().url().isEmpty() || task->frameInfo().request().url().isAboutBlank()) {
+#if defined(RC_REMOVE_SEC_ACCEL_3)
+        bool shouldIgnoreFrameDocumentURL = frameDocumentURL.isEmpty() || frameDocumentURL.isAboutBlank();
+#else
+        // A subframe navigation's committed URL is the document being replaced, not the initiator, so we shouldn't use it to authorize the load. Instead, use the parent frame's URL.
+        bool isSubframeNavigation = !task->frameInfo().isMainFrame() && task->request().requester() == WebCore::ResourceRequestRequester::Main;
+        bool shouldIgnoreFrameDocumentURL = frameDocumentURL.isEmpty() || frameDocumentURL.isAboutBlank() || isSubframeNavigation;
+#endif
+
+        if (shouldIgnoreFrameDocumentURL) {
             frameDocumentURL = task->request().firstPartyForCookies();
 
             if (!task->frameInfo().isMainFrame()) {

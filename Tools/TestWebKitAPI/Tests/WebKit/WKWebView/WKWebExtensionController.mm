@@ -961,6 +961,87 @@ TEST(WKWebExtensionController, DataURLResourcePathsAreNotServed)
 
     Util::loadAndRunExtension(manifest, resources);
 }
+
+TEST(WKWebExtensionController, NonWebAccessibleResourceDeniedForSubframeNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto *extensionManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/*" ],
+        } ],
+
+        @"web_accessible_resources": @[ @{
+            @"resources": @[ @"public.html" ],
+            @"matches": @[ @"*://localhost/*" ]
+        } ],
+    };
+
+    auto *publicScript = Util::constructScript(@[
+        @"setTimeout(() => browser.test.notifyPass(), 1000)",
+    ]);
+
+    auto *secretScript = Util::constructScript(@[
+        @"browser.test.notifyFail('secret.html is not a web accessible resource and should not have loaded')",
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const directFrame = document.createElement('iframe')",
+        @"directFrame.src = browser.runtime.getURL('secret.html')",
+        @"document.documentElement.appendChild(directFrame)",
+
+        @"const primedFrame = document.createElement('iframe')",
+
+        // Navigate the already-committed extension frame to a resource that is not web
+        // accessible. The frame's committed URL is the extension origin at this point,
+        // but this URL should not be used to authorize the load.
+        @"primedFrame.onload = () => {",
+        @"  primedFrame.src = browser.runtime.getURL('secret.html')",
+        @"}",
+
+        @"primedFrame.src = browser.runtime.getURL('public.html')",
+        @"document.documentElement.appendChild(primedFrame)",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+        @"public.js": publicScript,
+        @"public.html": @"<script type='module' src='public.js'></script>",
+        @"secret.js": secretScript,
+        @"secret.html": @"<script type='module' src='secret.js'></script>",
+    };
+
+    auto manager = Util::loadExtension(extensionManifest, resources);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
 #endif
 
 TEST(WKWebExtensionController, WebAccessibleResourcesV2)
