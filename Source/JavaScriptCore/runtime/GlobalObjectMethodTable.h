@@ -90,7 +90,7 @@ struct GlobalObjectMethodTable {
 #endif
     JSGlobalObject* (*deriveShadowRealmGlobalObject)(JSGlobalObject*);
     String (*codeForEval)(JSGlobalObject*, JSValue);
-    bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String, const ArgList&);
+    bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String);
     Structure* (*trustedScriptStructure)(JSGlobalObject*);
 };
 
