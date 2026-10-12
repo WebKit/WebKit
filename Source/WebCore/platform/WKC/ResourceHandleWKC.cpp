@@ -32,6 +32,7 @@
 #include "SharedBuffer.h"
 
 #include <curl/curl.h>
+#include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
@@ -337,6 +338,14 @@ size_t synchronousHeaderCallback(char* contents, size_t size, size_t count, void
 {
     auto bytes = size * count;
     auto& context = *static_cast<SynchronousLoadContext*>(userData);
+
+    // cURL can emit multiple status/header blocks for proxy CONNECT, interim
+    // responses, or authentication retries. Keep only the latest block so
+    // ResourceResponse is built from the final response headers.
+    std::string_view line(contents, bytes);
+    if (line.rfind("HTTP/", 0) == 0)
+        context.headerLines.clear();
+
     context.headerLines.emplace_back(contents, bytes);
     return bytes;
 }
@@ -453,7 +462,13 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     CurlHandle curl;
     curl.setURL(request.url(), CurlHandle::LocalhostAlias::Disable);
     curl.setTimeout(CurlContext::singleton().defaultTimeoutInterval());
-    curl.appendRequestHeaders(requestWithCookies.httpHeaderFields());
+
+    // Match CurlRequest's language negotiation for synchronous XHR and other
+    // synchronous loads, which bypass CurlRequest::appendAcceptLanguageHeader.
+    auto requestHeaders = requestWithCookies.httpHeaderFields();
+    for (const auto& language : userPreferredLanguages())
+        requestHeaders.add(HTTPHeaderName::AcceptLanguage, language);
+    curl.appendRequestHeaders(requestHeaders);
 
     auto method = request.httpMethod();
     if (method.isEmpty() || method == "GET"_s)
