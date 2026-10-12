@@ -4465,7 +4465,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-whil
 imported/w3c/web-platform-tests/css/css-view-transitions/paint-holding-in-iframe.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/mismatched-snapshot-containing-block-size-skips.html [ Failure Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/input-touch-while-render-blocked.html [ Skip ]
 
@@ -5222,7 +5221,6 @@ webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/i
 webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/service-worker-background-fetch.tentative.https.html [ Failure ]
 webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/service-worker.tentative.https.html [ Failure ]
 webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/shared-worker.tentative.https.html [ Failure ]
-webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/websocket.tentative.https.html [ Failure ]
 webkit.org/b/295047 imported/w3c/web-platform-tests/fetch/local-network-access/webtransport.tentative.https.html [ Failure ]
 webkit.org/b/319051 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Failure Pass ]
 webkit.org/b/319052 [ Debug ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Pass Failure ]
@@ -5408,8 +5406,8 @@ webkit.org/b/326561 [ x86_64 Release ] cssom/crash-font-family-invalid.html [ Pa
 webkit.org/b/322652 [ Debug ] workers/btoa-oom.html [ Pass Timeout ]
 webkit.org/b/325930 [ x86_64 Release ] imported/w3c/web-platform-tests/IndexedDB/transaction-inflight-worker-terminate.window.html [ Crash Pass ]
 
-# Gardening 2026-10-09
-webkit.org/b/326929 svg/text/bidi-dir-rtl.html [ ImageOnlyFailure ]
+# Gardening 2026-10-12
+webkit.org/b/325941 webrtc/video-update-often.html [ Pass Crash Timeout ]
 
 # End: Common failures between GTK and WPE.
 

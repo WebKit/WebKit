@@ -1089,7 +1089,6 @@ webkit.org/b/305509 fast/events/mouse-cursor-change.html [ Failure Pass ]
 webkit.org/b/305509 fast/events/mouse-cursor-no-mousemove.html [ Failure Pass ]
 webkit.org/b/305509 fast/events/mouse-cursor-update-during-raf.html [ Failure Pass ]
 webkit.org/b/305509 http/tests/inspector/network/har/har-page.html [ Failure Pass ]
-webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure Pass ]
 
 webkit.org/b/305514 webanimations/focus-accelerated-animated-element-initially-in-overflow.html [ Failure ]
 
