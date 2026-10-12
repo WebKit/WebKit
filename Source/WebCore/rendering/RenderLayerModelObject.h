@@ -91,9 +91,8 @@ public:
     void animationFinished(const BlendingKeyframes&) override;
     void transformRelatedPropertyDidChange() override;
 
-    // Single source of truth deciding if a SVG renderer should be painted. All SVG renderers
-    // use this method to test if they should continue processing in the paint() function or stop.
-    bool shouldPaintSVGRenderer(const PaintInfo&, const OptionSet<PaintPhase> relevantPaintPhases = OptionSet<PaintPhase>()) const;
+    bool shouldPaintSVGLeafRenderer(const PaintInfo&, const OptionSet<PaintPhase> relevantPaintPhases) const;
+    bool shouldPaintSVGContainerRenderer(const PaintInfo&, const OptionSet<PaintPhase> relevantPaintPhases) const;
 
     // Provides the SVG implementation for computeVisibleRectsInContainer().
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.

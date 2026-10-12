@@ -71,9 +71,6 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html
 # <foreignObject> issues
 svg/foreignObject/vertical-foreignObject.html                  [ ImageOnlyFailure ]
 
-# Text rendering has issues with CSS 'visibility'
-svg/batik/text/textProperties2.svg [ ImageOnlyFailure ]
-
 # Overflow/scrollbar handling issues
 svg/in-html/overflow-svg-root-attr.html  [ ImageOnlyFailure ]
 svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
