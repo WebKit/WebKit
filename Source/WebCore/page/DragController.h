@@ -116,7 +116,7 @@ public:
 private:
     void updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const;
     bool dispatchTextInputEventFor(LocalFrame*, const DragData&);
-    bool canProcessDrag(const DragData&);
+    bool canProcessDrag(LocalFrame&, const DragData&);
     bool concludeEditDrag(const DragData&);
     std::optional<DragOperation> operationForLoad(const DragData&);
     DragHandlingMethod tryDocumentDrag(LocalFrame&, const DragData&, OptionSet<DragDestinationAction>, std::optional<DragOperation>&);

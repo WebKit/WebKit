@@ -4450,6 +4450,10 @@ void WebPageProxy::propagateDragAndDrop(DragEventForwardingData&& forwardingData
         Vector<SandboxExtension::Handle> freshUploadHandles;
         createSandboxExtensionsForUpload(targetProcess, filenames, freshUploadHandles);
         forwardingData.sandboxExtensionsForUpload = WTF::move(freshUploadHandles);
+#if ENABLE(ATTACHMENT_ELEMENT)
+        for (auto& filename : filenames)
+            targetProcess->addAllowedAttachmentFilePath(filename);
+#endif
     }
 
     auto afterAllowed = [weakThis = WeakPtr { *this }, forwardingData = WTF::move(forwardingData), dragStorageName, dragData = WTF::move(dragData), targetFrameID] mutable {
