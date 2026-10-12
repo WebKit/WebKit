@@ -170,6 +170,17 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
     return detectItem(position, *contextRange);
 }
 
+IntRect DataDetection::visibleContentRectForHighlights(const LocalFrameView& rootView)
+{
+    IntRect visibleRect { rootView.visibleContentRect() };
+    auto visibleRectFromParentFrameProcess { rootView.visibleRectFromParentFrameProcess() };
+    if (!visibleRectFromParentFrameProcess)
+        return visibleRect;
+
+    auto clippedRect { intersection(visibleRect, rootView.viewToContents(*visibleRectFromParentFrameProcess)) };
+    return clippedRect.isEmpty() ? visibleRect : clippedRect;
+}
+
 #endif // PLATFORM(MAC)
 
 static BOOL resultIsURL(DDResultRef result)
