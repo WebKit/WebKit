@@ -43,7 +43,7 @@ class EWS(object):
         return cls(urlunsplit(split))
 
     def builders(self, invalidate_cache=False):
-        if not invalidate_cache and self.buildbot_url in self._builders:
+        if not invalidate_cache and self._builders:
             return self._builders
 
         r = self._session.get(urljoin(self._api_v2_url, "builders"))
