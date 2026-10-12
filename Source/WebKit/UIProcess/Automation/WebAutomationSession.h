@@ -356,6 +356,10 @@ public:
     bool isValidUserContext(const String& userContextID) const;
 #endif
 
+#if ENABLE(WEBDRIVER_BIDI) && ENABLE(WEBDRIVER_ACTIONS_API)
+    void runBidiInputKeyFrames(const String& pageHandle, const String& frameHandle, Vector<SimulatedInputKeyFrame>&&, const HashMap<String, Ref<SimulatedInputSource>>&, AutomationCompletionHandler&&);
+#endif
+
 private:
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&);

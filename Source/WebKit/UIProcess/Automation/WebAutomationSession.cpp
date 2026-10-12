@@ -77,6 +77,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 #include "BidiBrowserAgent.h"
 #include "BidiEventNames.h"
+#include "BidiInputAgent.h"
 #include "BidiScriptAgent.h"
 #include "IdentifierTypes.h"
 #include "WebDriverBidiProcessor.h"
@@ -1452,15 +1453,15 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     // actions to be aborted and the SimulatedInputDispatcher::run() call will unwind and fail.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     if (auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(page.identifier()))
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.identifier()))
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 #endif
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
     if (auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(page.identifier()))
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 #endif
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
@@ -1471,6 +1472,7 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 
 #if ENABLE(WEBDRIVER_BIDI)
     m_bidiProcessor->browserAgent().willClosePage(page);
+    m_bidiProcessor->inputAgent().willClosePage(handle);
 #endif
 }
 
@@ -2367,6 +2369,38 @@ void WebAutomationSession::sendBidiMessage(const String& message)
 {
     m_domainNotifier->bidiMessageSent(message);
 }
+
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+void WebAutomationSession::runBidiInputKeyFrames(const String& pageHandle, const String& frameHandle, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
+{
+    RefPtr page = webPageProxyForHandle(pageHandle);
+    if (!page || page->isClosed()) {
+        completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+        return;
+    }
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound) {
+        completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+        return;
+    }
+
+    Ref inputDispatcher = inputDispatcherForPage(*page);
+    if (inputDispatcher->isActive()) {
+        completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InternalError, "Another interaction sequence is already running on this page."_s));
+        return;
+    }
+
+    inputDispatcher->run(frameID, WTF::move(keyFrames), inputSources, [protectedThis = Ref { *this }, weakPage = WeakPtr { *page }, completionHandler = WTF::move(completionHandler)](std::optional<AutomationCommandError> error) mutable {
+        // https://w3c.github.io/webdriver-bidi/#get-a-navigable
+        RefPtr page = weakPage.get();
+        if (!page || page->isClosed())
+            error = AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound);
+        completionHandler(WTF::move(error));
+    });
+}
+#endif // ENABLE(WEBDRIVER_ACTIONS_API)
 #endif // ENABLE(WEBDRIVER_BIDI)
 
 void WebAutomationSession::performApplicationCommand(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& commandName, const String& arguments, Inspector::CommandCallback<String>&& callback)
@@ -2812,66 +2846,6 @@ static SimulatedInputSourceType NODELETE simulatedInputSourceTypeFromProtocolSou
 
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif // ENABLE(WEBDRIVER_ACTIONS_API)
-
-#if ENABLE(WEBDRIVER_ACTIONS_API)
-// §15.4.2 Keyboard actions
-// https://w3c.github.io/webdriver/#dfn-normalised-key-value
-static VirtualKey NODELETE normalizedVirtualKey(VirtualKey key)
-{
-    switch (key) {
-    case Inspector::Protocol::Automation::VirtualKey::ControlRight:
-        return Inspector::Protocol::Automation::VirtualKey::Control;
-    case Inspector::Protocol::Automation::VirtualKey::ShiftRight:
-        return Inspector::Protocol::Automation::VirtualKey::Shift;
-    case Inspector::Protocol::Automation::VirtualKey::AlternateRight:
-        return Inspector::Protocol::Automation::VirtualKey::Alternate;
-    case Inspector::Protocol::Automation::VirtualKey::MetaRight:
-        return Inspector::Protocol::Automation::VirtualKey::Meta;
-    case Inspector::Protocol::Automation::VirtualKey::CommandRight:
-        return Inspector::Protocol::Automation::VirtualKey::Command;
-    case Inspector::Protocol::Automation::VirtualKey::DownArrowRight:
-        return Inspector::Protocol::Automation::VirtualKey::DownArrow;
-    case Inspector::Protocol::Automation::VirtualKey::UpArrowRight:
-        return Inspector::Protocol::Automation::VirtualKey::UpArrow;
-    case Inspector::Protocol::Automation::VirtualKey::LeftArrowRight:
-        return Inspector::Protocol::Automation::VirtualKey::LeftArrow;
-    case Inspector::Protocol::Automation::VirtualKey::RightArrowRight:
-        return Inspector::Protocol::Automation::VirtualKey::RightArrow;
-    case Inspector::Protocol::Automation::VirtualKey::PageUpRight:
-        return Inspector::Protocol::Automation::VirtualKey::PageUp;
-    case Inspector::Protocol::Automation::VirtualKey::PageDownRight:
-        return Inspector::Protocol::Automation::VirtualKey::PageDown;
-    case Inspector::Protocol::Automation::VirtualKey::EndRight:
-        return Inspector::Protocol::Automation::VirtualKey::End;
-    case Inspector::Protocol::Automation::VirtualKey::HomeRight:
-        return Inspector::Protocol::Automation::VirtualKey::Home;
-    case Inspector::Protocol::Automation::VirtualKey::DeleteRight:
-        return Inspector::Protocol::Automation::VirtualKey::Delete;
-    case Inspector::Protocol::Automation::VirtualKey::InsertRight:
-        return Inspector::Protocol::Automation::VirtualKey::Insert;
-    default:
-        return key;
-    }
-}
-
-#if !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-static std::optional<char32_t> pressedCharKey(const String& pressedCharKeyString)
-{
-    switch (pressedCharKeyString.length()) {
-    case 1:
-        return pressedCharKeyString.codeUnitAt(0);
-    case 2: {
-        auto lead = pressedCharKeyString.codeUnitAt(0);
-        auto trail = pressedCharKeyString.codeUnitAt(1);
-        if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
-            return U16_GET_SUPPLEMENTARY(lead, trail);
-    }
-    }
-
-    return std::nullopt;
-}
-#endif // !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 void WebAutomationSession::performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, Ref<JSON::Array>&& inputSources, Ref<JSON::Array>&& steps, CommandCallback<void>&& callback)

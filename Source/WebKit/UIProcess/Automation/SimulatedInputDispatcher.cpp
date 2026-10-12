@@ -43,6 +43,63 @@
 
 namespace WebKit {
 
+// https://w3c.github.io/webdriver/#dfn-normalised-key-value
+VirtualKey NODELETE normalizedVirtualKey(VirtualKey key)
+{
+    switch (key) {
+    case VirtualKey::ControlRight:
+        return VirtualKey::Control;
+    case VirtualKey::ShiftRight:
+        return VirtualKey::Shift;
+    case VirtualKey::AlternateRight:
+        return VirtualKey::Alternate;
+    case VirtualKey::MetaRight:
+        return VirtualKey::Meta;
+    case VirtualKey::CommandRight:
+        return VirtualKey::Command;
+    case VirtualKey::DownArrowRight:
+        return VirtualKey::DownArrow;
+    case VirtualKey::UpArrowRight:
+        return VirtualKey::UpArrow;
+    case VirtualKey::LeftArrowRight:
+        return VirtualKey::LeftArrow;
+    case VirtualKey::RightArrowRight:
+        return VirtualKey::RightArrow;
+    case VirtualKey::PageUpRight:
+        return VirtualKey::PageUp;
+    case VirtualKey::PageDownRight:
+        return VirtualKey::PageDown;
+    case VirtualKey::EndRight:
+        return VirtualKey::End;
+    case VirtualKey::HomeRight:
+        return VirtualKey::Home;
+    case VirtualKey::DeleteRight:
+        return VirtualKey::Delete;
+    case VirtualKey::InsertRight:
+        return VirtualKey::Insert;
+    default:
+        return key;
+    }
+}
+
+#if !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+std::optional<CharKey> pressedCharKey(const String& pressedCharKeyString)
+{
+    switch (pressedCharKeyString.length()) {
+    case 1:
+        return pressedCharKeyString.codeUnitAt(0);
+    case 2: {
+        auto lead = pressedCharKeyString.codeUnitAt(0);
+        auto trail = pressedCharKeyString.codeUnitAt(1);
+        if (U16_IS_LEAD(lead) && U16_IS_TRAIL(trail))
+            return U16_GET_SUPPLEMENTARY(lead, trail);
+    }
+    }
+
+    return std::nullopt;
+}
+#endif // !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+
 SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(SimulatedInputSourceType type)
 {
     SimulatedInputSourceState result { };
