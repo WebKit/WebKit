@@ -512,7 +512,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     float minimumContentHintArea = 200 * 200;
     bool needsContentHint = bounds.area() > minimumContentHintArea;
     if (needsContentHint) {
-        if (auto* renderImage = dynamicDowncast<RenderImage>(regionRenderer)) {
+        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(regionRenderer)) {
             isPhoto = [&]() -> bool {
 #if ENABLE(VIDEO)
                 if (is<RenderVideo>(renderImage))

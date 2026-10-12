@@ -326,15 +326,15 @@ ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(con
 IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(const ElementBox& layoutBox) const
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
-        auto& style = layoutBox.style();
-        auto zoom = style.usedZoomForLength();
-        auto deviceScaleFactor = style.deviceScaleFactor();
-        return fixedValue(style.marginStart(), zoom).value_or(0)
-            + Style::evaluate<LayoutUnit>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor)
-            + fixedValue(style.paddingLeft(), zoom).value_or(0)
-            + fixedValue(style.paddingRight(), zoom).value_or(0)
-            + Style::evaluate<LayoutUnit>(style.usedBorderRightWidth(), zoom, deviceScaleFactor)
-            + fixedValue(style.marginEnd(), zoom).value_or(0);
+        CheckedRef style = layoutBox.style();
+        auto zoom = style->usedZoomForLength();
+        auto deviceScaleFactor = style->deviceScaleFactor();
+        return fixedValue(style->marginStart(), zoom).value_or(0)
+            + Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), zoom, deviceScaleFactor)
+            + fixedValue(style->paddingLeft(), zoom).value_or(0)
+            + fixedValue(style->paddingRight(), zoom).value_or(0)
+            + Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), zoom, deviceScaleFactor)
+            + fixedValue(style->marginEnd(), zoom).value_or(0);
     };
 
     auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {

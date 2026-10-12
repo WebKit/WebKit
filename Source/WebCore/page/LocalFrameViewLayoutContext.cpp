@@ -608,9 +608,9 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
             addResult.iterator->value.second.unite(rect);
     }
     // Map each parent-space union to its repaint container, once per parent.
-    for (auto& [parent, containerAndRect] : unionByParent) {
-        CheckedPtr container = containerAndRect.first;
-        addToContainer(container, protect(parent)->computeRectForRepaint(containerAndRect.second, container));
+    for (auto& entry : unionByParent) {
+        CheckedPtr container = entry.value.first;
+        addToContainer(container, protect(entry.key)->computeRectForRepaint(entry.value.second, container));
     }
 
     // Slow path: exact per-renderer mapping for the cases the fast path skipped.
@@ -624,8 +624,8 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
         addToContainer(repaintContainer.get(), rect);
     }
 
-    for (auto& [container, unionRect] : unionByContainer)
-        protect(container)->repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject> { container }, unionRect);
+    for (auto& entry : unionByContainer)
+        protect(entry.key)->repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject> { entry.key }, entry.value);
 
     if (!anyWorkDone)
         return;

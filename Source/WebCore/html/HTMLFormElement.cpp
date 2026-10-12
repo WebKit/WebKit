@@ -608,7 +608,7 @@ void HTMLFormElement::registerFormListedElement(FormListedElement& element)
 {
     m_listedElements.insert(formElementIndex(element), protect(element.asHTMLElement()));
 
-    auto* control = dynamicDowncast<HTMLFormControlElement>(element);
+    RefPtr control = dynamicDowncast<HTMLFormControlElement>(element);
     if (!control || !control->isSuccessfulSubmitButton())
         return;
 

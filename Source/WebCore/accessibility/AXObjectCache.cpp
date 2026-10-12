@@ -1527,7 +1527,7 @@ void AXObjectCache::remove(Node& node)
     }
 
     // We cannot use RefPtr here as node's m_deletionHasBegun is true.
-    if (SUPPRESS_UNCOUNTED_LOCAL auto* nodeElement = dynamicDowncast<Element>(node)) {
+    if (CheckedPtr nodeElement = dynamicDowncast<Element>(node)) {
         m_deferredTextFormControlValue.remove(*nodeElement);
         m_deferredAttributeChange.removeAllMatching([&node] (const auto& entry) {
             return entry.element == &node;
@@ -1548,7 +1548,7 @@ void AXObjectCache::remove(Node& node)
 void AXObjectCache::remove(Widget& view)
 {
     remove(m_widgetIdMapping.takeOptional(view));
-    if (auto* scrollView = dynamicDowncast<ScrollView>(view))
+    if (RefPtr scrollView = dynamicDowncast<ScrollView>(view))
         m_deferredScrollbarUpdateChangeList.remove(*scrollView);
 }
 
@@ -5982,7 +5982,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (boxAndOffset.box)
         renderer = const_cast<RenderObject*>(&boxAndOffset.box->renderer());
 
-    if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer); renderLineBreak && InlineIterator::boxFor(*renderLineBreak) != boxAndOffset.box)
+    if (CheckedPtr renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer); renderLineBreak && InlineIterator::boxFor(*renderLineBreak) != boxAndOffset.box)
         return IntRect();
 
     return computeLocalCaretRect(*renderer, boxAndOffset);
@@ -6339,7 +6339,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 
     AXLOGDeferredCollection("RecomputeIsIgnoredList"_s, m_deferredRecomputeIsIgnoredList);
     m_deferredRecomputeIsIgnoredList.forEach([this] (auto& element) {
-        if (auto* renderer = element.renderer())
+        if (CheckedPtr renderer = element.renderer())
             recomputeIsIgnored(*renderer);
     });
     m_deferredRecomputeIsIgnoredList.clear();

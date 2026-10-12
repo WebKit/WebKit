@@ -178,8 +178,9 @@ bool PositionIterator::isCandidate(AllowUserSelectNone allowUserSelectNone) cons
     if (is<RenderText>(*renderer)) {
         if (Position::nodeIsUserSelectNone(anchorNode.get()) && allowUserSelectNone == AllowUserSelectNone::No)
             return false;
-        auto [resolvedText, resolvedOffset] = Position(*this).resolvedTextRendererAndOffset();
-        return resolvedText && resolvedText->containsCaretOffset(resolvedOffset);
+        auto resolved = Position(*this).resolvedTextRendererAndOffset();
+        CheckedPtr resolvedText = resolved.first;
+        return resolvedText && resolvedText->containsCaretOffset(resolved.second);
     }
 
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))

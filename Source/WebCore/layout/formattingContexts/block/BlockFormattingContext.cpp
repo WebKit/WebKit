@@ -74,16 +74,16 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
     enum class LayoutDirection { Child, Sibling };
     auto appendNextToLayoutQueue = [&] (const auto& layoutBox, auto direction) {
         if (direction == LayoutDirection::Child) {
-            for (auto* child = layoutBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
-                layoutQueue.append(*downcast<ElementBox>(child));
+            for (CheckedPtr child = layoutBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
+                layoutQueue.append(downcast<ElementBox>(*child));
                 return true;
             }
             return false;
         }
 
         if (direction == LayoutDirection::Sibling) {
-            for (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling(); nextSibling; nextSibling = nextSibling->nextInFlowOrFloatingSibling()) {
-                layoutQueue.append(*downcast<ElementBox>(nextSibling));
+            for (CheckedPtr nextSibling = layoutBox.nextInFlowOrFloatingSibling(); nextSibling; nextSibling = nextSibling->nextInFlowOrFloatingSibling()) {
+                layoutQueue.append(downcast<ElementBox>(*nextSibling));
                 return true;
             }
             return false;
@@ -93,8 +93,8 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
     };
 
     auto constraintsForLayoutBox = [&] (const auto& layoutBox) {
-        auto& containingBlock = this->containingBlock(layoutBox);
-        return &containingBlock == &formattingRoot ? constraints : formattingGeometry().constraintsForInFlowContent(containingBlock);
+        CheckedRef containingBlock = this->containingBlock(layoutBox);
+        return containingBlock.ptr() == &formattingRoot ? constraints : formattingGeometry().constraintsForInFlowContent(containingBlock);
     };
 
     // This is a post-order tree traversal layout.
@@ -178,8 +178,8 @@ void BlockFormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlo
     collectOutOfFlowDescendantsIfNeeded();
 
     auto constraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
-        auto& containingBlock = this->containingBlock(outOfFlowBox);
-        return &containingBlock == &root() ? constraints : formattingGeometry().constraintsForOutOfFlowContent(containingBlock);
+        CheckedRef containingBlock = this->containingBlock(outOfFlowBox);
+        return containingBlock.ptr() == &root() ? constraints : formattingGeometry().constraintsForOutOfFlowContent(containingBlock);
     };
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {

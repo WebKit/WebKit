@@ -610,12 +610,12 @@ void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFor
                 auto& displayBox = displayBoxes[index];
                 isHorizontalWritingMode ? displayBox.moveHorizontally(-shiftValue) : displayBox.moveVertically(-shiftValue);
 
-                auto& layoutBox = displayBox.layoutBox();
+                CheckedRef layoutBox = displayBox.layoutBox();
                 if (displayBox.isInlineLevelBox() && !displayBox.isRootInlineBox())
                     parentFormattingContext.geometryForBox(layoutBox).moveHorizontally(LayoutUnit { -shiftValue });
 
-                if (layoutBox.isRubyBase() && layoutBox.associatedRubyAnnotationBox())
-                    parentFormattingContext.geometryForBox(*layoutBox.associatedRubyAnnotationBox()).moveHorizontally(LayoutUnit { -shiftValue });
+                if (layoutBox->isRubyBase() && layoutBox->associatedRubyAnnotationBox())
+                    parentFormattingContext.geometryForBox(*layoutBox->associatedRubyAnnotationBox()).moveHorizontally(LayoutUnit { -shiftValue });
             }
         };
         auto hasJustifiedAdjacentAfterContent = [&] {

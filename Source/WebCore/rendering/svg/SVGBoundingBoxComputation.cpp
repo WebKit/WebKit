@@ -220,7 +220,7 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     for (CheckedRef child : childrenOfType<RenderLayerModelObject>(m_renderer)) {
         if (is<RenderSVGHiddenContainer>(child))
             continue;
-        if (auto* shape = dynamicDowncast<RenderSVGShape>(child.get()); shape && shape->isRenderingDisabled())
+        if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(child.get()); shape && shape->isRenderingDisabled())
             continue;
 
         SVGBoundingBoxComputation childBoundingBoxComputation(child);

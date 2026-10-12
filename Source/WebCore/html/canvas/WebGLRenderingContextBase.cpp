@@ -458,7 +458,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         return nullptr;
 
     GraphicsClient* graphicsClient = scriptExecutionContext->graphicsClient();
-    auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
+    RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
 
 #if ENABLE(WEBXR)
     if (attributes.xrCompatible)

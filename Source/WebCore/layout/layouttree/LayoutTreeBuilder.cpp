@@ -76,9 +76,9 @@ LayoutTree::LayoutTree(std::unique_ptr<ElementBox> root)
 }
 
 template<class BoxType>
-static BoxType& appendChild(ElementBox& parent, std::unique_ptr<BoxType> newChild)
+static CheckedRef<BoxType> appendChild(ElementBox& parent, std::unique_ptr<BoxType> newChild)
 {
-    auto& box = *newChild;
+    CheckedRef box = *newChild;
     parent.appendChild(makeUniqueRefFromNonNullUniquePtr(WTF::move(newChild)));
     return box;
 }
@@ -307,14 +307,14 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, ElementB
         size_t maximumColumns = 0;
         size_t currentRow = 0;
         Vector<size_t> numberOfCellsPerRow;
-        for (auto& rowBox : childrenOfType<ElementBox>(tableBody)) {
+        for (CheckedRef rowBox : childrenOfType<ElementBox>(tableBody)) {
             if (numberOfCellsPerRow.size() <= currentRow) {
                 // Ensure we always have a vector entry for the current row -even when the row is empty.
                 numberOfCellsPerRow.append({ });
             }
-            for (auto& cellBox : childrenOfType<ElementBox>(rowBox)) {
-                auto numberOfSpannedColumns = cellBox.columnSpan();
-                for (size_t rowSpan = 0; rowSpan < cellBox.rowSpan(); ++rowSpan) {
+            for (CheckedRef cellBox : childrenOfType<ElementBox>(rowBox.get())) {
+                auto numberOfSpannedColumns = cellBox->columnSpan();
+                for (size_t rowSpan = 0; rowSpan < cellBox->rowSpan(); ++rowSpan) {
                     auto rowIndexWithSpan = currentRow + rowSpan;
                     if (numberOfCellsPerRow.size() <= rowIndexWithSpan) {
                         // This is where we advance from the current row by having a row spanner.
@@ -329,11 +329,11 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, ElementB
         }
         // Fill in the gaps.
         size_t rowIndex = 0;
-        for (auto& rowBox : childrenOfType<ElementBox>(tableBody)) {
+        for (CheckedRef rowBox : childrenOfType<ElementBox>(tableBody)) {
             ASSERT(maximumColumns >= numberOfCellsPerRow[rowIndex]);
             auto numberOfMissingCells = maximumColumns - numberOfCellsPerRow[rowIndex++];
             for (size_t i = 0; i < numberOfMissingCells; ++i)
-                appendChild(const_cast<ElementBox&>(rowBox), createContainer({ }, Style::ComputedStyle::createAnonymousStyleWithDisplay(rowBox.style(), Style::DisplayType::TableCell)));
+                appendChild(const_cast<ElementBox&>(rowBox.get()), createContainer({ }, Style::ComputedStyle::createAnonymousStyleWithDisplay(rowBox->style(), Style::DisplayType::TableCell)));
         }
     };
 

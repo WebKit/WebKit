@@ -68,7 +68,7 @@ private:
 
     void drawFocusIfNeededInternal(const Path&, Element&);
 
-    TextDirection toTextDirection(CanvasRenderingContext2DBase::Direction, const Style::ComputedStyle** = nullptr) const;
+    TextDirection toTextDirection(CanvasRenderingContext2DBase::Direction, CheckedPtr<const Style::ComputedStyle>* = nullptr) const;
 };
 
 } // namespace WebCore

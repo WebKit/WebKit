@@ -760,7 +760,7 @@ std::optional<RenderLayer::SVGRendererTransform> RenderLayer::computeRendererTra
 
     // For the outermost viewport container (anonymous child of RenderSVGRoot), apply the
     // content-box origin offset (border+padding).
-    if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(rendererRef.get()); viewportContainer && viewportContainer->isAnonymous()) {
+    if (CheckedPtr viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(rendererRef.get()); viewportContainer && viewportContainer->isAnonymous()) {
         if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(viewportContainer->parent())) {
             auto contentBoxLocation = svgRoot->contentBoxLocation();
             if (!contentBoxLocation.isZero())
@@ -851,9 +851,9 @@ void RenderLayer::paintRendererByApplyingTransformForSVG(GraphicsContext& contex
                 // Children recurse from the container's nominal origin (selfPaintOffset plus current) and
                 // add their own currentSVGLayoutLocation. The anonymous outermost viewport starts at (0, 0).
                 LayoutPoint recursionBase;
-                if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(rendererToPaint.get()); viewportContainer && viewportContainer->isAnonymous()) {
+                if (CheckedPtr viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(rendererToPaint.get()); viewportContainer && viewportContainer->isAnonymous()) {
                     // Outermost viewport container: coordinate system starts at (0, 0).
-                } else if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(rendererToPaint.get()))
+                } else if (CheckedPtr svgModel = dynamicDowncast<RenderSVGModelObject>(rendererToPaint.get()))
                     recursionBase = svgModel->nominalSVGLayoutLocation();
                 paintSubtreeWithinTransformScopeForSVG(context, rendererToPaint.get(), recursionBase, transformedPaintingInfo, adjustedPaintFlags, paintBehavior, subtreePaintRoot);
                 if (rendererToPaint->hasOutline())

@@ -6682,9 +6682,9 @@ void LocalFrameView::scheduleScrollEvent()
 
 void LocalFrameView::addChild(Widget& widget)
 {
-    if (auto* childFrameView = dynamicDowncast<LocalFrameView>(widget)) {
+    if (RefPtr childFrameView = dynamicDowncast<LocalFrameView>(widget)) {
         if (childFrameView->isScrollable())
-            addScrollableArea(childFrameView);
+            addScrollableArea(childFrameView.get());
     }
 
     ScrollView::addChild(widget);
@@ -6692,8 +6692,8 @@ void LocalFrameView::addChild(Widget& widget)
 
 void LocalFrameView::removeChild(Widget& widget)
 {
-    if (auto* childFrameView = dynamicDowncast<LocalFrameView>(widget))
-        removeScrollableArea(childFrameView);
+    if (RefPtr childFrameView = dynamicDowncast<LocalFrameView>(widget))
+        removeScrollableArea(childFrameView.get());
 
     ScrollView::removeChild(widget);
 }

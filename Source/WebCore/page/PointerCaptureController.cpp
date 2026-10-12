@@ -598,12 +598,12 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
     if (!isPointerdown && !isPointerup && !isPointermove)
         return;
 
-    auto& element = downcast<Element>(*target);
+    Ref element = downcast<Element>(*target);
 
     // Let targetDocument be target's node document.
     // If the event is pointerdown, pointermove, or pointerup set active document for the event's pointerId to targetDocument.
     auto capturingData = ensureCapturingDataForPointerEvent(event);
-    capturingData->activeDocument = element.document();
+    capturingData->activeDocument = element->document();
 
     if (isPointermove)
         return;
@@ -622,11 +622,11 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
         // pointerdown listeners. The hasPointerCapture API may be used (eg. within any pointerdown listener) to determine whether this has occurred. If
         // releasePointerCapture is not called for the pointer before the next pointer event is fired, then a gotpointercapture event will be dispatched
         // to the target (as normal) indicating that capture is active.
-        setPointerCapture(&element, event.pointerId());
+        setPointerCapture(element.ptr(), event.pointerId());
     }
-    protect(element.document())->handlePopoverLightDismiss(event, element);
-    if (element.document().settings().closeWatcherEnabled())
-        protect(element.document())->handleDialogLightDismiss(event, element);
+    protect(element->document())->handlePopoverLightDismiss(event, element);
+    if (element->document().settings().closeWatcherEnabled())
+        protect(element->document())->handleDialogLightDismiss(event, element);
 }
 
 auto PointerCaptureController::ensureCapturingDataForPointerEvent(const PointerEvent& event) -> Ref<CapturingData>

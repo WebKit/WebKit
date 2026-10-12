@@ -211,9 +211,9 @@ void TextTrackList::append(Ref<TextTrack>&& track)
 
 void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
 {
-    auto& textTrack = downcast<TextTrack>(track);
+    Ref textTrack = downcast<TextTrack>(track);
     Vector<Ref<TrackBase>>* tracks = nullptr;
-    switch (textTrack.trackType()) {
+    switch (textTrack->trackType()) {
     case TextTrack::TrackElement:
         tracks = &m_elementTracks;
         break;

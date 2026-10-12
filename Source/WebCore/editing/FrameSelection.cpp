@@ -1841,7 +1841,7 @@ bool CaretBase::updateCaretRect(Document& document, const VisiblePosition& caret
 {
     document.updateLayoutIgnorePendingStylesheets();
     m_caretRectNeedsUpdate = false;
-    RenderBlock* renderer;
+    SUPPRESS_UNCHECKED_LOCAL RenderBlock* renderer; // Out-parameter of localCaretRectInRendererForCaretPainting(); its value is unused.
     m_caretLocalRect = localCaretRectInRendererForCaretPainting(caretPosition, renderer);
     return !m_caretLocalRect.isEmpty();
 }
@@ -2568,10 +2568,12 @@ void FrameSelection::updateAppearance()
     // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
     // because we don't yet notify the FrameSelection of text removal.
     if (CheckedPtr view = document->renderView(); startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
-        auto [startRenderer, startOffset] = startPos.rendererAndOffset();
-        auto [endRenderer, endOffset] = endPos.rendererAndOffset();
+        auto start = startPos.rendererAndOffset();
+        auto end = endPos.rendererAndOffset();
+        CheckedPtr startRenderer = start.first;
+        CheckedPtr endRenderer = end.first;
         if (startRenderer && endRenderer)
-            view->selection().set({ startRenderer, endRenderer, startOffset, endOffset });
+            view->selection().set({ startRenderer, endRenderer, start.second, end.second });
     }
 }
 

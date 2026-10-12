@@ -4498,7 +4498,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 
     bool ignoreARIAHidden = isFocused();
     if (Accessibility::findAncestor<AccessibilityObject>(*this, false, [&] (const auto& object) {
-        const auto* style = object.style();
+        CheckedPtr style = object.style();
         if (style && style->display() == Style::DisplayType::None) {
             // We don't want to use AccessibilityObject::isRenderHidden(), as that also checks and returns true
             // for visibility:hidden, which would be wrong if |this| has a visibility:visible ancestor before

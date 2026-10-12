@@ -690,8 +690,8 @@ bool Line::restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhit
 {
     auto restore = [&](auto& trailingRun) {
         ASSERT(trailingRun.isText());
-        auto& layoutBox = downcast<InlineTextBox>(trailingRun.layoutBox());
-        if (trailingRun.m_textContent.start + trailingRun.m_textContent.length == layoutBox.content().length()) {
+        CheckedRef layoutBox = downcast<InlineTextBox>(trailingRun.layoutBox());
+        if (trailingRun.m_textContent.start + trailingRun.m_textContent.length == layoutBox->content().length()) {
             // It looks like we didn't _trim_ this trailing run but removed the lat run instead (happens with dedicated layout box).
             // Let's put that content back as trailing run.
             if (appendTrailingInlineItemAsTrailingRun(runs, trimmedTrailingWhitespaceWidth, inlineItemRange, inlineItems))

@@ -271,7 +271,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     setWordSpacing(std::exchange(modifiableState().wordSpacing, wordSpacing));
 }
 
-inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const Style::ComputedStyle** computedStyle) const
+inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, CheckedPtr<const Style::ComputedStyle>* computedStyle) const
 {
     CheckedPtr style = computedStyle || direction == Direction::Inherit ? protect(canvas())->existingComputedStyle() : nullptr;
     if (computedStyle)
@@ -319,7 +319,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     }
 
     String normalizedText = normalizeSpaces(text);
-    const Style::ComputedStyle* computedStyle;
+    CheckedPtr<const Style::ComputedStyle> computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, override, true);
@@ -353,7 +353,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
         return;
 
     String normalizedText = normalizeSpaces(text);
-    const Style::ComputedStyle* computedStyle;
+    CheckedPtr<const Style::ComputedStyle> computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, override, true);

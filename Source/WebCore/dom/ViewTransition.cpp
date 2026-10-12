@@ -460,7 +460,7 @@ static Vector<AtomString> effectiveViewTransitionClassList(RenderLayerModelObjec
             return { };
         },
         [&](const auto& list) -> Vector<AtomString> {
-            auto scope = Style::Scope::forOrdinal(originatingElement, list[0].scopeOrdinal);
+            CheckedPtr scope = Style::Scope::forOrdinal(originatingElement, list[0].scopeOrdinal);
             if (!scope || scope != &documentScope)
                 return { };
 
