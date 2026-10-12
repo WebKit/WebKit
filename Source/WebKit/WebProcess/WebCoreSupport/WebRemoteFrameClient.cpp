@@ -150,10 +150,10 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<Rende
 {
     RefPtr page = m_frame->page();
     if (!page)
-        return "Test Error - Missing page"_s;
+        return "Test Error - Missing page\n"_s;
     auto sendResult = page->sendSync(Messages::WebPageProxy::RenderTreeAsTextForTesting(m_frame->frameID(), baseIndent, behavior), IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     if (!sendResult.succeeded())
-        return "Test Error - sending WebPageProxy::RenderTreeAsTextForTesting failed"_s;
+        return "Test Error - sending WebPageProxy::RenderTreeAsTextForTesting failed\n"_s;
     auto [result] = sendResult.takeReply();
     return result;
 }
@@ -162,11 +162,11 @@ String WebRemoteFrameClient::layerTreeAsText(size_t baseIndent, OptionSet<LayerT
 {
     RefPtr page = m_frame->page();
     if (!page)
-        return "Test Error - Missing page"_s;
+        return "Test Error - Missing page\n"_s;
     options.add(LayerTreeAsTextOptions::IncludeRootLayers);
     auto sendResult = page->sendSync(Messages::WebPageProxy::LayerTreeAsTextForTesting(m_frame->frameID(), baseIndent, options));
     if (!sendResult.succeeded())
-        return "Test Error - sending WebPageProxy::LayerTreeAsTextForTesting failed"_s;
+        return "Test Error - sending WebPageProxy::LayerTreeAsTextForTesting failed\n"_s;
     auto [result] = sendResult.takeReply();
     return result;
 }

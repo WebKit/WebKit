@@ -10913,19 +10913,19 @@ void WebPage::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, uint6
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing in web process"_s);
+        return completionHandler("Test Error - WebFrame missing in web process\n"_s);
     }
 
     RefPtr coreLocalFrame = webFrame->coreLocalFrame();
     if (!coreLocalFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
+        return completionHandler("Test Error - WebFrame missing LocalFrame in web process\n"_s);
     }
 
     CheckedPtr renderer = coreLocalFrame->contentRenderer();
     if (!renderer) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
+        return completionHandler("Test Error - WebFrame missing RenderView in web process\n"_s);
     }
 
     auto ts = WebCore::createTextStream(*renderer);
@@ -10939,19 +10939,19 @@ void WebPage::layerTreeAsTextForTesting(WebCore::FrameIdentifier frameID, uint64
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing in web process"_s);
+        return completionHandler("Test Error - WebFrame missing in web process\n"_s);
     }
 
     RefPtr coreLocalFrame = webFrame->coreLocalFrame();
     if (!coreLocalFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
+        return completionHandler("Test Error - WebFrame missing LocalFrame in web process\n"_s);
     }
 
     CheckedPtr renderer = coreLocalFrame->contentRenderer();
     if (!renderer) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
+        return completionHandler("Test Error - WebFrame missing RenderView in web process\n"_s);
     }
 
     auto ts = WebCore::createTextStream(*renderer);
@@ -10964,7 +10964,7 @@ void WebPage::frameTextForTesting(WebCore::FrameIdentifier frameID, CompletionHa
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing in web process"_s);
+        return completionHandler("Test Error - WebFrame missing in web process\n"_s);
     }
     constexpr bool includeSubframes { true };
     completionHandler(webFrame->frameTextForTesting(includeSubframes));

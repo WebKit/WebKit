@@ -20589,7 +20589,7 @@ void WebPageProxy::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, 
 {
     auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::RenderTreeAsTextForTesting(frameID, baseIndent, behavior), 1_s, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     if (!sendResult.succeeded())
-        return completionHandler("Test Error - sending WebPage::RenderTreeAsTextForTesting failed"_s);
+        return completionHandler("Test Error - sending WebPage::RenderTreeAsTextForTesting failed\n"_s);
 
     auto [result] = sendResult.takeReply();
     completionHandler(WTF::move(result));
@@ -20599,7 +20599,7 @@ void WebPageProxy::layerTreeAsTextForTesting(FrameIdentifier frameID, uint64_t b
 {
     auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::LayerTreeAsTextForTesting(frameID, baseIndent, options));
     if (!sendResult.succeeded())
-        return completionHandler("Test Error - sending WebPage::RenderTreeAsTextForTesting failed"_s);
+        return completionHandler("Test Error - sending WebPage::LayerTreeAsTextForTesting failed\n"_s);
 
     auto [result] = sendResult.takeReply();
     completionHandler(WTF::move(result));
@@ -20624,7 +20624,7 @@ void WebPageProxy::frameTextForTesting(WebCore::FrameIdentifier frameID, Complet
 {
     auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::FrameTextForTesting(frameID));
     if (!sendResult.succeeded())
-        return completionHandler("Test Error - sending WebPage::FrameTextForTesting failed"_s);
+        return completionHandler("Test Error - sending WebPage::FrameTextForTesting failed\n"_s);
 
     auto [result] = sendResult.takeReply();
     completionHandler(WTF::move(result));
