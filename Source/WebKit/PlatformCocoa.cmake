@@ -1175,7 +1175,9 @@ function(WEBKIT_DEFINE_DAEMONS)
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
         set(${_target}_LIBRARIES WebKit)
 
+        # MACOSX_BUNDLE defaults on for the embedded SDKs; daemons are bare executables.
         set_target_properties(${_target} PROPERTIES
+            MACOSX_BUNDLE FALSE
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
         target_compile_options(${_target} PRIVATE
             -F${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
