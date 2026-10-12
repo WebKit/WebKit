@@ -123,6 +123,11 @@ void RemoteAudioSession::setPreferredBufferSize(size_t size)
     protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
 }
 
+void RemoteAudioSession::clearPreferredBufferSize()
+{
+    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(0), { });
+}
+
 Ref<AudioSession::SetActivePromise> RemoteAudioSession::tryToSetActiveInternal(bool active)
 {
     if (active && m_isInterruptedForTesting)

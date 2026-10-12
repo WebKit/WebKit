@@ -68,6 +68,7 @@ private:
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
+    void clearPreferredBufferSize() final;
     size_t outputLatency() const final;
     bool isMuted() const final;
     void handleMutedStateChange() final;
@@ -81,6 +82,7 @@ private:
     SoundStageSize soundStageSize() const final { return m_soundStageSize; }
 
     mutable std::optional<size_t> m_preferredBufferSize;
+    std::optional<size_t> m_systemPreferredBufferSize;
 
     String m_lastSetPreferredMicrophoneID;
     const RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;

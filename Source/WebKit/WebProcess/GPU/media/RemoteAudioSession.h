@@ -88,7 +88,8 @@ private:
 
     size_t preferredBufferSize() const final { return configuration().preferredBufferSize; }
     void setPreferredBufferSize(size_t) final;
-        
+    void clearPreferredBufferSize() final;
+
     void addConfigurationChangeObserver(WebCore::AudioSessionConfigurationChangeObserver&) final;
     void removeConfigurationChangeObserver(WebCore::AudioSessionConfigurationChangeObserver&) final;
 
