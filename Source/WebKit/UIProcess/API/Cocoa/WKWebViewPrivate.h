@@ -455,7 +455,7 @@ for this property.
 
 - (void)_nowPlayingMediaTitleAndArtist:(void (^)(NSString *, NSString *))completionHandler;
 
-- (void)_convertRect:(CGRect)rect fromFrame:(WKFrameInfo *)frame toMainFrameCoordinates:(void (^)(CGRect, NSError *error))completionHandler WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
+- (void)_convertRect:(CGRect)rect fromFrame:(WKFrameInfo *)frame toMainFrameCoordinates:(void (^)(CGRect, NSError *error))completionHandler WK_API_DEPRECATED("No longer supported", macos(26.0, WK_MAC_TBA), ios(26.0, WK_IOS_TBA), visionos(26.0, WK_XROS_TBA));
 
 @property (nonatomic, setter=_setStatusBarIsVisible:) BOOL _statusBarIsVisible WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 @property (nonatomic, setter=_setMenuBarIsVisible:) BOOL _menuBarIsVisible WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));

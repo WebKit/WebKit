@@ -11059,16 +11059,6 @@ template<typename T> T WebPage::rootViewToContents(WebCore::FrameIdentifier fram
     return view->rootViewToContents(geometry);
 }
 
-void WebPage::contentsToRootViewRect(FrameIdentifier frameID, FloatRect rect, CompletionHandler<void(FloatRect)>&& completionHandler)
-{
-    completionHandler(contentsToRootView(frameID, rect));
-}
-
-void WebPage::contentsToRootViewPoint(FrameIdentifier frameID, FloatPoint point, CompletionHandler<void(FloatPoint)>&& completionHandler)
-{
-    completionHandler(contentsToRootView(frameID, point));
-}
-
 void WebPage::contentsToMainFrameViewRect(FrameIdentifier frameID, FloatRect rect, CompletionHandler<void(FloatRect)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);

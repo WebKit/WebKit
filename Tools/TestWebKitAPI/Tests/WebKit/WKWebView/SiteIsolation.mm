@@ -9425,62 +9425,6 @@ TEST(SiteIsolation, FrameServerTrust)
     verifyCertificateAndPublicKey([webView firstChildFrame]._serverTrust);
 }
 
-TEST(SiteIsolation, CoordinateTransformation)
-{
-    HTTPServer server({
-        { "/example"_s, { "<br><iframe id='wk' src='https://webkit.org/iframe'></iframe>"_s } },
-        { "/iframe"_s, { "hi"_s } }
-    }, HTTPServer::Protocol::HttpsProxy);
-
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
-    auto convertRect = [] (TestWKWebView *webView, CGRect rect) {
-        __block CGRect result;
-        __block bool done { false };
-        [webView _convertRect:rect fromFrame:[webView firstChildFrame] toMainFrameCoordinates:^(CGRect transformedRect, NSError *error) {
-            EXPECT_NULL(error);
-            result = transformedRect;
-            done = true;
-        }];
-        Util::run(&done);
-        return result;
-    };
-
-    constexpr auto expectedTransformedY = 38;
-    {
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
-        [navigationDelegate waitForDidFinishNavigation];
-        auto transformedRect = convertRect(webView.get(), { { 11, 10 }, { 9, 8 } });
-        EXPECT_EQ(transformedRect.origin.x, 21);
-        EXPECT_EQ(transformedRect.origin.y, expectedTransformedY);
-        EXPECT_EQ(transformedRect.size.height, 8);
-        EXPECT_EQ(transformedRect.size.width, 9);
-    }
-
-    {
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/example"]]];
-        [navigationDelegate waitForDidFinishNavigation];
-        auto transformedRect = convertRect(webView.get(), { { 11, 10 }, { 9, 8 } });
-        EXPECT_EQ(transformedRect.origin.x, 21);
-        EXPECT_EQ(transformedRect.origin.y, expectedTransformedY);
-        EXPECT_EQ(transformedRect.size.height, 8);
-        EXPECT_EQ(transformedRect.size.width, 9);
-    }
-
-    RetainPtr frameInfoOfRemovedFrame = [webView firstChildFrame];
-    __block bool removedIframe { false };
-    [webView evaluateJavaScript:@"var frame = document.getElementById('wk');frame.parentNode.removeChild(frame)" completionHandler:^(id, NSError *error) {
-        removedIframe = true;
-    }];
-    Util::run(&removedIframe);
-    __block bool done { false };
-    [webView _convertRect:CGRect { { 11, 10 }, { 9, 8 } } fromFrame:frameInfoOfRemovedFrame.get() toMainFrameCoordinates:^(CGRect, NSError *error) {
-        EXPECT_NOT_NULL(error);
-        done = true;
-    }];
-    Util::run(&done);
-}
-
 RetainPtr<_WKTextManipulationToken> createToken(NSString *identifier, NSString *content)
 {
     RetainPtr<_WKTextManipulationToken> token = adoptNS([[_WKTextManipulationToken alloc] init]);
@@ -14805,8 +14749,7 @@ static void testImageServiceControlledImageBounds(const ASCIILiteral& mainFrameH
     NSRect expectedInWebView = NSMakeRect(150, 150, 100, 100);
     NSRect expectedInWindow = [webView convertRect:expectedInWebView toView:nil];
     NSRect expectedOnScreen = [[webView window] convertRectToScreen:expectedInWindow];
-    // Use a tolerance rather than exact equality: the coordinates round-trip through cross-process
-    // ContentsToRootViewRect IPC and window→screen conversion, which can introduce sub-pixel error.
+    // Use a tolerance rather than exact equality: the window→screen conversion can introduce sub-pixel error.
     EXPECT_NEAR(capturedSourceFrame.origin.x, expectedOnScreen.origin.x, 1);
     EXPECT_NEAR(capturedSourceFrame.origin.y, expectedOnScreen.origin.y, 1);
     EXPECT_NEAR(capturedSourceFrame.size.width, expectedOnScreen.size.width, 1);
