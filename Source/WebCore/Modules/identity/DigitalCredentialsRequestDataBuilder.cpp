@@ -26,24 +26,78 @@
 #include "config.h"
 #include "DigitalCredentialsRequestDataBuilder.h"
 
+#include <Logging.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentSecurityOrigin.h>
 #include <WebCore/ISO18013DocumentRequest.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> DigitalCredentialsRequestDataBuilder::build(Vector<ValidatedMobileDocumentRequest> validatedCredentialRequests, const Document& document, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests)
+ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> DigitalCredentialsRequestDataBuilder::build(Vector<std::optional<ValidatedDigitalCredentialRequest>>&& validatedCredentialRequests, const Document& document, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests)
 {
+    if (validatedCredentialRequests.size() != unvalidatedRequests.size())
+        return Exception { ExceptionCode::TypeError, "Validation did not account for every credential request."_s };
+
+    DigitalCredentialsSecurityOriginData origins {
+        .topOrigin = document.topOrigin().data(),
+        .documentOrigin = document.securityOrigin().data(),
+    };
+
+    // The raw requests handed to the document provider are exactly the presented requests, in the
+    // same order, so that a raw request can be released by its position.
+    Vector<ValidatedMobileDocumentRequest> mobileDocumentRequests;
+    Vector<UnvalidatedDigitalCredentialRequest> mobileDocumentRawRequests;
+    Vector<ValidatedOpenID4VPRequest> openID4VPRequests;
+    Vector<UnvalidatedDigitalCredentialRequest> openID4VPRawRequests;
+
+    for (size_t index = 0; index < validatedCredentialRequests.size(); ++index) {
+        auto& validatedRequest = validatedCredentialRequests[index];
+        if (!validatedRequest)
+            continue;
+
+        WTF::switchOn(*validatedRequest,
+            [&](ValidatedMobileDocumentRequest& request) {
+                mobileDocumentRequests.append(WTF::move(request));
+                mobileDocumentRawRequests.append(WTF::move(unvalidatedRequests[index]));
+            },
+            [&](ValidatedOpenID4VPRequest& request) {
+                if (!openID4VPRequests.isEmpty() && openID4VPRequests.first().protocol != request.protocol) {
+                    LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - not presenting an OpenID4VP request of a second protocol.");
+                    return;
+                }
+                if (openID4VPRequests.size() == maxOpenID4VPRequestCount) {
+                    LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - not presenting OpenID4VP requests beyond the limit.");
+                    return;
+                }
+                openID4VPRequests.append(WTF::move(request));
+                openID4VPRawRequests.append(WTF::move(unvalidatedRequests[index]));
+            });
+    }
+
+    if (mobileDocumentRequests.isEmpty()) {
+        return std::make_pair(
+            DigitalCredentialsRequestData {
+                DigitalCredentialsOpenID4VPRequestData {
+                    origins,
+                    WTF::move(openID4VPRequests) } },
+            DigitalCredentialsRawRequests { WTF::move(openID4VPRawRequests) });
+    }
+
+    if (!openID4VPRequests.isEmpty())
+        LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - mdoc requests present; %zu OpenID4VP request(s) will not be presented.", openID4VPRequests.size());
+
     return std::make_pair(
         DigitalCredentialsRequestData {
             DigitalCredentialsMobileDocumentRequestData {
-                { document.topOrigin().data(), document.securityOrigin().data() },
-                WTF::move(validatedCredentialRequests) } },
-        DigitalCredentialsRawRequests { WTF::move(unvalidatedRequests) });
+                origins,
+                WTF::move(mobileDocumentRequests) } },
+        DigitalCredentialsRawRequests { WTF::move(mobileDocumentRawRequests) });
 }
 
 } // namespace WebCore

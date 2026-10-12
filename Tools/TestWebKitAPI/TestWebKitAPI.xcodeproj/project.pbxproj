@@ -828,6 +828,7 @@
 				WebCore/Decimal.cpp,
 				WebCore/DFACombiner.cpp,
 				WebCore/DFAMinimizer.cpp,
+				WebCore/DigitalCredentialsRequestDataBuilder.cpp,
 				WebCore/DisplayListRecorderTests.cpp,
 				WebCore/DocumentOrder.cpp,
 				WebCore/FidoHidMessageTest.cpp,

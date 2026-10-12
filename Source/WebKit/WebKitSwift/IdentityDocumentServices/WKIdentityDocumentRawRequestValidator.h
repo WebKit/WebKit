@@ -37,6 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable WKIdentityDocumentPresentmentMobileDocumentRequest *)validateISO18013Request:(WKISO18013Request *)iso18013Request origin:(NSURL *)origin error:(NSError **)error;
 
+#if HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
+- (nullable WKIdentityDocumentPresentmentOpenID4VPRequest *)validateOpenID4VPRequest:(NSData *)requestData requestType:(NSString *)requestType origin:(NSURL *)origin error:(NSError **)error;
+#endif
+
 @end
 
 NS_ASSUME_NONNULL_END

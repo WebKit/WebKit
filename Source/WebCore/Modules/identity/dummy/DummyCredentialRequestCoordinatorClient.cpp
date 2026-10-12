@@ -55,7 +55,7 @@ void DummyCredentialRequestCoordinatorClient::dismissDigitalCredentialsChooser(C
     completionHandler(false);
 }
 
-ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> DummyCredentialRequestCoordinatorClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
+ExceptionOr<Vector<std::optional<ValidatedDigitalCredentialRequest>>> DummyCredentialRequestCoordinatorClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
 {
     return Exception { ExceptionCode::InvalidStateError };
 }

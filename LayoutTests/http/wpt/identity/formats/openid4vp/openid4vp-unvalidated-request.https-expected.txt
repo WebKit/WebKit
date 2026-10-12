@@ -1,0 +1,3 @@
+
+PASS openid4vp-v1-signed: a virtual wallet answers a request for another origin.
+

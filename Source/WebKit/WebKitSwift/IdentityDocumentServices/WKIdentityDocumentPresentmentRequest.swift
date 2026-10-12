@@ -39,9 +39,16 @@ extension WKIdentityDocumentPresentmentRequest {
 
     let mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest]
 
-    init(origin: URL, mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest]) {
+    let openID4VPRequests: [WKIdentityDocumentPresentmentOpenID4VPRequest]
+
+    init(
+        origin: URL,
+        mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest],
+        openID4VPRequests: [WKIdentityDocumentPresentmentOpenID4VPRequest]
+    ) {
         self.unsafeOrigin = origin as NSURL
         self.mobileDocumentRequests = mobileDocumentRequests
+        self.openID4VPRequests = openID4VPRequests
     }
 }
 

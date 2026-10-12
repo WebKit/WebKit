@@ -157,9 +157,13 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
 
     bool hasOpenID4VPRequest = unvalidatedRequests.containsIf([](auto& request) {
         return std::holds_alternative<OpenID4VPSignedRequest>(request)
-            || std::holds_alternative<OpenID4VPMultisignedRequest>(request);
+            || std::holds_alternative<OpenID4VPMultisignedRequest>(request)
+            || std::holds_alternative<OpenID4VPUnsignedRequest>(request);
     });
-    if (validatedCredentialRequests.isEmpty() && !hasOpenID4VPRequest)
+    bool hasValidatedRequest = validatedCredentialRequests.containsIf([](auto& request) {
+        return request.has_value();
+    });
+    if (!hasValidatedRequest && !hasOpenID4VPRequest)
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_s });
 
     if (signal) {
@@ -179,9 +183,9 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
     initiateTheCredentialRequest(document, WTF::move(validatedCredentialRequests), WTF::move(unvalidatedRequests), signal);
 }
 
-void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& document, Vector<ValidatedDigitalCredentialRequest>&& validatedRequests, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests, RefPtr<AbortSignal> signal)
+void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& document, Vector<std::optional<ValidatedDigitalCredentialRequest>>&& validatedRequests, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests, RefPtr<AbortSignal> signal)
 {
-    auto requestDataAndRawRequests = DigitalCredentialsRequestDataBuilder::build(validatedRequests, document, WTF::move(unvalidatedRequests));
+    auto requestDataAndRawRequests = DigitalCredentialsRequestDataBuilder::build(WTF::move(validatedRequests), document, WTF::move(unvalidatedRequests));
     if (requestDataAndRawRequests.hasException())
         return rejectTheCredentialRequestWith(requestDataAndRawRequests.releaseException());
 

@@ -26,9 +26,13 @@
 #pragma once
 
 #include <optional>
+#include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+constexpr size_t maxOpenID4VPRequestDataLength = 1 * MB;
 
 enum class DigitalCredentialPresentationProtocol : uint8_t {
     OrgIsoMdoc,
@@ -48,6 +52,38 @@ inline std::optional<DigitalCredentialPresentationProtocol> digitalCredentialPre
     if (protocol == "openid4vp-v1-multisigned"_s)
         return DigitalCredentialPresentationProtocol::Openid4vpV1Multisigned;
     return std::nullopt;
+}
+
+inline ASCIILiteral digitalCredentialPresentationProtocolToString(DigitalCredentialPresentationProtocol protocol)
+{
+    using enum DigitalCredentialPresentationProtocol;
+    switch (protocol) {
+    case OrgIsoMdoc:
+        return "org-iso-mdoc"_s;
+    case Openid4vpV1Unsigned:
+        return "openid4vp-v1-unsigned"_s;
+    case Openid4vpV1Signed:
+        return "openid4vp-v1-signed"_s;
+    case Openid4vpV1Multisigned:
+        return "openid4vp-v1-multisigned"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+inline bool isOpenID4VPPresentationProtocol(DigitalCredentialPresentationProtocol protocol)
+{
+    using enum DigitalCredentialPresentationProtocol;
+    switch (protocol) {
+    case OrgIsoMdoc:
+        return false;
+    case Openid4vpV1Unsigned:
+    case Openid4vpV1Signed:
+    case Openid4vpV1Multisigned:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebCore

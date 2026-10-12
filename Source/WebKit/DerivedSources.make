@@ -1166,4 +1166,13 @@ $(WEBKIT_ADDITIONS_SWIFT_FILES): %.swift : %.swift.in
 	cp -f $< $@
 
 all : $(WEBKIT_ADDITIONS_SWIFT_FILES)
+
+# WebKitAdditions may predate DigitalCredentialsExtras.swift.in. Its call sites are behind
+# HAVE(DIGITAL_CREDENTIALS_OPENID4VP), which the same WebKitAdditions defines, so an empty file stands in.
+DIGITAL_CREDENTIALS_EXTRAS = $(call find-webkitadditions-file,DigitalCredentialsExtras.swift.in)
+
+DigitalCredentialsExtras.swift : $(DIGITAL_CREDENTIALS_EXTRAS)
+	$(if $(DIGITAL_CREDENTIALS_EXTRAS),cp -f $< $@,: > $@)
+
+all : DigitalCredentialsExtras.swift
 endif

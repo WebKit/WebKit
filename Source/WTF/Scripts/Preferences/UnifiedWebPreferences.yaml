@@ -1968,7 +1968,9 @@ DigitalCredentialsOpenID4VPEnabled:
   humanReadableName: "OpenID4VP for Digital Credentials API"
   humanReadableDescription: "Enable the OpenID4VP presentation protocols for the Digital Credentials API"
   condition: ENABLE(WEB_AUTHN)
-  defaultValue: false
+  defaultValue:
+    "HAVE(DIGITAL_CREDENTIALS_OPENID4VP)": true
+    default: false
   disableInLockdownMode: true
 
 DirectoryUploadEnabled:

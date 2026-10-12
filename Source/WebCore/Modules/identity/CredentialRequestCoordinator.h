@@ -81,7 +81,7 @@ private:
     InteractionState NODELETE interactionState() const;
     void NODELETE setInteractionState(InteractionState);
 
-    void initiateTheCredentialRequest(const Document&, Vector<ValidatedDigitalCredentialRequest>&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
+    void initiateTheCredentialRequest(const Document&, Vector<std::optional<ValidatedDigitalCredentialRequest>>&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
     void processCredentialChooserResponse(std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal>);
 
     explicit CredentialRequestCoordinator(Ref<CredentialRequestCoordinatorClient>&&, Page&);

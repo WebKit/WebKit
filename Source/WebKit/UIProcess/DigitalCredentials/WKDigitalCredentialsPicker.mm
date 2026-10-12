@@ -48,10 +48,12 @@
 #import <WebCore/ExceptionData.h>
 #import <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #import <WebCore/ValidatedMobileDocumentRequest.h>
+#import <WebCore/ValidatedOpenID4VPRequest.h>
 #import <WebCore/X509SubjectKeyIdentifier.h>
 #import <WebKit/WKIdentityDocumentPresentmentController.h>
 #import <WebKit/WKIdentityDocumentPresentmentError.h>
 #import <WebKit/WKIdentityDocumentPresentmentMobileDocumentRequest.h>
+#import <WebKit/WKIdentityDocumentPresentmentOpenID4VPRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentRawRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentRequest.h>
 #import <wtf/BlockPtr.h>
@@ -63,6 +65,7 @@
 #import <wtf/WeakPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringCommon.h>
 #import <wtf/text/TextStream.h>
@@ -199,24 +202,139 @@ static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentR
     return mappedPresentmentRequests;
 }
 
-static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *>> mapRequestAuthentications(const Vector<WebCore::CertificateInfo>& requestAuthentications)
+static RetainPtr<NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *>> mapCertificateChain(const WebCore::CertificateInfo& certificateInfo)
 {
-    RetainPtr<NSMutableArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *>> mappedRequestAuthenticationCertificates = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *>> mappedCertificateChain = adoptNS([[NSMutableArray alloc] init]);
+    if (!certificateInfo.trust())
+        return mappedCertificateChain;
 
-    for (auto&& certificateInfo : requestAuthentications) {
-        RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *>> mappedCertificateChain = adoptNS([[NSMutableArray alloc] init]);
-        auto certificateChain = adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust().get()));
-
-        CFIndex count = CFArrayGetCount(certificateChain.get());
-        for (CFIndex i = 0; i < count; ++i) {
-            RetainPtr certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(certificateChain.get(), i));
-            RetainPtr mappedCertificate = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestAuthenticationCertificateInstance() initWithCertificate:certificate.get()]);
-            [mappedCertificateChain addObject:mappedCertificate.get()];
-        }
-        [mappedRequestAuthenticationCertificates addObject:mappedCertificateChain.get()];
+    RetainPtr certificateChain = adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust().get()));
+    CFIndex count = CFArrayGetCount(certificateChain.get());
+    for (CFIndex i = 0; i < count; ++i) {
+        RetainPtr certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(certificateChain.get(), i));
+        RetainPtr mappedCertificate = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestAuthenticationCertificateInstance() initWithCertificate:certificate.get()]);
+        [mappedCertificateChain addObject:mappedCertificate.get()];
     }
 
-    return mappedRequestAuthenticationCertificates;
+    return mappedCertificateChain;
+}
+
+static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *>> mapRequestAuthentications(const Vector<WebCore::CertificateInfo>& requestAuthentications)
+{
+    return createNSArray(requestAuthentications, [](const WebCore::CertificateInfo& certificateInfo) {
+        return mapCertificateChain(certificateInfo);
+    });
+}
+
+static RetainPtr<NSString> mapCredentialFormat(WebCore::OpenID4VPCredentialFormat format)
+{
+    switch (format) {
+    case WebCore::OpenID4VPCredentialFormat::MsoMdoc:
+        return @"mso_mdoc";
+    case WebCore::OpenID4VPCredentialFormat::DcSdJwt:
+        return @"dc+sd-jwt";
+    case WebCore::OpenID4VPCredentialFormat::Unknown:
+        return nil;
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+static RetainPtr<NSString> mapTrustedAuthorityType(WebCore::OpenID4VPTrustedAuthorityType type)
+{
+    switch (type) {
+    case WebCore::OpenID4VPTrustedAuthorityType::AuthorityKeyIdentifier:
+        return @"aki";
+    case WebCore::OpenID4VPTrustedAuthorityType::ETSITrustedList:
+        return @"etsi_tl";
+    case WebCore::OpenID4VPTrustedAuthorityType::OpenIDFederation:
+        return @"openid_federation";
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+static RetainPtr<NSArray<NSString *>> mapStrings(const Vector<String>& strings)
+{
+    return createNSArray(strings, [](const String& string) {
+        return string.createNSString();
+    });
+}
+
+static RetainPtr<NSArray<NSArray<NSString *> *>> mapStringSets(const Vector<Vector<String>>& stringSets)
+{
+    return createNSArray(stringSets, [](const Vector<String>& strings) {
+        return mapStrings(strings);
+    });
+}
+
+static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPClaimsQuery> mapClaimsQuery(const WebCore::OpenID4VPClaimsQuery& claim)
+{
+    RetainPtr path = createNSArray(claim.path, [](const WebCore::OpenID4VPClaimPathComponent& component) {
+        return WTF::switchOn(component,
+            [](const String& key) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimPathComponentInstance() initWithKey:key.createNSString().get() index:nil]);
+            },
+            [](const WebCore::OpenID4VPAllArrayElements&) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimPathComponentInstance() initWithKey:nil index:nil]);
+            },
+            [](uint64_t index) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimPathComponentInstance() initWithKey:nil index:@(index)]);
+            });
+    });
+
+    RetainPtr values = createNSArray(claim.values, [](const WebCore::OpenID4VPClaimValue& value) {
+        return WTF::switchOn(value,
+            [](const String& string) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimValueInstance() initWithStringValue:string.createNSString().get() integerValue:nil booleanValue:nil]);
+            },
+            [](int64_t integer) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimValueInstance() initWithStringValue:nil integerValue:@(integer) booleanValue:nil]);
+            },
+            [](bool boolean) {
+                return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimValueInstance() initWithStringValue:nil integerValue:nil booleanValue:@(boolean)]);
+            });
+    });
+
+    RetainPtr<NSNumber> intentToRetain = claim.intentToRetain ? @(*claim.intentToRetain) : nil;
+
+    return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPClaimsQueryInstance() initWithIdentifier:nsStringNilIfNull(claim.identifier).get() path:path.get() values:values.get() intentToRetain:intentToRetain.get()]);
+}
+
+static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequest(const WebCore::ValidatedOpenID4VPRequest& validatedRequest)
+{
+    auto& request = validatedRequest.request;
+
+    RetainPtr credentials = createNSArray(request.credentials, [](const WebCore::OpenID4VPCredentialQuery& credential) {
+        RetainPtr trustedAuthorities = createNSArray(credential.trustedAuthorities, [](const WebCore::OpenID4VPTrustedAuthoritiesQuery& query) {
+            return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPTrustedAuthoritiesQueryInstance() initWithType:mapTrustedAuthorityType(query.type).get() values:mapStrings(query.values).get()]);
+        });
+
+        RetainPtr claims = createNSArray(credential.claims, mapClaimsQuery);
+
+        return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPCredentialQueryInstance()
+            initWithIdentifier:credential.identifier.createNSString().get()
+            format:mapCredentialFormat(credential.format).get()
+            allowsMultiple:credential.allowsMultiple
+            documentType:nsStringNilIfNull(credential.documentType).get()
+            verifiableCredentialTypes:mapStrings(credential.verifiableCredentialTypes).get()
+            trustedAuthorities:trustedAuthorities.get()
+            requiresCryptographicHolderBinding:credential.requiresCryptographicHolderBinding
+            claims:claims.get()
+            claimSets:mapStringSets(credential.claimSets).get()]);
+    });
+
+    RetainPtr credentialSets = createNSArray(request.credentialSets, [](const WebCore::OpenID4VPCredentialSetQuery& credentialSet) {
+        return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPCredentialSetQueryInstance() initWithOptions:mapStringSets(credentialSet.options).get() isRequired:credentialSet.isRequired]);
+    });
+
+    RetainPtr verifierIdentities = createNSArray(request.verifierIdentities, [](const WebCore::OpenID4VPVerifierIdentity& identity) {
+        return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPVerifierIdentityInstance() initWithClientIdentifierPrefix:nsStringNilIfNull(identity.clientIdentifierPrefix).get() identifier:identity.identifier.createNSString().get() certificateChain:mapCertificateChain(identity.certificateChain).get()]);
+    });
+
+    RetainPtr requestType = WebCore::digitalCredentialPresentationProtocolToString(validatedRequest.protocol).createNSString();
+
+    return adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPRequestInstance() initWithRequestType:requestType.get() credentials:credentials.get() credentialSets:credentialSets.get() verifierIdentities:verifierIdentities.get()]);
 }
 
 #pragma mark - WKDigitalCredentialsPicker
@@ -283,8 +401,23 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
                 for (auto &&unvalidatedRequest : unvalidatedRequests) {
                     auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
                     if (!mobileDocumentRequest) {
-                        // FIXME: Hand off the OpenID4VP protocols once rdar://problem/183338719
-                        // is fulfilled.
+                        auto protocolAndJSON = WebCore::openID4VPRequestJSON(unvalidatedRequest);
+                        if (!protocolAndJSON) {
+                            completionHandler(@[]);
+                            return;
+                        }
+
+                        auto& [protocol, json] = *protocolAndJSON;
+                        RetainPtr requestProtocol = WebCore::digitalCredentialPresentationProtocolToString(protocol).createNSString();
+                        RetainPtr requestData = [json.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+                        if (!requestData) {
+                            LOG(DigitalCredentials, "Failed to encode an OpenID4VP raw request as UTF-8.");
+                            completionHandler(@[]);
+                            return;
+                        }
+
+                        RetainPtr rawRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRawRequestInstance() initWithRequestProtocol:requestProtocol.get() requestData:requestData.get()]);
+                        [rawRequests addObject:rawRequest.get()];
                         continue;
                     }
                     RetainPtr deviceRequest = mobileDocumentRequest->deviceRequest.createNSString();
@@ -300,7 +433,8 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 
                     if (!requestDataBytes) {
                         LOG(DigitalCredentials, "Failed to serialize JSON for raw request: %s", error.localizedDescription.UTF8String);
-                        continue;
+                        completionHandler(@[]);
+                        return;
                     }
 
                     RetainPtr rawRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRawRequestInstance() initWithRequestProtocol:@"org.iso.mdoc" requestData:requestDataBytes.get()]);
@@ -328,15 +462,12 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 
     _digitalCredentialsPickerDelegate = adoptNS([[WKDigitalCredentialsPickerDelegate alloc] initWithDigitalCredentialsPickerDelegate:self]);
 
-    WTF::switchOn(requestData,
-        [self](const WebCore::DigitalCredentialsMobileDocumentRequestData& requestData) {
-            [self performRequest:requestData];
-        },
-        [](const auto& data) {
-            UNUSED_PARAM(data);
-            ASSERT_NOT_IMPLEMENTED_YET();
-        }
-    );
+    if (auto* mobileDocumentRequestData = std::get_if<WebCore::DigitalCredentialsMobileDocumentRequestData>(&requestData))
+        [self performRequest:*mobileDocumentRequestData];
+    else if (auto* openID4VPRequestData = std::get_if<WebCore::DigitalCredentialsOpenID4VPRequestData>(&requestData))
+        [self performOpenID4VPRequest:*openID4VPRequestData];
+    else
+        ASSERT_NOT_REACHED();
 
     if ([self.delegate respondsToSelector:@selector(digitalCredentialsPickerDidPresent:)])
         [self.delegate digitalCredentialsPickerDidPresent:self];
@@ -364,9 +495,6 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         [mobileDocumentRequests addObject:mobileDocumentRequest.get()];
     }
 
-    RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
-    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:mobileDocumentRequests.get()]);
-
     if (![mobileDocumentRequests count]) {
         LOG(DigitalCredentials, "No supported mobile document requests to present.");
         WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "No supported document requests to present."_s };
@@ -374,7 +502,43 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         return;
     }
 
-    [_presentmentController performRequest:mappedRequest.get() completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKDigitalCredentialsPicker>(self)](WKIdentityDocumentPresentmentResponse *response, NSError *error) {
+    RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
+    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:mobileDocumentRequests.get() openID4VPRequests:@[]]);
+
+    [self presentRequest:mappedRequest.get()];
+}
+
+- (void)performOpenID4VPRequest:(const WebCore::DigitalCredentialsOpenID4VPRequestData &)requestData
+{
+    bool hasMismatchedProtocol = requestData.requests.containsIf([&](auto& request) {
+        return !WebCore::isOpenID4VPPresentationProtocol(request.protocol) || request.protocol != requestData.requests.first().protocol;
+    });
+    if (hasMismatchedProtocol) {
+        LOG(DigitalCredentials, "OpenID4VP requests to present do not share a single OpenID4VP protocol.");
+        [self completeWith:makeUnexpected(WebCore::ExceptionData { ExceptionCode::TypeError, "No supported credential requests to present."_s })];
+        return;
+    }
+
+    RetainPtr openID4VPRequests = createNSArray(requestData.requests, [](auto& validatedRequest) {
+        return mapOpenID4VPRequest(validatedRequest);
+    });
+
+    if (![openID4VPRequests count]) {
+        LOG(DigitalCredentials, "No supported OpenID4VP requests to present.");
+        WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "No supported credential requests to present."_s };
+        [self completeWith:makeUnexpected(exceptionData)];
+        return;
+    }
+
+    RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
+    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:@[] openID4VPRequests:openID4VPRequests.get()]);
+
+    [self presentRequest:mappedRequest.get()];
+}
+
+- (void)presentRequest:(WKIdentityDocumentPresentmentRequest *)request
+{
+    [_presentmentController performRequest:request completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKDigitalCredentialsPicker>(self)](WKIdentityDocumentPresentmentResponse *response, NSError *error) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -406,28 +570,45 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
             return;
         }
 
-        String responseData = base64URLEncodeToString(span(response.responseData));
-
-        if (responseData.isNull()) {
-            LOG(DigitalCredentials, "Failed to encode response bytes to URL-safe Base64.");
-            WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
-            [self completeWith:makeUnexpected(exceptionData)];
-            return;
-        }
-
-        LOG_WITH_STREAM(DigitalCredentials, stream << "The document provider returned response data: "_s << responseData << "."_s);
         RetainPtr<NSString> protocol = response.protocolString;
 
         if ([protocol isEqualToString:@"org.iso.mdoc"]) {
+            String responseData = base64URLEncodeToString(span(response.responseData));
+
+            if (responseData.isNull()) {
+                LOG(DigitalCredentials, "Failed to encode response bytes to URL-safe Base64.");
+                WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
+                [self completeWith:makeUnexpected(exceptionData)];
+                return;
+            }
+
+            LOG_WITH_STREAM(DigitalCredentials, stream << "The document provider returned response data: "_s << responseData << "."_s);
             Ref object = JSON::Object::create();
             object->setString("response"_s, responseData);
             WebCore::DigitalCredentialsResponseData responseObject { DigitalCredentialPresentationProtocol::OrgIsoMdoc, object->toJSONString() };
             [self completeWith:WTF::move(responseObject)];
-        } else {
-            LOG(DigitalCredentials, "Unknown protocol response from document provider. Can't convert it %s.", [protocol UTF8String]);
-            WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Unknown protocol response from document."_s };
-            [self completeWith:makeUnexpected(exceptionData)];
+            return;
         }
+
+        auto openID4VPProtocol = WebCore::digitalCredentialPresentationProtocolFromString(String(protocol.get()));
+        if (openID4VPProtocol && WebCore::isOpenID4VPPresentationProtocol(*openID4VPProtocol)) {
+            RetainPtr responseString = adoptNS([[NSString alloc] initWithData:response.responseData encoding:NSUTF8StringEncoding]);
+
+            if (!responseString) {
+                LOG(DigitalCredentials, "Failed to decode OpenID4VP response data as UTF-8.");
+                WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
+                [self completeWith:makeUnexpected(exceptionData)];
+                return;
+            }
+
+            WebCore::DigitalCredentialsResponseData responseObject { *openID4VPProtocol, String(responseString.get()) };
+            [self completeWith:WTF::move(responseObject)];
+            return;
+        }
+
+        LOG(DigitalCredentials, "Unknown protocol response from document provider. Can't convert it %s.", [protocol UTF8String]);
+        WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Unknown protocol response from document."_s };
+        [self completeWith:makeUnexpected(exceptionData)];
         return;
     }
 

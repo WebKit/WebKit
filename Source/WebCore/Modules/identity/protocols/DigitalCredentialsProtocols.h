@@ -28,9 +28,14 @@
 #include <WebCore/DigitalCredentialPresentationProtocol.h>
 #include <WebCore/MobileDocumentRequest.h>
 #include <WebCore/ValidatedMobileDocumentRequest.h>
+#include <WebCore/ValidatedOpenID4VPRequest.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
-using ValidatedDigitalCredentialRequest = ValidatedMobileDocumentRequest;
+using ValidatedDigitalCredentialRequest = Variant<
+    ValidatedMobileDocumentRequest,
+    ValidatedOpenID4VPRequest
+>;
 
 } // namespace WebCore
