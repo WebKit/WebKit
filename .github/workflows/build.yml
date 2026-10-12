@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       experimental_full_webcore:
-        description: "Build full WebCore + Web Audio + WebRTC and publish a separate engine bundle if it compiles"
+        description: "Build full WebCore + Web Audio for Wii U PPC and publish the engine bundle if it compiles"
         type: boolean
         required: false
         default: true
@@ -433,6 +433,15 @@ jobs:
           find $GITHUB_WORKSPACE/.generated-jsc-cache -name "*.cpp" \
             -exec cp {} $GITHUB_WORKSPACE/Source/JavaScriptCore/JavaScriptCore/ \; 2>/dev/null || true
 
+      # The normal WebCore CMake graph generates thousands of bindings and derived
+      # headers. The standalone Wii U CMake target doesn't load that graph, so invoke
+      # the same upstream generators here and put only their outputs in the ignored
+      # generated directory / working checkout.
+      - name: Generate WebCore derived sources and DOM bindings for WKC
+        run: |
+          set -euo pipefail
+          python3 "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/generate-webcore-derived-sources.py"
+
       - name: Restore CMake build
         id: cache-cmake-build
         uses: actions/cache/restore@v5.0.4
@@ -802,7 +811,7 @@ jobs:
       # Full WebCore is the feature build (DOM/HTML/CSS/rendering + Web Audio + WebRTC).
       # Keep its compile errors non-blocking while porting continues, but publish a
       # separately named engine bundle whenever the complete target and install pass.
-      - name: Build full WebCore + Web Audio + WebRTC (manual feature profile)
+      - name: Build full WebCore + Web Audio (Wii U PPC engine bring-up)
         id: full-engine-probe
         if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore) }}
         shell: bash
@@ -850,9 +859,11 @@ jobs:
               cp build-full-configure.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               cp build-full.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               {
-                echo "Profile: WKC full WebCore + Web Audio + WebRTC"
+                echo "Profile: WKC full WebCore + Web Audio (Wii U PPC bring-up)"
                 echo "Target: Wii U PowerPC 750 / devkitPPC"
                 echo "JavaScriptCore: CLoop interpreter; JIT disabled for Wii U"
+                echo "WebAssembly: disabled pending a Wii U PowerPC calling-convention implementation"
+                echo "WebRTC: built as a separate archive; not yet integrated into this full engine"
                 echo "Verification: full CMake build and install passed"
                 echo "Not yet verified: Wave Browser final executable link, hardware capture, or on-console runtime"
                 echo
@@ -865,7 +876,7 @@ jobs:
               echo "Full build compiled but CMake install failed; withholding the full-engine artifact."
             fi
           else
-            echo "Full WebCore/WebRTC remains in porting bring-up; keeping this diagnostic non-blocking."
+            echo "Full WebCore remains in porting bring-up; withholding this artifact and retaining diagnostics."
           fi
           exit 0
 
@@ -989,27 +1000,23 @@ jobs:
             if [ -f "$log" ]; then cp "$log" dist/diagnostics/; fi
           done
 
-          # Find all object files that actually exist (only successfully compiled
-          # ones). NOTE: the devkitPPC/CMake (CMAKE_SYSTEM_NAME=Generic) toolchain
-          # names objects *.obj, not *.o.
-          OFILES=$(find build/CMakeFiles/WebKitWKC.dir -name "*.obj" 2>/dev/null)
-
-          if [ -z "$OFILES" ]; then
-            echo "No object files compiled at all — artifact will be empty"
-            touch dist/lib/libWebKitWKC.a
-          else
-            COUNT=$(echo "$OFILES" | wc -l)
-            echo "=== Archiving $COUNT successfully compiled object files ==="
-            echo "$OFILES" | xargs /opt/devkitpro/devkitPPC/bin/powerpc-eabi-ar rcs dist/lib/libWebKitWKC.a
-            echo "=== Failed files (no .obj produced) ==="
-            find build/CMakeFiles/WebKitWKC.dir -name "*.obj.d" | while read dep; do
-              obj="${dep%.d}"
-              if [ ! -f "$obj" ]; then
-                echo "  FAILED: $(basename $obj)"
-              fi
-            done
+          # Use the archive produced by CMake itself. Never fabricate a named
+          # but empty archive or quietly rebuild a different archive from a partial
+          # set of object files; a successful artifact must pass a real archive check.
+          ARCHIVE="$GITHUB_WORKSPACE/build/libWebKitWKC.a"
+          if [ ! -s "$ARCHIVE" ]; then
+            echo "ERROR: CMake did not produce a non-empty libWebKitWKC.a"
+            exit 1
           fi
-
+          /opt/devkitpro/devkitPPC/bin/powerpc-eabi-ar t "$ARCHIVE" > dist/diagnostics/bootstrap-archive-members.txt
+          MEMBER_COUNT=$(wc -l < dist/diagnostics/bootstrap-archive-members.txt)
+          echo "CMake archive contains $MEMBER_COUNT members"
+          if [ "$MEMBER_COUNT" -lt 500 ]; then
+            echo "ERROR: libWebKitWKC.a has only $MEMBER_COUNT members; refusing to publish an incomplete bootstrap archive"
+            exit 1
+          fi
+          cp "$ARCHIVE" dist/lib/libWebKitWKC.a
+          echo "Archive members verified: $MEMBER_COUNT" >> dist/BUILD_PROFILE.txt
           ls -lh dist/lib/libWebKitWKC.a
           cp -r Source/WebKit/WKC/include/wkc dist/include/ 2>/dev/null || true
 
