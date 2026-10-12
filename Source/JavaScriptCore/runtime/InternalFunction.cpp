@@ -26,6 +26,7 @@
 #include "Debugger.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSRemoteFunction.h"
 #include "ProxyObject.h"
 #include "VMInlines.h"
 
@@ -143,10 +144,44 @@ String InternalFunction::calculatedDisplayName(VM& vm)
     return name();
 }
 
+bool InternalFunction::canUseSubclassAllocationProfile(JSObject* newTarget)
+{
+    if (newTarget->inherits<JSBoundFunction>() || newTarget->inherits<JSRemoteFunction>())
+        return false;
+    auto* targetFunction = dynamicDowncast<JSFunction>(newTarget);
+    return targetFunction && targetFunction->canUseAllocationProfiles();
+}
+
+Structure* InternalFunction::cachedSubclassStructure(JSObject* newTarget, Structure* baseClass)
+{
+    auto* targetFunction = dynamicDowncast<JSFunction>(newTarget);
+    if (!targetFunction)
+        return nullptr;
+    FunctionRareData* rareData = targetFunction->rareData();
+    if (!rareData)
+        return nullptr;
+    Structure* structure = rareData->internalFunctionAllocationStructure();
+    if (structure && structure->classInfoForCells() == baseClass->classInfoForCells() && structure->realm() == baseClass->realm())
+        return structure;
+    return nullptr;
+}
+
 Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObject, JSObject* newTarget, Structure* baseClass)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+    if (canUseSubclassAllocationProfile(newTarget)) {
+        if (Structure* cachedStructure = cachedSubclassStructure(newTarget, baseClass))
+            return cachedStructure;
+    }
+    JSValue prototype = newTarget->get(globalObject, vm.propertyNames->prototype);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    RELEASE_AND_RETURN(scope, createSubclassStructure(globalObject, newTarget, baseClass, prototype));
+}
+
+Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObject, JSObject* newTarget, Structure* baseClass, JSValue prototypeValue)
+{
+    VM& vm = globalObject->vm();
     JSGlobalObject* baseGlobalObject = baseClass->realm();
 
     ASSERT(baseClass->hasMonoProto());
@@ -155,8 +190,6 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     JSFunction* targetFunction = dynamicDowncast<JSFunction>(newTarget);
 
     if (!targetFunction || !targetFunction->canUseAllocationProfiles()) [[unlikely]] {
-        JSValue prototypeValue = newTarget->get(globalObject, vm.propertyNames->prototype);
-        RETURN_IF_EXCEPTION(scope, nullptr);
         // .prototype getter could have triggered having a bad time so need to recheck array structures.
         if (baseGlobalObject->isHavingABadTime()) [[unlikely]] {
             if (baseGlobalObject->isOriginalArrayStructure(baseClass))
@@ -174,10 +207,6 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     Structure* structure = rareData->internalFunctionAllocationStructure();
     if (structure && structure->classInfoForCells() == baseClass->classInfoForCells() && structure->realm() == baseGlobalObject) [[likely]]
         return structure;
-
-    // .prototype can't be a getter if we canUseAllocationProfiles().
-    JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
-    RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (JSObject* prototype = dynamicDowncast<JSObject>(prototypeValue))
         return rareData->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);

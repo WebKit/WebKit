@@ -228,9 +228,17 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
 
     JSGlobalObject* structureGlobalObject = globalObject;
     bool needsSubclassStructure = newTarget && newTarget != globalObject->functionConstructor();
+    std::optional<JSValue> prototype;
     if (needsSubclassStructure) {
-        structureGlobalObject = getFunctionRealm(globalObject, asObject(newTarget));
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        JSObject* target = asObject(newTarget);
+        if (InternalFunction::canUseSubclassAllocationProfile(target))
+            structureGlobalObject = target->realm();
+        else {
+            prototype = target->get(globalObject, vm.propertyNames->prototype);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            structureGlobalObject = getFunctionRealm(globalObject, target);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
     }
     Structure* structure = nullptr;
     switch (functionConstructionMode) {
@@ -249,7 +257,16 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
     }
 
     if (needsSubclassStructure) {
-        structure = InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), structure);
+        JSObject* target = asObject(newTarget);
+        if (prototype)
+            structure = InternalFunction::createSubclassStructure(globalObject, target, structure, *prototype);
+        else if (Structure* cachedStructure = InternalFunction::cachedSubclassStructure(target, structure))
+            structure = cachedStructure;
+        else {
+            JSValue prototypeValue = target->get(globalObject, vm.propertyNames->prototype);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            structure = InternalFunction::createSubclassStructure(globalObject, target, structure, prototypeValue);
+        }
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 

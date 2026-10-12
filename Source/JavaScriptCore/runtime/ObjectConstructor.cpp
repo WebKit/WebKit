@@ -127,10 +127,27 @@ static ALWAYS_INLINE JSObject* constructObjectWithNewTarget(JSGlobalObject* glob
     // 1. If NewTarget is neither undefined nor the active function, then
     if (newTarget && newTarget != objectConstructor) {
         // a. Return ? OrdinaryCreateFromConstructor(NewTarget, "%ObjectPrototype%").
-        JSGlobalObject* functionGlobalObject = getFunctionRealm(globalObject, asObject(newTarget));
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        Structure* baseStructure = functionGlobalObject->objectStructureForObjectConstructor();
-        Structure* objectStructure = InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), baseStructure);
+        JSObject* target = asObject(newTarget);
+        JSGlobalObject* functionGlobalObject;
+        Structure* objectStructure;
+        if (InternalFunction::canUseSubclassAllocationProfile(target)) {
+            functionGlobalObject = target->realm();
+            Structure* baseStructure = functionGlobalObject->objectStructureForObjectConstructor();
+            if (Structure* cachedStructure = InternalFunction::cachedSubclassStructure(target, baseStructure))
+                objectStructure = cachedStructure;
+            else {
+                JSValue prototype = target->get(globalObject, vm.propertyNames->prototype);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                objectStructure = InternalFunction::createSubclassStructure(globalObject, target, baseStructure, prototype);
+            }
+        } else {
+            JSValue prototype = target->get(globalObject, vm.propertyNames->prototype);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            functionGlobalObject = getFunctionRealm(globalObject, target);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            Structure* baseStructure = functionGlobalObject->objectStructureForObjectConstructor();
+            objectStructure = InternalFunction::createSubclassStructure(globalObject, target, baseStructure, prototype);
+        }
         RETURN_IF_EXCEPTION(scope, nullptr);
         return constructEmptyObject(vm, objectStructure);
     }

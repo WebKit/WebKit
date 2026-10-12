@@ -209,9 +209,21 @@ ALWAYS_INLINE Structure* JSGlobalObject::arrayStructureForIndexingTypeDuringAllo
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!newTarget || newTarget == globalObject->arrayConstructor())
         return globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
-    auto* functionGlobalObject = getFunctionRealm(globalObject, asObject(newTarget));
+    JSObject* target = asObject(newTarget);
+    if (InternalFunction::canUseSubclassAllocationProfile(target)) {
+        JSGlobalObject* functionGlobalObject = target->realm();
+        Structure* baseStructure = functionGlobalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+        if (Structure* cachedStructure = InternalFunction::cachedSubclassStructure(target, baseStructure))
+            return cachedStructure;
+        JSValue prototype = target->get(globalObject, vm.propertyNames->prototype);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, target, baseStructure, prototype));
+    }
+    JSValue prototype = target->get(globalObject, vm.propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), functionGlobalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)));
+    auto* functionGlobalObject = getFunctionRealm(globalObject, target);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, target, functionGlobalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), prototype));
 }
 
 inline JSFunction* JSGlobalObject::evalFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::evalFunction)); }
