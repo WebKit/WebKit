@@ -827,6 +827,12 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
     endif ()
 
     set(_stamp "${CMAKE_CURRENT_BINARY_DIR}/${_target}-codesign.stamp")
+    # Consumers link after ${_signed_order} rather than ${_stamp}: it is created
+    # after signing but never updated, so restat drops their links when only the
+    # signature changed. It needs its own command because, for an output restat
+    # finds unchanged, ninja records the command's start time, and codesign
+    # rewrites the binary after that.
+    set(_signed_order "${CMAKE_CURRENT_BINARY_DIR}/${_target}-codesign.order")
 
     add_custom_command(
         OUTPUT ${_stamp}
@@ -840,9 +846,15 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         COMMAND ${CMAKE_COMMAND} -E touch ${_stamp}
         VERBATIM
         COMMENT "Code signing ${_target}")
-    add_custom_target(${_target}_CodeSign ALL DEPENDS ${_stamp})
+    add_custom_command(
+        OUTPUT ${_signed_order}
+        DEPENDS ${_stamp}
+        # -a creates the file, but never changes its modification time.
+        COMMAND touch -a ${_signed_order}
+        VERBATIM)
+    add_custom_target(${_target}_CodeSign ALL DEPENDS ${_stamp} ${_signed_order})
     add_dependencies(${_target}_CodeSign ${_target})
-    set_target_properties(${_target} PROPERTIES CODESIGN_STAMP ${_stamp})
+    set_target_properties(${_target} PROPERTIES CODESIGN_STAMP ${_signed_order})
 endfunction()
 
 macro(_WEBKIT_TARGET_INTERFACE _target)
@@ -863,7 +875,8 @@ macro(_WEBKIT_TARGET_INTERFACE _target)
         get_target_property(_codesign_stamp ${_target} CODESIGN_STAMP)
         if (_codesign_stamp)
             # add_dependencies() on a utility target would order every consumer's
-            # objects behind signing; only linking reads the signed binary.
+            # objects behind signing; only linking reads the signed binary. The
+            # stamp never changes once it exists; see _WEBKIT_ADD_CODE_SIGN.
             set_property(TARGET ${_target}_PostBuild APPEND PROPERTY
                 INTERFACE_LINK_DEPENDS ${_codesign_stamp})
         else ()
