@@ -264,8 +264,8 @@ def arguments_constructor_name(type, name):
 
 def message_to_struct_declaration(receiver, message):
     result = []
-    function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
-    requires_suppress_forward_decl = [function_parameter_requires_suppress_forward_decl(x.type, x.kind) for x in message.parameters]
+    function_parameters = [(function_parameter_type(x.declared_type, x.kind), x.name) for x in message.parameters]
+    requires_suppress_forward_decl = [function_parameter_requires_suppress_forward_decl(x.declared_type, x.kind) for x in message.parameters]
 
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
@@ -296,19 +296,19 @@ def message_to_struct_declaration(receiver, message):
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
-        result.append('    using Reply = CompletionHandler<void(%s)>;\n' % ', '.join([function_parameter_type(x.type, x.kind, True) for x in message.reply_parameters]))
+        result.append('    using Reply = CompletionHandler<void(%s)>;\n' % ', '.join([function_parameter_type(x.declared_type, x.kind, True) for x in message.reply_parameters]))
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             if len(message.reply_parameters) == 0:
                 result.append('    using Promise = WTF::NativePromise<void, IPC::Error>;\n')
             elif len(message.reply_parameters) == 1:
-                result.append('    using Promise = WTF::NativePromise<%s, IPC::Error>;\n' % message.reply_parameters[0].type)
+                result.append('    using Promise = WTF::NativePromise<%s, IPC::Error>;\n' % message.reply_parameters[0].declared_type)
             else:
-                result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
+                result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error>;\n' % ', '.join([parameter.declared_type for parameter in message.reply_parameters]))
 
     result.append('    %s%s(%s)\n' % (len(message.parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
     for i in range(len(message.parameters)):
         parameter = message.parameters[i]
-        result.append('        %s m_%s(%s)\n' % (',' if i else ':', parameter.name, arguments_constructor_name(parameter.type, parameter.name)))
+        result.append('        %s m_%s(%s)\n' % (',' if i else ':', parameter.name, arguments_constructor_name(parameter.declared_type, parameter.name)))
     result.append('    {\n')
     result += generate_dispatched_for_x(receiver.receiver_dispatched_from, spacing='        ')
     result.append('    }\n\n')
@@ -336,15 +336,15 @@ def message_to_struct_declaration(receiver, message):
         if message.is_async_reply:
             # Extract original message name (remove 'Reply' suffix)
             original_message_name = message.name[:-5] if message.name.endswith('Reply') else message.name
-            if not opaque_ipc_types.reply_webcontent_dispatchable(receiver.name, original_message_name, parameter.name, unwrap_if_untrusted(parameter.type)):
+            if not opaque_ipc_types.reply_webcontent_dispatchable(receiver.name, original_message_name, parameter.name, unwrap_if_untrusted(parameter.declared_type)):
                 result.append('        ASSERT(!isInWebProcess());\n')
         else:
-            if not opaque_ipc_types.webcontent_dispatchable(receiver.name, message.name, parameter.name, unwrap_if_untrusted(parameter.type)):
+            if not opaque_ipc_types.webcontent_dispatchable(receiver.name, message.name, parameter.name, unwrap_if_untrusted(parameter.declared_type)):
                 result.append('        ASSERT(!isInWebProcess());\n')
         result.append('        ')
         if requires_suppress_forward_decl[i]:
             result.append('SUPPRESS_FORWARD_DECL_ARG ')
-        if unwrap_if_untrusted(parameter.type) in types_that_must_be_moved():
+        if unwrap_if_untrusted(parameter.declared_type) in types_that_must_be_moved():
             result.append('encoder << WTF::move(m_%s);\n' % parameter.name)
         else:
             result.append('encoder << m_%s;\n' % parameter.name)

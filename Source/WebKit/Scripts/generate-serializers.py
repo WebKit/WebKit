@@ -29,6 +29,7 @@ import os
 import re
 import sys
 
+from webkit.model import unsafe_span_type
 from webkit.opaque_ipc_types import is_opaque_type, opaque_ipc_types
 
 # Generated serializers are split into per-bundle translation units to keep
@@ -141,6 +142,7 @@ def matches_bundle(item, bundle_filter):
 # OptionalTupleBit - The name of the bit indicating whether this member is serialized.
 # SupportWKKeyedCoder - For webkit_secure_coding types, in addition to the preferred property list code path, support SupportWKKeyedCoder
 # Precondition - Used to fail early from a decoder, for example if a soft linked framework is not present to decode a member
+# UnsafeSpan - Don't make a Decoder-owned copy of a std::span, std::optional<std::span>, or IPC::ArrayReferenceTuple member when decoding. Beware of TOCTOU bugs in stream IPC messages.
 
 class Template(object):
     def __init__(self, template_type, namespace, name, enum_storage=None):
@@ -1067,7 +1069,9 @@ def decode_type(type, serialized_types):
                 result.append('            return std::nullopt;')
                 result.append('    }')
         else:
-            if should_decode_ref(member, serialized_types):
+            if 'UnsafeSpan' in member.attributes:
+                result.append(f'    auto {sanitized_variable_name} = decoder.decode<{unsafe_span_type(member.type)}>().transform([](auto&& value) {{ return IPC::unwrapUnsafeArgument(WTF::move(value)); }});')
+            elif should_decode_ref(member, serialized_types):
                 result.append(f'    auto {sanitized_variable_name} = decoder.decode<Ref<{member.type}>>();')
             else:
                 result.append(f'    auto {sanitized_variable_name} = decoder.decode<{member.type}>();')

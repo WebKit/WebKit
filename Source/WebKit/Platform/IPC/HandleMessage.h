@@ -136,7 +136,7 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple)
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -148,7 +148,7 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, Completi
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)..., WTF::move(completionHandler));
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))..., WTF::move(completionHandler));
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -158,7 +158,7 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, WTF::Ref
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)..., completionHandler);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))..., completionHandler);
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -170,7 +170,7 @@ void callMemberFunction(T* object, MF U::* function, Connection& connection, Arg
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)..., WTF::move(completionHandler));
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))..., WTF::move(completionHandler));
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -180,7 +180,7 @@ void callMemberFunction(T* object, MF U::* function, CT connection, ArgsTuple&& 
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)..., completionHandler);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))..., completionHandler);
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -192,7 +192,7 @@ void callMemberFunction(T* object, MF U::* function, CT connection, ArgsTuple&& 
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -203,7 +203,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple)
         Ref protectedObject { *object };
         co_await std::apply([&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
     }();
 }
@@ -215,7 +215,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, CT connection, Arg
         Ref protectedObject { *object };
         co_await std::apply([&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
     }();
 }
@@ -227,7 +227,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple,
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple)));
     }(WTF::move(completionHandler));
 }
@@ -239,7 +239,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple,
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple)));
     }(completionHandler);
 }
@@ -251,7 +251,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, Connection& connec
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple)));
     }(WTF::move(completionHandler));
 }
@@ -263,7 +263,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, Connection* connec
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         completionHandler(co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple)));
     }(WTF::move(completionHandler));
 }
@@ -275,7 +275,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tu
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
         completionHandler();
     }(WTF::move(completionHandler));
@@ -288,7 +288,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tu
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
         completionHandler();
     }(completionHandler);
@@ -301,7 +301,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection& co
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
         completionHandler();
     }(WTF::move(completionHandler));
@@ -314,7 +314,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection* co
         Ref protectedObject { *object };
         // Use of object without protection is safe here since std::apply() runs synchronously and object is protected for the lifetime of the Task.
         co_await std::apply([&](auto&&... args) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, std::forward<ArgsTuple>(tuple));
         completionHandler();
     }(completionHandler);
@@ -447,7 +447,7 @@ template<typename MessageType, typename C, typename T, typename U, typename MF>
 void handleMessage(C& connection, Decoder& decoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename UnwrappedUnsafeArguments<typename MessageType::Arguments>::Type>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
@@ -471,7 +471,7 @@ template<typename MessageType, typename T, typename U, typename MF>
 void handleMessageWithoutUsingIPCConnection(Decoder& decoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename UnwrappedUnsafeArguments<typename MessageType::Arguments>::Type>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
@@ -484,20 +484,20 @@ template<typename MessageType, typename T, typename U, typename MF>
 void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename UnwrappedUnsafeArguments<typename MessageType::Arguments>::Type>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
         return;
 
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename UnwrappedUnsafeArguments<typename MessageType::ReplyArguments>::Type>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     logMessage(connection, MessageType::name(), object, *arguments);
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
     [replyEncoder = WTF::move(replyEncoder), connection = protect(connection)] (auto&&... args) mutable {
         logReply(connection, MessageType::name(), args...);
-        (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
+        (replyEncoder.get() << ... << unwrapUnsafeArgument(std::forward<decltype(args)>(args)));
         connection->sendSyncReply(WTF::move(replyEncoder));
     }));
 
@@ -514,20 +514,20 @@ template<typename MessageType, typename T, typename U, typename MF>
 void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename UnwrappedUnsafeArguments<typename MessageType::Arguments>::Type>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
         return;
 
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename UnwrappedUnsafeArguments<typename MessageType::ReplyArguments>::Type>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     logMessage(connection, MessageType::name(), object, *arguments);
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
     [syncRequestID = decoder.syncRequestID(), connection = protect(connection)] (auto&&... args) mutable {
         logReply(connection, MessageType::name(), args...);
-        connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
+        connection->sendSyncReply<MessageType>(syncRequestID, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
     }));
 
     if constexpr (ValidationType::expectsConnectionArgument) {
@@ -543,7 +543,7 @@ template<typename MessageType, typename C, typename T, typename U, typename MF>
 void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename UnwrappedUnsafeArguments<typename MessageType::Arguments>::Type>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
@@ -553,16 +553,16 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
         return;
 
     if constexpr (ValidationType::returnsVoid)
-        static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+        static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename UnwrappedUnsafeArguments<typename MessageType::ReplyArguments>::Type>);
     else
-        static_assert(std::is_same_v<typename AwaitableReturnTuple<typename ValidationType::ReturnType>::Type, typename MessageType::ReplyArguments>);
+        static_assert(std::is_same_v<typename AwaitableReturnTuple<typename ValidationType::ReturnType>::Type, typename UnwrappedUnsafeArguments<typename MessageType::ReplyArguments>::Type>);
 
     using CompletionHandlerType = std::conditional_t<ValidationType::returnsVoid, typename ValidationType::CompletionHandlerType, typename MessageType::Reply>;
 
     logMessage(connection, MessageType::name(), object, *arguments);
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
         [replyID = *replyID, connection = protect(connection)] (auto&&... args) mutable {
-            connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
+            connection->template sendAsyncReply<MessageType>(replyID, unwrapUnsafeArgument(std::forward<decltype(args)>(args))...);
         }, MessageType::callbackThread));
     if constexpr (ValidationType::returnsVoid) {
         if constexpr (ValidationType::expectsConnectionArgument) {
@@ -594,19 +594,19 @@ template<typename MessageType, typename T, typename U, typename MF>
 void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void(UniqueRef<Encoder>&&)>&& replyHandler, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename UnwrappedUnsafeArguments<typename MessageType::Arguments>::Type>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
     if (!arguments) [[unlikely]]
         return;
 
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename UnwrappedUnsafeArguments<typename MessageType::ReplyArguments>::Type>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     CompletionHandlerType completionHandler {
         [destinationID = decoder.destinationID(), replyHandler = WTF::move(replyHandler), object = protect(*object)] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), destinationID);
-            (encoder.get() << ... << std::forward<decltype(args)>(args));
+            (encoder.get() << ... << unwrapUnsafeArgument(std::forward<decltype(args)>(args)));
             replyHandler(WTF::move(encoder));
         }, MessageType::callbackThread };
 

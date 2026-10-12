@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArrayReferenceTuple.h"
+#include "UnsafeArgument.h"
 
 namespace IPC {
 
@@ -76,6 +77,11 @@ public:
 
 private:
     ArrayReferenceTuple<Types...> m_tuple;
+};
+
+template<typename... Types> struct UnsafeArgumentTraits<UnsafeArrayReferenceTuple<Types...>> {
+    using DeclaredType = ArrayReferenceTuple<Types...>;
+    static DeclaredType unwrap(const UnsafeArrayReferenceTuple<Types...>& value) { return value.tuple(); }
 };
 
 }

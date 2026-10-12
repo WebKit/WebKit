@@ -273,6 +273,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSync>(globalObject, decoder);
     case MessageName::TestWithStream_CallWithIdentifier:
         return jsValueForDecodedMessage<MessageName::TestWithStream_CallWithIdentifier>(globalObject, decoder);
+    case MessageName::TestWithStream_SendUnsafeSpans:
+        return jsValueForDecodedMessage<MessageName::TestWithStream_SendUnsafeSpans>(globalObject, decoder);
+    case MessageName::TestWithStream_ReceiveUnsafeSpan:
+        return jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveUnsafeSpan>(globalObject, decoder);
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_SendMachSendRight:
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(globalObject, decoder);
@@ -448,6 +452,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSync>(globalObject, decoder);
     case MessageName::TestWithStream_CallWithIdentifier:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_CallWithIdentifier>(globalObject, decoder);
+    case MessageName::TestWithStream_ReceiveUnsafeSpan:
+        return jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveUnsafeSpan>(globalObject, decoder);
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_ReceiveMachSendRight:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveMachSendRight>(globalObject, decoder);
@@ -1078,6 +1084,15 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithStream_CallWithIdentifier:
         return Vector<ArgumentDescription> { };
+    case MessageName::TestWithStream_SendUnsafeSpans:
+        return Vector<ArgumentDescription> {
+            { "bytes"_s, "IPC::UnsafeSpan<uint8_t>"_s },
+            { "values"_s, "IPC::UnsafeSpan<float, 4>"_s },
+            { "pairs"_s, "IPC::UnsafeArrayReferenceTuple<int32_t, float>"_s },
+            { "optionalValues"_s, "std::optional<IPC::UnsafeSpan<float>>"_s },
+        };
+    case MessageName::TestWithStream_ReceiveUnsafeSpan:
+        return Vector<ArgumentDescription> { };
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_SendMachSendRight:
         return Vector<ArgumentDescription> {
@@ -1382,6 +1397,10 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
         };
     case MessageName::TestWithStream_CallWithIdentifier:
         return Vector<ArgumentDescription> { };
+    case MessageName::TestWithStream_ReceiveUnsafeSpan:
+        return Vector<ArgumentDescription> {
+            { "values"_s, "IPC::UnsafeSpan<int32_t>"_s },
+        };
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_ReceiveMachSendRight:
         return Vector<ArgumentDescription> {

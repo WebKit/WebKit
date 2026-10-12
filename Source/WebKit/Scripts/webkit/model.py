@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import itertools
+import re
 
 from collections import Counter, defaultdict
 from .opaque_ipc_types import is_opaque_type, opaque_ipc_types
@@ -34,6 +35,7 @@ ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE = "AllowedWhenWaitingForSyncReply"
 ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE = "AllowedWhenWaitingForSyncReplyDuringUnboundedIPC"
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
+UNSAFE_SPAN_ATTRIBUTE = 'UnsafeSpan'
 
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, wants_send_cancel_reply, swift_receiver, swift_receiver_build_enabled_by, receiver_name):
@@ -73,13 +75,13 @@ class MessageReceiver(object):
         for message in self.messages:
             for parameter in message.parameters:
                 # An opaque type stays opaque inside IPC::Untrusted<>, so look through the wrapper.
-                parameter_type = unwrap_if_untrusted(parameter.type)
+                parameter_type = unwrap_if_untrusted(parameter.declared_type)
                 if is_opaque_type(parameter_type):
                     if not opaque_ipc_types.message_param_tracked(self.name, message.name, parameter.name, parameter_type):
                         raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] MessageParam {self.name}.{message.name} {parameter.name} {parameter_type}")
             if message.reply_parameters is not None:
                 for parameter in message.reply_parameters:
-                    parameter_type = unwrap_if_untrusted(parameter.type)
+                    parameter_type = unwrap_if_untrusted(parameter.declared_type)
                     if is_opaque_type(parameter_type):
                         if not opaque_ipc_types.message_param_reply_tracked(self.name, message.name, parameter.name, parameter_type):
                             raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] MessageParamReply {self.name}.{message.name} {parameter.name} {parameter_type}")
@@ -119,12 +121,30 @@ class Message(object):
         return attribute in self.attributes
 
 
+def unsafe_span_type(type):
+    match = re.fullmatch(r'std::span<const (.+?)(, (\d+))?>', type)
+    if match:
+        element_type, _, extent = match.groups()
+        return 'IPC::UnsafeSpan<%s%s>' % (element_type, ', ' + extent if extent else '')
+    match = re.fullmatch(r'std::optional<(std::span<const .+>)>', type)
+    if match:
+        return 'std::optional<%s>' % unsafe_span_type(match.group(1))
+    match = re.fullmatch(r'IPC::ArrayReferenceTuple<(.+)>', type)
+    if match:
+        return 'IPC::UnsafeArrayReferenceTuple<%s>' % match.group(1)
+    raise Exception("ERROR: '%s' attribute found on type '%s', which is not a std::span<const T>, std::optional<std::span<const T>> or IPC::ArrayReferenceTuple" % (UNSAFE_SPAN_ATTRIBUTE, type))
+
+
 class Parameter(object):
     def __init__(self, kind, type, name, attributes=None, condition=None):
         self.kind = kind
-        self.type = type
-        self.name = name
         self.attributes = frozenset(attributes or [])
+        # The type as written in the .messages.in file, used for type-string checks such as opaque
+        # IPC type tracking.
+        self.declared_type = type
+        # The C++ type used in generated code.
+        self.type = unsafe_span_type(type) if UNSAFE_SPAN_ATTRIBUTE in self.attributes else type
+        self.name = name
         self.condition = condition
 
     def has_attribute(self, attribute):

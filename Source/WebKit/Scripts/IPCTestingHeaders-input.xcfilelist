@@ -65,6 +65,7 @@ $(SRCROOT)/Platform/IPC/SyncRequestID.h
 $(SRCROOT)/Platform/IPC/ThreadSafeObjectHeap.h
 $(SRCROOT)/Platform/IPC/Timeout.h
 $(SRCROOT)/Platform/IPC/TransferString.h
+$(SRCROOT)/Platform/IPC/UnsafeArgument.h
 $(SRCROOT)/Platform/IPC/UnsafeArrayReferenceTuple.h
 $(SRCROOT)/Platform/IPC/UnsafeSpan.h
 $(SRCROOT)/Shared/Cocoa/WKKeyedCoder.h
