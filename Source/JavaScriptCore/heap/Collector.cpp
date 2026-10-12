@@ -25,7 +25,6 @@
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
 #include "CollectorInlines.h"
-#include "HeapAnalyzer.h"
 #include "HeapHelperPool.h"
 #include "HeapInlines.h"
 #include "HeapVerifier.h"
@@ -449,14 +448,18 @@ void Collector::beginCollectionInEachHeap(CollectionScope scope, MonotonicTime s
 void Collector::setUpVisitors(CollectionScope scope)
 {
     HeapVersion markingVersion = heap().objectSpace().markingVersion();
-    HeapAnalyzer* heapAnalyzer = heap().vm().activeHeapAnalyzer();
+    bool isAnalyzingHeap = false;
+    forEachHeap([&](Heap& heap) {
+        if (heap.vm().isAnalyzingHeap())
+            isAnalyzingHeap = true;
+    });
     forEachSlotVisitor(
         [&](SlotVisitor& visitor) {
-            visitor.didStartMarking(scope, markingVersion, heapAnalyzer);
+            visitor.didStartMarking(scope, markingVersion, isAnalyzingHeap);
         });
     if (Options::verifyGC()) [[unlikely]] {
         m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*this);
-        m_verifierSlotVisitor->didStartMarking(scope, heapAnalyzer);
+        m_verifierSlotVisitor->didStartMarking(scope, isAnalyzingHeap);
     }
 }
 

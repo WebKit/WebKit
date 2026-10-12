@@ -129,7 +129,7 @@ public:
     bool isMarked(MarkedBlock&, HeapCell*) const final;
     bool isMarked(PreciseAllocation&, HeapCell*) const final;
 
-    void NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, HeapAnalyzer*);
+    void NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, bool isAnalyzingHeap);
     void NODELETE reset();
     void clearMarkStacks();
 
