@@ -46,6 +46,8 @@ public:
     Vector<AutoClampPoint> autoClampPoints() const;
     void setAutoClampPoint(const AutoClampPoint&);
     bool fitsAutoClampBlockSizeLimit() const;
+    bool hasConstrainedTextWrapContent() const;
+    void setIsStableTextWrap(bool);
     void setMaximumLines(size_t);
     void setClampAfterBox(const RenderBox&);
     void resetLineClamp();

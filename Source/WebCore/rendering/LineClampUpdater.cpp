@@ -77,7 +77,7 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     if (isAutoLineClampRoot()) {
         // Until layout finds the auto clamp point (see autoClampPoint), content is laid out as before the clamp point of a line-clamp container.
         m_isLineClampRoot = true;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), true, { } });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), true, { }, true });
         return;
     }
 
@@ -90,7 +90,7 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             return;
         }
         auto effectiveShouldDiscard = m_previousLineClamp->shouldDiscardOverflow  || m_blockContainer->style().overflowContinue() == OverflowContinue::Discard;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard, { } });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard, { }, m_previousLineClamp->isStableTextWrap });
         return;
     }
 }
@@ -121,7 +121,8 @@ LineClampUpdater::~LineClampUpdater()
     size_t lineCount = m_isLineClampRoot ? 0 : m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineClamp->maximumLines);
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
         lineCount = blockFlow->lineCount();
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_previousLineClamp->clampAfterBox });
+    auto hasConstrainedTextWrapContent = m_previousLineClamp->hasConstrainedTextWrapContent || lineClamp->hasConstrainedTextWrapContent;
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap, hasConstrainedTextWrapContent });
 }
 
 bool LineClampUpdater::isAutoLineClampRoot() const
@@ -259,6 +260,22 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
     return clampPoints;
 }
 
+bool LineClampUpdater::hasConstrainedTextWrapContent() const
+{
+    auto lineClamp = m_blockContainer->view().frameView().layoutContext().layoutState()->lineClamp();
+    return lineClamp && lineClamp->hasConstrainedTextWrapContent;
+}
+
+void LineClampUpdater::setIsStableTextWrap(bool isStableTextWrap)
+{
+    auto* layoutState = m_blockContainer->view().frameView().layoutContext().layoutState();
+    if (auto lineClamp = layoutState->lineClamp()) {
+        lineClamp->isStableTextWrap = isStableTextWrap;
+        lineClamp->hasConstrainedTextWrapContent = false;
+        layoutState->setLineClamp(lineClamp);
+    }
+}
+
 void LineClampUpdater::setAutoClampPoint(const AutoClampPoint& clampPoint)
 {
     WTF::switchOn(clampPoint, [&](size_t maximumLines) {
@@ -373,5 +390,6 @@ void LineClampUpdater::setIsForcedHidden(RenderElement& renderer, bool isHidden)
         return;
     setIsForceHiddenByLineClamp(renderer, renderer, isHidden);
 }
+
 
 } // namespace WebCore

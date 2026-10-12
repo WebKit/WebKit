@@ -954,7 +954,15 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
             } while (!autoClampPoints.isEmpty() && !lineClampUpdater.fitsAutoClampBlockSizeLimit());
             return true;
         };
-        if (!clampAtAutoClampPointIfNeeded() && lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
+        auto didClamp = clampAtAutoClampPointIfNeeded();
+        if (!didClamp && lineClampUpdater.isAutoLineClampRoot() && lineClampUpdater.hasConstrainedTextWrapContent()) {
+            // Nothing got truncated, but the content laid out as if 'text-wrap-style' were 'stable' "must be rebalanced", and
+            // "if this rebalancing would cause the logical height of the content to grow, the cutoff point must be reevaluated".
+            // https://drafts.csswg.org/css-overflow-4/#line-clamp
+            lineClampUpdater.setIsStableTextWrap(false);
+            relayoutContent();
+            clampAtAutoClampPointIfNeeded();
+        } else if (!didClamp && lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
             lineClampUpdater.resetLineClamp();
             relayoutContent();
         }
