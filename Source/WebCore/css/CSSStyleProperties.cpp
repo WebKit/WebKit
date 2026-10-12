@@ -549,17 +549,14 @@ Ref<MutableStyleProperties> PropertySetCSSStyleProperties::copyProperties() cons
 // MARK: - StyleRuleCSSStyleProperties
 
 StyleRuleCSSStyleProperties::StyleRuleCSSStyleProperties(MutableStyleProperties& propertySet, CSSRule& parentRule)
-    : PropertySetCSSStyleProperties(propertySet)
+    : StyleRuleCSSStylePropertiesOwner(propertySet)
+    , PropertySetCSSStyleProperties(propertySet)
     , m_parentRuleType(parentRule.styleRuleType())
     , m_parentRule(&parentRule)
 {
-    m_propertySet->ref();
 }
 
-StyleRuleCSSStyleProperties::~StyleRuleCSSStyleProperties()
-{
-    m_propertySet->deref();
-}
+StyleRuleCSSStyleProperties::~StyleRuleCSSStyleProperties() = default;
 
 bool StyleRuleCSSStyleProperties::willMutate()
 {
@@ -605,9 +602,9 @@ OptionalOrReference<CSSParserContext> StyleRuleCSSStyleProperties::cssParserCont
 
 void StyleRuleCSSStyleProperties::reattach(MutableStyleProperties& propertySet)
 {
-    m_propertySet->deref();
+    // Update m_propertySet first so that it no longer points to the old property set when it is released.
     m_propertySet = &propertySet;
-    m_propertySet->ref();
+    setOwnedPropertySet(propertySet);
 }
 
 // MARK: - InlineCSSStyleProperties
@@ -648,18 +645,23 @@ CSSStyleSheet* InlineCSSStyleProperties::parentStyleSheet() const
     return nullptr;
 }
 
+static OptionalOrReference<CSSParserContext> cssParserContextWithMode(const Document& document, CSSParserMode mode)
+{
+    auto& documentContext = document.cssParserContext();
+    if (documentContext.mode == mode)
+        return documentContext;
+
+    CSSParserContext context(documentContext);
+    context.mode = mode;
+    return context;
+}
+
 OptionalOrReference<CSSParserContext> InlineCSSStyleProperties::cssParserContext() const
 {
     if (!m_parentElement)
         return PropertySetCSSStyleProperties::cssParserContext();
 
-    auto& documentContext = protect(m_parentElement)->document().cssParserContext();
-    if (documentContext.mode == m_propertySet->cssParserMode())
-        return documentContext;
-
-    CSSParserContext context(documentContext);
-    context.mode = m_propertySet->cssParserMode();
-    return context;
+    return cssParserContextWithMode(protect(protect(m_parentElement)->document()), m_propertySet->cssParserMode());
 }
 
 }

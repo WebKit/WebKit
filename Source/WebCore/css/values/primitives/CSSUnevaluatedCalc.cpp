@@ -35,6 +35,7 @@
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcValue.h"
 #include "CSSNoConversionDataRequiredToken.h"
+#include "CSSPrimitiveData.h"
 #include "CSSPropertyParserOptions.h"
 #include "CSSSerializationContext.h"
 #include "StyleBuilderState.h"
@@ -115,6 +116,11 @@ void unevaluatedCalcRef(CSSCalc::Value* calc)
 void unevaluatedCalcDeref(CSSCalc::Value* calc)
 {
     calc->deref();
+}
+
+UnevaluatedCalcBase PrimitiveDataPayload::unevaluatedCalc() const
+{
+    return UnevaluatedCalcBase { *calc };
 }
 
 UnevaluatedCalcBase::UnevaluatedCalcBase(CSSCalc::Value& value)

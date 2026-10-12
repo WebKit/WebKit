@@ -284,10 +284,11 @@ private:
     };
     void createRareData();
 
+    // FIXME: The active member depends on m_hasRareData and the match type, and is ref'd and deref'd manually. Store it in a smart pointer instead.
     union DataUnion {
-        AtomStringImpl* value { nullptr };
-        QualifiedName::QualifiedNameImpl* tagQName;
-        RareData* rareData;
+        SUPPRESS_UNCOUNTED_MEMBER AtomStringImpl* value { nullptr };
+        SUPPRESS_UNCOUNTED_MEMBER QualifiedName::QualifiedNameImpl* tagQName;
+        SUPPRESS_UNCOUNTED_MEMBER RareData* rareData;
     } m_data;
 };
 

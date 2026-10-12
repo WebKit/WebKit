@@ -74,7 +74,7 @@ public:
     UnevaluatedCalcBase(Category, Range, const Style::UnevaluatedCalculationBase&);
 
     UnevaluatedCalcBase(const UnevaluatedCalcBase&);
-    UnevaluatedCalcBase(UnevaluatedCalcBase&&);
+    WEBCORE_EXPORT UnevaluatedCalcBase(UnevaluatedCalcBase&&);
     UnevaluatedCalcBase& operator=(const UnevaluatedCalcBase&);
     UnevaluatedCalcBase& operator=(UnevaluatedCalcBase&&);
 

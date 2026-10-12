@@ -1,5 +1,6 @@
 [ macOS ] accessibility/AXObjectCache.cpp
 [ macOS ] accessibility/AccessibilityObject.cpp
+[ macOS ] css/MutableStyleProperties.cpp
 dom/Document.cpp
 dom/Position.cpp
 [ macOS ] dom/PositionIterator.cpp

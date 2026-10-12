@@ -165,7 +165,7 @@ public:
     {
         if (!(m_metadata == other.m_metadata))
             return false;
-        return m_value->equals(other.m_value);
+        return protect(m_value)->equals(other.m_value);
     }
 
 private:

@@ -1,13 +1,3 @@
-css/CSSPrimitiveValue.h
-css/CSSRule.h
-css/CSSRuleList.h
-css/CSSSelector.h
-css/CSSStyleProperties.h
-css/CSSValueList.h
-css/SelectorChecker.h
-css/SelectorFilter.h
-css/StyleProperties.h
-css/values/primitives/CSSPrimitiveData.h
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
@@ -30,7 +20,7 @@ style/StyleRelations.h
 style/StyleResolver.cpp
 style/StyleScope.h
 style/StyleScopeRuleSets.h
-[ macOS ] style/StyleTreeResolver.h
+style/StyleTreeResolver.h
 style/Styleable.h
 xml/XPathGrammar.cpp
 xml/XPathGrammar.h

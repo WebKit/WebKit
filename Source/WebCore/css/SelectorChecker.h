@@ -108,7 +108,7 @@ public:
         std::optional<StyleScrollbarState> scrollbarState;
         Vector<AtomString> classList;
         RefPtr<const ContainerNode> scope;
-        const Element* hasScope { nullptr };
+        CheckedPtr<const Element> hasScope;
         bool matchesAllHasScopes { false };
         bool isEvaluatingScopingRoot { false };
         Style::ScopeOrdinal styleScopeOrdinal { Style::ScopeOrdinal::Element };

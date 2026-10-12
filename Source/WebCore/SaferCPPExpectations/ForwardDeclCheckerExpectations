@@ -1,4 +1,3 @@
-css/values/primitives/CSSPrimitiveData.h
 dom/ElementInlinesLight.h
 layout/formattingContexts/inline/InlineFormattingContext.h
 style/StyleBuilderState.h

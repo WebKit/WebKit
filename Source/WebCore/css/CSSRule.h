@@ -77,9 +77,10 @@ protected:
 private:
     mutable unsigned char m_hasCachedSelectorText : 1;
     unsigned char m_parentIsRule : 1;
+    // FIXME: These are raw back pointers to the parent, selected by m_parentIsRule. Use WeakPtr instead.
     union {
-        CSSRule* m_parentRule;
-        CSSStyleSheet* m_parentStyleSheet;
+        SUPPRESS_UNCOUNTED_MEMBER CSSRule* m_parentRule;
+        SUPPRESS_UNCOUNTED_MEMBER CSSStyleSheet* m_parentStyleSheet;
     };
 };
 

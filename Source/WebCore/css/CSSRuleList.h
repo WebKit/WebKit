@@ -78,15 +78,15 @@ public:
     {
     }
     
-    void ref() const final { m_rule.ref(); }
-    void deref() const final { m_rule.deref(); }
+    void ref() const final { m_rule->ref(); }
+    void deref() const final { m_rule->deref(); }
 
 private:
     unsigned length() const final { return protect(m_rule)->length(); }
     CSSRule* item(unsigned index) const final { return protect(m_rule)->item(index); }
-    CSSStyleSheet* styleSheet() const final { return m_rule.parentStyleSheet(); }
+    CSSStyleSheet* styleSheet() const final { return m_rule->parentStyleSheet(); }
     
-    Rule& m_rule;
+    WeakRef<Rule> m_rule;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<class Rule>, LiveCSSRuleList<Rule>);

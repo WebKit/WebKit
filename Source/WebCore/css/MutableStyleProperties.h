@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/StyleProperties.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -34,8 +35,9 @@ class StyledElement;
 struct CSSParserContext;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
-class MutableStyleProperties final : public StyleProperties {
+class MutableStyleProperties final : public StyleProperties, public CanMakeCheckedPtr<MutableStyleProperties> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MutableStyleProperties, MutableStyleProperties);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MutableStyleProperties);
 public:
     inline void deref() const;
 

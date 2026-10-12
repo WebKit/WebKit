@@ -71,9 +71,9 @@ private:
     static Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes&);
 
     struct ParentStackFrame {
-        ParentStackFrame() : element(0) { }
+        ParentStackFrame() = default;
         ParentStackFrame(Element* element) : element(element) { }
-        Element* element;
+        const CheckedPtr<Element> element;
         Vector<unsigned, 4> identifierHashes;
     };
     Vector<ParentStackFrame, 20> m_parentStack;

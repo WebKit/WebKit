@@ -71,7 +71,8 @@ public:
 
     private:
         const StylePropertyMetadata& m_metadata;
-        const CSSValue* m_value;
+        // PropertyReference is a short-lived view and the StyleProperties outlives it.
+        SUPPRESS_UNCOUNTED_MEMBER const CSSValue* m_value;
     };
 
     template<typename T>
@@ -92,7 +93,8 @@ public:
         bool operator==(std::nullptr_t) const { return index >= properties.propertyCount(); }
 
     private:
-        const T& properties;
+        // The iterator is a short-lived view and the StyleProperties outlives it.
+        SUPPRESS_UNCOUNTED_MEMBER const T& properties;
         unsigned index { 0 };
     };
 

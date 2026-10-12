@@ -85,14 +85,12 @@ StyleChangedAnimatablePropertiesGenerated.cpp
 [ macOS ] bindings/js/ScriptController.cpp
 [ macOS ] bindings/js/WindowProxy.cpp
 [ macOS ] css/CSSCounterStyleDescriptors.cpp
-css/CSSProperty.h
-css/CSSStyleProperties.cpp
+[ macOS ] css/CSSStyleProperties.cpp
 [ macOS ] css/CSSValue.cpp
 [ macOS ] css/FontFace.cpp
 [ macOS ] css/MediaList.cpp
 [ macOS ] css/MediaQueryMatcher.cpp
 [ macOS ] css/PropertySetCSSDescriptors.cpp
-css/SelectorCheckerTestFunctions.h
 [ macOS ] css/ShorthandSerializer.cpp
 [ macOS ] css/StyleRule.cpp
 [ macOS ] css/parser/CSSParser.cpp
@@ -101,7 +99,6 @@ css/SelectorCheckerTestFunctions.h
 [ macOS ] css/typedom/ComputedStylePropertyMapReadOnly.cpp
 [ macOS ] css/typedom/DeclaredStylePropertyMap.cpp
 [ macOS ] css/typedom/InlineStylePropertyMap.cpp
-[ macOS ] css/values/primitives/CSSPrimitiveData.h
 [ macOS ] dom/AbortSignal.cpp
 [ macOS ] dom/ActiveDOMObject.cpp
 dom/Attr.cpp

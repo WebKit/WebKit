@@ -96,7 +96,7 @@ protected:
 
     virtual OptionalOrReference<CSSParserContext> cssParserContext() const;
 
-    MutableStyleProperties* m_propertySet;
+    CheckedPtr<MutableStyleProperties> m_propertySet;
     HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
 
 private:
@@ -126,7 +126,22 @@ private:
     virtual void didMutate(MutationType) { }
 };
 
-class StyleRuleCSSStyleProperties final : public PropertySetCSSStyleProperties, public RefCounted<StyleRuleCSSStyleProperties> {
+// Owns the property set of a StyleRuleCSSStyleProperties. It is inherited before PropertySetCSSStyleProperties
+// so that it is destroyed after PropertySetCSSStyleProperties::m_propertySet.
+class StyleRuleCSSStylePropertiesOwner {
+protected:
+    explicit StyleRuleCSSStylePropertiesOwner(MutableStyleProperties& propertySet)
+        : m_ownedPropertySet(propertySet)
+    {
+    }
+
+    void setOwnedPropertySet(MutableStyleProperties& propertySet) { m_ownedPropertySet = propertySet; }
+
+private:
+    Ref<MutableStyleProperties> m_ownedPropertySet;
+};
+
+class StyleRuleCSSStyleProperties final : private StyleRuleCSSStylePropertiesOwner, public PropertySetCSSStyleProperties, public RefCounted<StyleRuleCSSStyleProperties> {
     WTF_MAKE_TZONE_ALLOCATED(StyleRuleCSSStyleProperties);
 public:
     void ref() const final { RefCounted::ref(); }

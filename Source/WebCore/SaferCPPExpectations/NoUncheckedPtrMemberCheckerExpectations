@@ -1,6 +1,3 @@
-css/CSSToLengthConversionData.h
-css/SelectorChecker.h
-css/SelectorFilter.h
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h

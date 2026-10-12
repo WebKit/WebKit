@@ -64,7 +64,7 @@ template<TupleLike CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
         } else {
             DeprecatedCSSOMValueListBuilder list;
 
-            auto caller = WTF::makeVisitor(
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto caller = WTF::makeVisitor(
                 [&]<OptionalLike T>(const T& element) {
                     if (!element)
                         return;

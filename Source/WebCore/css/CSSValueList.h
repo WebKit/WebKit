@@ -52,7 +52,8 @@ public:
         }
         constexpr bool operator==(const iterator& other) const { return index == other.index; }
 
-        const CSSValueContainingVector* vector { nullptr };
+        // The iterator is a short-lived view and the vector outlives it.
+        SUPPRESS_UNCOUNTED_MEMBER const CSSValueContainingVector* vector { nullptr };
         unsigned index { 0 };
     };
     using const_iterator = iterator;

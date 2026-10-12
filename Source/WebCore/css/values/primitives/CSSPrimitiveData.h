@@ -217,19 +217,22 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveDataIndex {
 
 // MARK: - Payload
 
+// FIXME: calc is ref'd and deref'd manually by PrimitiveData based on its index. Store it in a smart pointer instead.
 union PrimitiveDataPayload {
     double number;
-    CSSCalc::Value* calc;
+    SUPPRESS_UNCOUNTED_MEMBER CSSCalc::Value* calc;
 
     PrimitiveDataPayload(double number)
         : number { number }
     {
     }
 
-    PrimitiveDataPayload(CSSCalc::Value* calc)
-        : calc { calc }
+    PrimitiveDataPayload(UnevaluatedCalcBase&& unevaluatedCalc)
+        : calc { &unevaluatedCalc.leakRef() }
     {
     }
+
+    WEBCORE_EXPORT UnevaluatedCalcBase unevaluatedCalc() const;
 };
 
 // MARK: - PrimitiveData
@@ -251,7 +254,7 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveData {
     }
 
     PrimitiveData(Calc calc)
-        : payload { &calc.leakRef() }
+        : payload { WTF::move(calc) }
         , index { calc }
     {
     }
@@ -452,7 +455,7 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveData {
     Calc asCalc() const
     {
         ASSERT(isCalc());
-        return Calc { *payload.calc };
+        return Calc { payload.unevaluatedCalc() };
     }
 
     constexpr bool isRaw() const { return index.isRaw(); }

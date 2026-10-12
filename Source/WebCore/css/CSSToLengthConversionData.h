@@ -54,10 +54,10 @@ public:
 
     WEBCORE_EXPORT ~CSSToLengthConversionData();
 
-    const Style::ComputedStyle& style() const { return m_style; }
-    const Style::ComputedStyle* rootStyle() const { return m_rootStyle; }
-    const Style::ComputedStyle* parentStyle() const { return m_parentStyle; }
-    const RenderView* renderView() const { return m_renderView; }
+    const Style::ComputedStyle& style() const { return *m_style; }
+    const Style::ComputedStyle* rootStyle() const { return m_rootStyle.get(); }
+    const Style::ComputedStyle* parentStyle() const { return m_parentStyle.get(); }
+    const RenderView* renderView() const { return m_renderView.get(); }
     const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
     CSSPropertyID property() const { return m_property; }
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
@@ -65,13 +65,13 @@ public:
 private:
     friend class Style::BuilderState;
 
-    const Style::ComputedStyle& m_style;
-    const Style::ComputedStyle* m_rootStyle { nullptr };
-    const Style::ComputedStyle* m_parentStyle { nullptr };
-    const RenderView* m_renderView { nullptr };
-    RefPtr<const Element> m_elementForContainerUnitResolution;
+    const CheckedPtr<const Style::ComputedStyle> m_style;
+    const CheckedPtr<const Style::ComputedStyle> m_rootStyle;
+    const CheckedPtr<const Style::ComputedStyle> m_parentStyle;
+    const CheckedPtr<const RenderView> m_renderView;
+    const RefPtr<const Element> m_elementForContainerUnitResolution;
     CSSPropertyID m_property { CSSPropertyID::Invalid };
-    CheckedPtr<Style::BuilderState> m_styleBuilderState;
+    const CheckedPtr<Style::BuilderState> m_styleBuilderState;
 };
 
 } // namespace WebCore

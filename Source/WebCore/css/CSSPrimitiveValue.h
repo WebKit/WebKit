@@ -121,9 +121,10 @@ private:
 
     const CSSCalc::Value* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
 
+    // FIXME: calc is ref'd and deref'd manually based on the primitive type. Store it in a smart pointer instead.
     union {
         double number;
-        const CSSCalc::Value* calc;
+        SUPPRESS_UNCOUNTED_MEMBER const CSSCalc::Value* calc;
     } m_value;
 };
 

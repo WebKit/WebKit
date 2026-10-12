@@ -50,11 +50,10 @@ StyleExtractorGenerated.cpp
 [ macOS ] bindings/js/JSCustomElementInterface.cpp
 [ macOS ] bindings/js/JSDOMGuardedObject.cpp
 [ macOS ] bindings/js/ScriptController.cpp
-css/CSSStyleProperties.cpp
+[ macOS ] css/CSSStyleProperties.cpp
 [ macOS ] css/FontFace.cpp
 [ macOS ] css/MediaQueryMatcher.cpp
 [ macOS ] css/PropertySetCSSDescriptors.cpp
-css/SelectorCheckerTestFunctions.h
 [ macOS ] css/parser/CSSParser.cpp
 [ macOS ] css/parser/SizesAttributeParser.cpp
 [ macOS ] css/query/ContainerQueryFeatures.cpp
