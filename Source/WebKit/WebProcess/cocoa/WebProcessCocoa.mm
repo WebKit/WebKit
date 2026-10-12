@@ -73,6 +73,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
+#import <WebCore/FocusController.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
 #import <WebCore/FontCascade.h>
@@ -81,6 +82,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/Image.h>
 #import <WebCore/ImageDecoderCG.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
@@ -234,6 +236,13 @@ id WebProcess::accessibilityFocusedUIElement()
             RefPtr page = WebProcess::singleton().focusedWebPage();
             if (!page || !page->accessibilityRemoteObject())
                 return nil;
+#if PLATFORM(MAC)
+            RefPtr corePage = page->corePage();
+            if (RefPtr focusedFrame = corePage ? corePage->focusController().localFocusedFrame() : nullptr) {
+                Ref rootFrame = focusedFrame->rootFrame();
+                return [[protect(page->accessibilityRemoteObjectForFrame(*focusedFrame)) accessibilityRootObjectWrapper:rootFrame.ptr()] accessibilityFocusedUIElement];
+            }
+#endif
             return [protect(page->accessibilityRemoteObject()) accessibilityFocusedUIElement];
         }, Accessibility::InteractiveTimeout);
 

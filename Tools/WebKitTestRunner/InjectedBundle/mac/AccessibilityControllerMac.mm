@@ -36,12 +36,14 @@
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
 #import "JSBasics.h"
+#import "JSWrapper.h"
 #import "WebCoreTestSupport.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundle.h>
 #import <WebKit/WKBundleFramePrivate.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePagePrivate.h>
+#import <WebKit/WKBundlePrivate.h>
 
 #import <pal/spi/mac/HIServicesSPI.h>
 
@@ -77,6 +79,9 @@ bool AccessibilityController::addNotificationListener(JSContextRef context, JSVa
     if (!functionCallback)
         return false;
 
+    if (m_enableClientAccessibilityMode)
+        return addClientNotificationListener(context, functionCallback);
+
     if (m_globalNotificationHandler)
         return false;
 
@@ -93,6 +98,9 @@ bool AccessibilityController::addNotificationListener(JSContextRef context, JSVa
 
 bool AccessibilityController::removeNotificationListener()
 {
+    if (m_clientNotificationCallback)
+        return removeClientNotificationListener();
+
     ASSERT(m_globalNotificationHandler);
 
     [m_globalNotificationHandler.get() stopObserving];
@@ -101,9 +109,56 @@ bool AccessibilityController::removeNotificationListener()
     return true;
 }
 
+bool AccessibilityController::addClientNotificationListener(JSContextRef context, JSValueRef functionCallback)
+{
+    if (m_clientNotificationCallback)
+        return false;
+
+    // The UI process observes the web content processes with AXObserver, the way an assistive
+    // technology would, and forwards each notification back here as "AXClientNotification".
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    WKTypeRef returnData = nullptr;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), toWK("AXAddNotificationListener").get(), nullptr, &returnData);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    WKRetainPtr result = adoptWK(returnData);
+    if (!result || WKGetTypeID(result.get()) != WKBooleanGetTypeID() || !WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))) {
+        postSynchronousMessage("AXRemoveNotificationListener");
+        return false;
+    }
+
+    m_clientNotificationContext = JSContextGetGlobalContext(context);
+    m_clientNotificationCallback = functionCallback;
+    JSValueProtect(m_clientNotificationContext.get(), m_clientNotificationCallback);
+    return true;
+}
+
+bool AccessibilityController::removeClientNotificationListener()
+{
+    postSynchronousMessage("AXRemoveNotificationListener");
+
+    JSValueUnprotect(m_clientNotificationContext.get(), m_clientNotificationCallback);
+    m_clientNotificationCallback = nullptr;
+    m_clientNotificationContext = nullptr;
+    return true;
+}
+
+void AccessibilityController::clientNotificationReceived(uint64_t elementToken, JSStringRef notificationName)
+{
+    if (!m_clientNotificationCallback)
+        return;
+
+    // Match the arguments a global listener gets in non-client mode: element, notification name, user info.
+    auto context = m_clientNotificationContext.get();
+    JSValueRef arguments[3];
+    arguments[0] = toJS(context, AccessibilityUIElementClientMac::create(elementToken).ptr());
+    arguments[1] = JSValueMakeString(context, notificationName);
+    arguments[2] = JSValueMakeUndefined(context);
+    JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_clientNotificationCallback), 0, 3, arguments, 0);
+}
+
 void AccessibilityController::resetToConsistentState()
 {
-    if (m_globalNotificationHandler)
+    if (m_globalNotificationHandler || m_clientNotificationCallback)
         removeNotificationListener();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

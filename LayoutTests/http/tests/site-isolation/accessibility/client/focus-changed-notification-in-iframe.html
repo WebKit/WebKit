@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="before" type="text" aria-label="Before">
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-two-text-inputs.html"></iframe>
+<input id="after" type="text" aria-label="After">
+
+<script>
+var output = "Tests that a client observing the page receives AXFocusedUIElementChanged as keyboard focus moves\n";
+output += "into, within, and out of a cross-site iframe.\n\n";
+
+var focusedElements = [];
+function notificationCallback(element, notificationName) {
+    if (notificationName === "AXFocusedUIElementChanged")
+        focusedElements.push(element);
+}
+
+async function expectFocusNotificationFor(id) {
+    if (await waitFor(() => focusedElements.some((element) => element.domIdentifier === id)))
+        output += `PASS: Received AXFocusedUIElementChanged for #${id}\n`;
+    else
+        output += `FAIL: No AXFocusedUIElementChanged for #${id}, got [${focusedElements.map((element) => String(element.domIdentifier)).join(", ")}]\n`;
+    focusedElements = [];
+}
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+setTimeout(async function() {
+    // Walk into the iframe first, so its process is observed before focus moves into it.
+    await waitForElements([
+        (element) => element.domIdentifier === "after",
+        (element) => element.domIdentifier === "inner-second",
+    ]);
+
+    output += expect("accessibilityController.addNotificationListener(notificationCallback)", "true");
+
+    document.getElementById("before").focus();
+    await expectFocusNotificationFor("before");
+
+    // Into the iframe.
+    eventSender.keyDown("\t");
+    await expectFocusNotificationFor("inner-first");
+
+    // Within the iframe.
+    eventSender.keyDown("\t");
+    await expectFocusNotificationFor("inner-second");
+
+    // Out of the iframe.
+    eventSender.keyDown("\t");
+    await expectFocusNotificationFor("after");
+
+    // Back into the iframe, entering from the end.
+    eventSender.keyDown("\t", ["shiftKey"]);
+    await expectFocusNotificationFor("inner-second");
+
+    accessibilityController.removeNotificationListener();
+    debug(output);
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Tests that a client observing the page receives AXFocusedUIElementChanged as keyboard focus moves
+into, within, and out of a cross-site iframe.
+
+PASS: accessibilityController.addNotificationListener(notificationCallback) === true
+PASS: Received AXFocusedUIElementChanged for #before
+PASS: Received AXFocusedUIElementChanged for #inner-first
+PASS: Received AXFocusedUIElementChanged for #inner-second
+PASS: Received AXFocusedUIElementChanged for #after
+PASS: Received AXFocusedUIElementChanged for #inner-second
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

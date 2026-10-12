@@ -517,6 +517,7 @@ public:
 #if PLATFORM(MAC)
     // Client accessibility testing support
     void initializeWebProcessAccessibility();
+    void axNotificationReceived(CFTypeRef element, CFStringRef notification, CFDictionaryRef userInfo, pid_t observedPid);
 #endif
 
 #if !PLATFORM(COCOA)
@@ -644,6 +645,10 @@ private:
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsSize(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXSearchPredicate(WKDictionaryRef);
     void handleAXPerformAction(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXAddNotificationListener();
+    void handleAXRemoveNotificationListener();
+    bool observeAXApplicationForElement(CFTypeRef);
+    bool observeAXApplication(CFTypeRef);
 #endif
 
     // WKContextClient
@@ -961,6 +966,14 @@ private:
     // Client accessibility testing support
     std::atomic<uint64_t> m_nextAXElementToken { 1 };
     HashMap<uint64_t, RetainPtr<CFTypeRef>> m_axElementTokens;
+    // One AXObserver per observed web content process, keyed by pid, with the application element it
+    // observes. Non-empty only while a client-mode test has a notification listener installed.
+    struct AXApplicationObserver {
+        RetainPtr<CFTypeRef> observer;
+        RetainPtr<CFTypeRef> application;
+    };
+    HashMap<pid_t, AXApplicationObserver> m_axObservers;
+    bool m_isListeningForAXNotifications { false };
 #endif
 
 #if ENABLE(WPE_PLATFORM)
