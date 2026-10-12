@@ -28,6 +28,13 @@
 
 #if ENABLE(PROOF_OF_POSSESSION)
 
+#include "AbortSignal.h"
+#include "DocumentPage.h"
+#include "JSDOMPromiseDeferred.h"
+#include "MediationRequirement.h"
+#include "Page.h"
+#include "ProofOfPossessionCoordinator.h"
+#include "ProofOfPossessionRequest.h"
 #include "ProofOfPossessionResponse.h"
 #include <wtf/UUID.h>
 
@@ -50,6 +57,31 @@ ProofOfPossessionCredential::ProofOfPossessionCredential(ProofOfPossessionRespon
 }
 
 ProofOfPossessionCredential::~ProofOfPossessionCredential() = default;
+
+void ProofOfPossessionCredential::discoverFromExternalSource(const Document& document, ProofOfPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
+{
+    RefPtr page = document.page();
+    if (!page) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s });
+        return;
+    }
+    page->proofOfPossessionCoordinator().discoverFromExternalSource(document, WTF::move(request), mediation, WTF::move(signal), WTF::move(promise));
+}
+
+void ProofOfPossessionCredential::isAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    RefPtr page = document.page();
+    if (!page) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return;
+    }
+    page->proofOfPossessionCoordinator().isAvailable(document, WTF::move(promise));
+}
+
+void ProofOfPossessionCredential::isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    promise.resolve(false);
+}
 
 } // namespace WebCore
 

@@ -157,6 +157,8 @@
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
+#include "ProofOfPossessionCoordinator.h"
+#include "ProofOfPossessionCoordinatorClient.h"
 #include "Quirks.h"
 #include "RTCController.h"
 #include "Range.h"
@@ -474,6 +476,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorCoordinator(makeUniqueRefWithoutRefCountedCheck<AuthenticatorCoordinator>(*this, WTF::move(pageConfiguration.authenticatorCoordinatorClient)))
     , m_credentialRequestCoordinator(CredentialRequestCoordinator::create(WTF::move(pageConfiguration.credentialRequestCoordinatorClient), *this))
+#endif
+#if ENABLE(PROOF_OF_POSSESSION)
+    , m_proofOfPossessionCoordinator(makeUniqueRefWithoutRefCountedCheck<ProofOfPossessionCoordinator>(*this, WTF::move(pageConfiguration.proofOfPossessionCoordinatorClient)))
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
     , m_applicationManifest(pageConfiguration.applicationManifest)

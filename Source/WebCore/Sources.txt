@@ -389,6 +389,7 @@ Modules/pictureinpicture/DocumentPictureInPicture.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureEvent.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
+Modules/proofofpossession/ProofOfPossessionCoordinator.cpp
 Modules/proofofpossession/ProofOfPossessionCredential.cpp
 Modules/proofofpossession/ProofOfPossessionProviderInfo.cpp
 Modules/proofofpossession/ProofOfPossessionRequest.cpp

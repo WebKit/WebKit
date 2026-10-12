@@ -168,7 +168,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     const auto& options = createOptions.publicKey.value();
 
     // Step 2.
-    if (scopeAndCrossOriginParent(document).first != WebAuthn::Scope::SameOrigin) {
+    if (!document.isSameOriginWithAncestors()) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }

@@ -7601,6 +7601,8 @@
 		1EDD4EAC360A2C058339C9A8 /* ProofOfPossessionProviderData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D6204E043248DA5C91B85A3 /* ProofOfPossessionProviderData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86721D4F7D1D46A6B80B9F9A /* DebuggerSuspensionController.h in Headers */ = {isa = PBXBuildFile; fileRef = E1DEC3457E95468589B6727B /* DebuggerSuspensionController.h */; };
 		EFC21B040B76E5E705ECE268 /* ProofOfPossessionProviderInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3880493C91656A8729182D70 /* ProofOfPossessionProviderInfo.h */; };
+		68CE9AC93F8595E11D22A3A7 /* ProofOfPossessionCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5E23EE1515E7CBFCAF1C81 /* ProofOfPossessionCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B361F603AFEAC82C3843733 /* ProofOfPossessionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = F0112C63F1D28E3E5CB8AE34 /* ProofOfPossessionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A3A479BAB413F796EF38438 /* ProofOfPossessionCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = F6EF1185B9BFEAED5D815C1E /* ProofOfPossessionCredential.h */; };
 		A4C507AADDFB428EA96A5E75 /* FrameIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */; };
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
@@ -24318,6 +24320,9 @@
 		3D6204E043248DA5C91B85A3 /* ProofOfPossessionProviderData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionProviderData.h; sourceTree = "<group>"; };
 		E1DEC3457E95468589B6727B /* DebuggerSuspensionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerSuspensionController.h; sourceTree = "<group>"; };
 		2EA33ABA0CA84C378492C732 /* DebuggerSuspensionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerSuspensionController.cpp; sourceTree = "<group>"; };
+		9B5E23EE1515E7CBFCAF1C81 /* ProofOfPossessionCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionCoordinatorClient.h; sourceTree = "<group>"; };
+		F0112C63F1D28E3E5CB8AE34 /* ProofOfPossessionCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionCoordinator.h; sourceTree = "<group>"; };
+		84AD81E546C7B42E0F61A830 /* ProofOfPossessionCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionCoordinator.cpp; sourceTree = "<group>"; };
 		5730C2E5A2794FD7C14E0734 /* ProofOfPossessionCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionCredential.cpp; sourceTree = "<group>"; };
 		542FC0C1FBF0776D292FF8D6 /* ProofOfPossessionProviderInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionProviderInfo.cpp; sourceTree = "<group>"; };
 		3880493C91656A8729182D70 /* ProofOfPossessionProviderInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionProviderInfo.h; sourceTree = "<group>"; };
@@ -44452,6 +44457,9 @@
 		060ADCE725AA66DEC08F0842 /* proofofpossession */ = {
 			isa = PBXGroup;
 			children = (
+				84AD81E546C7B42E0F61A830 /* ProofOfPossessionCoordinator.cpp */,
+				F0112C63F1D28E3E5CB8AE34 /* ProofOfPossessionCoordinator.h */,
+				9B5E23EE1515E7CBFCAF1C81 /* ProofOfPossessionCoordinatorClient.h */,
 				5730C2E5A2794FD7C14E0734 /* ProofOfPossessionCredential.cpp */,
 				F6EF1185B9BFEAED5D815C1E /* ProofOfPossessionCredential.h */,
 				3D6204E043248DA5C91B85A3 /* ProofOfPossessionProviderData.h */,
@@ -48616,6 +48624,8 @@
 				1ACADD791880D91C00D8B71D /* ProgressTrackerClient.h in Headers */,
 				F47A633D1FF6FD500081B3CC /* PromisedAttachmentInfo.h in Headers */,
 				A578F4351DE00EEB003DFC6A /* PromiseRejectionEvent.h in Headers */,
+				7B361F603AFEAC82C3843733 /* ProofOfPossessionCoordinator.h in Headers */,
+				68CE9AC93F8595E11D22A3A7 /* ProofOfPossessionCoordinatorClient.h in Headers */,
 				4A3A479BAB413F796EF38438 /* ProofOfPossessionCredential.h in Headers */,
 				1EDD4EAC360A2C058339C9A8 /* ProofOfPossessionProviderData.h in Headers */,
 				EFC21B040B76E5E705ECE268 /* ProofOfPossessionProviderInfo.h in Headers */,

@@ -1274,6 +1274,9 @@ public:
     // https://html.spec.whatwg.org/multipage/interaction.html#fully-active-descendant-of-a-top-level-traversable-with-user-attention
     bool isFullyActiveAndHasUserAttention() const;
 
+    // https://w3c.github.io/webappsec-credential-management/#same-origin-with-its-ancestors
+    bool isSameOriginWithAncestors() const;
+
     // The full URL corresponding to the "site for cookies" in the Same-Site Cookies spec.,
     // <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00>. It is either
     // the URL of the top-level document or the null URL depending on whether the registrable

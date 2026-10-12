@@ -4221,6 +4221,17 @@ bool Document::isFullyActive() const
     return frame->isMainFrame() || frame->loader().client().isProvisionalFrame();
 }
 
+bool Document::isSameOriginWithAncestors() const
+{
+    Ref origin = securityOrigin();
+    for (Ref ancestor : ancestorFrames(frame())) {
+        RefPtr ancestorOrigin = ancestor->frameDocumentSecurityOrigin();
+        if (ancestorOrigin && !origin->isSameOriginAs(*ancestorOrigin))
+            return false;
+    }
+    return true;
+}
+
 bool Document::canEverRender() const
 {
     return isFullyActive() && !m_isNonRenderedPlaceholder;
