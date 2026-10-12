@@ -558,9 +558,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-paint-008.html [ Pass ]
 # Passsing since r274721.
 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.html [ Pass ]
 
-# The test is marked as Timeout for wk2. It has been flaky in GTK and WPE since added.
-crypto/subtle/ecdsa-import-compressed-spki-key-p384.html [ Skip ] # Timeout.
-
 # This test causes subsequent tests to crash with an assertion. Unskip when the referring bug is fixed.
 webkit.org/b/298476 gamepad/gamepad-visibility-1.html [ Skip ]
 

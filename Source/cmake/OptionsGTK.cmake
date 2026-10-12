@@ -64,7 +64,7 @@ WEBKIT_OPTION_DEPEND(USE_GBM USE_LIBDRM)
 
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
-WEBKIT_OPTION_DEFINE(USE_OPENSSL "Whether to use OpenSSL instead of libgcrypt as the crypto backend." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_OPENSSL "Whether to use OpenSSL instead of libgcrypt as the crypto backend." PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SPIEL "Whether to enable usage of LibSpiel for speech synthesis." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
