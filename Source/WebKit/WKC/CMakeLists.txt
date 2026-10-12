@@ -9,10 +9,11 @@ set(BMALLOC_DIR ${CMAKE_SOURCE_DIR}/../../bmalloc)
 
 get_filename_component(SOURCE_DIR "${CMAKE_SOURCE_DIR}/../.." ABSOLUTE)
 
-# Keep full WebCore opt-in until the whole common source list builds on Wii U.
-# In that bring-up mode Web Audio defaults on because this port has a WKC audio
-# destination backend; users can override WKC_ENABLE_WEB_AUDIO explicitly.
-option(WKC_ENABLE_FULL_WEBCORE "Compile the available common WebCore source list for Wii U porting" OFF)
+# The normal browser profile must include WebCore's DOM, HTML, CSS, loader and
+# rendering sources; without them WKC can build a platform library but cannot
+# display real webpages. Keep OFF available only for explicit bootstrap/diagnostic
+# builds while the full port is being brought up.
+option(WKC_ENABLE_FULL_WEBCORE "Compile the common WebCore sources required to render webpages on Wii U" ON)
 if (WKC_ENABLE_FULL_WEBCORE)
     set(_WKC_WEB_AUDIO_DEFAULT ON)
     set(_WKC_INDEXED_DATABASE_DEFAULT ON)
@@ -63,15 +64,11 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
-# Turn on WebRTC API source compilation only in the experimental full-WebCore
-# porting mode. This enables compilation coverage, but is not a claim that the
-# WebRTC backend is runtime-integrated yet.
-if (WKC_ENABLE_FULL_WEBCORE)
-    set(_WKC_WEBRTC_API_DEFAULT ON)
-else ()
-    set(_WKC_WEBRTC_API_DEFAULT OFF)
-endif ()
-option(WKC_ENABLE_WEBRTC_API "Compile WebRTC API support in full WebCore porting mode" ${_WKC_WEBRTC_API_DEFAULT})
+# WebRTC remains independently opt-in: it is not required for ordinary
+# page loading, and the Wii U RTC backend still needs runtime integration.
+# Keep it out of the default browser profile until that work is complete.
+set(_WKC_WEBRTC_API_DEFAULT OFF)
+option(WKC_ENABLE_WEBRTC_API "Compile experimental WebRTC API support for Wii U" ${_WKC_WEBRTC_API_DEFAULT})
 if (WKC_ENABLE_WEBRTC_API)
     set(_WKC_WEBRTC_API_DEFINE 1)
 else ()
