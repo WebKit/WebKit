@@ -24,13 +24,14 @@
  */
 
 #include "config.h"
-#include "CorpseProcessTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
+#include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseProcess.h>
+#include <JavaScriptCore/CorpseSnapshot.h>
 #include <errno.h>
 #include <signal.h>
 #include <spawn.h>
@@ -42,7 +43,21 @@
 
 namespace JSCToolsTest {
 
+using JSC::Corpse::Address;
 using JSC::Corpse::Process;
+using JSC::Corpse::Snapshot;
+
+static uint64_t targetGlobal;
+
+static Address createTargetGlobal()
+{
+    return Address { &targetGlobal };
+}
+
+[[noreturn]] static Address exitBeforeReporting()
+{
+    _exit(0);
+}
 
 // A pid that is certainly not in use: a child that has been reaped. Returns 0 if no
 // child could be made, reporting why, since the caller only sees the missing pid.
@@ -71,7 +86,7 @@ static pid_t reapedChildPid()
     return child;
 }
 
-#if CPU(ARM64)
+#if OS(DARWIN) && CPU(ARM64)
 // Launches /bin/sh as x86_64, which on Apple silicon means under translation.
 // Returns 0 if this machine cannot run x86_64 code.
 static pid_t spawnTranslatedChild()
@@ -98,7 +113,7 @@ static pid_t spawnTranslatedChild()
         return 0;
     return child;
 }
-#endif // CPU(ARM64)
+#endif // OS(DARWIN) && CPU(ARM64)
 
 void testProcess()
 {
@@ -125,6 +140,7 @@ void testProcess()
         process->detach();
         TEST_ASSERT(!process->isAttached(), "detaching twice is harmless");
     }
+#if OS(DARWIN)
     {
         // Attaching takes a send right to the target's task port, and every path out of
         // an attach has to give it back. Attaching to this very process yields the name
@@ -163,17 +179,22 @@ void testProcess()
                 "attaching and detaching leaves no port name behind");
         }
     }
+#endif // OS(DARWIN)
     {
         pid_t gone = reapedChildPid();
         if (!gone)
             TEST_ASSERT(gone, "a child could be forked and reaped");
         else {
-            dataLogLn("    (the next line is the failure this test asks for)");
+            ExpectedErrors expectedErrors;
+#if OS(DARWIN)
             unsigned namesBefore = machPortNameCount();
+#endif
             RefPtr<Process> process = Process::create(gone);
             TEST_ASSERT(!process->attach(), "attaching to a process that has exited fails");
             TEST_ASSERT(!process->isAttached(), "a failed attach leaves the Process unattached");
+#if OS(DARWIN)
             TEST_ASSERT_EQ(machPortNameCount(), namesBefore, "a failed attach leaves no port name behind");
+#endif
         }
     }
     {
@@ -193,7 +214,7 @@ void testProcess()
             TEST_ASSERT(!process->isTranslated(), "a process that has exited is not translated");
         }
     }
-#if CPU(ARM64)
+#if OS(DARWIN) && CPU(ARM64)
     {
         pid_t translated = spawnTranslatedChild();
         if (!translated)
@@ -206,9 +227,20 @@ void testProcess()
             while (waitpid(translated, &status, 0) < 0 && errno == EINTR) { }
         }
     }
-#endif // CPU(ARM64)
+#endif // OS(DARWIN) && CPU(ARM64)
+    {
+        bool analyzed = analyzeInSeparateProcess(exitBeforeReporting, [](Snapshot&, Address) {
+            TEST_ASSERT(false, "a target that exits before it reports is not analyzed");
+        });
+        TEST_ASSERT(!analyzed, "a target that exits before it reports is not snapshotted");
+    }
+    analyzeInSeparateProcessStartedByRelativePath(createTargetGlobal, [](Snapshot& snapshot, Address) {
+        UTF8CString path = snapshot.process()->executablePath();
+        TEST_ASSERT(!path.isNull() && path == Process::create(getpid())->executablePath(),
+            "a target started by a relative path has the absolute path of its executable");
+    });
 }
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

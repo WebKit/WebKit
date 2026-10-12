@@ -24,9 +24,8 @@
  */
 
 #include "config.h"
-#include "CorpseMemoryTest.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "LibJSCToolsTestUtilities.h"
 
@@ -36,12 +35,15 @@
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <array>
 #include <limits>
-#include <mach/mach.h>
-#include <mach/mach_vm.h>
 #include <span>
 #include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakRandom.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -51,6 +53,8 @@ using JSC::Corpse::Address;
 using JSC::Corpse::Memory;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+
+#if OS(DARWIN)
 
 namespace {
 
@@ -433,8 +437,20 @@ void testMemory()
     }
 }
 
+#else
+
+void testMemory()
+{
+    SuiteTracer tracer("Memory");
+    if (!tracer.shouldRun())
+        return;
+    skipSuite("Memory", "the test arena is laid out with Mach VM calls");
+}
+
+#endif // OS(DARWIN)
+
 } // namespace JSCToolsTest
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
