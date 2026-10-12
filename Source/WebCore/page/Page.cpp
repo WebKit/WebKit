@@ -1954,6 +1954,7 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
     if (displayID == m_displayID && nominalFramesPerSecond == m_displayNominalFramesPerSecond)
         return;
 
+    bool displayChanged = displayID != m_displayID;
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = nominalFramesPerSecond;
 
@@ -1981,7 +1982,8 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
         scheduler->windowScreenDidChange(displayID);
     chrome().client().renderingUpdateFramesPerSecondChanged();
 
-    setNeedsRecalcStyleInAllFrames();
+    if (displayChanged)
+        setNeedsRecalcStyleInAllFrames();
 }
 
 void Page::setInitialScaleIgnoringContentSize(float scale)
