@@ -17,6 +17,26 @@ promise_test((test) => {
     });
 }, "ensure loading artwork image method operates properly");
 
+function svgImage(attributes)
+{
+    return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' ${attributes}><rect width='100%' height='100%' fill='green'/></svg>`);
+}
+
+for (const [attributes, width, height] of [
+    ["width='40' height='20'", 40, 20],
+    ["viewBox='0 0 40 20'", 512, 256],
+    ["", 512, 512],
+]) {
+    promise_test(async (test) => {
+        if (!window.internals)
+            return Promise.rejects("Test needs internals");
+        const data = await internals.loadArtworkImage(svgImage(attributes));
+        assert_equals(data.codedWidth, width);
+        assert_equals(data.codedHeight, height);
+        data.close();
+    }, `an SVG image with ${attributes || "no size"} is sized ${width}x${height}`);
+}
+
 promise_test(async (test) => {
     if (!window.internals)
         return Promise.rejects("Test needs internals");

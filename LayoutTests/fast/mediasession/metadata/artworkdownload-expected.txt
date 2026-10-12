@@ -1,5 +1,8 @@
 
 PASS ensure loading artwork image method operates properly
+PASS an SVG image with width='40' height='20' is sized 40x20
+PASS an SVG image with viewBox='0 0 40 20' is sized 512x256
+PASS an SVG image with no size is sized 512x512
 PASS ensure loading invalid artwork causes a failure
 PASS ensure loading a non-image causes a failure
 

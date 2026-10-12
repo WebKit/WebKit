@@ -37,6 +37,8 @@ public:
     constexpr FloatSize size() const { return m_size; }
     constexpr float zoom() const { return m_zoom; }
 
+    constexpr bool isEmpty() const { return m_size.isEmpty(); }
+
     constexpr bool operator==(const ConcreteObjectSize&) const = default;
 
 private:

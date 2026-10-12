@@ -11370,6 +11370,7 @@
 		416F429929C0C19600C080DC /* MediaTrackCapabilities.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaTrackCapabilities.idl; sourceTree = "<group>"; };
 		416F429A29C0C19600C080DC /* MediaTrackCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackCapabilities.h; sourceTree = "<group>"; };
 		416F429D29C100D200C080DC /* MediaTrackCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTrackCapabilities.cpp; sourceTree = "<group>"; };
+		0571A87B253D37657A1A5C7C /* NowPlayingInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NowPlayingInfo.cpp; sourceTree = "<group>"; };
 		416FD25D240EE1AE006661D8 /* NowPlayingInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NowPlayingInfo.h; sourceTree = "<group>"; };
 		4170A2E91D8C0CC000318452 /* JSDOMWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWrapper.cpp; sourceTree = "<group>"; };
 		417253A81354BBBC00360F2A /* MediaControlTextTrackContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlTextTrackContainerElement.cpp; sourceTree = "<group>"; };
@@ -21749,6 +21750,7 @@
 		CDDDEA2B2538CDE300A1300C /* MediaSessionAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionAction.h; sourceTree = "<group>"; };
 		CDDDEA2C2538CE0400A1300C /* MediaMetadata.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaMetadata.idl; sourceTree = "<group>"; };
 		CDDDEA2D2538CE0400A1300C /* MediaMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaMetadata.h; sourceTree = "<group>"; };
+		E12A50DCD3B6A216E46C6787 /* MediaSessionArtworkSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionArtworkSizing.h; sourceTree = "<group>"; };
 		CDDDEA2F2538CE1E00A1300C /* MediaMetadataInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaMetadataInit.idl; sourceTree = "<group>"; };
 		CDDDEA302538CE1E00A1300C /* MediaMetadataInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaMetadataInit.h; sourceTree = "<group>"; };
 		CDDDEA312538CE3500A1300C /* MediaImage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaImage.idl; sourceTree = "<group>"; };
@@ -40931,6 +40933,7 @@
 				CDDDEA352538CE7000A1300C /* MediaSessionActionDetails.idl */,
 				CDDDEA3A2538E9C200A1300C /* MediaSessionActionHandler.h */,
 				CDDDEA392538E9C200A1300C /* MediaSessionActionHandler.idl */,
+				E12A50DCD3B6A216E46C6787 /* MediaSessionArtworkSizing.h */,
 				CDBA1F332F8C58FA00D30314 /* MediaSessionCaptionTrack.h */,
 				CDBA1F342F8C58FA00D30314 /* MediaSessionCaptionTrack.idl */,
 				072DBC0525DC6BD300A1350E /* MediaSessionCoordinator.cpp */,
@@ -44296,6 +44299,7 @@
 				07307B792DA06AEC00A5EF65 /* MediaSessionManagerInterface.h */,
 				FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */,
 				FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */,
+				0571A87B253D37657A1A5C7C /* NowPlayingInfo.cpp */,
 				416FD25D240EE1AE006661D8 /* NowPlayingInfo.h */,
 				A1C6C2092BC3AFE7002CDE6F /* NowPlayingMetadataObserver.h */,
 				FD31606C12B026F700C1A359 /* Panner.cpp */,

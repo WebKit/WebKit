@@ -2627,6 +2627,7 @@ platform/audio/HRTFPanner.cpp
 platform/audio/IIRFilter.cpp
 platform/audio/MediaSessionManagerInterface.cpp
 platform/audio/MultiChannelResampler.cpp
+platform/audio/NowPlayingInfo.cpp
 platform/audio/Panner.cpp
 platform/audio/PlatformMediaSession.cpp
 platform/audio/PlatformMediaSessionInterface.cpp

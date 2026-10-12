@@ -31,6 +31,7 @@
 #include <WebCore/NowPlayingMetadataObserver.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformMediaSessionTypes.h>
+#include <WebCore/Timer.h>
 #include <wtf/AggregateLogger.h>
 #include <wtf/CancellableTask.h>
 #include <wtf/LoggerHelper.h>
