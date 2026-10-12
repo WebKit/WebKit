@@ -1351,8 +1351,11 @@ void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient>&& uiClient)
 
     m_uiClient = WTF::move(uiClient);
 
-    if (hasRunningProcess())
-        send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient->canRunBeforeUnloadConfirmPanel()));
+    if (hasRunningProcess()) {
+        forEachWebContentProcess([&](auto& process, auto pageID) {
+            process.send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient->canRunBeforeUnloadConfirmPanel()), pageID);
+        });
+    }
 
     setCanRunModal(m_uiClient->canRunModal());
     setNeedsFontAttributes(m_uiClient->needsFontAttributes());
@@ -16814,7 +16817,9 @@ void WebPageProxy::setCanRunModal(bool canRunModal)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetCanRunModal(m_canRunModal));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetCanRunModal(m_canRunModal), pageID);
+    });
 }
 
 bool WebPageProxy::canRunModal()
