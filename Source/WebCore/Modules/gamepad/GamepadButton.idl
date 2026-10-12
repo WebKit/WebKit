@@ -30,5 +30,6 @@
 ] interface GamepadButton {
     readonly attribute boolean pressed;
     readonly attribute double value;
+    [EnabledBySetting=GamepadButtonTypeEnabled] readonly attribute GamepadButtonType type;
 };
 

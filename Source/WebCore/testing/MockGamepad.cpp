@@ -27,11 +27,24 @@
 #include "MockGamepad.h"
 
 #if ENABLE(GAMEPAD)
+
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MockGamepad);
+
+static Vector<GamepadButtonType> mockButtonTypes(const String& mapping, size_t buttonCount)
+{
+    auto buttonTypes = Vector<GamepadButtonType>(FillWith { }, buttonCount, GamepadButtonType::NonStandard);
+    if (mapping == "standard"_s) {
+        constexpr size_t standardButtonCount = 17;
+        for (size_t i = 0; i < buttonCount && i < standardButtonCount; ++i)
+            buttonTypes[i] = GamepadButtonType::Standard;
+    }
+
+    return buttonTypes;
+}
 
 MockGamepad::MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
     : PlatformGamepad(index)
@@ -50,6 +63,7 @@ void MockGamepad::updateDetails(const String& gamepadID, const String& mapping, 
     m_buttonValues.clear();
     for (size_t i = 0; i < buttonCount; ++i)
         m_buttonValues.append({ });
+    m_buttonTypes = mockButtonTypes(m_mapping, m_buttonValues.size());
     m_lastUpdateTime = MonotonicTime::now();
     if (supportsDualRumble)
         m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
