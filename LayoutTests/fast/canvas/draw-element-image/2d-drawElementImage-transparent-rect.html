@@ -1,0 +1,49 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-192; totalPixels=0-1100">
+<style>
+    canvas {
+        width: 240px;
+        height: 240px;
+        border: solid 1px black;
+        image-rendering: crisp-edges;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        background-color: rgb(0 255 0 / 0.5);
+        border: solid 10px rgb(0 0 255 / 0.5);
+    }
+    .right-bottom {
+        background-color: rgb(255 0 0 / 0.5);
+    }
+</style>
+<body>
+    <h3>Test drawing a drawable element with transparent background into a 2D canvas.</h3>
+    <canvas id="canvas" width="240" height="240" content="drawable">
+        <div id="box1" class="box" drawable></div>
+        <div id="box2" class="right-bottom box" drawable></div>
+    </canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function runTest() {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const box2Image = canvas.captureElementImage(box2);
+            ctx.drawElementImage(box1, 0, 0, 120, 120);
+            ctx.drawElementImage(box2Image, 120, 120, 120, 120);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>

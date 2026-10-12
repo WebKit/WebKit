@@ -1,0 +1,58 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-128; totalPixels=0-675">
+<style>
+    canvas {
+        width: 350px;
+        height: 350px;
+        border: solid 1px black;
+        image-rendering: crisp-edges;
+    }
+    .root {
+        height: 200px;
+        width: 200px;
+        background-color: rgb(255 0 0 / 0.5);
+    }
+    .intermediate {
+        height: 100px;
+        width: 100px;
+        background-color: rgb(0 255 0 / 0.5);
+    }
+    .inner {
+        height: 50px;
+        width: 50px;
+        background-color: rgb(0 0 255 / 0.5);
+    }
+</style>
+<body>
+    <h3>Test drawing nested drawable elements into a 2D canvas.</h3>
+    <canvas id="canvas" width="350" height="350" content="drawable">
+        <div id="root" class="root" drawable>
+            <div id="intermediate" class="intermediate" drawable>
+                <div id="inner" class="inner" drawable>
+            </div>
+        </div>
+    </canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function runTest() {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.drawElementImage(root, 0, 0);
+            ctx.drawElementImage(intermediate, 200, 200);
+            ctx.drawElementImage(inner, 300, 300);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>

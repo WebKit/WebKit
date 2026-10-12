@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<style>
+    .container {
+        width: 350px;
+        height: 350px;
+        border: solid 1px black;
+    }
+    .root {
+        height: 200px;
+        width: 200px;
+        background-color: rgb(255 0 0 / 0.5);
+    }
+    .intermediate {
+        height: 100px;
+        width: 100px;
+        transform: translate(200px, 200px);
+        background-color: rgb(0 255 0 / 0.5);
+    }
+    .inner {
+        height: 50px;
+        width: 50px;
+        transform: translate(100px, 100px);
+        background-color: rgb(0 0 255 / 0.5);
+    }
+</style>
+<body>
+    <h3>Test drawing nested drawable elements into a 2D canvas.</h3>
+    <div id="container" class="container">
+        <div id="root" class="root">
+            <div id="intermediate" class="intermediate">
+                <div id="inner" class="inner"></div>
+            </div>
+        </div>
+    </canvas>
+</body>

@@ -53,7 +53,7 @@ public:
     RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
     void setInnerRenderer(RenderBlock*);
 
-    bool hasDrawableContent() const;
+    bool hasDrawableContent() const final;
 
     DisplayList::RecorderImpl* canvasDrawableRecorder(RenderElement&, GraphicsContext&) const;
     std::optional<CanvasElementSnapshot> canvasDrawableSnapshot(RenderElement&) const;

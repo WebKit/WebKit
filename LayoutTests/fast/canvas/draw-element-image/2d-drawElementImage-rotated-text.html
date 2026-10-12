@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-252; totalPixels=0-20116">
+<meta charset="utf-8" />
+<style>
+    canvas {
+        width: 638px;
+        height: 318px;
+        border: solid 1px black;
+        image-rendering: crisp-edges;
+    }
+    .box {
+        height: 400px;
+        width: 600px;
+    }
+</style>
+<body>
+    <h3>Test drawing a drawable element that contains text into a 2D canvas.</h3>
+    <canvas id="canvas" width="638" height="318" content="drawable">
+        <div id="draw_element" class="box" drawable>
+            Hello from <a href="https://github.com/WICG/html-in-canvas">html-in-canvas</a>!
+            <br>I'm multi-line, <b>formatted</b>,
+            rotated text with emoji (&#128512;), RTL text
+            <span dir=rtl>من فارسی صحبت میکنم</span>,
+            vertical text,
+            <p style="writing-mode: vertical-rl;">
+                这是垂直文本
+            </p>
+            an inline image (<img width="150" src="resources/wolf.jpg">), and
+            <svg width="50" height="50">
+                <circle cx="25" cy="25" r="20" fill="green" />
+                <text x="25" y="30" font-size="15" text-anchor="middle" fill="#fff">
+                    SVG
+                </text>
+            </svg>!
+        </div>
+    </canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function runTest() {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.translate(80, 0);
+            ctx.rotate((15 * Math.PI) / 180);
+            ctx.drawElementImage(draw_element, 0, 0);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>

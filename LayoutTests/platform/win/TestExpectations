@@ -4515,6 +4515,9 @@ fast/html/history-action-user-activation.html [ Skip ]
 http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Skip ]
 
+# Needs implementing the paint event of the drawable element
+fast/canvas/draw-element-image [ Skip ]
+
 fast/canvas/image-buffer-backend-variants.html [ Skip ]
 
 fast/box-shadow/box-shadow-radius.html [ Failure ]

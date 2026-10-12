@@ -407,7 +407,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (paintInfo.paintBehavior.contains(PaintBehavior::ExcludeReplacedContentExceptForIFrames) && !isRenderIFrame())
         return false;
 
-    if (!canHaveChildren()
+    if ((!canHaveChildren() || hasDrawableContent())
         && paintInfo.phase != PaintPhase::Foreground
         && paintInfo.phase != PaintPhase::Outline
         && paintInfo.phase != PaintPhase::SelfOutline

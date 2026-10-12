@@ -148,17 +148,15 @@ DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElemen
     if (!element.isCanvasDrawable())
         return nullptr;
 
-    auto addResult = m_canvasDrawableRecorderMap.ensure(element, [&] {
-        auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
-        auto absoluteBoundingRect = element.absoluteBoundingBoxRect();
-        auto initialCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-        auto boundingRect = initialCTM.inverse().value_or(AffineTransform()).mapRect(absoluteBoundingRect);
-        Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, boundingRect, initialCTM, context.colorSpace());
-        snapshotRecorder->translate(-boundingRect.x(), -boundingRect.y());
-        return snapshotRecorder;
-    });
+    // FIXME: Clearing the recorder should happen only when a repaint or a layout happens.
+    auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
+    auto boundingRect = element.absoluteBoundingBoxRect();
+    auto initialCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, boundingRect, initialCTM, context.colorSpace());
+    snapshotRecorder->translate(-boundingRect.x(), -boundingRect.y());
 
-    return addResult.iterator->value.ptr();
+    m_canvasDrawableRecorderMap.set(element, WTF::move(snapshotRecorder));
+    return m_canvasDrawableRecorderMap.get(element);
 }
 
 std::optional<CanvasElementSnapshot> RenderHTMLCanvas::canvasDrawableSnapshot(RenderElement& element) const
