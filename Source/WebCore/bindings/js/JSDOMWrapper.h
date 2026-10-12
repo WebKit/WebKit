@@ -115,7 +115,7 @@ public:
     JSDOMGlobalObject* realm() const { return uncheckedDowncast<JSDOMGlobalObject>(JSC::JSNonFinalObject::realm()); }
     ScriptExecutionContext* scriptExecutionContext() const { return realm()->scriptExecutionContext(); }
 
-    ImplementationClass& wrapped() const { return static_cast<ImplementationClass&>(embeddedArrayLike()); }
+    ImplementationClass& wrapped() const { return downcast<ImplementationClass>(embeddedArrayLike()); }
     constexpr static bool hasCustomPtrTraits() { return false; };
 
 protected:

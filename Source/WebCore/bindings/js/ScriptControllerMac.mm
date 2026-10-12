@@ -42,6 +42,7 @@
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSContextInternal.h>
 #import <JavaScriptCore/JSLock.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
@@ -78,7 +79,7 @@ WebScriptObject *ScriptController::windowScriptObject()
     if (!m_windowScriptObject) {
         JSC::JSLockHolder lock(commonVM());
         RefPtr root = bindingRootObject();
-        lazyInitialize(m_windowScriptObject, RetainPtr<WebScriptObject> { [WebScriptObject scriptObjectForJSObject:toRef(&jsWindowProxy(pluginWorldSingleton())) originRootObject:root.get() rootObject:root.get()] });
+        lazyInitialize(m_windowScriptObject, RetainPtr<WebScriptObject> { checked_objc_cast<WebScriptObject>([WebScriptObject scriptObjectForJSObject:toRef(&jsWindowProxy(pluginWorldSingleton())) originRootObject:root.get() rootObject:root.get()]) });
     }
 
     return m_windowScriptObject.get();

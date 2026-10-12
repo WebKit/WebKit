@@ -68,7 +68,7 @@ RenderMathMLToken::~RenderMathMLToken() = default;
 
 MathMLTokenElement& RenderMathMLToken::element()
 {
-    return static_cast<MathMLTokenElement&>(nodeForNonAnonymous());
+    return downcast<MathMLTokenElement>(nodeForNonAnonymous());
 }
 
 void RenderMathMLToken::updateTokenContent()

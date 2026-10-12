@@ -158,7 +158,7 @@ PasteboardBuffer PlatformPasteboard::bufferForType(const String& pasteboardType)
     if (!data)
         return pasteboardBuffer;
 
-    pasteboardBuffer.data = SharedBuffer::create(adoptNS([data copy]).get());
+    pasteboardBuffer.data = SharedBuffer::create(adoptNS(checked_objc_cast<NSData>([data copy])).get());
     return pasteboardBuffer;
 }
 
@@ -193,7 +193,7 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const St
         pathnames.append(pathsString.get());
         return;
     }
-    pathnames = makeVector<String>(paths.get());
+    pathnames = makeVector<String>(dynamic_objc_cast<NSArray>(paths.get()));
 }
 
 static bool pasteboardMayContainFilePaths(NSPasteboard *pasteboard)
@@ -405,7 +405,7 @@ URL PlatformPasteboard::url()
 int64_t PlatformPasteboard::copy(const String& fromPasteboard)
 {
     RetainPtr pasteboard = [NSPasteboard pasteboardWithName:fromPasteboard.createNSString().get()];
-    RetainPtr<NSArray> types = [pasteboard types];
+    RetainPtr<NSArray<NSPasteboardType>> types = [pasteboard types];
 
     [m_pasteboard addTypes:types.get() owner:nil];
     for (NSUInteger i = 0; i < [types count]; i++) {
@@ -543,7 +543,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index,
         return { };
 
     if (RetainPtr data = [item dataForType:type.createNSString().get()]) {
-        RetainPtr nsData = adoptNS([data copy]);
+        RetainPtr<NSData> nsData = adoptNS([data copy]);
         return SharedBuffer::create(nsData.get());
     }
 

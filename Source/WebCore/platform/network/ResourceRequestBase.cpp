@@ -52,7 +52,7 @@ double ResourceRequestBase::s_defaultTimeoutInterval = 0;
 
 inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
 {
-    return *static_cast<const ResourceRequest*>(this);
+    return downcast<ResourceRequest>(*this);
 }
 
 ResourceRequest ResourceRequestBase::isolatedCopy() const

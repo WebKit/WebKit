@@ -343,7 +343,7 @@ Element::~Element()
 
 inline ElementRareData& Element::ensureElementRareData()
 {
-    return static_cast<ElementRareData&>(ensureRareData());
+    return uncheckedDowncast<ElementRareData>(ensureRareData());
 }
 
 void Element::setTabIndexExplicitly(std::optional<int> tabIndex)
@@ -842,11 +842,9 @@ void Element::synchronizeAllAttributes() const
 {
     if (!elementData())
         return;
-    if (elementData()->styleAttributeIsDirty()) {
-        ASSERT(isStyledElement());
-        static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
-    }
-    
+    if (elementData()->styleAttributeIsDirty())
+        uncheckedDowncast<StyledElement>(*this).synchronizeStyleAttributeInternal();
+
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this))
         const_cast<SVGElement&>(*svgElement).synchronizeAllAttributes();
 }
@@ -856,8 +854,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
     if (!elementData())
         return;
     if (name == styleAttr && elementData()->styleAttributeIsDirty()) [[unlikely]] {
-        ASSERT_WITH_SECURITY_IMPLICATION(isStyledElement());
-        static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
+        uncheckedDowncast<StyledElement>(*this).synchronizeStyleAttributeInternal();
         return;
     }
 
@@ -879,8 +876,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) co
     if (!elementData())
         return;
     if (elementData()->styleAttributeIsDirty() && isStyleAttribute(*this, localName)) {
-        ASSERT_WITH_SECURITY_IMPLICATION(isStyledElement());
-        static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
+        uncheckedDowncast<StyledElement>(*this).synchronizeStyleAttributeInternal();
         return;
     }
 

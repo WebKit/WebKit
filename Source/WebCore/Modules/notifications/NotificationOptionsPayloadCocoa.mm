@@ -28,6 +28,8 @@
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 namespace WebCore {
 
 namespace NotificationOptionsPayloadKeys {
@@ -47,8 +49,8 @@ std::optional<NotificationOptionsPayload> NotificationOptionsPayload::fromDictio
     if (![dictionary isKindOfClass:[NSDictionary class]])
         return std::nullopt;
 
-    RetainPtr<NSNumber> dir = dictionary[WebDirKey];
-    if (![dir isKindOfClass:[NSNumber class]])
+    RetainPtr dir = dynamic_objc_cast<NSNumber>(dictionary[WebDirKey]);
+    if (!dir)
         return std::nullopt;
 
     auto dirValue = [dir unsignedCharValue];
@@ -56,13 +58,13 @@ std::optional<NotificationOptionsPayload> NotificationOptionsPayload::fromDictio
         return std::nullopt;
     auto rawDir = static_cast<NotificationDirection>(dirValue);
 
-    RetainPtr<NSString> lang = dictionary[WebLangKey];
-    RetainPtr<NSString> body = dictionary[WebBodyKey];
-    RetainPtr<NSString> tag = dictionary[WebTagKey];
-    RetainPtr<NSString> icon = dictionary[WebIconKey];
-    RetainPtr<NSString> dataJSON = dictionary[WebDataJSONKey];
+    RetainPtr lang = dynamic_objc_cast<NSString>(dictionary[WebLangKey]);
+    RetainPtr body = dynamic_objc_cast<NSString>(dictionary[WebBodyKey]);
+    RetainPtr tag = dynamic_objc_cast<NSString>(dictionary[WebTagKey]);
+    RetainPtr icon = dynamic_objc_cast<NSString>(dictionary[WebIconKey]);
+    RetainPtr dataJSON = dynamic_objc_cast<NSString>(dictionary[WebDataJSONKey]);
 
-    RetainPtr<NSNumber> silent = dictionary[WebSilentKey];
+    RetainPtr<id> silent = dictionary[WebSilentKey];
     if (!silent)
         return std::nullopt;
 

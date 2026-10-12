@@ -67,7 +67,7 @@ RenderMathMLOperator::~RenderMathMLOperator() = default;
 
 MathMLOperatorElement& RenderMathMLOperator::element() const
 {
-    return static_cast<MathMLOperatorElement&>(nodeForNonAnonymous());
+    return downcast<MathMLOperatorElement>(nodeForNonAnonymous());
 }
 
 char32_t RenderMathMLOperator::singleCharCodePoint() const

@@ -91,7 +91,8 @@ inline RenderChildIterator<T>::RenderChildIterator(const RenderElement& parent, 
 template <typename T>
 inline RenderChildIterator<T>& RenderChildIterator<T>::operator++()
 {
-    return static_cast<RenderChildIterator<T>&>(RenderIterator<T>::traverseNextSibling());
+    RenderIterator<T>::traverseNextSibling();
+    return *this;
 }
 
 // RenderChildConstIterator
@@ -111,7 +112,8 @@ inline RenderChildConstIterator<T>::RenderChildConstIterator(const RenderElement
 template <typename T>
 inline RenderChildConstIterator<T>& RenderChildConstIterator<T>::operator++()
 {
-    return static_cast<RenderChildConstIterator<T>&>(RenderConstIterator<T>::traverseNextSibling());
+    RenderConstIterator<T>::traverseNextSibling();
+    return *this;
 }
 
 // RenderChildIteratorAdapter

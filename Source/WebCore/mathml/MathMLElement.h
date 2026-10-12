@@ -46,6 +46,7 @@ public:
     unsigned rowSpan() const;
 
     virtual bool isMathMLToken() const { return false; }
+    virtual bool isMathMLRowElement() const { return false; }
     virtual bool isSemanticAnnotation() const { return false; }
     virtual bool isPresentationMathML() const { return false; }
 

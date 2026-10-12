@@ -463,6 +463,11 @@ SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferAudioRenderer, PAL::getAVSampleBufferA
 SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferDisplayLayer, PAL::getAVSampleBufferDisplayLayerClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferVideoRenderer, PAL::getAVSampleBufferVideoRendererClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVOutputContext, PAL::getAVOutputContextClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVContentKeyResponse, PAL::getAVContentKeyResponseClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVContentKeySession, PAL::getAVContentKeySessionClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVMetadataItem, PAL::getAVMetadataItemClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVPlayerItem, PAL::getAVPlayerItemClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(AVSpeechUtterance, PAL::getAVSpeechUtteranceClassSingleton())
 
 #endif // USE(AVFOUNDATION)
 

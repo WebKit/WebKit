@@ -27,6 +27,7 @@
 #import "NotificationData.h"
 
 #import "NotificationDirection.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
@@ -63,25 +64,25 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
 {
     using namespace NotificationDataKeys;
 
-    RetainPtr<NSString> defaultActionURL = dictionary[WebNotificationDefaultActionURLKey];
-    RetainPtr<NSString> title = dictionary[WebNotificationTitleKey];
-    RetainPtr<NSString> body = dictionary[WebNotificationBodyKey];
-    RetainPtr<NSString> iconURL = dictionary[WebNotificationIconURLKey];
-    RetainPtr<NSString> tag = dictionary[WebNotificationTagKey];
-    RetainPtr<NSString> language = dictionary[WebNotificationLanguageKey];
-    RetainPtr<NSString> originString = dictionary[WebNotificationOriginKey];
-    RetainPtr<NSString> serviceWorkerRegistrationURL = dictionary[WebNotificationServiceWorkerRegistrationURLKey];
-    RetainPtr<NSNumber> sessionID = dictionary[WebNotificationSessionIDKey];
-    RetainPtr<NSNumber> creationTime = dictionary[WebNotificationCreationTimeKey];
-    RetainPtr<NSData> notificationData = dictionary[WebNotificationDataKey];
+    RetainPtr defaultActionURL = dynamic_objc_cast<NSString>(dictionary[WebNotificationDefaultActionURLKey]);
+    RetainPtr title = dynamic_objc_cast<NSString>(dictionary[WebNotificationTitleKey]);
+    RetainPtr body = dynamic_objc_cast<NSString>(dictionary[WebNotificationBodyKey]);
+    RetainPtr iconURL = dynamic_objc_cast<NSString>(dictionary[WebNotificationIconURLKey]);
+    RetainPtr tag = dynamic_objc_cast<NSString>(dictionary[WebNotificationTagKey]);
+    RetainPtr language = dynamic_objc_cast<NSString>(dictionary[WebNotificationLanguageKey]);
+    RetainPtr originString = dynamic_objc_cast<NSString>(dictionary[WebNotificationOriginKey]);
+    RetainPtr serviceWorkerRegistrationURL = dynamic_objc_cast<NSString>(dictionary[WebNotificationServiceWorkerRegistrationURLKey]);
+    RetainPtr sessionID = dynamic_objc_cast<NSNumber>(dictionary[WebNotificationSessionIDKey]);
+    RetainPtr creationTime = dynamic_objc_cast<NSNumber>(dictionary[WebNotificationCreationTimeKey]);
+    RetainPtr notificationData = dynamic_objc_cast<NSData>(dictionary[WebNotificationDataKey]);
 
-    String uuidString = dictionary[WebNotificationUUIDStringKey];
+    String uuidString = dynamic_objc_cast<NSString>(dictionary[WebNotificationUUIDStringKey]);
     auto uuid = WTF::UUID::parseVersion4(uuidString);
     if (!uuid)
         return std::nullopt;
 
     std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
-    String contextUUIDString = dictionary[WebNotificationContextUUIDStringKey];
+    String contextUUIDString = dynamic_objc_cast<NSString>(dictionary[WebNotificationContextUUIDStringKey]);
     if (!contextUUIDString.isEmpty()) {
         auto contextUUID = WTF::UUID::parseVersion4(contextUUIDString);
         if (!contextUUID)
@@ -91,7 +92,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     }
 
     NotificationDirection direction;
-    RetainPtr<NSNumber> directionNumber = dictionary[WebNotificationDirectionKey];
+    RetainPtr directionNumber = dynamic_objc_cast<NSNumber>(dictionary[WebNotificationDirectionKey]);
     switch ((NotificationDirection)(directionNumber.get().unsignedLongValue)) {
     case NotificationDirection::Auto:
     case NotificationDirection::Ltr:

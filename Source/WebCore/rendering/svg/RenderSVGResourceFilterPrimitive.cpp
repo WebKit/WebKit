@@ -72,7 +72,7 @@ void RenderSVGResourceFilterPrimitive::markFilterEffectForRebuild()
 
 SVGFilterPrimitiveStandardAttributes& RenderSVGResourceFilterPrimitive::filterPrimitiveElement() const
 {
-    return static_cast<SVGFilterPrimitiveStandardAttributes&>(RenderSVGHiddenContainer::element());
+    return downcast<SVGFilterPrimitiveStandardAttributes>(RenderSVGHiddenContainer::element());
 }
 
 void RenderSVGResourceFilterPrimitive::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)

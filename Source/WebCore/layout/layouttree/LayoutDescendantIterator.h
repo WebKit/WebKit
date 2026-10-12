@@ -69,7 +69,8 @@ inline LayoutDescendantIterator<T>::LayoutDescendantIterator(const ElementBox& r
 template <typename T>
 inline LayoutDescendantIterator<T>& LayoutDescendantIterator<T>::operator++()
 {
-    return static_cast<LayoutDescendantIterator<T>&>(LayoutIterator<T>::traverseNext());
+    LayoutIterator<T>::traverseNext();
+    return *this;
 }
 
 // LayoutDescendantIteratorAdapter

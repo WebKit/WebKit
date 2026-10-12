@@ -36,6 +36,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
@@ -392,3 +393,8 @@ template<> struct EnumTraitsForPersistence<WebCore::ResourceRequestRequester> {
 };
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ResourceRequest)
+    // ResourceRequest is the only subclass of ResourceRequestBase.
+    static bool isType(const WebCore::ResourceRequestBase&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

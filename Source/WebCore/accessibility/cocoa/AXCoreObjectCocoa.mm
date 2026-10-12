@@ -35,6 +35,8 @@
 #import "WebAccessibilityObjectWrapperBase.h"
 #import "Widget.h"
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 #if PLATFORM(IOS_FAMILY)
 #import <wtf/SoftLinking.h>
 
@@ -360,10 +362,10 @@ String AXCoreObject::rolePlatformDescription()
     // Attachments have the AXImage role, but may have different subroles.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (isAttachment())
-        return [protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
+        return dynamic_objc_cast<NSString>([protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute]);
 
     if (isRemoteFrame())
-        return [remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
+        return dynamic_objc_cast<NSString>([remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr axRole = rolePlatformString().createNSString();
@@ -472,10 +474,10 @@ String AXCoreObject::rolePlatformString()
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (isAttachment())
-        return [protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+        return dynamic_objc_cast<NSString>([protect([protect(wrapper()) attachmentView]) accessibilityAttributeValue:NSAccessibilityRoleAttribute]);
 
     if (isRemoteFrame())
-        return [remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+        return dynamic_objc_cast<NSString>([remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto role = this->role();

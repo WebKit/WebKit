@@ -225,7 +225,7 @@ inline UniqueElementData& Element::ensureUniqueElementData()
 {
     if (!elementData() || !elementData()->isUnique())
         createUniqueElementData();
-    return static_cast<UniqueElementData&>(*m_elementData);
+    return uncheckedDowncast<UniqueElementData>(*m_elementData);
 }
 
 inline bool shouldIgnoreAttributeCase(const Element& element)

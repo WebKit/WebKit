@@ -70,7 +70,8 @@ inline LayoutChildIterator<T>::LayoutChildIterator(const ElementBox& parent, con
 template <typename T>
 inline LayoutChildIterator<T>& LayoutChildIterator<T>::operator++()
 {
-    return static_cast<LayoutChildIterator<T>&>(LayoutIterator<T>::traverseNextSibling());
+    LayoutIterator<T>::traverseNextSibling();
+    return *this;
 }
 
 // LayoutChildIteratorAdapter

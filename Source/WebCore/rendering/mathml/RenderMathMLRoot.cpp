@@ -62,7 +62,7 @@ RenderMathMLRoot::~RenderMathMLRoot() = default;
 
 MathMLRootElement& RenderMathMLRoot::element() const
 {
-    return static_cast<MathMLRootElement&>(nodeForNonAnonymous());
+    return downcast<MathMLRootElement>(nodeForNonAnonymous());
 }
 
 RootType RenderMathMLRoot::rootType() const

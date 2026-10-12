@@ -51,4 +51,13 @@ private:
 
 }
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MathMLUnderOverElement)
+    static bool isType(const WebCore::MathMLElement& element) { return element.hasTagName(WebCore::MathMLNames::munderTag) || element.hasTagName(WebCore::MathMLNames::moverTag) || element.hasTagName(WebCore::MathMLNames::munderoverTag); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* mathMLElement = dynamicDowncast<WebCore::MathMLElement>(node);
+        return mathMLElement && isType(*mathMLElement);
+    }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // ENABLE(MATHML)

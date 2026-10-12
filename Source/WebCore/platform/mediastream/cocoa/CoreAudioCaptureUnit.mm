@@ -33,6 +33,7 @@
 
 #include <AudioUnit/AudioUnit.h>
 #include <AudioUnit/AudioUnitProperties.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(MAC)
 #include <CoreAudio/AudioHardware.h>
@@ -70,7 +71,7 @@ void unregisterAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener*
 
 - (void)handleMuteStatusChangedNotification:(NSNotification*)notification
 {
-    RetainPtr<NSNumber> newMuteState = [notification.userInfo valueForKey:AVAudioApplicationMuteStateKey];
+    RetainPtr newMuteState = dynamic_objc_cast<NSNumber>([notification.userInfo valueForKey:AVAudioApplicationMuteStateKey]);
     WebCore::CoreAudioCaptureUnit::defaultSingleton().handleMuteStatusChangedNotification(newMuteState.get().boolValue);
 }
 

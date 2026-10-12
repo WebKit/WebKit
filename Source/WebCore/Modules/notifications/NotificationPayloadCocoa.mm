@@ -28,6 +28,8 @@
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 namespace WebCore {
 
 namespace NotificationPayloadKeys {
@@ -42,15 +44,15 @@ std::optional<NotificationPayload> NotificationPayload::fromDictionary(NSDiction
 {
     using namespace NotificationPayloadKeys;
 
-    RetainPtr<NSURL> defaultAction = dictionary[WebNotificationDefaultActionKey];
+    RetainPtr defaultAction = dynamic_objc_cast<NSURL>(dictionary[WebNotificationDefaultActionKey]);
     if (!defaultAction)
         return std::nullopt;
 
-    RetainPtr<NSString> title = dictionary[WebNotificationTitleKey];
+    RetainPtr title = dynamic_objc_cast<NSString>(dictionary[WebNotificationTitleKey]);
     if (!title)
         return std::nullopt;
 
-    RetainPtr<NSNumber> appBadge = dictionary[WebNotificationAppBadgeKey];
+    RetainPtr<id> appBadge = dictionary[WebNotificationAppBadgeKey];
     if (!appBadge)
         return std::nullopt;
 
@@ -61,18 +63,18 @@ std::optional<NotificationPayload> NotificationPayload::fromDictionary(NSDiction
         rawAppBadge = [appBadge unsignedLongLongValue];
     }
 
-    RetainPtr<NSDictionary> options = dictionary[WebNotificationOptionsKey];
+    RetainPtr<id> options = dictionary[WebNotificationOptionsKey];
     if (!options)
         return std::nullopt;
 
     std::optional<NotificationOptionsPayload> rawOptions;
     if (![options isKindOfClass:[NSNull class]]) {
-        rawOptions = NotificationOptionsPayload::fromDictionary(options.get());
+        rawOptions = NotificationOptionsPayload::fromDictionary(dynamic_objc_cast<NSDictionary>(options.get()));
         if (!rawOptions)
             return std::nullopt;
     }
 
-    RetainPtr<NSNumber> isMutable = dictionary[WebNotificationMutableKey];
+    RetainPtr isMutable = dynamic_objc_cast<NSNumber>(dictionary[WebNotificationMutableKey]);
     if (!isMutable)
         return std::nullopt;
 

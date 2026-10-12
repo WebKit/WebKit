@@ -63,3 +63,8 @@ public:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NodeList)
+    // NodeList is the only subclass of JSC::EmbedderArrayLike.
+    static bool isType(const JSC::EmbedderArrayLike&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

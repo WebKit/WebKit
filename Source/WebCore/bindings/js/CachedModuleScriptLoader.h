@@ -59,7 +59,7 @@ public:
     bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>, const URL& referrer);
 
     CachedResource* cachedResource() { return m_cachedResource.get(); }
-    CachedScriptFetcher& scriptFetcher() { return static_cast<CachedScriptFetcher&>(ModuleScriptLoader::scriptFetcher()); }
+    CachedScriptFetcher& scriptFetcher() { return downcast<CachedScriptFetcher>(ModuleScriptLoader::scriptFetcher()); }
 
 private:
     CachedModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);

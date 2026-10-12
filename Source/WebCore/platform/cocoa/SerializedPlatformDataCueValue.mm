@@ -43,12 +43,12 @@ SerializedPlatformDataCueValue::SerializedPlatformDataCueValue(AVMetadataItem *i
     NSDictionary *extras = [item extraAttributes];
 
     for (id key in [extras keyEnumerator]) {
-        if (![key isKindOfClass:[NSString class]])
+        RetainPtr keyString = dynamic_objc_cast<NSString>(key);
+        if (!keyString)
             continue;
         NSString *value = [extras objectForKey:key];
         if (![value isKindOfClass:NSString.class])
             continue;
-        RetainPtr<NSString> keyString = key;
 
         if ([key isEqualToString:@"MIMEtype"])
             keyString = @"type";
