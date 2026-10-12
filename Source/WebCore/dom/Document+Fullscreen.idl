@@ -38,7 +38,7 @@
     attribute EventHandler onfullscreenerror;
 
     // Legacy WebKit-specific versions.
-    readonly attribute boolean webkitFullscreenEnabled;
+    [ImplementedAs=fullscreenEnabled] readonly attribute boolean webkitFullscreenEnabled;
     readonly attribute Element? webkitFullscreenElement;
     undefined webkitExitFullscreen();
     [NotEnumerable] attribute EventHandler onwebkitfullscreenchange;
