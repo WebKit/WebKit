@@ -833,6 +833,15 @@ jobs:
             -DWKC_ENABLE_WEBASSEMBLY=OFF \
             -DWKC_ENABLE_WEBRTC_API=ON > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
+
+          # Preserve the source-list omission report even if the engine compile fails.
+          if [ -s build-full/wkc-missing-webcore-sources.txt ]; then
+            mkdir -p "$GITHUB_WORKSPACE/dist/diagnostics"
+            cp build-full/wkc-missing-webcore-sources.txt "$GITHUB_WORKSPACE/dist/diagnostics/"
+            MISSING_SOURCE_COUNT=$(grep -vc '^None$' build-full/wkc-missing-webcore-sources.txt || true)
+            echo "===== WebCore Sources.txt entries omitted before compile: ${MISSING_SOURCE_COUNT:-0} ====="
+            sed -n '1,80p' build-full/wkc-missing-webcore-sources.txt
+          fi
           if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-full/build.ninja ]; then
             echo "===== full WebCore configure failed (diagnostic only) ====="
             grep -A5 -iE 'CMake Error|FATAL|Error' build-full-configure.log | head -100 || true
@@ -859,6 +868,9 @@ jobs:
               find build-full -type f -name '*.a' -exec cp -f {} "$GITHUB_WORKSPACE/dist-full/lib/" \;
               cp build-full-configure.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               cp build-full.log "$GITHUB_WORKSPACE/dist-full/diagnostics/"
+              if [ -s build-full/wkc-missing-webcore-sources.txt ]; then
+                cp build-full/wkc-missing-webcore-sources.txt "$GITHUB_WORKSPACE/dist-full/diagnostics/"
+              fi
               {
                 echo "Profile: WKC full WebCore + Web Audio (Wii U PPC bring-up)"
                 echo "Target: Wii U PowerPC 750 / devkitPPC"
