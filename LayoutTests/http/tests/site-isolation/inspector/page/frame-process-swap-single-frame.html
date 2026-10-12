@@ -1,0 +1,106 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function navigateIFrame(url) {
+    let iframe = document.getElementById("child-frame-element");
+    if (!iframe) {
+        iframe = document.createElement("iframe");
+        iframe.id = "child-frame-element";
+        iframe.name = "child-frame";
+        document.body.appendChild(iframe);
+    }
+    iframe.src = url;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.FrameProcessSwapSingleFrame");
+
+    let mainUrl = new URL(WI.networkManager.mainFrame.url);
+    let mainOrigin = mainUrl.origin;
+    let otherOrigin = `http://${mainUrl.hostname === "localhost" ? "127.0.0.1" : "localhost"}:8000`;
+    let path = "/site-isolation/inspector/page/resources/resource-tree-frame.html";
+    let run = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+
+    function childFrames() {
+        return WI.networkManager.frames.filter((frame) => frame !== WI.networkManager.mainFrame);
+    }
+
+    function awaitFrameRemoved(frame, timeout = 3000) {
+        return new Promise((resolve) => {
+            let timer = setTimeout(() => finish(false), timeout);
+            function finish(removed) {
+                clearTimeout(timer);
+                WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasRemoved, listener);
+                resolve(removed);
+            }
+            function listener(event) {
+                if (event.data.frame === frame)
+                    finish(true);
+            }
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, listener);
+        });
+    }
+
+    async function navigateAndSettle(url, previousFrame) {
+        let removedPromise = previousFrame ? awaitFrameRemoved(previousFrame) : Promise.resolve(true);
+        InspectorTest.evaluateInPage(`navigateIFrame(${JSON.stringify(url)})`);
+
+        for (let attempt = 0; attempt < 150; ++attempt) {
+            if (childFrames().some((frame) => frame.parentFrame && frame.url === url))
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 20));
+        }
+
+        return removedPromise;
+    }
+
+    function checkSingleChild(url, label) {
+        let mainFrame = WI.networkManager.mainFrame;
+        let frames = childFrames();
+        InspectorTest.expectEqual(frames.length, 1, `${label}: WI.networkManager.frames should hold one WI.Frame for the iframe.`);
+        InspectorTest.expectEqual(mainFrame.childFrameCollection.size, 1, `${label}: main frame should have one child frame.`);
+
+        let child = frames.find((frame) => frame.url === url);
+        InspectorTest.expectThat(!!child, `${label}: the iframe's WI.Frame should have the committed URL.`);
+        if (!child)
+            return null;
+
+        InspectorTest.expectThat(child.parentFrame === mainFrame, `${label}: the iframe's parent should be the main frame.`);
+        InspectorTest.expectThat(WI.networkManager.frameForIdentifier(child.id) === child, `${label}: the iframe's id should resolve to its WI.Frame.`);
+        return child;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.FrameProcessSwapSingleFrame.AToBToA",
+        description: "An iframe that swaps process on a cross-site navigation, and then swaps back, should always be represented by exactly one WI.Frame.",
+        async test() {
+            let urlA = `${mainOrigin}${path}?a-${run}`;
+            let urlB = `${otherOrigin}${path}?b-${run}`;
+            let urlA2 = `${mainOrigin}${path}?a2-${run}`;
+
+            await navigateAndSettle(urlA, null);
+            let frameA = checkSingleChild(urlA, "Initial same-site load");
+            if (!frameA)
+                return;
+
+            // The page's own Page agent also retires frameA here, so this step does not isolate the proxy.
+            let removed = await navigateAndSettle(urlB, frameA);
+            InspectorTest.expectThat(removed, "A to B: the frame for the previous process should be removed.");
+            let frameB = checkSingleChild(urlB, "A to B");
+            if (!frameB)
+                return;
+
+            removed = await navigateAndSettle(urlA2, frameB);
+            InspectorTest.expectThat(removed, "B to A: the frame for the previous process should be removed.");
+            let frameA2 = checkSingleChild(urlA2, "B to A");
+            InspectorTest.expectThat(frameA2 !== frameB && frameA2 !== frameA, "B to A: the iframe should be a new WI.Frame.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that an iframe that swaps process under Site Isolation leaves exactly one WI.Frame in the frontend frame tree.</p>
+</body>
