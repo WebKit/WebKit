@@ -1,4 +1,4 @@
 
-Harness Error (FAIL), message = SyntaxError: 'with' statements are not valid in strict mode.
-
+FAIL A relative URL in a statically imported CSS module resolves against the URL the request was redirected to assert_equals: the relative url() should resolve against the response URL, not the pre-redirect request URL expected "url(\"http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/css-module/resources/image.png\")" but got "url(\"http://web-platform.test:8800/common/image.png\")"
+FAIL A relative URL in a dynamically imported CSS module resolves against the URL the request was redirected to assert_equals: the relative url() should resolve against the response URL, not the pre-redirect request URL expected "url(\"http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/css-module/resources/image.png\")" but got "url(\"http://web-platform.test:8800/common/image.png\")"
 
