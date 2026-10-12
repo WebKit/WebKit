@@ -109,6 +109,7 @@ public:
     static constexpr bool isSync = true;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool shouldCopyReplySpans = true;
     using ReplyArguments = std::tuple<uint32_t>;
     using Reply = CompletionHandler<void(uint32_t)>;
     explicit MockSyncMessage(uint32_t value)

@@ -37,6 +37,8 @@ SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
 UNSAFE_SPAN_ATTRIBUTE = 'UnsafeSpan'
 
+
+
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, wants_send_cancel_reply, swift_receiver, swift_receiver_build_enabled_by, receiver_name):
         self.name = name
@@ -70,6 +72,23 @@ class MessageReceiver(object):
             raise Exception("ERROR: %s not annotated with 'DispatchedFrom=' attribute" % self.name)
         if not self.receiver_dispatched_to and not self.receiver_dispatched_to_exception:
             raise Exception("ERROR: %s not annotated with 'DispatchedTo=' attribute" % self.name)
+
+    def should_copy_reply_spans(self):
+        LESS_PRIVILEGED_PROCESSES = frozenset(['WebContent', 'Model'])
+        MORE_PRIVILEGED_PROCESSES = frozenset(['UI', 'GPU', 'Networking'])
+        reply_readers = [name for name in (self.receiver_dispatched_from or '').split('|') if name]
+        reply_writers = [name for name in (self.receiver_dispatched_to or '').split('|') if name]
+        return not (reply_readers and reply_writers
+                    and all(name in LESS_PRIVILEGED_PROCESSES for name in reply_readers)
+                    and all(name in MORE_PRIVILEGED_PROCESSES for name in reply_writers))
+
+    def enforce_unsafe_span_usage(self):
+        if self.should_copy_reply_spans():
+            return
+        for message in self.messages:
+            for parameter in message.reply_parameters or []:
+                if parameter.has_attribute(UNSAFE_SPAN_ATTRIBUTE):
+                    raise Exception("ERROR: '%s' attribute found on reply value %s.%s %s, but replies to %s are written by a more privileged process and are not copied" % (UNSAFE_SPAN_ATTRIBUTE, self.name, message.name, parameter.name, self.name))
 
     def enforce_opaque_ipc_types_usage(self):
         for message in self.messages:

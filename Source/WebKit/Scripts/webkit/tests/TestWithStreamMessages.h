@@ -82,6 +82,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
@@ -115,6 +116,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -146,6 +148,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_CallWithIdentifierReply; }
@@ -212,6 +215,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -270,6 +274,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = false;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -300,6 +305,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = false;
     static constexpr bool isReplyStreamEncodable = false;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

@@ -31,9 +31,10 @@
 #include "EditingRange.h"
 #include "Encoder.h"
 #include "GeneratedSerializers.h"
+#include "Helpers/Test.h"
 #include "SecurityFlags.h"
 #include "StreamConnectionEncoder.h"
-#include "Helpers/Test.h"
+#include "UnsafeSpan.h"
 #include <WebCore/ShareableResource.h>
 #include <WebCore/TransformationMatrix.h>
 #include <limits>
@@ -909,6 +910,116 @@ TEST(ArgumentCoderTransformationMatrix, NonAffineCostsSixteenDoubles)
         8.0, 7.0, 6.0, 5.0,
         4.0, 3.0, 2.0, 1.0
     });
+}
+
+static bool spanAliasesBuffer(std::span<const uint8_t> buffer, const void* data)
+{
+    auto* bytes = static_cast<const uint8_t*>(data);
+    return bytes >= buffer.data() && bytes < std::to_address(buffer.end());
+}
+
+TEST(ArgumentCoderStreamSpanCopy, PlainSpanIsCopiedOffStreamBuffer)
+{
+    Vector<uint8_t> buffer(FillWith { }, 1024, static_cast<uint8_t>(0));
+    IPC::StreamConnectionEncoder encoder(EncoderDecoderTest::name(), buffer.mutableSpan());
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    encoder << std::span<const uint32_t> { data };
+
+    auto decoder = makeUnique<IPC::Decoder>(buffer.span(), 0);
+    ASSERT_TRUE(decoder->shouldCopySpans());
+    auto span = decoder->decode<std::span<const uint32_t>>();
+    ASSERT_TRUE(!!span);
+    ASSERT_EQ(span->size(), 4u);
+
+    EXPECT_FALSE(spanAliasesBuffer(decoder->span(), span->data()));
+
+    for (auto& byte : buffer.mutableSpan())
+        byte = 0xff;
+    EXPECT_EQ((*span)[0], 1u);
+    EXPECT_EQ((*span)[1], 2u);
+    EXPECT_EQ((*span)[2], 3u);
+    EXPECT_EQ((*span)[3], 4u);
+}
+
+TEST(ArgumentCoderStreamSpanCopy, UnsafeSpanViewsStreamBuffer)
+{
+    Vector<uint8_t> buffer(FillWith { }, 1024, static_cast<uint8_t>(0));
+    IPC::StreamConnectionEncoder encoder(EncoderDecoderTest::name(), buffer.mutableSpan());
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    encoder << IPC::UnsafeSpan<uint32_t> { std::span<const uint32_t> { data } };
+
+    auto decoder = makeUnique<IPC::Decoder>(buffer.span(), 0);
+    ASSERT_TRUE(decoder->shouldCopySpans());
+    auto span = decoder->decode<IPC::UnsafeSpan<uint32_t>>();
+    ASSERT_TRUE(!!span);
+    ASSERT_EQ(span->size(), 4u);
+
+    EXPECT_TRUE(spanAliasesBuffer(decoder->span(), span->data()));
+
+    for (auto& byte : buffer.mutableSpan())
+        byte = 0xff;
+    EXPECT_EQ((*span)[0], 0xffffffffu);
+    EXPECT_EQ((*span)[3], 0xffffffffu);
+}
+
+TEST(ArgumentCoderStreamSpanCopy, NonStreamPlainSpanIsNotCopied)
+{
+    IPC::Encoder encoder(EncoderDecoderTest::name(), 0);
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    encoder << std::span<const uint32_t> { data };
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+    ASSERT_FALSE(decoder->shouldCopySpans());
+    auto span = decoder->decode<std::span<const uint32_t>>();
+    ASSERT_TRUE(!!span);
+    ASSERT_EQ(span->size(), 4u);
+
+    EXPECT_TRUE(spanAliasesBuffer(decoder->span(), span->data()));
+    EXPECT_EQ((*span)[0], 1u);
+    EXPECT_EQ((*span)[3], 4u);
+}
+
+TEST(ArgumentCoderStreamSpanCopy, SpansWithSmallElementAlignmentAreCopied)
+{
+    Vector<uint8_t> buffer(FillWith { }, 1024, static_cast<uint8_t>(0));
+    IPC::StreamConnectionEncoder encoder(EncoderDecoderTest::name(), buffer.mutableSpan());
+    std::array<uint8_t, 3> bytes { 1, 2, 3 };
+    std::array<float, 3> floats { 1.5f, 2.5f, 3.5f };
+    std::array<uint8_t, 3> tupleBytes { 4, 5, 6 };
+    std::array<float, 3> tupleFloats { 4.5f, 5.5f, 6.5f };
+    encoder << std::span<const uint8_t> { bytes } << std::span<const float> { floats } << IPC::ArrayReferenceTuple<uint8_t, float> { tupleBytes.data(), tupleFloats.data(), tupleBytes.size() };
+
+    auto decoder = makeUnique<IPC::Decoder>(buffer.span(), 0);
+    ASSERT_TRUE(decoder->shouldCopySpans());
+
+    auto byteSpan = decoder->decode<std::span<const uint8_t>>();
+    ASSERT_TRUE(!!byteSpan);
+    ASSERT_EQ(byteSpan->size(), 3u);
+    EXPECT_FALSE(spanAliasesBuffer(decoder->span(), byteSpan->data()));
+    EXPECT_EQ((*byteSpan)[0], 1u);
+    EXPECT_EQ((*byteSpan)[2], 3u);
+
+    auto floatSpan = decoder->decode<std::span<const float>>();
+    ASSERT_TRUE(!!floatSpan);
+    ASSERT_EQ(floatSpan->size(), 3u);
+    EXPECT_FALSE(spanAliasesBuffer(decoder->span(), floatSpan->data()));
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(floatSpan->data()) % alignof(float), 0u);
+    EXPECT_EQ((*floatSpan)[0], 1.5f);
+    EXPECT_EQ((*floatSpan)[2], 3.5f);
+
+    auto tuple = decoder->decode<IPC::ArrayReferenceTuple<uint8_t, float>>();
+    ASSERT_TRUE(!!tuple);
+    ASSERT_EQ(tuple->size(), 3u);
+    auto tupleByteSpan = tuple->span<0>();
+    auto tupleFloatSpan = tuple->span<1>();
+    EXPECT_FALSE(spanAliasesBuffer(decoder->span(), tupleByteSpan.data()));
+    EXPECT_FALSE(spanAliasesBuffer(decoder->span(), tupleFloatSpan.data()));
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(tupleFloatSpan.data()) % alignof(float), 0u);
+    EXPECT_EQ(tupleByteSpan[0], 4u);
+    EXPECT_EQ(tupleByteSpan[2], 6u);
+    EXPECT_EQ(tupleFloatSpan[0], 4.5f);
+    EXPECT_EQ(tupleFloatSpan[2], 6.5f);
 }
 
 } // namespace TestWebKitAPI
