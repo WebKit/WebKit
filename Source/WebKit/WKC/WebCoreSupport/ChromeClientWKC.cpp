@@ -429,4 +429,30 @@ ChromeClientWKC::showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHan
     completionHandler(false);
 }
 
+#if ENABLE(FULLSCREEN_API)
+bool
+ChromeClientWKC::supportsFullScreenForElement(const WebCore::Element&, bool)
+{
+    // The Wii U browser view is already the display surface. WebCore can switch
+    // the selected element into its fullscreen presentation within that surface.
+    return m_view;
+}
+
+void
+ChromeClientWKC::enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(WebCore::ExceptionOr<void>)>&& willEnterFullscreen, CompletionHandler<bool(bool)>&& didEnterFullscreen)
+{
+    // There is no separate desktop-style browser chrome to hide on this port.
+    // Complete WebCore's fullscreen transition so :fullscreen and fullscreen
+    // events are handled by the engine in the existing Wii U display surface.
+    willEnterFullscreen({ });
+    didEnterFullscreen(!!m_view);
+}
+
+void
+ChromeClientWKC::exitFullScreenForElement(WebCore::Element*, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+#endif // ENABLE(FULLSCREEN_API)
+
 } // namespace

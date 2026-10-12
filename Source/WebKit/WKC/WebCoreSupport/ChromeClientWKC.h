@@ -104,6 +104,12 @@ public:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&) const final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
 
+#if ENABLE(FULLSCREEN_API)
+    bool supportsFullScreenForElement(const WebCore::Element&, bool) final;
+    void enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(WebCore::ExceptionOr<void>)>&&, CompletionHandler<bool(bool)>&&) final;
+    void exitFullScreenForElement(WebCore::Element*, CompletionHandler<void()>&&) final;
+#endif
+
     // ---- No WKC embedder counterpart: correct as no-ops / local answers ----
     void chromeDestroyed() override { }
     bool isPopup() const final { return false; }
