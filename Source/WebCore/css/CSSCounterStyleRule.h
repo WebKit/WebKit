@@ -71,7 +71,7 @@ public:
     virtual ~CSSCounterStyleRule();
 
     String cssText() const final;
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
     StyleRuleType styleRuleType() const final { return StyleRuleType::CounterStyle; }
 
     String name() const { return m_counterStyleRule->name(); }
@@ -109,7 +109,7 @@ private:
     Ref<StyleRuleCounterStyle> m_counterStyleRule;
 };
 
-CSSCounterStyleDescriptors::System NODELETE toCounterStyleSystemEnum(const CSSValue*);
+CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue*);
 
 } // namespace WebCore
 

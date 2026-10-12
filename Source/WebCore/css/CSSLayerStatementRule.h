@@ -46,7 +46,7 @@ public:
 private:
     CSSLayerStatementRule(StyleRuleLayer&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::LayerStatement; }
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleLayer> m_layerRule;
 };

@@ -51,10 +51,10 @@ struct OSRExitHandle;
 
 class PatchpointExceptionHandle : public ThreadSafeRefCounted<PatchpointExceptionHandle> {
 public:
-    static Ref<PatchpointExceptionHandle> NODELETE create(
+    static Ref<PatchpointExceptionHandle> create(
         State&, OSRExitDescriptor*, DFG::NodeOrigin, unsigned dfgNodeIndex, unsigned offset, const HandlerInfo&);
 
-    static RefPtr<PatchpointExceptionHandle> NODELETE defaultHandle(State&, unsigned dfgNodeIndex);
+    static RefPtr<PatchpointExceptionHandle> defaultHandle(State&, unsigned dfgNodeIndex);
     
     ~PatchpointExceptionHandle();
 

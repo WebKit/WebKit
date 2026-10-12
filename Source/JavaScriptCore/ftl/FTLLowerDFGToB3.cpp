@@ -27308,7 +27308,7 @@ IGNORE_CLANG_WARNINGS_END
         callPreflight(codeOriginDescriptionOfCallSite());
     }
 
-    CodeOrigin NODELETE codeOriginDescriptionOfCallSite() const
+    CodeOrigin codeOriginDescriptionOfCallSite() const
     {
         CodeOrigin codeOrigin = m_origin.semantic;
         switch (m_node->op()) {

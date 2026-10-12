@@ -1362,7 +1362,7 @@ public:
     {
     }
     
-    void NODELETE addBorder(const CollapsedBorderValue& borderValue, BoxSide borderSide, bool shouldPaint,
+    void addBorder(const CollapsedBorderValue& borderValue, BoxSide borderSide, bool shouldPaint,
         LayoutUnit x1, LayoutUnit y1, LayoutUnit x2, LayoutUnit y2, BorderStyle borderStyle)
     {
         if (borderValue.exists() && shouldPaint) {

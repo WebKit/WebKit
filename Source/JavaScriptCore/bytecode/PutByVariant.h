@@ -109,7 +109,7 @@ public:
         return m_newStructure;
     }
     
-    void NODELETE fixTransitionToReplaceIfNecessary();
+    void fixTransitionToReplaceIfNecessary();
 
     bool NODELETE writesStructures() const;
     bool NODELETE reallocatesStorage() const;

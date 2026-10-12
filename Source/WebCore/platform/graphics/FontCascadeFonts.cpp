@@ -55,7 +55,7 @@ public:
         return { m_glyphs[index], m_fonts[index].get() };
     }
 
-    void NODELETE setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
+    void setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
     {
         setGlyphDataForIndex(GlyphPage::indexForCodePoint(c), glyphData);
     }

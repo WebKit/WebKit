@@ -191,7 +191,7 @@ public:
     }
 
     CSSPropertyID NODELETE cssPropertyID() const;
-    AtomString NODELETE customPropertyName() const;
+    AtomString customPropertyName() const;
 
     bool NODELETE isCurrentPropertyInvalidAtComputedValueTime() const;
     void NODELETE setCurrentPropertyInvalidAtComputedValueTime();

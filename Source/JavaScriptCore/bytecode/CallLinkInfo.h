@@ -441,7 +441,7 @@ public:
         m_callType = callType;
     }
 
-    void NODELETE initializeFromDFGUnlinkedCallLinkInfo(VM&, const DFG::UnlinkedCallLinkInfo&, CodeBlock*);
+    void initializeFromDFGUnlinkedCallLinkInfo(VM&, const DFG::UnlinkedCallLinkInfo&, CodeBlock*);
 
 private:
     void emitFastPath(CCallHelpers&);

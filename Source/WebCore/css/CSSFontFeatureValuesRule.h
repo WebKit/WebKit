@@ -64,7 +64,7 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValues; }
     String cssText() const final;
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFeatureValues> m_fontFeatureValuesRule;
 };

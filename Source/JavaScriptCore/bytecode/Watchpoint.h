@@ -501,7 +501,7 @@ private:
     }
 
     JS_EXPORT_PRIVATE WatchpointSet* inflateSlow();
-    JS_EXPORT_PRIVATE void NODELETE freeFat();
+    JS_EXPORT_PRIVATE void freeFat();
     
     uintptr_t m_data;
 };
