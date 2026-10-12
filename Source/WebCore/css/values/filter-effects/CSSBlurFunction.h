@@ -38,7 +38,7 @@ struct Blur {
 
     bool operator==(const Blur&) const = default;
 };
-using BlurFunction = FunctionNotation<CSSValueBlur, Blur>;
+using BlurFunction = FunctionNotation<CSSValueID::Blur, Blur>;
 
 DEFINE_TYPE_WRAPPER_GET(Blur, value);
 

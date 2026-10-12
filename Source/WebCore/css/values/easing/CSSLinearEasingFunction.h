@@ -50,7 +50,7 @@ struct LinearEasingParameters {
 
     bool operator==(const LinearEasingParameters&) const = default;
 };
-using LinearEasingFunction = FunctionNotation<CSSValueLinear, LinearEasingParameters>;
+using LinearEasingFunction = FunctionNotation<CSSValueID::Linear, LinearEasingParameters>;
 
 DEFINE_TYPE_WRAPPER_GET(LinearEasingParameters, stops);
 

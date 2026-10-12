@@ -239,7 +239,7 @@ static FontFaceStyleInfo calculateFontFaceStyleInfo(CSSValue& value)
         auto slope = Style::fontStyleFromCSSValueDeprecated(value);
         if (!slope)
             return { FontSelectionRange { normalItalicValue() }, FontStyleAxis::normal };
-        auto axis = isValueID(value, CSSValueItalic) ? FontStyleAxis::ital : FontStyleAxis::slnt;
+        auto axis = isValueID(value, CSSValueID::Italic) ? FontStyleAxis::ital : FontStyleAxis::slnt;
         return { FontSelectionRange { *slope }, axis };
     }
 

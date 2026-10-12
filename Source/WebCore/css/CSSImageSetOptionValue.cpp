@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, std::optional<CSS::Resolution<>>&& resolution, std::optional<FunctionNotation<CSSValueType, CSS::String>>&& mimeType)
+CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, std::optional<CSS::Resolution<>>&& resolution, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&& mimeType)
     : CSSValue(ClassType::ImageSetOption)
     , m_image(WTF::move(image))
     , m_resolution(resolution.value_or(CSS::Literals::x(1)))
@@ -40,7 +40,7 @@ CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, std::optio
 {
 }
 
-Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image, std::optional<CSS::Resolution<>>&& resolution, std::optional<FunctionNotation<CSSValueType, CSS::String>>&& mimeType)
+Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image, std::optional<CSS::Resolution<>>&& resolution, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&& mimeType)
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
     return adoptRef(*new CSSImageSetOptionValue( WTF::move(image), WTF::move(resolution), WTF::move(mimeType)));

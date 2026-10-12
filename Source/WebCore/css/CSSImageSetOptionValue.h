@@ -37,24 +37,24 @@ namespace WebCore {
 // https://drafts.csswg.org/css-images-4/#typedef-image-set-option
 class CSSImageSetOptionValue final : public CSSValue {
 public:
-    static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueType, CSS::String>>&&);
+    static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&&);
 
     bool equals(const CSSImageSetOptionValue&) const;
     String customCSSText(const CSS::SerializationContext&) const;
 
     const CSSValue& image() const LIFETIME_BOUND { return m_image; }
     const CSS::Resolution<>& resolution() const LIFETIME_BOUND { return m_resolution; }
-    const std::optional<FunctionNotation<CSSValueType, CSS::String>>& type() const LIFETIME_BOUND { return m_mimeType; }
+    const std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>& type() const LIFETIME_BOUND { return m_mimeType; }
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
 
 private:
-    CSSImageSetOptionValue(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueType, CSS::String>>&&);
+    CSSImageSetOptionValue(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&&);
 
     const Ref<CSSValue> m_image;
     const CSS::Resolution<> m_resolution;
-    const std::optional<FunctionNotation<CSSValueType, CSS::String>> m_mimeType;
+    const std::optional<FunctionNotation<CSSValueID::Type, CSS::String>> m_mimeType;
 };
 
 } // namespace WebCore

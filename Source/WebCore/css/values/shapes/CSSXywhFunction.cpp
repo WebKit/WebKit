@@ -40,7 +40,7 @@ void Serialize<Xywh>::operator()(StringBuilder& builder, const SerializationCont
     serializationForCSS(builder, context, value.size);
 
     if (!hasDefaultValue(value.radii)) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::Round), ' ');
         serializationForCSS(builder, context, value.radii);
     }
 }

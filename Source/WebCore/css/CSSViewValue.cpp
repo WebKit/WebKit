@@ -36,11 +36,11 @@ namespace WebCore {
 
 String CSSViewValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    auto hasAxis = m_axis && !isValueID(*m_axis, CSSValueBlock);
+    auto hasAxis = m_axis && !isValueID(*m_axis, CSSValueID::Block);
     auto hasEndInset = m_endInset && m_endInset != m_startInset;
     auto hasStartInset =
-           (m_startInset && !isValueID(*m_startInset, CSSValueAuto))
-        || (m_startInset && isValueID(*m_startInset, CSSValueAuto) && hasEndInset);
+           (m_startInset && !isValueID(*m_startInset, CSSValueID::Auto))
+        || (m_startInset && isValueID(*m_startInset, CSSValueID::Auto) && hasEndInset);
 
     return makeString(
         "view("_s,

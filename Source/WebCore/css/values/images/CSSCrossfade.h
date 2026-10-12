@@ -56,7 +56,7 @@ template<size_t I> const auto& get(const WebkitCrossfade& value)
     else if constexpr (I == 2)
         return value.progress;
 }
-using WebkitCrossfadeFunction = FunctionNotation<CSSValueWebkitCrossFade, WebkitCrossfade>;
+using WebkitCrossfadeFunction = FunctionNotation<CSSValueID::WebkitCrossFade, WebkitCrossfade>;
 
 // MARK: - cross-fade()
 
@@ -87,7 +87,7 @@ struct Crossfade {
     bool operator==(const Crossfade&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(Crossfade, components);
-using CrossfadeFunction = FunctionNotation<CSSValueCrossFade, Crossfade>;
+using CrossfadeFunction = FunctionNotation<CSSValueID::CrossFade, Crossfade>;
 
 } // namespace CSS
 } // namespace WebCore

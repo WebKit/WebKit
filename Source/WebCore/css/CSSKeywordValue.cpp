@@ -40,7 +40,7 @@ CSSKeywordValue::CSSKeywordValue(StaticCSSValueTag, CSS::Keyword keyword)
 }
 
 CSSKeywordValue::CSSKeywordValue(StaticCSSValueTag, ImplicitInitialValueTag)
-    : CSSKeywordValue(StaticCSSValue, CSS::Keyword { CSSValueInitial })
+    : CSSKeywordValue(StaticCSSValue, CSS::Keyword { CSSValueID::Initial })
 {
     m_isImplicitInitialValue = true;
 }

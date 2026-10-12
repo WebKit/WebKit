@@ -41,7 +41,7 @@ struct GridNameRepeatFunctionParameters {
 
     bool operator==(const GridNameRepeatFunctionParameters&) const = default;
 };
-using GridNameRepeatFunction = FunctionNotation<CSSValueRepeat, GridNameRepeatFunctionParameters>;
+using GridNameRepeatFunction = FunctionNotation<CSSValueID::Repeat, GridNameRepeatFunctionParameters>;
 
 template<size_t I> const auto& get(const GridNameRepeatFunctionParameters& value)
 {

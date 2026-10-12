@@ -35,14 +35,14 @@
 
 namespace WebCore {
 
-// The tokens are flat, including nested ones, and functionId() is CSSValueInvalid for anything that
+// The tokens are flat, including nested ones, and functionId() is CSSValueID::Invalid for anything that
 // is not a function token, so a linear scan finds inherit() at any depth.
 static bool containsInheritFunctionToken(const CSSVariableData& data)
 {
     if (!data.context().cssInheritFunctionEnabled)
         return false;
     for (auto& token : data.tokens()) {
-        if (token.functionId() == CSSValueInherit)
+        if (token.functionId() == CSSValueID::Inherit)
             return true;
     }
     return false;
@@ -92,14 +92,14 @@ void CSSSubstitutionValue::cacheSimpleReference()
 
     auto functionId = range.peek().functionId();
 
-    if (functionId == CSSValueInternalAutoBase) {
+    if (functionId == CSSValueID::InternalAutoBase) {
         range.consumeBlock();
         if (range.atEnd())
-            m_simpleReference = SimpleReference { { }, CSSValueInternalAutoBase };
+            m_simpleReference = SimpleReference { { }, CSSValueID::InternalAutoBase };
         return;
     }
 
-    if (functionId != CSSValueVar && functionId != CSSValueEnv)
+    if (functionId != CSSValueID::Var && functionId != CSSValueID::Env)
         return;
 
     auto variableRange = range.consumeBlock();
@@ -113,7 +113,7 @@ void CSSSubstitutionValue::cacheSimpleReference()
     auto& nameToken = variableRange.consumeIncludingWhitespace();
     if (nameToken.type() != IdentToken)
         return;
-    if (functionId == CSSValueVar && !CSSSubstitutionParser::isValidCustomPropertyName(nameToken))
+    if (functionId == CSSValueID::Var && !CSSSubstitutionParser::isValidCustomPropertyName(nameToken))
         return;
 
     // No fallback support on this path.

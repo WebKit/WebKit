@@ -120,7 +120,7 @@ static CSSValueID resolveIdent(const Value& value)
             return ident.value;
         },
         [](const auto&) {
-            return CSSValueInvalid;
+            return CSSValueID::Invalid;
         }
     );
 }
@@ -271,7 +271,7 @@ EvaluationResult evaluateResolutionFeature(const Feature& feature, float current
 EvaluationResult evaluateIdentifierFeature(const Feature& feature, CSSValueID currentValue, const CSSToLengthConversionData&)
 {
     if (!feature.rightComparison)
-        return toEvaluationResult(currentValue != CSSValueNone && currentValue != CSSValueNoPreference);
+        return toEvaluationResult(currentValue != CSSValueID::None && currentValue != CSSValueID::NoPreference);
 
     auto value = resolveIdent(*feature.rightComparison->value);
     return toEvaluationResult(value == currentValue);

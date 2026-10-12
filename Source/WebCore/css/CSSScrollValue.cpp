@@ -36,8 +36,8 @@ namespace WebCore {
 
 String CSSScrollValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    auto hasScroller = m_scroller && !isValueID(*m_scroller, CSSValueNearest);
-    auto hasAxis = m_axis && !isValueID(*m_axis, CSSValueBlock);
+    auto hasScroller = m_scroller && !isValueID(*m_scroller, CSSValueID::Nearest);
+    auto hasAxis = m_axis && !isValueID(*m_axis, CSSValueID::Block);
 
     return makeString(
         "scroll("_s,

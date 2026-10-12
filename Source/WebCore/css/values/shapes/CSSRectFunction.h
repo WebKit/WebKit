@@ -41,7 +41,7 @@ struct Rect {
 
     bool operator==(const Rect&) const = default;
 };
-using RectFunction = FunctionNotation<CSSValueRect, Rect>;
+using RectFunction = FunctionNotation<CSSValueID::Rect, Rect>;
 
 template<size_t I> const auto& get(const Rect& value)
 {

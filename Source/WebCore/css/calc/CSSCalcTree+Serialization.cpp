@@ -359,22 +359,22 @@ void serializeMathFunctionPrefix(StringBuilder& builder, const IndirectNode<Inve
 
 void serializeMathFunctionPrefix(StringBuilder& builder, const IndirectNode<RoundNearest>&, SerializationState&)
 {
-    builder.append(nameLiteralForSerialization(CSSValueRound), '(', nameLiteralForSerialization(RoundNearest::id), ", "_s);
+    builder.append(nameLiteralForSerialization(CSSValueID::Round), '(', nameLiteralForSerialization(RoundNearest::id), ", "_s);
 }
 
 void serializeMathFunctionPrefix(StringBuilder& builder, const IndirectNode<RoundUp>&, SerializationState&)
 {
-    builder.append(nameLiteralForSerialization(CSSValueRound), '(', nameLiteralForSerialization(RoundUp::id), ", "_s);
+    builder.append(nameLiteralForSerialization(CSSValueID::Round), '(', nameLiteralForSerialization(RoundUp::id), ", "_s);
 }
 
 void serializeMathFunctionPrefix(StringBuilder& builder, const IndirectNode<RoundDown>&, SerializationState&)
 {
-    builder.append(nameLiteralForSerialization(CSSValueRound), '(', nameLiteralForSerialization(RoundDown::id), ", "_s);
+    builder.append(nameLiteralForSerialization(CSSValueID::Round), '(', nameLiteralForSerialization(RoundDown::id), ", "_s);
 }
 
 void serializeMathFunctionPrefix(StringBuilder& builder, const IndirectNode<RoundToZero>&, SerializationState&)
 {
-    builder.append(nameLiteralForSerialization(CSSValueRound), '(', nameLiteralForSerialization(RoundToZero::id), ", "_s);
+    builder.append(nameLiteralForSerialization(CSSValueID::Round), '(', nameLiteralForSerialization(RoundToZero::id), ", "_s);
 }
 
 void serializeMathFunctionPrefix(StringBuilder& builder, const IndirectNode<ProgressNoClamp>&, SerializationState&)
@@ -416,16 +416,16 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<R
             }
             if (key.elementScoped) {
                 separate();
-                builder.append(nameLiteralForSerialization(CSSValueElementScoped));
+                builder.append(nameLiteralForSerialization(CSSValueID::ElementScoped));
             }
             if (key.propertyScoped) {
                 separate();
                 WTF::switchOn(*key.propertyScoped,
                     [&](const Random::Key::PropertyScoped&) {
-                        builder.append(nameLiteralForSerialization(CSSValuePropertyScoped));
+                        builder.append(nameLiteralForSerialization(CSSValueID::PropertyScoped));
                     },
                     [&](const Random::Key::PropertyIndexScoped&) {
-                        builder.append(nameLiteralForSerialization(CSSValuePropertyIndexScoped));
+                        builder.append(nameLiteralForSerialization(CSSValueID::PropertyIndexScoped));
                     }
                 );
             }
@@ -434,7 +434,7 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<R
             builder.append(", "_s);
         },
         [&](const Random::SharingFixed& fixed) {
-            builder.append(nameLiteralForSerialization(CSSValueFixed), ' ');
+            builder.append(nameLiteralForSerialization(CSSValueID::Fixed), ' ');
             CSS::serializationForCSS(builder, state.serializationContext, fixed.value);
             builder.append(", "_s);
         }

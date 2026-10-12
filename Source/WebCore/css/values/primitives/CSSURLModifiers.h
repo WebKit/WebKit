@@ -41,12 +41,12 @@ using URLCrossOriginParameters = Variant<
     Keyword::Anonymous,
     Keyword::UseCredentials
 >;
-using URLCrossOriginFunction = FunctionNotation<CSSValueCrossOrigin, URLCrossOriginParameters>;
+using URLCrossOriginFunction = FunctionNotation<CSSValueID::CrossOrigin, URLCrossOriginParameters>;
 
 // <integrity-modifier> = integrity( <string> )
 // https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-integrity-modifier
 using URLIntegrityParameters = String;
-using URLIntegrityFunction = FunctionNotation<CSSValueIntegrity, URLIntegrityParameters>;
+using URLIntegrityFunction = FunctionNotation<CSSValueID::Integrity, URLIntegrityParameters>;
 
 // <referrer-policy-modifier> = referrer-policy( no-referrer | no-referrer-when-downgrade | same-origin | origin | strict-origin | origin-when-cross-origin | strict-origin-when-cross-origin | unsafe-url )
 // https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier-referrer-policy-modifier
@@ -60,7 +60,7 @@ using URLReferrerPolicyParameters = Variant<
     Keyword::StrictOriginWhenCrossOrigin,
     Keyword::UnsafeUrl
 >;
-using URLReferrerPolicyFunction = FunctionNotation<CSSValueReferrerPolicy, URLReferrerPolicyParameters>;
+using URLReferrerPolicyFunction = FunctionNotation<CSSValueID::ReferrerPolicy, URLReferrerPolicyParameters>;
 
 using URLLinkParameterList = SpaceSeparatedVector<ParamFunction>;
 

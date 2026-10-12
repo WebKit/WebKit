@@ -46,35 +46,35 @@ static bool NODELETE isVGAPaletteColor(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#named-colors
     // "16 of CSS’s named colors come from the VGA palette originally, and were then adopted into HTML"
-    return id >= CSSValueAqua && id <= CSSValueGrey;
+    return id >= CSSValueID::Aqua && id <= CSSValueID::Grey;
 }
 
 static bool NODELETE isNonVGANamedColor(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#named-colors
-    return id >= CSSValueAliceblue && id <= CSSValueYellowgreen;
+    return id >= CSSValueID::Aliceblue && id <= CSSValueID::Yellowgreen;
 }
 
 bool isAbsoluteColorKeyword(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#typedef-absolute-color
-    return isVGAPaletteColor(id) || isNonVGANamedColor(id) || id == CSSValueAlpha || id == CSSValueTransparent;
+    return isVGAPaletteColor(id) || isNonVGANamedColor(id) || id == CSSValueID::Alpha || id == CSSValueID::Transparent;
 }
 
 bool isCurrentColorKeyword(CSSValueID id)
 {
-    return id == CSSValueCurrentcolor;
+    return id == CSSValueID::Currentcolor;
 }
 
 bool isSystemColorKeyword(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#css-system-colors
-    return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || isDeprecatedSystemColorKeyword(id);
+    return (id >= CSSValueID::Canvas && id <= CSSValueID::InternalDocumentTextColor) || isDeprecatedSystemColorKeyword(id);
 }
 
 SUPPRESS_NODELETE bool isDeprecatedSystemColorKeyword(CSSValueID id)
 {
-    if (id == CSSValueText)
+    if (id == CSSValueID::Text)
 #if PLATFORM(COCOA)
         return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTextValueForCSSColor);
 #else
@@ -82,7 +82,7 @@ SUPPRESS_NODELETE bool isDeprecatedSystemColorKeyword(CSSValueID id)
 #endif
 
     // https://drafts.csswg.org/css-color-4/#deprecated-system-colors
-    return (id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu;
+    return (id >= CSSValueID::Activeborder && id <= CSSValueID::Windowtext) || id == CSSValueID::Menu;
 }
 
 bool isColorKeyword(CSSValueID id, OptionSet<ColorType> allowedColorTypes)
@@ -122,15 +122,15 @@ WebCore::Color colorFromKeyword(CSSValueID keyword, OptionSet<StyleColorOptions>
 WebCore::Color createColor(const KeywordColor& unresolved, PlatformColorResolutionState& state)
 {
     switch (unresolved.valueID) {
-    case CSSValueInternalDocumentTextColor:
+    case CSSValueID::InternalDocumentTextColor:
         return state.internalDocumentTextColor();
-    case CSSValueWebkitLink:
+    case CSSValueID::WebkitLink:
         return state.forVisitedLink == Style::ForVisitedLink::Yes ? state.webkitLinkVisited() : state.webkitLink();
-    case CSSValueWebkitActivelink:
+    case CSSValueID::WebkitActivelink:
         return state.webkitActiveLink();
-    case CSSValueWebkitFocusRingColor:
+    case CSSValueID::WebkitFocusRingColor:
         return state.webkitFocusRingColor();
-    case CSSValueCurrentcolor:
+    case CSSValueID::Currentcolor:
         return state.currentColor();
     default:
         return colorFromKeyword(unresolved.valueID, state.keywordOptions);

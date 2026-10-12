@@ -55,7 +55,7 @@ void Serialize<RelativeControlPoint>::operator()(StringBuilder& builder, const S
     serializationForCSS(builder, context, value.offset);
 
     if (value.anchor && *value.anchor != RelativeControlPoint::defaultAnchor) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueFrom), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::From), ' ');
         serializationForCSS(builder, context, *value.anchor);
     }
 }
@@ -70,7 +70,7 @@ void Serialize<AbsoluteControlPoint>::operator()(StringBuilder& builder, const S
     serializationForCSS(builder, context, value.offset);
 
     if (value.anchor && *value.anchor != AbsoluteControlPoint::defaultAnchor) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueFrom), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::From), ' ');
         serializationForCSS(builder, context, *value.anchor);
     }
 }
@@ -144,7 +144,7 @@ void Serialize<CurveCommand::To>::operator()(StringBuilder& builder, const Seria
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
     serializationForCSS(builder, context, value.offset);
 
-    builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
+    builder.append(' ', nameLiteralForSerialization(CSSValueID::With), ' ');
     serializationForCSS(builder, context, value.controlPoint1);
     if (value.controlPoint2) {
         builder.append(" / "_s);
@@ -157,7 +157,7 @@ void Serialize<CurveCommand::By>::operator()(StringBuilder& builder, const Seria
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
     serializationForCSS(builder, context, value.offset);
 
-    builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
+    builder.append(' ', nameLiteralForSerialization(CSSValueID::With), ' ');
     serializationForCSS(builder, context, value.controlPoint1);
     if (value.controlPoint2) {
         builder.append(" / "_s);
@@ -182,7 +182,7 @@ void Serialize<SmoothCommand::To>::operator()(StringBuilder& builder, const Seri
     serializationForCSS(builder, context, value.offset);
 
     if (value.controlPoint) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::With), ' ');
         serializationForCSS(builder, context, *value.controlPoint);
     }
 }
@@ -193,7 +193,7 @@ void Serialize<SmoothCommand::By>::operator()(StringBuilder& builder, const Seri
     serializationForCSS(builder, context, value.offset);
 
     if (value.controlPoint) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::With), ' ');
         serializationForCSS(builder, context, *value.controlPoint);
     }
 }
@@ -218,7 +218,7 @@ void Serialize<ArcCommand>::operator()(StringBuilder& builder, const Serializati
     builder.append(nameLiteralForSerialization(value.name), ' ');
     serializationForCSS(builder, context, value.toBy);
 
-    builder.append(' ', nameLiteralForSerialization(CSSValueOf), ' ');
+    builder.append(' ', nameLiteralForSerialization(CSSValueID::Of), ' ');
     if (value.size.width() == value.size.height())
         serializationForCSS(builder, context, value.size.width());
     else
@@ -235,7 +235,7 @@ void Serialize<ArcCommand>::operator()(StringBuilder& builder, const Serializati
     }
 
     if (value.rotation != 0_css_deg) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRotate), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::Rotate), ' ');
         serializationForCSS(builder, context, value.rotation);
     }
 }
@@ -249,7 +249,7 @@ void Serialize<Shape>::operator()(StringBuilder& builder, const SerializationCon
         builder.append(' ');
     }
 
-    builder.append(nameLiteralForSerialization(CSSValueFrom), ' ');
+    builder.append(nameLiteralForSerialization(CSSValueID::From), ' ');
     serializationForCSS(builder, context, value.startingPoint);
     builder.append(", "_s);
     serializationForCSS(builder, context, value.commands);

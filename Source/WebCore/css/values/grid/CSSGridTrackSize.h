@@ -39,7 +39,7 @@ struct GridMinMaxFunctionParameters {
 
     bool operator==(const GridMinMaxFunctionParameters&) const = default;
 };
-using GridMinMaxFunction = FunctionNotation<CSSValueMinmax, GridMinMaxFunctionParameters>;
+using GridMinMaxFunction = FunctionNotation<CSSValueID::Minmax, GridMinMaxFunctionParameters>;
 
 template<size_t I> const auto& get(const GridMinMaxFunctionParameters& value)
 {
@@ -55,7 +55,7 @@ struct GridFitContentFunctionParameters {
 
     bool operator==(const GridFitContentFunctionParameters&) const = default;
 };
-using GridFitContentFunction = FunctionNotation<CSSValueFitContent, GridFitContentFunctionParameters>;
+using GridFitContentFunction = FunctionNotation<CSSValueID::FitContent, GridFitContentFunctionParameters>;
 DEFINE_TYPE_WRAPPER_GET(GridFitContentFunctionParameters, value);
 
 

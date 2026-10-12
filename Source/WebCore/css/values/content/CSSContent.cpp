@@ -37,7 +37,7 @@ static std::optional<CounterStyle> counterStyleForSerialization(const CounterSty
 {
     return WTF::switchOn(style.identifier,
         [&](const CSS::Keyword& predefinedKeyword) -> std::optional<CounterStyle> {
-            return predefinedKeyword.value != CSSValueDecimal ? std::make_optional(style) : std::nullopt;
+            return predefinedKeyword.value != CSSValueID::Decimal ? std::make_optional(style) : std::nullopt;
         },
         [&](const CSS::CustomIdent&) -> std::optional<CounterStyle> {
             return style;

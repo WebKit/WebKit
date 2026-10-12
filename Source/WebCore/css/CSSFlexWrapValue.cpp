@@ -33,11 +33,11 @@ namespace WebCore {
 Ref<CSSFlexWrapValue> CSSFlexWrapValue::create(Ref<CSSValue> wrap, Ref<CSSValue> balance)
 {
     auto flexWrap = [&] -> CSS::FlexWrap {
-        if (valueID(balance.get()) == CSSValueBalance) {
+        if (valueID(balance.get()) == CSSValueID::Balance) {
             switch (valueID(wrap.get())) {
-            case CSSValueWrap:
+            case CSSValueID::Wrap:
                 return { CSS::Keyword::Wrap { }, CSS::Keyword::Balance { } };
-            case CSSValueWrapReverse:
+            case CSSValueID::WrapReverse:
                 return { CSS::Keyword::WrapReverse { }, CSS::Keyword::Balance { } };
             default:
                 break;

@@ -159,7 +159,7 @@ struct Symbol {
 
 struct SiblingCount {
     static constexpr bool isLeaf = true;
-    static constexpr auto id = CSSValueSiblingCount;
+    static constexpr auto id = CSSValueID::SiblingCount;
 
     // <sibling-count()> = sibling-count()
     //     - INPUT: none
@@ -170,7 +170,7 @@ struct SiblingCount {
 
 struct SiblingIndex {
     static constexpr bool isLeaf = true;
-    static constexpr auto id = CSSValueSiblingIndex;
+    static constexpr auto id = CSSValueID::SiblingIndex;
 
     // <sibling-index()> = sibling-index()
     //     - INPUT: none
@@ -355,7 +355,7 @@ struct Deg2Rad {
 // Comparison Functions - https://drafts.csswg.org/css-values-4/#comp-func
 struct Min {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Min);
-    static constexpr auto id = CSSValueMin;
+    static constexpr auto id = CSSValueID::Min;
 
     // <min()>   = min( <calc-sum># )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -371,7 +371,7 @@ struct Min {
 
 struct Max {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Max);
-    static constexpr auto id = CSSValueMax;
+    static constexpr auto id = CSSValueID::Max;
 
     // <max()>   = max( <calc-sum># )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -387,7 +387,7 @@ struct Max {
 
 struct Clamp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Clamp);
-    static constexpr auto id = CSSValueClamp;
+    static constexpr auto id = CSSValueID::Clamp;
 
     // <clamp()> = clamp( [ <calc-sum> | none ], <calc-sum>, [ <calc-sum> | none ] )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -406,7 +406,7 @@ struct Clamp {
 // Stepped Value Functions - https://drafts.csswg.org/css-values-4/#round-func
 struct RoundNearest {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundNearest);
-    static constexpr auto id = CSSValueNearest;
+    static constexpr auto id = CSSValueID::Nearest;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -431,7 +431,7 @@ struct RoundNearest {
 
 struct RoundUp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundUp);
-    static constexpr auto id = CSSValueUp;
+    static constexpr auto id = CSSValueID::Up;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -456,7 +456,7 @@ struct RoundUp {
 
 struct RoundDown {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundDown);
-    static constexpr auto id = CSSValueDown;
+    static constexpr auto id = CSSValueID::Down;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -481,7 +481,7 @@ struct RoundDown {
 
 struct RoundToZero {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundToZero);
-    static constexpr auto id = CSSValueToZero;
+    static constexpr auto id = CSSValueID::ToZero;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -506,7 +506,7 @@ struct RoundToZero {
 
 struct Mod {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Mod);
-    static constexpr auto id = CSSValueMod;
+    static constexpr auto id = CSSValueID::Mod;
 
     // <mod()>   = mod( <calc-sum>, <calc-sum> )
     //     - INPUT: "same" <number>, <dimension>, or <percentage>
@@ -524,7 +524,7 @@ struct Mod {
 
 struct Rem {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Rem);
-    static constexpr auto id = CSSValueRem;
+    static constexpr auto id = CSSValueID::Rem;
 
     // <rem()>   = rem( <calc-sum>, <calc-sum> )
     //     - INPUT: "same" <number>, <dimension>, or <percentage>
@@ -543,7 +543,7 @@ struct Rem {
 // Trigonometric Functions - https://drafts.csswg.org/css-values-4/#trig-funcs
 struct Sin {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sin);
-    static constexpr auto id = CSSValueSin;
+    static constexpr auto id = CSSValueID::Sin;
 
     // <sin()>   = sin( <calc-sum> )
     //     - INPUT: <number> or <angle>
@@ -558,7 +558,7 @@ struct Sin {
 
 struct Cos {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Cos);
-    static constexpr auto id = CSSValueCos;
+    static constexpr auto id = CSSValueID::Cos;
 
     // <cos()>   = cos( <calc-sum> )
     //     - INPUT: <number> or <angle>
@@ -573,7 +573,7 @@ struct Cos {
 
 struct Tan {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Tan);
-    static constexpr auto id = CSSValueTan;
+    static constexpr auto id = CSSValueID::Tan;
 
     // <tan()>   = tan( <calc-sum> )
     //     - INPUT: <number> or <angle>
@@ -588,7 +588,7 @@ struct Tan {
 
 struct Asin {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Asin);
-    static constexpr auto id = CSSValueAsin;
+    static constexpr auto id = CSSValueID::Asin;
 
     // <asin()>  = asin( <calc-sum> )
     //     - INPUT: <number>
@@ -603,7 +603,7 @@ struct Asin {
 
 struct Acos {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Acos);
-    static constexpr auto id = CSSValueAcos;
+    static constexpr auto id = CSSValueID::Acos;
 
     // <acos()>  = acos( <calc-sum> )
     //     - INPUT: <number>
@@ -618,7 +618,7 @@ struct Acos {
 
 struct Atan {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Atan);
-    static constexpr auto id = CSSValueAtan;
+    static constexpr auto id = CSSValueID::Atan;
 
     // <atan()>  = atan( <calc-sum> )
     //     - INPUT: <number>
@@ -633,7 +633,7 @@ struct Atan {
 
 struct Atan2 {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Atan2);
-    static constexpr auto id = CSSValueAtan2;
+    static constexpr auto id = CSSValueID::Atan2;
 
     // <atan2()> = atan2( <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -651,7 +651,7 @@ struct Atan2 {
 // Exponential Functions - https://drafts.csswg.org/css-values-4/#exponent-funcs
 struct Pow {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Pow);
-    static constexpr auto id = CSSValuePow;
+    static constexpr auto id = CSSValueID::Pow;
 
     // <pow()>   = pow( <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>
@@ -668,7 +668,7 @@ struct Pow {
 
 struct Sqrt {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sqrt);
-    static constexpr auto id = CSSValueSqrt;
+    static constexpr auto id = CSSValueID::Sqrt;
 
     // <sqrt()>  = sqrt( <calc-sum> )
     //     - INPUT: <number>
@@ -683,7 +683,7 @@ struct Sqrt {
 
 struct Hypot {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Hypot);
-    static constexpr auto id = CSSValueHypot;
+    static constexpr auto id = CSSValueID::Hypot;
 
     // <hypot()> = hypot( <calc-sum># )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -699,7 +699,7 @@ struct Hypot {
 
 struct Log {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Log);
-    static constexpr auto id = CSSValueLog;
+    static constexpr auto id = CSSValueID::Log;
 
     // <log()>   = log( <calc-sum>, <calc-sum>? )
     //     - INPUT: <number>
@@ -716,7 +716,7 @@ struct Log {
 
 struct Exp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Exp);
-    static constexpr auto id = CSSValueExp;
+    static constexpr auto id = CSSValueID::Exp;
 
     // <exp()>   = exp( <calc-sum> )
     //     - INPUT: <number>
@@ -732,7 +732,7 @@ struct Exp {
 // Sign-Related Functions - https://drafts.csswg.org/css-values-4/#sign-funcs
 struct Abs {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Abs);
-    static constexpr auto id = CSSValueAbs;
+    static constexpr auto id = CSSValueID::Abs;
 
     // <abs()>   = abs( <calc-sum> )
     //     - INPUT: any
@@ -747,7 +747,7 @@ struct Abs {
 
 struct Sign {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sign);
-    static constexpr auto id = CSSValueSign;
+    static constexpr auto id = CSSValueID::Sign;
 
     // <sign()>  = sign( <calc-sum> )
     //     - INPUT: any
@@ -763,7 +763,7 @@ struct Sign {
 // Random Function - https://drafts.csswg.org/css-values-5/#random
 struct Random {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Random);
-    static constexpr auto id = CSSValueRandom;
+    static constexpr auto id = CSSValueID::Random;
 
     // <random-key> = auto | <random-cache-key> | fixed <number [0,1]>
     // <random-cache-key> = <dashed-ident> || element-scoped || [ property-scoped | property-index-scoped ]
@@ -795,7 +795,7 @@ struct Random {
 // Progress Function - https://drafts.csswg.org/css-values-5/#progress
 struct Progress {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Progress);
-    static constexpr auto id = CSSValueProgress;
+    static constexpr auto id = CSSValueID::Progress;
 
     // <progress()> = progress( <calc-sum>, <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -814,7 +814,7 @@ struct Progress {
 // Progress Function (no-clamp variant) - https://drafts.csswg.org/css-values-5/#progress
 struct ProgressNoClamp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(ProgressNoClamp);
-    static constexpr auto id = CSSValueProgress;
+    static constexpr auto id = CSSValueID::Progress;
 
     // <progress()> = progress( no-clamp <calc-sum>, <calc-sum>, <calc-sum> )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
@@ -834,7 +834,7 @@ struct ProgressNoClamp {
 
 struct CalcMix {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(CalcMix);
-    static constexpr auto id = CSSValueCalcMix;
+    static constexpr auto id = CSSValueID::CalcMix;
 
     struct Item {
         using Weight = CSS::Percentage<CSS::ClosedPercentageRange>;
@@ -873,7 +873,7 @@ struct AnchorSide {
 
 struct Anchor {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Anchor);
-    static constexpr auto id = CSSValueAnchor;
+    static constexpr auto id = CSSValueID::Anchor;
 
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
 
@@ -888,7 +888,7 @@ struct Anchor {
 
 struct AnchorSize {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(AnchorSize);
-    static constexpr auto id = CSSValueAnchorSize;
+    static constexpr auto id = CSSValueID::AnchorSize;
 
     // anchor-size() = anchor-size( [ <anchor-element> || <anchor-size> ]? , <length-percentage>? )
     // <anchor-element> = <dashed-ident>

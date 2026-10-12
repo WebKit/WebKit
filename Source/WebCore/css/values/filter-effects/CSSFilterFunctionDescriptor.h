@@ -35,7 +35,7 @@ namespace WebCore {
 template<auto FilterFunction> struct CSSFilterFunctionDescriptor;
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-blur
-template<> struct CSSFilterFunctionDescriptor<CSSValueBlur> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Blur> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = false;
 
@@ -47,7 +47,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueBlur> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-brightness
-template<> struct CSSFilterFunctionDescriptor<CSSValueBrightness> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Brightness> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -59,7 +59,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueBrightness> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-contrast
-template<> struct CSSFilterFunctionDescriptor<CSSValueContrast> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Contrast> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -71,7 +71,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueContrast> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-drop-shadow
-template<> struct CSSFilterFunctionDescriptor<CSSValueDropShadow> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::DropShadow> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = false;
 
@@ -85,7 +85,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueDropShadow> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-grayscale
-template<> struct CSSFilterFunctionDescriptor<CSSValueGrayscale> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Grayscale> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -97,7 +97,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueGrayscale> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-hue-rotate
-template<> struct CSSFilterFunctionDescriptor<CSSValueHueRotate> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::HueRotate> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -108,7 +108,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueHueRotate> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-invert
-template<> struct CSSFilterFunctionDescriptor<CSSValueInvert> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Invert> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -120,7 +120,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueInvert> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-opacity
-template<> struct CSSFilterFunctionDescriptor<CSSValueOpacity> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Opacity> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -132,7 +132,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueOpacity> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-saturate
-template<> struct CSSFilterFunctionDescriptor<CSSValueSaturate> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Saturate> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -144,7 +144,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueSaturate> {
 };
 
 // https://drafts.fxtf.org/filter-effects/#funcdef-filter-sepia
-template<> struct CSSFilterFunctionDescriptor<CSSValueSepia> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::Sepia> {
     static constexpr bool isPixelFilterFunction = true;
     static constexpr bool isColorFilterFunction = true;
 
@@ -156,7 +156,7 @@ template<> struct CSSFilterFunctionDescriptor<CSSValueSepia> {
 };
 
 // Non-standard addition.
-template<> struct CSSFilterFunctionDescriptor<CSSValueAppleInvertLightness> {
+template<> struct CSSFilterFunctionDescriptor<CSSValueID::AppleInvertLightness> {
     static constexpr bool isPixelFilterFunction = false;
     static constexpr bool isColorFilterFunction = true;
 };

@@ -65,7 +65,7 @@ Ref<CSSUnparsedValue> CSSUnparsedValue::create(CSSParserTokenRange tokens)
         auto currentToken = tokens.consume();
         
         if (currentToken.type() == FunctionToken || currentToken.type() == LeftParenthesisToken) {
-            if (currentToken.functionId() == CSSValueVar) {
+            if (currentToken.functionId() == CSSValueID::Var) {
                 // https://drafts.csswg.org/css-variables-2/#funcdef-var
                 // The name argument is a <declaration-value> that is only parsed as a
                 // <custom-property-name> at computed-value time, so there is a reference to reify here

@@ -38,7 +38,7 @@ void Serialize<Inset>::operator()(StringBuilder& builder, const SerializationCon
     serializationForCSS(builder, context, value.insets);
 
     if (!hasDefaultValue(value.radii)) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::Round), ' ');
         serializationForCSS(builder, context, value.radii);
     }
 }

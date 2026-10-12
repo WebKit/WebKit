@@ -43,7 +43,7 @@ struct Ray {
 
     bool operator==(const Ray&) const = default;
 };
-using RayFunction = FunctionNotation<CSSValueRay, Ray>;
+using RayFunction = FunctionNotation<CSSValueID::Ray, Ray>;
 
 template<size_t I> const auto& get(const Ray& value)
 {

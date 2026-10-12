@@ -81,7 +81,7 @@ template<size_t I> const auto& get(const LinkParameter& parameter)
 
 // <param()> = param( <param-spec> , <declaration-value>? )
 // https://drafts.csswg.org/css-link-params/#funcdef-param
-using ParamFunction = FunctionNotation<CSSValueParam, LinkParameter>;
+using ParamFunction = FunctionNotation<CSSValueID::Param, LinkParameter>;
 
 // <param()>#
 using LinkParameterList = CommaSeparatedFixedVector<ParamFunction>;

@@ -46,8 +46,8 @@ Ref<CSSFontStyleWithAngleValue> CSSFontStyleWithAngleValue::create(ObliqueAngle&
 String CSSFontStyleWithAngleValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (m_obliqueAngle.isKnownZero())
-        return nameLiteralForSerialization(CSSValueNormal);
-    return makeString(nameLiteralForSerialization(CSSValueOblique), ' ', CSS::serializationForCSS(context, m_obliqueAngle));
+        return nameLiteralForSerialization(CSSValueID::Normal);
+    return makeString(nameLiteralForSerialization(CSSValueID::Oblique), ' ', CSS::serializationForCSS(context, m_obliqueAngle));
 }
 
 bool CSSFontStyleWithAngleValue::equals(const CSSFontStyleWithAngleValue& other) const

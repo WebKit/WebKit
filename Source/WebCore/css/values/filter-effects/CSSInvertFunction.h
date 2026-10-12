@@ -38,7 +38,7 @@ struct Invert {
 
     bool operator==(const Invert&) const = default;
 };
-using InvertFunction = FunctionNotation<CSSValueInvert, Invert>;
+using InvertFunction = FunctionNotation<CSSValueID::Invert, Invert>;
 
 DEFINE_TYPE_WRAPPER_GET(Invert, value);
 

@@ -70,7 +70,7 @@ struct StepsEasingParameters {
 
     bool operator==(const StepsEasingParameters&) const = default;
 };
-using StepsEasingFunction = FunctionNotation<CSSValueSteps, StepsEasingParameters>;
+using StepsEasingFunction = FunctionNotation<CSSValueID::Steps, StepsEasingParameters>;
 
 DEFINE_TYPE_WRAPPER_GET(StepsEasingParameters, value);
 

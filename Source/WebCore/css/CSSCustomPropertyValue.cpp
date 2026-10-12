@@ -171,7 +171,7 @@ bool CSSCustomPropertyValue::isCurrentColor() const
         return false;
 
     // FIXME: This should probably check all tokens.
-    return token.id() == CSSValueCurrentcolor;
+    return token.id() == CSSValueID::Currentcolor;
 }
 
 IterationStatus CSSCustomPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const

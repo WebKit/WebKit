@@ -164,7 +164,7 @@ struct AspectRatioFeatureSchema : public SizeFeatureSchema {
 
 struct OrientationFeatureSchema : public SizeFeatureSchema {
     OrientationFeatureSchema()
-        : SizeFeatureSchema("orientation"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, MediaQueryDynamicDependency::Viewport, { CSSValuePortrait, CSSValueLandscape })
+        : SizeFeatureSchema("orientation"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, MediaQueryDynamicDependency::Viewport, { CSSValueID::Portrait, CSSValueID::Landscape })
     {
     }
 
@@ -173,7 +173,7 @@ struct OrientationFeatureSchema : public SizeFeatureSchema {
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
         bool isPortrait = renderer.contentBoxHeight() >= renderer.contentBoxWidth();
-        return evaluateIdentifierFeature(feature, isPortrait ? CSSValuePortrait : CSSValueLandscape, conversionData);
+        return evaluateIdentifierFeature(feature, isPortrait ? CSSValueID::Portrait : CSSValueID::Landscape, conversionData);
     }
 };
 
@@ -461,35 +461,35 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
 
         auto requested = WTF::switchOn(*feature.rightComparison->value,
             [](const CSS::Keyword& keyword) { return keyword.value; },
-            [](const auto&) { return CSSValueInvalid; });
+            [](const auto&) { return CSSValueID::Invalid; });
 
         auto writingMode = context.conversionData.style().writingMode();
         switch (requested) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return toEvaluationResult(!scrollableAnywhere);
-        case CSSValueTop:
+        case CSSValueID::Top:
             return toEvaluationResult(towardSide(BoxSide::Top));
-        case CSSValueRight:
+        case CSSValueID::Right:
             return toEvaluationResult(towardSide(BoxSide::Right));
-        case CSSValueBottom:
+        case CSSValueID::Bottom:
             return toEvaluationResult(towardSide(BoxSide::Bottom));
-        case CSSValueLeft:
+        case CSSValueID::Left:
             return toEvaluationResult(towardSide(BoxSide::Left));
-        case CSSValueBlockStart:
+        case CSSValueID::BlockStart:
             return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)));
-        case CSSValueBlockEnd:
+        case CSSValueID::BlockEnd:
             return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)));
-        case CSSValueInlineStart:
+        case CSSValueID::InlineStart:
             return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)));
-        case CSSValueInlineEnd:
+        case CSSValueID::InlineEnd:
             return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)));
-        case CSSValueX:
+        case CSSValueID::X:
             return toEvaluationResult(towardAxis(BoxAxis::Horizontal));
-        case CSSValueY:
+        case CSSValueID::Y:
             return toEvaluationResult(towardAxis(BoxAxis::Vertical));
-        case CSSValueBlock:
+        case CSSValueID::Block:
             return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block)));
-        case CSSValueInline:
+        case CSSValueID::Inline:
             return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline)));
         default:
             return EvaluationResult::False;
@@ -543,25 +543,25 @@ static const StyleFeatureSchema& styleFeatureSchema()
 
 static const ScrollStateFeatureSchema& scrollableFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollableFeatureSchema> schema { "scrollable"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    static MainThreadNeverDestroyed<ScrollableFeatureSchema> schema { "scrollable"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd, CSSValueID::Block, CSSValueID::Inline, CSSValueID::X, CSSValueID::Y } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& scrolledFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd, CSSValueID::Block, CSSValueID::Inline, CSSValueID::X, CSSValueID::Y } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& stuckFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "stuck"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd } };
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "stuck"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::Top, CSSValueID::Right, CSSValueID::Bottom, CSSValueID::Left, CSSValueID::BlockStart, CSSValueID::BlockEnd, CSSValueID::InlineStart, CSSValueID::InlineEnd } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& snappedFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "snapped"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth } };
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "snapped"_s, FixedVector<CSSValueID> { CSSValueID::None, CSSValueID::X, CSSValueID::Y, CSSValueID::Block, CSSValueID::Inline, CSSValueID::Both } };
     return schema;
 }
 

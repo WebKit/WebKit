@@ -88,7 +88,7 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
     switch (longhand) {
     case CSSPropertyID::BackgroundSize:
     case CSSPropertyID::MaskSize:
-        if (isValueIDPair(value, CSSValueAuto))
+        if (isValueIDPair(value, CSSValueID::Auto))
             return true;
         break;
     case CSSPropertyID::BorderImageOutset:
@@ -224,7 +224,7 @@ CSSValueID initialValueIDForLonghand(CSSPropertyID longhand)
             return value;
         },
         [](CSSPrimitiveValue::Raw) {
-            return CSSValueInvalid;
+            return CSSValueID::Invalid;
         }
     );
 }

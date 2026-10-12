@@ -38,7 +38,7 @@ struct Brightness {
 
     bool operator==(const Brightness&) const = default;
 };
-using BrightnessFunction = FunctionNotation<CSSValueBrightness, Brightness>;
+using BrightnessFunction = FunctionNotation<CSSValueID::Brightness, Brightness>;
 
 DEFINE_TYPE_WRAPPER_GET(Brightness, value);
 

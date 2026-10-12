@@ -41,7 +41,7 @@ struct CubicBezierEasingParameters {
 
     bool operator==(const CubicBezierEasingParameters&) const = default;
 };
-using CubicBezierEasingFunction = FunctionNotation<CSSValueCubicBezier, CubicBezierEasingParameters>;
+using CubicBezierEasingFunction = FunctionNotation<CSSValueID::CubicBezier, CubicBezierEasingParameters>;
 
 DEFINE_TYPE_WRAPPER_GET(CubicBezierEasingParameters, value);
 

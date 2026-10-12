@@ -62,34 +62,34 @@ static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<cons
     };
 
     switch (functionValue->name()) {
-    case CSSValueTranslateX:
-    case CSSValueTranslateY:
-    case CSSValueTranslateZ:
-    case CSSValueTranslate:
-    case CSSValueTranslate3d:
+    case CSSValueID::TranslateX:
+    case CSSValueID::TranslateY:
+    case CSSValueID::TranslateZ:
+    case CSSValueID::Translate:
+    case CSSValueID::Translate3d:
         return makeTransformComponent(CSSTranslate::create(WTF::move(functionValue), document));
-    case CSSValueScaleX:
-    case CSSValueScaleY:
-    case CSSValueScaleZ:
-    case CSSValueScale:
-    case CSSValueScale3d:
+    case CSSValueID::ScaleX:
+    case CSSValueID::ScaleY:
+    case CSSValueID::ScaleZ:
+    case CSSValueID::Scale:
+    case CSSValueID::Scale3d:
         return makeTransformComponent(CSSScale::create(WTF::move(functionValue), document));
-    case CSSValueRotateX:
-    case CSSValueRotateY:
-    case CSSValueRotateZ:
-    case CSSValueRotate:
-    case CSSValueRotate3d:
+    case CSSValueID::RotateX:
+    case CSSValueID::RotateY:
+    case CSSValueID::RotateZ:
+    case CSSValueID::Rotate:
+    case CSSValueID::Rotate3d:
         return makeTransformComponent(CSSRotate::create(WTF::move(functionValue), document));
-    case CSSValueSkewX:
+    case CSSValueID::SkewX:
         return makeTransformComponent(CSSSkewX::create(WTF::move(functionValue), document));
-    case CSSValueSkewY:
+    case CSSValueID::SkewY:
         return makeTransformComponent(CSSSkewY::create(WTF::move(functionValue), document));
-    case CSSValueSkew:
+    case CSSValueID::Skew:
         return makeTransformComponent(CSSSkew::create(WTF::move(functionValue), document));
-    case CSSValuePerspective:
+    case CSSValueID::Perspective:
         return makeTransformComponent(CSSPerspective::create(WTF::move(functionValue), document));
-    case CSSValueMatrix:
-    case CSSValueMatrix3d:
+    case CSSValueID::Matrix:
+    case CSSValueID::Matrix3d:
         return makeTransformComponent(CSSMatrixComponent::create(WTF::move(functionValue), document));
     default:
         return Exception { ExceptionCode::TypeError, "Unexpected function value type"_s };

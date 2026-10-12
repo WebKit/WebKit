@@ -506,7 +506,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(Document& document, Str
     }
     case CSSParserTokenType::FunctionToken: {
         auto functionID = componentValueRange.peek().functionId();
-        if (functionID == CSSValueCalc || functionID == CSSValueMin || functionID == CSSValueMax || functionID == CSSValueClamp) {
+        if (functionID == CSSValueID::Calc || functionID == CSSValueID::Min || functionID == CSSValueID::Max || functionID == CSSValueID::Clamp) {
             // FIXME: The spec is unclear on what context to use when parsing in CSSNumericValue so for the time-being, we use `Category::LengthPercentage`, as it is the most permissive.
             // See https://github.com/w3c/csswg-drafts/issues/10753
 

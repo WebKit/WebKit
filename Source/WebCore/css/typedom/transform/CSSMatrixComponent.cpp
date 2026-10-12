@@ -72,12 +72,12 @@ ExceptionOr<Ref<CSSMatrixComponent>> CSSMatrixComponent::create(Ref<const CSSFun
     };
 
     switch (cssFunctionValue->name()) {
-    case CSSValueMatrix:
+    case CSSValueID::Matrix:
         return makeMatrix([](Vector<double>&& components) {
             auto domMatrix = DOMMatrixReadOnly::create({ components[0], components[1], components[2], components[3], components[4], components[5] }, DOMMatrixReadOnly::Is2D::Yes);
             return CSSMatrixComponent::create(WTF::move(domMatrix));
         }, 6);
-    case CSSValueMatrix3d:
+    case CSSValueID::Matrix3d:
         return makeMatrix([](Vector<double>&& components) {
             auto domMatrix = DOMMatrixReadOnly::create({
                 components[0], components[1], components[2], components[3],
@@ -152,7 +152,7 @@ RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
         CSSValueListBuilder arguments;
         for (double value : values)
             arguments.append(CSSPrimitiveValue::create(value));
-        return CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments));
+        return CSSFunctionValue::create(CSSValueID::Matrix, WTF::move(arguments));
     }
     double values[] = {
         m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
@@ -163,7 +163,7 @@ RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
     CSSValueListBuilder arguments;
     for (double value : values)
         arguments.append(CSSPrimitiveValue::create(value));
-    return CSSFunctionValue::create(CSSValueMatrix3d, WTF::move(arguments));
+    return CSSFunctionValue::create(CSSValueID::Matrix3d, WTF::move(arguments));
 }
 
 CSSMatrixComponent::~CSSMatrixComponent() = default;

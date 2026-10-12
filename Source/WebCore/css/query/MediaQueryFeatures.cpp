@@ -228,15 +228,15 @@ static const IdentifierSchema& anyHoverFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "any-hover"_s,
-        FixedVector { CSSValueNone, CSSValueHover },
+        FixedVector { CSSValueID::None, CSSValueID::Hover },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             Ref frame = *context.document->frame();
             if (context.document->quirks().shouldSupportHoverMediaQueries() || frame->settings().shouldReportDesktopClassPointingDevice())
-                return MatchingIdentifiers { CSSValueHover };
+                return MatchingIdentifiers { CSSValueID::Hover };
             RefPtr page = frame->page();
             bool isSupported = page && page->chrome().client().hoverSupportedByAnyAvailablePointingDevice();
-            return MatchingIdentifiers { isSupported ? CSSValueHover : CSSValueNone };
+            return MatchingIdentifiers { isSupported ? CSSValueID::Hover : CSSValueID::None };
         }
     };
     return schema;
@@ -246,23 +246,23 @@ static const IdentifierSchema& anyPointerFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "any-pointer"_s,
-        FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
+        FixedVector { CSSValueID::None, CSSValueID::Fine, CSSValueID::Coarse },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             Ref frame = *context.document->frame();
             if (frame->settings().shouldReportDesktopClassPointingDevice())
-                return MatchingIdentifiers { CSSValueFine };
+                return MatchingIdentifiers { CSSValueID::Fine };
 
             RefPtr page = frame->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfAllAvailablePointingDevices() : OptionSet<PointerCharacteristics>();
 
             MatchingIdentifiers identifiers;
             if (pointerCharacteristics.contains(PointerCharacteristics::Fine))
-                identifiers.append(CSSValueFine);
+                identifiers.append(CSSValueID::Fine);
             if (pointerCharacteristics.contains(PointerCharacteristics::Coarse))
-                identifiers.append(CSSValueCoarse);
+                identifiers.append(CSSValueID::Coarse);
             if (identifiers.isEmpty())
-                identifiers.append(CSSValueNone);
+                identifiers.append(CSSValueID::None);
             return identifiers;
         }
 
@@ -299,13 +299,13 @@ static const IdentifierSchema& colorGamutFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "color-gamut"_s,
-        FixedVector { CSSValueSRGB, CSSValueP3, CSSValueRec2020 },
+        FixedVector { CSSValueID::SRGB, CSSValueID::P3, CSSValueID::Rec2020 },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             // FIXME: At some point we should start detecting displays that support more colors.
-            MatchingIdentifiers identifiers { CSSValueSRGB };
+            MatchingIdentifiers identifiers { CSSValueID::SRGB };
             if (screenSupportsExtendedColor(protect(protect(context.document->frame())->mainFrame().virtualView()).get()))
-                identifiers.append(CSSValueP3);
+                identifiers.append(CSSValueID::P3);
             return identifiers;
         }
     };
@@ -368,7 +368,7 @@ static const IdentifierSchema& devicePostureFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "device-posture"_s,
-        FixedVector { CSSValueContinuous, CSSValueFolded },
+        FixedVector { CSSValueID::Continuous, CSSValueID::Folded },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             if (!context.document->settings().devicePostureAPIEnabled())
@@ -376,7 +376,7 @@ static const IdentifierSchema& devicePostureFeatureSchema()
 
             RefPtr page = context.document->frame()->page();
             bool continuous = !page || (page->chrome().client().devicePostureType() == DevicePostureType::Continuous);
-            return MatchingIdentifiers { continuous ? CSSValueContinuous : CSSValueFolded };
+            return MatchingIdentifiers { continuous ? CSSValueID::Continuous : CSSValueID::Folded };
         }
     };
     return schema;
@@ -400,7 +400,7 @@ static const IdentifierSchema& dynamicRangeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "dynamic-range"_s,
-        FixedVector { CSSValueStandard, CSSValueHigh },
+        FixedVector { CSSValueID::Standard, CSSValueID::High },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             bool supportsHighDynamicRange = [&] {
@@ -412,9 +412,9 @@ static const IdentifierSchema& dynamicRangeFeatureSchema()
                 return screenSupportsHighDynamicRange(protect(frame->mainFrame().virtualView()).get());
             }();
 
-            MatchingIdentifiers identifiers { CSSValueStandard };
+            MatchingIdentifiers identifiers { CSSValueID::Standard };
             if (supportsHighDynamicRange)
-                identifiers.append(CSSValueHigh);
+                identifiers.append(CSSValueID::High);
             return identifiers;
         }
     };
@@ -425,10 +425,10 @@ static const IdentifierSchema& forcedColorsFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "forced-colors"_s,
-        FixedVector { CSSValueNone, CSSValueActive },
+        FixedVector { CSSValueID::None, CSSValueID::Active },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) {
-            return MatchingIdentifiers { CSSValueNone };
+            return MatchingIdentifiers { CSSValueID::None };
         }
     };
     return schema;
@@ -463,15 +463,15 @@ static const IdentifierSchema& hoverFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "hover"_s,
-        FixedVector { CSSValueNone, CSSValueHover },
+        FixedVector { CSSValueID::None, CSSValueID::Hover },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             Ref frame = *context.document->frame();
             if (context.document->quirks().shouldSupportHoverMediaQueries() || frame->settings().shouldReportDesktopClassPointingDevice())
-                return MatchingIdentifiers { CSSValueHover };
+                return MatchingIdentifiers { CSSValueID::Hover };
             RefPtr page = frame->page();
             bool isSupported =  page && page->chrome().client().hoverSupportedByPrimaryPointingDevice();
-            return MatchingIdentifiers { isSupported ? CSSValueHover : CSSValueNone };
+            return MatchingIdentifiers { isSupported ? CSSValueID::Hover : CSSValueID::None };
         }
     };
     return schema;
@@ -481,7 +481,7 @@ static const IdentifierSchema& invertedColorsFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "inverted-colors"_s,
-        FixedVector { CSSValueNone, CSSValueInverted },
+        FixedVector { CSSValueID::None, CSSValueID::Inverted },
         MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             bool isInverted = [&] {
@@ -493,7 +493,7 @@ static const IdentifierSchema& invertedColorsFeatureSchema()
                 return screenHasInvertedColors();
             }();
 
-            return MatchingIdentifiers { isInverted ? CSSValueInverted : CSSValueNone };
+            return MatchingIdentifiers { isInverted ? CSSValueID::Inverted : CSSValueID::None };
         }
     };
     return schema;
@@ -525,16 +525,16 @@ static const IdentifierSchema& orientationFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "orientation"_s,
-        FixedVector { CSSValueLandscape, CSSValuePortrait },
+        FixedVector { CSSValueID::Landscape, CSSValueID::Portrait },
         MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
             if (context.document->quirks().shouldPreventOrientationMediaQueryFromEvaluatingToLandscape())
-                return MatchingIdentifiers { CSSValuePortrait };
+                return MatchingIdentifiers { CSSValueID::Portrait };
 
             Ref view = *context.document->view();
             // Square viewport is portrait.
             bool isPortrait = view->layoutHeight() >= view->layoutWidth();
-            return MatchingIdentifiers { isPortrait ? CSSValuePortrait : CSSValueLandscape };
+            return MatchingIdentifiers { isPortrait ? CSSValueID::Portrait : CSSValueID::Landscape };
         }
     };
     return schema;
@@ -544,22 +544,22 @@ static const IdentifierSchema& pointerFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "pointer"_s,
-        FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
+        FixedVector { CSSValueID::None, CSSValueID::Fine, CSSValueID::Coarse },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             Ref frame = *context.document->frame();
             if (frame->settings().shouldReportDesktopClassPointingDevice())
-                return MatchingIdentifiers { CSSValueFine };
+                return MatchingIdentifiers { CSSValueID::Fine };
 
             RefPtr page = frame->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfPrimaryPointingDevice() : OptionSet<PointerCharacteristics>();
             MatchingIdentifiers identifiers;
             if (pointerCharacteristics.contains(PointerCharacteristics::Fine))
-                identifiers.append(CSSValueFine);
+                identifiers.append(CSSValueID::Fine);
             if (pointerCharacteristics.contains(PointerCharacteristics::Coarse) && !context.document->quirks().shouldHideCoarsePointerCharacteristics())
-                identifiers.append(CSSValueCoarse);
+                identifiers.append(CSSValueID::Coarse);
             if (identifiers.isEmpty())
-                identifiers.append(CSSValueNone);
+                identifiers.append(CSSValueID::None);
             return identifiers;
         }
 
@@ -571,7 +571,7 @@ static const IdentifierSchema& prefersContrastFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-contrast"_s,
-        FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess, CSSValueCustom },
+        FixedVector { CSSValueID::NoPreference, CSSValueID::More, CSSValueID::Less, CSSValueID::Custom },
         MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             InterfaceContrastPreference userPreferredContrast = [&] {
@@ -589,11 +589,11 @@ static const IdentifierSchema& prefersContrastFeatureSchema()
 
             switch (userPreferredContrast) {
             case InterfaceContrastPreference::NoPreference:
-                return MatchingIdentifiers { CSSValueNoPreference };
+                return MatchingIdentifiers { CSSValueID::NoPreference };
             case InterfaceContrastPreference::MoreContrast:
-                return MatchingIdentifiers { CSSValueMore };
+                return MatchingIdentifiers { CSSValueID::More };
             case InterfaceContrastPreference::LessContrast:
-                return MatchingIdentifiers { CSSValueLess };
+                return MatchingIdentifiers { CSSValueID::Less };
             }
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -605,13 +605,13 @@ static const IdentifierSchema& prefersDarkInterfaceFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-dark-interface"_s,
-        FixedVector { CSSValueNoPreference, CSSValuePrefers },
+        FixedVector { CSSValueID::NoPreference, CSSValueID::Prefers },
         MediaQueryDynamicDependency::Appearance,
         [](auto& context) {
             Ref page = *context.document->frame()->page();
             bool prefersDarkInterface = page->settings().useSystemAppearance() && page->useDarkAppearance();
 
-            return MatchingIdentifiers { prefersDarkInterface ? CSSValuePrefers : CSSValueNoPreference };
+            return MatchingIdentifiers { prefersDarkInterface ? CSSValueID::Prefers : CSSValueID::NoPreference };
         }
     };
     return schema;
@@ -621,7 +621,7 @@ static const IdentifierSchema& prefersReducedMotionFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-reduced-motion"_s,
-        FixedVector { CSSValueNoPreference, CSSValueReduce },
+        FixedVector { CSSValueID::NoPreference, CSSValueID::Reduce },
         MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             bool userPrefersReducedMotion = [&] {
@@ -637,7 +637,7 @@ static const IdentifierSchema& prefersReducedMotionFeatureSchema()
                 return false;
             }();
 
-            return MatchingIdentifiers { userPrefersReducedMotion ? CSSValueReduce : CSSValueNoPreference };
+            return MatchingIdentifiers { userPrefersReducedMotion ? CSSValueID::Reduce : CSSValueID::NoPreference };
         }
     };
     return schema;
@@ -659,7 +659,7 @@ static const IdentifierSchema& scanFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "scan"_s,
-        FixedVector { CSSValueInterlace, CSSValueProgressive },
+        FixedVector { CSSValueID::Interlace, CSSValueID::Progressive },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) {
             return MatchingIdentifiers { };
@@ -672,13 +672,13 @@ static const IdentifierSchema& scriptingFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "scripting"_s,
-        FixedVector { CSSValueNone, CSSValueInitialOnly, CSSValueEnabled },
+        FixedVector { CSSValueID::None, CSSValueID::InitialOnly, CSSValueID::Enabled },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             Ref frame = *context.document->frame();
             if (!protect(frame->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
-                return MatchingIdentifiers { CSSValueNone };
-            return MatchingIdentifiers { CSSValueEnabled };
+                return MatchingIdentifiers { CSSValueID::None };
+            return MatchingIdentifiers { CSSValueID::Enabled };
         }
     };
     return schema;
@@ -721,15 +721,15 @@ static const IdentifierSchema& updateFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "update"_s,
-        FixedVector { CSSValueNone, CSSValueSlow, CSSValueFast },
+        FixedVector { CSSValueID::None, CSSValueID::Slow, CSSValueID::Fast },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             RefPtr frameView = context.document->frame()->view();
             if (frameView && frameView->mediaType() == printAtom())
-                return MatchingIdentifiers { CSSValueNone };
+                return MatchingIdentifiers { CSSValueID::None };
 
             // FIXME: Potentially add a hook for ports to change this value.
-            return MatchingIdentifiers { CSSValueFast };
+            return MatchingIdentifiers { CSSValueID::Fast };
         }
     };
     return schema;
@@ -767,27 +767,27 @@ static const IdentifierSchema& displayModeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "display-mode"_s,
-        FixedVector { CSSValueFullscreen, CSSValueStandalone, CSSValueMinimalUi, CSSValueBrowser },
+        FixedVector { CSSValueID::Fullscreen, CSSValueID::Standalone, CSSValueID::MinimalUi, CSSValueID::Browser },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             auto identifier = [&] {
                 Ref frame = *context.document->frame();
                 auto manifest = frame->page() ? frame->page()->applicationManifest() : std::nullopt;
                 if (!manifest)
-                    return CSSValueBrowser;
+                    return CSSValueID::Browser;
 
                 switch (manifest->display) {
                 case ApplicationManifest::Display::Fullscreen:
-                    return CSSValueFullscreen;
+                    return CSSValueID::Fullscreen;
                 case ApplicationManifest::Display::Standalone:
-                    return CSSValueStandalone;
+                    return CSSValueID::Standalone;
                 case ApplicationManifest::Display::MinimalUI:
-                    return CSSValueMinimalUi;
+                    return CSSValueID::MinimalUi;
                 case ApplicationManifest::Display::Browser:
-                    return CSSValueBrowser;
+                    return CSSValueID::Browser;
                 }
                 ASSERT_NOT_REACHED();
-                return CSSValueBrowser;
+                return CSSValueID::Browser;
             }();
 
             return MatchingIdentifiers { identifier };
@@ -801,7 +801,7 @@ static const IdentifierSchema& overflowBlockFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "overflow-block"_s,
-        FixedVector { CSSValueNone, CSSValueScroll, CSSValuePaged },
+        FixedVector { CSSValueID::None, CSSValueID::Scroll, CSSValueID::Paged },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
@@ -811,7 +811,7 @@ static const IdentifierSchema& overflowBlockFeatureSchema()
                     return false;
                 return frameView->mediaType() == printAtom() || frameView->pagination().mode != PaginationMode::Unpaginated;
             }();
-            return MatchingIdentifiers { matchesPaged ? CSSValuePaged : CSSValueScroll };
+            return MatchingIdentifiers { matchesPaged ? CSSValueID::Paged : CSSValueID::Scroll };
         }
     };
     return schema;
@@ -821,11 +821,11 @@ static const IdentifierSchema& overflowInlineFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "overflow-inline"_s,
-        FixedVector { CSSValueNone, CSSValueScroll },
+        FixedVector { CSSValueID::None, CSSValueID::Scroll },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto&) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
-            return MatchingIdentifiers { CSSValueScroll };
+            return MatchingIdentifiers { CSSValueID::Scroll };
         }
     };
     return schema;
@@ -865,12 +865,12 @@ static const IdentifierSchema& prefersColorSchemeFeatureSchema()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-color-scheme"_s,
-        FixedVector { CSSValueLight, CSSValueDark },
+        FixedVector { CSSValueID::Light, CSSValueID::Dark },
         MediaQueryDynamicDependency::Appearance,
         [](auto& context) {
             bool useDarkAppearance = frameOwnerElementAncestorsUseDarkAppearance(*context.document->frame());
 
-            return MatchingIdentifiers { useDarkAppearance ? CSSValueDark : CSSValueLight };
+            return MatchingIdentifiers { useDarkAppearance ? CSSValueID::Dark : CSSValueID::Light };
         }
     };
     return schema;

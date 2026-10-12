@@ -168,7 +168,7 @@ static bool shouldQuoteFontFamily(StringView string)
     // keyword from a quoted family name at this point, and the generic
     // keyword is the common case, we leave it unquoted.
     auto stringID = cssValueKeywordID(string);
-    if (stringID == CSSValueSystemUi)
+    if (stringID == CSSValueID::SystemUi)
         return false;
     if (isGenericFontFamilyKeyword(stringID))
         return true;

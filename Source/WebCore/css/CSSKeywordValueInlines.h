@@ -37,18 +37,18 @@ inline CSSValueID valueID(const CSSKeywordValue& value)
 
 inline CSSValueID valueID(const CSSKeywordValue* value)
 {
-    return value ? valueID(*value) : CSSValueInvalid;
+    return value ? valueID(*value) : CSSValueID::Invalid;
 }
 
 inline CSSValueID valueID(const CSSValue& value)
 {
     auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value);
-    return keywordValue ? valueID(*keywordValue) : CSSValueInvalid;
+    return keywordValue ? valueID(*keywordValue) : CSSValueID::Invalid;
 }
 
 inline CSSValueID valueID(const CSSValue* value)
 {
-    return value ? valueID(*value) : CSSValueInvalid;
+    return value ? valueID(*value) : CSSValueID::Invalid;
 }
 
 inline bool isValueID(const CSSKeywordValue& value, CSSValueID id)

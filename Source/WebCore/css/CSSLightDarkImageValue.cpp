@@ -60,7 +60,7 @@ bool CSSLightDarkImageValue::equals(const CSSLightDarkImageValue& other) const
 
 static RefPtr<Style::Image> resolveImageOrNone(const CSSValue& value, const Style::BuilderState& state)
 {
-    if (auto* keyword = dynamicDowncast<CSSKeywordValue>(value); keyword && keyword->valueID() == CSSValueNone)
+    if (auto* keyword = dynamicDowncast<CSSKeywordValue>(value); keyword && keyword->valueID() == CSSValueID::None)
         return Style::ColorImage::create(Style::Color { WebCore::Color::transparentBlack });
     return state.createStyleImage(value);
 }

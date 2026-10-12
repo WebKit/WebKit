@@ -91,23 +91,23 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<const CSSFunctionValue> cssFun
     };
 
     switch (cssFunctionValue->name()) {
-    case CSSValueRotateX:
+    case CSSValueID::RotateX:
         return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSRotate::create(CSSNumericFactory::number(1), CSSNumericFactory::number(0), CSSNumericFactory::number(0), WTF::move(components[0]));
         }, 1);
-    case CSSValueRotateY:
+    case CSSValueID::RotateY:
         return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(1), CSSNumericFactory::number(0), WTF::move(components[0]));
         }, 1);
-    case CSSValueRotateZ:
+    case CSSValueID::RotateZ:
         return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSRotate::create(CSSNumericFactory::number(0), CSSNumericFactory::number(0), CSSNumericFactory::number(1), WTF::move(components[0]));
         }, 1);
-    case CSSValueRotate:
+    case CSSValueID::Rotate:
         return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSRotate::create(WTF::move(components[0]));
         }, 1);
-    case CSSValueRotate3d:
+    case CSSValueID::Rotate3d:
         return makeRotate([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSRotate::create(WTF::move(components[0]), WTF::move(components[1]), WTF::move(components[2]), WTF::move(components[3]));
         }, 4);
@@ -212,7 +212,7 @@ RefPtr<CSSValue> CSSRotate::toCSSValue() const
         return nullptr;
 
     if (is2D())
-        return CSSFunctionValue::create(CSSValueRotate, angle.releaseNonNull());
+        return CSSFunctionValue::create(CSSValueID::Rotate, angle.releaseNonNull());
 
     auto x = protect(m_x)->toCSSValue();
     if (!x)
@@ -224,7 +224,7 @@ RefPtr<CSSValue> CSSRotate::toCSSValue() const
     if (!z)
         return nullptr;
 
-    return CSSFunctionValue::create(CSSValueRotate3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull(), angle.releaseNonNull());
+    return CSSFunctionValue::create(CSSValueID::Rotate3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull(), angle.releaseNonNull());
 }
 
 } // namespace WebCore

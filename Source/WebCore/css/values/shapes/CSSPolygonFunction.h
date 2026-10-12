@@ -42,7 +42,7 @@ struct Polygon {
 
     bool operator==(const Polygon&) const = default;
 };
-using PolygonFunction = FunctionNotation<CSSValuePolygon, Polygon>;
+using PolygonFunction = FunctionNotation<CSSValueID::Polygon, Polygon>;
 
 template<size_t I> const auto& get(const Polygon& value)
 {

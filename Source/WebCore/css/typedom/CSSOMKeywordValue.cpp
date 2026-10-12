@@ -95,7 +95,7 @@ void CSSOMKeywordValue::serialize(StringBuilder& builder, OptionSet<Serializatio
 RefPtr<CSSValue> CSSOMKeywordValue::toCSSValue() const
 {
     auto keyword = cssValueKeywordID(m_value);
-    if (keyword == CSSValueInvalid)
+    if (keyword == CSSValueID::Invalid)
         return CSSCustomIdentValue::create(CSS::CustomIdent { AtomString { m_value } });
     return CSSKeywordValue::create(CSS::Keyword { keyword });
 }

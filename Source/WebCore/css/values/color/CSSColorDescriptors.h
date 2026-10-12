@@ -192,8 +192,8 @@ template<typename Descriptor> bool componentsRequireConversionData(const CSSColo
 
 // MARK: - Shared Component Descriptors
 
-constexpr auto AlphaComponent = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
-constexpr auto AlphaLegacyComponent = CSSColorComponent<CSS::Percentage<>, CSS::Number<>> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
+constexpr auto AlphaComponent = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None> { .symbol = CSSValueID::Alpha, .min = 0.0, .max = 1.0 };
+constexpr auto AlphaLegacyComponent = CSSColorComponent<CSS::Percentage<>, CSS::Number<>> { .symbol = CSSValueID::Alpha, .min = 0.0, .max = 1.0 };
 
 struct AlphaDescriptor {
     static constexpr auto components = std::make_tuple(AlphaComponent);
@@ -218,9 +218,9 @@ struct RGBFunctionModernAbsolute {
     using B = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
-        G { .symbol = CSSValueG, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
-        B { .symbol = CSSValueB, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        R { .symbol = CSSValueID::R, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        G { .symbol = CSSValueID::G, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        B { .symbol = CSSValueID::B, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
         AlphaComponent
     );
 };
@@ -244,9 +244,9 @@ template<RGBFunctionLegacyComponent Component> struct RGBFunctionLegacy {
     using B = CSSColorComponent<Component>;
 
     static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
-        G { .symbol = CSSValueG, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
-        B { .symbol = CSSValueB, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        R { .symbol = CSSValueID::R, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        G { .symbol = CSSValueID::G, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        B { .symbol = CSSValueID::B, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
         AlphaLegacyComponent
     );
 };
@@ -268,9 +268,9 @@ struct RGBFunctionModernRelative {
     using B = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
-        G { .symbol = CSSValueG, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
-        B { .symbol = CSSValueB, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        R { .symbol = CSSValueID::R, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        G { .symbol = CSSValueID::G, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        B { .symbol = CSSValueID::B, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
         AlphaComponent
     );
 };
@@ -293,9 +293,9 @@ struct HSLFunctionModern {
     using L = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        H { .symbol = CSSValueH, .type = ColorComponentType::Angle    },
-        S { .symbol = CSSValueS, .min = 0.0, .percentMultiplier = 1.0 },
-        L { .symbol = CSSValueL,             .percentMultiplier = 1.0 },
+        H { .symbol = CSSValueID::H, .type = ColorComponentType::Angle    },
+        S { .symbol = CSSValueID::S, .min = 0.0, .percentMultiplier = 1.0 },
+        L { .symbol = CSSValueID::L,             .percentMultiplier = 1.0 },
         AlphaComponent
     );
 };
@@ -317,9 +317,9 @@ struct HSLFunctionLegacy {
     using L = CSSColorComponent<CSS::Percentage<>>;
 
     static constexpr auto components = std::make_tuple(
-        H { .symbol = CSSValueH, .type = ColorComponentType::Angle    },
-        S { .symbol = CSSValueS, .min = 0.0, .percentMultiplier = 1.0 },
-        L { .symbol = CSSValueL,             .percentMultiplier = 1.0 },
+        H { .symbol = CSSValueID::H, .type = ColorComponentType::Angle    },
+        S { .symbol = CSSValueID::S, .min = 0.0, .percentMultiplier = 1.0 },
+        L { .symbol = CSSValueID::L,             .percentMultiplier = 1.0 },
         AlphaLegacyComponent
     );
 };
@@ -341,9 +341,9 @@ struct HWBFunction {
     using B = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        H { .symbol = CSSValueH, .type = ColorComponentType::Angle },
-        W { .symbol = CSSValueW, .percentMultiplier = 1.0          },
-        B { .symbol = CSSValueB, .percentMultiplier = 1.0          },
+        H { .symbol = CSSValueID::H, .type = ColorComponentType::Angle },
+        W { .symbol = CSSValueID::W, .percentMultiplier = 1.0          },
+        B { .symbol = CSSValueID::B, .percentMultiplier = 1.0          },
         AlphaComponent
     );
 };
@@ -365,9 +365,9 @@ struct LabFunction {
     using B = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        L { .symbol = CSSValueL, .min = 0.0, .max = 100.0, .percentMultiplier = 1.0           },
-        A { .symbol = CSSValueA,                           .percentMultiplier = 125.0 / 100.0 },
-        B { .symbol = CSSValueB,                           .percentMultiplier = 125.0 / 100.0 },
+        L { .symbol = CSSValueID::L, .min = 0.0, .max = 100.0, .percentMultiplier = 1.0           },
+        A { .symbol = CSSValueID::A,                           .percentMultiplier = 125.0 / 100.0 },
+        B { .symbol = CSSValueID::B,                           .percentMultiplier = 125.0 / 100.0 },
         AlphaComponent
     );
 };
@@ -389,9 +389,9 @@ struct LCHFunction {
     using H = CSSColorComponent<CSS::Angle<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        L { .symbol = CSSValueL, .min = 0.0, .max = 100.0, .percentMultiplier = 1.0           },
-        C { .symbol = CSSValueC, .min = 0.0,               .percentMultiplier = 150.0 / 100.0 },
-        H { .symbol = CSSValueH, .type = ColorComponentType::Angle                            },
+        L { .symbol = CSSValueID::L, .min = 0.0, .max = 100.0, .percentMultiplier = 1.0           },
+        C { .symbol = CSSValueID::C, .min = 0.0,               .percentMultiplier = 150.0 / 100.0 },
+        H { .symbol = CSSValueID::H, .type = ColorComponentType::Angle                            },
         AlphaComponent
     );
 };
@@ -413,9 +413,9 @@ struct OKLabFunction {
     using B = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        L { .symbol = CSSValueL, .min = 0.0, .max = 1.0                                   },
-        A { .symbol = CSSValueA,                         .percentMultiplier = 0.4 / 100.0 },
-        B { .symbol = CSSValueB,                         .percentMultiplier = 0.4 / 100.0 },
+        L { .symbol = CSSValueID::L, .min = 0.0, .max = 1.0                                   },
+        A { .symbol = CSSValueID::A,                         .percentMultiplier = 0.4 / 100.0 },
+        B { .symbol = CSSValueID::B,                         .percentMultiplier = 0.4 / 100.0 },
         AlphaComponent
     );
 };
@@ -437,9 +437,9 @@ struct OKLCHFunction {
     using H = CSSColorComponent<CSS::Angle<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        L { .symbol = CSSValueL, .min = 0.0, .max = 1.0                                   },
-        C { .symbol = CSSValueC, .min = 0.0,            .percentMultiplier = 0.4 / 100.0  },
-        H { .symbol = CSSValueH, .type = ColorComponentType::Angle },
+        L { .symbol = CSSValueID::L, .min = 0.0, .max = 1.0                                   },
+        C { .symbol = CSSValueID::C, .min = 0.0,            .percentMultiplier = 0.4 / 100.0  },
+        H { .symbol = CSSValueID::H, .type = ColorComponentType::Angle },
         AlphaComponent
     );
 };
@@ -463,9 +463,9 @@ template<typename T> struct ColorRGBFunction {
     using B = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR },
-        G { .symbol = CSSValueG },
-        B { .symbol = CSSValueB },
+        R { .symbol = CSSValueID::R },
+        G { .symbol = CSSValueID::G },
+        B { .symbol = CSSValueID::B },
         AlphaComponent
     );
 };
@@ -489,9 +489,9 @@ template<typename T> struct ColorXYZFunction {
     using Z = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None>;
 
     static constexpr auto components = std::make_tuple(
-        X { .symbol = CSSValueX },
-        Y { .symbol = CSSValueY },
-        Z { .symbol = CSSValueZ },
+        X { .symbol = CSSValueID::X },
+        Y { .symbol = CSSValueID::Y },
+        Z { .symbol = CSSValueID::Z },
         AlphaComponent
     );
 };

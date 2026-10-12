@@ -45,7 +45,7 @@ struct Path {
 
     bool operator==(const Path&) const = default;
 };
-using PathFunction = FunctionNotation<CSSValuePath, Path>;
+using PathFunction = FunctionNotation<CSSValueID::Path, Path>;
 
 template<size_t I> const auto& get(const Path& value)
 {

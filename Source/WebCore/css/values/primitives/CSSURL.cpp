@@ -41,7 +41,7 @@ void Serialize<URL>::operator()(StringBuilder& builder, const SerializationConte
 {
     // https://drafts.csswg.org/cssom/#serialize-a-url
 
-    builder.append(nameLiteralForSerialization(CSSValueUrl), '(');
+    builder.append(nameLiteralForSerialization(CSSValueID::Url), '(');
 
     if (!value.resolved.isNull()) {
         if (auto replacementURLString = context.replacementURLStrings.get(value.resolved.string()); !replacementURLString.isEmpty())

@@ -49,7 +49,7 @@ String CSSOffsetRotateValue::customCSSText(const CSS::SerializationContext& cont
 
 bool CSSOffsetRotateValue::isInitialValue() const
 {
-    return m_modifier && m_modifier->valueID() == CSSValueAuto
+    return m_modifier && m_modifier->valueID() == CSSValueID::Auto
         && (!m_angle || m_angle->isZero().value_or(false));
 }
 

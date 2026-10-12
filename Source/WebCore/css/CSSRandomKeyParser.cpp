@@ -68,7 +68,7 @@ std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserToke
     // <random-key> = auto | <random-cache-key> | fixed <number [0,1]>
     // <random-cache-key> = <dashed-ident> || element-scoped || [ property-scoped | property-index-scoped | <random-ua-ident> ]
 
-    if (tokens.peek().id() == CSSValueFixed) {
+    if (tokens.peek().id() == CSSValueID::Fixed) {
         CSSParserTokenRangeGuard guard { tokens };
 
         tokens.consumeIncludingWhitespace();
@@ -93,7 +93,7 @@ std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserToke
 
     // `auto` is a standalone <random-key> alternative (its scoping is chosen by the caller); it does not
     // combine with the <random-cache-key> keywords, so it is handled before the || loop below.
-    if (tokens.peek().id() == CSSValueAuto) {
+    if (tokens.peek().id() == CSSValueID::Auto) {
         tokens.consumeIncludingWhitespace();
         return CSSCalc::Random::Sharing { randomSharingAuto(source, consumeIndex()) };
     }
@@ -114,7 +114,7 @@ std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserToke
     auto consumeElementScoped = [&] -> bool {
         if (key.elementScoped)
             return false;
-        if (tokens.peek().id() == CSSValueElementScoped) {
+        if (tokens.peek().id() == CSSValueID::ElementScoped) {
             tokens.consumeIncludingWhitespace();
             key.elementScoped = CSS::Keyword::ElementScoped { };
             return true;
@@ -125,14 +125,14 @@ std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserToke
     auto consumeProperty = [&] -> bool {
         if (key.propertyScoped)
             return false;
-        if (tokens.peek().id() == CSSValuePropertyScoped) {
+        if (tokens.peek().id() == CSSValueID::PropertyScoped) {
             tokens.consumeIncludingWhitespace();
             // No index is consumed: property-scoped keys on the property alone, and taking an index here
             // would shift the index of any later `auto` or property-index-scoped in the same value.
             key.propertyScoped = CSSCalc::Random::Key::PropertyScoped { source.property };
             return true;
         }
-        if (tokens.peek().id() == CSSValuePropertyIndexScoped) {
+        if (tokens.peek().id() == CSSValueID::PropertyIndexScoped) {
             tokens.consumeIncludingWhitespace();
             key.propertyScoped = CSSCalc::Random::Key::PropertyIndexScoped { source.property, consumeIndex() };
             return true;

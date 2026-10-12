@@ -246,22 +246,22 @@ template<> struct Serialize<ConicGradient> { void operator()(StringBuilder&, con
 
 using Gradient = Variant<
     // Linear
-    FunctionNotation<CSSValueLinearGradient, LinearGradient>,
-    FunctionNotation<CSSValueRepeatingLinearGradient, LinearGradient>,
-    FunctionNotation<CSSValueWebkitLinearGradient, PrefixedLinearGradient>,
-    FunctionNotation<CSSValueWebkitRepeatingLinearGradient, PrefixedLinearGradient>,
-    FunctionNotation<CSSValueWebkitGradient, DeprecatedLinearGradient>,
+    FunctionNotation<CSSValueID::LinearGradient, LinearGradient>,
+    FunctionNotation<CSSValueID::RepeatingLinearGradient, LinearGradient>,
+    FunctionNotation<CSSValueID::WebkitLinearGradient, PrefixedLinearGradient>,
+    FunctionNotation<CSSValueID::WebkitRepeatingLinearGradient, PrefixedLinearGradient>,
+    FunctionNotation<CSSValueID::WebkitGradient, DeprecatedLinearGradient>,
 
     // Radial
-    FunctionNotation<CSSValueRadialGradient, RadialGradient>,
-    FunctionNotation<CSSValueRepeatingRadialGradient, RadialGradient>,
-    FunctionNotation<CSSValueWebkitRadialGradient, PrefixedRadialGradient>,
-    FunctionNotation<CSSValueWebkitRepeatingRadialGradient, PrefixedRadialGradient>,
-    FunctionNotation<CSSValueWebkitGradient, DeprecatedRadialGradient>,
+    FunctionNotation<CSSValueID::RadialGradient, RadialGradient>,
+    FunctionNotation<CSSValueID::RepeatingRadialGradient, RadialGradient>,
+    FunctionNotation<CSSValueID::WebkitRadialGradient, PrefixedRadialGradient>,
+    FunctionNotation<CSSValueID::WebkitRepeatingRadialGradient, PrefixedRadialGradient>,
+    FunctionNotation<CSSValueID::WebkitGradient, DeprecatedRadialGradient>,
 
     // Conic
-    FunctionNotation<CSSValueConicGradient, ConicGradient>,
-    FunctionNotation<CSSValueRepeatingConicGradient, ConicGradient>
+    FunctionNotation<CSSValueID::ConicGradient, ConicGradient>,
+    FunctionNotation<CSSValueID::RepeatingConicGradient, ConicGradient>
 >;
 
 } // namespace CSS

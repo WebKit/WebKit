@@ -347,8 +347,8 @@ IGNORE_GCC_WARNINGS_END
     m_refCount = tempRefCount;
 }
 
-template<typename CSSValueType>
-inline bool compareCSSValueVector(const Vector<Ref<CSSValueType>>& firstVector, const Vector<Ref<CSSValueType>>& secondVector)
+template<typename ValueType>
+inline bool compareCSSValueVector(const Vector<Ref<ValueType>>& firstVector, const Vector<Ref<ValueType>>& secondVector)
 {
     size_t size = firstVector.size();
     if (size != secondVector.size())
@@ -364,14 +364,14 @@ inline bool compareCSSValueVector(const Vector<Ref<CSSValueType>>& firstVector, 
     return true;
 }
 
-template<typename CSSValueType>
-inline bool compareCSSValuePtr(const RefPtr<CSSValueType>& first, const RefPtr<CSSValueType>& second)
+template<typename ValueType>
+inline bool compareCSSValuePtr(const RefPtr<ValueType>& first, const RefPtr<ValueType>& second)
 {
     return first ? second && first->equals(*second) : !second;
 }
 
-template<typename CSSValueType>
-inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueType>& second)
+template<typename ValueType>
+inline bool compareCSSValue(const Ref<ValueType>& first, const Ref<ValueType>& second)
 {
     return first.get().equals(second);
 }

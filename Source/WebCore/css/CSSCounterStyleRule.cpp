@@ -60,7 +60,7 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
         return CSSCounterStyleDescriptors::System::Symbolic;
 
     ASSERT(system->isKeywordValue() || system->isPair());
-    CSSValueID systemKeyword = CSSValueInvalid;
+    CSSValueID systemKeyword = CSSValueID::Invalid;
     if (RefPtr systemIdent = dynamicDowncast<CSSKeywordValue>(system))
         systemKeyword = systemIdent->valueID();
     else if (system->isPair()) {
@@ -70,43 +70,43 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
         }
     }
     switch (systemKeyword) {
-    case CSSValueCyclic:
+    case CSSValueID::Cyclic:
         return CSSCounterStyleDescriptors::System::Cyclic;
-    case CSSValueFixed:
+    case CSSValueID::Fixed:
         return CSSCounterStyleDescriptors::System::Fixed;
-    case CSSValueSymbolic:
+    case CSSValueID::Symbolic:
         return CSSCounterStyleDescriptors::System::Symbolic;
-    case CSSValueAlphabetic:
+    case CSSValueID::Alphabetic:
         return CSSCounterStyleDescriptors::System::Alphabetic;
-    case CSSValueNumeric:
+    case CSSValueID::Numeric:
         return CSSCounterStyleDescriptors::System::Numeric;
-    case CSSValueAdditive:
+    case CSSValueID::Additive:
         return CSSCounterStyleDescriptors::System::Additive;
-    case CSSValueInternalDisclosureClosed:
+    case CSSValueID::InternalDisclosureClosed:
         return CSSCounterStyleDescriptors::System::DisclosureClosed;
-    case CSSValueInternalDisclosureOpen:
+    case CSSValueID::InternalDisclosureOpen:
         return CSSCounterStyleDescriptors::System::DisclosureOpen;
-    case CSSValueInternalSimplifiedChineseInformal:
+    case CSSValueID::InternalSimplifiedChineseInformal:
         return CSSCounterStyleDescriptors::System::SimplifiedChineseInformal;
-    case CSSValueInternalSimplifiedChineseFormal:
+    case CSSValueID::InternalSimplifiedChineseFormal:
         return CSSCounterStyleDescriptors::System::SimplifiedChineseFormal;
-    case CSSValueInternalTraditionalChineseInformal:
+    case CSSValueID::InternalTraditionalChineseInformal:
         return CSSCounterStyleDescriptors::System::TraditionalChineseInformal;
-    case CSSValueInternalTraditionalChineseFormal:
+    case CSSValueID::InternalTraditionalChineseFormal:
         return CSSCounterStyleDescriptors::System::TraditionalChineseFormal;
-    case CSSValueInternalJapaneseInformal:
+    case CSSValueID::InternalJapaneseInformal:
         return CSSCounterStyleDescriptors::System::JapaneseInformal;
-    case CSSValueInternalJapaneseFormal:
+    case CSSValueID::InternalJapaneseFormal:
         return CSSCounterStyleDescriptors::System::JapaneseFormal;
-    case CSSValueInternalKoreanHangulFormal:
+    case CSSValueID::InternalKoreanHangulFormal:
         return CSSCounterStyleDescriptors::System::KoreanHangulFormal;
-    case CSSValueInternalKoreanHanjaInformal:
+    case CSSValueID::InternalKoreanHanjaInformal:
         return CSSCounterStyleDescriptors::System::KoreanHanjaInformal;
-    case CSSValueInternalKoreanHanjaFormal:
+    case CSSValueID::InternalKoreanHanjaFormal:
         return CSSCounterStyleDescriptors::System::KoreanHanjaFormal;
-    case CSSValueInternalEthiopicNumeric:
+    case CSSValueID::InternalEthiopicNumeric:
         return CSSCounterStyleDescriptors::System::EthiopicNumeric;
-    case CSSValueExtends:
+    case CSSValueID::Extends:
         return CSSCounterStyleDescriptors::System::Extends;
     default:
         ASSERT_NOT_REACHED();

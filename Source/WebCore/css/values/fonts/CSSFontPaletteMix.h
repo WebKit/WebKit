@@ -68,7 +68,7 @@ template<size_t I> const auto& get(const FontPaletteMixParameters::Component& va
 }
 
 // NOTE: Type wrapper is used here to allow forward declaration of the mix function in `CSSFontPalette.h`.
-using FontPaletteMixFunctionValue = FunctionNotation<CSSValuePaletteMix, FontPaletteMixParameters>;
+using FontPaletteMixFunctionValue = FunctionNotation<CSSValueID::PaletteMix, FontPaletteMixParameters>;
 DEFINE_TYPE_WRAPPER(FontPaletteMixFunction, FontPaletteMixFunctionValue);
 
 // Overload of operator== for UniqueRef<FontPaletteFunction> to make FontPalette::Kind's operator== work.

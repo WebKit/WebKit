@@ -134,13 +134,13 @@ unsigned short DeprecatedCSSOMPrimitiveValue::cssValueType() const
 
     if (auto* keyword = std::get_if<CSS::Keyword>(&m_data->value)) {
         switch (keyword->value) {
-        case CSSValueInherit:
+        case CSSValueID::Inherit:
             return CSS_INHERIT;
-        case CSSValueInitial:
+        case CSSValueID::Initial:
             return CSS_INITIAL;
-        case CSSValueUnset:
+        case CSSValueID::Unset:
             return CSS_UNSET;
-        case CSSValueRevert:
+        case CSSValueID::Revert:
             return CSS_REVERT;
         default:
             break;

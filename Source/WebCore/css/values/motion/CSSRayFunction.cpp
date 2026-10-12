@@ -50,7 +50,7 @@ void Serialize<Ray>::operator()(StringBuilder& builder, const SerializationConte
     }
 
     if (value.position) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueAt), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::At), ' ');
         serializationForCSS(builder, context, *value.position);
     }
 }

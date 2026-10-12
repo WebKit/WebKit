@@ -43,7 +43,7 @@ struct Circle {
 
     bool operator==(const Circle&) const = default;
 };
-using CircleFunction = FunctionNotation<CSSValueCircle, Circle>;
+using CircleFunction = FunctionNotation<CSSValueID::Circle, Circle>;
 
 template<size_t I> const auto& get(const Circle& value)
 {

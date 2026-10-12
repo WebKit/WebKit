@@ -42,7 +42,7 @@ struct Xywh {
 
     bool operator==(const Xywh&) const = default;
 };
-using XywhFunction = FunctionNotation<CSSValueXywh, Xywh>;
+using XywhFunction = FunctionNotation<CSSValueID::Xywh, Xywh>;
 
 template<size_t I> const auto& get(const Xywh& value)
 {

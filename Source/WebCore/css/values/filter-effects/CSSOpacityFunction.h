@@ -38,7 +38,7 @@ struct Opacity {
 
     bool operator==(const Opacity&) const = default;
 };
-using OpacityFunction = FunctionNotation<CSSValueOpacity, Opacity>;
+using OpacityFunction = FunctionNotation<CSSValueID::Opacity, Opacity>;
 
 DEFINE_TYPE_WRAPPER_GET(Opacity, value);
 

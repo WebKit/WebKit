@@ -72,7 +72,7 @@ CSSValueID CalcSizeParameters::basisKeyword() const
 {
     return WTF::switchOn(basis,
         []<CSSValueID Id>(const Constant<Id>&) { return Id; },
-        [](const CalcSizeCalculation&) { return CSSValueInvalid; },
+        [](const CalcSizeCalculation&) { return CSSValueID::Invalid; },
         [](const UniqueRef<CalcSizeFunction>& nested) { return nested->value.parameters.basisKeyword(); }
     );
 }

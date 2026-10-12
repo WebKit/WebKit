@@ -48,10 +48,10 @@ String CSSBackgroundRepeatValue::customCSSText(const CSS::SerializationContext&)
 {
     // background-repeat/mask-repeat behave a little like a shorthand, but `repeat no-repeat` is transformed to `repeat-x`.
     if (m_xValue != m_yValue) {
-        if (m_xValue == CSSValueRepeat && m_yValue == CSSValueNoRepeat)
-            return nameString(CSSValueRepeatX);
-        if (m_xValue == CSSValueNoRepeat && m_yValue == CSSValueRepeat)
-            return nameString(CSSValueRepeatY);
+        if (m_xValue == CSSValueID::Repeat && m_yValue == CSSValueID::NoRepeat)
+            return nameString(CSSValueID::RepeatX);
+        if (m_xValue == CSSValueID::NoRepeat && m_yValue == CSSValueID::Repeat)
+            return nameString(CSSValueID::RepeatY);
         return makeString(nameLiteral(m_xValue), ' ', nameLiteral(m_yValue));
     }
     return nameString(m_xValue);

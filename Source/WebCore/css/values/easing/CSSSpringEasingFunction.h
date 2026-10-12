@@ -46,7 +46,7 @@ struct SpringEasingParameters {
 
     bool operator==(const SpringEasingParameters&) const = default;
 };
-using SpringEasingFunction = FunctionNotation<CSSValueSpring, SpringEasingParameters>;
+using SpringEasingFunction = FunctionNotation<CSSValueID::Spring, SpringEasingParameters>;
 
 template<size_t I> const auto& get(const SpringEasingParameters& value)
 {

@@ -54,7 +54,7 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<CSSNumericValue> ax, Ref<CSSNumeri
 
 ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<const CSSFunctionValue> cssFunctionValue, Document& document)
 {
-    if (cssFunctionValue->name() != CSSValueSkew) {
+    if (cssFunctionValue->name() != CSSValueID::Skew) {
         ASSERT_NOT_REACHED();
         return CSSSkew::create(CSSNumericFactory::deg(0), CSSNumericFactory::deg(0));
     }
@@ -141,8 +141,8 @@ RefPtr<CSSValue> CSSSkew::toCSSValue() const
     if (!ax || !ay)
         return nullptr;
     if (RefPtr ayUnitValue = dynamicDowncast<CSSUnitValue>(m_ay); ayUnitValue && !ayUnitValue->value())
-        return CSSFunctionValue::create(CSSValueSkew, ax.releaseNonNull());
-    return CSSFunctionValue::create(CSSValueSkew, ax.releaseNonNull(), ay.releaseNonNull());
+        return CSSFunctionValue::create(CSSValueID::Skew, ax.releaseNonNull());
+    return CSSFunctionValue::create(CSSValueID::Skew, ax.releaseNonNull(), ay.releaseNonNull());
 }
 
 } // namespace WebCore

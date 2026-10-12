@@ -40,7 +40,7 @@ struct DropShadow {
 
     bool operator==(const DropShadow&) const = default;
 };
-using DropShadowFunction = FunctionNotation<CSSValueDropShadow, DropShadow>;
+using DropShadowFunction = FunctionNotation<CSSValueID::DropShadow, DropShadow>;
 
 template<size_t I> const auto& get(const DropShadow& value)
 {

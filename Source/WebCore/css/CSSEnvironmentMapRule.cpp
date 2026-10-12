@@ -44,7 +44,7 @@ static std::optional<EnvironmentMapFormat> toEnvironmentMapFormat(const CSSValue
     if (!keywordValue)
         return std::nullopt;
 
-    if (keywordValue->valueID() == CSSValueEquirectangular)
+    if (keywordValue->valueID() == CSSValueID::Equirectangular)
         return EnvironmentMapFormat::Equirectangular;
     return std::nullopt;
 }
@@ -100,7 +100,7 @@ String CSSEnvironmentMapRule::format() const
 
     switch (*format) {
     case EnvironmentMapFormat::Equirectangular:
-        return nameString(CSSValueEquirectangular);
+        return nameString(CSSValueID::Equirectangular);
     }
 
     RELEASE_ASSERT_NOT_REACHED();

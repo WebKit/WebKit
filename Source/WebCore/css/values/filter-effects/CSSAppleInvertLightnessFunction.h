@@ -33,7 +33,7 @@ namespace CSS {
 struct AppleInvertLightness {
     constexpr bool operator==(const AppleInvertLightness&) const = default;
 };
-using AppleInvertLightnessFunction = FunctionNotation<CSSValueAppleInvertLightness, AppleInvertLightness>;
+using AppleInvertLightnessFunction = FunctionNotation<CSSValueID::AppleInvertLightness, AppleInvertLightness>;
 
 } // namespace CSS
 } // namespace WebCore

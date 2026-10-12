@@ -47,7 +47,7 @@ static std::optional<ViewTransitionNavigation> NODELETE toViewTransitionNavigati
     if (!keywordValue)
         return std::nullopt;
 
-    if (keywordValue->valueID() == CSSValueAuto)
+    if (keywordValue->valueID() == CSSValueID::Auto)
         return ViewTransitionNavigation::Auto;
     return ViewTransitionNavigation::None;
 }

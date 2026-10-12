@@ -33,12 +33,12 @@ namespace WebCore {
 inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
 {
     switch (value) {
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         return normalWeightValue();
-    case CSSValueBold:
-    case CSSValueBolder:
+    case CSSValueID::Bold:
+    case CSSValueID::Bolder:
         return boldWeightValue();
-    case CSSValueLighter:
+    case CSSValueID::Lighter:
         return lightWeightValue();
     default:
         return std::nullopt;
@@ -48,46 +48,46 @@ inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
 inline std::optional<CSSValueID> fontWidthKeyword(FontSelectionValue width)
 {
     if (width == ultraCondensedWidthValue())
-        return CSSValueUltraCondensed;
+        return CSSValueID::UltraCondensed;
     if (width == extraCondensedWidthValue())
-        return CSSValueExtraCondensed;
+        return CSSValueID::ExtraCondensed;
     if (width == condensedWidthValue())
-        return CSSValueCondensed;
+        return CSSValueID::Condensed;
     if (width == semiCondensedWidthValue())
-        return CSSValueSemiCondensed;
+        return CSSValueID::SemiCondensed;
     if (width == normalWidthValue())
-        return CSSValueNormal;
+        return CSSValueID::Normal;
     if (width == semiExpandedWidthValue())
-        return CSSValueSemiExpanded;
+        return CSSValueID::SemiExpanded;
     if (width == expandedWidthValue())
-        return CSSValueExpanded;
+        return CSSValueID::Expanded;
     if (width == extraExpandedWidthValue())
-        return CSSValueExtraExpanded;
+        return CSSValueID::ExtraExpanded;
     if (width == ultraExpandedWidthValue())
-        return CSSValueUltraExpanded;
+        return CSSValueID::UltraExpanded;
     return std::nullopt;
 }
 
 inline std::optional<FontSelectionValue> fontWidthValue(CSSValueID value)
 {
     switch (value) {
-    case CSSValueUltraCondensed:
+    case CSSValueID::UltraCondensed:
         return ultraCondensedWidthValue();
-    case CSSValueExtraCondensed:
+    case CSSValueID::ExtraCondensed:
         return extraCondensedWidthValue();
-    case CSSValueCondensed:
+    case CSSValueID::Condensed:
         return condensedWidthValue();
-    case CSSValueSemiCondensed:
+    case CSSValueID::SemiCondensed:
         return semiCondensedWidthValue();
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         return normalWidthValue();
-    case CSSValueSemiExpanded:
+    case CSSValueID::SemiExpanded:
         return semiExpandedWidthValue();
-    case CSSValueExpanded:
+    case CSSValueID::Expanded:
         return expandedWidthValue();
-    case CSSValueExtraExpanded:
+    case CSSValueID::ExtraExpanded:
         return extraExpandedWidthValue();
-    case CSSValueUltraExpanded:
+    case CSSValueID::UltraExpanded:
         return ultraExpandedWidthValue();
     default:
         return std::nullopt;
@@ -97,9 +97,9 @@ inline std::optional<FontSelectionValue> fontWidthValue(CSSValueID value)
 inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
 {
     if (axis == FontStyleAxis::normal)
-        return CSSValueNormal;
+        return CSSValueID::Normal;
     if (style && style.value() == italicValue())
-        return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;
+        return axis == FontStyleAxis::ital ? CSSValueID::Italic : CSSValueID::Oblique;
     return std::nullopt;
 }
 

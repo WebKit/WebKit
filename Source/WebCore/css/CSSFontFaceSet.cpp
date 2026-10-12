@@ -150,21 +150,21 @@ AtomString CSSFontFaceSet::familyName(const CSSValue& value)
     // defining what font to use for those types.
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueSerif:
+        case CSSValueID::Serif:
             return serifFamily.get();
-        case CSSValueSansSerif:
+        case CSSValueID::SansSerif:
             return sansSerifFamily.get();
-        case CSSValueCursive:
+        case CSSValueID::Cursive:
             return cursiveFamily.get();
-        case CSSValueFantasy:
+        case CSSValueID::Fantasy:
             return fantasyFamily.get();
-        case CSSValueMonospace:
+        case CSSValueID::Monospace:
             return monospaceFamily.get();
-        case CSSValueWebkitPictograph:
+        case CSSValueID::WebkitPictograph:
             return pictographFamily.get();
-        case CSSValueSystemUi:
+        case CSSValueID::SystemUi:
             return systemUiFamily.get();
-        case CSSValueMath:
+        case CSSValueID::Math:
             return mathFamily.get();
         default:
             return { };
@@ -331,12 +331,12 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
     auto weightSelectionValue = WTF::switchOn(font.weight,
         [&](CSSValueID keyword) {
             switch (keyword) {
-            case CSSValueNormal:
+            case CSSValueID::Normal:
                 return normalWeightValue();
-            case CSSValueBold:
-            case CSSValueBolder:
+            case CSSValueID::Bold:
+            case CSSValueID::Bolder:
                 return boldWeightValue();
-            case CSSValueLighter:
+            case CSSValueID::Lighter:
                 return lightWeightValue();
             default:
                 ASSERT_NOT_REACHED();
@@ -366,11 +366,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
     auto styleSelectionValue = WTF::switchOn(font.style,
         [&](CSSValueID ident) -> std::optional<FontSelectionValue> {
             switch (ident) {
-            case CSSValueNormal:
+            case CSSValueID::Normal:
                 return std::nullopt;
-            case CSSValueItalic:
+            case CSSValueID::Italic:
                 return italicValue();
-            case CSSValueOblique:
+            case CSSValueID::Oblique:
                 return FontSelectionValue(0.0f); // FIXME: Spec says this should be 14deg.
             default:
                 ASSERT_NOT_REACHED();
@@ -418,7 +418,7 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
     for (auto& familyRaw : font->family) {
         auto familyAtom = WTF::switchOn(familyRaw,
             [&](CSSValueID familyKeyword) -> AtomString {
-                if (familyKeyword == CSSValueWebkitBody)
+                if (familyKeyword == CSSValueID::WebkitBody)
                     return AtomString { context.settingsValues().fontGenericFamilies.standardFontFamily() };
                 return *familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
             },

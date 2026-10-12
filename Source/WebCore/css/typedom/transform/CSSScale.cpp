@@ -85,25 +85,25 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(Ref<const CSSFunctionValue> cssFunct
     };
 
     switch (cssFunctionValue->name()) {
-    case CSSValueScaleX:
+    case CSSValueID::ScaleX:
         return makeScale([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSScale::create(WTF::move(components[0]), CSSNumericFactory::number(1), std::nullopt);
         }, 1);
-    case CSSValueScaleY:
+    case CSSValueID::ScaleY:
         return makeScale([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSScale::create(CSSNumericFactory::number(1), WTF::move(components[0]), std::nullopt);
         }, 1);
-    case CSSValueScaleZ:
+    case CSSValueID::ScaleZ:
         return makeScale([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSScale::create(CSSNumericFactory::number(1), CSSNumericFactory::number(1), WTF::move(components[0]));
         }, 1);
-    case CSSValueScale:
+    case CSSValueID::Scale:
         return makeScale([](Vector<Ref<CSSNumericValue>>&& components) {
             return components.size() == 2
                 ? CSSScale::create(WTF::move(components[0]), WTF::move(components[1]), std::nullopt)
                 : CSSScale::create(components[0], components[0], std::nullopt);
         }, 1, 2);
-    case CSSValueScale3d:
+    case CSSValueID::Scale3d:
         return makeScale([](Vector<Ref<CSSNumericValue>>&& components) {
             return CSSScale::create(WTF::move(components[0]), WTF::move(components[1]), WTF::move(components[2]));
         }, 3);
@@ -180,13 +180,13 @@ RefPtr<CSSValue> CSSScale::toCSSValue() const
         return nullptr;
 
     if (is2D())
-        return CSSFunctionValue::create(CSSValueScale, x.releaseNonNull(), y.releaseNonNull());
+        return CSSFunctionValue::create(CSSValueID::Scale, x.releaseNonNull(), y.releaseNonNull());
 
     auto z = protect(m_z)->toCSSValue();
     if (!z)
         return nullptr;
 
-    return CSSFunctionValue::create(CSSValueScale3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
+    return CSSFunctionValue::create(CSSValueID::Scale3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
 }
 
 } // namespace WebCore

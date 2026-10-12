@@ -52,7 +52,7 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
 
 ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<const CSSFunctionValue> cssFunctionValue, Document& document)
 {
-    if (cssFunctionValue->name() != CSSValueSkewX) {
+    if (cssFunctionValue->name() != CSSValueID::SkewX) {
         ASSERT_NOT_REACHED();
         return CSSSkewX::create(Ref<CSSNumericValue>(CSSNumericFactory::deg(0)));
     }
@@ -112,7 +112,7 @@ RefPtr<CSSValue> CSSSkewX::toCSSValue() const
     auto ax = protect(m_ax)->toCSSValue();
     if (!ax)
         return nullptr;
-    return CSSFunctionValue::create(CSSValueSkewX, ax.releaseNonNull());
+    return CSSFunctionValue::create(CSSValueID::SkewX, ax.releaseNonNull());
 }
 
 } // namespace WebCore

@@ -203,7 +203,7 @@ std::optional<ContainerCondition> ContainerQueryParser::consumeContainerConditio
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
             return nullAtom();
 
-        return CSSPropertyParserHelpers::consumeEagerlyResolvableCustomIdentRawExcluding(range, { CSSValueNone, CSSValueAnd, CSSValueOr, CSSValueNot }).toAtomString();
+        return CSSPropertyParserHelpers::consumeEagerlyResolvableCustomIdentRawExcluding(range, { CSSValueID::None, CSSValueID::And, CSSValueID::Or, CSSValueID::Not }).toAtomString();
     };
 
     auto name = consumeName();
@@ -233,15 +233,15 @@ std::optional<ContainerCondition> ContainerQueryParser::consumeContainerConditio
 
 bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)
 {
-    return functionId == CSSValueStyle || functionId == CSSValueScrollState;
+    return functionId == CSSValueID::Style || functionId == CSSValueID::ScrollState;
 }
 
 const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const CSSParserContext& context, State& state)
 {
-    if (state.inFunctionId == CSSValueStyle)
+    if (state.inFunctionId == CSSValueID::Style)
         return &Features::style();
 
-    if (state.inFunctionId == CSSValueScrollState) {
+    if (state.inFunctionId == CSSValueID::ScrollState) {
         if (!context.cssScrollStateContainerQueriesEnabled)
             return nullptr;
         return Features::scrollState(name);
@@ -253,7 +253,7 @@ const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomSt
 std::optional<MQ::Feature> ContainerQueryParser::consumeAndValidateFeature(CSSParserTokenRange& range, const CSSParserContext& context, State& state)
 {
     // style() features (boolean, plain and <style-range>) are all custom-property queries.
-    if (state.inFunctionId == CSSValueStyle) {
+    if (state.inFunctionId == CSSValueID::Style) {
         auto feature = consumeStyleFeature(range, context);
         if (!feature)
             return { };

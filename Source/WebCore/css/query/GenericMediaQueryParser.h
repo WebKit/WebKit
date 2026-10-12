@@ -84,7 +84,7 @@ template<typename ConcreteParser>
 std::optional<Condition> GenericMediaQueryParser<ConcreteParser>::consumeCondition(CSSParserTokenRange& range, const CSSParserContext& context, State& state)
 {
     if (range.peek().type() == IdentToken) {
-        if (range.peek().id() == CSSValueNot) {
+        if (range.peek().id() == CSSValueID::Not) {
             range.consumeIncludingWhitespace();
             auto query = consumeQueryInParens(range, context, state);
             if (!query || !range.atEnd())
@@ -100,9 +100,9 @@ std::optional<Condition> GenericMediaQueryParser<ConcreteParser>::consumeConditi
         auto operatorToken = range.peek();
         if (operatorToken.type() != IdentToken)
             return { };
-        if (operatorToken.id() == CSSValueAnd)
+        if (operatorToken.id() == CSSValueID::And)
             return LogicalOperator::And;
-        if (operatorToken.id() == CSSValueOr)
+        if (operatorToken.id() == CSSValueID::Or)
             return LogicalOperator::Or;
         return { };
     };

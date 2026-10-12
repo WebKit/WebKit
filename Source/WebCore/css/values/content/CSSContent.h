@@ -71,7 +71,7 @@ struct ContentCounterFunctionParameters {
 
     bool operator==(const ContentCounterFunctionParameters&) const = default;
 };
-using ContentCounterFunction = FunctionNotation<CSSValueCounter, ContentCounterFunctionParameters>;
+using ContentCounterFunction = FunctionNotation<CSSValueID::Counter, ContentCounterFunctionParameters>;
 
 // `ContentCounterFunctionWrapper` exists to allow easily forward declaring `ContentCounterFunction`.
 struct ContentCounterFunctionWrapper {
@@ -87,7 +87,7 @@ struct ContentCountersFunctionParameters {
 
     bool operator==(const ContentCountersFunctionParameters&) const = default;
 };
-using ContentCountersFunction = FunctionNotation<CSSValueCounters, ContentCountersFunctionParameters>;
+using ContentCountersFunction = FunctionNotation<CSSValueID::Counters, ContentCountersFunctionParameters>;
 
 // `ContentCountersFunctionWrapper` exists to allow easily forward declaring `ContentCountersFunction`.
 struct ContentCountersFunctionWrapper {

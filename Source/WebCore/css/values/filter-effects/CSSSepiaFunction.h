@@ -38,7 +38,7 @@ struct Sepia {
 
     bool operator==(const Sepia&) const = default;
 };
-using SepiaFunction = FunctionNotation<CSSValueSepia, Sepia>;
+using SepiaFunction = FunctionNotation<CSSValueID::Sepia, Sepia>;
 
 DEFINE_TYPE_WRAPPER_GET(Sepia, value);
 

@@ -73,7 +73,7 @@ struct CalcSizeParameters {
     CalcSizeParameters& operator=(CalcSizeParameters&&);
     ~CalcSizeParameters();
 
-    // Returns the keyword the function acts as other than for resolving the size, or CSSValueInvalid.
+    // Returns the keyword the function acts as other than for resolving the size, or CSSValueID::Invalid.
     CSSValueID basisKeyword() const;
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
@@ -94,7 +94,7 @@ template<size_t I> const auto& get(const CalcSizeParameters& value)
 
 // Wrapped in a named type because the basis holds this recursively, and an alias to a template
 // instantiation cannot be forward declared.
-using CalcSizeFunctionValue = FunctionNotation<CSSValueCalcSize, CalcSizeParameters>;
+using CalcSizeFunctionValue = FunctionNotation<CSSValueID::CalcSize, CalcSizeParameters>;
 DEFINE_TYPE_WRAPPER(CalcSizeFunction, CalcSizeFunctionValue);
 
 // Overload of operator== for UniqueRef<CalcSizeFunction> to make CalcSizeBasis's operator== work.

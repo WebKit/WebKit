@@ -38,7 +38,7 @@ void Serialize<Rect>::operator()(StringBuilder& builder, const SerializationCont
     serializationForCSS(builder, context, value.edges);
 
     if (!hasDefaultValue(value.radii)) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
+        builder.append(' ', nameLiteralForSerialization(CSSValueID::Round), ' ');
         serializationForCSS(builder, context, value.radii);
     }
 }

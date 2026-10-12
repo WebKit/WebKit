@@ -40,7 +40,7 @@ struct Inset {
 
     bool operator==(const Inset&) const = default;
 };
-using InsetFunction = FunctionNotation<CSSValueInset, Inset>;
+using InsetFunction = FunctionNotation<CSSValueID::Inset, Inset>;
 
 template<size_t I> const auto& get(const Inset& value)
 {

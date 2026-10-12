@@ -38,7 +38,7 @@ using DynamicRangeLimitMixComponent = SpaceSeparatedTuple<DynamicRangeLimit, Dyn
 using DynamicRangeLimitMixParameters = CommaSeparatedVector<DynamicRangeLimitMixComponent>;
 
 // NOTE: Type wrapper is used here to allow forward declaration of the mix function in `CSSDynamicRangeLimit.h`.
-using DynamicRangeLimitMixFunctionValue = FunctionNotation<CSSValueDynamicRangeLimitMix, DynamicRangeLimitMixParameters>;
+using DynamicRangeLimitMixFunctionValue = FunctionNotation<CSSValueID::DynamicRangeLimitMix, DynamicRangeLimitMixParameters>;
 DEFINE_TYPE_WRAPPER(DynamicRangeLimitMixFunction, DynamicRangeLimitMixFunctionValue);
 
 // Overload of operator== for UniqueRef<DynamicRangeLimitMixFunction> to make DynamicRangeLimit::Kind's operator== work.
