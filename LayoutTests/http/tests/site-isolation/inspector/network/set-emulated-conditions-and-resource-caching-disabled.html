@@ -28,7 +28,7 @@ function test() {
     // Give each phase a unique cache key so its first load is guaranteed to miss any entry left by a
     // previous test run; only a repeat within the same phase (same key) can be a genuine cache hit.
     function uniqueCacheableURL() {
-        return `cacheable-resource.py?key=${Math.random()}`;
+        return `static-cacheable/cacheable-resource.txt?key=${Math.random()}`;
     }
 
     // FIXME: Network.setEmulatedConditions is gated on ENABLE_INSPECTOR_NETWORK_THROTTLING, which is
