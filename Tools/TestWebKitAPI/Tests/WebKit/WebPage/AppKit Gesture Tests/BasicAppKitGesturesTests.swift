@@ -4039,22 +4039,21 @@ nonisolated(nonsending) private func withSwizzledContextMenu(
     perform body: () async -> Void
 ) async -> [PresentedMenuItem] {
     typealias CompletionHandler = @convention(block) () -> Void
-    typealias ObjCImplementation = @convention(block) (NSMenu.Type, NSMenu, _NSViewMenuContext, NSView, CompletionHandler?) -> Void
+    typealias ObjCImplementation =
+        @MainActor @convention(block) (
+            NSMenu.Type, NSMenu, _NSViewMenuContext, NSView, CompletionHandler?
+        ) -> Void
 
     let future = Future()
     let presentedItems = Mutex<[PresentedMenuItem]>([])
 
     let implementation: ObjCImplementation = { _, menu, _, _, completion in
-        let items = MainActor.assumeIsolated {
-            let items = menu.items.filter { !$0.isSeparatorItem }.map { PresentedMenuItem(title: $0.title, isEnabled: $0.isEnabled) }
-
-            if let itemTitle, let index = menu.items.firstIndex(where: { $0.title == itemTitle }) {
-                menu.performActionForItem(at: index)
-            }
-
-            return items
-        }
+        let items = menu.items.filter { !$0.isSeparatorItem }.map { PresentedMenuItem(title: $0.title, isEnabled: $0.isEnabled) }
         presentedItems.withLock { $0 = items }
+
+        if let itemTitle, let index = menu.items.firstIndex(where: { $0.title == itemTitle }) {
+            menu.performActionForItem(at: index)
+        }
 
         completion?()
 
