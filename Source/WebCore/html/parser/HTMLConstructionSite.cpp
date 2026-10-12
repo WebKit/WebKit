@@ -818,7 +818,9 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
-    SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
+    auto qualifiedName = qualifiedNameForTag(token, namespaceURI);
+    bool createdByParser = !(qualifiedName.matches(SVGNames::scriptTag) && m_parserContentPolicy.contains(ParserContentPolicy::DoNotMarkAlreadyStarted));
+    SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedName, createdByParser);
     setAttributes(element, token, m_parserContentPolicy);
     return element;
 }
