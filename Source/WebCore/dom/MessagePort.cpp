@@ -487,7 +487,7 @@ Ref<MessagePort> MessagePort::entangle(ScriptExecutionContext& context, Transfer
     return port;
 }
 
-// FIXME: avoid SUPRESS_NODELETE with lazyInitialize() - ThreadSafeWeakPtr still unsupported
+// FIXME: avoid SUPPRESS_NODELETE with lazyInitialize() - ThreadSafeWeakPtr still unsupported
 SUPPRESS_NODELETE void MessagePort::entangleLocally(MessagePort& port1, MessagePort& port2)
 {
     ASSERT(port1.scriptExecutionContext() == port2.scriptExecutionContext());

@@ -265,7 +265,7 @@ Vector<Ref<EventTarget>> EventPath::computePathUnclosedToTarget(const EventTarge
         bool movedOutOfShadowTree = depth < currentDepthAllowed;
         if (movedOutOfShadowTree)
             currentDepthAllowed = depth;
-        path.append(*currentContext.currentTarget());
+        path.append(Ref { *currentContext.currentTarget() });
     };
 
     auto currentDepthAllowed = currentTargetDepth;
@@ -291,7 +291,7 @@ Vector<Ref<EventTarget>> EventPath::computePathTreatingAllShadowRootsAsOpen() co
     for (auto& currentContext : m_path) {
         if (auto* currentNode = currentContext.node(); currentNode && currentNode->hasBeenInUserAgentShadowTree())
             continue;
-        path.append(*currentContext.currentTarget());
+        path.append(Ref { *currentContext.currentTarget() });
     }
     return path;
 }

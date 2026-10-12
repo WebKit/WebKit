@@ -556,7 +556,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         if (child->parentNode()) // Previous parserAppendChild may have mutated DOM.
             continue;
         ASSERT(!ensurePreInsertionValidity(child, nullptr).hasException());
-        child->setTreeScopeRecursively(treeScope());
+        child->setTreeScopeRecursivelyToMatch(*this);
         parserAppendChild(child);
     }
 }
@@ -737,7 +737,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     executeNodeInsertionWithScriptAssertion(*this, targets, next.ptr(), ChildChange::Source::API, ReplacedAllChildren::No, [&](Node& child) {
-        child.setTreeScopeRecursively(treeScope());
+        child.setTreeScopeRecursivelyToMatch(*this);
         insertBeforeCommon(next, child);
     });
 
@@ -802,7 +802,7 @@ void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
             protect(document())->adoptNode(newChild);
 
         insertBeforeCommon(nextChild, newChild);
-        newChild.setTreeScopeRecursively(treeScope());
+        newChild.setTreeScopeRecursivelyToMatch(*this);
         newChild.updateAncestorConnectedSubframeCountForInsertion();
     });
 }
@@ -880,7 +880,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     executeNodeInsertionWithScriptAssertion(*this, targets, refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&](Node& child) {
-        child.setTreeScopeRecursively(treeScope());
+        child.setTreeScopeRecursivelyToMatch(*this);
         if (refChild)
             insertBeforeCommon(*refChild, child);
         else
@@ -957,7 +957,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     ASSERT(!oldChild.nextSibling());
     oldChild.setParentNode(nullptr);
 
-    oldChild.setTreeScopeRecursively(document());
+    oldChild.setTreeScopeRecursivelyToDocument();
 }
 
 void ContainerNode::parserRemoveChild(Node& oldChild)
@@ -991,7 +991,7 @@ void ContainerNode::replaceAll(Node* node)
         ? ReplacedAllChildren::YesIncludingElements : ReplacedAllChildren::YesNotIncludingElements;
 
     executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, replacedAllChildren, [&] {
-        node->setTreeScopeRecursively(treeScope());
+        node->setTreeScopeRecursivelyToMatch(*this);
         appendChildCommon(*node);
     });
 
@@ -1071,7 +1071,7 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     executeNodeInsertionWithScriptAssertion(*this, targets, nullptr, ChildChange::Source::API, ReplacedAllChildren::No, [&](Node& child) {
-        child.setTreeScopeRecursively(treeScope());
+        child.setTreeScopeRecursivelyToMatch(*this);
         appendChildCommon(child);
     });
 
@@ -1133,7 +1133,7 @@ void ContainerNode::parserAppendChild(Node& newChild)
             protect(document())->adoptNode(newChild);
 
         appendChildCommon(newChild);
-        newChild.setTreeScopeRecursively(treeScope());
+        newChild.setTreeScopeRecursivelyToMatch(*this);
         newChild.updateAncestorConnectedSubframeCountForInsertion();
     });
 }
@@ -1151,7 +1151,7 @@ void ContainerNode::parserAppendChildIntoIsolatedTree(Node& newChild)
 
     executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(*this, newChild, [&] {
         appendChildCommon(newChild);
-        newChild.setTreeScopeRecursively(treeScope());
+        newChild.setTreeScopeRecursivelyToMatch(*this);
         newChild.updateAncestorConnectedSubframeCountForInsertion();
     });
 }
@@ -1216,7 +1216,7 @@ void ContainerNode::cloneSubtreeForFastParser(Document& document, CustomElementR
         Ref clonedChild = child->cloneNodeInternal(document, CloningOperation::SelfOnly, fallbackRegistry);
         executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(clone, clonedChild.get(), [&] {
             clone.appendChildCommon(clonedChild);
-            clonedChild->setTreeScopeRecursively(clone.treeScope());
+            clonedChild->setTreeScopeRecursivelyToMatch(clone);
             clonedChild->updateAncestorConnectedSubframeCountForInsertion();
         });
 
@@ -1239,7 +1239,7 @@ void ContainerNode::cloneChildNodes(Document& document, CustomElementRegistry* f
             WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-            clonedChild->setTreeScopeRecursively(clone.treeScope());
+            clonedChild->setTreeScopeRecursivelyToMatch(clone);
 
             clone.appendChildCommon(clonedChild);
             notifyChildNodeInserted(clone, clonedChild, postInsertionNotificationTargets);
@@ -1605,7 +1605,7 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
             // FIXME(319588): Handle inspector DOM breakpoints (e.g. InspectorInstrumentation::willInsertDOMNode)
             InspectorInstrumentation::didInsertDOMNode(protect(document()), node);
 
-            node.setTreeScopeRecursively(treeScope());
+            node.setTreeScopeRecursivelyToMatch(*this);
         }
         node.updateAncestorConnectedSubframeCountForInsertion();
         ChildListMutationScope(*this).childAdded(node);

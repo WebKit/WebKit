@@ -183,7 +183,9 @@ bool ProcessingInstruction::isLoading() const
 {
     if (m_loading)
         return true;
-    return m_sheet && m_sheet->isLoading();
+    if (RefPtr sheet = m_sheet)
+        return sheet->isLoading();
+    return false;
 }
 
 bool ProcessingInstruction::sheetLoaded()

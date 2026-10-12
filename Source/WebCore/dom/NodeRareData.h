@@ -167,7 +167,8 @@ public:
     void removeCacheWithAtomName(NodeListType& list, const AtomString& name)
     {
         ASSERT(&list == m_atomNameCaches.get(namedNodeListKey<NodeListType>(name)));
-        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list.ownerNode()))
+        Ref<Node> ownerNode = list.ownerNode();
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(ownerNode))
             return;
         m_atomNameCaches.remove(namedNodeListKey<NodeListType>(name));
     }

@@ -90,7 +90,7 @@ private:
 
     // DocumentParser
     void detach() final;
-    bool hasInsertionPoint() final;
+    bool NODELETE hasInsertionPoint() final;
     bool processingData() const final;
     void prepareToStopParsing() final;
     void stopParsing() final;

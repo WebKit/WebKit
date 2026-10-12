@@ -54,7 +54,7 @@ public:
     SandboxFlags creationSandboxFlags() const { return m_creationSandboxFlags; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
-    WEBCORE_EXPORT ContentSecurityPolicy* contentSecurityPolicy();
+    WEBCORE_EXPORT ContentSecurityPolicy* NODELETE contentSecurityPolicy();
 
     bool isSecureTransitionTo(const URL&) const;
 

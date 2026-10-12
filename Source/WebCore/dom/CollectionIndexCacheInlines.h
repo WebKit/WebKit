@@ -52,7 +52,7 @@ unsigned CollectionIndexCache<Collection, Iterator>::computeNodeCountUpdatingLis
 
     unsigned oldCapacity = m_cachedList.capacity();
     while (current) {
-        m_cachedList.append(*current);
+        m_cachedList.append(WeakPtr { *current });
         unsigned traversed;
         collection.collectionTraverseForward(current, 1, traversed);
         ASSERT(traversed == (current ? 1 : 0));

@@ -418,6 +418,8 @@ public:
         return *m_treeScope;
     }
     inline void setTreeScopeRecursively(TreeScope&);
+    inline void setTreeScopeRecursivelyToMatch(const Node&);
+    inline void setTreeScopeRecursivelyToDocument();
     static constexpr ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
 
     TreeScope& NODELETE treeScopeForSVGReferences() const;

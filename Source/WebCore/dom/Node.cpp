@@ -804,7 +804,7 @@ ExceptionOr<void> Node::normalize()
 Ref<Node> Node::cloneNode(CloneSubtree subtree) const
 {
     ASSERT(!isShadowRoot());
-    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
+    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, protect(treeScope()));
     return cloneNodeInternal(protect(document()), subtree == CloneSubtree::Yes ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
 }
 
@@ -875,7 +875,7 @@ static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Styl
 
 Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
-    if (!document().canEverRender() || isPseudoElement())
+    if (!protect(document())->canEverRender() || isPseudoElement())
         return Editability::ReadOnly;
 
     Ref document = this->document();
@@ -1513,7 +1513,7 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
     updateShadowIncludingRoot();
 
     if (removalType.disconnectedFromDocument) {
-        if (CheckedPtr cache = oldParentOfRemovedTree.document().existingAXObjectCache())
+        if (CheckedPtr cache = protect(oldParentOfRemovedTree.document())->existingAXObjectCache())
             cache->remove(*this);
     }
 }
@@ -1903,8 +1903,8 @@ unsigned short Node::compareDocumentPosition(Node& otherNode)
 FloatPoint Node::convertToPage(const FloatPoint& p) const
 {
     // If there is a renderer, just ask it to do the conversion
-    if (renderer())
-        return renderer()->localToAbsolute(p, MapCoordinatesMode::UseTransforms);
+    if (CheckedPtr renderer = this->renderer())
+        return renderer->localToAbsolute(p, MapCoordinatesMode::UseTransforms);
 
     // Otherwise go up the tree looking for a renderer
     if (RefPtr parent = parentElement())
@@ -1917,8 +1917,8 @@ FloatPoint Node::convertToPage(const FloatPoint& p) const
 FloatPoint Node::convertFromPage(const FloatPoint& p) const
 {
     // If there is a renderer, just ask it to do the conversion
-    if (renderer())
-        return renderer()->absoluteToLocal(p, MapCoordinatesMode::UseTransforms);
+    if (CheckedPtr renderer = this->renderer())
+        return renderer->absoluteToLocal(p, MapCoordinatesMode::UseTransforms);
 
     // Otherwise go up the tree looking for a renderer
     if (RefPtr parent = parentElement())

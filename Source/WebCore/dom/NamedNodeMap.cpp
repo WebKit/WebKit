@@ -119,9 +119,10 @@ RefPtr<Attr> NamedNodeMap::item(unsigned index) const
 
 unsigned NamedNodeMap::length() const
 {
-    if (!m_element->hasAttributes())
+    Ref element = m_element;
+    if (!element->hasAttributes())
         return 0;
-    return protect(m_element.get())->attributeCount();
+    return element->attributeCount();
 }
 
 } // namespace WebCore

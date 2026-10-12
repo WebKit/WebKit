@@ -52,13 +52,13 @@ DeviceMotionController::DeviceMotionController(DeviceMotionClient& client)
 
 void DeviceMotionController::suspendUpdates()
 {
-    m_client->stopUpdating();
+    protect(m_client)->stopUpdating();
 }
 
 void DeviceMotionController::resumeUpdates()
 {
     if (hasListeners())
-        m_client->startUpdating();
+        protect(m_client)->startUpdating();
 }
 
 #endif

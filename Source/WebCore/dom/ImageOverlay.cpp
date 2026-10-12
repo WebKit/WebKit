@@ -397,14 +397,14 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         elements.lines.reserveInitialCapacity(result.lines.size());
         for (auto& line : result.lines) {
             Ref lineContainer = HTMLDivElement::create(document.get());
-            protect(lineContainer)->classList().add(imageOverlayLineClass());
+            protect(lineContainer->classList())->add(imageOverlayLineClass());
             protect(elements.root)->appendChild(lineContainer);
             LineElements lineElements { lineContainer, { }, { } };
             lineElements.children.reserveInitialCapacity(line.children.size());
             for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
                 auto& child = line.children[childIndex];
                 Ref textContainer = HTMLDivElement::create(document.get());
-                protect(textContainer)->classList().add(imageOverlayTextClass());
+                protect(textContainer->classList())->add(imageOverlayTextClass());
                 protect(textContainer)->setUserAgentPart(UserAgentParts::internalImageOverlayText());
                 lineContainer->appendChild(textContainer);
                 textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : String { child.text }));
@@ -424,7 +424,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         elements.dataDetectors.reserveInitialCapacity(result.dataDetectors.size());
         for (auto& dataDetector : result.dataDetectors) {
             auto dataDetectorContainer = DataDetection::createElementForImageOverlay(document.get(), dataDetector);
-            protect(dataDetectorContainer)->classList().add(imageOverlayDataDetectorClass());
+            protect(dataDetectorContainer->classList())->add(imageOverlayDataDetectorClass());
             protect(elements.root)->appendChild(dataDetectorContainer);
             elements.dataDetectors.append(WTF::move(dataDetectorContainer));
         }
@@ -433,7 +433,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         elements.blocks.reserveInitialCapacity(result.blocks.size());
         for (auto& block : result.blocks) {
             Ref blockContainer = HTMLDivElement::create(document.get());
-            protect(blockContainer)->classList().add(imageOverlayBlockClass());
+            protect(blockContainer->classList())->add(imageOverlayBlockClass());
             auto lines = block.text.split(newlineCharacter);
             for (auto&& textContent : WTF::move(lines)) {
                 if (blockContainer->hasChildNodes())

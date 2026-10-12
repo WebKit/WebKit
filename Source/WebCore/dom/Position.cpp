@@ -455,17 +455,23 @@ Position Position::next(PositionMoveType moveType) const
 
 int Position::uncheckedPreviousOffset(const Node* n, unsigned current)
 {
-    return n->renderer() ? n->renderer()->previousOffset(current) : current - 1;
+    if (CheckedPtr renderer = n->renderer())
+        return renderer->previousOffset(current);
+    return current - 1;
 }
 
 int Position::uncheckedPreviousOffsetForBackwardDeletion(const Node* n, unsigned current)
 {
-    return n->renderer() ? n->renderer()->previousOffsetForBackwardDeletion(current) : current - 1;
+    if (CheckedPtr renderer = n->renderer())
+        return renderer->previousOffsetForBackwardDeletion(current);
+    return current - 1;
 }
 
 int Position::uncheckedNextOffset(const Node* n, unsigned current)
 {
-    return n->renderer() ? n->renderer()->nextOffset(current) : current + 1;
+    if (CheckedPtr renderer = n->renderer())
+        return renderer->nextOffset(current);
+    return current + 1;
 }
 
 bool Position::atFirstEditingPositionForNode() const
@@ -636,7 +642,7 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
     if (!node->hasChildNodes())
         return true;
 
-    return !Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*node->renderer()));
+    return !Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*protect(node->renderer())));
 }
 
 static RefPtr<Node> enclosingVisualBoundary(SUPPRESS_UNCHECKED_LOCAL Node* node)
@@ -1241,7 +1247,7 @@ std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
     RefPtr node = anchorNode();
     if (!node)
         return { nullptr, 0 };
-    auto* renderer = node->renderer();
+    CheckedPtr renderer = node->renderer();
     if (!renderer)
         return { nullptr, 0 };
     unsigned offset = deprecatedEditingOffset();

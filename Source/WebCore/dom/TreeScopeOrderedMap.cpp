@@ -168,8 +168,9 @@ inline Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScopeOrdere
         entry.orderedList.reserveCapacity(entry.count);
         auto elementDescendants = descendantsOfType<Element>(scope.rootNode());
         for (auto it = entry.element ? elementDescendants.beginAt(*entry.element) : elementDescendants.begin(); it; ++it) {
-            if (keyMatches(key, protect(*it)))
-                entry.orderedList.append(*it);
+            Ref element = *it;
+            if (keyMatches(key, element))
+                entry.orderedList.append(element.get());
         }
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(entry.orderedList.size() == entry.count);
     }

@@ -45,7 +45,7 @@ protected:
     IdTargetObserver(IdTargetObserverRegistry&, const AtomString& id);
 
 private:
-    CheckedPtr<IdTargetObserverRegistry> m_registry;
+    const CheckedPtr<IdTargetObserverRegistry> m_registry;
     AtomString m_id;
 };
 
