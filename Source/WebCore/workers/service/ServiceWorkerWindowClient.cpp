@@ -104,11 +104,7 @@ void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const 
                     promise->resolveWithJSValue(JSC::jsNull());
                     return;
                 }
-#if ASSERT_ENABLED
-                auto originData = SecurityOriginData::fromURL(clientData->url);
-                ClientOrigin clientOrigin { originData, originData };
-#endif
-                ASSERT(serviceWorkerContext.clientOrigin() == clientOrigin);
+                ASSERT(serviceWorkerContext.clientOrigin().clientOrigin == SecurityOriginData::fromURL(clientData->url));
                 promise->template resolve<IDLInterface<ServiceWorkerWindowClient>>(ServiceWorkerWindowClient::create(serviceWorkerContext, WTF::move(*clientData)));
             });
         });

@@ -364,7 +364,6 @@ private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
-    std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
 
     enum class ForInitialization : bool { No, Yes };
     void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);

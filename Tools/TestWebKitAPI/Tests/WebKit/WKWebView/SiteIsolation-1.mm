@@ -37,6 +37,7 @@
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestResourceLoadDelegate.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import "InstanceMethodSwizzler.h"
@@ -580,6 +581,57 @@ TEST(SiteIsolation, SetResourceLoadDelegateAfterCrossOriginIframeLoads)
     EXPECT_TRUE(Util::runFor(&sawSubresourceRequest, 5_s));
 
     webView.get()._resourceLoadDelegate = nil;
+}
+
+TEST(SiteIsolation, WindowClientNavigateInCrossSiteIframe)
+{
+    static constexpr auto frameHTML = "<script>"
+        "navigator.serviceWorker.onmessage = (event) => alert(event.data);"
+        "if (navigator.serviceWorker.controller) {"
+        "    if (!location.search)"
+        "        navigator.serviceWorker.controller.postMessage('navigate');"
+        "} else {"
+        "    navigator.serviceWorker.register('/sw.js').then((registration) => {"
+        "        const worker = registration.installing;"
+        "        worker.onstatechange = () => { if (worker.state == 'activated') alert('activated') };"
+        "    });"
+        "}"
+        "</script>"_s;
+    static constexpr auto serviceWorkerScript = "self.addEventListener('message', (event) => {"
+        "    event.waitUntil(event.source.navigate('/frame?navigated').then((client) => client ? client.url : 'null', () => 'failed').then(async (result) => {"
+        "        for (const client of await self.clients.matchAll())"
+        "            client.postMessage(result);"
+        "    }));"
+        "});"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/frame'></iframe>"_s } },
+        { "/frame"_s, { frameHTML } },
+        { "/frame?navigated"_s, { frameHTML } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScript } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr alerts = adoptNS([NSMutableArray<NSString *> new]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        [alerts addObject:message];
+        completionHandler();
+    };
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [alerts count] == 1;
+    }));
+    EXPECT_WK_STREQ([alerts firstObject], "activated");
+
+    // The iframe is now controlled by the service worker, which navigates it and reports the resulting client's URL.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [alerts count] == 2;
+    }));
+    EXPECT_WK_STREQ([alerts lastObject], "https://webkit.org/frame?navigated");
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
