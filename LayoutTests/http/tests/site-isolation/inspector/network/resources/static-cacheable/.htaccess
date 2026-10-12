@@ -1,0 +1,4 @@
+<Files cacheable-resource.txt>
+	Header set Cache-Control "max-age=3600"
+	Header set Access-Control-Allow-Origin "*"
+</Files>
