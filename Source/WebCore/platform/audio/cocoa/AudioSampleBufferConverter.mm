@@ -91,14 +91,16 @@ void AudioSampleBufferConverter::converterOutputBufferCallback(void* object, CMB
 
 bool AudioSampleBufferConverter::initialize()
 {
-    CMBufferQueueRef inputBufferQueue;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMBufferQueueRef inputBufferQueue;
     if (auto error = PAL::CMBufferQueueCreate(kCFAllocatorDefault, 0, PAL::CMBufferQueueGetCallbacksForUnsortedSampleBuffers(), &inputBufferQueue)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMBufferQueueCreate for m_inputBufferQueue failed with %d", static_cast<int>(error));
         return false;
     }
     lazyInitialize(m_inputBufferQueue, adoptCF(inputBufferQueue));
 
-    CMBufferQueueRef outputBufferQueue;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMBufferQueueRef outputBufferQueue;
     if (auto error = PAL::CMBufferQueueCreate(kCFAllocatorDefault, 0, PAL::CMBufferQueueGetCallbacksForUnsortedSampleBuffers(), &outputBufferQueue)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMBufferQueueCreate for m_outputBufferQueue failed with %d", static_cast<int>(error));
         return false;
@@ -402,7 +404,8 @@ std::expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter
             }
         }
 
-        CMFormatDescriptionRef destinationFormatDescription;
+        // This is an out-parameter which is immediately adopted below.
+        SUPPRESS_UNRETAINED_LOCAL CMFormatDescriptionRef destinationFormatDescription;
         if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &m_destinationFormat, 0, nullptr, cookieSize, cookie.span().data(), nullptr, &destinationFormatDescription)) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMAudioFormatDescriptionCreate failed with %d", static_cast<int>(error));
             return makeUnexpected(error);
@@ -411,7 +414,8 @@ std::expected<RetainPtr<CMSampleBufferRef>, OSStatus> AudioSampleBufferConverter
         m_gdrCountNum = gradualDecoderRefreshCount();
     }
 
-    CMSampleBufferRef rawSampleBuffer;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef rawSampleBuffer;
     if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, nullptr, false, nullptr, nullptr, m_destinationFormatDescription.get(), numSamples, m_currentNativePresentationTimeStamp, isPCM() ? nullptr : m_destinationPacketDescriptions.span().data(), &rawSampleBuffer)) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferConverter CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", static_cast<int>(error));
         return makeUnexpected(error);

@@ -337,7 +337,8 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 
 static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray *array, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
-    for (id anObject in array)
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL id anObject in array)
         aList.append(convertObjcValueToValue(lexicalGlobalObject, anObject, rootObject));
 }
 
@@ -424,7 +425,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     if (![self _isSafeScript])
         return nil;
 
-    id resultObj;
+    RetainPtr<id> resultObj;
     {
         auto globalObject = [self _rootObject]->globalObject();
         auto& vm = globalObject->vm();
@@ -451,7 +452,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     if ([resultObj isKindOfClass:[WebUndefined class]])
         resultObj = [super valueForKey:key];    // defaults to throwing an exception
 
-    return resultObj;
+    return resultObj.autorelease();
 }
 
 - (void)removeWebScriptKey:(NSString *)key

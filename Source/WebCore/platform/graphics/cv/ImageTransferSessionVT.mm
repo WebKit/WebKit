@@ -202,7 +202,8 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
         return nullptr;
     }
 
-    CMSampleBufferRef resizedSampleBuffer;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef resizedSampleBuffer;
     status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, convertedPixelBuffer.get(), formatDescription, timeingInfoSpan.data(), &resizedSampleBuffer);
     CFRelease(formatDescription);
     if (status != noErr) {
@@ -218,27 +219,28 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(CGImageRef
     if (!image || !setSize(size))
         return nullptr;
 
-    CVPixelBufferRef rgbBuffer;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CVPixelBufferRef rawRGBBuffer;
     auto imageSize = IntSize(CGImageGetWidth(image), CGImageGetHeight(image));
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, imageSize.width(), imageSize.height(), kCVPixelFormatType_32ARGB, nullptr, &rgbBuffer);
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, imageSize.width(), imageSize.height(), kCVPixelFormatType_32ARGB, nullptr, &rawRGBBuffer);
     if (status != kCVReturnSuccess) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CVPixelBufferCreate failed with error code: %d", static_cast<int>(status));
         return nullptr;
     }
+    RetainPtr rgbBuffer = adoptCF(rawRGBBuffer);
 
-    CVPixelBufferLockBaseAddress(rgbBuffer, 0);
-    void* data = CVPixelBufferGetBaseAddress(rgbBuffer);
-    auto retainedRGBBuffer = adoptCF(rgbBuffer);
-    auto context = adoptCF(CGBitmapContextCreate(data, imageSize.width(), imageSize.height(), 8, CVPixelBufferGetBytesPerRow(rgbBuffer), sRGBColorSpaceSingleton(), (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
+    CVPixelBufferLockBaseAddress(rgbBuffer.get(), 0);
+    void* data = CVPixelBufferGetBaseAddress(rgbBuffer.get());
+    RetainPtr context = adoptCF(CGBitmapContextCreate(data, imageSize.width(), imageSize.height(), 8, CVPixelBufferGetBytesPerRow(rgbBuffer.get()), sRGBColorSpaceSingleton(), (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
     if (!context) {
         RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CGBitmapContextCreate returned nullptr");
         return nullptr;
     }
 
     CGContextDrawImage(context.get(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), image);
-    CVPixelBufferUnlockBaseAddress(rgbBuffer, 0);
+    CVPixelBufferUnlockBaseAddress(rgbBuffer.get(), 0);
 
-    return convertPixelBuffer(rgbBuffer, size);
+    return convertPixelBuffer(rgbBuffer.get(), size);
 }
 
 RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CVPixelBufferRef sourceBuffer, const MediaTime& sampleTime, const IntSize& size)
@@ -261,7 +263,8 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CVPixe
         return nullptr;
     }
 
-    CMSampleBufferRef sampleBuffer;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef sampleBuffer;
     auto cmTime = PAL::toCMTime(sampleTime);
     CMSampleTimingInfo timingInfo = { PAL::kCMTimeInvalid, cmTime, cmTime };
     status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)inputBuffer.get(), formatDescription, &timingInfo, &sampleBuffer);

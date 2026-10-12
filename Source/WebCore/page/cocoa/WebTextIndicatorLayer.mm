@@ -305,7 +305,8 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
     }
 
     [CATransaction begin];
-    for (CALayer *bounceLayer in _bounceLayers.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL CALayer *bounceLayer in _bounceLayers.get()) {
         if (textIndicator->wantsManualAnimation())
             bounceLayer.speed = 0;
 
@@ -347,7 +348,8 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
     if (progress == 1) {
         _hasCompletedAnimation = true;
 
-        for (CALayer *bounceLayer in _bounceLayers.get()) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL CALayer *bounceLayer in _bounceLayers.get()) {
             // Continue the animation from wherever it had manually progressed to.
             CFTimeInterval beginTime = bounceLayer.timeOffset;
             bounceLayer.speed = 1;
@@ -356,7 +358,8 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
         }
     } else {
         CFTimeInterval animationDuration = [self _animationDuration];
-        for (CALayer *bounceLayer in _bounceLayers.get())
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL CALayer *bounceLayer in _bounceLayers.get())
             bounceLayer.timeOffset = progress * animationDuration;
     }
 }

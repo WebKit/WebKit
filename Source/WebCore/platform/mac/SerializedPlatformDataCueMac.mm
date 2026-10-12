@@ -169,7 +169,8 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
     if (exception)
         return [JSValue valueWithUndefinedInContext:context];
 
-    for (id key in [dictionary keyEnumerator]) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL id key in [dictionary keyEnumerator]) {
         if (![key isKindOfClass:[NSString class]])
             continue;
 

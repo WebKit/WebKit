@@ -105,7 +105,8 @@ static std::optional<Vector<uint8_t>> createAndStoreMasterKey()
     OSStatus status;
 
 #if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
-    SecAccessRef accessRef;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL SecAccessRef accessRef;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = SecAccessCreate(bridge_cast(localizedItemName.get()), nullptr, &accessRef);
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -120,7 +121,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<SecACLRef> acl = checked_cf_cast<SecACLRef>(CFArrayGetValueAtIndex(acls.get(), 0));
 
-    SecTrustedApplicationRef trustedAppRef;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL SecTrustedApplicationRef trustedAppRef;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = SecTrustedApplicationCreateFromPath(0, &trustedAppRef);
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -173,7 +175,8 @@ static std::optional<Vector<uint8_t>> findMasterKey()
         (id)kSecReturnData : @YES,
     };
 
-    CFDataRef keyDataRef;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CFDataRef keyDataRef;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef*)&keyDataRef);
     if (status) {
         if (status != errSecItemNotFound && status != errSecUserCanceled)

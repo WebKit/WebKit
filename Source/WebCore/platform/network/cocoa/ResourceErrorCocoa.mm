@@ -301,7 +301,8 @@ bool ResourceError::blockedKnownTracker() const
     if (id blockedTrackerFailure = error.get().userInfo[@"_NSURLErrorBlockedTrackerFailureKey"])
         return [blockedTrackerFailure boolValue];
     // This loop can be removed when the CFNetwork loader is no longer in use
-    for (NSError *underlyingError in error.get().underlyingErrors) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSError *underlyingError in error.get().underlyingErrors) {
         if ([underlyingError.userInfo[@"_NSURLErrorBlockedTrackerFailureKey"] boolValue])
             return true;
     }
@@ -320,7 +321,8 @@ String ResourceError::blockedTrackerHostName() const
         return { };
     }
     // This loop can be removed when the CFNetwork loader is no longer in use
-    for (NSError *underlyingError in error.get().underlyingErrors) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSError *underlyingError in error.get().underlyingErrors) {
         if (RetainPtr<id> failingPath = underlyingError.userInfo[@"_NSURLErrorNWPathKey"]) {
             auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath.get()));
             if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))

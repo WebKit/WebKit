@@ -191,7 +191,8 @@ void AVAssetMIMETypeCache::initializeCache(HashSet<String>& cache)
     if (!isAvailable())
         return;
 
-    for (NSString *type in [PAL::getAVURLAssetClassSingleton() audiovisualMIMETypes])
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *type in [PAL::getAVURLAssetClassSingleton() audiovisualMIMETypes])
         cache.add(type);
 
     if (m_cacheTypeCallback)

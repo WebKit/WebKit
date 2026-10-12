@@ -42,7 +42,7 @@ namespace WebCoreTestSupport {
 
 static RetainPtr<CFURLResponseRef> createCFURLResponseFromResponseData(CFDataRef responseData)
 {
-    NSURLResponse *response;
+    RetainPtr<NSURLResponse> response;
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)responseData error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     @try {
@@ -54,18 +54,19 @@ static RetainPtr<CFURLResponseRef> createCFURLResponseFromResponseData(CFDataRef
     }
 
     if (![response isKindOfClass:[NSHTTPURLResponse class]])
-        return adoptCF(CFURLResponseCreate(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, (__bridge CFStringRef)response.MIMEType, response.expectedContentLength, (__bridge CFStringRef)response.textEncodingName, kCFURLCacheStorageAllowed));
+        return adoptCF(CFURLResponseCreate(kCFAllocatorDefault, (__bridge CFURLRef)response.get().URL, (__bridge CFStringRef)response.get().MIMEType, response.get().expectedContentLength, (__bridge CFStringRef)response.get().textEncodingName, kCFURLCacheStorageAllowed));
 
-    RetainPtr httpResponse = checked_objc_cast<NSHTTPURLResponse>(response);
+    RetainPtr httpResponse = checked_objc_cast<NSHTTPURLResponse>(response.get());
 
     // NSURLResponse is not toll-free bridged to CFURLResponse.
     RetainPtr<CFHTTPMessageRef> httpMessage = adoptCF(CFHTTPMessageCreateResponse(kCFAllocatorDefault, httpResponse.get().statusCode, nullptr, kCFHTTPVersion1_1));
 
     NSDictionary *headerFields = httpResponse.get().allHeaderFields;
-    for (NSString *headerField in [headerFields keyEnumerator])
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *headerField in [headerFields keyEnumerator])
         CFHTTPMessageSetHeaderFieldValue(httpMessage.get(), (__bridge CFStringRef)headerField, (__bridge CFStringRef)[headerFields objectForKey:headerField]);
 
-    return adoptCF(CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, httpMessage.get(), kCFURLCacheStorageAllowed));
+    return adoptCF(CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (__bridge CFURLRef)response.get().URL, httpMessage.get(), kCFURLCacheStorageAllowed));
 }
 
 static void convertMIMEType(CFMutableStringRef mimeType)

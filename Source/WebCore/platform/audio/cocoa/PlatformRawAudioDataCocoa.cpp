@@ -81,7 +81,8 @@ static CAAudioStreamDescription::IsInterleaved NODELETE interleavedFormat(AudioS
 
 static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescription& description, const CMTime& time, size_t numberOfFrames, Ref<SharedBuffer>&& data, size_t dataSize)
 {
-    CMAudioFormatDescriptionRef rawFormatDescription;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMAudioFormatDescriptionRef rawFormatDescription;
     if (PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &description.streamDescription(), 0, nullptr, 0, nullptr, nullptr, &rawFormatDescription))
         return nullptr;
     RetainPtr formatDescription = adoptCF(rawFormatDescription);
@@ -95,7 +96,8 @@ static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescri
     // The caller may have supplied more bytes than the format describes; the sample buffer must
     // cover exactly the described bytes.
     if (PAL::CMBlockBufferGetDataLength(blockBuffer) != dataSize) {
-        CMBlockBufferRef rawTrimmedBuffer;
+        // This is an out-parameter which is immediately adopted below.
+        SUPPRESS_UNRETAINED_LOCAL CMBlockBufferRef rawTrimmedBuffer;
         if (auto error = PAL::CMBlockBufferCreateContiguous(kCFAllocatorDefault, blockBuffer, kCFAllocatorDefault, nullptr, 0, dataSize, 0, &rawTrimmedBuffer)) {
             RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't trim the block buffer with error %d", error);
             return nullptr;
@@ -103,7 +105,8 @@ static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescri
         blockBuffer = adoptCF(rawTrimmedBuffer);
     }
 
-    CMSampleBufferRef rawSampleBuffer;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef rawSampleBuffer;
     if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, blockBuffer, true, nullptr, nullptr, formatDescription, numberOfFrames, time, nullptr, &rawSampleBuffer)) {
         RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't create a sample buffer with error %d", error);
         return nullptr;

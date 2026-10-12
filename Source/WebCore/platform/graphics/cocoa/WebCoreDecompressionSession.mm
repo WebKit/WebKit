@@ -373,7 +373,8 @@ static std::expected<RetainPtr<CMSampleBufferRef>, OSStatus> handleDecompression
             groupFormatDescription = copyDescriptionExtensionValuesIfNeeded(adoptCF(rawBufferGroupFormatDescription), description, group);
         }
         ASSERT(PAL::CMFormatDescriptionGetMediaType(groupFormatDescription.get()) == kCMMediaType_TaggedBufferGroup);
-        CMSampleBufferRef rawGroupSampleBuffer;
+        // This is an out-parameter which is immediately adopted below.
+        SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef rawGroupSampleBuffer;
         if (auto status = PAL::CMSampleBufferCreateForTaggedBufferGroup(kCFAllocatorDefault, group, presentationTimeStamp, presentationDuration, groupFormatDescription.get(), &rawGroupSampleBuffer); status != noErr)
             return makeUnexpected(status);
         return adoptCF(rawGroupSampleBuffer);

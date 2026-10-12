@@ -396,7 +396,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
                 if (!font && [familyMemberFaceNames count])
                     font = [PlatformFontClass fontWithName:familyName size:size];
 #else
-                NSArray *familyMemberArray;
+                RetainPtr<NSArray> familyMemberArray;
                 NSString *faceName = [fontName substringFromIndex:(dividingRange.location + dividingRange.length)];
                 NSArray *familyMemberArrays = [fontManager availableMembersOfFontFamily:familyName];
                 NSEnumerator *familyMemberArraysEnum = [familyMemberArrays objectEnumerator];
@@ -1549,7 +1549,7 @@ void HTMLConverter::_processMetaElementWithName(NSString *name, NSString *conten
 #endif
     } else if (NSOrderedSame == [@"Keywords" compare:name options:NSCaseInsensitiveSearch]) {
         if (content && [content length] > 0) {
-            NSArray *array;
+            RetainPtr<NSArray> array;
             // ??? need better handling here and throughout
             if ([content rangeOfString:@", "].length == 0 && [content rangeOfString:@","].length > 0)
                 array = [content componentsSeparatedByString:@","];
@@ -1557,7 +1557,7 @@ void HTMLConverter::_processMetaElementWithName(NSString *name, NSString *conten
                 array = [content componentsSeparatedByString:@" "];
             else
                 array = [content componentsSeparatedByString:@", "];
-            [_documentAttrs setObject:array forKey:NSKeywordsDocumentAttribute];
+            [_documentAttrs setObject:array.get() forKey:NSKeywordsDocumentAttribute];
         }
     } else if (NSOrderedSame == [@"Author" compare:name options:NSCaseInsensitiveSearch])
         key = NSAuthorDocumentAttribute;
@@ -1705,11 +1705,10 @@ void HTMLConverter::_addTableCellForElement(Element* element)
     NSMutableArray *rowArray = [_textTableRowArrays lastObject];
     NSUInteger count = [rowArray count];
     PlatformColor *color = ([_textTableRowBackgroundColors count] > 0) ? [_textTableRowBackgroundColors lastObject] : nil;
-    NSTextTableBlock *previousBlock;
     CGFloat cellSpacingVal = [[_textTableSpacings lastObject] floatValue];
     if ([color isEqual:[PlatformColorClass clearColor]]) color = nil;
     for (NSUInteger i = 0; i < count; i++) {
-        previousBlock = [rowArray objectAtIndex:i];
+        RetainPtr<NSTextTableBlock> previousBlock = [rowArray objectAtIndex:i];
         if (columnNumber >= [previousBlock startingColumn] && columnNumber < [previousBlock startingColumn] + [previousBlock columnSpan])
             columnNumber = [previousBlock startingColumn] + [previousBlock columnSpan];
     }
@@ -1910,9 +1909,9 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
 {
     NSInteger itemNum = [list startingItemNumber];
     NSString *string = [_attrStr string];
-    NSString *stringToInsert;
+    RetainPtr<NSString> stringToInsert;
     NSDictionary *attrsToInsert = nil;
-    NSParagraphStyle *paragraphStyle;
+    RetainPtr<NSParagraphStyle> paragraphStyle;
     NSTextTab *tab = nil;
     RetainPtr<NSTextTab> tabToRemove;
     NSRange paragraphRange;
@@ -1922,7 +1921,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     NSUInteger insertLength;
     NSUInteger i;
     NSUInteger count;
-    NSArray *textLists;
+    RetainPtr<NSArray> textLists;
     CGFloat markerLocation;
     CGFloat listLocation;
 
@@ -1943,7 +1942,7 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     insertLength = [stringToInsert length];
                     attrsToInsert = [PlatformNSTextList _standardMarkerAttributesForAttributes:[_attrStr attributesAtIndex:paragraphRange.location effectiveRange:NULL]];
 
-                    [_attrStr replaceCharactersInRange:NSMakeRange(paragraphRange.location, 0) withString:stringToInsert];
+                    [_attrStr replaceCharactersInRange:NSMakeRange(paragraphRange.location, 0) withString:stringToInsert.get()];
                     [_attrStr setAttributes:attrsToInsert range:NSMakeRange(paragraphRange.location, insertLength)];
                     range.length += insertLength;
                     paragraphRange.length += insertLength;
@@ -2017,7 +2016,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         [_textTableRowArrays removeLastObject];
     } else if (displayValue == "table-row"_s && [_textTables count] > 0) {
         NSTextTable *table = [_textTables lastObject];
-        NSTextTableBlock *block;
+        RetainPtr<NSTextTableBlock> block;
         NSMutableArray *rowArray = [_textTableRowArrays lastObject];
         RetainPtr<NSMutableArray> previousRowArray;
         NSUInteger i, count;
@@ -2035,7 +2034,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
                     numberOfColumns = [block startingColumn] + [block columnSpan];
 
                 if ([block startingRow] + [block rowSpan] > rowNumber)
-                    [rowArray addObject:block];
+                    [rowArray addObject:block.get()];
             }
             count = [rowArray count];
             openColumn = 0;
@@ -2069,7 +2068,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         _addQuoteForElement(element, NO, --_quoteLevel);
     } else if (element.hasTagName(spanTag)) {
         RetainPtr className = element.getAttribute(classAttr).createNSString();
-        NSMutableString *mutableString;
+        RetainPtr<NSMutableString> mutableString;
         NSUInteger i, count = 0;
         unichar c;
         if ([@"Apple-converted-space" isEqualToString:className.get()]) {

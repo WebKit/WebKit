@@ -69,7 +69,7 @@ RefPtr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameContro
             ],
         };
 
-        NSError* error;
+        NSError* error = nil;
         auto pattern = adoptNS([allocCHHapticPatternInstance() initWithDictionary:hapticDict error:&error]);
         if (!pattern) {
             RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect: Failed to create a CHHapticPattern");
@@ -139,7 +139,7 @@ void GameControllerHapticEffect::start(CompletionHandler<void(bool)>&& completio
         if (!protectedThis || !success)
             return;
 
-        NSError *error;
+        NSError *error = nil;
         Vector<RetainPtr<id>> successPlayers;
         if ([protectedThis->m_leftPlayer startAtTime:0 error:&error])
             successPlayers.append(protectedThis->m_leftPlayer);
@@ -212,7 +212,7 @@ void GameControllerHapticEffect::stop()
 {
     ASSERT(isMainThread());
 
-    NSError *error;
+    NSError *error = nil;
     [m_leftPlayer cancelAndReturnError:&error];
     [m_rightPlayer cancelAndReturnError:&error];
 

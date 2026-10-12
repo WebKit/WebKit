@@ -398,7 +398,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
 
     RetainPtr cgContext = comboBoxImageBuffer->context().platformContext();
 
-    NSString *coreUIState;
+    RetainPtr<NSString> coreUIState;
     if (style.states.containsAny({ ControlStyle::State::Presenting, ControlStyle::State::ListButtonPressed }))
         coreUIState = (__bridge NSString *)kCUIStatePressed;
     else
@@ -406,7 +406,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     [[NSAppearance currentDrawingAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext.get() options:@{
         (__bridge NSString *)kCUIWidgetKey : (__bridge NSString *)kCUIWidgetButtonComboBox,
         (__bridge NSString *)kCUISizeKey : (__bridge NSString *)kCUISizeRegular,
-        (__bridge NSString *)kCUIStateKey : coreUIState,
+        (__bridge NSString *)kCUIStateKey : coreUIState.get(),
         (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey : (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
     }];
 
