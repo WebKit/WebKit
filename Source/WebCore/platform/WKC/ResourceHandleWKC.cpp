@@ -7,6 +7,7 @@
  */
 
 #include "config.h"
+#include "SecurityOrigin.h"
 #include "ResourceHandle.h"
 
 #if USE(CURL)
@@ -31,6 +32,7 @@
 #include <wtf/URL.h>
 #include <algorithm>
 #include <climits>
+#include <span>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -217,7 +219,7 @@ size_t synchronousWriteCallback(char* contents, size_t size, size_t count, void*
 {
     auto bytes = size * count;
     auto& context = *static_cast<SynchronousLoadContext*>(userData);
-    context.data->append(reinterpret_cast<const uint8_t*>(contents), bytes);
+    context.data->append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(contents), bytes });
     return bytes;
 }
 
@@ -239,7 +241,7 @@ String trimHeaderValue(const std::string& value)
     while (end > start && (value[end - 1] == ' ' || value[end - 1] == '\t' || value[end - 1] == '\r' || value[end - 1] == '\n'))
         --end;
 
-    return String::fromUTF8(value.data() + start, end - start);
+    return String::fromUTF8(std::span<const char> { value.data() + start, end - start });
 }
 
 void applySynchronousHeaders(const std::vector<std::string>& headers, ResourceResponse& response)
@@ -281,7 +283,7 @@ bool ResourceHandle::start()
         return true;
 
     auto curlClient = adoptRef(*new WKCResourceHandleCurlClient(*this, d->m_user, d->m_password));
-    auto request = CurlRequest::create(firstRequest(), *curlClient, CurlRequest::CaptureNetworkLoadMetrics::Extended);
+    auto request = CurlRequest::create(firstRequest(), curlClient.get(), CurlRequest::CaptureNetworkLoadMetrics::Extended);
     if (!d->m_user.isEmpty() || !d->m_password.isEmpty())
         request->setUserPass(d->m_user, d->m_password);
 
