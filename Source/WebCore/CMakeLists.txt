@@ -3003,7 +3003,7 @@ list(APPEND WebCore_SUPPLEMENTAL_IDL_FILES ${WebCore_DERIVED_SOURCES_DIR}/CSSSty
 
 # Generate CSS value keywords
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.in ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.h ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.gperf
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.in ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.h ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.serialization.in
     MAIN_DEPENDENCY ${WEBCORE_DIR}/css/scripts/process-css-values.py
     DEPENDS ${WebCore_CSS_VALUE_KEYWORDS} ${_platform_defines_file_dep}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}

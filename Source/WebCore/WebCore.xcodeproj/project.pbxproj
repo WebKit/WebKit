@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		2E86B6A6E3E4C9B02D5AAD6D /* CSSValueKeywords.serialization.in in Headers */ = {isa = PBXBuildFile; fileRef = A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */; settings = {ATTRIBUTES = (Private, ); }; };
 		4C1117D4C483A9BC36554D2F /* SVGImageElementSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 775ED9913673971DA280FD1E /* SVGImageElementSizing.h */; };
 		281A941CB72C48E5886C9BC1 /* ImageInputTypeSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */; };
 		6BC5F8454809457D9FAA6BE0 /* JSSimulatedWebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A60F92AA328DB579A254028 /* JSSimulatedWebGLContextEvent.cpp */; };
@@ -7847,6 +7848,7 @@
 		1401B330E419558F99500E10 /* StyleImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImage.cpp; sourceTree = "<group>"; };
 		67E6257C27C4E92D1FA4CBD1 /* ImageInputTypeSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageInputTypeSizing.h; sourceTree = "<group>"; };
 		73AFE9029ADA26681AC9083A /* HTMLImageDensityCorrectedSizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLImageDensityCorrectedSizing.h; sourceTree = "<group>"; };
+		A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = CSSValueKeywords.serialization.in; sourceTree = "<group>"; };
 		AB7389AEF5F167553DB95801 /* RequestedGPU.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RequestedGPU.idl; sourceTree = "<group>"; };
 		D0A0F32FE69879582D4B079E /* JSSimulatedWebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSimulatedWebGLContextEvent.h; sourceTree = "<group>"; };
 		E096CAD4B82ABA7405F84633 /* WorkerInternals.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerInternals.idl; sourceTree = "<group>"; };
@@ -30795,6 +30797,7 @@
 				E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */,
 				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
+				A41992C7F8B4034E8D8344E8 /* CSSValueKeywords.serialization.in */,
 				BCEB8A98294B7F73006F760C /* DecompressionStreamBuiltins.cpp */,
 				BCEB8AA0294B7F76006F760C /* DecompressionStreamBuiltins.h */,
 				BCEB8A99294B7F73006F760C /* DedicatedWorkerGlobalScopeConstructors.idl */,
@@ -45604,6 +45607,7 @@
 				BC2C0BEC2D284F7B00FCFBA0 /* CSSValueConcepts.h in Headers */,
 				E3BBC24723835526006EC39F /* CSSValueKey.h in Headers */,
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
+				2E86B6A6E3E4C9B02D5AAD6D /* CSSValueKeywords.serialization.in in Headers */,
 				A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */,
 				9317D02428DF6DC000FF7AF8 /* CSSValuePair.h in Headers */,
 				E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */,

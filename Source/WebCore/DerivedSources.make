@@ -2081,6 +2081,7 @@ $(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/c
 CSS_VALUE_KEYWORD_FILES = \
     CSSValueKeywords.h \
     CSSValueKeywords.cpp \
+    CSSValueKeywords.serialization.in \
 #
 CSS_VALUE_KEYWORD_FILES_PATTERNS = $(call to-pattern, $(CSS_VALUE_KEYWORD_FILES))
 
