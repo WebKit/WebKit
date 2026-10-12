@@ -117,16 +117,32 @@ public:
 
         if (isRedirectStatus(status) && !location.isEmpty()) {
             URL redirectedURL { request.resourceRequest().url(), location };
-            // Only follow web redirects. Do not let a remote response turn an
-            // ordinary web navigation into a file: or another local scheme.
-            if (redirectedURL.isValid() && redirectedURL.protocolIsInHTTPFamily()) {
-                if (handle->redirectCount() >= maximumRedirects) {
-                    ResourceError error(CURLE_TOO_MANY_REDIRECTS, request.resourceRequest().url(), ResourceError::Type::General);
-                    handle->client()->didFail(handle.get(), error);
-                    removeActiveTransfer(handle.get());
-                    return;
-                }
+            auto redirectSourceURL = request.resourceRequest().url();
 
+            // This in-process browser backend deliberately follows only HTTP(S).
+            // Refuse non-web or malformed destinations explicitly instead of
+            // treating a redirect response as if it were the final document.
+            if (!redirectedURL.isValid() || !redirectedURL.protocolIsInHTTPFamily()) {
+                auto* client = handle->client();
+                request.cancel();
+                ResourceError error(CURLE_UNSUPPORTED_PROTOCOL, redirectSourceURL, ResourceError::Type::General);
+                if (client)
+                    client->didFail(handle.get(), error);
+                removeActiveTransfer(handle.get());
+                return;
+            }
+
+            if (handle->redirectCount() >= maximumRedirects) {
+                auto* client = handle->client();
+                request.cancel();
+                ResourceError error(CURLE_TOO_MANY_REDIRECTS, redirectSourceURL, ResourceError::Type::General);
+                if (client)
+                    client->didFail(handle.get(), error);
+                removeActiveTransfer(handle.get());
+                return;
+            }
+
+            {
                 handle->incrementRedirectCount();
                 if (!sameOrigin(request.resourceRequest().url(), redirectedURL))
                     handle->markAsHavingCrossOriginRedirect();
