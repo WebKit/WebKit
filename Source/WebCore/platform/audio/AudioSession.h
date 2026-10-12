@@ -109,6 +109,7 @@ public:
 
     virtual size_t preferredBufferSize() const;
     virtual void setPreferredBufferSize(size_t);
+    virtual void clearPreferredBufferSize() { }
 
     virtual size_t outputLatency() const { return 0; }
 

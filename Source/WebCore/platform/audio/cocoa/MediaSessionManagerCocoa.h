@@ -52,6 +52,8 @@ public:
     static Ref<MediaSessionManagerCocoa> create(PageIdentifier);
 #endif
 
+    virtual ~MediaSessionManagerCocoa();
+
     // NowPlayingManagerClient.
     void ref() const override { PlatformMediaSessionManager::ref(); }
     void deref() const override { PlatformMediaSessionManager::deref(); }
@@ -117,6 +119,8 @@ private:
 
     void possiblyChangeAudioCategory();
 
+    static void updatePreferredBufferSizeForProcess();
+
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     static void updateNowPlayingSuppression(const NowPlayingInfo*);
 #endif
@@ -147,6 +151,7 @@ private:
 
     AudioHardwareListener::BufferSizeRange m_supportedAudioHardwareBufferSizes;
     std::optional<size_t> m_defaultBufferSize;
+    std::optional<size_t> m_requestedBufferSize;
 
     RunLoop::Timer m_delayCategoryChangeTimer;
     AudioSession::CategoryType m_previousCategory { AudioSession::CategoryType::None };

@@ -81,6 +81,7 @@ void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)
     ASSERT(m_proxies.contains(proxy));
     m_proxies.remove(proxy);
     updateCategory();
+    updatePreferredBufferSizeForProcess();
 }
 
 void RemoteAudioSessionProxyManager::updateCategory()
@@ -135,6 +136,8 @@ void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
 
     if (preferredBufferSize != std::numeric_limits<size_t>::max())
         AudioSession::singleton().setPreferredBufferSize(preferredBufferSize);
+    else
+        AudioSession::singleton().clearPreferredBufferSize();
 }
 
 void RemoteAudioSessionProxyManager::updateSpatialExperience()

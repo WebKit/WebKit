@@ -45,7 +45,9 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
 #import <wtf/MathExtras.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/ThreadSafeWeakHashSet.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -96,6 +98,32 @@ MediaSessionManagerCocoa::MediaSessionManagerCocoa(std::optional<PageIdentifier>
     , m_nowPlayingUpdateTimer(RunLoop::mainSingleton(), "MediaSessionManagerCocoa::NowPlayingUpdateTimer"_s, this, &MediaSessionManagerCocoa::updateNowPlayingInfo)
     , m_delayCategoryChangeTimer(RunLoop::mainSingleton(), "MediaSessionManagerCocoa::DelayCategoryChangeTimer"_s, this, &MediaSessionManagerCocoa::possiblyChangeAudioCategory)
 {
+}
+
+MediaSessionManagerCocoa::~MediaSessionManagerCocoa()
+{
+    if (m_requestedBufferSize)
+        updatePreferredBufferSizeForProcess();
+}
+
+static ThreadSafeWeakHashSet<MediaSessionManagerCocoa>& managersRequestingBufferSize()
+{
+    static NeverDestroyed<ThreadSafeWeakHashSet<MediaSessionManagerCocoa>> managers;
+    return managers;
+}
+
+void MediaSessionManagerCocoa::updatePreferredBufferSizeForProcess()
+{
+    std::optional<size_t> preferredBufferSize;
+    managersRequestingBufferSize().forEach([&](auto& manager) {
+        if (auto requestedBufferSize = manager.m_requestedBufferSize)
+            preferredBufferSize = std::min(*requestedBufferSize, preferredBufferSize.value_or(*requestedBufferSize));
+    });
+
+    if (preferredBufferSize)
+        AudioSession::singleton().setPreferredBufferSize(*preferredBufferSize);
+    else
+        AudioSession::singleton().clearPreferredBufferSize();
 }
 
 void MediaSessionManagerCocoa::updateSessionState()
@@ -170,7 +198,14 @@ void MediaSessionManagerCocoa::updateSessionState()
     } else if (m_supportedAudioHardwareBufferSizes && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled())
         bufferSize = m_supportedAudioHardwareBufferSizes.nearest(kLowPowerVideoBufferSize);
 
-    sharedSession->setPreferredBufferSize(bufferSize);
+    if ((hasNoSession() && !captureCount) || !bufferSize) {
+        m_requestedBufferSize = std::nullopt;
+        managersRequestingBufferSize().remove(*this);
+    } else {
+        m_requestedBufferSize = bufferSize;
+        managersRequestingBufferSize().add(*this);
+    }
+    updatePreferredBufferSizeForProcess();
 
     if (!DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
         return;

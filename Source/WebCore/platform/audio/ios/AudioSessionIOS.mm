@@ -403,6 +403,9 @@ void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)
         return;
     ALWAYS_LOG(LOGIDENTIFIER, bufferSize);
 
+    if (!m_systemPreferredBufferSize)
+        m_systemPreferredBufferSize = preferredBufferSize();
+
     NSError *error = nil;
     float duration = bufferSize / sampleRate();
     [[PAL::getAVAudioSessionClassSingleton() sharedInstance] setPreferredIOBufferDuration:duration error:&error];
@@ -412,6 +415,17 @@ void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)
         ASSERT_NOT_REACHED();
         RELEASE_LOG_ERROR(Media, "failed to set preferred buffer duration to %f with error: %@", duration, error.localizedDescription);
     }
+}
+
+void AudioSessionIOS::clearPreferredBufferSize()
+{
+    if (!m_systemPreferredBufferSize)
+        return;
+    ALWAYS_LOG(LOGIDENTIFIER, *m_systemPreferredBufferSize);
+
+    setPreferredBufferSize(*m_systemPreferredBufferSize);
+    m_systemPreferredBufferSize.reset();
+    m_preferredBufferSize.reset();
 }
 
 size_t AudioSessionIOS::outputLatency() const
