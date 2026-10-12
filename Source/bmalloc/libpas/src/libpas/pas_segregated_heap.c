@@ -1246,8 +1246,10 @@ static void check_size_lookup_recomputation(pas_segregated_heap* heap,
         bitvector_size, "check_size_lookup_recomputation/seen_index_to_small_size_directory");
     data.num_medium_directories = 0;
 
-    pas_zero_memory(data.seen_index_to_small_allocator_index, bitvector_size);
-    pas_zero_memory(data.seen_index_to_small_size_directory, bitvector_size);
+    if (data.seen_index_to_small_allocator_index)
+        pas_zero_memory(data.seen_index_to_small_allocator_index, bitvector_size);
+    if (data.seen_index_to_small_size_directory)
+        pas_zero_memory(data.seen_index_to_small_size_directory, bitvector_size);
 
     recompute_size_lookup(
         heap,
