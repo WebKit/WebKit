@@ -2,6 +2,29 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
+# WEBKIT_WRITE_FILE_IF_CHANGED(<path> <content>...) is file(WRITE) that leaves
+# the file alone if it already holds exactly <content>, so that its timestamp,
+# and with it everything built from it, only changes when its content does. Use
+# it rather than file(WRITE) for files written at configure time that the build
+# reads: CMake runs again on most pulls, and a plain file(WRITE) would make each
+# of those rebuild their dependents.
+function(WEBKIT_WRITE_FILE_IF_CHANGED _path)
+    set(_content "")
+    math(EXPR _last "${ARGC} - 1")
+    if (_last GREATER_EQUAL 1)
+        foreach (_i RANGE 1 ${_last})
+            string(APPEND _content "${ARGV${_i}}")
+        endforeach ()
+    endif ()
+    if (EXISTS "${_path}")
+        file(READ "${_path}" _existing)
+        if (_existing STREQUAL _content)
+            return ()
+        endif ()
+    endif ()
+    file(WRITE "${_path}" "${_content}")
+endfunction()
+
 # Translates a definition list into one Swift can be given.
 #
 #   FOO       -> -DFOO       for every language (already valid Swift)
@@ -967,6 +990,36 @@ function(_WEBKIT_CREATE_FRAMEWORK_BUNDLE_STRUCTURE _target)
     endforeach ()
 endfunction()
 
+# Symlinks <pairs> ("<source>|<destination>" entries) with a single run of
+# StageSymlinks.cmake. Staging thousands of headers with one process per header
+# cost several CPU-minutes per clean build and thousands of build.ninja edges.
+#
+# The command depends only on a manifest that changes when the list of files
+# does, not on the files themselves: a symlink does not need to be redone when
+# its source is edited (stat() follows it, so dependents still see the edit),
+# and depending on every header would put the command, and everything that
+# includes any header it stages, in the plan of every build that touches one of
+# them. Files in the build directory may be generated, so they are left to
+# per-file commands that wait for them.
+function(_WEBKIT_STAGE_SYMLINKS target_name pairs_var destinations_var)
+    list(LENGTH ${destinations_var} count)
+    string(REPLACE ";" "\n" content "${${pairs_var}}")
+    set(manifest "${CMAKE_CURRENT_BINARY_DIR}/${target_name}.symlinks")
+    set(existing "")
+    if (EXISTS "${manifest}")
+        file(READ "${manifest}" existing)
+    endif ()
+    if (NOT existing STREQUAL "${content}\n")
+        file(WRITE "${manifest}" "${content}\n")
+    endif ()
+    add_custom_command(OUTPUT ${${destinations_var}}
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/StageSymlinks.cmake ${manifest}
+        DEPENDS ${manifest} ${CMAKE_SOURCE_DIR}/Source/cmake/StageSymlinks.cmake
+        COMMENT "Staging ${count} files for ${target_name}"
+        VERBATIM
+    )
+endfunction()
+
 function(WEBKIT_COPY_FILES target_name)
     set(options FLATTENED NO_SYMLINK)
     set(oneValueArgs DESTINATION)
@@ -974,6 +1027,8 @@ function(WEBKIT_COPY_FILES target_name)
     cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(files ${opt_FILES})
     set(dst_files)
+    set(staged_pairs)
+    set(staged_files)
 
     foreach (file IN LISTS files)
         if (IS_ABSOLUTE ${file})
@@ -995,6 +1050,17 @@ function(WEBKIT_COPY_FILES target_name)
         if (opt_COMMAND)
             set(command ${opt_COMMAND})
         elseif (APPLE AND NOT opt_NO_SYMLINK)
+            string(FIND "${src_file}" "${CMAKE_BINARY_DIR}/" in_binary_dir)
+            if (NOT in_binary_dir EQUAL 0)
+                # Like add_custom_command, the first rule for an output wins.
+                get_source_file_property(has_rule "${dst_file}" GENERATED)
+                if (NOT has_rule AND NOT DEFINED "staged ${dst_file}")
+                    set("staged ${dst_file}" TRUE)
+                    list(APPEND staged_pairs "${src_file}|${dst_file}")
+                    list(APPEND staged_files ${dst_file})
+                endif ()
+                continue ()
+            endif ()
             set(command ${CMAKE_COMMAND} -E create_symlink)
         else ()
             set(command ${CMAKE_COMMAND} -E copy_if_different)
@@ -1006,6 +1072,10 @@ function(WEBKIT_COPY_FILES target_name)
         )
         list(APPEND dst_files ${dst_file})
     endforeach ()
+    if (staged_files)
+        _WEBKIT_STAGE_SYMLINKS(${target_name} staged_pairs staged_files)
+        list(APPEND dst_files ${staged_files})
+    endif ()
     add_custom_target(${target_name} ALL DEPENDS ${dst_files})
 endfunction()
 
@@ -1016,6 +1086,8 @@ function(WEBKIT_SYMLINK_FILES target_name)
     cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(files ${opt_FILES})
     set(dst_files)
+    set(staged_pairs)
+    set(staged_files)
     file(MAKE_DIRECTORY ${opt_DESTINATION})
 
     foreach (file IN LISTS files)
@@ -1032,6 +1104,17 @@ function(WEBKIT_SYMLINK_FILES target_name)
             file(MAKE_DIRECTORY ${opt_DESTINATION}/${file_dir})
             set(dst_file ${opt_DESTINATION}/${file})
         endif ()
+        string(FIND "${src_file}" "${CMAKE_BINARY_DIR}/" in_binary_dir)
+        if (APPLE AND NOT in_binary_dir EQUAL 0)
+            # Like add_custom_command, the first rule for an output wins.
+            get_source_file_property(has_rule "${dst_file}" GENERATED)
+            if (NOT has_rule AND NOT DEFINED "staged ${dst_file}")
+                set("staged ${dst_file}" TRUE)
+                list(APPEND staged_pairs "${src_file}|${dst_file}")
+                list(APPEND staged_files ${dst_file})
+            endif ()
+            continue ()
+        endif ()
         add_custom_command(OUTPUT ${dst_file}
             COMMAND ${CMAKE_COMMAND} -E create_symlink ${src_file} ${dst_file}
             MAIN_DEPENDENCY ${src_file}
@@ -1039,6 +1122,10 @@ function(WEBKIT_SYMLINK_FILES target_name)
         )
         list(APPEND dst_files ${dst_file})
     endforeach ()
+    if (staged_files)
+        _WEBKIT_STAGE_SYMLINKS(${target_name} staged_pairs staged_files)
+        list(APPEND dst_files ${staged_files})
+    endif ()
     add_custom_target(${target_name} ALL DEPENDS ${dst_files})
 endfunction()
 

@@ -1016,7 +1016,9 @@ file(CONFIGURE OUTPUT ${_resources_info_plist} CONTENT [[
 </plist>
 ]] @ONLY)
 
+set(_resources_src_files)
 set(_resources_dst_files)
+set(_resources_pairs)
 function(_testwebkitapi_stage_resources source_root skip_pattern)
     file(GLOB_RECURSE _entries RELATIVE "${source_root}" "${source_root}/*")
     foreach (_rel IN LISTS _entries)
@@ -1034,14 +1036,13 @@ function(_testwebkitapi_stage_resources source_root skip_pattern)
         endwhile ()
         get_filename_component(_dst_dir "${_dst}" DIRECTORY)
         file(MAKE_DIRECTORY "${_dst_dir}")
-        add_custom_command(OUTPUT "${_dst}"
-            COMMAND ${CMAKE_COMMAND} -E copy "${_src}" "${_dst}"
-            MAIN_DEPENDENCY "${_src}"
-            VERBATIM
-        )
+        list(APPEND _resources_src_files "${_src}")
         list(APPEND _resources_dst_files "${_dst}")
+        list(APPEND _resources_pairs "${_src}|${_dst}")
     endforeach ()
+    set(_resources_src_files "${_resources_src_files}" PARENT_SCOPE)
     set(_resources_dst_files "${_resources_dst_files}" PARENT_SCOPE)
+    set(_resources_pairs "${_resources_pairs}" PARENT_SCOPE)
 endfunction()
 
 # Top-level Resources/ files go to the bundle root. Skip platform subdirs
@@ -1052,6 +1053,18 @@ _testwebkitapi_stage_resources("${TESTWEBKITAPI_DIR}/Resources" "^(cocoa|glib)/"
 # URLForResource:.
 _testwebkitapi_stage_resources("${TESTWEBKITAPI_DIR}/Resources/cocoa" "")
 
+# One command copies whichever resources changed, instead of a cmake process
+# per resource (about 650 of them).
+list(LENGTH _resources_dst_files _resources_count)
+set(_resources_manifest "${CMAKE_CURRENT_BINARY_DIR}/TestWebKitAPIResources.files")
+string(REPLACE ";" "\n" _resources_manifest_content "${_resources_pairs}")
+WEBKIT_WRITE_FILE_IF_CHANGED("${_resources_manifest}" "${_resources_manifest_content}\n")
+add_custom_command(OUTPUT ${_resources_dst_files}
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/CopyChangedFiles.cmake ${_resources_manifest}
+    DEPENDS ${_resources_manifest} ${_resources_src_files} ${CMAKE_SOURCE_DIR}/Source/cmake/CopyChangedFiles.cmake
+    COMMENT "Copying ${_resources_count} files into TestWebKitAPIResources.bundle"
+    VERBATIM
+)
 add_custom_target(TestWebKitAPIResources ALL DEPENDS ${_resources_dst_files})
 # Ensure all test targets depend on the resources bundle.
 foreach (_test_target TestWTF TestJavaScriptCore TestWebCore TestWebKitLegacy TestWebKit TestIPC TestWGSL)
