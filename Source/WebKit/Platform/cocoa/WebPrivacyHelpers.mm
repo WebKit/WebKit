@@ -29,7 +29,6 @@
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 #import "Logging.h"
-#import "RestrictedOpenerType.h"
 #import "WKContentRuleListStoreInternal.h"
 #import <WebCore/DNS.h>
 #import <WebCore/LinkDecorationFilteringData.h>
@@ -336,81 +335,6 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
             completionHandler();
     }];
-}
-
-RestrictedOpenerDomainsController& RestrictedOpenerDomainsController::singleton()
-{
-    static MainRunLoopNeverDestroyed<RestrictedOpenerDomainsController> sharedInstance;
-    return sharedInstance.get();
-}
-
-RestrictedOpenerDomainsController::RestrictedOpenerDomainsController()
-{
-    scheduleNextUpdate(ContinuousApproximateTime::now());
-    update();
-
-    lazyInitialize(m_notificationListener, adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeRestrictedOpenerDomains) callback:^{
-        update();
-    }]));
-}
-
-static RestrictedOpenerType NODELETE restrictedOpenerType(WPRestrictedOpenerType type)
-{
-    switch (type) {
-    case WPRestrictedOpenerTypeNoOpener: return RestrictedOpenerType::NoOpener;
-    case WPRestrictedOpenerTypePostMessageAndClose: return RestrictedOpenerType::PostMessageAndClose;
-    default: return RestrictedOpenerType::Unrestricted;
-    }
-}
-
-void RestrictedOpenerDomainsController::scheduleNextUpdate(ContinuousApproximateTime now)
-{
-    // Allow the list to be re-requested from the server sometime between [24, 26) hours from now.
-    static WeakRandom random;
-    m_nextScheduledUpdateTime = now + 24_h + random.get() * 2_h;
-}
-
-void RestrictedOpenerDomainsController::update()
-{
-    ASSERT(RunLoop::isMain());
-    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
-        return;
-
-    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
-    [options setAfterUpdates:NO];
-
-    [[PAL::getWPResourcesClassSingleton() sharedInstance] requestRestrictedOpenerDomains:options.get() completionHandler:^(NSArray<WPRestrictedOpenerDomain *> *domains, NSError *error) {
-        if (error) {
-            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request restricted opener domains from WebPrivacy");
-            return;
-        }
-
-        HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> restrictedOpenerTypes;
-        restrictedOpenerTypes.reserveInitialCapacity(domains.count);
-
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL WPRestrictedOpenerDomain *domainInfo in domains) {
-            auto registrableDomain = WebCore::RegistrableDomain::fromRawString(domainInfo.domain);
-            if (registrableDomain.isEmpty())
-                continue;
-            restrictedOpenerTypes.add(registrableDomain, restrictedOpenerType(domainInfo.openerType));
-        }
-
-        m_restrictedOpenerTypes = WTF::move(restrictedOpenerTypes);
-    }];
-}
-
-RestrictedOpenerType RestrictedOpenerDomainsController::lookup(const WebCore::RegistrableDomain& domain) const
-{
-    auto now = ContinuousApproximateTime::now();
-    if (now > m_nextScheduledUpdateTime) {
-        auto mutableThis = const_cast<RestrictedOpenerDomainsController*>(this);
-        mutableThis->scheduleNextUpdate(now);
-        mutableThis->update();
-    }
-
-    auto it = m_restrictedOpenerTypes.find(domain);
-    return it == m_restrictedOpenerTypes.end() ? RestrictedOpenerType::Unrestricted : it->value;
 }
 
 HighValueFraudTargetDomainsController& HighValueFraudTargetDomainsController::singleton()

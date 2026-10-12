@@ -131,7 +131,6 @@
 #include "RemotePageProxy.h"
 #include "RemoteWebTouchEvent.h"
 #include "ResourceLoadInfo.h"
-#include "RestrictedOpenerType.h"
 #include "RunJavaScriptParameters.h"
 #include "SandboxExtension.h"
 #include "SessionHistoryTraversalQueue.h"

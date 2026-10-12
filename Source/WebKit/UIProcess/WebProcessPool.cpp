@@ -62,7 +62,6 @@
 #include "ProcessTerminationReason.h"
 #include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
-#include "RestrictedOpenerType.h"
 #include "SandboxExtension.h"
 #include "SuspendedPageProxy.h"
 #include "TextChecker.h"
@@ -1593,17 +1592,8 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
     }
 }
 
-static void loadRestrictedOpenerTypeDataIfNeeded()
-{
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    RestrictedOpenerDomainsController::singleton();
-#endif
-}
-
 void WebProcessPool::didReachGoodTimeToPrewarm()
 {
-    loadRestrictedOpenerTypeDataIfNeeded();
-
     if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation() || usesSingleWebProcess())
         return;
 
@@ -2490,7 +2480,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     bool isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput() && !navigation.substituteData();
     if (navigation.openedByDOMWithOpener()
         && page.mainFrame() && (page.mainFrame()->opener() || page.mainFrame()->disownedOpener())
-        && !(isRequestFromClientOrUserInput || siteIsolationEnabled || protect(page.websiteDataStore())->openerTypeForDomain(targetSite.domain()) == RestrictedOpenerType::NoOpener))
+        && !(isRequestFromClientOrUserInput || siteIsolationEnabled))
         return { WTF::move(sourceProcess), nullptr, "Browsing context been opened by DOM without 'noopener'"_s };
 
     // FIXME: We should support process swap when a window has opened other windows via window.open.

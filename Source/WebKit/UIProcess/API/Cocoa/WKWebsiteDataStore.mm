@@ -33,7 +33,6 @@
 #import "BaseBoardSPI.h"
 #import "CompletionHandlerCallChecker.h"
 #import "NetworkProcessProxy.h"
-#import "RestrictedOpenerType.h"
 #import "SecurityFlagsController.h"
 #import "ShouldGrandfatherStatistics.h"
 #import "UserNotificationsSPI.h"
@@ -1511,11 +1510,6 @@ struct WKWebsiteData {
 
         return completionHandlerCopy(nil);
     });
-}
-
-- (void)_setRestrictedOpenerTypeForTesting:(_WKRestrictedOpenerType)openerType forDomain:(NSString *)domain
-{
-    protect(*_websiteDataStore)->setRestrictedOpenerTypeForDomainForTesting(WebCore::RegistrableDomain::fromRawString(domain), static_cast<WebKit::RestrictedOpenerType>(openerType));
 }
 
 -(void)_getAppBadgeForTesting:(void(^)(NSNumber *))completionHandler

@@ -57,8 +57,6 @@ namespace WebKit {
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
-enum class RestrictedOpenerType : uint8_t;
-
 void configureForAdvancedPrivacyProtections(NSURLSession *);
 bool isKnownTrackerAddressOrDomain(StringView host);
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&);
@@ -161,23 +159,6 @@ private:
     void updateList(CompletionHandler<void()>&&) final;
     void didUpdateCachedListData() final;
     unsigned resourceTypeValue() const final;
-};
-
-class RestrictedOpenerDomainsController {
-public:
-    static RestrictedOpenerDomainsController& singleton();
-
-    RestrictedOpenerType lookup(const WebCore::RegistrableDomain&) const;
-
-private:
-    friend class NeverDestroyed<RestrictedOpenerDomainsController, MainRunLoopAccessTraits>;
-    RestrictedOpenerDomainsController();
-    void scheduleNextUpdate(ContinuousApproximateTime);
-    void update();
-
-    const RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
-    ContinuousApproximateTime m_nextScheduledUpdateTime;
 };
 
 class HighValueFraudTargetDomainsController {
