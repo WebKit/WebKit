@@ -1053,10 +1053,17 @@ selectors = [
     { name = "isFirstParty", class = "?" },
     { name = "isTopDomain", class = "?" },
     { name = "requestFingerprintingScripts:completionHandler:", class = "?" },
-    { name = "requestResourceMonitorRulesSource:completionHandler:", class = "?" },
 ]
 requires = [
     "ENABLE_SCRIPT_TRACKING_PRIVACY_PROTECTIONS",
+]
+
+[[legacy]]
+selectors = [
+    { name = "requestResourceMonitorRulesSource:completionHandler:", class = "?" },
+]
+requires = [
+    "ENABLE_HEAVY_AD_UNLOADING",
 ]
 
 [[legacy]]
