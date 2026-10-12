@@ -40,6 +40,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -51,6 +52,9 @@ SOFT_LINK_CLASS(Contacts, CNContactFormatter)
 SOFT_LINK_CLASS(Contacts, CNLabeledValue)
 SOFT_LINK_CLASS(Contacts, CNMutableContact)
 SOFT_LINK_CLASS(Contacts, CNPhoneNumber)
+
+SPECIALIZE_OBJC_TYPE_TRAITS(CNLabeledValue, getCNLabeledValueClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(CNPhoneNumber, getCNPhoneNumberClassSingleton())
 
 #if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
 SOFT_LINK_FRAMEWORK(ContactsUI)
@@ -311,7 +315,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
             RetainPtr<NSMutableArray<CNLabeledValue<NSString*>*>> emailAddresses = adoptNS([[NSMutableArray alloc] init]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *email in [emails filteredArrayUsingPredicate:stringValuePredicate.get()]) {
-                RetainPtr<CNLabeledValue<NSString*>> labeledValue = [getCNLabeledValueClassSingleton() labeledValueWithLabel:nil value:email];
+                RetainPtr<CNLabeledValue<NSString*>> labeledValue = checked_objc_cast<CNLabeledValue>([getCNLabeledValueClassSingleton() labeledValueWithLabel:nil value:email]);
                 [emailAddresses addObject:labeledValue.get()];
             }
             [contact setEmailAddresses:emailAddresses.get()];
@@ -322,8 +326,8 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
             RetainPtr<NSMutableArray<CNLabeledValue<CNPhoneNumber*>*>> numbers = adoptNS([[NSMutableArray alloc] init]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *phoneNumber in [phoneNumbers filteredArrayUsingPredicate:stringValuePredicate.get()]) {
-                RetainPtr<CNPhoneNumber> cnPhoneNumber = [getCNPhoneNumberClassSingleton() phoneNumberWithStringValue:phoneNumber];
-                RetainPtr<CNLabeledValue<CNPhoneNumber*>> labeledValue = [getCNLabeledValueClassSingleton() labeledValueWithLabel:nil value:cnPhoneNumber.get()];
+                RetainPtr cnPhoneNumber = checked_objc_cast<CNPhoneNumber>([getCNPhoneNumberClassSingleton() phoneNumberWithStringValue:phoneNumber]);
+                RetainPtr<CNLabeledValue<CNPhoneNumber*>> labeledValue = checked_objc_cast<CNLabeledValue>([getCNLabeledValueClassSingleton() labeledValueWithLabel:nil value:cnPhoneNumber.get()]);
                 [numbers addObject:labeledValue.get()];
             }
             [contact setPhoneNumbers:numbers.get()];

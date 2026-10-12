@@ -35,6 +35,7 @@
 #import "SandboxUtilities.h"
 #import "WKWebViewConfiguration.h"
 #import <wtf/FileSystem.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
@@ -71,7 +72,7 @@ Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::co
         result = createNonPersistent();
 
     result->setStorageDirectory(storageDirectory());
-    result->setWebViewConfiguration([m_webViewConfiguration copy]);
+    result->setWebViewConfiguration(checked_objc_cast<WKWebViewConfiguration>([m_webViewConfiguration copy]));
     result->setDefaultWebsiteDataStore(protect(m_defaultWebsiteDataStore));
 
     return result.releaseNonNull();

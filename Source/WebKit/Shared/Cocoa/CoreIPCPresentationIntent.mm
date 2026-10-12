@@ -31,6 +31,7 @@
 #import <Foundation/Foundation.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
@@ -77,7 +78,7 @@ CoreIPCPresentationIntent::CoreIPCPresentationIntent(NSPresentationIntent *inten
 
 RetainPtr<id> CoreIPCPresentationIntent::toID() const
 {
-    auto parent = (m_parentIntent ? m_parentIntent->toID(): nullptr);
+    RetainPtr parent = m_parentIntent ? checked_objc_cast<NSPresentationIntent>(m_parentIntent->toID().get()) : nullptr;
     switch (m_intentKind) {
     case NSPresentationIntentKindParagraph:
         return [NSPresentationIntent paragraphIntentWithIdentity:m_identity nestedInsideIntent:parent.get()];

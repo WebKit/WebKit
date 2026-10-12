@@ -45,6 +45,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/mac/NSEventSPI.h>
 #import <wtf/Scope.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -133,7 +134,7 @@ void WebAutomationSession::markEventAsSynthesizedForAutomation(NSEvent *event)
 
 bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 {
-    RetainPtr<NSString> senderSessionIdentifier = objc_getAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey);
+    RetainPtr senderSessionIdentifier = checked_objc_cast<NSString>(objc_getAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey));
     if ([senderSessionIdentifier isEqualToString:m_sessionIdentifier.createNSString().get()])
         return true;
 

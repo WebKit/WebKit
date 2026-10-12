@@ -291,7 +291,7 @@ public:
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Buffer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandBuffer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandEncoder&) = 0;
-    virtual const RemoteCompositorIntegrationProxy& convertToRawBacking(const WebCore::WebGPU::CompositorIntegration&) = 0;
+    virtual RemoteCompositorIntegrationProxy& convertToRawBacking(WebCore::WebGPU::CompositorIntegration&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CompositorIntegration&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePassEncoder&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePipeline&) = 0;

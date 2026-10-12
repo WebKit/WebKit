@@ -53,6 +53,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 
@@ -222,7 +223,7 @@ static void initializeTimerCoalescingPolicy()
 static void disableDowngradeToLayoutManager()
 {
     RetainPtr existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
-    RetainPtr newArguments = adoptNS([existingArguments mutableCopy]);
+    RetainPtr newArguments = checked_objc_cast<NSMutableDictionary>(adoptNS([existingArguments mutableCopy]));
     [newArguments setValue:@NO forKey:@"NSTextViewAllowsDowngradeToLayoutManager"];
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
 }

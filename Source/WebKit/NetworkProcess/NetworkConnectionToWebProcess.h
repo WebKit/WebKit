@@ -249,7 +249,7 @@ public:
     std::optional<NetworkActivityTracker> startTrackingResourceLoad(WebCore::PageIdentifier, WebCore::ResourceLoaderIdentifier resourceID, bool isTopResource);
     void stopTrackingResourceLoad(WebCore::ResourceLoaderIdentifier resourceID, NetworkActivityTracker::CompletionCode);
 
-    Vector<Ref<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
+    Vector<Ref<WebCore::BlobDataFileReference>> resolveBlobReferences(NetworkResourceLoadParameters&);
 
     void removeSocketChannel(WebCore::WebSocketIdentifier);
 

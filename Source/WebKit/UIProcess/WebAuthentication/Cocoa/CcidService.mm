@@ -35,6 +35,7 @@
 #import <WebCore/AuthenticatorTransport.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #define CCID_SERVICE_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p - CcidService::" fmt, this, ##__VA_ARGS__)
 
@@ -180,7 +181,7 @@ void CcidService::updateSlots(NSArray *slots)
         if (!service)
             return;
         Ref protectedService = *service;
-        protectedService->updateSlots(retainPtr(change.get()[NSKeyValueChangeNewKey]).get());
+        protectedService->updateSlots(protect(checked_objc_cast<NSArray>(change.get()[NSKeyValueChangeNewKey])));
     });
 }
 @end

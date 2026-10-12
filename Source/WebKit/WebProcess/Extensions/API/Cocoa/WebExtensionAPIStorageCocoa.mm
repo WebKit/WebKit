@@ -114,7 +114,7 @@ void WebExtensionContextProxy::dispatchStorageChangedEvent(const Vector<String>&
 
     auto *changes = [NSDictionary dictionary];
     for (auto& json : changesJSON)
-        changes = mergeDictionaries(changes, parseJSON(json.createNSString().get()));
+        changes = mergeDictionaries(changes, dynamic_objc_cast<NSDictionary>(parseJSON(json.createNSString().get())));
 
     RetainPtr areaName = toAPIString(dataType).createNSString();
 

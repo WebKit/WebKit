@@ -30,6 +30,7 @@
 #import "Logging.h"
 #import <WebCore/ResourceLoadPriority.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
@@ -43,8 +44,7 @@
 namespace WebKit {
 
 #define SET_NSURLREQUESTDATA(NAME, CLASS, WRAPPER)  \
-    RetainPtr<id> NAME = dict.get()[@#NAME];        \
-    if ([NAME isKindOfClass:CLASS.class]) {         \
+    if (RetainPtr NAME = dynamic_objc_cast<CLASS>(dict.get()[@#NAME])) { \
         auto var = WRAPPER(NAME.get());             \
         m_data.NAME = WTF::move(var);                 \
     }
@@ -72,7 +72,7 @@ namespace WebKit {
         target = [value boolValue]
 
 #define SET_PROTOCOL_PROPERTY(dict, key, CLASS, WRAPPER, target) \
-    if (RetainPtr<id> value = [dict objectForKey:key]; [value isKindOfClass:CLASS.class]) \
+    if (RetainPtr value = dynamic_objc_cast<CLASS>([dict objectForKey:key])) \
         target = WRAPPER(value.get())
 
 #define SET_PROTOCOL_DICT_BOOL(dict, key, value) \
@@ -216,8 +216,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 
     SET_NSURLREQUESTDATA_PRIMITIVE(isMutable, NSNumber, bool);
 
-    RetainPtr<id> url = dict.get()[@"URL"];
-    if ([url isKindOfClass:NSURL.class]) {
+    if (RetainPtr url = dynamic_objc_cast<NSURL>(dict.get()[@"URL"])) {
         auto var = CoreIPCURL(url.get());
         m_data.url = WTF::move(var);
     }
@@ -258,8 +257,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(isHTTP, NSNumber, bool);
     SET_NSURLREQUESTDATA(httpMethod, NSString, CoreIPCString);
 
-    RetainPtr<NSDictionary> headerFields = dict.get()[@"headerFields"];
-    if ([headerFields isKindOfClass:[NSDictionary class]]) {
+    if (RetainPtr headerFields = dynamic_objc_cast<NSDictionary>(dict.get()[@"headerFields"])) {
         Vector<CoreIPCNSURLRequestData::HeaderField> vector;
         vector.reserveInitialCapacity(headerFields.get().count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -330,14 +328,13 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(isWebSearchContent, NSNumber, bool);
     SET_NSURLREQUESTDATA_PRIMITIVE(allowOnlyPartitionedCookies, NSNumber, bool);
 
-    RetainPtr<NSArray> contentDispositionEncodingFallbackArray = dict.get()[@"contentDispositionEncodingFallbackArray"];
-    if ([contentDispositionEncodingFallbackArray isKindOfClass:[NSArray class]]) {
+    if (RetainPtr contentDispositionEncodingFallbackArray = dynamic_objc_cast<NSArray>(dict.get()[@"contentDispositionEncodingFallbackArray"])) {
         Vector<CoreIPCNumber> vector;
         vector.reserveInitialCapacity(contentDispositionEncodingFallbackArray.get().count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id element in contentDispositionEncodingFallbackArray.get()) {
-            if ([element isKindOfClass:[NSNumber class]])
-                vector.append(CoreIPCNumber(element));
+            if (RetainPtr number = dynamic_objc_cast<NSNumber>(element))
+                vector.append(CoreIPCNumber(number.get()));
         }
         vector.shrinkToFit();
         m_data.contentDispositionEncodingFallbackArray = WTF::move(vector);

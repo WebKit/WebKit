@@ -73,6 +73,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/persistence/PersistentDecoder.h>
@@ -263,7 +264,7 @@ private:
             Vector<WebCore::NotificationData> notificationDatas;
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL id notificationDictionary in notifications) {
-                auto notification = WebCore::NotificationData::fromDictionary(notificationDictionary);
+                auto notification = WebCore::NotificationData::fromDictionary(dynamic_objc_cast<NSDictionary>(notificationDictionary));
                 RELEASE_ASSERT_WITH_MESSAGE(notification, "getDisplayedNotificationsForWorkerOrigin: Invalid notification dictionary passed back to WebKit");
                 notificationDatas.append(*notification);
             }

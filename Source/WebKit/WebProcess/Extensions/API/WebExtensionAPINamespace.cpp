@@ -264,7 +264,7 @@ WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
     return *m_permissions;
 }
 
-WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime() const
+WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 

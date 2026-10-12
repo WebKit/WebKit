@@ -48,6 +48,7 @@
 #import "WebFrame.h"
 #import "WebProcess.h"
 #import <WebCore/LocalFrameInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -319,7 +320,7 @@ void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier,
 
     m_frameIdentifier = frame.frameID();
 
-    if (!validateObject(identifier, @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
+    if (!validateObject(dynamic_objc_cast<NSObject>(identifier), @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
         return;
 
     std::optional<WebExtensionMenuItemParameters> parameters;
@@ -364,7 +365,7 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/remove
 
-    if (!validateObject(identifier, @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
+    if (!validateObject(dynamic_objc_cast<NSObject>(identifier), @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
         return;
 
     NSString *identifierString;

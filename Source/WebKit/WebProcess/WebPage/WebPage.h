@@ -1461,7 +1461,7 @@ public:
     String frameTextForTestingIncludingSubframes(bool includingSubframes);
 
 #if PLATFORM(COCOA)
-    bool isSpeaking() const;
+    bool isSpeaking();
 
     void performDictionaryLookupForSelection(WebCore::LocalFrame&, const WebCore::VisibleSelection&, WebCore::TextIndicatorPresentationTransition);
 #endif

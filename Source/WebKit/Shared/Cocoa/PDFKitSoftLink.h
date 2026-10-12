@@ -36,6 +36,7 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, PDFKit)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFActionResetForm)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFActionNamed)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFAnnotation)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFDocument)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFLayerController)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, PDFSelection)
@@ -55,5 +56,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, PDFKit, PDFAnnotationWidgetSubtypeText, NS
 
 SPECIALIZE_OBJC_TYPE_TRAITS(PDFActionResetForm, WebKit::getPDFActionResetFormClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(PDFActionNamed, WebKit::getPDFActionNamedClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(PDFAnnotation, WebKit::getPDFAnnotationClassSingleton())
 
 #endif // HAVE(PDFKIT)

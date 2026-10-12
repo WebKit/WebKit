@@ -247,7 +247,7 @@ void PageAgentProxy::didPaint(RenderObject& renderer, const LayoutRect& rect)
     // correct only when that frame is its own local root. A same-site child frame nested inside a
     // local root in the same process, or a local subframe reached through a remote ancestor, is
     // drawn at the wrong offset. See webkit.org/b/308899.
-    LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
+    LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatQuad { rect }).boundingBox());
 
     // Scope to this frame's local root: the overlay for that root is attached to its own compositing
     // tree, so sibling local roots in one process each flash independently.

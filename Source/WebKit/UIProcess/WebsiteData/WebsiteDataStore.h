@@ -163,7 +163,6 @@ public:
 
     static void forEachWebsiteDataStore(NOESCAPE const Function<void(WebsiteDataStore&)>&);
     
-    NetworkProcessProxy& networkProcess() const;
     NetworkProcessProxy& networkProcess();
     NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
     void setNetworkProcess(NetworkProcessProxy&);
@@ -196,7 +195,7 @@ public:
     bool NODELETE resourceLoadStatisticsDebugMode() const;
     void setResourceLoadStatisticsDebugMode(bool);
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
-    void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&) const;
+    void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&);
 
     void setPrivateClickMeasurementDebugMode(bool);
     void storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement&);
@@ -302,9 +301,9 @@ public:
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(CompletionHandler<void()>&&);
     void deleteCookiesForTesting(const URL&, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);
-    void hasLocalStorageOrCookies(const URL&, CompletionHandler<void(bool)>&&) const;
-    void hasLocalStorageForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
-    void hasIsolatedSessionForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
+    void hasLocalStorageOrCookies(const URL&, CompletionHandler<void(bool)>&&);
+    void hasLocalStorageForTesting(const URL&, CompletionHandler<void(bool)>&&);
+    void hasIsolatedSessionForTesting(const URL&, CompletionHandler<void(bool)>&&);
     void setResourceLoadStatisticsShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(bool enabled, WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
@@ -454,7 +453,7 @@ public:
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
+    void hasAppBoundSession(CompletionHandler<void(bool)>&&);
     void clearAppBoundSession(CompletionHandler<void()>&&);
     void beginAppBoundDomainCheck(const String& host, const String& protocol, WebFramePolicyListenerProxy&);
     void getAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
@@ -547,7 +546,7 @@ public:
 
     void setStorageAccessPermissionForTesting(bool, WebPageProxyIdentifier, const String& topFrameDomain, const String& subFrameDomain, CompletionHandler<void()>&&);
     void clearStorageAccessForTesting(CompletionHandler<void()>&&);
-    void isStorageSuspendedForTesting(CompletionHandler<void(bool)>&&) const;
+    void isStorageSuspendedForTesting(CompletionHandler<void(bool)>&&);
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     void installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, std::span<const uint8_t> replacementData, CompletionHandler<void()>&&);

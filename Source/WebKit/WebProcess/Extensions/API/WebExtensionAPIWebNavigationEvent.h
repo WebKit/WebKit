@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    explicit WebExtensionAPIWebNavigationEvent(const WebExtensionAPIObject& parentObject, WebExtensionEventListenerType type)
+    explicit WebExtensionAPIWebNavigationEvent(WebExtensionAPIObject& parentObject, WebExtensionEventListenerType type)
         : WebExtensionAPIObject(parentObject)
         , m_type(type)
     {

@@ -276,7 +276,7 @@ private:
 
     bool shouldIgnoreIntrinsicSize() final;
 
-    PlatformLayer* platformLayer() const final;
+    PlatformLayer* platformLayer() final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlatformLayerContainer createVideoFullscreenLayer() final;

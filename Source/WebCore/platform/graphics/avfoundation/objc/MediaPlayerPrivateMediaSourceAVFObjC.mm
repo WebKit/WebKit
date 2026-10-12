@@ -348,7 +348,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::prepareToPlay()
 {
 }
 
-PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
+PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer()
 {
     return m_renderer->platformVideoLayer();
 }

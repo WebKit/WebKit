@@ -130,7 +130,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
-    RemoteAudioSessionProxyManager& audioSessionManager() const;
+    RemoteAudioSessionProxyManager& audioSessionManager();
 #endif
 
     WebCore::NowPlayingManager& nowPlayingManager() LIFETIME_BOUND;

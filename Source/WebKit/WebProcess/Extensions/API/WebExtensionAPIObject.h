@@ -62,7 +62,7 @@ public:
         lazyInitialize(m_runtime, Ref { runtime });
     }
 
-    WebExtensionAPIObject(const WebExtensionAPIObject& parentObject)
+    WebExtensionAPIObject(WebExtensionAPIObject& parentObject)
         : m_contentWorldType(parentObject.contentWorldType())
         , m_extensionContext(parentObject.m_extensionContext) // Using parentObject.extensionContext() is not safe for APIWebPage objects.
     {
@@ -78,7 +78,7 @@ public:
 
     WebExtensionContentWorldType contentWorldType() const { return m_contentWorldType; }
 
-    virtual WebExtensionAPIRuntimeBase& runtime() const { return *m_runtime; }
+    virtual WebExtensionAPIRuntimeBase& runtime() { return *m_runtime; }
 
     WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
     bool hasExtensionContext() const { return !!m_extensionContext; }
@@ -130,7 +130,7 @@ private: \
         setPropertyPath(#PropertyName##_s); \
     } \
 \
-    explicit ImplClass(const WebExtensionAPIObject& parentObject) \
+    explicit ImplClass(WebExtensionAPIObject& parentObject) \
         : WebExtensionAPIObject(parentObject) \
     { \
         setPropertyPath(#PropertyName##_s, &parentObject); \

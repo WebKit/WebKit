@@ -966,8 +966,8 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     DebuggableInfoData result;
     result.debuggableType = Inspector::DebuggableType::WebPage;
     result.targetPlatformName = "macOS"_s;
-    result.targetBuildVersion = plist.get()[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)];
-    result.targetProductVersion = plist.get()[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)];
+    result.targetBuildVersion = checked_objc_cast<NSString>(plist.get()[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)]);
+    result.targetProductVersion = checked_objc_cast<NSString>(plist.get()[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)]);
     result.targetIsSimulator = false;
 
     return result;

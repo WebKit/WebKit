@@ -318,7 +318,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     auto result = adoptNS([[NSMutableArray alloc] init]);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *attributes in (NSArray *)attributesArrayRef) {
-        auto decodedResponse = cbor::CBORReader::read(makeVector(retainPtr(attributes[bridge_id_cast(kSecAttrApplicationTag)]).get()));
+        auto decodedResponse = cbor::CBORReader::read(makeVector(protect(dynamic_objc_cast<NSData>(attributes[bridge_id_cast(kSecAttrApplicationTag)]))));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return nullptr;
@@ -486,7 +486,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     }
 
     auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
-    auto decodedResponse = cbor::CBORReader::read(makeVector(retainPtr(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]).get()));
+    auto decodedResponse = cbor::CBORReader::read(makeVector(protect(dynamic_objc_cast<NSData>(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]))));
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return;
@@ -558,7 +558,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         return;
     }
     auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
-    auto decodedResponse = cbor::CBORReader::read(makeVector(retainPtr(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]).get()));
+    auto decodedResponse = cbor::CBORReader::read(makeVector(protect(dynamic_objc_cast<NSData>(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]))));
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return;
@@ -809,11 +809,11 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     }
     
     cbor::CBORValue::MapValue credentialMap;
-    credentialMap[cbor::CBORValue(WebCore::privateKeyKey)] = cbor::CBORValue(WebCore::toBufferSource(bridge_id_cast(privateKeyRep.get())));
+    credentialMap[cbor::CBORValue(WebCore::privateKeyKey)] = cbor::CBORValue(WebCore::toBufferSource(bridge_cast(privateKeyRep.get())));
     credentialMap[cbor::CBORValue(WebCore::keyTypeKey)] = cbor::CBORValue(keyType);
     credentialMap[cbor::CBORValue(WebCore::keySizeKey)] = cbor::CBORValue(keySize);
     credentialMap[cbor::CBORValue(WebCore::relyingPartyKey)] = cbor::CBORValue(String(dynamic_objc_cast<NSString>(attributes.get()[bridge_id_cast(kSecAttrLabel)])));
-    auto decodedResponse = cbor::CBORReader::read(makeVector(retainPtr(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]).get()));
+    auto decodedResponse = cbor::CBORReader::read(makeVector(protect(dynamic_objc_cast<NSData>(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]))));
     if (!decodedResponse || !decodedResponse->isMap()) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
@@ -1364,7 +1364,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     WebCore::MockWebAuthenticationConfiguration::LocalConfiguration localConfiguration;
     localConfiguration.userVerification = WebCore::MockWebAuthenticationConfiguration::UserVerification::Yes;
     if (configuration[@"privateKeyBase64"])
-        localConfiguration.privateKeyBase64 = configuration[@"privateKeyBase64"];
+        localConfiguration.privateKeyBase64 = dynamic_objc_cast<NSString>(configuration[@"privateKeyBase64"]);
 
     WebCore::MockWebAuthenticationConfiguration mockConfiguration;
     mockConfiguration.local = WTF::move(localConfiguration);

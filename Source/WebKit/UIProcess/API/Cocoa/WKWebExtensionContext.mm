@@ -744,7 +744,7 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSArray<id<WKWebExtensi
     WebKit::WebExtensionContext::TabSet result;
     result.reserveInitialCapacity(tabs.count);
 
-    for (id tab in tabs)
+    for (id<WKWebExtensionTab> tab in tabs)
         result.addVoid(context.getOrCreateTab(tab));
 
     return result;

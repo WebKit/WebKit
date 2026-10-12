@@ -368,7 +368,7 @@ static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
 
 static void setIgnoreHSTS(RetainPtr<NSURLRequest>& request, bool shouldIgnoreHSTS)
 {
-    auto mutableRequest = adoptNS([request mutableCopy]);
+    RetainPtr mutableRequest = checked_objc_cast<NSMutableURLRequest>(adoptNS([request mutableCopy]));
     setIgnoreHSTS(mutableRequest.get(), shouldIgnoreHSTS);
     request = mutableRequest;
 }

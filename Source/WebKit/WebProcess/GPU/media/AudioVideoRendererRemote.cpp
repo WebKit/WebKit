@@ -663,7 +663,7 @@ void AudioVideoRendererRemote::enqueueSample(TrackIdentifier trackIdentifier, Re
         bool formatChanged = addResult.iterator->value.hasFormatChanged(sample);
         auto block = addResult.iterator->value.convert(sample, MediaSampleConverter::SetTrackInfo::No);
         if (formatChanged)
-            connection.send(Messages::RemoteAudioVideoRendererProxyManager::NewTrackInfoForTrack(renderer.m_identifier, trackIdentifier, Ref { const_cast<WebCore::TrackInfo&>(*addResult.iterator->value.currentTrackInfo()) }), 0);
+            connection.send(Messages::RemoteAudioVideoRendererProxyManager::NewTrackInfoForTrack(renderer.m_identifier, trackIdentifier, *addResult.iterator->value.currentTrackInfo()), 0);
         if (addResult.iterator->value.currentTrackInfo()->isVideo()) {
             if (renderer.m_keyframeNeeded && !sample->isSync()) {
                 ALWAYS_LOG_WITH_THIS(&renderer, LOGIDENTIFIER_WITH_THIS(&renderer), "Keyframe needed: but frame not keyframe");

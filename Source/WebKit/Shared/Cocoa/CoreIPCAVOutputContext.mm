@@ -30,6 +30,8 @@
 
 #import "Logging.h"
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebKit {
@@ -38,14 +40,14 @@ CoreIPCAVOutputContext::CoreIPCAVOutputContext(AVOutputContext *context)
 {
     RetainPtr dict = [context _webKitPropertyListData];
 
-    RetainPtr<NSString> contextID = [dict objectForKey:@"contextID"];
-    if (![contextID isKindOfClass:NSString.class]) {
+    RetainPtr contextID = dynamic_objc_cast<NSString>([dict objectForKey:@"contextID"]);
+    if (!contextID) {
         RELEASE_LOG_ERROR(IPC, "CoreIPCAVOutputContext 'contextID' value is nil or not an NSString");
         return;
     }
 
-    RetainPtr<NSString> contextType = [dict objectForKey:@"contextType"];
-    if (![contextType isKindOfClass:NSString.class]) {
+    RetainPtr contextType = dynamic_objc_cast<NSString>([dict objectForKey:@"contextType"]);
+    if (!contextType) {
         RELEASE_LOG_ERROR(IPC, "CoreIPCAVOutputContext 'contextType' value is nil or not an NSString");
         return;
     }

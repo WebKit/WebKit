@@ -115,9 +115,9 @@ String AutomationClient::browserName() const
 
     // Fall back to using the unlocalized app name (i.e., 'Safari').
     RetainPtr appBundle = [NSBundle mainBundle];
-    if (RetainPtr<NSString> displayName = appBundle.get().infoDictionary[bridge_cast(_kCFBundleDisplayNameKey)])
+    if (RetainPtr displayName = dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(_kCFBundleDisplayNameKey)]))
         return displayName.get();
-    return appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)];
+    return dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)]);
 }
 
 String AutomationClient::browserVersion() const
@@ -127,7 +127,7 @@ String AutomationClient::browserVersion() const
 
     // Fall back to using the app short version (i.e., '11.1.1').
     RetainPtr appBundle = [NSBundle mainBundle];
-    return appBundle.get().infoDictionary[bridge_cast(_kCFBundleShortVersionStringKey)];
+    return dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(_kCFBundleShortVersionStringKey)]);
 }
 
 } // namespace WebKit

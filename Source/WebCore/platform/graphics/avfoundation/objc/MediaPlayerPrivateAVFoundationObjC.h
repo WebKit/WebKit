@@ -177,7 +177,7 @@ private:
     void setMuted(bool) final;
     void paint(GraphicsContext&, const FloatRect&) final;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
-    PlatformLayer* platformLayer() const final;
+    PlatformLayer* platformLayer() final;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
@@ -240,6 +240,7 @@ private:
 
     bool hasContextRenderer() const final;
     bool hasLayerRenderer() const final;
+    bool hasVideoInlineLayer() const final;
 
 
     enum class ShouldAnimate : bool { No, Yes };

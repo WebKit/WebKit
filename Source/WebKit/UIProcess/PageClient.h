@@ -449,6 +449,7 @@ public:
 
 #if PLATFORM(MAC)
     virtual bool isViewVisible(NSView *, NSWindow *) const = 0;
+    virtual bool isPageClientImpl() const { return false; }
 #endif
 
     virtual void runModalJavaScriptDialog(CompletionHandler<void()>&& callback) { callback(); }

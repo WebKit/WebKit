@@ -436,8 +436,8 @@ std::optional<std::pair<IntRect, IntRect>> WebFullScreenManagerProxy::convertFro
     if (!client)
         return std::nullopt;
     return { {
-        IntRect(client->convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(*page, IntRect(rectsInMainFrameCoordinates.first))),
-        IntRect(page->syncRootViewToScreen(IntRect(rectsInMainFrameCoordinates.second)))
+        client->convertMainFrameCoordinatesInFullscreenPlaceholderViewToScreen(*page, rectsInMainFrameCoordinates.first),
+        page->syncRootViewToScreen(rectsInMainFrameCoordinates.second)
     } };
 }
 

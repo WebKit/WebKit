@@ -569,7 +569,7 @@ NetworkSession* NetworkConnectionToWebProcess::networkSession()
     return m_networkProcess->networkSession(m_sessionID);
 }
 
-Vector<Ref<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::resolveBlobReferences(const NetworkResourceLoadParameters& loadParameters)
+Vector<Ref<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::resolveBlobReferences(NetworkResourceLoadParameters& loadParameters)
 {
     CONNECTION_RELEASE_LOG(Loading, "resolveBlobReferences: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0);
 
@@ -585,7 +585,7 @@ Vector<Ref<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::resol
             if (auto* blobData = std::get_if<FormDataElement::EncodedBlobData>(&element.data))
                 files.appendVector(blobRegistry.filesInBlob(blobData->url));
         }
-        const_cast<WebCore::ResourceRequest&>(loadParameters.request).setHTTPBody(body->resolveBlobReferences(&blobRegistry));
+        loadParameters.request.setHTTPBody(body->resolveBlobReferences(&blobRegistry));
     }
 
     return files;

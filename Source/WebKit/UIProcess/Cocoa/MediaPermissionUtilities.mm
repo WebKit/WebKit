@@ -113,9 +113,9 @@ RetainPtr<NSString> applicationVisibleNameFromOrigin(const WebCore::SecurityOrig
 RetainPtr<NSString> applicationVisibleName()
 {
     RetainPtr appBundle = [NSBundle mainBundle];
-    if (RetainPtr<NSString> displayName = appBundle.get().infoDictionary[bridge_cast(_kCFBundleDisplayNameKey)])
+    if (RetainPtr displayName = dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(_kCFBundleDisplayNameKey)]))
         return displayName;
-    return appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)];
+    return dynamic_objc_cast<NSString>(appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)]);
 }
 
 static RetainPtr<NSString> alertMessageText(MediaPermissionReason reason, const WebCore::SecurityOriginData& origin)

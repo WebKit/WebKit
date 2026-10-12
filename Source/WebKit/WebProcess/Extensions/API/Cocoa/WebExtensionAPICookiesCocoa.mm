@@ -42,6 +42,7 @@
 #import "WebExtensionCookieParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -142,7 +143,7 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
     if (!validateDictionary(details, @"details", requiredKeys, types, outExceptionString))
         return std::nullopt;
 
-    String name = details[@"name"];
+    String name = dynamic_objc_cast<NSString>(details[@"name"]);
     if (!name.isNull() && name.isEmpty()) {
         *outExceptionString = toErrorString(nullString(), @"name", @"it must not be empty").createNSString().autorelease();
         return std::nullopt;
@@ -240,7 +241,7 @@ void WebExtensionAPICookies::getAll(NSDictionary *details, Ref<WebExtensionCallb
         filterParameters.name = name;
 
     if (details[domainKey])
-        filterParameters.domain = normalizeDomain(details[domainKey]);
+        filterParameters.domain = normalizeDomain(dynamic_objc_cast<NSString>(details[domainKey]));
 
     if (details[pathKey])
         filterParameters.path = dynamic_objc_cast<NSString>(details[pathKey]);
@@ -287,8 +288,8 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
     auto cookieParameters = WebExtensionCookieParameters { sessionID, { } };
     auto& cookie = cookieParameters.cookie;
 
-    cookie.name = details[@"name"] ?: @"";
-    cookie.value = details[valueKey] ?: @"";
+    cookie.name = dynamic_objc_cast<NSString>(details[@"name"]) ?: @"";
+    cookie.value = dynamic_objc_cast<NSString>(details[valueKey]) ?: @"";
     cookie.secure = details[secureKey] && objectForKey<NSNumber>(details, secureKey).boolValue;
     auto *domain = dynamic_objc_cast<NSString>(details[domainKey]);
     cookie.domain = domain ? String(domain) : normalizeDomain(url.host().toString());

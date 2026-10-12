@@ -31,6 +31,7 @@
 #import "CocoaHelpers.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 static const NSUInteger maximumNumberOfDeclarativeNetRequestErrorsToSurface = 50;
 
@@ -110,7 +111,7 @@ using namespace WebKit;
             allJSONObjects[rulesetID] = json;
 
         if (error)
-            [errors addObject:error.userInfo[NSDebugDescriptionErrorKey]];
+            [errors addObject:checked_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey])];
     }
 
     if (outErrorStrings)

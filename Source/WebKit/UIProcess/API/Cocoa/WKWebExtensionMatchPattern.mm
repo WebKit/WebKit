@@ -33,6 +33,7 @@
 #import "APIError.h"
 #import "WebExtensionMatchPattern.h"
 #import <wtf/URLParser.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 static NSString * const stringCodingKey = @"string";
@@ -133,7 +134,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 {
     NSParameterAssert([coder isKindOfClass:NSCoder.class]);
 
-    return [self initWithString:[coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey] error:nullptr];
+    return [self initWithString:checked_objc_cast<NSString>([coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey]) error:nullptr];
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder

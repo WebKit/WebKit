@@ -129,6 +129,18 @@ template<typename T, typename U> inline T *checked_objc_cast(U *object)
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<T*>(object);
 }
 
+template<typename T, typename U>
+    requires (std::is_same_v<U, id>)
+RetainPtr<T> checked_objc_cast(RetainPtr<U>&& object)
+{
+    if (!object)
+        return nullptr;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(is_objc<T>(object.get()));
+
+    return adoptNS(reinterpret_cast<T*>(object.leakRef()));
+}
+
 // Use dynamic_objc_cast<> instead of checked_objc_cast<> when actively checking NS types,
 // similar to dynamic_cast<> in C++.
 

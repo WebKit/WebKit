@@ -35,6 +35,7 @@
 #import <wtf/Language.h>
 #import <wtf/MainThread.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(WATCHOS)
 #import "PepperUICoreSPI.h"
@@ -440,7 +441,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     RetainPtr<ButtonType> showDetails = box.get().subviews.lastObject;
     [showDetails removeFromSuperview];
 
-    auto text = adoptNS([protect(_warning)->details() mutableCopy]);
+    RetainPtr text = checked_objc_cast<NSMutableAttributedString>(adoptNS([protect(_warning)->details() mutableCopy]));
     [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body).get() } range:NSMakeRange(0, [text length])];
     auto details = adoptNS([[_WKWarningViewTextView alloc] initWithAttributedString:text.get() forWarning:self]);
     _details = details.get();
@@ -509,7 +510,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #if PLATFORM(MAC)
 - (BOOL)textView:(NSTextView *)textView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
 {
-    [self clickedOnLink:link];
+    [self clickedOnLink:checked_objc_cast<NSURL>(link)];
     return YES;
 }
 
@@ -616,7 +617,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     self.delegate = warning;
 
     RetainPtr foregroundColor = colorForItem(WarningItem::MessageText, warning);
-    RetainPtr string = adoptNS([attributedString mutableCopy]);
+    RetainPtr string = checked_objc_cast<NSMutableAttributedString>(adoptNS([attributedString mutableCopy]));
     [string addAttributes:@{ NSForegroundColorAttributeName : foregroundColor.get() } range:NSMakeRange(0, [string length])];
     [self setBackgroundColor:colorForItem(WarningItem::BoxBackground, warning).get()];
     [self setLinkTextAttributes:@{ NSForegroundColorAttributeName : foregroundColor.get() }];

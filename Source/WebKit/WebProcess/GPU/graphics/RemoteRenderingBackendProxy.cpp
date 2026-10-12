@@ -536,8 +536,7 @@ void RemoteRenderingBackendProxy::releaseFont(RenderingResourceIdentifier identi
 
 void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
 {
-    Ref<FontCustomPlatformData> data = adoptRef(const_cast<FontCustomPlatformData&>(customPlatformData.leakRef()));
-    send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(data->serializedData()));
+    send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(customPlatformData->serializedData()));
 }
 
 void RemoteRenderingBackendProxy::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)

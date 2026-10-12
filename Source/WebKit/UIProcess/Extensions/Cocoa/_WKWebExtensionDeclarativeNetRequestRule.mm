@@ -39,6 +39,7 @@ NSString * const dynamicRulesetID = @"_dynamic";
 #import "WKContentRuleListInternal.h"
 #import "WebExtensionUtilities.h"
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // If any changes are made to the rule translation logic here, make sure to increment currentDeclarativeNetRequestRuleTranslatorVersion in WebExtensionContextCocoa.
 
@@ -828,7 +829,7 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     // ... and we also have to create one rule per request domain (unless we have a regex filter) and request method.
     if (requestDomains && !_condition[declarativeNetRequestRuleConditionRegexFilterKey]) {
         for (NSString *requestDomain in requestDomains) {
-            NSString *combinedRequestDomainAndURLFilter = [self _combineRequestDomain:requestDomain withURLFilter:_condition[declarativeNetRequestRuleConditionURLFilterKey]];
+            NSString *combinedRequestDomainAndURLFilter = [self _combineRequestDomain:requestDomain withURLFilter:checked_objc_cast<NSString>(_condition[declarativeNetRequestRuleConditionURLFilterKey])];
             NSDictionary *modifiedConditionsForURLFilter = createModifiedConditionsForURLFilter(_condition, combinedRequestDomainAndURLFilter);
 
             if (requestMethods && !isRuleForAllowAllRequests) {
@@ -889,17 +890,17 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
         triggerDictionary[@"url-filter"] = @".*";
 
         if ([condition[declarativeNetRequestRuleConditionResourceTypeKey] containsObject:@"main_frame"])
-            triggerDictionary[@"if-top-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
+            triggerDictionary[@"if-top-url"] = @[ [self _regexURLFilterForChromeURLFilter:checked_objc_cast<NSString>(condition[declarativeNetRequestRuleConditionURLFilterKey])] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
         else {
             // FIXME: rdar://154124673 (dNR: fix sub_frame resourceType allowAllRequests rules)
-            triggerDictionary[@"if-frame-url"] = @[ [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
+            triggerDictionary[@"if-frame-url"] = @[ [self _regexURLFilterForChromeURLFilter:checked_objc_cast<NSString>(condition[declarativeNetRequestRuleConditionURLFilterKey])] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*" ];
             triggerDictionary[@"load-context"] = @[ @"child-frame" ];
         }
 
         return [convertedRule copy];
     }
 
-    NSString *filter = [self _regexURLFilterForChromeURLFilter:condition[declarativeNetRequestRuleConditionURLFilterKey]] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*";
+    NSString *filter = [self _regexURLFilterForChromeURLFilter:checked_objc_cast<NSString>(condition[declarativeNetRequestRuleConditionURLFilterKey])] ?: condition[declarativeNetRequestRuleConditionRegexFilterKey] ?: @".*";
     NSArray *webKitResourceTypes = [self _convertedResourceTypesForChromeResourceTypes:[self _allChromeResourceTypesForCondition:condition]];
 
     if (filter) {
@@ -1208,8 +1209,8 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     if (_priority > rule.priority)
         return NSOrderedAscending;
 
-    NSInteger actionTypePriority = priorityForRuleType(_action[declarativeNetRequestRuleActionTypeKey]);
-    NSInteger otherActionTypePriority = priorityForRuleType(rule.action[declarativeNetRequestRuleActionTypeKey]);
+    NSInteger actionTypePriority = priorityForRuleType(checked_objc_cast<NSString>(_action[declarativeNetRequestRuleActionTypeKey]));
+    NSInteger otherActionTypePriority = priorityForRuleType(checked_objc_cast<NSString>(rule.action[declarativeNetRequestRuleActionTypeKey]));
     if (actionTypePriority < otherActionTypePriority)
         return NSOrderedDescending;
     if (actionTypePriority > otherActionTypePriority)

@@ -36,6 +36,7 @@
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringView.h>
 
@@ -413,10 +414,10 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                 ASSERT(detailNSRange.location != NSNotFound);
                 ASSERT(detailNSRange.length > 0);
                 detail.range = detailNSRange;
-                detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
-                RetainPtr<NSArray> guesses = [incomingDetail objectForKey:NSGrammarCorrections];
+                detail.userDescription = dynamic_objc_cast<NSString>([incomingDetail objectForKey:NSGrammarUserDescription]);
+                RetainPtr guesses = dynamic_objc_cast<NSArray>([incomingDetail objectForKey:NSGrammarCorrections]);
                 detail.guesses = makeVector<String>(guesses.get());
-                detail.uuid = [incomingDetail objectForKey:@"NSGrammarUUID"];
+                detail.uuid = dynamic_objc_cast<NSString>([incomingDetail objectForKey:@"NSGrammarUUID"]);
                 result.details.append(WTF::move(detail));
             }
             results.append(result);
@@ -462,8 +463,8 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                     ASSERT(detailNSRange.length > 0);
 
                     detail.range = detailNSRange;
-                    detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
-                    RetainPtr<NSArray> guesses = [incomingDetail objectForKey:NSGrammarCorrections];
+                    detail.userDescription = dynamic_objc_cast<NSString>([incomingDetail objectForKey:NSGrammarUserDescription]);
+                    RetainPtr guesses = dynamic_objc_cast<NSArray>([incomingDetail objectForKey:NSGrammarCorrections]);
                     detail.guesses = makeVector<String>(guesses.get());
                     result.details.append(WTF::move(detail));
                 }
@@ -574,10 +575,10 @@ static Vector<TextCheckingResult> convertExtendedCheckingResults(NSArray<NSTextC
                 RetainPtr detailRangeAsNSValue = [incomingDetail objectForKey:NSGrammarRange];
                 NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
                 detail.range = detailNSRange;
-                detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
-                RetainPtr<NSArray> guesses = [incomingDetail objectForKey:NSGrammarCorrections];
+                detail.userDescription = dynamic_objc_cast<NSString>([incomingDetail objectForKey:NSGrammarUserDescription]);
+                RetainPtr guesses = dynamic_objc_cast<NSArray>([incomingDetail objectForKey:NSGrammarCorrections]);
                 detail.guesses = makeVector<String>(guesses.get());
-                detail.uuid = [incomingDetail objectForKey:@"NSGrammarUUID"];
+                detail.uuid = dynamic_objc_cast<NSString>([incomingDetail objectForKey:@"NSGrammarUUID"]);
                 result.details.append(WTF::move(detail));
             }
             results.append(result);
