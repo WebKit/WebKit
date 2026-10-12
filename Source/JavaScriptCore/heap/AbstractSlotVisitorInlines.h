@@ -215,16 +215,16 @@ ALWAYS_INLINE ReferrerToken AbstractSlotVisitor::referrer() const
     return m_context->referrer();
 }
 
-inline void AbstractSlotVisitor::didStartMarking(CollectionScope scope, HeapAnalyzer* analyzer)
+inline void AbstractSlotVisitor::didStartMarking(CollectionScope scope, bool isAnalyzingHeap)
 {
     m_collectionScope = scope;
-    m_heapAnalyzer = analyzer;
+    m_isAnalyzingHeap = isAnalyzingHeap;
 }
 
 ALWAYS_INLINE void AbstractSlotVisitor::reset()
 {
     m_visitCount = 0;
-    m_heapAnalyzer = nullptr;
+    m_isAnalyzingHeap = false;
 }
 
 } // namespace JSC

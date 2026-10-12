@@ -40,7 +40,6 @@ namespace JSC {
 class Collector;
 class ConservativeRoots;
 class Heap;
-class HeapAnalyzer;
 class HeapCell;
 class JSCell;
 class MarkedBlock;
@@ -144,9 +143,9 @@ public:
     Collector& collector() const { return m_collector; }
 
     CollectionScope collectionScope() const { return m_collectionScope; }
-    HeapAnalyzer* heapAnalyzer() const { return m_heapAnalyzer; }
+    bool isAnalyzingHeap() const { return m_isAnalyzingHeap; }
 
-    inline void NODELETE didStartMarking(CollectionScope, HeapAnalyzer*); // Defined in AbstractSlotVisitorInlines.h
+    inline void NODELETE didStartMarking(CollectionScope, bool isAnalyzingHeap); // Defined in AbstractSlotVisitorInlines.h
 
     virtual void append(const ConservativeRoots&) = 0;
 
@@ -232,7 +231,6 @@ protected:
 
     size_t m_visitCount { 0 };
 
-    HeapAnalyzer* m_heapAnalyzer { nullptr };
     Collector& m_collector;
     ReferrerContext* m_context { nullptr };
     ASCIICString m_codeName;
@@ -246,6 +244,8 @@ protected:
     bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
     bool m_needsExtraOpaqueRootHandling { false };
     CollectionScope m_collectionScope { CollectionScope::Full };
+    // Whether any of the collection's heaps is being analyzed. Each cell is analyzed by its own VM's analyzer.
+    bool m_isAnalyzingHeap { false };
 
     friend class MarkingConstraintSolver;
 };
