@@ -167,68 +167,68 @@ ItemPosition PositionAreaValue::defaultAlignmentForAxis(BoxAxis physicalAxis, Wr
 static std::optional<PositionAreaAxis> NODELETE positionAreaKeywordToAxis(CSSValueID keyword)
 {
     switch (keyword) {
-    case CSSValueLeft:
-    case CSSValueSpanLeft:
-    case CSSValueRight:
-    case CSSValueSpanRight:
+    case CSSValueID::Left:
+    case CSSValueID::SpanLeft:
+    case CSSValueID::Right:
+    case CSSValueID::SpanRight:
         return PositionAreaAxis::Horizontal;
 
-    case CSSValueTop:
-    case CSSValueSpanTop:
-    case CSSValueBottom:
-    case CSSValueSpanBottom:
+    case CSSValueID::Top:
+    case CSSValueID::SpanTop:
+    case CSSValueID::Bottom:
+    case CSSValueID::SpanBottom:
         return PositionAreaAxis::Vertical;
 
-    case CSSValueXStart:
-    case CSSValueSpanXStart:
-    case CSSValueSelfXStart:
-    case CSSValueSpanSelfXStart:
-    case CSSValueXEnd:
-    case CSSValueSpanXEnd:
-    case CSSValueSelfXEnd:
-    case CSSValueSpanSelfXEnd:
+    case CSSValueID::XStart:
+    case CSSValueID::SpanXStart:
+    case CSSValueID::SelfXStart:
+    case CSSValueID::SpanSelfXStart:
+    case CSSValueID::XEnd:
+    case CSSValueID::SpanXEnd:
+    case CSSValueID::SelfXEnd:
+    case CSSValueID::SpanSelfXEnd:
         return PositionAreaAxis::X;
 
-    case CSSValueYStart:
-    case CSSValueSpanYStart:
-    case CSSValueSelfYStart:
-    case CSSValueSpanSelfYStart:
-    case CSSValueYEnd:
-    case CSSValueSpanYEnd:
-    case CSSValueSelfYEnd:
-    case CSSValueSpanSelfYEnd:
+    case CSSValueID::YStart:
+    case CSSValueID::SpanYStart:
+    case CSSValueID::SelfYStart:
+    case CSSValueID::SpanSelfYStart:
+    case CSSValueID::YEnd:
+    case CSSValueID::SpanYEnd:
+    case CSSValueID::SelfYEnd:
+    case CSSValueID::SpanSelfYEnd:
         return PositionAreaAxis::Y;
 
-    case CSSValueBlockStart:
-    case CSSValueSpanBlockStart:
-    case CSSValueSelfBlockStart:
-    case CSSValueSpanSelfBlockStart:
-    case CSSValueBlockEnd:
-    case CSSValueSpanBlockEnd:
-    case CSSValueSelfBlockEnd:
-    case CSSValueSpanSelfBlockEnd:
+    case CSSValueID::BlockStart:
+    case CSSValueID::SpanBlockStart:
+    case CSSValueID::SelfBlockStart:
+    case CSSValueID::SpanSelfBlockStart:
+    case CSSValueID::BlockEnd:
+    case CSSValueID::SpanBlockEnd:
+    case CSSValueID::SelfBlockEnd:
+    case CSSValueID::SpanSelfBlockEnd:
         return PositionAreaAxis::Block;
 
-    case CSSValueInlineStart:
-    case CSSValueSpanInlineStart:
-    case CSSValueSelfInlineStart:
-    case CSSValueSpanSelfInlineStart:
-    case CSSValueInlineEnd:
-    case CSSValueSpanInlineEnd:
-    case CSSValueSelfInlineEnd:
-    case CSSValueSpanSelfInlineEnd:
+    case CSSValueID::InlineStart:
+    case CSSValueID::SpanInlineStart:
+    case CSSValueID::SelfInlineStart:
+    case CSSValueID::SpanSelfInlineStart:
+    case CSSValueID::InlineEnd:
+    case CSSValueID::SpanInlineEnd:
+    case CSSValueID::SelfInlineEnd:
+    case CSSValueID::SpanSelfInlineEnd:
         return PositionAreaAxis::Inline;
 
-    case CSSValueStart:
-    case CSSValueSpanStart:
-    case CSSValueSelfStart:
-    case CSSValueSpanSelfStart:
-    case CSSValueEnd:
-    case CSSValueSpanEnd:
-    case CSSValueSelfEnd:
-    case CSSValueSpanSelfEnd:
-    case CSSValueCenter:
-    case CSSValueSpanAll:
+    case CSSValueID::Start:
+    case CSSValueID::SpanStart:
+    case CSSValueID::SelfStart:
+    case CSSValueID::SpanSelfStart:
+    case CSSValueID::End:
+    case CSSValueID::SpanEnd:
+    case CSSValueID::SelfEnd:
+    case CSSValueID::SpanSelfEnd:
+    case CSSValueID::Center:
+    case CSSValueID::SpanAll:
         return { };
 
     default:
@@ -240,65 +240,65 @@ static std::optional<PositionAreaAxis> NODELETE positionAreaKeywordToAxis(CSSVal
 static PositionAreaTrack NODELETE positionAreaKeywordToTrack(CSSValueID keyword)
 {
     switch (keyword) {
-    case CSSValueLeft:
-    case CSSValueTop:
-    case CSSValueXStart:
-    case CSSValueSelfXStart:
-    case CSSValueYStart:
-    case CSSValueSelfYStart:
-    case CSSValueBlockStart:
-    case CSSValueSelfBlockStart:
-    case CSSValueInlineStart:
-    case CSSValueSelfInlineStart:
-    case CSSValueStart:
-    case CSSValueSelfStart:
+    case CSSValueID::Left:
+    case CSSValueID::Top:
+    case CSSValueID::XStart:
+    case CSSValueID::SelfXStart:
+    case CSSValueID::YStart:
+    case CSSValueID::SelfYStart:
+    case CSSValueID::BlockStart:
+    case CSSValueID::SelfBlockStart:
+    case CSSValueID::InlineStart:
+    case CSSValueID::SelfInlineStart:
+    case CSSValueID::Start:
+    case CSSValueID::SelfStart:
         return PositionAreaTrack::Start;
 
-    case CSSValueSpanLeft:
-    case CSSValueSpanTop:
-    case CSSValueSpanXStart:
-    case CSSValueSpanSelfXStart:
-    case CSSValueSpanYStart:
-    case CSSValueSpanSelfYStart:
-    case CSSValueSpanBlockStart:
-    case CSSValueSpanSelfBlockStart:
-    case CSSValueSpanInlineStart:
-    case CSSValueSpanSelfInlineStart:
-    case CSSValueSpanStart:
-    case CSSValueSpanSelfStart:
+    case CSSValueID::SpanLeft:
+    case CSSValueID::SpanTop:
+    case CSSValueID::SpanXStart:
+    case CSSValueID::SpanSelfXStart:
+    case CSSValueID::SpanYStart:
+    case CSSValueID::SpanSelfYStart:
+    case CSSValueID::SpanBlockStart:
+    case CSSValueID::SpanSelfBlockStart:
+    case CSSValueID::SpanInlineStart:
+    case CSSValueID::SpanSelfInlineStart:
+    case CSSValueID::SpanStart:
+    case CSSValueID::SpanSelfStart:
         return PositionAreaTrack::SpanStart;
 
-    case CSSValueRight:
-    case CSSValueBottom:
-    case CSSValueXEnd:
-    case CSSValueSelfXEnd:
-    case CSSValueYEnd:
-    case CSSValueSelfYEnd:
-    case CSSValueBlockEnd:
-    case CSSValueSelfBlockEnd:
-    case CSSValueInlineEnd:
-    case CSSValueSelfInlineEnd:
-    case CSSValueEnd:
-    case CSSValueSelfEnd:
+    case CSSValueID::Right:
+    case CSSValueID::Bottom:
+    case CSSValueID::XEnd:
+    case CSSValueID::SelfXEnd:
+    case CSSValueID::YEnd:
+    case CSSValueID::SelfYEnd:
+    case CSSValueID::BlockEnd:
+    case CSSValueID::SelfBlockEnd:
+    case CSSValueID::InlineEnd:
+    case CSSValueID::SelfInlineEnd:
+    case CSSValueID::End:
+    case CSSValueID::SelfEnd:
         return PositionAreaTrack::End;
 
-    case CSSValueSpanRight:
-    case CSSValueSpanBottom:
-    case CSSValueSpanXEnd:
-    case CSSValueSpanSelfXEnd:
-    case CSSValueSpanYEnd:
-    case CSSValueSpanSelfYEnd:
-    case CSSValueSpanBlockEnd:
-    case CSSValueSpanSelfBlockEnd:
-    case CSSValueSpanInlineEnd:
-    case CSSValueSpanSelfInlineEnd:
-    case CSSValueSpanEnd:
-    case CSSValueSpanSelfEnd:
+    case CSSValueID::SpanRight:
+    case CSSValueID::SpanBottom:
+    case CSSValueID::SpanXEnd:
+    case CSSValueID::SpanSelfXEnd:
+    case CSSValueID::SpanYEnd:
+    case CSSValueID::SpanSelfYEnd:
+    case CSSValueID::SpanBlockEnd:
+    case CSSValueID::SpanSelfBlockEnd:
+    case CSSValueID::SpanInlineEnd:
+    case CSSValueID::SpanSelfInlineEnd:
+    case CSSValueID::SpanEnd:
+    case CSSValueID::SpanSelfEnd:
         return PositionAreaTrack::SpanEnd;
 
-    case CSSValueCenter:
+    case CSSValueID::Center:
         return PositionAreaTrack::Center;
-    case CSSValueSpanAll:
+    case CSSValueID::SpanAll:
         return PositionAreaTrack::SpanAll;
 
     default:
@@ -310,58 +310,58 @@ static PositionAreaTrack NODELETE positionAreaKeywordToTrack(CSSValueID keyword)
 static PositionAreaSelf NODELETE positionAreaKeywordToSelf(CSSValueID keyword)
 {
     switch (keyword) {
-    case CSSValueLeft:
-    case CSSValueSpanLeft:
-    case CSSValueRight:
-    case CSSValueSpanRight:
-    case CSSValueTop:
-    case CSSValueSpanTop:
-    case CSSValueBottom:
-    case CSSValueSpanBottom:
-    case CSSValueXStart:
-    case CSSValueSpanXStart:
-    case CSSValueXEnd:
-    case CSSValueSpanXEnd:
-    case CSSValueYStart:
-    case CSSValueSpanYStart:
-    case CSSValueYEnd:
-    case CSSValueSpanYEnd:
-    case CSSValueBlockStart:
-    case CSSValueSpanBlockStart:
-    case CSSValueBlockEnd:
-    case CSSValueSpanBlockEnd:
-    case CSSValueInlineStart:
-    case CSSValueSpanInlineStart:
-    case CSSValueInlineEnd:
-    case CSSValueSpanInlineEnd:
-    case CSSValueStart:
-    case CSSValueSpanStart:
-    case CSSValueEnd:
-    case CSSValueSpanEnd:
-    case CSSValueCenter:
-    case CSSValueSpanAll:
+    case CSSValueID::Left:
+    case CSSValueID::SpanLeft:
+    case CSSValueID::Right:
+    case CSSValueID::SpanRight:
+    case CSSValueID::Top:
+    case CSSValueID::SpanTop:
+    case CSSValueID::Bottom:
+    case CSSValueID::SpanBottom:
+    case CSSValueID::XStart:
+    case CSSValueID::SpanXStart:
+    case CSSValueID::XEnd:
+    case CSSValueID::SpanXEnd:
+    case CSSValueID::YStart:
+    case CSSValueID::SpanYStart:
+    case CSSValueID::YEnd:
+    case CSSValueID::SpanYEnd:
+    case CSSValueID::BlockStart:
+    case CSSValueID::SpanBlockStart:
+    case CSSValueID::BlockEnd:
+    case CSSValueID::SpanBlockEnd:
+    case CSSValueID::InlineStart:
+    case CSSValueID::SpanInlineStart:
+    case CSSValueID::InlineEnd:
+    case CSSValueID::SpanInlineEnd:
+    case CSSValueID::Start:
+    case CSSValueID::SpanStart:
+    case CSSValueID::End:
+    case CSSValueID::SpanEnd:
+    case CSSValueID::Center:
+    case CSSValueID::SpanAll:
         return PositionAreaSelf::No;
 
-    case CSSValueSelfXStart:
-    case CSSValueSpanSelfXStart:
-    case CSSValueSelfXEnd:
-    case CSSValueSpanSelfXEnd:
-    case CSSValueSelfYStart:
-    case CSSValueSpanSelfYStart:
-    case CSSValueSelfYEnd:
-    case CSSValueSpanSelfYEnd:
-    case CSSValueSelfBlockStart:
-    case CSSValueSpanSelfBlockStart:
-    case CSSValueSelfBlockEnd:
-    case CSSValueSpanSelfBlockEnd:
-    case CSSValueSelfInlineStart:
-    case CSSValueSpanSelfInlineStart:
-    case CSSValueSelfInlineEnd:
-    case CSSValueSpanSelfInlineEnd:
-    case CSSValueSelfStart:
-    case CSSValueSpanSelfStart:
-    case CSSValueSelfEnd:
-    case CSSValueSpanSelfEnd:
+    case CSSValueID::SelfXStart:
+    case CSSValueID::SpanSelfXStart:
+    case CSSValueID::SelfXEnd:
+    case CSSValueID::SpanSelfXEnd:
+    case CSSValueID::SelfYStart:
+    case CSSValueID::SpanSelfYStart:
+    case CSSValueID::SelfYEnd:
+    case CSSValueID::SpanSelfYEnd:
+    case CSSValueID::SelfBlockStart:
+    case CSSValueID::SpanSelfBlockStart:
+    case CSSValueID::SelfBlockEnd:
+    case CSSValueID::SpanSelfBlockEnd:
+    case CSSValueID::SelfInlineStart:
+    case CSSValueID::SpanSelfInlineStart:
+    case CSSValueID::SelfInlineEnd:
+    case CSSValueID::SpanSelfInlineEnd:
+    case CSSValueID::SelfStart:
+    case CSSValueID::SpanSelfStart:
+    case CSSValueID::SelfEnd:
+    case CSSValueID::SpanSelfEnd:
         return PositionAreaSelf::Yes;
 
     default:
@@ -380,9 +380,9 @@ static std::pair<CSSValueID, CSSValueID> NODELETE positionAreaExpandKeyword(CSSV
         // Y/inline axis keyword goes after in the pair.
         auto axis = *maybeAxis;
         if (axis == PositionAreaAxis::Vertical || axis == PositionAreaAxis::Y || axis == PositionAreaAxis::Inline)
-            return { CSSValueSpanAll, dim };
+            return { CSSValueID::SpanAll, dim };
 
-        return { dim, CSSValueSpanAll };
+        return { dim, CSSValueID::SpanAll };
     }
 
     // Keyword is axis ambiguous, it's repeated.
@@ -459,7 +459,7 @@ auto CSSValueConversion<PositionArea>::operator()(BuilderState& state, const CSS
 
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         auto valueID = keywordValue->valueID();
-        if (valueID == CSSValueNone)
+        if (valueID == CSSValueID::None)
             return CSS::Keyword::None { };
 
         dimPair = positionAreaExpandKeyword(valueID);
@@ -539,121 +539,121 @@ static CSSValueID NODELETE keywordForPositionAreaSpan(PositionAreaSpan span)
         ASSERT(self == PositionAreaSelf::No);
         switch (track) {
         case PositionAreaTrack::Start:
-            return CSSValueLeft;
+            return CSSValueID::Left;
         case PositionAreaTrack::SpanStart:
-            return CSSValueSpanLeft;
+            return CSSValueID::SpanLeft;
         case PositionAreaTrack::End:
-            return CSSValueRight;
+            return CSSValueID::Right;
         case PositionAreaTrack::SpanEnd:
-            return CSSValueSpanRight;
+            return CSSValueID::SpanRight;
         case PositionAreaTrack::Center:
-            return CSSValueCenter;
+            return CSSValueID::Center;
         case PositionAreaTrack::SpanAll:
-            return CSSValueSpanAll;
+            return CSSValueID::SpanAll;
         default:
             ASSERT_NOT_REACHED();
-            return CSSValueLeft;
+            return CSSValueID::Left;
         }
 
     case PositionAreaAxis::Vertical:
         ASSERT(self == PositionAreaSelf::No);
         switch (track) {
         case PositionAreaTrack::Start:
-            return CSSValueTop;
+            return CSSValueID::Top;
         case PositionAreaTrack::SpanStart:
-            return CSSValueSpanTop;
+            return CSSValueID::SpanTop;
         case PositionAreaTrack::End:
-            return CSSValueBottom;
+            return CSSValueID::Bottom;
         case PositionAreaTrack::SpanEnd:
-            return CSSValueSpanBottom;
+            return CSSValueID::SpanBottom;
         case PositionAreaTrack::Center:
-            return CSSValueCenter;
+            return CSSValueID::Center;
         case PositionAreaTrack::SpanAll:
-            return CSSValueSpanAll;
+            return CSSValueID::SpanAll;
         default:
             ASSERT_NOT_REACHED();
-            return CSSValueTop;
+            return CSSValueID::Top;
         }
 
     case PositionAreaAxis::X:
         switch (track) {
         case PositionAreaTrack::Start:
-            return self == PositionAreaSelf::No ? CSSValueXStart : CSSValueSelfXStart;
+            return self == PositionAreaSelf::No ? CSSValueID::XStart : CSSValueID::SelfXStart;
         case PositionAreaTrack::SpanStart:
-            return self == PositionAreaSelf::No ? CSSValueSpanXStart : CSSValueSpanSelfXStart;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanXStart : CSSValueID::SpanSelfXStart;
         case PositionAreaTrack::End:
-            return self == PositionAreaSelf::No ? CSSValueXEnd : CSSValueSelfXEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::XEnd : CSSValueID::SelfXEnd;
         case PositionAreaTrack::SpanEnd:
-            return self == PositionAreaSelf::No ? CSSValueSpanXEnd : CSSValueSpanSelfXEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanXEnd : CSSValueID::SpanSelfXEnd;
         case PositionAreaTrack::Center:
-            return CSSValueCenter;
+            return CSSValueID::Center;
         case PositionAreaTrack::SpanAll:
-            return CSSValueSpanAll;
+            return CSSValueID::SpanAll;
         default:
             ASSERT_NOT_REACHED();
-            return CSSValueXStart;
+            return CSSValueID::XStart;
         }
 
     case PositionAreaAxis::Y:
         switch (track) {
         case PositionAreaTrack::Start:
-            return self == PositionAreaSelf::No ? CSSValueYStart : CSSValueSelfYStart;
+            return self == PositionAreaSelf::No ? CSSValueID::YStart : CSSValueID::SelfYStart;
         case PositionAreaTrack::SpanStart:
-            return self == PositionAreaSelf::No ? CSSValueSpanYStart : CSSValueSpanSelfYStart;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanYStart : CSSValueID::SpanSelfYStart;
         case PositionAreaTrack::End:
-            return self == PositionAreaSelf::No ? CSSValueYEnd : CSSValueSelfYEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::YEnd : CSSValueID::SelfYEnd;
         case PositionAreaTrack::SpanEnd:
-            return self == PositionAreaSelf::No ? CSSValueSpanYEnd : CSSValueSpanSelfYEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanYEnd : CSSValueID::SpanSelfYEnd;
         case PositionAreaTrack::Center:
-            return CSSValueCenter;
+            return CSSValueID::Center;
         case PositionAreaTrack::SpanAll:
-            return CSSValueSpanAll;
+            return CSSValueID::SpanAll;
         default:
             ASSERT_NOT_REACHED();
-            return CSSValueYStart;
+            return CSSValueID::YStart;
         }
 
     case PositionAreaAxis::Block:
         switch (track) {
         case PositionAreaTrack::Start:
-            return self == PositionAreaSelf::No ? CSSValueBlockStart : CSSValueSelfBlockStart;
+            return self == PositionAreaSelf::No ? CSSValueID::BlockStart : CSSValueID::SelfBlockStart;
         case PositionAreaTrack::SpanStart:
-            return self == PositionAreaSelf::No ? CSSValueSpanBlockStart : CSSValueSpanSelfBlockStart;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanBlockStart : CSSValueID::SpanSelfBlockStart;
         case PositionAreaTrack::End:
-            return self == PositionAreaSelf::No ? CSSValueBlockEnd : CSSValueSelfBlockEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::BlockEnd : CSSValueID::SelfBlockEnd;
         case PositionAreaTrack::SpanEnd:
-            return self == PositionAreaSelf::No ? CSSValueSpanBlockEnd : CSSValueSpanSelfBlockEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanBlockEnd : CSSValueID::SpanSelfBlockEnd;
         case PositionAreaTrack::Center:
-            return CSSValueCenter;
+            return CSSValueID::Center;
         case PositionAreaTrack::SpanAll:
-            return CSSValueSpanAll;
+            return CSSValueID::SpanAll;
         default:
             ASSERT_NOT_REACHED();
-            return CSSValueBlockStart;
+            return CSSValueID::BlockStart;
         }
 
     case PositionAreaAxis::Inline:
         switch (track) {
         case PositionAreaTrack::Start:
-            return self == PositionAreaSelf::No ? CSSValueInlineStart : CSSValueSelfInlineStart;
+            return self == PositionAreaSelf::No ? CSSValueID::InlineStart : CSSValueID::SelfInlineStart;
         case PositionAreaTrack::SpanStart:
-            return self == PositionAreaSelf::No ? CSSValueSpanInlineStart : CSSValueSpanSelfInlineStart;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanInlineStart : CSSValueID::SpanSelfInlineStart;
         case PositionAreaTrack::End:
-            return self == PositionAreaSelf::No ? CSSValueInlineEnd : CSSValueSelfInlineEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::InlineEnd : CSSValueID::SelfInlineEnd;
         case PositionAreaTrack::SpanEnd:
-            return self == PositionAreaSelf::No ? CSSValueSpanInlineEnd : CSSValueSpanSelfInlineEnd;
+            return self == PositionAreaSelf::No ? CSSValueID::SpanInlineEnd : CSSValueID::SpanSelfInlineEnd;
         case PositionAreaTrack::Center:
-            return CSSValueCenter;
+            return CSSValueID::Center;
         case PositionAreaTrack::SpanAll:
-            return CSSValueSpanAll;
+            return CSSValueID::SpanAll;
         default:
             ASSERT_NOT_REACHED();
-            return CSSValueInlineStart;
+            return CSSValueID::InlineStart;
         }
     }
 
     ASSERT_NOT_REACHED();
-    return CSSValueLeft;
+    return CSSValueID::Left;
 }
 
 Ref<CSSValue> CSSValueCreation<PositionAreaValue>::operator()(CSSValuePool&, const Style::ComputedStyle&, const PositionAreaValue& value)

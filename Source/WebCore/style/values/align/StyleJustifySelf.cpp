@@ -103,37 +103,37 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (applyPositionTryFallbackTactics(state, keywordValue->valueID())) {
         // auto
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
         // normal
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         // stretch
-        case CSSValueStretch:
+        case CSSValueID::Stretch:
             return CSS::Keyword::Stretch { };
         // <baseline-position>
-        case CSSValueBaseline:
+        case CSSValueID::Baseline:
             return CSS::Keyword::Baseline { };
         // <overflow-position>? [ <self-position> | left | right ]
-        case CSSValueCenter:
+        case CSSValueID::Center:
             return CSS::Keyword::Center { };
-        case CSSValueStart:
+        case CSSValueID::Start:
             return CSS::Keyword::Start { };
-        case CSSValueEnd:
+        case CSSValueID::End:
             return CSS::Keyword::End { };
-        case CSSValueSelfStart:
+        case CSSValueID::SelfStart:
             return CSS::Keyword::SelfStart { };
-        case CSSValueSelfEnd:
+        case CSSValueID::SelfEnd:
             return CSS::Keyword::SelfEnd { };
-        case CSSValueFlexStart:
+        case CSSValueID::FlexStart:
             return CSS::Keyword::FlexStart { };
-        case CSSValueFlexEnd:
+        case CSSValueID::FlexEnd:
             return CSS::Keyword::FlexEnd { };
-        case CSSValueLeft:
+        case CSSValueID::Left:
             return CSS::Keyword::Left { };
-        case CSSValueRight:
+        case CSSValueID::Right:
             return CSS::Keyword::Right { };
-        case CSSValueAnchorCenter:
+        case CSSValueID::AnchorCenter:
             return CSS::Keyword::AnchorCenter { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -147,7 +147,7 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
 
     auto consumeAfterBaselinePositionPreference = [&](auto baselinePositionPreference, auto secondValueID) -> JustifySelf {
         switch (secondValueID) {
-        case CSSValueBaseline:
+        case CSSValueID::Baseline:
             return { CSS::Keyword::Baseline { }, { baselinePositionPreference } };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -157,27 +157,27 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
 
     auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> JustifySelf {
         switch (applyPositionTryFallbackTactics(state, secondValueID)) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return { CSS::Keyword::Normal { }, overflowPosition };
-        case CSSValueStart:
+        case CSSValueID::Start:
             return { CSS::Keyword::Start { }, overflowPosition };
-        case CSSValueEnd:
+        case CSSValueID::End:
             return { CSS::Keyword::End { }, overflowPosition };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             return { CSS::Keyword::Center { }, overflowPosition };
-        case CSSValueSelfStart:
+        case CSSValueID::SelfStart:
             return { CSS::Keyword::SelfStart { }, overflowPosition };
-        case CSSValueSelfEnd:
+        case CSSValueID::SelfEnd:
             return { CSS::Keyword::SelfEnd { }, overflowPosition };
-        case CSSValueFlexStart:
+        case CSSValueID::FlexStart:
             return { CSS::Keyword::FlexStart { }, overflowPosition };
-        case CSSValueFlexEnd:
+        case CSSValueID::FlexEnd:
             return { CSS::Keyword::FlexEnd { }, overflowPosition };
-        case CSSValueLeft:
+        case CSSValueID::Left:
             return { CSS::Keyword::Left { }, overflowPosition };
-        case CSSValueRight:
+        case CSSValueID::Right:
             return { CSS::Keyword::Right { }, overflowPosition };
-        case CSSValueAnchorCenter:
+        case CSSValueID::AnchorCenter:
             return { CSS::Keyword::AnchorCenter { }, overflowPosition };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -187,14 +187,14 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
 
     switch (pair->first->valueID()) {
     // <baseline-position>
-    case CSSValueFirst:
+    case CSSValueID::First:
         return consumeAfterBaselinePositionPreference(CSS::Keyword::First { }, pair->second->valueID());
-    case CSSValueLast:
+    case CSSValueID::Last:
         return consumeAfterBaselinePositionPreference(CSS::Keyword::Last { }, pair->second->valueID());
     // <overflow-position>? [ <self-position> | left | right ]
-    case CSSValueUnsafe:
+    case CSSValueID::Unsafe:
         return consumeAfterOverflowPosition(CSS::Keyword::Unsafe { }, pair->second->valueID());
-    case CSSValueSafe:
+    case CSSValueID::Safe:
         return consumeAfterOverflowPosition(CSS::Keyword::Safe { }, pair->second->valueID());
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();

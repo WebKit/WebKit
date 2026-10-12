@@ -59,8 +59,8 @@ SUPPRESS_NODELETE CSSValueID CalcSizeValue::basisKeyword() const
     return WTF::switchOn(m_basis,
         // `any` states that the value does not depend on a basis, so it behaves as a length rather
         // than as a keyword.
-        [](const CSS::Keyword::Any&) { return CSSValueInvalid; },
-        [](const Calculation::Tree&) { return CSSValueInvalid; },
+        [](const CSS::Keyword::Any&) { return CSSValueID::Invalid; },
+        [](const Calculation::Tree&) { return CSSValueID::Invalid; },
         [](const Ref<CalcSizeValue>& nested) { return nested->basisKeyword(); },
         []<CSSValueID Id>(const Constant<Id>&) { return Id; }
     );
@@ -155,7 +155,7 @@ double evaluateCalcSize(const CalcSizeValue& value, CSS::Range range, double per
 
 double evaluateCalcSize(const CalcSizeValue& value, CSS::Range range, double percentResolutionLength, ZoomFactor usedZoom)
 {
-    ASSERT_WITH_MESSAGE(value.basisKeyword() == CSSValueInvalid, "A keyword basis is resolved by layout, not here");
+    ASSERT_WITH_MESSAGE(value.basisKeyword() == CSSValueID::Invalid, "A keyword basis is resolved by layout, not here");
     return evaluateCalcSize(value, range, percentResolutionLength, usedZoom, 0);
 }
 

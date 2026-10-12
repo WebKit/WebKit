@@ -39,7 +39,7 @@ namespace Style {
 auto CSSValueConversion<SingleAnimationName>::operator()(BuilderState& state, const CSSValue& value) -> SingleAnimationName
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueNone)
+        if (keywordValue->valueID() == CSSValueID::None)
             return SingleAnimationName { CSS::Keyword::None { } };
 
         state.setCurrentPropertyInvalidAtComputedValueTime();

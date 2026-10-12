@@ -51,21 +51,21 @@ auto CSSValueConversion<AnimationAction>::operator()(BuilderState& state, const 
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValuePlay:
+        case CSSValueID::Play:
             return CSS::Keyword::Play { };
-        case CSSValuePlayOnce:
+        case CSSValueID::PlayOnce:
             return CSS::Keyword::PlayOnce { };
-        case CSSValuePlayForwards:
+        case CSSValueID::PlayForwards:
             return CSS::Keyword::PlayForwards { };
-        case CSSValuePlayBackwards:
+        case CSSValueID::PlayBackwards:
             return CSS::Keyword::PlayBackwards { };
-        case CSSValuePause:
+        case CSSValueID::Pause:
             return CSS::Keyword::Pause { };
-        case CSSValueReset:
+        case CSSValueID::Reset:
             return CSS::Keyword::Reset { };
-        case CSSValueReplay:
+        case CSSValueID::Replay:
             return CSS::Keyword::Replay { };
         default:
             break;

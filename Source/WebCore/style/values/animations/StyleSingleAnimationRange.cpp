@@ -100,21 +100,21 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(BuilderState
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueCover:
+        case CSSValueID::Cover:
             return CSS::Keyword::Cover { };
-        case CSSValueContain:
+        case CSSValueID::Contain:
             return CSS::Keyword::Contain { };
-        case CSSValueEntry:
+        case CSSValueID::Entry:
             return CSS::Keyword::Entry { };
-        case CSSValueExit:
+        case CSSValueID::Exit:
             return CSS::Keyword::Exit { };
-        case CSSValueEntryCrossing:
+        case CSSValueID::EntryCrossing:
             return CSS::Keyword::EntryCrossing { };
-        case CSSValueExitCrossing:
+        case CSSValueID::ExitCrossing:
             return CSS::Keyword::ExitCrossing { };
-        case CSSValueScroll:
+        case CSSValueID::Scroll:
             return CSS::Keyword::Scroll { };
         default:
             break;
@@ -134,19 +134,19 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(BuilderState
     auto offset = toStyleFromCSSValue<typename Edge::Offset>(state, pair->second.get());
 
     switch (pair->first->valueID()) {
-    case CSSValueCover:
+    case CSSValueID::Cover:
         return { CSS::Keyword::Cover { }, WTF::move(offset) };
-    case CSSValueContain:
+    case CSSValueID::Contain:
         return { CSS::Keyword::Contain { }, WTF::move(offset) };
-    case CSSValueEntry:
+    case CSSValueID::Entry:
         return { CSS::Keyword::Entry { }, WTF::move(offset) };
-    case CSSValueExit:
+    case CSSValueID::Exit:
         return { CSS::Keyword::Exit { }, WTF::move(offset) };
-    case CSSValueEntryCrossing:
+    case CSSValueID::EntryCrossing:
         return { CSS::Keyword::EntryCrossing { }, WTF::move(offset) };
-    case CSSValueExitCrossing:
+    case CSSValueID::ExitCrossing:
         return { CSS::Keyword::ExitCrossing { }, WTF::move(offset) };
-    case CSSValueScroll:
+    case CSSValueID::Scroll:
         return { CSS::Keyword::Scroll { }, WTF::move(offset) };
     default:
         break;
@@ -160,21 +160,21 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(const CSSToL
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueCover:
+        case CSSValueID::Cover:
             return CSS::Keyword::Cover { };
-        case CSSValueContain:
+        case CSSValueID::Contain:
             return CSS::Keyword::Contain { };
-        case CSSValueEntry:
+        case CSSValueID::Entry:
             return CSS::Keyword::Entry { };
-        case CSSValueExit:
+        case CSSValueID::Exit:
             return CSS::Keyword::Exit { };
-        case CSSValueEntryCrossing:
+        case CSSValueID::EntryCrossing:
             return CSS::Keyword::EntryCrossing { };
-        case CSSValueExitCrossing:
+        case CSSValueID::ExitCrossing:
             return CSS::Keyword::ExitCrossing { };
-        case CSSValueScroll:
+        case CSSValueID::Scroll:
             return CSS::Keyword::Scroll { };
         default:
             break;
@@ -201,19 +201,19 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(const CSSToL
         return CSS::Keyword::Normal { };
 
     switch (keywordValue->valueID()) {
-    case CSSValueCover:
+    case CSSValueID::Cover:
         return { CSS::Keyword::Cover { }, WTF::move(offset) };
-    case CSSValueContain:
+    case CSSValueID::Contain:
         return { CSS::Keyword::Contain { }, WTF::move(offset) };
-    case CSSValueEntry:
+    case CSSValueID::Entry:
         return { CSS::Keyword::Entry { }, WTF::move(offset) };
-    case CSSValueExit:
+    case CSSValueID::Exit:
         return { CSS::Keyword::Exit { }, WTF::move(offset) };
-    case CSSValueEntryCrossing:
+    case CSSValueID::EntryCrossing:
         return { CSS::Keyword::EntryCrossing { }, WTF::move(offset) };
-    case CSSValueExitCrossing:
+    case CSSValueID::ExitCrossing:
         return { CSS::Keyword::ExitCrossing { }, WTF::move(offset) };
-    case CSSValueScroll:
+    case CSSValueID::Scroll:
         return { CSS::Keyword::Scroll { }, WTF::move(offset) };
     default:
         break;
@@ -248,19 +248,19 @@ template<typename Edge> static std::optional<Edge> deprecatedConvertSingleAnimat
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueCover:
+        case CSSValueID::Cover:
             return { CSS::Keyword::Cover { } };
-        case CSSValueContain:
+        case CSSValueID::Contain:
             return { CSS::Keyword::Contain { } };
-        case CSSValueEntry:
+        case CSSValueID::Entry:
             return { CSS::Keyword::Entry { } };
-        case CSSValueExit:
+        case CSSValueID::Exit:
             return { CSS::Keyword::Exit { } };
-        case CSSValueEntryCrossing:
+        case CSSValueID::EntryCrossing:
             return { CSS::Keyword::EntryCrossing { } };
-        case CSSValueExitCrossing:
+        case CSSValueID::ExitCrossing:
             return { CSS::Keyword::ExitCrossing { } };
-        case CSSValueScroll:
+        case CSSValueID::Scroll:
             return { CSS::Keyword::Scroll { } };
         default:
             break;
@@ -294,19 +294,19 @@ template<typename Edge> static std::optional<Edge> deprecatedConvertSingleAnimat
         return { };
 
     switch (keywordValue->valueID()) {
-    case CSSValueCover:
+    case CSSValueID::Cover:
         return { { CSS::Keyword::Cover { }, WTF::move(offset) } };
-    case CSSValueContain:
+    case CSSValueID::Contain:
         return { { CSS::Keyword::Contain { }, WTF::move(offset) } };
-    case CSSValueEntry:
+    case CSSValueID::Entry:
         return { { CSS::Keyword::Entry { }, WTF::move(offset) } };
-    case CSSValueExit:
+    case CSSValueID::Exit:
         return { { CSS::Keyword::Exit { }, WTF::move(offset) } };
-    case CSSValueEntryCrossing:
+    case CSSValueID::EntryCrossing:
         return { { CSS::Keyword::EntryCrossing { }, WTF::move(offset) } };
-    case CSSValueExitCrossing:
+    case CSSValueID::ExitCrossing:
         return { { CSS::Keyword::ExitCrossing { }, WTF::move(offset) } };
-    case CSSValueScroll:
+    case CSSValueID::Scroll:
         return { { CSS::Keyword::Scroll { }, WTF::move(offset) } };
     default:
         break;

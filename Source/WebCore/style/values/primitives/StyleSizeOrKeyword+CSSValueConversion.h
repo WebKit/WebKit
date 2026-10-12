@@ -74,11 +74,11 @@ static auto toStyleCalcSizeValue(ConversionState& conversionState, const CSS::Ca
         },
         [&]<CSSValueID Id>(const Constant<Id>&) -> std::optional<CalcSizeValue::Basis> {
             // The prefixed spellings normalize here, so only canonical keywords are stored.
-            if constexpr (Id == CSSValueWebkitMinContent)
+            if constexpr (Id == CSSValueID::WebkitMinContent)
                 return CSS::Keyword::MinContent { };
-            else if constexpr (Id == CSSValueWebkitMaxContent)
+            else if constexpr (Id == CSSValueID::WebkitMaxContent)
                 return CSS::Keyword::MaxContent { };
-            else if constexpr (Id == CSSValueWebkitFitContent)
+            else if constexpr (Id == CSSValueID::WebkitFitContent)
                 return CSS::Keyword::FitContent { };
             else
                 return Constant<Id> { };

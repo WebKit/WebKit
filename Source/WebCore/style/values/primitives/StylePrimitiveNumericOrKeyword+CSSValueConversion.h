@@ -50,17 +50,17 @@ auto processKeywordForCSSValueConversion(const K& keyword, CSSValueID valueID, s
     // A few keywords have alternative spellings.
     // FIXME: Find a generic solution to this problem.
     if constexpr (std::same_as<K, CSS::Keyword::MinContent>) {
-        if (valueID == CSSValueWebkitMinContent) {
+        if (valueID == CSSValueID::WebkitMinContent) {
             result = StyleType { keyword };
             return true;
         }
     } else if constexpr (std::same_as<K, CSS::Keyword::MaxContent>) {
-        if (valueID == CSSValueWebkitMaxContent) {
+        if (valueID == CSSValueID::WebkitMaxContent) {
             result = StyleType { keyword };
             return true;
         }
     } else if constexpr (std::same_as<K, CSS::Keyword::FitContent>) {
-        if (valueID == CSSValueWebkitFitContent) {
+        if (valueID == CSSValueID::WebkitFitContent) {
             result = StyleType { keyword };
             return true;
         }

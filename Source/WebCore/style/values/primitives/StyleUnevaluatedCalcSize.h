@@ -56,9 +56,9 @@ public:
     CalcSizeValue& calcSize() const { return m_calcSize; }
     [[nodiscard]] CalcSizeValue& NODELETE leakRef();
 
-    // CSSValueInvalid for a <calc-sum> or `any` basis, which behave as an ordinary length.
+    // CSSValueID::Invalid for a <calc-sum> or `any` basis, which behave as an ordinary length.
     WEBCORE_EXPORT CSSValueID basisKeyword() const;
-    bool behavesAsKeyword() const { return basisKeyword() != CSSValueInvalid; }
+    bool behavesAsKeyword() const { return basisKeyword() != CSSValueID::Invalid; }
 
     WEBCORE_EXPORT bool hasPercentage() const;
     WEBCORE_EXPORT bool basisHasPercentage() const;

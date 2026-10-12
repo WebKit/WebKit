@@ -51,7 +51,7 @@ auto CSSValueConversion<Rotate>::operator()(BuilderState& state, const CSSValue&
 
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -76,11 +76,11 @@ auto CSSValueConversion<Rotate>::operator()(BuilderState& state, const CSSValue&
         auto angle = toStyleFromCSSValue<Angle<>>(state, protect(list->item(1)));
 
         switch (keywordValue->valueID()) {
-        case CSSValueX:
+        case CSSValueID::X:
             return RotateTransformFunction::create(1_css_number, 0_css_number, 0_css_number, angle, TransformFunctionBase::Type::RotateX);
-        case CSSValueY:
+        case CSSValueID::Y:
             return RotateTransformFunction::create(0_css_number, 1_css_number, 0_css_number, angle, TransformFunctionBase::Type::RotateY);
-        case CSSValueZ:
+        case CSSValueID::Z:
             return RotateTransformFunction::create(0_css_number, 0_css_number, 1_css_number, angle, TransformFunctionBase::Type::RotateZ);
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

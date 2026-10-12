@@ -83,30 +83,30 @@ auto CSSValueConversion<AlignContent>::operator()(BuilderState& state, const CSS
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         // <normal>
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         // <baseline-position>
-        case CSSValueBaseline:
+        case CSSValueID::Baseline:
             return CSS::Keyword::Baseline { };
         // <content-distribution>
-        case CSSValueSpaceBetween:
+        case CSSValueID::SpaceBetween:
             return CSS::Keyword::SpaceBetween { };
-        case CSSValueSpaceAround:
+        case CSSValueID::SpaceAround:
             return CSS::Keyword::SpaceAround { };
-        case CSSValueSpaceEvenly:
+        case CSSValueID::SpaceEvenly:
             return CSS::Keyword::SpaceEvenly { };
-        case CSSValueStretch:
+        case CSSValueID::Stretch:
             return CSS::Keyword::Stretch { };
         // <overflow-position>? <content-position>
-        case CSSValueStart:
+        case CSSValueID::Start:
             return CSS::Keyword::Start { };
-        case CSSValueEnd:
+        case CSSValueID::End:
             return CSS::Keyword::End { };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             return CSS::Keyword::Center { };
-        case CSSValueFlexStart:
+        case CSSValueID::FlexStart:
             return CSS::Keyword::FlexStart { };
-        case CSSValueFlexEnd:
+        case CSSValueID::FlexEnd:
             return CSS::Keyword::FlexEnd { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -120,7 +120,7 @@ auto CSSValueConversion<AlignContent>::operator()(BuilderState& state, const CSS
 
     auto consumeAfterBaselinePositionPreference = [&](auto baselinePositionPreference, auto secondValueID) -> AlignContent {
         switch (secondValueID) {
-        case CSSValueBaseline:
+        case CSSValueID::Baseline:
             return { CSS::Keyword::Baseline { }, { baselinePositionPreference } };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -130,15 +130,15 @@ auto CSSValueConversion<AlignContent>::operator()(BuilderState& state, const CSS
 
     auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> AlignContent {
         switch (secondValueID) {
-        case CSSValueStart:
+        case CSSValueID::Start:
             return { CSS::Keyword::Start { }, overflowPosition };
-        case CSSValueEnd:
+        case CSSValueID::End:
             return { CSS::Keyword::End { }, overflowPosition };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             return { CSS::Keyword::Center { }, overflowPosition };
-        case CSSValueFlexStart:
+        case CSSValueID::FlexStart:
             return { CSS::Keyword::FlexStart { }, overflowPosition };
-        case CSSValueFlexEnd:
+        case CSSValueID::FlexEnd:
             return { CSS::Keyword::FlexEnd { }, overflowPosition };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -148,14 +148,14 @@ auto CSSValueConversion<AlignContent>::operator()(BuilderState& state, const CSS
 
     switch (pair->first->valueID()) {
     // <baseline-position>
-    case CSSValueFirst:
+    case CSSValueID::First:
         return consumeAfterBaselinePositionPreference(CSS::Keyword::First { }, pair->second->valueID());
-    case CSSValueLast:
+    case CSSValueID::Last:
         return consumeAfterBaselinePositionPreference(CSS::Keyword::Last { }, pair->second->valueID());
     // <overflow-position>? <content-position>
-    case CSSValueUnsafe:
+    case CSSValueID::Unsafe:
         return consumeAfterOverflowPosition(CSS::Keyword::Unsafe { }, pair->second->valueID());
-    case CSSValueSafe:
+    case CSSValueID::Safe:
         return consumeAfterOverflowPosition(CSS::Keyword::Safe { }, pair->second->valueID());
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();

@@ -117,16 +117,16 @@ static TransformList transformListSlice(BuilderState& state, const CSSValueConta
 static bool isAutoKeyword(const CSSValue& value)
 {
     auto* keyword = dynamicDowncast<CSSKeywordValue>(value);
-    return keyword && keyword->valueID() == CSSValueAuto;
+    return keyword && keyword->valueID() == CSSValueID::Auto;
 }
 
 auto CSSValueConversion<PortalTransform>::operator()(BuilderState& state, const CSSValue& value) -> PortalTransform
 {
     if (auto* keyword = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keyword->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
         default:
             break;

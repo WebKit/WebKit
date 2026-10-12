@@ -91,19 +91,19 @@ auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, co
         for (Ref item : *valueList) {
             if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(item)) {
                 switch (keywordValue->valueID()) {
-                case CSSValueFlipBlock:
+                case CSSValueID::FlipBlock:
                     tactics.value.append(PositionTryFallbackTactic::FlipBlock);
                     break;
-                case CSSValueFlipInline:
+                case CSSValueID::FlipInline:
                     tactics.value.append(PositionTryFallbackTactic::FlipInline);
                     break;
-                case CSSValueFlipStart:
+                case CSSValueID::FlipStart:
                     tactics.value.append(PositionTryFallbackTactic::FlipStart);
                     break;
-                case CSSValueFlipX:
+                case CSSValueID::FlipX:
                     tactics.value.append(PositionTryFallbackTactic::FlipX);
                     break;
-                case CSSValueFlipY:
+                case CSSValueID::FlipY:
                     tactics.value.append(PositionTryFallbackTactic::FlipY);
                     break;
                 default:

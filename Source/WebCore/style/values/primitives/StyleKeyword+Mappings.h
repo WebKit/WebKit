@@ -97,8 +97,8 @@ template<typename TargetType> TargetType fromCSSValue(const CSSKeywordValue& val
     return fromCSSValueID<TargetType>(value.valueID());
 }
 
-#define EMIT_TO_CSS_SWITCH_CASE(VALUE) case TYPE::VALUE: return CSSValue##VALUE;
-#define EMIT_FROM_CSS_SWITCH_CASE(VALUE) case CSSValue##VALUE: return TYPE::VALUE;
+#define EMIT_TO_CSS_SWITCH_CASE(VALUE) case TYPE::VALUE: return CSSValueID::VALUE;
+#define EMIT_FROM_CSS_SWITCH_CASE(VALUE) case CSSValueID::VALUE: return TYPE::VALUE;
 #define EMIT_VALUE_REPRESENTATION_CSS_SWITCH_CASE(VALUE) case WebCore::TYPE::VALUE: return visitor(CSS::Keyword::VALUE { });
 
 #define DEFINE_TO_CSS_VALUE_ID_FUNCTION \
@@ -107,7 +107,7 @@ constexpr CSSValueID toCSSValueID(TYPE value) { \
     FOR_EACH(EMIT_TO_CSS_SWITCH_CASE) \
     } \
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(); \
-    return CSSValueInvalid; \
+    return CSSValueID::Invalid; \
 }
 
 #define DEFINE_FROM_CSS_VALUE_ID_FUNCTION \
@@ -190,28 +190,28 @@ constexpr CSSValueID toCSSValueID(BorderStyle e)
 {
     switch (e) {
     case BorderStyle::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case BorderStyle::Hidden:
-        return CSSValueHidden;
+        return CSSValueID::Hidden;
     case BorderStyle::Inset:
-        return CSSValueInset;
+        return CSSValueID::Inset;
     case BorderStyle::Groove:
-        return CSSValueGroove;
+        return CSSValueID::Groove;
     case BorderStyle::Ridge:
-        return CSSValueRidge;
+        return CSSValueID::Ridge;
     case BorderStyle::Outset:
-        return CSSValueOutset;
+        return CSSValueID::Outset;
     case BorderStyle::Dotted:
-        return CSSValueDotted;
+        return CSSValueID::Dotted;
     case BorderStyle::Dashed:
-        return CSSValueDashed;
+        return CSSValueID::Dashed;
     case BorderStyle::Solid:
-        return CSSValueSolid;
+        return CSSValueID::Solid;
     case BorderStyle::Double:
-        return CSSValueDouble;
+        return CSSValueID::Double;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr BorderStyle fromCSSValueID(CSSValueID valueID)
@@ -229,88 +229,88 @@ constexpr CSSValueID toCSSValueID(CompositeOperator e)
 {
     switch (e) {
     case CompositeOperator::SourceOver:
-        return CSSValueAdd;
+        return CSSValueID::Add;
     case CompositeOperator::SourceIn:
-        return CSSValueIntersect;
+        return CSSValueID::Intersect;
     case CompositeOperator::SourceOut:
-        return CSSValueSubtract;
+        return CSSValueID::Subtract;
     case CompositeOperator::XOR:
-        return CSSValueExclude;
+        return CSSValueID::Exclude;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 constexpr CSSValueID toCSSValueIDForWebkitMaskComposite(CompositeOperator e)
 {
     switch (e) {
     case CompositeOperator::Clear:
-        return CSSValueClear;
+        return CSSValueID::Clear;
     case CompositeOperator::Copy:
-        return CSSValueCopy;
+        return CSSValueID::Copy;
     case CompositeOperator::SourceOver:
-        return CSSValueSourceOver;
+        return CSSValueID::SourceOver;
     case CompositeOperator::SourceIn:
-        return CSSValueSourceIn;
+        return CSSValueID::SourceIn;
     case CompositeOperator::SourceOut:
-        return CSSValueSourceOut;
+        return CSSValueID::SourceOut;
     case CompositeOperator::SourceAtop:
-        return CSSValueSourceAtop;
+        return CSSValueID::SourceAtop;
     case CompositeOperator::DestinationOver:
-        return CSSValueDestinationOver;
+        return CSSValueID::DestinationOver;
     case CompositeOperator::DestinationIn:
-        return CSSValueDestinationIn;
+        return CSSValueID::DestinationIn;
     case CompositeOperator::DestinationOut:
-        return CSSValueDestinationOut;
+        return CSSValueID::DestinationOut;
     case CompositeOperator::DestinationAtop:
-        return CSSValueDestinationAtop;
+        return CSSValueID::DestinationAtop;
     case CompositeOperator::XOR:
-        return CSSValueXor;
+        return CSSValueID::Xor;
     case CompositeOperator::PlusDarker:
-        return CSSValuePlusDarker;
+        return CSSValueID::PlusDarker;
     case CompositeOperator::PlusLighter:
-        return CSSValuePlusLighter;
+        return CSSValueID::PlusLighter;
     case CompositeOperator::Difference:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr CompositeOperator fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueClear:
+    case CSSValueID::Clear:
         return CompositeOperator::Clear;
-    case CSSValueCopy:
+    case CSSValueID::Copy:
         return CompositeOperator::Copy;
-    case CSSValueSourceOver:
-    case CSSValueAdd:
+    case CSSValueID::SourceOver:
+    case CSSValueID::Add:
         return CompositeOperator::SourceOver;
-    case CSSValueSourceIn:
-    case CSSValueIntersect:
+    case CSSValueID::SourceIn:
+    case CSSValueID::Intersect:
         return CompositeOperator::SourceIn;
-    case CSSValueSourceOut:
-    case CSSValueSubtract:
+    case CSSValueID::SourceOut:
+    case CSSValueID::Subtract:
         return CompositeOperator::SourceOut;
-    case CSSValueSourceAtop:
+    case CSSValueID::SourceAtop:
         return CompositeOperator::SourceAtop;
-    case CSSValueDestinationOver:
+    case CSSValueID::DestinationOver:
         return CompositeOperator::DestinationOver;
-    case CSSValueDestinationIn:
+    case CSSValueID::DestinationIn:
         return CompositeOperator::DestinationIn;
-    case CSSValueDestinationOut:
+    case CSSValueID::DestinationOut:
         return CompositeOperator::DestinationOut;
-    case CSSValueDestinationAtop:
+    case CSSValueID::DestinationAtop:
         return CompositeOperator::DestinationAtop;
-    case CSSValueXor:
-    case CSSValueExclude:
+    case CSSValueID::Xor:
+    case CSSValueID::Exclude:
         return CompositeOperator::XOR;
-    case CSSValuePlusDarker:
+    case CSSValueID::PlusDarker:
         return CompositeOperator::PlusDarker;
-    case CSSValuePlusLighter:
+    case CSSValueID::PlusLighter:
         return CompositeOperator::PlusLighter;
     default:
         break;
@@ -323,54 +323,54 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
 {
     switch (e) {
     case StyleAppearance::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case StyleAppearance::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case StyleAppearance::Base:
-        return CSSValueBase;
+        return CSSValueID::Base;
     case StyleAppearance::BaseSelect:
-        return CSSValueBaseSelect;
+        return CSSValueID::BaseSelect;
     case StyleAppearance::Checkbox:
-        return CSSValueCheckbox;
+        return CSSValueID::Checkbox;
     case StyleAppearance::Radio:
-        return CSSValueRadio;
+        return CSSValueID::Radio;
     case StyleAppearance::PushButton:
-        return CSSValuePushButton;
+        return CSSValueID::PushButton;
     case StyleAppearance::SquareButton:
-        return CSSValueSquareButton;
+        return CSSValueID::SquareButton;
     case StyleAppearance::Button:
-        return CSSValueButton;
+        return CSSValueID::Button;
     case StyleAppearance::DefaultButton:
-        return CSSValueDefaultButton;
+        return CSSValueID::DefaultButton;
     case StyleAppearance::Listbox:
-        return CSSValueListbox;
+        return CSSValueID::Listbox;
     case StyleAppearance::Menulist:
-        return CSSValueMenulist;
+        return CSSValueID::Menulist;
     case StyleAppearance::MenulistButton:
-        return CSSValueMenulistButton;
+        return CSSValueID::MenulistButton;
     case StyleAppearance::Meter:
-        return CSSValueMeter;
+        return CSSValueID::Meter;
     case StyleAppearance::ProgressBar:
-        return CSSValueProgressBar;
+        return CSSValueID::ProgressBar;
     case StyleAppearance::SliderHorizontal:
-        return CSSValueSliderHorizontal;
+        return CSSValueID::SliderHorizontal;
     case StyleAppearance::SliderVertical:
-        return CSSValueSliderVertical;
+        return CSSValueID::SliderVertical;
     case StyleAppearance::SearchField:
-        return CSSValueSearchfield;
+        return CSSValueID::Searchfield;
     case StyleAppearance::TextField:
-        return CSSValueTextfield;
+        return CSSValueID::Textfield;
     case StyleAppearance::TextArea:
-        return CSSValueTextarea;
+        return CSSValueID::Textarea;
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:
-        return CSSValueAttachment;
+        return CSSValueID::Attachment;
     case StyleAppearance::BorderlessAttachment:
-        return CSSValueBorderlessAttachment;
+        return CSSValueID::BorderlessAttachment;
 #endif
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
-        return CSSValueApplePayButton;
+        return CSSValueID::ApplePayButton;
 #endif
     case StyleAppearance::ColorWell:
     case StyleAppearance::ColorWellSwatch:
@@ -389,18 +389,18 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
     case StyleAppearance::SliderThumbVertical:
     case StyleAppearance::Switch:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-        return CSSValueNone;
+        return CSSValueID::None;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr StyleAppearance fromCSSValueID(CSSValueID valueID)
 {
-    if (valueID == CSSValueNone)
+    if (valueID == CSSValueID::None)
         return StyleAppearance::None;
 
-    if (valueID == CSSValueAuto)
+    if (valueID == CSSValueID::Auto)
         return StyleAppearance::Auto;
 
     return StyleAppearance(std::to_underlying(valueID) - std::to_underlying(CSSValueID::Base) + static_cast<unsigned>(StyleAppearance::Base));
@@ -428,24 +428,24 @@ constexpr CSSValueID toCSSValueID(FillAttachment e)
 {
     switch (e) {
     case FillAttachment::ScrollBackground:
-        return CSSValueScroll;
+        return CSSValueID::Scroll;
     case FillAttachment::LocalBackground:
-        return CSSValueLocal;
+        return CSSValueID::Local;
     case FillAttachment::FixedBackground:
-        return CSSValueFixed;
+        return CSSValueID::Fixed;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr FillAttachment fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueScroll:
+    case CSSValueID::Scroll:
         return FillAttachment::ScrollBackground;
-    case CSSValueLocal:
+    case CSSValueID::Local:
         return FillAttachment::LocalBackground;
-    case CSSValueFixed:
+    case CSSValueID::Fixed:
         return FillAttachment::FixedBackground;
     default:
         break;
@@ -458,40 +458,40 @@ constexpr CSSValueID toCSSValueID(FillBox e)
 {
     switch (e) {
     case FillBox::BorderBox:
-        return CSSValueBorderBox;
+        return CSSValueID::BorderBox;
     case FillBox::PaddingBox:
-        return CSSValuePaddingBox;
+        return CSSValueID::PaddingBox;
     case FillBox::ContentBox:
-        return CSSValueContentBox;
+        return CSSValueID::ContentBox;
     case FillBox::BorderArea:
-        return CSSValueBorderArea;
+        return CSSValueID::BorderArea;
     case FillBox::Text:
-        return CSSValueText;
+        return CSSValueID::Text;
     case FillBox::NoClip:
-        return CSSValueNoClip;
+        return CSSValueID::NoClip;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr FillBox fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueBorder:
-    case CSSValueBorderBox:
+    case CSSValueID::Border:
+    case CSSValueID::BorderBox:
         return FillBox::BorderBox;
-    case CSSValuePadding:
-    case CSSValuePaddingBox:
+    case CSSValueID::Padding:
+    case CSSValueID::PaddingBox:
         return FillBox::PaddingBox;
-    case CSSValueContent:
-    case CSSValueContentBox:
+    case CSSValueID::Content:
+    case CSSValueID::ContentBox:
         return FillBox::ContentBox;
-    case CSSValueBorderArea:
+    case CSSValueID::BorderArea:
         return FillBox::BorderArea;
-    case CSSValueText:
-    case CSSValueWebkitText:
+    case CSSValueID::Text:
+    case CSSValueID::WebkitText:
         return FillBox::Text;
-    case CSSValueNoClip:
+    case CSSValueID::NoClip:
         return FillBox::NoClip;
     default:
         break;
@@ -552,22 +552,22 @@ constexpr CSSValueID toCSSValueID(BoxOrient e)
 {
     switch (e) {
     case BoxOrient::Horizontal:
-        return CSSValueHorizontal;
+        return CSSValueID::Horizontal;
     case BoxOrient::Vertical:
-        return CSSValueVertical;
+        return CSSValueID::Vertical;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr BoxOrient fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueHorizontal:
-    case CSSValueInlineAxis:
+    case CSSValueID::Horizontal:
+    case CSSValueID::InlineAxis:
         return BoxOrient::Horizontal;
-    case CSSValueVertical:
-    case CSSValueBlockAxis:
+    case CSSValueID::Vertical:
+    case CSSValueID::BlockAxis:
         return BoxOrient::Vertical;
     default:
         break;
@@ -598,96 +598,96 @@ constexpr CSSValueID toCSSValueID(CursorType e)
 {
     switch (e) {
     case CursorType::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case CursorType::Default:
-        return CSSValueDefault;
+        return CSSValueID::Default;
     case CursorType::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case CursorType::ContextMenu:
-        return CSSValueContextMenu;
+        return CSSValueID::ContextMenu;
     case CursorType::Help:
-        return CSSValueHelp;
+        return CSSValueID::Help;
     case CursorType::Pointer:
-        return CSSValuePointer;
+        return CSSValueID::Pointer;
     case CursorType::Progress:
-        return CSSValueProgress;
+        return CSSValueID::Progress;
     case CursorType::Wait:
-        return CSSValueWait;
+        return CSSValueID::Wait;
     case CursorType::Cell:
-        return CSSValueCell;
+        return CSSValueID::Cell;
     case CursorType::Crosshair:
-        return CSSValueCrosshair;
+        return CSSValueID::Crosshair;
     case CursorType::Text:
-        return CSSValueText;
+        return CSSValueID::Text;
     case CursorType::VerticalText:
-        return CSSValueVerticalText;
+        return CSSValueID::VerticalText;
     case CursorType::Alias:
-        return CSSValueAlias;
+        return CSSValueID::Alias;
     case CursorType::Copy:
-        return CSSValueCopy;
+        return CSSValueID::Copy;
     case CursorType::Move:
-        return CSSValueMove;
+        return CSSValueID::Move;
     case CursorType::NoDrop:
-        return CSSValueNoDrop;
+        return CSSValueID::NoDrop;
     case CursorType::NotAllowed:
-        return CSSValueNotAllowed;
+        return CSSValueID::NotAllowed;
     case CursorType::Grab:
-        return CSSValueGrab;
+        return CSSValueID::Grab;
     case CursorType::Grabbing:
-        return CSSValueGrabbing;
+        return CSSValueID::Grabbing;
     case CursorType::EResize:
-        return CSSValueEResize;
+        return CSSValueID::EResize;
     case CursorType::NResize:
-        return CSSValueNResize;
+        return CSSValueID::NResize;
     case CursorType::NEResize:
-        return CSSValueNeResize;
+        return CSSValueID::NeResize;
     case CursorType::NWResize:
-        return CSSValueNwResize;
+        return CSSValueID::NwResize;
     case CursorType::SResize:
-        return CSSValueSResize;
+        return CSSValueID::SResize;
     case CursorType::SEResize:
-        return CSSValueSeResize;
+        return CSSValueID::SeResize;
     case CursorType::SWResize:
-        return CSSValueSwResize;
+        return CSSValueID::SwResize;
     case CursorType::WResize:
-        return CSSValueWResize;
+        return CSSValueID::WResize;
     case CursorType::EWResize:
-        return CSSValueEwResize;
+        return CSSValueID::EwResize;
     case CursorType::NSResize:
-        return CSSValueNsResize;
+        return CSSValueID::NsResize;
     case CursorType::NESWResize:
-        return CSSValueNeswResize;
+        return CSSValueID::NeswResize;
     case CursorType::NWSEResize:
-        return CSSValueNwseResize;
+        return CSSValueID::NwseResize;
     case CursorType::ColumnResize:
-        return CSSValueColResize;
+        return CSSValueID::ColResize;
     case CursorType::RowResize:
-        return CSSValueRowResize;
+        return CSSValueID::RowResize;
     case CursorType::AllScroll:
-        return CSSValueAllScroll;
+        return CSSValueID::AllScroll;
     case CursorType::ZoomIn:
-        return CSSValueZoomIn;
+        return CSSValueID::ZoomIn;
     case CursorType::ZoomOut:
-        return CSSValueZoomOut;
+        return CSSValueID::ZoomOut;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr CursorType fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueCopy:
+    case CSSValueID::Copy:
         return CursorType::Copy;
-    case CSSValueWebkitGrab:
+    case CSSValueID::WebkitGrab:
         return CursorType::Grab;
-    case CSSValueWebkitGrabbing:
+    case CSSValueID::WebkitGrabbing:
         return CursorType::Grabbing;
-    case CSSValueWebkitZoomIn:
+    case CSSValueID::WebkitZoomIn:
         return CursorType::ZoomIn;
-    case CSSValueWebkitZoomOut:
+    case CSSValueID::WebkitZoomOut:
         return CursorType::ZoomOut;
-    case CSSValueNone:
+    case CSSValueID::None:
         return CursorType::None;
     default:
         return static_cast<CursorType>(std::to_underlying(valueID) - std::to_underlying(CSSValueID::Auto));
@@ -756,42 +756,42 @@ constexpr CSSValueID toCSSValueID(MarqueeDirection direction)
 {
     switch (direction) {
     case MarqueeDirection::Forward:
-        return CSSValueForwards;
+        return CSSValueID::Forwards;
     case MarqueeDirection::Backward:
-        return CSSValueBackwards;
+        return CSSValueID::Backwards;
     case MarqueeDirection::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case MarqueeDirection::Up:
-        return CSSValueUp;
+        return CSSValueID::Up;
     case MarqueeDirection::Down:
-        return CSSValueDown;
+        return CSSValueID::Down;
     case MarqueeDirection::Left:
-        return CSSValueLeft;
+        return CSSValueID::Left;
     case MarqueeDirection::Right:
-        return CSSValueRight;
+        return CSSValueID::Right;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr MarqueeDirection fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueForwards:
+    case CSSValueID::Forwards:
         return MarqueeDirection::Forward;
-    case CSSValueBackwards:
+    case CSSValueID::Backwards:
         return MarqueeDirection::Backward;
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return MarqueeDirection::Auto;
-    case CSSValueAhead:
-    case CSSValueUp: // We don't support vertical languages, so AHEAD just maps to UP.
+    case CSSValueID::Ahead:
+    case CSSValueID::Up: // We don't support vertical languages, so AHEAD just maps to UP.
         return MarqueeDirection::Up;
-    case CSSValueReverse:
-    case CSSValueDown: // REVERSE just maps to DOWN, since we don't do vertical text.
+    case CSSValueID::Reverse:
+    case CSSValueID::Down: // REVERSE just maps to DOWN, since we don't do vertical text.
         return MarqueeDirection::Down;
-    case CSSValueLeft:
+    case CSSValueID::Left:
         return MarqueeDirection::Left;
-    case CSSValueRight:
+    case CSSValueID::Right:
         return MarqueeDirection::Right;
     default:
         break;
@@ -810,41 +810,41 @@ constexpr CSSValueID toCSSValueID(Overflow e)
 {
     switch (e) {
     case Overflow::Visible:
-        return CSSValueVisible;
+        return CSSValueID::Visible;
     case Overflow::Hidden:
-        return CSSValueHidden;
+        return CSSValueID::Hidden;
     case Overflow::Scroll:
-        return CSSValueScroll;
+        return CSSValueID::Scroll;
     case Overflow::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case Overflow::PagedX:
-        return CSSValueWebkitPagedX;
+        return CSSValueID::WebkitPagedX;
     case Overflow::PagedY:
-        return CSSValueWebkitPagedY;
+        return CSSValueID::WebkitPagedY;
     case Overflow::Clip:
-        return CSSValueClip;
+        return CSSValueID::Clip;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr Overflow fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueVisible:
+    case CSSValueID::Visible:
         return Overflow::Visible;
-    case CSSValueHidden:
+    case CSSValueID::Hidden:
         return Overflow::Hidden;
-    case CSSValueScroll:
+    case CSSValueID::Scroll:
         return Overflow::Scroll;
-    case CSSValueOverlay:
-    case CSSValueAuto:
+    case CSSValueID::Overlay:
+    case CSSValueID::Auto:
         return Overflow::Auto;
-    case CSSValueWebkitPagedX:
+    case CSSValueID::WebkitPagedX:
         return Overflow::PagedX;
-    case CSSValueWebkitPagedY:
+    case CSSValueID::WebkitPagedY:
         return Overflow::PagedY;
-    case CSSValueClip:
+    case CSSValueID::Clip:
         return Overflow::Clip;
     default:
         break;
@@ -875,52 +875,52 @@ constexpr CSSValueID toCSSValueID(BreakBetween e)
 {
     switch (e) {
     case BreakBetween::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case BreakBetween::Avoid:
-        return CSSValueAvoid;
+        return CSSValueID::Avoid;
     case BreakBetween::AvoidColumn:
-        return CSSValueAvoidColumn;
+        return CSSValueID::AvoidColumn;
     case BreakBetween::AvoidPage:
-        return CSSValueAvoidPage;
+        return CSSValueID::AvoidPage;
     case BreakBetween::Column:
-        return CSSValueColumn;
+        return CSSValueID::Column;
     case BreakBetween::Page:
-        return CSSValuePage;
+        return CSSValueID::Page;
     case BreakBetween::LeftPage:
-        return CSSValueLeft;
+        return CSSValueID::Left;
     case BreakBetween::RightPage:
-        return CSSValueRight;
+        return CSSValueID::Right;
     case BreakBetween::RectoPage:
-        return CSSValueRecto;
+        return CSSValueID::Recto;
     case BreakBetween::VersoPage:
-        return CSSValueVerso;
+        return CSSValueID::Verso;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr BreakBetween fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return BreakBetween::Auto;
-    case CSSValueAvoid:
+    case CSSValueID::Avoid:
         return BreakBetween::Avoid;
-    case CSSValueAvoidColumn:
+    case CSSValueID::AvoidColumn:
         return BreakBetween::AvoidColumn;
-    case CSSValueAvoidPage:
+    case CSSValueID::AvoidPage:
         return BreakBetween::AvoidPage;
-    case CSSValueColumn:
+    case CSSValueID::Column:
         return BreakBetween::Column;
-    case CSSValuePage:
+    case CSSValueID::Page:
         return BreakBetween::Page;
-    case CSSValueLeft:
+    case CSSValueID::Left:
         return BreakBetween::LeftPage;
-    case CSSValueRight:
+    case CSSValueID::Right:
         return BreakBetween::RightPage;
-    case CSSValueRecto:
+    case CSSValueID::Recto:
         return BreakBetween::RectoPage;
-    case CSSValueVerso:
+    case CSSValueID::Verso:
         return BreakBetween::VersoPage;
     default:
         break;
@@ -939,33 +939,33 @@ constexpr CSSValueID toCSSValueID(PositionType e)
 {
     switch (e) {
     case PositionType::Static:
-        return CSSValueStatic;
+        return CSSValueID::Static;
     case PositionType::Relative:
-        return CSSValueRelative;
+        return CSSValueID::Relative;
     case PositionType::Absolute:
-        return CSSValueAbsolute;
+        return CSSValueID::Absolute;
     case PositionType::Fixed:
-        return CSSValueFixed;
+        return CSSValueID::Fixed;
     case PositionType::Sticky:
-        return CSSValueSticky;
+        return CSSValueID::Sticky;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr PositionType fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueStatic:
+    case CSSValueID::Static:
         return PositionType::Static;
-    case CSSValueRelative:
+    case CSSValueID::Relative:
         return PositionType::Relative;
-    case CSSValueAbsolute:
+    case CSSValueID::Absolute:
         return PositionType::Absolute;
-    case CSSValueFixed:
+    case CSSValueID::Fixed:
         return PositionType::Fixed;
-    case CSSValueSticky:
-    case CSSValueWebkitSticky:
+    case CSSValueID::Sticky:
+    case CSSValueID::WebkitSticky:
         return PositionType::Sticky;
     default:
         break;
@@ -1010,35 +1010,35 @@ constexpr CSSValueID toCSSValueID(Style::TextAlign e)
 {
     switch (e) {
     case Style::TextAlign::Start:
-        return CSSValueStart;
+        return CSSValueID::Start;
     case Style::TextAlign::End:
-        return CSSValueEnd;
+        return CSSValueID::End;
     case Style::TextAlign::Left:
-        return CSSValueLeft;
+        return CSSValueID::Left;
     case Style::TextAlign::Right:
-        return CSSValueRight;
+        return CSSValueID::Right;
     case Style::TextAlign::Center:
-        return CSSValueCenter;
+        return CSSValueID::Center;
     case Style::TextAlign::Justify:
-        return CSSValueJustify;
+        return CSSValueID::Justify;
     case Style::TextAlign::WebKitLeft:
-        return CSSValueWebkitLeft;
+        return CSSValueID::WebkitLeft;
     case Style::TextAlign::WebKitRight:
-        return CSSValueWebkitRight;
+        return CSSValueID::WebkitRight;
     case Style::TextAlign::WebKitCenter:
-        return CSSValueWebkitCenter;
+        return CSSValueID::WebkitCenter;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr Style::TextAlign fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueWebkitAuto: // Legacy -webkit-auto. Equivalent to start.
-    case CSSValueStart:
+    case CSSValueID::WebkitAuto: // Legacy -webkit-auto. Equivalent to start.
+    case CSSValueID::Start:
         return Style::TextAlign::Start;
-    case CSSValueEnd:
+    case CSSValueID::End:
         return Style::TextAlign::End;
     default:
         return static_cast<Style::TextAlign>(std::to_underlying(valueID) - std::to_underlying(CSSValueID::Left));
@@ -1089,29 +1089,29 @@ constexpr CSSValueID toCSSValueID(TextJustify e)
 {
     switch (e) {
     case TextJustify::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case TextJustify::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case TextJustify::InterWord:
-        return CSSValueInterWord;
+        return CSSValueID::InterWord;
     case TextJustify::InterCharacter:
-        return CSSValueInterCharacter;
+        return CSSValueID::InterCharacter;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr TextJustify fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return TextJustify::Auto;
-    case CSSValueNone:
+    case CSSValueID::None:
         return TextJustify::None;
-    case CSSValueInterWord:
+    case CSSValueID::InterWord:
         return TextJustify::InterWord;
-    case CSSValueInterCharacter:
-    case CSSValueDistribute:
+    case CSSValueID::InterCharacter:
+    case CSSValueID::Distribute:
         return TextJustify::InterCharacter;
     default:
         break;
@@ -1166,39 +1166,39 @@ constexpr CSSValueID toCSSValueID(UnicodeBidi e)
 {
     switch (e) {
     case UnicodeBidi::Normal:
-        return CSSValueNormal;
+        return CSSValueID::Normal;
     case UnicodeBidi::Embed:
-        return CSSValueEmbed;
+        return CSSValueID::Embed;
     case UnicodeBidi::Override:
-        return CSSValueBidiOverride;
+        return CSSValueID::BidiOverride;
     case UnicodeBidi::Isolate:
-        return CSSValueIsolate;
+        return CSSValueID::Isolate;
     case UnicodeBidi::IsolateOverride:
-        return CSSValueIsolateOverride;
+        return CSSValueID::IsolateOverride;
     case UnicodeBidi::Plaintext:
-        return CSSValuePlaintext;
+        return CSSValueID::Plaintext;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr UnicodeBidi fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         return UnicodeBidi::Normal;
-    case CSSValueEmbed:
+    case CSSValueID::Embed:
         return UnicodeBidi::Embed;
-    case CSSValueBidiOverride:
+    case CSSValueID::BidiOverride:
         return UnicodeBidi::Override;
-    case CSSValueIsolate:
-    case CSSValueWebkitIsolate:
+    case CSSValueID::Isolate:
+    case CSSValueID::WebkitIsolate:
         return UnicodeBidi::Isolate;
-    case CSSValueIsolateOverride:
-    case CSSValueWebkitIsolateOverride:
+    case CSSValueID::IsolateOverride:
+    case CSSValueID::WebkitIsolateOverride:
         return UnicodeBidi::IsolateOverride;
-    case CSSValuePlaintext:
-    case CSSValueWebkitPlaintext:
+    case CSSValueID::Plaintext:
+    case CSSValueID::WebkitPlaintext:
         return UnicodeBidi::Plaintext;
     default:
         break;
@@ -1223,28 +1223,28 @@ constexpr CSSValueID toCSSValueID(UserSelect e)
 {
     switch (e) {
     case UserSelect::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case UserSelect::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case UserSelect::Text:
-        return CSSValueText;
+        return CSSValueID::Text;
     case UserSelect::All:
-        return CSSValueAll;
+        return CSSValueID::All;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr UserSelect fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return UserSelect::Auto;
-    case CSSValueNone:
+    case CSSValueID::None:
         return UserSelect::None;
-    case CSSValueText:
+    case CSSValueID::Text:
         return UserSelect::Text;
-    case CSSValueAll:
+    case CSSValueID::All:
         return UserSelect::All;
     default:
         break;
@@ -1281,20 +1281,20 @@ constexpr CSSValueID toCSSValueID(TextDirection e)
 {
     switch (e) {
     case TextDirection::LTR:
-        return CSSValueLtr;
+        return CSSValueID::Ltr;
     case TextDirection::RTL:
-        return CSSValueRtl;
+        return CSSValueID::Rtl;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr TextDirection fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueLtr:
+    case CSSValueID::Ltr:
         return TextDirection::LTR;
-    case CSSValueRtl:
+    case CSSValueID::Rtl:
         return TextDirection::RTL;
     default:
         break;
@@ -1307,42 +1307,42 @@ constexpr CSSValueID toCSSValueID(StyleWritingMode e)
 {
     switch (e) {
     case StyleWritingMode::HorizontalTb:
-        return CSSValueHorizontalTb;
+        return CSSValueID::HorizontalTb;
     case StyleWritingMode::VerticalRl:
-        return CSSValueVerticalRl;
+        return CSSValueID::VerticalRl;
     case StyleWritingMode::VerticalLr:
-        return CSSValueVerticalLr;
+        return CSSValueID::VerticalLr;
     case StyleWritingMode::SidewaysRl:
-        return CSSValueSidewaysRl;
+        return CSSValueID::SidewaysRl;
     case StyleWritingMode::SidewaysLr:
-        return CSSValueSidewaysLr;
+        return CSSValueID::SidewaysLr;
     case StyleWritingMode::HorizontalBt:
-        return CSSValueHorizontalBt;
+        return CSSValueID::HorizontalBt;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr StyleWritingMode fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueHorizontalTb:
-    case CSSValueLr:
-    case CSSValueLrTb:
-    case CSSValueRl:
-    case CSSValueRlTb:
+    case CSSValueID::HorizontalTb:
+    case CSSValueID::Lr:
+    case CSSValueID::LrTb:
+    case CSSValueID::Rl:
+    case CSSValueID::RlTb:
         return StyleWritingMode::HorizontalTb;
-    case CSSValueVerticalRl:
-    case CSSValueTb:
-    case CSSValueTbRl:
+    case CSSValueID::VerticalRl:
+    case CSSValueID::Tb:
+    case CSSValueID::TbRl:
         return StyleWritingMode::VerticalRl;
-    case CSSValueVerticalLr:
+    case CSSValueID::VerticalLr:
         return StyleWritingMode::VerticalLr;
-    case CSSValueSidewaysLr:
+    case CSSValueID::SidewaysLr:
         return StyleWritingMode::SidewaysLr;
-    case CSSValueSidewaysRl:
+    case CSSValueID::SidewaysRl:
         return StyleWritingMode::SidewaysRl;
-    case CSSValueHorizontalBt:
+    case CSSValueID::HorizontalBt:
         return StyleWritingMode::HorizontalBt;
     default:
         break;
@@ -1355,21 +1355,21 @@ constexpr CSSValueID toCSSValueID(TextCombine e)
 {
     switch (e) {
     case TextCombine::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case TextCombine::All:
-        return CSSValueAll;
+        return CSSValueID::All;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr TextCombine fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNone:
+    case CSSValueID::None:
         return TextCombine::None;
-    case CSSValueAll:
-    case CSSValueHorizontal: // -webkit-text-combine only
+    case CSSValueID::All:
+    case CSSValueID::Horizontal: // -webkit-text-combine only
         return TextCombine::All;
     default:
         break;
@@ -1382,30 +1382,30 @@ constexpr CSSValueID toCSSValueID(RubyPosition e)
 {
     switch (e) {
     case RubyPosition::Over:
-        return CSSValueOver;
+        return CSSValueID::Over;
     case RubyPosition::Under:
-        return CSSValueUnder;
+        return CSSValueID::Under;
     case RubyPosition::InterCharacter:
-        return CSSValueInterCharacter;
+        return CSSValueID::InterCharacter;
     case RubyPosition::LegacyInterCharacter:
-        return CSSValueLegacyInterCharacter;
+        return CSSValueID::LegacyInterCharacter;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr RubyPosition fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueOver:
-    case CSSValueBefore: // -webkit-ruby-position only
+    case CSSValueID::Over:
+    case CSSValueID::Before: // -webkit-ruby-position only
         return RubyPosition::Over;
-    case CSSValueUnder:
-    case CSSValueAfter: // -webkit-ruby-position only
+    case CSSValueID::Under:
+    case CSSValueID::After: // -webkit-ruby-position only
         return RubyPosition::Under;
-    case CSSValueInterCharacter:
+    case CSSValueID::InterCharacter:
         return RubyPosition::InterCharacter;
-    case CSSValueLegacyInterCharacter:
+    case CSSValueID::LegacyInterCharacter:
         return RubyPosition::LegacyInterCharacter;
     default:
         break;
@@ -1430,20 +1430,20 @@ constexpr CSSValueID toCSSValueID(TextWrapMode wrap)
 {
     switch (wrap) {
     case TextWrapMode::Wrap:
-        return CSSValueWrap;
+        return CSSValueID::Wrap;
     case TextWrapMode::NoWrap:
-        return CSSValueNowrap;
+        return CSSValueID::Nowrap;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr TextWrapMode fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueWrap:
+    case CSSValueID::Wrap:
         return TextWrapMode::Wrap;
-    case CSSValueNowrap:
+    case CSSValueID::Nowrap:
         return TextWrapMode::NoWrap;
     default:
         break;
@@ -1474,32 +1474,32 @@ constexpr CSSValueID toCSSValueID(TextEmphasisMark mark)
 {
     switch (mark) {
     case TextEmphasisMark::Dot:
-        return CSSValueDot;
+        return CSSValueID::Dot;
     case TextEmphasisMark::Circle:
-        return CSSValueCircle;
+        return CSSValueID::Circle;
     case TextEmphasisMark::DoubleCircle:
-        return CSSValueDoubleCircle;
+        return CSSValueID::DoubleCircle;
     case TextEmphasisMark::Triangle:
-        return CSSValueTriangle;
+        return CSSValueID::Triangle;
     case TextEmphasisMark::Sesame:
-        return CSSValueSesame;
+        return CSSValueID::Sesame;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr TextEmphasisMark fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueDot:
+    case CSSValueID::Dot:
         return TextEmphasisMark::Dot;
-    case CSSValueCircle:
+    case CSSValueID::Circle:
         return TextEmphasisMark::Circle;
-    case CSSValueDoubleCircle:
+    case CSSValueID::DoubleCircle:
         return TextEmphasisMark::DoubleCircle;
-    case CSSValueTriangle:
+    case CSSValueID::Triangle:
         return TextEmphasisMark::Triangle;
-    case CSSValueSesame:
+    case CSSValueID::Sesame:
         return TextEmphasisMark::Sesame;
     default:
         break;
@@ -1526,24 +1526,24 @@ constexpr CSSValueID toCSSValueID(Kerning kerning)
 {
     switch (kerning) {
     case Kerning::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case Kerning::Normal:
-        return CSSValueNormal;
+        return CSSValueID::Normal;
     case Kerning::NoShift:
-        return CSSValueNone;
+        return CSSValueID::None;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr Kerning fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return Kerning::Auto;
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         return Kerning::Normal;
-    case CSSValueNone:
+    case CSSValueID::None:
         return Kerning::NoShift;
     default:
         break;
@@ -1562,32 +1562,32 @@ constexpr CSSValueID toCSSValueID(FontSizeAdjust::Metric metric)
 {
     switch (metric) {
     case FontSizeAdjust::Metric::ExHeight:
-        return CSSValueExHeight;
+        return CSSValueID::ExHeight;
     case FontSizeAdjust::Metric::CapHeight:
-        return CSSValueCapHeight;
+        return CSSValueID::CapHeight;
     case FontSizeAdjust::Metric::ChWidth:
-        return CSSValueChWidth;
+        return CSSValueID::ChWidth;
     case FontSizeAdjust::Metric::IcWidth:
-        return CSSValueIcWidth;
+        return CSSValueID::IcWidth;
     case FontSizeAdjust::Metric::IcHeight:
-        return CSSValueIcHeight;
+        return CSSValueID::IcHeight;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueAuto;
+    return CSSValueID::Auto;
 }
 
 template<> constexpr FontSizeAdjust::Metric fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueExHeight:
+    case CSSValueID::ExHeight:
         return FontSizeAdjust::Metric::ExHeight;
-    case CSSValueCapHeight:
+    case CSSValueID::CapHeight:
         return FontSizeAdjust::Metric::CapHeight;
-    case CSSValueChWidth:
+    case CSSValueID::ChWidth:
         return FontSizeAdjust::Metric::ChWidth;
-    case CSSValueIcWidth:
+    case CSSValueID::IcWidth:
         return FontSizeAdjust::Metric::IcWidth;
-    case CSSValueIcHeight:
+    case CSSValueID::IcHeight:
         return FontSizeAdjust::Metric::IcHeight;
     default:
         break;
@@ -1669,20 +1669,20 @@ constexpr CSSValueID toCSSValueID(WindRule e)
 {
     switch (e) {
     case WindRule::NonZero:
-        return CSSValueNonzero;
+        return CSSValueID::Nonzero;
     case WindRule::EvenOdd:
-        return CSSValueEvenodd;
+        return CSSValueID::Evenodd;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr WindRule fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNonzero:
+    case CSSValueID::Nonzero:
         return WindRule::NonZero;
-    case CSSValueEvenodd:
+    case CSSValueID::Evenodd:
         return WindRule::EvenOdd;
     default:
         break;
@@ -1709,34 +1709,34 @@ constexpr CSSValueID toCSSValueID(ImageRendering imageRendering)
 {
     switch (imageRendering) {
     case ImageRendering::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case ImageRendering::CrispEdges:
-        return CSSValueCrispEdges;
+        return CSSValueID::CrispEdges;
     case ImageRendering::Pixelated:
-        return CSSValuePixelated;
+        return CSSValueID::Pixelated;
     case ImageRendering::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
+        return CSSValueID::OptimizeSpeed;
     case ImageRendering::OptimizeQuality:
-        return CSSValueOptimizeQuality;
+        return CSSValueID::OptimizeQuality;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr ImageRendering fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return ImageRendering::Auto;
-    case CSSValueWebkitOptimizeContrast:
-    case CSSValueCrispEdges:
-    case CSSValueWebkitCrispEdges:
+    case CSSValueID::WebkitOptimizeContrast:
+    case CSSValueID::CrispEdges:
+    case CSSValueID::WebkitCrispEdges:
         return ImageRendering::CrispEdges;
-    case CSSValuePixelated:
+    case CSSValueID::Pixelated:
         return ImageRendering::Pixelated;
-    case CSSValueOptimizeSpeed:
+    case CSSValueID::OptimizeSpeed:
         return ImageRendering::OptimizeSpeed;
-    case CSSValueOptimizeQuality:
+    case CSSValueID::OptimizeQuality:
         return ImageRendering::OptimizeQuality;
     default:
         break;
@@ -1751,92 +1751,92 @@ constexpr CSSValueID toCSSValueID(AppleVisualEffect effect)
 {
     switch (effect) {
     case AppleVisualEffect::None:
-        return CSSValueNone;
+        return CSSValueID::None;
     case AppleVisualEffect::BlurUltraThinMaterial:
-        return CSSValueAppleSystemBlurMaterialUltraThin;
+        return CSSValueID::AppleSystemBlurMaterialUltraThin;
     case AppleVisualEffect::BlurThinMaterial:
-        return CSSValueAppleSystemBlurMaterialThin;
+        return CSSValueID::AppleSystemBlurMaterialThin;
     case AppleVisualEffect::BlurMaterial:
-        return CSSValueAppleSystemBlurMaterial;
+        return CSSValueID::AppleSystemBlurMaterial;
     case AppleVisualEffect::BlurThickMaterial:
-        return CSSValueAppleSystemBlurMaterialThick;
+        return CSSValueID::AppleSystemBlurMaterialThick;
     case AppleVisualEffect::BlurChromeMaterial:
-        return CSSValueAppleSystemBlurMaterialChrome;
+        return CSSValueID::AppleSystemBlurMaterialChrome;
 #if HAVE(MATERIAL_HOSTING)
     case AppleVisualEffect::GlassMaterial:
-        return CSSValueAppleSystemGlassMaterial;
+        return CSSValueID::AppleSystemGlassMaterial;
     case AppleVisualEffect::GlassClearMaterial:
-        return CSSValueAppleSystemGlassMaterialClear;
+        return CSSValueID::AppleSystemGlassMaterialClear;
     case AppleVisualEffect::GlassSubduedMaterial:
-        return CSSValueAppleSystemGlassMaterialSubdued;
+        return CSSValueID::AppleSystemGlassMaterialSubdued;
     case AppleVisualEffect::GlassMediaControlsMaterial:
-        return CSSValueAppleSystemGlassMaterialMediaControls;
+        return CSSValueID::AppleSystemGlassMaterialMediaControls;
     case AppleVisualEffect::GlassSubduedMediaControlsMaterial:
-        return CSSValueAppleSystemGlassMaterialMediaControlsSubdued;
+        return CSSValueID::AppleSystemGlassMaterialMediaControlsSubdued;
 #endif
     case AppleVisualEffect::VibrancyLabel:
-        return CSSValueAppleSystemVibrancyLabel;
+        return CSSValueID::AppleSystemVibrancyLabel;
     case AppleVisualEffect::VibrancySecondaryLabel:
-        return CSSValueAppleSystemVibrancySecondaryLabel;
+        return CSSValueID::AppleSystemVibrancySecondaryLabel;
     case AppleVisualEffect::VibrancyTertiaryLabel:
-        return CSSValueAppleSystemVibrancyTertiaryLabel;
+        return CSSValueID::AppleSystemVibrancyTertiaryLabel;
     case AppleVisualEffect::VibrancyQuaternaryLabel:
-        return CSSValueAppleSystemVibrancyQuaternaryLabel;
+        return CSSValueID::AppleSystemVibrancyQuaternaryLabel;
     case AppleVisualEffect::VibrancyFill:
-        return CSSValueAppleSystemVibrancyFill;
+        return CSSValueID::AppleSystemVibrancyFill;
     case AppleVisualEffect::VibrancySecondaryFill:
-        return CSSValueAppleSystemVibrancySecondaryFill;
+        return CSSValueID::AppleSystemVibrancySecondaryFill;
     case AppleVisualEffect::VibrancyTertiaryFill:
-        return CSSValueAppleSystemVibrancyTertiaryFill;
+        return CSSValueID::AppleSystemVibrancyTertiaryFill;
     case AppleVisualEffect::VibrancySeparator:
-        return CSSValueAppleSystemVibrancySeparator;
+        return CSSValueID::AppleSystemVibrancySeparator;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr AppleVisualEffect fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNone:
+    case CSSValueID::None:
         return AppleVisualEffect::None;
-    case CSSValueAppleSystemBlurMaterialUltraThin:
+    case CSSValueID::AppleSystemBlurMaterialUltraThin:
         return AppleVisualEffect::BlurUltraThinMaterial;
-    case CSSValueAppleSystemBlurMaterialThin:
+    case CSSValueID::AppleSystemBlurMaterialThin:
         return AppleVisualEffect::BlurThinMaterial;
-    case CSSValueAppleSystemBlurMaterial:
+    case CSSValueID::AppleSystemBlurMaterial:
         return AppleVisualEffect::BlurMaterial;
-    case CSSValueAppleSystemBlurMaterialThick:
+    case CSSValueID::AppleSystemBlurMaterialThick:
         return AppleVisualEffect::BlurThickMaterial;
-    case CSSValueAppleSystemBlurMaterialChrome:
+    case CSSValueID::AppleSystemBlurMaterialChrome:
         return AppleVisualEffect::BlurChromeMaterial;
 #if HAVE(MATERIAL_HOSTING)
-    case CSSValueAppleSystemGlassMaterial:
+    case CSSValueID::AppleSystemGlassMaterial:
         return AppleVisualEffect::GlassMaterial;
-    case CSSValueAppleSystemGlassMaterialClear:
+    case CSSValueID::AppleSystemGlassMaterialClear:
         return AppleVisualEffect::GlassClearMaterial;
-    case CSSValueAppleSystemGlassMaterialSubdued:
+    case CSSValueID::AppleSystemGlassMaterialSubdued:
         return AppleVisualEffect::GlassSubduedMaterial;
-    case CSSValueAppleSystemGlassMaterialMediaControls:
+    case CSSValueID::AppleSystemGlassMaterialMediaControls:
         return AppleVisualEffect::GlassMediaControlsMaterial;
-    case CSSValueAppleSystemGlassMaterialMediaControlsSubdued:
+    case CSSValueID::AppleSystemGlassMaterialMediaControlsSubdued:
         return AppleVisualEffect::GlassSubduedMediaControlsMaterial;
 #endif
-    case CSSValueAppleSystemVibrancyLabel:
+    case CSSValueID::AppleSystemVibrancyLabel:
         return AppleVisualEffect::VibrancyLabel;
-    case CSSValueAppleSystemVibrancySecondaryLabel:
+    case CSSValueID::AppleSystemVibrancySecondaryLabel:
         return AppleVisualEffect::VibrancySecondaryLabel;
-    case CSSValueAppleSystemVibrancyTertiaryLabel:
+    case CSSValueID::AppleSystemVibrancyTertiaryLabel:
         return AppleVisualEffect::VibrancyTertiaryLabel;
-    case CSSValueAppleSystemVibrancyQuaternaryLabel:
+    case CSSValueID::AppleSystemVibrancyQuaternaryLabel:
         return AppleVisualEffect::VibrancyQuaternaryLabel;
-    case CSSValueAppleSystemVibrancyFill:
+    case CSSValueID::AppleSystemVibrancyFill:
         return AppleVisualEffect::VibrancyFill;
-    case CSSValueAppleSystemVibrancySecondaryFill:
+    case CSSValueID::AppleSystemVibrancySecondaryFill:
         return AppleVisualEffect::VibrancySecondaryFill;
-    case CSSValueAppleSystemVibrancyTertiaryFill:
+    case CSSValueID::AppleSystemVibrancyTertiaryFill:
         return AppleVisualEffect::VibrancyTertiaryFill;
-    case CSSValueAppleSystemVibrancySeparator:
+    case CSSValueID::AppleSystemVibrancySeparator:
         return AppleVisualEffect::VibrancySeparator;
     default:
         break;
@@ -1857,27 +1857,27 @@ constexpr CSSValueID toCSSValueID(TransformStyle3D e)
 {
     switch (e) {
     case TransformStyle3D::Flat:
-        return CSSValueFlat;
+        return CSSValueID::Flat;
     case TransformStyle3D::Preserve3D:
-        return CSSValuePreserve3d;
+        return CSSValueID::Preserve3d;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     case TransformStyle3D::Separated:
-        return CSSValueSeparated;
+        return CSSValueID::Separated;
 #endif
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr TransformStyle3D fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueFlat:
+    case CSSValueID::Flat:
         return TransformStyle3D::Flat;
-    case CSSValuePreserve3d:
+    case CSSValueID::Preserve3d:
         return TransformStyle3D::Preserve3D;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    case CSSValueSeparated:
+    case CSSValueID::Separated:
         return TransformStyle3D::Separated;
 #endif
     default:
@@ -1928,28 +1928,28 @@ constexpr CSSValueID toCSSValueID(ShapeRendering e)
 {
     switch (e) {
     case ShapeRendering::Auto:
-        return CSSValueAuto;
+        return CSSValueID::Auto;
     case ShapeRendering::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
+        return CSSValueID::OptimizeSpeed;
     case ShapeRendering::CrispEdges:
-        return CSSValueCrispedges; // "crispedges", not "crisp-edges"
+        return CSSValueID::Crispedges; // "crispedges", not "crisp-edges"
     case ShapeRendering::GeometricPrecision:
-        return CSSValueGeometricPrecision;
+        return CSSValueID::GeometricPrecision;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr ShapeRendering fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return ShapeRendering::Auto;
-    case CSSValueOptimizeSpeed:
+    case CSSValueID::OptimizeSpeed:
         return ShapeRendering::OptimizeSpeed;
-    case CSSValueCrispedges: // "crispedges", not "crisp-edges"
+    case CSSValueID::Crispedges: // "crispedges", not "crisp-edges"
         return ShapeRendering::CrispEdges;
-    case CSSValueGeometricPrecision:
+    case CSSValueID::GeometricPrecision:
         return ShapeRendering::GeometricPrecision;
     default:
         break;
@@ -1980,44 +1980,44 @@ constexpr CSSValueID toCSSValueID(CSSBoxType cssBox)
 {
     switch (cssBox) {
     case CSSBoxType::MarginBox:
-        return CSSValueMarginBox;
+        return CSSValueID::MarginBox;
     case CSSBoxType::BorderBox:
-        return CSSValueBorderBox;
+        return CSSValueID::BorderBox;
     case CSSBoxType::PaddingBox:
-        return CSSValuePaddingBox;
+        return CSSValueID::PaddingBox;
     case CSSBoxType::ContentBox:
-        return CSSValueContentBox;
+        return CSSValueID::ContentBox;
     case CSSBoxType::FillBox:
-        return CSSValueFillBox;
+        return CSSValueID::FillBox;
     case CSSBoxType::StrokeBox:
-        return CSSValueStrokeBox;
+        return CSSValueID::StrokeBox;
     case CSSBoxType::ViewBox:
-        return CSSValueViewBox;
+        return CSSValueID::ViewBox;
     case CSSBoxType::BoxMissing:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-        return CSSValueNone;
+        return CSSValueID::None;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr CSSBoxType fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueMarginBox:
+    case CSSValueID::MarginBox:
         return CSSBoxType::MarginBox;
-    case CSSValueBorderBox:
+    case CSSValueID::BorderBox:
         return CSSBoxType::BorderBox;
-    case CSSValuePaddingBox:
+    case CSSValueID::PaddingBox:
         return CSSBoxType::PaddingBox;
-    case CSSValueContentBox:
+    case CSSValueID::ContentBox:
         return CSSBoxType::ContentBox;
     // The following are used in an SVG context.
-    case CSSValueFillBox:
+    case CSSValueID::FillBox:
         return CSSBoxType::FillBox;
-    case CSSValueStrokeBox:
+    case CSSValueID::StrokeBox:
         return CSSBoxType::StrokeBox;
-    case CSSValueViewBox:
+    case CSSValueID::ViewBox:
         return CSSBoxType::ViewBox;
     default:
         break;
@@ -2075,32 +2075,32 @@ constexpr CSSValueID toCSSValueID(ScrollSnapAxis axis)
 {
     switch (axis) {
     case ScrollSnapAxis::XAxis:
-        return CSSValueX;
+        return CSSValueID::X;
     case ScrollSnapAxis::YAxis:
-        return CSSValueY;
+        return CSSValueID::Y;
     case ScrollSnapAxis::Block:
-        return CSSValueBlock;
+        return CSSValueID::Block;
     case ScrollSnapAxis::Inline:
-        return CSSValueInline;
+        return CSSValueID::Inline;
     case ScrollSnapAxis::Both:
-        return CSSValueBoth;
+        return CSSValueID::Both;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr ScrollSnapAxis fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueX:
+    case CSSValueID::X:
         return ScrollSnapAxis::XAxis;
-    case CSSValueY:
+    case CSSValueID::Y:
         return ScrollSnapAxis::YAxis;
-    case CSSValueBlock:
+    case CSSValueID::Block:
         return ScrollSnapAxis::Block;
-    case CSSValueInline:
+    case CSSValueID::Inline:
         return ScrollSnapAxis::Inline;
-    case CSSValueBoth:
+    case CSSValueID::Both:
         return ScrollSnapAxis::Both;
     default:
         break;
@@ -2152,24 +2152,24 @@ constexpr CSSValueID toCSSValueID(FontVariantPosition position)
 {
     switch (position) {
     case FontVariantPosition::Normal:
-        return CSSValueNormal;
+        return CSSValueID::Normal;
     case FontVariantPosition::Subscript:
-        return CSSValueSub;
+        return CSSValueID::Sub;
     case FontVariantPosition::Superscript:
-        return CSSValueSuper;
+        return CSSValueID::Super;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr FontVariantPosition fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         return FontVariantPosition::Normal;
-    case CSSValueSub:
+    case CSSValueID::Sub:
         return FontVariantPosition::Subscript;
-    case CSSValueSuper:
+    case CSSValueID::Super:
         return FontVariantPosition::Superscript;
     default:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
@@ -2181,40 +2181,40 @@ constexpr CSSValueID toCSSValueID(FontVariantCaps caps)
 {
     switch (caps) {
     case FontVariantCaps::Normal:
-        return CSSValueNormal;
+        return CSSValueID::Normal;
     case FontVariantCaps::Small:
-        return CSSValueSmallCaps;
+        return CSSValueID::SmallCaps;
     case FontVariantCaps::AllSmall:
-        return CSSValueAllSmallCaps;
+        return CSSValueID::AllSmallCaps;
     case FontVariantCaps::Petite:
-        return CSSValuePetiteCaps;
+        return CSSValueID::PetiteCaps;
     case FontVariantCaps::AllPetite:
-        return CSSValueAllPetiteCaps;
+        return CSSValueID::AllPetiteCaps;
     case FontVariantCaps::Unicase:
-        return CSSValueUnicase;
+        return CSSValueID::Unicase;
     case FontVariantCaps::Titling:
-        return CSSValueTitlingCaps;
+        return CSSValueID::TitlingCaps;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 template<> constexpr FontVariantCaps fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         return FontVariantCaps::Normal;
-    case CSSValueSmallCaps:
+    case CSSValueID::SmallCaps:
         return FontVariantCaps::Small;
-    case CSSValueAllSmallCaps:
+    case CSSValueID::AllSmallCaps:
         return FontVariantCaps::AllSmall;
-    case CSSValuePetiteCaps:
+    case CSSValueID::PetiteCaps:
         return FontVariantCaps::Petite;
-    case CSSValueAllPetiteCaps:
+    case CSSValueID::AllPetiteCaps:
         return FontVariantCaps::AllPetite;
-    case CSSValueUnicase:
+    case CSSValueID::Unicase:
         return FontVariantCaps::Unicase;
-    case CSSValueTitlingCaps:
+    case CSSValueID::TitlingCaps:
         return FontVariantCaps::Titling;
     default:
         break;
@@ -2238,27 +2238,27 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 template<> constexpr FontTechnology fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueColorColrv0:
+    case CSSValueID::ColorColrv0:
         return FontTechnology::ColorColrv0;
-    case CSSValueColorColrv1:
+    case CSSValueID::ColorColrv1:
         return FontTechnology::ColorColrv1;
-    case CSSValueColorCbdt:
+    case CSSValueID::ColorCbdt:
         return FontTechnology::ColorCbdt;
-    case CSSValueColorSbix:
+    case CSSValueID::ColorSbix:
         return FontTechnology::ColorSbix;
-    case CSSValueColorSvg:
+    case CSSValueID::ColorSvg:
         return FontTechnology::ColorSvg;
-    case CSSValueFeaturesAat:
+    case CSSValueID::FeaturesAat:
         return FontTechnology::FeaturesAat;
-    case CSSValueFeaturesGraphite:
+    case CSSValueID::FeaturesGraphite:
         return FontTechnology::FeaturesGraphite;
-    case CSSValueFeaturesOpentype:
+    case CSSValueID::FeaturesOpentype:
         return FontTechnology::FeaturesOpentype;
-    case CSSValueIncremental:
+    case CSSValueID::Incremental:
         return FontTechnology::Incremental;
-    case CSSValuePalettes:
+    case CSSValueID::Palettes:
         return FontTechnology::Palettes;
-    case CSSValueVariations:
+    case CSSValueID::Variations:
         return FontTechnology::Variations;
     default:
         break;
@@ -2450,14 +2450,14 @@ constexpr CSSValueID toCSSValueIDForWebkitMaskSourceType(Style::MaskMode e)
 {
     switch (e) {
     case Style::MaskMode::Alpha:
-        return CSSValueAlpha;
+        return CSSValueID::Alpha;
     case Style::MaskMode::Luminance:
-        return CSSValueLuminance;
+        return CSSValueID::Luminance;
     case Style::MaskMode::MatchSource:
-        return CSSValueAlpha;
+        return CSSValueID::Alpha;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
+    return CSSValueID::Invalid;
 }
 
 #define TYPE Style::VisualBox

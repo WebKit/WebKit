@@ -68,7 +68,7 @@ public:
     bool NODELETE hasPercentage() const { return m_hasPercentage; }
     const Calculation::Tree& calculation() const LIFETIME_BOUND { return m_calculation; }
 
-    // The keyword the value behaves as, or CSSValueInvalid for a <calc-sum> or `any` basis, which
+    // The keyword the value behaves as, or CSSValueID::Invalid for a <calc-sum> or `any` basis, which
     // behave as an ordinary length.
     WEBCORE_EXPORT CSSValueID NODELETE basisKeyword() const;
 

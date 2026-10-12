@@ -240,7 +240,7 @@ public:
         if constexpr (hasCalcSize) {
             if (opaqueType == indexForCalcSize) {
                 SUPPRESS_FORWARD_DECL_ARG auto basisKeyword = calcSizeBasisKeyword(m_value.calcSizeValue());
-                if (basisKeyword != CSSValueInvalid)
+                if (basisKeyword != CSSValueID::Invalid)
                     return visitCalcSizeBasisKeyword(basisKeyword, visitor);
             }
         }
@@ -415,7 +415,7 @@ private:
         if constexpr (hasCalcSize) {
             if (opaqueType == indexForCalcSize) {
                 SUPPRESS_FORWARD_DECL_ARG auto basisKeyword = calcSizeBasisKeyword(m_value.calcSizeValue());
-                return basisKeyword != CSSValueInvalid ? PrimitiveDataEvaluationKind::Flag : PrimitiveDataEvaluationKind::CalcSize;
+                return basisKeyword != CSSValueID::Invalid ? PrimitiveDataEvaluationKind::Flag : PrimitiveDataEvaluationKind::CalcSize;
             }
         }
 
