@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CaretRectComputation.h"
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
 #include "ContainerNodeInlines.h"
@@ -690,6 +691,11 @@ void HTMLTextFormControlElement::readOnlyStateChanged()
 {
     HTMLFormControlElement::readOnlyStateChanged();
     updateInnerTextElementEditability();
+
+    if (Ref document = this->document(); this == document->focusedElement()) {
+        if (RefPtr page = document->page())
+            page->chrome().client().focusedElementDidChangeReadOnly(*this);
+    }
 }
 
 bool HTMLTextFormControlElement::isInnerTextElementEditable() const

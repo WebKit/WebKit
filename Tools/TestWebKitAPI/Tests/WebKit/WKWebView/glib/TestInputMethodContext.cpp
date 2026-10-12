@@ -1807,6 +1807,41 @@ static void testWebKitInputMethodContextReadOnly(InputMethodTest* test, gconstpo
     test->waitUntilInputMethodDisabled();
 }
 
+static void testWebKitInputMethodContextReadOnlyChange(InputMethodTest* test, gconstpointer)
+{
+    for (auto* element : { "<textarea id='editable' spellcheck='false'></textarea>", "<input id='editable' spellcheck='false'>" }) {
+        // The button toggles the readonly attribute of the field from its click handler. It does not take the focus.
+        GUniquePtr<char> html(g_strdup_printf("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>%s"
+            "<button style='top:50px' onmousedown='event.preventDefault()' onclick='editable.toggleAttribute(\"readonly\")'></button>"
+            "<script>var editable = document.getElementById('editable')</script>", element));
+        test->loadHtml(html.get(), nullptr);
+        test->waitUntilLoadFinished();
+        test->clickMouseButton(20, 15);
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->waitUntilInputMethodEnabled();
+        test->clearInputMethodCounters();
+
+        // A field that becomes read-only gets no input method state, which the embedder sees as a focus out.
+        test->clickMouseButton(20, 65);
+        test->assertJavaScriptBecomesTrue("editable.readOnly");
+        test->waitUntilInputMethodDisabled();
+        g_assert_cmpuint(test->focusInCount(), ==, 0);
+        g_assert_cmpuint(test->focusOutCount(), ==, 1);
+
+        // A field that becomes editable gets the input method again.
+        test->clickMouseButton(20, 65);
+        test->assertJavaScriptBecomesTrue("!editable.readOnly");
+        test->waitUntilInputMethodEnabled();
+        g_assert_cmpuint(test->focusInCount(), ==, 1);
+        g_assert_cmpuint(test->focusOutCount(), ==, 1);
+        g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+        g_assert_cmpuint(test->hints(), ==, 0);
+
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    }
+}
+
 static void testWebKitInputMethodContextInputModeChange(InputMethodTest* test, gconstpointer)
 {
     // The button changes the inputmode of the field from its click handler. It does not take the focus.
@@ -1894,6 +1929,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "focus-interaction", testWebKitInputMethodContextFocusInteraction);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
     InputMethodTest::add("WebKitInputMethodContext", "read-only", testWebKitInputMethodContextReadOnly);
+    InputMethodTest::add("WebKitInputMethodContext", "read-only-change", testWebKitInputMethodContextReadOnlyChange);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode", testWebKitInputMethodContextInputMode);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode-change", testWebKitInputMethodContextInputModeChange);
 }

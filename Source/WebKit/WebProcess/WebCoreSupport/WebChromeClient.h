@@ -382,6 +382,10 @@ private:
     void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void focusedElementDidChangeReadOnly(WebCore::Element&) final;
+#endif
+
 #if PLATFORM(COCOA)
     bool hasStablePageScaleFactor() const final;
 

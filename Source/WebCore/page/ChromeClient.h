@@ -471,6 +471,7 @@ public:
     virtual void elementDidRefocus(Element&, const FocusOptions&) { }
 
     virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
+    virtual void focusedElementDidChangeReadOnly(Element&) { }
     virtual void focusedSelectElementDidChangeOptions(const HTMLSelectElement&) { }
 
     virtual bool shouldPaintEntireContents() const { return false; }
