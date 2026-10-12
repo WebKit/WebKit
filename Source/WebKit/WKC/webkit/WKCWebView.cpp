@@ -197,6 +197,7 @@ public:
 #include <wtf/text/Base64.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <string>
 #include "FastMalloc.h"
 #include "NotImplemented.h"
 
@@ -1712,6 +1713,111 @@ void WKCWebView::loadURI(const char* uri, const char* referer)
 {
     if (!uri || !uri[0] || !m_private) return;
     m_private->m_mainFrame->loadURI(uri, referer);
+}
+
+// Accept the same kind of input a browser address bar accepts. Keep this in WKC
+// rather than changing upstream URL parsing or WebCore navigation behavior.
+bool WKCWebView::loadURLOrSearch(const char* input, const char* referer)
+{
+    if (!input || !m_private)
+        return false;
+
+    auto isWhitespace = [](unsigned char character) {
+        return character == ' ' || character == '\t' || character == '\r'
+            || character == '\n' || character == '\f' || character == '\v';
+    };
+
+    const char* begin = input;
+    while (*begin && isWhitespace(static_cast<unsigned char>(*begin)))
+        ++begin;
+
+    const char* end = begin + strlen(begin);
+    while (end > begin && isWhitespace(static_cast<unsigned char>(end[-1])))
+        --end;
+
+    if (begin == end)
+        return false;
+
+    std::string value(begin, static_cast<size_t>(end - begin));
+    auto lowerASCII = [](std::string text) {
+        for (auto& character : text) {
+            auto byte = static_cast<unsigned char>(character);
+            if (byte >= 'A' && byte <= 'Z')
+                character = static_cast<char>(byte + ('a' - 'A'));
+        }
+        return text;
+    };
+
+    // A typed URL with a scheme is unambiguous. Also recognise common non-HTTP
+    // schemes such as about:blank and data:, without mistaking host:port for one.
+    bool hasScheme = value.find("://") != std::string::npos;
+    if (!hasScheme) {
+        auto colon = value.find(':');
+        auto pathSeparator = value.find_first_of("/?#");
+        if (colon != std::string::npos
+            && (pathSeparator == std::string::npos || colon < pathSeparator)) {
+            auto scheme = lowerASCII(value.substr(0, colon));
+            if (scheme == "http" || scheme == "https" || scheme == "ftp"
+                || scheme == "file" || scheme == "about" || scheme == "data"
+                || scheme == "blob" || scheme == "mailto") {
+                hasScheme = true;
+            }
+        }
+    }
+
+    if (hasScheme) {
+        loadURI(value.c_str(), referer);
+        return true;
+    }
+
+    bool containsWhitespace = false;
+    for (unsigned char character : value) {
+        if (isWhitespace(character)) {
+            containsWhitespace = true;
+            break;
+        }
+    }
+
+    auto hostEnd = value.find_first_of("/?#");
+    auto host = value.substr(0, hostEnd);
+    auto lowerHost = lowerASCII(host);
+    bool looksLikeHost = lowerHost == "localhost"
+        || lowerHost.rfind("www.", 0) == 0
+        || host.find('.') != std::string::npos
+        || (host.size() > 2 && host.front() == '[' && host.find(']') != std::string::npos);
+
+    if (!containsWhitespace && looksLikeHost) {
+        std::string url = "https://";
+        url += value;
+        loadURI(url.c_str(), referer);
+        return true;
+    }
+
+    // Treat everything else as a search. Percent-encode UTF-8 bytes so spaces,
+    // punctuation and non-ASCII search terms survive the URL intact.
+    static const char hexDigits[] = "0123456789ABCDEF";
+    std::string encodedQuery;
+    encodedQuery.reserve(value.size() * 3);
+    for (unsigned char character : value) {
+        if ((character >= 'a' && character <= 'z')
+            || (character >= 'A' && character <= 'Z')
+            || (character >= '0' && character <= '9')
+            || character == '-' || character == '_' || character == '.'
+            || character == '~') {
+            encodedQuery.push_back(static_cast<char>(character));
+        } else if (character == ' ') {
+            encodedQuery.push_back('+');
+        } else {
+            encodedQuery.push_back('%');
+            encodedQuery.push_back(hexDigits[character >> 4]);
+            encodedQuery.push_back(hexDigits[character & 0x0f]);
+        }
+    }
+
+    std::string searchURL = "https://www.google.com/search?q=";
+    searchURL += encodedQuery;
+    loadURI(searchURL.c_str(), referer);
+    return true;
 }
 
 void WKCWebView::loadString(const char* content, const unsigned short* mimetype,
