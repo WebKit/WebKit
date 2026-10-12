@@ -44,15 +44,10 @@ public:
     
     void didStartMarking();
     
-    void add(
-        ASCIICString abbreviatedName,
-        ASCIICString name,
-        MarkingConstraintExecutorPair&&,
-        ConstraintVolatility,
-        ConstraintConcurrency,
-        ConstraintParallelism);
-    
-    void add(std::unique_ptr<MarkingConstraint>);
+    void add(Heap&, std::unique_ptr<MarkingConstraint>);
+
+    // Removes every constraint the heap added.
+    void remove(Heap&);
 
     // The following functions are only used by the real GC via the MarkingConstraintSolver.
     // Hence, we only need the SlotVisitor version.
@@ -61,7 +56,7 @@ public:
     // not the wavefront is advancing.
     bool isWavefrontAdvancing(SlotVisitor&);
     bool isWavefrontRetreating(SlotVisitor& visitor) { return !isWavefrontAdvancing(visitor); }
-    
+
     // Returns true if this executed all constraints and none of them produced new work. This
     // assumes that you've alraedy visited roots and drained from there.
     bool executeConvergence(SlotVisitor&);

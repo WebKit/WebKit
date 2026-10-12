@@ -700,12 +700,13 @@ sub testPath {
 }
 
 sub runTest {
-    my ($testName, $jsonTestStatusName, $extraEnvVars) = @_;
+    my ($testName, $jsonTestStatusName, $extraEnvVars, $extraArgs) = @_;
 
     chdirWebKit();
     chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
     my $testExecutable = testPath($productDir, $testName);
     my @command = ($testExecutable);
+    push @command, split(/\s+/, $extraArgs) if defined $extraArgs && $extraArgs ne "";
     if (defined($artifact_exec_wrapper)) {
         # This needs to go first, as one use case is to override the
         # ELF interpreter.
@@ -837,6 +838,8 @@ if ($runTestDFG) { runTest("testdfg", "allDFGTestsPassed") }
 if ($runTestAPI) {
     runTest("testapi", "allApiTestsPassed");
     runTest("testapi", "allApiTestsPassedWithSystemMalloc", "Malloc=1");
+    # The global Collector cannot yet collect several heaps at once, so run only the test that never collects.
+    runTest("testapi", "allApiTestsPassedWithGlobalGC", "JSC_useGlobalGC=1", "heapMembershipChanges");
 }
 if ($runTestWasmDebugger) { runTest("testwasmdebugger", "allWasmDebuggerTestsPassed") }
 if ($runTestLibJSCTools) { runTest("testLibJSCTools", "allLibJSCToolsTestsPassed") }
