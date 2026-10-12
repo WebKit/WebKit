@@ -93,6 +93,7 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
 #if USE(QUICK_LOOK)
@@ -104,6 +105,8 @@
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 #import "VolumetricSceneContentContext.h"
 #endif
+
+#import <WebCore/MediaAccessibilitySoftLink.h>
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
@@ -703,6 +706,26 @@ void WebPageProxy::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementDa
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->relayLiveRegionNotification(notificationData);
+}
+
+void WebPageProxy::didDisplayCaptions(Vector<String>&& captions)
+{
+    if (!canLoad_MediaAccessibility_MACaptionAppearanceDidDisplayCaptions())
+        return;
+
+    // The web process is untrusted, so bound how much text it can hand to assistive technology.
+    static constexpr size_t maximumCaptionCount = 16;
+    static constexpr unsigned maximumCaptionLength = 1024;
+    if (captions.size() > maximumCaptionCount)
+        captions.shrink(maximumCaptionCount);
+
+    RetainPtr strings = createNSArray(captions, [](const String& caption) {
+        return caption.left(maximumCaptionLength).createNSString();
+    });
+
+    // MediaAccessibility forwards this to UIAccessibility, which posts the notification VoiceOver uses
+    // to speak or braille captions, depending on the user's Described Media setting.
+    MACaptionAppearanceDidDisplayCaptions((__bridge CFArrayRef)strings.get());
 }
 
 void WebPageProxy::assistiveTechnologyMakeFirstResponder()

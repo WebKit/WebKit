@@ -310,6 +310,7 @@ public:
     virtual void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const = 0;
     virtual void relayAriaNotifyNotification(AriaNotifyData&&) const = 0;
     virtual void relayLiveRegionNotification(LiveRegionAnnouncementData&&) const = 0;
+    virtual void didDisplayCaptions(Vector<String>&&) const { }
 #endif
 
     virtual void translateAccessibilityAnnouncementStrings(const Vector<String>& strings, const String& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completion) { UNUSED_PARAM(strings); UNUSED_PARAM(targetLocaleIdentifier); completion({ }); }

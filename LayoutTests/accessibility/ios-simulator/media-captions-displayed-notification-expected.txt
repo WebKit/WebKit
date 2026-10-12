@@ -1,0 +1,18 @@
+This test verifies that the captions displayed for a video are sent to assistive technology as plain text, once each time the displayed set changes.
+
+PASS: notifications.length === 1
+PASS: formatNotification(0) === '["Hello, world!"]'
+PASS: notifications.length === 2
+PASS: formatNotification(1) === '["Hello, world!","Second line"]'
+PASS: notifications.length === 3
+PASS: formatNotification(2) === '["Hello, world!","Second line, edited"]'
+PASS: notifications.length === 4
+PASS: formatNotification(3) === '["Second line, edited"]'
+PASS: notifications.length === 4
+PASS: notifications.length === 5
+PASS: formatNotification(4) === '["Second line, edited"]'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

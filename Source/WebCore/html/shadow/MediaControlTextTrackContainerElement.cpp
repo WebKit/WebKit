@@ -200,6 +200,10 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         }
     }
 
+#if PLATFORM(IOS_FAMILY)
+    updateDisplayedCaptionsForAccessibility(activeCues);
+#endif
+
     // 11. Return output.
     if (hasChildNodes())
         show();
@@ -224,6 +228,37 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentationImageIf
         m_textTrackRepresentation->setHidden(false);
     }
 }
+
+#if PLATFORM(IOS_FAMILY)
+void MediaControlTextTrackContainerElement::updateDisplayedCaptionsForAccessibility(const CueList& renderedCues)
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    Vector<String> captions;
+    if (mediaElement->closedCaptionsVisible()) {
+        for (auto& interval : renderedCues) {
+            Ref cue = *interval.data();
+            if (cue->track()->isSpoken())
+                continue;
+
+            // Cue text can contain markup, like WebVTT tags, so get the plain text.
+            String text;
+            if (RefPtr vttCue = dynamicDowncast<VTTCue>(cue))
+                text = vttCue->textWithoutMarkup();
+            else if (RefPtr displayTree = cue->getDisplayTree())
+                text = displayTree->textContent();
+
+            text = text.simplifyWhiteSpace(isASCIIWhitespace);
+            if (!text.isEmpty())
+                captions.append(WTF::move(text));
+        }
+    }
+
+    mediaElement->displayedCaptionsDidChange(WTF::move(captions));
+}
+#endif
 
 void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
 {

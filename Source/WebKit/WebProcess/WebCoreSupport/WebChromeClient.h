@@ -70,6 +70,7 @@ public:
     void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final;
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&) const final;
     void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&) const final;
+    void didDisplayCaptions(Vector<String>&&) const final;
 #endif
 
 private:

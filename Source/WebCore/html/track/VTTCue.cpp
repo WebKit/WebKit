@@ -484,10 +484,11 @@ void VTTCue::setText(const String& text)
     didChange();
 }
 
-void VTTCue::createWebVTTNodeTree()
+RefPtr<DocumentFragment> VTTCue::getOrCreateWebVTTNodeTree()
 {
     if (!m_webVTTNodeTree && document())
         m_webVTTNodeTree = WebVTTParser::createDocumentFragmentFromCueText(*protect(document()), m_content);
+    return m_webVTTNodeTree;
 }
 
 static void copyWebVTTNodeToDOMTree(ContainerNode& webVTTNode, Node& parent)
@@ -506,8 +507,8 @@ static void copyWebVTTNodeToDOMTree(ContainerNode& webVTTNode, Node& parent)
 
 RefPtr<DocumentFragment> VTTCue::getCueAsHTML()
 {
-    createWebVTTNodeTree();
-    if (!m_webVTTNodeTree)
+    RefPtr webVTTNodeTree = getOrCreateWebVTTNodeTree();
+    if (!webVTTNodeTree)
         return nullptr;
 
     RefPtr document = this->document();
@@ -515,14 +516,22 @@ RefPtr<DocumentFragment> VTTCue::getCueAsHTML()
         return nullptr;
 
     auto clonedFragment = DocumentFragment::create(*document);
-    copyWebVTTNodeToDOMTree(*protect(m_webVTTNodeTree), clonedFragment);
+    copyWebVTTNodeToDOMTree(*webVTTNodeTree, clonedFragment);
     return clonedFragment;
+}
+
+String VTTCue::textWithoutMarkup()
+{
+    RefPtr webVTTNodeTree = getOrCreateWebVTTNodeTree();
+    if (!webVTTNodeTree)
+        return { };
+    return webVTTNodeTree->textContent();
 }
 
 RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
 {
-    createWebVTTNodeTree();
-    if (!m_webVTTNodeTree)
+    RefPtr webVTTNodeTree = getOrCreateWebVTTNodeTree();
+    if (!webVTTNodeTree)
         return nullptr;
 
     RefPtr document = this->document();
@@ -534,7 +543,7 @@ RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
     // The cloned fragment is never exposed to author scripts so it's safe to dispatch events here.
     ScriptDisallowedScope::EventAllowedScope allowedScope(clonedFragment);
 
-    protect(m_webVTTNodeTree)->cloneChildNodes(*document, nullptr, clonedFragment);
+    webVTTNodeTree->cloneChildNodes(*document, nullptr, clonedFragment);
     return clonedFragment;
 }
 
@@ -654,8 +663,8 @@ static bool isCueParagraphSeparator(char16_t character)
 void VTTCue::determineTextDirection()
 {
     static NeverDestroyed<const String> rtTag(MAKE_STATIC_STRING_IMPL("rt"));
-    createWebVTTNodeTree();
-    if (!m_webVTTNodeTree)
+    RefPtr webVTTNodeTree = getOrCreateWebVTTNodeTree();
+    if (!webVTTNodeTree)
         return;
 
     // Apply the Unicode Bidirectional Algorithm's Paragraph Level steps to the
@@ -663,7 +672,7 @@ void VTTCue::determineTextDirection()
     // pre-order, depth-first traversal, excluding WebVTT Ruby Text Objects and
     // their descendants.
     StringBuilder paragraphBuilder;
-    for (RefPtr<Node> node = m_webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(*node, m_webVTTNodeTree.get())) {
+    for (RefPtr<Node> node = webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(*node, webVTTNodeTree.get())) {
         // FIXME: The code does not match the comment above. This does not actually exclude Ruby Text Object descendant.
         if (!node->isTextNode() || node->localName() == rtTag)
             continue;

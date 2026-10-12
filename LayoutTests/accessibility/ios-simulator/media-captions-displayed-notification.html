@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../media/media-file.js"></script>
+</head>
+<body>
+
+<video id="video" controls muted></video>
+
+<script>
+var output = "This test verifies that the captions displayed for a video are sent to assistive technology as plain text, once each time the displayed set changes.\n\n";
+
+var notifications = [];
+function formatNotification(index) {
+    return JSON.stringify(notifications[index]);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXCaptionsDisplayed")
+            notifications.push(userInfo["AXCaptionsDisplayedTextRuns"]);
+    });
+
+    setTimeout(async function() {
+        // Create the accessibility tree, so the page has an accessibility object cache.
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        // Pause inside the time range of all the cues below, so adding and removing cues changes what's displayed.
+        const video = document.getElementById("video");
+        video.src = findMediaFile("video", "../../media/content/test");
+        await new Promise(resolve => video.oncanplaythrough = resolve);
+        video.currentTime = 1;
+        await new Promise(resolve => video.onseeked = resolve);
+
+        const captions = video.addTextTrack("captions", "English", "en");
+        captions.mode = "showing";
+
+        // WebVTT markup is removed, and whitespace is simplified.
+        const firstCue = new VTTCue(0, 10, "<i>Hello</i>, <v Narrator>world</v>!");
+        captions.addCue(firstCue);
+        output += await expectAsync("notifications.length", "1");
+        output += expect("formatNotification(0)", "'[\"Hello, world!\"]'");
+
+        // Every displayed caption is sent together.
+        const secondCue = new VTTCue(0, 10, "Second   line");
+        captions.addCue(secondCue);
+        output += await expectAsync("notifications.length", "2");
+        output += expect("formatNotification(1)", "'[\"Hello, world!\",\"Second line\"]'");
+
+        // Changing a cue's text removes and re-adds it. Only the final set is sent, not the moment when the cue is missing.
+        secondCue.text = "Second line, edited";
+        output += await expectAsync("notifications.length", "3");
+        output += expect("formatNotification(2)", "'[\"Hello, world!\",\"Second line, edited\"]'");
+
+        // Removing a displayed cue updates the displayed set. Cues on hidden tracks and on descriptions tracks aren't displayed, so they aren't sent.
+        const hiddenSubtitles = video.addTextTrack("subtitles", "Hidden", "en");
+        hiddenSubtitles.mode = "hidden";
+        hiddenSubtitles.addCue(new VTTCue(0, 10, "Hidden subtitle"));
+        const descriptions = video.addTextTrack("descriptions", "Descriptions", "en");
+        descriptions.mode = "showing";
+        descriptions.addCue(new VTTCue(0, 10, "Spoken description"));
+        captions.removeCue(firstCue);
+        output += await expectAsync("notifications.length", "4");
+        output += expect("formatNotification(3)", "'[\"Second line, edited\"]'");
+
+        // When no captions are displayed, nothing is sent. The same caption is sent again when it reappears.
+        captions.removeCue(secondCue);
+        await sleep(100);
+        output += expect("notifications.length", "4");
+        captions.addCue(secondCue);
+        output += await expectAsync("notifications.length", "5");
+        output += expect("formatNotification(4)", "'[\"Second line, edited\"]'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

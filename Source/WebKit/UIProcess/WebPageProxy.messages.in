@@ -60,6 +60,7 @@ messages -> WebPageProxy {
     RelayAccessibilityNotification(String notificationName, std::span<const uint8_t> notificationData)
     RelayAriaNotifyNotification(struct WebCore::AriaNotifyData notificationData)
     RelayLiveRegionNotification(struct WebCore::LiveRegionAnnouncementData notificationData)
+    DidDisplayCaptions(Vector<String> captions)
 #endif
     TranslateAccessibilityAnnouncementStrings(Vector<String> strings, String targetLocaleIdentifier) -> (Vector<String> translatedStrings)
 

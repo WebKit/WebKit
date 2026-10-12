@@ -209,6 +209,12 @@ void WebChromeClient::relayLiveRegionNotification(WebCore::LiveRegionAnnouncemen
         page->relayLiveRegionNotification(WTF::move(notificationData));
 }
 
+void WebChromeClient::didDisplayCaptions(Vector<String>&& captions) const
+{
+    if (RefPtr page = m_page.get())
+        page->didDisplayCaptions(WTF::move(captions));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

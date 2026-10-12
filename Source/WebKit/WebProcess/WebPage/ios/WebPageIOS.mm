@@ -288,6 +288,11 @@ void WebPage::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&& 
     send(Messages::WebPageProxy::RelayLiveRegionNotification(WTF::move(notificationData)));
 }
 
+void WebPage::didDisplayCaptions(Vector<String>&& captions)
+{
+    send(Messages::WebPageProxy::DidDisplayCaptions(WTF::move(captions)));
+}
+
 static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)
 {
     data.hasContent = false;

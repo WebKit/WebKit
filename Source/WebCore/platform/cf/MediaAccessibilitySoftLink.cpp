@@ -55,6 +55,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, kMAAudibleMe
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, MAImageCaptioningCopyCaptionWithSource, CFStringRef, (CGImageSourceRef imageSource, CFErrorRef *error), (imageSource, error), WEBCORE_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, MAAudibleMediaPrefCopyPreferDescriptiveVideo, CFBooleanRef, (), (), WEBCORE_EXPORT)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, MACaptionAppearanceIsCustomized, bool, (MACaptionAppearanceDomain domain), (domain), WEBCORE_EXPORT);
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, MACaptionAppearanceDidDisplayCaptions, void, (CFArrayRef strings), (strings), WEBCORE_EXPORT);
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, MACaptionAppearanceCopyActiveProfileID, CFStringRef, (), (), WEBCORE_EXPORT);
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, MediaAccessibility, MACaptionAppearanceCopyProfileIDs, CFArrayRef, (), (), WEBCORE_EXPORT)

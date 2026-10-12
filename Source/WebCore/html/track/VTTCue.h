@@ -167,6 +167,7 @@ public:
 
     RefPtr<DocumentFragment> getCueAsHTML() final;
     RefPtr<DocumentFragment> createCueRenderingTree();
+    String textWithoutMarkup();
 
     void NODELETE notifyRegionWhenRemovingDisplayTree(bool);
 
@@ -235,7 +236,7 @@ protected:
 private:
     VTTCue(Document&, Ref<WebVTTCueData>&&);
 
-    void createWebVTTNodeTree();
+    RefPtr<DocumentFragment> getOrCreateWebVTTNodeTree();
 
     void determineTextDirection();
     void calculateDisplayParameters();
