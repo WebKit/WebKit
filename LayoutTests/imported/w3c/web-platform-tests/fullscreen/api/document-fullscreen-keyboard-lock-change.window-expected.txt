@@ -1,0 +1,4 @@
+
+FAIL Requesting fullscreen again without keyboard lock should disable it assert_equals: fullscreen should stay expected Element node <body><div id="log"></div>
+<script src="/fullscreen/api/d... but got null
+

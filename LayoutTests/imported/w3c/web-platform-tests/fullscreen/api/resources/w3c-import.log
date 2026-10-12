@@ -10,11 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/resources/attempt-fullscreen.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/resources/echo-fullscreenEnabled.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/resources/keyboard-lock-inner.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/resources/navigate.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/resources/recursive-iframe-fullscreen.html
 /LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/resources/report-fullscreen-enabled.html

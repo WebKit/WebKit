@@ -2999,6 +2999,9 @@
     "imported/w3c/web-platform-tests/focus/activeelement-after-calling-window-focus.sub.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fullscreen/api/keyboard-lock-cross-origin-iframe.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/geolocation/enabled-by-permission-policy-attribute-redirect-on-load.https.sub.html": [
         "slow"
     ],
