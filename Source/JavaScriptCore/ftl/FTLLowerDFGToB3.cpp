@@ -228,7 +228,7 @@ public:
             m_proc.setNumEntrypoints(m_graph.m_numberOfEntrypoints);
 
             Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>(
-                [](CCallHelpers& jit, B3::Air::Code& code) {
+                [](CCallHelpers& jit, B3::Air::Code& code, B3::Air::GenerationContext&) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 
@@ -245,7 +245,7 @@ public:
             VM* vm = &this->vm();
 
             Ref<B3::Air::PrologueGenerator> mainPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>(
-                [=](CCallHelpers& jit, B3::Air::Code& code) {
+                [=](CCallHelpers& jit, B3::Air::Code& code, B3::Air::GenerationContext&) {
                     jit.emitFunctionPrologue();
 
                     AllowMacroScratchRegisterUsage allowScratch(jit);

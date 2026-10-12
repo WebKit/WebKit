@@ -47,6 +47,18 @@ public:
     typedef void LatePathFunction(CCallHelpers&, GenerationContext&);
     typedef SharedTask<LatePathFunction> LatePath;
 
+    template<typename Functor>
+    void addLatePath(Origin origin, const Functor& functor)
+    {
+        latePaths.append(std::tuple {
+            origin,
+            createSharedTask<LatePathFunction>(
+                [=](CCallHelpers& jit, GenerationContext&) {
+                    functor(jit);
+                })
+            });
+    }
+
     Vector<std::tuple<Origin, Ref<LatePath>>> latePaths;
     IndexMap<BasicBlock*, Box<MacroAssembler::Label>> blockLabels;
     BasicBlock* currentBlock { nullptr };

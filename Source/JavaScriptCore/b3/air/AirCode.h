@@ -68,11 +68,12 @@ class CCallSpecial;
 class CFG;
 class Code;
 class Disassembler;
+struct GenerationContext;
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, WasmBoundsCheckValue*, GPRReg);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
 
-typedef void PrologueGeneratorFunction(CCallHelpers&, Code&);
+typedef void PrologueGeneratorFunction(CCallHelpers&, Code&, GenerationContext&);
 typedef SharedTask<PrologueGeneratorFunction> PrologueGenerator;
 
 inline constexpr ASCIILiteral tierName { "Air "_s };
@@ -358,7 +359,7 @@ public:
     RegisterSet mutableGPRs();
     ScalarRegisterSet pinnedRegisters() const { return m_pinnedRegs; }
     
-    void emitDefaultPrologue(CCallHelpers&);
+    void emitDefaultPrologue(CCallHelpers&, GenerationContext&);
     void emitEpilogue(CCallHelpers&);
 
     std::unique_ptr<GenerateAndAllocateRegisters> m_generateAndAllocateRegisters;

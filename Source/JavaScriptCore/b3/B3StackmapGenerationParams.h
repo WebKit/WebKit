@@ -112,13 +112,7 @@ public:
     template<typename Functor>
     void addLatePath(const Functor& functor) const
     {
-        context().latePaths.append(std::tuple {
-            origin(),
-            createSharedTask<Air::GenerationContext::LatePathFunction>(
-                [=] (CCallHelpers& jit, Air::GenerationContext&) {
-                    functor(jit);
-                })
-            });
+        context().addLatePath(origin(), functor);
     }
 
 private:

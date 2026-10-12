@@ -1098,6 +1098,7 @@ void run(const TestConfig* config)
     RUN(testPatchpointTerminalReturnValue(true));
     RUN(testPatchpointTerminalReturnValue(false));
     RUN(testTerminalPatchpointThatNeedsToBeSpilled());
+    RUN(testPrologueGeneratorLatePath());
 
     RUN(testMemoryFence());
     RUN(testStoreFence());

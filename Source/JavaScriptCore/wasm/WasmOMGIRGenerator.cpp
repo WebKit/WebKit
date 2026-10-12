@@ -1392,7 +1392,7 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
         }
     }
 
-    m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
+    m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this](CCallHelpers& jit, B3::Air::Code& code, B3::Air::GenerationContext& context) {
         RELEASE_ASSERT(m_callee);
         AllowMacroScratchRegisterUsage allowScratch(jit);
 
@@ -1403,7 +1403,7 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
             });
         }
 
-        code.emitDefaultPrologue(jit);
+        code.emitDefaultPrologue(jit, context);
         GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
         jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_callee)), scratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
@@ -1553,7 +1553,7 @@ void OMGIRGenerator::insertEntrySwitch()
 {
     m_proc.setNumEntrypoints(m_rootBlocks.size());
 
-    Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([] (CCallHelpers& jit, B3::Air::Code& code) {
+    Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([](CCallHelpers& jit, B3::Air::Code& code, B3::Air::GenerationContext&) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
         jit.probe(tagCFunction<JITProbePtrTag>(buildEntryBufferForCatch), nullptr);

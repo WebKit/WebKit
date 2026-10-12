@@ -49,7 +49,7 @@ WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Code);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Dominators);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(NaturalLoops);
 
-static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
+static void defaultPrologueGenerator(CCallHelpers& jit, Code& code, GenerationContext&)
 {
     jit.emitFunctionPrologue();
 
@@ -109,9 +109,9 @@ Code::Code(Procedure& proc)
 
 Code::~Code() = default;
 
-void Code::emitDefaultPrologue(CCallHelpers& jit)
+void Code::emitDefaultPrologue(CCallHelpers& jit, GenerationContext& context)
 {
-    defaultPrologueGenerator(jit, *this);
+    defaultPrologueGenerator(jit, *this, context);
 }
 
 void Code::emitEpilogue(CCallHelpers& jit)

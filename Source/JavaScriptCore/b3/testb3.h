@@ -705,6 +705,7 @@ void testBranchBitAndImmFusion(B3::Opcode valueModifier, Type valueType, int64_t
 void testTerminalPatchpointThatNeedsToBeSpilled();
 void testTerminalPatchpointThatNeedsToBeSpilled2();
 void testPatchpointTerminalReturnValue(bool successIsRare);
+void testPrologueGeneratorLatePath();
 void testMemoryFence();
 void testStoreFence();
 void testLoadFence();

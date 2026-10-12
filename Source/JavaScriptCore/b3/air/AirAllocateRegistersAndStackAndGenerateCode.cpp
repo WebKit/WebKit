@@ -612,7 +612,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             if (disassembler)
                 disassembler->startEntrypoint(*m_jit); 
 
-            m_code.prologueGeneratorForEntrypoint(*entrypointIndex)->run(*m_jit, m_code);
+            m_code.prologueGeneratorForEntrypoint(*entrypointIndex)->run(*m_jit, m_code, context);
 
             if (disassembler)
                 disassembler->endEntrypoint(*m_jit); 
