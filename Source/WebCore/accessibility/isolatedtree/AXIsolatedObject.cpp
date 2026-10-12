@@ -845,7 +845,8 @@ RefPtr<AXIsolatedObject> AXIsolatedObject::approximateHitTest(const IntPoint& po
     adjustedPoint.moveBy(-remoteFrameOffset());
 #endif
 
-    if (!bounds.contains(adjustedPoint) && !bounds.isEmpty()) {
+    bool containsPoint = bounds.contains(adjustedPoint);
+    if (!containsPoint && !bounds.isEmpty() && !isExpanded()) {
         // If our bounds are empty, we cannot possibly contain the hit-point. However, this may happen
         // because we haven't got geometry for |this| yet, but maybe our children contain the hit-point,
         // so check them before exiting. If our bounds are not empty and we don't contain the hit-point,
@@ -853,7 +854,8 @@ RefPtr<AXIsolatedObject> AXIsolatedObject::approximateHitTest(const IntPoint& po
         //
         // This early-exit makes the assumption that parents always contain their children's bounds, which
         // is generally true, but not always. This is OK since it's an approximate hit-test, but maybe we
-        // can improve this heuristic in the future.
+        // can improve this heuristic in the future. An expanded object can have a popup outside its
+        // bounds, such as the picker of a select, so check its children.
         return nullptr;
     }
 
@@ -891,7 +893,7 @@ RefPtr<AXIsolatedObject> AXIsolatedObject::approximateHitTest(const IntPoint& po
             return hitChild;
     }
 
-    if (bounds.isEmpty())
+    if (!containsPoint)
         return nullptr;
 
     RefPtr result = mutableThis;

@@ -1,0 +1,10 @@
+This test ensures that hit testing finds the options of an open base appearance picker, which are outside the bounds of the select.
+
+PASS: hitTest('apple')?.domIdentifier === 'apple'
+PASS: hitTest('banana')?.domIdentifier === 'banana'
+PASS: hitTest('cherry')?.domIdentifier === 'cherry'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
