@@ -373,6 +373,7 @@ ResourceLoadStatisticsStore::~ResourceLoadStatisticsStore()
 void ResourceLoadStatisticsStore::openITPDatabase()
 {
     m_isNewResourceLoadStatisticsDatabaseFile = openDatabaseAndCreateSchemaIfNecessary() == CreatedNewFile::Yes;
+    m_database->setSynchronous(WebCore::SQLiteDatabase::SyncNormal);
 }
 
 bool ResourceLoadStatisticsStore::shouldSkip(const RegistrableDomain& domain) const
@@ -2548,6 +2549,7 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
 
 void ResourceLoadStatisticsStore::clearDatabaseContents()
 {
+    auto transactionScope = beginTransactionIfNecessary();
     m_database->clearAllTables();
 
     if (!createSchema())
