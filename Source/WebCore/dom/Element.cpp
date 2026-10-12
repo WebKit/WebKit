@@ -3210,9 +3210,10 @@ Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionTy
     }
 
     if (insertionType.connectedToDocument) {
-        if (isCustomElementUpgradeCandidate() && !usesNullCustomElementRegistry()) [[unlikely]] {
+        if (isCustomElementUpgradeCandidate()) [[unlikely]] {
             ASSERT(isConnected());
-            CustomElementReactionQueue::tryToUpgradeElement(*this);
+            if (usesNullCustomElementRegistry() || !CustomElementReactionQueue::tryToUpgradeElement(*this))
+                protect(document())->addCustomElementUpgradeCandidateLocalName(localName());
         }
         if (isDefinedCustomElement()) [[unlikely]]
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);

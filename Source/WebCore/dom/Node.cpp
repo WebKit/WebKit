@@ -2309,7 +2309,7 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
         adoptCustomElementRegistryIntoScopedRegistryDocument();
 
     if (!hasTypeFlag(TypeFlag::HasDidMoveToNewDocument) && !hasEventTargetFlag(EventTargetFlag::HasLangAttr) && !hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr)
-        && !isDefinedCustomElement())
+        && !isDefinedCustomElement() && !isCustomElementUpgradeCandidate())
         return;
 
     if (auto* element = dynamicDowncast<Element>(*this))

@@ -127,7 +127,7 @@ public:
     ~CustomElementReactionQueue();
 
     static void enqueueElementUpgrade(Element&, bool alreadyScheduledToUpgrade);
-    static void tryToUpgradeElement(Element&);
+    static bool tryToUpgradeElement(Element&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueConnectedMoveCallbackIfNeeded(Element&);

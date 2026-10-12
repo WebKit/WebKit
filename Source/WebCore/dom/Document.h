@@ -598,6 +598,9 @@ public:
     CustomElementRegistry* activeCustomElementConstructorRegistry(JSC::JSObject* constructor);
     void addToActiveCustomElementConstructorMap(JSC::JSObject* constructor, CustomElementRegistry&);
     void removeFromActiveCustomElementConstructorMap(JSC::JSObject* constructor);
+    void addCustomElementUpgradeCandidateLocalName(const AtomString& localName) { m_customElementUpgradeCandidateLocalNames.add(localName); }
+    void removeCustomElementUpgradeCandidateLocalName(const AtomString& localName) { m_customElementUpgradeCandidateLocalNames.remove(localName); }
+    bool mayHaveCustomElementUpgradeCandidate(const AtomString& localName) const { return m_customElementUpgradeCandidateLocalNames.contains(localName); }
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y, HitTestSource = HitTestSource::Script);
     std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint, HitTestSource);
@@ -2627,6 +2630,7 @@ private:
     WeakListHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_inDocumentShadowRoots;
 
     HashMap<uintptr_t, RefPtr<CustomElementRegistry>> m_activeCustomElementConstructorMap;
+    HashSet<AtomString> m_customElementUpgradeCandidateLocalNames;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     using TargetIdToClientMap = HashMap<PlaybackTargetClientContextIdentifier, WeakPtr<MediaPlaybackTargetClient>>;

@@ -148,19 +148,20 @@ void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, bool al
 }
 
 // https://html.spec.whatwg.org/multipage/custom-elements.html#concept-try-upgrade
-void CustomElementReactionQueue::tryToUpgradeElement(Element& element)
+bool CustomElementReactionQueue::tryToUpgradeElement(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());
     RefPtr registry = CustomElementRegistry::registryForElement(element);
     if (!registry)
-        return;
+        return false;
 
     RefPtr elementInterface = registry->findInterface(element);
     if (!elementInterface)
-        return;
+        return false;
 
     element.enqueueToUpgrade(*elementInterface);
+    return true;
 }
 
 void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)
