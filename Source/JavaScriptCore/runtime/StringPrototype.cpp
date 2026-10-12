@@ -337,7 +337,7 @@ JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSStrin
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto source = string->value(globalObject);
+    auto source = string->view(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned sourceLen = source->length();
@@ -357,7 +357,7 @@ JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSStrin
             RELEASE_AND_RETURN(scope, removeAllUsingRegExpSearch(vm, globalObject, string, source, regExp));
 
         if (callData.type == CallData::Type::JS && !hasNamedCaptures && sourceLen >= Options::thresholdForStringReplaceCache())
-            RELEASE_AND_RETURN(scope, replaceAllWithCacheUsingRegExpSearch(vm, globalObject, string, source, regExp, uncheckedDowncast<JSFunction>(replaceValue)));
+            RELEASE_AND_RETURN(scope, replaceAllWithCacheUsingRegExpSearch(vm, globalObject, string, string->value(globalObject), regExp, uncheckedDowncast<JSFunction>(replaceValue)));
     }
 
     if (callData.type == CallData::Type::None) {
@@ -471,7 +471,7 @@ JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSStrin
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
-                if (regExp->eitherUnicode() && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+                if (regExp->eitherUnicode() && startPosition < sourceLen && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
                     startPosition++;
                     if (startPosition > sourceLen)
                         break;
@@ -563,7 +563,7 @@ JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSStrin
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
-                if (regExp->eitherUnicode() && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+                if (regExp->eitherUnicode() && startPosition < sourceLen && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
                     startPosition++;
                     if (startPosition > sourceLen)
                         break;

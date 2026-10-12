@@ -155,7 +155,7 @@ ALWAYS_INLINE JSString* stringSubstring(JSGlobalObject* globalObject, JSString* 
     return jsSubstring(globalObject, string, start, end - start);
 }
 
-ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, const String* separators, int separatorCount)
+ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalObject, JSString* sourceVal, StringView source, const Range<int32_t>* substringRanges, int rangeCount, const String* separators, int separatorCount)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -167,7 +167,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
+        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*sourceVal->value(globalObject)->impl(), std::max(0, position), std::min(sourceSize, length))));
     }
 
     if (rangeCount == 2 && separatorCount == 1) {
@@ -179,8 +179,9 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         length += separators[0].length();
         if (!length.hasOverflowed()) [[likely]] {
             if (shouldMakeRope(length.value(), /* newFiberCount */ 3)) {
-                String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
-                String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+                auto resolved = sourceVal->value(globalObject);
+                String leftPart(StringImpl::createSubstringSharingImpl(*resolved->impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+                String rightPart(StringImpl::createSubstringSharingImpl(*resolved->impl(), substringRanges[1].begin(), substringRanges[1].distance()));
                 RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separators[0], rightPart));
             }
         }
@@ -254,7 +255,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
-ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, JSString* separatorVal, const String& separator, int separatorCount)
+ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalObject, JSString* sourceVal, StringView source, const Range<int32_t>* substringRanges, int rangeCount, JSString* separatorVal, const String& separator, int separatorCount)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -266,7 +267,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalOb
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
+        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*sourceVal->value(globalObject)->impl(), std::max(0, position), std::min(sourceSize, length))));
     }
 
     if (rangeCount == 2 && separatorCount == 1) {
@@ -279,13 +280,15 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparator(JSGlobalObject* globalOb
         if (!length.hasOverflowed()) [[likely]] {
             if (separatorVal) {
                 if (shouldMakeRope(length.value(), /* newFiberCount */ 2)) {
-                    JSString* leftPart = jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
-                    JSString* rightPart = jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+                    auto resolved = sourceVal->value(globalObject);
+                    JSString* leftPart = jsString(vm, StringImpl::createSubstringSharingImpl(*resolved->impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+                    JSString* rightPart = jsString(vm, StringImpl::createSubstringSharingImpl(*resolved->impl(), substringRanges[1].begin(), substringRanges[1].distance()));
                     RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separatorVal, rightPart));
                 }
             } else if (shouldMakeRope(length.value(), /* newFiberCount */ 3)) {
-                String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
-                String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+                auto resolved = sourceVal->value(globalObject);
+                String leftPart(StringImpl::createSubstringSharingImpl(*resolved->impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+                String rightPart(StringImpl::createSubstringSharingImpl(*resolved->impl(), substringRanges[1].begin(), substringRanges[1].distance()));
                 RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separator, rightPart));
             }
         }
@@ -605,7 +608,7 @@ inline JSString* tryReplaceOneCharUsingString(JSGlobalObject* globalObject, JSSt
     RELEASE_AND_RETURN(scope, string->tryReplaceOneChar(globalObject, searchString[0], replacement));
 }
 
-static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, std::span<const Range<int32_t>> substringRanges)
+static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, JSString* sourceVal, StringView source, std::span<const Range<int32_t>> substringRanges)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -617,7 +620,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
+        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*sourceVal->value(globalObject)->impl(), std::max(0, position), std::min(sourceSize, length))));
     }
 
     // We know that the sum of substringRanges lengths cannot exceed length of
@@ -676,7 +679,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         return nullptr; \
     } while (false)
 
-static ALWAYS_INLINE JSString* removeAllUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp)
+static ALWAYS_INLINE JSString* removeAllUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, StringView source, RegExp* regExp)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     SuperSamplerScope superSamplerScope(false);
@@ -1175,7 +1178,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearch(VM& vm, JSGl
     RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, string, source, sourceRanges.span().data(), sourceRanges.size(), replacements.span().data(), replacements.size()));
 }
 
-static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObject, const String& source, JSString* string, RegExp* regExp)
+static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObject, StringView source, JSString* string, RegExp* regExp)
 {
     unsigned sourceLen = source.length();
     unsigned left = 0;
@@ -1197,7 +1200,7 @@ static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObjec
         }
 
         globalObject->regExpGlobalData().resetResultFromCache(globalObject, regExp, string, MatchResult { right, sourceLen }, { });
-        return jsString(vm, source.substringSharingImpl(0, right));
+        return jsString(vm, string->value(globalObject)->substringSharingImpl(0, right));
     }
     case Yarr::SpecificPattern::LeadingSpacesPlus: {
         while (left < sourceLen && isStrWhiteSpace(source[left]))
@@ -1213,7 +1216,7 @@ static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObjec
         }
 
         globalObject->regExpGlobalData().resetResultFromCache(globalObject, regExp, string, MatchResult { 0, left }, { });
-        return jsString(vm, source.substringSharingImpl(left, sourceLen));
+        return jsString(vm, string->value(globalObject)->substringSharingImpl(left, sourceLen));
     }
     case Yarr::SpecificPattern::TrailingSpacesStar:
     case Yarr::SpecificPattern::LeadingSpacesStar:
@@ -1225,7 +1228,7 @@ static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObjec
     return nullptr;
 }
 
-ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearchNoBackreferences(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSString* replacementVal, const String& replacementString)
+ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearchNoBackreferences(VM& vm, JSGlobalObject* globalObject, JSString* string, StringView source, RegExp* regExp, JSString* replacementVal, const String& replacementString)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1256,7 +1259,7 @@ ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearchNoBackreferences(VM
             startPosition++;
             if (startPosition > sourceLen)
                 break;
-            if (regExp->eitherUnicode() && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+            if (regExp->eitherUnicode() && startPosition < sourceLen && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
@@ -1432,7 +1435,7 @@ ALWAYS_INLINE void appendReplacementUsingTemplate(StringBuilder& result, std::sp
     }
 }
 
-ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSString* replacementVal, const String& replacementString)
+ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, StringView source, RegExp* regExp, JSString* replacementVal, const String& replacementString)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1485,7 +1488,7 @@ ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalOb
             startPosition++;
             if (startPosition > sourceLen)
                 break;
-            if (regExp->eitherUnicode() && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+            if (regExp->eitherUnicode() && startPosition < sourceLen && U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
@@ -1501,8 +1504,9 @@ ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalOb
         appendReplacementUsingTemplate(replacement, templateParts.span(), replacementString, source, firstOvector.span().data(), regExp);
         if (replacement.hasOverflowed()) [[unlikely]]
             OUT_OF_MEMORY(globalObject, scope);
-        String left = source.substringSharingImpl(0, firstMatch.start);
-        String right = source.substringSharingImpl(firstMatch.end);
+        auto resolved = string->value(globalObject);
+        String left = resolved->substringSharingImpl(0, firstMatch.start);
+        String right = resolved->substringSharingImpl(firstMatch.end);
         RELEASE_AND_RETURN(scope, jsString(globalObject, left, replacement.toString(), right));
     }
 
@@ -1513,7 +1517,7 @@ ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalOb
     RELEASE_AND_RETURN(scope, jsString(vm, resultBuilder.toString()));
 }
 
-ALWAYS_INLINE JSString* replaceOneWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, const String& replacementString)
+ALWAYS_INLINE JSString* replaceOneWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, StringView source, RegExp* regExp, const String& replacementString)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
