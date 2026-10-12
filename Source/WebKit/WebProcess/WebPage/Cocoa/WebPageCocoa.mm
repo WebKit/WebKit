@@ -969,27 +969,27 @@ void WebPage::getPlatformEditorStateCommon(LocalFrame& frame, EditorState& resul
                 postLayoutData.typingAttributes.add(TypingAttribute::Underline);
 
             if (RefPtr styleProperties = editingStyle->style()) {
-                bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyID::Direction) == CSSValueLtr;
-                switch (styleProperties->propertyAsValueID(CSSPropertyID::TextAlign).value_or(CSSValueInvalid)) {
-                case CSSValueRight:
-                case CSSValueWebkitRight:
+                bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyID::Direction) == CSSValueID::Ltr;
+                switch (styleProperties->propertyAsValueID(CSSPropertyID::TextAlign).value_or(CSSValueID::Invalid)) {
+                case CSSValueID::Right:
+                case CSSValueID::WebkitRight:
                     postLayoutData.textAlignment = TextAlignment::Right;
                     break;
-                case CSSValueLeft:
-                case CSSValueWebkitLeft:
+                case CSSValueID::Left:
+                case CSSValueID::WebkitLeft:
                     postLayoutData.textAlignment = TextAlignment::Left;
                     break;
-                case CSSValueCenter:
-                case CSSValueWebkitCenter:
+                case CSSValueID::Center:
+                case CSSValueID::WebkitCenter:
                     postLayoutData.textAlignment = TextAlignment::Center;
                     break;
-                case CSSValueJustify:
+                case CSSValueID::Justify:
                     postLayoutData.textAlignment = TextAlignment::Justified;
                     break;
-                case CSSValueStart:
+                case CSSValueID::Start:
                     postLayoutData.textAlignment = isLeftToRight ? TextAlignment::Left : TextAlignment::Right;
                     break;
-                case CSSValueEnd:
+                case CSSValueID::End:
                     postLayoutData.textAlignment = isLeftToRight ? TextAlignment::Right : TextAlignment::Left;
                     break;
                 default:
@@ -1534,7 +1534,7 @@ static std::optional<bool> elementHasHiddenVisibility(StyledElement* styledEleme
     if (!value)
         return false;
 
-    return value->valueID() == CSSValueHidden;
+    return value->valueID() == CSSValueID::Hidden;
 }
 
 void WebPage::createTextIndicatorForElementWithID(const String& elementID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
@@ -1571,7 +1571,7 @@ void WebPage::createTextIndicatorForElementWithID(const String& elementID, Compl
 
     auto isHiddenInitially = elementHasHiddenVisibility(styledElement.get());
 
-    styledElement->setInlineStyleProperty(CSSPropertyID::Visibility, CSSValueVisible, IsImportant::Yes);
+    styledElement->setInlineStyleProperty(CSSPropertyID::Visibility, CSSValueID::Visible, IsImportant::Yes);
 
     auto elementRange = WebCore::makeRangeSelectingNodeContents(*styledElement);
 
@@ -1596,7 +1596,7 @@ void WebPage::createTextIndicatorForElementWithID(const String& elementID, Compl
     // Ensure the state is idempotent after by removing the inline style if this is the case.
 
     if (isHiddenInitially.has_value())
-        styledElement->setInlineStyleProperty(CSSPropertyID::Visibility, *isHiddenInitially ? CSSValueHidden : CSSValueVisible, IsImportant::Yes);
+        styledElement->setInlineStyleProperty(CSSPropertyID::Visibility, *isHiddenInitially ? CSSValueID::Hidden : CSSValueID::Visible, IsImportant::Yes);
     else
         styledElement->removeInlineStyleProperty(CSSPropertyID::Visibility);
 

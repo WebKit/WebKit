@@ -1107,7 +1107,7 @@ void UnifiedPDFPlugin::paintPDFSelection(const GraphicsLayer* layer, GraphicsCon
 static const WebCore::Color textAnnotationHoverColor()
 {
     static constexpr auto textAnnotationHoverAlpha = 0.12;
-    static NeverDestroyed color = RenderTheme::singleton().systemColor(CSSValueAppleSystemBlue, { }).colorWithAlpha(textAnnotationHoverAlpha);
+    static NeverDestroyed color = RenderTheme::singleton().systemColor(CSSValueID::AppleSystemBlue, { }).colorWithAlpha(textAnnotationHoverAlpha);
     return color.get();
 }
 

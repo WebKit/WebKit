@@ -542,7 +542,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             removeNodeAttribute(*element, dirAttr);
         } else {
             auto inlineStyle = copyStyleOrCreateEmpty(protect(element->inlineStyle()));
-            inlineStyle->setProperty(CSSPropertyID::UnicodeBidi, CSSValueNormal);
+            inlineStyle->setProperty(CSSPropertyID::UnicodeBidi, CSSValueID::Normal);
             inlineStyle->removeProperty(CSSPropertyID::Direction);
             setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom(CSS::defaultSerializationContext()));
             if (isSpanWithoutAttributesOrUnstyledStyleSpan(*element))
@@ -554,7 +554,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 static RefPtr<Node> highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 {
     for (RefPtr currentNode = startNode; currentNode && currentNode != enclosingNode; currentNode = currentNode->parentNode()) {
-        if (currentNode->isHTMLElement() && valueID(Style::Extractor(currentNode.get()).propertyValue(CSSPropertyID::UnicodeBidi).get()) == CSSValueEmbed)
+        if (currentNode->isHTMLElement() && valueID(Style::Extractor(currentNode.get()).propertyValue(CSSPropertyID::UnicodeBidi).get()) == CSSValueID::Embed)
             return currentNode;
     }
 

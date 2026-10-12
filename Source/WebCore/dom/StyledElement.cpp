@@ -398,7 +398,7 @@ void StyledElement::mapLanguageAttributeToLocale(const AtomString& value, Mutabl
         addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitLocale, serializeString(value));
     } else {
         // The empty string means the language is explicitly unknown.
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitLocale, CSSValueAuto);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitLocale, CSSValueID::Auto);
     }
 }
 

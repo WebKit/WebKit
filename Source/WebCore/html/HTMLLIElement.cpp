@@ -68,23 +68,23 @@ void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& 
 {
     if (name == typeAttr) {
         if (value == "a"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueLowerAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerAlpha);
         else if (value == "A"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueUpperAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperAlpha);
         else if (value == "i"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueLowerRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerRoman);
         else if (value == "I"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueUpperRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperRoman);
         else if (value == "1"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueDecimal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Decimal);
         else if (equalLettersIgnoringASCIICase(value, "disc"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueDisc);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Disc);
         else if (equalLettersIgnoringASCIICase(value, "circle"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueCircle);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Circle);
         else if (equalLettersIgnoringASCIICase(value, "square"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueSquare);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Square);
         else if (equalLettersIgnoringASCIICase(value, "none"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueNone);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::None);
     } else if (name == valueAttr) {
         if (auto parsedValue = parseHTMLInteger(value))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::CounterSet, makeString("list-item "_s, *parsedValue));

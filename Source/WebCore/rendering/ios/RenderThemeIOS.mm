@@ -285,10 +285,10 @@ void RenderThemeIOS::adjustTextFieldStyle(Style::ComputedStyle& style, const Ele
 
     auto adjustBackgroundColor = [&] {
         auto styleColorOptions = protect(element->document())->styleColorOptions(&style);
-        if (style.backgroundColor() != systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions))
+        if (style.backgroundColor() != systemColor(CSSValueID::AppleSystemOpaqueTertiaryFill, styleColorOptions))
             return;
 
-        style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+        style.setBackgroundColor(systemColor(CSSValueID::WebkitControlBackground, styleColorOptions));
     };
 
     if (PAL::currentUserInterfaceIdiomIsVision()) {
@@ -652,7 +652,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     if (isEnabled(box))
         context.setFillColor(style->color());
     else
-        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
+        context.setFillColor(systemColor(CSSValueID::AppleSystemTertiaryLabel, box.styleColorOptions()));
 
     context.fillPath(glyphPath);
 }
@@ -730,9 +730,9 @@ bool RenderThemeIOS::paintSliderTrack(const RenderElement& box, const PaintInfo&
 
     FloatRoundedRect outerBorder(innerBorder);
     outerBorder.inflateWithRadii(nativeControlBorderInlineSize);
-    context.fillRoundedRect(outerBorder, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    context.fillRoundedRect(outerBorder, systemColor(CSSValueID::WebkitControlBackground, styleColorOptions));
 
-    context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
+    context.fillRoundedRect(innerBorder, systemColor(CSSValueID::AppleSystemOpaqueFill, styleColorOptions));
 
     paintSliderTicks(box, paintInfo, trackClip);
 
@@ -834,9 +834,9 @@ bool RenderThemeIOS::paintProgressBar(const RenderElement& renderer, const Paint
 
     FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
     roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSize);
-    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueID::WebkitControlBackground, styleColorOptions));
 
-    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
+    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueID::AppleSystemOpaqueFill, styleColorOptions));
 
     float barInlineSize;
     float barInlineStart = trackInlineStart;
@@ -1124,50 +1124,50 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
         initializeOnce,
         [] {
         cssValueSystemColorInformationList.get() = Vector(std::initializer_list<CSSValueSystemColorInformation> {
-            { CSSValueCanvas, @selector(systemBackgroundColor) },
-            { CSSValueCanvastext, @selector(labelColor) },
-            { CSSValueText, @selector(labelColor) },
-            { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
-            { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
-            { CSSValueAppleSystemGray, @selector(systemGrayColor) },
-            { CSSValueAppleSystemGreen, @selector(systemGreenColor) },
-            { CSSValueAppleSystemIndigo, @selector(systemIndigoColor) },
-            { CSSValueAppleSystemOrange, @selector(systemOrangeColor) },
-            { CSSValueAppleSystemPink, @selector(systemPinkColor) },
-            { CSSValueAppleSystemPurple, @selector(systemPurpleColor) },
-            { CSSValueAppleSystemRed, @selector(systemRedColor) },
-            { CSSValueAppleSystemTeal, @selector(systemTealColor) },
-            { CSSValueAppleSystemYellow, @selector(systemYellowColor) },
-            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
-            { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
-            { CSSValueAppleSystemOpaqueFill, @selector(systemFillColor), true },
-            { CSSValueAppleSystemOpaqueSecondaryFill, @selector(secondarySystemFillColor), true },
+            { CSSValueID::Canvas, @selector(systemBackgroundColor) },
+            { CSSValueID::Canvastext, @selector(labelColor) },
+            { CSSValueID::Text, @selector(labelColor) },
+            { CSSValueID::WebkitControlBackground, @selector(systemBackgroundColor) },
+            { CSSValueID::AppleSystemBlue, @selector(systemBlueColor) },
+            { CSSValueID::AppleSystemBrown, @selector(systemBrownColor) },
+            { CSSValueID::AppleSystemGray, @selector(systemGrayColor) },
+            { CSSValueID::AppleSystemGreen, @selector(systemGreenColor) },
+            { CSSValueID::AppleSystemIndigo, @selector(systemIndigoColor) },
+            { CSSValueID::AppleSystemOrange, @selector(systemOrangeColor) },
+            { CSSValueID::AppleSystemPink, @selector(systemPinkColor) },
+            { CSSValueID::AppleSystemPurple, @selector(systemPurpleColor) },
+            { CSSValueID::AppleSystemRed, @selector(systemRedColor) },
+            { CSSValueID::AppleSystemTeal, @selector(systemTealColor) },
+            { CSSValueID::AppleSystemYellow, @selector(systemYellowColor) },
+            { CSSValueID::AppleSystemBackground, @selector(systemBackgroundColor) },
+            { CSSValueID::AppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
+            { CSSValueID::AppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
+            { CSSValueID::AppleSystemOpaqueFill, @selector(systemFillColor), true },
+            { CSSValueID::AppleSystemOpaqueSecondaryFill, @selector(secondarySystemFillColor), true },
             // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
-            { CSSValueAppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
-            { CSSValueAppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
-            { CSSValueAppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
-            { CSSValueAppleSystemQuaternaryFill, @selector(quaternarySystemFillColor) },
-            { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
-            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemLabel, @selector(labelColor) },
-            { CSSValueAppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
-            { CSSValueAppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
-            { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
-            { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
-            { CSSValueAppleSystemSeparator, @selector(separatorColor) },
+            { CSSValueID::AppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
+            { CSSValueID::AppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
+            { CSSValueID::AppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
+            { CSSValueID::AppleSystemQuaternaryFill, @selector(quaternarySystemFillColor) },
+            { CSSValueID::AppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
+            { CSSValueID::AppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
+            { CSSValueID::AppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
+            { CSSValueID::AppleSystemLabel, @selector(labelColor) },
+            { CSSValueID::AppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
+            { CSSValueID::AppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
+            { CSSValueID::AppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
+            { CSSValueID::AppleSystemPlaceholderText, @selector(placeholderTextColor) },
+            { CSSValueID::AppleSystemSeparator, @selector(separatorColor) },
             // FIXME: <rdar://problem/79471528> Adopt [UIColor opaqueSeparatorColor] once it has a high contrast variant.
-            { CSSValueAppleSystemOpaqueSeparator, @selector(separatorColor), true },
-            { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
-            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemGrid, @selector(separatorColor) },
-            { CSSValueAppleSystemHeaderText, @selector(labelColor) },
-            { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
+            { CSSValueID::AppleSystemOpaqueSeparator, @selector(separatorColor), true },
+            { CSSValueID::AppleSystemContainerBorder, @selector(separatorColor) },
+            { CSSValueID::AppleSystemControlBackground, @selector(systemBackgroundColor) },
+            { CSSValueID::AppleSystemGrid, @selector(separatorColor) },
+            { CSSValueID::AppleSystemHeaderText, @selector(labelColor) },
+            { CSSValueID::AppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
+            { CSSValueID::AppleSystemTextBackground, @selector(systemBackgroundColor) },
+            { CSSValueID::AppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
+            { CSSValueID::AppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
         });
     });
 
@@ -1248,9 +1248,9 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     const bool forVisitedLink = options.contains(StyleColorOptions::ForVisitedLink);
 
     // The system color cache below can't handle visited links. The only color value
-    // that cares about visited links is CSSValueWebkitLink, so handle it here by
+    // that cares about visited links is CSSValueID::WebkitLink, so handle it here by
     // calling through to RenderTheme's base implementation.
-    if (forVisitedLink && cssValueID == CSSValueWebkitLink)
+    if (forVisitedLink && cssValueID == CSSValueID::WebkitLink)
         return RenderTheme::systemColor(cssValueID, options);
 
     ASSERT(!forVisitedLink);
@@ -1456,7 +1456,7 @@ constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
 
 Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    auto defaultBorderColor = systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
+    auto defaultBorderColor = systemColor(CSSValueID::AppleSystemSecondaryLabel, styleColorOptions);
 
     if (!states.contains(ControlStyle::State::Enabled))
         return defaultBorderColor.colorWithAlphaMultipliedBy(checkboxRadioBorderDisabledOpacity);
@@ -1475,7 +1475,7 @@ Color RenderThemeIOS::checkboxRadioBackgroundColor(const Style::ComputedStyle& s
 
     if (PAL::currentUserInterfaceIdiomIsVision()) {
         if (!isEnabled)
-            return systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
+            return systemColor(isEmpty ? CSSValueID::WebkitControlBackground : CSSValueID::AppleSystemOpaqueTertiaryFill, styleColorOptions);
 
         if (isPressed)
             return isEmpty ? Color(DisplayP3<float> { 0.773, 0.773, 0.773 }) : Color(DisplayP3<float> { 0.067, 0.38, 0.953 });
@@ -1484,9 +1484,9 @@ Color RenderThemeIOS::checkboxRadioBackgroundColor(const Style::ComputedStyle& s
     }
 
     if (!isEnabled)
-        return systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
+        return systemColor(isEmpty ? CSSValueID::WebkitControlBackground : CSSValueID::AppleSystemOpaqueTertiaryFill, styleColorOptions);
 
-    auto enabledBackgroundColor = isEmpty ? systemColor(CSSValueWebkitControlBackground, styleColorOptions) : controlTintColor(style, styleColorOptions);
+    auto enabledBackgroundColor = isEmpty ? systemColor(CSSValueID::WebkitControlBackground, styleColorOptions) : controlTintColor(style, styleColorOptions);
     if (isPressed)
         return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
@@ -1509,9 +1509,9 @@ RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect
 Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     if (!states.contains(ControlStyle::State::Enabled))
-        return systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions);
+        return systemColor(CSSValueID::AppleSystemTertiaryLabel, styleColorOptions);
 
-    Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColorOptions::UseDarkAppearance);
+    Color enabledIndicatorColor = systemColor(CSSValueID::AppleSystemLabel, styleColorOptions | StyleColorOptions::UseDarkAppearance);
     if (states.contains(ControlStyle::State::Pressed))
         return enabledIndicatorColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
@@ -1731,10 +1731,10 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
     FloatRoundedRect roundedFillRect(rect, CornerRadii(cornerRadius));
-    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueID::WebkitControlBackground, styleColorOptions));
 
     roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSize);
-    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions));
+    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueID::AppleSystemOpaqueTertiaryFill, styleColorOptions));
 
     context.clipRoundedRect(roundedFillRect);
 
@@ -1754,13 +1754,13 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
 
     switch (element->gaugeRegion()) {
     case HTMLMeterElement::GaugeRegion::Optimum:
-        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemGreen, styleColorOptions));
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueID::AppleSystemGreen, styleColorOptions));
         break;
     case HTMLMeterElement::GaugeRegion::Suboptimal:
-        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemYellow, styleColorOptions));
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueID::AppleSystemYellow, styleColorOptions));
         break;
     case HTMLMeterElement::GaugeRegion::EvenLessGood:
-        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemRed, styleColorOptions));
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueID::AppleSystemRed, styleColorOptions));
         break;
     }
 
@@ -1871,7 +1871,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderElement& box, const PaintInfo&
                 tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
 
             FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
-            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlTintColor(box.style(), styleColorOptions) : systemColor(CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
+            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlTintColor(box.style(), styleColorOptions) : systemColor(CSSValueID::AppleSystemOpaqueSeparator, styleColorOptions));
         }
     }
 }
@@ -1978,7 +1978,7 @@ bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderElement& box, co
     transform.scale(scale);
     glyphPath.transform(transform);
 
-    context.setFillColor(systemColor(CSSValueAppleSystemSecondaryLabel, box.styleColorOptions()));
+    context.setFillColor(systemColor(CSSValueID::AppleSystemSecondaryLabel, box.styleColorOptions()));
     context.fillPath(glyphPath);
 
     return false;

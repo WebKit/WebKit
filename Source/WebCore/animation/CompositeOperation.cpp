@@ -38,11 +38,11 @@ std::optional<CompositeOperation> toCompositeOperation(const CSSValue& value)
         return std::nullopt;
 
     switch (keywordValue->valueID()) {
-    case CSSValueAdd:
+    case CSSValueID::Add:
         return CompositeOperation::Add;
-    case CSSValueAccumulate:
+    case CSSValueID::Accumulate:
         return CompositeOperation::Accumulate;
-    case CSSValueReplace:
+    case CSSValueID::Replace:
         return CompositeOperation::Replace;
     default:
         return std::nullopt;

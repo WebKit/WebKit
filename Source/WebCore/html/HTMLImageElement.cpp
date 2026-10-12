@@ -226,17 +226,17 @@ void HTMLImageElement::collectExtraStyleForPresentationalHints(MutableStylePrope
     if (!widthAttrFromSource.isNull())
         addHTMLLengthToStyle(style, CSSPropertyID::Width, widthAttrFromSource);
     else
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::Width, CSSValueAuto);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::Width, CSSValueID::Auto);
 
     if (!heightAttrFromSource.isNull())
         addHTMLLengthToStyle(style, CSSPropertyID::Height, heightAttrFromSource);
     else
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::Height, CSSValueAuto);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::Height, CSSValueID::Auto);
 
     if (!widthAttrFromSource.isNull() && !heightAttrFromSource.isNull())
         applyAspectRatioFromWidthAndHeightAttributesToStyle(widthAttrFromSource, heightAttrFromSource, style);
     else
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::AspectRatio, CSSValueAuto);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::AspectRatio, CSSValueID::Auto);
 }
 
 String HTMLImageElement::imageSourceURL() const

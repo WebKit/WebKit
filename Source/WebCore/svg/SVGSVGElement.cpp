@@ -338,31 +338,31 @@ void SVGSVGElement::collectExtraStyleForPresentationalHints(MutableStyleProperti
             CSSValueListBuilder arguments;
             for (double number : { matrix.a(), matrix.b(), matrix.c(), matrix.d(), matrix.e(), matrix.f() })
                 arguments.append(CSSPrimitiveValue::create(number));
-            functions.append(CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments)));
+            functions.append(CSSFunctionValue::create(CSSValueID::Matrix, WTF::move(arguments)));
             break;
         }
         case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
-            functions.append(CSSFunctionValue::create(CSSValueTranslate, px(matrix.e()), px(matrix.f())));
+            functions.append(CSSFunctionValue::create(CSSValueID::Translate, px(matrix.e()), px(matrix.f())));
             break;
         case SVGTransformValue::SVG_TRANSFORM_SCALE:
-            functions.append(CSSFunctionValue::create(CSSValueScale, CSSPrimitiveValue::create(matrix.a()), CSSPrimitiveValue::create(matrix.d())));
+            functions.append(CSSFunctionValue::create(CSSValueID::Scale, CSSPrimitiveValue::create(matrix.a()), CSSPrimitiveValue::create(matrix.d())));
             break;
         case SVGTransformValue::SVG_TRANSFORM_ROTATE: {
             // CSS rotate() has no center argument, so rotate(a, cx, cy) becomes translate(cx, cy) rotate(a) translate(-cx, -cy).
             auto center = value.rotationCenter();
             bool hasCenter = !center.isZero();
             if (hasCenter)
-                functions.append(CSSFunctionValue::create(CSSValueTranslate, px(center.x()), px(center.y())));
-            functions.append(CSSFunctionValue::create(CSSValueRotate, deg(value.angle())));
+                functions.append(CSSFunctionValue::create(CSSValueID::Translate, px(center.x()), px(center.y())));
+            functions.append(CSSFunctionValue::create(CSSValueID::Rotate, deg(value.angle())));
             if (hasCenter)
-                functions.append(CSSFunctionValue::create(CSSValueTranslate, px(-center.x()), px(-center.y())));
+                functions.append(CSSFunctionValue::create(CSSValueID::Translate, px(-center.x()), px(-center.y())));
             break;
         }
         case SVGTransformValue::SVG_TRANSFORM_SKEWX:
-            functions.append(CSSFunctionValue::create(CSSValueSkewX, deg(value.angle())));
+            functions.append(CSSFunctionValue::create(CSSValueID::SkewX, deg(value.angle())));
             break;
         case SVGTransformValue::SVG_TRANSFORM_SKEWY:
-            functions.append(CSSFunctionValue::create(CSSValueSkewY, deg(value.angle())));
+            functions.append(CSSFunctionValue::create(CSSValueID::SkewY, deg(value.angle())));
             break;
         }
     }

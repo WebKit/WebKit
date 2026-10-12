@@ -580,8 +580,8 @@ static bool executeJustifyRight(LocalFrame& frame, Event*, EditorCommandSource s
 static bool executeMakeTextWritingDirectionLeftToRight(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
     auto style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyID::UnicodeBidi, CSSValueEmbed);
-    style->setProperty(CSSPropertyID::Direction, CSSValueLtr);
+    style->setProperty(CSSPropertyID::UnicodeBidi, CSSValueID::Embed);
+    style->setProperty(CSSPropertyID::Direction, CSSValueID::Ltr);
     protect(frame.editor())->applyStyle(style.ptr(), EditAction::SetInlineWritingDirection);
     return true;
 }
@@ -589,7 +589,7 @@ static bool executeMakeTextWritingDirectionLeftToRight(LocalFrame& frame, Event*
 static bool executeMakeTextWritingDirectionNatural(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
     auto style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyID::UnicodeBidi, CSSValueNormal);
+    style->setProperty(CSSPropertyID::UnicodeBidi, CSSValueID::Normal);
     protect(frame.editor())->applyStyle(style.ptr(), EditAction::SetInlineWritingDirection);
     return true;
 }
@@ -597,8 +597,8 @@ static bool executeMakeTextWritingDirectionNatural(LocalFrame& frame, Event*, Ed
 static bool executeMakeTextWritingDirectionRightToLeft(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
     auto style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyID::UnicodeBidi, CSSValueEmbed);
-    style->setProperty(CSSPropertyID::Direction, CSSValueRtl);
+    style->setProperty(CSSPropertyID::UnicodeBidi, CSSValueID::Embed);
+    style->setProperty(CSSPropertyID::Direction, CSSValueID::Rtl);
     protect(frame.editor())->applyStyle(style.ptr(), EditAction::SetInlineWritingDirection);
     return true;
 }

@@ -142,8 +142,8 @@ TEST(CSSParser, ParseTextTransformPropertyWithNewlineBetweenTwoIdentInput)
         auto& valueList = *downcast<CSSValueList>(value);
 
         ASSERT_EQ((size_t)2, valueList.size());
-        EXPECT_EQ(CSSValueCapitalize, valueID(valueList[0]));
-        EXPECT_EQ(CSSValueFullWidth, valueID(valueList[1]));
+        EXPECT_EQ(CSSValueID::Capitalize, valueID(valueList[0]));
+        EXPECT_EQ(CSSValueID::FullWidth, valueID(valueList[1]));
     };
 
     auto properties = MutableStyleProperties::create();

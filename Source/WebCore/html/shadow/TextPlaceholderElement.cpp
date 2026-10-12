@@ -46,9 +46,9 @@ TextPlaceholderElement::TextPlaceholderElement(Document& document, const LayoutS
     : HTMLDivElement(document)
 {
     // FIXME: Move to User Agent stylesheet. See <https://webkit.org/b/208745>.
-    setInlineStyleProperty(CSSPropertyID::Display, size.width() ? CSSValueInlineBlock : CSSValueBlock);
-    setInlineStyleProperty(CSSPropertyID::VerticalAlign, CSSValueTop);
-    setInlineStyleProperty(CSSPropertyID::Visibility, CSSValueHidden, IsImportant::Yes);
+    setInlineStyleProperty(CSSPropertyID::Display, size.width() ? CSSValueID::InlineBlock : CSSValueID::Block);
+    setInlineStyleProperty(CSSPropertyID::VerticalAlign, CSSValueID::Top);
+    setInlineStyleProperty(CSSPropertyID::Visibility, CSSValueID::Hidden, IsImportant::Yes);
     if (size.width())
         setInlineStyleProperty(CSSPropertyID::Width, size.width(), CSSUnitType::Px);
     setInlineStyleProperty(CSSPropertyID::Height, size.height(), CSSUnitType::Px);

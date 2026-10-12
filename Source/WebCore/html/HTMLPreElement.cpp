@@ -55,8 +55,8 @@ bool HTMLPreElement::hasPresentationalHintsForAttribute(const QualifiedName& nam
 void HTMLPreElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == wrapAttr) {
-        style.setProperty(CSSPropertyID::WhiteSpaceCollapse, CSSValuePreserve);
-        style.setProperty(CSSPropertyID::TextWrapMode, CSSValueWrap);
+        style.setProperty(CSSPropertyID::WhiteSpaceCollapse, CSSValueID::Preserve);
+        style.setProperty(CSSPropertyID::TextWrapMode, CSSValueID::Wrap);
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }

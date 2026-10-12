@@ -508,7 +508,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
     }
 
     if (RefPtr value = inlineStylePropertyForElement(*element, propertyId)) {
-        if (isValueID(*value, CSSValueInherit))
+        if (isValueID(*value, CSSValueID::Inherit))
             inherit = true;
         else if (auto result = stringFromCSSValue(*value))
             return *result;
@@ -680,7 +680,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     if (RefPtr value = inlineStylePropertyForElement(*element, propertyId)) {
         if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && floatValueFromPrimitiveValue(*primitiveValue, result))
             return true;
-        if (isValueID(*value, CSSValueInherit))
+        if (isValueID(*value, CSSValueID::Inherit))
             inherit = true;
     }
 
@@ -822,7 +822,7 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     if (auto value = inlineStylePropertyForElement(*element, propertyId)) {
         if (value->isColor())
             return normalizedColor(CSSColorValue::absoluteColor(*value), ignoreDefaultColor, *element);
-        if (isValueID(*value, CSSValueInherit))
+        if (isValueID(*value, CSSValueID::Inherit))
             inherit = true;
     }
 

@@ -480,44 +480,44 @@ static std::optional<Color> legacyDeprecatedSystemColor(CSSValueID cssValueID, O
 {
     auto selectCocoaColor = [cssValueID, useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance)] () -> SEL {
         switch (cssValueID) {
-        case CSSValueActivecaption:
+        case CSSValueID::Activecaption:
             return @selector(windowFrameTextColor);
-        case CSSValueAppworkspace:
+        case CSSValueID::Appworkspace:
             return @selector(headerColor);
-        case CSSValueThreedface:
+        case CSSValueID::Threedface:
             // Fallback to hardcoded color below in light mode.
             return useDarkAppearance ? @selector(controlColor) : nullptr;
-        case CSSValueButtonhighlight:
+        case CSSValueID::Buttonhighlight:
             return @selector(controlHighlightColor);
-        case CSSValueButtonshadow:
+        case CSSValueID::Buttonshadow:
             return @selector(controlShadowColor);
-        case CSSValueCaptiontext:
+        case CSSValueID::Captiontext:
             return @selector(textColor);
-        case CSSValueInactiveborder:
+        case CSSValueID::Inactiveborder:
             return @selector(controlBackgroundColor);
-        case CSSValueInactivecaption:
+        case CSSValueID::Inactivecaption:
             return @selector(controlBackgroundColor);
-        case CSSValueInactivecaptiontext:
+        case CSSValueID::Inactivecaptiontext:
             return @selector(textColor);
-        case CSSValueInfotext:
+        case CSSValueID::Infotext:
             return @selector(textColor);
-        case CSSValueMenutext:
+        case CSSValueID::Menutext:
             return @selector(labelColor);
-        case CSSValueScrollbar:
+        case CSSValueID::Scrollbar:
             return @selector(scrollBarColor);
-        case CSSValueThreeddarkshadow:
+        case CSSValueID::Threeddarkshadow:
             return @selector(controlDarkShadowColor);
-        case CSSValueThreedshadow:
+        case CSSValueID::Threedshadow:
             return @selector(shadowColor);
-        case CSSValueThreedhighlight:
+        case CSSValueID::Threedhighlight:
             return @selector(highlightColor);
-        case CSSValueThreedlightshadow:
+        case CSSValueID::Threedlightshadow:
             return @selector(controlLightHighlightColor);
-        case CSSValueWindow:
+        case CSSValueID::Window:
             return @selector(windowBackgroundColor);
-        case CSSValueWindowframe:
+        case CSSValueID::Windowframe:
             return @selector(windowFrameColor);
-        case CSSValueWindowtext:
+        case CSSValueID::Windowtext:
             return @selector(windowFrameTextColor);
         default:
             return nullptr;
@@ -530,14 +530,14 @@ static std::optional<Color> legacyDeprecatedSystemColor(CSSValueID cssValueID, O
     }
 
     switch (cssValueID) {
-    case CSSValueActiveborder:
+    case CSSValueID::Activeborder:
         return defaultFocusRingColor(options);
-    case CSSValueThreedface:
+    case CSSValueID::Threedface:
         return Color::lightGray;
-    case CSSValueInfobackground:
+    case CSSValueID::Infobackground:
         // No corresponding NSColor for this so we use a hard coded value.
         return SRGBA<uint8_t> { 251, 252, 197 };
-    case CSSValueMenu:
+    case CSSValueID::Menu:
         return legacyMenuBackgroundColor();
     default:
         return std::nullopt;
@@ -566,47 +566,47 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
         switch (cssValueID) {
         // Web views that want system appearance get the system version of link colors, which differ from the HTML spec.
-        case CSSValueWebkitLink:
+        case CSSValueID::WebkitLink:
             if (forVisitedLink)
                 return systemAppearanceColor(cache.systemVisitedLinkColor, @selector(systemPurpleColor));
             return systemAppearanceColor(cache.systemLinkColor, @selector(linkColor));
 
-        case CSSValueLinktext:
+        case CSSValueID::Linktext:
             return systemAppearanceColor(cache.systemLinkColor, @selector(linkColor));
-        case CSSValueVisitedtext:
+        case CSSValueID::Visitedtext:
             return systemAppearanceColor(cache.systemVisitedLinkColor, @selector(systemPurpleColor));
-        case CSSValueWebkitActivelink:
-        case CSSValueActivetext:
+        case CSSValueID::WebkitActivelink:
+        case CSSValueID::Activetext:
             // FIXME: Use a semantic system color for this, instead of systemRedColor. <rdar://problem/39256684>
             return systemAppearanceColor(cache.systemActiveLinkColor, @selector(systemRedColor));
 
         // The following colors would expose user appearance preferences to the web, and could be used for fingerprinting.
         // These are available only when the web view opts into the system appearance.
-        case CSSValueWebkitFocusRingColor:
+        case CSSValueID::WebkitFocusRingColor:
             return focusRingColor(options);
 
-        case CSSValueActiveborder:
+        case CSSValueID::Activeborder:
             if (usesLegacyDeprecatedSystemColors())
                 return focusRingColor(options);
             break;
 
-        case CSSValueAppleSystemControlAccent:
+        case CSSValueID::AppleSystemControlAccent:
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
 
-        case CSSValueAppleSystemSelectedContentBackground:
+        case CSSValueID::AppleSystemSelectedContentBackground:
             return activeListBoxSelectionBackgroundColor(options);
 
-        case CSSValueAppleSystemSelectedTextBackground:
-        case CSSValueHighlight:
+        case CSSValueID::AppleSystemSelectedTextBackground:
+        case CSSValueID::Highlight:
             return activeSelectionBackgroundColor(options);
 
         default:
             // Handle other system colors below, that don't need special system appearance handling.
             break;
         }
-    } else if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
+    } else if (forVisitedLink && cssValueID == CSSValueID::WebkitLink) {
         // The system color cache below can't handle visited links. The only color value
-        // that cares about visited links is CSSValueWebkitLink, so handle it here.
+        // that cares about visited links is CSSValueID::WebkitLink, so handle it here.
         return RenderTheme::systemColor(cssValueID, options);
     }
 
@@ -626,94 +626,94 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
         auto selectCocoaColor = [cssValueID, useDarkAppearance] () -> SEL {
             switch (cssValueID) {
-            case CSSValueButtonface:
+            case CSSValueID::Buttonface:
                 // Fallback to hardcoded color below in light mode.
                 return useDarkAppearance ? @selector(controlColor) : nullptr;
-            case CSSValueButtontext:
+            case CSSValueID::Buttontext:
                 return @selector(controlTextColor);
-            case CSSValueCanvas:
+            case CSSValueID::Canvas:
                 return @selector(textBackgroundColor);
-            case CSSValueCanvastext:
+            case CSSValueID::Canvastext:
                 return @selector(textColor);
-            case CSSValueField:
+            case CSSValueID::Field:
                 return @selector(controlColor);
-            case CSSValueFieldtext:
+            case CSSValueID::Fieldtext:
                 return @selector(controlTextColor);
-            case CSSValueGraytext:
+            case CSSValueID::Graytext:
                 return @selector(disabledControlTextColor);
-            case CSSValueHighlighttext:
+            case CSSValueID::Highlighttext:
                 return @selector(selectedTextColor);
-            case CSSValueText:
+            case CSSValueID::Text:
                 return @selector(textColor);
-            case CSSValueAppleSystemHeaderText:
+            case CSSValueID::AppleSystemHeaderText:
                 return @selector(headerTextColor);
-            case CSSValueAppleSystemBackground:
-            case CSSValueAppleSystemSecondaryBackground:
-            case CSSValueAppleSystemTertiaryBackground:
-            case CSSValueAppleSystemGroupedBackground:
-            case CSSValueAppleSystemSecondaryGroupedBackground:
-            case CSSValueAppleSystemTertiaryGroupedBackground:
-            case CSSValueAppleSystemTextBackground:
+            case CSSValueID::AppleSystemBackground:
+            case CSSValueID::AppleSystemSecondaryBackground:
+            case CSSValueID::AppleSystemTertiaryBackground:
+            case CSSValueID::AppleSystemGroupedBackground:
+            case CSSValueID::AppleSystemSecondaryGroupedBackground:
+            case CSSValueID::AppleSystemTertiaryGroupedBackground:
+            case CSSValueID::AppleSystemTextBackground:
                 return @selector(textBackgroundColor);
-            case CSSValueAppleSystemControlBackground:
-            case CSSValueWebkitControlBackground:
+            case CSSValueID::AppleSystemControlBackground:
+            case CSSValueID::WebkitControlBackground:
                 return @selector(controlBackgroundColor);
-            case CSSValueAppleSystemAlternateSelectedText:
+            case CSSValueID::AppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
-            case CSSValueAppleSystemUnemphasizedSelectedContentBackground:
+            case CSSValueID::AppleSystemUnemphasizedSelectedContentBackground:
                 return @selector(unemphasizedSelectedContentBackgroundColor);
-            case CSSValueAppleSystemSelectedText:
+            case CSSValueID::AppleSystemSelectedText:
                 return @selector(selectedTextColor);
-            case CSSValueAppleSystemUnemphasizedSelectedText:
+            case CSSValueID::AppleSystemUnemphasizedSelectedText:
                 return @selector(unemphasizedSelectedTextColor);
-            case CSSValueAppleSystemUnemphasizedSelectedTextBackground:
+            case CSSValueID::AppleSystemUnemphasizedSelectedTextBackground:
                 return @selector(unemphasizedSelectedTextBackgroundColor);
-            case CSSValueAppleSystemPlaceholderText:
+            case CSSValueID::AppleSystemPlaceholderText:
                 return @selector(placeholderTextColor);
-            case CSSValueAppleSystemFindHighlightBackground:
+            case CSSValueID::AppleSystemFindHighlightBackground:
                 return @selector(findHighlightColor);
-            case CSSValueAppleSystemContainerBorder:
+            case CSSValueID::AppleSystemContainerBorder:
                 return @selector(containerBorderColor);
-            case CSSValueAppleSystemLabel:
+            case CSSValueID::AppleSystemLabel:
                 return @selector(labelColor);
-            case CSSValueAppleSystemSecondaryLabel:
+            case CSSValueID::AppleSystemSecondaryLabel:
                 return @selector(secondaryLabelColor);
-            case CSSValueAppleSystemTertiaryLabel:
+            case CSSValueID::AppleSystemTertiaryLabel:
                 return @selector(tertiaryLabelColor);
-            case CSSValueAppleSystemQuaternaryLabel:
+            case CSSValueID::AppleSystemQuaternaryLabel:
                 return @selector(quaternaryLabelColor);
-            case CSSValueAppleSystemQuinaryLabel:
+            case CSSValueID::AppleSystemQuinaryLabel:
                 return @selector(quinaryLabelColor);
 #if HAVE(NSCOLOR_FILL_COLOR_HIERARCHY)
-            case CSSValueAppleSystemOpaqueFill:
+            case CSSValueID::AppleSystemOpaqueFill:
                 return @selector(systemFillColor);
-            case CSSValueAppleSystemOpaqueSecondaryFill:
+            case CSSValueID::AppleSystemOpaqueSecondaryFill:
                 return @selector(secondarySystemFillColor);
-            case CSSValueAppleSystemTertiaryFill:
+            case CSSValueID::AppleSystemTertiaryFill:
                 return @selector(tertiarySystemFillColor);
 #endif
-            case CSSValueAppleSystemGrid:
+            case CSSValueID::AppleSystemGrid:
                 return @selector(gridColor);
-            case CSSValueAppleSystemSeparator:
+            case CSSValueID::AppleSystemSeparator:
                 return @selector(separatorColor);
-            case CSSValueAppleWirelessPlaybackTargetActive:
-            case CSSValueAppleSystemBlue:
+            case CSSValueID::AppleWirelessPlaybackTargetActive:
+            case CSSValueID::AppleSystemBlue:
                 return @selector(systemBlueColor);
-            case CSSValueAppleSystemBrown:
+            case CSSValueID::AppleSystemBrown:
                 return @selector(systemBrownColor);
-            case CSSValueAppleSystemGray:
+            case CSSValueID::AppleSystemGray:
                 return @selector(systemGrayColor);
-            case CSSValueAppleSystemGreen:
+            case CSSValueID::AppleSystemGreen:
                 return @selector(systemGreenColor);
-            case CSSValueAppleSystemOrange:
+            case CSSValueID::AppleSystemOrange:
                 return @selector(systemOrangeColor);
-            case CSSValueAppleSystemPink:
+            case CSSValueID::AppleSystemPink:
                 return @selector(systemPinkColor);
-            case CSSValueAppleSystemPurple:
+            case CSSValueID::AppleSystemPurple:
                 return @selector(systemPurpleColor);
-            case CSSValueAppleSystemRed:
+            case CSSValueID::AppleSystemRed:
                 return @selector(systemRedColor);
-            case CSSValueAppleSystemYellow:
+            case CSSValueID::AppleSystemYellow:
                 return @selector(systemYellowColor);
             default:
                 return nullptr;
@@ -734,56 +734,56 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
         };
 
         switch (cssValueID) {
-        case CSSValueActivebuttontext:
+        case CSSValueID::Activebuttontext:
             return textColorForActiveButton();
 
-        case CSSValueButtonface:
+        case CSSValueID::Buttonface:
             // Dark mode uses [NSColor controlColor].
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
             ASSERT(!localAppearance.usingDarkAppearance());
             return Color::lightGray;
 
-        case CSSValueWebkitFocusRingColor:
+        case CSSValueID::WebkitFocusRingColor:
             return defaultFocusRingColor(options);
 
-        case CSSValueAppleSystemControlAccent:
+        case CSSValueID::AppleSystemControlAccent:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             // Same color in light and dark appearances.
             return { SRGBA<uint8_t> { 0, 122, 255 }, Color::Flags::Semantic };
 
-        case CSSValueAppleSystemSelectedContentBackground:
+        case CSSValueID::AppleSystemSelectedContentBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
                 return { SRGBA<uint8_t> { 0, 88, 208 }, Color::Flags::Semantic };
             return { SRGBA<uint8_t> { 0, 99, 225 }, Color::Flags::Semantic };
 
-        case CSSValueHighlight:
-        case CSSValueAppleSystemSelectedTextBackground:
+        case CSSValueID::Highlight:
+        case CSSValueID::AppleSystemSelectedTextBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
                 return { SRGBA<uint8_t> { 63, 99, 139, 204 }, Color::Flags::Semantic };
             return { SRGBA<uint8_t> { 128, 188, 254, 153 }, Color::Flags::Semantic };
 
-        case CSSValueAppleSystemEvenAlternatingContentBackground: {
+        case CSSValueID::AppleSystemEvenAlternatingContentBackground: {
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(retainPtr(alternateColors[0]).get());
         }
 
-        case CSSValueAppleSystemOddAlternatingContentBackground: {
+        case CSSValueID::AppleSystemOddAlternatingContentBackground: {
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(retainPtr(alternateColors[1]).get());
         }
 
         // FIXME: Remove this fallback when AppKit without tertiary-fill is not used anymore; see rdar://108340604.
-        case CSSValueAppleSystemTertiaryFill:
+        case CSSValueID::AppleSystemTertiaryFill:
             if (localAppearance.usingDarkAppearance())
                 return { SRGBA<uint8_t> { 255, 255, 255, 12 }, Color::Flags::Semantic };
             return { SRGBA<uint8_t> { 0, 0, 0, 12 }, Color::Flags::Semantic };
 
-        case CSSValueBackground:
+        case CSSValueID::Background:
             // Use platform-independent value returned by base class.
             [[fallthrough]];
 

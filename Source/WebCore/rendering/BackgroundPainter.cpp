@@ -850,7 +850,7 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
             Sizing sizing {
                 FloatSize { positioningAreaSize },
                 ObjectSizeNegotiation::SpecifiedSize::none(),
-                keyword.value == CSSValueContain ? ObjectSizeNegotiation::SizingConstraint::Contain : ObjectSizeNegotiation::SizingConstraint::Cover
+                keyword.value == CSSValueID::Contain ? ObjectSizeNegotiation::SizingConstraint::Contain : ObjectSizeNegotiation::SizingConstraint::Cover
             };
 
             auto naturalDimensions = NaturalDimensions {

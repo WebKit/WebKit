@@ -453,22 +453,22 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
     bool validProgress = false;
     float value = progress.toFloat(&validProgress);
     if (validProgress && std::isfinite(value)) {
-        m_imageElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone);
+        m_imageElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
         if (!value) {
             m_placeholderElement->removeInlineStyleProperty(CSSPropertyID::Display);
-            m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone);
+            m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
             m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
             return;
         }
-        m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone);
+        m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
         m_progressElement->removeInlineStyleProperty(CSSPropertyID::Display);
         m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), (value < 0.0) ? "0"_s : (value > 1.0) ? "1"_s : progress);
         return;
     }
 
     m_imageElement->removeInlineStyleProperty(CSSPropertyID::Display);
-    m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone);
-    m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone);
+    m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+    m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
     m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
 }
 

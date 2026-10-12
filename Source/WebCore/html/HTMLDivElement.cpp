@@ -59,11 +59,11 @@ void HTMLDivElement::collectPresentationalHintsForAttribute(const QualifiedName&
 {
     if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle"_s) || equalLettersIgnoringASCIICase(value, "center"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, CSSValueWebkitCenter);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, CSSValueID::WebkitCenter);
         else if (equalLettersIgnoringASCIICase(value, "left"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, CSSValueWebkitLeft);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, CSSValueID::WebkitLeft);
         else if (equalLettersIgnoringASCIICase(value, "right"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, CSSValueWebkitRight);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, CSSValueID::WebkitRight);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextAlign, value);
     } else

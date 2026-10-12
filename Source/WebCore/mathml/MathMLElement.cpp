@@ -199,9 +199,9 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         return;
     case AttributeNames::displaystyleAttr:
         if (equalLettersIgnoringASCIICase(value, "false"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MathStyle, CSSValueCompact);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MathStyle, CSSValueID::Compact);
         else if (equalLettersIgnoringASCIICase(value, "true"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MathStyle, CSSValueNormal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MathStyle, CSSValueID::Normal);
         return;
     // https://w3c.github.io/mathml-core/#dfn-scriptlevel
     case AttributeNames::scriptlevelAttr: {
@@ -249,7 +249,7 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         // a presentational hint resetting the value of text-transform to none.
         // https://w3c.github.io/mathml-core/#dfn-mathvariant
         if (hasTagName(MathMLNames::miTag) && equalLettersIgnoringASCIICase(value, "normal"_s))
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextTransform, CSSValueNone);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextTransform, CSSValueID::None);
         return;
     }
 

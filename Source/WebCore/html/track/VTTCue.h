@@ -274,7 +274,7 @@ private:
 
     DirectionSetting m_writingDirection { DirectionSetting::Horizontal };
     AlignSetting m_cueAlignment { AlignSetting::Center };
-    CSSValueID m_displayDirection { CSSValueLtr };
+    CSSValueID m_displayDirection { CSSValueID::Ltr };
 
     RefPtr<VTTRegion> m_region;
     String m_parsedRegionId;

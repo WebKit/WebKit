@@ -145,26 +145,26 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& si
 
     switch (num) {
     case 1:
-        // FIXME: The spec says that we're supposed to use CSSValueXxSmall here.
-        size = CSSValueXSmall;
+        // FIXME: The spec says that we're supposed to use CSSValueID::XxSmall here.
+        size = CSSValueID::XSmall;
         break;
     case 2: 
-        size = CSSValueSmall;
+        size = CSSValueID::Small;
         break;
     case 3: 
-        size = CSSValueMedium;
+        size = CSSValueID::Medium;
         break;
     case 4: 
-        size = CSSValueLarge;
+        size = CSSValueID::Large;
         break;
     case 5: 
-        size = CSSValueXLarge;
+        size = CSSValueID::XLarge;
         break;
     case 6: 
-        size = CSSValueXxLarge;
+        size = CSSValueID::XxLarge;
         break;
     case 7:
-        size = CSSValueXxxLarge;
+        size = CSSValueID::XxxLarge;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -189,7 +189,7 @@ void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName
 {
     switch (name.nodeName()) {
     case AttributeNames::sizeAttr: {
-        CSSValueID size = CSSValueInvalid;
+        CSSValueID size = CSSValueID::Invalid;
         if (cssValueFromFontSizeNumber(value, size))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::FontSize, size);
         break;

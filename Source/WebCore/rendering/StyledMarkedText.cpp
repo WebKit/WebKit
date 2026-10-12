@@ -168,7 +168,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     case MarkedText::Type::TextMatch: {
         // Text matches always use the light system appearance.
 #if PLATFORM(MAC)
-        style.textStyles.fillColor = renderer.theme().systemColor(CSSValueAppleSystemLabel, systemAppearanceOptions);
+        style.textStyles.fillColor = renderer.theme().systemColor(CSSValueID::AppleSystemLabel, systemAppearanceOptions);
 #endif
         style.backgroundColor = renderer.theme().textSearchHighlightColor(systemAppearanceOptions);
         break;

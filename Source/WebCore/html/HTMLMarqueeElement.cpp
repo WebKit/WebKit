@@ -127,7 +127,7 @@ void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedN
     case AttributeNames::loopAttr:
         if (!value.isEmpty()) {
             if (value == "-1"_s || equalLettersIgnoringASCIICase(value, "infinite"_s))
-                addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitMarqueeRepetition, CSSValueInfinite);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitMarqueeRepetition, CSSValueID::Infinite);
             else
                 addHTMLNumberToStyle(style, CSSPropertyID::WebkitMarqueeRepetition, value);
         }

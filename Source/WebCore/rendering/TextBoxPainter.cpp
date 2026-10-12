@@ -1391,9 +1391,9 @@ void TextBoxPainter::fillCompositionUnderline(float start, float width, const Co
 
     auto underlineColor = [this] {
 #if PLATFORM(MAC)
-        auto cssColorValue = CSSValueAppleSystemControlAccent;
+        auto cssColorValue = CSSValueID::AppleSystemControlAccent;
 #else
-        auto cssColorValue = CSSValueAppleSystemBlue;
+        auto cssColorValue = CSSValueID::AppleSystemBlue;
 #endif
         auto styleColorOptions = m_renderer->styleColorOptions();
         return RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);

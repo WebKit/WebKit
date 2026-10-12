@@ -94,7 +94,7 @@ static void removeSourceListAttributes(const HTMLElement& listToReplace, HTMLEle
 
     RefPtr existingInlineStyle = listToReplace.inlineStyle();
     if (existingInlineStyle && !existingInlineStyle->getPropertyValue(CSSPropertyID::ListStyleType).isEmpty())
-        list.setInlineStyleProperty(CSSPropertyID::ListStyleType, (convertToUnorderedList ? CSSValueDisc : CSSValueDecimal));
+        list.setInlineStyleProperty(CSSPropertyID::ListStyleType, (convertToUnorderedList ? CSSValueID::Disc : CSSValueID::Decimal));
 }
 
 Ref<HTMLElement> ChangeListTypeCommand::createNewList(const HTMLElement& listToReplace)

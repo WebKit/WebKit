@@ -213,7 +213,7 @@ void ValidationMessage::buildBubbleTree()
     protect(m_bubble)->setUserAgentPart(UserAgentParts::webkitValidationBubble());
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
-    protect(m_bubble)->setInlineStyleProperty(CSSPropertyID::Position, CSSValueAbsolute);
+    protect(m_bubble)->setInlineStyleProperty(CSSPropertyID::Position, CSSValueID::Absolute);
 
     Ref clipper = HTMLDivElement::create(document.get());
     protect(m_bubble)->appendChild(clipper);

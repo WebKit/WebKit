@@ -139,7 +139,7 @@ static const StyleRuleKeyframe& zeroPercentKeyframe()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
-        protect(rule.get())->setKey({ CSSValueNormal, 0_css_percentage });
+        protect(rule.get())->setKey({ CSSValueID::Normal, 0_css_percentage });
     });
     return rule.get().get();
 }
@@ -152,7 +152,7 @@ static const StyleRuleKeyframe& hundredPercentKeyframe()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
-        protect(rule.get())->setKey({ CSSValueNormal, 100_css_percentage });
+        protect(rule.get())->setKey({ CSSValueID::Normal, 100_css_percentage });
     });
     return rule.get().get();
 }
@@ -347,11 +347,11 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
             auto valueId = keywordValue->valueID();
 
             // FIXME: All these should search inside complex values or be set during style resolution
-            if (valueId == CSSValueInherit)
+            if (valueId == CSSValueID::Inherit)
                 m_propertiesSetToInherit.add(propertyID);
-            else if (valueId == CSSValueCurrentcolor)
+            else if (valueId == CSSValueID::Currentcolor)
                 m_propertiesSetToCurrentColor.add(propertyID);
-            else if (!m_usesRelativeFontWeight && propertyID == CSSPropertyID::FontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
+            else if (!m_usesRelativeFontWeight && propertyID == CSSPropertyID::FontWeight && (valueId == CSSValueID::Bolder || valueId == CSSValueID::Lighter))
                 m_usesRelativeFontWeight = true;
         } else if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(cssValue)) {
             auto propertyID = propertyReference.id();

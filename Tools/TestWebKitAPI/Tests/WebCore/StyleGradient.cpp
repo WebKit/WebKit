@@ -77,7 +77,7 @@ static WebCore::Style::GradientLinearColorStopList allUncacheableStops()
 
 static WebCore::Style::Gradient gradientWithStops(WebCore::Style::GradientLinearColorStopList stops)
 {
-    return WebCore::FunctionNotation<WebCore::CSSValueLinearGradient, WebCore::Style::LinearGradient> {
+    return WebCore::FunctionNotation<WebCore::CSSValueID::LinearGradient, WebCore::Style::LinearGradient> {
         .parameters = {
             .colorInterpolationMethod = WebCore::CSS::GradientColorInterpolationMethod {
                 .method = { WebCore::ColorInterpolationMethod::SRGB { }, WebCore::AlphaPremultiplication::Premultiplied },

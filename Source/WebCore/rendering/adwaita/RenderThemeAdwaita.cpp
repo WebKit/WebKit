@@ -273,41 +273,41 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
     const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
 
     switch (cssValueID) {
-    case CSSValueActivebuttontext:
-    case CSSValueButtontext:
+    case CSSValueID::Activebuttontext:
+    case CSSValueID::Buttontext:
         if (useDarkAppearance)
             return { buttonTextColorDark, Color::Flags::Semantic };
         return { buttonTextColorLight, Color::Flags::Semantic };
 
-    case CSSValueGraytext:
+    case CSSValueID::Graytext:
         if (useDarkAppearance)
             return { buttonTextDisabledColorDark, Color::Flags::Semantic };
         return { buttonTextDisabledColorLight, Color::Flags::Semantic };
 
-    case CSSValueCanvas:
+    case CSSValueID::Canvas:
         if (useDarkAppearance)
             return { SRGBA<uint8_t> { 30, 30, 30 }, Color::Flags::Semantic };
         return { Color::white, Color::Flags::Semantic };
 
-    case CSSValueField:
+    case CSSValueID::Field:
 #if PLATFORM(COCOA)
-    case CSSValueWebkitControlBackground:
+    case CSSValueID::WebkitControlBackground:
 #endif
         if (useDarkAppearance)
             return { textFieldBackgroundColorDark, Color::Flags::Semantic };
         return { textFieldBackgroundColorLight, Color::Flags::Semantic };
 
-    case CSSValueCanvastext:
-    case CSSValueFieldtext:
+    case CSSValueID::Canvastext:
+    case CSSValueID::Fieldtext:
         if (useDarkAppearance)
             return { Color::white, Color::Flags::Semantic };
         return { Color::black, Color::Flags::Semantic };
 
-    case CSSValueHighlight:
+    case CSSValueID::Highlight:
         // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
         return { SRGBA<uint8_t> { 52, 132, 228 }, Color::Flags::Semantic };
 
-    case CSSValueHighlighttext:
+    case CSSValueID::Highlighttext:
         return { Color::white, Color::Flags::Semantic };
 
     default:

@@ -2060,9 +2060,9 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
 
     auto systemAccentCaretColor = [&] {
 #if PLATFORM(MAC)
-        auto cssColorValue = CSSValueAppleSystemControlAccent;
+        auto cssColorValue = CSSValueID::AppleSystemControlAccent;
 #else
-        auto cssColorValue = CSSValueAppleSystemBlue;
+        auto cssColorValue = CSSValueID::AppleSystemBlue;
 #endif
         auto styleColorOptions = protect(node->document())->styleColorOptions(&elementStyle);
         auto systemAccentColor = RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);

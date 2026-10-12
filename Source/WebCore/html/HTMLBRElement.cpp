@@ -66,7 +66,7 @@ void HTMLBRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
         if (!value.isEmpty()) {
             if (equalLettersIgnoringASCIICase(value, "all"_s))
-                addPropertyToPresentationalHintStyle(style, CSSPropertyID::Clear, CSSValueBoth);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyID::Clear, CSSValueID::Both);
             else
                 addPropertyToPresentationalHintStyle(style, CSSPropertyID::Clear, value);
         }

@@ -102,7 +102,7 @@ static Color adjustColorForPunchedOutBackground(const Color& textColor, const Re
 
     auto backdropColor = frameView->documentBackgroundColor();
     if (!backdropColor.isOpaque())
-        backdropColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+        backdropColor = RenderTheme::singleton().systemColor(CSSValueID::Canvas, styleColorOptions);
 
     if (!backdropColor.isValid() || textColorIsLegibleAgainstBackgroundColor(textColor, backdropColor))
         return textColor;
@@ -115,7 +115,7 @@ static Color adjustColorForPunchedOutBackground(const Color& textColor, const Re
         if (!document->backgroundColorIsPunchedOut(backgroundColor, *ancestor))
             return textColor;
 
-        return RenderTheme::singleton().systemColor(CSSValueCanvastext, styleColorOptions);
+        return RenderTheme::singleton().systemColor(CSSValueID::Canvastext, styleColorOptions);
     }
 
     return textColor;

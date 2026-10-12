@@ -462,9 +462,9 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 
         if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUniform) {
             appendCSS(builder, CSSPropertyID::StrokeColor, important, "black"_s);
-            appendCSS(builder, CSSPropertyID::PaintOrder, important, nameLiteral(CSSValueStroke));
-            appendCSS(builder, CSSPropertyID::StrokeLinejoin, important, nameLiteral(CSSValueRound));
-            appendCSS(builder, CSSPropertyID::StrokeLinecap, important, nameLiteral(CSSValueRound));
+            appendCSS(builder, CSSPropertyID::PaintOrder, important, nameLiteral(CSSValueID::Stroke));
+            appendCSS(builder, CSSPropertyID::StrokeLinejoin, important, nameLiteral(CSSValueID::Round));
+            appendCSS(builder, CSSPropertyID::StrokeLinecap, important, nameLiteral(CSSValueID::Round));
         }
 
         return builder.toString();

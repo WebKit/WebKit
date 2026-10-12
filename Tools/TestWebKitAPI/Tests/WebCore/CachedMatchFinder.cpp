@@ -288,7 +288,7 @@ TEST(CachedMatchFinder, TextBufferCacheIsInvalidatedByStyleChangeWithoutDOMMutat
 
     RefPtr content = dynamicDowncast<StyledElement>(testPage.getElementById("content"_s));
     ASSERT_TRUE(content);
-    content->setInlineStyleProperty(CSSPropertyID::Display, CSSValueBlock);
+    content->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Block);
     protect(testPage.document())->updateLayoutIgnorePendingStylesheets();
 
     auto visibleResult = finder.countMatches(std::nullopt, "brown"_s, { });

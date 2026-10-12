@@ -130,8 +130,8 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     ScriptDisallowedScope::EventAllowedScope defaultSlotScope { defaultSlot };
     defaultSlot->setUserAgentPart(UserAgentParts::detailsContent());
     ASSERT(!hasAttributeWithoutSynchronization(openAttr));
-    defaultSlot->setInlineStyleProperty(CSSPropertyID::ContentVisibility, CSSValueHidden);
-    defaultSlot->setInlineStyleProperty(CSSPropertyID::Display, CSSValueBlock);
+    defaultSlot->setInlineStyleProperty(CSSPropertyID::ContentVisibility, CSSValueID::Hidden);
+    defaultSlot->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Block);
     root.appendChild(defaultSlot);
     lazyInitialize(m_defaultSlot, WTF::move(defaultSlot));
 
@@ -183,7 +183,7 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
                         otherDetailsElement->removeAttribute(openAttr);
                 }
             } else {
-                defaultSlot->setInlineStyleProperty(CSSPropertyID::ContentVisibility, CSSValueHidden);
+                defaultSlot->setInlineStyleProperty(CSSPropertyID::ContentVisibility, CSSValueID::Hidden);
                 queueDetailsToggleEventTask(ToggleState::Open, ToggleState::Closed);
             }
         }

@@ -753,8 +753,8 @@ TextManipulationController::ManipulationResult TextManipulationController::compl
 
             CheckedRef style = box->style();
             if (style->width().isFixed() && style->height().isFixed() && !style->hasOutOfFlowPosition() && style->clip().isAuto()) {
-                element->setInlineStyleProperty(CSSPropertyID::OverflowX, CSSValueHidden);
-                element->setInlineStyleProperty(CSSPropertyID::OverflowY, CSSValueAuto);
+                element->setInlineStyleProperty(CSSPropertyID::OverflowX, CSSValueID::Hidden);
+                element->setInlineStyleProperty(CSSPropertyID::OverflowY, CSSValueID::Auto);
             }
         }
     }

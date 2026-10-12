@@ -131,26 +131,26 @@ void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
     case AttributeNames::alignAttr:
         if (equalLettersIgnoringASCIICase(value, "left"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginLeft, 0, CSSUnitType::Px);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginRight, CSSValueAuto);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginRight, CSSValueID::Auto);
         } else if (equalLettersIgnoringASCIICase(value, "right"_s)) {
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginLeft, CSSValueAuto);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginLeft, CSSValueID::Auto);
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginRight, 0, CSSUnitType::Px);
         } else {
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginLeft, CSSValueAuto);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginRight, CSSValueAuto);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginLeft, CSSValueID::Auto);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::MarginRight, CSSValueID::Auto);
         }
         break;
     case AttributeNames::widthAttr:
         addHTMLLengthToStyle(style, CSSPropertyID::Width, value);
         break;
     case AttributeNames::colorAttr:
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::BorderStyle, CSSValueSolid);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::BorderStyle, CSSValueID::Solid);
         addHTMLColorToStyle(style, CSSPropertyID::BorderColor, value);
         addHTMLColorToStyle(style, CSSPropertyID::BackgroundColor, value);
         break;
     case AttributeNames::noshadeAttr:
         if (!hasAttributeWithoutSynchronization(colorAttr)) {
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::BorderStyle, CSSValueSolid);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::BorderStyle, CSSValueID::Solid);
             auto darkGrayValue = CSSValuePool::singleton().createColorValue(Color::darkGray);
             style.setProperty(CSSPropertyID::BorderColor, darkGrayValue);
             style.setProperty(CSSPropertyID::BackgroundColor, WTF::move(darkGrayValue));

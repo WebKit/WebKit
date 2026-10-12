@@ -351,7 +351,7 @@ void ImageDocument::resizeImageToFit()
     imageElement->setIntegralAttribute(widthAttr, imageSize.width() * scale);
     imageElement->setIntegralAttribute(heightAttr, imageSize.height() * scale);
 
-    imageElement->setInlineStyleProperty(CSSPropertyID::Cursor, CSSValueZoomIn);
+    imageElement->setInlineStyleProperty(CSSPropertyID::Cursor, CSSValueID::ZoomIn);
 }
 
 void ImageDocument::restoreImageSize()
@@ -370,7 +370,7 @@ void ImageDocument::restoreImageSize()
     if (imageFitsInWindow())
         imageElement->removeInlineStyleProperty(CSSPropertyID::Cursor);
     else
-        imageElement->setInlineStyleProperty(CSSPropertyID::Cursor, CSSValueZoomOut);
+        imageElement->setInlineStyleProperty(CSSPropertyID::Cursor, CSSValueID::ZoomOut);
 
     m_didShrinkImage = false;
 }
@@ -406,7 +406,7 @@ void ImageDocument::didChangeViewSize()
         if (fitsInWindow)
             imageElement->removeInlineStyleProperty(CSSPropertyID::Cursor);
         else
-            imageElement->setInlineStyleProperty(CSSPropertyID::Cursor, CSSValueZoomOut);
+            imageElement->setInlineStyleProperty(CSSPropertyID::Cursor, CSSValueID::ZoomOut);
         return;
     }
 

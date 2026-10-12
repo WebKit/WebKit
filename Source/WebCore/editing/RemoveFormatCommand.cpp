@@ -96,7 +96,7 @@ void RemoveFormatCommand::doApply()
 
     // We want to remove everything but transparent background.
     // FIXME: We shouldn't access style().
-    protect(defaultStyle->style())->setProperty(CSSPropertyID::BackgroundColor, CSSValueTransparent);
+    protect(defaultStyle->style())->setProperty(CSSPropertyID::BackgroundColor, CSSValueID::Transparent);
 
     applyCommandToComposite(ApplyStyleCommand::create(document(), defaultStyle.ptr(), isElementForRemoveFormatCommand, editingAction()));
 }

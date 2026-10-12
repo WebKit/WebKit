@@ -2208,35 +2208,35 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     if (!value)
         return;
 
-    auto newValue = CSSValueInvalid;
+    auto newValue = CSSValueID::Invalid;
     switch (*value) {
-    case CSSValueStart:
-    case CSSValueEnd:
+    case CSSValueID::Start:
+    case CSSValueID::End:
         switch (direction) {
         case WritingDirection::Natural:
             return;
         case WritingDirection::LeftToRight:
-            newValue = CSSValueLeft;
+            newValue = CSSValueID::Left;
             break;
         case WritingDirection::RightToLeft:
-            newValue = CSSValueRight;
+            newValue = CSSValueID::Right;
             break;
         default:
             ASSERT_NOT_REACHED();
             return;
         }
         break;
-    case CSSValueLeft:
-    case CSSValueWebkitLeft:
-        newValue = CSSValueRight;
+    case CSSValueID::Left:
+    case CSSValueID::WebkitLeft:
+        newValue = CSSValueID::Right;
         break;
-    case CSSValueRight:
-    case CSSValueWebkitRight:
-        newValue = CSSValueLeft;
+    case CSSValueID::Right:
+    case CSSValueID::WebkitRight:
+        newValue = CSSValueID::Left;
         break;
-    case CSSValueCenter:
-    case CSSValueWebkitCenter:
-    case CSSValueJustify:
+    case CSSValueID::Center:
+    case CSSValueID::WebkitCenter:
+    case CSSValueID::Justify:
         return;
     default:
         ASSERT_NOT_REACHED();
@@ -4096,9 +4096,9 @@ void Editor::applyEditingStyleToBodyElement() const
     RefPtr body { document().body() };
     if (!body)
         return;
-    body->setInlineStyleProperty(CSSPropertyID::OverflowWrap, CSSValueBreakWord);
-    body->setInlineStyleProperty(CSSPropertyID::WebkitNbspMode, CSSValueSpace);
-    body->setInlineStyleProperty(CSSPropertyID::LineBreak, CSSValueAfterWhiteSpace);
+    body->setInlineStyleProperty(CSSPropertyID::OverflowWrap, CSSValueID::BreakWord);
+    body->setInlineStyleProperty(CSSPropertyID::WebkitNbspMode, CSSValueID::Space);
+    body->setInlineStyleProperty(CSSPropertyID::LineBreak, CSSValueID::AfterWhiteSpace);
 }
 
 std::optional<SimpleRange> Editor::findString(const String& target, FindOptions options)
@@ -4862,9 +4862,9 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
     RefPtr typingStyle { document().selection().typingStyle() };
     if (typingStyle && typingStyle->style()) {
         if (RefPtr value = dynamicDowncast<CSSValueList>(protect(typingStyle->style())->getPropertyCSSValue(CSSPropertyID::WebkitTextDecorationsInEffect))) {
-            if (value->hasValue(CSSValueLineThrough))
+            if (value->hasValue(CSSValueID::LineThrough))
                 attributes.hasStrikeThrough = true;
-            if (value->hasValue(CSSValueUnderline))
+            if (value->hasValue(CSSValueID::Underline))
                 attributes.hasUnderline = true;
         }
     } else {

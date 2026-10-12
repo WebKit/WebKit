@@ -677,7 +677,7 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
                         // FIXME: Consider keeping color in LCHA (if that change is made) or converting back to the initial underlying color type to avoid unnecessarily clamping colors outside of sRGB.
                         auto underlineColor = convertColor<SRGBA<uint8_t>>(hsla);
 
-                        anchorElement->setInlineStyleProperty(CSSPropertyID::Color, CSSValueCurrentcolor);
+                        anchorElement->setInlineStyleProperty(CSSPropertyID::Color, CSSValueID::Currentcolor);
                         anchorElement->setInlineStyleProperty(CSSPropertyID::TextDecorationColor, serializationForCSS(static_cast<Color>(underlineColor)));
                     }
                 }

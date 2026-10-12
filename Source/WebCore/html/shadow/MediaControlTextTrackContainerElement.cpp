@@ -345,7 +345,7 @@ void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
 void MediaControlTextTrackContainerElement::updateTextTrackStyle()
 {
     if (m_textTrackRepresentation) {
-        setInlineStyleProperty(CSSPropertyID::Position, CSSValueAbsolute);
+        setInlineStyleProperty(CSSPropertyID::Position, CSSValueID::Absolute);
         setInlineStyleProperty(CSSPropertyID::Width, m_videoDisplaySize.size().width(), CSSUnitType::Px);
         setInlineStyleProperty(CSSPropertyID::Height, m_videoDisplaySize.size().height(), CSSUnitType::Px);
         setInlineStyleProperty(CSSPropertyID::Left, 0, CSSUnitType::Px);
@@ -516,7 +516,7 @@ void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged
 
 void MediaControlTextTrackContainerElement::hide()
 {
-    setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone);
+    setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
 }
 
 void MediaControlTextTrackContainerElement::show()

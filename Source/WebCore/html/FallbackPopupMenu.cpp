@@ -85,7 +85,7 @@ static void applyFontCascade(HTMLElement& element, const FontCascade& font)
     element.setInlineStyleProperty(CSSPropertyID::FontSize, font.size(), CSSUnitType::Px);
     element.setInlineStyleProperty(CSSPropertyID::FontWeight, static_cast<double>(font.weight()), CSSUnitType::Number);
     if (font.fontStyleSlope())
-        element.setInlineStyleProperty(CSSPropertyID::FontStyle, CSSValueItalic);
+        element.setInlineStyleProperty(CSSPropertyID::FontStyle, CSSValueID::Italic);
 
     StringBuilder families;
     for (unsigned i = 0; i < font.familyCount(); ++i) {
@@ -113,9 +113,9 @@ static void applyItemStyle(HTMLElement& item, const PopupMenuStyle& style)
     if (CheckedRef font = style.font())
         applyFontCascade(item, font);
 
-    item.setInlineStyleProperty(CSSPropertyID::Direction, style.textDirection() == TextDirection::RTL ? CSSValueRtl : CSSValueLtr);
+    item.setInlineStyleProperty(CSSPropertyID::Direction, style.textDirection() == TextDirection::RTL ? CSSValueID::Rtl : CSSValueID::Ltr);
     if (style.hasTextDirectionOverride())
-        item.setInlineStyleProperty(CSSPropertyID::UnicodeBidi, CSSValueBidiOverride);
+        item.setInlineStyleProperty(CSSPropertyID::UnicodeBidi, CSSValueID::BidiOverride);
 }
 
 static void applyMenuStyle(HTMLElement& container, const PopupMenuStyle& style)
@@ -131,9 +131,9 @@ static void applyMenuStyle(HTMLElement& container, const PopupMenuStyle& style)
     if (CheckedRef font = style.font())
         applyFontCascade(container, font);
 
-    container.setInlineStyleProperty(CSSPropertyID::Direction, style.textDirection() == TextDirection::RTL ? CSSValueRtl : CSSValueLtr);
+    container.setInlineStyleProperty(CSSPropertyID::Direction, style.textDirection() == TextDirection::RTL ? CSSValueID::Rtl : CSSValueID::Ltr);
     if (style.hasTextDirectionOverride())
-        container.setInlineStyleProperty(CSSPropertyID::UnicodeBidi, CSSValueBidiOverride);
+        container.setInlineStyleProperty(CSSPropertyID::UnicodeBidi, CSSValueID::BidiOverride);
 }
 
 class FallbackPopupMenuDismissListener final : public EventListener {
@@ -285,7 +285,7 @@ void FallbackPopupMenu::buildPopupTree(const IntRect& elementRect, LocalFrameVie
     shadowRoot->appendChild(container);
     container->setUserAgentPart(UserAgentParts::internalFallbackPopupMenu());
     applyMenuStyle(container, element->menuStyle());
-    container->setInlineStyleProperty(CSSPropertyID::Position, CSSValueFixed);
+    container->setInlineStyleProperty(CSSPropertyID::Position, CSSValueID::Fixed);
     container->setInlineStyleProperty(CSSPropertyID::Left, elementRect.x() - scrollX, CSSUnitType::Px);
     container->setInlineStyleProperty(CSSPropertyID::Width, elementRect.width(), CSSUnitType::Px);
 

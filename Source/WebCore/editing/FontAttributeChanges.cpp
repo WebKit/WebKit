@@ -74,10 +74,10 @@ Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
     }
 
     if (m_italic)
-        style->setProperty(CSSPropertyID::FontStyle, *m_italic ? CSSValueItalic : CSSValueNormal);
+        style->setProperty(CSSPropertyID::FontStyle, *m_italic ? CSSValueID::Italic : CSSValueID::Normal);
 
     if (m_bold)
-        style->setProperty(CSSPropertyID::FontWeight, *m_bold ? CSSValueBold : CSSValueNormal);
+        style->setProperty(CSSPropertyID::FontWeight, *m_bold ? CSSValueID::Bold : CSSValueID::Normal);
 
     if (m_fontSize)
         style->setProperty(CSSPropertyID::FontSize, CSSPrimitiveValue::create(*m_fontSize, CSSUnitType::Px));
@@ -147,19 +147,19 @@ Ref<EditingStyle> FontAttributeChanges::createEditingStyle() const
         if (auto shadowValue = cssValueForTextShadow(*m_shadow))
             style->setProperty(CSSPropertyID::TextShadow, shadowValue.releaseNonNull());
         else
-            style->setProperty(CSSPropertyID::TextShadow, CSSValueNone);
+            style->setProperty(CSSPropertyID::TextShadow, CSSValueID::None);
     }
 
     if (m_verticalAlign) {
         switch (*m_verticalAlign) {
         case VerticalAlignChange::Superscript:
-            style->setProperty(CSSPropertyID::VerticalAlign, CSSValueSuper);
+            style->setProperty(CSSPropertyID::VerticalAlign, CSSValueID::Super);
             break;
         case VerticalAlignChange::Subscript:
-            style->setProperty(CSSPropertyID::VerticalAlign, CSSValueSub);
+            style->setProperty(CSSPropertyID::VerticalAlign, CSSValueID::Sub);
             break;
         case VerticalAlignChange::Baseline:
-            style->setProperty(CSSPropertyID::VerticalAlign, CSSValueBaseline);
+            style->setProperty(CSSPropertyID::VerticalAlign, CSSValueID::Baseline);
             break;
         default:
             ASSERT_NOT_REACHED();

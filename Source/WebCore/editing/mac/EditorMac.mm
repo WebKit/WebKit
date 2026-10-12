@@ -131,13 +131,13 @@ void Editor::platformPasteFont()
         style->setProperty(CSSPropertyID::FontFamily, [NSString stringWithFormat:@"'%@'", retainPtr([font familyName]).get()]);
         style->setProperty(CSSPropertyID::FontSize, CSSPrimitiveValue::create([font pointSize], CSSUnitType::Px));
         // FIXME: Map to the entire range of CSS weight values.
-        style->setProperty(CSSPropertyID::FontWeight, ([NSFontManager.sharedFontManager weightOfFont:font.get()] >= 7) ? CSSValueBold : CSSValueNormal);
-        style->setProperty(CSSPropertyID::FontStyle, ([NSFontManager.sharedFontManager traitsOfFont:font.get()] & NSItalicFontMask) ? CSSValueItalic : CSSValueNormal);
+        style->setProperty(CSSPropertyID::FontWeight, ([NSFontManager.sharedFontManager weightOfFont:font.get()] >= 7) ? CSSValueID::Bold : CSSValueID::Normal);
+        style->setProperty(CSSPropertyID::FontStyle, ([NSFontManager.sharedFontManager traitsOfFont:font.get()] & NSItalicFontMask) ? CSSValueID::Italic : CSSValueID::Normal);
     } else {
         style->setProperty(CSSPropertyID::FontFamily, "Helvetica"_s);
         style->setProperty(CSSPropertyID::FontSize, CSSPrimitiveValue::create(12, CSSUnitType::Px));
-        style->setProperty(CSSPropertyID::FontWeight, CSSValueNormal);
-        style->setProperty(CSSPropertyID::FontStyle, CSSValueNormal);
+        style->setProperty(CSSPropertyID::FontWeight, CSSValueID::Normal);
+        style->setProperty(CSSPropertyID::FontStyle, CSSValueID::Normal);
     }
 
     Color foregroundColor;
@@ -155,12 +155,12 @@ void Editor::platformPasteFont()
     style->setProperty(CSSPropertyID::TextShadow, serializationForCSS(fontShadow));
 
     auto superscriptStyle = [[fontAttributes objectForKey:NSSuperscriptAttributeName] intValue];
-    style->setProperty(CSSPropertyID::VerticalAlign, (superscriptStyle > 0) ? CSSValueSuper : ((superscriptStyle < 0) ? CSSValueSub : CSSValueBaseline));
+    style->setProperty(CSSPropertyID::VerticalAlign, (superscriptStyle > 0) ? CSSValueID::Super : ((superscriptStyle < 0) ? CSSValueID::Sub : CSSValueID::Baseline));
 
     // FIXME: Underline wins here if we have both (see bug 3790443).
     auto underlineStyle = [[fontAttributes objectForKey:NSUnderlineStyleAttributeName] intValue];
     auto strikethroughStyle = [[fontAttributes objectForKey:NSStrikethroughStyleAttributeName] intValue];
-    style->setProperty(CSSPropertyID::WebkitTextDecorationsInEffect, (underlineStyle != NSUnderlineStyleNone) ? CSSValueUnderline : ((strikethroughStyle != NSUnderlineStyleNone) ? CSSValueLineThrough : CSSValueNone));
+    style->setProperty(CSSPropertyID::WebkitTextDecorationsInEffect, (underlineStyle != NSUnderlineStyleNone) ? CSSValueID::Underline : ((strikethroughStyle != NSUnderlineStyleNone) ? CSSValueID::LineThrough : CSSValueID::None));
 
     applyStyleToSelection(style.ptr(), EditAction::PasteFont);
 

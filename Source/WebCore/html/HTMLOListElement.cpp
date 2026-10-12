@@ -71,15 +71,15 @@ void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedNam
 {
     if (name == typeAttr) {
         if (value == "a"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueLowerAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerAlpha);
         else if (value == "A"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueUpperAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperAlpha);
         else if (value == "i"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueLowerRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerRoman);
         else if (value == "I"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueUpperRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperRoman);
         else if (value == "1"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueDecimal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Decimal);
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }

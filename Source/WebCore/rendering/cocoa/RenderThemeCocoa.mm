@@ -126,13 +126,13 @@ static bool NODELETE formControlRefreshEnabled(const Element* element)
 
 static Color colorCompositedOverCanvasColor(const Color& color, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    const auto backingColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+    const auto backingColor = RenderTheme::singleton().systemColor(CSSValueID::Canvas, styleColorOptions);
     return blendSourceOver(backingColor, color);
 }
 
 static Color colorCompositedOverCanvasColor(CSSValueID cssValue, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    const auto backingColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+    const auto backingColor = RenderTheme::singleton().systemColor(CSSValueID::Canvas, styleColorOptions);
     const auto foregroundColor = RenderTheme::singleton().systemColor(cssValue, styleColorOptions);
     return blendSourceOver(backingColor, foregroundColor);
 }
@@ -167,7 +167,7 @@ static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, 
 
 static Color highContrastOutlineColor(OptionSet<StyleColorOptions> styleColorOptions)
 {
-    auto labelColor = RenderTheme::singleton().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
+    auto labelColor = RenderTheme::singleton().systemColor(CSSValueID::AppleSystemLabel, styleColorOptions);
     return labelColor.colorWithAlphaMultipliedBy(0.65f);
 }
 
@@ -269,9 +269,9 @@ static Color switchTrackColor(const RenderObject& renderer)
     // FIXME: rdar://118163161 UIKit would expose _switchOffColor ideally.
 
 #if PLATFORM(MAC)
-    auto cssColorValueForOnState = CSSValueAppleSystemControlAccent;
+    auto cssColorValueForOnState = CSSValueID::AppleSystemControlAccent;
 #else
-    auto cssColorValueForOnState = CSSValueAppleSystemGreen;
+    auto cssColorValueForOnState = CSSValueID::AppleSystemGreen;
 #endif
 
     Color offColor = SRGBA<uint8_t> { 120, 120, 128, 41 }; // alpha of .16f
@@ -282,9 +282,9 @@ static Color switchTrackColor(const RenderObject& renderer)
 #if ENABLE(FORM_CONTROL_REFRESH) && (!PLATFORM(VISION) || ENABLE(AX_ZOOM_ADJUSTMENTS))
     if (formControlRefreshEnabled(renderer)) {
 #if PLATFORM(MAC)
-        static constexpr auto cssColorValueForOffState = CSSValueAppleSystemQuaternaryLabel;
+        static constexpr auto cssColorValueForOffState = CSSValueID::AppleSystemQuaternaryLabel;
 #else
-        static constexpr auto cssColorValueForOffState = CSSValueAppleSystemTertiaryLabel;
+        static constexpr auto cssColorValueForOffState = CSSValueID::AppleSystemTertiaryLabel;
 #endif
         const auto modernOffColor = colorCompositedOverCanvasColor(cssColorValueForOffState, styleColorOptions);
 
@@ -323,7 +323,7 @@ static Color switchTrackColor(const RenderObject& renderer)
     isWindowActive = states.contains(ControlStyle::State::WindowActive);
 
     if (!isWindowActive) {
-        const auto quinary = RenderTheme::singleton().systemColor(CSSValueAppleSystemQuinaryLabel, styleColorOptions);
+        const auto quinary = RenderTheme::singleton().systemColor(CSSValueID::AppleSystemQuinaryLabel, styleColorOptions);
         on = blendSourceOver(offColor, quinary);
     }
 #endif
@@ -467,7 +467,7 @@ static Path continuousRoundedRectFromRoundedRect(const FloatRoundedRect& rounded
 #if PLATFORM(MAC)
 static void adjustSwitchColorForPressedState(Color& color, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    const auto pressedOverlay = RenderTheme::singleton().systemColor(CSSValueAppleSystemQuaternaryLabel, styleColorOptions);
+    const auto pressedOverlay = RenderTheme::singleton().systemColor(CSSValueID::AppleSystemQuaternaryLabel, styleColorOptions);
     color = blendSourceOver(color, pressedOverlay);
 }
 #endif
@@ -876,7 +876,7 @@ bool RenderThemeCocoa::shouldHaveCapsLockIndicator(const HTMLInputElement& eleme
 
 Color RenderThemeCocoa::pictureFrameColor(const RenderElement& buttonRenderer)
 {
-    return systemColor(CSSValueAppleSystemControlBackground, buttonRenderer.styleColorOptions());
+    return systemColor(CSSValueID::AppleSystemControlBackground, buttonRenderer.styleColorOptions());
 }
 
 void RenderThemeCocoa::paintFileUploadIconDecorations(const RenderElement&, const RenderElement& buttonRenderer, const PaintInfo& paintInfo, const FloatRect& rect, Icon* icon, FileUploadDecorations fileUploadDecorations)
@@ -1405,9 +1405,9 @@ Color RenderThemeCocoa::controlTintColor(const Style::ComputedStyle& style, Opti
         return style.usedAccentColor(options);
 
 #if PLATFORM(MAC)
-    auto cssColorValue = CSSValueAppleSystemControlAccent;
+    auto cssColorValue = CSSValueID::AppleSystemControlAccent;
 #else
-    auto cssColorValue = CSSValueAppleSystemBlue;
+    auto cssColorValue = CSSValueID::AppleSystemBlue;
 #endif
     return systemColor(cssColorValue, options | StyleColorOptions::UseSystemAppearance);
 }
@@ -1601,7 +1601,7 @@ static Color checkboxRadioIndicatorColorForVectorBasedControls(const Color& tint
     auto indicatorColor = foregroundColorForBackgroundColor(tintColor);
 #if PLATFORM(MAC)
     const auto isWindowActive = states.contains(ControlStyle::State::WindowActive);
-    indicatorColor = isWindowActive ? indicatorColor : RenderTheme::singleton().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
+    indicatorColor = isWindowActive ? indicatorColor : RenderTheme::singleton().systemColor(CSSValueID::AppleSystemLabel, styleColorOptions);
 #else
     UNUSED_PARAM(styleColorOptions);
 #endif
@@ -1724,7 +1724,7 @@ static void paintCheckboxRadioInnerShadowForVectorBasedControls(const PaintInfo&
 
 static Color checkboxRadioBorderColorForVectorBasedControls(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    const auto defaultBorderColor = RenderTheme::singleton().systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
+    const auto defaultBorderColor = RenderTheme::singleton().systemColor(CSSValueID::AppleSystemSecondaryLabel, styleColorOptions);
 
     if (!states.contains(ControlStyle::State::Enabled))
         return defaultBorderColor.colorWithAlphaMultipliedBy(checkboxRadioBorderDisabledOpacityForVectorBasedControls);
@@ -1740,7 +1740,7 @@ static Color adjustCheckboxRadioBackgroundColorDisabledState(const Color& backgr
 #if PLATFORM(IOS_FAMILY)
     const auto isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
     if (PAL::currentUserInterfaceIdiomIsVision()) {
-        auto disabledBackgroundColor = RenderTheme::singleton().systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
+        auto disabledBackgroundColor = RenderTheme::singleton().systemColor(isEmpty ? CSSValueID::WebkitControlBackground : CSSValueID::AppleSystemOpaqueTertiaryFill, styleColorOptions);
         return colorCompositedOverCanvasColor(disabledBackgroundColor, styleColorOptions);
     }
 #else
@@ -1763,14 +1763,14 @@ Color RenderThemeCocoa::checkboxRadioBackgroundColorForVectorBasedControls(const
         return colorCompositedOverCanvasColor(backgroundColor, styleColorOptions);
     }
 
-    backgroundColor = isEmpty ? systemColor(CSSValueWebkitControlBackground, styleColorOptions) : tintColor;
+    backgroundColor = isEmpty ? systemColor(CSSValueID::WebkitControlBackground, styleColorOptions) : tintColor;
 #else
     const auto isWindowActive = states.contains(ControlStyle::State::WindowActive);
 
     if (isEmpty)
-        backgroundColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+        backgroundColor = systemColor(CSSValueID::WebkitControlBackground, styleColorOptions);
     else if (!isWindowActive)
-        backgroundColor = systemColor(CSSValueAppleSystemTertiaryFill, styleColorOptions);
+        backgroundColor = systemColor(CSSValueID::AppleSystemTertiaryFill, styleColorOptions);
     else
         backgroundColor = tintColor;
 #endif
@@ -2191,7 +2191,7 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
         if (isSubmitStyleButton(protect(box.element())) && isWindowActive)
             backgroundColor = controlTintColorWithContrast(box.style(), styleColorOptions);
         else
-            backgroundColor = colorCompositedOverCanvasColor(CSSValueAppleSystemOpaqueSecondaryFill, styleColorOptions);
+            backgroundColor = colorCompositedOverCanvasColor(CSSValueID::AppleSystemOpaqueSecondaryFill, styleColorOptions);
     }
 
     if (!isEnabled)
@@ -2211,9 +2211,9 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
 
 #if PLATFORM(MAC)
     const auto userPrefersContrast = Theme::singleton().userPreferredContrast() == InterfaceContrastPreference::MoreContrast;
-    const auto borderColor = userPrefersContrast ? highContrastOutlineColor(styleColorOptions) : systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+    const auto borderColor = userPrefersContrast ? highContrastOutlineColor(styleColorOptions) : systemColor(CSSValueID::WebkitControlBackground, styleColorOptions);
 #else
-    const auto borderColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+    const auto borderColor = systemColor(CSSValueID::WebkitControlBackground, styleColorOptions);
 #endif
 
     drawShapeWithBorder(context, deviceScaleFactor, path, boundingRect, backgroundColor, borderWidth, borderColor);
@@ -2260,7 +2260,7 @@ bool RenderThemeCocoa::paintColorWellForVectorBasedControls(const RenderElement&
     const auto radius = std::min(rect.width(), rect.height()) / 2.f;
     const FloatRoundedRect boundingRoundedRect(rect, CornerRadii(radius));
 
-    auto backgroundColor = systemColor(CSSValueAppleSystemQuinaryLabel, box.styleColorOptions());
+    auto backgroundColor = systemColor(CSSValueID::AppleSystemQuinaryLabel, box.styleColorOptions());
 
     if (!isEnabled)
         backgroundColor = backgroundColor.colorWithAlphaMultipliedBy(0.5f);
@@ -2684,10 +2684,10 @@ bool RenderThemeCocoa::paintInnerSpinButtonForVectorBasedControls(const RenderEl
     const auto isSpinningUp = controlStates.contains(ControlStyle::State::SpinUp);
     const auto isWindowActive = controlStates.contains(ControlStyle::State::WindowActive);
 
-    const auto cssValueForIndicatorColor = isWindowActive ? CSSValueAppleSystemLabel : CSSValueAppleSystemSecondaryLabel;
+    const auto cssValueForIndicatorColor = isWindowActive ? CSSValueID::AppleSystemLabel : CSSValueID::AppleSystemSecondaryLabel;
 
-    auto backgroundColor = systemColor(CSSValueAppleSystemQuinaryLabel, styleColorOptions);
-    auto dividerColor = systemColor(CSSValueAppleSystemQuaternaryLabel, styleColorOptions);
+    auto backgroundColor = systemColor(CSSValueID::AppleSystemQuinaryLabel, styleColorOptions);
+    auto dividerColor = systemColor(CSSValueID::AppleSystemQuaternaryLabel, styleColorOptions);
     auto indicatorColor = systemColor(cssValueForIndicatorColor, styleColorOptions);
 
     if (!isEnabled) {
@@ -3084,9 +3084,9 @@ static bool paintTextAreaOrTextField(const RenderElement& box, const PaintInfo& 
     auto backgroundColor = style->visitedDependentBackgroundColor();
 #if PLATFORM(MAC)
     const auto prefersContrast = Theme::singleton().userPreferredContrast() == InterfaceContrastPreference::MoreContrast;
-    auto borderColor = prefersContrast ? highContrastOutlineColor(styleColorOptions) : RenderTheme::singleton().systemColor(CSSValueAppleSystemContainerBorder, styleColorOptions);
+    auto borderColor = prefersContrast ? highContrastOutlineColor(styleColorOptions) : RenderTheme::singleton().systemColor(CSSValueID::AppleSystemContainerBorder, styleColorOptions);
 #else
-    auto borderColor = RenderTheme::singleton().systemColor(CSSValueAppleSystemContainerBorder, styleColorOptions);
+    auto borderColor = RenderTheme::singleton().systemColor(CSSValueID::AppleSystemContainerBorder, styleColorOptions);
 #endif
 
     const auto states = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
@@ -3295,7 +3295,7 @@ bool RenderThemeCocoa::paintMenuListButtonForVectorBasedControls(const RenderEle
 
 Color RenderThemeCocoa::buttonTextColor(OptionSet<StyleColorOptions> options, bool enabled) const
 {
-    const auto cssValue = enabled ? CSSValueAppleSystemLabel : CSSValueAppleSystemTertiaryLabel;
+    const auto cssValue = enabled ? CSSValueID::AppleSystemLabel : CSSValueID::AppleSystemTertiaryLabel;
     return systemColor(cssValue, options);
 }
 
@@ -3523,7 +3523,7 @@ bool RenderThemeCocoa::adjustMeterStyleForVectorBasedControls(Style::ComputedSty
     return false;
 }
 
-static constexpr auto cssValueForProgressAndMeterTrackColor = CSSValueAppleSystemOpaqueFill;
+static constexpr auto cssValueForProgressAndMeterTrackColor = CSSValueID::AppleSystemOpaqueFill;
 
 bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
@@ -3551,7 +3551,7 @@ bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& ren
     if (userPrefersContrast)
         context.save();
     else
-        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueID::WebkitControlBackground, styleColorOptions));
 #endif
 
     roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSizeForVectorBasedControls);
@@ -3573,16 +3573,16 @@ bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& ren
     fillRect.move(gaugeRegionPosition);
     roundedFillRect.setRect(fillRect);
 
-    auto colorCSSValueID = CSSValueInvalid;
+    auto colorCSSValueID = CSSValueID::Invalid;
     switch (element->gaugeRegion()) {
     case HTMLMeterElement::GaugeRegion::Optimum:
-        colorCSSValueID = CSSValueAppleSystemGreen;
+        colorCSSValueID = CSSValueID::AppleSystemGreen;
         break;
     case HTMLMeterElement::GaugeRegion::Suboptimal:
-        colorCSSValueID = CSSValueAppleSystemYellow;
+        colorCSSValueID = CSSValueID::AppleSystemYellow;
         break;
     case HTMLMeterElement::GaugeRegion::EvenLessGood:
-        colorCSSValueID = CSSValueAppleSystemRed;
+        colorCSSValueID = CSSValueID::AppleSystemRed;
         break;
     }
 
@@ -3702,10 +3702,10 @@ bool RenderThemeCocoa::paintListButtonForVectorBasedControls(const RenderElement
 
 #if PLATFORM(MAC)
     const auto effectiveCornerRadius = listButtonCornerRadius(controlSize) * usedZoom;
-    auto backgroundColor = systemColor(CSSValueAppleSystemQuaternaryLabel, styleColorOptions);
+    auto backgroundColor = systemColor(CSSValueID::AppleSystemQuaternaryLabel, styleColorOptions);
 #endif
 
-    auto indicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions);
+    auto indicatorColor = systemColor(CSSValueID::AppleSystemLabel, styleColorOptions);
 
     if (!isEnabled) {
         indicatorColor = indicatorColor.colorWithAlphaMultipliedBy(kDisabledControlAlpha);
@@ -3750,7 +3750,7 @@ bool RenderThemeCocoa::adjustProgressBarStyleForVectorBasedControls(Style::Compu
     return false;
 }
 
-static constexpr auto cssValueForInactiveBarFill = CSSValueAppleSystemTertiaryLabel;
+static constexpr auto cssValueForInactiveBarFill = CSSValueID::AppleSystemTertiaryLabel;
 
 bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElement& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
@@ -3802,7 +3802,7 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
 
     FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
     roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSizeForVectorBasedControls);
-    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueID::WebkitControlBackground, styleColorOptions));
 
     context.fillRoundedRect(roundedTrackRect, systemColor(cssValueForProgressAndMeterTrackColor, styleColorOptions));
 
@@ -4031,8 +4031,8 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
 
     auto styleColorOptions = box.styleColorOptions();
 
-    auto borderColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
-    auto trackColor = systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions);
+    auto borderColor = systemColor(CSSValueID::WebkitControlBackground, styleColorOptions);
+    auto trackColor = systemColor(CSSValueID::AppleSystemOpaqueFill, styleColorOptions);
 
 #if PLATFORM(MAC)
     const auto isWindowActive = states.contains(ControlStyle::State::WindowActive);
@@ -4105,7 +4105,7 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
         auto tickColorOn = foregroundColorForBackgroundColor(unadjustedFillColor);
         tickColorOn = isEnabled ? tickColorOn : tickColorOn.colorWithAlphaMultipliedBy(kDisabledControlAlpha);
 
-        const auto cssValueForTickOffColor = isEnabled ? CSSValueAppleSystemTertiaryLabel : CSSValueAppleSystemQuaternaryLabel;
+        const auto cssValueForTickOffColor = isEnabled ? CSSValueID::AppleSystemTertiaryLabel : CSSValueID::AppleSystemQuaternaryLabel;
         const auto tickColorOff = systemColor(cssValueForTickOffColor, box.styleColorOptions());
 
         paintSliderTicksForVectorBasedControls(box, paintInfo, rect, isThumbVisible, tickColorOn, tickColorOff);
@@ -4242,10 +4242,10 @@ bool RenderThemeCocoa::paintSearchFieldForVectorBasedControls(const RenderElemen
     if (userPrefersContrast)
         borderColor = highContrastOutlineColor(styleColorOptions);
     else
-        borderColor = isDarkMode ? Color::transparentBlack : RenderTheme::singleton().systemColor(CSSValueAppleSystemQuinaryLabel, styleColorOptions);
+        borderColor = isDarkMode ? Color::transparentBlack : RenderTheme::singleton().systemColor(CSSValueID::AppleSystemQuinaryLabel, styleColorOptions);
 #else
     auto userPrefersContrast = false;
-    auto borderColor = RenderTheme::singleton().systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+    auto borderColor = RenderTheme::singleton().systemColor(CSSValueID::WebkitControlBackground, styleColorOptions);
 #endif
     if (!isEnabled) {
         backgroundColor = backgroundColor.colorWithAlphaMultipliedBy(0.5f);
@@ -4581,7 +4581,7 @@ bool RenderThemeCocoa::paintPlatformResizerForVectorBasedControls(const RenderLa
     if (Theme::singleton().userPreferredContrast() == InterfaceContrastPreference::MoreContrast)
         resizerColor = highContrastOutlineColor(styleColorOptions);
     else
-        resizerColor = systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
+        resizerColor = systemColor(CSSValueID::AppleSystemSecondaryLabel, styleColorOptions);
 
     auto rotation = -piOverFourFloat;
     if (renderer.shouldPlaceVerticalScrollbarOnLeft())

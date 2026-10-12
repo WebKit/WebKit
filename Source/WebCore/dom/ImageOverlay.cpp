@@ -386,7 +386,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             rootContainer->setIdAttribute(imageOverlayElementIdentifier());
             rootContainer->setTranslate(false);
             if (document->isImageDocument())
-                rootContainer->setInlineStyleProperty(CSSPropertyID::WebkitUserSelect, CSSValueText);
+                rootContainer->setInlineStyleProperty(CSSPropertyID::WebkitUserSelect, CSSValueID::Text);
 
             if (mediaControlsContainer)
                 mediaControlsContainer->appendChild(rootContainer);
@@ -443,7 +443,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 
             constexpr auto maxLineCountForCenterAlignedText = 2;
             if (lines.size() > maxLineCountForCenterAlignedText)
-                blockContainer->setInlineStyleProperty(CSSPropertyID::TextAlign, CSSValueStart);
+                blockContainer->setInlineStyleProperty(CSSPropertyID::TextAlign, CSSValueID::Start);
 
             protect(elements.root)->appendChild(blockContainer);
             elements.blocks.append(WTF::move(blockContainer));
@@ -583,11 +583,11 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             ));
 
             if (line.isVertical)
-                textContainer->setInlineStyleProperty(CSSPropertyID::WritingMode, CSSValueVerticalRl);
+                textContainer->setInlineStyleProperty(CSSPropertyID::WritingMode, CSSValueID::VerticalRl);
         }
 
         if (document->isImageDocument())
-            lineContainer->setInlineStyleProperty(CSSPropertyID::Cursor, line.isVertical ? CSSValueVerticalText : CSSValueText);
+            lineContainer->setInlineStyleProperty(CSSPropertyID::Cursor, line.isVertical ? CSSValueID::VerticalText : CSSValueID::Text);
     }
 
 #if ENABLE(DATA_DETECTION)

@@ -82,25 +82,25 @@ static void parsePositionAreaString(const String& positionArea, ResolvedCaptionD
 
     using XPositionArea = ResolvedCaptionDisplaySettingsOptions::XPositionArea;
     switch (firstValue->valueID()) {
-    case CSSValueLeft:
-    case CSSValueSpanLeft:
-    case CSSValueXStart:
-    case CSSValueSpanXStart:
-    case CSSValueSelfXStart:
-    case CSSValueSpanSelfXStart:
+    case CSSValueID::Left:
+    case CSSValueID::SpanLeft:
+    case CSSValueID::XStart:
+    case CSSValueID::SpanXStart:
+    case CSSValueID::SelfXStart:
+    case CSSValueID::SpanSelfXStart:
         options.xPositionArea = XPositionArea::Left;
         break;
 
-    case CSSValueCenter:
+    case CSSValueID::Center:
         options.xPositionArea = XPositionArea::Center;
         break;
 
-    case CSSValueRight:
-    case CSSValueSpanRight:
-    case CSSValueXEnd:
-    case CSSValueSpanXEnd:
-    case CSSValueSelfXEnd:
-    case CSSValueSpanSelfXEnd:
+    case CSSValueID::Right:
+    case CSSValueID::SpanRight:
+    case CSSValueID::XEnd:
+    case CSSValueID::SpanXEnd:
+    case CSSValueID::SelfXEnd:
+    case CSSValueID::SpanSelfXEnd:
         options.xPositionArea = XPositionArea::Right;
         break;
 
@@ -110,25 +110,25 @@ static void parsePositionAreaString(const String& positionArea, ResolvedCaptionD
 
     using YPositionArea = ResolvedCaptionDisplaySettingsOptions::YPositionArea;
     switch (secondValue->valueID()) {
-    case CSSValueTop:
-    case CSSValueSpanTop:
-    case CSSValueYStart:
-    case CSSValueSpanYStart:
-    case CSSValueSelfYStart:
-    case CSSValueSpanSelfYStart:
+    case CSSValueID::Top:
+    case CSSValueID::SpanTop:
+    case CSSValueID::YStart:
+    case CSSValueID::SpanYStart:
+    case CSSValueID::SelfYStart:
+    case CSSValueID::SpanSelfYStart:
         options.yPositionArea = YPositionArea::Top;
         break;
 
-    case CSSValueCenter:
+    case CSSValueID::Center:
         options.yPositionArea = YPositionArea::Center;
         break;
 
-    case CSSValueBottom:
-    case CSSValueSpanBottom:
-    case CSSValueYEnd:
-    case CSSValueSpanYEnd:
-    case CSSValueSelfYEnd:
-    case CSSValueSpanSelfYEnd:
+    case CSSValueID::Bottom:
+    case CSSValueID::SpanBottom:
+    case CSSValueID::YEnd:
+    case CSSValueID::SpanYEnd:
+    case CSSValueID::SelfYEnd:
+    case CSSValueID::SpanSelfYEnd:
         options.yPositionArea = YPositionArea::Bottom;
         break;
 

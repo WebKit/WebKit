@@ -95,8 +95,8 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
 {
     switch (name.nodeName()) {
     case AttributeNames::nowrapAttr:
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::WhiteSpaceCollapse, CSSValueCollapse);
-        addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextWrapMode, CSSValueNowrap);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::WhiteSpaceCollapse, CSSValueID::Collapse);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyID::TextWrapMode, CSSValueID::Nowrap);
         break;
     case AttributeNames::widthAttr:
         addHTMLLengthToStyle(style, CSSPropertyID::Width, value, AllowZeroValue::No);

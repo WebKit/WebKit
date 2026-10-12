@@ -376,7 +376,7 @@ void TextFieldInputType::createShadowSubtree()
         capsLockIndicator->setUserAgentPart(UserAgentParts::webkitCapsLockIndicator());
 
         bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
-        capsLockIndicator->setInlineStyleProperty(CSSPropertyID::Display, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, IsImportant::Yes);
+        capsLockIndicator->setInlineStyleProperty(CSSPropertyID::Display, shouldDrawCapsLockIndicator ? CSSValueID::Block : CSSValueID::None, IsImportant::Yes);
     }
 
     updateAutoFillButton();
@@ -477,7 +477,7 @@ void TextFieldInputType::createDataListDropdownIndicator()
     m_dataListDropdownIndicator = dataListDropdownIndicator.copyRef();
     RefPtr { m_container }->appendChild(dataListDropdownIndicator);
     dataListDropdownIndicator->setUserAgentPart(UserAgentParts::webkitListButton());
-    dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone, IsImportant::Yes);
+    dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None, IsImportant::Yes);
 }
 
 static ValueOrReference<String> limitLength(const String& string LIFETIME_BOUND, unsigned maxLength)
@@ -777,7 +777,7 @@ void TextFieldInputType::capsLockStateMayHaveChanged()
         return;
 
     bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
-    capsLockIndicator->setInlineStyleProperty(CSSPropertyID::Display, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, IsImportant::Yes);
+    capsLockIndicator->setInlineStyleProperty(CSSPropertyID::Display, shouldDrawCapsLockIndicator ? CSSValueID::Block : CSSValueID::None, IsImportant::Yes);
 }
 
 bool TextFieldInputType::shouldDrawAutoFillButton() const
@@ -885,12 +885,12 @@ void TextFieldInputType::updateAutoFillButton()
             autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { autoFillButtonTypeToAccessibilityLabel(autoFillButtonType) });
             autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
         }
-        autoFillButton->setInlineStyleProperty(CSSPropertyID::Display, CSSValueBlock, IsImportant::Yes);
+        autoFillButton->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::Block, IsImportant::Yes);
         return;
     }
     
     if (RefPtr autoFillButton = m_autoFillButton)
-        autoFillButton->setInlineStyleProperty(CSSPropertyID::Display, CSSValueNone, IsImportant::Yes);
+        autoFillButton->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None, IsImportant::Yes);
 }
 
 void TextFieldInputType::dataListMayHaveChanged()
@@ -905,7 +905,7 @@ void TextFieldInputType::dataListMayHaveChanged()
     RefPtr element = this->element();
     if (!element)
         return;
-    RefPtr { m_dataListDropdownIndicator }->setInlineStyleProperty(CSSPropertyID::Display, element->list() ? CSSValueBlock : CSSValueNone, IsImportant::Yes);
+    RefPtr { m_dataListDropdownIndicator }->setInlineStyleProperty(CSSPropertyID::Display, element->list() ? CSSValueID::Block : CSSValueID::None, IsImportant::Yes);
     if (element->hasDataList() && element->focused())
         displaySuggestions(DataListSuggestionActivationType::DataListMayHaveChanged);
 }

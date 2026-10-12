@@ -728,7 +728,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
         // Make sure spans are inline style in paste side e.g. span { display: block }.
         wrappingStyle->forceDisplayInline();
         // FIXME: Should this be included in forceDisplayInline?
-        protect(wrappingStyle->style())->setProperty(CSSPropertyID::Float, CSSValueNone);
+        protect(wrappingStyle->style())->setProperty(CSSPropertyID::Float, CSSValueID::None);
 
         appendStyleNodeOpenTag(out, protect(wrappingStyle->style()), false, [&] -> std::optional<TextDirection> {
             if (m_hasAppendedAnyText)
@@ -1143,7 +1143,7 @@ static bool propertyMissingOrEqualToNone(const StyleProperties* style, CSSProper
 {
     if (!style)
         return false;
-    return style->propertyAsValueID(propertyID).value_or(CSSValueNone) == CSSValueNone;
+    return style->propertyAsValueID(propertyID).value_or(CSSValueID::None) == CSSValueID::None;
 }
 
 static bool needInterchangeNewlineAfter(const VisiblePosition& v)
@@ -1283,13 +1283,13 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
                     // This assertion is caused at least when we select all text of a <body> element whose
                     // 'text-decoration' property is "inherit", and copy it.
                     if (!propertyMissingOrEqualToNone(style.get(), CSSPropertyID::TextDecorationLine)) {
-                        style->setProperty(CSSPropertyID::TextDecorationLine, CSSValueNone);
-                        style->setProperty(CSSPropertyID::TextDecorationThickness, CSSValueAuto);
-                        style->setProperty(CSSPropertyID::TextDecorationStyle, CSSValueSolid);
-                        style->setProperty(CSSPropertyID::TextDecorationColor, CSSValueCurrentcolor);
+                        style->setProperty(CSSPropertyID::TextDecorationLine, CSSValueID::None);
+                        style->setProperty(CSSPropertyID::TextDecorationThickness, CSSValueID::Auto);
+                        style->setProperty(CSSPropertyID::TextDecorationStyle, CSSValueID::Solid);
+                        style->setProperty(CSSPropertyID::TextDecorationColor, CSSValueID::Currentcolor);
                     }
                     if (!propertyMissingOrEqualToNone(style.get(), CSSPropertyID::WebkitTextDecorationsInEffect))
-                        style->setProperty(CSSPropertyID::WebkitTextDecorationsInEffect, CSSValueNone);
+                        style->setProperty(CSSPropertyID::WebkitTextDecorationsInEffect, CSSValueID::None);
                     accumulator.wrapWithStyleNode(style.get(), true);
                 }
             } else {
@@ -1310,7 +1310,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
             accumulator.append("<div style=\"clear: both;\"></div>"_s);
         RefPtr<EditingStyle> positionRelativeStyle = styleFromMatchedRulesAndInlineDecl(*body);
         RefPtr positionStyle = positionRelativeStyle->style();
-        positionStyle->setProperty(CSSPropertyID::Position, CSSValueRelative);
+        positionStyle->setProperty(CSSPropertyID::Position, CSSValueID::Relative);
         accumulator.wrapWithStyleNode(positionStyle.get(), true);
     }
 
