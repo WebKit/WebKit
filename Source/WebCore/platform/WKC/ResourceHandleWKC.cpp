@@ -20,6 +20,9 @@
 #include "CurlResponse.h"
 #include "HTTPParsers.h"
 #include "NetworkLoadMetrics.h"
+#include "NetworkStorageSession.h"
+#include "CookieRequestHeaderFieldProxy.h"
+#include "SameSiteInfo.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
@@ -75,6 +78,59 @@ bool isRedirectStatus(int status)
         || status == 307 || status == 308;
 }
 
+// ResourceHandle's in-process WKC bridge must explicitly bridge WebCore's
+// storage session to the cURL request. This keeps HTTP cookies in WebCore's
+// cookie database instead of relying on cURL's separate transient cookie jar.
+void applyCookiesToRequest(NetworkingContext* context, ResourceRequest& request)
+{
+    if (!context || !request.allowCookies() || request.hasHTTPHeaderField(HTTPHeaderName::Cookie))
+        return;
+
+    auto* session = context->storageSession();
+    if (!session)
+        return;
+
+    URL firstParty = request.firstPartyForCookies();
+    if (!firstParty.isValid())
+        firstParty = request.url();
+
+    CookieRequestHeaderFieldProxy proxy {
+        firstParty,
+        SameSiteInfo::create(request),
+        request.url(),
+        std::nullopt,
+        std::nullopt,
+        IncludeSecureCookies::Yes
+    };
+    auto cookieHeader = session->cookieRequestHeaderFieldValue(proxy).first;
+    if (!cookieHeader.isEmpty())
+        request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeader);
+}
+
+void storeResponseCookies(NetworkingContext* context, const ResourceRequest& request, const ResourceResponse& response)
+{
+    if (!context || !request.allowCookies())
+        return;
+
+    auto* session = context->storageSession();
+    if (!session)
+        return;
+
+    URL firstParty = request.firstPartyForCookies();
+    if (!firstParty.isValid())
+        firstParty = request.url();
+
+    // Iterate rather than asking for one header value so repeated Set-Cookie
+    // fields are stored independently whenever the response representation
+    // preserves them.
+    for (const auto& header : response.httpHeaderFields()) {
+        if (!header.keyAsHTTPHeaderName || *header.keyAsHTTPHeaderName != HTTPHeaderName::SetCookie)
+            continue;
+        if (!header.value.isEmpty())
+            session->setCookiesFromHTTPResponse(firstParty, request.url(), header.value);
+    }
+}
+
 void removeActiveTransfer(ResourceHandle* handle)
 {
     auto& transfers = activeTransfers();
@@ -112,6 +168,7 @@ public:
         }
 
         ResourceResponse response(curlResponse);
+        storeResponseCookies(handle->context(), request.resourceRequest(), response);
         auto status = response.httpStatusCode();
         auto location = response.httpHeaderField(HTTPHeaderName::Location);
 
@@ -149,6 +206,9 @@ public:
 
                 ResourceRequest redirectedRequest = request.resourceRequest();
                 redirectedRequest.setURL(WTF::move(redirectedURL));
+                // Recompute the Cookie header after approval for the redirected
+                // URL instead of forwarding cookies from the previous request.
+                redirectedRequest.removeHTTPHeaderField(HTTPHeaderName::Cookie);
                 // Apply HTTP redirect semantics (301/302/303 may turn POST into
                 // GET and drop the upload body; 307/308 must preserve it). Without
                 // this, form submissions and login flows can be replayed incorrectly
@@ -215,6 +275,7 @@ public:
 
         // Cancel the old transfer only after WebCore has approved the redirect.
         iterator->second.request->cancel();
+        applyCookiesToRequest(handle->context(), request);
         auto nextRequest = CurlRequest::create(request, *this, CurlRequest::CaptureNetworkLoadMetrics::Extended);
         if (sameOrigin(m_originalURL, request.url()))
             nextRequest->setUserPass(m_user, m_password);
@@ -305,7 +366,9 @@ bool ResourceHandle::start()
         return true;
 
     auto curlClient = adoptRef(*new WKCResourceHandleCurlClient(*this, d->m_user, d->m_password));
-    auto request = CurlRequest::create(firstRequest(), curlClient.get(), CurlRequest::CaptureNetworkLoadMetrics::Extended);
+    ResourceRequest initialRequest = firstRequest();
+    applyCookiesToRequest(context(), initialRequest);
+    auto request = CurlRequest::create(initialRequest, curlClient.get(), CurlRequest::CaptureNetworkLoadMetrics::Extended);
     if (!d->m_user.isEmpty() || !d->m_password.isEmpty())
         request->setUserPass(d->m_user, d->m_password);
 
