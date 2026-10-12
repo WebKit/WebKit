@@ -54,9 +54,9 @@ auto CSSValueConversion<TextDecorationThickness>::operator()(BuilderState& state
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueFromFont:
+        case CSSValueID::FromFont:
             return CSS::Keyword::FromFont { };
         default:
             break;

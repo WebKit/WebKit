@@ -58,7 +58,7 @@ auto CSSValueConversion<RepeatStyle>::operator()(BuilderState& state, const CSSV
         };
     }
 
-    if (keywordValue->valueID() == CSSValueRepeatX) {
+    if (keywordValue->valueID() == CSSValueID::RepeatX) {
         return RepeatStyle {
             .values {
                 FillRepeat::Repeat,
@@ -66,7 +66,7 @@ auto CSSValueConversion<RepeatStyle>::operator()(BuilderState& state, const CSSV
             }
         };
     }
-    if (keywordValue->valueID() == CSSValueRepeatY) {
+    if (keywordValue->valueID() == CSSValueID::RepeatY) {
         return RepeatStyle {
             .values {
                 FillRepeat::NoRepeat,

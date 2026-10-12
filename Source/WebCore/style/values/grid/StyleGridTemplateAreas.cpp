@@ -75,7 +75,7 @@ GridTemplateAreas::GridTemplateAreas(const GridNamedAreaMap& map)
 
 auto CSSValueConversion<GridTemplateAreas>::operator()(BuilderState& state, const CSSValue& value) -> GridTemplateAreas
 {
-    if (isValueID(value, CSSValueNone))
+    if (isValueID(value, CSSValueID::None))
         return CSS::Keyword::None { };
 
     RefPtr gridTemplateAreasValue = requiredDowncast<CSSGridTemplateAreasValue>(state, value);

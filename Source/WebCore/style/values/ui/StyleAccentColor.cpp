@@ -39,7 +39,7 @@ const Color& AccentColor::colorOrDefaultColor() const
 
     // Get the default accent color, which is a constant regardless of StyleColorOptions.
     // Hence the StyleColorOptions can be a default empty one.
-    static NeverDestroyed<Style::Color> defaultColor { CSS::colorFromKeyword(CSSValueAccentcolor, { }) };
+    static NeverDestroyed<Style::Color> defaultColor { CSS::colorFromKeyword(CSSValueID::Accentcolor, { }) };
     return defaultColor;
 }
 

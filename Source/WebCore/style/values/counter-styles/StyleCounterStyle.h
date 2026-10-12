@@ -51,7 +51,7 @@ struct SymbolsParameters {
 
     bool operator==(const SymbolsParameters&) const = default;
 };
-using SymbolsFunction = FunctionNotation<CSSValueSymbols, SymbolsParameters>;
+using SymbolsFunction = FunctionNotation<CSSValueID::Symbols, SymbolsParameters>;
 
 template<size_t I> const auto& get(const SymbolsParameters& value)
 {

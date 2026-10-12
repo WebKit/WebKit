@@ -39,9 +39,9 @@ auto CSSValueConversion<SingleTransitionProperty>::operator()(BuilderState& stat
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAll:
+        case CSSValueID::All:
             return CSS::Keyword::All { };
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

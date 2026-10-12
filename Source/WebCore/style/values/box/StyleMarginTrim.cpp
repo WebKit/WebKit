@@ -38,11 +38,11 @@ auto CSSValueConversion<MarginTrim>::operator()(BuilderState& state, const CSSVa
         return CSS::Keyword::None { };
 
     switch (keywordValue->valueID()) {
-    case CSSValueBlock:
+    case CSSValueID::Block:
         return { Style::MarginTrimSide::BlockStart, Style::MarginTrimSide::BlockEnd };
-    case CSSValueBlockStart:
+    case CSSValueID::BlockStart:
         return { Style::MarginTrimSide::BlockStart };
-    case CSSValueBlockEnd:
+    case CSSValueID::BlockEnd:
         return { Style::MarginTrimSide::BlockEnd };
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();

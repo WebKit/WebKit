@@ -46,7 +46,7 @@ struct DynamicRangeLimitMixParameters {
 
     bool operator==(const DynamicRangeLimitMixParameters&) const = default;
 };
-using DynamicRangeLimitMixFunction = FunctionNotation<CSSValueDynamicRangeLimitMix, DynamicRangeLimitMixParameters>;
+using DynamicRangeLimitMixFunction = FunctionNotation<CSSValueID::DynamicRangeLimitMix, DynamicRangeLimitMixParameters>;
 
 template<size_t I> const auto& get(const DynamicRangeLimitMixParameters& value)
 {

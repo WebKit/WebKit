@@ -57,14 +57,14 @@ auto CSSValueConversion<TextIndent>::operator()(BuilderState& state, const CSSVa
             amount = toStyleFromCSSValue<TextIndent::Amount>(state, *primitiveValue);
         } else if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(item)) {
             switch (keywordValue->valueID()) {
-            case CSSValueHanging:
+            case CSSValueID::Hanging:
                 if (hanging) {
                     state.setCurrentPropertyInvalidAtComputedValueTime();
                     return 0_css_px;
                 }
                 hanging = CSS::Keyword::Hanging { };
                 break;
-            case CSSValueEachLine:
+            case CSSValueID::EachLine:
                 if (eachLine) {
                     state.setCurrentPropertyInvalidAtComputedValueTime();
                     return 0_css_px;

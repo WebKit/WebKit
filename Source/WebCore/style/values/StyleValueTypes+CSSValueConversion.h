@@ -149,7 +149,7 @@ template<typename ListType> struct CSSValueConversion<ListOrNone<ListType>> {
     template<typename... Rest> ListOrNone<ListType> operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-            if (keywordValue->valueID() == CSSValueNone)
+            if (keywordValue->valueID() == CSSValueID::None)
                 return CSS::Keyword::None { };
         }
         return toStyleFromCSSValue<ListType>(state, value, std::forward<Rest>(rest)...);
@@ -161,7 +161,7 @@ template<ListOrNoneDerived T> struct CSSValueConversion<T> {
     template<typename... Rest> T operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-            if (keywordValue->valueID() == CSSValueNone)
+            if (keywordValue->valueID() == CSSValueID::None)
                 return CSS::Keyword::None { };
         }
         return toStyleFromCSSValue<typename T::List>(state, value, std::forward<Rest>(rest)...);

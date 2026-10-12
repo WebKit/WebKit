@@ -39,13 +39,13 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueRow:
+        case CSSValueID::Row:
             return CSS::Keyword::Row { };
-        case CSSValueColumn:
+        case CSSValueID::Column:
             return CSS::Keyword::Column { };
-        case CSSValueDense:
+        case CSSValueID::Dense:
             return CSS::Keyword::Dense { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

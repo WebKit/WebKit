@@ -61,7 +61,7 @@ auto CSSValueConversion<MaskBorderWidth>::operator()(BuilderState& state, const 
         return toStyle(widthValue->widths(), state);
 
     // Values coming from CSS Typed OM may not have been converted to a CSSMaskBorderWidthValue.
-    if (isValueID(value, CSSValueAuto))
+    if (isValueID(value, CSSValueID::Auto))
         return CSS::Keyword::Auto { };
 
     RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);

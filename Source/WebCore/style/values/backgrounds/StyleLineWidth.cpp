@@ -48,11 +48,11 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueThin:
+        case CSSValueID::Thin:
             return CSS::Keyword::Thin { };
-        case CSSValueMedium:
+        case CSSValueID::Medium:
             return CSS::Keyword::Medium { };
-        case CSSValueThick:
+        case CSSValueID::Thick:
             return CSS::Keyword::Thick { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

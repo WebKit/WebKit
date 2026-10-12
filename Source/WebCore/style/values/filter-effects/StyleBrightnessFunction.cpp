@@ -41,7 +41,7 @@ namespace Style {
 
 Brightness Brightness::passthroughForInterpolation()
 {
-    return { .value = CSSFilterFunctionDescriptor<CSSValueBrightness>::initialValueForInterpolation };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Brightness>::initialValueForInterpolation };
 }
 
 bool Brightness::transformColor(SRGBA<float>& color) const
@@ -71,7 +71,7 @@ auto ToStyle<CSS::Brightness>::operator()(const CSS::Brightness& value, const Bu
             }
         ) };
     }
-    return { .value = CSSFilterFunctionDescriptor<CSSValueBrightness>::defaultValue };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Brightness>::defaultValue };
 }
 
 // MARK: - Blending
@@ -81,7 +81,7 @@ auto Blending<Brightness>::blend(const Brightness& from, const Brightness& to, c
     // Accumulate needs to be special cased for filter functions with "initial values
     // for interpolation of 1" to use the formula "Vresult = Va + Vb - 1".
     // https://drafts.csswg.org/filter-effects/#accumulation
-    static_assert(CSSFilterFunctionDescriptor<CSSValueBrightness>::initialValueForInterpolation == 1_css_number);
+    static_assert(CSSFilterFunctionDescriptor<CSSValueID::Brightness>::initialValueForInterpolation == 1_css_number);
 
     if (context.compositeOperation == CompositeOperation::Accumulate) {
         return { Brightness::Parameter {

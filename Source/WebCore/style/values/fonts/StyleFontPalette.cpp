@@ -97,11 +97,11 @@ auto CSSValueConversion<FontPalette>::operator()(BuilderState& state, const CSSV
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueLight:
+        case CSSValueID::Light:
             return CSS::Keyword::Light { };
-        case CSSValueDark:
+        case CSSValueID::Dark:
             return CSS::Keyword::Dark { };
         default:
             if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))

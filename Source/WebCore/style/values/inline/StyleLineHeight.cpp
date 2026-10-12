@@ -42,7 +42,7 @@ namespace Style {
 auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSValue& value, float multiplier) -> LineHeight
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (auto valueID = keywordValue->valueID(); valueID == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
+        if (auto valueID = keywordValue->valueID(); valueID == CSSValueID::Normal || CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
             return CSS::Keyword::Normal { };
 
         state.setCurrentPropertyInvalidAtComputedValueTime();

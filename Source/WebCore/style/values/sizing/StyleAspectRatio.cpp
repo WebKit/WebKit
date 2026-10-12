@@ -39,7 +39,7 @@ namespace Style {
 
 auto CSSValueConversion<AspectRatio>::operator()(BuilderState& state, const CSSValue& value) -> AspectRatio
 {
-    if (isValueID(value, CSSValueAuto))
+    if (isValueID(value, CSSValueID::Auto))
         return CSS::Keyword::Auto { };
 
     if (RefPtr ratioValue = dynamicDowncast<CSSRatioValue>(value))
@@ -50,7 +50,7 @@ auto CSSValueConversion<AspectRatio>::operator()(BuilderState& state, const CSSV
         return CSS::Keyword::Auto { };
 
     Ref value0 = list->item(0);
-    if (!isValueID(value0.get(), CSSValueAuto))
+    if (!isValueID(value0.get(), CSSValueID::Auto))
         return CSS::Keyword::Auto { };
 
     Ref value1 = list->item(1);

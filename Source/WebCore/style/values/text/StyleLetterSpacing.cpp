@@ -34,7 +34,7 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

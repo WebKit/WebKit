@@ -41,7 +41,7 @@ namespace Style {
 
 auto CSSValueConversion<ScrollbarColor>::operator()(BuilderState& state, const CSSValue& value) -> ScrollbarColor
 {
-    if (isValueID(value, CSSValueAuto))
+    if (isValueID(value, CSSValueID::Auto))
         return CSS::Keyword::Auto { };
 
     RefPtr pair = requiredDowncast<CSSValuePair>(state, value);

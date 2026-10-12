@@ -38,13 +38,13 @@ auto CSSValueConversion<MaskMode>::operator()(BuilderState& state, const CSSValu
         return MaskMode::MatchSource;
 
     switch (keywordValue->valueID()) {
-    case CSSValueAlpha:
+    case CSSValueID::Alpha:
         return MaskMode::Alpha;
-    case CSSValueLuminance:
+    case CSSValueID::Luminance:
         return MaskMode::Luminance;
-    case CSSValueMatchSource:
+    case CSSValueID::MatchSource:
         return MaskMode::MatchSource;
-    case CSSValueAuto: // -webkit-mask-source-type
+    case CSSValueID::Auto: // -webkit-mask-source-type
         return MaskMode::MatchSource;
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();

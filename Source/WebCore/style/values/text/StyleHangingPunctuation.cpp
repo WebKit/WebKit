@@ -35,15 +35,15 @@ auto CSSValueConversion<HangingPunctuation>::operator()(BuilderState& state, con
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValueFirst:
+        case CSSValueID::First:
             return { HangingPunctuationValue::First };
-        case CSSValueForceEnd:
+        case CSSValueID::ForceEnd:
             return { HangingPunctuationValue::ForceEnd };
-        case CSSValueAllowEnd:
+        case CSSValueID::AllowEnd:
             return { HangingPunctuationValue::AllowEnd };
-        case CSSValueLast:
+        case CSSValueID::Last:
             return { HangingPunctuationValue::Last };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -58,24 +58,24 @@ auto CSSValueConversion<HangingPunctuation>::operator()(BuilderState& state, con
     HangingPunctuationValueEnumSet result;
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueFirst:
+        case CSSValueID::First:
             result.value.add(HangingPunctuationValue::First);
             break;
-        case CSSValueForceEnd:
+        case CSSValueID::ForceEnd:
             if (result.contains(HangingPunctuationValue::AllowEnd)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::None { };
             }
             result.value.add(HangingPunctuationValue::ForceEnd);
             break;
-        case CSSValueAllowEnd:
+        case CSSValueID::AllowEnd:
             if (result.contains(HangingPunctuationValue::ForceEnd)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::None { };
             }
             result.value.add(HangingPunctuationValue::AllowEnd);
             break;
-        case CSSValueLast:
+        case CSSValueID::Last:
             result.value.add(HangingPunctuationValue::Last);
             break;
         default:

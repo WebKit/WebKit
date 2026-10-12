@@ -60,10 +60,10 @@ auto CSSValueConversion<SVGPaint>::operator()(BuilderState& state, const CSSValu
         Ref secondItem = *list->item(1);
         if (RefPtr keywordValue = dynamicDowncast<const CSSKeywordValue>(secondItem)) {
             switch (keywordValue->valueID()) {
-            case CSSValueNone:
+            case CSSValueID::None:
                 return SVGPaint::URLNone { url, CSS::Keyword::None { } };
 
-            case CSSValueCurrentcolor:
+            case CSSValueID::Currentcolor:
                 state.style().setDisallowsFastPathInheritance();
                 return SVGPaint::URLColor { url, Color::currentColor() };
 
@@ -80,10 +80,10 @@ auto CSSValueConversion<SVGPaint>::operator()(BuilderState& state, const CSSValu
 
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
 
-        case CSSValueCurrentcolor:
+        case CSSValueID::Currentcolor:
             state.style().setDisallowsFastPathInheritance();
             return Color { Color::currentColor() };
 

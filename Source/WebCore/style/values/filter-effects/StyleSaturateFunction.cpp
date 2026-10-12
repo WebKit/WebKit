@@ -39,7 +39,7 @@ namespace Style {
 
 Saturate Saturate::passthroughForInterpolation()
 {
-    return { .value = CSSFilterFunctionDescriptor<CSSValueSaturate>::initialValueForInterpolation };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Saturate>::initialValueForInterpolation };
 }
 
 bool Saturate::transformColor(SRGBA<float>& color) const
@@ -67,7 +67,7 @@ auto ToStyle<CSS::Saturate>::operator()(const CSS::Saturate& value, const Builde
             }
         ) };
     }
-    return { .value = CSSFilterFunctionDescriptor<CSSValueSaturate>::defaultValue };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Saturate>::defaultValue };
 }
 
 // MARK: - Blending
@@ -77,7 +77,7 @@ auto Blending<Saturate>::blend(const Saturate& from, const Saturate& to, const B
     // Accumulate needs to be special cased for filter functions with "initial values
     // for interpolation of 1" to use the formula "Vresult = Va + Vb - 1".
     // https://drafts.csswg.org/filter-effects/#accumulation
-    static_assert(CSSFilterFunctionDescriptor<CSSValueSaturate>::initialValueForInterpolation == 1_css_number);
+    static_assert(CSSFilterFunctionDescriptor<CSSValueID::Saturate>::initialValueForInterpolation == 1_css_number);
 
     if (context.compositeOperation == CompositeOperation::Accumulate) {
         return { Saturate::Parameter {

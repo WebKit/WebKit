@@ -58,7 +58,7 @@ template<size_t I> const auto& get(const WebkitCrossfade& value)
         return value.progress;
 }
 DEFINE_TYPE_MAPPING(CSS::WebkitCrossfade, WebkitCrossfade)
-using WebkitCrossfadeFunction = FunctionNotation<CSSValueWebkitCrossFade, WebkitCrossfade>;
+using WebkitCrossfadeFunction = FunctionNotation<CSSValueID::WebkitCrossFade, WebkitCrossfade>;
 
 // MARK: - cross-fade()
 
@@ -91,7 +91,7 @@ struct Crossfade {
 };
 DEFINE_TYPE_WRAPPER_GET(Crossfade, components);
 DEFINE_TYPE_MAPPING(CSS::Crossfade, Crossfade)
-using CrossfadeFunction = FunctionNotation<CSSValueCrossFade, Crossfade>;
+using CrossfadeFunction = FunctionNotation<CSSValueID::CrossFade, Crossfade>;
 
 } // namespace Style
 } // namespace WebCore

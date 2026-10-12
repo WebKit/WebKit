@@ -40,7 +40,7 @@ namespace Style {
 struct ImageWithScale {
     RefPtr<Image> image { InvalidImage::create() };
     Style::Resolution<> scaleFactor { 1 };
-    std::optional<FunctionNotation<CSSValueType, Style::String>> mimeType;
+    std::optional<FunctionNotation<CSSValueID::Type, Style::String>> mimeType;
 
     bool operator==(const ImageWithScale& other) const
     {

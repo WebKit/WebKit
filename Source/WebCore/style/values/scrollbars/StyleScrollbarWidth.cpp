@@ -42,13 +42,13 @@ auto CSSValueConversion<ScrollbarWidth>::operator()(BuilderState& state, const C
         return ScrollbarWidth::Auto;
 
     switch (keywordValue->valueID()) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return ScrollbarWidth::Auto;
-    case CSSValueThin:
+    case CSSValueID::Thin:
         if (state.document().quirks().needsScrollbarWidthThinDisabledQuirk())
             return ScrollbarWidth::Auto;
         return ScrollbarWidth::Thin;
-    case CSSValueNone:
+    case CSSValueID::None:
         return ScrollbarWidth::None;
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();

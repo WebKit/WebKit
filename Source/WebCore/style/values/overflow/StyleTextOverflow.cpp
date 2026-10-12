@@ -38,9 +38,9 @@ auto CSSValueConversion<TextOverflow>::operator()(BuilderState& state, const CSS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueClip:
+        case CSSValueID::Clip:
             return CSS::Keyword::Clip { };
-        case CSSValueEllipsis:
+        case CSSValueID::Ellipsis:
             return CSS::Keyword::Ellipsis { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

@@ -40,7 +40,7 @@ auto CSSValueConversion<Resize>::operator()(BuilderState& state, const CSSValue&
     if (!keywordValue)
         return Resize::None;
 
-    if (keywordValue->valueID() == CSSValueInternalTextareaAuto)
+    if (keywordValue->valueID() == CSSValueID::InternalTextareaAuto)
         return state.document().settings().textAreasAreResizable() ? Resize::Both : Resize::None;
 
     return fromCSSValue<Resize>(*keywordValue);

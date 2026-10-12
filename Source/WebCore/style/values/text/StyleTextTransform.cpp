@@ -35,19 +35,19 @@ auto CSSValueConversion<TextTransform>::operator()(BuilderState& state, const CS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValueCapitalize:
+        case CSSValueID::Capitalize:
             return { TextTransformValue::Capitalize };
-        case CSSValueUppercase:
+        case CSSValueID::Uppercase:
             return { TextTransformValue::Uppercase };
-        case CSSValueLowercase:
+        case CSSValueID::Lowercase:
             return { TextTransformValue::Lowercase };
-        case CSSValueFullWidth:
+        case CSSValueID::FullWidth:
             return { TextTransformValue::FullWidth };
-        case CSSValueFullSizeKana:
+        case CSSValueID::FullSizeKana:
             return { TextTransformValue::FullSizeKana };
-        case CSSValueMathAuto:
+        case CSSValueID::MathAuto:
             return { TextTransformValue::MathAuto };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -62,31 +62,31 @@ auto CSSValueConversion<TextTransform>::operator()(BuilderState& state, const CS
     TextTransformValueEnumSet result;
     for (Ref item : *list) {
         switch (item->valueID()) {
-        case CSSValueCapitalize:
+        case CSSValueID::Capitalize:
             if (result.containsAny({ TextTransformValue::Uppercase, TextTransformValue::Lowercase })) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::None { };
             }
             result.value.add(TextTransformValue::Capitalize);
             break;
-        case CSSValueUppercase:
+        case CSSValueID::Uppercase:
             if (result.containsAny({ TextTransformValue::Capitalize, TextTransformValue::Lowercase })) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::None { };
             }
             result.value.add(TextTransformValue::Uppercase);
             break;
-        case CSSValueLowercase:
+        case CSSValueID::Lowercase:
             if (result.containsAny({ TextTransformValue::Capitalize, TextTransformValue::Uppercase })) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::None { };
             }
             result.value.add(TextTransformValue::Lowercase);
             break;
-        case CSSValueFullWidth:
+        case CSSValueID::FullWidth:
             result.value.add(TextTransformValue::FullWidth);
             break;
-        case CSSValueFullSizeKana:
+        case CSSValueID::FullSizeKana:
             result.value.add(TextTransformValue::FullSizeKana);
             break;
         default:

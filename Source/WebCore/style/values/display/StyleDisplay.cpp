@@ -93,70 +93,70 @@ auto CSSValueConversion<Display>::operator()(BuilderState& state, const CSSValue
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         // [ <display-outside> || <display-inside> ]
-        case CSSValueBlock:
+        case CSSValueID::Block:
             return DisplayType::BlockFlow;
-        case CSSValueFlowRoot:
+        case CSSValueID::FlowRoot:
             return DisplayType::BlockFlowRoot;
-        case CSSValueTable:
+        case CSSValueID::Table:
             return DisplayType::BlockTable;
-        case CSSValueFlex:
+        case CSSValueID::Flex:
             return DisplayType::BlockFlex;
-        case CSSValueGrid:
+        case CSSValueID::Grid:
             return DisplayType::BlockGrid;
-        case CSSValueGridLanes:
+        case CSSValueID::GridLanes:
             return DisplayType::BlockGridLanes;
 
-        case CSSValueInline:
+        case CSSValueID::Inline:
             return DisplayType::InlineFlow;
-        case CSSValueInlineBlock:
+        case CSSValueID::InlineBlock:
             return DisplayType::InlineFlowRoot;
-        case CSSValueInlineTable:
+        case CSSValueID::InlineTable:
             return DisplayType::InlineTable;
-        case CSSValueInlineFlex:
+        case CSSValueID::InlineFlex:
             return DisplayType::InlineFlex;
-        case CSSValueInlineGrid:
+        case CSSValueID::InlineGrid:
             return DisplayType::InlineGrid;
-        case CSSValueInlineGridLanes:
+        case CSSValueID::InlineGridLanes:
             return DisplayType::InlineGridLanes;
-        case CSSValueRuby:
+        case CSSValueID::Ruby:
             return DisplayType::InlineRuby;
 
         // <display-listitem>
-        case CSSValueListItem:
+        case CSSValueID::ListItem:
             return DisplayType::BlockFlowListItem;
 
         // <display-internal>
-        case CSSValueTableRowGroup:
+        case CSSValueID::TableRowGroup:
             return DisplayType::TableRowGroup;
-        case CSSValueTableHeaderGroup:
+        case CSSValueID::TableHeaderGroup:
             return DisplayType::TableHeaderGroup;
-        case CSSValueTableFooterGroup:
+        case CSSValueID::TableFooterGroup:
             return DisplayType::TableFooterGroup;
-        case CSSValueTableRow:
+        case CSSValueID::TableRow:
             return DisplayType::TableRow;
-        case CSSValueTableColumnGroup:
+        case CSSValueID::TableColumnGroup:
             return DisplayType::TableColumnGroup;
-        case CSSValueTableColumn:
+        case CSSValueID::TableColumn:
             return DisplayType::TableColumn;
-        case CSSValueTableCell:
+        case CSSValueID::TableCell:
             return DisplayType::TableCell;
-        case CSSValueTableCaption:
+        case CSSValueID::TableCaption:
             return DisplayType::TableCaption;
-        case CSSValueRubyBase:
+        case CSSValueID::RubyBase:
             return DisplayType::RubyBase;
-        case CSSValueRubyText:
+        case CSSValueID::RubyText:
             return DisplayType::RubyText;
 
         // <display-box>
-        case CSSValueContents:
+        case CSSValueID::Contents:
             return DisplayType::Contents;
-        case CSSValueNone:
+        case CSSValueID::None:
             return DisplayType::None;
 
         // <-webkit-display>
-        case CSSValueWebkitBox:
+        case CSSValueID::WebkitBox:
             return DisplayType::BlockDeprecatedFlex;
-        case CSSValueWebkitInlineBox:
+        case CSSValueID::WebkitInlineBox:
             return DisplayType::InlineDeprecatedFlex;
 
         default:
@@ -171,25 +171,25 @@ auto CSSValueConversion<Display>::operator()(BuilderState& state, const CSSValue
 
     auto handleInside = []<CSSPropertyParserHelpers::DisplayOutside outside>(BuilderState& state, CSSValueID inside) {
         switch (inside) {
-        case CSSValueFlow:
+        case CSSValueID::Flow:
             return mappedDisplayType<outside, Flow>();
 
-        case CSSValueFlowRoot:
+        case CSSValueID::FlowRoot:
             return mappedDisplayType<outside, FlowRoot>();
 
-        case CSSValueTable:
+        case CSSValueID::Table:
             return mappedDisplayType<outside, Table>();
 
-        case CSSValueFlex:
+        case CSSValueID::Flex:
             return mappedDisplayType<outside, Flex>();
 
-        case CSSValueGrid:
+        case CSSValueID::Grid:
             return mappedDisplayType<outside, Grid>();
 
-        case CSSValueGridLanes:
+        case CSSValueID::GridLanes:
             return mappedDisplayType<outside, GridLanes>();
 
-        case CSSValueRuby:
+        case CSSValueID::Ruby:
             return mappedDisplayType<outside, Ruby>();
 
         default:
@@ -202,10 +202,10 @@ auto CSSValueConversion<Display>::operator()(BuilderState& state, const CSSValue
     Ref second = pair->second;
 
     switch (first->valueID()) {
-    case CSSValueBlock:
+    case CSSValueID::Block:
         return handleInside.template operator()<Block>(state, second->valueID());
 
-    case CSSValueInline:
+    case CSSValueID::Inline:
         return handleInside.template operator()<Inline>(state, second->valueID());
 
     default:

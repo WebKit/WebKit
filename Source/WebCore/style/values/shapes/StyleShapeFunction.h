@@ -127,7 +127,7 @@ template<> struct Blending<AbsoluteControlPoint> {
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-move-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 struct MoveCommand {
-    static constexpr auto name = CSSValueMove;
+    static constexpr auto name = CSSValueID::Move;
     using To = ToPosition;
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
@@ -143,7 +143,7 @@ DEFINE_TYPE_MAPPING(CSS::MoveCommand, MoveCommand)
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-line-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 struct LineCommand {
-    static constexpr auto name = CSSValueLine;
+    static constexpr auto name = CSSValueID::Line;
     using To = ToPosition;
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
@@ -159,7 +159,7 @@ DEFINE_TYPE_MAPPING(CSS::LineCommand, LineCommand)
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-hv-line-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2426552611
 struct HLineCommand {
-    static constexpr auto name = CSSValueHline;
+    static constexpr auto name = CSSValueID::Hline;
     struct To {
         static constexpr CommandAffinity affinity = CSS::Keyword::To { };
         using Offset = TwoComponentPositionHorizontal;
@@ -193,7 +193,7 @@ DEFINE_TYPE_MAPPING(CSS::HLineCommand, HLineCommand)
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-hv-line-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2426552611
 struct VLineCommand {
-    static constexpr auto name = CSSValueVline;
+    static constexpr auto name = CSSValueID::Vline;
     struct To {
         static constexpr CommandAffinity affinity = CSS::Keyword::To { };
         using Offset = TwoComponentPositionVertical;
@@ -228,7 +228,7 @@ DEFINE_TYPE_MAPPING(CSS::VLineCommand, VLineCommand)
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-curve-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 struct CurveCommand {
-    static constexpr auto name = CSSValueCurve;
+    static constexpr auto name = CSSValueID::Curve;
     struct To {
         static constexpr CommandAffinity affinity = CSS::Keyword::To { };
 
@@ -282,7 +282,7 @@ DEFINE_TYPE_MAPPING(CSS::CurveCommand::By, CurveCommand::By)
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-smooth-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 struct SmoothCommand {
-    static constexpr auto name = CSSValueSmooth;
+    static constexpr auto name = CSSValueID::Smooth;
     struct To {
         static constexpr CommandAffinity affinity = CSS::Keyword::To { };
 
@@ -329,7 +329,7 @@ DEFINE_TYPE_MAPPING(CSS::SmoothCommand::By, SmoothCommand::By)
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-arc-command
 // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 struct ArcCommand {
-    static constexpr auto name = CSSValueArc;
+    static constexpr auto name = CSSValueID::Arc;
     using To = ToPosition;
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
@@ -397,7 +397,7 @@ struct Shape {
 
     bool operator==(const Shape&) const;
 };
-using ShapeFunction = FunctionNotation<CSSValueShape, Shape>;
+using ShapeFunction = FunctionNotation<CSSValueID::Shape, Shape>;
 
 template<size_t I> const auto& get(const Shape& value)
 {

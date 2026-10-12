@@ -38,7 +38,7 @@ auto CSSValueConversion<MathDepth>::operator()(BuilderState& state, const CSSVal
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAutoAdd:
+        case CSSValueID::AutoAdd:
             return { state.parentStyle().mathDepth().value + (state.parentStyle().mathStyle() == MathStyle::Compact) };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -46,7 +46,7 @@ auto CSSValueConversion<MathDepth>::operator()(BuilderState& state, const CSSVal
         }
     }
 
-    if (auto function = dynamicDowncast<CSSFunctionValue>(value); function && function->name() == CSSValueAdd) {
+    if (auto function = dynamicDowncast<CSSFunctionValue>(value); function && function->name() == CSSValueID::Add) {
         if (auto addFunction = requiredListDowncast<CSSFunctionValue, CSSPrimitiveValue>(state, value)) {
             RefPtr first = addFunction->item(0);
             auto value = toStyleFromCSSValue<MathDepth::Base>(state, *first);

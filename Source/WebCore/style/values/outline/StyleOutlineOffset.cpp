@@ -44,7 +44,7 @@ namespace Style {
 auto CSSValueConversion<OutlineOffset>::operator()(BuilderState& state, const CSSValue& value) -> OutlineOffset
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueInset)
+        if (keywordValue->valueID() == CSSValueID::Inset)
             return CSS::Keyword::Inset { };
     }
 

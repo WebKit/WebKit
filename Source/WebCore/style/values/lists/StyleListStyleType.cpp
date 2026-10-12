@@ -78,22 +78,22 @@ ListStyleType::IPCData ListStyleType::ipcData() const
 
 bool ListStyleType::isCircle() const
 {
-    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueCircle);
+    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueID::Circle);
 }
 
 bool ListStyleType::isDecimal() const
 {
-    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueDecimal);
+    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueID::Decimal);
 }
 
 bool ListStyleType::isDisc() const
 {
-    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueDisc);
+    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueID::Disc);
 }
 
 bool ListStyleType::isSquare() const
 {
-    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueSquare);
+    return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueID::Square);
 }
 
 // MARK: - Conversion
@@ -102,7 +102,7 @@ auto CSSValueConversion<ListStyleType>::operator()(BuilderState& state, const CS
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
         default:
             return CounterStyle { CustomIdent { nameStringForSerialization(valueID) } };

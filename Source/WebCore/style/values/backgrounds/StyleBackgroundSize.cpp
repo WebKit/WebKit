@@ -54,11 +54,11 @@ auto CSSValueConversion<BackgroundSize>::operator()(BuilderState& state, const C
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueCover:
+        case CSSValueID::Cover:
             return CSS::Keyword::Cover { };
-        case CSSValueContain:
+        case CSSValueID::Contain:
             return CSS::Keyword::Contain { };
         default:
             break;

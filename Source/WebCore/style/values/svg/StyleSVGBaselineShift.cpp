@@ -38,11 +38,11 @@ auto CSSValueConversion<SVGBaselineShift>::operator()(BuilderState& state, const
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueBaseline:
+        case CSSValueID::Baseline:
             return CSS::Keyword::Baseline { };
-        case CSSValueSub:
+        case CSSValueID::Sub:
             return CSS::Keyword::Sub { };
-        case CSSValueSuper:
+        case CSSValueID::Super:
             return CSS::Keyword::Super { };
         default:
             break;

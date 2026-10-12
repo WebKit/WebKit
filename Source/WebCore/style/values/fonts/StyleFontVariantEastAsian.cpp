@@ -39,7 +39,7 @@ auto CSSValueConversion<FontVariantEastAsian>::operator()(BuilderState& state, c
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -57,31 +57,31 @@ auto CSSValueConversion<FontVariantEastAsian>::operator()(BuilderState& state, c
 
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueJis78:
+        case CSSValueID::Jis78:
             variant = FontVariantEastAsianVariant::Jis78;
             break;
-        case CSSValueJis83:
+        case CSSValueID::Jis83:
             variant = FontVariantEastAsianVariant::Jis83;
             break;
-        case CSSValueJis90:
+        case CSSValueID::Jis90:
             variant = FontVariantEastAsianVariant::Jis90;
             break;
-        case CSSValueJis04:
+        case CSSValueID::Jis04:
             variant = FontVariantEastAsianVariant::Jis04;
             break;
-        case CSSValueSimplified:
+        case CSSValueID::Simplified:
             variant = FontVariantEastAsianVariant::Simplified;
             break;
-        case CSSValueTraditional:
+        case CSSValueID::Traditional:
             variant = FontVariantEastAsianVariant::Traditional;
             break;
-        case CSSValueFullWidth:
+        case CSSValueID::FullWidth:
             width = FontVariantEastAsianWidth::Full;
             break;
-        case CSSValueProportionalWidth:
+        case CSSValueID::ProportionalWidth:
             width = FontVariantEastAsianWidth::Proportional;
             break;
-        case CSSValueRuby:
+        case CSSValueID::Ruby:
             ruby = FontVariantEastAsianRuby::Yes;
             break;
         default:

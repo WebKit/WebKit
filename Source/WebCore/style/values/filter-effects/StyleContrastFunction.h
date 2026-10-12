@@ -58,7 +58,7 @@ struct Contrast {
 
     bool operator==(const Contrast&) const = default;
 };
-using ContrastFunction = FunctionNotation<CSSValueContrast, Contrast>;
+using ContrastFunction = FunctionNotation<CSSValueID::Contrast, Contrast>;
 DEFINE_TYPE_WRAPPER_GET(Contrast, value);
 
 // MARK: - Conversion

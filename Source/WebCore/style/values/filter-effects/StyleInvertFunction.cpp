@@ -39,7 +39,7 @@ namespace Style {
 
 Invert Invert::passthroughForInterpolation()
 {
-    return { .value = CSSFilterFunctionDescriptor<CSSValueInvert>::initialValueForInterpolation };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Invert>::initialValueForInterpolation };
 }
 
 bool Invert::transformColor(SRGBA<float>& color) const
@@ -71,7 +71,7 @@ auto ToStyle<CSS::Invert>::operator()(const CSS::Invert& value, const BuilderSta
             }
         ) };
     }
-    return { .value = CSSFilterFunctionDescriptor<CSSValueInvert>::defaultValue };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Invert>::defaultValue };
 }
 
 // MARK: - Evaluation

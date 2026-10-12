@@ -49,7 +49,7 @@ inline WebCore::Color resolveColor(const CurrentAccentColor&, const ResolvedColo
 {
     // Get the default accent color, which is a constant regardless of StyleColorOptions.
     // Hence the StyleColorOptions can be a default empty one.
-    return CSS::colorFromKeyword(CSSValueAccentcolor, { });
+    return CSS::colorFromKeyword(CSSValueID::Accentcolor, { });
 }
 
 constexpr bool containsCurrentColor(const CurrentAccentColor&)

@@ -57,10 +57,10 @@ auto CSSValueConversion<FontSizeAdjust>::operator()(BuilderState& state, const C
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
 
-        case CSSValueFromFont:
+        case CSSValueID::FromFont:
             // We cannot determine the primary font here, so we defer resolving the
             // aspect value for from-font to when the primary font is created.
             // See FontCascadeFonts::primaryFont().
@@ -86,7 +86,7 @@ auto CSSValueConversion<FontSizeAdjust>::operator()(BuilderState& state, const C
 
     if (RefPtr secondIdentValue = dynamicDowncast<CSSKeywordValue>(pair->second)) {
         switch (secondIdentValue->valueID()) {
-        case CSSValueFromFont:
+        case CSSValueID::FromFont:
             // We cannot determine the primary font here, so we defer resolving the
             // aspect value for from-font to when the primary font is created.
             // See FontCascadeFonts::primaryFont().

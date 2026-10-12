@@ -68,9 +68,9 @@ auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, 
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueHistoricalForms:
+        case CSSValueID::HistoricalForms:
             return CSS::Keyword::HistoricalForms { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -87,7 +87,7 @@ auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, 
     for (Ref item : *list) {
         if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(item)) {
             switch (keywordValue->valueID()) {
-            case CSSValueHistoricalForms:
+            case CSSValueID::HistoricalForms:
                 result.valuesRef().historicalForms = true;
                 break;
             default:
@@ -96,27 +96,27 @@ auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, 
             }
         } else if (RefPtr function = dynamicDowncast<CSSFunctionValue>(item)) {
             switch (function->name()) {
-            case CSSValueSwash:
+            case CSSValueID::Swash:
                 if (!processSingleItemFunction(*function, result.valuesRef().swash))
                     return CSS::Keyword::Normal { };
                 break;
-            case CSSValueStylistic:
+            case CSSValueID::Stylistic:
                 if (!processSingleItemFunction(*function, result.valuesRef().stylistic))
                     return CSS::Keyword::Normal { };
                 break;
-            case CSSValueStyleset:
+            case CSSValueID::Styleset:
                 if (!processListFunction(*function, result.valuesRef().styleset))
                     return CSS::Keyword::Normal { };
                 break;
-            case CSSValueCharacterVariant:
+            case CSSValueID::CharacterVariant:
                 if (!processListFunction(*function, result.valuesRef().characterVariant))
                     return CSS::Keyword::Normal { };
                 break;
-            case CSSValueOrnaments:
+            case CSSValueID::Ornaments:
                 if (!processSingleItemFunction(*function, result.valuesRef().ornaments))
                     return CSS::Keyword::Normal { };
                 break;
-            case CSSValueAnnotation:
+            case CSSValueID::Annotation:
                 if (!processSingleItemFunction(*function, result.valuesRef().annotation))
                     return CSS::Keyword::Normal { };
                 break;

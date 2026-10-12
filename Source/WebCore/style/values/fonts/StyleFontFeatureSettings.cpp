@@ -44,7 +44,7 @@ auto CSSValueConversion<FontFeatureSettings>::operator()(BuilderState& state, co
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         default:
             if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))

@@ -39,7 +39,7 @@ auto CSSValueConversion<ZIndex>::operator()(BuilderState& state, const CSSValue&
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

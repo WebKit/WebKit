@@ -35,15 +35,15 @@ auto CSSValueConversion<TextUnderlinePosition>::operator()(BuilderState& state, 
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueFromFont:
+        case CSSValueID::FromFont:
             return { TextUnderlinePositionValue::FromFont };
-        case CSSValueUnder:
+        case CSSValueID::Under:
             return { TextUnderlinePositionValue::Under };
-        case CSSValueLeft:
+        case CSSValueID::Left:
             return { TextUnderlinePositionValue::Left };
-        case CSSValueRight:
+        case CSSValueID::Right:
             return { TextUnderlinePositionValue::Right };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -58,28 +58,28 @@ auto CSSValueConversion<TextUnderlinePosition>::operator()(BuilderState& state, 
     TextUnderlinePositionValueEnumSet result;
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueFromFont:
+        case CSSValueID::FromFont:
             if (result.contains(TextUnderlinePositionValue::Under)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::Auto { };
             }
             result.value.add(TextUnderlinePositionValue::FromFont);
             break;
-        case CSSValueUnder:
+        case CSSValueID::Under:
             if (result.contains(TextUnderlinePositionValue::FromFont)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::Auto { };
             }
             result.value.add(TextUnderlinePositionValue::Under);
             break;
-        case CSSValueLeft:
+        case CSSValueID::Left:
             if (result.contains(TextUnderlinePositionValue::Right)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::Auto { };
             }
             result.value.add(TextUnderlinePositionValue::Left);
             break;
-        case CSSValueRight:
+        case CSSValueID::Right:
             if (result.contains(TextUnderlinePositionValue::Left)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return CSS::Keyword::Auto { };

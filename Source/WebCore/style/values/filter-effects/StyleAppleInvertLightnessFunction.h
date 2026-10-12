@@ -51,7 +51,7 @@ struct AppleInvertLightness {
 
     static ColorComponents<float, 4> hueRotate(const ColorComponents<float, 4>&, float);
 };
-using AppleInvertLightnessFunction = FunctionNotation<CSSValueAppleInvertLightness, AppleInvertLightness>;
+using AppleInvertLightnessFunction = FunctionNotation<CSSValueID::AppleInvertLightness, AppleInvertLightness>;
 
 DEFINE_TYPE_MAPPING(CSS::AppleInvertLightness, AppleInvertLightness)
 

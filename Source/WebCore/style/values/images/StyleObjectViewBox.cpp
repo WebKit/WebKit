@@ -43,7 +43,7 @@ namespace Style {
 
 auto CSSValueConversion<ObjectViewBox>::operator()(BuilderState& state, const CSSValue& value) -> ObjectViewBox
 {
-    if (isValueID(value, CSSValueNone))
+    if (isValueID(value, CSSValueID::None))
         return CSS::Keyword::None { };
 
     // <basic-shape-rect> variants (inset, rect, xywh) all resolve to InsetFunction
@@ -61,7 +61,7 @@ auto CSSValueConversion<ObjectViewBox>::operator()(BuilderState& state, const CS
 Ref<CSSValue> CSSValueCreation<ObjectViewBox>::operator()(CSSValuePool&, const ComputedStyle& style, const ObjectViewBox& value)
 {
     if (value.isNone())
-        return CSSKeywordValue::create(CSSValueNone);
+        return CSSKeywordValue::create(CSSValueID::None);
     return CSSBasicShapeValue::create(toCSS(BasicShape { *value.tryRect() }, style));
 }
 

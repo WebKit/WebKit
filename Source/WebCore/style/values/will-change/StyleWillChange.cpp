@@ -198,11 +198,11 @@ auto CSSValueConversion<WillChange>::operator()(BuilderState& state, const CSSVa
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueScrollPosition:
+        case CSSValueID::ScrollPosition:
             return WillChangeAnimatableFeatures { CSS::Keyword::ScrollPosition { } };
-        case CSSValueContents:
+        case CSSValueID::Contents:
             return WillChangeAnimatableFeatures { CSS::Keyword::Contents { } };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -233,9 +233,9 @@ auto CSSValueConversion<WillChange>::operator()(BuilderState& state, const CSSVa
     return WillChangeAnimatableFeatures::map(*list, [&](auto& item) -> WillChangeAnimatableFeature {
         if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(item)) {
             switch (keywordValue->valueID()) {
-            case CSSValueScrollPosition:
+            case CSSValueID::ScrollPosition:
                 return CSS::Keyword::ScrollPosition { };
-            case CSSValueContents:
+            case CSSValueID::Contents:
                 return CSS::Keyword::Contents { };
             default:
                 state.setCurrentPropertyInvalidAtComputedValueTime();

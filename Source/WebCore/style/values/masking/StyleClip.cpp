@@ -40,7 +40,7 @@ namespace Style {
 
 auto CSSValueConversion<Clip>::operator()(BuilderState& state, const CSSValue& value) -> Clip
 {
-    if (isValueID(value, CSSValueAuto))
+    if (isValueID(value, CSSValueID::Auto))
         return CSS::Keyword::Auto { };
 
     RefPtr clipValue = requiredDowncast<CSSClipValue>(state, value);

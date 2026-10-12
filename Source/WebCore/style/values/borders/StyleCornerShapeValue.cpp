@@ -43,17 +43,17 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueRound:
+        case CSSValueID::Round:
             return CSS::Keyword::Round { };
-        case CSSValueScoop:
+        case CSSValueID::Scoop:
             return CSS::Keyword::Scoop { };
-        case CSSValueBevel:
+        case CSSValueID::Bevel:
             return CSS::Keyword::Bevel { };
-        case CSSValueNotch:
+        case CSSValueID::Notch:
             return CSS::Keyword::Notch { };
-        case CSSValueSquare:
+        case CSSValueID::Square:
             return CSS::Keyword::Square { };
-        case CSSValueSquircle:
+        case CSSValueID::Squircle:
             return CSS::Keyword::Squircle { };
         default:
             break;
@@ -63,7 +63,7 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
         return CSS::Keyword::Round { };
     }
 
-    auto superellipseFunction = requiredFunctionDowncast<CSSValueSuperellipse, CSSValue>(state, value);
+    auto superellipseFunction = requiredFunctionDowncast<CSSValueID::Superellipse, CSSValue>(state, value);
     if (!superellipseFunction)
         return CSS::Keyword::Round { };
 
@@ -72,9 +72,9 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
     // https://drafts.csswg.org/css-borders-4/#typedef-corner-shape-value
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(superellipseDescriptor)) {
         switch (keywordValue->valueID()) {
-        case CSSValueInfinity:
+        case CSSValueID::Infinity:
             return { SuperellipseFunction { Number<>(std::numeric_limits<double>::infinity()) } };
-        case CSSValueNegativeInfinity:
+        case CSSValueID::NegativeInfinity:
             return { SuperellipseFunction { Number<>(-std::numeric_limits<double>::infinity()) } };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

@@ -35,7 +35,7 @@ namespace Style {
 auto CSSValueConversion<WhiteSpaceTrim>::operator()(BuilderState& state, const CSSValue& value) -> WhiteSpaceTrim
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueNone)
+        if (keywordValue->valueID() == CSSValueID::None)
             return CSS::Keyword::None { };
         state.setCurrentPropertyInvalidAtComputedValueTime();
         return CSS::Keyword::None { };
@@ -48,13 +48,13 @@ auto CSSValueConversion<WhiteSpaceTrim>::operator()(BuilderState& state, const C
     WhiteSpaceTrimValueEnumSet result;
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueDiscardBefore:
+        case CSSValueID::DiscardBefore:
             result.value.add(WhiteSpaceTrimValue::DiscardBefore);
             break;
-        case CSSValueDiscardAfter:
+        case CSSValueID::DiscardAfter:
             result.value.add(WhiteSpaceTrimValue::DiscardAfter);
             break;
-        case CSSValueDiscardInner:
+        case CSSValueID::DiscardInner:
             result.value.add(WhiteSpaceTrimValue::DiscardInner);
             break;
         default:

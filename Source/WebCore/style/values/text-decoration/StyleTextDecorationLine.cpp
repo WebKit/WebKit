@@ -72,11 +72,11 @@ auto CSSValueConversion<TextDecorationLine>::operator()(BuilderState& state, con
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValueSpellingError:
+        case CSSValueID::SpellingError:
             return CSS::Keyword::SpellingError { };
-        case CSSValueGrammarError:
+        case CSSValueID::GrammarError:
             return CSS::Keyword::GrammarError { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -92,16 +92,16 @@ auto CSSValueConversion<TextDecorationLine>::operator()(BuilderState& state, con
 
     for (Ref item : *valueList) {
         switch (item->valueID()) {
-        case CSSValueUnderline:
+        case CSSValueID::Underline:
             flags.add(TextDecorationLine::Flag::Underline);
             break;
-        case CSSValueOverline:
+        case CSSValueID::Overline:
             flags.add(TextDecorationLine::Flag::Overline);
             break;
-        case CSSValueLineThrough:
+        case CSSValueID::LineThrough:
             flags.add(TextDecorationLine::Flag::LineThrough);
             break;
-        case CSSValueBlink:
+        case CSSValueID::Blink:
             flags.add(TextDecorationLine::Flag::Blink);
             break;
         default:
@@ -124,13 +124,13 @@ Ref<CSSValue> CSSValueCreation<OptionSet<TextDecorationLine::Flag>>::operator()(
 
     CSSValueListBuilder list;
     if (value.contains(TextDecorationLine::Flag::Underline))
-        list.append(CSSKeywordValue::create(CSSValueUnderline));
+        list.append(CSSKeywordValue::create(CSSValueID::Underline));
     if (value.contains(TextDecorationLine::Flag::Overline))
-        list.append(CSSKeywordValue::create(CSSValueOverline));
+        list.append(CSSKeywordValue::create(CSSValueID::Overline));
     if (value.contains(TextDecorationLine::Flag::LineThrough))
-        list.append(CSSKeywordValue::create(CSSValueLineThrough));
+        list.append(CSSKeywordValue::create(CSSValueID::LineThrough));
     if (value.contains(TextDecorationLine::Flag::Blink))
-        list.append(CSSKeywordValue::create(CSSValueBlink));
+        list.append(CSSKeywordValue::create(CSSValueID::Blink));
     return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
@@ -149,11 +149,11 @@ void Serialize<OptionSet<TextDecorationLine::Flag>>::operator()(StringBuilder& b
             needsSpace = true;
         }
     };
-    appendOption(TextDecorationLine::Flag::Underline, CSSValueUnderline);
-    appendOption(TextDecorationLine::Flag::Overline, CSSValueOverline);
-    appendOption(TextDecorationLine::Flag::LineThrough, CSSValueLineThrough);
+    appendOption(TextDecorationLine::Flag::Underline, CSSValueID::Underline);
+    appendOption(TextDecorationLine::Flag::Overline, CSSValueID::Overline);
+    appendOption(TextDecorationLine::Flag::LineThrough, CSSValueID::LineThrough);
     // Blink value is ignored for rendering but not for the computed value.
-    appendOption(TextDecorationLine::Flag::Blink, CSSValueBlink);
+    appendOption(TextDecorationLine::Flag::Blink, CSSValueID::Blink);
 }
 
 // MARK: - Logging
@@ -180,10 +180,10 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const TextDecorationLine& decor
                     needsSpace = true;
                 }
             };
-            streamFlag(TextDecorationLine::Flag::Underline, CSSValueUnderline);
-            streamFlag(TextDecorationLine::Flag::Overline, CSSValueOverline);
-            streamFlag(TextDecorationLine::Flag::LineThrough, CSSValueLineThrough);
-            streamFlag(TextDecorationLine::Flag::Blink, CSSValueBlink);
+            streamFlag(TextDecorationLine::Flag::Underline, CSSValueID::Underline);
+            streamFlag(TextDecorationLine::Flag::Overline, CSSValueID::Overline);
+            streamFlag(TextDecorationLine::Flag::LineThrough, CSSValueID::LineThrough);
+            streamFlag(TextDecorationLine::Flag::Blink, CSSValueID::Blink);
         }
     );
     return ts;

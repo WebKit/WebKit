@@ -38,7 +38,7 @@ namespace Style {
 auto CSSValueConversion<WebkitInitialLetter>::operator()(BuilderState& state, const CSSValue& value) -> WebkitInitialLetter
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueNormal)
+        if (keywordValue->valueID() == CSSValueID::Normal)
             return CSS::Keyword::Normal { };
 
         state.setCurrentPropertyInvalidAtComputedValueTime();

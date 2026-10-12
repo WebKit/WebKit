@@ -41,15 +41,15 @@ template<TextEdgeDerived T> struct CSSValueConversion<T> {
             switch (keywordValue->valueID()) {
             case Keyword::value:
                 return Keyword { };
-            case CSSValueText:
+            case CSSValueID::Text:
                 return { TextEdgeOver::Text, TextEdgeUnder::Text };
-            case CSSValueIdeographic:
+            case CSSValueID::Ideographic:
                 return { TextEdgeOver::Ideographic, TextEdgeUnder::Ideographic };
-            case CSSValueIdeographicInk:
+            case CSSValueID::IdeographicInk:
                 return { TextEdgeOver::IdeographicInk, TextEdgeUnder::IdeographicInk };
-            case CSSValueCap:
+            case CSSValueID::Cap:
                 return { TextEdgeOver::Cap, TextEdgeUnder::Text };
-            case CSSValueEx:
+            case CSSValueID::Ex:
                 return { TextEdgeOver::Ex, TextEdgeUnder::Text };
             default:
                 state.setCurrentPropertyInvalidAtComputedValueTime();

@@ -103,9 +103,9 @@ auto CSSValueConversion<DynamicRangeLimit>::operator()(BuilderState& state, cons
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueStandard:      return CSS::Keyword::Standard { };
-        case CSSValueConstrained:   return CSS::Keyword::Constrained { };
-        case CSSValueNoLimit:       return CSS::Keyword::NoLimit { };
+        case CSSValueID::Standard:      return CSS::Keyword::Standard { };
+        case CSSValueID::Constrained:   return CSS::Keyword::Constrained { };
+        case CSSValueID::NoLimit:       return CSS::Keyword::NoLimit { };
         default:
             break;
         }

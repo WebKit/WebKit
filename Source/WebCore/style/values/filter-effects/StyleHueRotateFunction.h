@@ -58,7 +58,7 @@ struct HueRotate {
 
     bool operator==(const HueRotate&) const = default;
 };
-using HueRotateFunction = FunctionNotation<CSSValueHueRotate, HueRotate>;
+using HueRotateFunction = FunctionNotation<CSSValueID::HueRotate, HueRotate>;
 DEFINE_TYPE_WRAPPER_GET(HueRotate, value);
 
 // MARK: - Conversion

@@ -64,13 +64,13 @@ auto CSSValueConversion<SVGPaintOrder>::operator()(BuilderState& state, const CS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueFill:
+        case CSSValueID::Fill:
             return CSS::Keyword::Fill { };
-        case CSSValueStroke:
+        case CSSValueID::Stroke:
             return CSS::Keyword::Stroke { };
-        case CSSValueMarkers:
+        case CSSValueID::Markers:
             return CSS::Keyword::Markers { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -83,10 +83,10 @@ auto CSSValueConversion<SVGPaintOrder>::operator()(BuilderState& state, const CS
         return CSS::Keyword::Normal { };
 
     switch (auto& first = list->item(0); first.valueID()) {
-    case CSSValueFill:
+    case CSSValueID::Fill:
         if (list->size() > 1) {
             switch (auto& second = list->item(1); second.valueID()) {
-            case CSSValueMarkers:
+            case CSSValueID::Markers:
                 return { CSS::Keyword::Fill { }, CSS::Keyword::Markers { } };
             default:
                 state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -94,10 +94,10 @@ auto CSSValueConversion<SVGPaintOrder>::operator()(BuilderState& state, const CS
             }
         }
         return CSS::Keyword::Fill { };
-    case CSSValueStroke:
+    case CSSValueID::Stroke:
         if (list->size() > 1) {
             switch (auto& second = list->item(1); second.valueID()) {
-            case CSSValueMarkers:
+            case CSSValueID::Markers:
                 return { CSS::Keyword::Stroke { }, CSS::Keyword::Markers { } };
             default:
                 state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -105,10 +105,10 @@ auto CSSValueConversion<SVGPaintOrder>::operator()(BuilderState& state, const CS
             }
         }
         return CSS::Keyword::Stroke { };
-    case CSSValueMarkers:
+    case CSSValueID::Markers:
         if (list->size() > 1) {
             switch (auto& second = list->item(1); second.valueID()) {
-            case CSSValueStroke:
+            case CSSValueID::Stroke:
                 return { CSS::Keyword::Markers { }, CSS::Keyword::Stroke { } };
             default:
                 state.setCurrentPropertyInvalidAtComputedValueTime();

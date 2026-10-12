@@ -38,13 +38,13 @@ auto CSSValueConversion<FlexWrap>::operator()(BuilderState& state, const CSSValu
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNowrap:
+        case CSSValueID::Nowrap:
             return CSS::Keyword::Nowrap { };
-        case CSSValueWrap:
+        case CSSValueID::Wrap:
             return CSS::Keyword::Wrap { };
-        case CSSValueWrapReverse:
+        case CSSValueID::WrapReverse:
             return CSS::Keyword::WrapReverse { };
-        case CSSValueBalance:
+        case CSSValueID::Balance:
             return CSS::Keyword::Balance { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

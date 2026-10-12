@@ -41,24 +41,24 @@ auto CSSValueConversion<FontWidth>::operator()(BuilderState& state, const CSSVal
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueInvalid:
-        case CSSValueUltraCondensed:
+        case CSSValueID::Invalid:
+        case CSSValueID::UltraCondensed:
             return CSS::Keyword::UltraCondensed { };
-        case CSSValueExtraCondensed:
+        case CSSValueID::ExtraCondensed:
             return CSS::Keyword::ExtraCondensed { };
-        case CSSValueCondensed:
+        case CSSValueID::Condensed:
             return CSS::Keyword::Condensed { };
-        case CSSValueSemiCondensed:
+        case CSSValueID::SemiCondensed:
             return CSS::Keyword::SemiCondensed { };
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueSemiExpanded:
+        case CSSValueID::SemiExpanded:
             return CSS::Keyword::SemiExpanded { };
-        case CSSValueExpanded:
+        case CSSValueID::Expanded:
             return CSS::Keyword::Expanded { };
-        case CSSValueExtraExpanded:
+        case CSSValueID::ExtraExpanded:
             return CSS::Keyword::ExtraExpanded { };
-        case CSSValueUltraExpanded:
+        case CSSValueID::UltraExpanded:
             return CSS::Keyword::UltraExpanded { };
         default:
             if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))

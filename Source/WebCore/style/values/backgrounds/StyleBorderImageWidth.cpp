@@ -61,7 +61,7 @@ auto CSSValueConversion<BorderImageWidth>::operator()(BuilderState& state, const
         return toStyle(widthValue->widths(), state);
 
     // Values coming from CSS Typed OM may not have been converted to a CSSBorderImageWidthValue.
-    if (isValueID(value, CSSValueAuto))
+    if (isValueID(value, CSSValueID::Auto))
         return CSS::Keyword::Auto { };
 
     RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);

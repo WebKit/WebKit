@@ -244,7 +244,7 @@ auto CSSValueConversion<GridTemplateList>::operator()(BuilderState& state, const
     }
 
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueNone)
+        if (keywordValue->valueID() == CSSValueID::None)
             return CSS::Keyword::None { };
 
         return GridTrackList {

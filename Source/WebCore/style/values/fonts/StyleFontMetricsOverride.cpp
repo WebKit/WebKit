@@ -37,7 +37,7 @@ namespace Style {
 auto DeprecatedCSSValueConversion<FontMetricsOverride>::operator()(const CSSValue& value) -> std::optional<FontMetricsOverride>
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        if (keywordValue->valueID() == CSSValueNormal)
+        if (keywordValue->valueID() == CSSValueID::Normal)
             return FontMetricsOverride { CSS::Keyword::Normal { } };
     }
 

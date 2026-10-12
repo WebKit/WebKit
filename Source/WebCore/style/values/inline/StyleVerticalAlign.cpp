@@ -39,23 +39,23 @@ auto CSSValueConversion<VerticalAlign>::operator()(BuilderState& state, const CS
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueBaseline:
+        case CSSValueID::Baseline:
             return CSS::Keyword::Baseline { };
-        case CSSValueSub:
+        case CSSValueID::Sub:
             return CSS::Keyword::Sub { };
-        case CSSValueSuper:
+        case CSSValueID::Super:
             return CSS::Keyword::Super { };
-        case CSSValueTop:
+        case CSSValueID::Top:
             return CSS::Keyword::Top { };
-        case CSSValueTextTop:
+        case CSSValueID::TextTop:
             return CSS::Keyword::TextTop { };
-        case CSSValueMiddle:
+        case CSSValueID::Middle:
             return CSS::Keyword::Middle { };
-        case CSSValueBottom:
+        case CSSValueID::Bottom:
             return CSS::Keyword::Bottom { };
-        case CSSValueTextBottom:
+        case CSSValueID::TextBottom:
             return CSS::Keyword::TextBottom { };
-        case CSSValueWebkitBaselineMiddle:
+        case CSSValueID::WebkitBaselineMiddle:
             return CSS::Keyword::WebkitBaselineMiddle { };
         default:
             break;

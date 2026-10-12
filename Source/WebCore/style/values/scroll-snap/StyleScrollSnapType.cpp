@@ -35,7 +35,7 @@ auto CSSValueConversion<ScrollSnapType>::operator()(BuilderState& state, const C
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
         default:
             return toStyleFromCSSValue<ScrollSnapAxis>(state, *keywordValue);

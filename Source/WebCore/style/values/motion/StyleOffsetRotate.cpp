@@ -53,9 +53,9 @@ auto CSSValueConversion<OffsetRotate>::operator()(BuilderState& state, const CSS
 
         if (auto* modifierValue = offsetRotateValue->modifier()) {
             switch (modifierValue->valueID()) {
-            case CSSValueAuto:
+            case CSSValueID::Auto:
                 return OffsetRotate { CSS::Keyword::Auto { }, angle };
-            case CSSValueReverse:
+            case CSSValueID::Reverse:
                 angle.value += 180.0f;
                 return OffsetRotate { CSS::Keyword::Auto { }, angle };
             default:
@@ -70,9 +70,9 @@ auto CSSValueConversion<OffsetRotate>::operator()(BuilderState& state, const CSS
     // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSOffsetRotateValue.
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return OffsetRotate { CSS::Keyword::Auto { }, 0_css_deg };
-        case CSSValueReverse:
+        case CSSValueID::Reverse:
             return OffsetRotate { CSS::Keyword::Auto { }, 180_css_deg };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

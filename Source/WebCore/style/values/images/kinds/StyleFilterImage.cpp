@@ -83,7 +83,7 @@ Ref<CSSValue> FilterImage::computedStyleValue(const Style::ComputedStyle& style)
 {
     RefPtr image = m_image;
     return CSSFilterImageValue::create(
-        image ? image->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone)),
+        image ? image->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueID::None)),
         toCSS(m_filter, style)
     );
 }

@@ -46,7 +46,7 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         auto valueID = keywordValue->valueID();
-        if (valueID == CSSValueWebkitBody) {
+        if (valueID == CSSValueID::WebkitBody) {
             return {
                 AtomString { state.document().settings().standardFontFamily() },
                 FontFamilyKind::Specified
@@ -100,7 +100,7 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
                 return { nullAtom(), FontFamilyKind::Generic };
 
             auto valueID = keywordValue->valueID();
-            if (valueID == CSSValueWebkitBody)
+            if (valueID == CSSValueID::WebkitBody)
                 return { AtomString { state.document().settings().standardFontFamily() }, FontFamilyKind::Specified };
 
             return { genericFontFamily(valueID), FontFamilyKind::Generic };

@@ -47,13 +47,13 @@ auto CSSValueConversion<TextAlign>::operator()(BuilderState& state, const CSSVal
     // node whose computed value for the 'text-align' property is its initial value, whose declaration block consists of
     // just a single declaration that sets the 'text-align' property to the value 'center'.
     // https://html.spec.whatwg.org/multipage/rendering.html#rendering
-    if (keywordValue->valueID() == CSSValueInternalThCenter) {
+    if (keywordValue->valueID() == CSSValueID::InternalThCenter) {
         if (parentStyle->textAlign() == TextAlign::Start)
             return TextAlign::Center;
         return parentStyle->textAlign();
     }
 
-    if (keywordValue->valueID() == CSSValueWebkitMatchParent || keywordValue->valueID() == CSSValueMatchParent) {
+    if (keywordValue->valueID() == CSSValueID::WebkitMatchParent || keywordValue->valueID() == CSSValueID::MatchParent) {
         RefPtr element = state.element();
 
         if (element && element == state.document().documentElement())

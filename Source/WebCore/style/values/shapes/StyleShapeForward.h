@@ -41,12 +41,12 @@ struct Path;
 struct Polygon;
 struct Shape;
 
-using CircleFunction = FunctionNotation<CSSValueCircle, Circle>;
-using EllipseFunction = FunctionNotation<CSSValueEllipse, Ellipse>;
-using InsetFunction = FunctionNotation<CSSValueInset, Inset>;
-using PathFunction = FunctionNotation<CSSValuePath, Path>;
-using PolygonFunction = FunctionNotation<CSSValuePolygon, Polygon>;
-using ShapeFunction = FunctionNotation<CSSValueShape, Shape>;
+using CircleFunction = FunctionNotation<CSSValueID::Circle, Circle>;
+using EllipseFunction = FunctionNotation<CSSValueID::Ellipse, Ellipse>;
+using InsetFunction = FunctionNotation<CSSValueID::Inset, Inset>;
+using PathFunction = FunctionNotation<CSSValueID::Path, Path>;
+using PolygonFunction = FunctionNotation<CSSValueID::Polygon, Polygon>;
+using ShapeFunction = FunctionNotation<CSSValueID::Shape, Shape>;
 
 using BasicShape = Variant<
     CircleFunction,

@@ -39,9 +39,9 @@ auto CSSValueConversion<ScrollbarGutter>::operator()(BuilderState& state, const 
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueStable:
+        case CSSValueID::Stable:
             return CSS::Keyword::Stable { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -53,7 +53,7 @@ auto CSSValueConversion<ScrollbarGutter>::operator()(BuilderState& state, const 
     if (!pair)
         return CSS::Keyword::Auto { };
 
-    if ((pair->first->valueID() == CSSValueStable && pair->second->valueID() == CSSValueBothEdges) || (pair->first->valueID() == CSSValueBothEdges && pair->second->valueID() == CSSValueStable))
+    if ((pair->first->valueID() == CSSValueID::Stable && pair->second->valueID() == CSSValueID::BothEdges) || (pair->first->valueID() == CSSValueID::BothEdges && pair->second->valueID() == CSSValueID::Stable))
         return { CSS::Keyword::Stable { }, CSS::Keyword::BothEdges { } };
 
     state.setCurrentPropertyInvalidAtComputedValueTime();

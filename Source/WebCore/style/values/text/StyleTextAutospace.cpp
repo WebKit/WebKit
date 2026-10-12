@@ -37,11 +37,11 @@ auto CSSValueConversion<TextAutospace>::operator()(BuilderState& state, const CS
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueNoAutospace:
+        case CSSValueID::NoAutospace:
             return CSS::Keyword::NoAutospace { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -56,13 +56,13 @@ auto CSSValueConversion<TextAutospace>::operator()(BuilderState& state, const CS
     WebCore::TextAutospace::Options options;
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueIdeographAlpha:
+        case CSSValueID::IdeographAlpha:
             options.add(WebCore::TextAutospace::Type::IdeographAlpha);
             break;
-        case CSSValueIdeographNumeric:
+        case CSSValueID::IdeographNumeric:
             options.add(WebCore::TextAutospace::Type::IdeographNumeric);
             break;
-        case CSSValueInsert:
+        case CSSValueID::Insert:
             options.add(WebCore::TextAutospace::Type::Insert);
             break;
         default:

@@ -38,7 +38,7 @@ auto CSSValueConversion<SVGGlyphOrientationVertical>::operator()(BuilderState& s
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return SVGGlyphOrientationVertical::Auto;
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

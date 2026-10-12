@@ -58,7 +58,7 @@ struct OpacityParameters {
 
     bool operator==(const OpacityParameters&) const = default;
 };
-using OpacityFunction = FunctionNotation<CSSValueOpacity, OpacityParameters>;
+using OpacityFunction = FunctionNotation<CSSValueID::Opacity, OpacityParameters>;
 DEFINE_TYPE_WRAPPER_GET(OpacityParameters, value);
 
 // MARK: - Conversion

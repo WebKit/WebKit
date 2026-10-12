@@ -62,9 +62,9 @@ auto CSSValueConversion<OffsetPosition>::operator()(BuilderState& state, const C
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return CSS::Keyword::Auto { };
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

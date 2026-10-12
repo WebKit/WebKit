@@ -41,7 +41,7 @@ namespace Style {
 
 Contrast Contrast::passthroughForInterpolation()
 {
-    return { .value = CSSFilterFunctionDescriptor<CSSValueContrast>::initialValueForInterpolation };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Contrast>::initialValueForInterpolation };
 }
 
 bool Contrast::transformColor(SRGBA<float>& color) const
@@ -73,7 +73,7 @@ auto ToStyle<CSS::Contrast>::operator()(const CSS::Contrast& value, const Builde
             }
         ) };
     }
-    return { .value = CSSFilterFunctionDescriptor<CSSValueContrast>::defaultValue };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Contrast>::defaultValue };
 }
 
 // MARK: - Blending
@@ -83,7 +83,7 @@ auto Blending<Contrast>::blend(const Contrast& from, const Contrast& to, const B
     // Accumulate needs to be special cased for filter functions with "initial values
     // for interpolation of 1" to use the formula "Vresult = Va + Vb - 1".
     // https://drafts.csswg.org/filter-effects/#accumulation
-    static_assert(CSSFilterFunctionDescriptor<CSSValueContrast>::initialValueForInterpolation == 1_css_number);
+    static_assert(CSSFilterFunctionDescriptor<CSSValueID::Contrast>::initialValueForInterpolation == 1_css_number);
 
     if (context.compositeOperation == CompositeOperation::Accumulate) {
         return { Contrast::Parameter {

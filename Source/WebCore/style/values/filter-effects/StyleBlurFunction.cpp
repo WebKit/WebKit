@@ -38,7 +38,7 @@ namespace Style {
 
 Blur Blur::passthroughForInterpolation()
 {
-    return { .value = CSSFilterFunctionDescriptor<CSSValueBlur>::initialValueForInterpolation };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Blur>::initialValueForInterpolation };
 }
 
 IntOutsets Blur::calculateOutsets(ZoomFactor zoom) const
@@ -58,7 +58,7 @@ auto ToStyle<CSS::Blur>::operator()(const CSS::Blur& value, const BuilderState& 
 {
     if (auto parameter = value.value)
         return { .value = toStyle(*parameter, state) };
-    return { .value = CSSFilterFunctionDescriptor<CSSValueBlur>::defaultValue };
+    return { .value = CSSFilterFunctionDescriptor<CSSValueID::Blur>::defaultValue };
 }
 
 // MARK: - Evaluation

@@ -37,11 +37,11 @@ auto CSSValueConversion<ViewTransitionName>::operator()(BuilderState& state, con
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValueAuto:
+        case CSSValueID::Auto:
             return { CSS::Keyword::Auto { }, state.styleScopeOrdinal() };
-        case CSSValueMatchElement:
+        case CSSValueID::MatchElement:
             return { CSS::Keyword::MatchElement { }, state.styleScopeOrdinal() };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

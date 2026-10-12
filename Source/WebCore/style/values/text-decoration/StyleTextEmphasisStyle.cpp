@@ -104,11 +104,11 @@ auto CSSValueConversion<TextEmphasisStyle>::operator()(BuilderState& state, cons
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
 
-        case CSSValueFilled:
-        case CSSValueOpen:
+        case CSSValueID::Filled:
+        case CSSValueID::Open:
             return defaultTextEmphasisShape(state.style().writingMode(), fromCSSValueID<TextEmphasisFill>(valueID));
 
         default:
@@ -130,8 +130,8 @@ auto CSSValueConversion<TextEmphasisStyle>::operator()(BuilderState& state, cons
                 return CSS::Keyword::None { };
 
             switch (auto valueID = keywordValue->valueID(); valueID) {
-            case CSSValueFilled:
-            case CSSValueOpen:
+            case CSSValueID::Filled:
+            case CSSValueID::Open:
                 fill = fromCSSValueID<TextEmphasisFill>(valueID);
                 break;
             default:

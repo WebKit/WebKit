@@ -43,11 +43,11 @@ namespace Style {
 // MARK: - IsRepeatingGradient
 
 template<CSSValueID> constexpr bool IsRepeatingGradient = false;
-template<> constexpr bool IsRepeatingGradient<CSSValueRepeatingLinearGradient> = true;
-template<> constexpr bool IsRepeatingGradient<CSSValueWebkitRepeatingLinearGradient> = true;
-template<> constexpr bool IsRepeatingGradient<CSSValueRepeatingRadialGradient> = true;
-template<> constexpr bool IsRepeatingGradient<CSSValueWebkitRepeatingRadialGradient> = true;
-template<> constexpr bool IsRepeatingGradient<CSSValueRepeatingConicGradient> = true;
+template<> constexpr bool IsRepeatingGradient<CSSValueID::RepeatingLinearGradient> = true;
+template<> constexpr bool IsRepeatingGradient<CSSValueID::WebkitRepeatingLinearGradient> = true;
+template<> constexpr bool IsRepeatingGradient<CSSValueID::RepeatingRadialGradient> = true;
+template<> constexpr bool IsRepeatingGradient<CSSValueID::WebkitRepeatingRadialGradient> = true;
+template<> constexpr bool IsRepeatingGradient<CSSValueID::RepeatingConicGradient> = true;
 
 template<CSSValueID Name, typename T> static constexpr bool NODELETE isRepeating(const FunctionNotation<Name, T>&)
 {

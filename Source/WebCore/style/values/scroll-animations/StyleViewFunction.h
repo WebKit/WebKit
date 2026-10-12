@@ -42,7 +42,7 @@ struct ViewFunctionParameters {
 
     bool operator==(const ViewFunctionParameters&) const = default;
 };
-using ViewFunction = FunctionNotation<CSSValueView, ViewFunctionParameters>;
+using ViewFunction = FunctionNotation<CSSValueID::View, ViewFunctionParameters>;
 
 // MARK: - Conversion
 

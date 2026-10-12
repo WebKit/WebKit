@@ -29,7 +29,7 @@
 namespace WebCore {
 namespace Style {
 
-using SuperellipseFunction = FunctionNotation<CSSValueSuperellipse, Number<>>;
+using SuperellipseFunction = FunctionNotation<CSSValueID::Superellipse, Number<>>;
 
 // https://drafts.csswg.org/css-borders-4/#typedef-corner-shape-value
 struct CornerShapeValue {

@@ -39,7 +39,7 @@ auto CSSValueConversion<FontVariantNumeric>::operator()(BuilderState& state, con
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -59,28 +59,28 @@ auto CSSValueConversion<FontVariantNumeric>::operator()(BuilderState& state, con
 
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueLiningNums:
+        case CSSValueID::LiningNums:
             figure = FontVariantNumericFigure::LiningNumbers;
             break;
-        case CSSValueOldstyleNums:
+        case CSSValueID::OldstyleNums:
             figure = FontVariantNumericFigure::OldStyleNumbers;
             break;
-        case CSSValueProportionalNums:
+        case CSSValueID::ProportionalNums:
             spacing = FontVariantNumericSpacing::ProportionalNumbers;
             break;
-        case CSSValueTabularNums:
+        case CSSValueID::TabularNums:
             spacing = FontVariantNumericSpacing::TabularNumbers;
             break;
-        case CSSValueDiagonalFractions:
+        case CSSValueID::DiagonalFractions:
             fraction = FontVariantNumericFraction::DiagonalFractions;
             break;
-        case CSSValueStackedFractions:
+        case CSSValueID::StackedFractions:
             fraction = FontVariantNumericFraction::StackedFractions;
             break;
-        case CSSValueOrdinal:
+        case CSSValueID::Ordinal:
             ordinal = FontVariantNumericOrdinal::Yes;
             break;
-        case CSSValueSlashedZero:
+        case CSSValueID::SlashedZero:
             slashedZero = FontVariantNumericSlashedZero::Yes;
             break;
         default:

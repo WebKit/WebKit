@@ -45,7 +45,7 @@ struct Ellipse {
 
     bool operator==(const Ellipse&) const = default;
 };
-using EllipseFunction = FunctionNotation<CSSValueEllipse, Ellipse>;
+using EllipseFunction = FunctionNotation<CSSValueID::Ellipse, Ellipse>;
 
 template<size_t I> const auto& get(const Ellipse& value)
 {

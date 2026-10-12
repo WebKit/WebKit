@@ -39,13 +39,13 @@ auto CSSValueConversion<ContainerType>::operator()(BuilderState& state, const CS
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueSize:
+        case CSSValueID::Size:
             return { ContainerTypeValue::Size };
-        case CSSValueInlineSize:
+        case CSSValueID::InlineSize:
             return { ContainerTypeValue::InlineSize };
-        case CSSValueScrollState:
+        case CSSValueID::ScrollState:
             return { ContainerTypeValue::ScrollState };
         default:
             break;
@@ -62,13 +62,13 @@ auto CSSValueConversion<ContainerType>::operator()(BuilderState& state, const CS
             if (!keyword)
                 return false;
             switch (keyword->valueID()) {
-            case CSSValueSize:
+            case CSSValueID::Size:
                 result.value.add(ContainerTypeValue::Size);
                 return true;
-            case CSSValueInlineSize:
+            case CSSValueID::InlineSize:
                 result.value.add(ContainerTypeValue::InlineSize);
                 return true;
-            case CSSValueScrollState:
+            case CSSValueID::ScrollState:
                 result.value.add(ContainerTypeValue::ScrollState);
                 return true;
             default:

@@ -39,7 +39,7 @@ auto CSSValueConversion<TextAlignLast>::operator()(BuilderState& state, const CS
     if (!keywordValue)
         return TextAlignLast::Auto;
 
-    if (keywordValue->valueID() == CSSValueMatchParent) {
+    if (keywordValue->valueID() == CSSValueID::MatchParent) {
         CheckedRef parentStyle = state.parentStyle();
 
         if (parentStyle->textAlignLast() == TextAlignLast::Start)

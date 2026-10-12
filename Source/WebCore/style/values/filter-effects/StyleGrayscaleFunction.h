@@ -58,7 +58,7 @@ struct Grayscale {
 
     bool operator==(const Grayscale&) const = default;
 };
-using GrayscaleFunction = FunctionNotation<CSSValueGrayscale, Grayscale>;
+using GrayscaleFunction = FunctionNotation<CSSValueID::Grayscale, Grayscale>;
 DEFINE_TYPE_WRAPPER_GET(Grayscale, value);
 
 // MARK: - Conversion

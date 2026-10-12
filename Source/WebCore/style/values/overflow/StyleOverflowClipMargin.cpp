@@ -42,9 +42,9 @@ auto CSSValueConversion<OverflowClipMargin>::operator()(BuilderState& state, con
 
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (auto valueID = keywordValue->valueID(); valueID) {
-        case CSSValueBorderBox:
-        case CSSValueContentBox:
-        case CSSValuePaddingBox:
+        case CSSValueID::BorderBox:
+        case CSSValueID::ContentBox:
+        case CSSValueID::PaddingBox:
             return fromCSSValueID<VisualBox>(valueID);
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -72,9 +72,9 @@ auto CSSValueConversion<OverflowClipMargin>::operator()(BuilderState& state, con
                 return 0_css_px;
             }
             switch (auto valueID = keywordValue->valueID(); valueID) {
-            case CSSValueBorderBox:
-            case CSSValueContentBox:
-            case CSSValuePaddingBox:
+            case CSSValueID::BorderBox:
+            case CSSValueID::ContentBox:
+            case CSSValueID::PaddingBox:
                 referenceBox = fromCSSValueID<VisualBox>(valueID);
                 break;
             default:

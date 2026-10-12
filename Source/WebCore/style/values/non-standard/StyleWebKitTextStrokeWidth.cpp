@@ -47,11 +47,11 @@ auto CSSValueConversion<WebkitTextStrokeWidth>::operator()(BuilderState& state, 
         };
 
         switch (keywordValue->valueID()) {
-        case CSSValueThin:
+        case CSSValueID::Thin:
             return convertFromEms(1.0 / 48.0);
-        case CSSValueMedium:
+        case CSSValueID::Medium:
             return convertFromEms(3.0 / 48.0);
-        case CSSValueThick:
+        case CSSValueID::Thick:
             return convertFromEms(5.0 / 48.0);
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

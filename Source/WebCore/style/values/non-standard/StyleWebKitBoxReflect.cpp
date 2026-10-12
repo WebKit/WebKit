@@ -98,15 +98,15 @@ auto CSSValueConversion<WebkitBoxReflect>::operator()(BuilderState& state, const
         return CSS::Keyword::None { };
 
     switch (keywordValue->valueID()) {
-    case CSSValueNone:
+    case CSSValueID::None:
         return CSS::Keyword::None { };
-    case CSSValueAbove:
+    case CSSValueID::Above:
         return WebkitBoxReflection { .direction = ReflectionDirection::Above, .offset = 0_css_px, .mask = MaskBorder { } };
-    case CSSValueBelow:
+    case CSSValueID::Below:
         return WebkitBoxReflection { .direction = ReflectionDirection::Below, .offset = 0_css_px, .mask = MaskBorder { } };
-    case CSSValueLeft:
+    case CSSValueID::Left:
         return WebkitBoxReflection { .direction = ReflectionDirection::Left,  .offset = 0_css_px, .mask = MaskBorder { } };
-    case CSSValueRight:
+    case CSSValueID::Right:
         return WebkitBoxReflection { .direction = ReflectionDirection::Right, .offset = 0_css_px, .mask = MaskBorder { } };
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();

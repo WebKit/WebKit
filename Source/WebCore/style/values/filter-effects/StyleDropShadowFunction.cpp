@@ -41,7 +41,7 @@ namespace Style {
 
 DropShadow DropShadow::passthroughForInterpolation()
 {
-    using Descriptor = CSSFilterFunctionDescriptor<CSSValueDropShadow>;
+    using Descriptor = CSSFilterFunctionDescriptor<CSSValueID::DropShadow>;
 
     return {
         .color = Descriptor::initialColorValueForInterpolation,
@@ -76,7 +76,7 @@ auto ToCSS<DropShadow>::operator()(const DropShadow& value, const Style::Compute
 
 auto ToStyle<CSS::DropShadow>::operator()(const CSS::DropShadow& value, const BuilderState& state) -> DropShadow
 {
-    using Descriptor = CSSFilterFunctionDescriptor<CSSValueDropShadow>;
+    using Descriptor = CSSFilterFunctionDescriptor<CSSValueID::DropShadow>;
 
     return {
         .color = value.color ? toStyle(*value.color, state, ForVisitedLink::No) : Style::Color { Descriptor::defaultColorValue },

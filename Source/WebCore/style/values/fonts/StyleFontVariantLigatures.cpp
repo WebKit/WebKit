@@ -39,9 +39,9 @@ auto CSSValueConversion<FontVariantLigatures>::operator()(BuilderState& state, c
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             return CSS::Keyword::Normal { };
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -62,28 +62,28 @@ auto CSSValueConversion<FontVariantLigatures>::operator()(BuilderState& state, c
 
     for (auto& item : *list) {
         switch (item.valueID()) {
-        case CSSValueNoCommonLigatures:
+        case CSSValueID::NoCommonLigatures:
             common = No;
             break;
-        case CSSValueCommonLigatures:
+        case CSSValueID::CommonLigatures:
             common = Yes;
             break;
-        case CSSValueNoDiscretionaryLigatures:
+        case CSSValueID::NoDiscretionaryLigatures:
             discretionary = No;
             break;
-        case CSSValueDiscretionaryLigatures:
+        case CSSValueID::DiscretionaryLigatures:
             discretionary = Yes;
             break;
-        case CSSValueNoHistoricalLigatures:
+        case CSSValueID::NoHistoricalLigatures:
             historical = No;
             break;
-        case CSSValueHistoricalLigatures:
+        case CSSValueID::HistoricalLigatures:
             historical = Yes;
             break;
-        case CSSValueContextual:
+        case CSSValueID::Contextual:
             contextual = Yes;
             break;
-        case CSSValueNoContextual:
+        case CSSValueID::NoContextual:
             contextual = No;
             break;
         default:

@@ -42,7 +42,7 @@ struct ScrollFunctionParameters {
 
     bool NODELETE operator==(const ScrollFunctionParameters&) const = default;
 };
-using ScrollFunction = FunctionNotation<CSSValueScroll, ScrollFunctionParameters>;
+using ScrollFunction = FunctionNotation<CSSValueID::Scroll, ScrollFunctionParameters>;
 
 // MARK: - Conversion
 

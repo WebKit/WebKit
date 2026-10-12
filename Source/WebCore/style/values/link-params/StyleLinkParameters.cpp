@@ -70,8 +70,8 @@ static CSS::ParamSpec toCSSParamSpec(const ParamSpec& spec)
 const AtomString& ParamSpec::name() const
 {
     return WTF::switchOn(value,
-        [](CSS::Keyword::Color) -> const AtomString& { return nameStringForSerialization(CSSValueColor); },
-        [](CSS::Keyword::AccentColor) -> const AtomString& { return nameStringForSerialization(CSSValueAccentColor); },
+        [](CSS::Keyword::Color) -> const AtomString& { return nameStringForSerialization(CSSValueID::Color); },
+        [](CSS::Keyword::AccentColor) -> const AtomString& { return nameStringForSerialization(CSSValueID::AccentColor); },
         [](const Custom& custom) -> const AtomString& { return custom.name.value; }
     );
 }

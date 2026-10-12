@@ -35,9 +35,9 @@ auto CSSValueConversion<TextEmphasisPosition>::operator()(BuilderState& state, c
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueOver:
+        case CSSValueID::Over:
             return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
-        case CSSValueUnder:
+        case CSSValueID::Under:
             return { TextEmphasisPositionValue::Under, TextEmphasisPositionValue::Right };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
@@ -52,28 +52,28 @@ auto CSSValueConversion<TextEmphasisPosition>::operator()(BuilderState& state, c
     TextEmphasisPositionValueEnumSet result;
     for (Ref item : *list) {
         switch (item->valueID()) {
-        case CSSValueOver:
+        case CSSValueID::Over:
             if (result.contains(TextEmphasisPositionValue::Under)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
             }
             result.value.add(TextEmphasisPositionValue::Over);
             break;
-        case CSSValueUnder:
+        case CSSValueID::Under:
             if (result.contains(TextEmphasisPositionValue::Over)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
             }
             result.value.add(TextEmphasisPositionValue::Under);
             break;
-        case CSSValueLeft:
+        case CSSValueID::Left:
             if (result.contains(TextEmphasisPositionValue::Right)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
             }
             result.value.add(TextEmphasisPositionValue::Left);
             break;
-        case CSSValueRight:
+        case CSSValueID::Right:
             if (result.contains(TextEmphasisPositionValue::Left)) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
