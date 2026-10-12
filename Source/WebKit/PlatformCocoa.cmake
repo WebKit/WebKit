@@ -2100,14 +2100,9 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/en.lproj/InfoPlist.strings
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/en.lproj/InfoPlist.strings
-        # FIXME: Use the coremlc command to produce the compiled model, same as
-        # macOS.
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/Resources/ResourceLoadStatistics/corePrediction_model
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/corePrediction_model
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodel
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/WebKitSwift/RealityKit/studio_lighting_objectmode_v3.reibl
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/studio_lighting_objectmode_v3.reibl
@@ -2138,6 +2133,23 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
     # created in the same POST_BUILD chain as codesign above. A separate
     # add_custom_command modifies the framework after the seal, which breaks
     # codesign verification at sim runtime.
+
+    set(_text_extraction_filter_model_outputs
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodelc/analytics/coremldata.bin
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodelc/coremldata.bin
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodelc/metadata.json
+    )
+    WEBKIT_XCRUN(_coremlc -f coremlc)
+    add_custom_command(OUTPUT ${_text_extraction_filter_model_outputs}
+        COMMAND ${_coremlc} compile ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
+            --deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --sdkroot ${CMAKE_OSX_SYSROOT} --platform ios
+            --container bundle-resources
+        DEPENDS ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
+        COMMENT "Compiling TextExtractionFilter.mlmodel"
+        VERBATIM)
+    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS
+        ${_text_extraction_filter_model_outputs})
+    add_dependencies(WebKit WebKitTextExtractionFilterModel)
 
     set(_sb_profiles_dir "${WEBKIT_DIR}/Resources/SandboxProfiles/ios")
     set(_sb_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework")
