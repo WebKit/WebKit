@@ -55,6 +55,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "NodeName.h"
 #include "NotImplemented.h"
+#include "ProcessingInstruction.h"
 #include "SVGElementInlines.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -515,6 +516,26 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
         setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     else
         setCompatibilityModeFromDoctype(token.name(), publicId, systemId);
+}
+
+void HTMLConstructionSite::insertProcessingInstruction(AtomHTMLToken&& token)
+{
+    ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
+    attachLater(protect(currentNode()), ProcessingInstruction::create(protect(ownerDocumentForCurrentNode()), String { token.processingInstructionTarget() }, String { token.processingInstructionData() }));
+}
+
+void HTMLConstructionSite::insertProcessingInstructionOnDocument(AtomHTMLToken&& token)
+{
+    ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
+    attachLater(protect(m_attachmentRoot), ProcessingInstruction::create(protect(m_document), String { token.processingInstructionTarget() }, String { token.processingInstructionData() }));
+}
+
+void HTMLConstructionSite::insertProcessingInstructionOnHTMLHtmlElement(AtomHTMLToken&& token)
+{
+    ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
+    Ref root = m_openElements.rootNode();
+    Ref rootDocument = root->document();
+    attachLater(WTF::move(root), ProcessingInstruction::create(rootDocument, String { token.processingInstructionTarget() }, String { token.processingInstructionData() }));
 }
 
 void HTMLConstructionSite::insertComment(AtomHTMLToken&& token)

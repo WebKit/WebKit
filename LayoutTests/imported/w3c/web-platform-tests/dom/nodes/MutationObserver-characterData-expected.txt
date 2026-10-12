@@ -13,7 +13,7 @@ PASS characterData Text.deleteData: simple mutation
 PASS characterData Text.deleteData: empty mutation
 PASS characterData Text.replaceData: simple mutation
 PASS characterData Text.replaceData: empty mutation
-PASS characterData ProcessingInstruction: data mutations
+FAIL characterData ProcessingInstruction: data mutations assert_equals: oldValue didn't match expected "?processing data?" but got "data"
 PASS characterData Comment: data mutations
 PASS Range (r70) is created
 PASS characterData Range.deleteContents: child and data removal mutation

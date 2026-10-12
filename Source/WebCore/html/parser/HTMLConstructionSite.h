@@ -112,6 +112,9 @@ public:
     void finishedParsing();
 
     void insertDoctype(AtomHTMLToken&&);
+    void insertProcessingInstruction(AtomHTMLToken&&);
+    void insertProcessingInstructionOnDocument(AtomHTMLToken&&);
+    void insertProcessingInstructionOnHTMLHtmlElement(AtomHTMLToken&&);
     void insertComment(AtomHTMLToken&&);
     void insertCommentOnDocument(AtomHTMLToken&&);
     void insertCommentOnHTMLHtmlElement(AtomHTMLToken&&);
