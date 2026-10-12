@@ -315,6 +315,9 @@ public:
     void reload();
     void reloadBypassCache();
     void loadURI(const char* uri, const char* referrer = 0);
+    // Accept an address-bar value: navigate to a URL or run a web search.
+    // Returns false only when the supplied input is empty after trimming.
+    bool loadURLOrSearch(const char* input, const char* referrer = 0);
     void loadString(const char* content, const unsigned short* mimetype, const unsigned short* encoding, const char* base_uri);
     void loadHTMLString(const char* content, const char* base_uri);
 
