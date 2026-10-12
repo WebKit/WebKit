@@ -62,6 +62,7 @@ enum class ViewTransitionPhase : uint8_t {
     PendingCapture,
     CapturingOldState, // Not part of the spec.
     UpdateCallbackCalled,
+    AnimatingFirstFrame, // Not part of the spec.
     Animating,
     Done
 };
@@ -204,6 +205,7 @@ public:
     DOMPromise& NODELETE finished();
 
     ViewTransitionPhase phase() const { return m_phase; }
+    bool isAnimating() const { return m_phase == ViewTransitionPhase::AnimatingFirstFrame || m_phase == ViewTransitionPhase::Animating; }
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
     Document* NODELETE document() const;
