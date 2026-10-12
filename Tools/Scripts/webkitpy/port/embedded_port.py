@@ -283,7 +283,7 @@ class EmbeddedPort(DarwinPort):
                     exception_list.append([Exception(u'Exception while tearing down {}'.format(device)), trace])
 
         if len(exception_list) == 1:
-            raise
+            raise exception_list[0][0]
         if len(exception_list) > 1:
             print('\n')
             for exception in exception_list:
