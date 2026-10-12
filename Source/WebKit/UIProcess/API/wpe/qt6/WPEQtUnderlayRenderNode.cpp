@@ -1,0 +1,168 @@
+/*
+ * Copyright (C) 2026 Savoir-faire Linux, Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WPEQtUnderlayRenderNode.h"
+
+#include "WPEViewQtQuick.h"
+
+#include <QCoreApplication>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
+
+#include <epoxy/egl.h>
+
+#include <wtf/glib/GUniquePtr.h>
+#include <wtf/unix/UnixFileDescriptor.h>
+
+static WTF::UnixFileDescriptor wpeQtUnderlayCreateReleaseFence(QOpenGLFunctions* gl)
+{
+    auto display = eglGetCurrentDisplay();
+    if (display == EGL_NO_DISPLAY || !epoxy_has_egl_extension(display, "EGL_ANDROID_native_fence_sync"))
+        return { };
+
+    auto usesEGL15 = epoxy_egl_version(display) >= 15;
+    if (!usesEGL15 && !epoxy_has_egl_extension(display, "EGL_KHR_fence_sync"))
+        return { };
+
+    auto sync = usesEGL15
+        ? eglCreateSync(display, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr)
+        : eglCreateSyncKHR(display, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr);
+    if (sync == EGL_NO_SYNC_KHR)
+        return { };
+
+    gl->glFlush();
+
+    auto fd = eglDupNativeFenceFDANDROID(display, sync);
+    usesEGL15 ? eglDestroySync(display, sync) : eglDestroySyncKHR(display, sync);
+
+    if (fd == -1)
+        return { };
+
+    return WTF::UnixFileDescriptor { fd, WTF::UnixFileDescriptor::Adopt };
+}
+
+WPEQtUnderlayRenderNode::~WPEQtUnderlayRenderNode()
+{
+    QObject::disconnect(m_frameSwappedConnection);
+    if (!m_wpeView)
+        return;
+
+    if (m_frameNeedsAck && !m_frameReadyForAck)
+        wpe_view_qtquick_rollback_frame(m_wpeView.get());
+    if (m_releaseFence)
+        wpe_view_qtquick_set_frame_release_fence(m_wpeView.get(), m_releaseFence.release());
+    if (m_frameReadyForAck) {
+        QMetaObject::invokeMethod(QCoreApplication::instance(), [view = m_wpeView] {
+            wpe_view_qtquick_did_update_scene(view.get());
+            }, Qt::QueuedConnection);
+    }
+}
+
+void WPEQtUnderlayRenderNode::setView(QQuickWindow* window, WPEViewQtQuick* wpeView)
+{
+    // one node per view
+    ASSERT(!m_wpeView || m_wpeView.get() == wpeView);
+
+    m_wpeView = wpeView;
+    if (!m_frameSwappedConnection) {
+        m_frameSwappedConnection = QObject::connect(window, &QQuickWindow::frameSwapped, window, [this] {
+            frameSwapped();
+        }, Qt::DirectConnection);
+    }
+}
+
+void WPEQtUnderlayRenderNode::releaseResources()
+{
+    m_blitter.invalidate();
+}
+
+void WPEQtUnderlayRenderNode::advanceFrame()
+{
+    if (!m_wpeView || !m_blitter.initialize())
+        return;
+
+    if (m_releaseFence)
+        wpe_view_qtquick_set_frame_release_fence(m_wpeView.get(), m_releaseFence.release());
+
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    gboolean didPromote = FALSE;
+    GUniqueOutPtr<GError> error;
+    // WPE returns the committed buffer while it's acknowledgment is pending.
+    GRefPtr<WPEBuffer> buffer = adoptGRef(wpe_view_qtquick_acquire_frame(m_wpeView.get(), &image, &didPromote, &error.outPtr()));
+    if (!buffer)
+        return;
+
+    if (!m_blitter.importEGLImage(image)) {
+        if (didPromote)
+            wpe_view_qtquick_rollback_frame(m_wpeView.get());
+        return;
+    }
+
+    m_buffer = WTF::move(buffer);
+    if (didPromote)
+        m_frameNeedsAck = true;
+}
+
+void WPEQtUnderlayRenderNode::render(const RenderState* state)
+{
+    if (!m_buffer || !state || !m_blitter.isInitialized())
+        return;
+
+    auto* context = QOpenGLContext::currentContext();
+    if (!context)
+        return;
+
+    auto* gl = context->functions();
+    if (!gl)
+        return;
+
+    const auto scissorRect = state->scissorEnabled() ? std::optional<QRect>(state->scissorRect()) : std::nullopt;
+    const auto stencilValue = state->stencilEnabled() ? std::optional<int>(state->stencilValue()) : std::nullopt;
+
+    QMatrix4x4 itemToClip = *state->projectionMatrix() * (matrix() ? *matrix() : QMatrix4x4());
+    itemToClip.translate(m_rect.x(), m_rect.y());
+    itemToClip.scale(m_rect.width(), m_rect.height());
+    if (!m_blitter.draw(itemToClip, float(inheritedOpacity()), scissorRect, stencilValue))
+        return;
+
+    m_releaseFence = wpeQtUnderlayCreateReleaseFence(gl);
+    if (!m_releaseFence)
+        gl->glFinish();
+    m_frameReadyForAck = m_frameNeedsAck;
+}
+
+void WPEQtUnderlayRenderNode::frameSwapped()
+{
+    if (!m_frameReadyForAck)
+        return;
+
+    m_frameNeedsAck = false;
+    m_frameReadyForAck = false;
+    // Capturing GRefPtr keeps the view alive until the queued call runs.
+    QMetaObject::invokeMethod(QCoreApplication::instance(), [view = m_wpeView] {
+        wpe_view_qtquick_did_update_scene(view.get());
+        }, Qt::QueuedConnection);
+}
