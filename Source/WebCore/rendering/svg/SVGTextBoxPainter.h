@@ -40,10 +40,9 @@ namespace Style {
 class ComputedStyle;
 }
 
-template<typename TextBoxPath>
 class SVGTextBoxPainter {
 public:
-    SVGTextBoxPainter(TextBoxPath&&, PaintInfo&, const LayoutPoint& paintOffset);
+    SVGTextBoxPainter(const LayoutIntegration::InlineContent&, size_t boxIndex, PaintInfo&, const LayoutPoint& paintOffset);
     ~SVGTextBoxPainter() = default;
 
     void paint();
@@ -69,7 +68,7 @@ private:
 
     std::pair<unsigned, unsigned> selectionStartEnd() const;
 
-    const TextBoxPath m_textBox;
+    const InlineIterator::BoxPath m_textBox;
     const RenderSVGInlineText& m_renderer;
     const RenderBoxModelObject& m_parentRenderer;
     PaintInfo& m_paintInfo;
@@ -79,13 +78,6 @@ private:
 
     OptionSet<RenderSVGResourceMode> m_paintingResourceMode;
     LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
-};
-
-extern template class SVGTextBoxPainter<InlineIterator::BoxPath>;
-
-class ModernSVGTextBoxPainter : public SVGTextBoxPainter<InlineIterator::BoxPath> {
-public:
-    ModernSVGTextBoxPainter(const LayoutIntegration::InlineContent&, size_t boxIndex, PaintInfo&, const LayoutPoint& paintOffset);
 };
 
 TextRun constructTextRun(StringView, TextDirection, const Style::ComputedStyle&, const SVGTextFragment&);
