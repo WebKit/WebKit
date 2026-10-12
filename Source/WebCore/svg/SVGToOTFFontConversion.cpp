@@ -75,7 +75,7 @@ private:
     struct GlyphData {
         GlyphData(Vector<char>&& charString, const SVGElement* glyphElement, float horizontalAdvance, float verticalAdvance, FloatRect boundingBox, const String& codepoints)
             : boundingBox(boundingBox)
-            , charString(charString)
+            , charString(WTF::move(charString))
             , codepoints(codepoints)
             , glyphElement(glyphElement)
             , horizontalAdvance(horizontalAdvance)
