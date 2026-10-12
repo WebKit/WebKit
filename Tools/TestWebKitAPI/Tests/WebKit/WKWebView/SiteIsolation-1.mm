@@ -2312,4 +2312,26 @@ TEST(SiteIsolation, AccessibilitySettingsChangeReachesCrossOriginIframe)
     }));
 }
 
+TEST(SiteIsolation, GetContentsOfAllFramesIncludesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>main frame text<iframe src='https://webkit.org/iframe'></iframe><iframe src='https://example.com/same-site-iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body>cross-site text</body>"_s } },
+        { "/same-site-iframe"_s, { "<body>same-site text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<NSString> contents;
+    __block bool done = false;
+    [webView _getContentsOfAllFramesAsStringWithCompletionHandler:^(NSString *string) {
+        contents = string;
+        done = true;
+    }];
+    EXPECT_TRUE(Util::runFor(&done, 5_s));
+    EXPECT_WK_STREQ(@"main frame text\n\ncross-site text\n\nsame-site text", contents.get());
+}
+
 } // namespace TestWebKitAPI
