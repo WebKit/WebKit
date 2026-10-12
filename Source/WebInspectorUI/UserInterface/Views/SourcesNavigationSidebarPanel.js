@@ -1997,11 +1997,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         case WI.DebuggerManager.PauseReason.FunctionCall: {
-            console.assert(pauseData, "Expected data with an event listener, but found none.");
+            console.assert(pauseData, "Expected data with a function name, but found none.");
             if (!pauseData)
                 break;
 
-            let symbolicBreakpoint = WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name)[0];
+            let symbolicBreakpoint = WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name, {matchFunctionCalls: true})[0];
             console.assert(symbolicBreakpoint, "Expected Symbolic breakpoint for function name.", pauseData.name);
             if (!symbolicBreakpoint)
                 break;
@@ -2033,6 +2033,25 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._pauseReasonTextRow.text = WI.UIString("Immediate Pause Requested");
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
             return true;
+
+        case WI.DebuggerManager.PauseReason.PropertyRead: {
+            console.assert(pauseData, "Expected data with a property name, but found none.");
+            if (!pauseData)
+                break;
+
+            let symbolicBreakpoint = WI.debuggerManager.symbolicBreakpointsForSymbol(pauseData.name, {matchPropertyReads: true})[0];
+            console.assert(symbolicBreakpoint, "Expected Symbolic breakpoint for property name.", pauseData.name);
+            if (!symbolicBreakpoint)
+                break;
+
+            const format = WI.UIString("Reading Property \u201C%s\u201D", "Reading Property \u201C%s\u201D @ Sources Navigation Sidebar Panel", "Label shown when JavaScript execution is paused due to a symbolic breakpoint.");
+            let titleElement = this._createBreakpointPauseReasonTitleWithTooltip(format, pauseData.name);
+            if (!this._updatePauseReasonForBreakpoint(symbolicBreakpoint, titleElement)) {
+                console.assert(false, "not reached");
+                break;
+            }
+            return true;
+        }
 
         case WI.DebuggerManager.PauseReason.Timer: {
             console.assert(pauseData, "Expected data with a timer, but found none.");

@@ -36,6 +36,22 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.RejectsNoMatches",
+        async test() {
+            try {
+                await DebuggerAgent.addSymbolicBreakpoint.invoke({
+                    symbol: "matchesNothing",
+                    matchFunctionCalls: false,
+                    matchPropertyReads: false,
+                });
+                InspectorTest.fail("Should reject a symbolic breakpoint that matches nothing.");
+            } catch (error) {
+                InspectorTest.expectTrue(error.message.includes("Symbolic breakpoint must match something"), "Should reject a symbolic breakpoint that matches nothing.");
+            }
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
@@ -44,3 +60,4 @@ function test()
 <p>Tests for SymbolicBreakpoint.</p>
 </body>
 </html>
+
