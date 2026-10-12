@@ -436,6 +436,27 @@
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerType.h"
 
+// Each parsed by at least half of this subtarget's unified bundles.
+#include "GPUDevice.h"
+#include "JSSVGImageElement.h"
+#include "MediaStreamTrack.h"
+#include "ServiceWorkerRegistration.h"
+#include "StyleFilter.h"
+#include <JavaScriptCore/ScriptCallStack.h>
+
+
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if PLATFORM(MAC)
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include "JSManagedSourceBuffer.h"
+#include "JSFetchRequest.h"
+#include "JSServiceWorkerContainer.h"
+#include "WebGLAny.h"
+#include "JSWebCodecsAudioEncoder.h"
+#include "JSAudioParam.h"
+#include "JSManagedMediaSource.h"
+#include "StyleAnimation.h"
+#endif // PLATFORM(MAC)
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())

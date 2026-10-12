@@ -847,6 +847,49 @@
 #endif // !PLATFORM(WIN)
 
 
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if defined(BUILDING_WITH_CMAKE)
+#if PLATFORM(MAC)
+#if !defined(__OBJC__)
+#include "AcceleratedEffect.h"
+#include "FileSystemHandleGlobalIdentifier.h"
+#include "ScriptSourceCode.h"
+#include "FilterEffectVector.h"
+#include <wtf/text/cf/TextBreakIteratorCF.h>
+#include "HTMLAnchorElement.h"
+#include "StyleOriginatedAnimation.h"
+#include "CSSColorValue.h"
+#include "HTMLImageElement.h"
+#include "CaptionUserPreferences.h"
+#include "Navigator.h"
+#include "QuirkBehaviors.h"
+#include <wtf/text/icu/TextBreakIteratorICU.h>
+#include "ContentSecurityPolicy.h"
+#include "SVGGraphicsElement.h"
+#include "CSSImageValue.h"
+#include "PlatformMouseEvent.h"
+#include "LocalFrameViewLayoutContext.h"
+#include "NowPlayingInfo.h"
+#include "HTMLIFrameElement.h"
+#include "HTMLInputElement.h"
+#include "CookieJar.h"
+#include "DigitalCredentialsProtocols.h"
+#include "ElementIteratorInlines.h"
+#include "Logging.h"
+#include "InstrumentingAgents.h"
+#include "JSDOMBindingSecurity.h"
+#include "CanvasRenderingContext.h"
+#include "ResourceLoader.h"
+#include "CSSValuePool.h"
+#include "LocalFrameLoaderClient.h"
+#include "JSDOMPromise.h"
+#endif
+#if defined(__OBJC__)
+#import <QuartzCore/QuartzCore.h>
+#endif
+#endif // PLATFORM(MAC)
+#endif // defined(BUILDING_WITH_CMAKE)
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif

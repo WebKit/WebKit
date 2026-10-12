@@ -950,7 +950,7 @@ ModelProcessConnectionMessageReceiver.cpp
 ModelProcessMessageReceiver.cpp
 ModelProcessModelPlayerProxyMessageReceiver.cpp
 ModelProcessProxyMessageReceiver.cpp
-NetworkConnectionToWebProcessMessageReceiver.cpp @cost:9
+NetworkConnectionToWebProcessMessageReceiver.cpp @cost:38
 NetworkContentRuleListManagerMessageReceiver.cpp @cost:3
 NetworkMDNSRegisterMessageReceiver.cpp
 NetworkProcessConnectionMessageReceiver.cpp @cost:3
@@ -960,7 +960,7 @@ NetworkResourceLoaderMessageReceiver.cpp @cost:5
 NetworkRTCMonitorMessageReceiver.cpp
 NetworkRTCProviderMessageReceiver.cpp @cost:3
 NetworkSocketChannelMessageReceiver.cpp
-NetworkStorageManagerMessageReceiver.cpp @cost:6
+NetworkStorageManagerMessageReceiver.cpp @cost:50
 NotificationManagerMessageHandlerMessageReceiver.cpp @cost:3
 PlaybackSessionManagerMessageReceiver.cpp @cost:3
 PlaybackSessionManagerProxyMessageReceiver.cpp @cost:3

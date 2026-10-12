@@ -58,7 +58,9 @@
 
 #ifdef __cplusplus
 #include <algorithm> // needed for exception_defines.h
+#if !PLATFORM(MAC)
 #include <chrono>
+#endif
 #include <functional>
 #include <list>
 #include <memory>
@@ -88,7 +90,9 @@
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudio.h>
 #include <CoreAudioTypes/CoreAudioTypes.h>
+#if defined(__OBJC__) || !PLATFORM(MAC)
 #include <CoreMedia/CoreMedia.h>
+#endif
 #include <Network/Network.h>
 #include <Security/Security.h>
 #include <dlfcn.h>
@@ -584,6 +588,26 @@
 #endif
 
 #ifdef __cplusplus
+// Headers that most of this subtarget's sources parse (measured with -ftime-trace).
+#if defined(BUILDING_WITH_CMAKE)
+#if PLATFORM(MAC)
+#if !defined(__OBJC__)
+#include "SpeechRecognitionServer.h"
+#include "StreamClientConnection.h"
+#include "NavigationActionData.h"
+#include "WebCompiledContentRuleList.h"
+#include "LoadedWebArchive.h"
+#include <wtf/CoroutineUtilities.h>
+#include <CoreServices/CoreServices.h>
+#include "RemoteVideoFrameProxyProperties.h"
+#include "WebResourceLoadStatisticsStore.h"
+#endif
+#if defined(__OBJC__)
+#include "GeneratedWebKitSecureCoding.h"
+#endif
+#endif // PLATFORM(MAC)
+#endif // defined(BUILDING_WITH_CMAKE)
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif
