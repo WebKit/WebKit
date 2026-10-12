@@ -58,6 +58,7 @@ ALWAYS_INLINE unsigned Butterfly::availableContiguousVectorLength(Structure* str
 
 ALWAYS_INLINE unsigned Butterfly::optimalContiguousVectorLength(size_t propertyCapacity, unsigned vectorLength)
 {
+    // Keep in sync with JIT side implementation (SpeculativeJIT::emitAllocateButterfly and LowerDFGToB3::allocateJSArray).
     if (!vectorLength)
         vectorLength = BASE_CONTIGUOUS_VECTOR_LEN_EMPTY;
     else

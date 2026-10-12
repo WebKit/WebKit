@@ -23620,9 +23620,17 @@ IGNORE_CLANG_WARNINGS_END
                     staticVectorLength = vectorLengthConst;
                 }
             }
-        } else {
-            // We don't compute the optimal vector length for new Array(blah) where blah is not
-            // statically known, since the compute effort of doing it here is probably not worth it.
+        }
+
+        bool slowPathCanRecomputeVectorLength = vectorLength == publicLength
+            || (staticVectorLengthFromPublicLength && staticVectorLength && staticVectorLength.value() == staticVectorLengthFromPublicLength.value());
+
+        if (!staticVectorLength) {
+            // Apply the same minimum vector length as Butterfly::optimalContiguousVectorLength so that the
+            // C++ slow path allocates from the same size class and refills this allocator.
+            vectorLength = m_out.select(m_out.isZero32(vectorLength),
+                m_out.constInt32(BASE_CONTIGUOUS_VECTOR_LEN_EMPTY),
+                m_out.select(m_out.below(vectorLength, m_out.constInt32(BASE_CONTIGUOUS_VECTOR_LEN)), m_out.constInt32(BASE_CONTIGUOUS_VECTOR_LEN), vectorLength));
         }
 
         ValueFromBlock noButterfly = m_out.anchor(m_out.intPtrZero);
@@ -23679,8 +23687,7 @@ IGNORE_CLANG_WARNINGS_END
 
         VM& vm = this->vm();
         LValue slowResultValue = nullptr;
-        if (vectorLength == publicLength
-            || (staticVectorLengthFromPublicLength && staticVectorLength && staticVectorLength.value() == staticVectorLengthFromPublicLength.value())) {
+        if (slowPathCanRecomputeVectorLength) {
             slowResultValue = lazySlowPath(
                 [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                     return createLazyCallGenerator(vm,

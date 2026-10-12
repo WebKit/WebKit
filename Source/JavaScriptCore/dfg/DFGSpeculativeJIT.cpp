@@ -9649,8 +9649,8 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         GPRReg scratchGPR = scratch.gpr();
         GPRReg scratch2GPR = scratch2.gpr();
 
-        emitAllocateButterfly(storageResultGPR, sizeGPR, scratchGPR, scratch2GPR, resultGPR, slowCases);
-        emitInitializeButterfly(storageResultGPR, sizeGPR, emptyValueGPR, scratchGPR);
+        emitAllocateButterfly(storageResultGPR, scratchGPR, sizeGPR, scratch2GPR, resultGPR, slowCases);
+        emitInitializeButterfly(storageResultGPR, scratchGPR, emptyValueGPR, scratchGPR);
         emitAllocateJSObject<JSArray>(resultGPR, tempValue, storageResultGPR, scratchGPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
         mutatorFence(vm());
 
@@ -14456,22 +14456,33 @@ void SpeculativeJIT::compileObjectDefinePropertyFromFields(Node* node)
     noResult(node, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, JumpList& slowCases)
+void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg vectorLengthResultGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, JumpList& slowCases)
 {
-    RELEASE_ASSERT(RegisterSet(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
-    ASSERT((1 << 3) == sizeof(JSValue));
-    lshift32(sizeGPR, TrustedImm32(3), scratch1);
-    add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
-#if ASSERT_ENABLED
-    Jump didNotOverflow = branch32(AboveOrEqual, scratch2, sizeGPR);
-    abortWithReason(UncheckedOverflow);
-    didNotOverflow.link(this);
-#endif
-    emitAllocateVariableSized(
-        storageResultGPR, vm().auxiliarySpace(), scratch2, scratch1, scratch3, slowCases);
+    RELEASE_ASSERT(RegisterSet(storageResultGPR, vectorLengthResultGPR, sizeGPR, scratch1, scratch2).numberOfSetGPRs() == 5);
+    GPRReg vectorLengthGPR = vectorLengthResultGPR;
+    GPRReg allocatorGPR = scratch1;
+
+    // Apply the same minimum vector length as Butterfly::optimalContiguousVectorLength so that the
+    // C++ slow path allocates from the same size class and refills this allocator.
+    moveConditionally32(Below, sizeGPR, TrustedImm32(BASE_CONTIGUOUS_VECTOR_LEN), TrustedImm32(BASE_CONTIGUOUS_VECTOR_LEN), sizeGPR, vectorLengthGPR);
+    moveConditionally32(Equal, sizeGPR, TrustedImm32(0), TrustedImm32(BASE_CONTIGUOUS_VECTOR_LEN_EMPTY), vectorLengthGPR, vectorLengthGPR);
+
+    // The butterfly is (vectorLength + 1) JSValues, so its size step index is
+    // ceil((vectorLength + 1) * 8 / 16) == (vectorLength >> 1) + 1. The + 1 is folded into the table base.
+    static_assert(sizeof(IndexingHeader) == sizeof(JSValue));
+    static_assert(MarkedSpace::sizeStep == 2 * sizeof(JSValue));
+    static_assert(sizeof(Allocator) == sizeof(void*));
+    constexpr unsigned largestSizeStepIndex = MarkedSpace::largeCutoff / MarkedSpace::sizeStep;
+    static_assert(largestSizeStepIndex < MarkedSpace::numSizeClasses);
+    slowCases.append(branch32(AboveOrEqual, sizeGPR, TrustedImm32(2 * largestSizeStepIndex)));
+    urshift32(vectorLengthGPR, TrustedImm32(1), allocatorGPR);
+    move(TrustedImmPtr(&vm().auxiliarySpace().allocatorsForSizeSteps()[1]), scratch2);
+    loadPtr(BaseIndex(scratch2, allocatorGPR, ScalePtr), allocatorGPR);
+    emitAllocate(storageResultGPR, JITAllocator::variable(), allocatorGPR, scratch2, slowCases);
+
     addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
     static_assert(Butterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == Butterfly::offsetOfVectorLength());
-    storePair32(sizeGPR, sizeGPR, storageResultGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
+    storePair32(sizeGPR, vectorLengthGPR, storageResultGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
 }
 
 void SpeculativeJIT::compileNormalizeMapKey(Node* node)
@@ -16763,9 +16774,10 @@ void SpeculativeJIT::compileBitwiseStrictEq(Node* node)
     unblessedBooleanResult(result.gpr(), node);
 }
 
-void SpeculativeJIT::emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg emptyValueGPR, GPRReg scratchGPR)
+void SpeculativeJIT::emitInitializeButterfly(GPRReg storageGPR, GPRReg vectorLengthGPR, GPRReg emptyValueGPR, GPRReg scratchGPR)
 {
-    zeroExtend32ToWord(sizeGPR, scratchGPR);
+    // No zero extension is needed: sub32 clears the upper bits before the index is first used as 64-bit.
+    move(vectorLengthGPR, scratchGPR);
     Jump done = branchTest32(Zero, scratchGPR);
     Label loop = label();
     sub32(TrustedImm32(1), scratchGPR);
@@ -16801,14 +16813,14 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(Node* node, GPRReg resultGP
 #endif // ASSERT_ENABLED
 
     // We can use resultGPR as a scratch right now.
-    emitAllocateButterfly(storageGPR, sizeGPR, scratchGPR, scratch2GPR, resultGPR, slowCases);
+    emitAllocateButterfly(storageGPR, resultGPR, sizeGPR, scratchGPR, scratch2GPR, slowCases);
 
     GPRReg emptyValueGPR(scratchGPR);
     if (hasDouble(structure->indexingType()))
         moveTrustedValue(jsNaN(), emptyValueGPR);
     else
         moveTrustedValue(JSValue(), emptyValueGPR);
-    emitInitializeButterfly(storageGPR, sizeGPR, emptyValueGPR, resultGPR);
+    emitInitializeButterfly(storageGPR, resultGPR, emptyValueGPR, resultGPR);
 
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
 
