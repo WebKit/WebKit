@@ -58,14 +58,14 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
     Dependency dependency;
     if (cell->isPreciseAllocation()) [[unlikely]] {
         if (cell->preciseAllocation().isMarked()) [[likely]] {
-            if (!m_heapAnalyzer) [[likely]]
+            if (!m_isAnalyzingHeap) [[likely]]
                 return;
         }
     } else {
         MarkedBlock& block = cell->markedBlock();
         dependency = block.aboutToMark(m_markingVersion, cell);
         if (block.isMarked(cell, dependency)) [[likely]] {
-            if (!m_heapAnalyzer) [[likely]]
+            if (!m_isAnalyzingHeap) [[likely]]
                 return;
         }
     }
