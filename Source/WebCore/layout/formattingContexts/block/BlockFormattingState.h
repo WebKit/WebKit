@@ -25,49 +25,30 @@
 
 #pragma once
 
-#include "FormattingState.h"
 #include <WebCore/PlacedFloats.h>
-#include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
+class ElementBox;
+
 // BlockFormattingState holds the state for a particular block formatting context tree.
-class BlockFormattingState : public FormattingState {
+class BlockFormattingState {
+    WTF_MAKE_NONCOPYABLE(BlockFormattingState);
     WTF_MAKE_TZONE_ALLOCATED(BlockFormattingState);
 public:
-    BlockFormattingState(LayoutState&, const ElementBox& blockFormattingContextRoot);
+    explicit BlockFormattingState(const ElementBox& blockFormattingContextRoot);
     ~BlockFormattingState();
 
     const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
     PlacedFloats& placedFloats() LIFETIME_BOUND { return m_placedFloats; }
 
-    // Since we layout the out-of-flow boxes at the end of the formatting context layout, it's okay to store them in the formatting state -as opposed to the containing block level.
-    using OutOfFlowBoxList = Vector<CheckedRef<const Box>>;
-    void addOutOfFlowBox(const Box& outOfFlowBox) { m_outOfFlowBoxes.append(outOfFlowBox); }
-    void setOutOfFlowBoxes(OutOfFlowBoxList&& outOfFlowBoxes) { m_outOfFlowBoxes = WTF::move(outOfFlowBoxes); }
-    const OutOfFlowBoxList& outOfFlowBoxes() const LIFETIME_BOUND { return m_outOfFlowBoxes; }
-
-    void setUsedVerticalMargin(const Box& layoutBox, const UsedVerticalMargin& usedVerticalMargin) { m_usedVerticalMargins.set(layoutBox, usedVerticalMargin); }
-    UsedVerticalMargin usedVerticalMargin(const Box& layoutBox) const { return m_usedVerticalMargins.get(layoutBox); }
-    bool hasUsedVerticalMargin(const Box& layoutBox) const { return m_usedVerticalMargins.contains(layoutBox); }
-
-    void setHasClearance(const Box& layoutBox) { m_clearanceSet.add(layoutBox); }
-    void clearHasClearance(const Box& layoutBox) { m_clearanceSet.remove(layoutBox); }
-    bool hasClearance(const Box& layoutBox) const { return m_clearanceSet.contains(layoutBox); }
-
     void shrinkToFit();
 
 private:
     PlacedFloats m_placedFloats;
-    OutOfFlowBoxList m_outOfFlowBoxes;
-    HashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;
-    HashSet<CheckedRef<const Box>> m_clearanceSet;
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(BlockFormattingState, isBlockFormattingState())
-

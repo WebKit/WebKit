@@ -28,7 +28,6 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
-#include "FormattingContext.h"
 #include "InlineDisplayContent.h"
 #include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"

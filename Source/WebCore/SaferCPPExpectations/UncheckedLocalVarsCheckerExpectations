@@ -1,15 +1,12 @@
 [ macOS ] css/MutableStyleProperties.cpp
 dom/Document.cpp
 dom/Position.cpp
-layout/formattingContexts/FormattingGeometry.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineQuirks.cpp
 layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
-layout/formattingContexts/table/TableFormattingContext.cpp
-[ iOS ] layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp

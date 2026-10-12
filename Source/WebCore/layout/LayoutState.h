@@ -44,11 +44,8 @@ namespace Layout {
 
 class BlockFormattingState;
 class BoxGeometry;
-class FormattingContext;
-class FormattingState;
 class InlineContentCache;
 class InlineLayoutState;
-class TableFormattingState;
 
 class LayoutState : public CanMakeWeakPtr<LayoutState>, public CanMakeThreadSafeCheckedPtr<LayoutState> {
     WTF_MAKE_NONCOPYABLE(LayoutState);
@@ -73,21 +70,7 @@ public:
     InlineContentCache& inlineContentCache(const ElementBox& formattingContextRoot);
 
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
-    TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
-
-    BlockFormattingState& NODELETE formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const LIFETIME_BOUND;
-    TableFormattingState& NODELETE formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const LIFETIME_BOUND;
-
-    FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const LIFETIME_BOUND;
-
     void destroyBlockFormattingState(const ElementBox& formattingContextRoot);
-
-    bool NODELETE hasFormattingState(const ElementBox& formattingRoot) const;
-
-#ifndef NDEBUG
-    void registerFormattingContext(const FormattingContext&);
-    void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
-#endif
 
     BoxGeometry& geometryForRootBox() LIFETIME_BOUND;
     BoxGeometry& ensureGeometryForBox(const Box&) LIFETIME_BOUND;
@@ -118,11 +101,6 @@ private:
     const Type m_type;
 
     HashMap<CheckedRef<const ElementBox>, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
-    HashMap<CheckedRef<const ElementBox>, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
-
-#ifndef NDEBUG
-    HashSet<const FormattingContext*> m_formattingContextList;
-#endif
     HashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
     QuirksMode m_quirksMode { QuirksMode::No };
     bool m_isTextShapingAcrossInlineBoxesEnabled { false };
@@ -166,15 +144,6 @@ inline const BoxGeometry& LayoutState::geometryForBox(const Box& layoutBox) cons
     ASSERT(m_layoutBoxToBoxGeometry.contains(&layoutBox));
     return *m_layoutBoxToBoxGeometry.get(&layoutBox);
 }
-
-#ifndef NDEBUG
-inline void LayoutState::registerFormattingContext(const FormattingContext& formattingContext)
-{
-    // Multiple formatting contexts of the same root within a layout frame indicates defective layout logic.
-    ASSERT(!m_formattingContextList.contains(&formattingContext));
-    m_formattingContextList.add(&formattingContext);
-}
-#endif
 
 }
 }

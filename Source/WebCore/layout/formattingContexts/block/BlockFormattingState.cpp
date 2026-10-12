@@ -34,9 +34,8 @@ namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlockFormattingState);
 
-BlockFormattingState::BlockFormattingState(LayoutState& layoutState, const ElementBox& blockFormattingContextRoot)
-    : FormattingState(Type::Block, layoutState)
-    , m_placedFloats(blockFormattingContextRoot)
+BlockFormattingState::BlockFormattingState(const ElementBox& blockFormattingContextRoot)
+    : m_placedFloats(blockFormattingContextRoot)
 {
 }
 

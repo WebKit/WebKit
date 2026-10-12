@@ -32,7 +32,6 @@
 #import "DocumentLoader.h"
 #import "FrameLoader.h"
 #import "FrameTree.h"
-#import "LayoutTreeBuilder.h"
 #import "LocalFrame.h"
 #import "Logging.h"
 #import "PlatformMediaSessionManager.h"
@@ -73,7 +72,6 @@ void Page::platformInitialize()
         PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showPaintOrderTree"_s, printPaintOrderTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree"_s, Layout::printLayoutTreeForLiveDocuments);
         PAL::registerNotifyCallback("com.apple.WebKit.showScrollingStateTree"_s, printScrollingStateTree);
 #endif // ENABLE(TREE_DEBUGGING)
 

@@ -87,11 +87,6 @@ dom/ViewTransition.cpp
 [ macOS ] inspector/agents/frame/FrameCSSAgent.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp
-layout/formattingContexts/FormattingGeometry.cpp
-layout/formattingContexts/block/BlockFormattingContext.cpp
-layout/formattingContexts/block/BlockFormattingQuirks.cpp
-layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp
-layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp
 layout/formattingContexts/inline/InlineContentAligner.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
@@ -111,11 +106,6 @@ layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp
 layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
 [ macOS ] layout/formattingContexts/inline/text/TextUtil.cpp
-layout/formattingContexts/table/TableFormattingContext.cpp
-layout/formattingContexts/table/TableFormattingGeometry.cpp
-[ macOS ] layout/formattingContexts/table/TableFormattingQuirks.cpp
-layout/formattingContexts/table/TableGrid.cpp
-layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp

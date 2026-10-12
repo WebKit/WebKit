@@ -40,6 +40,16 @@ InitialContainingBlock::InitialContainingBlock(Style::ComputedStyle&& style, std
 {
 }
 
+const InitialContainingBlock& initialContainingBlock(const Box& layoutBox)
+{
+    if (auto* initialContainingBlock = dynamicDowncast<InitialContainingBlock>(layoutBox))
+        return *initialContainingBlock;
+
+    auto* ancestor = &layoutBox.parent();
+    for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }
+    return downcast<InitialContainingBlock>(*ancestor);
+}
+
 }
 }
 

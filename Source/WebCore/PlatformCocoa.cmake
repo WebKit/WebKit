@@ -945,21 +945,12 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/Origin.h
     html/PDFJSDocument.h
 
-    layout/FormattingState.h
 
     layout/floats/FloatingContext.h
 
-    layout/formattingContexts/FormattingContext.h
-    layout/formattingContexts/FormattingGeometry.h
-    layout/formattingContexts/FormattingQuirks.h
 
-    layout/formattingContexts/block/BlockFormattingContext.h
-    layout/formattingContexts/block/BlockFormattingGeometry.h
-    layout/formattingContexts/block/BlockFormattingQuirks.h
     layout/formattingContexts/block/BlockFormattingState.h
 
-    layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h
-    layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.h
 
 
     layout/formattingContexts/grid/AxisConstraint.h
@@ -987,8 +978,6 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/formattingContexts/inline/ruby/RubyFormattingContext.h
 
-    layout/formattingContexts/table/TableFormattingGeometry.h
-    layout/formattingContexts/table/TableFormattingQuirks.h
 
     layout/integration/LayoutIntegrationBoxGeometryUpdater.h
     layout/integration/LayoutIntegrationBoxTreeUpdater.h
