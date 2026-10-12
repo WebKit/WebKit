@@ -26,14 +26,13 @@
 #include "config.h"
 #include "FloatingContext.h"
 
-#include "BlockFormattingContext.h"
-#include "BlockFormattingState.h"
 #include "FloatAvoider.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutShape.h"
+#include "LayoutState.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
@@ -326,7 +325,7 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
         ASSERT(*blockAxisPosition == logicalTopRelativeToBlockFormattingContextRoot);
 
         // The return vertical position needs to be in the containing block's coordinate system.
-        CheckedRef containingBlock = FormattingContext::containingBlock(layoutBox);
+        CheckedRef containingBlock = Layout::containingBlock(layoutBox);
         if (containingBlock.ptr() == &placedFloats().blockFormattingContextRoot())
             return BlockAxisPositionWithClearance { logicalTopRelativeToBlockFormattingContextRoot, clearance };
 
@@ -543,7 +542,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
 
 FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteCoordinates(const Box& floatAvoider, LayoutPoint borderBoxTopLeft) const
 {
-    CheckedRef containingBlock = FormattingContext::containingBlock(floatAvoider);
+    CheckedRef containingBlock = Layout::containingBlock(floatAvoider);
     auto& containingBlockGeometry = containingBlockGeometries().geometryForBox(containingBlock);
     auto absoluteTopLeft = mapTopLeftToBlockFormattingContextRoot(floatAvoider, borderBoxTopLeft);
 
@@ -570,7 +569,7 @@ Point FloatingContext::mapPointFromFloatingContextRootToBlockFormattingContextRo
     if (from.ptr() == to.ptr())
         return position;
     auto mappedPosition = position;
-    for (CheckedPtr containingBlock = from.ptr(); containingBlock != to.ptr(); containingBlock = &FormattingContext::containingBlock(*containingBlock))
+    for (CheckedPtr containingBlock = from.ptr(); containingBlock != to.ptr(); containingBlock = &Layout::containingBlock(*containingBlock))
         mappedPosition.moveBy(BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(*containingBlock)));
     return mappedPosition;
 }

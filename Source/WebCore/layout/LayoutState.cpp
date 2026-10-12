@@ -37,7 +37,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderBox.h"
 #include "Settings.h"
-#include "TableFormattingState.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -97,37 +96,6 @@ BoxGeometry& LayoutState::ensureGeometryForBoxSlow(const Box& layoutBox)
     }).iterator->value;
 }
 
-bool LayoutState::hasFormattingState(const ElementBox& formattingContextRoot) const
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    return m_blockFormattingStates.contains(formattingContextRoot) || m_tableFormattingStates.contains(formattingContextRoot);
-}
-
-FormattingState& LayoutState::formattingStateForFormattingContext(const ElementBox& formattingContextRoot) const
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-
-    if (formattingContextRoot.establishesBlockFormattingContext())
-        return formattingStateForBlockFormattingContext(formattingContextRoot);
-
-    if (formattingContextRoot.establishesTableFormattingContext())
-        return formattingStateForTableFormattingContext(formattingContextRoot);
-
-    CRASH();
-}
-
-BlockFormattingState& LayoutState::formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const
-{
-    ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext());
-    return *m_blockFormattingStates.get(blockFormattingContextRoot);
-}
-
-TableFormattingState& LayoutState::formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const
-{
-    ASSERT(tableFormattingContextRoot.establishesTableFormattingContext());
-    return *m_tableFormattingStates.get(tableFormattingContextRoot);
-}
-
 InlineContentCache& LayoutState::inlineContentCache(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
@@ -137,13 +105,7 @@ InlineContentCache& LayoutState::inlineContentCache(const ElementBox& formatting
 BlockFormattingState& LayoutState::ensureBlockFormattingState(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesBlockFormattingContext());
-    return *m_blockFormattingStates.ensure(formattingContextRoot, [&] { return makeUnique<BlockFormattingState>(*this, formattingContextRoot); }).iterator->value;
-}
-
-TableFormattingState& LayoutState::ensureTableFormattingState(const ElementBox& formattingContextRoot)
-{
-    ASSERT(formattingContextRoot.establishesTableFormattingContext());
-    return *m_tableFormattingStates.ensure(formattingContextRoot, [&] { return makeUnique<TableFormattingState>(*this, formattingContextRoot); }).iterator->value;
+    return *m_blockFormattingStates.ensure(formattingContextRoot, [&] { return makeUnique<BlockFormattingState>(formattingContextRoot); }).iterator->value;
 }
 
 void LayoutState::destroyBlockFormattingState(const ElementBox& formattingContextRoot)

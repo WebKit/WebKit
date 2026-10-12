@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FormattingContext.h"
 #include <WebCore/LayoutElementBox.h>
+#include <WebCore/LayoutInitialContainingBlock.h>
 
 namespace WebCore {
 namespace Layout {
@@ -56,6 +56,8 @@ private:
     const ElementBox* m_stayWithin { nullptr };
 };
 
+const ElementBox& containingBlock(const Box&);
+
 LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&);
 LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&, const ElementBox& stayWithin);
 LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box&, const ElementBox& root);
@@ -68,7 +70,7 @@ inline LayoutContainingBlockChainIterator::LayoutContainingBlockChainIterator(co
 inline LayoutContainingBlockChainIterator& LayoutContainingBlockChainIterator::operator++()
 {
     ASSERT(m_current);
-    m_current = m_current->isInitialContainingBlock() ? nullptr : &FormattingContext::containingBlock(*m_current);
+    m_current = m_current->isInitialContainingBlock() ? nullptr : &containingBlock(*m_current);
     return *this;
 }
 
@@ -80,13 +82,13 @@ inline LayoutContainingBlockChainIteratorAdapter::LayoutContainingBlockChainIter
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box& layoutBox)
 {
-    return LayoutContainingBlockChainIteratorAdapter(FormattingContext::containingBlock(layoutBox));
+    return LayoutContainingBlockChainIteratorAdapter(containingBlock(layoutBox));
 }
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box& layoutBox, const ElementBox& stayWithin)
 {
     ASSERT(layoutBox.isDescendantOf(stayWithin));
-    return LayoutContainingBlockChainIteratorAdapter(FormattingContext::containingBlock(layoutBox), &stayWithin);
+    return LayoutContainingBlockChainIteratorAdapter(containingBlock(layoutBox), &stayWithin);
 }
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box& layoutBox, const ElementBox& root)

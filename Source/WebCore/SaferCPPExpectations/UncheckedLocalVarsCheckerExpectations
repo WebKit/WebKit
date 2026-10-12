@@ -9,9 +9,6 @@ dom/Position.cpp
 [ macOS ] html/canvas/CanvasRenderingContext2D.cpp
 [ macOS ] html/canvas/WebGLRenderingContextBase.cpp
 [ macOS ] html/track/TextTrackList.cpp
-layout/formattingContexts/FormattingGeometry.cpp
-[ macOS ] layout/formattingContexts/block/BlockFormattingContext.cpp
-[ macOS ] layout/formattingContexts/block/BlockFormattingGeometry.cpp
 [ macOS ] layout/formattingContexts/inline/InlineLine.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
@@ -20,8 +17,6 @@ layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 [ macOS ] layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
-layout/formattingContexts/table/TableFormattingContext.cpp
-[ iOS ] layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 [ macOS ] layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
