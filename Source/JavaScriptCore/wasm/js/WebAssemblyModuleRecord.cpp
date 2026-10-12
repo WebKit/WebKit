@@ -39,6 +39,7 @@
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
+#include "SourceProvider.h"
 #include "VariableWriteFireDetailInlines.h"
 #include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -92,6 +93,7 @@ void WebAssemblyModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_instance);
+    visitor.append(thisObject->m_jsModule);
     visitor.append(thisObject->m_startFunction);
     visitor.append(thisObject->m_exportsObject);
 }
@@ -102,6 +104,50 @@ void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instanc
 {
     RELEASE_ASSERT(!m_instance);
     m_instance.set(vm, this, instance);
+    if (!m_jsModule)
+        m_jsModule.set(vm, this, instance->jsModule());
+}
+
+JSWebAssemblyModule* WebAssemblyModuleRecord::jsModule() const
+{
+    if (m_jsModule)
+        return m_jsModule.get();
+    if (m_instance)
+        return m_instance->jsModule();
+    return nullptr;
+}
+
+void WebAssemblyModuleRecord::setJSModule(VM& vm, JSWebAssemblyModule* module)
+{
+    m_jsModule.set(vm, this, module);
+}
+
+void WebAssemblyModuleRecord::setSourceProvider(RefPtr<SourceProvider>&& provider)
+{
+    m_sourceProvider = WTF::move(provider);
+}
+
+void WebAssemblyModuleRecord::ensureInstance(JSGlobalObject* globalObject)
+{
+    if (m_instance)
+        return;
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyModule* module = jsModule();
+    RELEASE_ASSERT(module);
+
+    RefPtr<SourceProvider> provider = m_sourceProvider;
+    if (!provider)
+        provider = StringSourceProvider::create("[wasm code]"_s, SourceOrigin(), String(), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::Program);
+
+    auto* instance = JSWebAssemblyInstance::tryCreate(vm, globalObject->webAssemblyInstanceStructure(), globalObject, moduleKey(), module, nullptr, Wasm::CreationMode::FromModuleLoader, WTF::move(provider), this);
+    RETURN_IF_EXCEPTION(scope, void());
+    instance->initializeImports(globalObject, nullptr, Wasm::CreationMode::FromModuleLoader);
+    RETURN_IF_EXCEPTION(scope, void());
+    instance->finalizeCreation(vm, globalObject, module->module().compileSync(vm, instance->memory0Mode()), Wasm::CreationMode::FromModuleLoader);
+    RETURN_IF_EXCEPTION(scope, void());
 }
 
 Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, RefPtr<ScriptFetcher>)

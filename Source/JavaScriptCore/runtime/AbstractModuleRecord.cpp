@@ -38,6 +38,7 @@
 #include "JSPromise.h"
 #include "SyntheticModuleRecord.h"
 #include "VMTrapsInlines.h"
+#include "JSWebAssemblyModule.h"
 #include "WebAssemblyModuleRecord.h"
 #include <wtf/text/MakeString.h>
 
@@ -792,6 +793,36 @@ auto AbstractModuleRecord::resolveExport(JSGlobalObject* globalObject, const Ide
     RELEASE_AND_RETURN(scope, resolveExportImpl(globalObject, ResolveQuery(this, exportName.impl())));
 }
 
+JSValue AbstractModuleRecord::getModuleSource(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+#if ENABLE(WEBASSEMBLY)
+    if (auto* wasmRecord = dynamicDowncast<WebAssemblyModuleRecord>(this)) {
+        if (auto* module = wasmRecord->jsModule())
+            return JSValue(static_cast<JSCell*>(module));
+    }
+#endif
+    return throwSyntaxError(globalObject, scope, "Source phase imports are not available for this module"_s);
+}
+
+JSValue AbstractModuleRecord::getSourcePhaseBinding(JSGlobalObject* globalObject, PropertyName propertyName)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    for (const auto& pair : m_importEntries) {
+        const ImportEntry& importEntry = pair.value;
+        if (propertyName != importEntry.localName || importEntry.phase != ModulePhase::Source)
+            continue;
+        AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, importEntry.moduleRequest, importEntry.moduleRequestType);
+        RETURN_IF_EXCEPTION(scope, { });
+        JSValue source = importedModule->getModuleSource(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        return source;
+    }
+    return { };
+}
+
 JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject* globalObject, ModulePhase phase)
 {
     VM& vm = globalObject->vm();
@@ -1204,7 +1235,11 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
     for (const ModuleRequest& request : module->requestedModules()) {
         // 11.a. Let requiredModule be GetImportedModule(module, request).
         AbstractModuleRecord* requiredModule = JSModuleLoader::getImportedModule(module, request);
-        // 11.b. If request.[[Phase]] is defer, then
+        // 11.b. If request.[[Phase]] is source, then do not evaluate.
+        // https://tc39.es/proposal-source-phase-imports/
+        if (request.m_phase == ModulePhase::Source)
+            continue;
+        // 11.c. If request.[[Phase]] is defer, then
         if (request.m_phase == ModulePhase::Defer) [[unlikely]] {
             // 11.b.i. Let additionalModules be GatherAsynchronousTransitiveDependencies(requiredModule).
             // 11.b.ii. For each Module Record additionalModule of additionalModules, do
@@ -1320,6 +1355,13 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* module = dynamicDowncast<CyclicModuleRecord>(this);
 
+#if ENABLE(WEBASSEMBLY)
+    if (auto* wasm = dynamicDowncast<WebAssemblyModuleRecord>(this); wasm && wasm->jsModule() && !wasm->instance()) {
+        wasm->ensureInstance(globalObject);
+        RETURN_IF_EXCEPTION(scope, invalid);
+    }
+#endif
+
     // 1. If module is not a Cyclic Module Record, then
     if (!module) {
         // 1.a. Perform ? module.Link().
@@ -1330,6 +1372,14 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
     }
     // 2. If module.[[Status]] is one of LINKING, LINKED, EVALUATING-ASYNC, or EVALUATED, then
     if (auto status = module->status(); status == Status::Linking || status == Status::Linked || status == Status::EvaluatingAsync || status == Status::Evaluated) {
+#if ENABLE(WEBASSEMBLY)
+        if (status == Status::Linked) {
+            if (auto* wasm = dynamicDowncast<WebAssemblyModuleRecord>(this); wasm && wasm->instance() && !wasm->moduleEnvironment()) {
+                module->initializeEnvironment(globalObject, scriptFetcher);
+                RETURN_IF_EXCEPTION(scope, invalid);
+            }
+        }
+#endif
         // 2.a. Return index.
         return index;
     }
@@ -1351,6 +1401,10 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
         AbstractModuleRecord* requiredModule = JSModuleLoader::getImportedModule(module, request);
         checkSafeToRecurse(globalObject, scope);
         RETURN_IF_EXCEPTION(scope, invalid);
+        // Source-phase imports are not linked.
+        // https://tc39.es/proposal-source-phase-imports/
+        if (request.m_phase == ModulePhase::Source)
+            continue;
         // 9.b. Set index to ? InnerModuleLinking(requiredModule, stack, index).
         index = requiredModule->innerModuleLinking(globalObject, stack, index, scriptFetcher);
         RETURN_IF_EXCEPTION(scope, invalid);
