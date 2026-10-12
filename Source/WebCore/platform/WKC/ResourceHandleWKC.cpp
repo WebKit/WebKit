@@ -436,87 +436,149 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 {
     data.clear();
     response = ResourceResponse();
+    error = ResourceError();
 
-    // Synchronous XHR and form-backed requests can carry a request body too.
-    // Support in-memory body elements here. File/blob-backed elements still need
-    // an asynchronous upload stream, so fail explicitly rather than silently
-    // flattening them into an incomplete request.
-    Vector<uint8_t> requestBodyBytes;
-    auto requestBody = request.httpBody();
-    if (requestBody) {
-        for (const auto& element : requestBody->elements()) {
-            if (!std::get_if<Vector<uint8_t>>(&element.data)) {
-                error = ResourceError(CURLE_READ_ERROR, request.url(), ResourceError::Type::General);
+    if (!request.url().isValid()) {
+        error = ResourceError(CURLE_URL_MALFORMAT, request.url(), ResourceError::Type::General);
+        return;
+    }
+
+    ResourceRequest currentRequest = request;
+    unsigned redirectCount = 0;
+    static constexpr unsigned maximumRedirects = 20;
+
+    for (;;) {
+        data.clear();
+        response = ResourceResponse();
+
+        // Synchronous XHR and form-backed requests can carry a request body too.
+        // Support in-memory body elements here. File/blob-backed elements still need
+        // an asynchronous upload stream, so fail explicitly rather than silently
+        // flattening them into an incomplete request.
+        Vector<uint8_t> requestBodyBytes;
+        auto requestBody = currentRequest.httpBody();
+        if (requestBody) {
+            for (const auto& element : requestBody->elements()) {
+                if (!std::get_if<Vector<uint8_t>>(&element.data)) {
+                    error = ResourceError(CURLE_READ_ERROR, currentRequest.url(), ResourceError::Type::General);
+                    return;
+                }
+            }
+            requestBodyBytes = requestBody->flatten();
+        }
+
+        // Re-read WebCore's cookie store for every hop. Never carry a Cookie header
+        // from the previous URL across a redirect.
+        ResourceRequest requestWithCookies = currentRequest;
+        applyCookiesToRequest(context, requestWithCookies);
+
+        configureCertificateAuthorityBundle(currentRequest.url());
+        CurlHandle curl;
+        curl.setURL(currentRequest.url(), CurlHandle::LocalhostAlias::Disable);
+        curl.setTimeout(CurlContext::singleton().defaultTimeoutInterval());
+
+        // Match CurlRequest's language negotiation for synchronous XHR and other
+        // synchronous loads, which bypass CurlRequest::appendAcceptLanguageHeader.
+        auto requestHeaders = requestWithCookies.httpHeaderFields();
+        for (const auto& language : userPreferredLanguages())
+            requestHeaders.add(HTTPHeaderName::AcceptLanguage, language);
+        curl.appendRequestHeaders(requestHeaders);
+
+        auto method = currentRequest.httpMethod();
+        if (method.isEmpty() || method == "GET"_s)
+            curl.enableHttpGetRequest();
+        else if (method == "HEAD"_s)
+            curl.enableHttpHeadRequest();
+        else
+            curl.setHttpCustomRequest(method);
+
+        if (requestBody) {
+            const char* bodyData = requestBodyBytes.isEmpty()
+                ? ""
+                : reinterpret_cast<const char*>(requestBodyBytes.span().data());
+            auto optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDS, bodyData);
+            if (optionResult == CURLE_OK)
+                optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDSIZE_LARGE, static_cast<curl_off_t>(requestBodyBytes.size()));
+            if (optionResult != CURLE_OK) {
+                data.clear();
+                error = ResourceError(static_cast<int>(optionResult), currentRequest.url(), ResourceError::Type::General);
                 return;
             }
         }
-        requestBodyBytes = requestBody->flatten();
-    }
 
-    // Keep synchronous loads on the same WebCore cookie store as ordinary
-    // asynchronous document and subresource requests.
-    ResourceRequest requestWithCookies = request;
-    applyCookiesToRequest(context, requestWithCookies);
+        SynchronousLoadContext loadContext { &data, { } };
+        curl.setWriteCallbackFunction(synchronousWriteCallback, &loadContext);
+        curl.setHeaderCallbackFunction(synchronousHeaderCallback, &loadContext);
 
-    configureCertificateAuthorityBundle(request.url());
-    CurlHandle curl;
-    curl.setURL(request.url(), CurlHandle::LocalhostAlias::Disable);
-    curl.setTimeout(CurlContext::singleton().defaultTimeoutInterval());
+        auto result = curl.perform();
+        response.setURL(URL { currentRequest.url() });
+        response.setSource(ResourceResponse::Source::Network);
+        applySynchronousHeaders(loadContext.headerLines, response);
+        storeResponseCookies(context, currentRequest, response);
 
-    // Match CurlRequest's language negotiation for synchronous XHR and other
-    // synchronous loads, which bypass CurlRequest::appendAcceptLanguageHeader.
-    auto requestHeaders = requestWithCookies.httpHeaderFields();
-    for (const auto& language : userPreferredLanguages())
-        requestHeaders.add(HTTPHeaderName::AcceptLanguage, language);
-    curl.appendRequestHeaders(requestHeaders);
+        long statusCode = 0;
+        curl_easy_getinfo(curl.handle(), CURLINFO_RESPONSE_CODE, &statusCode);
+        response.setHTTPStatusCode(static_cast<int>(statusCode));
 
-    auto method = request.httpMethod();
-    if (method.isEmpty() || method == "GET"_s)
-        curl.enableHttpGetRequest();
-    else if (method == "HEAD"_s)
-        curl.enableHttpHeadRequest();
-    else
-        curl.setHttpCustomRequest(method);
+        // Content-Length describes the representation, not necessarily the bytes
+        // delivered to this callback (notably for HEAD responses).
+        long long expectedContentLength = static_cast<long long>(data.size());
+        auto contentLength = response.httpHeaderField(HTTPHeaderName::ContentLength);
+        if (!contentLength.isEmpty()) {
+            auto contentLengthCString = contentLength.utf8();
+            char* endOfContentLength = nullptr;
+            auto parsedContentLength = std::strtoll(contentLengthCString.data(), &endOfContentLength, 10);
+            if (endOfContentLength != contentLengthCString.data() && !*endOfContentLength && parsedContentLength >= 0)
+                expectedContentLength = parsedContentLength;
+        }
+        response.setExpectedContentLength(expectedContentLength);
 
-    if (requestBody) {
-        const char* bodyData = requestBodyBytes.isEmpty()
-            ? ""
-            : reinterpret_cast<const char*>(requestBodyBytes.span().data());
-        auto optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDS, bodyData);
-        if (optionResult == CURLE_OK)
-            optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDSIZE_LARGE, static_cast<curl_off_t>(requestBodyBytes.size()));
-        if (optionResult != CURLE_OK) {
-            data.clear();
-            error = ResourceError(static_cast<int>(optionResult), request.url(), ResourceError::Type::General);
+        auto contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
+        response.setMimeType(extractMIMETypeFromMediaType(contentType).convertToASCIILowercase());
+        response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
+
+        if (result != CURLE_OK) {
+            error = ResourceError(static_cast<int>(result), currentRequest.url(), result == CURLE_OPERATION_TIMEDOUT ? ResourceError::Type::Timeout : ResourceError::Type::General);
             return;
         }
+
+        auto location = response.httpHeaderField(HTTPHeaderName::Location);
+        auto status = response.httpStatusCode();
+        if (!isRedirectStatus(status) || location.isEmpty()) {
+            error = ResourceError();
+            return;
+        }
+
+        URL redirectedURL { currentRequest.url(), location };
+        if (!redirectedURL.isValid() || !redirectedURL.protocolIsInHTTPFamily()) {
+            data.clear();
+            error = ResourceError(CURLE_UNSUPPORTED_PROTOCOL, currentRequest.url(), ResourceError::Type::General);
+            return;
+        }
+
+        if (redirectCount >= maximumRedirects) {
+            data.clear();
+            error = ResourceError(CURLE_TOO_MANY_REDIRECTS, currentRequest.url(), ResourceError::Type::General);
+            return;
+        }
+
+        auto* networkingContext = context;
+        ResourceRequest redirectedRequest = currentRequest.redirectedRequest(
+            response,
+            networkingContext && networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect());
+        if (redirectedRequest.isNull()) {
+            data.clear();
+            error = ResourceError(CURLE_URL_MALFORMAT, currentRequest.url(), ResourceError::Type::General);
+            return;
+        }
+
+        // Let WebCore apply redirect method/referrer/authorization semantics.
+        // Cookies are deliberately rebuilt at the top of the next iteration.
+        redirectedRequest.removeHTTPHeaderField(HTTPHeaderName::Cookie);
+        currentRequest = WTF::move(redirectedRequest);
+        ++redirectCount;
     }
-
-    SynchronousLoadContext loadContext { &data, { } };
-    curl.setWriteCallbackFunction(synchronousWriteCallback, &loadContext);
-    curl.setHeaderCallbackFunction(synchronousHeaderCallback, &loadContext);
-
-    auto result = curl.perform();
-    response.setURL(URL { request.url() });
-    response.setSource(ResourceResponse::Source::Network);
-    applySynchronousHeaders(loadContext.headerLines, response);
-    storeResponseCookies(context, requestWithCookies, response);
-
-    long statusCode = 0;
-    curl_easy_getinfo(curl.handle(), CURLINFO_RESPONSE_CODE, &statusCode);
-    response.setHTTPStatusCode(static_cast<int>(statusCode));
-    response.setExpectedContentLength(static_cast<long long>(data.size()));
-
-    auto contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
-    response.setMimeType(extractMIMETypeFromMediaType(contentType).convertToASCIILowercase());
-    response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
-
-    if (result == CURLE_OK)
-        error = ResourceError();
-    else
-        error = ResourceError(static_cast<int>(result), request.url(), result == CURLE_OPERATION_TIMEDOUT ? ResourceError::Type::Timeout : ResourceError::Type::General);
 }
-
 bool ResourceHandle::shouldUseCredentialStorage()
 {
     return (!client() || client()->shouldUseCredentialStorage(this)) && firstRequest().url().protocolIsInHTTPFamily();
