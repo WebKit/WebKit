@@ -81,20 +81,25 @@ std::optional<float> SizesAttributeParser::effectiveSizeDefaultValue()
 std::optional<float> SizesAttributeParser::parse(CSSParserTokenRange tokens, const CSSParserContext& context)
 {
     // https://html.spec.whatwg.org/multipage/images.html#parsing-a-sizes-attribute
-    auto savedTokens = tokens;
-    tokens.consumeWhitespace();
-    if (tokens.peek().type() == IdentToken && equalLettersIgnoringASCIICase(tokens.peek().value(), "auto"_s)) {
-        tokens.consume();
+    while (true) {
+        auto savedTokens = tokens;
         tokens.consumeWhitespace();
-        if (tokens.atEnd() || tokens.peek().type() == CommaToken) {
-            m_isAuto = true;
-            if (!tokens.atEnd())
+        if (tokens.peek().type() == IdentToken && equalLettersIgnoringASCIICase(tokens.peek().value(), "auto"_s)) {
+            tokens.consume();
+            tokens.consumeWhitespace();
+            if (tokens.atEnd()) {
+                m_isAuto = true;
+                return std::nullopt;
+            }
+            if (tokens.peek().type() == CommaToken) {
+                m_isAuto = true;
                 tokens.consume();
-            return parse(tokens, context);
+                continue;
+            }
         }
         tokens = savedTokens;
-    } else
-        tokens = savedTokens;
+        break;
+    }
 
     // Split on a comma token and parse the result tokens as (media-condition, length) pairs
     while (!tokens.atEnd()) {
