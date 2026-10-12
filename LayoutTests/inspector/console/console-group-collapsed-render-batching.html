@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.GroupCollapsedRenderBatching");
+
+    // The test front-end doesn't instantiate the full console UI, so provide minimal
+    // stand-ins for the container views the controller renders into. `ConsoleGroup`'s
+    // collapse behavior mirrors the production `WI.ConsoleGroup.prototype.render`.
+    WI.quickConsole = {needsLayout() {}};
+    WI.ConsoleCommandView = class ConsoleCommandView {};
+
+    WI.ConsoleSession = class ConsoleSession {
+        constructor() {
+            this.element = document.createElement("div");
+            this.element.className = "console-session";
+            this._messagesElement = this.element.appendChild(document.createElement("div"));
+            this._hasMessages = false;
+        }
+        append(element) { this._hasMessages = true; this._messagesElement.appendChild(element); }
+        addMessageView(messageView) { this.append(messageView.element); }
+        hasMessages() { return this._hasMessages; }
+    };
+
+    WI.ConsoleGroup = class ConsoleGroup {
+        constructor(parentGroup) { this._parentGroup = parentGroup; }
+        get parentGroup() { return this._parentGroup; }
+        render(messageView) {
+            let groupElement = document.createElement("div");
+            groupElement.className = "console-group";
+            groupElement.appendChild(messageView.element);
+            if (messageView.message.type === WI.ConsoleMessage.MessageType.StartGroupCollapsed)
+                groupElement.classList.add("collapsed");
+            this._messagesElement = groupElement.appendChild(document.createElement("div"));
+            this._messagesElement.className = "console-group-messages";
+            return groupElement;
+        }
+        append(element) { this._messagesElement.appendChild(element); }
+        addMessageView(messageView) { this.append(messageView.element); }
+    };
+
+    // Don't group failed source map errors; that path needs the full ConsoleManager.
+    WI.settings.experimentalGroupSourceMapErrors.value = false;
+
+    function makeMessageView(type) {
+        return {message: {type}, element: document.createElement("div"), render() {}};
+    }
+
+    function createController() {
+        let controller = Object.create(WI.JavaScriptLogViewController.prototype);
+        controller._element = document.createElement("div");
+        controller._scrollElement = document.createElement("div");
+        controller._sessions = [];
+        controller._currentSessionOrGroup = null;
+        controller._pendingMessagesForSessionOrGroup = new Map;
+        controller._openGroupForSessionOrGroup = new Map;
+        controller._scheduledRenderIdentifier = 0;
+        controller._cleared = true;
+        controller._previousMessageView = null;
+        controller._lastConsoleMessageViewForTarget = new WeakMap;
+        controller._lastCommitted = {text: "", special: false};
+        controller._repeatCountWasInterrupted = false;
+        controller._failedSourceMapsGroup = null;
+        controller.delegate = null;
+
+        // Avoid dependencies on layout, scrolling, and timestamp settings.
+        controller.scrollToBottom = function() {};
+        controller.isScrolledToBottom = function() { return false; };
+        controller._handleShowConsoleMessageTimestampsSettingChanged = function() {};
+
+        controller.startNewSession();
+        return controller;
+    }
+
+    // A message is properly nested inside a collapsed group when its element is a descendant
+    // of a `.console-group-messages` whose `.console-group` is `.collapsed`. If the group
+    // cursor is lost across render batches, the message is instead appended to the
+    // `.console-session` as a sibling of the group, and stays visible when the group collapses.
+    function isNestedInCollapsedGroup(messageView) {
+        let messagesElement = messageView.element.closest(".console-group-messages");
+        if (!messagesElement)
+            return false;
+        let groupElement = messagesElement.closest(".console-group");
+        return !!groupElement && groupElement.classList.contains("collapsed");
+    }
+
+    suite.addTestCase({
+        name: "GroupSpanningRenderBatches",
+        description: "A collapsed group with more children than fit in one render frame should keep every child nested.",
+        test(resolve, reject) {
+            let controller = createController();
+
+            controller._addToPendingMessages(makeMessageView(WI.ConsoleMessage.MessageType.StartGroupCollapsed));
+
+            // `maxMessagesPerFrame` is 100, so more than 99 children guarantees the group
+            // start and some of its children render in separate frames.
+            const childCount = 150;
+            let childViews = [];
+            for (let i = 0; i < childCount; ++i) {
+                let childView = makeMessageView(WI.ConsoleMessage.MessageType.Log);
+                childViews.push(childView);
+                controller._addToPendingMessages(childView);
+            }
+
+            controller._addToPendingMessages(makeMessageView(WI.ConsoleMessage.MessageType.EndGroup));
+
+            // Render synchronously; each call renders up to `maxMessagesPerFrame`.
+            do {
+                controller.renderPendingMessages();
+            } while (controller._pendingMessagesForSessionOrGroup.size);
+
+            let nestedCount = childViews.filter(isNestedInCollapsedGroup).length;
+            InspectorTest.expectEqual(nestedCount, childCount, `All ${childCount} children should be nested inside the collapsed group.`);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "GroupContinuedAfterQueueDrains",
+        description: "A child logged after the pending queue drained on a group boundary should still nest in the open group.",
+        test(resolve, reject) {
+            let controller = createController();
+
+            // Frame 1: render only the group start; the pending queue drains here.
+            controller._addToPendingMessages(makeMessageView(WI.ConsoleMessage.MessageType.StartGroupCollapsed));
+            controller.renderPendingMessages();
+
+            // Frame 2: a child arrives afterwards and is rendered in a separate call.
+            let childView = makeMessageView(WI.ConsoleMessage.MessageType.Log);
+            controller._addToPendingMessages(childView);
+            controller.renderPendingMessages();
+
+            InspectorTest.expectThat(isNestedInCollapsedGroup(childView), "Child rendered in a later frame should nest in the still-open collapsed group.");
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that messages inside a <code>console.groupCollapsed()</code> stay nested when the group's rendering spans multiple frames.</p>
+</body>
+</html>
