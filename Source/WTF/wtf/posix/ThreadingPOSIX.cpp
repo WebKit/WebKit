@@ -95,6 +95,10 @@
 #define SA_RESTART 0
 #endif
 
+#if BENABLE(LIBPAS) && OS(LINUX)
+#include <bmalloc/pas_thread_suspend_lock.h>
+#endif
+
 namespace WTF {
 
 Thread::~Thread() = default;
@@ -134,6 +138,13 @@ static std::atomic<Thread*> targetThread { nullptr };
 
 void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 {
+#if BENABLE(LIBPAS) && OS(LINUX)
+    if (pas_thread_suspend_current_reason != pas_thread_suspend_reason_client) {
+        pas_thread_suspend_handle_signal();
+        return;
+    }
+#endif
+
     // Touching a global variable atomic types from signal handlers is allowed.
     Thread* thread = targetThread.load();
 
@@ -235,6 +246,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool signalIsInstalled = attemptToSetSignal(g_wtfConfig.sigThreadSuspendResume);
     RELEASE_ASSERT(signalIsInstalled);
+#if BENABLE(LIBPAS) && OS(LINUX)
+    pas_thread_suspend_set_signal(g_wtfConfig.sigThreadSuspendResume);
+#endif
 #endif
 }
 
