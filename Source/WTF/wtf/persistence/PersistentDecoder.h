@@ -86,7 +86,7 @@ public:
     template<typename T> [[nodiscard]]
     bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
-        static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
+        static_assert(std::is_arithmetic_v<T> || std::is_same_v<T, Latin1Character>, "Type T must have a fixed, known encoded size!");
         return numElements <= std::numeric_limits<size_t>::max() / sizeof(T) && bufferIsLargeEnoughToContain(numElements * sizeof(T));
     }
 

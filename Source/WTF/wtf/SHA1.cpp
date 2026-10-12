@@ -212,9 +212,9 @@ void SHA1::addUTF8Bytes(StringView string)
 {
     if (string.containsOnlyASCII()) {
         if (string.is8Bit())
-            addBytes(string.span8());
+            addBytes(asBytes(string.span8()));
         else
-            addBytes(String::make8Bit(string.span16()).span8());
+            addBytes(asBytes(String::make8Bit(string.span16()).span8()));
     } else
         addBytes(std::as_bytes(string.utf8().span()));
 }

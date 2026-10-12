@@ -115,7 +115,7 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
     ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
 
     if constexpr (sizeof(CharacterType) == 1) {
-        size_t bytesWritten = simdutf::binary_to_base64(inputDataBuffer, destinationDataBuffer, toSIMDUTFEncodeOptions(options));
+        size_t bytesWritten = simdutf::binary_to_base64(inputDataBuffer, byteCast<char>(destinationDataBuffer), toSIMDUTFEncodeOptions(options));
         ASSERT_UNUSED(bytesWritten, bytesWritten == destinationDataBuffer.size());
         return;
     }
@@ -205,17 +205,17 @@ unsigned calculateBase64EncodedSize(size_t inputLength, OptionSet<Base64EncodeOp
     return simdutf::base64_length_from_binary(inputLength, toSIMDUTFEncodeOptions(options));
 }
 
-template<typename T, typename Malloc = VectorBufferMalloc>
-static std::optional<Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc>> base64DecodeInternal(std::span<const T> inputDataBuffer, OptionSet<Base64DecodeOption> options)
+template<typename T, typename VectorType = Vector<uint8_t, 0, CrashOnOverflow, 16, VectorBufferMalloc>>
+static std::optional<VectorType> base64DecodeInternal(std::span<const T> inputDataBuffer, OptionSet<Base64DecodeOption> options)
 {
     if (!inputDataBuffer.size())
-        return Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> { };
+        return VectorType { };
 
     auto& decodeMap = options.contains(Base64DecodeOption::URL) ? base64URLDecMap : base64DecMap;
     auto validatePadding = options.contains(Base64DecodeOption::ValidatePadding);
     auto ignoreWhitespace = options.contains(Base64DecodeOption::IgnoreWhitespace);
 
-    Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> destination(inputDataBuffer.size());
+    VectorType destination(inputDataBuffer.size());
 
     unsigned equalsSignCount = 0;
     unsigned destinationLength = 0;
@@ -246,7 +246,7 @@ static std::optional<Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc>> base64Deco
     if (!destinationLength) {
         if (equalsSignCount)
             return std::nullopt;
-        return Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> { };
+        return VectorType { };
     }
 
     // There should be no padding if length is a multiple of 4.
@@ -302,15 +302,13 @@ std::optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64De
 
 String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> options)
 {
-    auto toString = [&] (auto optionalBuffer) {
-        if (!optionalBuffer)
-            return nullString();
-        return String::adopt(WTF::move(*optionalBuffer));
-    };
-
-    if (input.is8Bit())
-        return toString(base64DecodeInternal<Latin1Character, StringImplMalloc>(input.span8(), options));
-    return toString(base64DecodeInternal<char16_t, StringImplMalloc>(input.span16(), options));
+    using VectorType = Vector<Latin1Character, 0, CrashOnOverflow, 16, StringImplMalloc>;
+    auto result = input.is8Bit()
+        ? base64DecodeInternal<Latin1Character, VectorType>(input.span8(), options)
+        : base64DecodeInternal<char16_t, VectorType>(input.span16(), options);
+    if (!result)
+        return nullString();
+    return String::adopt(WTF::move(*result));
 }
 
 static inline simdutf::base64_options NODELETE toSIMDUTFDecodeOptions(Alphabet alphabet)
@@ -346,7 +344,13 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std
         return { FromBase64ShouldThrowError::No, 0, 0 };
 
     constexpr bool decodeUpToBadChar = true;
-    auto [result, outputLength] = simdutf::base64_to_binary_safe(span, output, toSIMDUTFDecodeOptions(alphabet), toSIMDUTFLastChunkHandling(lastChunkHandling), decodeUpToBadChar);
+    auto simdutfSpan = [&] {
+        if constexpr (sizeof(CharacterType) == 1)
+            return byteCast<char>(span);
+        else
+            return span;
+    }();
+    auto [result, outputLength] = simdutf::base64_to_binary_safe(simdutfSpan, output, toSIMDUTFDecodeOptions(alphabet), toSIMDUTFLastChunkHandling(lastChunkHandling), decodeUpToBadChar);
     switch (result.error) {
     case simdutf::error_code::OUTPUT_BUFFER_TOO_SMALL:
     case simdutf::error_code::SUCCESS:
@@ -367,7 +371,7 @@ std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView str
 size_t maxLengthFromBase64(StringView string)
 {
     if (string.is8Bit())
-        return simdutf::maximal_binary_length_from_base64(string.span8());
+        return simdutf::maximal_binary_length_from_base64(byteCast<char>(string.span8()));
     return simdutf::maximal_binary_length_from_base64(string.span16());
 }
 

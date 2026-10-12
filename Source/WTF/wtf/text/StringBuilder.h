@@ -64,6 +64,7 @@ public:
     void append(char16_t);
     void append(Latin1Character);
     void append(char character) { append(byteCast<Latin1Character>(character)); }
+    void append(uint8_t) = delete; // Ambiguous: pass Latin1Character for a character or use the variadic append for a number.
 
     template<typename... StringTypeAdapters> void appendFromAdapters(const StringTypeAdapters&...);
 

@@ -387,7 +387,7 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
         if (parsedLength == trimmedScaleString.length() && scaleIsInBounds(scale))
             scaleFromEnvironment = scale;
         else
-            g_warning("Invalid WPE_DRM_SCALE='%*s' value, or out of bounds.", static_cast<int>(scaleString.span8().size()), scaleString.span8().data());
+            g_warning("Invalid WPE_DRM_SCALE='%*s' value, or out of bounds.", static_cast<int>(scaleString.span8().size()), byteCast<char>(scaleString.span8().data()));
     }
 
     int x = crtc->x();
