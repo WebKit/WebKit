@@ -932,11 +932,11 @@ CSSFontFaceMetricOverrideDescriptorsEnabled:
 
 CSSFontPaletteMixFunctionEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS palette-mix() function"
   humanReadableDescription: "Enable the CSS palette-mix() function"
-  defaultValue: false
+  defaultValue: true
 
 CSSFontSynthesisStyleObliqueOnlyEnabled:
   type: bool

@@ -108,6 +108,27 @@ std::optional<AtomString> FontPalette::ident() const
     return std::nullopt;
 }
 
+static void collectReferencedIdentifiers(const FontPalette& fontPalette, OrderedHashSet<AtomString>& identifiers)
+{
+    WTF::switchOn(fontPalette,
+        [&](const FontPalette::Keyword&) { },
+        [&](const AtomString& ident) {
+            identifiers.add(ident);
+        },
+        [&](const FontPaletteMixFunction& mix) {
+            for (auto& component : mix.components)
+                collectReferencedIdentifiers(component.palette, identifiers);
+        }
+    );
+}
+
+OrderedHashSet<AtomString> FontPalette::referencedIdentifiers() const
+{
+    OrderedHashSet<AtomString> identifiers;
+    collectReferencedIdentifiers(*this, identifiers);
+    return identifiers;
+}
+
 void add(Hasher& hasher, const FontPalette& fontPalette)
 {
     WTF::switchOn(fontPalette,

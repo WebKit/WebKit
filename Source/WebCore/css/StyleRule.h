@@ -232,9 +232,9 @@ public:
 
     const AtomString& name() const LIFETIME_BOUND { return m_name; }
     const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
-    const FontPaletteValues& fontPaletteValues() const LIFETIME_BOUND { return m_fontPaletteValues; }
-    std::optional<FontPaletteIndex> basePalette() const { return m_fontPaletteValues.basePalette(); }
-    const Vector<FontPaletteValues::OverriddenColor>& overrideColors() const LIFETIME_BOUND { return m_fontPaletteValues.overrideColors(); }
+    std::optional<FontPaletteIndex> basePalette() const { return m_basePalette; }
+    const Vector<FontPaletteValues::OverriddenColor>& overrideColors() const LIFETIME_BOUND { return m_overrideColors; }
+    FontPaletteValues::CustomPalette customPalette() const { return { m_name, m_basePalette, m_overrideColors }; }
 
     Ref<StyleRuleFontPaletteValues> copy() const { return adoptRef(*new StyleRuleFontPaletteValues(*this)); }
 
@@ -244,7 +244,8 @@ private:
 
     AtomString m_name;
     Vector<AtomString> m_fontFamilies;
-    FontPaletteValues m_fontPaletteValues;
+    std::optional<FontPaletteIndex> m_basePalette;
+    Vector<FontPaletteValues::OverriddenColor> m_overrideColors;
 };
 
 class StyleRuleFontFeatureValuesBlock final : public StyleRuleBase {

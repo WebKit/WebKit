@@ -256,7 +256,7 @@ void CSSFontSelector::addFontPaletteValuesRule(const StyleRuleFontPaletteValues&
         return;
 
     for (auto& fontFamily : fontFamilies)
-        m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
+        m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.customPalette());
 
     ++m_version;
 }
@@ -361,19 +361,19 @@ std::optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescri
     return std::nullopt;
 }
 
-const FontPaletteValues& CSSFontSelector::lookupFontPaletteValues(const AtomString& familyName, const FontDescription& fontDescription) const
+FontPaletteValues CSSFontSelector::lookupFontPaletteValues(const AtomString& familyName, const FontDescription& fontDescription) const
 {
-    static NeverDestroyed<FontPaletteValues> emptyFontPaletteValues;
+    Vector<FontPaletteValues::CustomPalette> customPalettes;
+    for (auto& paletteName : fontDescription.fontPalette().referencedIdentifiers()) {
+        auto iterator = m_paletteMap.find(std::make_pair(familyName, paletteName));
+        if (iterator == m_paletteMap.end())
+            continue;
 
-    auto paletteName = fontDescription.fontPalette().ident();
-    if (!paletteName)
-        return emptyFontPaletteValues.get();
-
-    auto iterator = m_paletteMap.find(std::make_pair(familyName, *paletteName));
-    if (iterator == m_paletteMap.end())
-        return emptyFontPaletteValues.get();
-
-    return iterator->value;
+        auto& customPalette = iterator->value;
+        if (customPalette.basePalette || !customPalette.overrideColors.isEmpty())
+            customPalettes.append(customPalette);
+    }
+    return FontPaletteValues { WTF::move(customPalettes) };
 }
 
 RefPtr<FontFeatureValues> CSSFontSelector::lookupFontFeatureValues(const AtomString& familyName) const
@@ -459,7 +459,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
         }
     };
 
-    const auto& fontPaletteValues = lookupFontPaletteValues(familyName, fontDescription);
+    auto fontPaletteValues = lookupFontPaletteValues(familyName, fontDescription);
     auto fontFeatureValues = lookupFontFeatureValues(familyName);
 
     // Handle the generic math font family a bit differently.

@@ -18957,6 +18957,8 @@
 		B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeCG.cpp; sourceTree = "<group>"; };
 		B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeMathData.h; sourceTree = "<group>"; };
 		B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeCG.h; sourceTree = "<group>"; };
+		BC01033C30473B01000021F4 /* OpenTypeCPAL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeCPAL.cpp; sourceTree = "<group>"; };
+		BC01033D30473B02000021F4 /* OpenTypeCPAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenTypeCPAL.h; sourceTree = "<group>"; };
 		B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeTypes.h; sourceTree = "<group>"; };
 		B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint3D.cpp; sourceTree = "<group>"; };
 		B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint3D.h; sourceTree = "<group>"; };
@@ -27566,6 +27568,8 @@
 			children = (
 				B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */,
 				B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */,
+				BC01033C30473B01000021F4 /* OpenTypeCPAL.cpp */,
+				BC01033D30473B02000021F4 /* OpenTypeCPAL.h */,
 				B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */,
 				B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */,
 				B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */,

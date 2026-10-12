@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/OrderedHashSet.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
@@ -55,6 +56,8 @@ struct FontPalette {
     bool isLight() const;
     bool isDark() const;
     std::optional<AtomString> ident() const;
+
+    OrderedHashSet<AtomString> referencedIdentifiers() const;
 
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 

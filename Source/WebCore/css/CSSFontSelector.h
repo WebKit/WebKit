@@ -109,7 +109,7 @@ private:
 
     std::optional<AtomString> resolveGenericFamily(const FontDescription&, const AtomString& family);
 
-    const FontPaletteValues& lookupFontPaletteValues(const AtomString& familyName, const FontDescription&) const;
+    FontPaletteValues lookupFontPaletteValues(const AtomString& familyName, const FontDescription&) const;
     RefPtr<FontFeatureValues> lookupFontFeatureValues(const AtomString& familyName) const;
 
     // CSSFontFaceClient
@@ -140,7 +140,7 @@ private:
             return ASCIICaseInsensitiveHash::equal(a.first, b.first) && DefaultHash<AtomString>::equal(a.second, b.second);
         }
     };
-    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
+    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues::CustomPalette, PaletteMapHash> m_paletteMap;
     HashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
     HashSet<Ref<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
