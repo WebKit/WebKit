@@ -390,7 +390,6 @@ public:
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, LambdaFinalizer);
 
     void notifyIsSafeToCollect();
-    bool isSafeToCollect() const { return m_isSafeToCollect; }
     
     bool isShuttingDown() const { return m_isShuttingDown; }
 
@@ -709,8 +708,8 @@ private:
     
     void setMutatorWaiting();
     void clearMutatorWaiting();
-    void notifyThreadStopping(const AbstractLocker&);
     
+    void waitForMembershipChange(uint64_t ticket);
     void waitForCollection(GCRequest::Ticket);
     void waitForAllCollections();
     
@@ -774,7 +773,7 @@ private:
     
     void setMutatorShouldBeFenced(bool value);
     
-    void addCoreConstraints();
+    Vector<std::unique_ptr<MarkingConstraint>> createCoreConstraints();
 
     enum class MemoryThresholdCallType {
         Cached,
@@ -839,7 +838,10 @@ private:
 
     std::unique_ptr<MachineThreads> m_machineThreads;
     
-    const std::unique_ptr<Collector> m_collector;
+    // The Collector this heap owns, which collects only this heap. Null with useGlobalGC.
+    const std::unique_ptr<Collector> m_localCollector;
+    // The Collector that collects this heap: m_localCollector, or the global Collector.
+    Collector* const m_collector;
     std::unique_ptr<SlotVisitor> m_mutatorSlotVisitor;
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
     

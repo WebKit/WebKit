@@ -86,6 +86,7 @@
 #include "ProxyObject.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
+#include "SimpleMarkingConstraint.h"
 #include "StopIfNecessaryTimer.h"
 #include "StringSplitCache.h"
 #include "StructureAlignedMemoryAllocator.h"
@@ -293,7 +294,8 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_maxHeapSize(m_minBytesPerCycle)
     , m_objectSpace(this)
     , m_machineThreads(makeUnique<MachineThreads>())
-    , m_collector(makeUnique<Collector>(*this))
+    , m_localCollector(Options::useGlobalGC() ? nullptr : makeUnique<Collector>())
+    , m_collector(m_localCollector ? m_localCollector.get() : &Collector::globalCollector())
     , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*m_collector, "M"_s))
     , m_mutatorMarkStack(makeUnique<MarkStackArray>())
     , m_strongSet(vm)
@@ -450,27 +452,19 @@ void Heap::shutDown()
     RELEASE_ASSERT(!vm().entryScope);
     RELEASE_ASSERT(m_mutatorState == MutatorState::Running);
     
-    // The collect-continuously thread requests a collection whenever the queue is empty, so it has to
-    // stop before the queue drains.
-    m_collector->stopCollectingContinuously();
-    dataLogIf(Options::logGC(), "stopped collecting continuously, ");
-    
+    // notifyIsSafeToCollect() joins and sets m_isSafeToCollect, except with Options::useGC() off.
+    bool hadJoined = m_isSafeToCollect;
+
     // Prevent new collections from being started. This is probably not even necessary, since we're not
     // going to call into anything that starts collections. Still, this makes the algorithm more
     // obviously sound.
     m_isSafeToCollect = false;
     dataLogIf(Options::logGC(), "disabled collection, ");
 
-    if (m_collector->hasOutstandingRequest()) {
-        dataLogIf(Options::logGC(), "waiting for outstanding collections...]\n");
-        waitForAllCollections();
-        
-        dataLogIf(Options::logGC(), "[GC<", RawPointer(this), ">: shutdown: ");
+    if (hadJoined) {
+        waitForMembershipChange(m_collector->requestMembershipChange({ Collector::MembershipChange::Kind::Leave, this, nullptr }));
+        dataLogIf(Options::logGC(), "left the collector, ");
     }
-    dataLogIf(Options::logGC(), "no collection pending, stopping the collector thread, ");
-
-    m_collector->stopThread();
-    dataLogIf(Options::logGC(), "stopped, ");
 
     if (Options::dumpHeapStatisticsAtVMDestruction()) [[unlikely]]
         dumpHeapStatisticsAtVMDestruction();
@@ -766,6 +760,7 @@ void Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor& vi
 
 void Heap::gatherStackRoots(ConservativeRoots& roots)
 {
+    ASSERT(m_collector->m_conductorThread);
     m_machineThreads->gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks, m_collector->m_conductingMutatorState, m_collector->m_conductorThread);
 #if ENABLE(C_LOOP)
     vm().cloopStack().gatherConservativeRoots(roots, *m_jitStubRoutines, *m_codeBlocks);
@@ -1276,7 +1271,7 @@ void Heap::collect(Synchronousness synchronousness, GCRequest request)
 
     stopIfNecessary();
 
-    GCRequest::Ticket ticket = m_collector->requestCollection(request);
+    GCRequest::Ticket ticket = m_collector->requestCollection(*this, request);
     if (synchronousness == Sync)
         waitForCollection(ticket);
 }
@@ -1614,7 +1609,7 @@ void Heap::finishRelinquishingConn()
     sanitizeStackForVM(vm());
     
     Locker locker { *m_collector->m_threadLock };
-    if (m_collector->hasOutstandingRequestWithLock()) {
+    if (m_collector->hasWorkWithLock()) {
         RELEASE_ASSERT(!m_collector->m_threadShouldStop);
         m_collector->m_threadCondition->notifyOne(locker);
     }
@@ -1679,12 +1674,6 @@ void Heap::clearMutatorWaiting()
     m_worldState.exchangeAnd(~mutatorWaitingBit);
 }
 
-void Heap::notifyThreadStopping(const AbstractLocker&)
-{
-    clearMutatorWaiting();
-    ParkingLot::unparkAll(&m_worldState);
-}
-
 void Heap::runCollectionEpilogue()
 {
     MonotonicTime before;
@@ -1736,10 +1725,18 @@ void Heap::runCollectionEpilogue()
     }
 }
 
+void Heap::waitForMembershipChange(Collector::MembershipChange::Ticket ticket)
+{
+    waitForCollector(
+        [&](const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
+            return m_collector->hasAppliedMembershipChangeWithLock(ticket);
+        });
+}
+
 void Heap::waitForCollection(GCRequest::Ticket ticket)
 {
     waitForCollector(
-        [&] (const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
+        [&](const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
             return m_collector->hasServedTicketWithLock(ticket);
         });
 }
@@ -1747,8 +1744,8 @@ void Heap::waitForCollection(GCRequest::Ticket ticket)
 void Heap::waitForAllCollections()
 {
     waitForCollector(
-        [&] (const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
-            return !m_collector->hasOutstandingRequestWithLock();
+        [&](const AbstractLocker&) WTF_REQUIRES_LOCK(*m_collector->m_threadLock) -> bool {
+            return !m_collector->hasPendingGCRequestWithLock();
         });
 }
 
@@ -2260,7 +2257,7 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
         bool logRequestGC = false;
         // Don't log if we already have a request pending or if we have to come back later so we don't flood dataFile.
         if (Options::logGC()) [[unlikely]]
-            logRequestGC = !m_collector->hasOutstandingRequest() && !deferralContext && !isDeferred();
+            logRequestGC = !m_collector->hasPendingGCRequest() && !deferralContext && !isDeferred();
         if (Options::gcMaxHeapSize()) [[unlikely]] {
             size_t bytesAllocatedThisCycle = totalBytesAllocatedThisCycle();
             if (bytesAllocatedThisCycle <= Options::gcMaxHeapSize())
@@ -2383,9 +2380,11 @@ constexpr bool samplingProfilerSupported = false;
 static UNUSED_FUNCTION void visitSamplingProfiler(VM&, AbstractSlotVisitor&) { };
 #endif
 
-void Heap::addCoreConstraints()
+Vector<std::unique_ptr<MarkingConstraint>> Heap::createCoreConstraints()
 {
-    m_collector->addMarkingConstraint(
+    Vector<std::unique_ptr<MarkingConstraint>> constraints;
+
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "Cs"_s, "Conservative Scan"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this, lastVersion = static_cast<uint64_t>(0)] (auto& visitor) mutable {
             bool shouldNotProduceWork = lastVersion == m_collector->m_phaseVersion;
@@ -2435,9 +2434,9 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByExecution,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Sequential);
-    
-    m_collector->addMarkingConstraint(
+        ConstraintParallelism::Sequential));
+
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "Msr"_s, "Misc Small Roots"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             VM& vm = this->vm();
@@ -2479,9 +2478,9 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByExecution,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Sequential);
-    
-    m_collector->addMarkingConstraint(
+        ConstraintParallelism::Sequential));
+
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "Sh"_s, "Strong Handles"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongHandles);
@@ -2490,9 +2489,9 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByExecution,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Sequential);
-    
-    m_collector->addMarkingConstraint(
+        ConstraintParallelism::Sequential));
+
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "D"_s, "Debugger"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Debugger);
@@ -2509,9 +2508,9 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByExecution,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Sequential);
-    
-    m_collector->addMarkingConstraint(
+        ConstraintParallelism::Sequential));
+
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "Ws"_s, "Weak Sets"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakSets);
@@ -2520,9 +2519,9 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByMarking,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Parallel);
+        ConstraintParallelism::Parallel));
     
-    m_collector->addMarkingConstraint(
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "O"_s, "Output"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             auto callOutputConstraint = [] (auto& visitor, HeapCell* heapCell, HeapCell::Kind) {
@@ -2552,10 +2551,10 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByMarking,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Parallel);
+        ConstraintParallelism::Parallel));
 
 #if ENABLE(WEBASSEMBLY)
-    m_collector->addMarkingConstraint(
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "Pbc"_s, "Pinball Completions"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             // FIXME: Unlike the "Cs" constraint which is skipped during verification
@@ -2583,12 +2582,12 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::GreyedByMarking,
         ConstraintConcurrency::Sequential,
-        ConstraintParallelism::Sequential);
+        ConstraintParallelism::Sequential));
 #endif
 
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-        m_collector->addMarkingConstraint(
+        constraints.append(makeUnique<SimpleMarkingConstraint>(
             "Jw"_s, "JIT Worklist"_s,
             MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::JITWorkList);
@@ -2609,11 +2608,11 @@ void Heap::addCoreConstraints()
             })),
             ConstraintVolatility::GreyedByMarking,
             ConstraintConcurrency::Concurrent,
-            ConstraintParallelism::Sequential);
+            ConstraintParallelism::Sequential));
     }
 #endif
     
-    m_collector->addMarkingConstraint(
+    constraints.append(makeUnique<SimpleMarkingConstraint>(
         "Cb"_s, "CodeBlocks"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::CodeBlocks);
@@ -2627,15 +2626,20 @@ void Heap::addCoreConstraints()
         })),
         ConstraintVolatility::SeldomGreyed,
         ConstraintConcurrency::Concurrent,
-        ConstraintParallelism::Sequential);
+        ConstraintParallelism::Sequential));
     
-    m_collector->addMarkingConstraint(makeUnique<MarkStackMergingConstraint>(*this));
+    constraints.append(makeUnique<MarkStackMergingConstraint>(*this));
+
+    return constraints;
 }
 
 void Heap::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
 {
-    PreventCollectionScope preventCollectionScope(*this);
-    m_collector->addMarkingConstraint(WTF::move(constraint));
+    // With collection off, the heap never joins and no constraint would run.
+    if (!Options::useGC()) [[unlikely]]
+        return;
+    ASSERT(m_isSafeToCollect);
+    waitForMembershipChange(m_collector->requestMembershipChange({ Collector::MembershipChange::Kind::AddConstraint, this, WTF::move(constraint) }));
 }
 
 void Heap::notifyIsSafeToCollect()
@@ -2649,7 +2653,8 @@ void Heap::notifyIsSafeToCollect()
         dataLog("[GC<", RawPointer(this), ">: starting ");
     }
     
-    addCoreConstraints();
+    // Applying the join also adds this heap's core constraints.
+    m_collector->requestMembershipChange({ Collector::MembershipChange::Kind::Join, this, nullptr });
     
     m_isSafeToCollect = true;
     

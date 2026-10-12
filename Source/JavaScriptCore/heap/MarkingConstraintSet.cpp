@@ -28,7 +28,6 @@
 
 #include "MarkingConstraintSolver.h"
 #include "Options.h"
-#include "SimpleMarkingConstraint.h"
 #include "SuperSampler.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -60,19 +59,29 @@ void MarkingConstraintSet::didStartMarking()
     m_iteration = 1;
 }
 
-void MarkingConstraintSet::add(ASCIICString abbreviatedName, ASCIICString name, MarkingConstraintExecutorPair&& executors, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
+void MarkingConstraintSet::add(Heap& heap, std::unique_ptr<MarkingConstraint> constraint)
 {
-    add(makeUnique<SimpleMarkingConstraint>(WTF::move(abbreviatedName), WTF::move(name), WTF::move(executors), volatility, concurrency, parallelism));
-}
-
-void MarkingConstraintSet::add(
-    std::unique_ptr<MarkingConstraint> constraint)
-{
+    constraint->m_heap = &heap;
     constraint->m_index = m_set.size();
     m_ordered.append(constraint.get());
     if (constraint->volatility() == ConstraintVolatility::GreyedByMarking)
         m_outgrowths.append(constraint.get());
     m_set.append(WTF::move(constraint));
+}
+
+void MarkingConstraintSet::remove(Heap& heap)
+{
+    auto wasAddedByHeap = [&](const MarkingConstraint* constraint) {
+        return constraint->m_heap == &heap;
+    };
+    // Drop the raw pointers before m_set destroys what they point to.
+    m_ordered.removeAllMatching(wasAddedByHeap);
+    m_outgrowths.removeAllMatching(wasAddedByHeap);
+    m_set.removeAllMatching([&](const std::unique_ptr<MarkingConstraint>& constraint) {
+        return wasAddedByHeap(constraint.get());
+    });
+    for (unsigned i = 0; i < m_set.size(); ++i)
+        m_set[i]->m_index = i;
 }
 
 bool MarkingConstraintSet::executeConvergence(SlotVisitor& visitor)

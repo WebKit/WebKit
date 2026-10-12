@@ -104,7 +104,7 @@ void PinballCompletion::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     visitor.append(thisObject->m_resultPromise);
     // Evacuated stack slices and callee saves are conservatively scanned by the "Pbc"
-    // constraint in Heap::addCoreConstraints() when this cell is marked.
+    // constraint in Heap::createCoreConstraints() when this cell is marked.
 }
 
 DEFINE_VISIT_CHILDREN(PinballCompletion);

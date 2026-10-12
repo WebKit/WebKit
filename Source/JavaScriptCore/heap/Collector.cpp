@@ -41,6 +41,7 @@
 #include <wtf/ListDump.h>
 #include <wtf/ParkingLot.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SpinBackoff.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -78,12 +79,11 @@ public:
     }
 
 private:
-    PollResult poll(const AbstractLocker& locker) final
+    PollResult poll(const AbstractLocker&) final
     {
         assertIsHeld(*m_collector.m_threadLock);
         if (m_collector.m_threadShouldStop) {
             m_collector.m_threadIsWorking = false;
-            m_collector.heap().notifyThreadStopping(locker);
             return PollResult::Stop;
         }
         if (m_collector.shouldCollectInCollectorThread()) {
@@ -116,9 +116,8 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Collector);
 
-Collector::Collector(Heap& heap)
-    : m_heaps({ &heap })
-    , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
+Collector::Collector()
+    : m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
     , m_raceMarkStack(makeUnique<MarkStackArray>())
     , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"_s))
@@ -152,8 +151,23 @@ Collector::Collector(Heap& heap)
     lazyInitialize(m_thread, adoptRef(*new CollectorThread(locker, *this)));
 }
 
+Collector& Collector::globalCollector()
+{
+    RELEASE_ASSERT(Options::useGlobalGC());
+    // Never destroyed, since it outlives every heap.
+    static Collector* collector;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        collector = new Collector;
+    });
+    return *collector;
+}
+
 Collector::~Collector()
 {
+    ASSERT(m_heaps.isEmpty());
+    stopCollectingContinuously();
+    stopThread();
     m_raceMarkStack->clear();
 }
 
@@ -162,8 +176,7 @@ void Collector::stopThread()
     bool stopped = false;
     {
         Locker locker { *m_threadLock };
-        RELEASE_ASSERT(m_requests.isEmpty());
-        RELEASE_ASSERT(!hasOutstandingRequestWithLock());
+        RELEASE_ASSERT(!hasWorkWithLock());
         stopped = m_thread->tryStop(locker);
         m_threadShouldStop = true;
         if (!stopped)
@@ -209,7 +222,7 @@ bool Collector::isSubsumedByQueuedRequest(const GCRequest& request)
     return false;
 }
 
-GCRequest::Ticket Collector::requestCollection(GCRequest request)
+GCRequest::Ticket Collector::requestCollection(Heap& requester, GCRequest request)
 {
     Locker locker { *m_threadLock };
     // Once the thread is stopping, nothing would serve a request.
@@ -218,25 +231,25 @@ GCRequest::Ticket Collector::requestCollection(GCRequest request)
     // right now. This is an optimization that prevents the collector thread from ever starting in most
     // cases.
     ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
-    if ((m_lastServedTicket == m_lastGrantedTicket) && !m_threadIsWorking) {
+    // It's okay for a heap to request a GC while its membership is pending, but it can't be the conductor yet.
+    if ((m_lastServedTicket == m_lastGrantedTicket) && !m_threadIsWorking && hasHeap(requester)) {
         dataLogLnIf(CollectorInternal::verbose, "Taking the conn.");
-        heap().m_worldState.exchangeOr(Heap::mutatorHasConnBit);
+        requester.m_worldState.exchangeOr(Heap::mutatorHasConnBit);
     }
 
     m_requests.append(request);
     m_lastGrantedTicket++;
-    if (!(heap().m_worldState.load() & Heap::mutatorHasConnBit))
+    // A mutator that has the conn serves the request at its next poll, and otherwise the collector thread does.
+    if (!anyMutatorHasConnWithLock())
         m_threadCondition->notifyOne(locker);
     return m_lastGrantedTicket;
 }
 
 bool Collector::shouldCollectInCollectorThread()
 {
-    RELEASE_ASSERT(m_requests.isEmpty() == (m_lastServedTicket == m_lastGrantedTicket));
-    RELEASE_ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
-    dataLogLnIf(CollectorInternal::verbose, "Mutator has the conn = ", !!(heap().m_worldState.load() & Heap::mutatorHasConnBit));
+    dataLogLnIf(CollectorInternal::verbose, "Mutator has the conn = ", anyMutatorHasConnWithLock());
 
-    return !m_requests.isEmpty() && !(heap().m_worldState.load() & Heap::mutatorHasConnBit);
+    return hasWorkWithLock() && !anyMutatorHasConnWithLock();
 }
 
 CollectionScope Collector::decideCollectionScope()
@@ -268,8 +281,9 @@ void Collector::collectInCollectorThread()
 
 void Collector::collectInMutatorThread(Heap& conductor)
 {
-    // For now, only a single heap is supported.
-    ASSERT(&conductor == &heap());
+    ASSERT(hasHeap(conductor));
+    ASSERT(!m_conductingHeap);
+    SetForScope setConductingHeap { m_conductingHeap, &conductor };
     for (;;) {
         RunCurrentPhaseResult result = runCurrentPhase(GCConductor::Mutator, nullptr);
         switch (result) {
@@ -301,12 +315,12 @@ void Collector::collectInMutatorThread(Heap& conductor)
 
 auto Collector::runCurrentPhase(GCConductor conn, CurrentThreadState* conductingMutatorState) -> RunCurrentPhaseResult
 {
-    heap().checkConn(conn);
+    assertConn(conn);
     m_conductingMutatorState = conductingMutatorState;
     m_conductorThread = &Thread::currentSingleton();
 
     if (conn == GCConductor::Mutator)
-        sanitizeStackForVM(heap().vm());
+        sanitizeStackForVM(m_conductingHeap->vm());
 
     // If the collector transfers the conn to the mutator, it leaves us in between phases.
     if (!finishChangingPhase(conn)) {
@@ -351,13 +365,24 @@ auto Collector::runCurrentPhase(GCConductor conn, CurrentThreadState* conducting
 
 NEVER_INLINE bool Collector::runNotRunningPhase(GCConductor conn)
 {
-    // Check m_requests since the mutator calls this to poll what's going on.
+    Vector<Heap*, 8> changedHeaps;
+    bool shouldBegin;
     {
         Locker locker { *m_threadLock };
-        if (m_requests.isEmpty())
-            return false;
+        applyAllMembershipChangesWithLock(changedHeaps);
+        // If every heap has left, then any pending GC requests have no work left to do.
+        if (m_heaps.isEmpty() && hasPendingGCRequestWithLock()) {
+            m_requests.clear();
+            m_lastServedTicket = m_lastGrantedTicket;
+        }
+        // A mutator whose heap just left must not begin a collection, since it is no longer in the set.
+        shouldBegin = hasPendingGCRequestWithLock() && (conn == GCConductor::Collector || hasHeap(*m_conductingHeap));
     }
+    for (Heap* heap : changedHeaps)
+        ParkingLot::unparkAll(&heap->m_worldState);
 
+    if (!shouldBegin)
+        return false;
     return changePhase(conn, CollectorPhase::Begin);
 }
 
@@ -367,7 +392,7 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
 
     {
         Locker locker { *m_threadLock };
-        RELEASE_ASSERT(!m_requests.isEmpty());
+        RELEASE_ASSERT(hasPendingGCRequestWithLock());
         m_currentRequest = m_requests.first();
     }
     dataLogIf(Options::logGC(), "[GC<", *this, ">: START ", gcConductorShortName(conn), " ", capacity() / 1024, "kb ");
@@ -465,7 +490,7 @@ void Collector::setUpVisitors(CollectionScope scope)
 
 NEVER_INLINE bool Collector::runFixpointPhase(GCConductor conn)
 {
-    RELEASE_ASSERT(conn == GCConductor::Collector || m_conductingMutatorState);
+    RELEASE_ASSERT_IMPLIES(conn == GCConductor::Mutator, m_conductingMutatorState);
 
     SlotVisitor& visitor = *m_collectorSlotVisitor;
 
@@ -484,7 +509,7 @@ NEVER_INLINE bool Collector::runFixpointPhase(GCConductor conn)
         // estimate.
         // https://bugs.webkit.org/show_bug.cgi?id=166828
 
-        // Wondering what this does? Look at Heap::addCoreConstraints(). The DOM and others can also
+        // Wondering what this does? Look at Heap::createCoreConstraints(). The DOM and others can also
         // add their own using Heap::addMarkingConstraint().
         bool converged = m_constraintSet->executeConvergence(visitor);
 
@@ -656,7 +681,7 @@ void Collector::endCollectionInEachHeap()
 
 bool Collector::changePhase(GCConductor conn, CollectorPhase nextPhase)
 {
-    heap().checkConn(conn);
+    assertConn(conn);
 
     m_lastPhase = m_currentPhase;
     m_nextPhase = nextPhase;
@@ -664,9 +689,11 @@ bool Collector::changePhase(GCConductor conn, CollectorPhase nextPhase)
     return finishChangingPhase(conn);
 }
 
+// Returns false only when the collector thread conducts and cannot stop the mutator because it holds heap access. The
+// mutator is handed the conn instead, and finishes the transition at its next poll.
 NEVER_INLINE bool Collector::finishChangingPhase(GCConductor conn)
 {
-    heap().checkConn(conn);
+    assertConn(conn);
 
     if (m_nextPhase == m_currentPhase)
         return true;
@@ -690,6 +717,8 @@ NEVER_INLINE bool Collector::finishChangingPhase(GCConductor conn)
         } else {
             RELEASE_ASSERT(!suspendedBefore);
             RELEASE_ASSERT(suspendedAfter);
+            // FIXME: Stopping the mutators of several heaps is not implemented yet.
+            RELEASE_ASSERT(m_heaps.size() <= 1);
 
             if (conn == GCConductor::Collector) {
                 heap().waitWhileNeedCollectionEpilogue();
@@ -797,17 +826,80 @@ void Collector::resumeCompilerThreads()
 #endif
 }
 
-void Collector::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
+auto Collector::requestMembershipChange(MembershipChange&& change) -> MembershipChange::Ticket
 {
-    ASSERT(m_currentPhase == CollectorPhase::NotRunning);
-    m_constraintSet->add(WTF::move(constraint));
+    Locker locker { *m_threadLock };
+    auto ticket = ++m_lastRequestedMembershipChange;
+    // If the Collector is idle, apply the change now: no collection can start while this thread holds the lock. This
+    // way, a heap joining its own Collector never starts that Collector's thread.
+    if (isIdleWithLock()) {
+        applyMembershipChangeWithLock(change);
+        ++m_lastAppliedMembershipChange;
+        return ticket;
+    }
+    m_membershipChanges.append(WTF::move(change));
+    // A mutator that has the conn applies the change at its next poll, and otherwise the collector thread does.
+    if (!anyMutatorHasConnWithLock())
+        m_threadCondition->notifyOne(locker);
+    return ticket;
 }
 
-void Collector::addMarkingConstraint(ASCIICString abbreviatedName, ASCIICString name, MarkingConstraintExecutorPair&& executors,
-    ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
+bool Collector::isIdleWithLock()
 {
-    ASSERT(m_currentPhase == CollectorPhase::NotRunning);
-    m_constraintSet->add(WTF::move(abbreviatedName), WTF::move(name), WTF::move(executors), volatility, concurrency, parallelism);
+    return !m_threadIsWorking && !hasWorkWithLock() && !anyMutatorHasConnWithLock();
+}
+
+void Collector::applyAllMembershipChangesWithLock(Vector<Heap*, 8>& changedHeaps)
+{
+    while (!m_membershipChanges.isEmpty()) {
+        auto& change = m_membershipChanges.first();
+        Heap& heap = *change.heap;
+        applyMembershipChangeWithLock(change);
+        heap.clearMutatorWaiting();
+        changedHeaps.append(&heap);
+        m_membershipChanges.removeFirst();
+        ++m_lastAppliedMembershipChange;
+    }
+}
+
+void Collector::applyMembershipChangeWithLock(MembershipChange& change)
+{
+    RELEASE_ASSERT(m_currentPhase == CollectorPhase::NotRunning);
+    Heap& heap = *change.heap;
+    switch (change.kind) {
+    case MembershipChange::Kind::Join:
+        for (auto& constraint : heap.createCoreConstraints())
+            m_constraintSet->add(heap, WTF::move(constraint));
+        m_heaps.append(&heap);
+        break;
+    case MembershipChange::Kind::Leave: {
+        m_constraintSet->remove(heap);
+        bool removed = m_heaps.removeFirst(&heap);
+        RELEASE_ASSERT(removed);
+        break;
+    }
+    case MembershipChange::Kind::AddConstraint:
+        m_constraintSet->add(heap, WTF::move(change.constraint));
+        break;
+    }
+}
+
+// Only the conducting heap's mutator has the conn, and none does while the collector thread conducts.
+void Collector::assertConn(GCConductor conn)
+{
+    RELEASE_ASSERT_IMPLIES(conn == GCConductor::Mutator, m_conductingHeap);
+    forEachHeap([&](Heap& heap) {
+        heap.checkConn(conn == GCConductor::Mutator && &heap == m_conductingHeap ? GCConductor::Mutator : GCConductor::Collector);
+    });
+}
+
+bool Collector::anyMutatorHasConnWithLock()
+{
+    for (Heap* heap : m_heaps) {
+        if (heap->m_worldState.load() & Heap::mutatorHasConnBit)
+            return true;
+    }
+    return false;
 }
 
 void Collector::dump(PrintStream& out) const
@@ -1012,6 +1104,9 @@ void Collector::dumpVerifierMarkerData(HeapCell* cell)
 
 void Collector::startCollectingContinuously()
 {
+    if (m_collectContinuouslyThread)
+        return;
+
     m_collectContinuouslyThread = Thread::create(
         "JSC DEBUG Continuous GC"_s,
         [this] () {
@@ -1021,7 +1116,7 @@ void Collector::startCollectingContinuously()
                 Locker locker { m_collectContinuouslyLock };
                 {
                     Locker locker { *m_threadLock };
-                    if (m_requests.isEmpty()) {
+                    if (!hasPendingGCRequestWithLock() && !m_heaps.isEmpty()) {
                         m_requests.append(std::nullopt);
                         m_lastGrantedTicket++;
                         m_threadCondition->notifyOne(locker);
