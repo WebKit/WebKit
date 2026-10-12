@@ -127,12 +127,18 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     return { };
 }
 
-// Only display: flow-root: the other ways to establish a block formatting context also clip, scroll, contain, align or fragment the content.
+// Only display: flow-root and overflow: hidden. The other ways to establish a block formatting context also contain, align or fragment the
+// content, or give it scrollbars: those take space, and RenderBlock::layout lays the box out again when they come or go.
 static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
 {
     CheckedRef style = blockContainer.style();
-    return style->display() == Style::DisplayType::BlockFlowRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
-        && !blockContainer.hasNonVisibleOverflow() && !blockContainer.shouldApplyAnyContainment() && style->alignContent().isNormal()
+    auto isScrollContainerWithoutScrollbars = [&] {
+        // Marquees scroll their content and size their children differently (RenderBox::sizesLogicalWidthToFitContent).
+        return style->overflowX() == Overflow::Hidden && style->overflowY() == Overflow::Hidden && style->scrollbarGutter().isAuto() && !blockContainer.isHTMLMarquee();
+    };
+    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? isScrollContainerWithoutScrollbars() : style->display() == Style::DisplayType::BlockFlowRoot;
+    return isSupportedRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
+        && !blockContainer.shouldApplyAnyContainment() && style->alignContent().isNormal()
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All && style->blockStepSize().isNone()
         && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
 }
