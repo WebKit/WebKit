@@ -1,0 +1,22 @@
+This test ensures that a select gets new accessibility objects when it switches appearance or box type, so that it exposes its base appearance picker, and that focus moves to the new object.
+
+PASS: axSelect?.role === 'AXRole: AXPopUpButton'
+PASS: pickerMenu() === null
+PASS: accessibilityController.focusedElement?.isEqual(axSelect) === true
+PASS: focusNotifications.includes('select') === true
+PASS: accessibilityController.focusedElement?.isEqual(axSelect) === true
+PASS: select.matches(':open') === true
+PASS: pickerMenu()?.childrenCount === 2
+PASS: pickerMenu()?.childAtIndex(0)?.role === 'AXRole: AXMenuItem'
+PASS: select.matches(':open') === false
+PASS: axSelect?.role === 'AXRole: AXPopUpButton'
+PASS: axSelect?.stringValue === 'AXValue: Apple'
+PASS: pickerMenu() === null
+PASS: axSelect?.role === 'AXRole: AXList'
+PASS: axSelect?.childrenCount === 2
+PASS: axSelect?.role === 'AXRole: AXPopUpButton'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

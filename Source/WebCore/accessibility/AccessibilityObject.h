@@ -139,6 +139,8 @@ public:
     virtual bool isAccessibilityTableColumnInstance() const { return false; }
     virtual bool isAccessibilityListBoxInstance() const { return false; }
     virtual bool isAccessibilityListBoxOptionInstance() const { return false; }
+    virtual bool isAccessibilityProgressIndicatorInstance() const { return false; }
+    virtual bool isAccessibilitySliderInstance() const { return false; }
     bool isAXIsolatedObjectInstance() const final { return false; }
 
     bool isSecureField() const override { return false; }

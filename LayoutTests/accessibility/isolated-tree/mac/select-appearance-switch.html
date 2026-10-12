@@ -1,0 +1,88 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
+<script>
+var output = "This test ensures that a select gets new accessibility objects when it switches appearance or box type, so that it exposes its base appearance picker, and that focus moves to the new object.\n\n";
+
+var focusNotifications = [];
+
+function pickerMenu()
+{
+    return window.axSelect ? findBaseSelectMenu(axSelect) : null;
+}
+
+async function waitForNewSelectObject()
+{
+    await waitFor(() => {
+        const element = accessibilityController.accessibleElementById("select");
+        return element && !axSelect.isEqual(element);
+    });
+    window.axSelect = await waitForElementById("select");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        var select = document.getElementById("select");
+        window.axSelect = await waitForElementById("select");
+        output += expect("axSelect?.role", "'AXRole: AXPopUpButton'");
+        output += expect("pickerMenu()", "null");
+
+        select.focus();
+        output += await expectAsync("accessibilityController.focusedElement?.isEqual(axSelect)", "true");
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification == "AXFocusChanged")
+                focusNotifications.push(accessibilityController.focusedElement?.domIdentifier);
+        });
+
+        select.classList.add("base");
+        await waitForNewSelectObject();
+        output += await expectAsync("focusNotifications.includes('select')", "true");
+        output += expect("accessibilityController.focusedElement?.isEqual(axSelect)", "true");
+        accessibilityController.removeNotificationListener();
+        axSelect?.press();
+        output += await expectAsync("select.matches(':open')", "true");
+        output += await expectAsync("pickerMenu()?.childrenCount", "2");
+        output += expect("pickerMenu()?.childAtIndex(0)?.role", "'AXRole: AXMenuItem'");
+        axSelect?.press();
+        output += await expectAsync("select.matches(':open')", "false");
+
+        select.classList.remove("base");
+        await waitForNewSelectObject();
+        output += expect("axSelect?.role", "'AXRole: AXPopUpButton'");
+        output += expect("axSelect?.stringValue", "'AXValue: Apple'");
+        output += expect("pickerMenu()", "null");
+
+        select.size = 4;
+        await waitForNewSelectObject();
+        output += expect("axSelect?.role", "'AXRole: AXList'");
+        output += expect("axSelect?.childrenCount", "2");
+
+        select.removeAttribute("size");
+        await waitForNewSelectObject();
+        output += expect("axSelect?.role", "'AXRole: AXPopUpButton'");
+
+        select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
