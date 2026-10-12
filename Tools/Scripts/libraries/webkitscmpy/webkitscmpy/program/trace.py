@@ -67,6 +67,30 @@ FOLLOW_UP_FIXES_RE = [
 ]
 UNPACK_SECONDARY_RE = re.compile(r' \(({})\)'.format(COMMIT_REF_BASE))
 
+# Unlike COMMIT_REF_BASE, these only match things which look like commit references, so they
+# can be searched for anywhere in a title (for example, "[GTK] REGRESSION(1234@main): ...").
+STRICT_COMMIT_REF = r'(?<![\w@/.])(?:\d+(?:\.\d+)?@[\w\-/.]*[\w\-/]|r\d{3,}|[a-fA-F0-9]{7,40})(?![\w@])'
+STRICT_COMPOUND_COMMIT_REF = r'(?P<primary>{0})(?: \((?P<secondary>{0})\))?'.format(STRICT_COMMIT_REF)
+STRICT_COMMIT_REF_LIST = r'(?P<list>{0}(?: \({0}\))?(?:(?:,? and |, | & | \+ ){0}(?: \({0}\))?)*)'.format(STRICT_COMMIT_REF)
+STRICT_COMPOUND_COMMIT_REF_RE = re.compile(STRICT_COMPOUND_COMMIT_REF)
+DOUBLE_REVERT_SEARCH_RE = [
+    re.compile(r'\b[Rr]everts? "(?:[Uu]nreviewed,? )?[Rr](?:everting|olling out) {}'.format(STRICT_COMMIT_REF_LIST)),
+]
+REVERT_SEARCH_RE = [
+    re.compile(r'\b[Rr]everts? "?(?:[Cc]herry[- ][Pp]ick )?{}'.format(STRICT_COMMIT_REF_LIST)),
+    re.compile(r'\b[Rr]everting {}'.format(STRICT_COMMIT_REF_LIST)),
+    re.compile(r'\b[Rr]olling out {}'.format(STRICT_COMMIT_REF_LIST)),
+]
+# Also matches the indented message of a cherry-picked revert, and reverts listed in a body
+REVERT_BODY_RE = re.compile(r'^\s*(?:This reverts commits?|[Rr]everts?|(?:[Uu]nreviewed,? )?[Rr]everting) {}'.format(STRICT_COMMIT_REF_LIST))
+FOLLOW_UP_SEARCH_RE = [
+    re.compile(r'REGRESSION ?(?:\([^()]*?)?{}'.format(STRICT_COMMIT_REF_LIST)),
+    re.compile(r'\b[Ff]ollow-? ?up(?: fix)?(?: to| for)? ?\(?{}'.format(STRICT_COMMIT_REF_LIST)),
+    re.compile(r'\bNew [Tt]est ?\(?{}'.format(STRICT_COMMIT_REF_LIST)),
+    re.compile(r'\bFix following {}'.format(STRICT_COMMIT_REF_LIST)),
+    re.compile(r'\b[Tt]est-? ?[Aa]ddition \(?{}'.format(STRICT_COMMIT_REF_LIST)),
+]
+
 
 class Relationship(object):
     TYPES = (
@@ -126,6 +150,67 @@ class Relationship(object):
                 return type, [ref.rstrip() for ref in [primary, secondary] if ref]
         return None, []
 
+    @classmethod
+    def _unpack_list(cls, string):
+        result = []
+        for match in STRICT_COMPOUND_COMMIT_REF_RE.finditer(string):
+            primary, secondary = match.group('primary'), match.group('secondary')
+            if secondary and Commit.HASH_RE.match(secondary):
+                primary, secondary = secondary, primary
+            result.append([ref[:Commit.HASH_LABEL_SIZE] if Commit.HASH_RE.match(ref) else ref for ref in [primary, secondary] if ref])
+        return result
+
+    @classmethod
+    def parse_all(cls, commit):
+        # Unlike parse(), find every commit referenced, not just the first one, and search the whole title
+        # instead of only matching its start. Returns a list of (type, refs) tuples, one per referenced commit,
+        # where refs are alternative representations of the same commit.
+        if not commit.message:
+            return []
+        lines = commit.message.splitlines()
+        lines_to_check = commit.trailers + [lines[0]]
+
+        # Squashed cherry-picks put each picked commit on its own unindented line
+        result = []
+        for line in lines:
+            for regex in CHERRY_PICK_RE:
+                match = regex.match(line)
+                if match:
+                    result += [(cls.ORIGINAL, refs) for refs in cls._unpack_list(line[match.start('primary'):])[:1]]
+                    break
+
+        if not result:
+            result = cls._parse_title(commit, lines_to_check)
+
+        for line in lines[1:]:
+            match = REVERT_BODY_RE.match(line)
+            if match:
+                result += [(cls.REVERTS, refs) for refs in cls._unpack_list(match.group('list'))]
+
+        deduplicated = []
+        seen = set()
+        for type, refs in result:
+            if refs[0] not in seen:
+                seen.add(refs[0])
+                deduplicated.append((type, refs))
+        return deduplicated
+
+    @classmethod
+    def _parse_title(cls, commit, lines):
+        for type, regexes in (
+            (cls.ORIGINAL, DOUBLE_REVERT_SEARCH_RE),
+            (cls.REVERTS, REVERT_SEARCH_RE),
+            (cls.FOLLOW_UP, FOLLOW_UP_SEARCH_RE),
+        ):
+            for regex in regexes:
+                for line in lines:
+                    match = regex.search(line)
+                    if match:
+                        return [(type, refs) for refs in cls._unpack_list(match.group('list'))]
+
+        type, refs = cls.parse(commit)
+        return [(type, refs)] if type else []
+
     def __init__(self, commit, type=None):
         self.commit = commit
         self.type = type or self.REFERENCES
@@ -167,8 +252,7 @@ class CommitsStory(object):
                 self.by_issue[issue.link] = []
             self.by_issue[issue.link].append(commit)
 
-        type, refs = Relationship.parse(commit)
-        if type:
+        for type, refs in Relationship.parse_all(commit):
             for ref in refs:
                 if ref not in self.relations:
                     self.relations[ref] = []
@@ -198,8 +282,7 @@ class Trace(Command):
     def relationships(cls, commit, repository, commits_story=None):
         tracked = set([str(commit)])
         result = []
-        type, refs = Relationship.parse(commit)
-        if type and refs:
+        for type, refs in Relationship.parse_all(commit):
             for ref in refs:
                 found = None
                 if commits_story:
@@ -213,6 +296,8 @@ class Trace(Command):
                     continue
                 if commits_story:
                     commits_story.add(found)
+                if str(found) in tracked:
+                    break
 
                 tracked.add(str(found))
                 result.append(Relationship(found, type))
