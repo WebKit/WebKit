@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CorpseTargetType.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA) && HAVE(LLDB)
 
-namespace JSCToolsTest {
+#include <lldb/API/LLDB.h>
+#include <wtf/TZoneMallocInlines.h>
 
-void testByteParser();
+namespace JSC {
+namespace Corpse {
 
-} // namespace JSCToolsTest
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TargetType);
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+TargetType::TargetType(const lldb::SBType& type)
+    : m_type(makeUniqueWithoutFastMallocCheck<lldb::SBType>(type))
+{
+}
+
+TargetType::~TargetType() = default;
+
+String TargetType::name() const
+{
+    return String::fromUTF8(m_type->GetName());
+}
+
+size_t TargetType::byteSize() const
+{
+    return m_type->GetByteSize();
+}
+
+} // namespace Corpse
+} // namespace JSC
+
+#endif // ENABLE(MYA) && HAVE(LLDB)

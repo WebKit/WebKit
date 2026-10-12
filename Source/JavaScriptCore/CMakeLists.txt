@@ -1636,9 +1636,28 @@ if (USE_INSPECTOR_SOCKET_SERVER)
     )
 endif ()
 
-# The corpse memory-analysis support is built on Mach task and corpse APIs, so
-# its headers have no content off Darwin and there is nothing to build or export.
-if (APPLE)
+# A machine without liblldb still builds, but the mya_heap tests fail.
+if (ENABLE_MYA_HEAP)
+    if (APPLE)
+        set(_LLDB_INSTALL_HINT "Unpack the lib/liblldb* and include/lldb of "
+            "https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.8/LLVM-21.1.8-macOS-ARM64.tar.xz "
+            "into ~/Library/Developer")
+    else ()
+        set(_LLDB_INSTALL_HINT "Install liblldb-21-dev from apt.llvm.org")
+    endif ()
+    find_package(LLDB)
+    # FIXME: There are bugs in lldb22+ that we can't work around.
+    if (LLDB_FOUND AND NOT LLDB_VERSION MATCHES "^21(\\.|$)")
+        message(FATAL_ERROR "mya_heap needs liblldb 21, but found liblldb '${LLDB_VERSION}' (${LLDB_LIBRARY}). "
+            "${_LLDB_INSTALL_HINT} or set LLDB_ROOT to an install of it, then run cmake -ULLDB_INCLUDE_DIR -ULLDB_LIBRARY on the build directory.")
+    endif ()
+    if (NOT LLDB_FOUND)
+        message(WARNING "mya_heap is on but liblldb 21 was not found. "
+            "${_LLDB_INSTALL_HINT}, set LLDB_ROOT to an install of it, or turn off ENABLE_MYA_HEAP.")
+    endif ()
+endif ()
+
+if (ENABLE_MYA)
     list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
         "${JAVASCRIPTCORE_DIR}/corpse"
     )
@@ -1648,13 +1667,18 @@ if (APPLE)
         corpse/CorpseClient.h
         corpse/CorpseError.h
         corpse/CorpseExportsTrie.h
+        corpse/CorpseImage.h
+        corpse/CorpseLimits.h
         corpse/CorpseMemory.h
         corpse/CorpseMemoryPtr.h
         corpse/CorpseMemorySpan.h
+        corpse/CorpsePlatform.h
         corpse/CorpseProcess.h
         corpse/CorpseRegion.h
         corpse/CorpseSnapshot.h
+        corpse/CorpseSnapshotDebugInfo.h
         corpse/CorpseSymbol.h
+        corpse/CorpseTargetType.h
         corpse/CorpseThread.h
     )
 endif ()
@@ -1918,9 +1942,8 @@ add_dependencies(JavaScriptCoreSharedScripts JSCBuiltins)
 
 # The corpse code is part of JavaScriptCoreTools, which ships as a static library used
 # only by tools for assisting in the development of JavaScriptCore and WebKit. This code
-# is not needed for JavaScriptCore and WebKit functionality as a browser engine. The
-# corpse code rely on Mach APIs which are only available on Apple platforms.
-if (APPLE)
+# is not needed for JavaScriptCore and WebKit functionality as a browser engine.
+if (ENABLE_MYA)
   add_subdirectory(corpse)
 endif ()
 
