@@ -32,6 +32,7 @@
 #import "WKSLinearMediaPlayer.h"
 #import "WKSLinearMediaTypes.h"
 #import <WebCore/ExceptionOr.h>
+#import <WebCore/Image.h>
 #import <WebCore/ImageAdapter.h>
 #import <WebCore/ImmersiveVideoMetadata.h>
 #import <WebCore/MediaSelectionOption.h>
@@ -41,6 +42,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import "WebKitSwiftSoftLink.h"
 
