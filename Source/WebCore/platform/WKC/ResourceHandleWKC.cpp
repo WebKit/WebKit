@@ -20,6 +20,7 @@
 #include "CurlResponse.h"
 #include "HTTPParsers.h"
 #include "NetworkLoadMetrics.h"
+#include "NetworkingContext.h"
 #include "NetworkStorageSession.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "SameSiteInfo.h"
@@ -204,16 +205,18 @@ public:
                 if (!sameOrigin(request.resourceRequest().url(), redirectedURL))
                     handle->markAsHavingCrossOriginRedirect();
 
-                ResourceRequest redirectedRequest = request.resourceRequest();
-                redirectedRequest.setURL(WTF::move(redirectedURL));
-                // Recompute the Cookie header after approval for the redirected
-                // URL instead of forwarding cookies from the previous request.
+                // Delegate redirect policy to WebCore's canonical helper. In
+                // addition to POST/GET rewriting, it clears Authorization and
+                // Proxy-Authorization, drops Origin when the origin changes, and
+                // applies the port's HTTPS-to-HTTP referrer policy.
+                auto* networkingContext = handle->context();
+                ResourceRequest redirectedRequest = request.resourceRequest().redirectedRequest(
+                    response,
+                    networkingContext && networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect());
+
+                // Recompute the Cookie header for the redirected URL instead of
+                // forwarding cookies from the previous request.
                 redirectedRequest.removeHTTPHeaderField(HTTPHeaderName::Cookie);
-                // Apply HTTP redirect semantics (301/302/303 may turn POST into
-                // GET and drop the upload body; 307/308 must preserve it). Without
-                // this, form submissions and login flows can be replayed incorrectly
-                // when a server redirects the request.
-                redirectedRequest.redirectAsGETIfNeeded(request.resourceRequest(), response);
 
                 Ref<WKCResourceHandleCurlClient> protectedThis { *this };
                 handle->client()->willSendRequestAsync(handle.get(), WTF::move(redirectedRequest), WTF::move(response),
