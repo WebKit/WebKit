@@ -38,6 +38,7 @@ namespace WebCore {
 namespace TextExtraction {
 
 struct Item;
+enum class TextVisibility : bool;
 
 } // namespace TextExtraction
 
@@ -68,7 +69,7 @@ enum class TextExtractionOutputFormat : uint8_t {
 
 using TextExtractionOptionFlags = OptionSet<TextExtractionOptionFlag>;
 using TextExtractionFilterPromise = NativePromise<String, void>;
-using TextExtractionFilterCallback = Function<Ref<TextExtractionFilterPromise>(const String&, std::optional<WebCore::FrameIdentifier>&&, std::optional<WebCore::NodeIdentifier>&&)>;
+using TextExtractionFilterCallback = Function<Ref<TextExtractionFilterPromise>(const String&, std::optional<WebCore::FrameIdentifier>&&, std::optional<WebCore::NodeIdentifier>&&, WebCore::TextExtraction::TextVisibility)>;
 
 struct TextExtractionOptions {
     TextExtractionOptions(TextExtractionOptions&& other)

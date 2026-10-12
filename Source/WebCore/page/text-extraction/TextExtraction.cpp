@@ -29,6 +29,8 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "BoundaryPointInlines.h"
+#include "ColorBlending.h"
+#include "ColorLuminance.h"
 #include "CommonVM.h"
 #include "ComposedTreeIterator.h"
 #include "ContainerNodeInlines.h"
@@ -70,6 +72,7 @@
 #include "ImageOverlay.h"
 #include "JSNode.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
@@ -85,6 +88,7 @@
 #include "RenderLayerModelObject.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGInlineText.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
@@ -93,6 +97,7 @@
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include "StringEntropyHelpers.h"
+#include "StyleFillLayers.h"
 #include "StyleTextDecorationLine.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -315,6 +320,7 @@ struct TraversalContext {
     unsigned onlyCollectTextAndLinksCount { 0 };
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
+    bool detectTextWithUncertainVisibility { false };
     NodeIdentifierInclusion nodeIdentifierInclusion { NodeIdentifierInclusion::None };
     bool includeAccessibilityAttributes { false };
     unsigned visibleTextLength { 0 };
@@ -576,6 +582,75 @@ static inline bool isClippedOutByAncestors(const Node& node, const FloatRect& bo
     return renderer && !bounds.isEmpty() && renderer->absoluteClippedOverflowRectForTextRepresentation().isEmpty();
 }
 
+static float onScreenFontSize(const RenderText& renderer)
+{
+    CheckedRef style = renderer.style();
+    float fontSize = style->usedFontSize();
+    if (is<RenderSVGInlineText>(renderer)) {
+        if (float scalingFactor = RenderSVGInlineText::computeScalingFactorForRenderer(renderer))
+            fontSize *= scalingFactor;
+    }
+    return fontSize;
+}
+
+static bool hasUncertainVisibility(const RenderText& renderer)
+{
+    CheckedRef style = renderer.style();
+
+    static constexpr auto minimumLegibleFontSize = 4.f;
+    if (onScreenFontSize(renderer) < minimumLegibleFontSize)
+        return true;
+
+    auto textColor = style->visitedDependentTextFillColorApplyingColorFilter();
+    if (!textColor.isVisible())
+        return true;
+
+    float opacity = 1;
+    Vector<Color, 2> backgroundColors;
+    bool foundOpaqueBackground = false;
+    for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+        opacity *= ancestor->opacity();
+        if (foundOpaqueBackground)
+            continue;
+
+        CheckedRef ancestorStyle = ancestor->style();
+        if (Style::hasImageInAnyLayer(ancestorStyle->backgroundLayers()))
+            return true;
+
+        auto backgroundColor = ancestorStyle->visitedDependentBackgroundColorApplyingColorFilter();
+        if (!backgroundColor.isVisible())
+            continue;
+
+        backgroundColors.append(backgroundColor);
+        foundOpaqueBackground = backgroundColor.isOpaque();
+    }
+
+    if (opacity < minOpacityToConsiderVisible)
+        return true;
+
+    Color backdrop = Color::white;
+    if (!foundOpaqueBackground) {
+        if (RefPtr view = renderer.document().view()) {
+            if (auto documentBackground = view->documentBackgroundColor(); documentBackground.isValid() && documentBackground.isOpaque())
+                backdrop = documentBackground;
+        }
+    }
+    for (size_t index = backgroundColors.size(); index--;)
+        backdrop = blendSourceOver(backdrop, backgroundColors[index]);
+
+    static constexpr auto minimumContrastRatioToConsiderVisible = 1.5;
+    if (contrastRatio(blendSourceOver(backdrop, textColor), backdrop) < minimumContrastRatioToConsiderVisible)
+        return true;
+
+    FloatRect boundingBox = renderer.absoluteBoundingBoxRect();
+    if (boundingBox.isEmpty() || !boundingBox.intersects(protect(renderer.view())->documentRect()))
+        return true;
+
+    static constexpr auto minimumUnclippedAreaRatio = 0.1;
+    FloatRect clippedRect = renderer.pixelSnappedAbsoluteClippedOverflowRect();
+    return clippedRect.isEmpty() || clippedRect.area() < minimumUnclippedAreaRatio * boundingBox.area();
+}
+
 static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputElement& input)
 {
     bool isCheckboxOrRadio = input.isCheckbox() || input.isRadioButton();
@@ -754,7 +829,10 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         if (auto iterator = context.visibleText.find(*textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
             context.visibleTextLength += textContent.length();
-            return { TextItemData { { }, selectedRange, textContent, { } } };
+            TextItemData textData { { }, selectedRange, textContent, { } };
+            if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*renderer); textRenderer && context.detectTextWithUncertainVisibility)
+                textData.visibility = hasUncertainVisibility(*textRenderer) ? TextVisibility::Uncertain : TextVisibility::Evident;
+            return { WTF::move(textData) };
         }
         return { SkipExtraction::Self };
     }
@@ -1885,6 +1963,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
             .onlyCollectTextAndLinksCount = 0,
             .mergeParagraphs = request.mergeParagraphs,
             .skipNearlyTransparentContent = request.skipNearlyTransparentContent,
+            .detectTextWithUncertainVisibility = request.detectTextWithUncertainVisibility,
             .nodeIdentifierInclusion = request.nodeIdentifierInclusion,
             .includeAccessibilityAttributes = request.includeAccessibilityAttributes,
         };
