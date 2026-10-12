@@ -156,10 +156,6 @@
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 
-#if __has_include(<WebKitAdditions/WebProcessPoolAdditions.h>)
-#import <WebKitAdditions/WebProcessPoolAdditions.h>
-#endif
-
 static NSString * const WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
 static NSString * const WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKey";
 
@@ -1608,10 +1604,13 @@ void WebProcessPool::platformCompileResourceMonitorRuleList(const String& rulesT
     }).get()];
 }
 
-String WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
+SUPPRESS_NODELETE String WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
 {
-#if HAVE(RESOURCE_MONITOR_RULE_LIST_SOURCE_FOR_TESTING)
-    return resourceMonitorRuleListSourceForTestingCocoa();
+#if ENABLE(HEAVY_AD_UNLOADING)
+    return R"json([
+        { "action": { "type": "block" }, "trigger": { "url-filter": "googlesyndication.com" } },
+        { "action": { "type": "block" }, "trigger": { "url-filter": "\/adserver-network\/" } }
+    ])json"_s;
 #else
     return emptyString();
 #endif

@@ -50,7 +50,7 @@ public:
 private:
     AboutSchemeHandler();
 
-    void NODELETE platformInitialize();
+    void platformInitialize();
 
     void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final { }

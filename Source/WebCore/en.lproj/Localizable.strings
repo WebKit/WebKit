@@ -151,6 +151,12 @@
 /* Actual Size context menu item */
 "Actual Size" = "Actual Size";
 
+/* Heavy Ad Unloaded frame: short description html */
+"Ad hidden" = "Ad hidden";
+
+/* Heavy Ad Unloaded frame: description html */
+"Ad hidden for using significant resources" = "Ad hidden for using significant resources";
+
 /* Label for the add money with Apple Pay button. */
 "Add money with Apple Pay" = "Add money with Apple Pay";
 

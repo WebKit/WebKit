@@ -28,10 +28,6 @@
 
 #include <WebCore/ResourceError.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AboutSchemeHandlerAdditions.h>)
-#include <WebKitAdditions/AboutSchemeHandlerAdditions.h>
-#endif
-
 namespace WebKit {
 
 Ref<AboutSchemeHandler> AboutSchemeHandler::create()
@@ -75,12 +71,11 @@ bool AboutSchemeHandler::canHandleURL(const URL& url) const
     return url.protocolIsAbout() && url.hasOpaquePath() && m_handlers.contains<StringViewHashTranslator>(url.path());
 }
 
+#if !PLATFORM(COCOA)
 void AboutSchemeHandler::platformInitialize()
 {
-#if PLATFORM(COCOA) && HAVE(CUSTOM_ABOUT_SCHEME_HANDLER)
-    registerCocoaAboutHandlers(*this);
-#endif
 }
+#endif
 
 void AboutSchemeHandler::registerHandler(const String& opaquePath, std::unique_ptr<OpaquePathHandler>&& handler)
 {
