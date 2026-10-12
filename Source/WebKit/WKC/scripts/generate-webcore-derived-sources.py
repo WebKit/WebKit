@@ -26,12 +26,13 @@ WEBCORE_CMAKE = WEBCORE / "CMakeLists.txt"
 WEBCORE_MACROS = WEBCORE / "WebCoreMacros.cmake"
 
 # These are the feature switches passed to the generator, not C++ options.
-# Keep them in step with the full-WebCore profile in build.yml. Wasm and
-# WebRTC are intentionally excluded until the Wii U PPC integrations build.
+# Keep them in step with the full-WebCore profile in build.yml. WebRTC API
+# bindings are enabled by the experimental full-engine CMake profile; WebAssembly
+# remains excluded until the Wii U PPC interpreter integration is enabled.
 FEATURE_DEFINES = (
     "LANGUAGE_JAVASCRIPT ENABLE_WKC ENABLE_CSS_ANIMATIONS ENABLE_GAMEPAD "
     "ENABLE_INDEXED_DATABASE ENABLE_MEDIA_STREAM ENABLE_SVG ENABLE_WEBGL "
-    "ENABLE_WEB_AUDIO"
+    "ENABLE_WEB_AUDIO ENABLE_WEB_RTC"
 )
 
 
