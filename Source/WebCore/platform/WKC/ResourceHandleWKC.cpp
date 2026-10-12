@@ -284,7 +284,7 @@ bool ResourceHandle::start()
         return true;
 
     auto curlClient = adoptRef(*new WKCResourceHandleCurlClient(*this, d->m_user, d->m_password));
-    auto request = CurlRequest::create(firstRequest(), *curlClient, CurlRequest::CaptureNetworkLoadMetrics::Extended);
+    auto request = CurlRequest::create(firstRequest(), curlClient.get(), CurlRequest::CaptureNetworkLoadMetrics::Extended);
     if (!d->m_user.isEmpty() || !d->m_password.isEmpty())
         request->setUserPass(d->m_user, d->m_password);
 
@@ -348,7 +348,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const
     if (requestBody) {
         const char* bodyData = requestBodyBytes.isEmpty()
             ? ""
-            : reinterpret_cast<const char*>(requestBodyBytes.data());
+            : reinterpret_cast<const char*>(requestBodyBytes.span().data());
         auto optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDS, bodyData);
         if (optionResult == CURLE_OK)
             optionResult = curl_easy_setopt(curl.handle(), CURLOPT_POSTFIELDSIZE_LARGE, static_cast<curl_off_t>(requestBodyBytes.size()));
