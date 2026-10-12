@@ -180,9 +180,6 @@ test/staging/sm/Function/function-toString-builtin-name.js:
   strict mode: 3
 test/staging/sm/PrivateName/modify-non-extensible.js:
   default: 3
-test/staging/sm/Proxy/revoked-get-function-realm-typeerror.js:
-  default: 3
-  strict mode: 3
 test/staging/sm/RegExp/replace-sticky-lastIndex.js:
   default: 3
   strict mode: 3

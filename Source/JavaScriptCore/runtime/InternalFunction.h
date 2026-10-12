@@ -107,14 +107,16 @@ protected:
 };
 
 JS_EXPORT_PRIVATE JSGlobalObject* getFunctionRealm(JSGlobalObject*, JSObject*);
+JS_EXPORT_PRIVATE JSGlobalObject* tryGetFunctionRealm(JSObject*);
 
 #define JSC_GET_DERIVED_STRUCTURE(vm, structureMemberFunctionName, newTarget, constructor) \
     ((newTarget) == (constructor) \
         ? globalObject->structureMemberFunctionName() \
         : ([&]() -> Structure* { \
             auto scope = DECLARE_THROW_SCOPE((vm)); \
-            auto* functionGlobalObject = getFunctionRealm(globalObject, (newTarget)); \
-            RETURN_IF_EXCEPTION(scope, nullptr); \
+            auto* functionGlobalObject = tryGetFunctionRealm((newTarget)); \
+            if (!functionGlobalObject) \
+                functionGlobalObject = globalObject; \
             RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, (newTarget), functionGlobalObject->structureMemberFunctionName())); \
         }()))
 
