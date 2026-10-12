@@ -486,7 +486,7 @@ void RenderBlockFlow::setChildrenInline(bool value)
 {
     if (childrenInline() && !value) {
         setLineLayoutPath(UndeterminedPath);
-        m_lineLayout = std::monostate();
+        m_lineLayout = nullptr;
     }
 
     RenderBlock::setChildrenInline(value);
@@ -4205,7 +4205,7 @@ void RenderBlockFlow::invalidateLineLayout(InvalidationReason invalidationReason
         break;
     }
 
-    m_lineLayout = std::monostate();
+    m_lineLayout = nullptr;
 }
 
 bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
@@ -4504,7 +4504,7 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     auto inlineContentStatus = markInlineContentDirtyForLayout(relayoutChildren);
     if (inlineContentStatus.hasSimpleOutOfFlowContentOnly) {
         // Shortcut the layout.
-        m_lineLayout = std::monostate();
+        m_lineLayout = nullptr;
 
         setStaticPositionsForSimpleOutOfFlowContent();
         setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
@@ -4526,9 +4526,7 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
         }
     }
 
-    if (!inlineLayout())
-        m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
-    auto& inlineLayout = *this->inlineLayout();
+    auto& inlineLayout = ensureInlineLayout();
 
     ASSERT(containingBlock() || is<RenderView>(*this));
     inlineLayout.updateFormattingContextGeometries(containingBlock() ? containingBlockLogicalWidthForContent() : LayoutUnit());
@@ -5537,10 +5535,7 @@ bool RenderBlockFlow::tryComputeIntrinsicLogicalWidthsUsingInlinePath(LayoutUnit
     if (!LayoutIntegration::LineLayout::canUseForIntrinsicWidthComputation(*this))
         return false;
 
-    if (!inlineLayout())
-        m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
-
-    std::tie(minLogicalWidth, maxLogicalWidth) = inlineLayout()->computeIntrinsicWidthConstraints();
+    std::tie(minLogicalWidth, maxLogicalWidth) = ensureInlineLayout().computeIntrinsicWidthConstraints();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto* renderer = walker.current();
         renderer->clearContentLogicalWidthsInvalidation();

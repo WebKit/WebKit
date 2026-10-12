@@ -26,21 +26,6 @@
 
 namespace WebCore {
 
-inline bool RenderBlockFlow::hasInlineLayout() const
-{
-    return std::holds_alternative<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout);
-}
-
-inline const LayoutIntegration::LineLayout* RenderBlockFlow::inlineLayout() const
-{
-    return hasInlineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
-}
-
-inline LayoutIntegration::LineLayout* RenderBlockFlow::inlineLayout()
-{
-    return hasInlineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
-}
-
 inline bool RenderBlockFlow::hasOverhangingFloats() const { return parent() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
 
 inline bool RenderBlockFlow::shouldTrimChildMargin(Style::MarginTrimSide marginTrimSide, const RenderBox& child) const

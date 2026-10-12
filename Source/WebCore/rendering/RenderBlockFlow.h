@@ -349,8 +349,8 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    inline const LayoutIntegration::LineLayout* inlineLayout() const; // Defined in RenderBlockFlowInlines.h
-    inline LayoutIntegration::LineLayout* inlineLayout(); // Defined in RenderBlockFlowInlines.h
+    const LayoutIntegration::LineLayout* inlineLayout() const { return m_lineLayout.get(); }
+    LayoutIntegration::LineLayout* inlineLayout() { return m_lineLayout.get(); }
 
 #if ENABLE(TREE_DEBUGGING)
     void outputFloatingObjects(WTF::TextStream&, int depth) const;
@@ -500,7 +500,6 @@ private:
     
     PositionWithAffinity positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource) override;
 
-    inline bool hasInlineLayout() const; // Defined in RenderBlockFlowInlines.h
     void layoutInlineContent(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     struct InlineContentStatus {
         bool hasSimpleOutOfFlowContentOnly { false };
@@ -562,10 +561,7 @@ private:
     // m_inlineContentCache must be declared before m_lineLayout.
     // m_lineLayout's destructor runs first which requires the cache to still exist.
     std::unique_ptr<Layout::InlineContentCache> m_inlineContentCache;
-    Variant<
-        std::monostate,
-        std::unique_ptr<LayoutIntegration::LineLayout>
-    > m_lineLayout;
+    std::unique_ptr<LayoutIntegration::LineLayout> m_lineLayout;
 };
 
 } // namespace WebCore
