@@ -35,12 +35,18 @@ namespace WebKit {
 
 Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(WPEEvent* event)
 {
-    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event)));
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event), event));
 }
 
 Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(WPEEvent* event, WebWheelEvent::Phase phase)
 {
-    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase)));
+    return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase), event));
+}
+
+NativeWebWheelEvent::NativeWebWheelEvent(WebWheelEventInit&& init, WPEEvent* event)
+    : WebWheelEvent(WTF::move(init.event), WTF::move(init.wheel))
+    , m_nativeEvent(event)
+{
 }
 
 } // namespace WebKit

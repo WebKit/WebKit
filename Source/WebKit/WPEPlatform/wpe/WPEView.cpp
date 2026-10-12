@@ -123,6 +123,7 @@ enum {
     BUFFER_RENDERED,
     BUFFER_RELEASED,
     EVENT,
+    EVENT_PROCESSED,
     TOPLEVEL_STATE_CHANGED,
     PREFERRED_BUFFER_FORMATS_CHANGED,
 
@@ -470,6 +471,38 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
         WPE_TYPE_EVENT);
+
+    /**
+     * WPEView::event-processed:
+     * @view: a #WPEView
+     * @event: the #WPEEvent that was delivered with wpe_view_event()
+     * @handled: whether the web engine handled @event
+     *
+     * Emitted when the web view has finished processing @event, which happens
+     * asynchronously, always after [signal@WPEView::event] returned, because the
+     * web content only gets to decide once the event reached it.
+     *
+     * An event the web content did not take reports %FALSE, which lets a
+     * platform implementation, or the application embedding it, treat the event
+     * as unclaimed and act on it, without it ever being injected back into the
+     * toolkit.
+     *
+     * Not every event is reported. Keyboard, scroll and touch events are, since
+     * the web view tells the UI process what became of them. Others, pointer
+     * events in particular, are not. An event the web engine never got to decide
+     * on is not reported either, which is the case for a key an input method
+     * consumed.
+     *
+     * Since: 2.56
+     */
+    signals[EVENT_PROCESSED] = g_signal_new(
+        "event-processed",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        WPE_TYPE_EVENT, G_TYPE_BOOLEAN);
 
     /**
      * WPEView::toplevel-state-changed:
@@ -1028,6 +1061,26 @@ void wpe_view_event(WPEView* view, WPEEvent* event)
         if (std::abs(x - priv->lastButtonPress.x) >= doubleClickDistance || std::abs(y - priv->lastButtonPress.y) >= doubleClickDistance)
             priv->lastButtonPress.pressCount = 0;
     }
+}
+
+/**
+ * wpe_view_event_processed:
+ * @view: a #WPEView
+ * @event: a #WPEEvent previously delivered with wpe_view_event()
+ * @handled: whether the web engine handled @event
+ *
+ * Emit [signal@WPEView::event-processed] signal to report the result of
+ * processing @event. This is called by the web engine once processing completed,
+ * which for events forwarded to the web process happens asynchronously.
+ *
+ * Since: 2.56
+ */
+void wpe_view_event_processed(WPEView* view, WPEEvent* event, gboolean handled)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+    g_return_if_fail(event);
+
+    g_signal_emit(view, signals[EVENT_PROCESSED], 0, event, handled);
 }
 
 /**

@@ -720,17 +720,33 @@ public:
         return FALSE;
     }
 
+#if ENABLE(WPE_PLATFORM)
+    static void viewEventProcessedCallback(WPEView*, WPEEvent* event, gboolean, FullScreenClientTest* test)
+    {
+        if (wpe_event_get_event_type(event) == WPE_EVENT_KEYBOARD_KEY_UP)
+            test->m_keyUpProcessed = true;
+    }
+#endif
+
     FullScreenClientTest()
         : m_event(None)
     {
         webkit_settings_set_enable_fullscreen(webkit_web_view_get_settings(m_webView.get()), TRUE);
         g_signal_connect(m_webView.get(), "enter-fullscreen", G_CALLBACK(viewEnterFullScreenCallback), this);
         g_signal_connect(m_webView.get(), "leave-fullscreen", G_CALLBACK(viewLeaveFullScreenCallback), this);
+#if ENABLE(WPE_PLATFORM)
+        if (m_display)
+            g_signal_connect(webkit_web_view_get_wpe_view(m_webView.get()), "event-processed", G_CALLBACK(viewEventProcessedCallback), this);
+#endif
     }
 
     ~FullScreenClientTest()
     {
         g_signal_handlers_disconnect_matched(m_webView.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+#if ENABLE(WPE_PLATFORM)
+        if (m_display)
+            g_signal_handlers_disconnect_matched(webkit_web_view_get_wpe_view(m_webView.get()), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+#endif
     }
 
     void requestFullScreenAndWaitUntilEnteredFullScreen()
@@ -754,9 +770,19 @@ public:
         m_event = None;
         g_idle_add(reinterpret_cast<GSourceFunc>(leaveFullScreenIdle), this);
         g_main_loop_run(m_mainLoop);
+
+#if ENABLE(WPE_PLATFORM)
+        // A key event still queued in the page holds the WPEView, so let it finish before teardown.
+        unsigned triesCount = 100;
+        while (m_display && !m_keyUpProcessed && triesCount--)
+            wait(0.05);
+#endif
     }
 
     FullScreenEvent m_event;
+#if ENABLE(WPE_PLATFORM)
+    bool m_keyUpProcessed { false };
+#endif
 };
 
 #if ENABLE(FULLSCREEN_API)

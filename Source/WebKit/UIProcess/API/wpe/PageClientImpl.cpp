@@ -28,6 +28,7 @@
 
 #include "APIViewClient.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
+#include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -243,13 +244,34 @@ WebCore::IntRect PageClientImpl::rootViewToAccessibilityScreen(const WebCore::In
     return rootViewToScreen(rect);    
 }
 
-void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
+#if ENABLE(WPE_PLATFORM)
+    if (auto* view = m_view.wpeView()) {
+        // Events synthesized by the input method filter carry no native event.
+        if (auto* wpeEvent = event.nativeEvent()) {
+            wpe_view_event_processed(view, wpeEvent, wasEventHandled);
+            return;
+        }
+    }
+#else
+    UNUSED_PARAM(event);
+    UNUSED_PARAM(wasEventHandled);
+#endif
 }
 
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wasEventHandled)
 {
+#if ENABLE(WPE_PLATFORM)
+    if (auto* view = m_view.wpeView()) {
+        if (touchEvent.isNativeWebTouchEvent()) {
+            if (auto* wpeEvent = static_cast<const NativeWebTouchEvent&>(touchEvent).nativeEvent())
+                wpe_view_event_processed(view, wpeEvent, wasEventHandled);
+        }
+    }
+#endif
+
     if (wasEventHandled) {
 #if ENABLE(WPE_PLATFORM)
         // If the touch event was handled, we must interrupt any gesture detection sequence ongoing so that gestures
@@ -312,6 +334,21 @@ void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wa
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&)
 {
+}
+
+void PageClientImpl::doneWithWheelEvent(const NativeWebWheelEvent& event, bool wasEventHandled)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (auto* view = m_view.wpeView()) {
+        if (auto* wpeEvent = event.nativeEvent()) {
+            wpe_view_event_processed(view, wpeEvent, wasEventHandled);
+            return;
+        }
+    }
+#else
+    UNUSED_PARAM(event);
+    UNUSED_PARAM(wasEventHandled);
+#endif
 }
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
