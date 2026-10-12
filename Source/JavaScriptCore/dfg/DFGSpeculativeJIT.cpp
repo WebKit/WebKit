@@ -8308,6 +8308,50 @@ void SpeculativeJIT::compileDataViewGetByteLength(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
+void SpeculativeJIT::compileTypedArraySet(Node* node)
+{
+    SpeculateCellOperand target(this, node->child1());
+    SpeculateCellOperand source(this, node->child2());
+    SpeculateStrictInt32Operand offset(this, node->child3());
+    GPRTemporary targetStorage(this);
+    GPRTemporary sourceStorage(this);
+    GPRTemporary size(this);
+
+    GPRReg targetGPR = target.gpr();
+    GPRReg sourceGPR = source.gpr();
+    GPRReg offsetGPR = offset.gpr();
+    GPRReg targetStorageGPR = targetStorage.gpr();
+    GPRReg sourceStorageGPR = sourceStorage.gpr();
+    GPRReg sizeGPR = size.gpr();
+
+    TypedArrayType type = node->typedArrayType();
+    speculateCellType(node->child2(), sourceGPR, speculationFromTypedArrayType(type), typeForTypedArrayType(type));
+
+    if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(targetGPR), node->child1(), branchTest8(NonZero, Address(targetGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+    if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child2())))
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(sourceGPR), node->child2(), branchTest8(NonZero, Address(sourceGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+
+    speculationCheck(OutOfBounds, JSValueSource(), nullptr, branch32(LessThan, offsetGPR, TrustedImm32(0)));
+    load64(Address(sourceGPR, JSArrayBufferView::offsetOfLength()), sizeGPR);
+    add64(offsetGPR, sizeGPR, targetStorageGPR);
+    speculationCheck(OutOfBounds, JSValueSource(), nullptr, branch64(Above, targetStorageGPR, Address(targetGPR, JSArrayBufferView::offsetOfLength())));
+
+    loadPtr(Address(targetGPR, JSArrayBufferView::offsetOfVector()), targetStorageGPR);
+    loadPtr(Address(sourceGPR, JSArrayBufferView::offsetOfVector()), sourceStorageGPR);
+    speculationCheck(BadIndexingType, JSValueSource(targetGPR), node->child1(), branchTestPtr(Zero, targetStorageGPR));
+    speculationCheck(BadIndexingType, JSValueSource(sourceGPR), node->child2(), branchTestPtr(Zero, sourceStorageGPR));
+
+    cageTypedArrayStorage(targetGPR, targetStorageGPR);
+    cageTypedArrayStorage(sourceGPR, sourceStorageGPR);
+    getEffectiveAddress(BaseIndex(targetStorageGPR, offsetGPR, static_cast<Scale>(logElementSize(type))), targetStorageGPR);
+    lshift64(TrustedImm32(logElementSize(type)), sizeGPR);
+
+    flushRegisters();
+    callOperationWithoutExceptionCheck(operationTypedArraySet, targetStorageGPR, sourceStorageGPR, sizeGPR);
+    noResult(node);
+}
+
 void SpeculativeJIT::compileCheckIdent(Node* node)
 {
     SpeculateCellOperand stringOrSymbol(this, node->child1());

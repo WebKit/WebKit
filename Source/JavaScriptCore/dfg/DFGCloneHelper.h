@@ -377,6 +377,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, NOESCAPE const Cust
     CLONE_STATUS(TypeOfIsFunction, Common) \
     CLONE_STATUS(TypeOfIsObject, Common) \
     CLONE_STATUS(TypeOfIsUndefined, Common) \
+    CLONE_STATUS(TypedArraySet, Common) \
     CLONE_STATUS(UInt32ToNumber, Common) \
     CLONE_STATUS(ValueAdd, Common) \
     CLONE_STATUS(ValueBitAnd, Common) \

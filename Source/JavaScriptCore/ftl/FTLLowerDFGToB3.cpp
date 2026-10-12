@@ -1993,6 +1993,9 @@ private:
         case DataViewSet:
             compileDataViewSet();
             break;
+        case TypedArraySet:
+            compileTypedArraySet();
+            break;
 
         case ResolvePromiseFirstResolving:
             compileResolvePromiseFirstResolving();
@@ -22382,6 +22385,34 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
+    }
+
+    void compileTypedArraySet()
+    {
+        LValue target = lowCell(m_node->child1());
+        LValue source = lowCell(m_node->child2());
+        LValue offset = lowInt32(m_node->child3());
+
+        TypedArrayType type = m_node->typedArrayType();
+        FTL_TYPE_CHECK(jsValueValue(source), m_node->child2(), speculationFromTypedArrayType(type), isNotType(source, typeForTypedArrayType(type)));
+
+        LValue targetLength = typedArrayLength(target, false, type, m_node->child1());
+        LValue sourceLength = typedArrayLength(source, false, type, m_node->child2());
+        speculate(OutOfBounds, noValue(), nullptr, m_out.lessThan(offset, m_out.int32Zero));
+        LValue offsetPtr = m_out.zeroExtPtr(offset);
+        speculate(OutOfBounds, noValue(), nullptr, m_out.above(m_out.add(offsetPtr, sourceLength), targetLength));
+
+        LValue targetVector = m_out.loadPtr(target, m_heaps.JSArrayBufferView_vector);
+        LValue sourceVector = m_out.loadPtr(source, m_heaps.JSArrayBufferView_vector);
+        speculate(BadIndexingType, jsValueValue(target), m_node->child1().node(), m_out.isNull(targetVector));
+        speculate(BadIndexingType, jsValueValue(source), m_node->child2().node(), m_out.isNull(sourceVector));
+
+        LValue shift = m_out.constInt32(logElementSize(type));
+        LValue targetPointer = m_out.add(caged(Gigacage::Primitive, targetVector, target), m_out.shl(offsetPtr, shift));
+        LValue sourcePointer = caged(Gigacage::Primitive, sourceVector, source);
+        vmCall(Void, operationTypedArraySet, targetPointer, sourcePointer, m_out.shl(sourceLength, shift));
+        ensureStillAliveHere(target);
+        ensureStillAliveHere(source);
     }
 
     void compileDateNow()
