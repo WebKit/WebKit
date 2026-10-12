@@ -6387,34 +6387,6 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_move] [4]",
             'foo.mm')
 
-    def test_css_property_id(self):
-        self.assert_lint(
-            'auto id = CSSPropertyID::BackgroundColor;',
-            '',
-            'foo.cpp')
-
-        self.assert_lint(
-            'CSSPropertyParser parser(CSSPropertySettings { });',
-            '',
-            'foo.cpp')
-
-        self.assert_lint(
-            'auto id = CSSPropertyBackgroundColor;',
-            "Use 'CSSPropertyID::BackgroundColor' instead of 'CSSPropertyBackgroundColor'."
-            "  [runtime/css_property_id] [4]",
-            'foo.cpp')
-
-        self.assert_lint(
-            'if (id == WebCore::CSSPropertyInvalid)',
-            "Use 'CSSPropertyID::Invalid' instead of 'CSSPropertyInvalid'."
-            "  [runtime/css_property_id] [4]",
-            'foo.mm')
-
-        self.assert_lint(
-            'auto name = "CSSPropertyColor"_s;',
-            '',
-            'foo.cpp')
-
     def test_wtf_to_array(self):
         self.assert_lint(
             'auto a = WTF::toArray<int>({ 1, 2, 3 });',

@@ -38,7 +38,6 @@
 
 import codecs
 import functools
-import json
 import math  # for log
 import os
 import os.path
@@ -3029,51 +3028,6 @@ def check_wtf_to_array(clean_lines, line_number, file_state, error):
 
 
 @memoized
-def _css_property_id_enumerator_names():
-    """Returns the set of CSSPropertyID enumerator names (e.g. 'BackgroundColor'), derived from CSSProperties.json."""
-    json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..', '..', 'Source', 'WebCore', 'css', 'CSSProperties.json')
-    try:
-        with codecs.open(json_path, 'r', 'utf-8') as json_file:
-            properties_json = json.load(json_file)
-    except (IOError, OSError, ValueError):
-        return frozenset()
-
-    # Must match Name.convert_name_to_id() in Source/WebCore/css/scripts/process-css-properties.py.
-    def convert_name_to_id(name):
-        special_case_name_to_id = {'url': 'URL', '-infinity': 'NegativeInfinity'}
-        return special_case_name_to_id.get(name) or re.sub(r'(^[^-])|-(.)', lambda m: (m.group(1) or m.group(2)).upper(), name).replace('.', '_').replace('(', '').replace(')', '')
-
-    names = {'Invalid', 'Custom'}
-    names.update(convert_name_to_id(name) for name in properties_json.get('properties', {}))
-    for descriptors in properties_json.get('descriptors', {}).values():
-        names.update(convert_name_to_id(name) for name in descriptors)
-    return frozenset(names)
-
-
-def check_css_property_id(clean_lines, line_number, file_state, error):
-    """Looks for use of the deprecated 'CSSPropertyFoo' constants, which should be replaced with 'CSSPropertyID::Foo'.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_state: A _FileState instance which maintains information about
-                  the state of things in the file.
-      error: The function to call with any errors found.
-    """
-
-    # This check doesn't apply to C or Objective-C implementation files.
-    if file_state.is_c_or_objective_c():
-        return
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-
-    for matched in re.finditer(r'\bCSSProperty([A-Z]\w*)\b', line):
-        name = matched.group(1)
-        if name in _css_property_id_enumerator_names():
-            error(line_number, 'runtime/css_property_id', 4, "Use 'CSSPropertyID::%s' instead of 'CSSProperty%s'." % (name, name))
-
-
-@memoized
 def _css_value_id_enumerator_names():
     """Returns the set of CSSValueID enumerator names (e.g. 'Auto'), derived from CSSValueKeywords.in and SVGCSSValueKeywords.in."""
     css_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..', '..', 'Source', 'WebCore', 'css')
@@ -4739,7 +4693,6 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_to_array(clean_lines, line_number, file_state, error)
-    check_css_property_id(clean_lines, line_number, file_state, error)
     check_css_value_id(clean_lines, line_number, file_state, error)
     check_utf8cstring_from_utf8(clean_lines, line_number, file_state, error)
     check_construct_and_append(clean_lines, line_number, file_state, error)
@@ -6050,7 +6003,6 @@ class CppChecker(object):
         'runtime/bitfields',
         'runtime/callonmainthread',
         'runtime/casting',
-        'runtime/css_property_id',
         'runtime/css_value_id',
         'runtime/construct_and_append',
         'runtime/ctype_function',

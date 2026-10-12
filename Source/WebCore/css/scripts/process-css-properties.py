@@ -4383,13 +4383,6 @@ class GenerateCSSPropertyNames:
         to.write(f"}};")
         to.newline()
 
-        to.write(f"// FIXME: Remove these once all call sites use CSSPropertyID::Foo.")
-        to.write(f"inline constexpr CSSPropertyID CSSPropertyInvalid = CSSPropertyID::Invalid;")
-        to.write(f"inline constexpr CSSPropertyID CSSPropertyCustom = CSSPropertyID::Custom;")
-        for property in self.properties_and_descriptors.all_unique:
-            to.write(f"inline constexpr CSSPropertyID {property.id_without_scope} = {property.id};")
-        to.newline()
-
         to.write(f"// Enum value of the first \"real\" CSS property, which excludes")
         to.write(f"// CSSPropertyID::Invalid and CSSPropertyID::Custom.")
         to.write(f"constexpr uint16_t firstCSSProperty = {first};")
