@@ -50,6 +50,10 @@ public:
         bool shouldDiscardOverflow { false };
         // A clamp point between this block and its next sibling, which no line box precedes (see the auto clamp point).
         SingleThreadWeakPtr<const RenderBox> clampAfterBox;
+        // While looking for the auto clamp point, "layout must first be computed as if 'text-wrap-style' were set to 'stable'".
+        // https://drafts.csswg.org/css-overflow-4/#line-clamp
+        bool isStableTextWrap { false };
+        bool hasConstrainedTextWrapContent { false };
     };
 
     struct LegacyLineClamp {

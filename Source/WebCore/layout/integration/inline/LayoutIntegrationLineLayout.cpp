@@ -36,6 +36,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineContentCache.h"
+#include "InlineContentConstrainer.h"
 #include "InlineDisplayBoxInlines.h"
 #include "InlineDamage.h"
 #include "InlineFormattingContext.h"
@@ -457,7 +458,7 @@ static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const
     if (auto legacyLineClamp = layoutState.legacyLineClamp())
         return Layout::BlockLayoutState::LineClamp { std::max(legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount, static_cast<size_t>(0)), false, true };
     if (auto lineClamp = layoutState.lineClamp())
-        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false };
+        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false, lineClamp->isStableTextWrap };
     return { };
 }
 
@@ -623,6 +624,11 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft(), m_inlineContentConstraints->formattingRootBorderBoxSize() };
     };
 
+    if (auto& renderTreeLayoutState = *flow().view().frameView().layoutContext().layoutState(); renderTreeLayoutState.lineClamp() && renderTreeLayoutState.lineClamp()->isStableTextWrap && Layout::InlineContentConstrainer::constrainsContent(flow().style())) {
+        auto lineClamp = renderTreeLayoutState.lineClamp();
+        lineClamp->hasConstrainedTextWrapContent = true;
+        renderTreeLayoutState.setLineClamp(lineClamp);
+    }
     auto parentBlockLayoutState = Layout::BlockLayoutState {
         ensureBlockFormattingState().placedFloats(),
         Layout::IntegrationUtils::toMarginState(marginInfo),

@@ -171,10 +171,11 @@ std::unique_ptr<InlineLayoutResult> InlineFormattingContext::layout(const Constr
     // FIXME: This needs partial support when line-clamped content has nested blocks.
     inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(inlineLayoutState.lineCount());
 
-    auto textWrapStyle = root().style().textWrapStyle();
-    if (root().style().textWrapMode() == TextWrapMode::Wrap && (textWrapStyle == TextWrapStyle::Balance || textWrapStyle == TextWrapStyle::Pretty)) {
+    auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp();
+    auto isStableTextWrap = lineClamp && lineClamp->isStableTextWrap;
+    if (!isStableTextWrap && InlineContentConstrainer::constrainsContent(root().style())) {
         auto constrainer = InlineContentConstrainer { *this, inlineItemList, constraints.horizontal() };
-        auto constrainedLineWidths = constrainer.computeParagraphLevelConstraints(textWrapStyle);
+        auto constrainedLineWidths = constrainer.computeParagraphLevelConstraints(root().style().textWrapStyle());
         if (constrainedLineWidths)
             inlineLayoutState.setAvailableLineWidthOverride({ *constrainedLineWidths });
     }
