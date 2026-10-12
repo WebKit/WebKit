@@ -233,7 +233,7 @@ unsigned InliningPlan::priceCandidate(CallVariant callee, CodeSpecializationKind
             return UINT_MAX;
     }
 
-    return targetCodeBlock->bytecodeCost();
+    return m_jitType == JITType::FTLJIT ? targetCodeBlock->bytecodeCostForFTLInlining() : targetCodeBlock->bytecodeCost();
 }
 
 // Because call frequency data is available only for polymorphic sites and not monomorphic ones,
@@ -2105,7 +2105,8 @@ std::tuple<unsigned, InlineAttribute> ByteCodeParser::inliningCost(CallVariant c
     VERBOSE_LOG("    Inlining should be possible.\n");
     
     // It might be possible to inline.
-    return { targetCodeBlock->bytecodeCost(), codeBlock->ownerExecutable()->inlineAttribute() };
+    unsigned cost = m_graph.m_plan.isFTL() ? targetCodeBlock->bytecodeCostForFTLInlining() : targetCodeBlock->bytecodeCost();
+    return { cost, codeBlock->ownerExecutable()->inlineAttribute() };
 }
 
 template<typename ChecksFunctor>

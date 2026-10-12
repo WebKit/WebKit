@@ -36,6 +36,7 @@
 #include "B3PatchpointValue.h"
 #include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
+#include "BaselineJITCode.h"
 #include "BaselineJITRegisters.h"
 #include "B3ValueInlines.h"
 #include "ButterflyInlines.h"
@@ -414,6 +415,11 @@ public:
         for (DFG::BasicBlock* block : preOrder)
             numberOfCompiledDFGNodes += compileBlock(block);
         m_ftlState.jitCode->setNumberOfCompiledDFGNodes(numberOfCompiledDFGNodes);
+        if (m_graph.m_plan.mode() == JITCompilationMode::FTL) {
+            CodeBlock* baseline = m_graph.m_codeBlock->alternative();
+            if (baseline && baseline->jitType() == JITType::BaselineJIT)
+                static_cast<BaselineJITCode*>(baseline->jitCode().get())->setNumberOfCompiledFTLNodes(numberOfCompiledDFGNodes);
+        }
 
         // Make sure everything is decorated. This does a bunch of deferred decorating. This has
         // to happen last because our abstract heaps are generated lazily. They have to be
