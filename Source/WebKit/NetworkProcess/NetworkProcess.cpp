@@ -553,6 +553,13 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     return set.contains(firstPartyDomain) ? AllowCookieAccess::Allow : terminateOrDisallow;
 }
 
+// Dropped when the connection does not exist yet: NetworkProcessConnectionParameters carries the current value.
+void NetworkProcess::setHostedDomains(WebCore::ProcessIdentifier processIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains)
+{
+    if (RefPtr connection = webProcessConnection(processIdentifier))
+        connection->setHostedDomains(WTF::move(domains));
+}
+
 void NetworkProcess::addAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, WebPageProxyIdentifier pageID)
 {
     if (!HashSet<WebPageProxyIdentifier>::isValidValue(pageID)) {

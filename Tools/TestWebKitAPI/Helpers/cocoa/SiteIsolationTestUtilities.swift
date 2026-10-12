@@ -71,7 +71,32 @@ public func siteIsolatedWebViewAndDelegate(
     configuration: WKWebViewConfiguration,
     frame: CGRect = .zero
 ) -> (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate) {
-    configuration.preferences._siteIsolationEnabled = true
+    webViewAndDelegate(configuration: configuration, frame: frame, siteIsolationEnabled: true)
+}
+
+/// Creates a web view with site isolation enabled or disabled, and a navigation delegate that trusts any server
+/// certificate.
+///
+/// Use this to run the same test with and without site isolation. A test that only needs site isolation can use
+/// ``siteIsolatedWebViewAndDelegate(configuration:frame:)`` instead.
+///
+/// A web view only holds its navigation delegate weakly, so keep the delegate alive for as long as the web view
+/// loads anything.
+///
+/// - Parameters:
+///   - configuration: The configuration for the web view, such as one created with
+///     ``WebKit/WKWebViewConfiguration/init(httpsProxyFor:)``. This sets whether site isolation is enabled in its
+///     preferences.
+///   - frame: The frame of the web view.
+///   - siteIsolationEnabled: Whether to enable site isolation.
+/// - Returns: The web view and its navigation delegate.
+@MainActor
+public func webViewAndDelegate(
+    configuration: WKWebViewConfiguration,
+    frame: CGRect = .zero,
+    siteIsolationEnabled: Bool
+) -> (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate) {
+    configuration.preferences._siteIsolationEnabled = siteIsolationEnabled
 
     let navigationDelegate = TestNavigationDelegate()
     navigationDelegate.allowAnyTLSCertificate()
