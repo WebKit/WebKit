@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- This test is symlinked and run from a different location to test site isolated behaviors. Attempt to find the test driver from two possible places. -->
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../../../../inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("resources/worker-console-multiple-targets.js");
+
+function tellWorker(action, text) {
+    worker.postMessage({action, text});
+}
+
+function pageError(text) {
+    console.error(text);
+}
+
+function pageClearThenError(text) {
+    console.clear();
+    console.error(text);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Worker.Console.MultipleTargets");
+
+    // The main frame's messages arrive on the page target, or on the frame target with Site Isolation.
+    let pageTarget = null;
+    let workerTarget = WI.targets.find((target) => target.type === WI.TargetType.Worker);
+
+    // Re-enabling Console replays whatever the agent still buffers.
+    async function replayedMessages(target) {
+        let replayed = [];
+        let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+            if (event.data.message.target === target)
+                replayed.push(event.data.message.messageText);
+        });
+
+        await target.ConsoleAgent.disable();
+        await target.ConsoleAgent.enable();
+
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+        return replayed;
+    }
+
+    // The error logged right after console.clear() reaches the frontend before the other targets have
+    // been cleared, so it must outlast the Console.messagesCleared events those clears produce.
+    async function clearThenError(expression) {
+        let clearedCount = 0;
+        let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, () => {
+            ++clearedCount;
+        });
+
+        await Promise.all([
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+            InspectorTest.evaluateInPage(expression),
+        ]);
+
+        // Each target handles commands in order, so this waits for every Console.clearMessages sent so far.
+        await Promise.all(WI.targets.map((target) => new Promise((resolve) => target.connection.runAfterPendingDispatches(resolve))));
+
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, listener);
+
+        InspectorTest.expectEqual(clearedCount, 1, "The console should be cleared once.");
+        InspectorTest.expectEqual(WI.consoleManager.errorCount, 1, "errorCount should include the error logged right after console.clear().");
+    }
+
+    suite.addTestCase({
+        name: "Worker.Console.MultipleTargets.RepeatCountMessageLevel",
+        description: "A repeated message's level must be taken from its own target, not from the globally-last message.",
+        async test() {
+            InspectorTest.expectThat(workerTarget, "There should be a worker target.");
+
+            let errorCountBefore = WI.consoleManager.errorCount;
+
+            let [pageErrorEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`pageError("repeat-count-error")`),
+            ]);
+            pageTarget = pageErrorEvent.data.message.target;
+            InspectorTest.expectNotEqual(pageTarget, workerTarget, "The page's message should not come from the worker target.");
+
+            let [workerLogEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`tellWorker("log", "worker-log")`),
+            ]);
+            InspectorTest.expectEqual(workerLogEvent.data.message.target, workerTarget, "The worker's message should come from the worker target.");
+
+            let [repeatEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated),
+                InspectorTest.evaluateInPage(`pageError("repeat-count-error")`),
+            ]);
+            InspectorTest.expectEqual(repeatEvent.data.target, pageTarget, "The repeat should be attributed to the page target.");
+
+            InspectorTest.expectEqual(WI.consoleManager.errorCount - errorCountBefore, 2, "errorCount should count both console.error() calls.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Console.MultipleTargets.ClearFromPage",
+        description: "console.clear() in the page should also clear the worker's console agent, and keep what the page logs right after it.",
+        async test() {
+            await workerTarget.ConsoleAgent.setConsoleClearAPIEnabled(true);
+            await pageTarget.ConsoleAgent.setConsoleClearAPIEnabled(true);
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`tellWorker("log", "clear-from-page")`),
+            ]);
+
+            await clearThenError(`pageClearThenError("error-after-clear-from-page")`);
+
+            let replayed = await replayedMessages(workerTarget);
+            InspectorTest.expectEqual(replayed.length, 0, "The worker's console agent should have no messages left to replay.");
+            for (let messageText of replayed)
+                InspectorTest.log(`    Unexpectedly replayed: ${JSON.stringify(messageText)}`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Console.MultipleTargets.ClearFromWorker",
+        description: "console.clear() in the worker should also clear the page's console agent, and keep what the worker logs right after it.",
+        async test() {
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`pageError("clear-from-worker")`),
+            ]);
+
+            await clearThenError(`tellWorker("clear-then-error", "error-after-clear-from-worker")`);
+
+            let replayed = await replayedMessages(pageTarget);
+            InspectorTest.expectEqual(replayed.length, 0, "The page's console agent should have no messages left to replay.");
+            for (let messageText of replayed)
+                InspectorTest.log(`    Unexpectedly replayed: ${JSON.stringify(messageText)}`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Console repeat counts and console.clear() must account for every console target, including workers.</p>
+</body>
+</html>
