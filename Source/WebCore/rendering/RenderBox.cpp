@@ -1935,7 +1935,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     if (borderOrBackgroundPaintingIsNeeded) {
         if (bleedAvoidance == BleedAvoidance::BackgroundOverBorder)
-            borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
+            borderPainter.paintBorder(paintRect, usedStyle(), bleedAvoidance);
 
         backgroundPainter.paintBackground(paintRect, bleedAvoidance);
 
@@ -1963,7 +1963,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         }
 
         if (paintCSSBorder && style().border().hasVisibleBorderDecoration())
-            borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
+            borderPainter.paintBorder(paintRect, usedStyle(), bleedAvoidance);
     }
 
     if (bleedAvoidance == BleedAvoidance::UseTransparencyLayer)

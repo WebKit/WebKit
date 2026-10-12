@@ -31,12 +31,13 @@
 namespace WebCore {
 
 class BorderShape;
+class UsedStyle;
 
 class BorderPainter {
 public:
     BorderPainter(const RenderElement&, const PaintInfo&);
 
-    void paintBorder(const LayoutRect&, const Style::ComputedStyle&, BleedAvoidance = BleedAvoidance::None, RectEdges<bool> closedEdges = { true }) const;
+    void paintBorder(const LayoutRect&, const UsedStyle&, BleedAvoidance = BleedAvoidance::None, RectEdges<bool> closedEdges = { true }) const;
 
     bool paintNinePieceImage(const LayoutRect&, const Style::ComputedStyle&, const Style::BorderImage&, CompositeOperator = CompositeOperator::SourceOver) const;
     bool paintNinePieceImage(const LayoutRect&, const Style::ComputedStyle&, const Style::MaskBorder&, CompositeOperator = CompositeOperator::SourceOver) const;

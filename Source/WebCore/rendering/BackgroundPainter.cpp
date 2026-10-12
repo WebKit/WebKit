@@ -39,6 +39,7 @@
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -480,7 +481,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         setupMaskingBackgroundClip(rect, [&](GraphicsContext& context, const LayoutRect& borderRect, const FloatRect& paintRect) {
             auto borderPaintInfo = PaintInfo { context, LayoutRect { paintRect }, PaintPhase::BlockBackground, PaintBehavior::ForceBlackBorder };
             auto borderPainter = BorderPainter { m_renderer, borderPaintInfo };
-            borderPainter.paintBorder(borderRect, style);
+            borderPainter.paintBorder(borderRect, m_renderer.usedStyle());
         });
         break;
     }

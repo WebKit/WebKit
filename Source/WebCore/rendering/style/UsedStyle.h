@@ -36,7 +36,8 @@ class Box;
 
 // A lightweight, non-owning view of a renderer's used values, as defined by CSS Cascade &
 // Inheritance: the computed value with any remaining layout-time calculations completed. It wraps
-// a renderer. Its computed style is available via computedStyle().
+// a renderer and either its style or the style of one of its non-box pseudo-elements, such as
+// ::first-line, available via computedStyle().
 //
 // Getters mirror the Style::ComputedStyle getter names but return used values. Properties opt in
 // via the `used-style` codegen property in CSSProperties.json (see UsedStyleProperties). Used
@@ -44,7 +45,7 @@ class Box;
 class UsedStyle final : public UsedStyleProperties {
 public:
     explicit UsedStyle(const RenderElement& renderer LIFETIME_BOUND)
-        : UsedStyleProperties(renderer)
+        : UsedStyleProperties(renderer, renderer.style())
     {
     }
 
@@ -58,6 +59,15 @@ public:
     UsedClear clear() const;
 
     inline UsedVisibility visibility() const;
+
+private:
+    friend class RenderElement;
+
+    // The style must belong to the renderer, as returned by RenderElement::firstLineStyle().
+    UsedStyle(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& pseudoElementStyle LIFETIME_BOUND)
+        : UsedStyleProperties(renderer, pseudoElementStyle)
+    {
+    }
 };
 
 inline UsedVisibility UsedStyle::visibility() const
