@@ -157,6 +157,17 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
             '/mock-checkout/LayoutTests/platform/wk2',
         ])
 
+    def test_device_type_matches_any_runtime_patch_version(self):
+        port = self.make_port()
+        port.set_option('version', None)
+        port.device_version = lambda: Version(18, 4, 1)
+        self.assertEqual(port._device_type_with_version().software_version, Version(18, 4))
+
+    def test_device_type_keeps_requested_version(self):
+        port = self.make_port()
+        port.set_option('version', '18.4.1')
+        self.assertEqual(port._device_type_with_version().software_version, Version(18, 4, 1))
+
     def test_max_child_processes(self):
         port = self.make_port()
         self.assertEqual(port.max_child_processes(DeviceType.from_string('Apple Watch')), 0)
