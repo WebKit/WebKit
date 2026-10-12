@@ -312,7 +312,8 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
                 m_lazyImageLoadState = LazyImageLoadState::Deferred;
                 request.setIgnoreForRequestCount(true);
             }
-        }
+        } else if (m_lazyImageLoadState == LazyImageLoadState::LoadImmediately)
+            request.setIgnoreForRequestCount(true);
         auto imageLoading = (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate;
         newImage = protect(document->cachedResourceLoader())->requestImage(WTF::move(request), imageLoading).value_or(nullptr);
         LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement " << element.get() << " - state changed from " << oldState << " to " << m_lazyImageLoadState << ", loading is " << imageLoading << " new image " << newImage.get());
