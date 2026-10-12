@@ -38,6 +38,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
+#include "ScrollbarUpdateScope.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -182,9 +183,12 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
             if (damagedInlineContent && !didInvalidateWholeBox)
                 downcast<RenderBlockFlow>(renderer).repaintInlineContentAfterLayout(damagedInlineContent->logicalTop, damagedInlineContent->logicalBottom);
         });
-        // What RenderBlock::layout and RenderBlock::recomputeLogicalWidth do once the box is laid out.
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+        // What RenderBlock::layout and RenderBlock::recomputeLogicalWidth do once the box is laid out. The scroll size and position of a
+        // scroll container follow its new overflow; coverage keeps out the ones whose scrollbars would come or go with it.
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+            blockFlow->updateScrollInfoAfterLayout();
             blockFlow->setShouldForceRelayoutChildren(false);
+        }
         renderer->invalidateBackgroundObscurationStatus();
         renderer->setScrollAnchoringSuppressionStyleChanged(false);
         renderer->clearNeedsLayout();
