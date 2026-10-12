@@ -200,7 +200,7 @@ def main() -> int:
     run([
         sys.executable,
         WEBCORE / "dom" / "make-event-names.py",
-        "--event-names", WEBCORE / "dom" / "EventNames.in",
+        "--event-names", WEBCORE / "dom" / "EventNames.json",
     ], cwd=GEN)
     run([
         sys.executable,
