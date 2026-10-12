@@ -3455,6 +3455,20 @@ _XPC_STRING_WRAPPERS = {
 }
 
 
+_ICU_STRING_WRAPPERS = {
+    'u_strToLower': 'uStrToLower',
+    'u_strToTitle': 'uStrToTitle',
+    'u_strToUpper': 'uStrToUpper',
+    'ubrk_open': 'ubrkOpen',
+    'ucal_open': 'ucalOpen',
+    'ucol_open': 'ucolOpen',
+    'udat_open': 'udatOpen',
+    'udatpg_open': 'udatpgOpen',
+    'unum_open': 'unumOpen',
+    'usearch_open': 'usearchOpen',
+}
+
+
 def _enclosing_function_call(clean_lines, line_number, position):
     """Returns the name of the function whose argument list contains the given position, or None.
 
@@ -3574,6 +3588,21 @@ def check_darwin_string_wrappers(clean_lines, line_number, file_state, error):
 
     _check_string_wrappers(clean_lines, line_number, file_state, error, _DARWIN_STRING_WRAPPERS, '<wtf/darwin/DarwinExtras.h>', 'runtime/darwin_string_wrappers', {})
     _check_string_wrappers(clean_lines, line_number, file_state, error, _XPC_STRING_WRAPPERS, '<wtf/darwin/XPCExtras.h>', 'runtime/darwin_string_wrappers', {})
+
+
+def check_icu_string_wrappers(clean_lines, line_number, file_state, error):
+    """Looks for ICU functions called with a locale from legacyCStringPointer(), which should use the wrappers in
+    wtf/text/icu/UnicodeExtras.h.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    _check_string_wrappers(clean_lines, line_number, file_state, error, _ICU_STRING_WRAPPERS, '<wtf/text/icu/UnicodeExtras.h>', 'runtime/icu_string_wrappers', {})
 
 
 def check_legacy_cstring_pointer_with_length(clean_lines, line_number, file_state, error):
@@ -4603,6 +4632,18 @@ def check_safer_cpp(clean_lines, line_number, error):
     if search(r'sqlite3_column_blob\(', line):
         error(line_number, 'safercpp/sqlite3_column_blob', 4, "Use sqliteColumnBlob() instead of sqlite3_column_blob().")
 
+    if search(r'\bsqlite3_open_v2\(', line):
+        error(line_number, 'safercpp/sqlite3_open_v2', 4, "Use sqliteOpen() instead of sqlite3_open_v2().")
+
+    if search(r'\bsqlite3_prepare_v2\(', line):
+        error(line_number, 'safercpp/sqlite3_prepare_v2', 4, "Use sqlitePrepare() instead of sqlite3_prepare_v2().")
+
+    if search(r'\bsqlite3_create_collation_v2\(', line):
+        error(line_number, 'safercpp/sqlite3_create_collation_v2', 4, "Use sqliteCreateCollation() instead of sqlite3_create_collation_v2().")
+
+    if search(r'\bsqlite3_result_error\(', line):
+        error(line_number, 'safercpp/sqlite3_result_error', 4, "Use sqliteResultError() instead of sqlite3_result_error().")
+
     # FIXME: Remove protectedFoo() check once all protectedFoo() getters are removed from WebKit.
     # See: https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines#do-not-call-protect-free-function-to-initialize-local-variables
     if search(r'= [a-zA-Z0-9_.(),\s\->]*(?<!\()protected[a-zA-Z0-9]+\(\)(;|\))(?!;)', line):
@@ -4704,6 +4745,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_glib_string_wrappers(clean_lines, line_number, file_state, error)
     check_posix_string_wrappers(clean_lines, line_number, file_state, error)
     check_darwin_string_wrappers(clean_lines, line_number, file_state, error)
+    check_icu_string_wrappers(clean_lines, line_number, file_state, error)
     check_legacy_cstring_pointer_with_length(clean_lines, line_number, file_state, error)
     check_log_string_conversions(clean_lines, line_number, file_state, error)
     check_printstream_printf(clean_lines, line_number, file_state, error)
@@ -6012,6 +6054,7 @@ class CppChecker(object):
         'runtime/enum_bitfields',
         'runtime/explicit',
         'runtime/glib_string_wrappers',
+        'runtime/icu_string_wrappers',
         'runtime/init',
         'runtime/int',
         'runtime/invalid_increment',
@@ -6067,6 +6110,16 @@ class CppChecker(object):
         'safercpp/strncmp',
         'safercpp/printf',
         'safercpp/protected_getter_for_init',
+        'safercpp/sqlite3_bind_blob',
+        'safercpp/sqlite3_bind_text',
+        'safercpp/sqlite3_column_blob',
+        'safercpp/sqlite3_column_name',
+        'safercpp/sqlite3_column_text',
+        'safercpp/sqlite3_create_collation_v2',
+        'safercpp/sqlite3_open_v2',
+        'safercpp/sqlite3_prepare_v2',
+        'safercpp/sqlite3_result_error',
+        'safercpp/sqlite3_value_text',
         'safercpp/strchr',
         'safercpp/strstr',
         'safercpp/timer_exception',

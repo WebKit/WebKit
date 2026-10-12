@@ -39,6 +39,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -72,7 +73,7 @@ static std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> buildCalendarTemplate(
     auto str = calendarIDToString(calendarId);
     auto locale = buildICULocale(str);
     UErrorCode status = U_ZERO_ERROR;
-    auto cal = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(u"UTC", 3, locale.legacyCStringPointer(), UCAL_DEFAULT, &status));
+    auto cal = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucalOpen(u"UTC", 3, locale, UCAL_DEFAULT, &status));
     if (U_FAILURE(status)) [[unlikely]]
         return nullptr;
     // Set to ExactTime::minValue in ms — the minimum representable Temporal instant — making ICU

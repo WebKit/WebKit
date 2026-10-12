@@ -25,6 +25,7 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
 #include <wtf/text/icu/UTextProviderUTF16.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WTF {
@@ -60,7 +61,7 @@ public:
         });
 
         UErrorCode status = U_ZERO_ERROR;
-        m_iterator = ubrk_open(type, localeWithOptionalBreakKeyword.string().utf8().legacyCStringPointer(), nullptr, 0, &status);
+        m_iterator = ubrkOpen(type, localeWithOptionalBreakKeyword.string().utf8(), nullptr, 0, &status);
         if (!m_iterator || U_FAILURE(status)) {
             status = U_ZERO_ERROR;
             m_iterator = ubrk_open(type, "", nullptr, 0, &status); // There's no reason for this to ever fail, unless there's an allocation failure, in which case we _should_ crash; that's the behavior of our allocators.

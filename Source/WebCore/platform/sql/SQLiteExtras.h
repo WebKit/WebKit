@@ -30,6 +30,7 @@
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/UTF8CStringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -79,6 +80,33 @@ inline std::span<const T> sqliteColumnBlob(sqlite3_stmt* statement, int index)
     if (blobSize < 0 || (blobSize % sizeof(T)))
         return { };
     return unsafeMakeSpan(blob, blobSize / sizeof(T));
+}
+
+inline int sqliteOpen(UTF8CStringView filename, sqlite3** database, int flags, UTF8CStringView vfs = nullptr)
+{
+    return sqlite3_open_v2(filename.utf8(), database, flags, vfs.utf8()); // NOLINT
+}
+
+// Passing the length including the null terminator lets SQLite avoid copying the query.
+inline int sqlitePrepare(sqlite3* database, std::span<const char> queryIncludingNullTerminator, sqlite3_stmt** statement, const char** tail = nullptr)
+{
+    return sqlite3_prepare_v2(database, queryIncludingNullTerminator.data(), queryIncludingNullTerminator.size(), statement, tail); // NOLINT
+}
+
+inline int sqlitePrepare(sqlite3* database, UTF8CStringView query, sqlite3_stmt** statement, const char** tail = nullptr)
+{
+    return sqlitePrepare(database, byteCast<char>(query.spanIncludingNullTerminator()), statement, tail);
+}
+
+inline int sqliteCreateCollation(sqlite3* database, UTF8CStringView name, int textRepresentation, void* argument, int(*compare)(void*, int, const void*, int, const void*), void(*destroy)(void*))
+{
+    return sqlite3_create_collation_v2(database, name.utf8(), textRepresentation, argument, compare, destroy); // NOLINT
+}
+
+inline void sqliteResultError(sqlite3_context* context, UTF8CStringView message)
+{
+    auto characters = byteCast<char>(message.span());
+    sqlite3_result_error(context, characters.data(), characters.size()); // NOLINT
 }
 
 } // namespace WebCore

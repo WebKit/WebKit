@@ -74,6 +74,7 @@
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -250,13 +251,13 @@ static size_t capitalizeWordWithLocale(StringView textContent, unsigned startOff
 
     Vector<char16_t, 32> titlecased(wordLength + 4);
     UErrorCode status = U_ZERO_ERROR;
-    auto realLength = u_strToTitle(titlecased.mutableSpan().data(), titlecased.size(), wordData, wordLength, nullptr, localeUTF8.legacyCStringPointer(), &status);
+    auto realLength = uStrToTitle(titlecased.mutableSpan().data(), titlecased.size(), wordData, wordLength, nullptr, localeUTF8, &status);
     if (U_FAILURE(status)) {
         if (status != U_BUFFER_OVERFLOW_ERROR)
             return 0;
         titlecased.grow(realLength);
         status = U_ZERO_ERROR;
-        u_strToTitle(titlecased.mutableSpan().data(), titlecased.size(), wordData, wordLength, nullptr, localeUTF8.legacyCStringPointer(), &status);
+        uStrToTitle(titlecased.mutableSpan().data(), titlecased.size(), wordData, wordLength, nullptr, localeUTF8, &status);
         if (U_FAILURE(status))
             return 0;
     }

@@ -35,6 +35,7 @@
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/text/TextBreakIteratorInternalICU.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ static UStringSearch* createSearcher()
     // without setting both the pattern and the text.
     UErrorCode status = U_ZERO_ERROR;
     auto searchCollatorName = makeString(unsafeSpan(currentSearchLocaleID()), "@collation=search"_s);
-    UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8().legacyCStringPointer(), 0, &status);
+    UStringSearch* searcher = usearchOpen(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8(), 0, &status);
     ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
     return searcher;
 }

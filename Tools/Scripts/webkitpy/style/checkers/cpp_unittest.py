@@ -7306,6 +7306,103 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.cpp')
 
+    def test_icu_string_wrappers(self):
+        self.assert_lint(
+            'm_numberFormat = unum_open(UNUM_DECIMAL, 0, 0, m_locale.legacyCStringPointer(), 0, &status);',
+            "Use 'unumOpen()' from <wtf/text/icu/UnicodeExtras.h> instead of 'unum_open()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/icu_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'm_iterator = ubrk_open(type, locale.string().utf8().legacyCStringPointer(), nullptr, 0, &status);',
+            "Use 'ubrkOpen()' from <wtf/text/icu/UnicodeExtras.h> instead of 'ubrk_open()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/icu_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto length = u_strToTitle(destination, capacity, source, sourceLength, nullptr, localeUTF8.legacyCStringPointer(), &status);',
+            "Use 'uStrToTitle()' from <wtf/text/icu/UnicodeExtras.h> instead of 'u_strToTitle()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/icu_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_multi_line_lint(
+            'UStringSearch* searcher = usearch_open(pattern, 1, text, 1,\n'
+            '    collatorName.utf8().legacyCStringPointer(), 0, &status);',
+            "Use 'usearchOpen()' from <wtf/text/icu/UnicodeExtras.h> instead of 'usearch_open()', and pass the typed string instead of calling legacyCStringPointer()."
+            "  [runtime/icu_string_wrappers] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'm_iterator = ubrk_open(type, "", nullptr, 0, &status);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'm_numberFormat = unumOpen(UNUM_DECIMAL, 0, 0, m_locale, 0, &status);',
+            '',
+            'foo.cpp')
+
+    def test_sqlite_wrappers(self):
+        self.assert_lint(
+            'sqlite3_bind_blob(statement, index, data, size, SQLITE_TRANSIENT);',
+            'Use sqliteBindBlob() instead of sqlite3_bind_blob() or sqlite3_bind_blob64().  [safercpp/sqlite3_bind_blob] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'sqlite3_bind_text(statement, index, text, -1, SQLITE_TRANSIENT);',
+            'Use sqliteBindText() instead of sqlite3_bind_text().  [safercpp/sqlite3_bind_text] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto* name = sqlite3_column_name(statement, index);',
+            'Use sqliteColumnName() instead of sqlite3_column_name().  [safercpp/sqlite3_column_name] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto* text = sqlite3_value_text(value);',
+            'Use sqliteValueText() instead of sqlite3_value_text().  [safercpp/sqlite3_value_text] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto* text = sqlite3_column_text(statement, index);',
+            'Use sqliteColumnText() instead of sqlite3_column_text().  [safercpp/sqlite3_column_text] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto* blob = sqlite3_column_blob(statement, index);',
+            'Use sqliteColumnBlob() instead of sqlite3_column_blob().  [safercpp/sqlite3_column_blob] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int result = sqlite3_open_v2(path.legacyCStringPointer(), &m_db, flags, nullptr);',
+            'Use sqliteOpen() instead of sqlite3_open_v2().  [safercpp/sqlite3_open_v2] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int result = sqlite3_prepare_v2(m_db, query.data(), query.size(), &statement, &tail);',
+            'Use sqlitePrepare() instead of sqlite3_prepare_v2().  [safercpp/sqlite3_prepare_v2] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'sqlite3_create_collation_v2(m_db, name.legacyCStringPointer(), SQLITE_UTF8, function, compare, destroy);',
+            'Use sqliteCreateCollation() instead of sqlite3_create_collation_v2().  [safercpp/sqlite3_create_collation_v2] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'sqlite3_result_error(context, message.legacyCStringPointer(), -1);',
+            'Use sqliteResultError() instead of sqlite3_result_error().  [safercpp/sqlite3_result_error] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'sqlite3_result_error_code(context, SQLITE_ERROR);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int result = sqlitePrepare(m_db, query.utf8(), &statement);',
+            '',
+            'foo.cpp')
+
     def test_posix_string_wrappers(self):
         self.assert_lint(
             'int fd = open(path.legacyCStringPointer(), O_RDONLY);',

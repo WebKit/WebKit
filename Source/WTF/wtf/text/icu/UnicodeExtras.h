@@ -27,8 +27,17 @@
 
 #include <array>
 #include <span>
+#include <unicode/ubrk.h>
+#include <unicode/ucal.h>
+#include <unicode/ucol.h>
 #include <unicode/ucsdet.h>
+#include <unicode/udat.h>
+#include <unicode/udatpg.h>
+#include <unicode/unum.h>
+#include <unicode/usearch.h>
+#include <unicode/ustring.h>
 #include <wtf/ExportMacros.h>
+#include <wtf/text/UTF8CStringView.h>
 
 namespace WTF {
 
@@ -68,6 +77,81 @@ static constexpr std::array<char, 16> U8_LEAD4_T1_BITS_SAFE { '\x00', '\x00', '\
 #define U8_NEXT_SPAN(s, i, c) U8_INTERNAL_NEXT_OR_SUB_SAFE(s, i, std::size(s), c, U_SENTINEL)
 #define U8_NEXT_OR_FFFD_SPAN(s, i, c) U8_INTERNAL_NEXT_OR_SUB_SAFE(s, i, std::size(s), c, 0xfffd)
 
+// Wrappers for ICU functions that take a locale ID, so that callers can pass typed strings instead of
+// unwrapping them with legacyCStringPointer(). The other parameters are the same as the wrapped functions'.
+
+inline int32_t uStrToLower(UChar* destination, int32_t destinationCapacity, const UChar* source, int32_t sourceLength, UTF8CStringView locale, UErrorCode* status)
+{
+    return u_strToLower(destination, destinationCapacity, source, sourceLength, locale.utf8(), status);
+}
+
+inline int32_t uStrToUpper(UChar* destination, int32_t destinationCapacity, const UChar* source, int32_t sourceLength, UTF8CStringView locale, UErrorCode* status)
+{
+    return u_strToUpper(destination, destinationCapacity, source, sourceLength, locale.utf8(), status);
+}
+
+#if !UCONFIG_NO_BREAK_ITERATION
+inline UBreakIterator* ubrkOpen(UBreakIteratorType type, UTF8CStringView locale, const UChar* text, int32_t textLength, UErrorCode* status)
+{
+    return ubrk_open(type, locale.utf8(), text, textLength, status);
+}
+
+inline int32_t uStrToTitle(UChar* destination, int32_t destinationCapacity, const UChar* source, int32_t sourceLength, UBreakIterator* titleIterator, UTF8CStringView locale, UErrorCode* status)
+{
+    return u_strToTitle(destination, destinationCapacity, source, sourceLength, titleIterator, locale.utf8(), status);
+}
+#endif
+
+#if !UCONFIG_NO_COLLATION
+inline UCollator* ucolOpen(UTF8CStringView locale, UErrorCode* status)
+{
+    return ucol_open(locale.utf8(), status);
+}
+
+inline UStringSearch* usearchOpen(const UChar* pattern, int32_t patternLength, const UChar* text, int32_t textLength, UTF8CStringView locale, UBreakIterator* breakIterator, UErrorCode* status)
+{
+    return usearch_open(pattern, patternLength, text, textLength, locale.utf8(), breakIterator, status);
+}
+#endif
+
+#if !UCONFIG_NO_FORMATTING
+inline UCalendar* ucalOpen(const UChar* zoneID, int32_t zoneIDLength, UTF8CStringView locale, UCalendarType type, UErrorCode* status)
+{
+    return ucal_open(zoneID, zoneIDLength, locale.utf8(), type, status);
+}
+
+inline UDateFormat* udatOpen(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle, UTF8CStringView locale, const UChar* timeZoneID, int32_t timeZoneIDLength, const UChar* pattern, int32_t patternLength, UErrorCode* status)
+{
+    return udat_open(timeStyle, dateStyle, locale.utf8(), timeZoneID, timeZoneIDLength, pattern, patternLength, status);
+}
+
+inline UDateTimePatternGenerator* udatpgOpen(UTF8CStringView locale, UErrorCode* status)
+{
+    return udatpg_open(locale.utf8(), status);
+}
+
+inline UNumberFormat* unumOpen(UNumberFormatStyle style, const UChar* pattern, int32_t patternLength, UTF8CStringView locale, UParseError* parseError, UErrorCode* status)
+{
+    return unum_open(style, pattern, patternLength, locale.utf8(), parseError, status);
+}
+#endif
+
 } // namespace WTF
 
 using WTF::ucsdet_detectAll_span;
+using WTF::uStrToLower;
+using WTF::uStrToUpper;
+#if !UCONFIG_NO_BREAK_ITERATION
+using WTF::ubrkOpen;
+using WTF::uStrToTitle;
+#endif
+#if !UCONFIG_NO_COLLATION
+using WTF::ucolOpen;
+using WTF::usearchOpen;
+#endif
+#if !UCONFIG_NO_FORMATTING
+using WTF::ucalOpen;
+using WTF::udatOpen;
+using WTF::udatpgOpen;
+using WTF::unumOpen;
+#endif
