@@ -75,14 +75,14 @@ BoxGeometry::Edges TableFormattingGeometry::computedCellBorder(const TableGridCe
     if (!cellPosition.column)
         border.horizontal.start = collapsedBorder->horizontal.start / 2;
     else {
-        auto adjacentBorderRight = computedBorder(grid.slot({ cellPosition.column - 1, cellPosition.row })->cell().box()).horizontal.end;
+        auto adjacentBorderRight = computedBorder(protect(grid.slot({ cellPosition.column - 1, cellPosition.row })->cell().box())).horizontal.end;
         border.horizontal.start = std::max(border.horizontal.start, adjacentBorderRight) / 2;
     }
     // Collapsed border right from table and adjacent cells.
     if (cellPosition.column == grid.columns().size() - 1)
         border.horizontal.end = collapsedBorder->horizontal.end / 2;
     else {
-        auto adjacentBorderLeft = computedBorder(grid.slot({ cellPosition.column + 1, cellPosition.row })->cell().box()).horizontal.start;
+        auto adjacentBorderLeft = computedBorder(protect(grid.slot({ cellPosition.column + 1, cellPosition.row })->cell().box())).horizontal.start;
         border.horizontal.end = std::max(border.horizontal.end, adjacentBorderLeft) / 2;
     }
     // Collapsed border top from table, row and adjacent cells.
@@ -90,8 +90,8 @@ BoxGeometry::Edges TableFormattingGeometry::computedCellBorder(const TableGridCe
     if (!cellPosition.row)
         border.vertical.before = collapsedBorder->vertical.before / 2;
     else {
-        auto adjacentBorderBottom = computedBorder(grid.slot({ cellPosition.column, cellPosition.row - 1 })->cell().box()).vertical.after;
-        auto adjacentRowBottom = computedBorder(rows[cellPosition.row - 1].box()).vertical.after;
+        auto adjacentBorderBottom = computedBorder(protect(grid.slot({ cellPosition.column, cellPosition.row - 1 })->cell().box())).vertical.after;
+        auto adjacentRowBottom = computedBorder(protect(rows[cellPosition.row - 1].box())).vertical.after;
         auto adjacentCollapsedBorder = std::max(adjacentBorderBottom, adjacentRowBottom);
         border.vertical.before = std::max(border.vertical.before, adjacentCollapsedBorder) / 2;
     }
@@ -99,8 +99,8 @@ BoxGeometry::Edges TableFormattingGeometry::computedCellBorder(const TableGridCe
     if (cellPosition.row == grid.rows().size() - 1)
         border.vertical.after = collapsedBorder->vertical.after / 2;
     else {
-        auto adjacentBorderTop = computedBorder(grid.slot({ cellPosition.column, cellPosition.row + 1 })->cell().box()).vertical.before;
-        auto adjacentRowTop = computedBorder(rows[cellPosition.row + 1].box()).vertical.before;
+        auto adjacentBorderTop = computedBorder(protect(grid.slot({ cellPosition.column, cellPosition.row + 1 })->cell().box())).vertical.before;
+        auto adjacentRowTop = computedBorder(protect(rows[cellPosition.row + 1].box())).vertical.before;
         auto adjacentCollapsedBorder = std::max(adjacentBorderTop, adjacentRowTop);
         border.vertical.after = std::max(border.vertical.after, adjacentCollapsedBorder) / 2;
     }
@@ -156,7 +156,7 @@ LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGri
         logicalWidth += columnList.at(columnIndex).usedLogicalWidth();
     // No column spacing when spanning.
     logicalWidth += (cell.columnSpan() - 1) * grid.horizontalSpacing();
-    auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
+    auto& cellBoxGeometry = formattingContext().geometryForBox(protect(cell.box()));
     logicalWidth -= cellBoxGeometry.horizontalBorderAndPadding();
     return logicalWidth;
 }
@@ -170,7 +170,7 @@ LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGridC
         return contentHeight;
     auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox->style().boxSizing() == BoxSizing::BorderBox;
     if (heightUsesBorderBox) {
-        auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
+        auto& cellBoxGeometry = formattingContext().geometryForBox(cellBox);
         *computedHeight -= cellBoxGeometry.verticalBorderAndPadding();
     }
     return std::max(contentHeight, *computedHeight);

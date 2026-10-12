@@ -55,7 +55,7 @@ static TextLogicalOrderCache makeTextLogicalOrderCacheIfNeeded(const RenderText&
 
 static void updateTextLogicalOrderCacheIfNeeded(const TextBoxIterator& textBox, TextLogicalOrderCache& cache)
 {
-    if (!cache && !(cache = makeTextLogicalOrderCacheIfNeeded(textBox->renderer())))
+    if (!cache && !(cache = makeTextLogicalOrderCacheIfNeeded(protect(textBox->renderer()))))
         return;
 
     if (cache->index < cache->boxes.size() && cache->boxes[cache->index] == textBox)

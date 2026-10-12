@@ -70,7 +70,7 @@ std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicab
 
     if (layoutBox.isDocumentBox()) {
         // Let's stretch the inflow document box(<html>) to the height of the initial containing block (view).
-        auto documentBoxContentHeight = formattingContext.geometryForBox(FormattingContext::initialContainingBlock(layoutBox), FormattingContext::EscapeReason::DocumentBoxStretchesToViewportQuirk).contentBoxHeight();
+        auto documentBoxContentHeight = formattingContext.geometryForBox(protect(FormattingContext::initialContainingBlock(layoutBox)), FormattingContext::EscapeReason::DocumentBoxStretchesToViewportQuirk).contentBoxHeight();
         // Document box's own vertical margin/border/padding values always shrink the content height.
         auto& documentBoxGeometry = formattingContext.geometryForBox(layoutBox);
         documentBoxContentHeight -= nonCollapsedVerticalMargin + documentBoxGeometry.verticalBorderAndPadding();
@@ -146,7 +146,7 @@ LayoutUnit BlockFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
             auto& formattingGeometry = formattingContext.formattingGeometry();
-            auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(FormattingContext::containingBlock(containingBlock), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal();
+            auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(protect(FormattingContext::containingBlock(containingBlock)), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal();
             auto verticalMargin = formattingGeometry.computedVerticalMargin(containingBlock, horizontalConstraints);
 
             auto& boxGeometry = formattingContext.geometryForBox(containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
@@ -154,7 +154,7 @@ LayoutUnit BlockFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
         }
     }
     // Initial containing block has to have a height.
-    return formattingContext.geometryForBox(FormattingContext::initialContainingBlock(layoutBox), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
+    return formattingContext.geometryForBox(protect(FormattingContext::initialContainingBlock(layoutBox)), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
 }
 
 }

@@ -299,8 +299,8 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
     auto top = std::optional<LayoutUnit> { };
     auto bottom = std::optional<LayoutUnit> { };
     if (root().hasInFlowChild()) {
-        top = BoxGeometry::marginBoxRect(geometryForBox(*root().firstInFlowChild())).top();
-        bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
+        top = BoxGeometry::marginBoxRect(geometryForBox(protect(*root().firstInFlowChild()))).top();
+        bottom = BoxGeometry::marginBoxRect(geometryForBox(protect(*root().lastInFlowChild()))).bottom();
     }
 
     auto floatingContext = FloatingContext { root(), layoutState(), formattingState().placedFloats() };
@@ -550,7 +550,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstrai
     // (Any subtrees with new formatting contexts need to layout synchronously)
     Vector<CheckedRef<const ElementBox>> queue;
     if (root().hasInFlowOrFloatingChild())
-        queue.append(*downcast<ElementBox>(root().firstInFlowOrFloatingChild()));
+        queue.append(protect(*downcast<ElementBox>(root().firstInFlowOrFloatingChild())));
 
     IntrinsicWidthConstraints constraints;
     auto maximumHorizontalStackingWidth = LayoutUnit { };
@@ -584,7 +584,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstrai
             // No relevant child content.
             if (!layoutBox->hasInFlowOrFloatingChild())
                 break;
-            queue.append(*downcast<ElementBox>(layoutBox->firstInFlowOrFloatingChild()));
+            queue.append(protect(*downcast<ElementBox>(layoutBox->firstInFlowOrFloatingChild())));
         }
         // Compute min/max intrinsic width bottom up if needed.
         while (!queue.isEmpty()) {
@@ -666,7 +666,7 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const ElementBox& 
     CheckedRef containingBlock = this->containingBlock(layoutBox);
     ASSERT(containingBlock->firstInFlowChild());
     ASSERT(containingBlock->firstInFlowChild() != &layoutBox);
-    if (marginCollapse().marginBeforeCollapsesWithParentMarginBefore(downcast<ElementBox>(*containingBlock->firstInFlowChild())))
+    if (marginCollapse().marginBeforeCollapsesWithParentMarginBefore(protect(downcast<ElementBox>(*containingBlock->firstInFlowChild()))))
         return containingBlockContentBoxTop;
 
     return containingBlockContentBoxTop + marginBefore(verticalMargin);

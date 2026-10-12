@@ -71,7 +71,7 @@ void TableWrapperBlockFormattingContext::layoutInFlowContent(const ConstraintsFo
 
 void TableWrapperBlockFormattingContext::layoutTableBox(const ElementBox& tableBox, const ConstraintsForInFlowContent& constraints)
 {
-    layoutState().ensureTableFormattingState(tableBox);
+    protect(layoutState())->ensureTableFormattingState(tableBox);
 
     computeBorderAndPaddingForTableBox(tableBox, constraints.horizontal());
     computeStaticVerticalPosition(tableBox, constraints.logicalTop());
@@ -81,7 +81,7 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ElementBox& tableB
     if (tableBox.hasChild()) {
         auto& formattingGeometry = this->formattingGeometry();
         auto constraints = ConstraintsForTableContent { formattingGeometry.constraintsForInFlowContent(tableBox), formattingGeometry.computedHeight(tableBox) };
-        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(constraints);
+        LayoutContext::createFormattingContext(tableBox, protect(layoutState()))->layoutInFlowContent(constraints);
     }
 
     computeHeightAndMarginForTableBox(tableBox, constraints);
@@ -122,22 +122,22 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
         bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(boxInLastRow).vertical.after);
     }
 
-    topBorder = std::max(topBorder, formattingGeometry().computedBorder(*tableBox.firstChild()).vertical.before);
+    topBorder = std::max(topBorder, formattingGeometry().computedBorder(protect(*tableBox.firstChild())).vertical.before);
     for (CheckedRef section : childrenOfType<ElementBox>(tableBox)) {
         auto horizontalBorder = formattingGeometry().computedBorder(section).horizontal;
         leftBorder = std::max(leftBorder, horizontalBorder.start);
         rightBorder = std::max(rightBorder, horizontalBorder.end);
     }
-    bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(*tableBox.lastChild()).vertical.after);
+    bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(protect(*tableBox.lastChild())).vertical.after);
 
     auto& rows = grid.rows().list();
-    topBorder = std::max(topBorder, formattingGeometry().computedBorder(rows.first().box()).vertical.before);
+    topBorder = std::max(topBorder, formattingGeometry().computedBorder(protect(rows.first().box())).vertical.before);
     for (auto& row : rows) {
-        auto horizontalBorder = formattingGeometry().computedBorder(row.box()).horizontal;
+        auto horizontalBorder = formattingGeometry().computedBorder(protect(row.box())).horizontal;
         leftBorder = std::max(leftBorder, horizontalBorder.start);
         rightBorder = std::max(rightBorder, horizontalBorder.end);
     }
-    bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(rows.last().box()).vertical.after);
+    bottomBorder = std::max(bottomBorder, formattingGeometry().computedBorder(protect(rows.last().box())).vertical.after);
 
     auto collapsedBorder = BoxGeometry::Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
     grid.setCollapsedBorder(collapsedBorder);
@@ -158,7 +158,7 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
         intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
     else {
         if (tableBox.hasChild())
-            intrinsicWidthConstraints = LayoutContext::createFormattingContext(tableBox, layoutState())->computedIntrinsicWidthConstraints();
+            intrinsicWidthConstraints = LayoutContext::createFormattingContext(tableBox, protect(layoutState()))->computedIntrinsicWidthConstraints();
         formattingStateForTableBox.setIntrinsicWidthConstraints(intrinsicWidthConstraints);
     }
 

@@ -101,10 +101,10 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
             auto [nonAnonymousContainingBlockLogicalHeight, nonAnonymousContainingBlockUsedZoom] = [&]() -> std::pair<Style::PreferredSize, Style::ZoomFactor> {
                 // When the block level box is a direct child of an inline level box (<span><div></div></span>),
                 // the containing block (anonymous wrapper) is not the box we need to check for fixed height.
-                for (auto& containingBlock : containingBlockChain(layoutBox)) {
-                    if (containingBlock.isAnonymous())
+                for (CheckedRef containingBlock : containingBlockChain(layoutBox)) {
+                    if (containingBlock->isAnonymous())
                         continue;
-                    return { containingBlock.style().logicalHeight(), containingBlock.style().usedZoomForLength() };
+                    return { containingBlock->style().logicalHeight(), containingBlock->style().usedZoomForLength() };
                 }
                 ASSERT_NOT_REACHED();
                 return { CSS::Keyword::Auto { }, Style::ZoomFactor { 1.0f } };
@@ -197,7 +197,7 @@ LayoutUnit FormattingGeometry::contentHeightForFormattingContextRoot(const Eleme
     // The used height of the containment box is determined as if performing a normal layout of the box, except that it is treated as having no content.
     auto shouldIgnoreContent = formattingContextRoot.isSizeContainmentBox();
     if (hasContent && !shouldIgnoreContent)
-        usedContentHeight = LayoutContext::createFormattingContext(formattingContextRoot, const_cast<LayoutState&>(layoutState()))->usedContentHeight();
+        usedContentHeight = LayoutContext::createFormattingContext(formattingContextRoot, protect(const_cast<LayoutState&>(layoutState())))->usedContentHeight();
     return usedContentHeight;
 }
 
@@ -240,18 +240,18 @@ LayoutUnit FormattingGeometry::staticVerticalPositionForOutOfFlowPositioned(cons
     auto top = LayoutUnit { };
     if (layoutBox.previousInFlowSibling() && layoutBox.previousInFlowSibling()->isBlockLevelBox()) {
         // Add sibling offset
-        auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
+        CheckedRef previousInFlowSibling = *layoutBox.previousInFlowSibling();
         auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(previousInFlowSibling, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         auto usedVerticalMarginForPreviousBox = downcast<BlockFormattingContext>(formattingContext).formattingState().usedVerticalMargin(previousInFlowSibling);
 
         top += BoxGeometry::borderBoxRect(previousInFlowBoxGeometry).bottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
     } else
-        top = formattingContext.geometryForBox(layoutBox.parent(), FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
+        top = formattingContext.geometryForBox(protect(layoutBox.parent()), FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
 
     // Resolve top all the way up to the containing block.
-    auto& containingBlock = FormattingContext::containingBlock(layoutBox);
+    CheckedRef containingBlock = FormattingContext::containingBlock(layoutBox);
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &FormattingContext::containingBlock(*ancestor)) {
+    for (CheckedPtr ancestor = &layoutBox.parent(); ancestor != containingBlock.ptr(); ancestor = &FormattingContext::containingBlock(*ancestor)) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::top is the border box top position in its containing block's coordinate system.
         top += BoxGeometry::borderBoxTop(boxGeometry);
@@ -268,12 +268,12 @@ LayoutUnit FormattingGeometry::staticHorizontalPositionForOutOfFlowPositioned(co
 
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
-    auto left = formattingContext.geometryForBox(layoutBox.parent(), FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxLeft();
+    auto left = formattingContext.geometryForBox(protect(layoutBox.parent()), FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxLeft();
 
     // Resolve left all the way up to the containing block.
-    auto& containingBlock = FormattingContext::containingBlock(layoutBox);
+    CheckedRef containingBlock = FormattingContext::containingBlock(layoutBox);
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &FormattingContext::containingBlock(*ancestor)) {
+    for (CheckedPtr ancestor = &layoutBox.parent(); ancestor != containingBlock.ptr(); ancestor = &FormattingContext::containingBlock(*ancestor)) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::left is the border box left position in its containing block's coordinate system.
         left += BoxGeometry::borderBoxLeft(boxGeometry);
@@ -303,12 +303,12 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
         return { };
 
     auto computedIntrinsicWidthConstraints = [&] {
-        auto& layoutState = this->layoutState();
-        if (layoutState.hasFormattingState(*root)) {
-            if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(*root).intrinsicWidthConstraints())
+        CheckedRef layoutState = this->layoutState();
+        if (layoutState->hasFormattingState(*root)) {
+            if (auto intrinsicWidthConstraints = layoutState->formattingStateForFormattingContext(*root).intrinsicWidthConstraints())
                 return *intrinsicWidthConstraints;
         }
-        return LayoutContext::createFormattingContext(*root, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
+        return LayoutContext::createFormattingContext(*root, const_cast<LayoutState&>(layoutState.get()))->computedIntrinsicWidthConstraints();
     }();
     return std::min(std::max(computedIntrinsicWidthConstraints.minimum, availableWidth), computedIntrinsicWidthConstraints.maximum);
 }
@@ -785,12 +785,12 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
         if (!elementBox || !elementBox->hasInFlowOrFloatingChild())
             height = 0_lu;
         else if (layoutBox.isDocumentBox() && !layoutBox.establishesFormattingContext()) {
-            auto top = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*elementBox->firstInFlowChild())).top();
-            auto bottom = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*elementBox->lastInFlowChild())).bottom();
+            auto top = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(protect(*elementBox->firstInFlowChild()))).top();
+            auto bottom = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(protect(*elementBox->lastInFlowChild()))).bottom();
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
-            auto& initialContainingBlock = FormattingContext::initialContainingBlock(*elementBox);
-            auto floatingContext = FloatingContext { formattingContext().root(), layoutState(), downcast<BlockFormattingState>(layoutState().formattingStateForFormattingContext(initialContainingBlock)).placedFloats() };
+            CheckedRef initialContainingBlock = FormattingContext::initialContainingBlock(*elementBox);
+            auto floatingContext = FloatingContext { formattingContext().root(), layoutState(), downcast<BlockFormattingState>(protect(layoutState())->formattingStateForFormattingContext(initialContainingBlock)).placedFloats() };
             if (auto floatBottom = floatingContext.placedFloats().lowestPositionOnBlockAxis()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);
                 auto floatTop = floatingContext.placedFloats().highestPositionOnBlockAxis();

@@ -124,7 +124,7 @@ void TableGrid::appendCell(const ElementBox& cellBox)
         m_columns.addAnonymousColumn();
 
     if (isInNewRow)
-        m_rows.addRow(cellBox.parent());
+        m_rows.addRow(protect(cellBox.parent()));
 
     m_cells.add(WTF::move(cell));
 }

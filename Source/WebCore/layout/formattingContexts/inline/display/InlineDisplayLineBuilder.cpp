@@ -485,7 +485,7 @@ void InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(con
     makeRoomForLinkBoxOnClampedLineIfNeeded(displayContent, *clampedLineIndex, displayBoxes, *insertionPosition, linkContentWidth);
 
     // link box content
-    moveDisplayBoxToClampedLine(displayContent, *clampedLineIndex, linkContentDisplayBox, inlineFormattingContext.geometryForBox(linkInlineBoxDisplayBox.layoutBox()).marginBorderAndPaddingStart());
+    moveDisplayBoxToClampedLine(displayContent, *clampedLineIndex, linkContentDisplayBox, inlineFormattingContext.geometryForBox(protect(linkInlineBoxDisplayBox.layoutBox())).marginBorderAndPaddingStart());
     displayBoxes.insert(*insertionPosition, linkContentDisplayBox);
     // Link inline box
     moveDisplayBoxToClampedLine(displayContent, *clampedLineIndex, linkInlineBoxDisplayBox, LayoutUnit { });

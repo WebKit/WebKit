@@ -70,8 +70,8 @@ void TableFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
 LayoutUnit TableFormattingContext::usedContentHeight() const
 {
     // Table has to have some section content, at least one <tbody>.
-    auto top = BoxGeometry::marginBoxRect(geometryForBox(*root().firstInFlowChild())).top();
-    auto bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
+    auto top = BoxGeometry::marginBoxRect(geometryForBox(protect(*root().firstInFlowChild()))).top();
+    auto bottom = BoxGeometry::marginBoxRect(geometryForBox(protect(*root().lastInFlowChild()))).bottom();
     return bottom - top;
 }
 
@@ -105,9 +105,10 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
         if (cellBox->hasInFlowOrFloatingChild()) {
             // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell multiple times as part of the multi-pass table algorithm.
-            auto& placedFloatsForCellContent = layoutState().ensureBlockFormattingState(cellBox).placedFloats();
+            CheckedRef layoutState = this->layoutState();
+            auto& placedFloatsForCellContent = layoutState->ensureBlockFormattingState(cellBox).placedFloats();
             placedFloatsForCellContent.clear();
-            LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(formattingGeometry.constraintsForInFlowContent(cellBox));
+            LayoutContext::createFormattingContext(cellBox, layoutState)->layoutInFlowContent(formattingGeometry.constraintsForInFlowContent(cellBox));
         }
         cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(*cell, availableVerticalSpace));
 
@@ -152,7 +153,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                     // Normally by the time we start positioning the child content, we already have computed borders and padding for the containing block.
                     // This is different with table cells where the final padding offset depends on the content height as we use
                     // the padding box to vertically align the table cell content.
-                    auto& formattingState = layoutState().formattingStateForFormattingContext(cellBox);
+                    CheckedRef layoutState = this->layoutState();
+                    auto& formattingState = layoutState->formattingStateForFormattingContext(cellBox);
                     for (CheckedPtr child = cellBox->firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
                         if (child->isInlineTextBox())
                             continue;
@@ -177,7 +179,7 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
     auto& rows = grid.rows().list();
 
     auto rowLogicalTop = grid.verticalSpacing();
-    const ElementBox* previousRow = nullptr;
+    CheckedPtr<const ElementBox> previousRow;
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto& row = rows[rowIndex];
         CheckedRef rowBox = row.box();
@@ -531,7 +533,7 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
             auto& slot = *grid.slot({ columnIndex, rowIndex });
             if (slot.isRowSpanned())
                 continue;
-            auto layoutCellContent = [&](auto& cell) {
+            auto layoutCellContent = [&](TableGridCell& cell) {
                 auto& cellBox = cell.box();
                 auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
                 cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(cell));
@@ -539,16 +541,16 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
                 cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(cell));
 
                 if (cellBox.hasInFlowOrFloatingChild())
-                    LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(formattingGeometry.constraintsForInFlowContent(cellBox));
+                    LayoutContext::createFormattingContext(cellBox, protect(layoutState()))->layoutInFlowContent(formattingGeometry.constraintsForInFlowContent(cellBox));
                 cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(cell, availableVerticalSpace));
             };
-            layoutCellContent(slot.cell());
+            CheckedRef cell = slot.cell();
+            layoutCellContent(cell);
             if (slot.hasRowSpan())
                 continue;
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
-            CheckedRef cell = slot.cell();
-            cell->setBaseline(formattingGeometry.usedBaselineForCell(cell->box()));
+            cell->setBaseline(formattingGeometry.usedBaselineForCell(protect(cell->box())));
         }
     }
 
