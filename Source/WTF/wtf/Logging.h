@@ -30,6 +30,9 @@
 
 namespace WTF {
 
+// Lets Swift fold away debug-only logging at compile time, since it cannot see LOG_DISABLED.
+constexpr bool logEnabledForSwift = !LOG_DISABLED;
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #ifndef LOG_CHANNEL_PREFIX
@@ -50,6 +53,29 @@ namespace WTF {
     WTF_EXPORT_PRIVATE extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
 
 WTF_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+
+// Lets Swift name a channel, e.g. WTF.LogChannel.Process(), since it cannot use LOG_CHANNEL.
+struct LogChannel {
+#define DEFINE_LOG_CHANNEL_ACCESSOR(name) static WTFLogChannel& name() { return LOG_CHANNEL(name); }
+    WTF_LOG_CHANNELS(DEFINE_LOG_CHANNEL_ACCESSOR)
+#undef DEFINE_LOG_CHANNEL_ACCESSOR
+};
+
+// Entry points for Swift, which cannot use the LOG and RELEASE_LOG macros.
+// See the WTFLogChannel extension in Swift for the idiomatic API.
+
+// Behaves like LOG_WITH_STREAM(channel, stream << message).
+WTF_EXPORT_PRIVATE void logPreformatted(WTFLogChannel&, const String& message);
+
+#if USE(OS_LOG) && !RELEASE_LOG_DISABLED
+// RELEASE_LOG is os_log on this handle, so Swift can use os.Logger(osLog(channel)) directly.
+inline os_log_t osLog(const WTFLogChannel& channel) { return channel.osLogChannel; }
+#elif !RELEASE_LOG_DISABLED
+enum class ReleaseLogType : uint8_t { Default, Info, Debug, Error, Fault };
+
+// RELEASE_LOG(channel, "%s", message) through the same WTF_RELEASE_LOG_SEND backend, with the location of the Swift caller.
+WTF_EXPORT_PRIVATE void releaseLogPreformatted(WTFLogChannel&, ReleaseLogType, const String& file, unsigned line, const String& function, const String& message);
+#endif
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
