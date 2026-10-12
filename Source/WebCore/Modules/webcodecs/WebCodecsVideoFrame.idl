@@ -49,6 +49,7 @@ typedef (HTMLImageElement
     Exposed=(Window,DedicatedWorker),
     InterfaceName=VideoFrame,
     ReportExtraMemoryCost,
+    SameAgentCluster,
     Serializable,
     Transferable,
 ] interface WebCodecsVideoFrame {

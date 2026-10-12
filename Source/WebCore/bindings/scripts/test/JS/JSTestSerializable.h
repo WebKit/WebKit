@@ -40,6 +40,7 @@ public:
 
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
     static bool isExposedInGlobalObject(JSDOMGlobalObject&);
+    static constexpr bool isRestrictedToSameAgentCluster = true;
     template<typename, JSC::SubspaceAccess mode> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)

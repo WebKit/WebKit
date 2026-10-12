@@ -552,6 +552,9 @@
         "ReturnValue": {
             "contextsAllowed": ["argument"]
         },
+        "SameAgentCluster": {
+            "contextsAllowed": ["interface"]
+        },
         "SameObject": {
             "contextsAllowed": ["attribute"],
             "standard": {
