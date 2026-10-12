@@ -8936,7 +8936,9 @@ void Document::postTask(Task&& task)
             return;
 
         RefPtr page = document->page();
-        if ((page && page->defersLoading() && document->activeDOMObjectsAreSuspended()) || !document->m_pendingTasks.isEmpty())
+        if ((page && page->defersLoading() && document->activeDOMObjectsAreSuspended())
+            || document->backForwardCacheState() == InBackForwardCache
+            || !document->m_pendingTasks.isEmpty())
             document->m_pendingTasks.append(WTF::move(task));
         else
             task.performTask(*document);
@@ -8945,6 +8947,12 @@ void Document::postTask(Task&& task)
 
 void Document::pendingTasksTimerFired()
 {
+    performPendingTasks();
+}
+
+void Document::performPendingTasks()
+{
+    m_pendingTasksTimer.stop();
     auto pendingTasks = std::exchange(m_pendingTasks, Vector<Task> { });
     for (auto& task : pendingTasks)
         task.performTask(*this);

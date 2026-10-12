@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that loads requested by a dedicated worker in an iframe while the page enters the back/forward cache do not start while the page is in the back/forward cache.");
+jsTestIsAsync = true;
+
+const iterations = 10;
+let restoreCount = 0;
+let iframe;
+
+function navigateAway()
+{
+    window.location = "/navigation/resources/page-cache-helper.html";
+}
+
+window.addEventListener("pagehide", (event) => {
+    if (!event.persisted) {
+        testFailed("Page failed to enter the back/forward cache");
+        finishJSTest();
+    }
+});
+
+window.addEventListener("pageshow", (event) => {
+    if (!event.persisted)
+        return;
+    if (++restoreCount == iterations) {
+        testPassed("Page was restored from the back/forward cache " + iterations + " times without crashing.");
+        // Removing the iframe terminates the worker.
+        iframe.remove();
+        finishJSTest();
+        return;
+    }
+    setTimeout(navigateAway, 0);
+});
+
+onload = () => {
+    if (performance.getEntriesByType("navigation")[0].type == "back_forward") {
+        testFailed("Page was not restored from the back/forward cache");
+        finishJSTest();
+        return;
+    }
+    addEventListener("message", () => setTimeout(navigateAway, 0));
+    iframe = document.createElement("iframe");
+    iframe.src = "resources/worker-fetch-loop-frame.html";
+    document.body.appendChild(iframe);
+};
+</script>
+</body>
+</html>

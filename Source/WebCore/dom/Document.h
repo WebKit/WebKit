@@ -1364,6 +1364,7 @@ public:
     String NODELETE nameForCSSCanvasElement(const HTMLCanvasElement&) const;
 
     WEBCORE_EXPORT void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
+    void performPendingTasks();
 
     WEBCORE_EXPORT EventLoopTaskGroup& eventLoop() final;
     WindowEventLoop& windowEventLoop();
