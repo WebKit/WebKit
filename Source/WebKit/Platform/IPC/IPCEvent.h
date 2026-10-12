@@ -78,6 +78,7 @@ private:
 
 #if PLATFORM(COCOA)
     MachSendRight m_sendRight;
+    bool m_peerDied { false };
 #else
     Semaphore m_semaphore;
 #endif
