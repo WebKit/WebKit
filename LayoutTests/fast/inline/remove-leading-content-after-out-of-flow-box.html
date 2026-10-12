@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 20px/1 monospace;
+    width: 300px;
+}
+img {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: green;
+}
+</style>
+<!-- Out-of-flow boxes produce no display boxes, so the removed content leads the first line. -->
+<div id="textContainer"><img> removed<br>kept</div>
+<div id="lineBreakContainer"><img><br>kept</div>
+<script>
+document.body.offsetHeight;
+// The leading whitespace collapses.
+textContainer.childNodes[1].remove();
+lineBreakContainer.querySelector("br").remove();
+</script>

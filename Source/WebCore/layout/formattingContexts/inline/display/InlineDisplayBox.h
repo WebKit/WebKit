@@ -182,6 +182,8 @@ struct Box {
     void detachLayoutBox() { m_layoutBox = nullptr; }
 
 private:
+    friend bool operator==(const Box&, const Box&);
+
     CheckedPtr<const Layout::Box> m_layoutBox;
     FloatRect m_unflippedVisualRect;
     FloatRect m_inkOverflow;
@@ -351,8 +353,9 @@ inline bool operator==(const Box::Text& a, const Box::Text& b)
 
 inline bool operator==(const Box& a, const Box& b)
 {
-    return &a.layoutBox() == &b.layoutBox()
-        && a.style() == b.style()
+    // Display boxes of the same layout box only differ in style through the first-line style.
+    return a.m_layoutBox == b.m_layoutBox
+        && a.isFirstFormattedLine() == b.isFirstFormattedLine()
         && a.lineIndex() == b.lineIndex()
         && a.bidiLevel() == b.bidiLevel()
         && a.visualRectIgnoringBlockDirection() == b.visualRectIgnoringBlockDirection()

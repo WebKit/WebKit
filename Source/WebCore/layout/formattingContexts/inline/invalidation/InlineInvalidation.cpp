@@ -421,6 +421,13 @@ static std::optional<InvalidatedLine> invalidatedLineByDamagedBox(const DamagedC
     return { };
 }
 
+static bool NODELETE startsAtRemovedBox(const InvalidatedLine& invalidatedLine, const Box& removedBox, const InlineItemList& inlineItemList)
+{
+    // Partial inline item building starts at the leading inline item's layout box, so that box has to stay in the tree.
+    auto& startPosition = invalidatedLine.leadingInlineItemPosition;
+    return startPosition && &inlineItemList[startPosition.index].layoutBox() == &removedBox;
+}
+
 static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesAfterDamagedLine(size_t damagedLineIndex, const InlineDisplay::Content& displayContent)
 {
     auto trailingDisplayBoxes = InlineDamage::TrailingDisplayBoxList { };
@@ -562,7 +569,9 @@ bool InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTex
     if (setFullLayoutIfNeeded(damagedInlineTextBox))
         return false;
 
-    if (auto invalidatedLine = invalidatedLineByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes()))
+    auto invalidatedLine = invalidatedLineByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes());
+    // No offset means the text box itself is removed from the tree.
+    if (invalidatedLine && (offset || !startsAtRemovedBox(*invalidatedLine, damagedInlineTextBox, m_inlineItemList)))
         return updateInlineDamage(*invalidatedLine, InlineDamage::Reason::Remove, ShouldApplyRangeLayout::No);
 
     m_inlineDamage.resetLayoutPosition();
@@ -609,7 +618,8 @@ bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
     if (setFullLayoutIfNeeded(layoutBox))
         return false;
 
-    if (auto invalidatedLine = invalidatedLineByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes()))
+    auto invalidatedLine = invalidatedLineByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes());
+    if (invalidatedLine && !startsAtRemovedBox(*invalidatedLine, layoutBox, m_inlineItemList))
         return updateInlineDamage(*invalidatedLine, InlineDamage::Reason::Remove, ShouldApplyRangeLayout::Yes);
 
     m_inlineDamage.resetLayoutPosition();
