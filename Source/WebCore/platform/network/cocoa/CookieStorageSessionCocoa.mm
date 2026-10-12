@@ -204,7 +204,7 @@ RetainPtr<NSHTTPCookie> CookieStorageSession::capExpiryOfPersistentCookie(NSHTTP
         return cookie;
 
     if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > cap.seconds()) {
-        RetainPtr properties = adoptNS([[cookie properties] mutableCopy]);
+        RetainPtr<NSMutableDictionary> properties = adoptNS([[cookie properties] mutableCopy]);
         RetainPtr date = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:cap.seconds()]);
         [properties setObject:date.get() forKey:NSHTTPCookieExpires];
         return adoptNS([[NSHTTPCookie alloc] initWithProperties:properties.get()]);
@@ -226,7 +226,7 @@ NSHTTPCookie *CookieStorageSession::setCookiePartition(NSHTTPCookie *cookie, NSS
         return cookie;
     }
 
-    RetainPtr properties = adoptNS([[cookie properties] mutableCopy]);
+    RetainPtr<NSMutableDictionary> properties = adoptNS([[cookie properties] mutableCopy]);
     [properties setObject:partitionKey forKey:@"StoragePartition"];
     return [NSHTTPCookie cookieWithProperties:properties.get()];
 }
@@ -339,7 +339,7 @@ static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCo
         return nil;
 
 #if ENABLE(JS_COOKIE_CHECKING)
-    RetainPtr mutableProperties = adoptNS([[initialCookie properties] mutableCopy]);
+    RetainPtr<NSMutableDictionary> mutableProperties = adoptNS([[initialCookie properties] mutableCopy]);
     [mutableProperties.get() setValue:@1 forKey:@"SetInJavaScript"];
     RetainPtr cookie = adoptNS([[NSHTTPCookie alloc] initWithProperties:mutableProperties.get()]);
 #else
@@ -454,7 +454,7 @@ void CookieStorageSession::deleteCookie(const URL& firstParty, const URL& url, c
 
     NSUInteger count = [cookies count];
     for (NSUInteger i = 0; i < count; ++i) {
-        RetainPtr<NSHTTPCookie> cookie = [cookies objectAtIndex:i];
+        RetainPtr cookie = checked_objc_cast<NSHTTPCookie>([cookies objectAtIndex:i]);
         if ([[cookie name] isEqualToString:cookieNameString.get()])
             deleteHTTPCookie(cookieStorage.get(), cookie.get(), [aggregator] { });
     }

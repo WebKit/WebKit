@@ -98,7 +98,7 @@ void RenderTableCol::updateFromElement()
     ASSERT(element());
     unsigned oldSpan = m_span;
     if (element()->hasTagName(colTag) || element()->hasTagName(colgroupTag)) {
-        HTMLTableColElement& tc = static_cast<HTMLTableColElement&>(*element());
+        HTMLTableColElement& tc = downcast<HTMLTableColElement>(*element());
         m_span = tc.span();
     } else
         m_span = 1;

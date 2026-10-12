@@ -186,16 +186,13 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(cons
 
     auto contents = contentForRange(range, spellCheck);
     for (id content in contents.get()) {
-        auto item = retainPtr(content);
-        if ([item isKindOfClass:[WebAccessibilityObjectWrapper class]]) {
-            attributedStringAppendWrapper(result.get(), item.get());
+        if (RetainPtr wrapper = dynamic_objc_cast<WebAccessibilityObjectWrapper>(content)) {
+            attributedStringAppendWrapper(result.get(), wrapper);
             continue;
         }
 
-        if (![item isKindOfClass:[NSAttributedString class]])
-            continue;
-
-        [result appendAttributedString:item.get()];
+        if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(content))
+            [result appendAttributedString:attributedString];
     }
 
     return result;

@@ -198,11 +198,11 @@ String AccessibilityObject::subrolePlatformString() const
         return NSAccessibilitySearchFieldSubrole;
 
     if (isAttachment()) {
-        RetainPtr<NSView> attachView = [protect(wrapper()) attachmentView];
+        RetainPtr<id> attachView = [protect(wrapper()) attachmentView];
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
-            return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
+            return dynamic_objc_cast<NSString>([attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute]);
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
 

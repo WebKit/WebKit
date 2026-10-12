@@ -31,6 +31,7 @@
 #include "SharedBuffer.h"
 #include <numeric>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore::OpenType {
 
@@ -134,6 +135,20 @@ struct Coverage2Table : CoverageTable {
 };
 #endif // ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
 
+} // namespace WebCore::OpenType
+
+#if ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::OpenType::Coverage1Table)
+    static bool isType(const WebCore::OpenType::CoverageTable& table) { return table.coverageFormat == 1; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::OpenType::Coverage2Table)
+    static bool isType(const WebCore::OpenType::CoverageTable& table) { return table.coverageFormat == 2; }
+SPECIALIZE_TYPE_TRAITS_END()
+#endif // ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
+
+namespace WebCore::OpenType {
+
 #if ENABLE(OPENTYPE_MATH)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 struct TableWithCoverage : TableBase {
@@ -142,7 +157,7 @@ protected:
     {
         switch (coverage->coverageFormat) {
         case 1: { // Coverage Format 1
-            const Coverage1Table* coverage1 = validatePtr<Coverage1Table>(buffer, coverage);
+            const Coverage1Table* coverage1 = validatePtr<Coverage1Table>(buffer, &downcast<Coverage1Table>(*coverage));
             if (!coverage1)
                 return false;
             uint16_t glyphCount = coverage1->glyphCount;
@@ -166,7 +181,7 @@ protected:
             break;
         }
         case 2: { // Coverage Format 2
-            const Coverage2Table* coverage2 = validatePtr<Coverage2Table>(buffer, coverage);
+            const Coverage2Table* coverage2 = validatePtr<Coverage2Table>(buffer, &downcast<Coverage2Table>(*coverage));
             if (!coverage2)
                 return false;
             uint16_t rangeCount = coverage2->rangeCount;

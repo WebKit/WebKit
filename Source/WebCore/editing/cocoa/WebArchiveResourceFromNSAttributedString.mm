@@ -29,6 +29,8 @@
 #import "ArchiveResource.h"
 #import "MIMETypeRegistry.h"
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 @implementation WebArchiveResourceFromNSAttributedString
 
 - (instancetype)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
@@ -49,7 +51,7 @@
             updatedMIMEType = mimeTypeFromURL.createNSString();
     }
 
-    resource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(adoptNS([data copy]).get()), URL, updatedMIMEType.get(), textEncodingName, frameName, { });
+    resource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(adoptNS(checked_objc_cast<NSData>([data copy])).get()), URL, updatedMIMEType.get(), textEncodingName, frameName, { });
     if (!resource) {
         [self release];
         return nil;

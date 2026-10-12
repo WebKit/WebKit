@@ -365,7 +365,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 #else
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     if (font) {
-        font = [fontManager convertFont:font.get() toSize:size];
+        font = [fontManager convertFont:checked_objc_cast<NSFont>(font.get()) toSize:size];
         return font.autorelease();
     }
     font = [fontManager fontWithFamily:fontName traits:0 weight:0 size:size];

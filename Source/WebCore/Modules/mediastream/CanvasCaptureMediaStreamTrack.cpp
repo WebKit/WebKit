@@ -63,9 +63,14 @@ CanvasCaptureMediaStreamTrack::CanvasCaptureMediaStreamTrack(Document& document,
 {
 }
 
+void CanvasCaptureMediaStreamTrack::requestFrame()
+{
+    downcast<Source>(source()).requestFrame();
+}
+
 RefPtr<VideoFrame> CanvasCaptureMediaStreamTrack::grabFrame()
 {
-    Ref source = static_cast<Source&>(this->source());
+    Ref source = downcast<Source>(this->source());
     return source->grabFrame();
 }
 

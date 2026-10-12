@@ -26,6 +26,7 @@
 #import "config.h"
 #import "SearchPopupMenuCocoa.h"
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
@@ -129,11 +130,11 @@ void saveRecentSearchesToFile(const String& name, const Vector<RecentSearch>& se
 
     RetainPtr nsDirectory = directory.createNSString();
     RetainPtr<NSDictionary> recentSearchesPlist = readSearchFieldRecentSearchesPlist(nsDirectory.get());
-    RetainPtr<NSMutableDictionary> itemsDictionary = [recentSearchesPlist objectForKey:itemsKey];
+    RetainPtr itemsDictionary = dynamic_objc_cast<NSMutableDictionary>([recentSearchesPlist objectForKey:itemsKey]);
 
     // The NSMutableDictionary method we use to read the property list guarantees we get only
     // mutable containers, but it does not guarantee the file has a dictionary as expected.
-    if (![itemsDictionary isKindOfClass:[NSDictionary class]]) {
+    if (!itemsDictionary) {
         itemsDictionary = adoptNS([[NSMutableDictionary alloc] init]);
         recentSearchesPlist = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:itemsDictionary.get(), itemsKey, nil]);
     }

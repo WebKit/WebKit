@@ -56,6 +56,7 @@ OBJC_CLASS NSTextTab;
 SPECIALIZE_OBJC_TYPE_TRAITS(UIImage, PAL::getUIImageClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(NSShadow, PAL::getNSShadowClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(NSPresentationIntent, PAL::getNSPresentationIntentClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(NSTextTableBlock, WebCore::getNSTextTableBlockClassSingleton())
 #endif
 
 namespace WebCore {
@@ -247,7 +248,7 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle&
 
             RetainPtr tableBlock = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:foundTable->value.get() startingRow:item.startingRow rowSpan:item.rowSpan startingColumn:item.startingColumn columnSpan:item.columnSpan]);
             [tableBlock setVerticalAlignment:reconstructNSTextBlockVerticalAlignment(item.verticalAlignment)];
-            configureNSTextBlockFromParagraphStyleCommonTableAttributes(tableBlock.get(), item);
+            configureNSTextBlockFromParagraphStyleCommonTableAttributes(checked_objc_cast<NSTextTableBlock>(tableBlock.get()), item);
             return tableBlock;
         });
     };

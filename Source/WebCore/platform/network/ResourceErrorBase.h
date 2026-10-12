@@ -28,6 +28,7 @@
 
 #include <source_location>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -127,3 +128,8 @@ WEBCORE_EXPORT ResourceError badResponseHeadersError(const URL&);
 bool operator==(const ResourceError& a, const ResourceError& b);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ResourceError)
+    // ResourceError is the only subclass of ResourceErrorBase.
+    static bool isType(const WebCore::ResourceErrorBase&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

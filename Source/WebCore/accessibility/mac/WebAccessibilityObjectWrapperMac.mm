@@ -256,12 +256,12 @@ static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> ac
     AccessibilitySearchTextCriteria criteria;
     AccessibilityTextOperation operation;
 
-    RetainPtr<NSString> activityParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextActivity];
-    RetainPtr<NSString> ambiguityResolutionParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextAmbiguityResolution];
-    RetainPtr<NSString> replacementStringParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextReplacementString];
-    RetainPtr<NSArray> searchStringsParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextSearchStrings];
+    RetainPtr activityParameter = dynamic_objc_cast<NSString>([parameterizedAttribute objectForKey:NSAccessibilitySelectTextActivity]);
+    RetainPtr ambiguityResolutionParameter = dynamic_objc_cast<NSString>([parameterizedAttribute objectForKey:NSAccessibilitySelectTextAmbiguityResolution]);
+    RetainPtr replacementStringParameter = dynamic_objc_cast<NSString>([parameterizedAttribute objectForKey:NSAccessibilitySelectTextReplacementString]);
+    RetainPtr searchStringsParameter = dynamic_objc_cast<NSArray>([parameterizedAttribute objectForKey:NSAccessibilitySelectTextSearchStrings]);
 
-    if ([activityParameter isKindOfClass:[NSString class]]) {
+    if (activityParameter) {
         if ([activityParameter isEqualToString:NSAccessibilitySelectTextActivityFindAndReplace])
             operation.type = AccessibilityTextOperationType::Replace;
         else if ([activityParameter isEqualToString:NSAccessibilitySelectTextActivityFindAndCapitalize])
@@ -273,17 +273,17 @@ static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> ac
     }
 
     criteria.direction = AccessibilitySearchTextDirection::Closest;
-    if ([ambiguityResolutionParameter isKindOfClass:[NSString class]]) {
+    if (ambiguityResolutionParameter) {
         if ([ambiguityResolutionParameter isEqualToString:NSAccessibilitySelectTextAmbiguityResolutionClosestAfterSelection])
             criteria.direction = AccessibilitySearchTextDirection::Forward;
         else if ([ambiguityResolutionParameter isEqualToString:NSAccessibilitySelectTextAmbiguityResolutionClosestBeforeSelection])
             criteria.direction = AccessibilitySearchTextDirection::Backward;
     }
 
-    if ([replacementStringParameter isKindOfClass:[NSString class]])
+    if (replacementStringParameter)
         operation.replacementStrings = { String(replacementStringParameter.get()) };
 
-    if ([searchStringsParameter isKindOfClass:[NSArray class]])
+    if (searchStringsParameter)
         criteria.searchStrings = makeVector<String>(searchStringsParameter.get());
 
     return std::make_pair(criteria, operation);
@@ -293,21 +293,21 @@ static AccessibilitySearchTextCriteria accessibilitySearchTextCriteriaForParamet
 {
     AccessibilitySearchTextCriteria criteria;
 
-    RetainPtr<NSArray> searchStrings = [params objectForKey:NSAccessibilitySearchTextSearchStrings];
-    RetainPtr<NSString> start = [params objectForKey:NSAccessibilitySearchTextStartFrom];
-    RetainPtr<NSString> direction = [params objectForKey:NSAccessibilitySearchTextDirection];
+    RetainPtr searchStrings = dynamic_objc_cast<NSArray>([params objectForKey:NSAccessibilitySearchTextSearchStrings]);
+    RetainPtr start = dynamic_objc_cast<NSString>([params objectForKey:NSAccessibilitySearchTextStartFrom]);
+    RetainPtr direction = dynamic_objc_cast<NSString>([params objectForKey:NSAccessibilitySearchTextDirection]);
 
-    if ([searchStrings isKindOfClass:[NSArray class]])
+    if (searchStrings)
         criteria.searchStrings = makeVector<String>(searchStrings.get());
 
-    if ([start isKindOfClass:[NSString class]]) {
+    if (start) {
         if ([start isEqualToString:NSAccessibilitySearchTextStartFromBegin])
             criteria.start = AccessibilitySearchTextStartFrom::Begin;
         else if ([start isEqualToString:NSAccessibilitySearchTextStartFromEnd])
             criteria.start = AccessibilitySearchTextStartFrom::End;
     }
 
-    if ([direction isKindOfClass:[NSString class]]) {
+    if (direction) {
         if ([direction isEqualToString:NSAccessibilitySearchTextDirectionBackward])
             criteria.direction = AccessibilitySearchTextDirection::Backward;
         else if ([direction isEqualToString:NSAccessibilitySearchTextDirectionClosest])
@@ -323,20 +323,20 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
 {
     AccessibilityTextOperation operation;
 
-    RetainPtr<NSArray> markerRanges = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationMarkerRanges];
-    RetainPtr<NSString> operationType = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationType];
-    RetainPtr<NSArray> individualReplacementStrings = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationIndividualReplacementStrings];
-    RetainPtr<NSString> replacementString = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString];
-    RetainPtr<NSNumber> smartReplace = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationSmartReplace];
+    RetainPtr markerRanges = dynamic_objc_cast<NSArray>([parameterizedAttribute objectForKey:NSAccessibilityTextOperationMarkerRanges]);
+    RetainPtr operationType = dynamic_objc_cast<NSString>([parameterizedAttribute objectForKey:NSAccessibilityTextOperationType]);
+    RetainPtr individualReplacementStrings = dynamic_objc_cast<NSArray>([parameterizedAttribute objectForKey:NSAccessibilityTextOperationIndividualReplacementStrings]);
+    RetainPtr replacementString = dynamic_objc_cast<NSString>([parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString]);
+    RetainPtr smartReplace = dynamic_objc_cast<NSNumber>([parameterizedAttribute objectForKey:NSAccessibilityTextOperationSmartReplace]);
 
-    if ([markerRanges isKindOfClass:[NSArray class]]) {
+    if (markerRanges) {
         operation.textRanges = makeVector(markerRanges.get(), [&axObjectCache] (id markerRange) {
             AX_ASSERT(AXObjectIsTextMarkerRange(markerRange));
             return rangeForTextMarkerRange(axObjectCache, (AXTextMarkerRangeRef)markerRange);
         });
     }
 
-    if ([operationType isKindOfClass:[NSString class]]) {
+    if (operationType) {
         if ([operationType isEqualToString:NSAccessibilityTextOperationReplace])
             operation.type = AccessibilityTextOperationType::Replace;
         else if ([operationType isEqualToString:NSAccessibilityTextOperationReplacePreserveCase])
@@ -349,12 +349,12 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
             operation.type = AccessibilityTextOperationType::Uppercase;
     }
 
-    if ([individualReplacementStrings isKindOfClass:[NSArray class]]) {
+    if (individualReplacementStrings) {
         operation.replacementStrings = makeVector<String>(individualReplacementStrings.get());
-    } else if ([replacementString isKindOfClass:[NSString class]])
+    } else if (replacementString)
         operation.replacementStrings = { String(replacementString.get()) };
 
-    if ([smartReplace isKindOfClass:[NSNumber class]])
+    if (smartReplace)
         operation.smartReplace = [smartReplace boolValue] ? AccessibilityTextOperationSmartReplace::Yes : AccessibilityTextOperationSmartReplace::No;
 
     return operation;
@@ -369,8 +369,8 @@ static std::pair<AXTextMarkerRange, AccessibilitySearchDirection> misspellingSea
     std::pair<AXTextMarkerRange, AccessibilitySearchDirection> criteria;
     criteria.first = AXTextMarkerRange { (AXTextMarkerRangeRef)markerRangeRef.get() };
 
-    RetainPtr<NSNumber> forward = [params objectForKey:NSAccessibilitySearchTextDirection];
-    if ([forward isKindOfClass:[NSNumber class]])
+    RetainPtr forward = dynamic_objc_cast<NSNumber>([params objectForKey:NSAccessibilitySearchTextDirection]);
+    if (forward)
         criteria.second = [forward boolValue] ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous;
     else
         criteria.second = AccessibilitySearchDirection::Next;
@@ -2848,7 +2848,7 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
         }
     } else {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        callback([hitTestResult accessibilityAttributeValue:NSAccessibilityInfoStringForTestingAttribute]);
+        callback(dynamic_objc_cast<NSString>([hitTestResult accessibilityAttributeValue:NSAccessibilityInfoStringForTestingAttribute]));
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }

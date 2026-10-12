@@ -91,7 +91,8 @@ inline RenderAncestorIterator<T>::RenderAncestorIterator(T* current)
 template <typename T>
 inline RenderAncestorIterator<T>& RenderAncestorIterator<T>::operator++()
 {
-    return static_cast<RenderAncestorIterator<T>&>(RenderIterator<T>::traverseAncestor());
+    RenderIterator<T>::traverseAncestor();
+    return *this;
 }
 
 // RenderAncestorConstIterator
@@ -111,7 +112,8 @@ inline RenderAncestorConstIterator<T>::RenderAncestorConstIterator(const T* curr
 template <typename T>
 inline RenderAncestorConstIterator<T>& RenderAncestorConstIterator<T>::operator++()
 {
-    return static_cast<RenderAncestorConstIterator<T>&>(RenderConstIterator<T>::traverseAncestor());
+    RenderConstIterator<T>::traverseAncestor();
+    return *this;
 }
 
 // RenderAncestorIteratorAdapter

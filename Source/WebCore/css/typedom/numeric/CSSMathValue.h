@@ -59,7 +59,7 @@ template<typename T> bool CSSMathValue::equalsImpl(const CSSNumericValue& other)
         return false;
 
     ASSERT(styleValueType() == other.styleValueType());
-    Ref thisValues = static_cast<const T*>(this)->values();
+    Ref thisValues = downcast<T>(*this).values();
     Ref otherValues = otherT->values();
     auto length = thisValues->length();
     if (length != otherValues->length())

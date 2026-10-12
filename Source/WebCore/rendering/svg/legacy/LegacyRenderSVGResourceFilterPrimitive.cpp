@@ -52,7 +52,7 @@ LegacyRenderSVGResourceFilterPrimitive::LegacyRenderSVGResourceFilterPrimitive(S
 
 SVGFilterPrimitiveStandardAttributes& LegacyRenderSVGResourceFilterPrimitive::filterPrimitiveElement() const
 {
-    return static_cast<SVGFilterPrimitiveStandardAttributes&>(LegacyRenderSVGHiddenContainer::element());
+    return downcast<SVGFilterPrimitiveStandardAttributes>(LegacyRenderSVGHiddenContainer::element());
 }
 
 void LegacyRenderSVGResourceFilterPrimitive::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)

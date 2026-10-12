@@ -55,7 +55,7 @@ RenderMathMLRow::~RenderMathMLRow() = default;
 
 MathMLRowElement& RenderMathMLRow::element() const
 {
-    return static_cast<MathMLRowElement&>(nodeForNonAnonymous());
+    return downcast<MathMLRowElement>(nodeForNonAnonymous());
 }
 
 RenderMathMLOperator* RenderMathMLRow::unembellishedOperator() const

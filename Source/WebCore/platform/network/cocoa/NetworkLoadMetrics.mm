@@ -28,6 +28,7 @@
 
 #import "ResourceHandle.h"
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -92,7 +93,7 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, const Resour
     RetainPtr<NSDictionary> timingData = [connection _timingData];
 
     auto timingValue = [&](NSString *key) -> RetainPtr<NSDate> {
-        if (RetainPtr<NSNumber> number = [timingData objectForKey:key]) {
+        if (RetainPtr number = dynamic_objc_cast<NSNumber>([timingData objectForKey:key])) {
             if (double doubleValue = number.get().doubleValue)
                 return adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:doubleValue]);
         }

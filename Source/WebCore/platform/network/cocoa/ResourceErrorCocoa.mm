@@ -33,6 +33,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/NetworkOSObject.h>
 #import <wtf/text/WTFString.h>
 
 @interface NSError (WebExtras)
@@ -313,7 +314,7 @@ String ResourceError::blockedTrackerHostName() const
     ASSERT(blockedKnownTracker());
 
     RetainPtr error = nsError();
-    if (RetainPtr<id> failingPath = error.get().userInfo[@"_NSURLErrorNWPathKey"]) {
+    if (OSObjectPtr failingPath = dynamicOSObjectCast<nw_path_t>(error.get().userInfo[@"_NSURLErrorNWPathKey"])) {
         auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath.get()));
         if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))
             return String::fromUTF8(hostName);
@@ -321,7 +322,7 @@ String ResourceError::blockedTrackerHostName() const
     }
     // This loop can be removed when the CFNetwork loader is no longer in use
     for (NSError *underlyingError in error.get().underlyingErrors) {
-        if (RetainPtr<id> failingPath = underlyingError.userInfo[@"_NSURLErrorNWPathKey"]) {
+        if (OSObjectPtr failingPath = dynamicOSObjectCast<nw_path_t>(underlyingError.userInfo[@"_NSURLErrorNWPathKey"])) {
             auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath.get()));
             if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))
                 return String::fromUTF8(hostName);
