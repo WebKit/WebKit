@@ -381,6 +381,14 @@ if (WKC_ENABLE_FULL_WEBCORE)
     message(STATUS "WKC full WebCore probe: ${_WKC_WEBCORE_SOURCE_COUNT} source files selected from Sources.txt/generated outputs")
 endif ()
 
+# ResourceHandle.cpp's CURL branch is a stub for ports that run networking in a
+# separate NetworkProcess. WKC runs in-process, so compile out those fallback
+# definitions and provide the port implementation from platform/WKC instead.
+# This is source-local: the rest of WebCore still builds with USE_CURL=1.
+set_source_files_properties("${WEBCORE_DIR}/platform/network/ResourceHandle.cpp"
+    PROPERTIES COMPILE_OPTIONS "-UUSE_CURL")
+
+
 # Full WebCore requires the shared platform-side audio and media-stream
 # implementations in addition to Sources.txt. Select the portable top-level
 # implementations only; OS/port subdirectories remain excluded unless WKC-owned.
