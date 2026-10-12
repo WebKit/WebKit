@@ -59,6 +59,10 @@ public:
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
     bool NODELETE isConnected() const;
 
+    // The completion handler reports whether the device was acquired; on failure the previous
+    // routing stays in effect.
+    void setSinkId(const String& persistentDeviceId, bool isSilentSink, CompletionHandler<void(bool)>&&);
+
 #if PLATFORM(IOS_FAMILY)
     void setSceneIdentifier(const String&) final;
 #endif
@@ -91,6 +95,8 @@ private:
 
     RefPtr<AudioDestination> m_destination;
     String m_inputDeviceId;
+    String m_outputDevicePersistentId;
+    bool m_outputSinkIsSilent { false };
     unsigned m_numberOfInputChannels { 0 };
     bool m_wasDestinationStarted { false };
     bool m_isEffectivelyPlayingAudio { false };
