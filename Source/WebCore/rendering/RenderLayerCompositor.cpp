@@ -1743,9 +1743,13 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         }
         
         if (layerNeedsUpdate || layer.needsCompositingConfigurationUpdate()) {
+            bool hadClippingLayer = layerBacking->hasClippingLayer();
             if (layerBacking->updateConfiguration(traversalState.compositingAncestor)) {
                 layerNeedsUpdate = true; // We also need to update geometry.
                 layer.setNeedsCompositingLayerConnection();
+                // Composited children are positioned relative to parentForSublayers(), which changes with the clipping layer.
+                if (hadClippingLayer != layerBacking->hasClippingLayer())
+                    updateLevel.add(UpdateLevel::CompositedChildren);
             }
 
             layerBacking->updateDebugIndicators(m_showDebugBorders, m_showRepaintCounter);
