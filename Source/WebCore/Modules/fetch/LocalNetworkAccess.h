@@ -41,7 +41,7 @@ struct ClientOrigin;
 // would block nearly every cross-origin subresource, so the check is skipped instead.
 constexpr bool canDetermineConnectionAddressSpace()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SOUP)
     return true;
 #else
     return false;
