@@ -101,7 +101,9 @@ void applyCookiesToRequest(NetworkingContext* context, ResourceRequest& request)
         request.url(),
         std::nullopt,
         std::nullopt,
-        IncludeSecureCookies::Yes
+        (request.url().protocolIs("https"_s) || request.url().protocolIs("wss"_s))
+            ? IncludeSecureCookies::Yes
+            : IncludeSecureCookies::No
     };
     auto cookieHeader = session->cookieRequestHeaderFieldValue(proxy).first;
     if (!cookieHeader.isEmpty())
