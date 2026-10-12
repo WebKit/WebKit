@@ -39,6 +39,7 @@
 #include "WebErrors.h"
 #include "WebKitDirectoryInputStream.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/DNS.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -442,9 +443,20 @@ static ShouldStartHTTPRedirection shouldStartHTTPRedirection(const WebCore::Reso
     return ShouldStartHTTPRedirection::Yes;
 }
 
+static std::optional<IPAddress> remoteIPAddress(SoupMessage* message)
+{
+    auto* address = soup_message_get_remote_address(message);
+    if (!G_IS_INET_SOCKET_ADDRESS(address))
+        return std::nullopt;
+    GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
+    return IPAddress::fromString(String::fromUTF8(ipAddress.get()));
+}
+
 void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 {
     m_response = ResourceResponse(m_soupMessage.get(), m_sniffedContentType);
+    if (CheckedPtr session = networkSession())
+        m_response.setIPAddressSpace(session->classifyConnectionAddressSpace(remoteIPAddress(m_soupMessage.get()), m_response.url()));
 
     switch (shouldStartHTTPRedirection(m_response)) {
     case ShouldStartHTTPRedirection::Yes:
