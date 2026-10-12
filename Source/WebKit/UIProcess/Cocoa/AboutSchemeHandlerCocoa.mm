@@ -24,8 +24,36 @@
  */
 
 #import "config.h"
-#include "AboutSchemeHandler.h"
+#import "AboutSchemeHandler.h"
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AboutSchemeHandlerAdditions.mm>)
-#include <WebKitAdditions/AboutSchemeHandlerAdditions.mm>
+#import "WebPrivacyHelpers.h"
+#import <WebCore/ResourceResponse.h>
+#import <WebCore/SharedBuffer.h>
+
+namespace WebKit {
+
+#if ENABLE(HEAVY_AD_UNLOADING)
+class AdTaggingListHandler final : public AboutSchemeHandler::OpaquePathHandler {
+public:
+    static constexpr auto path = "ad-tagging-list"_s;
+
+    void loadContent(URL requestURL, CompletionHandler<void(WebCore::ResourceResponse&&, Ref<WebCore::SharedBuffer>&&)>&& handler) final
+    {
+        ResourceMonitorURLsController::singleton().getSource([requestURL = WTF::move(requestURL), handler = WTF::move(handler)](String&& source) mutable {
+            auto data = WebCore::SharedBuffer::create(source.span8());
+
+            WebCore::ResourceResponse response(WTF::move(requestURL), "text/plain"_s, data->size(), "UTF-8"_s);
+            handler(WTF::move(response), WTF::move(data));
+        });
+    }
+};
 #endif
+
+void AboutSchemeHandler::platformInitialize()
+{
+#if ENABLE(HEAVY_AD_UNLOADING)
+    registerHandler(AdTaggingListHandler::path, makeUnique<AdTaggingListHandler>());
+#endif
+}
+
+} // namespace WebKit
