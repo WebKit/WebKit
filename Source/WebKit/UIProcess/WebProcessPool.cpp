@@ -1308,7 +1308,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #endif
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition, CrossOriginMode crossOriginMode, const std::optional<SecurityOriginData>& coopOrigin, WebProcessProxy* reusableProvisionalProcess)
+Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition, CrossOriginMode crossOriginMode, const std::optional<SecurityOriginData>& coopOrigin, WebProcessProxy* reusableProvisionalProcess, const std::optional<SecurityOriginData>& cachedCOOPProcessOrigin)
 {
     // Reusable processes are never isolated.
     bool canReuseAnExistingProcess = crossOriginMode == CrossOriginMode::Shared;
@@ -1348,6 +1348,16 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
         if (RefPtr process = webProcessCache().takeCOOPProcess(*coopOrigin, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using COOP WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
+            return process.releaseNonNull();
+        }
+    }
+
+    if (canReuseAnExistingProcess && cachedCOOPProcessOrigin) {
+        ASSERT(processSwapDisposition != ProcessSwapDisposition::COOP);
+        if (RefPtr process = webProcessCache().takeCOOPProcess(*cachedCOOPProcessOrigin, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using COOP WebProcess from WebProcess cache before the browsing context group switch (process=%p, PID=%i)", process.get(), process->processID());
+            ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
+            process->markCOOPCacheOriginAsUnconfirmed();
             return process.releaseNonNull();
         }
     }
@@ -2475,6 +2485,9 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         return { WTF::move(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s };
     }
 
+    if (navigation.currentRequestIsRedirect() && sourceProcess->isCOOPCacheOriginUnconfirmed() && sourceProcess->coopCacheOrigin() != SecurityOriginData::fromURL(targetURL))
+        return { createNewProcess(), nullptr, "Redirect away from the origin of a process taken from the COOP process cache"_s };
+
     if (siteIsolationEnabled && (targetURL.isAboutBlank() || targetURL.isAboutSrcDoc())) {
         RefPtr navigationOriginatorFrame = navigation.originatingFrameInfo() ? WebFrameProxy::webFrame(navigation.originatingFrameInfo()->frameID) : nullptr;
         if (navigationOriginatorFrame)
@@ -2611,6 +2624,13 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
                 return { process.releaseNonNull(), nullptr, reason };
             }
         }
+    }
+
+    if (frame.isMainFrame() && isolatedProcessType == WebProcessProxy::IsolatedProcessType::MainFrame && !navigation.targetItem() && crossOriginMode == CrossOriginMode::Shared && targetURL.protocolIsInHTTPFamily()) {
+        Ref process = processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None, crossOriginMode, std::nullopt, nullptr, SecurityOriginData::fromURL(targetURL));
+        if (process->isCOOPCacheOriginUnconfirmed())
+            reason = "Using cached COOP process for the target origin"_s;
+        return { WTF::move(process), nullptr, reason };
     }
 
     return { createNewProcess(), nullptr, reason };
