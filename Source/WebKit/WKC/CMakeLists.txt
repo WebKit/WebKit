@@ -348,6 +348,7 @@ file(GLOB_RECURSE WKC_WEBKIT_SOURCES
 set(WEBCORE_CORE_SOURCES)
 if (WKC_ENABLE_FULL_WEBCORE)
     file(STRINGS "${WEBCORE_DIR}/Sources.txt" _WKC_WEBCORE_SOURCE_LINES)
+    set(_WKC_WEBCORE_MISSING_SOURCES)
     foreach (_source_line IN LISTS _WKC_WEBCORE_SOURCE_LINES)
         string(STRIP "${_source_line}" _source_entry)
         if (_source_entry STREQUAL "" OR _source_entry MATCHES "^//")
@@ -357,9 +358,9 @@ if (WKC_ENABLE_FULL_WEBCORE)
         # WebCore's source list annotates some TUs with @cost, @header, and
         # @no-unify-when metadata. Those annotations are for upstream's unified
         # build generator; a standalone CMake target only needs the source path.
-        string(REGEX REPLACE "[ \t]+@.*$" "" _source_entry "${_source_entry}")
+        string(REGEX REPLACE "[ \\t]+@.*$" "" _source_entry "${_source_entry}")
         string(STRIP "${_source_entry}" _source_entry)
-        if (NOT _source_entry MATCHES "\\.cpp$")
+        if (NOT _source_entry MATCHES "\\\\.cpp$")
             continue()
         endif ()
 
@@ -370,6 +371,11 @@ if (WKC_ENABLE_FULL_WEBCORE)
             # sources directory; build.yml's forwarding/copy steps put generated
             # copies in WebCore/WebCore when they are available.
             list(APPEND WEBCORE_CORE_SOURCES "${WEBCORE_DIR}/WebCore/${_source_entry}")
+        else ()
+            # Do not silently lose entries from Apple's canonical source list.
+            # Record unresolved paths so engine bring-up can tell a deliberately
+            # excluded platform feature from a missing generated source.
+            list(APPEND _WKC_WEBCORE_MISSING_SOURCES "${_source_entry}")
         endif ()
     endforeach ()
 
@@ -379,6 +385,26 @@ if (WKC_ENABLE_FULL_WEBCORE)
     list(REMOVE_DUPLICATES WEBCORE_CORE_SOURCES)
     list(LENGTH WEBCORE_CORE_SOURCES _WKC_WEBCORE_SOURCE_COUNT)
     message(STATUS "WKC full WebCore probe: ${_WKC_WEBCORE_SOURCE_COUNT} source files selected from Sources.txt/generated outputs")
+
+    # Emit a complete omission report even while the full engine is still being
+    # brought up. This prevents missing Sources.txt entries from going unnoticed.
+    if (_WKC_WEBCORE_MISSING_SOURCES)
+        list(LENGTH _WKC_WEBCORE_MISSING_SOURCES _WKC_WEBCORE_MISSING_COUNT)
+        string(JOIN "\\n" _WKC_WEBCORE_MISSING_REPORT ${_WKC_WEBCORE_MISSING_SOURCES})
+        file(WRITE "${CMAKE_BINARY_DIR}/wkc-missing-webcore-sources.txt" "${_WKC_WEBCORE_MISSING_REPORT}\\n")
+        message(WARNING "WKC full WebCore omitted ${_WKC_WEBCORE_MISSING_COUNT} Sources.txt entries; full list: ${CMAKE_BINARY_DIR}/wkc-missing-webcore-sources.txt")
+        set(_WKC_WEBCORE_MISSING_SAMPLE_COUNT 0)
+        foreach (_missing_source IN LISTS _WKC_WEBCORE_MISSING_SOURCES)
+            if (_WKC_WEBCORE_MISSING_SAMPLE_COUNT GREATER_EQUAL 40)
+                break()
+            endif ()
+            message(STATUS "WKC missing WebCore source: ${_missing_source}")
+            math(EXPR _WKC_WEBCORE_MISSING_SAMPLE_COUNT "${_WKC_WEBCORE_MISSING_SAMPLE_COUNT} + 1")
+        endforeach ()
+    else ()
+        file(WRITE "${CMAKE_BINARY_DIR}/wkc-missing-webcore-sources.txt" "None\\n")
+        message(STATUS "WKC full WebCore resolved every .cpp entry in Sources.txt")
+    endif ()
 endif ()
 
 # ResourceHandle.cpp's CURL branch is a stub for ports that run networking in a
