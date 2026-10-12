@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PseudoElementIdentifier.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ struct ExtractorState {
     enum class PropertyValueType : bool { Resolved, Computed };
     PropertyValueType valueType;
 
-    const Style::ComputedStyle& style;
+    const CheckedRef<const Style::ComputedStyle> style;
 
     Ref<Element> element;
     const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier;

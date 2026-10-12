@@ -21,195 +21,195 @@ public:
         auto mapper = [](auto& extractorState, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) -> Ref<CSSValue> {
             return createCSSValue(extractorState.pool, extractorState.style, value);
         };
-        return extractCoordinatedValueListValue<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete>(extractorState, extractorState.style.backgroundLayers(), mapper);
+        return extractCoordinatedValueListValue<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete>(extractorState, extractorState.style->backgroundLayers(), mapper);
     }
     static void extractBackgroundCoordinatedValueListPropertyTestDiscreteSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
         auto mapper = [](auto& extractorState, auto& builder, const auto& context, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) {
             serializationForCSS(builder, context, extractorState.style, value);
         };
-        extractCoordinatedValueListSerialization<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete>(extractorState, builder, context, extractorState.style.backgroundLayers(), mapper);
+        extractCoordinatedValueListSerialization<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete>(extractorState, builder, context, extractorState.style->backgroundLayers(), mapper);
     }
     static RefPtr<CSSValue> extractBackgroundCoordinatedValueListPropertyTestTwo(ExtractorState& extractorState)
     {
         auto mapper = [](auto& extractorState, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) -> Ref<CSSValue> {
             return createCSSValue(extractorState.pool, extractorState.style, value);
         };
-        return extractCoordinatedValueListValue<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo>(extractorState, extractorState.style.backgroundLayers(), mapper);
+        return extractCoordinatedValueListValue<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo>(extractorState, extractorState.style->backgroundLayers(), mapper);
     }
     static void extractBackgroundCoordinatedValueListPropertyTestTwoSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
         auto mapper = [](auto& extractorState, auto& builder, const auto& context, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) {
             serializationForCSS(builder, context, extractorState.style, value);
         };
-        extractCoordinatedValueListSerialization<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo>(extractorState, builder, context, extractorState.style.backgroundLayers(), mapper);
+        extractCoordinatedValueListSerialization<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo>(extractorState, builder, context, extractorState.style->backgroundLayers(), mapper);
     }
     static RefPtr<CSSValue> extractTestAnimationWrapper(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testAnimationWrapper());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testAnimationWrapper());
     }
     static void extractTestAnimationWrapperSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testAnimationWrapper());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testAnimationWrapper());
     }
     static RefPtr<CSSValue> extractTestAnimationWrapperAccelerationAlways(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testAnimationWrapperAccelerationAlways());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testAnimationWrapperAccelerationAlways());
     }
     static void extractTestAnimationWrapperAccelerationAlwaysSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testAnimationWrapperAccelerationAlways());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testAnimationWrapperAccelerationAlways());
     }
     static RefPtr<CSSValue> extractTestAnimationWrapperAccelerationThreadedOnly(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testAnimationWrapperAccelerationThreadedOnly());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testAnimationWrapperAccelerationThreadedOnly());
     }
     static void extractTestAnimationWrapperAccelerationThreadedOnlySerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testAnimationWrapperAccelerationThreadedOnly());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testAnimationWrapperAccelerationThreadedOnly());
     }
     static RefPtr<CSSValue> extractTestColor(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testColor());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testColor());
     }
     static void extractTestColorSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testColor());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testColor());
     }
     static RefPtr<CSSValue> extractTestColorAllowsTypesAbsolute(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testColorAllowsTypesAbsolute());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testColorAllowsTypesAbsolute());
     }
     static void extractTestColorAllowsTypesAbsoluteSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testColorAllowsTypesAbsolute());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testColorAllowsTypesAbsolute());
     }
     static RefPtr<CSSValue> extractTestColorPropertyWithVisitedLinkSupport(ExtractorState& extractorState)
     {
         if (extractorState.allowVisitedStyle) {
-            return extractorState.pool.createColorValue(extractorState.style.visitedDependentTestColorPropertyWithVisitedLinkSupport());
+            return extractorState.pool.createColorValue(extractorState.style->visitedDependentTestColorPropertyWithVisitedLinkSupport());
         }
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testColorPropertyWithVisitedLinkSupport());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testColorPropertyWithVisitedLinkSupport());
     }
     static void extractTestColorPropertyWithVisitedLinkSupportSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
         if (extractorState.allowVisitedStyle) {
-            builder.append(WebCore::serializationForCSS(extractorState.style.visitedDependentTestColorPropertyWithVisitedLinkSupport()));
+            builder.append(WebCore::serializationForCSS(extractorState.style->visitedDependentTestColorPropertyWithVisitedLinkSupport()));
             return;
         }
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testColorPropertyWithVisitedLinkSupport());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testColorPropertyWithVisitedLinkSupport());
     }
     static RefPtr<CSSValue> extractTestRenderStyleGetterNodeleteFalse(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleGetterNodeleteFalse());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleGetterNodeleteFalse());
     }
     static void extractTestRenderStyleGetterNodeleteFalseSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleGetterNodeleteFalse());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleGetterNodeleteFalse());
     }
     static RefPtr<CSSValue> extractTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
     }
     static void extractTestRenderStyleHasExplicitlySetPolicyAllAuthorOriginSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
     }
     static RefPtr<CSSValue> extractTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleHasExplicitlySetPolicyAllBorderRadius());
     }
     static void extractTestRenderStyleHasExplicitlySetPolicyAllBorderRadiusSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleHasExplicitlySetPolicyAllBorderRadius());
     }
     static RefPtr<CSSValue> extractTestRenderStyleHasExplicitlySetPolicyValueOnly(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyValueOnly());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleHasExplicitlySetPolicyValueOnly());
     }
     static void extractTestRenderStyleHasExplicitlySetPolicyValueOnlySerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyValueOnly());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleHasExplicitlySetPolicyValueOnly());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelEnum(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelEnum());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelEnum());
     }
     static void extractTestRenderStyleStorageOneLevelEnumSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelEnum());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelEnum());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelRaw(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelRaw());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelRaw());
     }
     static void extractTestRenderStyleStorageOneLevelRawSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelRaw());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelRaw());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelReference(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelReference());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelReference());
     }
     static void extractTestRenderStyleStorageOneLevelReferenceSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelReference());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelReference());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelValue(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelValue());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelValue());
     }
     static void extractTestRenderStyleStorageOneLevelValueSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelValue());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelValue());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelEnum(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelEnum());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelEnum());
     }
     static void extractTestRenderStyleStorageTwoLevelEnumSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelEnum());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelEnum());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelRaw(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelRaw());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelRaw());
     }
     static void extractTestRenderStyleStorageTwoLevelRawSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelRaw());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelRaw());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelReference(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelReference());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelReference());
     }
     static void extractTestRenderStyleStorageTwoLevelReferenceSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelReference());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelReference());
     }
     static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelValue(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelValue());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelValue());
     }
     static void extractTestRenderStyleStorageTwoLevelValueSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleStorageTwoLevelValue());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageTwoLevelValue());
     }
     static RefPtr<CSSValue> extractTestSettingsOne(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testSettingsOne());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testSettingsOne());
     }
     static void extractTestSettingsOneSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testSettingsOne());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testSettingsOne());
     }
     static RefPtr<CSSValue> extractTestLogicalPropertyGroupPhysicalVertical(ExtractorState& extractorState)
     {
-        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testLogicalPropertyGroupPhysicalVertical());
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testLogicalPropertyGroupPhysicalVertical());
     }
     static void extractTestLogicalPropertyGroupPhysicalVerticalSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
     {
-        serializationForCSS(builder, context, extractorState.style, extractorState.style.testLogicalPropertyGroupPhysicalVertical());
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testLogicalPropertyGroupPhysicalVertical());
     }
 };
 
@@ -539,7 +539,7 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         return ExtractorFunctions::extractTestLogicalPropertyGroupPhysicalVertical(extractorState);
     case CSSPropertyID::TestLogicalPropertyGroupLogicalBlock:
         // Logical properties are handled by recursing using the direction resolved property.
-        return extractValue(extractorState, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style.writingMode()));
+        return extractValue(extractorState, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style->writingMode()));
     case CSSPropertyID::TestLogicalPropertyGroupLogicalInline:
         // Skipped - Not computable
         return nullptr;
@@ -910,7 +910,7 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         return;
     case CSSPropertyID::TestLogicalPropertyGroupLogicalBlock:
         // Logical properties are handled by recursing using the direction resolved property.
-        extractValueSerialization(extractorState, builder, context, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style.writingMode()));
+        extractValueSerialization(extractorState, builder, context, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style->writingMode()));
         return;
     case CSSPropertyID::TestLogicalPropertyGroupLogicalInline:
         // Skipped - Not computable

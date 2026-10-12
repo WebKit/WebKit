@@ -1,7 +1,6 @@
 [ macOS ] Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
 [ macOS ] Modules/indexeddb/server/SQLiteIDBCursor.cpp
 StyleBuilderGenerated.cpp
-StyleExtractorGenerated.cpp
 [ macOS ] accessibility/AXCoreObject.cpp
 [ macOS ] accessibility/AXCrossProcessSearch.cpp
 [ macOS ] accessibility/AXGeometryManager.cpp

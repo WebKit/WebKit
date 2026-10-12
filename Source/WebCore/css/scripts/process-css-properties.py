@@ -5153,14 +5153,14 @@ class GenerateStyleExtractorGenerated:
     def _generate_visited_link_color_supporting_property_value_getter(self, to, property):
         to.write(f"if (extractorState.allowVisitedStyle) {{")
         with to.indent():
-            to.write(f"return extractorState.pool.createColorValue(extractorState.style.visitedDependent{property.codegen_properties.computed_style_name_for_methods}());")
+            to.write(f"return extractorState.pool.createColorValue(extractorState.style->visitedDependent{property.codegen_properties.computed_style_name_for_methods}());")
         to.write(f"}}")
         self._generate_property_value_getter(to, property)
 
     def _generate_visited_link_color_supporting_property_value_serialization_getter(self, to, property):
         to.write(f"if (extractorState.allowVisitedStyle) {{")
         with to.indent():
-            to.write(f"builder.append(WebCore::serializationForCSS(extractorState.style.visitedDependent{property.codegen_properties.computed_style_name_for_methods}()));")
+            to.write(f"builder.append(WebCore::serializationForCSS(extractorState.style->visitedDependent{property.codegen_properties.computed_style_name_for_methods}()));")
             to.write(f"return;")
         to.write(f"}}")
         self._generate_property_value_serialization_getter(to, property)
@@ -5172,22 +5172,22 @@ class GenerateStyleExtractorGenerated:
         with to.indent():
             to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, 'value')};")
         to.write(f"}};")
-        to.write(f"return extractCoordinatedValueListValue<{property.id_or_cascade_alias_id}>(extractorState, extractorState.style.{property.method_name_for_get_coordinated_value_list}(), mapper);")
+        to.write(f"return extractCoordinatedValueListValue<{property.id_or_cascade_alias_id}>(extractorState, extractorState.style->{property.method_name_for_get_coordinated_value_list}(), mapper);")
 
     def _generate_coordinated_value_list_property_value_serialization_getter(self, to, property):
         to.write(f"auto mapper = [](auto& extractorState, auto& builder, const auto& context, const auto& value, const std::optional<{property.type_name_for_coordinated_value_list}::value_type>&, const auto&) {{")
         with to.indent():
             to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, 'value')};")
         to.write(f"}};")
-        to.write(f"extractCoordinatedValueListSerialization<{property.id_or_cascade_alias_id}>(extractorState, builder, context, extractorState.style.{property.method_name_for_get_coordinated_value_list}(), mapper);")
+        to.write(f"extractCoordinatedValueListSerialization<{property.id_or_cascade_alias_id}>(extractorState, builder, context, extractorState.style->{property.method_name_for_get_coordinated_value_list}(), mapper);")
 
     # All other property value getters.
 
     def _generate_property_value_getter(self, to, property):
-        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style.{property.codegen_properties.computed_style_getter}()')};")
+        to.write(f"return {GenerateStyleExtractorGenerated.wrap_in_converter(property, f'extractorState.style->{property.codegen_properties.computed_style_getter}()')};")
 
     def _generate_property_value_serialization_getter(self, to, property):
-        to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'extractorState.style.{property.codegen_properties.computed_style_getter}()')};")
+        to.write(f"{GenerateStyleExtractorGenerated.wrap_in_serializer(property, f'extractorState.style->{property.codegen_properties.computed_style_getter}()')};")
 
     # Shorthand property value getter.
 
@@ -5297,7 +5297,7 @@ class GenerateStyleExtractorGenerated:
                         to.write(f"return nullptr;")
                     elif property.codegen_properties.is_logical and not property.codegen_properties.style_extractor_custom:
                         to.write(f"// Logical properties are handled by recursing using the direction resolved property.")
-                        to.write(f"return extractValue(extractorState, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style.writingMode()));")
+                        to.write(f"return extractValue(extractorState, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style->writingMode()));")
                     elif property.codegen_properties.longhands:
                         to.write(f"ASSERT(isShorthand(id));")
                         to.write(f"return {scope_for_function(property)}::extract{property.id_without_prefix}Shorthand(extractorState);")
@@ -5345,7 +5345,7 @@ class GenerateStyleExtractorGenerated:
                         to.write(f"return;")
                     elif property.codegen_properties.is_logical and not property.codegen_properties.style_extractor_custom:
                         to.write(f"// Logical properties are handled by recursing using the direction resolved property.")
-                        to.write(f"extractValueSerialization(extractorState, builder, context, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style.writingMode()));")
+                        to.write(f"extractValueSerialization(extractorState, builder, context, CSSProperty::resolveDirectionAwareProperty(id, extractorState.style->writingMode()));")
                         to.write(f"return;")
                     elif property.codegen_properties.longhands:
                         to.write(f"ASSERT(isShorthand(id));")
