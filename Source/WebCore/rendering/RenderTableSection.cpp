@@ -1399,11 +1399,29 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             row->paintShadowForRowIfNeeded(paintInfo, paintOffset);
     };
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    auto recordRowBackdrop = [&](unsigned rowIndex, PaintPhase phase) {
+        if (phase != PaintPhase::AXCustomColorCollectBackgrounds)
+            return;
+
+        CheckedPtr row = m_grid[rowIndex].rowRenderer;
+        if (!row || row->hasSelfPaintingLayer())
+            return;
+
+        auto rowPaintOffset = flipForWritingModeForChild(*row, paintOffset) + row->location();
+        auto rowBorderRect = FloatRect { LayoutRect(rowPaintOffset, row->borderBoxSize()) };
+        paintInfo.axCustomColorBackdropContext()->recordBackdrop(*row, rowBorderRect, paintInfo.paintBehavior);
+    };
+#endif
+
     auto paintContiguousCells = [&]() {
         // Draw the dirty cells in the order that they appear.
         for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
             paintRowShadow(r , paintInfo.phase);
             paintRowOutline(r, paintInfo.phase);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            recordRowBackdrop(r, paintInfo.phase);
+#endif
 
             for (unsigned c = dirtiedColumns.start; c < dirtiedColumns.end; c++) {
                 CellStruct& current = cellAt(r, c);
@@ -1474,6 +1492,9 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 
         for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
             paintRowOutline(r, paintInfo.phase);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            recordRowBackdrop(r, paintInfo.phase);
+#endif
 
             for (unsigned c = dirtiedColumns.start; c < dirtiedColumns.end; c++) {
                 CellStruct& current = cellAt(r, c);
