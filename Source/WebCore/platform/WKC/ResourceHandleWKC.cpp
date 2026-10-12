@@ -538,6 +538,11 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
         if (result != CURLE_OK) {
+            // Do not let a truncated document or subresource body escape as if it
+            // were usable response data. WebCore will receive the transport error
+            // and can handle the failed load through its normal error path.
+            data.clear();
+            response = ResourceResponse();
             error = ResourceError(static_cast<int>(result), currentRequest.url(), result == CURLE_OPERATION_TIMEDOUT ? ResourceError::Type::Timeout : ResourceError::Type::General);
             return;
         }
