@@ -70,10 +70,8 @@ bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& na
     case AttributeNames::backgroundAttr:
     case AttributeNames::marginwidthAttr:
     case AttributeNames::leftmarginAttr:
-    case AttributeNames::rightmarginAttr:
     case AttributeNames::marginheightAttr:
     case AttributeNames::topmarginAttr:
-    case AttributeNames::bottommarginAttr:
     case AttributeNames::bgcolorAttr:
     case AttributeNames::textAttr:
         return true;
@@ -97,16 +95,10 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
         addHTMLPixelLengthToStyle(style, CSSPropertyID::MarginRight, value);
         addHTMLPixelLengthToStyle(style, CSSPropertyID::MarginLeft, value);
         break;
-    case AttributeNames::rightmarginAttr:
-        addHTMLPixelLengthToStyle(style, CSSPropertyID::MarginRight, value);
-        break;
     case AttributeNames::marginheightAttr:
     case AttributeNames::topmarginAttr:
         addHTMLPixelLengthToStyle(style, CSSPropertyID::MarginBottom, value);
         addHTMLPixelLengthToStyle(style, CSSPropertyID::MarginTop, value);
-        break;
-    case AttributeNames::bottommarginAttr:
-        addHTMLPixelLengthToStyle(style, CSSPropertyID::MarginBottom, value);
         break;
     case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyID::BackgroundColor, value);

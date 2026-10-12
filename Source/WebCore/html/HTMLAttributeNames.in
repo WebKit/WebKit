@@ -87,7 +87,6 @@ axis
 background
 behavior
 bgcolor
-bottommargin
 blocking
 border
 bordercolor
@@ -391,7 +390,6 @@ required
 results
 rev
 reversed
-rightmargin
 role
 rows
 rowspan
