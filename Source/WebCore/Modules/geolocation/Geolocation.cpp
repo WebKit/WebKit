@@ -142,7 +142,7 @@ Ref<Geolocation> Geolocation::create(Navigator& navigator)
 }
 
 Geolocation::Geolocation(Navigator& navigator)
-    : ActiveDOMObject(navigator.scriptExecutionContext())
+    : ActiveDOMObject(protect(navigator.scriptExecutionContext()))
     , m_navigator(navigator)
     , m_resumeTimer(*this, &Geolocation::resumeTimerFired)
 {

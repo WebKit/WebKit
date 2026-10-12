@@ -1109,7 +1109,7 @@ void RTCPeerConnection::dispatchDataChannelEvent(UniqueRef<RTCDataChannelHandler
         if (connection.isClosed())
             return;
 
-        Ref channel = RTCDataChannel::create(*connection.document(), channelHandler.moveToUniquePtr(), WTF::move(label), WTF::move(channelInit), RTCDataChannelState::Open);
+        Ref channel = RTCDataChannel::create(protect(*connection.document()), channelHandler.moveToUniquePtr(), WTF::move(label), WTF::move(channelInit), RTCDataChannelState::Open);
         connection.m_channels.append(channel->identifier());
         ALWAYS_LOG_WITH_THIS(&connection, LOGIDENTIFIER_WITH_THIS(&connection), makeString("Dispatching data-channel event for channel "_s, channel->label()));
         connection.dispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, Ref { channel }));

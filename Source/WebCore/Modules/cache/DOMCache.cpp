@@ -125,7 +125,7 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
 
         RefPtr<FetchResponse> response;
         if (!result.returnValue().isEmpty())
-            response = createResponse(*scriptExecutionContext(), result.returnValue()[0], requestStart);
+            response = createResponse(*protect(scriptExecutionContext()), result.returnValue()[0], requestStart);
 
         callback(WTF::move(response));
     });
@@ -134,7 +134,7 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
 Vector<Ref<FetchResponse>> DOMCache::cloneResponses(const Vector<DOMCacheEngine::Record>& records, MonotonicTime requestStart)
 {
     return WTF::map(records, [this, requestStart] (const auto& record) {
-        return createResponse(*scriptExecutionContext(), record, requestStart);
+        return createResponse(*protect(scriptExecutionContext()), record, requestStart);
     });
 }
 
@@ -506,7 +506,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
 
             auto records = result.releaseReturnValue();
             promise.resolve(WTF::map(records, [&](auto& record) {
-                return createRequest(*cache.scriptExecutionContext(), record);
+                return createRequest(*protect(cache.scriptExecutionContext()), record);
             }));
         });
     });

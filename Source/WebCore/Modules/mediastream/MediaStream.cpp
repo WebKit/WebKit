@@ -128,8 +128,9 @@ MediaStream::~MediaStream()
     m_isActive = false;
     m_private->removeObserver(*this);
     if (WeakPtr document = this->document()) {
+        // Don't ref the document here since it may have already started destruction.
         if (m_isWaitingUntilMediaCanStart)
-            document->removeMediaCanStartListener(*this);
+            SUPPRESS_UNCOUNTED_ARG document->removeMediaCanStartListener(*this);
     }
 }
 

@@ -336,7 +336,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
             origin = protect(document->securityOrigin())->toString();
 
         // 8.3. If there is a MediaKeySession object that is not closed in this object's Document whose sessionId attribute is sanitized session ID, reject promise with a QuotaExceededError.
-        if (session.m_keys && session.m_keys->hasOpenSessionWithIdForOrigin(sanitizedSessionId.value(), WTF::move(origin))) {
+        if (RefPtr keys = session.m_keys; keys && keys->hasOpenSessionWithIdForOrigin(sanitizedSessionId.value(), WTF::move(origin))) {
             ERROR_LOG_WITH_THIS(&session, identifier, "Rejected: Another open MediaKeySession with the same session ID already exists for this security origin");
             promise->reject(ExceptionCode::QuotaExceededError);
             return;
@@ -396,7 +396,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
                 // compared before were empty at the moment of comparison because they were in the middle of a
                 // session loading that completed asynchronously. Their ids should have settled now, so let's
                 // check again.
-                if (session.m_keys && session.m_keys->hasOpenSessionWithIdForOrigin(sanitizedSessionId, origin)) {
+                if (RefPtr keys = session.m_keys; keys && keys->hasOpenSessionWithIdForOrigin(sanitizedSessionId, origin)) {
                     ERROR_LOG_WITH_THIS(&session, identifier, "Rejected (later): Another open MediaKeySession with the same session ID already exists for this security origin");
                     promise->reject(ExceptionCode::QuotaExceededError);
                     return;

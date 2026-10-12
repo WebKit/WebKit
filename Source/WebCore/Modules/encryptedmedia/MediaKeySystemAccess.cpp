@@ -106,7 +106,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
             // 2.10.3. Let the supported session types value be be the value of configuration's sessionTypes member.
             // 2.10.4. Let the cdm implementation value be this object's cdm implementation value.
             // 2.10.5. Let the cdm instance value be instance.
-            auto mediaKeys = MediaKeys::create(*weakDocument, useDistinctiveIdentifier, persistentStateAllowed, sessionTypes, WTF::move(implementation), WTF::move(instance));
+            auto mediaKeys = MediaKeys::create(*protect(weakDocument), useDistinctiveIdentifier, persistentStateAllowed, sessionTypes, WTF::move(implementation), WTF::move(instance));
 
             // 2.11. Resolve promise with media keys.
             promise->resolveWithNewlyCreated<IDLInterface<MediaKeys>>(WTF::move(mediaKeys));

@@ -1096,8 +1096,8 @@ void HTMLModelElement::startLoadModelTimer()
     Ref document = this->document();
     Seconds delay = document->page() && document->page()->shouldDisableModelLoadDelaysForTesting() ? 0_s : reloadModelDelay;
     m_loadModelTimer = protect(document->eventLoop())->scheduleTask(delay, TaskSource::ModelElement, [weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->loadModelTimerFired();
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->loadModelTimerFired();
     });
 }
 

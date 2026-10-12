@@ -637,7 +637,7 @@ RefPtr<DOMPromise> StreamPipeToState::waitForPendingReadAndWrite(Action&& action
                     return;
                 }
 
-                m_pendingWritePromise->whenSettled([waitForAction = WTF::move(waitForAction), deferred = WTF::move(deferred)]() mutable {
+                protect(m_pendingWritePromise)->whenSettled([waitForAction = WTF::move(waitForAction), deferred = WTF::move(deferred)]() mutable {
                     waitForAction(WTF::move(deferred));
                 });
             };

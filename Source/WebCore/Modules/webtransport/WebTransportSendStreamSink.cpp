@@ -85,7 +85,7 @@ void WebTransportSendStreamSink::sendError(JSDOMGlobalObject& globalObject, JSC:
     m_isCancelled = true;
 
     if (RefPtr stream = m_stream.get()) {
-        Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+        JSC::JSLockHolder lock(globalObject.vm());
         stream->errorIfPossible(globalObject, error);
     }
 

@@ -182,7 +182,7 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
             ExceptionOr<Ref<FileSystemWritableFileStream>> stream { Exception { ExceptionCode::UnknownError } };
             {
                 // FIXME: Make WritableStream function acquire lock as needed and remove this.
-                Locker<JSC::JSLock> locker(globalObject->vm().apiLock());
+                JSC::JSLockHolder lock(globalObject->vm());
                 stream = FileSystemWritableFileStream::create(*globalObject, sink.releaseReturnValue());
             }
             if (!stream.hasException())

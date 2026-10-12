@@ -118,10 +118,10 @@ static auto makeArrayBuffer(Variant<std::span<const uint8_t>, size_t> source, si
         arrayBuffer = ArrayBuffer::create(numberOfElements, 1);
     }), source);
 
-    cachedArrayBuffers.append({ arrayBuffer.get(), offset });
+    cachedArrayBuffers.append({ arrayBuffer, offset });
     arrayBuffer->pin();
-    if (device)
-        device->addBufferToUnmap(buffer);
+    if (RefPtr protectedDevice = device.get())
+        protectedDevice->addBufferToUnmap(buffer);
     return arrayBuffer;
 }
 

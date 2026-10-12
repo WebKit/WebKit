@@ -431,7 +431,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
 
             for (auto& pair : removeList) {
                 DEBUG_LOG(LOGIDENTIFIER, "Removing track "_s, pair.track->id(), " from MediaStream "_s, pair.stream->id());
-                pair.stream->privateStream().removeTrack(pair.track->privateTrack());
+                protect(pair.stream->privateStream())->removeTrack(protect(pair.track->privateTrack()));
                 if (peerConnection.isClosed())
                     return;
             }
@@ -534,7 +534,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 
             DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Removing ", removeList.size(), " tracks");
             for (auto& pair : removeList) {
-                pair.stream->privateStream().removeTrack(pair.track->privateTrack());
+                protect(pair.stream->privateStream())->removeTrack(protect(pair.track->privateTrack()));
                 if (peerConnection.isClosed()) {
                     DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while removing tracks");
                     return;

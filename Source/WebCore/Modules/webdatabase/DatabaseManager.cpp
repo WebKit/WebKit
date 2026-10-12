@@ -137,7 +137,7 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabaseBackend(Document& docume
             // The client may want to increase the quota, and we'll give it
             // one more try after if that is the case.
             {
-                ProposedDatabase proposedDatabase { *this, document.securityOrigin(), name, displayName, estimatedSize };
+                ProposedDatabase proposedDatabase { *this, protect(document.securityOrigin()), name, displayName, estimatedSize };
                 this->databaseContext(document)->databaseExceededQuota(name, proposedDatabase.details());
             }
             backend = tryToOpenDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, RetryOpenDatabase);

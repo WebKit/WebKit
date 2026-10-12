@@ -113,8 +113,9 @@ void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepa
     WeakHashSet<Navigator> notifiedNavigators;
 
     // Handle the disconnect for all DOMWindows with event listeners and their Navigators.
-    for (auto& window : copyToVectorOf<WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData>>(m_domWindows)) {
+    for (auto& weakWindow : copyToVectorOf<WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData>>(m_domWindows)) {
         // Event dispatch might have made this window go away.
+        RefPtr window = weakWindow;
         if (!window)
             continue;
 
@@ -174,8 +175,9 @@ void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, WeakHa
     for (Ref navigator : navigatorSet)
         NavigatorGamepad::from(navigator).gamepadConnected(platformGamepad);
 
-    for (auto& window : copyToVectorOf<WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData>>(m_domWindows)) {
+    for (auto& weakWindow : copyToVectorOf<WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData>>(m_domWindows)) {
         // Event dispatch might have made this window go away.
+        RefPtr window = weakWindow;
         if (!window)
             continue;
 

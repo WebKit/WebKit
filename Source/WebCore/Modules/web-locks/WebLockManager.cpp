@@ -174,7 +174,7 @@ Ref<WebLockManager> WebLockManager::create(NavigatorBase& navigator)
 }
 
 WebLockManager::WebLockManager(NavigatorBase& navigator)
-    : ActiveDOMObject(navigator.scriptExecutionContext())
+    : ActiveDOMObject(protect(navigator.scriptExecutionContext()))
     , m_mainThreadBridge(MainThreadBridge::create(protect(navigator.scriptExecutionContext()).get()))
 {
 }
@@ -243,19 +243,19 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
     std::optional<uint32_t> signalAlgorithmIdentifier;
     if (RefPtr signal = options.signal) {
         signalAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
-            if (weakThis)
-                weakThis->signalToAbortTheRequest(lockIdentifier, reason);
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->signalToAbortTheRequest(lockIdentifier, reason);
         });
     }
 
     m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTF::move(grantedCallback), WTF::move(options.signal), signalAlgorithmIdentifier });
 
     m_mainThreadBridge->requestLock(lockIdentifier, name, options, [weakThis = WeakPtr { *this }, lockIdentifier](bool success) mutable {
-        if (weakThis)
-            weakThis->didCompleteLockRequest(lockIdentifier, success);
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didCompleteLockRequest(lockIdentifier, success);
     }, [weakThis = WeakPtr { *this }, lockIdentifier]() mutable {
-        if (weakThis)
-            weakThis->settleReleasePromise(lockIdentifier, Exception { ExceptionCode::AbortError, "Lock was stolen by another request"_s });
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->settleReleasePromise(lockIdentifier, Exception { ExceptionCode::AbortError, "Lock was stolen by another request"_s });
     });
 }
 
@@ -275,7 +275,7 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
             }
 
             Ref lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
-            auto result = request.grantedCallback->invoke(lock.ptr());
+            auto result = protect(request.grantedCallback)->invoke(lock.ptr());
             if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
                 manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
@@ -291,7 +291,7 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
                 protectedThis->settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
-            auto result = request.grantedCallback->invoke(nullptr);
+            auto result = protect(request.grantedCallback)->invoke(nullptr);
             if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;

@@ -174,7 +174,7 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 }
 
 MediaSession::MediaSession(Navigator& navigator)
-    : ActiveDOMObject(navigator.scriptExecutionContext())
+    : ActiveDOMObject(protect(navigator.scriptExecutionContext()))
     , m_navigator(navigator)
     , m_platformSession { PlatformMediaSession::create(*this) }
     , m_logger(Document::sharedLogger())

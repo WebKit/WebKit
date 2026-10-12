@@ -165,10 +165,11 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
     if (signal) {
         ASSERT(!signal->aborted());
         auto identifier = signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue reason) {
-            if (!weakThis)
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
             LOG(DigitalCredentials, "Credential request was aborted by AbortSignal");
-            weakThis->abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { WTF::move(reason) });
+            protectedThis->abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { WTF::move(reason) });
         });
         session->setAbortAlgorithm(RefPtr { signal }, identifier);
     }

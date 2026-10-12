@@ -127,8 +127,8 @@ bool RTCRtpScriptTransform::setupTransformer(Ref<RTCRtpTransformBackend>&& backe
         return false;
 
     m_worker->postTaskToWorkerGlobalScope([transformer = m_transformer, backend = WTF::move(backend)](auto&) mutable {
-        if (transformer)
-            transformer->start(WTF::move(backend));
+        if (RefPtr protectedTransformer = transformer)
+            protectedTransformer->start(WTF::move(backend));
     });
     return true;
 }
@@ -138,8 +138,8 @@ void RTCRtpScriptTransform::clear(RTCRtpScriptTransformer::ClearCallback clearCa
     Locker locker { m_transformerLock };
     m_isTransformerInitialized = false;
     m_worker->postTaskToWorkerGlobalScope([transformer = WTF::move(m_transformer), clearCallback](auto&) mutable {
-        if (transformer)
-            transformer->clear(clearCallback);
+        if (RefPtr protectedTransformer = transformer)
+            protectedTransformer->clear(clearCallback);
     });
 }
 

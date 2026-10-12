@@ -181,7 +181,7 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     ActiveDOMObject::queueTaskKeepingObjectAlive(*videoElement, TaskSource::MediaElement, [enterPictureInPicturePromise = std::exchange(m_enterPictureInPicturePromise, nullptr), pictureInPictureWindow = m_pictureInPictureWindow](auto& videoElement) mutable {
 
         // 5.2. Set doc’s Picture-in-Picture element to this.
-        videoElement.document().setPictureInPictureElement(&videoElement);
+        protect(videoElement.document())->setPictureInPictureElement(&videoElement);
 
         // 5.3. Append relevant settings object’s origin to initiators of active Picture-in-Picture sessions.
         // 5.4. If this is fullscreenElement, exit fullscreen.

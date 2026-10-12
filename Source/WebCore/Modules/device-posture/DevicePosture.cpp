@@ -50,7 +50,7 @@ Ref<DevicePosture> DevicePosture::create(Navigator& navigator)
 }
 
 DevicePosture::DevicePosture(Navigator& navigator)
-    : ActiveDOMObject(navigator.scriptExecutionContext())
+    : ActiveDOMObject(protect(navigator.scriptExecutionContext()))
     , m_navigator(navigator)
 {
 }

@@ -193,7 +193,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
             }
 
             if (RefPtr blob = JSBlob::toWrapped(result.getObject()->vm(), result.getObject()))
-                itemTypeLoader->didResolveToBlob(*clipboard->scriptExecutionContext(), blob.releaseNonNull());
+                itemTypeLoader->didResolveToBlob(*protect(clipboard->scriptExecutionContext()), blob.releaseNonNull());
             else
                 itemTypeLoader->didFailToResolve();
         });

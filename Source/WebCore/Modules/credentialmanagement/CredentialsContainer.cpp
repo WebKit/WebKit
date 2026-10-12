@@ -170,7 +170,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    document->page()->authenticatorCoordinator().discoverFromExternalSource(*document, WTF::move(options), WTF::move(promise));
+    protect(document->page()->authenticatorCoordinator())->discoverFromExternalSource(*document, WTF::move(options), WTF::move(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
@@ -196,7 +196,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
     }
 
     if (options.publicKey) {
-        document->page()->authenticatorCoordinator().create(*document, WTF::move(options), WTF::move(options.signal), WTF::move(promise));
+        protect(document->page()->authenticatorCoordinator())->create(*document, WTF::move(options), WTF::move(options.signal), WTF::move(promise));
         return;
     }
 

@@ -56,7 +56,7 @@ Ref<ScriptProcessorNode> ScriptProcessorNode::create(BaseAudioContext& context, 
 
 ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
     : AudioNode(context, NodeTypeJavaScript)
-    , ActiveDOMObject(context.scriptExecutionContext())
+    , ActiveDOMObject(protect(context.scriptExecutionContext()))
     , m_bufferSize(bufferSize)
     , m_numberOfInputChannels(numberOfInputChannels)
     , m_numberOfOutputChannels(numberOfOutputChannels)

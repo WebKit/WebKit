@@ -133,7 +133,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
 
 AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name, AudioWorkletNodeOptions&& options, Ref<MessagePort>&& port)
     : AudioNode(context, NodeTypeWorklet)
-    , ActiveDOMObject(context.scriptExecutionContext())
+    , ActiveDOMObject(protect(context.scriptExecutionContext()))
     , m_name(name)
     , m_parameters(AudioParamMap::create())
     , m_port(WTF::move(port))

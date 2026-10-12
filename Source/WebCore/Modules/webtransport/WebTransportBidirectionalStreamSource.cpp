@@ -41,7 +41,7 @@ bool WebTransportBidirectionalStreamSource::receiveIncomingStream(JSC::JSGlobalO
     if (m_isCancelled)
         return false;
     auto& jsDOMGlobalObject = downcast<JSDOMGlobalObject>(globalObject);
-    Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+    JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
     auto value = toJS(&globalObject, &jsDOMGlobalObject, stream.get());
     if (!controller().enqueue(value)) {
         doCancel();

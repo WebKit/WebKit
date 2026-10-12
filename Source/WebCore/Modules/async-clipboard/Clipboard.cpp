@@ -452,7 +452,7 @@ void Clipboard::ItemWriter::didSetAllData()
     promise->resolve();
     m_promise = nullptr;
 
-    if (auto clipboard = std::exchange(m_clipboard, nullptr))
+    if (RefPtr clipboard = std::exchange(m_clipboard, nullptr))
         clipboard->didResolveOrReject(*this);
 }
 
@@ -461,7 +461,7 @@ void Clipboard::ItemWriter::reject()
     if (RefPtr promise = std::exchange(m_promise, nullptr))
         promise->reject(ExceptionCode::NotAllowedError);
 
-    if (auto clipboard = std::exchange(m_clipboard, nullptr))
+    if (RefPtr clipboard = std::exchange(m_clipboard, nullptr))
         clipboard->didResolveOrReject(*this);
 }
 

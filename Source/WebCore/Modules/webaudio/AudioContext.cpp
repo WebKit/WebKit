@@ -712,7 +712,7 @@ WeakPtr<PlatformMediaSessionInterface> AudioContext::selectBestMediaSession(cons
         if (!audibleSession)
             audibleSession = session;
 
-        if (session->isPlaying())
+        if (protect(session)->isPlaying())
             return session;
     }
 

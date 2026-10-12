@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TransactionOperationImpl);
 
 TransactionOperation::TransactionOperation(IDBTransaction& transaction)
     : m_transaction(transaction)
-    , m_identifier(transaction.connectionProxy())
+    , m_identifier(protect(transaction.connectionProxy()))
     , m_operationID(transaction.generateOperationID())
     , m_scriptExecutionContextIdentifier(transaction.database().scriptExecutionContextIdentifier())
 {

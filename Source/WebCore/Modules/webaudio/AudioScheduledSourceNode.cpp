@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioScheduledSourceNode);
 
 AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context, NodeType type)
     : AudioNode(context, type)
-    , ActiveDOMObject(context.scriptExecutionContext())
+    , ActiveDOMObject(protect(context.scriptExecutionContext()))
 {
 }
 

@@ -276,42 +276,42 @@ void SpeechSynthesis::didStartSpeaking()
 {
     if (!m_currentSpeechUtterance)
         return;
-    didStartSpeaking(currentSpeechUtterance()->platformUtterance());
+    didStartSpeaking(protect(currentSpeechUtterance()->platformUtterance()));
 }
 
 void SpeechSynthesis::didFinishSpeaking()
 {
     if (!m_currentSpeechUtterance)
         return;
-    didFinishSpeaking(currentSpeechUtterance()->platformUtterance());
+    didFinishSpeaking(protect(currentSpeechUtterance()->platformUtterance()));
 }
 
 void SpeechSynthesis::didPauseSpeaking()
 {
     if (!m_currentSpeechUtterance)
         return;
-    didPauseSpeaking(currentSpeechUtterance()->platformUtterance());
+    didPauseSpeaking(protect(currentSpeechUtterance()->platformUtterance()));
 }
 
 void SpeechSynthesis::didResumeSpeaking()
 {
     if (!m_currentSpeechUtterance)
         return;
-    didResumeSpeaking(currentSpeechUtterance()->platformUtterance());
+    didResumeSpeaking(protect(currentSpeechUtterance()->platformUtterance()));
 }
 
 void SpeechSynthesis::speakingErrorOccurred()
 {
     if (!m_currentSpeechUtterance)
         return;
-    speakingErrorOccurred(currentSpeechUtterance()->platformUtterance());
+    speakingErrorOccurred(protect(currentSpeechUtterance()->platformUtterance()));
 }
 
 void SpeechSynthesis::boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength)
 {
     if (!m_currentSpeechUtterance)
         return;
-    boundaryEventOccurred(currentSpeechUtterance()->platformUtterance(), wordBoundary ? SpeechBoundary::SpeechWordBoundary : SpeechBoundary::SpeechSentenceBoundary, charIndex, charLength);
+    boundaryEventOccurred(protect(currentSpeechUtterance()->platformUtterance()), wordBoundary ? SpeechBoundary::SpeechWordBoundary : SpeechBoundary::SpeechSentenceBoundary, charIndex, charLength);
 }
 
 void SpeechSynthesis::voicesChanged()

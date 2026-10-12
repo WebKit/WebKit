@@ -550,7 +550,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
     m_previouslyImportedExternalTexture.first = videoElementRef.ptr();
     m_previouslyImportedExternalTexture.second = externalTexture.ptr();
 
-    videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, protect(scriptExecutionContext())));
+    videoElementRef->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), videoElementRef, *this, protect(scriptExecutionContext())));
     queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [videoElementPtr, externalTextureRef = externalTexture](auto& gpuDevice) {
         if (!videoElementPtr)
             return;

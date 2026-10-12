@@ -841,7 +841,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
             // named change at the HTMLMediaElement audioTracks list.
             if (removedEnabledAudioTrack) {
                 ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
-                    mediaElement.ensureAudioTracks().scheduleChangeEvent();
+                    protect(mediaElement.ensureAudioTracks())->scheduleChangeEvent();
                 });
             }
         }
@@ -896,7 +896,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
             // named change at the HTMLMediaElement videoTracks list.
             if (removedSelectedVideoTrack) {
                 ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
-                    mediaElement.ensureVideoTracks().scheduleChangeEvent();
+                    protect(mediaElement.ensureVideoTracks())->scheduleChangeEvent();
                 });
             }
         }
@@ -950,7 +950,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
             // named change at the HTMLMediaElement textTracks list.
             if (removedEnabledTextTrack) {
                 ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
-                    mediaElement.ensureTextTracks().scheduleChangeEvent();
+                    protect(mediaElement.ensureTextTracks())->scheduleChangeEvent();
                 });
             }
         }

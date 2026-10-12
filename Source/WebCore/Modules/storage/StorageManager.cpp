@@ -141,7 +141,7 @@ void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<File
         auto info = result.releaseReturnValue();
         RefPtr context = weakNavigator ? weakNavigator->scriptExecutionContext() : nullptr;
         if (!context) {
-            info.connection->closeHandle(info.identifier);
+            protect(info.connection)->closeHandle(info.identifier);
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
         }
 

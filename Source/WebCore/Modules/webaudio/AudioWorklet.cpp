@@ -51,7 +51,7 @@ Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 }
 
 AudioWorklet::AudioWorklet(BaseAudioContext& audioContext)
-    : Worklet(*audioContext.document())
+    : Worklet(protect(*audioContext.document()))
     , m_audioContext(audioContext)
 {
 }

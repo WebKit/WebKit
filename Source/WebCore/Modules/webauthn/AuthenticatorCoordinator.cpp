@@ -273,7 +273,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->makeCredential(*weakFrame, options, createOptions.mediation, WTF::move(callback));
+            weakThis->m_client->makeCredential(*frame, options, createOptions.mediation, WTF::move(callback));
         };
         return;
     }
@@ -394,7 +394,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation, scopeCrossOriginParent, WTF::move(callback));
+            weakThis->m_client->getAssertion(*frame, options, requestOptions.mediation, scopeCrossOriginParent, WTF::move(callback));
         };
         return;
     }

@@ -253,7 +253,7 @@ void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentif
 
     auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
 
-    Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+    JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
 
     Ref incomingStream = WebTransportReceiveStreamByteSource::create(*this, identifier);
     auto stream = WebTransportReceiveStream::create(identifier, m_session, jsDOMGlobalObject, incomingStream.copyRef());
@@ -274,7 +274,7 @@ static ExceptionOr<Ref<WebTransportBidirectionalStream>> createBidirectionalStre
 {
     auto identifier = sink->identifier();
 
-    Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+    JSC::JSLockHolder lock(globalObject.vm());
 
     auto sendStream = WebTransportSendStream::create(transport, globalObject, WTF::move(sink), options);
     if (sendStream.hasException())
@@ -300,7 +300,7 @@ void WebTransport::receiveBidirectionalStream(WebTransportStreamIdentifier ident
     Ref sink = WebTransportSendStreamSink::create(*this, identifier);
     auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
 
-    Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+    JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
 
     Ref incomingStream = WebTransportReceiveStreamByteSource::create(*this, identifier);
     auto stream = WebCore::createBidirectionalStream(*this, m_session, jsDOMGlobalObject, sink.copyRef(), incomingStream.copyRef(), WebTransportSendStreamOptions { });
@@ -347,7 +347,7 @@ void WebTransport::streamReceiveError(WebTransportStreamIdentifier identifier, u
             static_cast<unsigned>(errorCode)
         });
         auto jsError = [&] {
-            Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+            JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
             return toJS(globalObject, &jsDOMGlobalObject, error.get());
         }();
         source->receiveError(jsDOMGlobalObject, jsError);
@@ -370,7 +370,7 @@ void WebTransport::streamSendError(WebTransportStreamIdentifier identifier, uint
             static_cast<unsigned>(errorCode)
         });
         auto jsError = [&] {
-            Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+            JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
             return toJS(globalObject, &jsDOMGlobalObject, error.get());
         }();
         sink->sendError(jsDOMGlobalObject, jsError);
@@ -539,7 +539,7 @@ void WebTransport::cleanup(Ref<DOMException>&& exception, std::optional<WebTrans
     auto& jsDOMGlobalObject = *dynamicDowncast<JSDOMGlobalObject>(globalObject);
 
     auto jsException = [&] {
-        Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+        JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
         return toJS(&jsDOMGlobalObject, &jsDOMGlobalObject, exception.get());
     } ();
 
@@ -609,7 +609,7 @@ void WebTransport::createBidirectionalStream(ScriptExecutionContext& context, We
             return promise->reject(ExceptionCode::InvalidStateError);
         if (!context)
             return promise->reject(ExceptionCode::InvalidStateError);
-        auto* globalObject = context->globalObject();
+        auto* globalObject = protect(context)->globalObject();
         if (!globalObject)
             return promise->reject(ExceptionCode::InvalidStateError);
 
@@ -653,14 +653,14 @@ void WebTransport::createUnidirectionalStream(ScriptExecutionContext& context, W
             return promise->reject(ExceptionCode::InvalidStateError);
         if (!context)
             return promise->reject(ExceptionCode::InvalidStateError);
-        auto* globalObject = context->globalObject();
+        auto* globalObject = protect(context)->globalObject();
         if (!globalObject)
             return promise->reject(ExceptionCode::InvalidStateError);
 
         Ref sink = WebTransportSendStreamSink::create(protectedThis.get(), *identifier);
         auto& jsDOMGlobalObject = *downcast<JSDOMGlobalObject>(globalObject);
         auto stream = [&] {
-            Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
+            JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
             return WebTransportSendStream::create(protectedThis, jsDOMGlobalObject, sink.copyRef(), options);
         } ();
         if (stream.hasException())

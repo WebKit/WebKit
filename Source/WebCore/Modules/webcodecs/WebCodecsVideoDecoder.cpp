@@ -194,16 +194,17 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 }
 
                 auto decodedResult = WTF::move(result).value();
+                Ref frame = WTF::move(decodedResult.frame);
                 WebCodecsVideoFrame::BufferInit init {
-                    .format = convertVideoFramePixelFormat(decodedResult.frame->pixelFormat()),
-                    .codedWidth = static_cast<size_t>(decodedResult.frame->presentationSize().width()),
-                    .codedHeight = static_cast<size_t>(decodedResult.frame->presentationSize().height()),
+                    .format = convertVideoFramePixelFormat(frame->pixelFormat()),
+                    .codedWidth = static_cast<size_t>(frame->presentationSize().width()),
+                    .codedHeight = static_cast<size_t>(frame->presentationSize().height()),
                     .timestamp = decodedResult.timestamp,
                     .duration = decodedResult.duration,
-                    .colorSpace = decodedResult.frame->colorSpace()
+                    .colorSpace = frame->colorSpace()
                 };
 
-                auto videoFrame = WebCodecsVideoFrame::create(*decoder.scriptExecutionContext(), WTF::move(decodedResult.frame), WTF::move(init));
+                auto videoFrame = WebCodecsVideoFrame::create(protect(*decoder.scriptExecutionContext()), WTF::move(frame), WTF::move(init));
                 decoder.m_output->invoke(WTF::move(videoFrame));
             });
         });

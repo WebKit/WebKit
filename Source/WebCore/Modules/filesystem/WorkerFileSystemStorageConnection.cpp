@@ -58,7 +58,7 @@ WorkerFileSystemStorageConnection::~WorkerFileSystemStorageConnection()
 void WorkerFileSystemStorageConnection::connectionClosed()
 {
     for (auto handle : m_syncAccessHandles.values())
-        handle->invalidate();
+        protect(handle)->invalidate();
 
     scopeClosed();
 }

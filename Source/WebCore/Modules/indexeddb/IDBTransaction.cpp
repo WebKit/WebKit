@@ -83,7 +83,7 @@ Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTrans
 }
 
 IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& info, IDBOpenDBRequest* request)
-    : IDBActiveDOMObject(database.scriptExecutionContext())
+    : IDBActiveDOMObject(protect(database.scriptExecutionContext()))
     , m_database(database)
     , m_info(info)
     , m_openDBRequest(request)

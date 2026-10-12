@@ -177,7 +177,7 @@ Ref<SourceBuffer> SourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPr
 }
 
 SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource& source)
-    : ActiveDOMObject(source.scriptExecutionContext())
+    : ActiveDOMObject(protect(source.scriptExecutionContext()))
     , m_private(WTF::move(sourceBufferPrivate))
     , m_client(SourceBufferClientImpl::create(*this))
     , m_source(&source)

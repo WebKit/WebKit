@@ -131,7 +131,7 @@ void WebTransportReceiveStreamByteSource::receiveBytes(std::span<const uint8_t> 
     if (!controller)
         return;
 
-    Locker<JSC::JSLock> locker(globalObject->vm().apiLock());
+    JSC::JSLockHolder lock(globalObject->vm());
 
     if (exception)
         return errorStream(*globalObject, *controller, *exception);
@@ -165,7 +165,7 @@ void WebTransportReceiveStreamByteSource::receiveError(JSDOMGlobalObject& global
     m_queue.clear();
     m_currentOffset = 0;
 
-    Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+    JSC::JSLockHolder lock(globalObject.vm());
     if (RefPtr stream = m_stream.get()) {
         if (RefPtr controller = stream->controller())
             controller->error(globalObject, error);

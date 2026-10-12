@@ -567,8 +567,9 @@ void WebSocket::didConnect()
         }
         ASSERT(socket.scriptExecutionContext());
         socket.m_state = OPEN;
-        socket.m_subprotocol = socket.m_channel->subprotocol();
-        socket.m_extensions = socket.m_channel->extensions();
+        RefPtr channel = socket.m_channel;
+        socket.m_subprotocol = channel->subprotocol();
+        socket.m_extensions = channel->extensions();
         socket.dispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
@@ -581,7 +582,8 @@ void WebSocket::didReceiveMessage(String&& message)
             return;
 
         if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-            if (auto* inspector = socket.m_channel->channelInspector()) {
+            RefPtr channel = socket.m_channel;
+            if (auto* inspector = channel->channelInspector()) {
                 auto utf8Message = message.utf8();
                 inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(byteCast<uint8_t>(utf8Message.span()), WebSocketFrame::OpCode::OpCodeText));
             }
@@ -599,7 +601,8 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
             return;
 
         if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-            if (auto* inspector = socket.m_channel->channelInspector())
+            RefPtr channel = socket.m_channel;
+            if (auto* inspector = channel->channelInspector())
                 inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(binaryData.span(), WebSocketFrame::OpCode::OpCodeBinary));
         }
 
@@ -625,7 +628,8 @@ void WebSocket::didReceiveMessageError(String&& reason)
         ASSERT(socket.scriptExecutionContext());
 
         if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-            if (auto* inspector = socket.m_channel->channelInspector())
+            RefPtr channel = socket.m_channel;
+            if (auto* inspector = channel->channelInspector())
                 inspector->didReceiveWebSocketFrameError(reason);
         }
 
@@ -660,7 +664,8 @@ void WebSocket::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompl
             return;
 
         if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-            if (auto* inspector = socket.m_channel->channelInspector()) {
+            RefPtr channel = socket.m_channel;
+            if (auto* inspector = channel->channelInspector()) {
                 WebSocketFrame closingFrame(WebSocketFrame::OpCodeClose, true, false, false);
                 inspector->didReceiveWebSocketFrame(closingFrame);
                 inspector->didCloseWebSocket();
@@ -674,8 +679,8 @@ void WebSocket::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompl
 
         socket.dispatchEvent(CloseEvent::create(wasClean, code, reason));
 
-        if (socket.m_channel) {
-            socket.m_channel->disconnect();
+        if (RefPtr channel = socket.m_channel) {
+            channel->disconnect();
             socket.m_channel = nullptr;
         }
         socket.m_pendingActivity = nullptr;
