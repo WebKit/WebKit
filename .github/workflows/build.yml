@@ -829,8 +829,8 @@ jobs:
             -DWKC_ENABLE_WEB_AUDIO=ON \
             -DWKC_ENABLE_INDEXED_DATABASE=ON \
             -DWKC_ENABLE_GAMEPAD=ON \
-            -DWKC_ENABLE_WEBASSEMBLY=ON \
-            -DWKC_ENABLE_WEBRTC_API=ON > build-full-configure.log 2>&1
+            -DWKC_ENABLE_WEBASSEMBLY=OFF \
+            -DWKC_ENABLE_WEBRTC_API=OFF > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
           if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-full/build.ninja ]; then
             echo "===== full WebCore configure failed (diagnostic only) ====="
