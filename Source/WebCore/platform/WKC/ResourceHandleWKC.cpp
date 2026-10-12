@@ -133,6 +133,11 @@ public:
 
                 ResourceRequest redirectedRequest = request.resourceRequest();
                 redirectedRequest.setURL(WTF::move(redirectedURL));
+                // Apply HTTP redirect semantics (301/302/303 may turn POST into
+                // GET and drop the upload body; 307/308 must preserve it). Without
+                // this, form submissions and login flows can be replayed incorrectly
+                // when a server redirects the request.
+                redirectedRequest.redirectAsGETIfNeeded(request.resourceRequest(), response);
 
                 Ref<WKCResourceHandleCurlClient> protectedThis { *this };
                 handle->client()->willSendRequestAsync(handle.get(), WTF::move(redirectedRequest), WTF::move(response),
