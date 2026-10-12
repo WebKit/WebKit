@@ -942,10 +942,19 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
                 descendant->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
             layoutChildren(RelayoutChildren::Yes);
         };
-        if (auto autoClampPoint = lineClampUpdater.autoClampPoint()) {
-            lineClampUpdater.setAutoClampPoint(*autoClampPoint);
-            relayoutContent();
-        } else if (lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
+        auto clampAtAutoClampPointIfNeeded = [&] {
+            auto autoClampPoints = lineClampUpdater.autoClampPoints();
+            if (autoClampPoints.isEmpty())
+                return false;
+            // Laid out clamped, block-end margins may still take the line-clamp container past the block size limit (see LineClampUpdater::autoClampPoints).
+            // Then the clamp point is the previous one.
+            do {
+                lineClampUpdater.setAutoClampPoint(autoClampPoints.takeLast());
+                relayoutContent();
+            } while (!autoClampPoints.isEmpty() && !lineClampUpdater.fitsAutoClampBlockSizeLimit());
+            return true;
+        };
+        if (!clampAtAutoClampPointIfNeeded() && lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
             lineClampUpdater.resetLineClamp();
             relayoutContent();
         }

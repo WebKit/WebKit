@@ -163,6 +163,12 @@ void LineClampUpdater::resetLineClamp()
     layoutState->setLineClamp({ });
 }
 
+// The content bottom of the box in its own coordinates, where its block-end padding (and scrollbar) starts.
+static LayoutUnit contentLogicalBottom(const RenderBox& box)
+{
+    return box.logicalHeight() - box.borderAndPaddingAfter() - box.scrollbarLogicalHeight();
+}
+
 // "the block size the box would have if its automatic block size were infinite", from the line-clamp container's border box top edge.
 static std::optional<LayoutUnit> autoClampBlockSizeLimit(const RenderBlock& lineClampContainer)
 {
@@ -172,9 +178,15 @@ static std::optional<LayoutUnit> autoClampBlockSizeLimit(const RenderBlock& line
     return lineClampContainer.borderAndPaddingBefore() + maximumContentHeight;
 }
 
-std::optional<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoint() const
+bool LineClampUpdater::fitsAutoClampBlockSizeLimit() const
 {
-    if (!isAutoLineClampRoot() || !autoClampBlockSizeLimit(m_blockContainer))
+    auto blockSizeLimit = autoClampBlockSizeLimit(m_blockContainer);
+    return !blockSizeLimit || contentLogicalBottom(m_blockContainer) <= *blockSizeLimit;
+}
+
+Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() const
+{
+    if (!isAutoLineClampRoot() || fitsAutoClampBlockSizeLimit())
         return { };
     auto& lineClampContainer = m_blockContainer.get();
     auto blockSizeLimit = *autoClampBlockSizeLimit(lineClampContainer);
@@ -183,6 +195,8 @@ std::optional<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoint
     // the line-clamp container's automatic block size (as determined below) is not greater than the block size the box would have
     // if its automatic block size were infinite."
     // https://drafts.csswg.org/css-overflow-4/#line-clamp-containers
+    // These are the possible clamp points up to the last one whose content ends within that block size. Block-end margins are not taken
+    // into account here: block layout collapses them once it lays out the content clamped (see RenderBlockFlow::layoutInFlowChildren).
     // The lines of this block formatting context in the subtree, and the ones of them that end within the block size limit.
     auto countLines = [&](const RenderBox& root) -> std::pair<size_t, size_t> {
         size_t lineCount = 0;
@@ -207,43 +221,42 @@ std::optional<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoint
         return { lineCount, fittingLineCount };
     };
 
+    // "The start of the line-clamp container."
+    auto clampPoints = Vector<AutoClampPoint> { AutoClampPoint { size_t { 0 } } };
+    auto appendLineClampPoints = [&](size_t lineCountBefore, size_t lineCount) {
+        for (size_t line = 1; line <= lineCount; ++line)
+            clampPoints.append(lineCountBefore + line);
+    };
+
     if (lineClampContainer.childrenInline()) {
         auto [lineCount, fittingLineCount] = countLines(lineClampContainer);
-        if (fittingLineCount == lineCount)
-            return { };
-        return AutoClampPoint { fittingLineCount };
+        appendLineClampPoints(0, fittingLineCount);
+        return clampPoints;
     }
 
     // "A point between two in-flow block-level sibling boxes in the line-clamp container's block formatting context."
-    auto overflowsBlockSizeLimit = [&](const RenderBox& child) {
-        return child.logicalBottom() + lineClampContainer.marginAfterForChild(child) > blockSizeLimit;
-    };
     size_t lineCountBeforeChild = 0;
-    std::optional<AutoClampPoint> clampPointAfterPreviousChild;
     for (CheckedPtr child = lineClampContainer.firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto [lineCount, fittingLineCount] = countLines(*child);
-        if (overflowsBlockSizeLimit(*child)) {
+        if (child->logicalBottom() > blockSizeLimit) {
             // A block keeps its set height whatever its content, and its min-height keeps it at least that tall, so no clamp point inside it fits either.
             CheckedRef childStyle = child->style();
             auto fixedMinimumHeight = childStyle->logicalMinHeight().tryFixed();
             auto minimumHeightOverflows = fixedMinimumHeight && child->logicalTop() + LayoutUnit { fixedMinimumHeight->resolveZoom(childStyle->usedZoomForLength()) } > blockSizeLimit;
             if (!childStyle->logicalHeight().isAuto() || minimumHeightOverflows)
                 fittingLineCount = 0;
-            // The clamp point is after the last line of this child that fits, or else between this child and the previous one.
-            if (fittingLineCount || !clampPointAfterPreviousChild)
-                return AutoClampPoint { lineCountBeforeChild + fittingLineCount };
-            return clampPointAfterPreviousChild;
+            appendLineClampPoints(lineCountBeforeChild, fittingLineCount);
+            return clampPoints;
         }
+        appendLineClampPoints(lineCountBeforeChild, lineCount);
         lineCountBeforeChild += lineCount;
         // "Ignoring any intervening absolutely positioned elements or element closing boundaries" the last line box of this
         // child immediately precedes the clamp point after it and gets the block ellipsis. Without a line box, no line does.
         // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
-        if (lineCount)
-            clampPointAfterPreviousChild = AutoClampPoint { lineCountBeforeChild };
-        else
-            clampPointAfterPreviousChild = AutoClampPoint { CheckedRef { *child } };
+        if (!lineCount)
+            clampPoints.append(CheckedRef<const RenderBox> { *child });
     }
-    return { };
+    return clampPoints;
 }
 
 void LineClampUpdater::setAutoClampPoint(const AutoClampPoint& clampPoint)

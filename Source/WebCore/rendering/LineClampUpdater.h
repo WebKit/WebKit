@@ -42,8 +42,10 @@ public:
     bool isAutoLineClampRoot() const;
     // The clamp point is either after this many lines, or between this block and its next sibling (with no line box right before it).
     using AutoClampPoint = Variant<size_t, CheckedRef<const RenderBox>>;
-    std::optional<AutoClampPoint> autoClampPoint() const;
+    // The possible auto clamp points in render tree order (none when the content fits).
+    Vector<AutoClampPoint> autoClampPoints() const;
     void setAutoClampPoint(const AutoClampPoint&);
+    bool fitsAutoClampBlockSizeLimit() const;
     void setMaximumLines(size_t);
     void setClampAfterBox(const RenderBox&);
     void resetLineClamp();
