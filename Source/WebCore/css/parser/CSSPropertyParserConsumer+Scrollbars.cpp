@@ -42,7 +42,7 @@ RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange& range, CSS::Property
     // <'scrollbar-color'> = auto | <color>{2}
     // https://drafts.csswg.org/css-scrollbars/#propdef-scrollbar-color
 
-    if (auto ident = consumeIdent<CSSValueAuto>(range))
+    if (auto ident = consumeIdent<CSSValueID::Auto>(range))
         return ident;
 
     if (auto thumbColor = consumeColor(range, state)) {

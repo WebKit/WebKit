@@ -46,7 +46,7 @@ namespace CSSPropertyParserHelpers {
 static bool isValidBasisKeyword(CSSValueID keyword, CSSPropertyID property)
 {
     switch (keyword) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         switch (property) {
         case CSSPropertyID::MaxWidth:
         case CSSPropertyID::MaxHeight:
@@ -56,7 +56,7 @@ static bool isValidBasisKeyword(CSSValueID keyword, CSSPropertyID property)
         default:
             return true;
         }
-    case CSSValueContent:
+    case CSSValueID::Content:
         return property == CSSPropertyID::FlexBasis;
     default:
         return true;
@@ -75,31 +75,31 @@ static std::optional<CSS::CalcSizeBasis> consumeBasisKeyword(CSSParserTokenRange
     };
 
     switch (keyword) {
-    case CSSValueAny:
+    case CSSValueID::Any:
         return consume(CSS::Keyword::Any { });
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         return consume(CSS::Keyword::Auto { });
-    case CSSValueContent:
+    case CSSValueID::Content:
         return consume(CSS::Keyword::Content { });
-    case CSSValueMinContent:
+    case CSSValueID::MinContent:
         return consume(CSS::Keyword::MinContent { });
-    case CSSValueWebkitMinContent:
+    case CSSValueID::WebkitMinContent:
         return consume(CSS::Keyword::WebkitMinContent { });
-    case CSSValueMaxContent:
+    case CSSValueID::MaxContent:
         return consume(CSS::Keyword::MaxContent { });
-    case CSSValueWebkitMaxContent:
+    case CSSValueID::WebkitMaxContent:
         return consume(CSS::Keyword::WebkitMaxContent { });
-    case CSSValueFitContent:
+    case CSSValueID::FitContent:
         return consume(CSS::Keyword::FitContent { });
-    case CSSValueWebkitFitContent:
+    case CSSValueID::WebkitFitContent:
         return consume(CSS::Keyword::WebkitFitContent { });
-    case CSSValueStretch:
+    case CSSValueID::Stretch:
         return consume(CSS::Keyword::Stretch { });
-    case CSSValueWebkitFillAvailable:
+    case CSSValueID::WebkitFillAvailable:
         return consume(CSS::Keyword::WebkitFillAvailable { });
-    case CSSValueIntrinsic:
+    case CSSValueID::Intrinsic:
         return consume(CSS::Keyword::Intrinsic { });
-    case CSSValueMinIntrinsic:
+    case CSSValueID::MinIntrinsic:
         return consume(CSS::Keyword::MinIntrinsic { });
     default:
         return { };
@@ -115,7 +115,7 @@ static std::optional<CSS::CalcSizeCalculation> consumeCalcSum(CSSParserTokenRang
     auto parserOptions = CSSCalc::ParserOptions {
         .category = CSS::Category::LengthPercentage,
         .range = CSS::All,
-        .allowedSymbols = sizeKeywordPolicy == SizeKeywordPolicy::Allow ? CSSCalcSymbolsAllowed { { CSSValueSize, CSSUnitType::Px } } : CSSCalcSymbolsAllowed { },
+        .allowedSymbols = sizeKeywordPolicy == SizeKeywordPolicy::Allow ? CSSCalcSymbolsAllowed { { CSSValueID::Size, CSSUnitType::Px } } : CSSCalcSymbolsAllowed { },
         .propertyOptions = { }
     };
     auto simplificationOptions = CSSCalc::SimplificationOptions {
@@ -140,7 +140,7 @@ static std::optional<CSS::CalcSizeBasis> consumeCalcSizeBasis(CSSParserTokenRang
             return keyword;
     }
 
-    if (args.peek().functionId() == CSSValueCalcSize) {
+    if (args.peek().functionId() == CSSValueID::CalcSize) {
         auto nested = consumeCalcSizeFunction(args, state);
         if (!nested)
             return { };
@@ -157,7 +157,7 @@ static std::optional<CSS::CalcSizeFunction> consumeCalcSizeFunction(CSSParserTok
 {
     // <calc-size()> = calc-size( <calc-size-basis>, <calc-sum> )
 
-    ASSERT(range.peek().functionId() == CSSValueCalcSize);
+    ASSERT(range.peek().functionId() == CSSValueID::CalcSize);
 
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
@@ -190,7 +190,7 @@ RefPtr<CSSValue> consumeCalcSize(CSSParserTokenRange& range, CSS::PropertyParser
     if (!state.context.cssCalcSizeFunctionEnabled)
         return { };
 
-    if (range.peek().functionId() != CSSValueCalcSize)
+    if (range.peek().functionId() != CSSValueID::CalcSize)
         return { };
 
     auto calcSize = consumeCalcSizeFunction(range, state);

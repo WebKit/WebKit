@@ -61,7 +61,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedStepsEasingFunction(C
     //                         | steps( <integer [2,∞]>, jump-none )
     // https://drafts.csswg.org/css-easing-2/#funcdef-steps
 
-    ASSERT(range.peek().functionId() == CSSValueSteps);
+    ASSERT(range.peek().functionId() == CSSValueID::Steps);
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
 
@@ -76,13 +76,13 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedStepsEasingFunction(C
 
     if (consumeCommaIncludingWhitespace(args)) {
         switch (args.consumeIncludingWhitespace().id()) {
-        case CSSValueJumpStart:
+        case CSSValueID::JumpStart:
             parameters = { CSS::StepsEasingParameters::JumpStart { WTF::move(*steps) } };
             break;
-        case CSSValueJumpEnd:
+        case CSSValueID::JumpEnd:
             parameters = { CSS::StepsEasingParameters::JumpEnd { WTF::move(*steps) } };
             break;
-        case CSSValueJumpNone: {
+        case CSSValueID::JumpNone: {
             // "The first parameter specifies the number of intervals in the function. It must be a
             //  positive integer greater than 0 unless the second parameter is jump-none in which
             //  case it must be a positive integer greater than 1."
@@ -96,13 +96,13 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedStepsEasingFunction(C
             break;
         }
 
-        case CSSValueJumpBoth:
+        case CSSValueID::JumpBoth:
             parameters = { CSS::StepsEasingParameters::JumpBoth { WTF::move(*steps) } };
             break;
-        case CSSValueStart:
+        case CSSValueID::Start:
             parameters = { CSS::StepsEasingParameters::Start { WTF::move(*steps) } };
             break;
-        case CSSValueEnd:
+        case CSSValueID::End:
             parameters = { CSS::StepsEasingParameters::End { WTF::move(*steps) } };
             break;
         default:
@@ -160,7 +160,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedLinearEasingFunction(
     // <linear()> = linear( [ <number> && <percentage>{0,2} ]# )
     // https://drafts.csswg.org/css-easing-2/#funcdef-linear
 
-    ASSERT(range.peek().functionId() == CSSValueLinear);
+    ASSERT(range.peek().functionId() == CSSValueID::Linear);
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
 
@@ -198,7 +198,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedCubicBezierEasingFunc
     // <cubic-bezier()> = cubic-bezier( [ <number [0,1]>, <number> ]#{2} )
     // https://drafts.csswg.org/css-easing-2/#funcdef-cubic-bezier
 
-    ASSERT(range.peek().functionId() == CSSValueCubicBezier);
+    ASSERT(range.peek().functionId() == CSSValueID::CubicBezier);
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
 
@@ -245,7 +245,7 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedSpringEasingFunction(
     // <spring()> = spring( <number [>0,∞]> <number [>0,∞]> <number [0,∞]> <number> )
     // Non-standard
 
-    ASSERT(range.peek().functionId() == CSSValueSpring);
+    ASSERT(range.peek().functionId() == CSSValueID::Spring);
 
     if (!state.context.springTimingFunctionEnabled)
         return { };
@@ -292,23 +292,23 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
     // https://drafts.csswg.org/css-easing/#typedef-easing-function
 
     switch (range.peek().id()) {
-    case CSSValueLinear:
+    case CSSValueID::Linear:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction { CSS::Keyword::Linear { } };
-    case CSSValueEase:
+    case CSSValueID::Ease:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction { CSS::Keyword::Ease { } };
-    case CSSValueEaseIn:
+    case CSSValueID::EaseIn:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction { CSS::Keyword::EaseIn { } };
-    case CSSValueEaseOut:
+    case CSSValueID::EaseOut:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction { CSS::Keyword::EaseOut { } };
-    case CSSValueEaseInOut:
+    case CSSValueID::EaseInOut:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction { CSS::Keyword::EaseInOut { } };
 
-    case CSSValueStepStart:
+    case CSSValueID::StepStart:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction {
             CSS::StepsEasingFunction {
@@ -316,7 +316,7 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
             }
         };
 
-    case CSSValueStepEnd:
+    case CSSValueID::StepEnd:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction {
             CSS::StepsEasingFunction {
@@ -329,16 +329,16 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
     }
 
     switch (range.peek().functionId()) {
-    case CSSValueLinear:
+    case CSSValueID::Linear:
         return consumeUnresolvedLinearEasingFunction(range, state);
 
-    case CSSValueCubicBezier:
+    case CSSValueID::CubicBezier:
         return consumeUnresolvedCubicBezierEasingFunction(range, state);
 
-    case CSSValueSteps:
+    case CSSValueID::Steps:
         return consumeUnresolvedStepsEasingFunction(range, state);
 
-    case CSSValueSpring:
+    case CSSValueID::Spring:
         return consumeUnresolvedSpringEasingFunction(range, state);
 
     default:
@@ -352,11 +352,11 @@ RefPtr<CSSValue> consumeEasingFunction(CSSParserTokenRange& range, CSS::Property
 {
     // Avoid allocation of a CSSEasingFunctionValue when the result is a just a value ID.
     switch (range.peek().id()) {
-    case CSSValueLinear:
-    case CSSValueEase:
-    case CSSValueEaseIn:
-    case CSSValueEaseOut:
-    case CSSValueEaseInOut:
+    case CSSValueID::Linear:
+    case CSSValueID::Ease:
+    case CSSValueID::EaseIn:
+    case CSSValueID::EaseOut:
+    case CSSValueID::EaseInOut:
         return consumeIdent(range);
     default:
         break;

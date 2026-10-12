@@ -45,7 +45,7 @@ std::optional<CSS::ColorScheme> consumeUnresolvedColorScheme(CSSParserTokenRange
     // <'color-scheme'> = normal | [ light | dark | <custom-ident> ]+ && only?
     // https://drafts.csswg.org/css-color-adjust/#propdef-color-scheme
 
-    if (range.peek().id() == CSSValueNormal) {
+    if (range.peek().id() == CSSValueID::Normal) {
         range.consumeIncludingWhitespace();
 
         // NOTE: `normal` is represented in CSS::ColorScheme as an empty list of schemes.
@@ -60,7 +60,7 @@ std::optional<CSS::ColorScheme> consumeUnresolvedColorScheme(CSSParserTokenRange
         .only = { }
     };
 
-    if (range.peek().id() == CSSValueOnly) {
+    if (range.peek().id() == CSSValueID::Only) {
         range.consumeIncludingWhitespace();
 
         result->only = CSS::Keyword::Only { };
@@ -69,12 +69,12 @@ std::optional<CSS::ColorScheme> consumeUnresolvedColorScheme(CSSParserTokenRange
     while (!range.atEnd()) {
         if (range.peek().type() == IdentToken) {
             switch (CSSValueID id = range.peek().id()) {
-            case CSSValueNormal:
+            case CSSValueID::Normal:
                 // `normal` is only allowed as a single value, and was handled earlier.
                 // Don't allow it in the list.
                 return { };
 
-            case CSSValueOnly:
+            case CSSValueID::Only:
                 // `only` can either appear first, handled before the loop, or last,
                 // handled here.
 
@@ -96,7 +96,7 @@ std::optional<CSS::ColorScheme> consumeUnresolvedColorScheme(CSSParserTokenRange
                 break;
             }
         } else {
-            auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNormal, CSSValueOnly });
+            auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueID::Normal, CSSValueID::Only });
             if (!customIdent)
                 return { };
 

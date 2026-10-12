@@ -120,72 +120,72 @@ enum class KeywordType : uint8_t {
 static std::optional<KeywordType> NODELETE getKeywordType(CSSValueID id)
 {
     switch (id) {
-    case CSSValueLeft:
-    case CSSValueRight:
-    case CSSValueSpanLeft:
-    case CSSValueSpanRight:
-    case CSSValueXStart:
-    case CSSValueXEnd:
-    case CSSValueSpanXStart:
-    case CSSValueSpanXEnd:
-    case CSSValueSelfXStart:
-    case CSSValueSelfXEnd:
-    case CSSValueSpanSelfXStart:
-    case CSSValueSpanSelfXEnd:
+    case CSSValueID::Left:
+    case CSSValueID::Right:
+    case CSSValueID::SpanLeft:
+    case CSSValueID::SpanRight:
+    case CSSValueID::XStart:
+    case CSSValueID::XEnd:
+    case CSSValueID::SpanXStart:
+    case CSSValueID::SpanXEnd:
+    case CSSValueID::SelfXStart:
+    case CSSValueID::SelfXEnd:
+    case CSSValueID::SpanSelfXStart:
+    case CSSValueID::SpanSelfXEnd:
         return KeywordType::PhysicalX;
 
-    case CSSValueTop:
-    case CSSValueBottom:
-    case CSSValueSpanTop:
-    case CSSValueSpanBottom:
-    case CSSValueYStart:
-    case CSSValueYEnd:
-    case CSSValueSpanYStart:
-    case CSSValueSpanYEnd:
-    case CSSValueSelfYStart:
-    case CSSValueSelfYEnd:
-    case CSSValueSpanSelfYStart:
-    case CSSValueSpanSelfYEnd:
+    case CSSValueID::Top:
+    case CSSValueID::Bottom:
+    case CSSValueID::SpanTop:
+    case CSSValueID::SpanBottom:
+    case CSSValueID::YStart:
+    case CSSValueID::YEnd:
+    case CSSValueID::SpanYStart:
+    case CSSValueID::SpanYEnd:
+    case CSSValueID::SelfYStart:
+    case CSSValueID::SelfYEnd:
+    case CSSValueID::SpanSelfYStart:
+    case CSSValueID::SpanSelfYEnd:
         return KeywordType::PhysicalY;
 
-    case CSSValueBlockStart:
-    case CSSValueBlockEnd:
-    case CSSValueSpanBlockStart:
-    case CSSValueSpanBlockEnd:
+    case CSSValueID::BlockStart:
+    case CSSValueID::BlockEnd:
+    case CSSValueID::SpanBlockStart:
+    case CSSValueID::SpanBlockEnd:
         return KeywordType::LogicalBlock;
 
-    case CSSValueInlineStart:
-    case CSSValueInlineEnd:
-    case CSSValueSpanInlineStart:
-    case CSSValueSpanInlineEnd:
+    case CSSValueID::InlineStart:
+    case CSSValueID::InlineEnd:
+    case CSSValueID::SpanInlineStart:
+    case CSSValueID::SpanInlineEnd:
         return KeywordType::LogicalInline;
 
-    case CSSValueSelfBlockStart:
-    case CSSValueSelfBlockEnd:
-    case CSSValueSpanSelfBlockStart:
-    case CSSValueSpanSelfBlockEnd:
+    case CSSValueID::SelfBlockStart:
+    case CSSValueID::SelfBlockEnd:
+    case CSSValueID::SpanSelfBlockStart:
+    case CSSValueID::SpanSelfBlockEnd:
         return KeywordType::SelfLogicalBlock;
 
-    case CSSValueSelfInlineStart:
-    case CSSValueSelfInlineEnd:
-    case CSSValueSpanSelfInlineStart:
-    case CSSValueSpanSelfInlineEnd:
+    case CSSValueID::SelfInlineStart:
+    case CSSValueID::SelfInlineEnd:
+    case CSSValueID::SpanSelfInlineStart:
+    case CSSValueID::SpanSelfInlineEnd:
         return KeywordType::SelfLogicalInline;
 
-    case CSSValueStart:
-    case CSSValueEnd:
-    case CSSValueSpanStart:
-    case CSSValueSpanEnd:
+    case CSSValueID::Start:
+    case CSSValueID::End:
+    case CSSValueID::SpanStart:
+    case CSSValueID::SpanEnd:
         return KeywordType::Ambiguous;
 
-    case CSSValueSelfStart:
-    case CSSValueSelfEnd:
-    case CSSValueSpanSelfStart:
-    case CSSValueSpanSelfEnd:
+    case CSSValueID::SelfStart:
+    case CSSValueID::SelfEnd:
+    case CSSValueID::SpanSelfStart:
+    case CSSValueID::SpanSelfEnd:
         return KeywordType::SelfAmbiguous;
 
-    case CSSValueCenter:
-    case CSSValueSpanAll:
+    case CSSValueID::Center:
+    case CSSValueID::SpanAll:
         return KeywordType::Axisless;
 
     default:
@@ -278,27 +278,27 @@ static bool NODELETE typeIsInlineOrYAxis(KeywordType type)
 static CSSValueID NODELETE makeAmbiguous(CSSValueID dim)
 {
     switch (dim) {
-    case CSSValueBlockStart: return CSSValueStart;
-    case CSSValueSpanBlockStart: return CSSValueSpanStart;
-    case CSSValueSelfBlockStart: return CSSValueSelfStart;
-    case CSSValueSpanSelfBlockStart: return CSSValueSpanSelfStart;
+    case CSSValueID::BlockStart: return CSSValueID::Start;
+    case CSSValueID::SpanBlockStart: return CSSValueID::SpanStart;
+    case CSSValueID::SelfBlockStart: return CSSValueID::SelfStart;
+    case CSSValueID::SpanSelfBlockStart: return CSSValueID::SpanSelfStart;
 
-    case CSSValueBlockEnd: return CSSValueEnd;
-    case CSSValueSpanBlockEnd: return CSSValueSpanEnd;
-    case CSSValueSelfBlockEnd: return CSSValueSelfEnd;
-    case CSSValueSpanSelfBlockEnd: return CSSValueSpanSelfEnd;
+    case CSSValueID::BlockEnd: return CSSValueID::End;
+    case CSSValueID::SpanBlockEnd: return CSSValueID::SpanEnd;
+    case CSSValueID::SelfBlockEnd: return CSSValueID::SelfEnd;
+    case CSSValueID::SpanSelfBlockEnd: return CSSValueID::SpanSelfEnd;
 
-    case CSSValueInlineStart: return CSSValueStart;
-    case CSSValueSpanInlineStart: return CSSValueSpanStart;
-    case CSSValueSelfInlineStart: return CSSValueSelfStart;
-    case CSSValueSpanSelfInlineStart: return CSSValueSpanSelfStart;
+    case CSSValueID::InlineStart: return CSSValueID::Start;
+    case CSSValueID::SpanInlineStart: return CSSValueID::SpanStart;
+    case CSSValueID::SelfInlineStart: return CSSValueID::SelfStart;
+    case CSSValueID::SpanSelfInlineStart: return CSSValueID::SpanSelfStart;
 
-    case CSSValueInlineEnd: return CSSValueEnd;
-    case CSSValueSpanInlineEnd: return CSSValueSpanEnd;
-    case CSSValueSelfInlineEnd: return CSSValueSelfEnd;
-    case CSSValueSpanSelfInlineEnd: return CSSValueSpanSelfEnd;
+    case CSSValueID::InlineEnd: return CSSValueID::End;
+    case CSSValueID::SpanInlineEnd: return CSSValueID::SpanEnd;
+    case CSSValueID::SelfInlineEnd: return CSSValueID::SelfEnd;
+    case CSSValueID::SpanSelfInlineEnd: return CSSValueID::SpanSelfEnd;
 
-    case CSSValueCenter: return CSSValueCenter;
+    case CSSValueID::Center: return CSSValueID::Center;
 
     default:
         ASSERT_NOT_REACHED();
@@ -321,9 +321,9 @@ RefPtr<CSSValue> valueForPositionArea(CSSValueID dim1, CSSValueID dim2, ValueTyp
     if (!typesAreCompatible(dim1Type, dim2Type))
         return nullptr;
 
-    if (dim1 == CSSValueSpanAll && typeIsAxisExplicit(dim2Type))
+    if (dim1 == CSSValueID::SpanAll && typeIsAxisExplicit(dim2Type))
         return CSSKeywordValue::create(dim2);
-    if (typeIsAxisExplicit(dim1Type) && dim2 == CSSValueSpanAll)
+    if (typeIsAxisExplicit(dim1Type) && dim2 == CSSValueID::SpanAll)
         return CSSKeywordValue::create(dim1);
 
     // Ensure the X/block axis keyword goes first in the pair.
@@ -357,8 +357,8 @@ RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange& range, CSS::PropertyPa
     if (!maybeDim1)
         return nullptr;
     auto dim1 = *maybeDim1;
-    if (dim1 == CSSValueNone)
-        return CSSKeywordValue::create(CSSValueNone);
+    if (dim1 == CSSValueID::None)
+        return CSSKeywordValue::create(CSSValueID::None);
 
     auto maybeDim2 = consumeIdentRaw(range);
     if (!maybeDim2) {

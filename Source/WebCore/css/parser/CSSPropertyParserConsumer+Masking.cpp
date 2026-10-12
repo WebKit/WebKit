@@ -63,7 +63,7 @@ static std::optional<CSS::ClipRect> consumeUnresolvedClipRectFunction(CSSParserT
     // "<top>, <right>, <bottom>, and <left> may either have a <length> value or auto."
     // https://drafts.fxtf.org/css-masking/#funcdef-clip-rect
 
-    if (range.peek().functionId() != CSSValueRect)
+    if (range.peek().functionId() != CSSValueID::Rect)
         return std::nullopt;
 
     CSSParserTokenRangeGuard guard { range };
@@ -138,7 +138,7 @@ RefPtr<CSSValue> consumeClipPath(CSSParserTokenRange& range, CSS::PropertyParser
     // <clip-source> = <url>
     // https://drafts.fxtf.org/css-masking/#propdef-clip-path
 
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueID::None)
         return consumeIdent(range);
 
     if (auto url = consumeURL(range, state, { }))
@@ -172,7 +172,7 @@ RefPtr<CSSValue> consumeClipPath(CSSParserTokenRange& range, CSS::PropertyParser
     if (shape)
         list.append(shape.releaseNonNull());
     // Default value is border-box.
-    if (box && (!isValueID(*box, CSSValueBorderBox) || !hasShape))
+    if (box && (!isValueID(*box, CSSValueID::BorderBox) || !hasShape))
         list.append(box.releaseNonNull());
 
     if (list.isEmpty())

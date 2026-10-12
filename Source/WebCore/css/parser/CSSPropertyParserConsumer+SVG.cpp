@@ -48,7 +48,7 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, CSS::PropertyPars
     // <'paint-order'> = normal | [ fill || stroke || markers ]
     // https://svgwg.org/svg2-draft/painting.html#PaintOrderProperty
 
-    if (range.peek().id() == CSSValueNormal)
+    if (range.peek().id() == CSSValueID::Normal)
         return consumeIdent(range);
 
     Vector<CSSValueID, 3> paintTypeList;
@@ -57,11 +57,11 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, CSS::PropertyPars
     RefPtr<CSSKeywordValue> markers;
     do {
         CSSValueID id = range.peek().id();
-        if (id == CSSValueFill && !fill)
+        if (id == CSSValueID::Fill && !fill)
             fill = consumeIdent(range);
-        else if (id == CSSValueStroke && !stroke)
+        else if (id == CSSValueID::Stroke && !stroke)
             stroke = consumeIdent(range);
-        else if (id == CSSValueMarkers && !markers)
+        else if (id == CSSValueID::Markers && !markers)
             markers = consumeIdent(range);
         else
             return nullptr;
@@ -74,18 +74,18 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, CSS::PropertyPars
     CSSValueID firstPaintOrderType = paintTypeList.at(0);
     CSSValueListBuilder paintOrderList;
     switch (firstPaintOrderType) {
-    case CSSValueFill:
-    case CSSValueStroke:
-        paintOrderList.append(firstPaintOrderType == CSSValueFill ? fill.releaseNonNull() : stroke.releaseNonNull());
+    case CSSValueID::Fill:
+    case CSSValueID::Stroke:
+        paintOrderList.append(firstPaintOrderType == CSSValueID::Fill ? fill.releaseNonNull() : stroke.releaseNonNull());
         if (paintTypeList.size() > 1) {
-            if (paintTypeList.at(1) == CSSValueMarkers)
+            if (paintTypeList.at(1) == CSSValueID::Markers)
                 paintOrderList.append(markers.releaseNonNull());
         }
         break;
-    case CSSValueMarkers:
+    case CSSValueID::Markers:
         paintOrderList.append(markers.releaseNonNull());
         if (paintTypeList.size() > 1) {
-            if (paintTypeList.at(1) == CSSValueStroke)
+            if (paintTypeList.at(1) == CSSValueID::Stroke)
                 paintOrderList.append(stroke.releaseNonNull());
         }
         break;
@@ -103,7 +103,7 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range, CSS::Propert
     // https://svgwg.org/svg2-draft/painting.html#StrokeDashing
 
     CSSValueID id = range.peek().id();
-    if (id == CSSValueNone)
+    if (id == CSSValueID::None)
         return consumeIdent(range);
     CSSValueListBuilder dashes;
     do {

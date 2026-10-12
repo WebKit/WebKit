@@ -57,11 +57,11 @@ static std::optional<CSS::Quotes> consumeUnresolvedQuotes(CSSParserTokenRange& r
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueNone:
+    case CSSValueID::None:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::Quotes { CSS::Keyword::None { } };
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::Quotes { CSS::Keyword::Auto { } };
@@ -115,7 +115,7 @@ static std::optional<CSS::Content::CounterFunction> consumeUnresolvedContentCoun
         if (!counterStyle)
             return std::nullopt;
     } else
-        counterStyle = CSS::CounterStyle { CSS::Keyword { CSSValueDecimal } };
+        counterStyle = CSS::CounterStyle { CSS::Keyword { CSSValueID::Decimal } };
 
     if (!args.atEnd())
         return std::nullopt;
@@ -150,7 +150,7 @@ static std::optional<CSS::Content::CountersFunction> consumeUnresolvedContentCou
         if (!counterStyle)
             return std::nullopt;
     } else
-        counterStyle = CSS::CounterStyle { CSS::Keyword { CSSValueDecimal } };
+        counterStyle = CSS::CounterStyle { CSS::Keyword { CSSValueID::Decimal } };
 
     if (!args.atEnd())
         return std::nullopt;
@@ -174,11 +174,11 @@ static std::optional<CSS::Content> consumeUnresolvedContent(CSSParserTokenRange&
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueNone:
+    case CSSValueID::None:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::Content { CSS::Keyword::None { } };
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::Content { CSS::Keyword::Normal { } };
@@ -204,9 +204,9 @@ static std::optional<CSS::Content> consumeUnresolvedContent(CSSParserTokenRange&
         }
 
         switch (range.peek().functionId()) {
-        case CSSValueCounter:
+        case CSSValueID::Counter:
             return consumeUnresolvedContentCounterFunction(consumeFunction(range), state);
-        case CSSValueCounters:
+        case CSSValueID::Counters:
             return consumeUnresolvedContentCountersFunction(consumeFunction(range), state);
         default:
             break;

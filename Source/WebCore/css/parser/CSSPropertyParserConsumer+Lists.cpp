@@ -44,7 +44,7 @@ namespace CSSPropertyParserHelpers {
 
 static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, CSS::PropertyParserState& state, int defaultValue)
 {
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueID::None)
         return consumeIdent(range);
 
     CSSValueListBuilder list;

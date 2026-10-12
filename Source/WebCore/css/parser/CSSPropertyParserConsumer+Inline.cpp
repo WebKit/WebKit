@@ -42,19 +42,19 @@ static RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange& range)
     //               [ text | alphabetic | ideographic | ideographic-ink ]?
     // https://drafts.csswg.org/css-inline-3/#typedef-text-edge
 
-    auto firstValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
+    auto firstValue = consumeIdent<CSSValueID::Text, CSSValueID::Cap, CSSValueID::Ex, CSSValueID::Ideographic, CSSValueID::IdeographicInk>(range);
     if (!firstValue)
         return nullptr;
 
-    auto secondValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
+    auto secondValue = consumeIdent<CSSValueID::Text, CSSValueID::Alphabetic, CSSValueID::Ideographic, CSSValueID::IdeographicInk>(range);
 
     // https://drafts.csswg.org/css-inline-3/#text-edges
     // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
     auto shouldSerializeSecondValue = [&]() {
         if (!secondValue)
             return false;
-        if (firstValue->valueID() == CSSValueCap || firstValue->valueID() == CSSValueEx)
-            return secondValue->valueID() != CSSValueText;
+        if (firstValue->valueID() == CSSValueID::Cap || firstValue->valueID() == CSSValueID::Ex)
+            return secondValue->valueID() != CSSValueID::Text;
         return firstValue->valueID() != secondValue->valueID();
     }();
     if (!shouldSerializeSecondValue)
@@ -68,7 +68,7 @@ RefPtr<CSSValue> consumeLineFitEdge(CSSParserTokenRange& range, CSS::PropertyPar
     // <'line-fit-edge'> = leading | <text-edge>
     // https://drafts.csswg.org/css-inline-3/#propdef-line-fit-edge
 
-    if (range.peek().id() == CSSValueLeading)
+    if (range.peek().id() == CSSValueID::Leading)
         return consumeIdent(range);
     return consumeTextEdge(range);
 }
@@ -78,7 +78,7 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, CSS::PropertyPar
     // <'text-box-edge'> = auto | <text-edge>
     // https://drafts.csswg.org/css-inline-3/#propdef-text-box-edge
 
-    if (range.peek().id() == CSSValueAuto)
+    if (range.peek().id() == CSSValueID::Auto)
         return consumeIdent(range);
     return consumeTextEdge(range);
 }

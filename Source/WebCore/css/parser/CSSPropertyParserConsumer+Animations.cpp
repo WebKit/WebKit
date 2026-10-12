@@ -64,16 +64,16 @@ Vector<std::pair<CSSValueID, CSS::Percentage<>>> consumeKeyframeKeyList(CSSParse
 
         if (auto tokenValue = consumeIdent(range)) {
             auto valueId = tokenValue->valueID();
-            if (valueId == CSSValueFrom)
-                result.append({ CSSValueNormal, CSS::Percentage<> { 0 } });
-            else if (valueId == CSSValueTo)
-                result.append({ CSSValueNormal, CSS::Percentage<> { 100 } });
+            if (valueId == CSSValueID::From)
+                result.append({ CSSValueID::Normal, CSS::Percentage<> { 0 } });
+            else if (valueId == CSSValueID::To)
+                result.append({ CSSValueID::Normal, CSS::Percentage<> { 100 } });
             else if (auto pair = timelineRange(range, valueId))
                 result.append(*pair);
             else
                 return { }; // Parser error, invalid value in keyframe selector
         } else if (auto percentage = MetaConsumer<CSS::Percentage<CSS::ClosedPercentageRange>>::consume(range, state))
-            result.append({ CSSValueNormal, CSS::rangeExpandingCast<CSS::All>(*percentage) });
+            result.append({ CSSValueID::Normal, CSS::rangeExpandingCast<CSS::All>(*percentage) });
         else
             return { }; // Parser error, invalid value in keyframe selector
 
@@ -119,7 +119,7 @@ RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, CSS::PropertyP
             return nullptr;
 
         auto valueId = cssValueKeywordID(token.value());
-        if (isValidCustomIdentifier(valueId) && valueId != CSSValueNone)
+        if (isValidCustomIdentifier(valueId) && valueId != CSSValueID::None)
             return CSSCustomIdentValue::create(CSS::CustomIdent { token.value().toAtomString() });
         return CSSStringValue::create(CSS::String { token.value().toString() });
     }

@@ -42,30 +42,30 @@ public:
     {
         CSSValueID valueID = range.peek().id();
         switch (valueID) {
-        case CSSValueLiningNums:
-        case CSSValueOldstyleNums:
+        case CSSValueID::LiningNums:
+        case CSSValueID::OldstyleNums:
             if (m_sawNumericFigureValue)
                 return ParseResult::DisallowedValue;
             m_sawNumericFigureValue = true;
             break;
-        case CSSValueProportionalNums:
-        case CSSValueTabularNums:
+        case CSSValueID::ProportionalNums:
+        case CSSValueID::TabularNums:
             if (m_sawNumericSpacingValue)
                 return ParseResult::DisallowedValue;
             m_sawNumericSpacingValue = true;
             break;
-        case CSSValueDiagonalFractions:
-        case CSSValueStackedFractions:
+        case CSSValueID::DiagonalFractions:
+        case CSSValueID::StackedFractions:
             if (m_sawNumericFractionValue)
                 return ParseResult::DisallowedValue;
             m_sawNumericFractionValue = true;
             break;
-        case CSSValueOrdinal:
+        case CSSValueID::Ordinal:
             if (m_sawOrdinalValue)
                 return ParseResult::DisallowedValue;
             m_sawOrdinalValue = true;
             break;
-        case CSSValueSlashedZero:
+        case CSSValueID::SlashedZero:
             if (m_sawSlashedZeroValue)
                 return ParseResult::DisallowedValue;
             m_sawSlashedZeroValue = true;
@@ -80,7 +80,7 @@ public:
     RefPtr<CSSValue> finalizeValue()
     {
         if (m_result.isEmpty())
-            return CSSKeywordValue::create(CSSValueNormal);
+            return CSSKeywordValue::create(CSSValueID::Normal);
         return CSSValueList::createSpaceSeparated(WTF::move(m_result));
     }
 

@@ -71,7 +71,7 @@ RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::Prop
 
     CSSValueListBuilder list;
     // Default value is padding-box
-    if (visualBox && !isValueID(visualBox, CSSValuePaddingBox))
+    if (visualBox && !isValueID(visualBox, CSSValueID::PaddingBox))
         list.append(visualBox.releaseNonNull());
 
     // Default value is 0px

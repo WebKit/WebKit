@@ -71,7 +71,7 @@ bool isNameCodePoint(CharacterType c)
 inline bool isValidCustomIdentifier(CSSValueID valueID)
 {
     // "default" is obsolete as a CSS-wide keyword but is still not allowed as a custom identifier.
-    return !isCSSWideKeyword(valueID) && valueID != CSSValueDefault;
+    return !isCSSWideKeyword(valueID) && valueID != CSSValueID::Default;
 }
 
 // Unlike CSSPropertyParserHelpers::genericFontFamily, this does not access
@@ -80,14 +80,14 @@ inline bool isValidCustomIdentifier(CSSValueID valueID)
 inline bool isGenericFontFamilyKeyword(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueSerif:
-    case CSSValueSansSerif:
-    case CSSValueCursive:
-    case CSSValueFantasy:
-    case CSSValueMonospace:
-    case CSSValueSystemUi:
-    case CSSValueWebkitPictograph:
-    case CSSValueMath:
+    case CSSValueID::Serif:
+    case CSSValueID::SansSerif:
+    case CSSValueID::Cursive:
+    case CSSValueID::Fantasy:
+    case CSSValueID::Monospace:
+    case CSSValueID::SystemUi:
+    case CSSValueID::WebkitPictograph:
+    case CSSValueID::Math:
         return true;
     default:
         return false;
@@ -98,10 +98,10 @@ inline bool isGenericFontFamilyKeyword(CSSValueID valueID)
 inline bool isValidContainerNameIdentifier(CSSValueID valueID)
 {
     switch (valueID) {
-    case CSSValueNone:
-    case CSSValueAnd:
-    case CSSValueOr:
-    case CSSValueNot:
+    case CSSValueID::None:
+    case CSSValueID::And:
+    case CSSValueID::Or:
+    case CSSValueID::Not:
         return false;
     default:
         return isValidCustomIdentifier(valueID);

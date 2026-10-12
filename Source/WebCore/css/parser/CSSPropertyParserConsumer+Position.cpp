@@ -129,39 +129,39 @@ static std::optional<PositionUnresolvedComponent> consumePositionUnresolvedCompo
 {
     if (range.peek().type() == IdentToken) {
         switch (range.peek().id()) {
-        case CSSValueLeft:
+        case CSSValueID::Left:
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::Left { } };
-        case CSSValueRight:
+        case CSSValueID::Right:
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::Right { } };
-        case CSSValueXStart:
+        case CSSValueID::XStart:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::XStart { } };
-        case CSSValueXEnd:
+        case CSSValueID::XEnd:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::XEnd { } };
-        case CSSValueBottom:
+        case CSSValueID::Bottom:
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::Bottom { } };
-        case CSSValueTop:
+        case CSSValueID::Top:
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::Top { } };
-        case CSSValueYStart:
+        case CSSValueID::YStart:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::YStart { } };
-        case CSSValueYEnd:
+        case CSSValueID::YEnd:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::YEnd { } };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             range.consumeIncludingWhitespace();
             return PositionUnresolvedComponent { CSS::Keyword::Center { } };
         default:
@@ -510,31 +510,31 @@ std::optional<CSS::PositionX> consumePositionXUnresolved(CSSParserTokenRange& ra
 {
     if (range.peek().type() == IdentToken) {
         switch (range.peek().id()) {
-        case CSSValueLeft:
+        case CSSValueID::Left:
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionX { CSS::FourComponentPositionHorizontal { { CSS::Keyword::Left { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionX { CSS::TwoComponentPositionHorizontal { CSS::Keyword::Left { } } };
-        case CSSValueRight:
+        case CSSValueID::Right:
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionX { CSS::FourComponentPositionHorizontal { { CSS::Keyword::Right { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionX { CSS::TwoComponentPositionHorizontal { CSS::Keyword::Right { } } };
-        case CSSValueXStart:
+        case CSSValueID::XStart:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionX { CSS::FourComponentPositionHorizontal { { CSS::Keyword::XStart { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionX { CSS::TwoComponentPositionHorizontal { CSS::Keyword::XStart { } } };
-        case CSSValueXEnd:
+        case CSSValueID::XEnd:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionX { CSS::FourComponentPositionHorizontal { { CSS::Keyword::XEnd { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionX { CSS::TwoComponentPositionHorizontal { CSS::Keyword::XEnd { } } };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             range.consumeIncludingWhitespace();
             return CSS::PositionX { CSS::TwoComponentPositionHorizontal { CSS::Keyword::Center { } } };
         default:
@@ -551,31 +551,31 @@ std::optional<CSS::PositionY> consumePositionYUnresolved(CSSParserTokenRange& ra
 {
     if (range.peek().type() == IdentToken) {
         switch (range.peek().id()) {
-        case CSSValueTop:
+        case CSSValueID::Top:
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionY { CSS::FourComponentPositionVertical { { CSS::Keyword::Top { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionY { CSS::TwoComponentPositionVertical { CSS::Keyword::Top { } } };
-        case CSSValueBottom:
+        case CSSValueID::Bottom:
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionY { CSS::FourComponentPositionVertical { { CSS::Keyword::Bottom { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionY { CSS::TwoComponentPositionVertical { CSS::Keyword::Bottom { } } };
-        case CSSValueYStart:
+        case CSSValueID::YStart:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionY { CSS::FourComponentPositionVertical { { CSS::Keyword::YStart { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionY { CSS::TwoComponentPositionVertical { CSS::Keyword::YStart { } } };
-        case CSSValueYEnd:
+        case CSSValueID::YEnd:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state))
                 return CSS::PositionY { CSS::FourComponentPositionVertical { { CSS::Keyword::YEnd { }, WTF::move(*lengthPercentage) } } };
             return CSS::PositionY { CSS::TwoComponentPositionVertical { CSS::Keyword::YEnd { } } };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             range.consumeIncludingWhitespace();
             return CSS::PositionY { CSS::TwoComponentPositionVertical { CSS::Keyword::Center { } } };
         default:
@@ -616,23 +616,23 @@ std::optional<CSS::TwoComponentPositionHorizontal> consumeTwoComponentPositionHo
 {
     if (range.peek().type() == IdentToken) {
         switch (range.peek().id()) {
-        case CSSValueLeft:
+        case CSSValueID::Left:
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionHorizontal { CSS::Keyword::Left { } };
-        case CSSValueRight:
+        case CSSValueID::Right:
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionHorizontal { CSS::Keyword::Right { } };
-        case CSSValueXStart:
+        case CSSValueID::XStart:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionHorizontal { CSS::Keyword::XStart { } };
-        case CSSValueXEnd:
+        case CSSValueID::XEnd:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionHorizontal { CSS::Keyword::XEnd { } };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionHorizontal { CSS::Keyword::Center { } };
         default:
@@ -649,23 +649,23 @@ std::optional<CSS::TwoComponentPositionVertical> consumeTwoComponentPositionVert
 {
     if (range.peek().type() == IdentToken) {
         switch (range.peek().id()) {
-        case CSSValueBottom:
+        case CSSValueID::Bottom:
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionVertical { CSS::Keyword::Bottom { } };
-        case CSSValueTop:
+        case CSSValueID::Top:
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionVertical { CSS::Keyword::Top { } };
-        case CSSValueYStart:
+        case CSSValueID::YStart:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionVertical { CSS::Keyword::YStart { } };
-        case CSSValueYEnd:
+        case CSSValueID::YEnd:
             if (!state.context.cssAxisRelativePositionKeywordsEnabled)
                 return { };
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionVertical { CSS::Keyword::YEnd { } };
-        case CSSValueCenter:
+        case CSSValueID::Center:
             range.consumeIncludingWhitespace();
             return CSS::TwoComponentPositionVertical { CSS::Keyword::Center { } };
         default:

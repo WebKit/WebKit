@@ -51,13 +51,13 @@ bool isTimelineRangeName(CSSValueID id)
     // https://drafts.csswg.org/scroll-animations-1/#view-timelines-ranges
 
     return identMatches<
-        CSSValueCover,
-        CSSValueContain,
-        CSSValueEntry,
-        CSSValueExit,
-        CSSValueEntryCrossing,
-        CSSValueExitCrossing,
-        CSSValueScroll
+        CSSValueID::Cover,
+        CSSValueID::Contain,
+        CSSValueID::Entry,
+        CSSValueID::Exit,
+        CSSValueID::EntryCrossing,
+        CSSValueID::ExitCrossing,
+        CSSValueID::Scroll
     >(id);
 }
 
@@ -101,7 +101,7 @@ RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range, CSS:
     // <axis> = block | inline | x | y
     // https://drafts.csswg.org/scroll-animations-1/#scroll-notation
 
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueScroll)
+    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueID::Scroll)
         return nullptr;
 
     auto args = consumeFunction(range);
@@ -130,7 +130,7 @@ RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, CSS::P
     // <'view-timeline-inset'> = [ [ auto | <length-percentage> ]{1,2} ]#
     // https://drafts.csswg.org/scroll-animations-1/#view-notation
 
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueView)
+    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueID::View)
         return nullptr;
 
     auto args = consumeFunction(range);
@@ -217,7 +217,7 @@ RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::Pr
         );
     };
 
-    if (auto normal = consumeIdent<CSSValueNormal>(range))
+    if (auto normal = consumeIdent<CSSValueID::Normal>(range))
         return normal;
 
     if (auto name = consumeTimelineRangeName(range)) {

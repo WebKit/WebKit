@@ -41,12 +41,12 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::Pro
     // <'types'> = none | <custom-ident>+
     // https://www.w3.org/TR/css-view-transitions-2/#descdef-view-transition-types
 
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueID::None)
         return consumeIdent(range);
 
     CSSValueListBuilder list;
     do {
-        auto type = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNone });
+        auto type = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueID::None });
         if (!type)
              return nullptr;
         if (type->value.startsWith("-ua-"_s))

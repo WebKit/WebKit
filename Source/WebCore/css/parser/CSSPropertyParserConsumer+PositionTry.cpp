@@ -41,14 +41,14 @@ RefPtr<CSSValue> consumePositionTryFallbacks(CSSParserTokenRange& range, CSS::Pr
     // <'position-try-fallbacks'> = none | [ [<dashed-ident> || <try-tactic>] | <'position-area'> ]#
     // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-try-fallbacks
 
-    if (auto result = consumeIdent<CSSValueNone>(range))
+    if (auto result = consumeIdent<CSSValueID::None>(range))
         return result;
 
     auto consumeFallback = [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
         // Try to parse <'position-area'>
         auto rangeCopy = range;
         // consumePositionArea accepts 'none', so detect and reject it beforehand.
-        if (range.peek().id() == CSSValueNone)
+        if (range.peek().id() == CSSValueID::None)
             return nullptr;
         if (auto positionArea = consumePositionArea(range, state))
             return positionArea;
@@ -60,7 +60,7 @@ RefPtr<CSSValue> consumePositionTryFallbacks(CSSParserTokenRange& range, CSS::Pr
         auto tryRuleIdent = consumeUnresolvedDashedIdent(range, state);
 
         Vector<CSSValueID, 5> tryTactics;
-        while (auto tactic = consumeIdentRaw<CSSValueFlipBlock, CSSValueFlipInline, CSSValueFlipStart, CSSValueFlipX, CSSValueFlipY>(range)) {
+        while (auto tactic = consumeIdentRaw<CSSValueID::FlipBlock, CSSValueID::FlipInline, CSSValueID::FlipStart, CSSValueID::FlipX, CSSValueID::FlipY>(range)) {
             if (tryTactics.contains(*tactic))
                 return nullptr;
             tryTactics.append(*tactic);

@@ -47,10 +47,10 @@ namespace CSSPropertyParserHelpers {
 static std::optional<CSS::ParamSpec> consumeParamSpec(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     switch (range.peek().id()) {
-    case CSSValueColor:
+    case CSSValueID::Color:
         range.consumeIncludingWhitespace();
         return CSS::ParamSpec { CSS::Keyword::Color { } };
-    case CSSValueAccentColor:
+    case CSSValueID::AccentColor:
         range.consumeIncludingWhitespace();
         return CSS::ParamSpec { CSS::Keyword::AccentColor { } };
     default:
@@ -74,7 +74,7 @@ static std::optional<CSS::ParamSpec> consumeParamSpec(CSSParserTokenRange& range
 
 std::optional<CSS::ParamFunction> consumeParamFunctionRaw(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    if (range.peek().functionId() != CSSValueParam)
+    if (range.peek().functionId() != CSSValueID::Param)
         return { };
 
     auto arguments = consumeFunction(range);

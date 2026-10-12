@@ -316,7 +316,7 @@ static std::optional<CSS::Color> consumeRelativeFunctionParameters(CSSParserToke
 template<typename Descriptor>
 static std::optional<CSS::Color> consumeRelativeFunctionParameters(CSSParserTokenRange& args, ColorParserState& state)
 {
-    ASSERT(args.peek().id() == CSSValueFrom);
+    ASSERT(args.peek().id() == CSSValueID::From);
     consumeIdentRaw(args);
 
     auto originColor = consumeColor(args, state);
@@ -333,11 +333,11 @@ static std::optional<CSS::Color> consumeRelativeFunctionParameters(CSSParserToke
 template<typename Descriptor>
 static std::optional<CSS::Color> consumeGenericFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
-    ASSERT(range.peek().functionId() == CSSValueLch || range.peek().functionId() == CSSValueOklch || range.peek().functionId() == CSSValueLab || range.peek().functionId() == CSSValueOklab || range.peek().functionId() == CSSValueHwb);
+    ASSERT(range.peek().functionId() == CSSValueID::Lch || range.peek().functionId() == CSSValueID::Oklch || range.peek().functionId() == CSSValueID::Lab || range.peek().functionId() == CSSValueID::Oklab || range.peek().functionId() == CSSValueID::Hwb);
 
     auto args = consumeFunction(range);
 
-    if (args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueID::From)
         return consumeRelativeFunctionParameters<Descriptor>(args, state);
     return consumeAbsoluteFunctionParameters<Descriptor>(args, state);
 }
@@ -346,10 +346,10 @@ static std::optional<CSS::Color> consumeGenericFunction(CSSParserTokenRange& ran
 
 static std::optional<CSS::Color> consumeRGBFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
-    ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
+    ASSERT(range.peek().functionId() == CSSValueID::Rgb || range.peek().functionId() == CSSValueID::Rgba);
     auto args = consumeFunction(range);
 
-    if (args.peek().id() == CSSValueFrom) {
+    if (args.peek().id() == CSSValueID::From) {
         using Descriptor = RGBFunctionModernRelative;
 
         return consumeRelativeFunctionParameters<Descriptor>(args, state);
@@ -395,10 +395,10 @@ static std::optional<CSS::Color> consumeRGBFunction(CSSParserTokenRange& range, 
 
 static std::optional<CSS::Color> consumeHSLFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
-    ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
+    ASSERT(range.peek().functionId() == CSSValueID::Hsl || range.peek().functionId() == CSSValueID::Hsla);
     auto args = consumeFunction(range);
 
-    if (args.peek().id() == CSSValueFrom) {
+    if (args.peek().id() == CSSValueID::From) {
         using Descriptor = HSLFunctionModern;
 
         return consumeRelativeFunctionParameters<Descriptor>(args, state);
@@ -446,24 +446,24 @@ template<typename Functor>
 static auto callWithColorFunction(CSSValueID id, NOESCAPE const Functor& functor) -> decltype(functor.template operator()<ColorRGBFunction<ExtendedSRGBA<float>>>())
 {
     switch (id) {
-    case CSSValueA98Rgb:
+    case CSSValueID::A98Rgb:
         return functor.template operator()<ColorRGBFunction<ExtendedA98RGB<float>>>();
-    case CSSValueDisplayP3:
+    case CSSValueID::DisplayP3:
         return functor.template operator()<ColorRGBFunction<ExtendedDisplayP3<float>>>();
-    case CSSValueDisplayP3Linear:
+    case CSSValueID::DisplayP3Linear:
         return functor.template operator()<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>();
-    case CSSValueProphotoRgb:
+    case CSSValueID::ProphotoRgb:
         return functor.template operator()<ColorRGBFunction<ExtendedProPhotoRGB<float>>>();
-    case CSSValueRec2020:
+    case CSSValueID::Rec2020:
         return functor.template operator()<ColorRGBFunction<ExtendedRec2020<float>>>();
-    case CSSValueSRGB:
+    case CSSValueID::SRGB:
         return functor.template operator()<ColorRGBFunction<ExtendedSRGBA<float>>>();
-    case CSSValueSrgbLinear:
+    case CSSValueID::SrgbLinear:
         return functor.template operator()<ColorRGBFunction<ExtendedLinearSRGBA<float>>>();
-    case CSSValueXyzD50:
+    case CSSValueID::XyzD50:
         return functor.template operator()<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>();
-    case CSSValueXyz:
-    case CSSValueXyzD65:
+    case CSSValueID::Xyz:
+    case CSSValueID::XyzD65:
         return functor.template operator()<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>();
     default:
         return { };
@@ -485,10 +485,10 @@ static auto consumeColorSpace(CSSParserTokenRange& args, NOESCAPE const Functor&
 
 static std::optional<CSS::Color> consumeColorFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
-    ASSERT(range.peek().functionId() == CSSValueColor);
+    ASSERT(range.peek().functionId() == CSSValueID::Color);
     auto args = consumeFunction(range);
 
-    if (args.peek().id() == CSSValueFrom) {
+    if (args.peek().id() == CSSValueID::From) {
         consumeIdentRaw(args);
 
         auto originColor = consumeColor(args, state);
@@ -511,7 +511,7 @@ static std::optional<CSS::Color> consumeColorLayersFunction(CSSParserTokenRange&
 {
     // color-layers() = color-layers([ <blend-mode>, ]? <color># )
 
-    ASSERT(range.peek().functionId() == CSSValueColorLayers);
+    ASSERT(range.peek().functionId() == CSSValueID::ColorLayers);
 
     if (!state.propertyParserState.context.colorLayersEnabled)
         return std::nullopt;
@@ -568,12 +568,12 @@ static std::optional<CSS::Color> consumeColorMixFunction(CSSParserTokenRange& ra
     // color-mix() = color-mix( <color-interpolation-method>? , [ <color> && <percentage [0,100]>? ]# )
     // https://drafts.csswg.org/css-color-5/#color-mix
 
-    ASSERT(range.peek().functionId() == CSSValueColorMix);
+    ASSERT(range.peek().functionId() == CSSValueID::ColorMix);
 
     auto args = consumeFunction(range);
 
     std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod = CSS::defaultInterpolationMethodForColorMix;
-    if (args.peek().id() == CSSValueIn) {
+    if (args.peek().id() == CSSValueID::In) {
         colorInterpolationMethod = consumeColorInterpolationMethod(args, state.propertyParserState);
         if (!colorInterpolationMethod)
             return std::nullopt;
@@ -608,7 +608,7 @@ static std::optional<CSS::Color> consumeContrastColorFunction(CSSParserTokenRang
     // contrast-color() = contrast-color( <color> )
     // https://drafts.csswg.org/css-color-5/#funcdef-contrast-color
 
-    ASSERT(range.peek().functionId() == CSSValueContrastColor);
+    ASSERT(range.peek().functionId() == CSSValueID::ContrastColor);
 
     auto args = consumeFunction(range);
 
@@ -633,7 +633,7 @@ static std::optional<CSS::Color> consumeLightDarkFunction(CSSParserTokenRange& r
     // light-dark() = light-dark( <color>, <color> )
     // https://drafts.csswg.org/css-color-5/#light-dark
 
-    ASSERT(range.peek().functionId() == CSSValueLightDark);
+    ASSERT(range.peek().functionId() == CSSValueID::LightDark);
 
     auto args = consumeFunction(range);
 
@@ -666,13 +666,13 @@ static std::optional<CSS::Color> consumeRelativeAlphaColorFunction(CSSParserToke
     // alpha() = alpha([from <color>] / [<alpha-value> | none] )
     // https://drafts.csswg.org/css-color-5/#relative-alpha
 
-    ASSERT(range.peek().functionId() == CSSValueAlpha);
+    ASSERT(range.peek().functionId() == CSSValueID::Alpha);
 
     using Descriptor = CSS::RelativeAlphaColor::Descriptor;
 
     auto args = consumeFunction(range);
 
-    if (!consumeIdentRaw<CSSValueFrom>(args))
+    if (!consumeIdentRaw<CSSValueID::From>(args))
         return std::nullopt;
 
     auto originColor = consumeColor(args, state);
@@ -711,45 +711,45 @@ static std::optional<CSS::Color> consumeAColorFunction(CSSParserTokenRange& rang
     CSSValueID functionId = range.peek().functionId();
     std::optional<CSS::Color> color;
     switch (functionId) {
-    case CSSValueRgb:
-    case CSSValueRgba:
+    case CSSValueID::Rgb:
+    case CSSValueID::Rgba:
         color = consumeRGBFunction(colorRange, state);
         break;
-    case CSSValueHsl:
-    case CSSValueHsla:
+    case CSSValueID::Hsl:
+    case CSSValueID::Hsla:
         color = consumeHSLFunction(colorRange, state);
         break;
-    case CSSValueHwb:
+    case CSSValueID::Hwb:
         color = consumeGenericFunction<HWBFunction>(colorRange, state);
         break;
-    case CSSValueLab:
+    case CSSValueID::Lab:
         color = consumeGenericFunction<LabFunction>(colorRange, state);
         break;
-    case CSSValueLch:
+    case CSSValueID::Lch:
         color = consumeGenericFunction<LCHFunction>(colorRange, state);
         break;
-    case CSSValueOklab:
+    case CSSValueID::Oklab:
         color = consumeGenericFunction<OKLabFunction>(colorRange, state);
         break;
-    case CSSValueOklch:
+    case CSSValueID::Oklch:
         color = consumeGenericFunction<OKLCHFunction>(colorRange, state);
         break;
-    case CSSValueColor:
+    case CSSValueID::Color:
         color = consumeColorFunction(colorRange, state);
         break;
-    case CSSValueColorLayers:
+    case CSSValueID::ColorLayers:
         color = consumeColorLayersFunction(colorRange, state);
         break;
-    case CSSValueColorMix:
+    case CSSValueID::ColorMix:
         color = consumeColorMixFunction(colorRange, state);
         break;
-    case CSSValueContrastColor:
+    case CSSValueID::ContrastColor:
         color = consumeContrastColorFunction(colorRange, state);
         break;
-    case CSSValueLightDark:
+    case CSSValueID::LightDark:
         color = consumeLightDarkFunction(colorRange, state);
         break;
-    case CSSValueAlpha:
+    case CSSValueID::Alpha:
         color = consumeRelativeAlphaColorFunction(colorRange, state);
         break;
     default:
@@ -808,7 +808,7 @@ static std::optional<SRGBA<uint8_t>> consumeHexColor(CSSParserTokenRange& range,
 bool isColorKeywordAllowed(CSSValueID id, const CSSParserContext& context)
 {
     switch (id) {
-    case CSSValueWebkitFocusRingColor:
+    case CSSValueID::WebkitFocusRingColor:
         switch (context.mode) {
         case UASheetMode:
         case HTMLQuirksMode:
@@ -818,16 +818,16 @@ bool isColorKeywordAllowed(CSSValueID id, const CSSParserContext& context)
         }
 
 #if PLATFORM(COCOA)
-    case CSSValueAppleSystemTertiaryFill:
+    case CSSValueID::AppleSystemTertiaryFill:
 #endif
 #if PLATFORM(IOS_FAMILY)
-    case CSSValueAppleSystemQuaternaryFill:
+    case CSSValueID::AppleSystemQuaternaryFill:
 #endif
 #if PLATFORM(MAC)
-    case CSSValueAppleSystemOpaqueFill:
-    case CSSValueAppleSystemOpaqueSecondaryFill:
+    case CSSValueID::AppleSystemOpaqueFill:
+    case CSSValueID::AppleSystemOpaqueSecondaryFill:
 #endif
-    case CSSValueInternalDocumentTextColor:
+    case CSSValueID::InternalDocumentTextColor:
         switch (context.mode) {
         case UASheetMode:
             return true;
@@ -980,7 +980,7 @@ static std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimitM
 {
     // dynamic-range-limit-mix() = dynamic-range-limit-mix( [ <'dynamic-range-limit'> && <percentage [0,100]> ]#{2,} )
 
-    ASSERT(range.peek().functionId() == CSSValueDynamicRangeLimitMix);
+    ASSERT(range.peek().functionId() == CSSValueID::DynamicRangeLimitMix);
 
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
@@ -1016,15 +1016,15 @@ std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimit(CSSPars
     // https://drafts.csswg.org/css-color-hdr/#propdef-dynamic-range-limit
 
     switch (range.peek().id()) {
-    case CSSValueStandard:
+    case CSSValueID::Standard:
         range.consumeIncludingWhitespace();
         return CSS::DynamicRangeLimit { CSS::Keyword::Standard { } };
-    case CSSValueConstrained:
+    case CSSValueID::Constrained:
         if (!propertyParserState.context.cssConstrainedDynamicRangeLimitEnabled)
             return { };
         range.consumeIncludingWhitespace();
         return CSS::DynamicRangeLimit { CSS::Keyword::Constrained { } };
-    case CSSValueNoLimit:
+    case CSSValueID::NoLimit:
         range.consumeIncludingWhitespace();
         return CSS::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
     default:
@@ -1034,7 +1034,7 @@ std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimit(CSSPars
     if (!propertyParserState.context.cssDynamicRangeLimitMixEnabled)
         return { };
 
-    if (range.peek().functionId() == CSSValueDynamicRangeLimitMix) {
+    if (range.peek().functionId() == CSSValueID::DynamicRangeLimitMix) {
         if (auto mix = consumeUnresolvedDynamicRangeLimitMix(range, propertyParserState))
             return CSS::DynamicRangeLimit { WTF::move(*mix) };
     }

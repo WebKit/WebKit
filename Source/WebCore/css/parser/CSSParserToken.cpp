@@ -501,14 +501,14 @@ CSSPropertyID CSSParserToken::parseAsCSSPropertyID() const
 CSSValueID CSSParserToken::id() const
 {
     if (m_type != IdentToken)
-        return CSSValueInvalid;
+        return CSSValueID::Invalid;
     return identOrFunctionId();
 }
 
 CSSValueID CSSParserToken::functionId() const
 {
     if (m_type != FunctionToken)
-        return CSSValueInvalid;
+        return CSSValueID::Invalid;
     return identOrFunctionId();
 }
 
@@ -570,7 +570,7 @@ bool CSSParserToken::tryUseStringLiteralBacking()
 
     if (!m_isBackedByStringLiteral) {
         auto valueId = identOrFunctionId();
-        if (valueId == CSSValueInvalid)
+        if (valueId == CSSValueID::Invalid)
             return false;
 
         auto literal = nameLiteral(valueId);

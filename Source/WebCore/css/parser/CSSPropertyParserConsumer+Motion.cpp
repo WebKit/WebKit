@@ -56,14 +56,14 @@ static RefPtr<CSSValue> consumeRayFunction(CSSParserTokenRange& range, CSS::Prop
     // https://drafts.fxtf.org/motion-1/#ray-function
 
     static constexpr SortedArrayMap sizeMap { WTF::toArray<std::pair<CSSValueID, CSS::RaySize>>({
-        { CSSValueClosestSide, CSS::RaySize { CSS::Keyword::ClosestSide { } } },
-        { CSSValueClosestCorner, CSS::RaySize { CSS::Keyword::ClosestCorner { } } },
-        { CSSValueFarthestSide, CSS::RaySize { CSS::Keyword::FarthestSide { } } },
-        { CSSValueFarthestCorner, CSS::RaySize { CSS::Keyword::FarthestCorner { } } },
-        { CSSValueSides, CSS::RaySize { CSS::Keyword::Sides { } } },
+        { CSSValueID::ClosestSide, CSS::RaySize { CSS::Keyword::ClosestSide { } } },
+        { CSSValueID::ClosestCorner, CSS::RaySize { CSS::Keyword::ClosestCorner { } } },
+        { CSSValueID::FarthestSide, CSS::RaySize { CSS::Keyword::FarthestSide { } } },
+        { CSSValueID::FarthestCorner, CSS::RaySize { CSS::Keyword::FarthestCorner { } } },
+        { CSSValueID::Sides, CSS::RaySize { CSS::Keyword::Sides { } } },
     }) };
 
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueRay)
+    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueID::Ray)
         return { };
 
     auto args = consumeFunction(range);
@@ -86,13 +86,13 @@ static RefPtr<CSSValue> consumeRayFunction(CSSParserTokenRange& range, CSS::Prop
         return size.has_value();
     };
     auto consumeContain = [&] -> bool {
-        if (contain || !consumeIdentRaw<CSSValueContain>(args).has_value())
+        if (contain || !consumeIdentRaw<CSSValueID::Contain>(args).has_value())
             return false;
         contain = CSS::Keyword::Contain { };
         return contain.has_value();
     };
     auto consumeAtPosition = [&] -> bool {
-        if (position || !consumeIdentRaw<CSSValueAt>(args).has_value())
+        if (position || !consumeIdentRaw<CSSValueID::At>(args).has_value())
             return false;
         position = consumePositionUnresolved(args, state);
         return position.has_value();
@@ -139,7 +139,7 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, CSS::PropertyPars
     //
     // https://drafts.fxtf.org/motion-1/#propdef-offset-path
 
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueID::None)
         return consumeIdent(range);
 
     // FIXME: It should be possible to consume both a <url> and <coord-box>.
@@ -183,7 +183,7 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, CSS::PropertyPars
         list.append(shapeOrRay.releaseNonNull());
 
     // Default value is border-box.
-    if (box && (!isValueID(box, CSSValueBorderBox) || !hasShapeOrRay))
+    if (box && (!isValueID(box, CSSValueID::BorderBox) || !hasShapeOrRay))
         list.append(box.releaseNonNull());
 
     if (list.isEmpty())

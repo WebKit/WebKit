@@ -121,7 +121,7 @@ static std::optional<CSS::TextShadowProperty::List> consumeUnresolvedTextShadowL
 
 static std::optional<CSS::TextShadowProperty> consumeUnresolvedTextShadow(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    if (range.peek().id() == CSSValueNone) {
+    if (range.peek().id() == CSSValueID::None) {
         range.consumeIncludingWhitespace();
         return CSS::TextShadowProperty { CSS::Keyword::None { } };
     }

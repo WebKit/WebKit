@@ -50,7 +50,7 @@ consteval DisplayOutsideInsideMap NODELETE makeDisplayOutsideInsideMap()
     DisplayOutsideInsideMap result;
 
     // One of either <display-inside> or <display-outside> is needed, so this is case is invalid.
-    result[NoOutside][NoInside]  = { CSSValueInvalid, CSSValueInvalid };
+    result[NoOutside][NoInside]  = { CSSValueID::Invalid, CSSValueID::Invalid };
 
     // Aliasing `block <display-inside>`.
     //
@@ -59,14 +59,14 @@ consteval DisplayOutsideInsideMap NODELETE makeDisplayOutsideInsideMap()
     //   - `block flow` is aliased to `block`, not `flow`.
     //   - `block ruby` is not aliased to anything.
 
-    result[Block][NoInside]      = { CSSValueBlock,     CSSValueInvalid };
-    result[Block][Flow]          = { CSSValueBlock,     CSSValueInvalid };
-    result[Block][FlowRoot]      = { CSSValueFlowRoot,  CSSValueInvalid };
-    result[Block][Table]         = { CSSValueTable,     CSSValueInvalid };
-    result[Block][Flex]          = { CSSValueFlex,      CSSValueInvalid };
-    result[Block][Grid]          = { CSSValueGrid,      CSSValueInvalid };
-    result[Block][GridLanes]     = { CSSValueGridLanes, CSSValueInvalid };
-    result[Block][Ruby]          = { CSSValueBlock,     CSSValueRuby };
+    result[Block][NoInside]      = { CSSValueID::Block,     CSSValueID::Invalid };
+    result[Block][Flow]          = { CSSValueID::Block,     CSSValueID::Invalid };
+    result[Block][FlowRoot]      = { CSSValueID::FlowRoot,  CSSValueID::Invalid };
+    result[Block][Table]         = { CSSValueID::Table,     CSSValueID::Invalid };
+    result[Block][Flex]          = { CSSValueID::Flex,      CSSValueID::Invalid };
+    result[Block][Grid]          = { CSSValueID::Grid,      CSSValueID::Invalid };
+    result[Block][GridLanes]     = { CSSValueID::GridLanes, CSSValueID::Invalid };
+    result[Block][Ruby]          = { CSSValueID::Block,     CSSValueID::Ruby };
 
     // Aliasing `inline <display-inside>`.
     //
@@ -76,14 +76,14 @@ consteval DisplayOutsideInsideMap NODELETE makeDisplayOutsideInsideMap()
     //   - `inline flow-root` is aliased to `inline-block`. not `inline-flow-root`.
     //   - `inline ruby` is aliased to `ruby`, not `inline-ruby`.
 
-    result[Inline][NoInside]     = { CSSValueInline,          CSSValueInvalid };
-    result[Inline][Flow]         = { CSSValueInline,          CSSValueInvalid };
-    result[Inline][FlowRoot]     = { CSSValueInlineBlock,     CSSValueInvalid };
-    result[Inline][Table]        = { CSSValueInlineTable,     CSSValueInvalid };
-    result[Inline][Flex]         = { CSSValueInlineFlex,      CSSValueInvalid };
-    result[Inline][Grid]         = { CSSValueInlineGrid,      CSSValueInvalid };
-    result[Inline][GridLanes]    = { CSSValueInlineGridLanes, CSSValueInvalid };
-    result[Inline][Ruby]         = { CSSValueRuby,            CSSValueInvalid };
+    result[Inline][NoInside]     = { CSSValueID::Inline,          CSSValueID::Invalid };
+    result[Inline][Flow]         = { CSSValueID::Inline,          CSSValueID::Invalid };
+    result[Inline][FlowRoot]     = { CSSValueID::InlineBlock,     CSSValueID::Invalid };
+    result[Inline][Table]        = { CSSValueID::InlineTable,     CSSValueID::Invalid };
+    result[Inline][Flex]         = { CSSValueID::InlineFlex,      CSSValueID::Invalid };
+    result[Inline][Grid]         = { CSSValueID::InlineGrid,      CSSValueID::Invalid };
+    result[Inline][GridLanes]    = { CSSValueID::InlineGridLanes, CSSValueID::Invalid };
+    result[Inline][Ruby]         = { CSSValueID::Ruby,            CSSValueID::Invalid };
 
     // Aliasing `<display-inside>` on its own.
     //
@@ -108,9 +108,9 @@ RefPtr<CSSValue> NODELETE mappedDisplayValue()
 {
     static constexpr auto result = displayOutsideInsideMap[outside][inside];
 
-    if constexpr (result.first == CSSValueInvalid && result.second == CSSValueInvalid)
+    if constexpr (result.first == CSSValueID::Invalid && result.second == CSSValueID::Invalid)
         return nullptr;
-    else if constexpr (result.second == CSSValueInvalid)
+    else if constexpr (result.second == CSSValueID::Invalid)
         return CSSKeywordValue::create(result.first);
     else
         return CSSValuePair::createNoncoalescing(CSSKeywordValue::create(result.first), CSSKeywordValue::create(result.second));
@@ -125,32 +125,32 @@ static RefPtr<CSSValue> consumeAfterInitialDisplayOutside(CSSParserTokenRange& r
     range.consumeIncludingWhitespace();
 
     switch (range.peek().id()) {
-    case CSSValueFlow:
+    case CSSValueID::Flow:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<outside, Flow>();
 
-    case CSSValueFlowRoot:
+    case CSSValueID::FlowRoot:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<outside, FlowRoot>();
 
-    case CSSValueTable:
+    case CSSValueID::Table:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<outside, Table>();
 
-    case CSSValueFlex:
+    case CSSValueID::Flex:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<outside, Flex>();
 
-    case CSSValueGrid:
+    case CSSValueID::Grid:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<outside, Grid>();
 
-    case CSSValueGridLanes:
+    case CSSValueID::GridLanes:
         if (!state.context.gridLanesEnabled)
             return nullptr;
 
@@ -158,7 +158,7 @@ static RefPtr<CSSValue> consumeAfterInitialDisplayOutside(CSSParserTokenRange& r
         guard.commit();
         return mappedDisplayValue<outside, GridLanes>();
 
-    case CSSValueRuby:
+    case CSSValueID::Ruby:
         if (!state.context.cssRubyDisplayTypesEnabled)
             return nullptr;
 
@@ -166,7 +166,7 @@ static RefPtr<CSSValue> consumeAfterInitialDisplayOutside(CSSParserTokenRange& r
         guard.commit();
         return mappedDisplayValue<outside, Ruby>();
 
-    case CSSValueInvalid:
+    case CSSValueID::Invalid:
         guard.commit();
         return mappedDisplayValue<outside, NoInside>();
 
@@ -184,17 +184,17 @@ static RefPtr<CSSValue> consumeAfterInitialDisplayInside(CSSParserTokenRange& ra
     range.consumeIncludingWhitespace();
 
     switch (range.peek().id()) {
-    case CSSValueBlock:
+    case CSSValueID::Block:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<Block, inside>();
 
-    case CSSValueInline:
+    case CSSValueID::Inline:
         range.consumeIncludingWhitespace();
         guard.commit();
         return mappedDisplayValue<Inline, inside>();
 
-    case CSSValueInvalid:
+    case CSSValueID::Invalid:
         guard.commit();
         return mappedDisplayValue<NoOutside, inside>();
 
@@ -225,81 +225,81 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSS::PropertyParserS
     switch (range.peek().id()) {
     // <display-outside>
     // FIXME: Add support for `run-in`.
-    case CSSValueBlock:
+    case CSSValueID::Block:
         return consumeAfterInitialDisplayOutside<DisplayOutside::Block>(range, state);
-    case CSSValueInline:
+    case CSSValueID::Inline:
         return consumeAfterInitialDisplayOutside<DisplayOutside::Inline>(range, state);
 
     // <display-inside>
-    case CSSValueFlow:
+    case CSSValueID::Flow:
         return consumeAfterInitialDisplayInside<DisplayInside::Flow>(range, state);
-    case CSSValueFlowRoot:
+    case CSSValueID::FlowRoot:
         return consumeAfterInitialDisplayInside<DisplayInside::FlowRoot>(range, state);
-    case CSSValueTable:
+    case CSSValueID::Table:
         return consumeAfterInitialDisplayInside<DisplayInside::Table>(range, state);
-    case CSSValueFlex:
+    case CSSValueID::Flex:
         return consumeAfterInitialDisplayInside<DisplayInside::Flex>(range, state);
-    case CSSValueGrid:
+    case CSSValueID::Grid:
         return consumeAfterInitialDisplayInside<DisplayInside::Grid>(range, state);
-    case CSSValueGridLanes:
+    case CSSValueID::GridLanes:
         if (!state.context.gridLanesEnabled)
             return nullptr;
         return consumeAfterInitialDisplayInside<DisplayInside::GridLanes>(range, state);
-    case CSSValueRuby:
+    case CSSValueID::Ruby:
         if (!state.context.cssRubyDisplayTypesEnabled)
             return nullptr;
         return consumeAfterInitialDisplayInside<DisplayInside::Ruby>(range, state);
 
     // <display-listitem>
     // FIXME: Add support for the full <display-listitem> syntax, not just the single value version.
-    case CSSValueListItem:
+    case CSSValueID::ListItem:
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
 
     // <display-internal>
     // FIXME: Add support for `ruby-base-container` and `ruby-text-container`.
-    case CSSValueTableCaption:
-    case CSSValueTableCell:
-    case CSSValueTableColumnGroup:
-    case CSSValueTableColumn:
-    case CSSValueTableHeaderGroup:
-    case CSSValueTableFooterGroup:
-    case CSSValueTableRow:
-    case CSSValueTableRowGroup:
+    case CSSValueID::TableCaption:
+    case CSSValueID::TableCell:
+    case CSSValueID::TableColumnGroup:
+    case CSSValueID::TableColumn:
+    case CSSValueID::TableHeaderGroup:
+    case CSSValueID::TableFooterGroup:
+    case CSSValueID::TableRow:
+    case CSSValueID::TableRowGroup:
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
-    case CSSValueRubyBase:
-    case CSSValueRubyText:
+    case CSSValueID::RubyBase:
+    case CSSValueID::RubyText:
         if (!state.context.cssRubyDisplayTypesEnabled)
             return nullptr;
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
 
     // <display-box>
-    case CSSValueContents:
-    case CSSValueNone:
+    case CSSValueID::Contents:
+    case CSSValueID::None:
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
 
     // <display-legacy>
-    case CSSValueInlineBlock:
-    case CSSValueInlineTable:
-    case CSSValueInlineFlex:
-    case CSSValueInlineGrid:
+    case CSSValueID::InlineBlock:
+    case CSSValueID::InlineTable:
+    case CSSValueID::InlineFlex:
+    case CSSValueID::InlineGrid:
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
-    case CSSValueInlineGridLanes:
+    case CSSValueID::InlineGridLanes:
         if (!state.context.gridLanesEnabled)
             return nullptr;
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
 
     // <display-non-standard>
-    case CSSValueWebkitBox:
-    case CSSValueWebkitInlineBox:
+    case CSSValueID::WebkitBox:
+    case CSSValueID::WebkitInlineBox:
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
-    case CSSValueWebkitFlex:
+    case CSSValueID::WebkitFlex:
         // `-webkit-flex` is aliased to `flex`.
         range.consumeIncludingWhitespace();
-        return CSSKeywordValue::create(CSSValueFlex);
-    case CSSValueWebkitInlineFlex:
+        return CSSKeywordValue::create(CSSValueID::Flex);
+    case CSSValueID::WebkitInlineFlex:
         // `-webkit-inline-flex` is aliased to `inline-flex`.
         range.consumeIncludingWhitespace();
-        return CSSKeywordValue::create(CSSValueInlineFlex);
+        return CSSKeywordValue::create(CSSValueID::InlineFlex);
 
     default:
         return nullptr;

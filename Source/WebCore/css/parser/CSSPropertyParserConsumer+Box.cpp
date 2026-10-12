@@ -44,24 +44,24 @@ RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, CSS::PropertyPars
     // https://drafts.csswg.org/css-box/#margin-trim
 
     switch (range.peek().id()) {
-    case CSSValueNone:
-    case CSSValueBlock:
+    case CSSValueID::None:
+    case CSSValueID::Block:
         return consumeIdent(range).releaseNonNull();
     default:
         break;
     }
 
-    auto firstIdent = consumeIdentRaw<CSSValueBlockStart, CSSValueBlockEnd>(range);
+    auto firstIdent = consumeIdentRaw<CSSValueID::BlockStart, CSSValueID::BlockEnd>(range);
     if (!firstIdent)
         return nullptr;
 
-    auto secondIdent = consumeIdentRaw<CSSValueBlockStart, CSSValueBlockEnd>(range);
+    auto secondIdent = consumeIdentRaw<CSSValueID::BlockStart, CSSValueID::BlockEnd>(range);
     if (!secondIdent)
         return CSSKeywordValue::create(*firstIdent);
     if (*secondIdent == *firstIdent)
         return nullptr;
 
-    return CSSKeywordValue::create(CSSValueBlock);
+    return CSSKeywordValue::create(CSSValueID::Block);
 }
 
 } // namespace CSSPropertyParserHelpers

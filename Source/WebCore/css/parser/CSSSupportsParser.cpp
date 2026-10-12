@@ -145,15 +145,15 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSS
         return Invalid;
 
     switch (range.peek().functionId()) {
-    case CSSValueSelector:
+    case CSSValueID::Selector:
         return consumeSupportsSelectorFunction(range);
-    case CSSValueFontFormat:
+    case CSSValueID::FontFormat:
         return consumeSupportsFontFormatFunction(range);
-    case CSSValueFontTech:
+    case CSSValueID::FontTech:
         return consumeSupportsFontTechFunction(range);
-    case CSSValueAtRule:
+    case CSSValueID::AtRule:
         return consumeSupportsAtRuleFunction(range);
-    case CSSValueNamedFeature:
+    case CSSValueID::NamedFeature:
         return consumeSupportsNamedFeatureFunction(range);
     default: // Unknown functions should parse as unsupported.
         range.consumeComponentValue();
@@ -175,7 +175,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFeatureOrGen
 // <supports-selector-fn>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunction(CSSParserTokenRange& range)
 {
-    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueSelector);
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueID::Selector);
 
     auto block = range.consumeBlock();
     block.consumeWhitespace();
@@ -186,7 +186,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
 // <supports-font-format-fn>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFunction(CSSParserTokenRange& range)
 {
-    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontFormat);
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueID::FontFormat);
 
     auto state = CSS::PropertyParserState { .context = m_parser.context() };
     auto format = CSSPropertyParserHelpers::consumeFontFormat(range, state, true);
@@ -198,7 +198,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFu
 // <supports-font-tech-fn>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontTechFunction(CSSParserTokenRange& range)
 {
-    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontTech);
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueID::FontTech);
 
     auto state = CSS::PropertyParserState { .context = m_parser.context() };
     auto technologies = CSSPropertyParserHelpers::consumeFontTech(range, state, true);
@@ -211,7 +211,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontTechFunc
 // <supports-at-rule-fn> = at-rule( <at-keyword-token> )
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsAtRuleFunction(CSSParserTokenRange& range)
 {
-    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueAtRule);
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueID::AtRule);
 
     auto function = CSSPropertyParserHelpers::consumeFunction(range);
     auto atKeywordToken = function.consumeIncludingWhitespace();
@@ -273,7 +273,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsAtRuleFuncti
 // <supports-named-feature-fn> = named-feature( <ident> )
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsNamedFeatureFunction(CSSParserTokenRange& range)
 {
-    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueNamedFeature);
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueID::NamedFeature);
 
     auto functionArgs = CSSPropertyParserHelpers::consumeFunction(range);
     auto namedFeature = CSSPropertyParserHelpers::consumeIdentRaw(functionArgs);
@@ -285,12 +285,12 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsNamedFeature
 
     switch (*namedFeature) {
     // FIXME (webkit.org/b/321970): remaining issue before transformed anchor is fully supported.
-    case CSSValueAnchorPositionFollowsTransforms:
+    case CSSValueID::AnchorPositionFollowsTransforms:
         return Unsupported;
 
     // FIXME: not implemented yet
     // https://github.com/WebKit/standards-positions/issues/680
-    case CSSValueSingleAxisScrollContainer:
+    case CSSValueID::SingleAxisScrollContainer:
         return Unsupported;
 
     default:

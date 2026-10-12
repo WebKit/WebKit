@@ -54,7 +54,7 @@ namespace CSSPropertyParserHelpers {
 
 static std::optional<CSS::CustomIdent> consumeUnresolvedCustomIdentForGridLine(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    return consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueAuto, CSSValueSpan });
+    return consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueID::Auto, CSSValueID::Span });
 }
 
 std::optional<CSS::GridNamedAreaMapRow> consumeUnresolvedGridTemplateAreasRow(CSSParserTokenRange& range, CSS::PropertyParserState&)
@@ -121,12 +121,12 @@ std::optional<CSS::GridLine> consumeUnresolvedGridLine(CSSParserTokenRange& rang
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridLine { CSS::Keyword::Auto { } };
 
-    case CSSValueSpan: {
+    case CSSValueID::Span: {
         range.consumeIncludingWhitespace();
 
         auto index = MetaConsumer<CSS::Integer<CSS::Positive>>::consume(range, state);
@@ -151,7 +151,7 @@ std::optional<CSS::GridLine> consumeUnresolvedGridLine(CSSParserTokenRange& rang
     if (auto index = MetaConsumer<CSS::Integer<>>::consume(range, state)) {
         auto name = consumeUnresolvedCustomIdentForGridLine(range, state);
 
-        if (consumeIdentRaw<CSSValueSpan>(range).has_value()) {
+        if (consumeIdentRaw<CSSValueID::Span>(range).has_value()) {
             auto rangeCastedIndex = CSS::dynamicRangeNarrowingCast<CSS::Positive>(*index);
             if (!rangeCastedIndex)
                 return std::nullopt;
@@ -179,7 +179,7 @@ std::optional<CSS::GridLine> consumeUnresolvedGridLine(CSSParserTokenRange& rang
 
     auto index = MetaConsumer<CSS::Integer<>>::consume(range, state);
 
-    if (consumeIdentRaw<CSSValueSpan>(range).has_value()) {
+    if (consumeIdentRaw<CSSValueID::Span>(range).has_value()) {
         if (index) {
             auto rangeCastedIndex = CSS::dynamicRangeNarrowingCast<CSS::Positive>(*index);
             if (!rangeCastedIndex)
@@ -286,7 +286,7 @@ static std::optional<GridNameRepeatFunctionResult> consumeUnresolvedGridNameRepe
     // <name-repeat>         = repeat( [ <integer [1,∞]> | auto-fill ], <line-names>+)
     // https://drafts.csswg.org/css-grid/#typedef-name-repeat
 
-    ASSERT(range.peek().functionId() == CSSValueRepeat);
+    ASSERT(range.peek().functionId() == CSSValueID::Repeat);
 
     CSSParserTokenRangeGuard guard { range };
     auto args = consumeFunction(range);
@@ -299,7 +299,7 @@ static std::optional<GridNameRepeatFunctionResult> consumeUnresolvedGridNameRepe
     std::optional<Repetitions> repetitions;
 
     switch (args.peek().id()) {
-    case CSSValueAutoFill:
+    case CSSValueID::AutoFill:
         args.consumeIncludingWhitespace();
         repetitions = Repetitions { CSS::Keyword::AutoFill { } };
         hasConsumedAutoRepeat = true;
@@ -352,7 +352,7 @@ static std::optional<CSS::GridSubgrid> consumeUnresolvedGridSubgrid(CSSParserTok
     // <subgrid>             = subgrid <line-name-list>?
     // <line-name-list>      = [ <line-names> | <name-repeat> ]+
 
-    ASSERT(range.peek().id() == CSSValueSubgrid);
+    ASSERT(range.peek().id() == CSSValueID::Subgrid);
 
     CSSParserTokenRangeGuard guard { range };
 
@@ -365,7 +365,7 @@ static std::optional<CSS::GridSubgrid> consumeUnresolvedGridSubgrid(CSSParserTok
 
     while (!range.atEnd() && range.peek().type() != DelimiterToken) {
         auto& token = range.peek();
-        if (token.functionId() == CSSValueRepeat) {
+        if (token.functionId() == CSSValueID::Repeat) {
             auto repeat = consumeUnresolvedGridNameRepeatFunction(range, state);
             if (!repeat)
                 return std::nullopt;
@@ -399,19 +399,19 @@ static std::optional<CSS::GridTrackBreadth> consumeUnresolvedGridInflexibleBread
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
+    case CSSValueID::MinContent:
+    case CSSValueID::WebkitMinContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTrackBreadth { CSS::Keyword::MinContent { } };
 
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
+    case CSSValueID::MaxContent:
+    case CSSValueID::WebkitMaxContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTrackBreadth { CSS::Keyword::MaxContent { } };
 
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTrackBreadth { CSS::Keyword::Auto { } };
@@ -436,19 +436,19 @@ static std::optional<CSS::GridTrackBreadth> consumeUnresolvedGridTrackBreadth(CS
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
+    case CSSValueID::MinContent:
+    case CSSValueID::WebkitMinContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTrackBreadth { CSS::Keyword::MinContent { } };
 
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
+    case CSSValueID::MaxContent:
+    case CSSValueID::WebkitMaxContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTrackBreadth { CSS::Keyword::MaxContent { } };
 
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTrackBreadth { CSS::Keyword::Auto { } };
@@ -481,8 +481,8 @@ static std::optional<GridInflexibleOrFixedBreadth> consumeUnresolvedGridInflexib
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
+    case CSSValueID::MinContent:
+    case CSSValueID::WebkitMinContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return GridInflexibleOrFixedBreadth {
@@ -490,8 +490,8 @@ static std::optional<GridInflexibleOrFixedBreadth> consumeUnresolvedGridInflexib
             .hasConsumedNonFixed = true,
         };
 
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
+    case CSSValueID::MaxContent:
+    case CSSValueID::WebkitMaxContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return GridInflexibleOrFixedBreadth {
@@ -499,7 +499,7 @@ static std::optional<GridInflexibleOrFixedBreadth> consumeUnresolvedGridInflexib
             .hasConsumedNonFixed = true,
         };
 
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         range.consumeIncludingWhitespace();
         guard.commit();
         return GridInflexibleOrFixedBreadth {
@@ -534,8 +534,8 @@ static std::optional<GridTrackOrFixedBreadth> consumeUnresolvedGridTrackOrFixedB
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
+    case CSSValueID::MinContent:
+    case CSSValueID::WebkitMinContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return GridTrackOrFixedBreadth {
@@ -543,8 +543,8 @@ static std::optional<GridTrackOrFixedBreadth> consumeUnresolvedGridTrackOrFixedB
             .hasConsumedNonFixed = true,
         };
 
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
+    case CSSValueID::MaxContent:
+    case CSSValueID::WebkitMaxContent:
         range.consumeIncludingWhitespace();
         guard.commit();
         return GridTrackOrFixedBreadth {
@@ -552,7 +552,7 @@ static std::optional<GridTrackOrFixedBreadth> consumeUnresolvedGridTrackOrFixedB
             .hasConsumedNonFixed = true,
         };
 
-    case CSSValueAuto:
+    case CSSValueID::Auto:
         range.consumeIncludingWhitespace();
         guard.commit();
         return GridTrackOrFixedBreadth {
@@ -586,7 +586,7 @@ static std::optional<CSS::GridFitContentFunction> consumeUnresolvedGridFitConten
 {
     // fit-content( <length-percentage [0,∞]> )
 
-    ASSERT(range.peek().functionId() == CSSValueFitContent);
+    ASSERT(range.peek().functionId() == CSSValueID::FitContent);
 
     CSSParserTokenRangeGuard guard { range };
     auto args = consumeFunction(range);
@@ -613,14 +613,14 @@ std::optional<CSS::GridTrackSize> consumeUnresolvedGridTrackSize(CSSParserTokenR
     }
 
     switch (range.peek().functionId()) {
-    case CSSValueFitContent:
+    case CSSValueID::FitContent:
         if (auto fitContentFunction = consumeUnresolvedGridFitContentFunction(range, state)) {
             guard.commit();
             return CSS::GridTrackSize { WTF::move(*fitContentFunction) };
         }
         return std::nullopt;
 
-    case CSSValueMinmax: {
+    case CSSValueID::Minmax: {
         // minmax( <inflexible-breadth> , <track-breadth> )
 
         CSSParserTokenRange args = consumeFunction(range);
@@ -678,7 +678,7 @@ static std::optional<GridTrackOrFixedSize> consumeUnresolvedGridTrackOrFixedSize
     }
 
     switch (range.peek().functionId()) {
-    case CSSValueFitContent:
+    case CSSValueID::FitContent:
         if (auto fitContentFunction = consumeUnresolvedGridFitContentFunction(range, state)) {
             guard.commit();
             return GridTrackOrFixedSize {
@@ -688,7 +688,7 @@ static std::optional<GridTrackOrFixedSize> consumeUnresolvedGridTrackOrFixedSize
         }
         return std::nullopt;
 
-    case CSSValueMinmax: {
+    case CSSValueID::Minmax: {
         // Potentially one of:
         //   - minmax( <inflexible-breadth> , <track-breadth> ) (from <track-size>)
         //   - minmax( <fixed-breadth>      , <track-breadth> ) (from <fixed-size>)
@@ -741,7 +741,7 @@ static std::optional<GridTrackOrFixedOrAutoRepeatResult> consumeGridTrackOrFixed
     // <auto-repeat>         = repeat( [ auto-fill | auto-fit ] , [ <line-names>? <fixed-size> ]+ <line-names>? )
     // <fixed-repeat>        = repeat( [ <integer [1,∞]> ] , [ <line-names>? <fixed-size> ]+ <line-names>? )
 
-    ASSERT(range.peek().functionId() == CSSValueRepeat);
+    ASSERT(range.peek().functionId() == CSSValueID::Repeat);
 
     CSSParserTokenRangeGuard guard { range };
     auto args = consumeFunction(range);
@@ -756,13 +756,13 @@ static std::optional<GridTrackOrFixedOrAutoRepeatResult> consumeGridTrackOrFixed
     std::optional<Repetitions> repetitions;
 
     switch (args.peek().id()) {
-    case CSSValueAutoFill:
+    case CSSValueID::AutoFill:
         args.consumeIncludingWhitespace();
         repetitions = Repetitions { CSS::Keyword::AutoFill { } };
         hasConsumedAutoRepeat = true;
         break;
 
-    case CSSValueAutoFit:
+    case CSSValueID::AutoFit:
         args.consumeIncludingWhitespace();
         repetitions = Repetitions { CSS::Keyword::AutoFit { } };
         hasConsumedAutoRepeat = true;
@@ -837,12 +837,12 @@ std::optional<CSS::GridTemplateList> consumeUnresolvedGridTemplateList(CSSParser
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueNone:
+    case CSSValueID::None:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTemplateList { CSS::Keyword::None { } };
 
-    case CSSValueSubgrid:
+    case CSSValueID::Subgrid:
         if (auto subgrid = consumeUnresolvedGridSubgrid(range, state)) {
             guard.commit();
             return CSS::GridTemplateList { WTF::move(*subgrid) };
@@ -863,7 +863,7 @@ std::optional<CSS::GridTemplateList> consumeUnresolvedGridTemplateList(CSSParser
         trackList.value.append(Track { WTF::move(*lineNames) });
 
     do {
-        if (range.peek().functionId() == CSSValueRepeat) {
+        if (range.peek().functionId() == CSSValueID::Repeat) {
             auto repeat = consumeGridTrackOrFixedOrAutoRepeat(range, state);
             if (!repeat)
                 return std::nullopt;
@@ -902,7 +902,7 @@ RefPtr<CSSValue> consumeGridTemplateList(CSSParserTokenRange& range, CSS::Proper
 
     if (auto unresolved = consumeUnresolvedGridTemplateList(range, state)) {
         if (unresolved->isNone())
-            return CSSKeywordValue::create(CSSValueNone);
+            return CSSKeywordValue::create(CSSValueID::None);
         return CSSGridTemplateListValue::create(WTF::move(*unresolved));
     }
     return nullptr;
@@ -915,7 +915,7 @@ std::optional<CSS::GridTemplateAreas> consumeUnresolvedGridTemplateAreas(CSSPars
 
     CSSParserTokenRangeGuard guard { range };
 
-    if (range.peek().id() == CSSValueNone) {
+    if (range.peek().id() == CSSValueID::None) {
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridTemplateAreas { CSS::Keyword::None { } };
@@ -942,7 +942,7 @@ RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range, CSS::Prope
 
     if (auto unresolved = consumeUnresolvedGridTemplateAreas(range, state)) {
         if (unresolved->isNone())
-            return CSSKeywordValue::create(CSSValueNone);
+            return CSSKeywordValue::create(CSSValueID::None);
         return CSSGridTemplateAreasValue::create(WTF::move(*unresolved));
     }
     return nullptr;
@@ -989,16 +989,16 @@ std::optional<CSS::GridAutoFlow> consumeUnresolvedGridAutoFlow(CSSParserTokenRan
     CSSParserTokenRangeGuard guard { range };
 
     switch (range.peek().id()) {
-    case CSSValueNormal:
+    case CSSValueID::Normal:
         range.consumeIncludingWhitespace();
         guard.commit();
         return CSS::GridAutoFlow { CSS::Keyword::Normal { } };
 
-    case CSSValueRow:
+    case CSSValueID::Row:
         range.consumeIncludingWhitespace();
 
         switch (range.peek().id()) {
-        case CSSValueDense:
+        case CSSValueID::Dense:
             range.consumeIncludingWhitespace();
             guard.commit();
             return CSS::GridAutoFlow { CSS::Keyword::Row { }, CSS::Keyword::Dense { } };
@@ -1010,11 +1010,11 @@ std::optional<CSS::GridAutoFlow> consumeUnresolvedGridAutoFlow(CSSParserTokenRan
         guard.commit();
         return CSS::GridAutoFlow { CSS::Keyword::Row { } };
 
-    case CSSValueColumn:
+    case CSSValueID::Column:
         range.consumeIncludingWhitespace();
 
         switch (range.peek().id()) {
-        case CSSValueDense:
+        case CSSValueID::Dense:
             range.consumeIncludingWhitespace();
             guard.commit();
             return CSS::GridAutoFlow { CSS::Keyword::Column { }, CSS::Keyword::Dense { } };
@@ -1026,16 +1026,16 @@ std::optional<CSS::GridAutoFlow> consumeUnresolvedGridAutoFlow(CSSParserTokenRan
         guard.commit();
         return CSS::GridAutoFlow { CSS::Keyword::Column { } };
 
-    case CSSValueDense:
+    case CSSValueID::Dense:
         range.consumeIncludingWhitespace();
 
         switch (range.peek().id()) {
-        case CSSValueRow:
+        case CSSValueID::Row:
             range.consumeIncludingWhitespace();
             guard.commit();
             return CSS::GridAutoFlow { CSS::Keyword::Row { }, CSS::Keyword::Dense { } };
 
-        case CSSValueColumn:
+        case CSSValueID::Column:
             range.consumeIncludingWhitespace();
             guard.commit();
             return CSS::GridAutoFlow { CSS::Keyword::Column { }, CSS::Keyword::Dense { } };

@@ -43,26 +43,26 @@ public:
     {
         CSSValueID valueID = range.peek().id();
         switch (valueID) {
-        case CSSValueNoCommonLigatures:
-        case CSSValueCommonLigatures:
+        case CSSValueID::NoCommonLigatures:
+        case CSSValueID::CommonLigatures:
             if (m_sawCommonLigaturesValue)
                 return ParseResult::DisallowedValue;
             m_sawCommonLigaturesValue = true;
             break;
-        case CSSValueNoDiscretionaryLigatures:
-        case CSSValueDiscretionaryLigatures:
+        case CSSValueID::NoDiscretionaryLigatures:
+        case CSSValueID::DiscretionaryLigatures:
             if (m_sawDiscretionaryLigaturesValue)
                 return ParseResult::DisallowedValue;
             m_sawDiscretionaryLigaturesValue = true;
             break;
-        case CSSValueNoHistoricalLigatures:
-        case CSSValueHistoricalLigatures:
+        case CSSValueID::NoHistoricalLigatures:
+        case CSSValueID::HistoricalLigatures:
             if (m_sawHistoricalLigaturesValue)
                 return ParseResult::DisallowedValue;
             m_sawHistoricalLigaturesValue = true;
             break;
-        case CSSValueNoContextual:
-        case CSSValueContextual:
+        case CSSValueID::NoContextual:
+        case CSSValueID::Contextual:
             if (m_sawContextualLigaturesValue)
                 return ParseResult::DisallowedValue;
             m_sawContextualLigaturesValue = true;
@@ -77,7 +77,7 @@ public:
     RefPtr<CSSValue> finalizeValue()
     {
         if (m_result.isEmpty())
-            return CSSKeywordValue::create(CSSValueNormal);
+            return CSSKeywordValue::create(CSSValueID::Normal);
         return CSSValueList::createSpaceSeparated(WTF::move(m_result));
     }
 

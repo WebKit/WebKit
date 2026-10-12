@@ -980,10 +980,10 @@ RefPtr<StyleRuleFontPaletteValues> CSSParser::consumeFontPaletteValuesRule(CSSPa
                 basePalette = FontPaletteIndex(resolvedInteger->value);
         } else if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(*basePaletteValue)) {
             switch (keywordValue->valueID()) {
-            case CSSValueLight:
+            case CSSValueID::Light:
                 basePalette = FontPaletteIndex(FontPaletteIndex::Type::Light);
                 break;
-            case CSSValueDark:
+            case CSSValueID::Dark:
                 basePalette = FontPaletteIndex(FontPaletteIndex::Type::Dark);
                 break;
             default:
@@ -1028,7 +1028,7 @@ RefPtr<StyleRuleKeyframes> CSSParser::consumeKeyframesRule(CSSParserTokenRange p
         // According to the CSS Values specification, identifier-based keyframe names
         // are not allowed to be CSS wide keywords or "default". And CSS Animations
         // additionally excludes the "none" keyword.
-        if (!isValidCustomIdentifier(nameToken.id()) || nameToken.id() == CSSValueNone)
+        if (!isValidCustomIdentifier(nameToken.id()) || nameToken.id() == CSSValueID::None)
             return nullptr;
     } else if (nameToken.type() != StringToken)
         return nullptr; // Parse error; expected ident token or string in @keyframes header
@@ -1457,7 +1457,7 @@ RefPtr<StyleRuleProperty> CSSParser::consumePropertyRule(CSSParserTokenRange pre
             descriptor.syntax = protect(downcast<CSSStringValue>(*property.value()))->string().value;
             continue;
         case CSSPropertyID::Inherits:
-            descriptor.inherits = isValueID(property.value(), CSSValueTrue);
+            descriptor.inherits = isValueID(property.value(), CSSValueID::True);
             break;
         case CSSPropertyID::InitialValue:
             descriptor.initialValue = protect(downcast<CSSCustomPropertyValue>(*property.value()))->asVariableData();

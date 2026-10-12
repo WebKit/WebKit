@@ -40,7 +40,7 @@ RefPtr<CSSValue> consumeObjectViewBox(CSSParserTokenRange& range, CSS::PropertyP
     // <'object-view-box'> = none | <basic-shape-rect>
     // https://drafts.csswg.org/css-images-5/#the-object-view-box
 
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueID::None)
         return consumeIdent(range);
 
     return consumeBasicShapeRect(range, state);

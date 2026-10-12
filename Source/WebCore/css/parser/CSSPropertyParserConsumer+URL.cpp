@@ -69,7 +69,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
     }
 
     switch (token.functionId()) {
-    case CSSValueUrl: {
+    case CSSValueID::Url: {
         CSSParserTokenRangeGuard guard { range };
 
         auto args = consumeFunction(range);
@@ -89,7 +89,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
 
             while (!args.atEnd()) {
                 switch (args.peek().functionId()) {
-                case CSSValueCrossOrigin: {
+                case CSSValueID::CrossOrigin: {
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::CrossOrigin))
                         return { };
                     if (result->modifiers.crossOrigin)
@@ -104,7 +104,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                     result->modifiers.crossOrigin = CSS::URLCrossOriginFunction { .parameters = { *crossOriginValue } };
                     break;
                 }
-                case CSSValueIntegrity: {
+                case CSSValueID::Integrity: {
                     if (!state.context.cssURLIntegrityModifierEnabled)
                         return { };
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::Integrity))
@@ -118,7 +118,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                     result->modifiers.integrity = CSS::URLIntegrityFunction { .parameters = { integrityValue.toString() } };
                     break;
                 }
-                case CSSValueReferrerPolicy: {
+                case CSSValueID::ReferrerPolicy: {
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::ReferrerPolicy))
                         return { };
                     if (result->modifiers.referrerPolicy)
@@ -139,7 +139,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                     result->modifiers.referrerPolicy = CSS::URLReferrerPolicyFunction { .parameters = { *referrerPolicyValue } };
                     break;
                 }
-                case CSSValueParam: {
+                case CSSValueID::Param: {
                     if (!state.context.cssLinkParametersEnabled)
                         return { };
                     if (!allowedURLModifiers.contains(AllowedURLModifiers::Param))

@@ -55,7 +55,7 @@ bool isPredefinedCounterStyle(CSSValueID valueID)
 {
     // https://drafts.csswg.org/css-counter-styles-3/#predefined-counters
 
-    return valueID >= CSSValueDisc && valueID <= CSSValueEthiopicNumeric;
+    return valueID >= CSSValueID::Disc && valueID <= CSSValueID::EthiopicNumeric;
 }
 
 // <symbols-type> = cyclic | numeric | alphabetic | symbolic | fixed
@@ -70,7 +70,7 @@ static std::optional<CSS::SymbolsType> consumeUnresolvedSymbolsType(CSSParserTok
 // FIXME: Add support for <image> symbols.
 static std::optional<CSS::SymbolsFunction> consumeUnresolvedSymbolsFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    ASSERT(range.peek().functionId() == CSSValueSymbols);
+    ASSERT(range.peek().functionId() == CSSValueID::Symbols);
 
     if (!state.context.cssSymbolsFunctionEnabled)
         return { };
@@ -109,14 +109,14 @@ std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRan
     if (isPredefinedCounterStyle(range.peek().id()))
         return CSS::CounterStyle { CSS::Keyword { range.consumeIncludingWhitespace().id() } };
 
-    if (range.peek().functionId() == CSSValueSymbols) {
+    if (range.peek().functionId() == CSSValueID::Symbols) {
         auto symbolsFunction = consumeUnresolvedSymbolsFunction(range, state);
         if (!symbolsFunction)
             return { };
         return CSS::CounterStyle { WTF::move(*symbolsFunction) };
     }
 
-    auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNone });
+    auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueID::None });
     if (!customIdent)
         return { };
 
@@ -131,14 +131,14 @@ RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyPa
     if (isPredefinedCounterStyle(range.peek().id()))
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
 
-    if (range.peek().functionId() == CSSValueSymbols) {
+    if (range.peek().functionId() == CSSValueID::Symbols) {
         auto symbolsFunction = consumeUnresolvedSymbolsFunction(range, state);
         if (!symbolsFunction)
             return nullptr;
         return CSSSymbolsFunctionValue::create(WTF::move(*symbolsFunction));
     }
 
-    return consumeCustomIdentExcluding(range, state, { CSSValueNone });
+    return consumeCustomIdentExcluding(range, state, { CSSValueID::None });
 }
 
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSParserMode mode)
@@ -156,7 +156,7 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSPar
     if (nameToken.type() != IdentToken || !isValidCustomIdentifier(nameToken.id()))
         return AtomString();
     auto id = nameToken.id();
-    if (identMatches<CSSValueNone>(id) || (!isUASheetBehavior(mode) && identMatches<CSSValueDecimal, CSSValueDisc, CSSValueCircle, CSSValueSquare, CSSValueDisclosureOpen, CSSValueDisclosureClosed>(id)))
+    if (identMatches<CSSValueID::None>(id) || (!isUASheetBehavior(mode) && identMatches<CSSValueID::Decimal, CSSValueID::Disc, CSSValueID::Circle, CSSValueID::Square, CSSValueID::DisclosureOpen, CSSValueID::DisclosureClosed>(id)))
         return AtomString();
     auto name = nameToken.value();
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
@@ -168,14 +168,14 @@ RefPtr<CSSValue> consumeCounterStyleName(CSSParserTokenRange& range, CSS::Proper
     // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style-name
 
     auto valueID = range.peek().id();
-    if (valueID == CSSValueNone)
+    if (valueID == CSSValueID::None)
         return nullptr;
 
     // If the value is an ASCII case-insensitive match for any of the predefined counter styles, lowercase it.
     if (isPredefinedCounterStyle(valueID))
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
 
-    return consumeCustomIdentExcluding(range, state, { CSSValueNone });
+    return consumeCustomIdentExcluding(range, state, { CSSValueID::None });
 }
 
 RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -183,29 +183,29 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, CSS::Prop
     // <'system'> = cyclic | numeric | alphabetic | symbolic | additive | [fixed <integer>?] | [ extends <counter-style-name> ]
     // https://drafts.csswg.org/css-counter-styles-3/#counter-style-system
 
-    if (auto ident = consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueAdditive>(range))
+    if (auto ident = consumeIdent<CSSValueID::Cyclic, CSSValueID::Numeric, CSSValueID::Alphabetic, CSSValueID::Symbolic, CSSValueID::Additive>(range))
         return ident;
 
     if (isUASheetBehavior(state.context.mode)) {
         auto internalKeyword = consumeIdent<
-            CSSValueInternalDisclosureClosed,
-            CSSValueInternalDisclosureOpen,
-            CSSValueInternalSimplifiedChineseInformal,
-            CSSValueInternalSimplifiedChineseFormal,
-            CSSValueInternalTraditionalChineseInformal,
-            CSSValueInternalTraditionalChineseFormal,
-            CSSValueInternalJapaneseInformal,
-            CSSValueInternalJapaneseFormal,
-            CSSValueInternalKoreanHangulFormal,
-            CSSValueInternalKoreanHanjaInformal,
-            CSSValueInternalKoreanHanjaFormal,
-            CSSValueInternalEthiopicNumeric
+            CSSValueID::InternalDisclosureClosed,
+            CSSValueID::InternalDisclosureOpen,
+            CSSValueID::InternalSimplifiedChineseInformal,
+            CSSValueID::InternalSimplifiedChineseFormal,
+            CSSValueID::InternalTraditionalChineseInformal,
+            CSSValueID::InternalTraditionalChineseFormal,
+            CSSValueID::InternalJapaneseInformal,
+            CSSValueID::InternalJapaneseFormal,
+            CSSValueID::InternalKoreanHangulFormal,
+            CSSValueID::InternalKoreanHanjaInformal,
+            CSSValueID::InternalKoreanHanjaFormal,
+            CSSValueID::InternalEthiopicNumeric
         >(range);
         if (internalKeyword)
             return internalKeyword;
     }
 
-    if (auto ident = consumeIdent<CSSValueFixed>(range)) {
+    if (auto ident = consumeIdent<CSSValueID::Fixed>(range)) {
         if (range.atEnd())
             return ident;
         // If we have the `fixed` keyword but the range is not at the end, the next token must be a integer.
@@ -216,7 +216,7 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, CSS::Prop
         return CSSValuePair::create(ident.releaseNonNull(), firstSymbolValue.releaseNonNull());
     }
 
-    if (auto ident = consumeIdent<CSSValueExtends>(range)) {
+    if (auto ident = consumeIdent<CSSValueID::Extends>(range)) {
         // There must be a `<counter-style-name>` following the `extends` keyword. If there isn't, this value is invalid.
         auto parsedCounterStyleName = consumeCounterStyleName(range, state);
         if (!parsedCounterStyleName)
@@ -232,14 +232,14 @@ RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range, CSS::Prope
     // https://drafts.csswg.org/css-counter-styles-3/#counter-style-range
 
     auto consumeCounterStyleRangeBound = [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        if (auto infinite = consumeIdent<CSSValueInfinite>(range))
+        if (auto infinite = consumeIdent<CSSValueID::Infinite>(range))
             return infinite;
         if (auto integer = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state))
             return integer;
         return nullptr;
     };
 
-    if (auto autoValue = consumeIdent<CSSValueAuto>(range))
+    if (auto autoValue = consumeIdent<CSSValueID::Auto>(range))
         return autoValue;
 
     auto rangeList = consumeListSeparatedBy<',', OneOrMore>(range, [&](auto& range) -> RefPtr<CSSValue> {

@@ -172,7 +172,7 @@ template<typename CharacterType> static CSSValueID cssValueKeywordID(std::span<c
     for (unsigned i = 0; i != characters.size(); ++i) {
         auto character = characters[i];
         if (!character || !isASCII(character))
-            return CSSValueInvalid;
+            return CSSValueID::Invalid;
         buffer[i] = toASCIILower(character);
     }
 
@@ -192,9 +192,9 @@ CSSValueID cssValueKeywordID(StringView string)
 {
     unsigned length = string.length();
     if (!length)
-        return CSSValueInvalid;
+        return CSSValueID::Invalid;
     if (length > maxCSSValueKeywordLength)
-        return CSSValueInvalid;
+        return CSSValueID::Invalid;
     
     return string.is8Bit() ? cssValueKeywordID(string.span8()) : cssValueKeywordID(string.span16());
 }
@@ -765,7 +765,7 @@ bool consumePageDescriptor(CSSParserTokenRange& range, const CSSParserContext& c
         // Portrait is the default and should not be serialized.
         if (property == CSSPropertyID::PageSize) {
             RefPtr pair = dynamicDowncast<CSSValuePair>(parsedValue);
-            if (pair && valueID(pair->second()) == CSSValuePortrait)
+            if (pair && valueID(pair->second()) == CSSValueID::Portrait)
                 parsedValue = &pair->first();
         }
 

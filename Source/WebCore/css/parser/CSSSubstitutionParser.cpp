@@ -125,50 +125,50 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
             if (token.type() == LeftBraceToken && current.isTopLevelBlock && block.atEnd())
                 result.hasEmptyTopLevelBraceBlock = true;
 
-            if (token.functionId() == CSSValueVar) {
+            if (token.functionId() == CSSValueID::Var) {
                 if (!isValidVariableReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueEnv) {
+            if (token.functionId() == CSSValueID::Env) {
                 if (!isValidEnvReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueInherit && parserContext.cssInheritFunctionEnabled) {
+            if (token.functionId() == CSSValueID::Inherit && parserContext.cssInheritFunctionEnabled) {
                 // <inherit-args> is the same argument grammar as var()'s.
                 if (!isValidVariableReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueAttr) {
+            if (token.functionId() == CSSValueID::Attr) {
                 if (!isValidAttrReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueRandomItem && parserContext.cssRandomItemFunctionEnabled) {
+            if (token.functionId() == CSSValueID::RandomItem && parserContext.cssRandomItemFunctionEnabled) {
                 if (!isValidRandomItemReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueIf && parserContext.cssIfFunctionEnabled) {
+            if (token.functionId() == CSSValueID::If && parserContext.cssIfFunctionEnabled) {
                 if (!isValidIfReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueIdent && parserContext.cssIdentFunctionEnabled) {
+            if (token.functionId() == CSSValueID::Ident && parserContext.cssIdentFunctionEnabled) {
                 if (!isValidIdentReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
-            if (token.functionId() == CSSValueInternalAutoBase && parserContext.cssInternalAutoBaseParsingEnabled) {
+            if (token.functionId() == CSSValueID::InternalAutoBase && parserContext.cssInternalAutoBaseParsingEnabled) {
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
