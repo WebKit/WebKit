@@ -325,6 +325,10 @@ void CachedFrame::destroy()
     // fully anyway, because the document won't be able to access its LocalDOMWindow object (due to being frameless).
     document->removeAllEventListeners();
 
+    // Document::postTask() keeps the tasks posted while the document is in the back/forward cache.
+    // Run them now since the document will not be resumed.
+    document->performPendingTasks();
+
     document->setBackForwardCacheState(Document::NotInBackForwardCache);
     document->willBeRemovedFromFrame();
 
