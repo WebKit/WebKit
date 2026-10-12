@@ -1754,11 +1754,11 @@ inline void extractCoalescingQuadShorthandSerialization(ExtractorState& state, S
 inline bool isRoundCornerShapeValue(const CSSValue& shape)
 {
     if (RefPtr keyword = dynamicDowncast<CSSKeywordValue>(shape))
-        return keyword->valueID() == CSSValueRound;
+        return keyword->valueID() == CSSValueID::Round;
 
     // Computed corner shapes serialize as superellipse(), where round is superellipse(1).
     RefPtr function = dynamicDowncast<CSSFunctionValue>(shape);
-    if (!function || function->name() != CSSValueSuperellipse || function->size() != 1)
+    if (!function || function->name() != CSSValueID::Superellipse || function->size() != 1)
         return false;
     RefPtr parameter = dynamicDowncast<CSSPrimitiveValue>(function->item(0));
     return parameter && parameter->isNumber() && parameter->isOne().value_or(false);
@@ -1783,7 +1783,7 @@ inline RefPtr<CSSValue> buildCornerValue(RefPtr<CSSValue> radius, RefPtr<CSSValu
     if (!radius || !shape)
         return nullptr;
     if (isCornerNormalValue(radius.get(), shape.get()))
-        return CSSKeywordValue::create(CSSValueNormal);
+        return CSSKeywordValue::create(CSSValueID::Normal);
     return CSSValuePair::create(radius.releaseNonNull(), shape.releaseNonNull());
 }
 
@@ -3193,16 +3193,16 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontShorthand(ExtractorState& st
     computedFont->size = createCSSValue(state.pool, state.style, Length<> { description.unzoomedUsedSize() });
 
     auto computedLineHeight = ExtractorGenerated::extractValue(state, CSSPropertyID::LineHeight);
-    if (computedLineHeight && !isValueID(*computedLineHeight, CSSValueNormal))
+    if (computedLineHeight && !isValueID(*computedLineHeight, CSSValueID::Normal))
         computedFont->lineHeight = computedLineHeight.releaseNonNull();
 
     if (description.variantCaps() == FontVariantCaps::Small)
-        computedFont->variant = CSSKeywordValue::create(CSSValueSmallCaps);
+        computedFont->variant = CSSKeywordValue::create(CSSValueID::SmallCaps);
     if (float weight = description.weight(); weight != 400)
         computedFont->weight = CSSPrimitiveValue::create(weight);
-    if (*fontWidth != CSSValueNormal)
+    if (*fontWidth != CSSValueID::Normal)
         computedFont->width = CSSKeywordValue::create(*fontWidth);
-    if (*fontStyle != CSSValueNormal)
+    if (*fontStyle != CSSValueID::Normal)
         computedFont->style = CSSKeywordValue::create(*fontStyle);
 
     computedFont->family = createCSSValue(state.pool, state.style, state.style.fontFamily());
@@ -3232,7 +3232,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontVariantShorthand(ExtractorSt
     for (auto longhand : fontVariantShorthand()) {
         auto value = ExtractorGenerated::extractValue(state, longhand);
         // We may not have a value if the longhand is disabled.
-        if (!value || isValueID(value, CSSValueNormal))
+        if (!value || isValueID(value, CSSValueID::Normal))
             continue;
         list.append(value.releaseNonNull());
     }

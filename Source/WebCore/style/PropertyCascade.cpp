@@ -280,7 +280,7 @@ const PropertyCascade::Property* PropertyCascade::lastPropertyResolvingLogicalPr
 // style changes. https://drafts.csswg.org/css-values-5/#funcdef-inherit
 static bool explicitlyInheritsFromParent(const CSSValue& value)
 {
-    if (isValueID(value, CSSValueInherit))
+    if (isValueID(value, CSSValueID::Inherit))
         return true;
     if (RefPtr shorthandValue = dynamicDowncast<CSSShorthandSubstitutionValue>(value))
         return shorthandValue->shorthandValue().containsInheritFunction();

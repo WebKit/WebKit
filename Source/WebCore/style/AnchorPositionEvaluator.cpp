@@ -734,29 +734,29 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
         if (std::holds_alternative<CSSValueID>(anchorSide)) {
             auto anchorSideID = std::get<CSSValueID>(anchorSide);
             switch (anchorSideID) {
-            case CSSValueCenter:
+            case CSSValueID::Center:
                 return 0.5;
-            case CSSValueStart:
+            case CSSValueID::Start:
                 return 0;
-            case CSSValueEnd:
+            case CSSValueID::End:
                 return 1;
-            case CSSValueSelfStart:
+            case CSSValueID::SelfStart:
                 return constraints.isOpposing() ? 1 : 0;
-            case CSSValueSelfEnd:
+            case CSSValueID::SelfEnd:
                 return constraints.isOpposing() ? 0 : 1;
 
-            case CSSValueTop:
+            case CSSValueID::Top:
                 return constraints.containingWritingMode().isAnyTopToBottom() ? 0 : 1;
-            case CSSValueBottom:
+            case CSSValueID::Bottom:
                 return constraints.containingWritingMode().isAnyTopToBottom() ? 1 : 0;
-            case CSSValueLeft:
+            case CSSValueID::Left:
                 return constraints.containingWritingMode().isAnyLeftToRight() ? 0 : 1;
-            case CSSValueRight:
+            case CSSValueID::Right:
                 return constraints.containingWritingMode().isAnyLeftToRight() ? 1 : 0;
 
-            case CSSValueInside:
+            case CSSValueID::Inside:
                 return isInsetPropertyContainerStartSide(insetPropertyID, constraints) != isFlipped ? 0 : 1;
-            case CSSValueOutside:
+            case CSSValueID::Outside:
                 return isInsetPropertyContainerStartSide(insetPropertyID, constraints) != isFlipped ? 1 : 0;
 
             default:
@@ -1586,22 +1586,22 @@ CSSValueID AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPositi
         // Swap to the "opposite" position if the current position is "sided".
         // If there is no opposite value, nothing is changed.
         switch (position) {
-        case CSSValueStart:
-            return CSSValueEnd;
-        case CSSValueEnd:
-            return CSSValueStart;
-        case CSSValueSelfStart:
-            return CSSValueSelfEnd;
-        case CSSValueSelfEnd:
-            return CSSValueSelfStart;
-        case CSSValueFlexStart:
-            return CSSValueFlexEnd;
-        case CSSValueFlexEnd:
-            return CSSValueFlexStart;
-        case CSSValueLeft:
-            return CSSValueRight;
-        case CSSValueRight:
-            return CSSValueLeft;
+        case CSSValueID::Start:
+            return CSSValueID::End;
+        case CSSValueID::End:
+            return CSSValueID::Start;
+        case CSSValueID::SelfStart:
+            return CSSValueID::SelfEnd;
+        case CSSValueID::SelfEnd:
+            return CSSValueID::SelfStart;
+        case CSSValueID::FlexStart:
+            return CSSValueID::FlexEnd;
+        case CSSValueID::FlexEnd:
+            return CSSValueID::FlexStart;
+        case CSSValueID::Left:
+            return CSSValueID::Right;
+        case CSSValueID::Right:
+            return CSSValueID::Left;
         default:
             return position;
         }
@@ -1614,10 +1614,10 @@ CSSValueID AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPositi
         // So if we're resolving `justify-self` (which later gets swapped with `align-self`),
         // and the position is `left`/`right`, resolve it to `self-start`/`self-end`.
         switch (position) {
-        case CSSValueLeft:
-            return writingMode.bidiDirection() == TextDirection::LTR ? CSSValueSelfStart : CSSValueSelfEnd;
-        case CSSValueRight:
-            return writingMode.bidiDirection() == TextDirection::LTR ? CSSValueSelfEnd : CSSValueSelfStart;
+        case CSSValueID::Left:
+            return writingMode.bidiDirection() == TextDirection::LTR ? CSSValueID::SelfStart : CSSValueID::SelfEnd;
+        case CSSValueID::Right:
+            return writingMode.bidiDirection() == TextDirection::LTR ? CSSValueID::SelfEnd : CSSValueID::SelfStart;
         default:
             return position;
         }

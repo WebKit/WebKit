@@ -170,7 +170,7 @@ CSSCalc::Child toCSS(const Percentage& percentage, const ToCSSConversionOptions&
 
 CSSCalc::Child toCSS(const Size&, const ToCSSConversionOptions&)
 {
-    return CSSCalc::makeChild(CSSCalc::Symbol { .id = CSSValueSize, .unit = CSSUnitType::Px });
+    return CSSCalc::makeChild(CSSCalc::Symbol { .id = CSSValueID::Size, .unit = CSSUnitType::Px });
 }
 
 CSSCalc::Child toCSS(const Dimension& root, const ToCSSConversionOptions& options)
@@ -299,7 +299,7 @@ Child toStyle(const CSSCalc::Symbol& root, const ToStyleConversionOptions&)
 {
     // `size` is the one symbol the Tree can hold, since it resolves at used value time rather than
     // during conversion.
-    if (root.id == CSSValueSize)
+    if (root.id == CSSValueID::Size)
         return Size { };
 
     ASSERT_NOT_REACHED("Unevaluated symbols are not supported in the Tree");

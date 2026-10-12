@@ -71,7 +71,7 @@ static const StyleProperties& leftToRightDeclaration()
 IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
     static auto& declaration = [] () -> const StyleProperties& {
         auto properties = MutableStyleProperties::create();
-        properties->setProperty(CSSPropertyID::Direction, CSSValueLtr);
+        properties->setProperty(CSSPropertyID::Direction, CSSValueID::Ltr);
         return properties.leakRef();
     }();
 IGNORE_GCC_WARNINGS_END
@@ -83,7 +83,7 @@ static const StyleProperties& rightToLeftDeclaration()
 IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
     static auto& declaration = [] () -> const StyleProperties& {
         auto properties = MutableStyleProperties::create();
-        properties->setProperty(CSSPropertyID::Direction, CSSValueRtl);
+        properties->setProperty(CSSPropertyID::Direction, CSSValueID::Rtl);
         return properties.leakRef();
     }();
 IGNORE_GCC_WARNINGS_END

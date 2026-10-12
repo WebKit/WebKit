@@ -517,7 +517,7 @@ WebCore::Color ComputedStyle::usedAccentColor(OptionSet<StyleColorOptions> style
             auto resolvedAccentColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(color);
 
             if (!resolvedAccentColor.isOpaque()) {
-                auto computedCanvasColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+                auto computedCanvasColor = RenderTheme::singleton().systemColor(CSSValueID::Canvas, styleColorOptions);
                 resolvedAccentColor = blendSourceOver(computedCanvasColor, resolvedAccentColor);
             }
 

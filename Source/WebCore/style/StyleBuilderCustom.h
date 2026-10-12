@@ -172,7 +172,7 @@ void applyValueCoordinatedValueListProperty(BuilderState& builderState, CSSValue
     auto& list = (builderState.style().*listMutableGetter)();
 
     auto set = [&](auto i, auto& item) {
-        if (isValueID(item, CSSValueInitial))
+        if (isValueID(item, CSSValueID::Initial))
             PropertyAccessor { list[i] }.set(PropertyAccessor::initial());
         else
             PropertyAccessor { list[i] }.set(toStyleFromCSSValue<ItemType>(builderState, item));
@@ -221,7 +221,7 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNormal:
+        case CSSValueID::Normal:
             resetUsedZoom(builderState);
             builderState.setZoom(Style::ComputedStyle::initialZoom());
             return;
@@ -439,12 +439,12 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 {
     auto fontDescription = builderState.fontDescription();
-    float size = fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), builderState.document());
+    float size = fontSizeForKeyword(CSSValueID::Medium, fontDescription.useFixedDefaultSize(), builderState.document());
 
     if (size < 0)
         return;
 
-    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
+    fontDescription.setKeywordSizeFromIdentifier(CSSValueID::Medium);
     builderState.setFontSize(fontDescription, size);
     builderState.setFontDescription(WTF::move(fontDescription));
 }
@@ -560,7 +560,7 @@ inline float BuilderCustom::determineMathDepthScale(BuilderState& builderState)
 inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSValue& value)
 {
     auto& fontDescription = builderState.fontDescription();
-    builderState.setFontDescriptionKeywordSizeFromIdentifier(CSSValueInvalid);
+    builderState.setFontDescriptionKeywordSizeFromIdentifier(CSSValueID::Invalid);
 
     float parentSize = builderState.parentStyle().fontDescription().computedSize();
     bool parentIsAbsoluteSize = builderState.parentStyle().fontDescription().isAbsoluteSize();
@@ -568,33 +568,33 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     float size = 0;
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         auto ident = keywordValue->valueID();
-        builderState.setFontDescriptionIsAbsoluteSize((parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText || ident == CSSValueMath)) || CSSPropertyParserHelpers::isSystemFontShorthand(ident));
+        builderState.setFontDescriptionIsAbsoluteSize((parentIsAbsoluteSize && (ident == CSSValueID::Larger || ident == CSSValueID::Smaller || ident == CSSValueID::WebkitRubyText || ident == CSSValueID::Math)) || CSSPropertyParserHelpers::isSystemFontShorthand(ident));
 
         if (CSSPropertyParserHelpers::isSystemFontShorthand(ident))
             size = SystemFontDatabase::singleton().systemFontShorthandSize(CSSPropertyParserHelpers::lowerFontShorthand(ident));
 
         switch (ident) {
-        case CSSValueXxSmall:
-        case CSSValueXSmall:
-        case CSSValueSmall:
-        case CSSValueMedium:
-        case CSSValueLarge:
-        case CSSValueXLarge:
-        case CSSValueXxLarge:
-        case CSSValueXxxLarge:
+        case CSSValueID::XxSmall:
+        case CSSValueID::XSmall:
+        case CSSValueID::Small:
+        case CSSValueID::Medium:
+        case CSSValueID::Large:
+        case CSSValueID::XLarge:
+        case CSSValueID::XxLarge:
+        case CSSValueID::XxxLarge:
             size = fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), builderState.document());
             builderState.setFontDescriptionKeywordSizeFromIdentifier(ident);
             break;
-        case CSSValueLarger:
+        case CSSValueID::Larger:
             size = largerFontSize(parentSize);
             break;
-        case CSSValueSmaller:
+        case CSSValueID::Smaller:
             size = smallerFontSize(parentSize);
             break;
-        case CSSValueMath:
+        case CSSValueID::Math:
             size = determineMathDepthScale(builderState) * parentSize;
             break;
-        case CSSValueWebkitRubyText:
+        case CSSValueID::WebkitRubyText:
             size = determineRubyTextSizeMultiplier(builderState) * parentSize;
             break;
         default:
@@ -655,7 +655,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 // https://www.w3.org/TR/css-color-4/#the-color-property
 inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 {
-    const CSS::Color initialColor { CSS::KeywordColor { CSSValueCanvastext } };
+    const CSS::Color initialColor { CSS::KeywordColor { CSSValueID::Canvastext } };
 
     if (builderState.applyPropertyToRegularStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::No);

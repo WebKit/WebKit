@@ -168,12 +168,12 @@ static PseudoElementBoxGeneration computePseudoElementBoxGeneration(const CSSSel
             break;
         }
         case CSSPropertyID::AnimationName:
-            if (!isKeywordOrKeywordList(value, CSSValueNone))
+            if (!isKeywordOrKeywordList(value, CSSValueID::None))
                 return PseudoElementBoxGeneration::Normal;
             break;
         case CSSPropertyID::TransitionBehavior:
             // Only allow-discrete transitions can change 'content' or 'display'.
-            if (!isKeywordOrKeywordList(value, CSSValueNormal))
+            if (!isKeywordOrKeywordList(value, CSSValueID::Normal))
                 return PseudoElementBoxGeneration::Normal;
             break;
         default:

@@ -38,9 +38,9 @@ auto CSSValueConversion<NameScope>::operator()(BuilderState& state, const CSSVal
 {
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
-        case CSSValueNone:
+        case CSSValueID::None:
             return CSS::Keyword::None { };
-        case CSSValueAll:
+        case CSSValueID::All:
             return { CSS::Keyword::All { }, state.styleScopeOrdinal() };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();

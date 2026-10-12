@@ -414,7 +414,7 @@ static bool hasRevertValue(const StyleRuleKeyframe& keyframe)
 {
     for (auto propertyReference : keyframe.properties()) {
         RefPtr value = propertyReference.value();
-        if (value && isValueID(*value, CSSValueRevert))
+        if (value && isValueID(*value, CSSValueID::Revert))
             return true;
     }
     return false;
@@ -557,7 +557,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
             KeyframeUniqueKey uniqueKey { offsetRangeName, offsetPercentage.value / 100, timingFunction, compositeOperation };
             if (RefPtr existingStyleRuleKeyframe = keyframesMap.get(uniqueKey)) {
                 protect(existingStyleRuleKeyframe->mutableProperties())->mergeAndOverrideOnConflict(originalKeyframe->properties());
-                if (existingStyleRuleKeyframe->keys()[0].rangeName == CSSValueNormal)
+                if (existingStyleRuleKeyframe->keys()[0].rangeName == CSSValueID::Normal)
                     continue;
                 deduplicatedKeyframes.removeFirstMatching([&](const auto& styleRuleKeyframe) {
                     return styleRuleKeyframe.ptr() == existingStyleRuleKeyframe;
@@ -704,9 +704,9 @@ std::unique_ptr<Style::ComputedStyle> Resolver::defaultStyleForElement(const Ele
 
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily(WebCore::FontFamily { standardFamily, FontFamilyKind::Generic });
-    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
+    fontDescription.setKeywordSizeFromIdentifier(CSSValueID::Medium);
 
-    auto size = fontSizeForKeyword(CSSValueMedium, false, protect(document()));
+    auto size = fontSizeForKeyword(CSSValueID::Medium, false, protect(document()));
     fontDescription.setComputedSize(size);
     auto usedFontSize = usedFontSizeFromComputedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(element), *style, protect(document()));
     fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);

@@ -392,17 +392,17 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     auto valueID = WebCore::valueID(valueToApply.get());
     auto valueType = [&] {
-        if (valueID == CSSValueInherit)
+        if (valueID == CSSValueID::Inherit)
             return ApplyValueType::Inherit;
-        if (valueID == CSSValueInitial)
+        if (valueID == CSSValueID::Initial)
             return ApplyValueType::Initial;
         return ApplyValueType::Value;
     }();
 
-    bool isUnset = valueID == CSSValueUnset;
-    bool isRevert = valueID == CSSValueRevert;
-    bool isRevertLayer = valueID == CSSValueRevertLayer;
-    bool isRevertRule = valueID == CSSValueRevertRule;
+    bool isUnset = valueID == CSSValueID::Unset;
+    bool isRevert = valueID == CSSValueID::Revert;
+    bool isRevertLayer = valueID == CSSValueID::RevertLayer;
+    bool isRevertRule = valueID == CSSValueID::RevertRule;
     bool isAnyRevert = isRevert || isRevertLayer || isRevertRule;
 
     if (isAnyRevert) {
@@ -641,7 +641,7 @@ Ref<CSSValue> Builder::resolveSubstitutionFunctions(CSSPropertyID propertyID, CS
     // https://drafts.csswg.org/css-variables-2/#invalid-variables
     // ...as if the property’s value had been specified as the unset keyword.
     if (!variableValue || m_state->m_invalidAtComputedValueTimeProperties.get(std::to_underlying(propertyID)))
-        return CSSKeywordValue::create(CSSValueUnset);
+        return CSSKeywordValue::create(CSSValueID::Unset);
 
     return *variableValue;
 }

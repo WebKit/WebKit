@@ -91,8 +91,8 @@ Style::ComputedStyle resolveForDocument(const Document& document)
         fontDescription.setOneFamily(WebCore::FontFamily { standardFamily, FontFamilyKind::Generic });
         fontDescription.setShouldAllowUserInstalledFonts(settings.shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
 
-        fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
-        int size = fontSizeForKeyword(CSSValueMedium, false, document);
+        fontDescription.setKeywordSizeFromIdentifier(CSSValueID::Medium);
+        int size = fontSizeForKeyword(CSSValueID::Medium, false, document);
         fontDescription.setComputedSize(size);
         bool useSVGZoomRules = document.isSVGDocument();
         auto usedFontSize = usedFontSizeFromComputedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle, document);

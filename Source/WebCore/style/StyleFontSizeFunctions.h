@@ -50,7 +50,7 @@ UsedFontSize usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSiz
 float usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 float NODELETE adjustedFontSize(float size, const WebCore::FontSizeAdjust&, const FontMetrics&);
 
-// Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueXxxLarge), this function will return
+// Given a CSS keyword id in the range (CSSValueID::XxSmall to CSSValueID::XxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).
 float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const SettingsValues&, bool inQuirksMode = false);
 float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const Document&);
