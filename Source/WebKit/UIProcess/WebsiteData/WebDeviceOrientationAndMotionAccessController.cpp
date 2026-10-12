@@ -31,6 +31,7 @@
 #include "APIUIClient.h"
 #include "FrameInfoData.h"
 #include "PageLoadState.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebsiteDataStore.h"
 
@@ -45,7 +46,10 @@ WebDeviceOrientationAndMotionAccessController::WebDeviceOrientationAndMotionAcce
 
 void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
-    auto requestOriginData = frameInfo.topOrigin;
+    RefPtr mainFrame = frame.mainFrame();
+    if (!mainFrame)
+        return completionHandler(DeviceOrientationOrMotionPermissionState::Denied);
+    auto requestOriginData = mainFrame->documentSecurityOriginData();
     auto currentPermission = cachedDeviceOrientationPermission(requestOriginData);
     if (currentPermission != DeviceOrientationOrMotionPermissionState::Prompt || !mayPrompt)
         return completionHandler(currentPermission);

@@ -66,6 +66,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 struct GeolocationRequestData {
     URL url;
     WebKit::FrameInfoData frameInfo;
+    WebCore::SecurityOriginData topOrigin;
     Function<void(bool)> completionHandler;
     RetainPtr<WKWebView> view;
 };
@@ -159,11 +160,11 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     return self;
 }
 
-- (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
+- (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo topOrigin:(const WebCore::SecurityOriginData&)topOrigin completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
 {
     WebCore::RegistrableDomain registrableDomain(frameInfo.securityOrigin);
     URL requestingURL = frameInfo.request.url();
-    GeolocationRequestData geolocationRequestData { WTF::move(requestingURL), WTF::move(frameInfo), WTF::move(completionHandler), contentView };
+    GeolocationRequestData geolocationRequestData { WTF::move(requestingURL), WTF::move(frameInfo), topOrigin, WTF::move(completionHandler), contentView };
     _requestsWaitingForCoreLocationAuthorization.append(WTF::move(geolocationRequestData));
     if (_coreLocationProvider) {
         // Step 1: ask the user if the app can use Geolocation.
@@ -210,7 +211,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     }
 
     auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTF::move(decisionHandler)]);
-    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:request.frameInfo.topOrigin requestingURL:request.url.createNSURL().get() view:request.view.get() listener:policyListener.get()];
+    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:request.topOrigin requestingURL:request.url.createNSURL().get() view:request.view.get() listener:policyListener.get()];
 }
 
 - (void)geolocationAuthorizationDenied

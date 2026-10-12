@@ -50,7 +50,6 @@ struct FrameInfoData {
     FrameType frameType { FrameType::Local };
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
-    WebCore::SecurityOriginData topOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebPageProxyIdentifier> webPageProxyID;

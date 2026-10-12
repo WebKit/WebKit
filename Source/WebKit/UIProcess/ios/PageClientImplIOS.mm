@@ -70,6 +70,7 @@
 #import "WebContextMenuProxy.h"
 #import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEditCommandProxy.h"
+#import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
@@ -362,9 +363,12 @@ void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
+    RefPtr mainFrame = frame.mainFrame();
+    if (!mainFrame)
+        return std::exchange(completionHandler, nullptr)(false);
     if (auto webView = this->webView()) {
         RetainPtr geolocationProvider = [protect(wrapper(webView->_page->configuration().processPool())) _geolocationProvider];
-        [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
+        [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } topOrigin:mainFrame->documentSecurityOriginData() completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
     }
 }
 

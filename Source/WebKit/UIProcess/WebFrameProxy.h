@@ -252,6 +252,7 @@ public:
 
     WebFrameProxy* parentFrame() const { return m_parentFrame; }
     Ref<WebFrameProxy> rootFrame();
+    RefPtr<WebFrameProxy> mainFrame();
     RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
     std::optional<uint64_t> NODELETE indexInFrameTreeSiblings() const;
 
@@ -366,8 +367,7 @@ private:
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
     std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
 
-    enum class ForInitialization : bool { No, Yes };
-    void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);
+    void updateDocumentSecurityOrigin(WebFrameProxy*);
     WebCore::SecurityOriginData committedDocumentSecurityOriginData() const;
 
     RefPtr<WebFrameProxy> deepLastChild();

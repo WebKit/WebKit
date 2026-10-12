@@ -186,7 +186,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
     if (previousURL)
         frameLoadState().setURL(WTF::move(*previousURL));
 
-    updateDocumentSecurityOrigin(parent ? parent : opener, ForInitialization::Yes);
+    updateDocumentSecurityOrigin(parent ? parent : opener);
 
     // The initial about:blank document is as secure as its creator and in its agent cluster.
     if (RefPtr creator = parent ? parent : opener; creator && creator->m_documentSecurityPolicy)
@@ -752,11 +752,6 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameInfoD
             RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: security origin mismatch");
             frameInfo->securityOrigin = WTF::move(securityOrigin);
         }
-        auto topOrigin = SecurityOriginData::fromURL(rootFrame()->url());
-        if (!topOrigin.isOpaque() && frameInfo->topOrigin != topOrigin) {
-            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: topOrigin mismatch");
-            frameInfo->topOrigin = WTF::move(topOrigin);
-        }
         if (m_page) {
             if (frameInfo->webPageProxyID != m_page->identifier()) {
                 RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: webPageProxyID mismatch");
@@ -1133,6 +1128,16 @@ Ref<WebFrameProxy> WebFrameProxy::rootFrame()
     return rootFrame;
 }
 
+RefPtr<WebFrameProxy> WebFrameProxy::mainFrame()
+{
+    Ref mainFrame = *this;
+    while (mainFrame->m_parentFrame)
+        mainFrame = *mainFrame->m_parentFrame;
+    if (!mainFrame->isMainFrame())
+        return nullptr;
+    return mainFrame;
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
 // Mirrors LocalDOMWindow::notifyActivated. We track activation in the UIProcess so that a
 // compromised WebContent process cannot fabricate transient activation when calling APIs
@@ -1336,7 +1341,7 @@ ProvisionalFrameCreationParameters WebFrameProxy::provisionalFrameCreationParame
     };
 }
 
-void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator, ForInitialization forInitialization)
+void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator)
 {
     if (m_effectiveSandboxFlags.contains(SandboxFlag::Origin)) {
         m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
@@ -1346,7 +1351,7 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator, ForInit
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(url())) {
         if (RefPtr creatorFrame = creator)
             m_documentSecurityOrigin = creatorFrame->securityOrigin().ptr();
-        else if (forInitialization == ForInitialization::Yes)
+        else
             m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
         return;
     }

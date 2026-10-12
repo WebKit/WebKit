@@ -593,7 +593,10 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
 
     if (uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandlerSPI
         || uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler) {
-        Ref securityOrigin = frameInfo.topOrigin.securityOrigin();
+        RefPtr mainFrame = frame.mainFrame();
+        if (!mainFrame)
+            return std::exchange(completionHandler, nullptr)(false);
+        Ref securityOrigin = mainFrame->documentSecurityOriginData().securityOrigin();
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:));
         auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTF::move(checker), weakPage = WeakPtr { page }] (WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
@@ -1262,7 +1265,10 @@ void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorUI
 #if ENABLE(DEVICE_ORIENTATION)
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy& page, WebFrameProxy& webFrameProxy, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler)
 {
-    Ref securityOrigin = frameInfo.topOrigin.securityOrigin();
+    RefPtr mainFrame = webFrameProxy.mainFrame();
+    if (!mainFrame)
+        return completionHandler(false);
+    Ref securityOrigin = mainFrame->documentSecurityOriginData().securityOrigin();
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate || !uiDelegate->m_delegate.get() || !uiDelegate->m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler) {
         alertForPermission(page, MediaPermissionReason::DeviceOrientation, securityOrigin->data(), WTF::move(completionHandler));
