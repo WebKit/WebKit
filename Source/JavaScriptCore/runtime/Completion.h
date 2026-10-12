@@ -73,6 +73,7 @@ JS_EXPORT_PRIVATE JSPromise* loadAndEvaluateModule(JSGlobalObject*, SourceCode&&
 
 // Fetch the module source, and instantiate the module record.
 JS_EXPORT_PRIVATE JSPromise* loadModule(JSGlobalObject*, const Identifier& moduleKey, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
+JS_EXPORT_PRIVATE JSPromise* loadModule(JSGlobalObject*, const Identifier& moduleKey, SourceCode&&, RefPtr<ScriptFetcher>);
 JS_EXPORT_PRIVATE JSPromise* loadModule(JSGlobalObject*, SourceCode&&, RefPtr<ScriptFetcher>);
 
 // Link and evaluate the already linked module. This function is called in an async manner.

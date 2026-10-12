@@ -345,7 +345,12 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
 
     Ref protector { scriptFetcher };
     {
-        auto* promise = JSExecState::loadModule(globalObject, sourceCode.jsSourceCode(), protector.ptr());
+        JSC::JSPromise* promise;
+        if (sourceCode.url().isValid()) {
+            Identifier key = Identifier::fromString(vm, sourceCode.url().string());
+            promise = JSExecState::loadModule(globalObject, key, sourceCode.jsSourceCode(), protector.ptr());
+        } else
+            promise = JSExecState::loadModule(globalObject, sourceCode.jsSourceCode(), protector.ptr());
         scope.assertNoExceptionExceptTermination();
         RETURN_IF_EXCEPTION(scope, false);
 

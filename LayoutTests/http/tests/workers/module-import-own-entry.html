@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const worker = new Worker("resources/module-import-own-entry-worker.js", { type: "module" });
+worker.onmessage = (event) => {
+    document.body.textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+worker.onerror = (event) => {
+    document.body.textContent = "error: " + event.message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+setTimeout(() => worker.postMessage("go"), 0);
+</script>
