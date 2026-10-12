@@ -1,55 +1,33 @@
-# WEBKIT_ADD_SWIFT_PREWARM(<consumer> <swift-source>)
+# WEBKIT_ADD_SWIFT_PREWARM(<consumer> <swift-source> [<edges>])
 #   <consumer>     Target that contains .swift files with expensive imports.
 #   <swift-source> .swift file that imports the consumer's expensive Swift imports.
+#   <edges>        Passed to WEBKIT_RAISE_SWIFT_NINJA_PRIORITY.
 #
-# Warms the implicit Clang module cache, so the consumer's swiftc finds them
-# already built instead of compiling them serially.
+# Warms the module cache, so the consumer's swiftc finds its module dependencies
+# already built instead of compiling them serially. The target is named after
+# <swift-source>'s stem, so other targets with the consumer's flags can depend on it.
 function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
     # Options that name the consumer's own build artifacts. The prewarm compiles
     # a different set of sources, so letting it inherit these would have it
     # write the consumer's dependency file and rebuild stamp with its own
     # dependencies.
     set(_excluded_options
-        "(-emit-clang-header-path|-import-underlying-module|--emit-ninja-depfile|--ninja-depfile-target|--ninja-depfile-exclude|--emit-compile-stamp)"
+        "(-emit-clang-header-path|-emit-module-interface-path|-emit-private-module-interface-path|-import-underlying-module|--emit-ninja-depfile|--ninja-depfile-target|--ninja-depfile-exclude|--emit-compile-stamp)"
     )
 
     cmake_path(GET _swift_source STEM _prewarm)
 
     add_library(${_prewarm} OBJECT "${_swift_source}")
 
-    get_target_property(_opts ${_consumer} COMPILE_OPTIONS)
-    list(FILTER _opts EXCLUDE REGEX "${_excluded_options}")
-    target_compile_options(${_prewarm} PRIVATE ${_opts})
-
-    get_target_property(_opts ${_consumer} COMPILE_DEFINITIONS)
-    target_compile_definitions(${_prewarm} PRIVATE ${_opts})
-
-    get_target_property(_opts ${_consumer} INCLUDE_DIRECTORIES)
-    target_include_directories(${_prewarm} PRIVATE ${_opts})
-    target_include_directories(${_prewarm} PRIVATE ${${_consumer}_SYSTEM_INCLUDE_DIRECTORIES})
+    # The consumer's exact flags, in order; any difference builds modules it won't reuse.
+    target_compile_options(${_prewarm} PRIVATE
+        "$<FILTER:$<TARGET_PROPERTY:${_consumer},COMPILE_OPTIONS>,EXCLUDE,${_excluded_options}>")
+    target_compile_definitions(${_prewarm} PRIVATE
+        "$<TARGET_PROPERTY:${_consumer},COMPILE_DEFINITIONS>")
+    target_include_directories(${_prewarm} PRIVATE
+        "$<TARGET_PROPERTY:${_consumer},INCLUDE_DIRECTORIES>")
 
     get_target_property(_linked_libraries ${_consumer} LINK_LIBRARIES)
-    foreach (_target ${_linked_libraries})
-        if (NOT TARGET ${_target})
-            continue()
-        endif ()
-
-        get_target_property(_opts ${_target} INTERFACE_COMPILE_OPTIONS)
-        if (_opts)
-            list(FILTER _opts EXCLUDE REGEX "${_excluded_options}")
-            target_compile_options(${_prewarm} PRIVATE ${_opts})
-        endif ()
-
-        get_target_property(_opts ${_target} INTERFACE_COMPILE_DEFINITIONS)
-        if (_opts)
-            target_compile_definitions(${_prewarm} PRIVATE ${_opts})
-        endif ()
-
-        get_target_property(_opts ${_target} INTERFACE_INCLUDE_DIRECTORIES)
-        if (_opts)
-            target_include_directories(${_prewarm} PRIVATE ${_opts})
-        endif ()
-    endforeach ()
 
     # Depend on the headers and modulemaps needed to do the prewarming. WTF is
     # special because it's not directly linked against, but its interface is
@@ -64,16 +42,25 @@ function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
             endif ()
         endforeach ()
     endforeach ()
+    # The consumer's own module maps, which its flags can name with -fmodule-map-file.
+    if (TARGET "${_consumer}_CopyModules")
+        list(APPEND _staging_deps "${_consumer}_CopyModules")
+    endif ()
     if (_staging_deps)
         list(REMOVE_DUPLICATES _staging_deps)
         add_dependencies(${_prewarm} ${_staging_deps})
     endif ()
 
-    # Depend on platform-swift-args.resp
-    set_source_files_properties(${_swift_source} OBJECT_DEPENDS
-        "${CMAKE_CURRENT_BINARY_DIR}/${_consumer}.platform-swift-args.resp")
+    # Depend on the platform-swift-args.resp files the consumer's flags read.
+    get_target_property(_opts ${_consumer} COMPILE_OPTIONS)
+    string(REGEX MATCHALL "@[^ ;>]*\\.platform-swift-args\\.resp" _resps "${_opts}")
+    list(TRANSFORM _resps REPLACE "^@" "")
+    list(REMOVE_DUPLICATES _resps)
+    if (_resps)
+        set_source_files_properties(${_swift_source} OBJECT_DEPENDS "${_resps}")
+    endif ()
 
-    WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(${_prewarm})
+    WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(${_prewarm} ${ARGN})
     add_dependencies(${_consumer} ${_prewarm})
 endfunction()
 
