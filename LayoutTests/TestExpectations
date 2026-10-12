@@ -1477,6 +1477,7 @@ webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimen
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-allowed-object.tentative.window.html [ Skip ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-embed.tentative.window.html [ Skip ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-object.tentative.window.html [ Skip ]
+webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-disabled-scrollbar-tentative.html [ ImageOnlyFailure ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-timing-iframe-camera.https.sub.html [ Skip ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-all.https.sub.html [ Skip ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-malformed-wildcard.https.sub.html [ Skip ]
