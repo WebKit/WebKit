@@ -7545,11 +7545,11 @@ enum class WebCore::DOMPasteAccessPolicy : uint8_t {
 
 header: <WebCore/UserGestureIndicator.h>
 [CustomHeader] struct WebCore::UserGestureTokenData {
+    Markable<WTF::UUID> authorizationToken;
+    MonotonicTime startTime;
     WebCore::IsProcessingUserGesture isProcessingUserGesture;
     WebCore::UserGestureType userGestureType;
-    std::optional<WTF::UUID> authorizationToken;
     WebCore::CanRequestDOMPaste canRequestDOMPaste;
-    MonotonicTime startTime;
     WebCore::DOMPasteAccessPolicy domPasteAccessPolicy;
     WebCore::GestureScope scope;
     bool removesTransientActivation;

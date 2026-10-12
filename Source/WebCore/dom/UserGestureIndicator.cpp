@@ -68,7 +68,7 @@ static void setCurrentToken(JSC::VM& vm, RefPtr<UserGestureToken>&& token)
 }
 
 UserGestureToken::UserGestureToken(IsProcessingUserGesture isProcessingUserGesture, UserGestureType gestureType, Document* document, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste canRequestDOMPaste, MonotonicTime startTime, DOMPasteAccessPolicy domPasteAccessPolicy, GestureScope gestureScope, RemoveTransientActivation removeTransientActivation)
-    : m_data { isProcessingUserGesture, gestureType, authorizationToken, canRequestDOMPaste, startTime, domPasteAccessPolicy, gestureScope, removeTransientActivation == RemoveTransientActivation::Yes }
+    : m_data { authorizationToken, startTime, isProcessingUserGesture, gestureType, canRequestDOMPaste, domPasteAccessPolicy, gestureScope, removeTransientActivation == RemoveTransientActivation::Yes }
 {
     if (!document || !processingUserGesture())
         return;

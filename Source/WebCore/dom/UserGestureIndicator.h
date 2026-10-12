@@ -30,6 +30,7 @@
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Function.h>
+#include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -56,11 +57,11 @@ enum class GestureScope : bool { All, MediaOnly };
 enum class RemoveTransientActivation : bool;
 
 struct UserGestureTokenData {
+    Markable<WTF::UUID> authorizationToken;
+    MonotonicTime startTime { MonotonicTime::now() };
     IsProcessingUserGesture isProcessingUserGesture { IsProcessingUserGesture::No };
     UserGestureType userGestureType { UserGestureType::ActivationTriggering };
-    std::optional<WTF::UUID> authorizationToken;
     CanRequestDOMPaste canRequestDOMPaste { CanRequestDOMPaste::No };
-    MonotonicTime startTime { MonotonicTime::now() };
     DOMPasteAccessPolicy domPasteAccessPolicy { DOMPasteAccessPolicy::NotRequestedYet };
     GestureScope scope { GestureScope::All };
     bool removesTransientActivation { false };
