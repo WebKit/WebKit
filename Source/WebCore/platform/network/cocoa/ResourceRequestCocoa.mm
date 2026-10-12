@@ -193,7 +193,8 @@ void ResourceRequest::doUpdateResourceRequest()
     m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
     RetainPtr<NSArray> encodingFallbacks = [m_nsRequest contentDispositionEncodingFallbackArray];
     m_requestData.m_responseContentDispositionEncodingFallbackArray.reserveCapacity([encodingFallbacks count]);
-    for (NSNumber *encodingFallback in encodingFallbacks.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSNumber *encodingFallback in encodingFallbacks.get()) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
         if (encoding != kCFStringEncodingInvalidId)
             m_requestData.m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
@@ -299,7 +300,8 @@ void ResourceRequest::doUpdatePlatformRequest()
     [nsRequest _setProperty:m_requestData.m_isTopSite ? @YES : @NO forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
 
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
-    for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
         [nsRequest setValue:nil forHTTPHeaderField:oldHeaderName];
     for (const auto& header : httpHeaderFields()) {
         RetainPtr encodedValue = httpHeaderValueUsingSuitableEncoding(header);

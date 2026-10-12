@@ -328,7 +328,8 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
         if (segment.duration.isInvalid() || segment.duration == MediaTime::zeroTime())
             segment.duration = PAL::toMediaTime([asset duration]);
 
-        for (AVAssetTrack* track in [asset tracks]) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL AVAssetTrack* track in [asset tracks]) {
             NSString* mediaType = [track mediaType];
             if ([mediaType isEqualToString:AVMediaTypeVideo]) {
                 SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;

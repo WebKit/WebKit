@@ -185,7 +185,8 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(cons
     auto result = adoptNS([[NSMutableAttributedString alloc] init]);
 
     auto contents = contentForRange(range, spellCheck);
-    for (id content in contents.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL id content in contents.get()) {
         auto item = retainPtr(content);
         if ([item isKindOfClass:[WebAccessibilityObjectWrapper class]]) {
             attributedStringAppendWrapper(result.get(), item.get());

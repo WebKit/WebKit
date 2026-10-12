@@ -32,6 +32,7 @@
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/InbandTextTrackPrivateClient.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
@@ -108,7 +109,7 @@ private:
 #endif
 
     bool processVTTFileHeader(CMFormatDescriptionRef);
-    bool readVTTSampleBuffer(CMSampleBufferRef, CMFormatDescriptionRef&);
+    bool readVTTSampleBuffer(CMSampleBufferRef, RetainPtr<CMFormatDescriptionRef>&);
 
     MediaTime m_currentCueStartTime;
     MediaTime m_currentCueEndTime;

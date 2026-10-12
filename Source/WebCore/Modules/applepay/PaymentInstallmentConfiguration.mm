@@ -153,7 +153,7 @@ static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayIn
     if (![arrayElement isKindOfClass:PAL::getPKPaymentInstallmentItemClassSingleton()])
         return std::nullopt;
 
-    PKPaymentInstallmentItem *item = arrayElement;
+    RetainPtr<PKPaymentInstallmentItem> item = arrayElement;
     return ApplePayInstallmentItem {
         applePayItemType([item installmentItemType]),
         fromDecimalNumber(retainPtr([item amount]).get()),

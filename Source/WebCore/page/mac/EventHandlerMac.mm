@@ -328,9 +328,9 @@ static bool findViewInSubviews(NSView *superview, NSView *target)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSEnumerator *e = [[superview subviews] objectEnumerator];
-    NSView *subview;
+    RetainPtr<NSView> subview;
     while ((subview = [e nextObject])) {
-        if (subview == target || findViewInSubviews(subview, target)) {
+        if (subview == target || findViewInSubviews(subview.get(), target)) {
             return true;
         }
     }

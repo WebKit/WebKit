@@ -788,7 +788,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (flipImage)
         flipImageSpec(&imageSpec);
 
-    CGSRegionObj imageShape;
+    // This is an out-parameter which is explicitly released below.
+    SUPPRESS_UNRETAINED_LOCAL CGSRegionObj imageShape;
     OSStatus error = CGSNewRegionWithRect(&imageRect, &imageShape);
     ASSERT(error == kCGErrorSuccess);
     if (error != kCGErrorSuccess)

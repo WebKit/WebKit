@@ -74,9 +74,11 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
     if (!supportedComputeStageDevices || error)
         return;
 
-    for (VNComputeStage computeStage in supportedComputeStageDevices.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL VNComputeStage computeStage in supportedComputeStageDevices.get()) {
         bool set = false;
-        for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices.get()[computeStage]) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL id<MLComputeDeviceProtocol> device in supportedComputeStageDevices.get()[computeStage]) {
             if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClassSingleton()]) {
                 [request setComputeDevice:device forComputeStage:computeStage];
                 set = true;
@@ -84,7 +86,8 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
             }
         }
         if (!set) {
-            for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices.get()[computeStage]) {
+            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+            for (SUPPRESS_UNRETAINED_LOCAL id<MLComputeDeviceProtocol> device in supportedComputeStageDevices.get()[computeStage]) {
                 if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClassSingleton()]) {
                     [request setComputeDevice:device forComputeStage:computeStage];
                     break;

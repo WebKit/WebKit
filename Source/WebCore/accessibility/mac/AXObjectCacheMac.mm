@@ -252,7 +252,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
 
     bool skipSystemNotification = false;
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
-    NSString *macNotification;
+    RetainPtr<NSString> macNotification;
     switch (notification) {
     case AXNotification::ActiveDescendantChanged:
         macNotification = NSAccessibilityActiveElementChangedNotification;
@@ -374,7 +374,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     exerciseIsIgnored(object);
 #endif
 
-    AXPostNotificationWithUserInfo(protect(object.wrapper()), macNotification, nil, skipSystemNotification);
+    AXPostNotificationWithUserInfo(protect(object.wrapper()), macNotification.get(), nil, skipSystemNotification);
 }
 
 void AXObjectCache::postPlatformAnnouncementNotification(const String& message)

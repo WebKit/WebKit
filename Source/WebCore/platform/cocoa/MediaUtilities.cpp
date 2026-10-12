@@ -77,7 +77,8 @@ RetainPtr<CMSampleBufferRef> createVideoSampleBuffer(CVPixelBufferRef pixelBuffe
     auto retainedFormatDescription = adoptCF(formatDescription);
 
     CMSampleTimingInfo timingInfo { PAL::kCMTimeInvalid, presentationTime, PAL::kCMTimeInvalid };
-    CMSampleBufferRef sampleBuffer;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef sampleBuffer;
     status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
     if (status)
         return nullptr;

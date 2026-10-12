@@ -261,7 +261,8 @@ void InternalAudioEncoderCocoa::processEncodedOutputs()
         ASSERT(rawBuffer);
         // Make sure block buffer is contiguous.
         if (!PAL::CMBlockBufferIsRangeContiguous(rawBuffer.get(), 0, 0)) {
-            CMBlockBufferRef contiguousBuffer;
+            // This is an out-parameter which is immediately adopted below.
+            SUPPRESS_UNRETAINED_LOCAL CMBlockBufferRef contiguousBuffer;
             if (auto error = PAL::CMBlockBufferCreateContiguous(nullptr, rawBuffer.get(), nullptr, nullptr, 0, 0, 0, &contiguousBuffer)) {
                 RELEASE_LOG_ERROR(MediaStream, "Couldn't create buffer with error %d", error);
                 m_lastError = error;

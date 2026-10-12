@@ -68,7 +68,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
     // We don't use NSStepperCell because there are no ways to draw an
     // NSStepperCell with the up button highlighted.
 
-    NSString *coreUIState;
+    RetainPtr<NSString> coreUIState;
     auto states = style.states;
     if (!states.contains(ControlStyle::State::Enabled))
         coreUIState = (__bridge NSString *)kCUIStateDisabled;
@@ -77,7 +77,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
     else
         coreUIState = (__bridge NSString *)kCUIStateActive;
 
-    NSString *coreUISize;
+    RetainPtr<NSString> coreUISize;
     auto controlSize = controlSizeForSize(borderRect.rect().size(), style);
     if (controlSize == NSControlSizeMini)
         coreUISize = (__bridge NSString *)kCUISizeMini;
@@ -96,8 +96,8 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
 
     [[NSAppearance currentDrawingAppearance] _drawInRect:logicalRect context:protect(context.platformContext()) options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetButtonLittleArrows,
-        (__bridge NSString *)kCUISizeKey: coreUISize,
-        (__bridge NSString *)kCUIStateKey: coreUIState,
+        (__bridge NSString *)kCUISizeKey: coreUISize.get(),
+        (__bridge NSString *)kCUIStateKey: coreUIState.get(),
         (__bridge NSString *)kCUIValueKey: states.contains(ControlStyle::State::SpinUp) ? @1 : @0,
         (__bridge NSString *)kCUIIsFlippedKey: @NO,
         (__bridge NSString *)kCUIScaleKey: @1,

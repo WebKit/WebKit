@@ -310,7 +310,8 @@ void MockAudioCaptureInternalUnit::reconfigure()
 
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamFormat, m_maximiumFrameCount);
 
-    CMFormatDescriptionRef formatDescription;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CMFormatDescriptionRef formatDescription;
     PAL::CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);
     m_formatDescription = adoptCF(formatDescription);
 

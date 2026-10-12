@@ -304,11 +304,11 @@ std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes
             RetainPtr key = checked_cf_cast<CFNumberRef>(keys[i]);
             if (CFGetTypeID(key.get()) != CFNumberGetTypeID())
                 continue;
-            auto value = static_cast<ValueType>(values[i]);
-            if (CFGetTypeID(value) != valueCFType)
+            RetainPtr value = static_cast<ValueType>(values[i]);
+            if (CFGetTypeID(value.get()) != valueCFType)
                 continue;
 
-            vector.append({ key, value });
+            vector.append({ WTF::move(key), WTF::move(value) });
         }
 
         return WTF::move(vector);

@@ -585,7 +585,8 @@ static void paintScrollbarUsingLayersForSnapshot(Scrollbar& scrollbar, GraphicsC
     [hostLayer setGeometryFlipped:YES];
     [scrollerImp setLayer:hostLayer.get()];
 
-    for (CALayer *sublayer in [hostLayer sublayers])
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL CALayer *sublayer in [hostLayer sublayers])
         [sublayer setDelegate:delegate.get()];
 
     [hostLayer renderInContext:protect(localContext.cgContext())];

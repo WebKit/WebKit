@@ -221,7 +221,8 @@ RefPtr<NativeImage> ImageRotationSessionVT::applyRotation(NativeImage& nativeIma
     if (!pixelBuffer)
         return nullptr;
 
-    CGImageRef cgImage;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CGImageRef cgImage;
     VTCreateCGImageFromCVPixelBuffer(pixelBuffer, nullptr, &cgImage);
     return NativeImage::create(adoptCF(cgImage));
 }

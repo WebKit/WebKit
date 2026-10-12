@@ -425,7 +425,7 @@ void ScreenCaptureKitCaptureSource::startContentStream()
 #endif
 
     RetainPtr contentStream = this->contentStream();
-    NSError *error;
+    NSError *error = nil;
     if (![contentStream addStreamOutput:m_captureHelper.get() type:SCStreamOutputTypeScreen sampleHandlerQueue:protect(captureQueue()) error:&error]) {
         sessionFailedWithError(WTF::move(error), "-[SCStream addStreamOutput:type:sampleHandlerQueue:error:] failed"_s);
         return;

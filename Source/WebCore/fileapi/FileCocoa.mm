@@ -43,14 +43,14 @@ bool File::shouldReplaceFile(const String& path)
     if (path.isEmpty())
         return false;
 
-    NSError *error;
+    NSError *error = nil;
     RetainPtr pathURL = [NSURL URLByResolvingAliasFileAtURL:[NSURL fileURLWithPath:path.createNSString().get() isDirectory:NO] options:NSURLBookmarkResolutionWithoutUI error:&error];
     if (!pathURL) {
         LOG_ERROR("Failed to resolve alias at path %s with error %@.\n", path.utf8(), error);
         return false;
     }
 
-    UTType *uti;
+    UTType *uti = nil;
     if (![pathURL getResourceValue:&uti forKey:NSURLContentTypeKey error:&error]) {
         LOG_ERROR("Failed to get type identifier of resource at URL %@ with error %@.\n", pathURL.get(), error);
         return false;

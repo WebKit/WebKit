@@ -54,7 +54,8 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
             ASSERT(pos != notFound);
             auto wildcardMIMEType = makeString(StringView(type).left(pos), "/*"_s);
 
-            for (NSString *extension in extensions) {
+            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+            for (SUPPRESS_UNRETAINED_LOCAL NSString *extension in extensions) {
                 // Add extension to wildcardMIMEType, for example add "png" to "image/*"
                 addExtension(wildcardMIMEType, extension);
                 // Add extension to its mimeType, for example add "png" to "image/png"
