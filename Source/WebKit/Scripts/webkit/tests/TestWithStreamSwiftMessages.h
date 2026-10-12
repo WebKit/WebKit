@@ -107,6 +107,7 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool shouldCopyReplySpans = true;
     static constexpr bool isStreamBatched = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

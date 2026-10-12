@@ -289,7 +289,7 @@ struct WebCore::CharacterRange {
 webkit_platform_headers: <WebCore/AffineTransform.h>
 
 [AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] class WebCore::AffineTransform {
-    std::span<const double, 6> span();
+    [UnsafeSpan] std::span<const double, 6> span();
 }
 
 [WebKitPlatform] class WebCore::DoublePoint {
@@ -5981,7 +5981,7 @@ header: <WebCore/PixelBuffer.h>
 [AdditionalEncoder=StreamConnectionEncoder, CreateUsing=create, CustomHeader] class WebCore::PixelBufferSourceView {
     WebCore::PixelBufferFormat format();
     WebCore::IntSize size();
-    std::span<const uint8_t> bytes();
+    [UnsafeSpan] std::span<const uint8_t> bytes();
 };
 
 #if ENABLE(CONTEXT_MENUS)

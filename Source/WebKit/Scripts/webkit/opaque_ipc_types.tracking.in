@@ -166,6 +166,7 @@
     [Legacy] MessageParam RemoteGraphicsContextGL.TexImage3D0 pixels
     [Legacy] MessageParam RemoteGraphicsContextGL.TexSubImage2D0 pixels
     [Legacy] MessageParam RemoteGraphicsContextGL.TexSubImage3D0 pixels
+    [Legacy] MessageParam TestWithStream.SendUnsafeSpans bytes
 
     [Legacy] MessageParam WebPageProxy.RegisterWebProcessAccessibilityToken data
     [Legacy] MessageParam WebPageProxy.RelayAccessibilityNotification notificationData

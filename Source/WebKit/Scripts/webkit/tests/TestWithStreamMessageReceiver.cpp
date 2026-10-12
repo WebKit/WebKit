@@ -29,6 +29,9 @@
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "TestWithStreamMessages.h" // NOLINT
+#include "UnsafeArrayReferenceTuple.h" // NOLINT
+#include "UnsafeSpan.h" // NOLINT
+#include <optional> // NOLINT
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h> // NOLINT
 #endif
@@ -54,6 +57,10 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
         IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection, decoder, this, &TestWithStream::callWithIdentifier);
         return;
     }
+    if (decoder.messageName() == Messages::TestWithStream::SendUnsafeSpans::name()) {
+        IPC::handleMessage<Messages::TestWithStream::SendUnsafeSpans>(connection, decoder, this, &TestWithStream::sendUnsafeSpans);
+        return;
+    }
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name()) {
         IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection, decoder, this, &TestWithStream::sendMachSendRight);
@@ -62,6 +69,10 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
 #endif
     if (decoder.messageName() == Messages::TestWithStream::SendStringSync::name()) {
         IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, decoder, this, &TestWithStream::sendStringSync);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithStream::ReceiveUnsafeSpan::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveUnsafeSpan>(connection, decoder, this, &TestWithStream::receiveUnsafeSpan);
         return;
     }
 #if PLATFORM(COCOA)
@@ -111,6 +122,18 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendUnsafeSpans>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendUnsafeSpans::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveUnsafeSpan>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveUnsafeSpan::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveUnsafeSpan>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveUnsafeSpan::ReplyArguments>(globalObject, decoder);
 }
 #if PLATFORM(COCOA)
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)

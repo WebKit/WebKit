@@ -107,6 +107,7 @@ struct Amazing;
 }
 
 namespace WebKit {
+class UnsafeSpanMembers;
 class PlatformClass;
 class CustomEncoded;
 class LayerProperties;
@@ -218,6 +219,12 @@ template<> struct ArgumentCoder<WTF::CreateUsingClass> {
 template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
     static void encode(Encoder&, const WebCore::FloatBoxExtent&);
     static std::optional<WebCore::FloatBoxExtent> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::UnsafeSpanMembers> {
+    static void encode(Encoder&, const WebKit::UnsafeSpanMembers&);
+    static void encode(StreamConnectionEncoder&, const WebKit::UnsafeSpanMembers&);
+    static std::optional<WebKit::UnsafeSpanMembers> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<SoftLinkedMember> {

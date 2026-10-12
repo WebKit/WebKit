@@ -111,6 +111,7 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithStream_SendString"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStream_SendStringAsync"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithStream_SendStringAsyncReply"_s, ReceiverName::TestWithStream, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithStream_SendUnsafeSpans"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclassAndWantsAsyncDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsAsyncDispatch, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclassAndWantsDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsDispatch, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_LoadURL"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
@@ -209,6 +210,9 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithStreamSwift_SendStringSync"_s, ReceiverName::TestWithStreamSwift, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #if PLATFORM(COCOA)
     MessageDescription { "TestWithStream_ReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#endif
+    MessageDescription { "TestWithStream_ReceiveUnsafeSpan"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
+#if PLATFORM(COCOA)
     MessageDescription { "TestWithStream_SendAndReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithStream_SendStringSync"_s, ReceiverName::TestWithStream, true, false, false, ProcessName::Unknown, ProcessName::Unknown },
