@@ -180,6 +180,27 @@ class TestGit(testing.PathTestCase):
             with self.assertRaises(local.Git.Exception):
                 self.assertEqual(None, local.Git(self.path).commit(revision=10))
 
+    def test_commit_cached_default_branch(self):
+        with mocks.local.Git(self.path, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            repository.cache.populate(branch='main')
+
+            with patch.object(local.Git, '_is_on_default_branch', side_effect=AssertionError('asked git for the branch')):
+                self.assertEqual('4@main', str(repository.commit(hash='bae5d1e9')))
+                self.assertEqual('4@main', str(repository.commit(identifier='4@main')))
+                self.assertEqual('4@main', str(repository.commit(revision=8)))
+                self.assertEqual('4@main', str(repository.find('r8')))
+
+    def test_commit_cached_other_branch(self):
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            repository.cache.populate(branch='branch-a')
+            branch_hash = repository.find('2.2@branch-a').hash
+
+            with patch.object(local.Git, '_is_on_default_branch', return_value=False) as is_on_default_branch:
+                self.assertEqual('2.2@branch-a', str(repository.commit(hash=branch_hash)))
+                is_on_default_branch.assert_called()
+
     def test_commit_hash(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock, MockTime, LoggerCapture():
