@@ -606,6 +606,50 @@ std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::d
     };
 }
 
+void ArgumentCoder<WebKit::UnsafeSpanMembers>::encode(Encoder& encoder, const WebKit::UnsafeSpanMembers& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.fixedExtent())>, std::span<const double, 6>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.dynamicExtent())>, std::span<const float>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.optionalDynamicExtent())>, std::optional<std::span<const float>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.pairs())>, IPC::ArrayReferenceTuple<int32_t, float>>);
+
+    encoder << instance.fixedExtent();
+    encoder << instance.dynamicExtent();
+    encoder << instance.optionalDynamicExtent();
+    encoder << instance.pairs();
+}
+
+void ArgumentCoder<WebKit::UnsafeSpanMembers>::encode(StreamConnectionEncoder& encoder, const WebKit::UnsafeSpanMembers& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.fixedExtent())>, std::span<const double, 6>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.dynamicExtent())>, std::span<const float>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.optionalDynamicExtent())>, std::optional<std::span<const float>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.pairs())>, IPC::ArrayReferenceTuple<int32_t, float>>);
+
+    encoder << instance.fixedExtent();
+    encoder << instance.dynamicExtent();
+    encoder << instance.optionalDynamicExtent();
+    encoder << instance.pairs();
+}
+
+std::optional<WebKit::UnsafeSpanMembers> ArgumentCoder<WebKit::UnsafeSpanMembers>::decode(Decoder& decoder)
+{
+    auto fixedExtent = decoder.decode<IPC::UnsafeSpan<double, 6>>().transform([](auto&& value) { return IPC::unwrapUnsafeArgument(WTF::move(value)); });
+    auto dynamicExtent = decoder.decode<IPC::UnsafeSpan<float>>().transform([](auto&& value) { return IPC::unwrapUnsafeArgument(WTF::move(value)); });
+    auto optionalDynamicExtent = decoder.decode<std::optional<IPC::UnsafeSpan<float>>>().transform([](auto&& value) { return IPC::unwrapUnsafeArgument(WTF::move(value)); });
+    auto pairs = decoder.decode<IPC::UnsafeArrayReferenceTuple<int32_t, float>>().transform([](auto&& value) { return IPC::unwrapUnsafeArgument(WTF::move(value)); });
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::UnsafeSpanMembers {
+            WTF::move(*fixedExtent),
+            WTF::move(*dynamicExtent),
+            WTF::move(*optionalDynamicExtent),
+            WTF::move(*pairs)
+        }
+    };
+}
+
 void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedMember& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.firstMember)>, RetainPtr<DDActionContext>>);

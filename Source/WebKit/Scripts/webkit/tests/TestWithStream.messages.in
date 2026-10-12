@@ -31,6 +31,8 @@ messages -> TestWithStream Stream {
     void SendStringAsync(String url) -> (int64_t returnValue)
     void SendStringSync(String url) -> (int64_t returnValue) Synchronous
     void CallWithIdentifier() -> () CallWithReplyID
+    void SendUnsafeSpans([UnsafeSpan] std::span<const uint8_t> bytes, [UnsafeSpan] std::span<const float, 4> values, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, float> pairs, [UnsafeSpan] std::optional<std::span<const float>> optionalValues)
+    void ReceiveUnsafeSpan() -> ([UnsafeSpan] std::span<const int32_t> values) Synchronous
 #if PLATFORM(COCOA)
     void SendMachSendRight(MachSendRight a1) NotStreamEncodable
     void ReceiveMachSendRight() -> (MachSendRight r1) Synchronous NotStreamEncodableReply

@@ -270,6 +270,24 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "left()"_s
             },
         } },
+        { "WebKit::UnsafeSpanMembers"_s, {
+            {
+                "std::span<const double, 6>"_s,
+                "fixedExtent()"_s
+            },
+            {
+                "std::span<const float>"_s,
+                "dynamicExtent()"_s
+            },
+            {
+                "std::optional<std::span<const float>>"_s,
+                "optionalDynamicExtent()"_s
+            },
+            {
+                "IPC::ArrayReferenceTuple<int32_t, float>"_s,
+                "pairs()"_s
+            },
+        } },
         { "SoftLinkedMember"_s, {
             {
                 "RetainPtr<DDActionContext>"_s,

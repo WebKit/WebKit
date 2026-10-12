@@ -440,7 +440,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    return { { WTF::move(decoder), WTF::move(*replyArguments) } };
+    return { { WTF::move(decoder), unwrapUnsafeArguments(WTF::move(*replyArguments)) } };
 }
 
 inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)

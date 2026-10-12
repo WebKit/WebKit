@@ -27,6 +27,8 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
+#include "UnsafeArrayReferenceTuple.h"
+#include "UnsafeSpan.h"
 #include <wtf/Forward.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RuntimeApplicationChecks.h>
@@ -152,6 +154,70 @@ public:
     using Reply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     CallWithIdentifier()
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+    }
+
+private:
+};
+
+class SendUnsafeSpans {
+public:
+    using Arguments = std::tuple<IPC::UnsafeSpan<uint8_t>, IPC::UnsafeSpan<float, 4>, IPC::UnsafeArrayReferenceTuple<int32_t, float>, std::optional<IPC::UnsafeSpan<float>>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendUnsafeSpans; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
+
+    SendUnsafeSpans(const std::span<const uint8_t>& bytes, const std::span<const float, 4>& values, const IPC::ArrayReferenceTuple<int32_t, float>& pairs, const std::optional<std::span<const float>>& optionalValues)
+        : m_bytes(bytes)
+        , m_values(values)
+        , m_pairs(pairs)
+        , m_optionalValues(optionalValues)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_bytes;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_values;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_pairs;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_optionalValues;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const std::span<const uint8_t>& m_bytes;
+    SUPPRESS_FORWARD_DECL_MEMBER const std::span<const float, 4>& m_values;
+    SUPPRESS_FORWARD_DECL_MEMBER const IPC::ArrayReferenceTuple<int32_t, float>& m_pairs;
+    SUPPRESS_FORWARD_DECL_MEMBER const std::optional<std::span<const float>>& m_optionalValues;
+};
+
+class ReceiveUnsafeSpan {
+public:
+    using Arguments = std::tuple<>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_ReceiveUnsafeSpan; }
+    static constexpr bool isSync = true;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
+
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    using ReplyArguments = std::tuple<IPC::UnsafeSpan<int32_t>>;
+    using Reply = CompletionHandler<void(std::span<const int32_t>&&)>;
+    ReceiveUnsafeSpan()
     {
     }
 

@@ -779,6 +779,28 @@ TEST(ArgumentCoderShareableResourceHandle, OverflowingOffsetAndSizeIsRejectedNot
 }
 #endif // ENABLE(SHAREABLE_RESOURCE)
 
+TEST(ArgumentCoderUnsafeArguments, UnwrapToDeclaredTypes)
+{
+    std::array<uint32_t, 4> data { 1, 2, 3, 4 };
+    std::array<float, 4> floats { 5, 6, 7, 8 };
+    std::tuple<IPC::UnsafeSpan<uint32_t>, std::optional<IPC::UnsafeSpan<uint32_t>>, IPC::UnsafeArrayReferenceTuple<uint32_t, float>, int> decoded {
+        std::span<const uint32_t> { data },
+        IPC::UnsafeSpan<uint32_t> { std::span<const uint32_t> { data }.first(2) },
+        IPC::UnsafeArrayReferenceTuple<uint32_t, float> { data.data(), floats.data(), data.size() },
+        9
+    };
+
+    auto unwrapped = IPC::unwrapUnsafeArguments(WTF::move(decoded));
+    static_assert(std::is_same_v<decltype(unwrapped), std::tuple<std::span<const uint32_t>, std::optional<std::span<const uint32_t>>, IPC::ArrayReferenceTuple<uint32_t, float>, int>>);
+    EXPECT_EQ(std::get<0>(unwrapped).data(), data.data());
+    EXPECT_EQ(std::get<0>(unwrapped).size(), 4u);
+    ASSERT_TRUE(std::get<1>(unwrapped));
+    EXPECT_EQ(std::get<1>(unwrapped)->size(), 2u);
+    EXPECT_EQ(std::get<2>(unwrapped).data<1>(), floats.data());
+    EXPECT_EQ(std::get<2>(unwrapped).size(), 4u);
+    EXPECT_EQ(std::get<3>(unwrapped), 9);
+}
+
 TEST(ArgumentCoderSecurityFlags, SecureDefaultRoundTrips)
 {
     IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);

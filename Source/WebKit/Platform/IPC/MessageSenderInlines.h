@@ -73,7 +73,7 @@ void cancelReplyWithoutUsingConnection(C&& completionHandler)
 {
     [&]<size_t... Indices>(std::index_sequence<Indices...>)
     {
-        completionHandler(AsyncReplyError<std::tuple_element_t<Indices, typename T::ReplyArguments>>::create()...);
+        completionHandler(AsyncReplyError<std::tuple_element_t<Indices, UnwrappedReplyArguments<T>>>::create()...);
     }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
 }
 
@@ -84,7 +84,7 @@ void callReplyWithoutUsingConnection(Decoder& decoder, C&& completionHandler)
         completionHandler();
     else {
         if (auto arguments = decoder.template decode<typename T::ReplyArguments>())
-            return std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
+            return std::apply(std::forward<C>(completionHandler), unwrapUnsafeArguments(WTF::move(*arguments)));
         cancelReplyWithoutUsingConnection<T>(std::forward<C>(completionHandler));
     }
 }

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "UnsafeArgument.h"
+#include <optional>
 #include <span>
 #include <wtf/Compiler.h>
 
@@ -63,6 +65,19 @@ public:
 
 private:
     std::span<const T, Extent> m_span;
+};
+
+template<typename T, size_t Extent> struct UnsafeArgumentTraits<UnsafeSpan<T, Extent>> {
+    using DeclaredType = std::span<const T, Extent>;
+    static DeclaredType unwrap(const UnsafeSpan<T, Extent>& value) { return value.span(); }
+};
+
+template<typename T, size_t Extent> struct UnsafeArgumentTraits<std::optional<UnsafeSpan<T, Extent>>> {
+    using DeclaredType = std::optional<std::span<const T, Extent>>;
+    static DeclaredType unwrap(const std::optional<UnsafeSpan<T, Extent>>& value)
+    {
+        return value.transform([](auto& span) { return span.span(); });
+    }
 };
 
 }
