@@ -988,7 +988,7 @@ public:
     // coordinate space. This method deals with outlines and overflow.
     inline LayoutRect absoluteClippedOverflowRectForRepaint() const;
     inline LayoutRect absoluteClippedOverflowRectForSpatialNavigation() const;
-    inline LayoutRect absoluteClippedOverflowRectForRenderTreeAsText() const;
+    inline LayoutRect absoluteClippedOverflowRectForTextRepresentation() const;
 
     WEBCORE_EXPORT IntRect pixelSnappedAbsoluteClippedOverflowRect() const;
 
@@ -1136,7 +1136,7 @@ protected:
 
     static VisibleRectContext visibleRectContextForRepaint();
     static VisibleRectContext visibleRectContextForSpatialNavigation();
-    static VisibleRectContext visibleRectContextForRenderTreeAsText();
+    static VisibleRectContext visibleRectContextForTextRepresentation();
 
     bool isSetNeedsLayoutForbidden() const;
 

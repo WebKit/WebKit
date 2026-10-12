@@ -79,6 +79,7 @@
 #include "RenderBox.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderIFrame.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
@@ -551,6 +552,30 @@ static inline bool paintsVisibleContent(const RenderObject& renderer)
     return renderer.isRenderReplaced() || hasVisuallyDistinctStyling(protect(style));
 }
 
+template<typename RectOrSize>
+static inline bool isNearlyEmpty(const RectOrSize& rectOrSize)
+{
+    return rectOrSize.width() <= 1 || rectOrSize.height() <= 1;
+}
+
+static inline bool isClippedOutOfView(const RenderObject& renderer)
+{
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box)
+        return false;
+
+    if (box->hasClip() && isNearlyEmpty(box->clipRect({ })))
+        return true;
+
+    return box->hasNonVisibleOverflow() && isNearlyEmpty(box->borderBoxSize());
+}
+
+static inline bool isClippedOutByAncestors(const Node& node, const FloatRect& bounds)
+{
+    CheckedPtr renderer = node.renderer();
+    return renderer && !bounds.isEmpty() && renderer->absoluteClippedOverflowRectForTextRepresentation().isEmpty();
+}
+
 static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputElement& input)
 {
     bool isCheckboxOrRadio = input.isCheckbox() || input.isRadioButton();
@@ -704,7 +729,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (renderer->isRenderOrLegacyRenderSVGHiddenContainer())
         return { SkipExtraction::SelfAndSubtree };
 
-    if (context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible) {
+    if ((context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible) || (!context.originalRequest.includeClippedContent && isClippedOutOfView(*renderer))) {
         RefPtr input = dynamicDowncast<HTMLInputElement>(node);
         if (!input)
             return { SkipExtraction::SelfAndSubtree };
@@ -1430,6 +1455,10 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                         bounds = *labelBounds;
                 }
             }
+
+            if (!context.originalRequest.includeClippedContent && isClippedOutByAncestors(node, bounds))
+                return;
+
             if (!context.inAdditionalContainerToCollectCount && !context.shouldIncludeNodeWithRect(bounds)) {
                 if (context.hasOverflowItemsStack.isEmpty()) {
                     ASSERT_NOT_REACHED();
@@ -1469,7 +1498,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
 
     bool onlyCollectTextAndLinks = linkURL || editable;
     if (onlyCollectTextAndLinks) {
-        if (auto bounds = rootViewBounds(node); context.shouldIncludeNodeWithRect(bounds)) {
+        if (auto bounds = rootViewBounds(node); context.shouldIncludeNodeWithRect(bounds) && (context.originalRequest.includeClippedContent || !isClippedOutByAncestors(node, bounds))) {
             item = {
                 TextItemData { { }, { }, emptyString(), { } },
                 WTF::move(bounds),

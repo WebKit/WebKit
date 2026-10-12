@@ -133,7 +133,7 @@ inline auto RenderObject::visibleRectContextForSpatialNavigation() -> VisibleRec
     };
 }
 
-inline auto RenderObject::visibleRectContextForRenderTreeAsText() -> VisibleRectContext
+inline auto RenderObject::visibleRectContextForTextRepresentation() -> VisibleRectContext
 {
     return {
         .options = {
@@ -155,9 +155,9 @@ inline LayoutRect RenderObject::absoluteClippedOverflowRectForSpatialNavigation(
     return clippedOverflowRect(nullptr, visibleRectContextForSpatialNavigation());
 }
 
-inline LayoutRect RenderObject::absoluteClippedOverflowRectForRenderTreeAsText() const
+inline LayoutRect RenderObject::absoluteClippedOverflowRectForTextRepresentation() const
 {
-    return clippedOverflowRect(nullptr, visibleRectContextForRenderTreeAsText());
+    return clippedOverflowRect(nullptr, visibleRectContextForTextRepresentation());
 }
 
 inline LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const

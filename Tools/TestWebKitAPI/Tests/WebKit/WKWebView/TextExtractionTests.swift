@@ -1635,6 +1635,96 @@ struct TextExtractionTests {
     }
 
     @Test
+    func excludeContentInEmptyClippedContainers() async throws {
+        try await webView.load(
+            html: """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <style>
+                .sr-only { clip: rect(0, 0, 0, 0); border: 0; height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px; }
+                .clip-only { clip: rect(0, 0, 0, 0); position: absolute; }
+                </style>
+                </head>
+                <body>
+                    <div>visible container text</div>
+                    <div><span class="sr-only">screen reader only text</span></div>
+                    <div class="clip-only">clipped container text</div>
+                    <input id="hidden-checkbox" type="checkbox" class="sr-only" checked>
+                    <label for="hidden-checkbox">Visible checkbox label</label>
+                </body>
+                </html>
+                """
+        )
+
+        let defaultText = try await webView.debugText(extractionConfigurationWithFilteringDisabled())
+        #expect(defaultText.contains("visible container text"))
+        #expect(defaultText.contains("screen reader only text"))
+        #expect(defaultText.contains("clipped container text"))
+
+        let configuration = extractionConfigurationWithFilteringDisabled()
+        configuration.includeClippedContent = false
+
+        let textWithoutClippedContent = try await webView.debugText(configuration)
+        #expect(textWithoutClippedContent.contains("visible container text"))
+        #expect(textWithoutClippedContent.contains("screen reader only text") == false)
+        #expect(textWithoutClippedContent.contains("clipped container text") == false)
+        #expect(textWithoutClippedContent.contains("checked"))
+        #expect(textWithoutClippedContent.contains("Visible checkbox label"))
+    }
+
+    @Test
+    func excludeContentClippedByAncestors() async throws {
+        try await webView.load(
+            html: """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <style>
+                .carousel { position: relative; width: 200px; height: 50px; overflow: hidden; white-space: nowrap; }
+                .clipper { width: 200px; height: 20px; overflow: hidden; }
+                .spacer { height: 100px; }
+                .tiny { width: 1px; height: 1px; overflow: hidden; white-space: nowrap; }
+                </style>
+                </head>
+                <body>
+                    <div class="carousel">
+                        <div>visible slide</div>
+                        <div style="position: absolute; top: 0; left: 400px;">positioned hidden slide</div>
+                        <div style="transform: translateX(400px);">transformed hidden slide</div>
+                    </div>
+                    <div class="clipper">
+                        <div class="spacer"></div>
+                        <div>overflowing clipped text</div>
+                        <div style="position: absolute; top: 300px;">escaped absolute text</div>
+                    </div>
+                    <div class="tiny">tiny overflow text</div>
+                </body>
+                </html>
+                """
+        )
+
+        let defaultText = try await webView.debugText(extractionConfigurationWithFilteringDisabled())
+        #expect(defaultText.contains("visible slide"))
+        #expect(defaultText.contains("positioned hidden slide"))
+        #expect(defaultText.contains("transformed hidden slide"))
+        #expect(defaultText.contains("overflowing clipped text"))
+        #expect(defaultText.contains("escaped absolute text"))
+        #expect(defaultText.contains("tiny overflow text"))
+
+        let configuration = extractionConfigurationWithFilteringDisabled()
+        configuration.includeClippedContent = false
+
+        let textWithoutClippedContent = try await webView.debugText(configuration)
+        #expect(textWithoutClippedContent.contains("visible slide"))
+        #expect(textWithoutClippedContent.contains("positioned hidden slide") == false)
+        #expect(textWithoutClippedContent.contains("transformed hidden slide") == false)
+        #expect(textWithoutClippedContent.contains("overflowing clipped text") == false)
+        #expect(textWithoutClippedContent.contains("escaped absolute text"))
+        #expect(textWithoutClippedContent.contains("tiny overflow text") == false)
+    }
+
+    @Test
     func extractTransparentCheckboxOverVisualProxy() async throws {
         try await webView.load(
             html: """
