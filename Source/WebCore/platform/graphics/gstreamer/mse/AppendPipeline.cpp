@@ -526,6 +526,12 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
         return;
     }
 
+    if (GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DROPPABLE)) {
+        // mpegaudioparse might emit empty Xing metadata frames, ignore them.
+        GST_DEBUG_OBJECT(pipeline(), "Ignoring droppable sample");
+        return;
+    }
+
     auto hasValidPTS = GST_BUFFER_PTS_IS_VALID(buffer);
     if (!hasValidPTS && track.streamType != StreamType::Text) {
         // When demuxing Vorbis, matroskademux creates several PTS-less frames with header information. We don't need those.

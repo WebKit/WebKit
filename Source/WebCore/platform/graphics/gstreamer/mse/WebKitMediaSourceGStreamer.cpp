@@ -654,8 +654,10 @@ static void webKitMediaSrcLoop(void* userData)
         } else if (result != GST_FLOW_OK && result != GST_FLOW_FLUSHING) {
             gst_pad_pause_task(pad);
             // Do not propagate NoKey decryption errors downstream, the decryptor should already have emitted an appropriate error message.
-            if (!isBufferEncrypted && result != GST_FLOW_CUSTOM_ERROR)
+            if (!isBufferEncrypted && result != GST_FLOW_CUSTOM_ERROR) {
+                GST_WARNING_OBJECT(pad, "Failed to push buffer");
                 GST_ELEMENT_ERROR(stream->source, CORE, PAD, ("Failed to push buffer"), ("gst_pad_push() returned %s", gst_flow_get_name(result)));
+            }
         } else if (pushingFirstBuffer) {
             GST_DEBUG_OBJECT(pad, "First buffer on this pad was pushed (ret = %s).", gst_flow_get_name(result));
             dumpPipeline("first-frame-after"_s, stream);
