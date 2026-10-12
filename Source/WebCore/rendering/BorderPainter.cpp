@@ -42,6 +42,7 @@
 #include "PathUtilities.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderListBox.h"
 #include "RenderObjectDocument.h"
@@ -51,6 +52,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleMaskBorderSizing.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "UsedStyle.h"
 #include <numeric>
 
 namespace WebCore {
@@ -209,8 +211,9 @@ bool BorderPainter::decorationHasAllSolidEdges(const RectEdges<BorderEdge>& edge
     return true;
 }
 
-void BorderPainter::paintBorder(const LayoutRect& rect, const Style::ComputedStyle& style, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
+void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedStyle, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
 {
+    auto& style = usedStyle.computedStyle();
     auto& graphicsContext = m_paintInfo.context();
 
     if (graphicsContext.paintingDisabled())

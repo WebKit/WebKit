@@ -8464,7 +8464,7 @@ class GenerateUsedStyle:
                 writer.write(f"public:")
 
                 with writer.indent():
-                    writer.write(f"const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND {{ return m_renderer->style(); }}")
+                    writer.write(f"const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND {{ return m_computedStyle.get(); }}")
                     writer.newline()
 
                     self._generate_property_getter_declarations(
@@ -8477,9 +8477,10 @@ class GenerateUsedStyle:
                 writer.write(f"protected:")
 
                 with writer.indent():
-                    writer.write(f"explicit UsedStyleProperties(const RenderElement& renderer LIFETIME_BOUND)")
+                    writer.write(f"UsedStyleProperties(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& computedStyle LIFETIME_BOUND)")
                     with writer.indent():
                         writer.write(f": m_renderer(renderer)")
+                        writer.write(f", m_computedStyle(computedStyle)")
                     writer.write(f"{{")
                     writer.write(f"}}")
                     writer.newline()
@@ -8489,8 +8490,10 @@ class GenerateUsedStyle:
                     writer.write(f"LayoutUnit resolveReferenceSize(ReferenceSize) const;")
                     writer.newline()
 
-                    writer.write(f"// const: a UsedStyle view never rebinds its renderer, so it can be read without a stack-local guard.")
+                    writer.write(f"// const: a UsedStyle view never rebinds its members, so they can be read without a stack-local guard.")
                     writer.write(f"const CheckedRef<const RenderElement> m_renderer;")
+                    writer.write(f"// The renderer's style, or one of its pseudo-element styles.")
+                    writer.write(f"const CheckedRef<const Style::ComputedStyle> m_computedStyle;")
                 writer.write(f"}};")
                 writer.newline()
 

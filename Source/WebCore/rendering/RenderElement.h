@@ -80,6 +80,7 @@ public:
 
     const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
     inline UsedStyle usedStyle() const LIFETIME_BOUND;
+    inline UsedStyle firstLineUsedStyle() const LIFETIME_BOUND;
     const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !m_parent ? nullptr : &m_parent->style(); }
     const Style::ComputedStyle& NODELETE firstLineStyle() const LIFETIME_BOUND;
 
