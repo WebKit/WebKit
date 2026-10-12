@@ -1,11 +1,12 @@
-"use strict";
+// META: global=dedicatedworker
+// META: script=/resources/WebIDLParser.js
+// META: script=/resources/idlharness.js
 
-importScripts("/resources/testharness.js");
-importScripts("/resources/WebIDLParser.js", "/resources/idlharness.js");
+"use strict";
 
 idl_test(
   ["html"],
-  ["wai-aria", "dom", "cssom", "touch-events", "uievents", "performance-timeline"],
+  ["wai-aria", "dom", "cssom", "touch-events", "pointerevents", "uievents", "performance-timeline"],
   idlArray => {
     idlArray.add_untested_idls('typedef Window WindowProxy;');
     idlArray.add_objects({
@@ -15,8 +16,7 @@ idl_test(
       Worker: [],
       MessageEvent: ['new MessageEvent("message", { data: 5 })'],
       DedicatedWorkerGlobalScope: ['self'],
+      Origin: ['new Origin()'],
     });
   }
 );
-
-done();

@@ -14,6 +14,7 @@ PASS Removing child of slotted content changes direction on dir=auto slot
 PASS Child directionality gets updated when dir=auto is set on parent
 PASS dir=auto slot is not affected by text in value of input element children
 PASS input direction changes if it stops being auto-directionality form-associated
+PASS Input that becomes auto directionality associated but is dir=ltr stays LTR
 PASS slot provides updated directionality from host to a dir=auto container
 PASS text input and textarea value changes should only be reflected in :dir() when dir=auto (value changes)
 PASS slot removal resets parent's dependency on host directionality

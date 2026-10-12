@@ -1,6 +1,7 @@
 اختبر
 Text
 اختبر
+اختبر
 
 PASS Slots: Directionality: dir=rtl on slot
 PASS Slots: Directionality: dir=rtl on host
@@ -18,4 +19,5 @@ PASS dir=auto slot is not affected by value of auto-directionality form associat
 PASS inner slot is given directionality from slotted content
 PASS dir=auto slot is not affected by content inside inner slot (version 1)
 PASS dir=auto slot is not affected by content inside inner slot (version 2)
+FAIL Slot assigned node manual removal assert_equals: Expect rtl for slot with assigned rtl content expected "rtl" but got "ltr"
 

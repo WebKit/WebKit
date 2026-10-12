@@ -261,6 +261,45 @@ PASS head.hidden: IDL set to -Infinity
 PASS head.hidden: IDL set to "\0"
 PASS head.hidden: IDL set to object "test-toString"
 PASS head.hidden: IDL set to object "test-valueOf"
+PASS head.inert: typeof IDL attribute
+PASS head.inert: IDL get with DOM attribute unset
+PASS head.inert: setAttribute() to ""
+PASS head.inert: setAttribute() to " foo "
+PASS head.inert: setAttribute() to undefined
+PASS head.inert: setAttribute() to null
+PASS head.inert: setAttribute() to 7
+PASS head.inert: setAttribute() to 1.5
+PASS head.inert: setAttribute() to "5%"
+PASS head.inert: setAttribute() to "+100"
+PASS head.inert: setAttribute() to ".5"
+PASS head.inert: setAttribute() to true
+PASS head.inert: setAttribute() to false
+PASS head.inert: setAttribute() to object "[object Object]"
+PASS head.inert: setAttribute() to NaN
+PASS head.inert: setAttribute() to Infinity
+PASS head.inert: setAttribute() to -Infinity
+PASS head.inert: setAttribute() to "\0"
+PASS head.inert: setAttribute() to object "test-toString"
+PASS head.inert: setAttribute() to object "test-valueOf"
+PASS head.inert: setAttribute() to "inert"
+PASS head.inert: IDL set to ""
+PASS head.inert: IDL set to " foo "
+PASS head.inert: IDL set to undefined
+PASS head.inert: IDL set to null
+PASS head.inert: IDL set to 7
+PASS head.inert: IDL set to 1.5
+PASS head.inert: IDL set to "5%"
+PASS head.inert: IDL set to "+100"
+PASS head.inert: IDL set to ".5"
+PASS head.inert: IDL set to true
+PASS head.inert: IDL set to false
+PASS head.inert: IDL set to object "[object Object]"
+PASS head.inert: IDL set to NaN
+PASS head.inert: IDL set to Infinity
+PASS head.inert: IDL set to -Infinity
+PASS head.inert: IDL set to "\0"
+PASS head.inert: IDL set to object "test-toString"
+PASS head.inert: IDL set to object "test-valueOf"
 PASS head.accessKey: typeof IDL attribute
 PASS head.accessKey: IDL get with DOM attribute unset
 PASS head.accessKey: setAttribute() to ""
@@ -587,6 +626,45 @@ PASS title.hidden: IDL set to -Infinity
 PASS title.hidden: IDL set to "\0"
 PASS title.hidden: IDL set to object "test-toString"
 PASS title.hidden: IDL set to object "test-valueOf"
+PASS title.inert: typeof IDL attribute
+PASS title.inert: IDL get with DOM attribute unset
+PASS title.inert: setAttribute() to ""
+PASS title.inert: setAttribute() to " foo "
+PASS title.inert: setAttribute() to undefined
+PASS title.inert: setAttribute() to null
+PASS title.inert: setAttribute() to 7
+PASS title.inert: setAttribute() to 1.5
+PASS title.inert: setAttribute() to "5%"
+PASS title.inert: setAttribute() to "+100"
+PASS title.inert: setAttribute() to ".5"
+PASS title.inert: setAttribute() to true
+PASS title.inert: setAttribute() to false
+PASS title.inert: setAttribute() to object "[object Object]"
+PASS title.inert: setAttribute() to NaN
+PASS title.inert: setAttribute() to Infinity
+PASS title.inert: setAttribute() to -Infinity
+PASS title.inert: setAttribute() to "\0"
+PASS title.inert: setAttribute() to object "test-toString"
+PASS title.inert: setAttribute() to object "test-valueOf"
+PASS title.inert: setAttribute() to "inert"
+PASS title.inert: IDL set to ""
+PASS title.inert: IDL set to " foo "
+PASS title.inert: IDL set to undefined
+PASS title.inert: IDL set to null
+PASS title.inert: IDL set to 7
+PASS title.inert: IDL set to 1.5
+PASS title.inert: IDL set to "5%"
+PASS title.inert: IDL set to "+100"
+PASS title.inert: IDL set to ".5"
+PASS title.inert: IDL set to true
+PASS title.inert: IDL set to false
+PASS title.inert: IDL set to object "[object Object]"
+PASS title.inert: IDL set to NaN
+PASS title.inert: IDL set to Infinity
+PASS title.inert: IDL set to -Infinity
+PASS title.inert: IDL set to "\0"
+PASS title.inert: IDL set to object "test-toString"
+PASS title.inert: IDL set to object "test-valueOf"
 PASS title.accessKey: typeof IDL attribute
 PASS title.accessKey: IDL get with DOM attribute unset
 PASS title.accessKey: setAttribute() to ""
@@ -913,6 +991,45 @@ PASS base.hidden: IDL set to -Infinity
 PASS base.hidden: IDL set to "\0"
 PASS base.hidden: IDL set to object "test-toString"
 PASS base.hidden: IDL set to object "test-valueOf"
+PASS base.inert: typeof IDL attribute
+PASS base.inert: IDL get with DOM attribute unset
+PASS base.inert: setAttribute() to ""
+PASS base.inert: setAttribute() to " foo "
+PASS base.inert: setAttribute() to undefined
+PASS base.inert: setAttribute() to null
+PASS base.inert: setAttribute() to 7
+PASS base.inert: setAttribute() to 1.5
+PASS base.inert: setAttribute() to "5%"
+PASS base.inert: setAttribute() to "+100"
+PASS base.inert: setAttribute() to ".5"
+PASS base.inert: setAttribute() to true
+PASS base.inert: setAttribute() to false
+PASS base.inert: setAttribute() to object "[object Object]"
+PASS base.inert: setAttribute() to NaN
+PASS base.inert: setAttribute() to Infinity
+PASS base.inert: setAttribute() to -Infinity
+PASS base.inert: setAttribute() to "\0"
+PASS base.inert: setAttribute() to object "test-toString"
+PASS base.inert: setAttribute() to object "test-valueOf"
+PASS base.inert: setAttribute() to "inert"
+PASS base.inert: IDL set to ""
+PASS base.inert: IDL set to " foo "
+PASS base.inert: IDL set to undefined
+PASS base.inert: IDL set to null
+PASS base.inert: IDL set to 7
+PASS base.inert: IDL set to 1.5
+PASS base.inert: IDL set to "5%"
+PASS base.inert: IDL set to "+100"
+PASS base.inert: IDL set to ".5"
+PASS base.inert: IDL set to true
+PASS base.inert: IDL set to false
+PASS base.inert: IDL set to object "[object Object]"
+PASS base.inert: IDL set to NaN
+PASS base.inert: IDL set to Infinity
+PASS base.inert: IDL set to -Infinity
+PASS base.inert: IDL set to "\0"
+PASS base.inert: IDL set to object "test-toString"
+PASS base.inert: IDL set to object "test-valueOf"
 PASS base.accessKey: typeof IDL attribute
 PASS base.accessKey: IDL get with DOM attribute unset
 PASS base.accessKey: setAttribute() to ""
@@ -1299,6 +1416,45 @@ PASS link.hidden: IDL set to -Infinity
 PASS link.hidden: IDL set to "\0"
 PASS link.hidden: IDL set to object "test-toString"
 PASS link.hidden: IDL set to object "test-valueOf"
+PASS link.inert: typeof IDL attribute
+PASS link.inert: IDL get with DOM attribute unset
+PASS link.inert: setAttribute() to ""
+PASS link.inert: setAttribute() to " foo "
+PASS link.inert: setAttribute() to undefined
+PASS link.inert: setAttribute() to null
+PASS link.inert: setAttribute() to 7
+PASS link.inert: setAttribute() to 1.5
+PASS link.inert: setAttribute() to "5%"
+PASS link.inert: setAttribute() to "+100"
+PASS link.inert: setAttribute() to ".5"
+PASS link.inert: setAttribute() to true
+PASS link.inert: setAttribute() to false
+PASS link.inert: setAttribute() to object "[object Object]"
+PASS link.inert: setAttribute() to NaN
+PASS link.inert: setAttribute() to Infinity
+PASS link.inert: setAttribute() to -Infinity
+PASS link.inert: setAttribute() to "\0"
+PASS link.inert: setAttribute() to object "test-toString"
+PASS link.inert: setAttribute() to object "test-valueOf"
+PASS link.inert: setAttribute() to "inert"
+PASS link.inert: IDL set to ""
+PASS link.inert: IDL set to " foo "
+PASS link.inert: IDL set to undefined
+PASS link.inert: IDL set to null
+PASS link.inert: IDL set to 7
+PASS link.inert: IDL set to 1.5
+PASS link.inert: IDL set to "5%"
+PASS link.inert: IDL set to "+100"
+PASS link.inert: IDL set to ".5"
+PASS link.inert: IDL set to true
+PASS link.inert: IDL set to false
+PASS link.inert: IDL set to object "[object Object]"
+PASS link.inert: IDL set to NaN
+PASS link.inert: IDL set to Infinity
+PASS link.inert: IDL set to -Infinity
+PASS link.inert: IDL set to "\0"
+PASS link.inert: IDL set to object "test-toString"
+PASS link.inert: IDL set to object "test-valueOf"
 PASS link.accessKey: typeof IDL attribute
 PASS link.accessKey: IDL get with DOM attribute unset
 PASS link.accessKey: setAttribute() to ""
@@ -1781,23 +1937,23 @@ PASS link.nonce: setAttribute() to "\0"
 PASS link.nonce: setAttribute() to null
 PASS link.nonce: setAttribute() to object "test-toString"
 PASS link.nonce: setAttribute() to object "test-valueOf"
-FAIL link.nonce: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
-FAIL link.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
-FAIL link.nonce: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
-FAIL link.nonce: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
-FAIL link.nonce: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
-FAIL link.nonce: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "test-valueOf"
-FAIL link.nonce: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "test-valueOf"
-FAIL link.nonce: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "test-valueOf"
-FAIL link.nonce: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
-FAIL link.nonce: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
-FAIL link.nonce: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
-FAIL link.nonce: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
-FAIL link.nonce: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
-FAIL link.nonce: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
-FAIL link.nonce: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
-FAIL link.nonce: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
-FAIL link.nonce: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
+PASS link.nonce: IDL set to ""
+PASS link.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS link.nonce: IDL set to undefined
+PASS link.nonce: IDL set to 7
+PASS link.nonce: IDL set to 1.5
+PASS link.nonce: IDL set to "5%"
+PASS link.nonce: IDL set to "+100"
+PASS link.nonce: IDL set to ".5"
+PASS link.nonce: IDL set to true
+PASS link.nonce: IDL set to false
+PASS link.nonce: IDL set to object "[object Object]"
+PASS link.nonce: IDL set to NaN
+PASS link.nonce: IDL set to Infinity
+PASS link.nonce: IDL set to -Infinity
+PASS link.nonce: IDL set to "\0"
+PASS link.nonce: IDL set to null
+PASS link.nonce: IDL set to object "test-toString"
 PASS link.nonce: IDL set to object "test-valueOf"
 PASS link.integrity: typeof IDL attribute
 PASS link.integrity: IDL get with DOM attribute unset
@@ -2415,6 +2571,45 @@ PASS meta.hidden: IDL set to -Infinity
 PASS meta.hidden: IDL set to "\0"
 PASS meta.hidden: IDL set to object "test-toString"
 PASS meta.hidden: IDL set to object "test-valueOf"
+PASS meta.inert: typeof IDL attribute
+PASS meta.inert: IDL get with DOM attribute unset
+PASS meta.inert: setAttribute() to ""
+PASS meta.inert: setAttribute() to " foo "
+PASS meta.inert: setAttribute() to undefined
+PASS meta.inert: setAttribute() to null
+PASS meta.inert: setAttribute() to 7
+PASS meta.inert: setAttribute() to 1.5
+PASS meta.inert: setAttribute() to "5%"
+PASS meta.inert: setAttribute() to "+100"
+PASS meta.inert: setAttribute() to ".5"
+PASS meta.inert: setAttribute() to true
+PASS meta.inert: setAttribute() to false
+PASS meta.inert: setAttribute() to object "[object Object]"
+PASS meta.inert: setAttribute() to NaN
+PASS meta.inert: setAttribute() to Infinity
+PASS meta.inert: setAttribute() to -Infinity
+PASS meta.inert: setAttribute() to "\0"
+PASS meta.inert: setAttribute() to object "test-toString"
+PASS meta.inert: setAttribute() to object "test-valueOf"
+PASS meta.inert: setAttribute() to "inert"
+PASS meta.inert: IDL set to ""
+PASS meta.inert: IDL set to " foo "
+PASS meta.inert: IDL set to undefined
+PASS meta.inert: IDL set to null
+PASS meta.inert: IDL set to 7
+PASS meta.inert: IDL set to 1.5
+PASS meta.inert: IDL set to "5%"
+PASS meta.inert: IDL set to "+100"
+PASS meta.inert: IDL set to ".5"
+PASS meta.inert: IDL set to true
+PASS meta.inert: IDL set to false
+PASS meta.inert: IDL set to object "[object Object]"
+PASS meta.inert: IDL set to NaN
+PASS meta.inert: IDL set to Infinity
+PASS meta.inert: IDL set to -Infinity
+PASS meta.inert: IDL set to "\0"
+PASS meta.inert: IDL set to object "test-toString"
+PASS meta.inert: IDL set to object "test-valueOf"
 PASS meta.accessKey: typeof IDL attribute
 PASS meta.accessKey: IDL get with DOM attribute unset
 PASS meta.accessKey: setAttribute() to ""
@@ -2931,6 +3126,45 @@ PASS style.hidden: IDL set to -Infinity
 PASS style.hidden: IDL set to "\0"
 PASS style.hidden: IDL set to object "test-toString"
 PASS style.hidden: IDL set to object "test-valueOf"
+PASS style.inert: typeof IDL attribute
+PASS style.inert: IDL get with DOM attribute unset
+PASS style.inert: setAttribute() to ""
+PASS style.inert: setAttribute() to " foo "
+PASS style.inert: setAttribute() to undefined
+PASS style.inert: setAttribute() to null
+PASS style.inert: setAttribute() to 7
+PASS style.inert: setAttribute() to 1.5
+PASS style.inert: setAttribute() to "5%"
+PASS style.inert: setAttribute() to "+100"
+PASS style.inert: setAttribute() to ".5"
+PASS style.inert: setAttribute() to true
+PASS style.inert: setAttribute() to false
+PASS style.inert: setAttribute() to object "[object Object]"
+PASS style.inert: setAttribute() to NaN
+PASS style.inert: setAttribute() to Infinity
+PASS style.inert: setAttribute() to -Infinity
+PASS style.inert: setAttribute() to "\0"
+PASS style.inert: setAttribute() to object "test-toString"
+PASS style.inert: setAttribute() to object "test-valueOf"
+PASS style.inert: setAttribute() to "inert"
+PASS style.inert: IDL set to ""
+PASS style.inert: IDL set to " foo "
+PASS style.inert: IDL set to undefined
+PASS style.inert: IDL set to null
+PASS style.inert: IDL set to 7
+PASS style.inert: IDL set to 1.5
+PASS style.inert: IDL set to "5%"
+PASS style.inert: IDL set to "+100"
+PASS style.inert: IDL set to ".5"
+PASS style.inert: IDL set to true
+PASS style.inert: IDL set to false
+PASS style.inert: IDL set to object "[object Object]"
+PASS style.inert: IDL set to NaN
+PASS style.inert: IDL set to Infinity
+PASS style.inert: IDL set to -Infinity
+PASS style.inert: IDL set to "\0"
+PASS style.inert: IDL set to object "test-toString"
+PASS style.inert: IDL set to object "test-valueOf"
 PASS style.accessKey: typeof IDL attribute
 PASS style.accessKey: IDL get with DOM attribute unset
 PASS style.accessKey: setAttribute() to ""
@@ -3055,23 +3289,23 @@ PASS style.nonce: setAttribute() to "\0"
 PASS style.nonce: setAttribute() to null
 PASS style.nonce: setAttribute() to object "test-toString"
 PASS style.nonce: setAttribute() to object "test-valueOf"
-FAIL style.nonce: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
-FAIL style.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
-FAIL style.nonce: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
-FAIL style.nonce: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
-FAIL style.nonce: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
-FAIL style.nonce: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "test-valueOf"
-FAIL style.nonce: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "test-valueOf"
-FAIL style.nonce: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "test-valueOf"
-FAIL style.nonce: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
-FAIL style.nonce: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
-FAIL style.nonce: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
-FAIL style.nonce: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
-FAIL style.nonce: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
-FAIL style.nonce: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
-FAIL style.nonce: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
-FAIL style.nonce: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
-FAIL style.nonce: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
+PASS style.nonce: IDL set to ""
+PASS style.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS style.nonce: IDL set to undefined
+PASS style.nonce: IDL set to 7
+PASS style.nonce: IDL set to 1.5
+PASS style.nonce: IDL set to "5%"
+PASS style.nonce: IDL set to "+100"
+PASS style.nonce: IDL set to ".5"
+PASS style.nonce: IDL set to true
+PASS style.nonce: IDL set to false
+PASS style.nonce: IDL set to object "[object Object]"
+PASS style.nonce: IDL set to NaN
+PASS style.nonce: IDL set to Infinity
+PASS style.nonce: IDL set to -Infinity
+PASS style.nonce: IDL set to "\0"
+PASS style.nonce: IDL set to null
+PASS style.nonce: IDL set to object "test-toString"
 PASS style.nonce: IDL set to object "test-valueOf"
 PASS style.type: typeof IDL attribute
 PASS style.type: IDL get with DOM attribute unset

@@ -19,6 +19,7 @@ PASS Partial interface Document[2]: original interface defined
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface Document[3]: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
+PASS Partial interface Element[2]: member names are unique
 PASS Partial interface UIEvent: member names are unique
 PASS Partial interface MouseEvent: member names are unique
 PASS Partial interface UIEvent[2]: member names are unique
@@ -91,7 +92,10 @@ PASS SVGSVGElement includes SVGFitToViewBox: member names are unique
 PASS SVGSVGElement includes WindowEventHandlers: member names are unique
 PASS SVGImageElement includes SVGURIReference: member names are unique
 PASS SVGScriptElement includes SVGURIReference: member names are unique
+PASS MathMLElement includes GlobalEventHandlers: member names are unique
+PASS MathMLElement includes HTMLOrSVGElement: member names are unique
 PASS SVGElement includes ElementCSSInlineStyle: member names are unique
+PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
 PASS DocumentFragment includes NonElementParentNode: member names are unique
 PASS Document includes DocumentOrShadowRoot: member names are unique
@@ -1147,6 +1151,10 @@ PASS XMLSerializer interface: existence and properties of interface prototype ob
 PASS XMLSerializer interface: existence and properties of interface prototype object's "constructor" property
 PASS XMLSerializer interface: existence and properties of interface prototype object's @@unscopables property
 PASS XMLSerializer interface: operation serializeToString(Node)
+PASS XMLSerializer must be primary interface of new XMLSerializer()
+PASS Stringification of new XMLSerializer()
+PASS XMLSerializer interface: new XMLSerializer() must inherit property "serializeToString(Node)" with the proper type
+PASS XMLSerializer interface: calling serializeToString(Node) on new XMLSerializer() with too few arguments must throw TypeError
 PASS Navigator interface: existence and properties of interface object
 PASS Navigator interface object length
 PASS Navigator interface object name
@@ -1557,6 +1565,88 @@ FAIL SVGSVGElement interface: attribute onrejectionhandled assert_true: The prot
 FAIL SVGSVGElement interface: attribute onstorage assert_true: The prototype object must have a property "onstorage" expected true got false
 FAIL SVGSVGElement interface: attribute onunhandledrejection assert_true: The prototype object must have a property "onunhandledrejection" expected true got false
 FAIL SVGSVGElement interface: attribute onunload assert_true: The prototype object must have a property "onunload" expected true got false
+PASS MathMLElement interface: attribute onabort
+PASS MathMLElement interface: attribute onauxclick
+PASS MathMLElement interface: attribute onbeforeinput
+PASS MathMLElement interface: attribute onbeforematch
+PASS MathMLElement interface: attribute onbeforetoggle
+PASS MathMLElement interface: attribute onblur
+PASS MathMLElement interface: attribute oncancel
+PASS MathMLElement interface: attribute oncanplay
+PASS MathMLElement interface: attribute oncanplaythrough
+PASS MathMLElement interface: attribute onchange
+PASS MathMLElement interface: attribute onclick
+PASS MathMLElement interface: attribute onclose
+PASS MathMLElement interface: attribute oncommand
+FAIL MathMLElement interface: attribute oncontextlost assert_true: The prototype object must have a property "oncontextlost" expected true got false
+PASS MathMLElement interface: attribute oncontextmenu
+FAIL MathMLElement interface: attribute oncontextrestored assert_true: The prototype object must have a property "oncontextrestored" expected true got false
+PASS MathMLElement interface: attribute oncopy
+PASS MathMLElement interface: attribute oncuechange
+PASS MathMLElement interface: attribute oncut
+PASS MathMLElement interface: attribute ondblclick
+PASS MathMLElement interface: attribute ondrag
+PASS MathMLElement interface: attribute ondragend
+PASS MathMLElement interface: attribute ondragenter
+PASS MathMLElement interface: attribute ondragleave
+PASS MathMLElement interface: attribute ondragover
+PASS MathMLElement interface: attribute ondragstart
+PASS MathMLElement interface: attribute ondrop
+PASS MathMLElement interface: attribute ondurationchange
+PASS MathMLElement interface: attribute onemptied
+PASS MathMLElement interface: attribute onended
+PASS MathMLElement interface: attribute onerror
+PASS MathMLElement interface: attribute onfocus
+PASS MathMLElement interface: attribute onformdata
+PASS MathMLElement interface: attribute oninput
+PASS MathMLElement interface: attribute oninvalid
+PASS MathMLElement interface: attribute onkeydown
+PASS MathMLElement interface: attribute onkeypress
+PASS MathMLElement interface: attribute onkeyup
+PASS MathMLElement interface: attribute onload
+PASS MathMLElement interface: attribute onloadeddata
+PASS MathMLElement interface: attribute onloadedmetadata
+PASS MathMLElement interface: attribute onloadstart
+PASS MathMLElement interface: attribute onmousedown
+PASS MathMLElement interface: attribute onmouseenter
+PASS MathMLElement interface: attribute onmouseleave
+PASS MathMLElement interface: attribute onmousemove
+PASS MathMLElement interface: attribute onmouseout
+PASS MathMLElement interface: attribute onmouseover
+PASS MathMLElement interface: attribute onmouseup
+PASS MathMLElement interface: attribute onpaste
+PASS MathMLElement interface: attribute onpause
+PASS MathMLElement interface: attribute onplay
+PASS MathMLElement interface: attribute onplaying
+PASS MathMLElement interface: attribute onprogress
+PASS MathMLElement interface: attribute onratechange
+PASS MathMLElement interface: attribute onreset
+PASS MathMLElement interface: attribute onresize
+PASS MathMLElement interface: attribute onscroll
+PASS MathMLElement interface: attribute onscrollend
+PASS MathMLElement interface: attribute onsecuritypolicyviolation
+PASS MathMLElement interface: attribute onseeked
+PASS MathMLElement interface: attribute onseeking
+PASS MathMLElement interface: attribute onselect
+PASS MathMLElement interface: attribute onslotchange
+PASS MathMLElement interface: attribute onstalled
+PASS MathMLElement interface: attribute onsubmit
+PASS MathMLElement interface: attribute onsuspend
+PASS MathMLElement interface: attribute ontimeupdate
+PASS MathMLElement interface: attribute ontoggle
+PASS MathMLElement interface: attribute onvolumechange
+PASS MathMLElement interface: attribute onwaiting
+PASS MathMLElement interface: attribute onwebkitanimationend
+PASS MathMLElement interface: attribute onwebkitanimationiteration
+PASS MathMLElement interface: attribute onwebkitanimationstart
+PASS MathMLElement interface: attribute onwebkittransitionend
+PASS MathMLElement interface: attribute onwheel
+PASS MathMLElement interface: attribute dataset
+PASS MathMLElement interface: attribute nonce
+PASS MathMLElement interface: attribute autofocus
+PASS MathMLElement interface: attribute tabIndex
+PASS MathMLElement interface: operation focus(optional FocusOptions)
+PASS MathMLElement interface: operation blur()
 PASS ShadowRoot interface: operation setHTMLUnsafe((TrustedHTML or DOMString))
 PASS ShadowRoot interface: operation getHTML(optional GetHTMLOptions)
 PASS ShadowRoot interface: attribute innerHTML
@@ -1566,5 +1656,15 @@ PASS Element interface: operation getHTML(optional GetHTMLOptions)
 PASS Element interface: attribute innerHTML
 PASS Element interface: attribute outerHTML
 PASS Element interface: operation insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))
+PASS Element interface: document.createElement("div") must inherit property "setHTMLUnsafe((TrustedHTML or DOMString))" with the proper type
+PASS Element interface: calling setHTMLUnsafe((TrustedHTML or DOMString)) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "getHTML(optional GetHTMLOptions)" with the proper type
+PASS Element interface: calling getHTML(optional GetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "innerHTML" with the proper type
+PASS Element interface: document.createElement("div") must inherit property "outerHTML" with the proper type
+PASS Element interface: document.createElement("div") must inherit property "insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))" with the proper type
+PASS Element interface: calling insertAdjacentHTML(DOMString, (TrustedHTML or DOMString)) on document.createElement("div") with too few arguments must throw TypeError
 PASS Range interface: operation createContextualFragment((TrustedHTML or DOMString))
+PASS Range interface: new Range() must inherit property "createContextualFragment((TrustedHTML or DOMString))" with the proper type
+PASS Range interface: calling createContextualFragment((TrustedHTML or DOMString)) on new Range() with too few arguments must throw TypeError
 

@@ -1,0 +1,7 @@
+ Label for input1    Label for input3
+
+PASS Setting ariaLabelledByElements should determine the computed label for the labelled element
+PASS Setting ariaLabelledByElements before inserting the elements referred to in the document should cause the label to be updated once elements are inserted
+PASS Setting ariaLabelledByElements on an element before inserting it in the document should cause the label to be updated once the element is inserted
+PASS Moving the label from shadow DOM to light DOM causes the reference to become valid
+

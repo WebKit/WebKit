@@ -3,8 +3,8 @@
 <title>HTML IDL tests</title>
 <meta name=timeout content=long>
 <meta name="variant" content="?include=(Document|Window)">
-<meta name="variant" content="?include=HTML.*">
-<meta name="variant" content="?exclude=(Document|Window|HTML.*)">
+<meta name="variant" content="?include=HTML.+">
+<meta name="variant" content="?exclude=(Document|Window|HTML.+)">
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
 <script src=/common/subset-tests-by-key.js></script>
@@ -38,7 +38,7 @@ const waitForLoad = new Promise(resolve => { addEventListener('load', resolve); 
 
 idl_test(
   ['html'],
-  ['wai-aria', 'SVG', 'cssom', 'touch-events', 'uievents', 'dom', 'xhr', 'FileAPI', 'mediacapture-streams', 'performance-timeline', 'trusted-types'],
+  ['wai-aria', 'SVG', 'mathml-core', 'cssom', 'touch-events', "pointerevents", "uievents", 'dom', 'xhr', 'FileAPI', 'mediacapture-streams', 'performance-timeline', 'trusted-types'],
   async idlArray => {
     self.documentWithHandlers = new Document();
     const handler = function(e) {};
@@ -50,6 +50,9 @@ idl_test(
     idlArray.add_untested_idls('typedef Window WindowProxy;');
 
     idlArray.add_objects({
+      Element: ['document.createElement("div")'],
+      Range: ['new Range()'],
+      XMLSerializer: ['new XMLSerializer()'],
       NodeList: ['document.getElementsByName("name")'],
       HTMLAllCollection: ['document.all'],
       HTMLFormControlsCollection: ['document.createElement("form").elements'],
@@ -231,7 +234,8 @@ idl_test(
         'localStorage',
         'sessionStorage',
       ],
-      StorageEvent: ['new StorageEvent("storage")']
+      StorageEvent: ['new StorageEvent("storage")'],
+      Sanitizer: ['new Sanitizer({})']
     });
     idlArray.prevent_multiple_testing('HTMLElement');
     await waitForLoad;
