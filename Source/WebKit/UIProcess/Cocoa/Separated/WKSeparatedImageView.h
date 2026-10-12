@@ -26,6 +26,7 @@
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 
 #import <UIKit/UIKit.h>
+#import <IOSurface/IOSurfaceRef.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

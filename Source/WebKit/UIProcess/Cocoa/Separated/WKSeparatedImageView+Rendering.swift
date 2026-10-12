@@ -143,7 +143,7 @@ extension WKSeparatedImageView {
 
         let portalEntity = ModelEntity()
         var ipc = ImagePresentationComponent(spatial3DImage: spatial3DImage)
-        #if canImport(RealityKit, _version: 420)
+        #if USE_APPLE_INTERNAL_SDK
         ipc.enableSpatial3DDepthPatching = true
         #endif
         ipc.desiredViewingMode = desiredViewingModeSpatial ? .spatial3D : .mono
