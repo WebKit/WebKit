@@ -50,6 +50,18 @@ struct NaturalDimensions {
         return { scaled(width), scaled(height), aspectRatio };
     }
 
+    constexpr NaturalDimensions zoomed(float zoom) const
+    {
+        if (zoom == 1)
+            return *this;
+        auto scaled = [&](auto dimension) -> std::optional<float> {
+            if (!dimension)
+                return std::nullopt;
+            return *dimension * zoom;
+        };
+        return { scaled(width), scaled(height), aspectRatio };
+    }
+
     constexpr NaturalDimensions oriented(ImageOrientation orientation) const
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(orientation.orientation() != ImageOrientation::Orientation::FromImage);

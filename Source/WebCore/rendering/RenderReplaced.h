@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+struct NaturalDimensions;
+
 class RenderReplaced : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderReplaced);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderReplaced);
@@ -37,8 +39,8 @@ public:
     void computeReplacedOutOfFlowPositionedLogicalHeight(LogicalExtentComputedValues&) const;
     void computeReplacedOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValues&) const;
 
-    LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
-    LayoutRect replacedContentRect() const { return replacedContentRect(intrinsicSize()); }
+    LayoutRect replacedContentRect(NaturalDimensions zoomedNaturalDimensions) const;
+    LayoutRect replacedContentRect() const;
 
     std::optional<FloatRect> resolvedObjectViewBox(const FloatSize& physicalIntrinsicSize) const;
 
@@ -111,6 +113,8 @@ protected:
 
     LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const;
     template<typename T> LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(T logicalHeight) const { return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(logicalHeight)); }
+
+    virtual NaturalDimensions zoomedNaturalDimensions() const;
 
 private:
     LayoutUnit computeConstrainedLogicalWidth() const;

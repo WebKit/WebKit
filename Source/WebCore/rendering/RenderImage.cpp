@@ -56,6 +56,7 @@
 #include "LocalFrameView.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
 #include "NativeImage.h"
+#include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformRenderTheme.h"
@@ -375,6 +376,11 @@ LayoutRect RenderImage::imagePaintRect() const
     return hasNaturalAspectRatio()
         ? computePaintRectForObjectViewBox(replacedContentRect())
         : contentBoxRect();
+}
+
+NaturalDimensions RenderImage::zoomedNaturalDimensions() const
+{
+    return imageResource().naturalDimensions().zoomed(style().usedZoom());
 }
 
 std::optional<FloatSize> RenderImage::usedImageSize() const
