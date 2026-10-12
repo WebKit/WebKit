@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+<style>
+    canvas { display: block; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function nextFrames() {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    window.addEventListener('load', async () => {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { renderingModeForTesting: 'Accelerated' });
+        ctx.fillStyle = 'red';
+        ctx.fillRect(0, 0, 20, 20);
+        await nextFrames();
+
+        canvas.removeAttribute('content');
+        await nextFrames();
+
+        // Not drawable, so the canvas is not shown through a contents layer when this draw happens.
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 20, 20);
+        await nextFrames();
+
+        canvas.setAttribute('content', 'drawable');
+        await nextFrames();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
+</head>
+<body>
+<!-- Tests that an accelerated 2D canvas whose content changes from drawable to not drawable and back shows its current pixels, not the ones from when it was last drawable. -->
+<canvas id="canvas" width="20" height="20" content="drawable"></canvas>
+</body>
+</html>

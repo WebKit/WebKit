@@ -1,0 +1,32 @@
+Tests that an accelerated 2D canvas with content="drawable" shows its pixels through a contents layer, while its own layer still paints so its drawable content gets recorded. An unaccelerated one has no contents layer.
+
+Hello
+
+Hello
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 68.00)
+          (bounds 20.00 20.00)
+          (drawsContent 1)
+          (contents layer (canvas)
+            (position 0.00 0.00)
+            (bounds 20.00 20.00)
+          )
+        )
+        (GraphicsLayer
+          (position 32.00 68.00)
+          (bounds 20.00 20.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

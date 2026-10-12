@@ -174,8 +174,11 @@ void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomSt
             didUpdateSizeProperties();
     }
 
-    if (name == contentAttr)
+    if (name == contentAttr) {
         invalidateStyleAndRenderersForSubtree();
+        if (m_context)
+            protect(m_context.get())->didUpdateCanvasContentAttribute();
+    }
 
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }

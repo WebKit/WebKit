@@ -251,6 +251,8 @@ void ImageBufferSkiaAcceleratedBackend::flushContext()
 
 void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
 {
+    flushContext();
+
 #if USE(COORDINATED_GRAPHICS)
     if (!m_layerContentsDisplayDelegate)
         return;
@@ -341,7 +343,7 @@ void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBufferSourceVi
 }
 
 #if USE(COORDINATED_GRAPHICS)
-RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBufferSkiaAcceleratedBackend::layerContentsDisplayDelegate() const
+RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBufferSkiaAcceleratedBackend::layerContentsDisplayDelegate()
 {
     return m_layerContentsDisplayDelegate;
 }

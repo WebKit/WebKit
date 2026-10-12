@@ -399,6 +399,7 @@ protected:
     RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
     RefPtr<ImageBuffer> createImageForNoiseInjection() const;
     void didUpdateCanvasSizeProperties(bool) override;
+    void didUpdateCanvasContentAttribute() final;
 
 private:
     struct CachedContentsTransparent {
@@ -488,9 +489,7 @@ private:
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
-#if USE(SKIA)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
-#endif
     bool hasDeferredOperations() const final;
     void flushDeferredOperations() final;
 

@@ -163,7 +163,8 @@ public:
 
     virtual bool isNullImageBufferBackend() const { return false; }
 
-    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const { return nullptr; }
+    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() { return nullptr; }
+    virtual void releaseLayerContentsDisplayDelegate() { }
 
     virtual void prepareForDisplay() { }
 

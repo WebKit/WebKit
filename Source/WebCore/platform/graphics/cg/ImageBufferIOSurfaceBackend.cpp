@@ -30,11 +30,14 @@
 
 #include "GraphicsClient.h"
 #include "GraphicsContextCG.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "IOSurface.h"
 #include "IOSurfacePool.h"
 #include "IntRect.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
+#include "PlatformCALayer.h"
+#include "PlatformCALayerDelegatedContents.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/cg/CoreGraphicsSoftLink.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
@@ -42,6 +45,73 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+#if USE(CA)
+// Completes the copy to a display surface when the display surface is about to be shown.
+class ImageBufferIOSurfaceDisplayFence final : public PlatformCALayerDelegatedContentsFence {
+public:
+    static Ref<ImageBufferIOSurfaceDisplayFence> create(RetainPtr<CGContextRef>&& context)
+    {
+        return adoptRef(*new ImageBufferIOSurfaceDisplayFence(WTF::move(context)));
+    }
+
+    bool waitFor(Seconds) final
+    {
+        Locker locker { m_lock };
+        if (RetainPtr context = std::exchange(m_context, nullptr))
+            CGContextFlush(context.get());
+        return true;
+    }
+
+private:
+    explicit ImageBufferIOSurfaceDisplayFence(RetainPtr<CGContextRef>&& context)
+        : m_context(WTF::move(context))
+    {
+    }
+
+    Lock m_lock;
+    RetainPtr<CGContextRef> m_context WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+// Shows the display surface that the backend copies to each time it is prepared for display.
+class ImageBufferIOSurfaceDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<ImageBufferIOSurfaceDisplayDelegate> create(ContentsFormat contentsFormat)
+    {
+        return adoptRef(*new ImageBufferIOSurfaceDisplayDelegate(contentsFormat));
+    }
+
+    // The send right keeps the display surface in use, so it is not reused while shown.
+    void setContents(std::optional<PlatformCALayerDelegatedContents>&& contents)
+    {
+        m_contents = WTF::move(contents);
+    }
+
+    void display(PlatformCALayer& layer) final
+    {
+        if (!m_contents) {
+            layer.clearContents();
+            return;
+        }
+        layer.setContentsFormat(m_contentsFormat);
+        layer.setDelegatedContents({ MachSendRight { m_contents->surface }, m_contents->finishedFence });
+    }
+
+    std::optional<PlatformCALayerDelegatedContents> delegatedContents() const final
+    {
+        return m_contents;
+    }
+
+private:
+    explicit ImageBufferIOSurfaceDisplayDelegate(ContentsFormat contentsFormat)
+        : m_contentsFormat(contentsFormat)
+    {
+    }
+
+    std::optional<PlatformCALayerDelegatedContents> m_contents;
+    const ContentsFormat m_contentsFormat;
+};
+#endif
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
 
@@ -94,6 +164,45 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const ImageBufferParame
     ASSERT(m_surface);
     ASSERT(!m_surface->isVolatile());
 }
+
+#if USE(CA)
+RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBufferIOSurfaceBackend::layerContentsDisplayDelegate()
+{
+    if (!m_layerContentsDisplayDelegate) {
+        m_layerContentsDisplayDelegate = ImageBufferIOSurfaceDisplayDelegate::create(convertToContentsFormat(pixelFormat()));
+        // The buffer may already have been prepared for display this frame.
+        prepareForDisplay();
+    }
+    return m_layerContentsDisplayDelegate;
+}
+
+void ImageBufferIOSurfaceBackend::releaseLayerContentsDisplayDelegate()
+{
+    m_layerContentsDisplayDelegate = nullptr;
+}
+
+void ImageBufferIOSurfaceBackend::prepareForDisplay()
+{
+    RefPtr displayDelegate = m_layerContentsDisplayDelegate;
+    if (!displayDelegate)
+        return;
+
+    // Copy to a display surface, so that drawing can continue while it is shown. The surface goes back to the
+    // pool right away: the pool does not hand it out while the send right keeps it in use.
+    std::optional<PlatformCALayerDelegatedContents> contents;
+    if (RefPtr image = copyNativeImage()) {
+        if (auto surface = IOSurface::create(m_ioSurfacePool.get(), size(), colorSpace(), IOSurface::Name::ImageBuffer, convertToIOSurfaceFormat(pixelFormat()), bufferFormat().useLosslessCompression)) {
+            if (RetainPtr context = surface->createPlatformContext(m_displayID)) {
+                CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
+                CGContextDrawImage(context.get(), CGRectMake(0, 0, size().width(), size().height()), image->platformImage().get());
+                contents = PlatformCALayerDelegatedContents { surface->createSendRight(), ImageBufferIOSurfaceDisplayFence::create(WTF::move(context)) };
+            }
+            IOSurface::moveToPool(WTF::move(surface), m_ioSurfacePool.get());
+        }
+    }
+    displayDelegate->setContents(WTF::move(contents));
+}
+#endif
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {

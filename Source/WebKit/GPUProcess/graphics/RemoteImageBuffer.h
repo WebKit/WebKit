@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "IPCEvent.h"
+#include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
@@ -73,6 +74,9 @@ private:
     void copyNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier);
     void getEffectiveRenderingModeForTesting(CompletionHandler<void(std::optional<WebCore::RenderingMode>)>&&);
     void getBackendHandle(CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&&);
+#if PLATFORM(COCOA)
+    void prepareForDisplay(IPC::Semaphore&& finishedSignal, CompletionHandler<void(MachSendRight&&)>&&);
+#endif
     void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::ColorSpace&);
@@ -85,6 +89,10 @@ private:
 #endif
 
     const Ref<WebCore::ImageBuffer> m_imageBuffer;
+#if PLATFORM(COCOA)
+    // Provides the display surface the web process shows; there is no layer in this process.
+    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> m_displayDelegate;
+#endif
     const WebCore::RenderingResourceIdentifier m_identifier;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
     IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferGraphicsContext> m_context;

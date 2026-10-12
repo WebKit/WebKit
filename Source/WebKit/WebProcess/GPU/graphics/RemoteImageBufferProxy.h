@@ -46,6 +46,10 @@ namespace WebKit {
 
 class RemoteRenderingBackendProxy;
 class RemoteImageBufferProxyFlushFence;
+#if PLATFORM(COCOA)
+class DisplayBufferDisplayDelegate;
+class DisplayBufferFence;
+#endif
 
 class RemoteImageBufferProxy final : public WebCore::ImageBuffer {
     WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferProxy);
@@ -126,6 +130,12 @@ private:
     void prepareForBackingStoreChange();
     std::optional<WebCore::RenderingMode> getEffectiveRenderingModeForTesting() const final;
 
+    void prepareForDisplay() final;
+#if PLATFORM(COCOA)
+    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+    void releaseLayerContentsDisplayDelegate() final;
+#endif
+
     void NODELETE assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message) const;
     template<typename T> auto sendSync(T&& message) const;
@@ -137,6 +147,11 @@ private:
     void ensureBackendHandle() const;
 
     RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
+#if PLATFORM(COCOA)
+    RefPtr<DisplayBufferDisplayDelegate> m_displayDelegate;
+    // Signaled by the GPU process when the last display buffer copy is complete.
+    RefPtr<DisplayBufferFence> m_displayBufferFence;
+#endif
     mutable RemoteGraphicsContextProxy m_context;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
 };

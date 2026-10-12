@@ -3899,8 +3899,11 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
 #endif
 
 #if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
-    if (is<RenderHTMLCanvas>(renderer()) && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents)
+    if (is<RenderHTMLCanvas>(renderer()) && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
+        if (downcast<RenderHTMLCanvas>(renderer()).hasDrawableContent())
+            return true;
         return m_owningLayer.hasVisibleBoxDecorationsOrBackground();
+    }
 #endif
 
     return true;

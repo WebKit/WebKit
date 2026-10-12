@@ -54,7 +54,7 @@ public:
 private:
     explicit RemoteGraphicsContextGLProxyCocoa(const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
         : RemoteGraphicsContextGLProxy(attributes, renderingBackend)
-        , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
+        , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, WebCore::GraphicsLayerCompositingCoordinatesOrientation::BottomUp))
     {
     }
 

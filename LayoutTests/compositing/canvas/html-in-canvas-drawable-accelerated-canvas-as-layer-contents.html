@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function draw(id, renderingMode) {
+        const ctx = document.getElementById(id).getContext('2d', { renderingModeForTesting: renderingMode });
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 20, 20);
+    }
+
+    window.addEventListener('load', () => {
+        draw('drawable-accelerated', 'Accelerated');
+        draw('drawable-unaccelerated', 'Unaccelerated');
+
+        requestAnimationFrame(() => {
+            if (window.testRunner) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+                testRunner.notifyDone();
+            }
+        });
+    });
+</script>
+</head>
+<body>
+<p>Tests that an accelerated 2D canvas with content="drawable" shows its pixels through a contents layer, while its own layer still paints so its drawable content gets recorded. An unaccelerated one has no contents layer.</p>
+<canvas id="drawable-accelerated" width="20" height="20" content="drawable">
+    <div drawable>Hello</div>
+</canvas>
+<canvas id="drawable-unaccelerated" width="20" height="20" content="drawable">
+    <div drawable>Hello</div>
+</canvas>
+
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

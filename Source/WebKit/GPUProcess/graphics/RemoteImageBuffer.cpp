@@ -38,6 +38,10 @@
 #include "RemoteSharedResourceCache.h"
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContext.h>
+#if PLATFORM(COCOA)
+#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#include <WebCore/PlatformCALayerDelegatedContents.h>
+#endif
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/StdLibExtras.h>
 
@@ -79,6 +83,33 @@ void RemoteImageBuffer::getBackendHandle(CompletionHandler<void(std::optional<Im
     }
     completionHandler(downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle());
 }
+
+#if PLATFORM(COCOA)
+void RemoteImageBuffer::prepareForDisplay(IPC::Semaphore&& finishedSignal, CompletionHandler<void(MachSendRight&&)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    Ref imageBuffer = m_imageBuffer;
+    RefPtr displayDelegate = m_displayDelegate;
+    if (!displayDelegate) {
+        // Creating the delegate prepares the current contents for display.
+        displayDelegate = imageBuffer->layerContentsDisplayDelegate();
+        m_displayDelegate = displayDelegate;
+    } else
+        imageBuffer->prepareForDisplay();
+    auto contents = displayDelegate ? displayDelegate->delegatedContents() : std::nullopt;
+    if (!contents) {
+        completionHandler({ });
+        finishedSignal.signal();
+        return;
+    }
+    RefPtr finishedFence = WTF::move(contents->finishedFence);
+    completionHandler(WTF::move(contents->surface));
+    // Complete the contents after replying, so that the web process continues meanwhile.
+    if (finishedFence)
+        finishedFence->waitFor(WebCore::delegatedContentsFinishedTimeout);
+    finishedSignal.signal();
+}
+#endif
 
 RemoteImageBuffer::~RemoteImageBuffer()
 {

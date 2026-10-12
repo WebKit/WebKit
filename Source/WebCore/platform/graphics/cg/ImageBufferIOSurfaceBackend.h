@@ -35,6 +35,10 @@
 
 namespace WebCore {
 
+#if USE(CA)
+class ImageBufferIOSurfaceDisplayDelegate;
+#endif
+
 class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBufferIOSurfaceBackend, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
@@ -54,6 +58,12 @@ public:
     GraphicsContext& context() override;
     void flushContext() override;
     void submitDrawingCommands() override;
+
+#if USE(CA)
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
+    void releaseLayerContentsDisplayDelegate() override;
+    void prepareForDisplay() override;
+#endif
 
 protected:
     ImageBufferIOSurfaceBackend(const ImageBufferParameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*);
@@ -97,6 +107,9 @@ protected:
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
     RefPtr<IOSurfacePool> m_ioSurfacePool;
     bool m_needsFirstFlush { true };
+#if USE(CA)
+    RefPtr<ImageBufferIOSurfaceDisplayDelegate> m_layerContentsDisplayDelegate;
+#endif
 };
 
 } // namespace WebCore

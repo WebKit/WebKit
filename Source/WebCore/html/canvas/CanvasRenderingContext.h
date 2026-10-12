@@ -85,6 +85,7 @@ public:
     // Called when the canvas size properties are assigned.
     // The canvas will already have the new size.
     virtual void didUpdateCanvasSizeProperties(bool sizeChanged) = 0;
+    virtual void didUpdateCanvasContentAttribute() { }
 
     // Canvas 2DContext drawing buffer is the same as display buffer.
     // WebGL, WebGPU draws to drawing buffer. The draw buffer is then swapped to

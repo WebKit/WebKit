@@ -28,6 +28,7 @@
 
 #if USE(CA)
 #include "GraphicsLayerCA.h"
+#include "PlatformCALayerDelegatedContents.h"
 #endif
 
 namespace WebCore {
@@ -42,6 +43,11 @@ void GraphicsLayerContentsDisplayDelegate::prepareToDelegateDisplay(PlatformCALa
 GraphicsLayerCompositingCoordinatesOrientation GraphicsLayerContentsDisplayDelegate::orientation() const
 {
     return GraphicsLayerCA::defaultContentsOrientation;
+}
+
+std::optional<PlatformCALayerDelegatedContents> GraphicsLayerContentsDisplayDelegate::delegatedContents() const
+{
+    return std::nullopt;
 }
 #endif
 

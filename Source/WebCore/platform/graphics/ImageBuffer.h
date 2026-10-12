@@ -149,7 +149,7 @@ public:
 
     WEBCORE_EXPORT virtual void submitDrawingCommands();
 
-    void prepareForDisplay();
+    WEBCORE_EXPORT virtual void prepareForDisplay();
 
     WEBCORE_EXPORT IntSize backendSize() const;
 
@@ -200,7 +200,9 @@ public:
     WEBCORE_EXPORT virtual std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
 #endif
 
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
+    WEBCORE_EXPORT virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
+    // A later layerContentsDisplayDelegate() may return a new delegate.
+    WEBCORE_EXPORT virtual void releaseLayerContentsDisplayDelegate();
 
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
     // Caller is responsible for ensuring that the passed reference is the only reference to the ImageBuffer.
