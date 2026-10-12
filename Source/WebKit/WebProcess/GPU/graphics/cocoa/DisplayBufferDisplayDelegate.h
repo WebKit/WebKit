@@ -75,9 +75,9 @@ private:
 
 class DisplayBufferDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque)
+    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque, WebCore::GraphicsLayerCompositingCoordinatesOrientation orientation)
     {
-        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque));
+        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, orientation));
     }
 
     // WebCore::GraphicsLayerContentsDisplayDelegate overrides.
@@ -88,15 +88,25 @@ public:
 
     void display(WebCore::PlatformCALayer& layer) final
     {
-        if (m_displayBuffer)
-            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, m_finishedFence });
-        else
+        if (!m_displayBuffer) {
             layer.clearContents();
+            return;
+        }
+        if (m_contentsFormat)
+            layer.setContentsFormat(*m_contentsFormat);
+        layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, m_finishedFence });
+    }
+
+    // Set once, before the first display.
+    void setContentsFormat(WebCore::ContentsFormat contentsFormat)
+    {
+        ASSERT(!m_contentsFormat);
+        m_contentsFormat = contentsFormat;
     }
 
     WebCore::GraphicsLayerCompositingCoordinatesOrientation orientation() const final
     {
-        return WebCore::GraphicsLayerCompositingCoordinatesOrientation::BottomUp;
+        return m_orientation;
     }
 
     void setDisplayBuffer(MachSendRight&& displayBuffer, RefPtr<DisplayBufferFence> finishedFence)
@@ -113,14 +123,17 @@ public:
     }
 
 private:
-    DisplayBufferDisplayDelegate(bool isOpaque)
+    DisplayBufferDisplayDelegate(bool isOpaque, WebCore::GraphicsLayerCompositingCoordinatesOrientation orientation)
         : m_isOpaque(isOpaque)
+        , m_orientation(orientation)
     {
     }
 
     MachSendRight m_displayBuffer;
     RefPtr<DisplayBufferFence> m_finishedFence;
+    std::optional<WebCore::ContentsFormat> m_contentsFormat;
     const bool m_isOpaque;
+    const WebCore::GraphicsLayerCompositingCoordinatesOrientation m_orientation;
 };
 
 } // namespace WebKit
