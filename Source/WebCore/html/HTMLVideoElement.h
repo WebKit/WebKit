@@ -154,9 +154,6 @@ public:
     void suspend(ReasonForSuspension) final;
     void stop() final;
 
-    bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
-    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
-
     double cameraYaw() const { return m_cameraYaw; }
     double cameraPitch() const { return m_cameraPitch; }
     double cameraFieldOfView() const { return m_cameraFieldOfView; }
@@ -183,6 +180,12 @@ private:
     String imageSourceURL() const final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
+    void runLazyLoadResumptionSteps() final;
+    void viewportIntersectionChanged() final;
+    bool tracksViewportIntersection() const final { return true; }
+    void loadDeferredPosterImage();
+    void resumePosterLoadIfAlreadyVisible();
 
     bool hasAvailableVideoFrame() const;
     void mediaPlayerFirstVideoFrameAvailable() final;
@@ -233,7 +236,6 @@ private:
     Vector<UniqueRef<VideoFrameRequest>> m_videoFrameRequests;
     Vector<UniqueRef<VideoFrameRequest>> m_servicedVideoFrameRequests;
     unsigned m_nextVideoFrameRequestIndex { 0 };
-    bool m_isIntersectingViewport { false };
 
 #if USE(GSTREAMER)
     bool m_enableGStreamerHolePunching { false };

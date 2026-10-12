@@ -34,6 +34,7 @@
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
 #include "JSRequestPriority.h"
+#include "LazyLoadElementObserver.h"
 #include "LinkLoader.h"
 #include "LinkRelAttribute.h"
 #include "Logging.h"
@@ -177,7 +178,7 @@ public:
             return nullptr;
 
         // Do not preload if lazyload is possible but metadata fetch is disabled.
-        if (HTMLImageElement::hasLazyLoadableAttributeValue(m_lazyloadAttribute))
+        if (LazyLoading::hasLazyAttributeValue(m_lazyloadAttribute))
             return nullptr;
 
         std::optional<ScriptType> scriptType;
@@ -204,7 +205,7 @@ public:
 
     bool isLazyloadingImage() const
     {
-        return m_tagId == TagId::Img && HTMLImageElement::hasLazyLoadableAttributeValue(m_lazyloadAttribute);
+        return m_tagId == TagId::Img && LazyLoading::hasLazyAttributeValue(m_lazyloadAttribute);
     }
 
     static bool NODELETE match(const AtomString& name, const QualifiedName& qName)
@@ -363,7 +364,10 @@ private:
             }
             break;
         case TagId::Video:
-            processVideoAttribute(attributeName, attributeValue);
+            if (m_document->settings().lazyMediaLoadingEnabled() && match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull())
+                m_lazyloadAttribute = attributeValue.toString();
+            else
+                processVideoAttribute(attributeName, attributeValue);
             break;
         case TagId::Base:
         case TagId::Style:

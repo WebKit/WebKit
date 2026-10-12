@@ -28,6 +28,7 @@
 
 #include "IntersectionObserver.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -35,6 +36,13 @@ namespace WebCore {
 
 class Document;
 class Element;
+
+namespace LazyLoading {
+
+bool hasLazyAttributeValue(StringView);
+bool isLazyLoadable(const Element&);
+
+} // namespace LazyLoading
 
 class LazyLoadElementObserver final : public CanMakeCheckedPtr<LazyLoadElementObserver> {
     WTF_MAKE_TZONE_ALLOCATED(LazyLoadElementObserver);
@@ -44,9 +52,14 @@ public:
     ~LazyLoadElementObserver();
 
     static void observe(Element&);
+
+    // Detaches unconditionally; for callers that own the observation outright, such as element
+    // teardown or a document move.
     static void unobserve(Element&, Document&);
 
-    bool isObserved(Element&) const;
+    // Detaches only elements observed solely to trigger a one-shot lazy load, leaving those that
+    // track viewport intersection for their own purposes attached.
+    static void unobserveIfLazyLoadOnly(Element&, Document&);
 
 private:
     IntersectionObserver* intersectionObserver(Document&);

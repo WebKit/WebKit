@@ -251,9 +251,9 @@ public:
     void handlePlaybackPositionChanged();
     void notifyAboutPlaying(PlayPromiseVector&&);
     void durationChanged();
-    
+
     MediaPlayer::MovieLoadType movieLoadType() const;
-    
+
     bool inActiveDocument() const { return m_inActiveDocument; }
 
     std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
@@ -281,6 +281,10 @@ public:
     Ref<TimeRanges> buffered() const override;
     WEBCORE_EXPORT void load();
     WEBCORE_EXPORT String canPlayType(const String& mimeType) const;
+
+    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
+
+    enum LoadingValues { Lazy, Eager };
 
 // ready state
     using HTMLMediaElementEnums::ReadyState;
@@ -535,7 +539,7 @@ public:
 
     bool didPassCORSAccessCheck() const { return m_player && protect(player())->didPassCORSAccessCheck(); }
     bool taintsOrigin(const SecurityOrigin&) const;
-    
+
     WEBCORE_EXPORT bool isFullscreen() const override;
     WEBCORE_EXPORT bool isInFullscreenOrPictureInPicture() const;
     bool isStandardFullscreen() const;
@@ -628,7 +632,12 @@ public:
 
     void resetPlaybackSessionState();
     WEBCORE_EXPORT bool NODELETE isVisibleInViewport() const;
-    virtual bool isIntersectingViewport() const { return false; }
+    bool isIntersectingViewport() const { return m_isIntersectingViewport; }
+
+    // <video> tracks viewport intersection for its whole lifetime to drive accelerated
+    // rendering teardown (311380@main). <audio> is observed only while a lazy load is parked,
+    // and detaches once that load resumes.
+    virtual bool tracksViewportIntersection() const { return false; }
     WEBCORE_EXPORT ViewportVisibility viewportVisibility() const;
     bool NODELETE hasEverNotifiedAboutPlaying() const;
     void setShouldDelayLoadEvent(bool);
@@ -781,6 +790,9 @@ protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
 
+    virtual void runLazyLoadResumptionSteps();
+    virtual void viewportIntersectionChanged() { }
+
     void removeAllEventListeners() final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
@@ -865,7 +877,7 @@ private:
     void postConnectionSteps() override;
     void removingSteps(RemovalType, ContainerNode&) override;
     void didRecalcStyle(OptionSet<Style::Change>) override;
-    bool canStartSelection() const override { return false; } 
+    bool canStartSelection() const override { return false; }
     bool isInteractiveContent() const override;
 
     void willStopBeingFullscreenElement() override;
@@ -876,7 +888,7 @@ private:
 
     void stopWithoutDestroyingMediaPlayer();
     void contextDestroyed() override;
-    
+
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
@@ -985,12 +997,20 @@ private:
     void finishSeek();
     void clearSeeking();
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
-    
+
     void scheduleTimeupdateEvent(bool periodicEvent);
     virtual void scheduleResizeEvent(const FloatSize&) { }
     virtual void scheduleResizeEventIfSizeChanged(const FloatSize&) { }
 
     void selectMediaResource();
+    void queueSelectMediaResourceTask();
+
+    bool shouldLazyLoadMediaResource() const;
+    bool deferMediaResourceLoadIfNeeded();
+    bool isMediaResourceLoadDeferred() const { return m_lazyLoadState == LazyLoadState::Deferred; }
+    bool shouldObserveViewportIntersection() const { return tracksViewportIntersection() || isMediaResourceLoadDeferred(); }
+    void clearLazyLoadState();
+    void resumeDeferredMediaResourceLoad();
     void queueLoadMediaResourceTask();
     void loadResource(const URL&, const ContentType&);
     void scheduleNextSourceChild();
@@ -1290,7 +1310,7 @@ private:
     double m_volume { 1 };
     bool m_volumeInitialized { false };
     MediaTime m_lastSeekTime;
-    
+
     MonotonicTime m_previousProgressTime { MonotonicTime::infinity() };
     double m_playbackStartedTime { 0 };
 
@@ -1300,10 +1320,15 @@ private:
 
     // The last time a timeupdate event was sent in movie time.
     MediaTime m_lastTimeUpdateEventMovieTime;
-    
+
     // Loading state.
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
     LoadState m_loadState { WaitingForSource };
+
+    enum class LazyLoadState : uint8_t { NotDeferred, Deferred, ResumedFromDeferred };
+    LazyLoadState m_lazyLoadState { LazyLoadState::NotDeferred };
+
+    bool m_isIntersectingViewport { false };
     RefPtr<HTMLSourceElement> m_currentSourceNode;
     RefPtr<HTMLSourceElement> m_nextChildNodeToConsider;
 

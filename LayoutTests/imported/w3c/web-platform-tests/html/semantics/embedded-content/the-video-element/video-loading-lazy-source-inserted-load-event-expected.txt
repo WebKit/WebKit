@@ -1,0 +1,3 @@
+
+PASS Inserting a source element into a below-viewport loading=lazy video does not delay the window load event
+

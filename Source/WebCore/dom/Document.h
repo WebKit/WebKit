@@ -2060,6 +2060,7 @@ public:
     bool allowsContentJavaScript() const;
 
     LazyLoadElementObserver& lazyLoadElementObserver() LIFETIME_BOUND;
+    LazyLoadElementObserver* lazyLoadElementObserverIfExists() LIFETIME_BOUND { return m_lazyLoadElementObserver.get(); }
 
     ContentVisibilityDocumentState& contentVisibilityDocumentState();
 
