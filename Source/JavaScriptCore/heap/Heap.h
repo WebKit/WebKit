@@ -607,8 +607,6 @@ public:
 
     UncheckedKeyHashMap<JSCellButterfly*, JSString*> immutableButterflyToStringCache;
 
-    bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
-
 
     void appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(const JSString* owner, String&& string)
     {
@@ -854,7 +852,6 @@ private:
     bool m_isSafeToCollect { false };
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { false };
-    bool m_isMarkingForGCVerifier { false };
     Lock m_wasmCalleesPendingDestructionLock;
 
     unsigned m_barrierThreshold { blackThreshold };

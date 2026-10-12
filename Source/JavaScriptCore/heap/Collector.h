@@ -84,6 +84,7 @@ public:
     SlotVisitor& collectorSlotVisitor() LIFETIME_BOUND { return *m_collectorSlotVisitor; }
 
     // The GC verifier (Options::verifyGC()).
+    bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
     void setKeepVerifierSlotVisitor() { m_keepVerifierSlotVisitor = true; }
     void clearVerifierSlotVisitor();
     // This is a debug function for checking who marked the target cell.
@@ -289,6 +290,7 @@ private:
     // everything it should have. Created at Begin, run in End, kept afterwards only if asked.
     std::unique_ptr<VerifierSlotVisitor> m_verifierSlotVisitor;
     bool m_keepVerifierSlotVisitor { false };
+    bool m_isMarkingForGCVerifier { false };
 
     bool m_shouldStopCollectingContinuously WTF_GUARDED_BY_LOCK(m_collectContinuouslyLock) { false };
     Lock m_collectContinuouslyLock;

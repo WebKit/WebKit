@@ -2394,7 +2394,7 @@ Vector<std::unique_ptr<MarkingConstraint>> Heap::createCoreConstraints()
             // as the real GC. Otherwise, the GC verifier may report false negatives due to
             // variations in stack values. For this same reason, we will skip this constraint
             // when we're running the GC verification in the End phase.
-            if (shouldNotProduceWork || m_isMarkingForGCVerifier)
+            if (shouldNotProduceWork || visitor.collector().isMarkingForGCVerifier())
                 return;
             
             TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan"_s);
@@ -2562,7 +2562,7 @@ Vector<std::unique_ptr<MarkingConstraint>> Heap::createCoreConstraints()
             // ConservativeRoots::genericAddPointer asserts isMarking(), which doesn't
             // hold during verification. This constraint could run always otherwise, but
             // that would require rethinking the assumptions in ConservativeRoots.
-            if (m_isMarkingForGCVerifier)
+            if (visitor.collector().isMarkingForGCVerifier())
                 return;
             IsoSubspace* subspace = m_pinballCompletionSpace.get();
             if (!subspace)
