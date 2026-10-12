@@ -115,8 +115,6 @@ interface TestRunner {
     // Printing
     boolean isPageBoxVisible(long pageIndex);
 
-    undefined setValueForUser(object element, DOMString value);
-
     // UserContent testing.
     undefined addUserScript(DOMString source, boolean runAtStart, boolean allFrames);
     undefined addUserStyleSheet(DOMString source, boolean allFrames);

@@ -1258,31 +1258,6 @@ static bool readytoResign;
 
 @end
 
-@interface AutoFillAvailableDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation AutoFillAvailableDelegate
-
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
-{
-    completionHandler();
-    done = true;
-    ASSERT_STREQ(message.UTF8String, "autofill available");
-}
-
-@end
-
-TEST(WebKit, AutoFillAvailable)
-{
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AutoFillAvailable"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    RetainPtr delegate = adoptNS([[AutoFillAvailableDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    [webView evaluateJavaScript:@"" completionHandler: nil]; // Ensure the WebProcess and injected bundle are running.
-    TestWebKitAPI::Util::run(&done);
-}
-
 @interface InjectedBundleNodeHandleIsTextFieldDelegate : NSObject <WKUIDelegatePrivate>
 @end
 

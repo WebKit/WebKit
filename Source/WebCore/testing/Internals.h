@@ -450,6 +450,7 @@ public:
 
     ExceptionOr<bool> wasLastChangeUserEdit(Element& textField);
     bool elementShouldAutoComplete(HTMLInputElement&);
+    void setValueForUser(HTMLInputElement&, const String&);
     void setAutofilled(HTMLInputElement&, bool enabled);
     void setAutofilledAndViewable(HTMLInputElement&, bool enabled);
     void setAutofilledAndObscured(HTMLInputElement&, bool enabled);

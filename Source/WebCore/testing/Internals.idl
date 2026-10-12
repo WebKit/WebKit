@@ -661,6 +661,7 @@ enum ContentsFormat {
 
     boolean wasLastChangeUserEdit(Element textField);
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
+    undefined setValueForUser(HTMLInputElement inputElement, DOMString value);
     undefined setAutofilled(HTMLInputElement inputElement, boolean enabled);
     undefined setAutofilledAndViewable(HTMLInputElement inputElement, boolean enabled);
     undefined setAutofilledAndObscured(HTMLInputElement inputElement, boolean enabled);

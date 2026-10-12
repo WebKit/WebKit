@@ -97,7 +97,6 @@ Tests/WebKit/WKWebView/AsyncPolicyForNavigationResponse.mm @nonARC
 Tests/WebKit/WKWebView/AttrStyle.mm @nonARC
 Tests/WebKit/WKWebView/AudioBufferSize.mm @nonARC
 Tests/WebKit/WKWebView/AudioRoutingArbitration.mm @nonARC
-Tests/WebKit/WKWebView/AutoFillAvailable.mm @nonARC
 Tests/WebKit/WKWebView/AutoLayoutIntegration.mm @nonARC
 Tests/WebKit/WKWebView/Badging.mm @nonARC
 Tests/WebKit/WKWebView/BundleCSSStyleDeclarationHandle.mm @nonARC
@@ -135,7 +134,6 @@ Tests/WebKit/WKWebView/DecidePolicyForNavigationAction.mm @nonARC
 Tests/WebKit/WKWebView/DeviceManagementRestrictions.mm @nonARC
 Tests/WebKit/WKWebView/DeviceOrientation.mm @nonARC
 Tests/WebKit/WKWebView/DictationStreamingOpacity.mm @nonARC
-Tests/WebKit/WKWebView/DisableSpellcheck.mm @nonARC
 Tests/WebKit/WKWebView/DisplayName.mm @nonARC
 Tests/WebKit/WKWebView/DoAfterNextPresentationUpdateAfterCrash.mm @nonARC
 Tests/WebKit/WKWebView/DoAfterNextPresentationUpdateOffscreen.mm @nonARC
