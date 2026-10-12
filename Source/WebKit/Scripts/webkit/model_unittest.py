@@ -116,6 +116,32 @@ class ModelCheckTest(unittest.TestCase):
         with self.assertRaises(Exception):
             parser.parse(StringIO(invalid_contents))
 
+    def test_unsafe_span_reply_value(self):
+        contents = """
+        [
+            DispatchedFrom=WebContent,
+            DispatchedTo=GPU
+        ]
+        messages -> WebPage Stream {
+            GetSpan() -> ([UnsafeSpan] std::span<const uint32_t> e) Synchronous
+        }"""
+        receiver = parser.parse(StringIO(contents))
+        self.assertFalse(receiver.should_copy_reply_spans())
+        with self.assertRaises(Exception):
+            receiver.enforce_unsafe_span_usage()
+
+        reversed_contents = """
+        [
+            DispatchedFrom=GPU,
+            DispatchedTo=WebContent
+        ]
+        messages -> WebPage Stream {
+            GetSpan() -> ([UnsafeSpan] std::span<const uint32_t> e) Synchronous
+        }"""
+        reversed_receiver = parser.parse(StringIO(reversed_contents))
+        self.assertTrue(reversed_receiver.should_copy_reply_spans())
+        reversed_receiver.enforce_unsafe_span_usage()
+
 
 if __name__ == '__main__':
     unittest.main()

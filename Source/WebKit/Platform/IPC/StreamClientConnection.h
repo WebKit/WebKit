@@ -416,7 +416,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             if (!replySpan)
                 return makeUnexpected(Error::FailedToAcquireReplyBufferSpan);
 
-            auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID);
+            auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID, T::shouldCopyReplySpans ? Decoder::ShouldCopySpans::Yes : Decoder::ShouldCopySpans::No);
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply || decoder->messageName() == MessageName::CancelSyncMessageReply);
                 return decoder;
