@@ -10031,9 +10031,9 @@ void WebPage::dismissVolumetricScenesForDetachedElements()
             continue;
         }
 
-        // The element cannot be told, so drop the entry here rather than waiting for a reply about it.
-        m_volumetricSceneElements.remove(it);
-        send(Messages::WebPageProxy::DismissVolumetricScene(nodeID));
+        if (it->value.state == VolumetricSceneState::Presented)
+            send(Messages::WebPageProxy::DismissVolumetricScene(nodeID));
+        volumetricSceneDidClose(nodeID);
     }
 }
 
