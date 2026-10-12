@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
 
 if sys.version_info < (3, 9):  # noqa: UP036
@@ -31,7 +33,7 @@ import os
 log = logging.getLogger('webkitbugspy')
 
 
-def _maybe_add_library_path(path):
+def _maybe_add_library_path(path: str) -> None:
     # Hopefully we're beside the required library, otherwise that library will need to be installed.
     libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
     library_path = os.path.join(libraries_path, path)
@@ -50,10 +52,19 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(0, 15, 6)
+version = Version(0, 15, 7)
 
 from .user import User
 from .issue import Issue
 from .tracker import Tracker
 
 name = 'webkitbugspy'
+
+__all__ = [
+    'Issue',
+    'Tracker',
+    'User',
+    'log',
+    'name',
+    'version',
+]

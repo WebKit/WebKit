@@ -20,7 +20,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 from .bugzilla import Bugzilla
 from .data import ISSUES, USERS, PROJECTS, MILESTONES
 from .github import GitHub
 from .radar import Radar, NoRadar
+
+__all__ = [
+    'Bugzilla',
+    'GitHub',
+    'ISSUES',
+    'MILESTONES',
+    'NoRadar',
+    'PROJECTS',
+    'Radar',
+    'USERS',
+]

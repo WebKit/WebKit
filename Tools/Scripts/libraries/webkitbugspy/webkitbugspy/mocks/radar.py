@@ -20,12 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import calendar
 import os
 import re
 import time
 from datetime import datetime, timezone
 from unittest.mock import patch
+from typing import Any, Callable, Iterable, Iterator
 
 from webkitcorepy import string_utils
 from webkitcorepy.mocks import ContextStack
@@ -36,7 +39,7 @@ from .base import Base
 
 
 class AppleDirectoryUserEntry(object):
-    def __init__(self, user):
+    def __init__(self, user: User) -> None:
         self.first_name = lambda: user.name.split(' ', 1)[0]
         self.last_name = lambda: user.name.split(' ', 1)[1]
         self.email = lambda: user.email
@@ -44,13 +47,13 @@ class AppleDirectoryUserEntry(object):
 
 
 class AppleDirectoryQuery(object):
-    def __init__(self, parent):
+    def __init__(self, parent: Radar) -> None:
         self.parent = parent
 
-    def user_entry_for_dsid(self, dsid):
+    def user_entry_for_dsid(self, dsid: int) -> AppleDirectoryUserEntry | None:
         return self.user_entry_for_attribute_value('dsid', dsid)
 
-    def user_entry_for_attribute_value(self, name, value):
+    def user_entry_for_attribute_value(self, name: str, value: int | str) -> AppleDirectoryUserEntry | None:
         if name not in ('cn', 'dsid', 'mail', 'uid'):
             raise ValueError("'{}' is not a valid user attribute value".format(name))
         found = self.parent.users.get(value)
@@ -64,13 +67,17 @@ class AppleDirectoryQuery(object):
             return None
         return AppleDirectoryUserEntry(found)
 
-    def member_dsid_list_for_group_name(self, name):
+    def member_dsid_list_for_group_name(self, name: str) -> list[int | str | None]:
         return [user.username for user in self.parent.users]
 
 
 class RadarModel(object):
     class Person(object):
-        def __init__(self, user):
+        def __init__(self, user: User | dict[str, Any]) -> None:
+            self.firstName: str | None
+            self.lastName: str | None
+            self.email: str | None
+            self.dsid: int | str | None
             if isinstance(user, dict):
                 self.firstName = user.get('firstName')
                 self.lastName = user.get('lastName')
@@ -83,24 +90,24 @@ class RadarModel(object):
                 self.dsid = user.username
 
     class CCMembership(object):
-        def __init__(self, user):
+        def __init__(self, user: User) -> None:
             self.person = RadarModel.Person(user)
 
     class CollectionProperty(object):
-        def __init__(self, model, *properties):
+        def __init__(self, model: RadarModel, *properties: Any) -> None:
             self.model = model
             self._properties = list(properties)
 
-        def items(self, type=None):
+        def items(self, type: str | None = None) -> Iterator[Any]:
             for property in self._properties:
                 yield property
 
-        def add(self, item):
+        def add(self, item: Radar.DiagnosisEntry) -> None:
             from datetime import datetime, timedelta, timezone
 
             username = self.model.client.authentication_strategy.username()
             if username:
-                by = RadarModel.CommentAuthor(self.model.client.parent.users['{}@APPLECONNECT.APPLE.COM'.format(username)])
+                by = RadarModel.CommentAuthor(self.model.client.parent._fixture_user('{}@APPLECONNECT.APPLE.COM'.format(username)))
             else:
                 by = None
 
@@ -111,24 +118,24 @@ class RadarModel(object):
             ))
 
     class DescriptionEntry(object):
-        def __init__(self, text):
+        def __init__(self, text: str) -> None:
             self.text = text
 
     class CommentAuthor(object):
-        def __init__(self, user):
+        def __init__(self, user: User) -> None:
             self.name = user.name
             self.email = user.email
 
     class Event(object):
-        def __init__(self, name):
+        def __init__(self, name: str) -> None:
             self.name = name
 
     class Tentpole(object):
-        def __init__(self, args):
+        def __init__(self, args: dict[str, str]) -> None:
             self.name = args['name']
 
     class MilestoneAssociations(object):
-        def __init__(self, milestone):
+        def __init__(self, milestone: Radar.Milestone) -> None:
             self.isCategoryRequired = milestone._isCategoryRequired
             self.categories = milestone._categories
             self.isEventRequired = milestone._isEventRequired
@@ -137,26 +144,26 @@ class RadarModel(object):
             self.tentpoles = milestone._tentpoles
 
     class Keyword(object):
-        def __init__(self, name, isClosed=False):
+        def __init__(self, name: str, isClosed: bool = False) -> None:
             self.name = name
             self.isClosed = isClosed
 
     class RadarGroup(object):
-        def __init__(self, name):
+        def __init__(self, name: str) -> None:
             self.name = name
 
     class Attachment(object):
-        def __init__(self, file_name, data=b'', locked=False):
+        def __init__(self, file_name: str, data: bytes = b'', locked: bool = False) -> None:
             self.fileName = file_name
             self._data = data if isinstance(data, bytes) else string_utils.encode(data)
             self.locked = locked
 
-        def content(self, client=None):
+        def content(self, client: RadarClient | None = None) -> bytes:
             if self.locked:
                 raise Radar.exceptions.AttachmentLockedException("'{}' is locked".format(self.fileName))
             return self._data
 
-    def __init__(self, client, issue, additional_fields=None):
+    def __init__(self, client: RadarClient, issue: dict[str, Any], additional_fields: list[str] | None = None) -> None:
         from datetime import datetime, timedelta, timezone
 
         additional_fields = additional_fields or []
@@ -175,8 +182,9 @@ class RadarModel(object):
         else:
             self.state = 'Analyze' if issue['opened'] else 'Verify'
         self.duplicateOfProblemID = issue['original']['id'] if issue.get('original', None) else None
-        self.related = list()
-        self.unrelated = list()
+        self.related: list[Radar.Relationship] = list()
+        self.unrelated: list[Radar.Relationship] = list()
+        self.substate: str | None
         if issue.get('substate'):
             self.substate = issue['substate']
         else:
@@ -213,7 +221,8 @@ class RadarModel(object):
         tentpole = issue.get('tentpole')
         self.tentpole = RadarModel.Tentpole(dict(name=tentpole)) if tentpole else None
 
-        components = []
+        components: list[Radar.Component] = []
+        self.component: Radar.Component | None
         if issue.get('project') and issue.get('component') and issue.get('version'):
             components = self.client.find_components(dict(
                 name=dict(eq='{} {}'.format(issue['project'], issue['component'])),
@@ -227,22 +236,24 @@ class RadarModel(object):
         if 'sourceChanges' in additional_fields:
             self.sourceChanges = issue.get('sourceChanges', None)
 
-    def related_radars(self):
+    def related_radars(self) -> Iterator[RadarModel]:
         for reference in self._issue.get('references', []):
             ref = self.client.radar_for_id(reference)
             if ref:
                 yield ref
 
-    def keywords(self):
+    def keywords(self) -> list[RadarModel.Keyword]:
         return [self.client.parent.keywords[keyword] for keyword in self._issue.get('keywords', [])]
 
-    def commit_changes(self):
+    def commit_changes(self) -> None:
         self.client.parent.request_count += 1
 
         # Anything without someone who added it was made by the current user
         for entry in self.diagnosis.items():
             if not entry.addedBy:
-                entry.addedBy = self.CommentAuthor(self.client.parent.users[self.client.current_user().email])
+                current_user = self.client.current_user()
+                assert current_user is not None
+                entry.addedBy = self.CommentAuthor(self.client.parent._fixture_user(current_user.email))
 
         self.client.parent.issues[self.id]['comments'] = [
             Issue.Comment(
@@ -303,10 +314,10 @@ class RadarModel(object):
         if getattr(self, 'sourceChanges', None):
             self.client.parent.issues[self.id]['sourceChanges'] = self.sourceChanges
 
-    def milestone_associations(self, milestone=None):
+    def milestone_associations(self, milestone: Radar.Milestone | None = None) -> RadarModel.MilestoneAssociations:
         return RadarModel.MilestoneAssociations(milestone or self.milestone)
 
-    def relationships(self, relationships=None):
+    def relationships(self, relationships: list[str] | None = None) -> list[Radar.Relationship]:
         if not relationships:
             if not self.client.parent.issues[self.id].get('related'):
                 self.client.parent.issues[self.id]['related'] = list()
@@ -323,35 +334,35 @@ class RadarModel(object):
             ))
         return result
 
-    def add_relationship(self, relationship):
+    def add_relationship(self, relationship: Radar.Relationship) -> None:
         self.related.append(relationship)
 
-    def delete_relationship(self, relationship):
+    def delete_relationship(self, relationship: Radar.Relationship) -> None:
         self.unrelated.append(relationship)
 
-    def remove_keyword(self, keyword):
-        if keyword.name in self._issue.get('keywords') or []:
+    def remove_keyword(self, keyword: RadarModel.Keyword) -> None:
+        if keyword.name in (self._issue.get('keywords') or []):
             self._issue['keywords'].remove(keyword.name)
 
-    def add_keyword(self, keyword):
+    def add_keyword(self, keyword: RadarModel.Keyword) -> None:
         self._issue['keywords'] = self._issue.get('keywords') or []
         if keyword.name not in self._issue['keywords']:
             self._issue['keywords'].append(keyword.name)
 
 
 class RadarClient(object):
-    def __init__(self, parent, authentication_strategy):
+    def __init__(self, parent: Radar, authentication_strategy: Any) -> None:
         self.parent = parent
         self.authentication_strategy = authentication_strategy
 
-    def current_user(self):
+    def current_user(self) -> RadarModel.Person | None:
         username = self.authentication_strategy.username() or os.environ.get('RADAR_USERNAME')
         user = self.parent.users.get(f'{username}@APPLECONNECT.APPLE.COM') or self.parent.users.get(username)
         if not user:
             return None
         return RadarModel.Person(Radar.transform_user(user))
 
-    def radar_for_id(self, problem_id, additional_fields=None):
+    def radar_for_id(self, problem_id: int, additional_fields: list[str] | None = None) -> RadarModel:
         self.parent.request_count += 1
 
         found = self.parent.issues.get(problem_id)
@@ -359,7 +370,7 @@ class RadarClient(object):
             raise Radar.exceptions.RadarAccessDeniedResponseException('Unable to access radar')
         return RadarModel(self, found, additional_fields=additional_fields)
 
-    def find_radars(self, query, return_find_results_directly=False):
+    def find_radars(self, query: dict[str, Any], return_find_results_directly: bool = False) -> list[RadarModel]:
         self.parent.request_count += 1
 
         result = []
@@ -379,14 +390,14 @@ class RadarClient(object):
                 result.append(r)
         return result
 
-    def milestones_for_component(self, component, include_access_groups=False):
+    def milestones_for_component(self, component: Radar.Component, include_access_groups: bool = False) -> list[Radar.Milestone]:
         self.parent.request_count += 1
         return list(self.parent.milestones.values())
 
-    def find_components(self, request_data):
+    def find_components(self, request_data: dict[str, Any]) -> list[Radar.Component]:
         self.parent.request_count += 1
 
-        filters = []
+        filters: list[Callable[..., Any]] = []
         for key in ('name', 'version'):
             if key in request_data:
                 key_data = request_data[key]
@@ -412,7 +423,7 @@ class RadarClient(object):
                     result.append(Radar.Component(component_name, component_details['description'], version))
         return result
 
-    def create_radar(self, request_data):
+    def create_radar(self, request_data: dict[str, Any]) -> RadarModel:
         self.parent.request_count += 1
 
         if not all((
@@ -440,7 +451,9 @@ class RadarClient(object):
         while id in self.parent.issues.keys():
             id += 1
 
-        user = self.parent.users[self.current_user().email]
+        current_user = self.current_user()
+        assert current_user is not None
+        user = self.parent._fixture_user(current_user.email)
         issue = dict(
             id=id,
             title=request_data['title'],
@@ -459,7 +472,7 @@ class RadarClient(object):
 
         return self.radar_for_id(id)
 
-    def clone_radar(self, problem_id, reason_text, component=None):
+    def clone_radar(self, problem_id: int, reason_text: str, component: dict[str, str] | None = None) -> RadarModel:
         self.parent.request_count += 1
 
         original = self.radar_for_id(problem_id)
@@ -469,6 +482,7 @@ class RadarClient(object):
         if not isinstance(reason_text, str) and not isinstance(reason_text, string_utils.unicode):
             raise ValueError("Expected reason_text to be '{}' not '{}'".format(str, type(reason_text)))
         if not component:
+            assert original.component is not None
             component = dict(name=original.component.name.strip(), version=original.component.version)
         description = 'Reason for clone:\n{}\n\n<original text - begin>\n\n{}'.format(
             reason_text,
@@ -482,7 +496,7 @@ class RadarClient(object):
             reproducible='Always',
         ))
 
-    def keywords_for_name(self, keyword_name, additional_fields=None):
+    def keywords_for_name(self, keyword_name: str, additional_fields: Any = None) -> list[RadarModel.Keyword]:
         self.parent.request_count += 1
 
         return [
@@ -498,52 +512,52 @@ class Radar(Base, ContextStack):
     Tentpole = RadarModel.Tentpole
 
     class AuthenticationStrategyNarrative(object):
-        def __init__(self, __):
+        def __init__(self, __: Any) -> None:
             pass
 
-        def username(self):
+        def username(self) -> str | None:
             return None
 
     class AuthenticationStrategySystemAccount(object):
-        def __init__(self, username, __, ___, ____):
+        def __init__(self, username: str, __: Any, ___: Any, ____: Any) -> None:
             self._username = username
 
-        def username(self):
+        def username(self) -> str | None:
             return self._username
 
     class AuthenticationStrategySystemAccountOAuth(object):
-        def __init__(self, __, ___, ____, _____):
+        def __init__(self, __: Any, ___: Any, ____: Any, _____: Any) -> None:
             pass
 
-        def username(self):
+        def username(self) -> str | None:
             return None
 
     class AuthenticationStrategySPNego(object):
-        def username(self):
+        def username(self) -> str | None:
             return os.environ.get('RADAR_USERNAME')
 
     class AuthenticationStrategyAppleConnect(object):
-        def username(self):
+        def username(self) -> str | None:
             return None
 
     class ClientSystemIdentifier(object):
-        def __init__(self, name, version):
+        def __init__(self, name: str, version: str) -> None:
             pass
 
     class Component(object):
-        def __init__(self, name, description, version):
+        def __init__(self, name: str, description: str, version: str) -> None:
             self.name = name
             self.description = description
             self.version = version
 
-        def get(self, item, default=None):
+        def get(self, item: str, default: str | None = None) -> Any:
             return getattr(self, item, default)
 
-        def __getitem__(self, item):
+        def __getitem__(self, item: str) -> Any:
             return getattr(self, item)
 
     class DiagnosisEntry(object):
-        def __init__(self, text=None, addedAt=None, addedBy=None):
+        def __init__(self, text: str | None = None, addedAt: datetime | None = None, addedBy: RadarModel.CommentAuthor | None = None) -> None:
             self.text = text
             self.addedAt = addedAt or datetime.fromtimestamp(int(time.time()), timezone.utc)
             self.addedBy = addedBy
@@ -573,11 +587,11 @@ class Radar(Base, ContextStack):
         }
         inverse_map.update({v: k for k, v in list(inverse_map.items())})
 
-        def __init__(self, type, radar, related_radar=None):
+        def __init__(self, type: str, radar: RadarModel, related_radar: RadarModel | None = None) -> None:
             self.type = type
             self.radar = radar
             self.related_radar = related_radar
-            self.related_radar_id = related_radar.id if related_radar else None
+            self.related_radar_id: Any = related_radar.id if related_radar else None
 
     class exceptions(object):
         class UnsuccessfulResponseException(Exception):
@@ -594,14 +608,14 @@ class Radar(Base, ContextStack):
 
     class Milestone(object):
         def __init__(
-            self, name,
-            isClosed=False,
-            isRestricted=False, restrictedAccessGroups=None,
-            isProtected=False, protectedAccessGroups=None,
-            isCategoryRequired=False, categories=None,
-            isEventRequired=False, events=None,
-            isTentpoleRequired=False, tentpoles=None,
-        ):
+            self, name: str | dict[str, str],
+            isClosed: bool = False,
+            isRestricted: bool = False, restrictedAccessGroups: list[str] | None = None,
+            isProtected: bool = False, protectedAccessGroups: list[str] | None = None,
+            isCategoryRequired: bool = False, categories: list[str] | None = None,
+            isEventRequired: bool = False, events: list[str] | None = None,
+            isTentpoleRequired: bool = False, tentpoles: list[str] | None = None,
+        ) -> None:
             self.name = name['name'] if isinstance(name, dict) else name
             self.isClosed = isClosed
             self.isRestricted = isRestricted
@@ -619,26 +633,33 @@ class Radar(Base, ContextStack):
             self._tentpoles = [RadarModel.Tentpole(dict(name=tentpole)) for tentpole in (tentpoles or [])]
 
     class Category(object):
-        def __init__(self, name):
+        def __init__(self, name: str | dict[str, str]) -> None:
             self.name = name['name'] if isinstance(name, dict) else name
 
     @classmethod
-    def transform_user(cls, user):
+    def transform_user(cls, user: User) -> User:
+        # Radar users in the test data all have emails, from which DSIDs are derived.
+        assert user.email
         return User(
             name=user.name,
             username=sum(bytearray(string_utils.encode(user.email))) % 1000,
             emails=user.emails + [user.email.split('@')[0] + '@APPLECONNECT.APPLE.COM'],
         )
 
-    def __init__(self, users=None, issues=None, projects=None, milestones=None):
+    def __init__(
+        self, users: User.Mapping | None = None, issues: Iterable[dict[str, Any]] | None = None,
+        projects: dict[str, dict[str, Any]] | None = None, milestones: Iterable[dict[str, Any]] | None = None,
+    ) -> None:
         Base.__init__(self, users=users, issues=issues, projects=projects)
         ContextStack.__init__(self, Radar)
 
         self.users = User.Mapping()
         for name in sorted([user.name for user in users or []]):
-            self.users.add(self.transform_user(users[name]))
+            user = users[name] if users else None
+            assert user is not None
+            self.users.add(self.transform_user(user))
 
-        self.keywords = {}
+        self.keywords: dict[str, RadarModel.Keyword] = {}
         for issue in issues or []:
             for keyword in issue.get('keywords') or []:
                 self.keywords[keyword] = RadarModel.Keyword(keyword)
@@ -646,7 +667,7 @@ class Radar(Base, ContextStack):
         self.issues = {}
         for issue in issues or []:
             self.add(issue)
-        self.milestones = {}
+        self.milestones: dict[str, Radar.Milestone] = {}
         for kwargs in milestones or []:
             ms = Radar.Milestone(**kwargs)
             self.milestones[ms.name] = ms
@@ -662,7 +683,7 @@ class Radar(Base, ContextStack):
 class NoRadar(ContextStack):
     top = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(NoRadar, self).__init__(NoRadar)
 
         self.patches.append(patch('webkitbugspy.radar.Tracker.radarclient', new=lambda s=None: None))

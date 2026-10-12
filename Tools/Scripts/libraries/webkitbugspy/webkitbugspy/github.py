@@ -20,17 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import calendar
 import re
 import sys
 import time
 import webkitcorepy
+from typing import Any, TYPE_CHECKING
 
 from .issue import Issue
 from .tracker import Tracker as GenericTracker
 
 from datetime import datetime
 from webkitbugspy import User
+
+if TYPE_CHECKING:
+    from requests.models import Response
+    from requests.sessions import Session
 
 requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 HTTPBasicAuth = webkitcorepy.CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
@@ -64,9 +71,9 @@ class Tracker(GenericTracker):
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
-        def default(context, obj):
+        def default(context: Any, obj: Any) -> Any:
             if isinstance(obj, Tracker):
-                result = dict(
+                result: dict[str, Any] = dict(
                     type='github',
                     url=obj.url,
                     hide_title=obj.hide_title,
@@ -79,12 +86,12 @@ class Tracker(GenericTracker):
             return super(Tracker.Encoder, context).default(obj)
 
     def __init__(
-            self, url, users=None, res=None,
-            component_color=DEFAULT_COMPONENT_COLOR,
-            version_color=DEFAULT_VERSION_COLOR,
-            session=None, redact=None, hide_title=None,
-            redact_exemption=None,
-    ):
+            self, url: str, users: User.Mapping | None = None, res: list[re.Pattern[str]] | None = None,
+            component_color: str = DEFAULT_COMPONENT_COLOR,
+            version_color: str = DEFAULT_VERSION_COLOR,
+            session: Session | None = None, redact: dict[str, bool] | None = None, hide_title: bool | None = None,
+            redact_exemption: dict[str, bool] | None = None,
+    ) -> None:
         super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title, redact_exemption=redact_exemption)
 
         self.session = session or requests.Session()
@@ -105,15 +112,15 @@ class Tracker(GenericTracker):
         self.owner = match.group('owner')
         self.name = match.group('repository')
 
-    def from_string(self, string):
+    def from_string(self, string: str) -> Issue | None:
         for regex in self._res:
             match = regex.match(string)
             if match:
                 return self.issue(int(match.group('id')))
         return None
 
-    def credentials(self, required=True, validate=False, save_in_keyring=None):
-        def validater(username, access_token):
+    def credentials(self, required: bool = True, validate: bool = False, save_in_keyring: bool | None = None) -> tuple[str | None, str | None]:
+        def validater(username: str, access_token: str) -> bool:
             if '@' in username:
                 sys.stderr.write("Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
                 return False
@@ -137,7 +144,7 @@ class Tracker(GenericTracker):
         hostname = self.url.split('/')[2]
         token_url = 'https://{}/settings/tokens/new'.format(hostname)
 
-        def prompt():
+        def prompt() -> str:
             result = "GitHub's API\nProvide {} username and access token to create and update pull requests".format(hostname)
             if webkitcorepy.Terminal.open_url(
                 '{}?scopes=repo,workflow&description={}%20Local%20Automation'.format(token_url, self.name),
@@ -161,14 +168,14 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         )
 
     @classmethod
-    def decode_json(cls, response):
+    def decode_json(cls, response: Response) -> Any:
         try:
             return response.json()
         except ValueError:
             return {}
 
     @classmethod
-    def api_error_hint(cls, response) -> str:
+    def api_error_hint(cls, response: Response) -> str:
         status_code = response.status_code
         if status_code in (403, 429) and (
             response.headers.get('x-ratelimit-remaining') == '0'
@@ -181,7 +188,10 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             return cls.SERVER_ERROR_PROMPT
         return ''
 
-    def request(self, path=None, params=None, method='GET', headers=None, authenticated=None, paginate=True, json=None, error_message=None):
+    def request(
+        self, path: str | None = None, params: dict[str, Any] | None = None, method: str = 'GET', headers: dict[str, str] | None = None,
+        authenticated: bool | None = None, paginate: bool = True, json: Any = None, error_message: str | None = None,
+    ) -> Any:
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
 
@@ -225,7 +235,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             result += response.json()
         return result
 
-    def user(self, name=None, username=None, email=None):
+    def user(self, name: str | None = None, username: int | str | None = None, email: str | None = None) -> User | None:
         user = super(Tracker, self).user(name=name, username=username, email=email)
         if user:
             return user
@@ -253,14 +263,14 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         )
 
     @webkitcorepy.decorators.Memoize()
-    def me(self):
+    def me(self) -> User | None:
         username, _ = self.credentials(required=True)
         return self.user(username=username)
 
-    def issue(self, id):
+    def issue(self, id: int | str) -> Issue:
         return Issue(id=int(id), tracker=self)
 
-    def populate(self, issue, member=None):
+    def populate(self, issue: Issue, member: str | None = None) -> Issue:
         issue._link = '{}/issues/{}'.format(self.url, issue.id)
         issue._project = self.name
         issue._keywords = []  # We don't yet have a defined idiom for "keywords" in GitHub Issues
@@ -294,26 +304,26 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         if member == 'watchers':
             issue._watchers = []
-            refs = set()
+            usernames: set[int | str | None] = set()
             response = self.request(path='issues/{}'.format(issue.id))
             if response:
                 for assignee in response['assignees']:
                     watcher = self.user(username=assignee['login'])
-                    if not watcher or watcher.username in refs:
+                    if not watcher or watcher.username in usernames:
                         continue
-                    refs.add(watcher.username)
+                    usernames.add(watcher.username)
                     issue._watchers.append(watcher)
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
 
             for text in [issue.description] + [comment.content for comment in issue.comments]:
-                for match in self.USERNAME_RE.findall(text):
-                    if match[1] in refs:
+                for match in self.USERNAME_RE.findall(text or ''):
+                    if match[1] in usernames:
                         continue
                     user = self.user(username=match[1])
                     if not user:
                         continue
-                    refs.add(user.username)
+                    usernames.add(user.username)
                     issue._watchers.append(user)
 
         if member == 'comments':
@@ -338,19 +348,19 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             refs = set()
 
             for text in [issue.description] + [comment.content for comment in issue.comments]:
-                for match in self.ISSUE_LINK_RE.findall(text):
+                for match in self.ISSUE_LINK_RE.findall(text or ''):
                     candidate = self.issue(int(match))
                     if candidate.link in refs or candidate.id == issue.id:
                         continue
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-                for match in self.REFERENCE_RE.findall(text):
-                    candidate = GenericTracker.from_string(match[0])
-                    if not candidate or candidate.link in refs or candidate.id == issue.id:
+                for match in self.REFERENCE_RE.findall(text or ''):
+                    referenced = GenericTracker.from_string(match[0])
+                    if not referenced or referenced.link in refs or referenced.id == issue.id:
                         continue
-                    issue._references.append(candidate)
-                    refs.add(candidate.link)
+                    issue._references.append(referenced)
+                    refs.add(referenced.link)
 
             response = self.request(path='issues/{}/timeline'.format(issue.id))
             if response:
@@ -368,8 +378,13 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, original=None, source_changes=None, state=None, substate=None, see_also=None, **properties):
-        update_dict = dict()
+    def set(
+        self, issue: Issue, assignee: User | None = None, opened: bool | None = None, why: str | None = None,
+        project: str | None = None, component: str | None = None, version: str | None = None, labels: list[str] | None = None,
+        original: Issue | None = None, source_changes: list[str] | None = None, state: str | None = None, substate: str | None = None,
+        see_also: list[str] | None = None, **properties: Any,
+    ) -> Issue | Issue.Comment | None:
+        update_dict: dict[str, Any] = dict()
 
         if properties:
             raise TypeError("'{}' is an invalid property".format(list(properties.keys())[0]))
@@ -378,6 +393,8 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if not isinstance(assignee, User):
                 raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
             issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
+            if not issue._assignee:
+                return None
             assignees = [issue._assignee.username]
             if self.add_assignees(issue, assignees) != assignees:
                 return None
@@ -405,7 +422,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if version and version not in versions:
                 raise ValueError("'{}' is not a recognized version of '{}'".format(version, project))
 
-            labels = (labels or issue.labels)
+            labels = (labels or issue.labels or [])
             index = 0
             while index < len(labels):
                 label = labels[index]
@@ -466,13 +483,14 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             sys.stderr.write('GitHub does not support the see_also field at this time\n')
             return None
 
-        if issue and original:
-            issue = self.add_comment(issue, 'Duplicate of #{}'.format(original.id))
-        if issue and why:
-            issue = self.add_comment(issue, why)
-        return issue
+        result: Issue | Issue.Comment | None = issue
+        if result and original:
+            result = self.add_comment(issue, 'Duplicate of #{}'.format(original.id))
+        if result and why:
+            result = self.add_comment(issue, why)
+        return result
 
-    def add_assignees(self, issue, assignees):
+    def add_assignees(self, issue: Issue, assignees: list[int | str | None]) -> list[str]:
         response = self.request(
             'issues/{id}/assignees'.format(id=issue.id),
             method='POST',
@@ -490,7 +508,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             sys.stderr.write('Could not assign {} to issue'.format(missed_assignees))
         return response_assignees
 
-    def add_comment(self, issue, text):
+    def add_comment(self, issue: Issue, text: str) -> Issue.Comment | None:
         data = self.request(
             'issues/{id}/comments'.format(id=issue.id),
             method='POST',
@@ -505,7 +523,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         if tm:
             tm = int(calendar.timegm(datetime.strptime(tm, '%Y-%m-%dT%H:%M:%SZ').timetuple()))
         else:
-            tm = time.time()
+            tm = int(time.time())
 
         result = Issue.Comment(
             user=self.user(username=data.get('user', {}).get('login')),
@@ -520,7 +538,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
     @property
     @webkitcorepy.decorators.Memoize()
-    def labels(self):
+    def labels(self) -> dict[str, dict[str, Any]]:
         response = self.request('labels')
         result = {}
         for label in response:
@@ -533,8 +551,8 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         return result
 
     @property
-    def projects(self):
-        result = dict(
+    def projects(self) -> dict[str, dict[str, Any]]:
+        result: dict[str, Any] = dict(
             versions=[],
             components=dict(),
         )
@@ -550,10 +568,10 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         return {}
 
     def create(
-        self, title, description,
-        project=None, component=None, version=None,
-        labels=None, assign=True,
-    ):
+        self, title: str, description: str,
+        project: str | None = None, component: str | None = None, version: str | None = None,
+        labels: list[str] | None = None, assign: bool = True,
+    ) -> Issue | None:
         if not title:
             raise ValueError('Must define title to create issue')
         if not description:
@@ -597,14 +615,17 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if label not in self.labels:
                 raise ValueError("'{}' is not a recognized label in '{}'".format(label, self.url))
 
-        data = dict(
+        data: dict[str, Any] = dict(
             title=title,
             body=description,
         )
         if labels:
             data['labels'] = labels
         if assign:
-            data['assignee'] = self.me().username
+            me = self.me()
+            if not me:
+                raise RuntimeError('Failed to determine the current GitHub user')
+            data['assignee'] = me.username
 
         response = self.request(
             'issues',
@@ -618,7 +639,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return self.issue(response['number'])
 
-    def parse_error(self, json):
+    def parse_error(self, json: dict[str, Any]) -> str:
         message = json.get('message', 'Empty Message')
         error_messages = []
         for error in json.get('errors', []):
@@ -654,6 +675,6 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return 'Error Message: {}\n{}'.format(message, ''.join(error_messages))
 
-    def cc_radar(self, issue, block=False, timeout=None, radar=None):
+    def cc_radar(self, issue: Issue, block: bool = False, timeout: float | None = None, radar: Issue | None = None) -> None:
         sys.stderr.write('No radar CC implemented for GitHub Issues\n')
         return None
