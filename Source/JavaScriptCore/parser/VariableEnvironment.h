@@ -33,6 +33,10 @@
 #include <wtf/PackedRefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
+#ifdef Success
+#undef Success
+#endif
+
 namespace JSC {
 
 struct VariableEnvironmentEntry {
