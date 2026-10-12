@@ -3399,16 +3399,6 @@ RefPtr<TDZEnvironmentLink> BytecodeGenerator::getVariablesUnderTDZ()
     return parent;
 }
 
-void BytecodeGenerator::preserveTDZStack(BytecodeGenerator::PreservedTDZStack& preservedStack)
-{
-    preservedStack.m_preservedTDZStack = m_TDZStack;
-}
-
-void BytecodeGenerator::restoreTDZStack(const BytecodeGenerator::PreservedTDZStack& preservedStack)
-{
-    m_TDZStack = preservedStack.m_preservedTDZStack;
-}
-
 RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
 {
     OpNewObject::emit(this, dst, 0);
