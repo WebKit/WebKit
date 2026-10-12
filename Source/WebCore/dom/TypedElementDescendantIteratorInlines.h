@@ -141,7 +141,7 @@ template<typename ElementType, bool filter(const ElementType&)> FilteredElementD
 {
     do {
         ElementIterator<ElementType>::traverseNext();
-    } while (*this && !filter(**this));
+    } while (*this && !filter(protect(**this)));
     return *this;
 }
 

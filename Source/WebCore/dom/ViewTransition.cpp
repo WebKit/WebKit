@@ -124,7 +124,7 @@ RefPtr<ViewTransition> ViewTransition::resolveInboundCrossDocumentViewTransition
     // Re-check against the new document's final origin, which may differ from the URL-derived
     // origin used by DocumentLoader::navigationCanTriggerCrossDocumentViewTransition.
     if (!inboundViewTransitionParams->oldDocumentOrigin
-        || !inboundViewTransitionParams->oldDocumentOrigin->isSameOriginAs(document.securityOrigin()))
+        || !protect(inboundViewTransitionParams->oldDocumentOrigin)->isSameOriginAs(protect(document.securityOrigin())))
         return nullptr;
 
     if (document.activeViewTransition())
@@ -479,7 +479,8 @@ LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)
     if (renderer.isDocumentElementRenderer())
         return containingBlockRect();
 
-    auto bounds = renderer.layer()->calculateLayerBounds(renderer.layer(), LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags, RenderLayer::ExcludeViewTransitionCapturedDescendants });
+    CheckedPtr layer = renderer.layer();
+    auto bounds = layer->calculateLayerBounds(layer, LayoutSize(), { RenderLayer::IncludeFilterOutsets, RenderLayer::ExcludeHiddenDescendants, RenderLayer::IncludeCompositedDescendants, RenderLayer::PreserveAncestorFlags, RenderLayer::ExcludeViewTransitionCapturedDescendants });
     return LayoutRect(encloseRectToDevicePixels(bounds, protect(renderer.document())->deviceScaleFactor()));
 }
 
@@ -536,7 +537,7 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
     paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
     paintFlags.add(RenderLayer::PaintLayerFlag::AppliedTransform);
     paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition);
-    layerRenderer->layer()->paint(buffer->context(), paintRect, subpixelOffset, frameView->paintBehavior(), nullptr, paintFlags);
+    protect(layerRenderer->layer())->paint(buffer->context(), paintRect, subpixelOffset, frameView->paintBehavior(), nullptr, paintFlags);
 
     frameView->setPaintBehavior(oldPaintBehavior);
     return buffer;
@@ -626,7 +627,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
                 captureRenderers.append(renderer);
             }
             return { };
-        }, *view->layer());
+        }, *protect(view->layer()));
         if (result.hasException()) {
             for (auto& renderer : captureRenderers)
                 renderer->setCapturedInViewTransition(false);
@@ -712,7 +713,7 @@ ExceptionOr<void> ViewTransition::captureNewState()
                     copyElementBaseProperties(*box, namedElement->newState);
             }
             return { };
-        }, *view->layer());
+        }, *protect(view->layer()));
         if (result.hasException())
             return result.releaseException();
     }
@@ -1029,7 +1030,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
         // snapshots.
         transform.unzoom(documentElementRenderer->style().usedZoom());
 
-        Ref transformListValue = CSSTransformListValue::create(Style::createCSSValue(CSSValuePool::singleton(), documentElementRenderer->style(), transform));
+        Ref transformListValue = CSSTransformListValue::create(Style::createCSSValue(CSSValuePool::singleton(), protect(documentElementRenderer->style()), transform));
         protect(output.properties)->setProperty(CSSPropertyID::Transform, WTF::move(transformListValue));
     }
 

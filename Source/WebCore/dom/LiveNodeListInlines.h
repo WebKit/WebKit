@@ -95,37 +95,37 @@ CachedLiveNodeList<NodeListType, traversalType>::~CachedLiveNodeList()
 template <class NodeListType, CollectionTraversalType traversalType>
 unsigned CachedLiveNodeList<NodeListType, traversalType>::length() const
 {
-    return m_indexCache.nodeCount(nodeList());
+    return m_indexCache.nodeCount(uncheckedDowncast<NodeListType>(*this));
 }
 
 template <class NodeListType, CollectionTraversalType traversalType>
 Node* CachedLiveNodeList<NodeListType, traversalType>::item(unsigned offset) const
 {
-    return m_indexCache.nodeAt(nodeList(), offset);
+    return m_indexCache.nodeAt(uncheckedDowncast<NodeListType>(*this), offset);
 }
 
 template <class NodeListType, CollectionTraversalType traversalType>
 auto CachedLiveNodeList<NodeListType, traversalType>::collectionBegin() const -> Iterator
 {
-    return Traversal::begin(nodeList(), rootNode());
+    return Traversal::begin(uncheckedDowncast<NodeListType>(*this), protect(rootNode()));
 }
 
 template <class NodeListType, CollectionTraversalType traversalType>
 auto CachedLiveNodeList<NodeListType, traversalType>::collectionLast() const -> Iterator
 {
-    return Traversal::last(nodeList(), rootNode());
+    return Traversal::last(uncheckedDowncast<NodeListType>(*this), protect(rootNode()));
 }
 
 template <class NodeListType, CollectionTraversalType traversalType>
 void CachedLiveNodeList<NodeListType, traversalType>::collectionTraverseForward(Iterator& current, unsigned count, unsigned& traversedCount) const
 {
-    Traversal::traverseForward(nodeList(), current, count, traversedCount);
+    Traversal::traverseForward(uncheckedDowncast<NodeListType>(*this), current, count, traversedCount);
 }
 
 template <class NodeListType, CollectionTraversalType traversalType>
 void CachedLiveNodeList<NodeListType, traversalType>::collectionTraverseBackward(Iterator& current, unsigned count) const
 {
-    Traversal::traverseBackward(nodeList(), current, count);
+    Traversal::traverseBackward(uncheckedDowncast<NodeListType>(*this), current, count);
 }
 
 template <class NodeListType, CollectionTraversalType traversalType>
@@ -144,7 +144,7 @@ template <class NodeListType, CollectionTraversalType traversalType>
 void CachedLiveNodeList<NodeListType, traversalType>::invalidateCacheForDocument(Document& document) const
 {
     if (m_indexCache.hasValidCache()) {
-        document.unregisterNodeListForInvalidation(const_cast<NodeListType&>(nodeList()));
+        document.unregisterNodeListForInvalidation(const_cast<CachedLiveNodeList&>(*this));
         m_indexCache.invalidate();
     }
 }

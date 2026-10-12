@@ -43,44 +43,28 @@ StyleChangedAnimatablePropertiesGenerated.cpp
 [ macOS ] dom/AbortSignal.cpp
 [ macOS ] dom/ActiveDOMObject.cpp
 dom/Attr.cpp
-dom/BroadcastChannel.cpp
-dom/CollectionIndexCacheInlines.h
-dom/ComposedTreeIterator.h
-dom/ContainerNode.cpp
-dom/CurrentScriptIncrementer.h
+[ macOS ] dom/BroadcastChannel.cpp
+[ macOS ] dom/ComposedTreeIterator.h
+[ macOS ] dom/ContainerNode.cpp
 [ macOS ] dom/CustomElementDefaultARIA.cpp
 dom/Document.cpp
 dom/Element.cpp
-dom/ElementInternals.cpp
-dom/ElementIteratorInlines.h
 [ macOS ] dom/ElementTextDirection.cpp
-dom/EventPath.cpp
+[ macOS ] dom/EventPath.cpp
 [ macOS ] dom/EventSender.h
 [ macOS ] dom/EventTarget.cpp
 [ macOS ] dom/ExtensionStyleSheets.cpp
-dom/GCReachableRef.h
-dom/ImageOverlay.cpp
-dom/InlineStyleSheetOwner.cpp
-dom/LiveNodeListInlines.h
+[ macOS ] dom/InlineStyleSheetOwner.cpp
 [ macOS ] dom/MessageEvent.cpp
-dom/MouseRelatedEvent.cpp
-dom/MutationObserver.cpp
-dom/MutationObserverRegistration.cpp
-dom/NamedNodeMap.cpp
-dom/Node.cpp
-[ iOS ] dom/NodeRareData.h
-dom/ProcessingInstruction.cpp
+[ macOS ] dom/MutationObserver.cpp
 [ macOS ] dom/PseudoElement.cpp
-dom/Range.cpp
 [ macOS ] dom/ScriptElement.cpp
 [ macOS ] dom/ScriptExecutionContextInlines.h
 [ macOS ] dom/SecurityContext.cpp
 [ macOS ] dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 [ macOS ] dom/StyledElement.cpp
-dom/TreeScopeOrderedMap.cpp
-dom/TypedElementDescendantIteratorInlines.h
-dom/ViewTransition.cpp
+[ macOS ] dom/ViewTransition.cpp
 [ macOS ] editing/Editor.cpp
 [ macOS ] editing/mac/FrameSelectionMac.mm
 [ macOS ] fileapi/Blob.cpp

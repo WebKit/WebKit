@@ -775,7 +775,7 @@ History& LocalDOMWindow::history()
     return *m_history;
 }
 
-Navigation& LocalDOMWindow::navigation()
+SUPPRESS_NODELETE Navigation& LocalDOMWindow::navigation()
 {
     if (!m_navigation)
         m_navigation = Navigation::create(*this);

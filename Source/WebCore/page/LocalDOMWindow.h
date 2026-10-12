@@ -361,7 +361,7 @@ public:
 #endif
 
     // Navigation API
-    WEBCORE_EXPORT Navigation& navigation();
+    WEBCORE_EXPORT Navigation& NODELETE navigation();
 
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();

@@ -119,7 +119,7 @@ void PageGroup::captionPreferencesChanged()
     BackForwardCache::singleton().markPagesForCaptionPreferencesChanged();
 }
 
-CaptionUserPreferences& PageGroup::ensureCaptionPreferences()
+SUPPRESS_NODELETE CaptionUserPreferences& PageGroup::ensureCaptionPreferences()
 {
     if (!m_captionPreferences) {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

@@ -217,6 +217,18 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
     }
 }
 
+inline void Node::setTreeScopeRecursivelyToMatch(const Node& node)
+{
+    if (m_treeScope != &node.treeScope()) [[unlikely]]
+        setTreeScopeRecursively(protect(node.treeScope()));
+}
+
+inline void Node::setTreeScopeRecursivelyToDocument()
+{
+    if (m_treeScope != &document()) [[unlikely]]
+        setTreeScopeRecursively(protect(document()));
+}
+
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!isShadowRoot());

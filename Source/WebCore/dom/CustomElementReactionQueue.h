@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <WebCore/CustomElementFormValue.h>
 #include <WebCore/Element.h>
 #include <WebCore/GCReachableRef.h>
@@ -38,7 +39,6 @@
 
 namespace JSC {
 
-class JSGlobalObject;
 class CallFrame;
 
 }

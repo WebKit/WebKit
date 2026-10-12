@@ -62,7 +62,6 @@
 [ macOS ] dom/Element.cpp
 [ macOS ] dom/ElementInlines.h
 [ macOS ] dom/EventTarget.cpp
-[ macOS ] dom/LiveNodeList.h
 [ macOS ] dom/Node.cpp
 [ macOS ] dom/Node.h
 [ macOS ] dom/PositionIterator.cpp

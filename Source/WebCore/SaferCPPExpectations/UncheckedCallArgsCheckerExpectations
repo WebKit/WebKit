@@ -35,44 +35,26 @@ StyleBuilderGenerated.cpp
 [ macOS ] dom/ActiveDOMObject.cpp
 dom/Attr.cpp
 [ macOS ] dom/BroadcastChannel.cpp
-dom/CollectionIndexCacheInlines.h
-dom/ComposedTreeIterator.h
-dom/ContentVisibilityDocumentState.cpp
-dom/CurrentScriptIncrementer.h
-[ iOS ] dom/DeviceMotionController.cpp
-[ iOS ] dom/DeviceOrientationController.cpp
+[ macOS ] dom/ComposedTreeIterator.h
 dom/Document.cpp
-dom/DocumentFullscreen.cpp
 dom/Element.cpp
-dom/ElementInternals.cpp
-dom/ElementIteratorInlines.h
 [ macOS ] dom/ElementTextDirection.cpp
-dom/EventLoop.cpp
+[ macOS ] dom/EventLoop.cpp
 [ macOS ] dom/EventPath.cpp
 [ macOS ] dom/EventSender.h
 [ macOS ] dom/ExtensionStyleSheets.cpp
-dom/IdTargetObserver.cpp
-dom/InlineStyleSheetOwner.cpp
-dom/LiveNodeListInlines.h
-dom/MouseRelatedEvent.cpp
-dom/MutationObserver.cpp
-dom/MutationObserverRegistration.cpp
-dom/NamedNodeMap.cpp
-dom/Node.cpp
-[ iOS ] dom/NodeRareData.h
+[ macOS ] dom/InlineStyleSheetOwner.cpp
+[ macOS ] dom/MutationObserver.cpp
 dom/PendingScript.cpp
-dom/Position.cpp
 [ macOS ] dom/ProcessingInstruction.cpp
 [ macOS ] dom/PseudoElement.cpp
-dom/Range.cpp
-dom/ScriptElement.cpp
+[ macOS ] dom/Range.cpp
+[ macOS ] dom/ScriptElement.cpp
 [ macOS ] dom/ScriptExecutionContextInlines.h
 [ macOS ] dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 [ macOS ] dom/StyledElement.cpp
-dom/TreeScopeOrderedMap.cpp
-dom/TypedElementDescendantIteratorInlines.h
-dom/ViewTransition.cpp
+[ macOS ] dom/ViewTransition.cpp
 [ macOS ] editing/Editor.cpp
 [ macOS ] editing/EditorCommand.cpp
 [ macOS ] editing/FrameSelection.cpp

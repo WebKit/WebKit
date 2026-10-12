@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/EventTargetInlines.h>
 #include <WebCore/Node.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/RawPtrTraits.h>
@@ -61,13 +62,13 @@ public:
     GCReachableRef(T& object)
         : m_ptr(&object)
     {
-        GCReachableRefMap::add(*m_ptr);
+        GCReachableRefMap::add(object);
     }
 
     ~GCReachableRef()
     {
-        if (m_ptr)
-            GCReachableRefMap::remove(*m_ptr);
+        if (RefPtr<EventTarget> target = WTF::move(m_ptr))
+            GCReachableRefMap::remove(*target);
     }
 
     GCReachableRef(GCReachableRef&& other)

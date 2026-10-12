@@ -46,7 +46,7 @@ public:
     virtual HTMLDocumentParser* asHTMLDocumentParser() { return nullptr; }
 
     // http://www.whatwg.org/specs/web-apps/current-work/#insertion-point
-    virtual bool hasInsertionPoint() { return true; }
+    virtual bool NODELETE hasInsertionPoint() { return true; }
 
     // insert is used by document.write.
     virtual void insert(SegmentedString&&) = 0;

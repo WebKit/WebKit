@@ -188,7 +188,7 @@ void ElementInternals::setElementsArrayAttribute(const QualifiedName& name, std:
 
     protect(element->customElementDefaultARIA())->setElementsForAttribute(name, WTF::move(value));
 
-    if (CheckedPtr cache = element->document().existingAXObjectCache())
+    if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(*element, name, oldValue, computeValueForAttribute(*element, name));
 }
 

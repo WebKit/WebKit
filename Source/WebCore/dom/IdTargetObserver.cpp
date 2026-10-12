@@ -37,7 +37,7 @@ IdTargetObserver::IdTargetObserver(IdTargetObserverRegistry& registry, const Ato
     : m_registry(&registry)
     , m_id(id)
 {
-    m_registry->addObserver(m_id, *this);
+    registry.addObserver(m_id, *this);
 }
 
 IdTargetObserver::~IdTargetObserver()

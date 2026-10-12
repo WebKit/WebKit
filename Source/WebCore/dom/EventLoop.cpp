@@ -215,7 +215,7 @@ EventLoopTimerHandle EventLoop::scheduleTask(Seconds timeout, TimerAlignment* al
         timer->suspend();
 
     ASSERT(timer->group());
-    timer->group()->didAddTimer(timer);
+    protect(timer->group())->didAddTimer(timer);
 
     EventLoopTimerHandle handle { timer };
     m_scheduledTasks.add(timer);
@@ -241,7 +241,7 @@ EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Secon
         timer->suspend();
 
     ASSERT(timer->group());
-    timer->group()->didAddTimer(timer);
+    protect(timer->group())->didAddTimer(timer);
 
     EventLoopTimerHandle handle { timer };
     m_repeatingTasks.add(timer);

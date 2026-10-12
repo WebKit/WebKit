@@ -123,7 +123,7 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseAnces
     ASSERT(m_current);
     ASSERT(m_current != m_root);
     ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = findElementAncestorOfType<ElementType>(*m_current);
+    m_current = findElementAncestorOfType<ElementType>(*protect(m_current));
 #if ASSERT_ENABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)

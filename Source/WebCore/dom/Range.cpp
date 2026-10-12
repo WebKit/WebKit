@@ -1209,8 +1209,9 @@ RefPtr<Range> createLiveRange(const std::optional<SimpleRange>& range)
 void Range::visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
     Locker locker { m_boundaryPointLock };
-    addWebCoreOpaqueRoot(visitor, m_start.container());
-    addWebCoreOpaqueRoot(visitor, m_end.container());
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_start.container());
+    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_end.container());
 }
 
 } // namespace WebCore

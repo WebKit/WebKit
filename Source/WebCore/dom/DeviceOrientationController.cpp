@@ -58,13 +58,13 @@ void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientationDa
 
 void DeviceOrientationController::suspendUpdates()
 {
-    m_client->stopUpdating();
+    protect(m_client)->stopUpdating();
 }
 
 void DeviceOrientationController::resumeUpdates()
 {
     if (hasListeners())
-        m_client->startUpdating();
+        protect(m_client)->startUpdating();
 }
 
 #else

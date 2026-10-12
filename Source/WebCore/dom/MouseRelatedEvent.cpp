@@ -192,7 +192,7 @@ float MouseRelatedEvent::documentToAbsoluteScaleFactor() const
 
 void MouseRelatedEvent::computePageLocation()
 {
-    m_absoluteLocation = pagePointToAbsolutePoint(m_pageLocation, frameViewFromWindowProxy(protect(view())));
+    m_absoluteLocation = pagePointToAbsolutePoint(m_pageLocation, protect(frameViewFromWindowProxy(protect(view()))));
 }
 
 void MouseRelatedEvent::receivedTarget()
