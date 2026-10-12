@@ -1299,7 +1299,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         return true;
     }
 
-#if ENABLE(MODEL_ELEMENT) && !ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(MODEL_ELEMENT) && ENABLE(MODEL_PROCESS)
     if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(state.source); modelElement && m_dragSourceAction.contains(DragSourceAction::Model)) {
         dragImage = DragImage { createDragImageForNode(src, *modelElement) };
 

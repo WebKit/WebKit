@@ -30,7 +30,7 @@
 namespace WebCore {
 class PlatformCALayerClient;
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 class ModelContext;
 #endif
 }
@@ -44,7 +44,7 @@ class PlatformCALayerRemoteCustom final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     static Ref<PlatformCALayerRemote> create(Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 #endif
 #if HAVE(AVKIT)
@@ -66,7 +66,7 @@ private:
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, LayerHostingContextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemoteCustom(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 #endif
 
@@ -82,7 +82,7 @@ private:
     bool m_hasVideo { false };
     const std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     const RetainPtr<PlatformLayer> m_platformLayer;
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     const RefPtr<WebCore::ModelContext> m_modelContext;
 #endif
 };

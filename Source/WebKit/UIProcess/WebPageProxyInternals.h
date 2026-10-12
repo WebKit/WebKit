@@ -113,7 +113,7 @@
 #include "InteractionInformationRequest.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
 #include "PortalPresentationManagerProxy.h"
 #endif
 
@@ -438,7 +438,7 @@ public:
     std::optional<WebCore::RemoteUserInputEventData> acceptsFirstMouseRemoteUserInputEventData;
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
     RefPtr<PortalPresentationManagerProxy> portalPresentationManagerProxy;
 #endif
 

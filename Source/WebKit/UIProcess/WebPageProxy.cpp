@@ -497,7 +497,7 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
 #include "PortalPresentationManagerProxy.h"
 #endif
 
@@ -1813,7 +1813,7 @@ void WebPageProxy::didAttachToRunningProcess()
     internals().xrSystem = PlatformXRSystem::create(*this);
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
     internals().portalPresentationManagerProxy = PortalPresentationManagerProxy::create(*this);
 #endif
 }

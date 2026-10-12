@@ -80,7 +80,13 @@ RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::
         return nullptr;
     }
 #endif
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    if (page->corePage() && page->corePage()->settings().modelProcessEnabled()) {
+        if (page->corePage()->settings().unifiedModelRenderingEnabled())
+            return WebModelPlayer::create(*page->corePage(), client);
+        return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(page, client);
+    }
+#elif ENABLE(MODEL_PROCESS)
     if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
         return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(page, client);
 #elif ENABLE(GPU_PROCESS_MODEL)
@@ -96,14 +102,18 @@ RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::
 
 void WebModelPlayerProvider::deleteModelPlayer(WebCore::ModelPlayer& modelPlayer)
 {
+#if ENABLE(GPU_PROCESS_MODEL)
+    if (RefPtr webModelPlayer = dynamicDowncast<WebModelPlayer>(modelPlayer)) {
+        webModelPlayer->releaseModelResources();
+        return;
+    }
+#endif
 #if ENABLE(MODEL_PROCESS)
     Ref page = m_page.get();
     if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
         WebProcess::singleton().modelProcessModelPlayerManager().deleteModelProcessModelPlayer(modelPlayer);
-#elif ENABLE(GPU_PROCESS_MODEL)
-    if (RefPtr webModelPlayer = dynamicDowncast<WebModelPlayer>(modelPlayer))
-        webModelPlayer->releaseModelResources();
-#else
+#endif
+#if !ENABLE(GPU_PROCESS_MODEL) && !ENABLE(MODEL_PROCESS)
     UNUSED_PARAM(modelPlayer);
 #endif
 }

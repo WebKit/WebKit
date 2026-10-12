@@ -358,7 +358,7 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
     return PlatformCALayerCocoa::create(platformLayer, owner);
 }
 
-#if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(MODEL_CONTEXT)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<ModelContext>, PlatformCALayerClient* owner)
 {
     ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayer should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
@@ -1481,7 +1481,17 @@ void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifi
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
-#if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
+static void configureLayerForDelegatedDisplay(PlatformCALayer& contentsLayer, GraphicsLayerContentsDisplayDelegate& delegate)
+{
+    contentsLayer.setBackingStoreAttached(true);
+    contentsLayer.setAcceleratesDrawing(true);
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    contentsLayer.setTonemappingEnabled(true);
+#endif
+    delegate.prepareToDelegateDisplay(contentsLayer);
+}
+
+#if ENABLE(MODEL_CONTEXT)
 void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, ContentsLayerPurpose purpose)
 {
     if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == modelContext->modelContentsLayerHostingContextIdentifier())
@@ -1489,7 +1499,8 @@ void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, 
 
     m_contentsLayer = createPlatformCALayer(modelContext, this);
     m_contentsLayerPurpose = purpose;
-    m_contentsDisplayDelegate = nullptr;
+    if (RefPtr contentsDisplayDelegate = m_contentsDisplayDelegate)
+        configureLayerForDelegatedDisplay(Ref { *m_contentsLayer }, *contentsDisplayDelegate);
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
@@ -1547,12 +1558,7 @@ void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDis
         m_contentsLayerPurpose = purpose;
         // Currently delegated display is only useful when delegatee calls setContents, so set the
         // backing store settings accordingly.
-        contentsLayer->setBackingStoreAttached(true);
-        contentsLayer->setAcceleratesDrawing(true);
-#if HAVE(SUPPORT_HDR_DISPLAY)
-        contentsLayer->setTonemappingEnabled(true);
-#endif
-        delegate->prepareToDelegateDisplay(contentsLayer);
+        configureLayerForDelegatedDisplay(contentsLayer, *delegate);
     }
 
     noteSublayersChanged();

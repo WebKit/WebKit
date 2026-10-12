@@ -45,6 +45,7 @@
 #import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #import <WebCore/HTMLModelElement.h>
 #import <WebCore/ImageBuffer.h>
+#import <WebCore/ModelContext.h>
 #import <WebCore/ModelPlayerAnimationState.h>
 #import <WebCore/ModelPlayerGraphicsLayerConfiguration.h>
 #import <WebCore/ModelPlayerTransformState.h>
@@ -498,6 +499,20 @@ void WebModelPlayer::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLaye
 {
     m_graphicsLayer = graphicsLayer;
     graphicsLayer.setContentsDisplayDelegate(contentsDisplayDelegate(), WebCore::GraphicsLayer::ContentsLayerPurpose::Canvas);
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=326862
+    if (auto modelLayerIdentifier = graphicsLayer.primaryLayerID()) {
+        graphicsLayer.setContentsToModelContext(
+            WebCore::ModelContext::create(
+                *modelLayerIdentifier,
+                m_layerHostingContextIdentifier,
+                configuration.contentSize,
+                configuration.contentOrigin,
+                configuration.hasPortal ? WebCore::ModelContextDisablePortal::No : WebCore::ModelContextDisablePortal::Yes,
+                configuration.backgroundColor),
+            WebCore::GraphicsLayer::ContentsLayerPurpose::HostedModel);
+    }
+#endif
 }
 
 void WebModelPlayer::adoptContentsDisplayDelegateFrom(WebCore::ModelPlayer& previousPlayer)
@@ -512,6 +527,10 @@ void WebModelPlayer::adoptContentsDisplayDelegateFrom(WebCore::ModelPlayer& prev
 
     delegate->setModelPlayer(*this);
     m_contentsDisplayDelegate = WTF::move(delegate);
+
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    m_layerHostingContextIdentifier = webPrevious->m_layerHostingContextIdentifier;
+#endif
 }
 
 const MachSendRight* WebModelPlayer::displayBuffer() const

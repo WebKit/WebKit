@@ -174,7 +174,7 @@ public:
 #endif
     WEBCORE_EXPORT void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) override;
-#if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(MODEL_CONTEXT)
     WEBCORE_EXPORT void setContentsToModelContext(Ref<ModelContext>, ContentsLayerPurpose) override;
 #endif
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL)
@@ -321,7 +321,7 @@ private:
 
     virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
     virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
-#if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(MODEL_CONTEXT)
     virtual Ref<PlatformCALayer> createPlatformCALayer(Ref<ModelContext>, PlatformCALayerClient*);
 #endif
 #if ENABLE(MODEL_ELEMENT)

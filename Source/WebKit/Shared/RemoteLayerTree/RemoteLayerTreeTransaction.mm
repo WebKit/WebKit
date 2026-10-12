@@ -41,7 +41,7 @@
 #import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #import <WebCore/ModelContext.h>
 #endif
 
@@ -381,7 +381,7 @@ std::optional<WebCore::LayerHostingContextIdentifier> RemoteLayerTreeTransaction
 
 uint32_t RemoteLayerTreeTransaction::LayerCreationProperties::hostingContextID() const
 {
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     if (auto* modelContext = std::get_if<Ref<WebCore::ModelContext>>(&additionalData))
         return (*modelContext)->modelContentsLayerHostingContextIdentifier().toUInt64();
 #endif
@@ -414,7 +414,7 @@ float RemoteLayerTreeTransaction::LayerCreationProperties::hostingDeviceScaleFac
     return 1;
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 RefPtr<WebCore::ModelContext> RemoteLayerTreeTransaction::LayerCreationProperties::modelContext() const
 {
     auto* modelContext = std::get_if<Ref<WebCore::ModelContext>>(&additionalData);

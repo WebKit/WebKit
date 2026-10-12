@@ -632,7 +632,7 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
 class PortalPresentationManagerProxy;
 #endif
 
@@ -3076,7 +3076,7 @@ public:
     void setPresentingApplicationAuditToken(const audit_token_t&);
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
     RefPtr<PortalPresentationManagerProxy> portalPresentationManagerProxy() const;
 #endif
 
