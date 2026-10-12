@@ -1219,7 +1219,7 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
                 LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
                 for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
                     if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance))
-                        map.add(CSSValueKey { std::to_underlying(cssValueSystemColorInformation.cssValueID), useDarkAppearance, useElevatedUserInterfaceLevel }, WTF::move(*color));
+                        map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTF::move(*color));
                 }
             }
         }
@@ -1264,7 +1264,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
         const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
         const bool useElevatedUserInterfaceLevel = options.contains(StyleColorOptions::UseElevatedUserInterfaceLevel);
         if (!globalCSSValueToSystemColorMap().isEmpty()) {
-            auto it = globalCSSValueToSystemColorMap().find(CSSValueKey { std::to_underlying(cssValueID), useDarkAppearance, useElevatedUserInterfaceLevel });
+            auto it = globalCSSValueToSystemColorMap().find(CSSValueKey { cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel });
             if (it == globalCSSValueToSystemColorMap().end())
                 return RenderTheme::systemColor(cssValueID, options);
             return it->value.semanticColor();

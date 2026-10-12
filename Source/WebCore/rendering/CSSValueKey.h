@@ -36,14 +36,14 @@ struct CSSValueKey {
 
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
-    unsigned cssValueID;
+    CSSValueID cssValueID;
     bool useDarkAppearance;
     bool useElevatedUserInterfaceLevel;
 };
 
 inline unsigned CSSValueKey::hash() const
 {
-    return cssValueID;
+    return std::to_underlying(cssValueID);
 }
 
 } // namespace WebCore
@@ -51,9 +51,9 @@ inline unsigned CSSValueKey::hash() const
 namespace WTF {
 
 template<> struct HashTraits<WebCore::CSSValueKey> : GenericHashTraits<WebCore::CSSValueKey> {
-    static WebCore::CSSValueKey emptyValue() { return WebCore::CSSValueKey { std::to_underlying(WebCore::CSSValueID::Invalid), false, false }; }
-    static void constructDeletedValue(WebCore::CSSValueKey& slot) { new (NotNull, &slot) WebCore::CSSValueKey { std::to_underlying(WebCore::CSSValueID::Invalid), true, true }; }
-    static bool isDeletedValue(const WebCore::CSSValueKey& slot) { return slot.cssValueID == std::to_underlying(WebCore::CSSValueID::Invalid) && slot.useDarkAppearance && slot.useElevatedUserInterfaceLevel; }
+    static WebCore::CSSValueKey emptyValue() { return WebCore::CSSValueKey { WebCore::CSSValueID::Invalid, false, false }; }
+    static void constructDeletedValue(WebCore::CSSValueKey& slot) { new (NotNull, &slot) WebCore::CSSValueKey { WebCore::CSSValueID::Invalid, true, true }; }
+    static bool isDeletedValue(const WebCore::CSSValueKey& slot) { return slot.cssValueID == WebCore::CSSValueID::Invalid && slot.useDarkAppearance && slot.useElevatedUserInterfaceLevel; }
 };
 
 } // namespace WTF
