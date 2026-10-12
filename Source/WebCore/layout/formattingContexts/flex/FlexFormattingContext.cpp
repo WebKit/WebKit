@@ -897,7 +897,7 @@ LayoutUnit FlexFormattingContext::computeUsedNonAutoMinMainSize(const FlexLayout
 
     // We must never return a min size smaller than the min preferred size for tables.
     if (flexLayoutItem.isTable() && flexLayoutItem.mainAxisIsInlineAxis)
-        minExtent = std::max(minExtent, integrationUtils().minContentMainAxisContributionForFlexItem(flexLayoutItem));
+        minExtent = std::max(minExtent, integrationUtils().minContentMainAxisExtentForFlexItem(flexLayoutItem));
     return minExtent;
 }
 
