@@ -65,6 +65,7 @@ struct SharedVideoFrame {
     bool mirrored { false };
     WebCore::VideoFrameRotation rotation { };
     WebCore::PlatformVideoColorSpace colorSpace;
+    bool shouldIgnoreAlpha { false };
     using Buffer = Variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>;
     Buffer buffer;
 };

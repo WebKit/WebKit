@@ -124,7 +124,7 @@ void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFram
 {
     auto size = videoFrame.presentationSize();
     WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
-    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), { }, blackFrameSize };
+    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), { }, false, blackFrameSize };
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTF::move(sharedVideoFrame) }, identifier());
 }
 

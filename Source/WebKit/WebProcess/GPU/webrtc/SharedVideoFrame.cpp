@@ -113,7 +113,7 @@ std::optional<SharedVideoFrame> SharedVideoFrameWriter::write(const VideoFrame& 
     auto buffer = writeBuffer(frame, newSemaphoreCallback, newMemoryCallback);
     if (!buffer)
         return { };
-    return SharedVideoFrame { frame.presentationTime(), frame.isMirrored(), frame.rotation(), frame.colorSpace(), WTF::move(*buffer) };
+    return SharedVideoFrame { frame.presentationTime(), frame.isMirrored(), frame.rotation(), frame.colorSpace(), frame.shouldIgnoreAlpha(), WTF::move(*buffer) };
 }
 
 std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(const VideoFrame& frame, NOESCAPE const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, NOESCAPE const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
@@ -297,7 +297,7 @@ RefPtr<VideoFrame> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoFr
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(sharedVideoFrame.time, sharedVideoFrame.mirrored, sharedVideoFrame.rotation, WTF::move(pixelBuffer), WTF::move(sharedVideoFrame.colorSpace));
+    return VideoFrameCV::create(sharedVideoFrame.time, sharedVideoFrame.mirrored, sharedVideoFrame.rotation, WTF::move(pixelBuffer), WTF::move(sharedVideoFrame.colorSpace), sharedVideoFrame.shouldIgnoreAlpha);
 }
 
 CVPixelBufferPoolRef SharedVideoFrameReader::pixelBufferPool(const SharedVideoFrameInfo& info)

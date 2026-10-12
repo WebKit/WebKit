@@ -43,11 +43,12 @@
 
 namespace WebCore {
 
-VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
+VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace, bool shouldIgnoreAlpha)
     : m_presentationTime(presentationTime)
     , m_isMirrored(isMirrored)
     , m_rotation(rotation)
     , m_colorSpace(WTF::move(colorSpace))
+    , m_shouldIgnoreAlpha(shouldIgnoreAlpha)
 {
 }
 
@@ -103,7 +104,19 @@ RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t>, size_t, size
     return nullptr;
 }
 
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
 RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;

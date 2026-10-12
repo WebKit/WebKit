@@ -142,7 +142,7 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+static RetainPtr<CVPixelBufferRef> createRGBABuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane)
 {
     CVPixelBufferRef rawPixelBuffer = nullptr;
 
@@ -167,10 +167,29 @@ RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t 
     // Permutation will not fail as long as the provided arguments are valid.
     ASSERT_UNUSED(error, error == kvImageNoError);
 
+    return pixelBuffer;
+}
+
+RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createRGBABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
     return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createRGBABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
+    bool shouldIgnoreAlpha = true;
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), shouldIgnoreAlpha);
+}
+
+static RetainPtr<CVPixelBufferRef> createBGRABuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane)
 {
     CVPixelBufferRef rawPixelBuffer = nullptr;
 
@@ -193,7 +212,26 @@ RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t 
     // Copy will not fail as long as the provided arguments are valid.
     ASSERT_UNUSED(error, error == kvImageNoError);
 
+    return pixelBuffer;
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createBGRABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
     return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createBGRABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
+    bool shouldIgnoreAlpha = true;
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), shouldIgnoreAlpha);
 }
 
 RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, PlatformVideoColorSpace&& colorSpace)
@@ -504,7 +542,7 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     } else
         cgColorSpace = createCGColorSpaceForCVPixelBuffer(source.get());
 
-    return NativeImage::create(WTF::move(bgraSource), kCGImageAlphaFirst, cgColorSpace.get());
+    return NativeImage::create(WTF::move(bgraSource), m_shouldIgnoreAlpha ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaFirst, cgColorSpace.get());
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)
@@ -517,11 +555,11 @@ Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMi
     return VideoFrameCV::create(PAL::toMediaTime(timeStamp), isMirrored, rotation, pixelBuffer.get());
 }
 
-Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
+Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace, bool shouldIgnoreAlpha)
 {
     ASSERT(pixelBuffer);
     attachColorSpaceToPixelBuffer(colorSpace, pixelBuffer.get());
-    return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace)));
+    return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), shouldIgnoreAlpha));
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
@@ -556,8 +594,8 @@ RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuf
     return RefPtr { VideoFrameCV::create({ }, false, Rotation::None, WTF::move(cvPixelBuffer), WTF::move(colorSpace)) };
 }
 
-VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
-    : VideoFrame(presentationTime, isMirrored, rotation, WTF::move(colorSpace))
+VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace, bool shouldIgnoreAlpha)
+    : VideoFrame(presentationTime, isMirrored, rotation, WTF::move(colorSpace), shouldIgnoreAlpha)
     , m_pixelBuffer(WTF::move(pixelBuffer))
 {
 }
@@ -599,7 +637,7 @@ ImageOrientation VideoFrameCV::orientation() const
 
 Ref<VideoFrame> VideoFrameCV::clone()
 {
-    return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }));
+    return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }, shouldIgnoreAlpha()));
 }
 
 }

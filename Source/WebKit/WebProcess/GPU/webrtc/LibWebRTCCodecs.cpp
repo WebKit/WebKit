@@ -792,10 +792,10 @@ int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uin
     return 0;
 }
 
-template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::encodeFrameInternal(Encoder& encoder, const Frame& frame, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation rotation, MediaTime mediaTime, int64_t timestamp, std::optional<uint64_t> duration)
+template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::encodeFrameInternal(Encoder& encoder, const Frame& frame, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation rotation, MediaTime mediaTime, int64_t timestamp, std::optional<uint64_t> duration, bool shouldIgnoreAlpha)
 {
     Locker locker { m_encodersConnectionLock };
-    return encodeFrameInternalWithLock(encoder, frame, shouldEncodeAsKeyFrame, rotation, mediaTime, timestamp, duration);
+    return encodeFrameInternalWithLock(encoder, frame, shouldEncodeAsKeyFrame, rotation, mediaTime, timestamp, duration, shouldIgnoreAlpha);
 }
 
 static WebCore::PlatformVideoColorSpace frameColorSpace(const webrtc::VideoFrame& frame)
@@ -808,7 +808,7 @@ static WebCore::PlatformVideoColorSpace frameColorSpace(const WebCore::VideoFram
     return frame.colorSpace();
 }
 
-template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::encodeFrameInternalWithLock(Encoder& encoder, const Frame& frame, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation rotation, MediaTime mediaTime, int64_t timestamp, std::optional<uint64_t> duration)
+template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::encodeFrameInternalWithLock(Encoder& encoder, const Frame& frame, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation rotation, MediaTime mediaTime, int64_t timestamp, std::optional<uint64_t> duration, bool shouldIgnoreAlpha)
 {
     RefPtr connection = encoderConnection(encoder);
     ASSERT(connection);
@@ -823,7 +823,7 @@ template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::
     if (!buffer)
         return nullptr;
 
-    SharedVideoFrame sharedVideoFrame { mediaTime, false, rotation, frameColorSpace(frame), WTF::move(*buffer) };
+    SharedVideoFrame sharedVideoFrame { mediaTime, false, rotation, frameColorSpace(frame), shouldIgnoreAlpha, WTF::move(*buffer) };
     auto promise = connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, WTF::move(sharedVideoFrame), timestamp, duration, shouldEncodeAsKeyFrame });
     return promise->whenSettled(workQueue(), [] (auto&& result) mutable {
         if (!result)
@@ -851,7 +851,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
 
 Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::encodeFrame(Encoder& encoder, const WebCore::VideoFrame& frame, int64_t timestamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame)
 {
-    auto promise = encodeFrameInternal(encoder, frame, shouldEncodeAsKeyFrame, frame.rotation(), frame.presentationTime(), timestamp, duration);
+    auto promise = encodeFrameInternal(encoder, frame, shouldEncodeAsKeyFrame, frame.rotation(), frame.presentationTime(), timestamp, duration, frame.shouldIgnoreAlpha());
     return promise ? promise.releaseNonNull() : FramePromise::createAndReject("Encoding task did not complete"_s);
 }
 

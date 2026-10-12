@@ -66,9 +66,9 @@ public:
         std::optional<PlatformVideoColorSpace> colorSpace;
     };
 
-    static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&& = { });
+    static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&& = { }, bool shouldIgnoreAlpha = false);
 
-    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, std::optional<CreateOptions> = std::nullopt);
+    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, std::optional<CreateOptions> = std::nullopt, bool shouldIgnoreAlpha = false);
 
     static RefPtr<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, const IntSize& destinationSize, double frameRate, const CreateOptions&, PlatformVideoColorSpace&& = { });
 
@@ -121,8 +121,8 @@ public:
     GRefPtr<GstSample> convert(GstVideoFormat, const IntSize&, std::optional<PlatformVideoColorSpace> = std::nullopt);
 
 private:
-    VideoFrameGStreamer(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&&);
-    VideoFrameGStreamer(const GRefPtr<GstSample>&, const CreateOptions&, PlatformVideoColorSpace&&);
+    VideoFrameGStreamer(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&&, bool shouldIgnoreAlpha);
+    VideoFrameGStreamer(const GRefPtr<GstSample>&, const CreateOptions&, PlatformVideoColorSpace&&, bool shouldIgnoreAlpha);
 
     bool isGStreamer() const final { return true; }
     Ref<VideoFrame> clone() final;
