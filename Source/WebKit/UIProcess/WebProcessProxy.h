@@ -688,8 +688,11 @@ public:
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }
     bool isEligibleForWebProcessCache() const { return m_isEligibleForWebProcessCache; }
 
-    void setCOOPCacheOrigin(const WebCore::SecurityOriginData& origin) { m_coopCacheOrigin = origin; }
+    void setCOOPCacheOrigin(const WebCore::SecurityOriginData&);
     const std::optional<WebCore::SecurityOriginData>& coopCacheOrigin() const LIFETIME_BOUND { return m_coopCacheOrigin; }
+
+    void markCOOPCacheOriginAsUnconfirmed();
+    bool isCOOPCacheOriginUnconfirmed() const { return m_isCOOPCacheOriginUnconfirmed; }
 
     void incrementFrameProcessCount() { ++m_frameProcessCount; }
     void decrementFrameProcessCount();
@@ -932,6 +935,7 @@ private:
     bool m_isInProcessCache { false };
     bool m_isEligibleForWebProcessCache { true };
     std::optional<WebCore::SecurityOriginData> m_coopCacheOrigin;
+    bool m_isCOOPCacheOriginUnconfirmed { false };
     bool m_isShuttingDown { false };
     bool m_isRunningProcess { false };
 
