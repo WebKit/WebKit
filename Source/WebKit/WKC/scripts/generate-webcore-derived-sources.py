@@ -282,6 +282,7 @@ def main() -> int:
     main_idl_relatives = (
         parse_cmake_list(cmake_source, "WebCore_NON_SVG_IDL_FILES")
         + parse_cmake_list(cmake_source, "WebCore_SVG_IDL_FILES")
+        + parse_cmake_list(cmake_source, "WebCore_IDL_FILES")
     )
     main_idls = [WEBCORE / item for item in dict.fromkeys(main_idl_relatives)]
     missing = [path for path in main_idls if not path.is_file()]
