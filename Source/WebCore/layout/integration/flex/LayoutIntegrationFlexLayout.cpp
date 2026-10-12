@@ -53,14 +53,14 @@ void FlexLayout::prepareOutOfFlowBoxForPositionedLayout(RenderBox& outOfFlowBox)
     outOfFlowBox.containingBlock()->addOutOfFlowBox(outOfFlowBox);
     CheckedPtr layer = outOfFlowBox.layer();
     FlexFormattingUtils utils { flexBox() };
-    LayoutUnit staticInlinePosition = utils.flowAwareBorderStart() + utils.flowAwarePaddingStart();
+    LayoutUnit staticInlinePosition = utils.flowAwareBorderAndPaddingStart();
     if (layer->staticInlinePosition() != staticInlinePosition) {
         layer->setStaticInlinePosition(staticInlinePosition);
         if (outOfFlowBox.style().hasStaticInlinePosition(flexBox().writingMode().isHorizontal()))
             outOfFlowBox.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     }
 
-    LayoutUnit staticBlockPosition = utils.flowAwareBorderBefore() + utils.flowAwarePaddingBefore();
+    LayoutUnit staticBlockPosition = utils.flowAwareBorderAndPaddingBefore();
     if (layer->staticBlockPosition() != staticBlockPosition) {
         layer->setStaticBlockPosition(staticBlockPosition);
         if (outOfFlowBox.style().hasStaticBlockPosition(flexBox().writingMode().isHorizontal()))
@@ -82,9 +82,9 @@ FlexLayoutConstraints FlexLayout::flexLayoutConstraints() const
         .isColumnOrRowReverse = utils.isColumnOrRowReverse(),
         .isLeftToRightFlow = utils.isLeftToRightFlow(),
         .crossAxisDirection = utils.crossAxisDirection(),
-        .flowAwareBorderAndPaddingStart = utils.flowAwareBorderStart() + utils.flowAwarePaddingStart(),
-        .flowAwareBorderAndPaddingEnd = utils.flowAwareBorderEnd() + utils.flowAwarePaddingEnd(),
-        .flowAwareBorderAndPaddingBefore = utils.flowAwareBorderBefore() + utils.flowAwarePaddingBefore(),
+        .flowAwareBorderAndPaddingStart = utils.flowAwareBorderAndPaddingStart(),
+        .flowAwareBorderAndPaddingEnd = utils.flowAwareBorderAndPaddingEnd(),
+        .flowAwareBorderAndPaddingBefore = utils.flowAwareBorderAndPaddingBefore(),
         .mainAxisAvailableSpace = mainAxisAvailableSpace(),
         .mainAxisSizeForLengthResolution = FlexFormattingUtils::isColumnFlow(flexBox()) ? flexBox().availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) : flexBox().contentBoxLogicalWidth(),
         .mainAxisBorderBoxExtent = utils.mainAxisExtent(),

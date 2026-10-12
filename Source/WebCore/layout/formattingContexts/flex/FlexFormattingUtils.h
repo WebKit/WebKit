@@ -59,12 +59,9 @@ class FlexFormattingUtils {
 public:
     FlexFormattingUtils(const RenderFlexibleBox&);
 
-    LayoutUnit flowAwareBorderStart() const;
-    LayoutUnit flowAwareBorderEnd() const;
-    LayoutUnit flowAwareBorderBefore() const;
-    LayoutUnit flowAwarePaddingStart() const;
-    LayoutUnit flowAwarePaddingEnd() const;
-    LayoutUnit flowAwarePaddingBefore() const;
+    LayoutUnit flowAwareBorderAndPaddingStart() const;
+    LayoutUnit flowAwareBorderAndPaddingEnd() const;
+    LayoutUnit flowAwareBorderAndPaddingBefore() const;
 
     LayoutUnit flowAwareMarginStartForFlexItem(const FlexLayoutItem&) const;
     LayoutUnit flowAwareMarginEndForFlexItem(const FlexLayoutItem&) const;
