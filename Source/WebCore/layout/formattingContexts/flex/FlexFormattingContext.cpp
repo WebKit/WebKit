@@ -707,22 +707,20 @@ LayoutUnit FlexFormattingContext::placeFlexItems(LayoutUnit crossAxisOffset, std
     // 9.5. (#12) Position the items along the main axis: first give any positive free space to main-axis auto
     // margins, then place each item per justify-content (the initial offset plus the spacing between items).
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(flexLayoutItems, availableFreeSpace);
+    auto resolvedJustifyContent = m_constraints.style->justifyContent().resolve(FlexFormattingUtils::contentAlignmentNormalBehavior());
+    auto justifyContentPosition = FlexFormattingUtils::resolveLeftRightAlignment(resolvedJustifyContent, m_constraints.style, m_constraints.isColumnOrRowReverse);
+    auto distribution = resolvedJustifyContent.distribution();
+    auto safety = resolvedJustifyContent.overflow();
     LayoutUnit mainAxisOffset = m_constraints.flowAwareBorderInline.first + m_constraints.flowAwarePaddingInline.first;
-    mainAxisOffset += FlexFormattingUtils::initialJustifyContentOffset(m_constraints.style, availableFreeSpace, flexLayoutItems.size(), m_constraints.isColumnOrRowReverse);
+    mainAxisOffset += FlexFormattingUtils::initialContentAlignmentOffset(availableFreeSpace, justifyContentPosition, distribution, safety, flexLayoutItems.size(), m_constraints.isColumnOrRowReverse);
     if (m_constraints.style->flexDirection() == FlexDirection::RowReverse)
         mainAxisOffset += m_constraints.mainAxisScrollbarExtent;
 
     if (availableFreeSpace < 0) {
-        auto resolvedJustifyContent = m_constraints.style->justifyContent().resolve(FlexFormattingUtils::contentAlignmentNormalBehavior());
-        auto distribution = resolvedJustifyContent.distribution();
-        auto safety = resolvedJustifyContent.overflow();
-        auto position = FlexFormattingUtils::resolveLeftRightAlignment(resolvedJustifyContent, m_constraints.style, m_constraints.isColumnOrRowReverse);
-        LayoutUnit overflow = FlexFormattingUtils::contentAlignmentStartOverflow(availableFreeSpace, position, distribution, safety, m_constraints.isColumnOrRowReverse);
+        LayoutUnit overflow = FlexFormattingUtils::contentAlignmentStartOverflow(availableFreeSpace, justifyContentPosition, distribution, safety, m_constraints.isColumnOrRowReverse);
         m_result.justifyContentStartOverflow = std::max(m_result.justifyContentStartOverflow, overflow);
     }
 
-    auto resolvedJustifyContent = m_constraints.style->justifyContent().resolve(FlexFormattingUtils::contentAlignmentNormalBehavior());
-    auto distribution = resolvedJustifyContent.distribution();
     auto gapBetweenItems = flexFormattingUtils().computeGap(FlexFormattingUtils::GapType::BetweenItems);
     for (size_t i = 0; i < flexLayoutItems.size(); ++i) {
         auto& flexLayoutItem = flexLayoutItems[i];
