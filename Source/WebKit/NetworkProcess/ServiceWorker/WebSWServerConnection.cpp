@@ -37,6 +37,7 @@
 #include "NetworkSession.h"
 #include "NetworkStorageManager.h"
 #include "RemoteWorkerType.h"
+#include "ServiceWorkerOriginAuthority.h"
 #include "SharedBufferReference.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "WebFrameProxyFromNetworkProcessMessages.h"
@@ -47,12 +48,14 @@
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
+#include <WebCore/BackgroundFetchRequest.h>
 #include <WebCore/CookieChangeSubscription.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/NotificationData.h>
+#include <WebCore/RetrieveRecordsOptions.h>
 #include <WebCore/SWServerRegistration.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
@@ -60,11 +63,19 @@
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
+#include <WebCore/WorkerFetchResult.h>
 #include <algorithm>
 #include <cstdint>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace PAL;
@@ -382,8 +393,10 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
     worker.whenActivated(WTF::move(runServerWorkerAndStartFetch));
 }
 
-void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier, Vector<URL>&& blobURLs)
+void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier, IPC::Untrusted<Vector<URL>>&& untrustedBlobURLs)
 {
+    // Only blob URLs the sending process registered are retained for the message.
+    auto blobURLs = WTF::move(untrustedBlobURLs).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     RefPtr server = this->server();
     if (!server)
         return;
@@ -430,11 +443,34 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     });
 }
 
-void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
+void WebSWServerConnection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedRegistrationKey, IPC::Untrusted<WorkerFetchResult>&& untrustedResult)
 {
-    if (!checkTopOrigin(jobData.topOrigin))
-        return;
+    auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    EXTRACT_WITH_MESSAGE_CHECK(registrationKey, untrustedRegistrationKey, ServiceWorkerClientOriginAuthority { *this });
+    SWServer::Connection::finishFetchingScriptInServer(jobDataIdentifier, registrationKey, WTF::move(result));
+}
 
+void WebSWServerConnection::didResolveRegistrationPromise(IPC::Untrusted<ServiceWorkerRegistrationKey>&& untrustedKey)
+{
+    EXTRACT_WITH_MESSAGE_CHECK(key, untrustedKey, ServiceWorkerClientOriginAuthority { *this });
+    SWServer::Connection::didResolveRegistrationPromise(key);
+}
+
+void WebSWServerConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, IPC::Untrusted<Vector<BackgroundFetchRequest>>&& untrustedRequests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
+{
+    auto requests = WTF::move(untrustedRequests).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    SWServer::Connection::startBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(requests), WTF::move(options), WTF::move(callback));
+}
+
+void WebSWServerConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, IPC::Untrusted<RetrieveRecordsOptions>&& untrustedOptions, MatchBackgroundFetchCallback&& callback)
+{
+    EXTRACT_WITH_MESSAGE_CHECK(options, untrustedOptions, ServiceWorkerClientOriginAuthority { *this });
+    SWServer::Connection::matchBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(options), WTF::move(callback));
+}
+
+void WebSWServerConnection::scheduleJobInServer(IPC::Untrusted<ServiceWorkerJobData>&& untrustedJobData)
+{
+    EXTRACT_WITH_MESSAGE_CHECK(jobData, untrustedJobData, ServiceWorkerClientOriginAuthority { *this });
     ASSERT(!jobData.scopeURL.isNull());
     if (jobData.scopeURL.isNull()) {
         rejectJobInClient(jobData.identifier().jobIdentifier, ExceptionData { ExceptionCode::InvalidStateError, "Scope URL is empty"_s });
@@ -520,24 +556,45 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     });
 }
 
-void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, IPC::Untrusted<URL>&& untrustedClientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    auto clientURL = WTF::move(untrustedClientURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
+    auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!topOriginValidated)
+        return;
+    auto topOrigin = WTF::move(*topOriginValidated);
+
     if (!checkTopOrigin(topOrigin))
         return;
 
     doRegistrationMatching(topOrigin, clientURL, WTF::move(callback));
 }
 
-void WebSWServerConnection::whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
+void WebSWServerConnection::whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, IPC::Untrusted<URL>&& untrustedClientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
 {
+    auto clientURL = WTF::move(untrustedClientURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
+    auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!topOriginValidated)
+        return;
+    auto topOrigin = WTF::move(*topOriginValidated);
+
     if (!checkTopOrigin(topOrigin))
         return;
 
     SWServer::Connection::whenRegistrationReady(topOrigin, clientURL, WTF::move(callback));
 }
 
-void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
+void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedTopOrigin, IPC::Untrusted<URL>&& untrustedClientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
 {
+    auto clientURL = WTF::move(untrustedClientURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
+    auto topOriginValidated = WTF::move(untrustedTopOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!topOriginValidated)
+        return;
+    auto topOrigin = WTF::move(*topOriginValidated);
+
     if (!checkTopOrigin(topOrigin))
         return;
 
@@ -550,8 +607,14 @@ void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin
     });
 }
 
-void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
+void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, IPC::Untrusted<ServiceWorkerClientData>&& untrustedData, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
+    auto data = WTF::move(untrustedData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    auto clientOriginValidated = WTF::move(untrustedClientOrigin).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!clientOriginValidated)
+        return;
+    auto clientOrigin = WTF::move(*clientOriginValidated);
+
     MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
     if (!checkTopOrigin(clientOrigin.topOrigin))
         return;
@@ -956,7 +1019,16 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTF::move(callback));
+    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](IPC::Untrusted<std::optional<ServiceWorkerClientData>>&& untrustedClientData) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return callback({ });
+
+        auto validatedClientData = WTF::move(untrustedClientData).validate(ServiceWorkerClientOriginAuthority { *protectedThis });
+        if (!validatedClientData)
+            return callback({ });
+        callback(WTF::move(*validatedClientData));
+    });
 }
 
 void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration, const WebCore::ResourceRequest& request)
@@ -1064,8 +1136,13 @@ void WebSWServerConnection::addRoutes(WebCore::ServiceWorkerRegistrationIdentifi
 }
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-void WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::getNotifications(IPC::Untrusted<URL>&& untrustedRegistrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    auto validatedRegistrationURL = WTF::move(untrustedRegistrationURL).validate(ServiceWorkerClientOriginAuthority { *this });
+    if (!validatedRegistrationURL)
+        return completionHandler(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this registration"_s }));
+    auto registrationURL = WTF::move(*validatedRegistrationURL);
+
     CheckedPtr session = this->session();
     if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
@@ -1101,3 +1178,5 @@ bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& or
 #undef MESSAGE_CHECK_WITH_RETURN_VALUE
 #undef SWSERVERCONNECTION_RELEASE_LOG
 #undef SWSERVERCONNECTION_RELEASE_LOG_ERROR
+
+#undef EXTRACT_WITH_MESSAGE_CHECK

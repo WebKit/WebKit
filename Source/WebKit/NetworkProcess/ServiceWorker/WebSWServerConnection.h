@@ -30,6 +30,7 @@
 #include "MessageSender.h"
 #include "RetrieveRecordResponseBodyCallbackIdentifier.h"
 #include "ServiceWorkerFetchTask.h"
+#include "Untrusted.h"
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/NavigationPreloadState.h>
@@ -102,7 +103,7 @@ public:
     void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
     std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
 
-    void registerServiceWorkerClient(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
+    void registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&&, IPC::Untrusted<WebCore::ServiceWorkerClientData>&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     void registerServiceWorkerClientInternal(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent, WebCore::SWServer::IsBeingCreatedClient);
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
@@ -126,16 +127,23 @@ private:
     void notifyClientsOfControllerChange(const HashSet<WebCore::ScriptExecutionContextIdentifier>& contextIdentifiers, const std::optional<WebCore::ServiceWorkerData>& newController);
     void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&) final;
 
-    void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
+    void scheduleJobInServer(IPC::Untrusted<WebCore::ServiceWorkerJobData>&&);
+
+    // These hide the same-named methods on WebCore::SWServer::Connection, which cannot take an
+    // IPC type. They unwrap and call the base.
+    void finishFetchingScriptInServer(const WebCore::ServiceWorkerJobDataIdentifier&, IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&, IPC::Untrusted<WebCore::WorkerFetchResult>&&);
+    void didResolveRegistrationPromise(IPC::Untrusted<WebCore::ServiceWorkerRegistrationKey>&&);
+    void matchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, IPC::Untrusted<WebCore::RetrieveRecordsOptions>&&, MatchBackgroundFetchCallback&&);
+    void startBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, IPC::Untrusted<Vector<WebCore::BackgroundFetchRequest>>&&, WebCore::BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
 
     using UnregisterJobResult = std::expected<bool, WebCore::ExceptionData>;
     void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier, CompletionHandler<void(UnregisterJobResult&&)>&&);
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
-    void matchRegistration(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
-    void getRegistrations(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
+    void matchRegistration(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void whenRegistrationReady(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
+    void getRegistrations(IPC::Untrusted<WebCore::SecurityOriginData>&& topOrigin, IPC::Untrusted<URL>&& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
 
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
@@ -156,7 +164,7 @@ private:
     void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
     void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, Vector<URL>&& blobURLs);
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, IPC::Untrusted<Vector<URL>>&& blobURLs);
     void controlClient(const NetworkResourceLoadParameters&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&, WebCore::ProcessIdentifier);
 
     using ExceptionOrVoidCallback = CompletionHandler<void(std::optional<WebCore::ExceptionData>&&)>;
@@ -175,10 +183,11 @@ private:
     void addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&&);
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(IPC::Untrusted<URL>&& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 #endif
 
     bool checkTopOrigin(const WebCore::SecurityOriginData&);
+    friend class ServiceWorkerClientOriginAuthority;
 
     URL clientURLFromIdentifier(WebCore::ServiceWorkerOrClientIdentifier);
 

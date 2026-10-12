@@ -183,6 +183,15 @@
 #define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
     EXTRACT_WITH_MESSAGE_CHECK_BASE(connection(), name, untrusted, (void)0, __VA_ARGS__)
 
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION(IPC::valueMayBeLegitimate(name##Validated), completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
+
 #define WEBPROCESSPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(this), processID(), ##__VA_ARGS__)
 #define WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(channel, thisPtr, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(WTF::getPtr(thisPtr)), thisPtr->processID(), ##__VA_ARGS__)
 
@@ -492,6 +501,8 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
     proxy->m_committedSites.add(site);
     proxy->m_remoteWorkerSites.add(site);
     proxy->m_site = WTF::move(site);
+    // Workers are placed by top site, so this process also runs third-party workers from sites it has no record of.
+    proxy->m_mayHostAnySite = true;
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerForRemoteWorkers());
     proxy->didStartRunningProcess();
     proxy->connect();
@@ -604,7 +615,42 @@ void WebProcessProxy::platformDestroy()
 
 void WebProcessProxy::addSharedProcessDomain(const RegistrableDomain& domain)
 {
-    m_sharedProcessDomains.add(domain);
+    if (m_sharedProcessDomains.add(domain).isNewEntry)
+        sendHostedDomains();
+}
+
+std::optional<HashSet<RegistrableDomain>> WebProcessProxy::hostedDomains() const
+{
+    if (!m_wasUsedForSiteIsolation || m_mayHostAnySite)
+        return std::nullopt;
+
+    auto domains = m_sharedProcessDomains;
+    for (auto& site : m_committedSites) {
+        if (!site.isEmpty())
+            domains.add(site.domain());
+    }
+    return domains;
+}
+
+void WebProcessProxy::setMayHostAnySite()
+{
+    if (std::exchange(m_mayHostAnySite, true))
+        return;
+    sendHostedDomains();
+}
+
+// Sent to the network process ahead of the AddAllowedFirstPartyForCookies that every load waits for, on the same connection.
+void WebProcessProxy::sendHostedDomains()
+{
+    auto domains = hostedDomains();
+    if (RefPtr dataStore = m_websiteDataStore) {
+        if (RefPtr networkProcess = dataStore->networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::SetHostedDomains(coreProcessIdentifier(), domains), 0);
+    }
+#if ENABLE(GPU_PROCESS)
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::SetHostedDomains(coreProcessIdentifier(), WTF::move(domains)), 0);
+#endif
 }
 
 void WebProcessProxy::setIsolatedProcessType(IsolatedProcessType isolatedProcessType, std::optional<WebCore::Site> mainFrameSite)
@@ -2261,11 +2307,13 @@ void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "fetchWebsiteData: Taking a background assertion because the Web process is fetching Website data");
 
-    sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (auto reply) mutable {
+    sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (IPC::Untrusted<WebsiteData>&& untrustedReply) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
-        completionHandler(WTF::move(reply));
+        // Names the origins of the resources in this process's own memory cache, which legitimately
+        // includes cross-origin subresources; the UI process only lists them for the API client.
+        completionHandler(WTF::move(untrustedReply).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "fetchWebsiteData: Releasing a background assertion because the Web process is done fetching Website data");
     });
 }
@@ -2899,11 +2947,15 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
         m_sharedProcessDomains.clear();
         m_site = makeUnexpected(SiteState::SharedProcess);
         m_sharedProcessMainFrameSite = mainFrameSite;
+        m_wasUsedForSiteIsolation = true;
+        sendHostedDomains();
         return;
     }
     ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_committedSites.add(*site);
     m_site = *site;
+    m_wasUsedForSiteIsolation = true;
+    sendHostedDomains();
 }
 
 unsigned WebProcessProxy::suspendedPageCount() const
@@ -3435,8 +3487,10 @@ void WebProcessProxy::systemBeep()
 }
 #endif
 
-void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+void WebProcessProxy::getNotifications(IPC::Untrusted<URL>&& untrustedRegistrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(registrationURL, untrustedRegistrationURL, callback({ }), ProcessSpeaksForDomain { *this });
+
     if (RefPtr websiteDataStore = m_websiteDataStore; websiteDataStore->hasClientGetDisplayedNotifications()) {
         auto callbackHandlingTags = [tag, callback = WTF::move(callback)] (Vector<NotificationData>&& notifications) mutable {
             if (tag.isEmpty()) {
@@ -3803,8 +3857,10 @@ void WebProcessProxy::clearSandboxExtensions()
     m_fileSandboxExtensions.clear();
 }
 
-void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ScriptMessageHandlerIdentifier handlerID, IPC::Untrusted<JavaScriptEvaluationResult>&& untrustedMessage, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(message, untrustedMessage, completionHandler(makeUnexpected(String())), FirstPartyStructAuthority { *this });
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, completionHandler(makeUnexpected(String())), FirstPartyStructAuthority { *this });
     RefPtr page = WebPageProxy::fromIdentifier(pageID);
     if (!page)
         return completionHandler(makeUnexpected(String()));
@@ -3816,9 +3872,9 @@ void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentC
     controller->didPostMessage(*page, WTF::move(frameInfo), handlerID, WTF::move(message), WTF::move(completionHandler));
 }
 
-void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, ScriptMessageHandlerIdentifier handlerID, IPC::Untrusted<JavaScriptEvaluationResult>&& untrustedMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
 {
-    didPostMessage(pageID, identifier, WTF::move(frameInfo), handlerID, WTF::move(message), WTF::move(completionHandler));
+    didPostMessage(pageID, identifier, WTF::move(untrustedFrameInfo), handlerID, WTF::move(untrustedMessage), WTF::move(completionHandler));
 }
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
@@ -4168,6 +4224,7 @@ void WebProcessProxy::commitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlace
 } // namespace WebKit
 
 #undef EXTRACT_WITH_MESSAGE_CHECK
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK_COMPLETION

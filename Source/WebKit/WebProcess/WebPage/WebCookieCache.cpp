@@ -79,7 +79,10 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         if (!sendResult.succeeded())
             return { };
 
-        auto& [cookies] = sendResult.reply();
+        auto& [optionalCookies] = sendResult.reply();
+        if (!optionalCookies)
+            return { };
+        auto& cookies = *optionalCookies;
 
         if (hasCacheForHost)
             return cookiesToString(cookies);

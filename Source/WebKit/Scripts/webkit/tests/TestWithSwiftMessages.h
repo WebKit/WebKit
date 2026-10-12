@@ -92,6 +92,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
+    using SuppliedReply = CompletionHandler<void(uint8_t)>;
     using Promise = WTF::NativePromise<uint8_t, IPC::Error>;
     explicit TestAsyncMessage(uint32_t param)
         : m_param(param)
@@ -121,6 +122,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
+    using SuppliedReply = CompletionHandler<void(uint8_t)>;
     explicit TestSyncMessage(uint32_t param)
         : m_param(param)
     {
@@ -174,6 +176,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
+    using SuppliedReply = CompletionHandler<void(uint8_t)>;
     explicit TestThrowingMessageWithReply(uint32_t param)
         : m_param(param)
     {
@@ -231,6 +234,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     explicit TestMessageWithEmptyReply(uint32_t param)
         : m_param(param)
@@ -299,10 +303,10 @@ private:
 
 namespace CompletionHandlers {
 namespace TestWithSwift {
-using TestAsyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestAsyncMessage::Reply>;
-using TestSyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestSyncMessage::Reply>;
-using TestThrowingMessageWithReplyCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestThrowingMessageWithReply::Reply>;
-using TestMessageWithEmptyReplyCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestMessageWithEmptyReply::Reply>;
+using TestAsyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestAsyncMessage::SuppliedReply>;
+using TestSyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestSyncMessage::SuppliedReply>;
+using TestThrowingMessageWithReplyCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestThrowingMessageWithReply::SuppliedReply>;
+using TestMessageWithEmptyReplyCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestMessageWithEmptyReply::SuppliedReply>;
 
 void completeWithDefaultReply(TestAsyncMessageCompletionHandler&);
 

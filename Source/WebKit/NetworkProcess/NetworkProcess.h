@@ -480,7 +480,9 @@ public:
     enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
+    bool hostsDomain(WebCore::ProcessIdentifier, const RegistrableDomain&) const;
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
+    void setHostedDomains(WebCore::ProcessIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&&);
 
     // Per launch, so a reconnecting web process keeps its Vary entries.
     uint64_t cookieHeaderDigestSalt() const { return m_cookieHeaderDigestSalt; }
