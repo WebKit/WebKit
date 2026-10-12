@@ -589,7 +589,7 @@ class Sharder(object):
             shard = TestShard(directory, test_inputs)
             shards.append(shard)
 
-        # Sort the shards by directory name.
-        shards.sort(key=lambda shard: shard.name)
+        # Biggest first, so a large shard is not left running alone at the end.
+        shards.sort(key=lambda shard: (-len(shard.test_inputs), shard.name))
 
         return shards
