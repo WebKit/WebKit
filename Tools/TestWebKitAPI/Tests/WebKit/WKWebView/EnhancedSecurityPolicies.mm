@@ -898,6 +898,53 @@ static void runOpenerThenSelfNavigation(bool useSiteIsolation)
 
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(OpenerThenSelfNavigation)
 
+static void runOpenerNavigatedWhileSelfNavigationIsProvisional(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "<script>window.open('https://secure.different.internal/');</script>"_s } }
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('opened-window');</script>"_s } },
+        { "/self-navigate"_s, { HTTPResponse::Behavior::NeverSendResponse } },
+        { "/navigated"_s, { "<script>alert('navigated');</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+    RetainPtr navigationDelegate = static_cast<TestNavigationDelegate *>([webView navigationDelegate]);
+
+    __block RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    __block RetainPtr<TestWKWebView> popup;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        popup = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        popup.get().UIDelegate = uiDelegate.get();
+        popup.get().navigationDelegate = navigationDelegate.get();
+        return popup.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://insecure.example.internal/"]]];
+    testAlertWithEnhancedSecurity(uiDelegate, "opened-window"_s, true, std::source_location::current());
+
+    __block bool didStartSelfNavigation = false;
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *navigatingWebView, WKNavigation *) {
+        if (navigatingWebView == webView.get())
+            didStartSelfNavigation = true;
+    };
+
+    // The opener's self-navigation never commits, so it is still provisional when the popup navigates the opener.
+    [webView evaluateJavaScript:@"window.location = 'https://secure.final.internal/self-navigate'" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didStartSelfNavigation);
+
+    [popup evaluateJavaScript:@"window.opener.location = 'https://secure.final.internal/navigated'" completionHandler:nil];
+    testAlertWithEnhancedSecurity(uiDelegate, "navigated"_s, true, std::source_location::current());
+
+    navigationDelegate.get().didStartProvisionalNavigation = nil;
+    [webView setUIDelegate:nil];
+}
+
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(OpenerNavigatedWhileSelfNavigationIsProvisional)
+
 static void runHttpOpeningHttpsNoOpener(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
