@@ -27,10 +27,14 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "EventLoop.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLDocument.h"
@@ -42,10 +46,13 @@
 #include "JSCustomElementInterface.h"
 #include "LinkLoader.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Microtasks.h"
 #include "NavigationScheduler.h"
 #include "NodeDocument.h"
+#include "Page.h"
 #include "ScriptElement.h"
+#include "ScriptRunner.h"
 #include "TaskSource.h"
 #include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
 #include <JavaScriptCore/JSGlobalObject.h>
@@ -120,6 +127,9 @@ void HTMLDocumentParser::detach()
     m_insertionPreloadScanner = nullptr;
     if (RefPtr parserScheduler = std::exchange(m_parserScheduler, nullptr))
         parserScheduler->detach(); // Will clear any timers.
+
+    if (m_yieldBeforeDeferredScriptsState == YieldBeforeDeferredScriptsState::Yielding)
+        m_yieldBeforeDeferredScriptsState = YieldBeforeDeferredScriptsState::DidYield;
 }
 
 void HTMLDocumentParser::stopParsing()
@@ -127,6 +137,19 @@ void HTMLDocumentParser::stopParsing()
     DocumentParser::stopParsing();
     if (RefPtr parserScheduler = std::exchange(m_parserScheduler, nullptr))
         parserScheduler->detach(); // Will clear any timers.
+    if (m_yieldBeforeDeferredScriptsState == YieldBeforeDeferredScriptsState::Yielding)
+        stopYieldingForFirstPaintBeforeDeferredScripts();
+}
+
+void HTMLDocumentParser::stopYieldingForFirstPaintBeforeDeferredScripts()
+{
+    ASSERT(m_yieldBeforeDeferredScriptsState == YieldBeforeDeferredScriptsState::Yielding);
+    m_yieldBeforeDeferredScriptsState = YieldBeforeDeferredScriptsState::DidYield;
+
+    if (RefPtr document = this->document()) {
+        if (RefPtr scriptRunner = document->scriptRunnerIfExists())
+            scriptRunner->resume();
+    }
 }
 
 // This kicks off "Once the user agent stops parsing" as described by:
@@ -223,6 +246,13 @@ void HTMLDocumentParser::resumeParsingAfterYield()
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
+
+    if (m_yieldBeforeDeferredScriptsState == YieldBeforeDeferredScriptsState::Yielding) {
+        m_endWasDelayed = false;
+        stopYieldingForFirstPaintBeforeDeferredScripts();
+        attemptToRunDeferredScriptsAndEnd();
+        return;
+    }
 
     // We should never be here unless we can pump immediately.
     // Call pumpTokenizer() directly so that ASSERTS will fire if we're wrong.
@@ -471,9 +501,67 @@ void HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd()
 {
     ASSERT(isStopping());
     ASSERT(!hasInsertionPoint());
+
+    if (m_yieldBeforeDeferredScriptsState == YieldBeforeDeferredScriptsState::Yielding)
+        return;
+
+    if (shouldTryToYieldForFirstPaintBeforeDeferredScripts()) {
+        m_yieldBeforeDeferredScriptsState = YieldBeforeDeferredScriptsState::DidNotYield;
+        protect(document())->updateStyleIfNeeded();
+        if (isStopped())
+            return;
+
+        if (wouldPaintAfterYielding()) {
+            m_yieldBeforeDeferredScriptsState = YieldBeforeDeferredScriptsState::Yielding;
+            Ref { *m_parserScheduler }->scheduleForResumeAfterRenderingUpdate();
+            return;
+        }
+    }
+
     if (m_scriptRunner && !m_scriptRunner->executeScriptsWaitingForParsing())
         return;
     end();
+}
+
+bool HTMLDocumentParser::shouldTryToYieldForFirstPaintBeforeDeferredScripts() const
+{
+    if (m_yieldBeforeDeferredScriptsState != YieldBeforeDeferredScriptsState::NotAttempted || !m_parserScheduler)
+        return false;
+
+    if (!m_scriptRunner || !m_scriptRunner->isFirstScriptWaitingForParsingLoaded())
+        return false;
+
+    RefPtr document = this->document();
+    if (document->activeDOMObjectsAreSuspended())
+        return false;
+
+    RefPtr frame = document->frame();
+    if (!frame || !frame->isMainFrame())
+        return false;
+
+    RefPtr page = document->page();
+    if (!page || !page->isVisible() || page->isInRenderingUpdate())
+        return false;
+
+    RefPtr view = document->view();
+    if (!view || view->hasEverPainted())
+        return false;
+
+    if (view->isVisuallyNonEmpty() && page->chrome().client().layerTreeStateIsFrozen())
+        return false;
+
+    return document->body() && document->haveStylesheetsLoaded() && document->visualUpdatesAllowed();
+}
+
+bool HTMLDocumentParser::wouldPaintAfterYielding() const
+{
+    RefPtr document = this->document();
+    RefPtr view = document->view();
+    if (!view || !view->isVisuallyNonEmpty())
+        return false;
+
+    RefPtr page = document->page();
+    return page && !page->chrome().client().layerTreeStateIsFrozen();
 }
 
 void HTMLDocumentParser::attemptToEnd()
