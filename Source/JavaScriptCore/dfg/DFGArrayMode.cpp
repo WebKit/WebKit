@@ -159,6 +159,21 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile profile, Array::Action action, bo
 
         if ((observed & asArrayModesIgnoringTypedArrays(NonArray)) && profile.mayInterceptIndexedAccesses())
             return ArrayMode(Array::SelectUsingPredictions).withSpeculationFromProfile(profile, makeSafe);
+
+        // We avoid converting arrays to ArrayStorage since it misses most of the array fast paths.
+        constexpr ArrayModes arrayStorageModes = asArrayModesIgnoringTypedArrays(NonArrayWithArrayStorage) | asArrayModesIgnoringTypedArrays(ArrayWithArrayStorage);
+        if (observed & arrayStorageModes) {
+            bool hasSeenOtherShapes = arrayModesIncludeIgnoringTypedArrays(observed, UndecidedShape) || arrayModesIncludeIgnoringTypedArrays(observed, Int32Shape) || arrayModesIncludeIgnoringTypedArrays(observed, DoubleShape) || arrayModesIncludeIgnoringTypedArrays(observed, ContiguousShape);
+            bool hasSeenSlowPutArrayStorage = arrayModesIncludeIgnoringTypedArrays(observed, SlowPutArrayStorageShape);
+            if (hasSeenOtherShapes && !hasSeenSlowPutArrayStorage) {
+                // FIXME: Support ArrayStorage in MultiGetByVal and MultiPutByVal.
+                if (profile.speculationFailedOnArrayStorage())
+                    return ArrayMode(Array::Generic, nonArray, Array::AsIs, action).withProfile(profile, makeSafe);
+                profile.removeObservedArrayModes(arrayStorageModes);
+                ASSERT(!(profile.observedArrayModes() & arrayStorageModes));
+                return fromObserved(profile, action, makeSafe);
+            }
+        }
         
         Array::Type type;
         Array::Class arrayClass;
@@ -214,8 +229,8 @@ ArrayMode ArrayMode::refine(
     if (!isInt32Speculation(index) && !mayBeLargeTypedArray())
         return ArrayMode(Array::Generic, action());
     
-    // If we had exited because of an exotic object behavior, then don't try to specialize.
-    if (graph.hasExitSite(node->origin.semantic, ExoticObjectMode))
+    // If we had exited because of an exotic object behavior or a sparse index, then don't try to specialize.
+    if (graph.hasExitSite(node->origin.semantic, ExoticObjectMode) || graph.hasExitSite(node->origin.semantic, SparseIndex))
         return ArrayMode(Array::Generic, action());
 
     if (isInBounds() && graph.hasExitSite(node->origin.semantic, LoadFromHole))
