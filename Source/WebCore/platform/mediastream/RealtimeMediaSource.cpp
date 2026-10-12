@@ -1020,12 +1020,12 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
     }
 
     case MediaConstraintType::DeviceId:
+    case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::GroupId:
         ASSERT(constraint.isString());
         // There is nothing to do here, neither can be changed.
         break;
 
-    case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
         ASSERT(constraint.isBoolean());
         break;

@@ -249,7 +249,6 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
             break;
         }
 
-        case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::LogicalSurface: {
             auto& boolConstraint = downcast<BooleanConstraint>(constraint);
             bool value;
@@ -259,6 +258,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
 
         case MediaConstraintType::FacingMode:
         case MediaConstraintType::DeviceId:
+        case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::GroupId: {
             auto& stringConstraint = downcast<StringConstraint>(constraint);
             Vector<String> values;

@@ -247,9 +247,6 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::EchoCancellation:
         m_echoCancellation = WTF::move(constraint);
         break;
-    case MediaConstraintType::DisplaySurface:
-        m_displaySurface = WTF::move(constraint);
-        break;
     case MediaConstraintType::LogicalSurface:
         m_logicalSurface = WTF::move(constraint);
         break;
@@ -272,6 +269,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::Volume:
     case MediaConstraintType::FacingMode:
     case MediaConstraintType::DeviceId:
+    case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::GroupId:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
@@ -293,6 +291,11 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
             constraint->removeEmptyStringConstraint();
         m_deviceId = WTF::move(constraint);
         break;
+    case MediaConstraintType::DisplaySurface:
+        if (constraint)
+            constraint->removeEmptyStringConstraint();
+        m_displaySurface = WTF::move(constraint);
+        break;
     case MediaConstraintType::GroupId:
         m_groupId = WTF::move(constraint);
         break;
@@ -308,7 +311,6 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FrameRate:
     case MediaConstraintType::Volume:
     case MediaConstraintType::EchoCancellation:
-    case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
@@ -450,6 +452,12 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
         else
             m_deviceId->merge(constraint);
         break;
+    case MediaConstraintType::DisplaySurface:
+        if (!m_deviceId)
+            m_deviceId = constraint;
+        else
+            m_deviceId->merge(constraint);
+        break;
     case MediaConstraintType::GroupId:
         if (!m_groupId)
             m_groupId = constraint;
@@ -471,7 +479,6 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::Volume:
     case MediaConstraintType::Zoom:
     case MediaConstraintType::EchoCancellation:
-    case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
@@ -491,12 +498,6 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
             m_echoCancellation = constraint;
         else
             m_echoCancellation->merge(constraint);
-        break;
-    case MediaConstraintType::DisplaySurface:
-        if (!m_displaySurface)
-            m_displaySurface = constraint;
-        else
-            m_displaySurface->merge(constraint);
         break;
     case MediaConstraintType::LogicalSurface:
         if (!m_logicalSurface)
@@ -525,6 +526,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
 
     case MediaConstraintType::FacingMode:
     case MediaConstraintType::DeviceId:
+    case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::GroupId:
     case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Width:
@@ -597,12 +599,12 @@ bool MediaTrackConstraintSetMap::isValid() const
             break;
         case MediaConstraintType::FacingMode:
         case MediaConstraintType::DeviceId:
+        case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::GroupId:
         case MediaConstraintType::WhiteBalanceMode:
             isValid &= (constraint.dataType() == MediaConstraint::DataType::String);
             break;
         case MediaConstraintType::EchoCancellation:
-        case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::LogicalSurface:
         case MediaConstraintType::Torch:
         case MediaConstraintType::BackgroundBlur:

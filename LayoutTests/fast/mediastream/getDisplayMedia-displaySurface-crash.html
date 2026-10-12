@@ -1,0 +1,13 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>getDisplayMedia should accept a displaySurface string</title>
+<p>PASS if this neither crashes nor asserts.</p>
+<script>
+  testRunner?.dumpAsText();
+  testRunner?.waitUntilDone();
+  window.internals?.withUserGesture(async () => {
+    await navigator.mediaDevices.
+      getDisplayMedia({ video: {displaySurface: "browser"} });
+    testRunner?.notifyDone();
+  });
+</script>
