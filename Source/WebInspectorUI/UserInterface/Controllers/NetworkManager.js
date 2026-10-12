@@ -63,6 +63,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
+        WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._handleResourceCachingDisabledSettingChanged, this);
+
         if (NetworkManager.supportsOverridingResponses()) {
             WI.Resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleResourceContentChangedForLocalResourceOverride, this);
             WI.Resource.addEventListener(WI.Resource.Event.RequestDataDidChange, this._handleResourceContentChangedForLocalResourceOverride, this);
@@ -1219,6 +1221,20 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     }
 
     // Private
+
+    _handleResourceCachingDisabledSettingChanged(event)
+    {
+        let targets = new Set(WI.targets);
+
+        // Under Site Isolation, cross-origin frames are reached only through the multiplexing target.
+        if (this._enabledNetworkForSiteIsolation && WI.backendTarget)
+            targets.add(WI.backendTarget);
+
+        for (let target of targets) {
+            if (target.hasCommand("Network.setResourceCachingDisabled"))
+                target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+        }
+    }
 
     _associateTargetExecutionContextsWithFrame(frame)
     {

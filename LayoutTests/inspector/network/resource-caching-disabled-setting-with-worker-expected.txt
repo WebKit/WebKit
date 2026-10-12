@@ -1,0 +1,11 @@
+Tests that toggling the resource caching setting skips targets without the Network domain, such as workers.
+
+
+== Running test suite: Network.ResourceCachingDisabledSetting
+-- Running test case: Network.ResourceCachingDisabledSetting.WithWorkerTarget
+PASS: Worker target should not support Network.setResourceCachingDisabled.
+PASS: Toggling the setting should not throw.
+PASS: A target should receive the command.
+PASS: Each target should receive the command once per toggle.
+PASS: Worker target should not receive the command.
+

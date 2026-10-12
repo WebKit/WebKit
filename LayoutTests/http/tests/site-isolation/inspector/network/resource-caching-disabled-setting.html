@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.ResourceCachingDisabledSetting");
+
+    // Load a resource inside the cross-origin iframe and resolve to the resulting resource's
+    // responseSource, so we can observe whether it was served from the cache.
+    async function fetchResponseSource(frameTarget, url) {
+        let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+        await frameTarget.RuntimeAgent.evaluate.invoke({
+            expression: `fetch("${url}").then((response) => response.text())`,
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+        let resource = (await resourceAddedPromise).data.resource;
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+        return resource.responseSource;
+    }
+
+    function isFromCache(responseSource) {
+        return responseSource === WI.Resource.ResponseSource.MemoryCache
+            || responseSource === WI.Resource.ResponseSource.DiskCache;
+    }
+
+    // Give each phase a unique cache key so its first load is guaranteed to miss any entry left by a
+    // previous test run; only a repeat within the same phase (same key) can be a genuine cache hit.
+    function uniqueCacheableURL() {
+        return `cacheable-static-resource.txt?key=${Date.now()}-${Math.random()}`;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.ResourceCachingDisabledSetting.CrossOriginIFrameBypassesCache",
+        description: "Toggling the resource caching setting should reach the WebContent process so a cross-origin iframe's repeated load is not served from the cache.",
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("iframe-with-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+            try {
+                // Control: with caching enabled, a repeated load of a cacheable resource is served from
+                // the cache. This establishes that the resource is cacheable in the first place.
+                const enabledURL = uniqueCacheableURL();
+                WI.settings.resourceCachingDisabled.value = false;
+                await frameTarget.RuntimeAgent.evaluate.invoke({expression: "internals.clearMemoryCache()", objectGroup: "test"});
+
+                let firstEnabledSource = await fetchResponseSource(frameTarget, enabledURL);
+                InspectorTest.expectEqual(firstEnabledSource, WI.Resource.ResponseSource.Network, "With caching enabled, the first load should come from the network.");
+                let secondEnabledSource = await fetchResponseSource(frameTarget, enabledURL);
+                InspectorTest.expectThat(isFromCache(secondEnabledSource), "With caching enabled, the second load should be served from the cache.");
+
+                // Treatment: with caching disabled, the same repeated load must go to the network.
+                const disabledURL = uniqueCacheableURL();
+                WI.settings.resourceCachingDisabled.value = true;
+                await frameTarget.RuntimeAgent.evaluate.invoke({expression: "internals.clearMemoryCache()", objectGroup: "test"});
+
+                let firstDisabledSource = await fetchResponseSource(frameTarget, disabledURL);
+                InspectorTest.expectEqual(firstDisabledSource, WI.Resource.ResponseSource.Network, "With caching disabled, the first load should come from the network.");
+                let secondDisabledSource = await fetchResponseSource(frameTarget, disabledURL);
+                InspectorTest.expectFalse(isFromCache(secondDisabledSource), "With caching disabled, the second load should NOT be served from the cache.");
+            } finally {
+                WI.settings.resourceCachingDisabled.value = false;
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that toggling the resource caching setting reaches cross-origin iframes under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>

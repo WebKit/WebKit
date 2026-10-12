@@ -1,0 +1,11 @@
+Tests that toggling the resource caching setting reaches cross-origin iframes under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.ResourceCachingDisabledSetting
+-- Running test case: SiteIsolation.Network.ResourceCachingDisabledSetting.CrossOriginIFrameBypassesCache
+PASS: With caching enabled, the first load should come from the network.
+PASS: With caching enabled, the second load should be served from the cache.
+PASS: With caching disabled, the first load should come from the network.
+PASS: With caching disabled, the second load should NOT be served from the cache.
+

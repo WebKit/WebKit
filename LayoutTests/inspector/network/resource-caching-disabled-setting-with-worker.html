@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("../worker/resources/worker-1.js");
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.ResourceCachingDisabledSetting");
+
+    suite.addTestCase({
+        name: "Network.ResourceCachingDisabledSetting.WithWorkerTarget",
+        description: "Toggling the setting should not throw when a target has no Network domain.",
+        async test() {
+            let workerTarget = WI.targets.find((target) => target.type === WI.TargetType.Worker);
+            InspectorTest.assert(workerTarget, "Worker target should exist.");
+            InspectorTest.expectFalse(workerTarget.hasCommand("Network.setResourceCachingDisabled"), "Worker target should not support Network.setResourceCachingDisabled.");
+
+            let received = new Map;
+            let restoreFunctions = [];
+            for (let target of WI.targetManager.allTargets) {
+                if (!target.hasCommand("Network.setResourceCachingDisabled"))
+                    continue;
+                let agent = target.NetworkAgent;
+                let original = agent.setResourceCachingDisabled;
+                agent.setResourceCachingDisabled = function(disabled) {
+                    received.set(target, (received.get(target) || 0) + 1);
+                    return original.apply(this, arguments);
+                };
+                restoreFunctions.push(() => { agent.setResourceCachingDisabled = original; });
+            }
+
+            let threw = false;
+            try {
+                WI.settings.resourceCachingDisabled.value = true;
+            } catch (e) {
+                threw = true;
+                InspectorTest.log("Exception: " + e.message);
+            } finally {
+                WI.settings.resourceCachingDisabled.value = false;
+                for (let restore of restoreFunctions)
+                    restore();
+            }
+
+            InspectorTest.expectFalse(threw, "Toggling the setting should not throw.");
+            InspectorTest.expectThat(received.size > 0, "A target should receive the command.");
+            InspectorTest.expectThat(Array.from(received.values()).every((count) => count === 2), "Each target should receive the command once per toggle.");
+            InspectorTest.expectFalse(received.has(workerTarget), "Worker target should not receive the command.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that toggling the resource caching setting skips targets without the Network domain, such as workers.</p>
+</body>
+</html>
