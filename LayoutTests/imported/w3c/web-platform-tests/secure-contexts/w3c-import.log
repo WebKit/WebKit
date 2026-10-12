@@ -27,5 +27,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/secure-contexts/postMessage-helper.https.html
 /LayoutTests/imported/w3c/web-platform-tests/secure-contexts/sandboxed-iframe-child.https.html
 /LayoutTests/imported/w3c/web-platform-tests/secure-contexts/server-locations.sub.js
-/LayoutTests/imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html
-/LayoutTests/imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html
+/LayoutTests/imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.tentative.https.html

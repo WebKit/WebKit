@@ -4,6 +4,7 @@
     <meta charset=utf-8>
     <title>Test SharedWorkerGlobalScope.isSecureContext for HTTP creator</title>
     <meta name="help" href="https://w3c.github.io/webappsec-secure-contexts/#monkey-patching-global-object">
+    <link rel="help" href="https://privacycg.github.io/storage-partitioning/">
     <script src=/resources/testharness.js></script>
     <script src=/resources/testharnessreport.js></script>
     <script src="server-locations.sub.js"></script>
@@ -12,21 +13,23 @@
     <script>
       /*
        * The goal of this test is to check that we do the right thing if the
-       * same SharedWorker is used first from an secure context and then from
-       * an insecure context.
+       * same SharedWorker is used first from an insecure context and then from
+       * a secure context.
        *
-       * To do this, we load a subframe which loads a SharedWorker
+       * To do this, we first open an insecure (http) popup, which loads a
+       * subframe that is same-origin with us but not a secure context, since
+       * its parent is http, not https.  Then this subframe loads a SharedWorker
        * and communicates back to us whether that worker and a child dedicated
-       * worker it spawns think they are secure contexts. Async tests t1 and t2
+       * worker it spawns think they are secure contexts.  Async tests t3 and t4
        * track these two workers.
        *
-       * After we have heard from both workers in the subframe, we open an
-       * insecure (http) popup, which loads the same exact subframe.  This
-       * subframe is still is same-origin with
-       * us but not a secure context, since its parent is http, not https.  Then
-       * we wait to hear about the status of the workers in the popup's
-       * subframe.  Async tests t3 and t4 track these two workers.
+       * After we have heard from both workers in the popup, we directly load
+       * the same exact subframe ourselves and see what the workers in it
+       * report.  Async tests t1 and t2 track these two workers.
        *
+       * Shared workers are partitioned by top-level site, so our subframe gets
+       * its own SharedWorker, which is a secure context, rather than an error
+       * for connecting to the popup's.
        */
       var t1 = async_test("Shared worker in subframe");
       var t2 = async_test("Nested worker in shared worker in subframe");
@@ -37,6 +40,8 @@
       var popup = null;
       onmessage = function(e) {
         ++messageCount;
+        // Make sure to not close the popup until we've run the iframe part of
+        // the test!  We need to keep those shared workers alive.
         if (messageCount == 4 && popup) {
           popup.close();
         }
@@ -46,8 +51,9 @@
           // one in the popup or in our subframe.
           if (data.fromPopup) {
             t3.step(function() {
-              assert_false(data.exception, "No exception should be present.");
-              assert_true(data.error, "SharedWorker connection should error out.");
+              assert_false(data.exception, "SharedWorker should not throw an exception.");
+              assert_false(data.error, "SharedWorker connection should not generate an error.");
+              assert_false(data.isSecureContext, "SharedWorker is not a secure context");
             });
             t3.done();
           } else {
@@ -63,8 +69,9 @@
           // check whether it's the one in the popup or in our subframe.
           if (data.fromPopup) {
             t4.step(function() {
-              assert_false(data.exception, "No exception should be present.");
-              assert_true(data.error, "SharedWorker connection should error out.");
+              assert_false(data.exception, "SharedWorker should not throw an exception.");
+              assert_false(data.error, "SharedWorker connection should not generate an error.");
+              assert_false(data.isSecureContext);
             });
             t4.done();
           } else {
@@ -98,14 +105,14 @@
         }
 
         if (messageCount == 2) {
-          // Got both messages from our child; time to open our popup
-          popup = window.open(http_dir + "support/shared-worker-insecure-popup.html?https_dir4");
+          // Got both messages from our popup; time to create our child.
+          var ifr = document.createElement("iframe");
+          ifr.src = https_dir5 + "support/https-subframe-shared.html";
+          document.body.appendChild(ifr);
         }
       }
 
-      var ifr = document.createElement("iframe");
-      ifr.src = https_dir4 + "support/https-subframe-shared.html";
-      document.body.appendChild(ifr);
+      popup = window.open(http_dir + "support/shared-worker-insecure-popup.html?https_dir5");
     </script>
   </body>
 </html>
