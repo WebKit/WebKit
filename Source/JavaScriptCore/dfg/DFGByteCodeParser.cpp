@@ -499,6 +499,7 @@ private:
     enum class CallOptimizationResult { OptimizedToJump, Inlined, InlinedTerminal, DidNothing };
     CallOptimizationResult handleCallVariant(Node* callTargetNode, Operand result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction, Node* newTarget, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
     CallOptimizationResult handleInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction, Node* newTarget, ECMAMode);
+    bool emitDirectCallForPolymorphicCallVariant(CallVariant, Operand result, NodeType callOp, InlineCallFrame::Kind, int argumentCountIncludingThis, int registerOffset, SpeculatedType prediction);
     template<typename ChecksFunctor>
     void inlineCall(Node* callTargetNode, Operand result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, NOESCAPE const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -2762,9 +2763,19 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
             inliningBalance, continuationBlock, needsToCheckCallee);
         
         if (inliningResult == CallOptimizationResult::DidNothing) {
+            ASSERT(m_graph.m_blocks.last().get() == m_currentBlock);
+            if (allAreDirectCalls && emitDirectCallForPolymorphicCallVariant(callLinkStatus[i], result, callOp, kind, argumentCountIncludingThis, registerOffset, prediction)) {
+                m_currentIndex = osrExitIndex;
+                m_exitOK = true;
+                processSetLocalQueue();
+                addJumpTo(continuationBlock);
+                data.cases.append(SwitchCase(m_graph.freeze(callLinkStatus[i].nonExecutableCallee()), calleeEntryBlock));
+                VERBOSE_LOG("Emitted a direct call for ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
+                continue;
+            }
+
             // That failed so we let the block die. Nothing interesting should have been added to
             // the block. We also give up on inlining any of the (less frequent) callees.
-            ASSERT(m_graph.m_blocks.last().get() == m_currentBlock);
             m_graph.killBlockAndItsContents(m_currentBlock);
             m_graph.m_blocks.removeLast();
             VERBOSE_LOG("Inlining of a poly call failed, we will have to go through a slow path\n");
@@ -2840,6 +2851,36 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     
     VERBOSE_LOG("Done inlining (hard).\nStack: ", currentCodeOrigin(), "\n");
     return CallOptimizationResult::Inlined;
+}
+
+bool ByteCodeParser::emitDirectCallForPolymorphicCallVariant(CallVariant variant, Operand result, NodeType callOp, InlineCallFrame::Kind kind, int argumentCountIncludingThis, int registerOffset, SpeculatedType prediction)
+{
+    if (callOp != Call && callOp != Construct)
+        return false;
+    if (kind != InlineCallFrame::Call && kind != InlineCallFrame::Construct)
+        return false;
+
+    JSFunction* function = variant.function();
+    if (!function)
+        return false;
+
+    auto* functionExecutable = dynamicDowncast<FunctionExecutable>(variant.executable());
+    if (!functionExecutable)
+        return false;
+    if (functionExecutable->intrinsic() == WasmFunctionIntrinsic || functionExecutable->intrinsic() == BoundFunctionCallIntrinsic)
+        return false;
+    if (callOp == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
+        return false;
+
+    unsigned numAllocatedArgs = std::max(static_cast<unsigned>(functionExecutable->parameterCount()) + 1, static_cast<unsigned>(argumentCountIncludingThis));
+    if (numAllocatedArgs > Options::maximumDirectCallStackSize())
+        return false;
+    m_parameterSlots = std::max(m_parameterSlots, Graph::parameterSlotsForArgCount(numAllocatedArgs));
+
+    m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentNodeOrigin().semantic, CallLinkStatus(variant));
+    Node* callNode = addCall(result, callOp, OpInfo(), weakJSConstant(function), argumentCountIncludingThis, registerOffset, prediction);
+    callNode->convertToDirectCall(m_graph.freeze(functionExecutable));
+    return true;
 }
 
 template<typename ChecksFunctor>
