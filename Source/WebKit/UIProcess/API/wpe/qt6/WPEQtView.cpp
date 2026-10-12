@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WPEQtView.h"
 
+#include "WPEQtViewContextMenuRequest.h"
 #include "WPEQtViewLoadRequest.h"
 #include "WPEQtViewLoadRequestPrivate.h"
 #include "WPEQtViewPrivate.h"
@@ -139,6 +140,7 @@ void WPEQtView::createWebView()
     g_signal_connect_swapped(d->m_webView.get(), "notify::estimated-load-progress", G_CALLBACK(notifyLoadProgressCallback), this);
     g_signal_connect(d->m_webView.get(), "load-changed", G_CALLBACK(notifyLoadChangedCallback), this);
     g_signal_connect(d->m_webView.get(), "load-failed", G_CALLBACK(notifyLoadFailedCallback), this);
+    g_signal_connect(d->m_webView.get(), "context-menu", G_CALLBACK(notifyContextMenuCallback), this);
 
     if (!d->m_url.isEmpty())
         webkit_web_view_load_uri(d->m_webView.get(), d->m_url.toString().toUtf8().constData());
@@ -203,6 +205,18 @@ void WPEQtView::notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const 
 
     auto loadRequest = std::make_unique<WPEQtViewLoadRequest>(QUrl(QString(failingURI)), loadStatus, error->message);
     Q_EMIT view->loadingChanged(loadRequest.get());
+}
+
+gboolean WPEQtView::notifyContextMenuCallback(WebKitWebView*, WebKitContextMenu*, WebKitHitTestResult* result, WPEQtView* view)
+{
+    // The context menu is currently unused. We cannot pass it directly
+    // to the qt signal, which is handled asynchronously, because
+    // WebKit will destroy the context menu when this function returns.
+    // Future implementations may extract the data from the menu in
+    // this function and pass the data to the qt signal.
+    auto contextMenuRequest = WPEQtViewContextMenuRequest(result);
+    view->contextMenuRequested(contextMenuRequest);
+    return TRUE;
 }
 
 void WPEQtView::didUpdateScene()
