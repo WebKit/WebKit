@@ -190,9 +190,11 @@ public:
     void installDataDetectorOverlay(WebCore::PageOverlay&);
     void uninstallDataDetectorOverlay(WebCore::PageOverlay&);
 
-    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint& clickPointInMainFrameView);
 
     bool NODELETE canShowDataDetectorHighlightOverlays() const;
+
+    WebCore::IntRect rectForSelectionInRootViewContentsSpace(PDFSelection *) const;
 #endif
 
     void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep> = WebCore::RenderingUpdateStep::LayerFlush);
