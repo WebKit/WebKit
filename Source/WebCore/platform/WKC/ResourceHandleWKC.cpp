@@ -37,7 +37,9 @@
 #include <wtf/URL.h>
 #include <algorithm>
 #include <climits>
+#include <cstdlib>
 #include <span>
+#include <variant>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -77,6 +79,25 @@ bool isRedirectStatus(int status)
 {
     return status == 301 || status == 302 || status == 303
         || status == 307 || status == 308;
+}
+
+// Wii U deployments may store CA certificates outside the cURL port's compiled
+// default paths. Honor a CA bundle explicitly supplied by the embedder, while
+// retaining normal TLS peer and hostname verification.
+void configureCertificateAuthorityBundle(const URL& url)
+{
+    if (!url.protocolIs("https"_s))
+        return;
+
+    auto& sslHandle = CurlContext::singleton().sslHandle();
+    if (!std::holds_alternative<std::monostate>(sslHandle.getCACertInfo()))
+        return;
+
+    const char* path = std::getenv("CURL_CA_BUNDLE");
+    if (!path || !*path)
+        path = std::getenv("SSL_CERT_FILE");
+    if (path && *path)
+        sslHandle.setCACertPath(String::fromUTF8(path));
 }
 
 // ResourceHandle's in-process WKC bridge must explicitly bridge WebCore's
@@ -280,6 +301,7 @@ public:
 
         // Cancel the old transfer only after WebCore has approved the redirect.
         iterator->second.request->cancel();
+        configureCertificateAuthorityBundle(request.url());
         applyCookiesToRequest(handle->context(), request);
         auto nextRequest = CurlRequest::create(request, *this, CurlRequest::CaptureNetworkLoadMetrics::Extended);
         if (sameOrigin(m_originalURL, request.url()))
@@ -372,6 +394,7 @@ bool ResourceHandle::start()
 
     auto curlClient = adoptRef(*new WKCResourceHandleCurlClient(*this, d->m_user, d->m_password));
     ResourceRequest initialRequest = firstRequest();
+    configureCertificateAuthorityBundle(initialRequest.url());
     applyCookiesToRequest(context(), initialRequest);
     auto request = CurlRequest::create(initialRequest, curlClient.get(), CurlRequest::CaptureNetworkLoadMetrics::Extended);
     if (!d->m_user.isEmpty() || !d->m_password.isEmpty())
@@ -426,6 +449,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     ResourceRequest requestWithCookies = request;
     applyCookiesToRequest(context, requestWithCookies);
 
+    configureCertificateAuthorityBundle(request.url());
     CurlHandle curl;
     curl.setURL(request.url(), CurlHandle::LocalhostAlias::Disable);
     curl.setTimeout(CurlContext::singleton().defaultTimeoutInterval());
