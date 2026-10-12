@@ -1018,6 +1018,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 #
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
+	CSSValueKeywords.serialization.in \
 	HTTPHeaderNames.serialization.in \
 	ActivityState.serialization.in \
 	DocumentSyncData.serialization.in \

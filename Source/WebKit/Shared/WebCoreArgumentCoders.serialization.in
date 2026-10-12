@@ -4186,7 +4186,7 @@ struct WebCore::LinkIcon {
 };
 
 struct WebCore::CSSValueKey {
-    unsigned cssValueID;
+    WebCore::CSSValueID cssValueID;
     bool useDarkAppearance;
     bool useElevatedUserInterfaceLevel;
 };
