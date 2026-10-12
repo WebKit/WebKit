@@ -87,7 +87,7 @@ struct AttachmentLayout {
     FloatRect iconBackgroundRect;
     FloatRect attachmentRect;
     FloatRect progressRect;
-    AttachmentLayoutStyle style;
+    AttachmentLayoutStyle style { AttachmentLayoutStyle::NonSelected };
     float progress { 0 };
     bool excludeTypographicLeading { false };
     RefPtr<BitmapImage> icon;
