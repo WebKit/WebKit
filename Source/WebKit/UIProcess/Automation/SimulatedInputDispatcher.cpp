@@ -36,6 +36,7 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
 #include <WebCore/PointerEventTypeNames.h>
+#include <ranges>
 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 #include <wtf/text/TextBreakIterator.h>
@@ -303,6 +304,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         UNUSED_PARAM(this);
 #endif
 
+        updateInputCancelList(inputSource, inputSource->state, newState);
         inputSource->state = newState;
         completionHandler(std::nullopt);
     };
@@ -387,13 +389,9 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
         //
         // A tick changes at most one key per input source, but the keyframe that resets every input
-        // source (§17.6 Release Actions) releases everything still held at once, so several keys can
-        // differ here. Character keys are released in reverse order of being pressed, as step 6 of
-        // §17.6 requires.
-        //
-        // FIXME: §17.6 requires reverse press order across character and virtual keys together, but
-        // pressedVirtualKeys does not record the order of presses, so virtual keys are released last.
-        // That is observable: a character key pressed before Shift is reported shifted on release.
+        // source releases anything still held at once, so several keys can differ here. Release Actions
+        // (§17.6) first undoes the held presses one at a time in reverse order (see
+        // takeKeyFramesToUndoPresses()), so this only releases keys that the input cancel list missed.
         Vector<KeyboardInteractionSpec> interactions;
 
         for (const auto& iter : b.pressedVirtualKeys) {
@@ -506,6 +504,91 @@ void SimulatedInputDispatcher::dispatchKeyboardInteractions(Vector<KeyboardInter
     });
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+
+static bool isPointerPressed(const SimulatedInputSourceState& state)
+{
+    return state.pressedMouseButton && *state.pressedMouseButton != MouseButton::None;
+}
+
+void SimulatedInputDispatcher::updateInputCancelList(SimulatedInputSource& inputSource, const SimulatedInputSourceState& oldState, const SimulatedInputSourceState& newState)
+{
+    auto removeHeldPress = [&](auto&& matches) {
+        m_inputCancelList.removeFirstMatching([&](auto& heldPress) {
+            return heldPress.inputSource.ptr() == &inputSource && matches(heldPress.press);
+        });
+    };
+
+    if (isPointerPressed(newState) && !isPointerPressed(oldState))
+        m_inputCancelList.append({ inputSource, *newState.pressedMouseButton });
+    else if (!isPointerPressed(newState) && isPointerPressed(oldState)) {
+        removeHeldPress([](auto& press) {
+            return std::holds_alternative<MouseButton>(press);
+        });
+    }
+
+    for (auto& virtualKey : newState.pressedVirtualKeys.keys()) {
+        if (!oldState.pressedVirtualKeys.contains(virtualKey))
+            m_inputCancelList.append({ inputSource, virtualKey });
+    }
+    for (auto& virtualKey : oldState.pressedVirtualKeys.keys()) {
+        if (!newState.pressedVirtualKeys.contains(virtualKey)) {
+            removeHeldPress([&](auto& press) {
+                auto* heldVirtualKey = std::get_if<VirtualKey>(&press);
+                return heldVirtualKey && *heldVirtualKey == virtualKey;
+            });
+        }
+    }
+
+    for (auto& charKey : newState.pressedCharKeys) {
+        if (!oldState.pressedCharKeys.contains(charKey))
+            m_inputCancelList.append({ inputSource, CharKey { charKey } });
+    }
+    for (auto& charKey : oldState.pressedCharKeys) {
+        if (!newState.pressedCharKeys.contains(charKey)) {
+            removeHeldPress([&](auto& press) {
+                auto* heldCharKey = std::get_if<CharKey>(&press);
+                return heldCharKey && *heldCharKey == charKey;
+            });
+        }
+    }
+}
+
+Vector<SimulatedInputKeyFrame> SimulatedInputDispatcher::takeKeyFramesToUndoPresses()
+{
+    // The "undo actions" of Release Actions (§17.6): release the held presses one at a time, most recent first.
+    Vector<std::pair<Ref<SimulatedInputSource>, SimulatedInputSourceState>> releasedStates;
+    Vector<SimulatedInputKeyFrame> keyFrames;
+    auto heldPresses = std::exchange(m_inputCancelList, { });
+    for (auto& heldPress : std::views::reverse(heldPresses)) {
+        Ref inputSource = heldPress.inputSource;
+        auto index = releasedStates.findIf([&](const auto& entry) {
+            return entry.first.ptr() == inputSource.ptr();
+        });
+        if (index == notFound) {
+            index = releasedStates.size();
+            releasedStates.append({ inputSource, inputSource->state });
+        }
+
+        auto& state = releasedStates[index].second;
+        state.duration = std::nullopt;
+        WTF::switchOn(heldPress.press, [&](MouseButton) {
+            state.pressedMouseButton = std::nullopt;
+            state.mouseInteraction = MouseInteraction::Up;
+            state.origin = std::nullopt;
+            state.nodeHandle = std::nullopt;
+            state.location = std::nullopt;
+        }, [&](VirtualKey virtualKey) {
+            state.pressedVirtualKeys.remove(virtualKey);
+        }, [&](const CharKey& charKey) {
+            state.pressedCharKeys.remove(charKey);
+        });
+
+        Vector<SimulatedInputKeyFrame::StateEntry> entries;
+        entries.append({ inputSource.get(), state });
+        keyFrames.append(SimulatedInputKeyFrame(WTF::move(entries)));
+    }
+    return keyFrames;
+}
 
 void SimulatedInputDispatcher::run(std::optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
 {

@@ -169,6 +169,8 @@ public:
     void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
+    Vector<SimulatedInputKeyFrame> takeKeyFramesToUndoPresses();
+
     bool NODELETE isActive() const;
 
 private:
@@ -182,6 +184,7 @@ private:
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     void dispatchKeyboardInteractions(Vector<KeyboardInteractionSpec>&&, size_t nextIndex, AutomationCompletionHandler&&);
 #endif
+    void updateInputCancelList(SimulatedInputSource&, const SimulatedInputSourceState& oldState, const SimulatedInputSourceState& newState);
     void finishDispatching(std::optional<AutomationCommandError>);
 
     void keyFrameTransitionDurationTimerFired();
@@ -205,6 +208,13 @@ private:
     // The position within the input source state vector at m_keyframes[m_keyframeIndex].
     // Events that reflect input source state transitions are dispatched serially based on this order.
     unsigned m_inputSourceStateIndex { 0 };
+
+    // The input cancel list (§15.3 Input State), limited to the presses that are still held, in the order they happened.
+    struct HeldPress {
+        Ref<SimulatedInputSource> inputSource;
+        Variant<MouseButton, VirtualKey, CharKey> press;
+    };
+    Vector<HeldPress> m_inputCancelList;
 };
 
 } // namespace WebKit

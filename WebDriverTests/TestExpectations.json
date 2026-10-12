@@ -734,9 +734,6 @@
         "subtests": {
             "test_control_click[\\ue051-ctrlKey]": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_release_control_click": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213060"}}
             }
         }
     },

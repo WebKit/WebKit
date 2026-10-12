@@ -3091,10 +3091,12 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
     auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, WindowNotFound);
 
-    Vector<SimulatedInputKeyFrame> keyFrames({ SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources) });
     Ref inputDispatcher = inputDispatcherForPage(*page);
     inputDispatcher->cancel();
-    
+
+    auto keyFrames = inputDispatcher->takeKeyFramesToUndoPresses();
+    keyFrames.append(SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources));
+
     inputDispatcher->run(frameID, WTF::move(keyFrames), m_inputSources, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)](std::optional<AutomationCommandError> error) {
         if (error)
             callback(makeUnexpected(error.value().toProtocolString()));
