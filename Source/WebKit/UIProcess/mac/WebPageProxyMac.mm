@@ -231,6 +231,12 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
             },
             webPageIDInMainFrameProcess()
         );
+
+        forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            if (&webProcess == &legacyMainFrameProcess())
+                return;
+            webProcess.sendWithAsyncReply(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), [] { }, pageID);
+        });
     });
 }
 
