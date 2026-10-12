@@ -500,6 +500,7 @@ void MacroAssemblerX86_64::collectCPUFeatures()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+#if OS(DARWIN)
         {
             CPUID cpuid = getCPUID(0x1);
             s_sse3CheckState = (cpuid[2] & (1 << 0)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
@@ -507,13 +508,8 @@ void MacroAssemblerX86_64::collectCPUFeatures()
             s_sse4_1CheckState = (cpuid[2] & (1 << 19)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_sse4_2CheckState = (cpuid[2] & (1 << 20)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_popcntCheckState = (cpuid[2] & (1 << 23)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-#if OS(DARWIN)
             s_avxCheckState = CPUIDCheckState::Set;
-#else
-            s_avxCheckState = (cpuid[2] & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-#endif
         }
-#if OS(DARWIN)
         {
             uint32_t val = 0;
             size_t valSize = sizeof(val);
@@ -524,11 +520,15 @@ void MacroAssemblerX86_64::collectCPUFeatures()
             s_avx2CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
 #else
-        {
-            CPUID cpuid = getCPUID(0x7);
-            s_bmi1CheckState = (cpuid[2] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-            s_avx2CheckState = (cpuid[2] & (1 << 5)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-        }
+        __builtin_cpu_init();
+        s_sse3CheckState = __builtin_cpu_supports("sse3") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_supplementalSSE3CheckState = __builtin_cpu_supports("ssse3") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_sse4_1CheckState = __builtin_cpu_supports("sse4.1") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_sse4_2CheckState = __builtin_cpu_supports("sse4.2") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_popcntCheckState = __builtin_cpu_supports("popcnt") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_avxCheckState = __builtin_cpu_supports("avx") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_avx2CheckState = __builtin_cpu_supports("avx2") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_bmi1CheckState = __builtin_cpu_supports("bmi") ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
 #endif
         {
             CPUID cpuid = getCPUID(0x80000001);
