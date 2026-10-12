@@ -240,6 +240,12 @@ InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLine
     };
 }
 
+bool InlineContentConstrainer::constrainsContent(const Style::ComputedStyle& style)
+{
+    auto textWrapStyle = style.textWrapStyle();
+    return style.textWrapMode() == TextWrapMode::Wrap && (textWrapStyle == TextWrapStyle::Balance || textWrapStyle == TextWrapStyle::Pretty);
+}
+
 void InlineContentConstrainer::initialize()
 {
     auto lineClamp = m_inlineFormattingContext.layoutState().parentBlockLayoutState().lineClamp();

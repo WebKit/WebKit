@@ -190,7 +190,7 @@ static inline void updateRenderTreeLineClampBeforeLayout(auto& inlineLayoutState
     }
 
     if (auto renderTreeLineClamp = renderTreeLayoutState.lineClamp())
-        renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { remainingLinesForLineClamp(inlineLayoutState), renderTreeLineClamp->shouldDiscardOverflow, renderTreeLineClamp->clampAfterBox });
+        renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { remainingLinesForLineClamp(inlineLayoutState), renderTreeLineClamp->shouldDiscardOverflow, renderTreeLineClamp->clampAfterBox, renderTreeLineClamp->isStableTextWrap, renderTreeLineClamp->hasConstrainedTextWrapContent });
 }
 
 static inline void updateIFCLineClampAfterLayout(auto& inlineLayoutState, auto& renderTreeLayoutState)

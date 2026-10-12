@@ -42,6 +42,7 @@ public:
         size_t maximumLines { 0 };
         bool shouldDiscardOverflow { false };
         bool isLegacy { true };
+        bool isStableTextWrap { false };
     };
     enum class TextBoxTrimSide : bool {
         Start,
