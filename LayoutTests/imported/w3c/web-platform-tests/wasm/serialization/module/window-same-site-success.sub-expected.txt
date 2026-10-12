@@ -1,0 +1,4 @@
+
+PASS postMessaging a wasm module to a same-site iframe on another host succeeds
+PASS postMessaging a wasm module to a same-site iframe on another port succeeds
+

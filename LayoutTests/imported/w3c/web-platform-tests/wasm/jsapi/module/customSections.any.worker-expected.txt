@@ -8,4 +8,6 @@ PASS Custom sections
 PASS Custom sections with surrogate pairs
 PASS Custom sections with U+FFFD
 PASS Stray argument
+PASS Custom section buffers are independent copies
+PASS Mutating a custom section buffer does not change other copies
 

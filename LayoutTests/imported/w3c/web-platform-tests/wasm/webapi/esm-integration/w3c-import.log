@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-allows-source-phase-wasm.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-allows-wasm.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/scripting-disabled.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-blocked-by-csp.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-import-non-UTF8.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/source-phase-js-string.tentative.html

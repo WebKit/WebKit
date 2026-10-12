@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/log.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/non-UTF8.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/resolve-export.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/scripting-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-i64-global.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-to-wasm.wasm
 /LayoutTests/imported/w3c/web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-error-from-wasm.wasm
