@@ -1,0 +1,117 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="match" href="selection-gap-clear-vertical-rl-expected.html">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body { margin: 0; }
+p { margin: 10px; }
+#host { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 10px; }
+.editor {
+    font: 16px/1.5 Ahem;
+    color: #888;
+    caret-color: transparent;
+    width: 220px;
+    height: 220px;
+    padding: 6px;
+    border: 1px solid #888;
+    margin: 0;
+    overflow: auto;
+    white-space: pre-wrap;
+    resize: none;
+    outline: none;
+    writing-mode: vertical-rl;
+}
+.editor::selection { background: blue; }
+#block { font: 16px/1 Ahem; color: #666; background: #ccc; writing-mode: vertical-rl; width: 100px; height: 100px; }
+#block::selection { background: blue; }
+</style>
+</head>
+<body>
+<p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=119635">119635</a>: Selection gaps in vertical-rl should be repainted when the selection is cleared. No blue should remain.</p>
+<div id="host">
+<textarea class="editor" data-scroll="0"></textarea>
+<textarea class="editor" data-scroll="150"></textarea>
+<div class="editor" contenteditable="plaintext-only" data-scroll="0"></div>
+<div class="editor" contenteditable="plaintext-only" data-scroll="150"></div>
+<div id="block">abc<br><br>hello world</div>
+</div>
+<script>
+// Selections that span blank lines paint selection gaps. Clearing the selection has to repaint them;
+// in vertical-rl the gap invalidation used to land on the mirrored side of the block, so the highlight
+// stayed on screen. testRunner.dontForceRepaint() keeps the snapshot from hiding a missed repaint.
+
+const text = Array.from({ length: 30 }, (_, i) => (i % 3 === 1) ? "" : `${i + 1} XXXXXX XXXX`).join("\n");
+
+function scroll(editor)
+{
+    editor.scrollLeft = -editor.dataset.scroll;
+}
+
+async function selectThenClear(editor)
+{
+    const start = text.indexOf(editor.dataset.scroll === "0" ? "1 X" : "13 X");
+    const end = start + 60;
+    editor.focus();
+    if (editor.tagName === "TEXTAREA")
+        editor.setSelectionRange(start, end);
+    else
+        getSelection().setBaseAndExtent(editor.firstChild, start, editor.firstChild, end);
+    scroll(editor);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (editor.tagName === "TEXTAREA")
+        editor.setSelectionRange(end, end);
+    else
+        getSelection().collapse(editor.firstChild, end);
+    await UIHelper.renderingUpdate();
+}
+
+async function runTest()
+{
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        if (testRunner.dontForceRepaint)
+            testRunner.dontForceRepaint();
+    }
+
+    const editors = [...document.querySelectorAll(".editor")];
+    for (const editor of editors) {
+        if (editor.tagName === "TEXTAREA")
+            editor.value = text;
+        else
+            editor.textContent = text;
+        scroll(editor);
+    }
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    for (const editor of editors)
+        await selectThenClear(editor);
+
+    // The reduced test case from the bug.
+    const block = document.getElementById("block");
+    getSelection().setPosition(block, 0);
+    getSelection().modify("extend", "forward", "line");
+    getSelection().modify("extend", "forward", "line");
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    document.activeElement.blur();
+    getSelection().removeAllRanges();
+    await UIHelper.renderingUpdate();
+    for (const editor of editors)
+        scroll(editor);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest();
+</script>
+</body>
+</html>

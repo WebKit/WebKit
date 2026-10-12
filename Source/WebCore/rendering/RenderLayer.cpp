@@ -5590,6 +5590,9 @@ void RenderLayer::repaintBlockSelectionGaps()
         rect.intersect(downcast<RenderBox>(renderer()).overflowClipRect({ }));
     if (renderer().hasClip())
         rect.intersect(downcast<RenderBox>(renderer()).clipRect({ }));
+    // m_blockSelectionGapsBounds is in physical coordinates, but repaintRectangle() expects flipped block coordinates.
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer()))
+        box->flipForWritingMode(rect);
     if (!rect.isEmpty())
         renderer().repaintRectangle(rect);
 }
