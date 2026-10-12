@@ -438,6 +438,7 @@ jobs:
       # the same upstream generators here and put only their outputs in the ignored
       # generated directory / working checkout.
       - name: Generate WebCore derived sources and DOM bindings for WKC
+        shell: bash
         run: |
           set -euo pipefail
           python3 "$GITHUB_WORKSPACE/Source/WebKit/WKC/scripts/generate-webcore-derived-sources.py"
