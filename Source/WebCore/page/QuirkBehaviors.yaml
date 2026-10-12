@@ -465,6 +465,9 @@ ShouldDisableAdSkippingInPip:
   available: pipSkipPreroll
   export: true
 
+# news.yahoo.co.jp rdar://189631518
+ShouldDisableCSSSizeShorthandQuirk:
+
 # Microsoft office online generates data URLs with incorrect padding on Safari only (rdar://114573089).
 ShouldDisableDataURLPaddingValidation:
 
