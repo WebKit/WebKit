@@ -569,15 +569,15 @@ class SingleTestRunner(object):
                 self._driver.stop()
 
             test_result = self._compare_output_with_reference(reference_output, test_output, reference.path, reference.relation == '!=')
+            total_test_time += test_result.test_run_time
 
             if (reference.relation == '!=' and test_result.failures) or (reference.relation == '==' and not test_result.failures):
                 break
-            total_test_time += test_result.test_run_time
 
         assert(reference_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
         reftest_type = set([reference_file.relation for reference_file in self._reference_files])
-        return TestResult(self._test_input, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
+        return TestResult(self._test_input, test_result.failures, total_test_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
 
     def _run_self_comparison_test(self, header):
         driver_input = self._driver_input()
