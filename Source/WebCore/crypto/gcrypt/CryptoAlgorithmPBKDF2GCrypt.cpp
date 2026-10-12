@@ -45,9 +45,11 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
     // Length, in bits, is a multiple of 8, as guaranteed by CryptoAlgorithmPBKDF2::deriveBits().
     ASSERT(!(length % 8));
 
+    const void* key = keyData.span().data() ? keyData.span().data() : reinterpret_cast<const uint8_t*>("");
+
     // Derive bits using PBKDF2, the specified hash algorithm, salt data and iteration count.
     Vector<uint8_t> result(length / 8);
-    gcry_error_t error = gcry_kdf_derive(keyData.span().data(), keyData.size(), GCRY_KDF_PBKDF2, *hashAlgorithm, saltData.span().data(), saltData.size(), iterations, result.size(), result.mutableSpan().data());
+    gcry_error_t error = gcry_kdf_derive(key, keyData.size(), GCRY_KDF_PBKDF2, *hashAlgorithm, saltData.span().data(), saltData.size(), iterations, result.size(), result.mutableSpan().data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
