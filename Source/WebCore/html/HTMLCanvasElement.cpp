@@ -69,6 +69,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderElement.h"
 #include "RenderHTMLCanvas.h"
+#include "RenderLayerBacking.h"
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
 #include "ScriptTrackingPrivacyCategory.h"
@@ -614,40 +615,30 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* g
     return dynamicDowncast<GPUCanvasContext>(m_context.get());
 }
 
-std::optional<FloatRect> HTMLCanvasElement::computeDirtyRectangleIfNeeded(const std::optional<FloatRect>& rect) const
-{
-    if (!rect)
-        return std::nullopt;
-
-#if ENABLE(DAMAGE_TRACKING)
-    if (usesContentsAsLayerContents() && !document().settings().propagateDamagingInformation())
-        return std::nullopt;
-#else
-    if (usesContentsAsLayerContents())
-        return std::nullopt;
-#endif
-
-    FloatRect destRect;
-    CheckedPtr renderer = renderBox();
-    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer))
-        destRect = renderReplaced->replacedContentRect();
-    else
-        destRect = renderer->contentBoxRect();
-
-    FloatRect dirtyRect = mapRect(*rect, FloatRect { { }, size() }, destRect);
-    dirtyRect.intersect(destRect);
-    if (dirtyRect.isEmpty())
-        return std::nullopt;
-
-    return dirtyRect;
-}
-
 void HTMLCanvasElement::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     m_copiedImage = nullptr;
     if (CheckedPtr renderer = renderBox()) {
-        const std::optional<FloatRect> dirtyRect = computeDirtyRectangleIfNeeded(rect);
-        if (usesContentsAsLayerContents())
+        bool usesLayerContents = usesContentsAsLayerContents();
+#if ENABLE(DAMAGE_TRACKING)
+        bool needsDirtyRect = !usesLayerContents || document().settings().propagateDamagingInformation();
+#else
+        bool needsDirtyRect = !usesLayerContents;
+#endif
+        std::optional<FloatRect> dirtyRect;
+        if (rect && needsDirtyRect) {
+            FloatRect destRect;
+            if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer))
+                destRect = renderReplaced->replacedContentRect();
+            else
+                destRect = renderer->contentBoxRect();
+
+            dirtyRect = mapRect(*rect, FloatRect { { }, size() }, destRect);
+            dirtyRect->intersect(destRect);
+            if (dirtyRect->isEmpty())
+                dirtyRect = std::nullopt;
+        }
+        if (usesLayerContents)
             renderer->contentChanged(ContentChangeType::CanvasPixels, dirtyRect);
         else if (dirtyRect)
             renderer->repaintRectangle(enclosingIntRect(*dirtyRect));
@@ -686,9 +677,11 @@ bool HTMLCanvasElement::usesContentsAsLayerContents() const
     CheckedPtr renderBox = this->renderBox();
     if (!renderBox)
         return false;
-    if (!m_context)
+    CheckedPtr layer = renderBox->layer();
+    if (!layer)
         return false;
-    return renderBox->hasAcceleratedCompositing() && protect(m_context.get())->delegatesDisplay();
+    auto* backing = layer->backing();
+    return backing && backing->hasContentsDisplayDelegate();
 }
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)

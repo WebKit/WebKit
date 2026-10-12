@@ -424,6 +424,7 @@ void GraphicsLayerWC::setContentsToSolidColor(const Color& color)
 
 void GraphicsLayerWC::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
+    m_hasContentsDisplayDelegate = false;
     if (m_platformLayer == platformLayer)
         return;
     m_platformLayer = platformLayer;
@@ -443,6 +444,7 @@ void GraphicsLayerWC::setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerCo
 {
     auto platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
     setContentsToPlatformLayer(platformLayer, purpose);
+    m_hasContentsDisplayDelegate = !!platformLayer;
 }
 
 bool GraphicsLayerWC::usesContentsLayer() const

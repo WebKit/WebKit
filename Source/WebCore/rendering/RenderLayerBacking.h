@@ -110,6 +110,7 @@ public:
     void updateAfterLayout(bool needsClippingUpdate, bool needsFullRepaint);
     
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
+    bool hasContentsDisplayDelegate() const;
 
     // Layer to clip children
     bool hasClippingLayer() const { return (m_childContainmentLayer && !m_isFrameLayerWithTiledBacking); }

@@ -97,6 +97,7 @@ private:
     void setContentsToNativeImage(NativeImage*) override;
     void setContentsToSolidColor(const Color&) override;
     bool usesContentsLayer() const override;
+    bool hasContentsDisplayDelegate() const override { return !!m_contentsDisplayDelegate; }
 
     bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
     void addChild(Ref<GraphicsLayer>&&) override;

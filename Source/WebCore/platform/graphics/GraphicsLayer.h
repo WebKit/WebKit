@@ -421,6 +421,7 @@ public:
     virtual std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const { return std::nullopt; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
+    virtual bool hasContentsDisplayDelegate() const { return false; }
 
     // Callback from the underlying graphics system to draw layer contents.
     WEBCORE_EXPORT void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior> = { }) const;

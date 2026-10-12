@@ -718,6 +718,11 @@ bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
     return canvasCompositingStrategy(renderer()) == CanvasAsLayerContents;
 }
 
+bool RenderLayerBacking::hasContentsDisplayDelegate() const
+{
+    return m_graphicsLayer && m_graphicsLayer->hasContentsDisplayDelegate();
+}
+
 #if PLATFORM(IOS_FAMILY)
 bool RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer& layer) const
 {

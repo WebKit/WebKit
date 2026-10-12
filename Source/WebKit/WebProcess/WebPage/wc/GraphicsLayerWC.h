@@ -91,6 +91,7 @@ public:
     void setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     bool canDirectlyCompositeNativeImage() const override { return false; }
     bool usesContentsLayer() const override;
+    bool hasContentsDisplayDelegate() const override { return m_hasContentsDisplayDelegate; }
     void setShowDebugBorder(bool) override;
     void setDebugBorder(const WebCore::Color&, float width) override;
     void setShowRepaintCounter(bool) override;
@@ -130,6 +131,7 @@ private:
     Observer* m_observer;
     const std::unique_ptr<WCTiledBacking> m_tiledBacking;
     PlatformLayer* m_platformLayer { nullptr };
+    bool m_hasContentsDisplayDelegate { false };
     Markable<WebCore::LayerHostingContextIdentifier> m_hostIdentifier;
     WebCore::Color m_solidColor;
     WebCore::Color m_debugBorderColor;
