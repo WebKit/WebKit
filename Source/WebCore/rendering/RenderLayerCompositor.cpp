@@ -2657,11 +2657,7 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
         auto constrainingRect = box.constrainingRectForStickyPosition();
         box.computeStickyPositionConstraints(constraints, constrainingRect);
         auto stickyBounds = LayoutRect(constraints.computeStickyExtent());
-        // extent.bounds includes the current sticky offset, but the sticky extent is relative to the box without that offset,
-        // so remove the offset when positioning the sticky extent.
-        auto stickyOffset = LayoutSize(constraints.computeStickyOffset(constrainingRect));
-        stickyBounds.move(extent.bounds.x() - stickyOffset.width() - LayoutUnit(constraints.stickyBoxRect().x()),
-            extent.bounds.y() - stickyOffset.height() - LayoutUnit(constraints.stickyBoxRect().y()));
+        stickyBounds.move(extent.bounds.x() - LayoutUnit(constraints.stickyBoxRect().x()), extent.bounds.y() - LayoutUnit(constraints.stickyBoxRect().y()));
         scrollInflated.intersect(stickyBounds);
         extent.bounds = scrollInflated;
     } else if (renderer.isFixedPositioned() && renderer.container() == &m_renderView) {
@@ -4297,16 +4293,6 @@ bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const
         return true;
 
     return false;
-}
-
-bool RenderLayerCompositor::canSkipRequirementsTraversalForStickyOffsetChange(const RenderLayer& layer) const
-{
-    if (!layer.renderer().isStickilyPositioned() || !layer.isComposited())
-        return false;
-
-    // computeExtent() covers all sticky positions, so a sticky offset change cannot affect overlap.
-    const RenderLayer* enclosingAcceleratedOverflowLayer = nullptr;
-    return isAsyncScrollableStickyLayer(layer, &enclosingAcceleratedOverflowLayer) && !enclosingAcceleratedOverflowLayer;
 }
 
 bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& layer, const RenderLayer** enclosingAcceleratedOverflowLayer) const
