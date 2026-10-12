@@ -50,8 +50,6 @@ public:
         if (!m_graph.m_hasExceptionHandlers)
             return false;
 
-        m_graph.determineReachability();
-
         InsertionSet insertionSet(m_graph);
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             if (block->isReachable) {
@@ -60,7 +58,6 @@ public:
             }
         }
 
-        m_graph.clearReachability();
         return true;
     }
 
