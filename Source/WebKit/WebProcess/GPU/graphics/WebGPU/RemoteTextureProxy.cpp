@@ -66,7 +66,8 @@ static bool NODELETE equalDescriptors(const std::optional<WebCore::WebGPU::Textu
         && a->baseMipLevel == b->baseMipLevel
         && a->mipLevelCount == b->mipLevelCount
         && a->baseArrayLayer == b->baseArrayLayer
-        && a->arrayLayerCount == b->arrayLayerCount;
+        && a->arrayLayerCount == b->arrayLayerCount
+        && a->swizzle == b->swizzle;
 }
 
 RefPtr<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& descriptor)

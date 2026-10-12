@@ -250,6 +250,7 @@ void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
     m_destroyed = true;
     internalUnmap(scriptExecutionContext);
     m_bufferSize = 0;
+    m_memoryCost.store(0, std::memory_order_relaxed);
     m_backing->destroy();
     if (RefPtr device = m_device)
         device->didChangeBufferMemoryCost(*this);

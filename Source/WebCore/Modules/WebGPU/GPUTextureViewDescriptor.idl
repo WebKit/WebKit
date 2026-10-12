@@ -42,4 +42,5 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
     GPUIntegerCoordinate mipLevelCount;
     GPUIntegerCoordinate baseArrayLayer = 0;
     GPUIntegerCoordinate arrayLayerCount;
+    DOMString swizzle = "rgba";
 };

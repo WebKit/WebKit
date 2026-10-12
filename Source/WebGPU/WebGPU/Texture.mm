@@ -2046,6 +2046,9 @@ NSString *Device::errorValidatingTextureCreation(const WebGPU::TextureDescriptor
 
         if (descriptor.size.depthOrArrayLayers != 1)
             return @"createTexture: descriptor.size.depthOrArrayLayers must be 1 when using Transient textures";
+
+        if (!descriptor.viewFormats.empty())
+            return @"createTexture: descriptor.viewFormats must be empty when using Transient textures";
     }
 
     return nil;
@@ -3189,6 +3192,11 @@ NSString* Texture::errorValidatingTextureViewCreation(const ResolvedTextureViewD
     if (!m_usage.containsAll(descriptor.usage))
         return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) is not a subset of the texture's usage(%llu)", toAPI(descriptor.usage), toAPI(m_usage)]);
 
+    // Transient textures never leave tile memory, so a view of one cannot drop any of the
+    // texture's usages. A zero usage has already been resolved to the texture's usage above.
+    if (m_usage.contains(WebGPU::TextureUsage::Transient) && descriptor.usage != m_usage)
+        return ERROR_STRING([NSString stringWithFormat:@"view usage(%llu) must be either zero or exactly the transient texture's usage(%llu)", toAPI(descriptor.usage), toAPI(m_usage)]);
+
     // The format helpers take the C API format.
     auto format = toAPI(descriptor.format);
 
@@ -4243,9 +4251,29 @@ void wgpuTextureRelease(WGPUTexture texture)
     WebGPU::Metal::fromAPI(texture).deref();
 }
 
+static bool isIdentitySwizzle(const WGPUTextureComponentSwizzle& swizzle)
+{
+    // WGPUComponentSwizzle_Undefined selects the channel's own component, so a zero-initialized swizzle is the identity.
+    auto isIdentity = [](WGPUComponentSwizzle component, WGPUComponentSwizzle channel) {
+        return component == WGPUComponentSwizzle_Undefined || component == channel;
+    };
+    return isIdentity(swizzle.r, WGPUComponentSwizzle_R)
+        && isIdentity(swizzle.g, WGPUComponentSwizzle_G)
+        && isIdentity(swizzle.b, WGPUComponentSwizzle_B)
+        && isIdentity(swizzle.a, WGPUComponentSwizzle_A);
+}
+
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
     Ref protectedTexture = WebGPU::Metal::fromAPI(texture);
+    // The C++ descriptor has no swizzle, and the texture-component-swizzle feature is not supported,
+    // so it can never be enabled. A destroyed texture's createView generates no error.
+    if (descriptor && !isIdentitySwizzle(descriptor->swizzle)) {
+        Ref device = protectedTexture->device();
+        if (!protectedTexture->isDestroyed())
+            device->generateAValidationError("GPUTexture.createView: swizzle is not \"rgba\" and the texture-component-swizzle feature is not enabled"_s);
+        return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
+    }
     // A null descriptor is a descriptor with all members at their defaults.
     std::optional<WebGPU::TextureViewDescriptor> apiDescriptor;
     if (descriptor) {

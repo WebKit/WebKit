@@ -2687,7 +2687,12 @@ Result<void> TypeChecker::introduceFunction(const AST::Identifier& name, const T
 
 std::optional<FailedCheck> typeCheck(ShaderModule& shaderModule)
 {
-    return TypeChecker(shaderModule).check();
+    auto result = TypeChecker(shaderModule).check();
+    // Every module builds its own copy of the builtin overload candidates, several hundred kilobytes
+    // of them, and nothing resolves an overload after this. Free them now rather than when the page
+    // lets go of the module.
+    shaderModule.releaseOverloadCandidates();
+    return result;
 }
 
 template<typename TargetConstructor, typename Validator, typename... Arguments>

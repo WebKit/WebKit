@@ -327,6 +327,17 @@ typedef enum WGPUCompilationMessageType {
     WGPUCompilationMessageType_Force32 = 0x7FFFFFFF
 } WGPUCompilationMessageType WGPU_ENUM_ATTRIBUTE;
 
+typedef enum WGPUComponentSwizzle {
+    WGPUComponentSwizzle_Undefined = 0x00000000,
+    WGPUComponentSwizzle_Zero = 0x00000001,
+    WGPUComponentSwizzle_One = 0x00000002,
+    WGPUComponentSwizzle_R = 0x00000003,
+    WGPUComponentSwizzle_G = 0x00000004,
+    WGPUComponentSwizzle_B = 0x00000005,
+    WGPUComponentSwizzle_A = 0x00000006,
+    WGPUComponentSwizzle_Force32 = 0x7FFFFFFF
+} WGPUComponentSwizzle WGPU_ENUM_ATTRIBUTE;
+
 typedef enum WGPUToneMappingMode {
     WGPUToneMappingMode_Standard = 0x00000000,
     WGPUToneMappingMode_Extended = 0x00000001,
@@ -776,6 +787,9 @@ static const WGPUBufferUsage WGPUBufferUsage_Uniform = 0x0000000000000040;
 static const WGPUBufferUsage WGPUBufferUsage_Storage = 0x0000000000000080;
 static const WGPUBufferUsage WGPUBufferUsage_Indirect = 0x0000000000000100;
 static const WGPUBufferUsage WGPUBufferUsage_QueryResolve = 0x0000000000000200;
+// Carries the fact that the caller asked for a usage bit that does not exist, so that buffer
+// creation can reject it rather than acting on the bits it happened to recognize.
+static const WGPUBufferUsage WGPUBufferUsage_Invalid = 0x0000000000000400;
 
 typedef WGPUFlags WGPUColorWriteMask;
 static const WGPUColorWriteMask WGPUColorWriteMask_None = 0x0000000000000000;
@@ -1143,6 +1157,13 @@ typedef struct WGPUTextureBindingLayout {
     WGPUBool multisampled;
 } WGPUTextureBindingLayout WGPU_STRUCTURE_ATTRIBUTE;
 
+typedef struct WGPUTextureComponentSwizzle {
+    WGPUComponentSwizzle r;
+    WGPUComponentSwizzle g;
+    WGPUComponentSwizzle b;
+    WGPUComponentSwizzle a;
+} WGPUTextureComponentSwizzle WGPU_STRUCTURE_ATTRIBUTE;
+
 typedef struct WGPUTextureViewDescriptor {
     WGPUStringView label;
     WGPUTextureFormat format;
@@ -1153,6 +1174,7 @@ typedef struct WGPUTextureViewDescriptor {
     uint32_t arrayLayerCount;
     WGPUTextureAspect aspect;
     WGPUTextureUsage usage;
+    WGPUTextureComponentSwizzle swizzle;
 } WGPUTextureViewDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUVertexAttribute {

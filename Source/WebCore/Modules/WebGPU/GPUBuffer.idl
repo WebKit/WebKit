@@ -35,6 +35,7 @@ typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
     Exposed=(Window,Worker),
     SecureContext,
     CallTracer=InspectorCanvasCallTracer,
+    ReportExtraMemoryCost,
 ] interface GPUBuffer {
     readonly attribute GPUSize64 size;
     readonly attribute GPUBufferUsageFlags usage;

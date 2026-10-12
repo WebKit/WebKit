@@ -313,6 +313,9 @@ public:
     std::optional<Error> validateOverrides(const PrepareResult&, HashMap<String, ConstantValue>&);
 
     const OverloadedDeclaration* lookupOverload(const String&) const;
+    // Only the type checker resolves overloads. Later passes look builtins up only for their
+    // constant and validation functions, which this keeps.
+    void releaseOverloadCandidates();
 
     void addOverride(AST::Variable& variable) { m_overrides.append(&variable); }
     bool containsOverride(const String& key) const;

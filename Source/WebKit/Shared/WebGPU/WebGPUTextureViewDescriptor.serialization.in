@@ -30,5 +30,6 @@
     std::optional<WebCore::WebGPU::IntegerCoordinate> mipLevelCount;
     WebCore::WebGPU::IntegerCoordinate baseArrayLayer;
     std::optional<WebCore::WebGPU::IntegerCoordinate> arrayLayerCount;
+    WebCore::WebGPU::TextureComponentSwizzle swizzle;
 };
 #endif

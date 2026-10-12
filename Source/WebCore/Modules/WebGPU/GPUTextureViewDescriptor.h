@@ -34,13 +34,45 @@
 #include "WebGPUTextureViewDescriptor.h"
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+inline std::optional<WebGPU::ComponentSwizzle> convertSwizzleComponentToBacking(char16_t component)
+{
+    switch (component) {
+    case 'r':
+        return WebGPU::ComponentSwizzle::R;
+    case 'g':
+        return WebGPU::ComponentSwizzle::G;
+    case 'b':
+        return WebGPU::ComponentSwizzle::B;
+    case 'a':
+        return WebGPU::ComponentSwizzle::A;
+    case '0':
+        return WebGPU::ComponentSwizzle::Zero;
+    case '1':
+        return WebGPU::ComponentSwizzle::One;
+    default:
+        return std::nullopt;
+    }
+}
+
 struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
-    WebGPU::TextureViewDescriptor convertToBacking() const
+    // Returns std::nullopt if swizzle is not four characters, each of which is one of "rgba01".
+    std::optional<WebGPU::TextureViewDescriptor> convertToBacking() const
     {
-        return {
+        if (swizzle.length() != 4)
+            return std::nullopt;
+
+        auto r = convertSwizzleComponentToBacking(swizzle[0]);
+        auto g = convertSwizzleComponentToBacking(swizzle[1]);
+        auto b = convertSwizzleComponentToBacking(swizzle[2]);
+        auto a = convertSwizzleComponentToBacking(swizzle[3]);
+        if (!r || !g || !b || !a)
+            return std::nullopt;
+
+        return { {
             { label },
             format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
             dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
@@ -50,7 +82,8 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
             mipLevelCount,
             baseArrayLayer,
             arrayLayerCount,
-        };
+            { *r, *g, *b, *a },
+        } };
     }
 
     Ref<JSON::Object> toJSON() const;
@@ -63,6 +96,7 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
     std::optional<GPUIntegerCoordinate> mipLevelCount;
     GPUIntegerCoordinate baseArrayLayer { 0 };
     std::optional<GPUIntegerCoordinate> arrayLayerCount;
+    String swizzle { "rgba"_s };
 };
 
 }

@@ -83,6 +83,7 @@
 #include "XRGPUBinding.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RAMSize.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -193,7 +194,7 @@ size_t GPUDevice::memoryCost() const
     for (auto& buffer : m_buffers)
         result += static_cast<size_t>(buffer.size());
     for (auto& texture : m_textures)
-        result += texture.memoryCost();
+        result += texture.estimatedMemoryCost();
     return result.hasOverflowed() ? 0 : result.value();
 }
 
@@ -263,6 +264,13 @@ RefPtr<WebGPU::XRBinding> GPUDevice::createXRBinding(const WebXRSession&)
     return m_backing->createXRBinding();
 }
 
+// An object bigger than the system could ever allocate is invalid, so it holds no memory. Telling the GC its size anyway
+// would inflate the heap size the GC paces itself by, and put collections off rather than bring them on.
+static size_t memoryCostIfAllocatable(size_t memoryCost)
+{
+    return memoryCost <= ramSize() ? memoryCost : 0;
+}
+
 ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(GPUBufferDescriptor&& bufferDescriptor)
 {
     auto bufferSize = bufferDescriptor.size;
@@ -280,6 +288,9 @@ ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(GPUBufferDescriptor&& buffer
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBuffer: Unable to create buffer."_s };
 
     Ref result = GPUBuffer::create(buffer.releaseNonNull(), bufferSize, usage, mappedAtCreation, *this);
+    // A buffer over the device's limits is invalid, so it holds no memory.
+    if (bufferSize <= limits()->maxBufferSize())
+        result->setMemoryCost(memoryCostIfAllocatable(bufferSize));
     m_buffers.add(result);
     didChangeBufferMemoryCost(result);
     return result;
@@ -377,6 +388,21 @@ std::optional<String> GPUDevice::errorValidatingSupportedFormat(GPUTextureFormat
     }
 }
 
+// A texture over the device's limits is invalid, so it holds no memory.
+static bool exceedsLimits(const GPUTexture& texture, const GPUSupportedLimits& limits)
+{
+    switch (texture.dimension()) {
+    case GPUTextureDimension::_1d:
+        return texture.width() > limits.maxTextureDimension1D() || texture.height() > 1 || texture.depthOrArrayLayers() > 1;
+    case GPUTextureDimension::_2d:
+        return std::max(texture.width(), texture.height()) > limits.maxTextureDimension2D() || texture.depthOrArrayLayers() > limits.maxTextureArrayLayers();
+    case GPUTextureDimension::_3d:
+        return std::max({ texture.width(), texture.height(), texture.depthOrArrayLayers() }) > limits.maxTextureDimension3D();
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
 ExceptionOr<Ref<GPUTexture>> GPUDevice::createTexture(GPUTextureDescriptor&& textureDescriptor)
 {
     if (auto error = errorValidatingSupportedFormat(textureDescriptor.format))
@@ -387,6 +413,8 @@ ExceptionOr<Ref<GPUTexture>> GPUDevice::createTexture(GPUTextureDescriptor&& tex
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createTexture: Unable to create texture."_s };
 
     Ref result = GPUTexture::create(texture.releaseNonNull(), textureDescriptor, *this);
+    if (!exceedsLimits(result, limits()))
+        result->setMemoryCost(memoryCostIfAllocatable(result->estimatedMemoryCost()));
     m_textures.add(result);
     didChangeTextureMemoryCost(result);
     return result;

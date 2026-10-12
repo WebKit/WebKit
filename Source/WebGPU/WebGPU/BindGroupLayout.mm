@@ -295,6 +295,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const String& label, Vector<R
             layoutError = @"Buffer layout is not valid";
         }, [&](const BindGroupLayout::SamplerBindingLayout& sampler) {
             descriptors[0] = createArgumentDescriptor(sampler);
+            layoutError = @"Sampler layout is not valid";
         }, [&](const BindGroupLayout::TextureBindingLayout& texture) {
             descriptors[0] = createArgumentDescriptor(texture);
             layoutError = @"Texture layout not valid";

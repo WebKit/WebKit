@@ -201,7 +201,7 @@ frames:
         0: (anonymous function)
         1: executeFrameFunction
   24: (duration)
-    0: textureView = texture.createView({"usage":0,"aspect":"all","baseMipLevel":0,"baseArrayLayer":0})
+    0: textureView = texture.createView({"usage":0,"aspect":"all","baseMipLevel":0,"baseArrayLayer":0,"swizzle":"rgba"})
       swizzleTypes: [JSON]
       trace:
         0: createView

@@ -48,6 +48,7 @@ Ref<JSON::Object> GPUTextureViewDescriptor::toJSON() const
     json->setDouble("baseArrayLayer"_s, baseArrayLayer);
     if (arrayLayerCount)
         json->setDouble("arrayLayerCount"_s, *arrayLayerCount);
+    json->setString("swizzle"_s, swizzle);
     return json;
 }
 

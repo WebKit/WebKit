@@ -28,6 +28,7 @@
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <WebCore/WebGPUObjectDescriptorBase.h>
 #include <WebCore/WebGPUTextureAspect.h>
+#include <WebCore/WebGPUTextureComponentSwizzle.h>
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
 #include <WebCore/WebGPUTextureViewDimension.h>
@@ -44,6 +45,7 @@ struct TextureViewDescriptor : public ObjectDescriptorBase {
     std::optional<IntegerCoordinate> mipLevelCount;
     IntegerCoordinate baseArrayLayer { 0 };
     std::optional<IntegerCoordinate> arrayLayerCount;
+    TextureComponentSwizzle swizzle;
 };
 
 } // namespace WebCore::WebGPU

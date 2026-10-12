@@ -41,6 +41,9 @@ enum class BufferUsage : uint16_t {
     Storage         = 1 << 7,
     Indirect        = 1 << 8,
     QueryResolve    = 1 << 9,
+    // Set when the caller passed a bit that is not one of the above, so that the usage can be
+    // rejected instead of being silently narrowed to the bits we do recognize.
+    Invalid         = 1 << 10,
 };
 using BufferUsageFlags = std::underlying_type_t<BufferUsage>;
 

@@ -413,7 +413,6 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 else {
 #define makeCase(N) case N: crashGPUProcess<N>(error, underlyingError);
                     switch (underlyingError.code) {
-                        makeCase(8); // kIOGPUCommandBufferCallbackErrorOutOfMemory = 8,
                         makeCase(9); // kIOGPUCommandBufferCallbackErrorInvalidResource = 9,
                         makeCase(10); // kIOGPUCommandBufferCallbackErrorInvalidInput = 10,
                         makeCase(11); // kIOGPUCommandBufferCallbackErrorPageFault = 11,
@@ -505,6 +504,12 @@ void Queue::submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands)
             ASSERT_NOT_REACHED("Always expect command buffer in the container");
 #endif
         apiCommandBuffer->preCommitHandler();
+        // A command encoder that overflowed one MTLCommandBuffer's render encoder budget spilled the
+        // filled buffers here. They hold the commands encoded before this one, so they have to be
+        // committed first; sequential commits on the same MTLCommandQueue execute in order.
+        auto priorCommandBuffers = apiCommandBuffer->takePriorCommandBuffers();
+        for (auto& priorCommandBuffer : priorCommandBuffers)
+            commitMTLCommandBuffer(priorCommandBuffer.get());
         commitMTLCommandBuffer(commandBuffer);
         apiCommandBuffer->postCommitHandler();
     }

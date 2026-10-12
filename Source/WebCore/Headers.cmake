@@ -294,6 +294,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPUTexture.h
     Modules/WebGPU/InternalAPI/WebGPUTextureAspect.h
     Modules/WebGPU/InternalAPI/WebGPUTextureBindingLayout.h
+    Modules/WebGPU/InternalAPI/WebGPUTextureComponentSwizzle.h
     Modules/WebGPU/InternalAPI/WebGPUTextureDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPUTextureDimension.h
     Modules/WebGPU/InternalAPI/WebGPUTextureFormat.h

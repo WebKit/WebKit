@@ -112,4 +112,10 @@ const OverloadedDeclaration* ShaderModule::lookupOverload(const String& name) co
     return &it->value;
 }
 
+void ShaderModule::releaseOverloadCandidates()
+{
+    for (auto& declaration : m_overloadedOperations.values())
+        declaration.overloads.clear();
+}
+
 } // namespace WGSL

@@ -30,6 +30,7 @@
     Exposed=(Window,Worker),
     SecureContext,
     CallTracer=InspectorCanvasCallTracer,
+    ReportExtraMemoryCost,
 ]
 interface GPUTexture {
     GPUTextureView createView(optional GPUTextureViewDescriptor descriptor = {});

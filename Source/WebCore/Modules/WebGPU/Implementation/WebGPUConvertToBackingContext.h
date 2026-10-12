@@ -36,6 +36,7 @@
 #include "WebGPUOrigin3D.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUShaderStage.h"
+#include "WebGPUTextureComponentSwizzle.h"
 #include "WebGPUTextureUsage.h"
 #include <WebGPU/WebGPU.h>
 #include <WebGPU/WebGPUExt.h>
@@ -147,6 +148,7 @@ public:
     WGPUBufferBindingType convertToBacking(BufferBindingType);
     WGPUCompareFunction convertToBacking(CompareFunction);
     WGPUCompilationMessageType convertToBacking(CompilationMessageType);
+    WGPUComponentSwizzle convertToBacking(ComponentSwizzle);
     WGPUCullMode convertToBacking(CullMode);
     WGPUErrorFilter convertToBacking(ErrorFilter);
     WGPUFeatureName convertToBacking(FeatureName);
@@ -183,6 +185,7 @@ public:
     WGPUExtent3D convertToBacking(const Extent3D&);
     WGPUOrigin3D convertToBacking(const Origin2D&);
     WGPUOrigin3D convertToBacking(const Origin3D&);
+    WGPUTextureComponentSwizzle convertToBacking(const TextureComponentSwizzle&);
 
     virtual WGPUAdapter convertToBacking(const Adapter&) = 0;
     virtual WGPUBindGroup convertToBacking(const BindGroup&) = 0;
