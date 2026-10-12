@@ -62,6 +62,7 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -979,6 +980,13 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     ASSERT_NOT_REACHED();
 }
 
+static void requestCanvasPaintEventIfNeeded(const RenderObject& renderer, const RenderLayerModelObject* repaintContainer)
+{
+    CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(repaintContainer);
+    if (canvasRenderer && canvasRenderer.get() != &renderer)
+        canvasRenderer->requestPaintEventIfNeeded(renderer);
+}
+
 void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, ClipRepaintToLayer clipRepaintToLayer, RepaintRectIsPartial rectIsPartial) const
 {
     if (r.isEmpty())
@@ -986,6 +994,8 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
 
     if (!repaintContainer)
         repaintContainer = &view();
+
+    requestCanvasPaintEventIfNeeded(*this, repaintContainer.get());
 
     if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*repaintContainer)) {
         fragmentedFlow->repaintRectangleInFragments(r);
@@ -1043,8 +1053,10 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     if (!repaintContainer.renderer)
         repaintContainer = { fullRepaintIsScheduled(*this), &view() };
 
-    if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No)
+    if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No) {
+        requestCanvasPaintEventIfNeeded(*this, repaintContainer.renderer.get());
         return;
+    }
 
     LayoutRect repaintRect;
 
