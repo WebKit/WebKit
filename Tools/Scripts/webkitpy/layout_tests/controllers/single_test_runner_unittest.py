@@ -21,12 +21,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test import Reference
 from webkitpy.layout_tests.models.test_input import ReferenceInput, Test, TestInput
 from webkitpy.layout_tests.run_webkit_tests import parse_args
@@ -335,6 +339,41 @@ class SingleTestRunnerTest(unittest.TestCase):
                 ('http/tests/foo/ref.html', 'http://127.0.0.1:8000/foo/ref.html'),
             ],
         )
+
+    def test_run_reftest_counts_the_time_of_each_comparison_once(self):
+        class ImageDriver:
+            def run_test(self, driver_input, stop_when_done):
+                return DriverOutput('', b'image', 'hash', '')
+
+            def stop(self):
+                """do nothing"""
+
+        # (relation, whether the comparison has failures, run time) in the order
+        # the references are run: mismatches first, then matches. The loop
+        # stops at a mismatch that fails and at a match that passes.
+        for name, comparisons, total in (
+            ('a failing match is the last comparison', [('==', True, 2.0)], 2.0),
+            ('a passing mismatch is the last comparison', [('!=', False, 2.0)], 2.0),
+            ('every comparison runs', [('!=', False, 1.0), ('==', True, 2.0), ('==', True, 4.0)], 7.0),
+            ('a failing mismatch stops the loop', [('!=', True, 1.0), ('==', False, 2.0)], 1.0),
+            ('a passing match stops the loop', [('!=', False, 1.0), ('==', True, 2.0), ('==', False, 4.0), ('==', False, 8.0)], 7.0),
+        ):
+            with self.subTest(name):
+                runner = self._make_test_runner('foo/test.html')
+                d = runner._port.layout_tests_dir()
+                join = runner._port.host.filesystem.join
+                references = tuple(Reference(relation, join(d, 'foo/ref-%d.html' % i)) for i, (relation, _, _) in enumerate(comparisons))
+                runner._test_input = TestInput(Test('foo/test.html', reference_files=references), url='http://127.0.0.1:8000/foo/test.html')
+                runner._options.additional_header = None
+                runner._driver = ImageDriver()
+                results = iter(
+                    SimpleNamespace(failures=[test_failures.FailureReftestMismatch()] if failed else [], test_run_time=time, has_stderr=False, pid=None)
+                    for _, failed, time in comparisons
+                )
+                with mock.patch.object(runner, '_compare_output_with_reference', side_effect=lambda *args: next(results)), \
+                        mock.patch.object(single_test_runner.test_result_writer, 'write_test_result'):
+                    result = runner._run_reftest()
+                self.assertEqual(result.test_run_time, total)
 
     def test_driver_input_passes_test_input_url_through(self):
         # The URL (including any cross-origin rewrite) is computed by Manager;
