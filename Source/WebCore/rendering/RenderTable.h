@@ -59,8 +59,8 @@ public:
     
     bool collapseBorders() const;
 
-    LayoutUnit borderStart() const final { return m_borderStart; }
-    LayoutUnit borderEnd() const final { return m_borderEnd; }
+    LayoutUnit borderStart() const final;
+    LayoutUnit borderEnd() const final;
     LayoutUnit borderBefore() const final;
     LayoutUnit borderAfter() const final;
 
@@ -79,10 +79,6 @@ public:
     inline LayoutUnit outerBorderRight() const;
     inline LayoutUnit outerBorderTop() const;
     inline LayoutUnit outerBorderBottom() const;
-
-    LayoutUnit calcBorderStart() const;
-    LayoutUnit calcBorderEnd() const;
-    void recalcBordersInRowDirection();
 
     void forceSectionsRecalc()
     {
@@ -305,8 +301,6 @@ protected:
 
     LayoutUnit m_hSpacing;
     LayoutUnit m_vSpacing;
-    LayoutUnit m_borderStart;
-    LayoutUnit m_borderEnd;
     mutable LayoutUnit m_columnOffsetTop { -1 };
     mutable LayoutUnit m_columnOffsetHeight { -1 };
     unsigned m_recursiveSectionMovedWithPaginationLevel { 0 };
