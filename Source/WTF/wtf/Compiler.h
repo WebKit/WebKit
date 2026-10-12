@@ -272,6 +272,12 @@
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif
 
+/* NEVER_INLINE_LARGE_STACK_ALLOC */
+
+#if !defined(NEVER_INLINE_LARGE_STACK_ALLOC)
+#define NEVER_INLINE_LARGE_STACK_ALLOC NEVER_INLINE
+#endif
+
 /* NOT_TAIL_CALLED */
 
 #if !defined(NOT_TAIL_CALLED)
