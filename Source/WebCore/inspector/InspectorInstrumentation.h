@@ -309,6 +309,7 @@ public:
 
     static void didDispatchDOMStorageEvent(Page&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
+    static String bootstrapScript(ScriptExecutionContext&);
     static bool shouldWaitForDebuggerOnStart(ScriptExecutionContext&);
     static void workerStarted(WorkerInspectorProxy&);
     static void workerTerminated(WorkerInspectorProxy&);
@@ -533,6 +534,7 @@ private:
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, Page&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
+    static String bootstrapScriptImpl(InstrumentingAgents&);
     static bool shouldWaitForDebuggerOnStartImpl(InstrumentingAgents&);
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
     static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
@@ -1405,6 +1407,14 @@ inline void InspectorInstrumentation::didDispatchDOMStorageEvent(Page& page, con
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didDispatchDOMStorageEventImpl(protect(instrumentingAgents(page)), page, key, oldValue, newValue, storageType, securityOrigin);
+}
+
+inline String InspectorInstrumentation::bootstrapScript(ScriptExecutionContext& context)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(String());
+    if (RefPtr agents = instrumentingAgents(context))
+        return bootstrapScriptImpl(*agents);
+    return { };
 }
 
 inline bool InspectorInstrumentation::shouldWaitForDebuggerOnStart(ScriptExecutionContext& context)

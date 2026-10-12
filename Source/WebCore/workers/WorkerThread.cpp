@@ -67,6 +67,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         ownerURL.isolatedCopy(),
         name.isolatedCopy(),
         inspectorIdentifier.isolatedCopy(),
+        inspectorBootstrapScript.isolatedCopy(),
         userAgent.isolatedCopy(),
         isOnline,
         contentSecurityPolicyResponseHeaders.isolatedCopy(),
@@ -172,6 +173,9 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
     // nothing clears its script. A callback that created the global object would keep the global scope alive.
     if (globalScopeCreatedCallbackForTesting && !protect(globalScope->script())->isExecutionForbidden())
         globalScopeCreatedCallbackForTesting(globalScope);
+
+    if (!m_startupData->params.inspectorBootstrapScript.isEmpty())
+        protect(globalScope->script())->evaluate(ScriptSourceCode(m_startupData->params.inspectorBootstrapScript, JSC::SourceTaintedOrigin::Untainted, URL { "web-inspector://bootstrap.js"_str }));
 
     WeakPtr<ScriptBufferSourceProvider> sourceProvider;
     if (m_startupData->params.workerType == WorkerType::Classic) {

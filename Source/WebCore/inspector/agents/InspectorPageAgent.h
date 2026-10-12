@@ -123,6 +123,8 @@ public:
     void didScroll();
     void didRecalculateStyle();
 
+    const String& bootstrapScript() const LIFETIME_BOUND { return m_bootstrapScript; }
+
     Frame* frameForId(const Inspector::Protocol::Network::FrameId&);
     WEBCORE_EXPORT String frameId(Frame*);
     String loaderId(DocumentLoader*);

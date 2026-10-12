@@ -1,0 +1,113 @@
+Tests for Inspector Bootstrap Scripts in dedicated workers.
+
+
+== Running test suite: Worker.setBootstrapScript
+-- Running test case: Page.setBootstrapScript.ClassicWorker
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value 42 before its script runs.
+PASS: Worker 0 should run the bootstrap script exactly once.
+
+-- Running test case: Page.setBootstrapScript.ModuleWorker
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value 42 before its script runs.
+PASS: Worker 0 should run the bootstrap script exactly once.
+
+-- Running test case: Worker.setBootstrapScript.NestedClassicWorkers
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value 42 before its script runs.
+PASS: Worker 0 should run the bootstrap script exactly once.
+PASS: Worker 1 should observe bootstrap value 42 before its script runs.
+PASS: Worker 1 should run the bootstrap script exactly once.
+PASS: Worker 2 should observe bootstrap value 42 before its script runs.
+PASS: Worker 2 should run the bootstrap script exactly once.
+
+-- Running test case: Worker.setBootstrapScript.NestedModuleWorkers
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value 42 before its script runs.
+PASS: Worker 0 should run the bootstrap script exactly once.
+PASS: Worker 1 should observe bootstrap value 42 before its script runs.
+PASS: Worker 1 should run the bootstrap script exactly once.
+PASS: Worker 2 should observe bootstrap value 42 before its script runs.
+PASS: Worker 2 should run the bootstrap script exactly once.
+
+-- Running test case: Worker.setBootstrapScript.ExistingWorker
+PASS: Setting a bootstrap script should not execute it in an existing worker.
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value 84 before its script runs.
+PASS: Worker 1 should run the bootstrap script exactly once.
+
+-- Running test case: Worker.setBootstrapScript.EmptySource
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value undefined before its script runs.
+PASS: Worker 1 should run the bootstrap script zero times.
+
+-- Running test case: Worker.setBootstrapScript.Cleared
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value undefined before its script runs.
+PASS: Worker 1 should run the bootstrap script zero times.
+
+-- Running test case: Worker.setBootstrapScript.ContentChanged
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value 84 before its script runs.
+PASS: Worker 0 should run the bootstrap script exactly once.
+PASS: Worker 1 should observe bootstrap value 84 before its script runs.
+PASS: Worker 1 should run the bootstrap script exactly once.
+PASS: Worker 2 should observe bootstrap value 84 before its script runs.
+PASS: Worker 2 should run the bootstrap script exactly once.
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value 84 before its script runs.
+PASS: Worker 1 should run the bootstrap script exactly once.
+
+-- Running test case: Worker.setBootstrapScript.Disabled
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value undefined before its script runs.
+PASS: Worker 1 should run the bootstrap script zero times.
+PASS: Worker 2 should observe bootstrap value undefined before its script runs.
+PASS: Worker 2 should run the bootstrap script zero times.
+
+-- Running test case: Worker.setBootstrapScript.Enabled
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value 84 before its script runs.
+PASS: Worker 0 should run the bootstrap script exactly once.
+PASS: Worker 1 should observe bootstrap value 84 before its script runs.
+PASS: Worker 1 should run the bootstrap script exactly once.
+PASS: Worker 2 should observe bootstrap value 84 before its script runs.
+PASS: Worker 2 should run the bootstrap script exactly once.
+
+-- Running test case: Worker.setBootstrapScript.EmptyContent
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value undefined before its script runs.
+PASS: Worker 1 should run the bootstrap script zero times.
+PASS: Worker 2 should observe bootstrap value undefined before its script runs.
+PASS: Worker 2 should run the bootstrap script zero times.
+
+-- Running test case: Worker.setBootstrapScript.Destroyed
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Should report each worker.
+PASS: Worker 0 should observe bootstrap value undefined before its script runs.
+PASS: Worker 0 should run the bootstrap script zero times.
+PASS: Worker 1 should observe bootstrap value undefined before its script runs.
+PASS: Worker 1 should run the bootstrap script zero times.
+PASS: Worker 2 should observe bootstrap value undefined before its script runs.
+PASS: Worker 2 should run the bootstrap script zero times.
+

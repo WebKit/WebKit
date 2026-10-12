@@ -104,6 +104,7 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         URL(), // FIXME: Should pass owner URL.
         emptyString(),
         makeString("serviceworker:"_s, Inspector::IdentifiersFactory::createIdentifier()),
+        { }, // inspectorBootstrapScript
         WTF::move(userAgent),
         platformStrategies()->loaderStrategy()->isOnLine(),
         contextData.contentSecurityPolicy,

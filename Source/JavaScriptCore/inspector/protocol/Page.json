@@ -229,7 +229,7 @@
             "name": "setBootstrapScript",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future global objects as soon as they're created. Omitting `source` will stop this from happening." }
+                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future page, sub-frame, and dedicated worker global objects before their scripts run. Omitting `source` will stop this from happening." }
             ]
         },
         {

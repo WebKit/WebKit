@@ -1312,6 +1312,15 @@ void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgent
         domStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin);
 }
 
+String InspectorInstrumentation::bootstrapScriptImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
+        return pageAgent->bootstrapScript();
+    if (CheckedPtr workerAgent = instrumentingAgents.persistentWorkerAgent())
+        return workerAgent->bootstrapScript();
+    return { };
+}
+
 bool InspectorInstrumentation::shouldWaitForDebuggerOnStartImpl(InstrumentingAgents& instrumentingAgents)
 {
     if (CheckedPtr workerAgent = instrumentingAgents.persistentWorkerAgent())

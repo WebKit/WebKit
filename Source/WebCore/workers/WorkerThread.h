@@ -76,6 +76,7 @@ public:
     URL ownerURL;
     String name;
     String inspectorIdentifier;
+    String inspectorBootstrapScript { };
     String userAgent;
     bool isOnline;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
