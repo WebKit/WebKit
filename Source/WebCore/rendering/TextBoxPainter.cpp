@@ -28,6 +28,7 @@
 #include "CaretRectComputation.h"
 #include "CompositionHighlight.h"
 #include "DocumentMarkerController.h"
+#include "DocumentView.h"
 #include "Editor.h"
 #include "EventRegion.h"
 #include "FontCascadeInlines.h"
@@ -36,7 +37,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
-#include "InlineIteratorTextBoxInlines.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "LayoutInlineTextBox.h"
 #include "LineSelection.h"
@@ -111,22 +112,22 @@ struct ShapedContent {
     size_t textBoxStartOffset { 0 }; // text box's position relative to the shaped content.
     float textBoxVisualLeft { 0.f }; // text box's left relative to the visual left of the shaped content.
 };
-static void buildTextForShaping(ShapedContent& shapedContent, InlineIterator::BoxPath textBox, bool needsTextBoxVisualLeft = false)
+static void buildTextForShaping(ShapedContent& shapedContent, const InlineIterator::TextBoxIterator& textBox, bool needsTextBoxVisualLeft = false)
 {
-    ASSERT(textBox.direction() == TextDirection::RTL);
+    ASSERT(textBox->direction() == TextDirection::RTL);
 
-    auto shapingBoundaryIterator = textBox;
+    InlineIterator::LeafBoxIterator shapingBoundaryIterator = textBox;
     // 1. Find shaping boundary start when we are at the end or inside a shape range (note that we deal with
     // rtl content hence the opposite direction walk)
     // 2. Walk from the start to the end and build the text content.
 
     auto moveToShapingBoundaryStart = [&] {
-        if (shapingBoundaryIterator.box().text().isAtShapingBoundaryStart())
+        if (shapingBoundaryIterator->displayBox().text().isAtShapingBoundaryStart())
             return;
 
-        shapingBoundaryIterator.traverseNextLeafOnLine();
-        for (; !shapingBoundaryIterator.atEnd(); shapingBoundaryIterator.traverseNextLeafOnLine()) {
-            auto& displayBox = shapingBoundaryIterator.box();
+        shapingBoundaryIterator.traverseLineRightwardOnLine();
+        for (; !shapingBoundaryIterator.atEnd(); shapingBoundaryIterator.traverseLineRightwardOnLine()) {
+            auto& displayBox = shapingBoundaryIterator->displayBox();
             if (displayBox.isText()) {
                 shapedContent.textBoxStartOffset += displayBox.text().length();
                 if (displayBox.text().isAtShapingBoundaryStart())
@@ -136,18 +137,18 @@ static void buildTextForShaping(ShapedContent& shapedContent, InlineIterator::Bo
     };
     moveToShapingBoundaryStart();
 
-    if (shapingBoundaryIterator.atEnd() || !shapingBoundaryIterator.isText()) {
+    if (shapingBoundaryIterator.atEnd() || !shapingBoundaryIterator->isText()) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     auto buildTextContent = [&] {
-        for (; !shapingBoundaryIterator.atEnd(); shapingBoundaryIterator.traversePreviousLeafOnLine()) {
-            auto& displayBox = shapingBoundaryIterator.box();
+        for (; !shapingBoundaryIterator.atEnd(); shapingBoundaryIterator.traverseLineLeftwardOnLine()) {
+            auto& displayBox = shapingBoundaryIterator->displayBox();
             if (!displayBox.isText())
                 continue;
             auto& text = displayBox.text();
-            if (shapingBoundaryIterator.direction() == TextDirection::LTR) {
+            if (shapingBoundaryIterator->direction() == TextDirection::LTR) {
                 shapedContent.text.clear();
                 return;
             }
@@ -173,10 +174,10 @@ static void buildTextForShaping(ShapedContent& shapedContent, InlineIterator::Bo
         if (!needsTextBoxVisualLeft)
             return;
         // Starting from visual left, walk all the way to the current text box.
-        for (; !shapingBoundaryIterator.atEnd(); shapingBoundaryIterator.traverseNextLeafOnLine()) {
+        for (; !shapingBoundaryIterator.atEnd(); shapingBoundaryIterator.traverseLineRightwardOnLine()) {
             if (shapingBoundaryIterator == textBox)
                 return;
-            auto& displayBox = shapingBoundaryIterator.box();
+            auto& displayBox = shapingBoundaryIterator->displayBox();
             if (displayBox.isText())
                 shapedContent.textBoxVisualLeft += displayBox.visualRectIgnoringBlockDirection().width();
         }
@@ -185,8 +186,8 @@ static void buildTextForShaping(ShapedContent& shapedContent, InlineIterator::Bo
 }
 
 TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, const Style::ComputedStyle& style, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : m_textBox(InlineIterator::BoxPath { inlineContent, inlineContent.indexForBox(box) })
-    , m_renderer(downcast<RenderText>(m_textBox.renderer()))
+    : m_textBox(inlineContent, inlineContent.indexForBox(box))
+    , m_renderer(m_textBox.renderer())
     , m_document(m_renderer->document())
     , m_style(style)
     , m_logicalRect(m_textBox.isHorizontal() ? m_textBox.visualRectIgnoringBlockDirection() : m_textBox.visualRectIgnoringBlockDirection().transposedRect())
@@ -195,7 +196,7 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
     , m_selectableRange(m_textBox.selectableRange())
     , m_paintOffset(paintOffset)
     , m_paintRect(computePaintRect(paintOffset))
-    , m_isFirstLine(m_textBox.isFirstFormattedLine())
+    , m_isFirstLine(m_textBox.displayBox().isFirstFormattedLine())
     , m_isCombinedText([&] {
         auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(m_renderer.get());
         return combineTextRenderer && combineTextRenderer->isCombined();
@@ -219,8 +220,7 @@ TextBoxPainter::~TextBoxPainter() = default;
 
 InlineIterator::TextBoxIterator TextBoxPainter::makeIterator() const
 {
-    auto pathCopy = m_textBox;
-    return InlineIterator::TextBoxIterator { WTF::move(pathCopy) };
+    return { m_textBox };
 }
 
 void TextBoxPainter::paint()
@@ -623,13 +623,13 @@ LayoutRect TextBoxPainter::selectionRectForRange(unsigned startOffset, unsigned 
     if (isInsideShapedContent()) {
         auto shapedContent = ShapedContent { };
 
-        buildTextForShaping(shapedContent, m_textBox, true);
+        buildTextForShaping(shapedContent, makeIterator(), true);
         selectionRect.setX(selectionRect.x() - shapedContent.textBoxVisualLeft);
         auto selectionLength = endOffset - startOffset;
         auto adjustedStartOffset = shapedContent.textBoxStartOffset + startOffset;
 
         auto characterScanForCodePath = true;
-        auto expansion = m_textBox.box().expansion();
+        auto expansion = m_textBox.displayBox().expansion();
         auto paintRect = m_paintRect;
         paintRect.shiftXEdgeTo(shapedContent.visualLeft);
         auto run = TextRun { shapedContent.text, paintRect.x(), expansion.horizontalExpansion, expansion.behavior, m_textBox.direction(), m_style->rtlOrdering() == Order::Visual, characterScanForCodePath };
@@ -692,7 +692,7 @@ static bool NODELETE isTransparent(const StyledMarkedText& markedText)
 
 bool TextBoxPainter::hasSynthesizedGlyph() const
 {
-    CheckedPtr inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(m_textBox.box().layoutBox());
+    CheckedPtr inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(m_textBox.displayBox().layoutBox());
     return inlineTextBox && inlineTextBox->hasSynthesizedGlyph();
 }
 
@@ -809,7 +809,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
         context.clip(clipRect);
     }
 
-    textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_style, m_paintTextRun);
+    textPainter.setGlyphDisplayListIfNeeded(textBox().displayBox(), m_paintInfo, m_style, m_paintTextRun);
     // TextPainter wants the box rectangle and text origin of the entire line box.
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);
 }
@@ -827,7 +827,7 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
         auto rect = FloatRect::infiniteRect();
         rect.setX(m_paintRect.x());
         // Note that this is RTL direction.
-        auto& textContent = m_textBox.box().text();
+        auto& textContent = m_textBox.displayBox().text();
         if (!textContent.isAtShapingBoundaryStart())
             rect.setWidth(m_paintRect.width());
         // FIXME: Setup a semi-inifite rect for the (visually) first box where x is -inifite with fixed maxX.
@@ -836,7 +836,7 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
     context.save();
     context.clip(clipRect());
     auto shapedContent = ShapedContent { };
-    buildTextForShaping(shapedContent, m_textBox);
+    buildTextForShaping(shapedContent, makeIterator());
 
     if (shapedContent.text.isEmpty())
         return false;
@@ -845,7 +845,7 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
     paintRect.shiftXEdgeTo(m_paintOffset.x() + shapedContent.visualLeft);
 
     auto characterScanForCodePath = true;
-    auto expansion = m_textBox.box().expansion();
+    auto expansion = m_textBox.displayBox().expansion();
     auto run = TextRun { shapedContent.text, paintRect.x(), expansion.horizontalExpansion, expansion.behavior, m_textBox.direction(), m_style->rtlOrdering() == Order::Visual, characterScanForCodePath };
     run.disableSpacing();
 
@@ -1336,12 +1336,12 @@ static FloatRect snapRectToDevicePixelsInDirection(const FloatRect& rect, float 
 }
 
 enum class TextBoxFragmentLocationWithinLayoutBox : uint8_t { First = 1 << 0, Last = 1 << 1 };
-static OptionSet<TextBoxFragmentLocationWithinLayoutBox> NODELETE textBoxFragmentLocationWithinLayoutBox(const InlineIterator::BoxPath& textBox)
+static OptionSet<TextBoxFragmentLocationWithinLayoutBox> NODELETE textBoxFragmentLocationWithinLayoutBox(const InlineIterator::TextBox& textBox)
 {
     OptionSet<TextBoxFragmentLocationWithinLayoutBox> location;
-    if (textBox.box().isFirstForLayoutBox())
+    if (textBox.displayBox().isFirstForLayoutBox())
         location.add(TextBoxFragmentLocationWithinLayoutBox::First);
-    if (textBox.box().isLastForLayoutBox())
+    if (textBox.displayBox().isLastForLayoutBox())
         location.add(TextBoxFragmentLocationWithinLayoutBox::Last);
     return location;
 }
@@ -1784,7 +1784,7 @@ FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) c
 
 bool TextBoxPainter::isInsideShapedContent() const
 {
-    auto& textContent = textBox().box().text();
+    auto& textContent = textBox().displayBox().text();
     return textContent.isAtShapingBoundaryStart() || textContent.isAtShapingBoundaryEnd() || textContent.isInsideShapingBoundary();
 }
 

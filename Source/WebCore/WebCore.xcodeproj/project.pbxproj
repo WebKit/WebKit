@@ -3828,7 +3828,6 @@
 		9331BAC729EC95E300137ED2 /* RenderBlockFlowInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BAC629EC95E000137ED2 /* RenderBlockFlowInlines.h */; };
 		9331BAC929EC982900137ED2 /* InlineIteratorLineBoxInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BAC829EC982800137ED2 /* InlineIteratorLineBoxInlines.h */; };
 		9331BACB29EC9CCB00137ED2 /* InlineIteratorBoxInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BACA29EC9CCA00137ED2 /* InlineIteratorBoxInlines.h */; };
-		9331BACD29EC9E0700137ED2 /* InlineIteratorTextBoxInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BACC29EC9E0600137ED2 /* InlineIteratorTextBoxInlines.h */; };
 		9331BACF29EC9FFA00137ED2 /* RenderLayerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BACE29EC9FF900137ED2 /* RenderLayerInlines.h */; };
 		9331BAD129EDA36600137ED2 /* StyleBuilderStateInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BAD029EDA36500137ED2 /* StyleBuilderStateInlines.h */; };
 		9331BAD329EDA88200137ED2 /* RenderTableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BAD229EDA88100137ED2 /* RenderTableInlines.h */; };
@@ -3836,7 +3835,6 @@
 		9331BAD729F0300500137ED2 /* RenderTableCellInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BAD629F0300300137ED2 /* RenderTableCellInlines.h */; };
 		9331BAD929F033FA00137ED2 /* RenderMathMLBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BAD829F033F800137ED2 /* RenderMathMLBlockInlines.h */; };
 		9331BADB29F0D87800137ED2 /* RenderTableRowInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BADA29F0D87700137ED2 /* RenderTableRowInlines.h */; };
-		9331BADD29F0DCDA00137ED2 /* InlineIteratorBoxPathInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9331BADC29F0DCD900137ED2 /* InlineIteratorBoxPathInlines.h */; };
 		933A14300B7D188600A53FFD /* TextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A142D0B7D188600A53FFD /* TextEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14B70B7D1D5200A53FFD /* JSTextEvent.h */; };
 		93442C9E0D2B335C00338FF9 /* HTMLTableRowsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */; };
@@ -7069,7 +7067,6 @@
 		E49F85D02E66CBC3001C5E06 /* CSSFunctionDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = E49F85CF2E66CBC3001C5E06 /* CSSFunctionDeclarations.h */; };
 		E49F85D22E66CBCF001C5E06 /* CSSFunctionDescriptors.h in Headers */ = {isa = PBXBuildFile; fileRef = E49F85D12E66CBCF001C5E06 /* CSSFunctionDescriptors.h */; };
 		E4A664CC2521D4AF007081DC /* InlineIteratorBox.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A664C62521B778007081DC /* InlineIteratorBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4A664CE2521D4C9007081DC /* InlineIteratorBoxPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A664C42521B777007081DC /* InlineIteratorBoxPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */; };
 		E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */; };
 		E4A814E01C7338EB00BF85AC /* IdChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */; };
@@ -7098,7 +7095,6 @@
 		E4C91A0E1802343100A17F6D /* TextPaintStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C91A0D1802343100A17F6D /* TextPaintStyle.h */; };
 		E4D33F3B252AEECD00837D05 /* InlineRunAndOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D33F39252AEECC00837D05 /* InlineRunAndOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4D33F41252C4B8300837D05 /* InlineIteratorLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D33F3F252C4B8200837D05 /* InlineIteratorLineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4D33F46252C50FC00837D05 /* InlineIteratorLineBoxPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D33F45252C50FB00837D05 /* InlineIteratorLineBoxPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4D58EB517B4DBDC00CBDCA8 /* StyleResolveForDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EB317B4DBDC00CBDCA8 /* StyleResolveForDocument.h */; };
 		E4D58EB917B4ED8900CBDCA8 /* StyleFontSizeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EB717B4ED8900CBDCA8 /* StyleFontSizeFunctions.h */; };
 		E4D58EBB17B8F12800CBDCA8 /* ElementTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16490,7 +16486,6 @@
 		9331BAC629EC95E000137ED2 /* RenderBlockFlowInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBlockFlowInlines.h; sourceTree = "<group>"; };
 		9331BAC829EC982800137ED2 /* InlineIteratorLineBoxInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorLineBoxInlines.h; sourceTree = "<group>"; };
 		9331BACA29EC9CCA00137ED2 /* InlineIteratorBoxInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorBoxInlines.h; sourceTree = "<group>"; };
-		9331BACC29EC9E0600137ED2 /* InlineIteratorTextBoxInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorTextBoxInlines.h; sourceTree = "<group>"; };
 		9331BACE29EC9FF900137ED2 /* RenderLayerInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerInlines.h; sourceTree = "<group>"; };
 		9331BAD029EDA36500137ED2 /* StyleBuilderStateInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderStateInlines.h; sourceTree = "<group>"; };
 		9331BAD229EDA88100137ED2 /* RenderTableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTableInlines.h; sourceTree = "<group>"; };
@@ -16498,7 +16493,6 @@
 		9331BAD629F0300300137ED2 /* RenderTableCellInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTableCellInlines.h; sourceTree = "<group>"; };
 		9331BAD829F033F800137ED2 /* RenderMathMLBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLBlockInlines.h; sourceTree = "<group>"; };
 		9331BADA29F0D87700137ED2 /* RenderTableRowInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTableRowInlines.h; sourceTree = "<group>"; };
-		9331BADC29F0DCD900137ED2 /* InlineIteratorBoxPathInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorBoxPathInlines.h; sourceTree = "<group>"; };
 		9332AB3D16515D7700D827EC /* GraphicsContextGLNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLNEON.h; sourceTree = "<group>"; };
 		9332AB871653A97900D827EC /* FEBlendNeonApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEBlendNeonApplier.h; sourceTree = "<group>"; };
 		9332AB881653A97900D827EC /* FECompositeNeonArithmeticApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FECompositeNeonArithmeticApplier.h; sourceTree = "<group>"; };
@@ -23197,7 +23191,6 @@
 		E4A007821B820EC8002C5A6E /* DataURLDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataURLDecoder.h; sourceTree = "<group>"; };
 		E4A007841B820ED3002C5A6E /* DataURLDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataURLDecoder.cpp; sourceTree = "<group>"; };
 		E4A1822F1F13BE5800FEF698 /* StyleInvalidationFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInvalidationFunctions.h; sourceTree = "<group>"; };
-		E4A664C42521B777007081DC /* InlineIteratorBoxPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorBoxPath.h; sourceTree = "<group>"; };
 		E4A664C62521B778007081DC /* InlineIteratorBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorBox.h; sourceTree = "<group>"; };
 		E4A664C72521B779007081DC /* InlineIteratorBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineIteratorBox.cpp; sourceTree = "<group>"; };
 		E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassChangeInvalidation.h; sourceTree = "<group>"; };
@@ -23264,7 +23257,6 @@
 		E4D33F39252AEECC00837D05 /* InlineRunAndOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineRunAndOffset.h; sourceTree = "<group>"; };
 		E4D33F3F252C4B8200837D05 /* InlineIteratorLineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorLineBox.h; sourceTree = "<group>"; };
 		E4D33F42252C50A800837D05 /* InlineIteratorLineBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineIteratorLineBox.cpp; sourceTree = "<group>"; };
-		E4D33F45252C50FB00837D05 /* InlineIteratorLineBoxPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorLineBoxPath.h; sourceTree = "<group>"; };
 		E4D58EB217B4DBDC00CBDCA8 /* StyleResolveForDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolveForDocument.cpp; sourceTree = "<group>"; };
 		E4D58EB317B4DBDC00CBDCA8 /* StyleResolveForDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleResolveForDocument.h; sourceTree = "<group>"; };
 		E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFontSizeFunctions.cpp; sourceTree = "<group>"; };
@@ -31988,21 +31980,17 @@
 				E4A664C72521B779007081DC /* InlineIteratorBox.cpp */,
 				E4A664C62521B778007081DC /* InlineIteratorBox.h */,
 				9331BACA29EC9CCA00137ED2 /* InlineIteratorBoxInlines.h */,
-				E4A664C42521B777007081DC /* InlineIteratorBoxPath.h */,
-				9331BADC29F0DCD900137ED2 /* InlineIteratorBoxPathInlines.h */,
 				E415EB14270C353700E8DA1B /* InlineIteratorInlineBox.cpp */,
 				E415EB11270C351200E8DA1B /* InlineIteratorInlineBox.h */,
 				E4D33F42252C50A800837D05 /* InlineIteratorLineBox.cpp */,
 				E4D33F3F252C4B8200837D05 /* InlineIteratorLineBox.h */,
 				9331BAC829EC982800137ED2 /* InlineIteratorLineBoxInlines.h */,
-				E4D33F45252C50FB00837D05 /* InlineIteratorLineBoxPath.h */,
 				E41ACC12271733F3003E9157 /* InlineIteratorLogicalOrderTraversal.cpp */,
 				E41ACC1527173402003E9157 /* InlineIteratorLogicalOrderTraversal.h */,
 				E44129952C7F25260047598D /* InlineIteratorSVGTextBox.cpp */,
 				E44129942C7F251C0047598D /* InlineIteratorSVGTextBox.h */,
 				E47CEBDE2709916400B8D8F5 /* InlineIteratorTextBox.cpp */,
 				E47CEBE02709916D00B8D8F5 /* InlineIteratorTextBox.h */,
-				9331BACC29EC9E0600137ED2 /* InlineIteratorTextBoxInlines.h */,
 				E4FB4B35239BEB10003C336A /* LayoutIntegrationInlineContent.cpp */,
 				E451C6332394058E00993190 /* LayoutIntegrationInlineContent.h */,
 				6F3FBA962556E308003530FD /* LayoutIntegrationInlineContentBuilder.cpp */,
@@ -46728,15 +46716,11 @@
 				11D0363C272C4CFD009ED70D /* InlineItemsBuilder.h in Headers */,
 				E4A664CC2521D4AF007081DC /* InlineIteratorBox.h in Headers */,
 				9331BACB29EC9CCB00137ED2 /* InlineIteratorBoxInlines.h in Headers */,
-				E4A664CE2521D4C9007081DC /* InlineIteratorBoxPath.h in Headers */,
-				9331BADD29F0DCDA00137ED2 /* InlineIteratorBoxPathInlines.h in Headers */,
 				E415EB13270C351300E8DA1B /* InlineIteratorInlineBox.h in Headers */,
 				E4D33F41252C4B8300837D05 /* InlineIteratorLineBox.h in Headers */,
 				9331BAC929EC982900137ED2 /* InlineIteratorLineBoxInlines.h in Headers */,
-				E4D33F46252C50FC00837D05 /* InlineIteratorLineBoxPath.h in Headers */,
 				E41ACC1627173402003E9157 /* InlineIteratorLogicalOrderTraversal.h in Headers */,
 				E47CEBE12709916D00B8D8F5 /* InlineIteratorTextBox.h in Headers */,
-				9331BACD29EC9E0700137ED2 /* InlineIteratorTextBoxInlines.h in Headers */,
 				DDA210EA29FC46EE00C712C3 /* InlineLayoutState.h in Headers */,
 				6FAAE71326A2814B00E07502 /* InlineLevelBox.h in Headers */,
 				930BE42B29F46E3100214945 /* InlineLevelBoxInlines.h in Headers */,

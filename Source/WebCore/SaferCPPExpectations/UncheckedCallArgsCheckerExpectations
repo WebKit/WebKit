@@ -113,7 +113,6 @@ layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp
 [ macOS ] layout/integration/grid/LayoutIntegrationGridLayout.cpp
 layout/integration/inline/InlineIteratorBox.cpp
-layout/integration/inline/InlineIteratorBoxPath.h
 layout/integration/inline/InlineIteratorLineBox.cpp
 layout/integration/inline/InlineIteratorLineBox.h
 layout/integration/inline/InlineIteratorLineBoxInlines.h

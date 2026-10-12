@@ -49,7 +49,7 @@ namespace WebCore {
 
 SVGTextBoxPainter::SVGTextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : m_textBox(inlineContent, boxIndex)
-    , m_renderer(downcast<RenderSVGInlineText>(m_textBox.renderer()))
+    , m_renderer(m_textBox.renderer())
     , m_parentRenderer(textBoxIterator()->parentInlineBox()->renderer())
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox.selectableRange())
@@ -60,7 +60,7 @@ SVGTextBoxPainter::SVGTextBoxPainter(const LayoutIntegration::InlineContent& inl
 
 InlineIterator::SVGTextBoxIterator SVGTextBoxPainter::textBoxIterator() const
 {
-    return { InlineIterator::BoxPath { m_textBox } };
+    return { m_textBox };
 }
 
 FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, TextDirection direction, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition, const Style::ComputedStyle& style)

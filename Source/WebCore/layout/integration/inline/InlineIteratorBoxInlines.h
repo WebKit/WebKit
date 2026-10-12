@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "InlineDisplayBoxInlines.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorBoxPathInlines.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -43,7 +43,7 @@ inline float Box::logicalRight() const { return logicalLeft() + logicalWidth(); 
 
 inline bool Box::isHorizontal() const
 {
-    return m_path.isHorizontal();
+    return displayBox().isHorizontal();
 }
 
 inline FloatRect Box::logicalRectIgnoringInlineDirection() const

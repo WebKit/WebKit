@@ -38,11 +38,6 @@
 namespace WebCore {
 namespace InlineIterator {
 
-BoxIterator::BoxIterator(BoxPath&& path)
-    : m_box(WTF::move(path))
-{
-}
-
 BoxIterator::BoxIterator(const Box& run)
     : m_box(run)
 {
@@ -53,29 +48,29 @@ bool BoxIterator::operator==(const BoxIterator& other) const
     if (atEnd() && other.atEnd())
         return true;
 
-    return m_box.m_path == other.m_box.m_path;
+    return m_box.m_inlineContent == other.m_box.m_inlineContent && m_box.m_boxIndex == other.m_box.m_boxIndex;
 }
 
 bool BoxIterator::atEnd() const
 {
-    return m_box.m_path.atEnd();
+    return m_box.atEnd();
 }
 
 BoxIterator& BoxIterator::traverseLineRightwardOnLine()
 {
-    m_box.m_path.traverseNextBoxOnLine();
+    m_box.traverseNextBoxOnLine();
     return *this;
 }
 
 BoxIterator& BoxIterator::traverseLineRightwardOnLineSkippingChildren()
 {
-    m_box.m_path.traverseNextBoxOnLineSkippingChildren();
+    m_box.traverseNextBoxOnLineSkippingChildren();
     return *this;
 }
 
 BoxIterator& BoxIterator::traverseLineLeftwardOnLine()
 {
-    m_box.m_path.traversePreviousBoxOnLine();
+    m_box.traversePreviousBoxOnLine();
     return *this;
 }
 
@@ -106,12 +101,28 @@ LeafBoxIterator Box::nextLineLeftwardOnLineIgnoringLineBreak() const
 
 InlineBoxIterator Box::parentInlineBox() const
 {
-    return { m_path.parentInlineBox() };
+    ASSERT(!atEnd());
+
+    auto candidate = *this;
+
+    if (isRootInlineBox()) {
+        candidate.setAtEnd();
+        return { candidate };
+    }
+
+    CheckedRef parentLayoutBox = displayBox().layoutBox().parent();
+    do {
+        candidate.traversePreviousBox();
+    } while (!candidate.atEnd() && &candidate.displayBox().layoutBox() != parentLayoutBox.ptr());
+
+    ASSERT(candidate.atEnd() || candidate.displayBox().isInlineBox());
+
+    return { candidate };
 }
 
 LineBoxIterator Box::lineBox() const
 {
-    return LineBoxIterator(LineBoxIteratorPath(m_path.inlineContent(), m_path.box().lineIndex()));
+    return lineBoxFor(*m_inlineContent, lineIndex());
 }
 
 FloatRect Box::visualRect() const
@@ -133,11 +144,6 @@ RenderObject::HighlightState Box::selectionState() const
     return renderer().selectionState();
 }
 
-LeafBoxIterator::LeafBoxIterator(BoxPath&& path)
-    : BoxIterator(WTF::move(path))
-{
-}
-
 LeafBoxIterator::LeafBoxIterator(const Box& run)
     : BoxIterator(run)
 {
@@ -145,13 +151,13 @@ LeafBoxIterator::LeafBoxIterator(const Box& run)
 
 LeafBoxIterator& LeafBoxIterator::traverseLineRightwardOnLine()
 {
-    m_box.m_path.traverseNextLeafOnLine();
+    m_box.traverseNextLeafOnLine();
     return *this;
 }
 
 LeafBoxIterator& LeafBoxIterator::traverseLineLeftwardOnLine()
 {
-    m_box.m_path.traversePreviousLeafOnLine();
+    m_box.traversePreviousLeafOnLine();
     return *this;
 }
 
@@ -187,7 +193,7 @@ LeafBoxIterator boxFor(const RenderBox& renderer)
 
 LeafBoxIterator boxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
-    return { BoxPath { content, boxIndex } };
+    return { Box { content, boxIndex } };
 }
 
 }

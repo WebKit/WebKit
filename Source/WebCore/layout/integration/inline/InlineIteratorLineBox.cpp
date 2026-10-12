@@ -37,11 +37,6 @@
 namespace WebCore {
 namespace InlineIterator {
 
-LineBoxIterator::LineBoxIterator(LineBoxIteratorPath&& path)
-    : m_lineBox(WTF::move(path))
-{
-}
-
 LineBoxIterator::LineBoxIterator(const LineBox& lineBox)
     : m_lineBox(lineBox)
 {
@@ -49,18 +44,27 @@ LineBoxIterator::LineBoxIterator(const LineBox& lineBox)
 
 bool LineBoxIterator::atEnd() const
 {
-    return m_lineBox.m_path.atEnd();
+    return m_lineBox.atEnd();
 }
 
 LineBoxIterator& LineBoxIterator::traverseNext()
 {
-    m_lineBox.m_path.traverseNext();
+    ASSERT(!atEnd());
+
+    ++m_lineBox.m_lineIndex;
     return *this;
 }
 
 LineBoxIterator& LineBoxIterator::traversePrevious()
 {
-    m_lineBox.m_path.traversePrevious();
+    ASSERT(!atEnd());
+
+    if (!m_lineBox.m_lineIndex) {
+        m_lineBox.setAtEnd();
+        return *this;
+    }
+
+    --m_lineBox.m_lineIndex;
     return *this;
 }
 
@@ -71,7 +75,7 @@ LineBoxIterator::operator bool() const
 
 bool LineBoxIterator::operator==(const LineBoxIterator& other) const
 {
-    return m_lineBox.m_path == other.m_lineBox.m_path;
+    return m_lineBox.m_inlineContent == other.m_lineBox.m_inlineContent && m_lineBox.m_lineIndex == other.m_lineBox.m_lineIndex;
 }
 
 LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
@@ -90,7 +94,7 @@ LineBoxIterator lastLineBoxFor(const RenderBlockFlow& flow)
 
 LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
 {
-    return { LineBoxIteratorPath { inlineContent, lineIndex } };
+    return { LineBox { inlineContent, lineIndex } };
 }
 
 LineBoxIterator LineBox::next() const
@@ -105,12 +109,23 @@ LineBoxIterator LineBox::previous() const
 
 LeafBoxIterator LineBox::lineLeftmostLeafBox() const
 {
-    return { m_path.firstLeafBox() };
+    if (!line().boxCount())
+        return { };
+    auto box = boxFor(*m_inlineContent, line().firstBoxIndex());
+    if (box->isInlineBox())
+        box.traverseLineRightwardOnLine();
+    return box;
 }
 
 LeafBoxIterator LineBox::lineRightmostLeafBox() const
 {
-    return { m_path.lastLeafBox() };
+    auto boxCount = line().boxCount();
+    if (!boxCount)
+        return { };
+    auto box = boxFor(*m_inlineContent, line().firstBoxIndex() + boxCount - 1);
+    if (box->isInlineBox())
+        box.traverseLineLeftwardOnLine();
+    return box;
 }
 
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float horizontalPosition, bool editableOnly)

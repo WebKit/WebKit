@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,12 @@
 
 #pragma once
 
-#include <WebCore/InlineIteratorBoxPath.h>
+#include <WebCore/LayoutElementBox.h>
+#include <WebCore/LayoutInlineTextBox.h>
+#include <WebCore/LayoutIntegrationInlineContent.h>
+#include <WebCore/RenderBlockFlow.h>
+#include <WebCore/RenderSVGInlineText.h>
+#include <WebCore/TextBoxSelectableRange.h>
 
 namespace WebCore {
 
@@ -48,7 +53,7 @@ struct EndIterator { };
 
 class Box {
 public:
-    Box(BoxPath&&);
+    Box(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     bool isText() const;
     bool isSVGText() const;
@@ -112,7 +117,9 @@ public:
     LineBoxIterator lineBox() const;
     size_t lineIndex() const;
 
-    const BoxPath& path() const LIFETIME_BOUND { return m_path; }
+    const InlineDisplay::Box& displayBox() const { return displayBoxes()[m_boxIndex]; }
+    size_t boxIndex() const { return m_boxIndex; }
+    const LayoutIntegration::InlineContent& inlineContent() const { return *m_inlineContent; }
 
 protected:
     friend class BoxIterator;
@@ -120,16 +127,46 @@ protected:
     friend class LeafBoxIterator;
     friend class TextBoxIterator;
 
-    BoxPath m_path;
+    Box() = default;
+
+    bool atEnd() const { return !m_inlineContent || m_boxIndex == displayBoxes().size(); }
+
+    void traverseNextTextBox();
+    void traverseNextLeafOnLine();
+    void traversePreviousLeafOnLine();
+    void traverseNextInlineBox();
+    void traversePreviousInlineBox();
+    void traverseNextBoxOnLine();
+    void traverseNextBoxOnLineSkippingChildren();
+    void traversePreviousBoxOnLine();
+
+    Box firstLeafBoxForInlineBox() const;
+    Box lastLeafBoxForInlineBox() const;
+
+    const InlineDisplay::Line& line() const { return m_inlineContent->lineForBox(displayBox()); }
 
 private:
     bool hasRenderer() const;
+    bool isWithinInlineBox(const Layout::Box&) const;
+
+    void traverseNextBox();
+    void traversePreviousBox();
+    void traverseNextLeaf();
+    void traversePreviousLeaf();
+    void traverseNextWithSameLayoutBox();
+    void traversePreviousWithSameLayoutBox();
+
+    void setAtEnd() { m_boxIndex = displayBoxes().size(); }
+
+    const InlineDisplay::Boxes& displayBoxes() const { return m_inlineContent->displayContent().boxes; }
+
+    WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
+    size_t m_boxIndex { 0 };
 };
 
 class BoxIterator {
 public:
-    BoxIterator() : m_box(BoxPath { }) { };
-    BoxIterator(BoxPath&&);
+    BoxIterator() = default;
     BoxIterator(const Box&);
 
     explicit operator bool() const { return !atEnd(); }
@@ -156,7 +193,6 @@ protected:
 class LeafBoxIterator : public BoxIterator {
 public:
     LeafBoxIterator() = default;
-    LeafBoxIterator(BoxPath&&);
     LeafBoxIterator(const Box&);
 
     // Text-relative left/right
@@ -195,89 +231,279 @@ LeafBoxIterator boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex)
 
 // -----------------------------------------------
 
-inline Box::Box(BoxPath&& path)
-    : m_path(WTF::move(path))
+inline Box::Box(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex)
+    : m_inlineContent(&inlineContent)
+    , m_boxIndex(boxIndex)
 {
 }
 
 inline bool Box::isText() const
 {
-    return m_path.isText();
+    return displayBox().isTextOrSoftLineBreak();
 }
 
 inline bool Box::isInlineBox() const
 {
-    return m_path.isInlineBox();
+    return displayBox().isInlineBox();
 }
 
 inline bool Box::isRootInlineBox() const
 {
-    return m_path.isRootInlineBox();
+    return displayBox().isRootInlineBox();
 }
 
 inline bool Box::isRubyBase() const
 {
-    return m_path.isRubyBase();
+    return displayBox().isRubyBase();
 }
 
 inline FloatRect Box::visualRectIgnoringBlockDirection() const
 {
-    return m_path.visualRectIgnoringBlockDirection();
+    return displayBox().visualRectIgnoringBlockDirection();
 }
 
 inline bool Box::isLineBreak() const
 {
-    return m_path.isLineBreak();
+    return displayBox().isLineBreak();
 }
 
 inline bool Box::isBlockLevelBox() const
 {
-    return m_path.isBlockLevelBox();
+    return displayBox().isBlockLevelBox();
 }
 
 inline bool Box::isAtomicInlineBox() const
 {
-    return m_path.isAtomicInlineBox();
+    return displayBox().isAtomicInlineBox();
 }
 
 inline unsigned Box::minimumCaretOffset() const
 {
-    return m_path.minimumCaretOffset();
+    return isText() ? displayBox().text().start() : 0;
 }
 
 inline unsigned Box::maximumCaretOffset() const
 {
-    return m_path.maximumCaretOffset();
+    return isText() ? displayBox().text().end() : 1;
 }
 
 inline unsigned char Box::bidiLevel() const
 {
-    return m_path.bidiLevel();
+    return displayBox().bidiLevel();
 }
 
 inline size_t Box::lineIndex() const
 {
-    return m_path.lineIndex();
+    return displayBox().lineIndex();
 }
 
 inline const RenderObject& Box::renderer() const
 {
-    return m_path.renderer();
+    return *displayBox().layoutBox().rendererForIntegration();
 }
 
 inline bool Box::hasRenderer() const
 {
-    return m_path.hasRenderer();
+    return !!displayBox().layoutBox().rendererForIntegration();
 }
 
 inline const RenderBlockFlow& Box::formattingContextRoot() const
 {
-    return m_path.formattingContextRoot();
+    return m_inlineContent->formattingContextRoot();
 }
 
 inline CheckedRef<const Style::ComputedStyle> Box::style() const
 {
-    return m_path.style();
+    return displayBox().style();
+}
+
+inline void Box::traverseNextTextBox()
+{
+    ASSERT(!atEnd());
+    ASSERT(displayBox().isTextOrSoftLineBreak());
+
+    if (displayBox().isLastForLayoutBox()) {
+        setAtEnd();
+        return;
+    }
+
+    traverseNextWithSameLayoutBox();
+
+    ASSERT(displayBox().isTextOrSoftLineBreak());
+}
+
+inline void Box::traverseNextLeafOnLine()
+{
+    ASSERT(!atEnd());
+
+    auto oldLineIndex = displayBox().lineIndex();
+
+    traverseNextLeaf();
+
+    if (!atEnd() && oldLineIndex != displayBox().lineIndex())
+        setAtEnd();
+}
+
+inline void Box::traversePreviousLeafOnLine()
+{
+    ASSERT(!atEnd());
+
+    auto oldLineIndex = displayBox().lineIndex();
+
+    traversePreviousLeaf();
+
+    if (!atEnd() && oldLineIndex != displayBox().lineIndex())
+        setAtEnd();
+}
+
+inline void Box::traverseNextInlineBox()
+{
+    ASSERT(!atEnd());
+    ASSERT(displayBox().isInlineBox());
+
+    if (displayBox().isLastForLayoutBox()) {
+        setAtEnd();
+        return;
+    }
+
+    traverseNextWithSameLayoutBox();
+
+    ASSERT(displayBox().isInlineBox());
+}
+
+inline void Box::traversePreviousInlineBox()
+{
+    ASSERT(!atEnd());
+    ASSERT(displayBox().isInlineBox());
+
+    if (displayBox().isFirstForLayoutBox()) {
+        setAtEnd();
+        return;
+    }
+
+    traversePreviousWithSameLayoutBox();
+
+    ASSERT(displayBox().isInlineBox());
+}
+
+inline void Box::traverseNextBoxOnLine()
+{
+    auto lineIndex = displayBox().lineIndex();
+
+    traverseNextBox();
+
+    if (!atEnd() && lineIndex != displayBox().lineIndex())
+        setAtEnd();
+}
+
+inline void Box::traverseNextBoxOnLineSkippingChildren()
+{
+    auto lineIndex = displayBox().lineIndex();
+    bool wasInlineBox = displayBox().isInlineBox();
+    auto& startBox = displayBox().layoutBox();
+
+    traverseNextBox();
+
+    if (wasInlineBox) {
+        while (!atEnd() && isWithinInlineBox(startBox))
+            traverseNextBox();
+    }
+
+    if (!atEnd() && lineIndex != displayBox().lineIndex())
+        setAtEnd();
+}
+
+inline void Box::traversePreviousBoxOnLine()
+{
+    auto lineIndex = displayBox().lineIndex();
+
+    traversePreviousBox();
+
+    if (!atEnd() && lineIndex != displayBox().lineIndex())
+        setAtEnd();
+}
+
+inline Box Box::firstLeafBoxForInlineBox() const
+{
+    ASSERT(displayBox().isInlineBox());
+
+    auto& inlineBox = displayBox().layoutBox();
+
+    // The next box is the first descendant of this box.
+    auto first = *this;
+    first.traverseNextLeafOnLine();
+
+    if (!first.atEnd() && !first.isWithinInlineBox(inlineBox))
+        first.setAtEnd();
+
+    return first;
+}
+
+inline Box Box::lastLeafBoxForInlineBox() const
+{
+    ASSERT(displayBox().isInlineBox());
+
+    auto& inlineBox = displayBox().layoutBox();
+
+    // FIXME: Get the last box index directly from the display box.
+    auto last = firstLeafBoxForInlineBox();
+    for (auto box = last; !box.atEnd() && box.isWithinInlineBox(inlineBox); box.traverseNextLeafOnLine())
+        last = box;
+
+    return last;
+}
+
+inline bool Box::isWithinInlineBox(const Layout::Box& inlineBox) const
+{
+    for (auto* layoutBox = &displayBox().layoutBox().parent();; layoutBox = &layoutBox->parent()) {
+        if (layoutBox == &inlineBox)
+            return true;
+        if (!layoutBox->isInlineBox())
+            return false;
+    }
+    return false;
+}
+
+inline void Box::traverseNextBox()
+{
+    ASSERT(!atEnd());
+    ++m_boxIndex;
+}
+
+inline void Box::traversePreviousBox()
+{
+    ASSERT(!atEnd());
+    m_boxIndex = m_boxIndex ? m_boxIndex - 1 : displayBoxes().size();
+}
+
+inline void Box::traverseNextLeaf()
+{
+    do {
+        traverseNextBox();
+    } while (!atEnd() && displayBox().isInlineBox());
+}
+
+inline void Box::traversePreviousLeaf()
+{
+    do {
+        traversePreviousBox();
+    } while (!atEnd() && displayBox().isInlineBox());
+}
+
+inline void Box::traverseNextWithSameLayoutBox()
+{
+    auto& layoutBox = displayBox().layoutBox();
+    do {
+        traverseNextBox();
+    } while (!atEnd() && &displayBox().layoutBox() != &layoutBox);
+}
+
+inline void Box::traversePreviousWithSameLayoutBox()
+{
+    auto& layoutBox = displayBox().layoutBox();
+    do {
+        traversePreviousBox();
+    } while (!atEnd() && &displayBox().layoutBox() != &layoutBox);
 }
 
 }

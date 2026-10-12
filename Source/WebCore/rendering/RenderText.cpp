@@ -38,7 +38,7 @@
 #include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorSVGTextBox.h"
-#include "InlineIteratorTextBoxInlines.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutIntegrationLineLayout.h"

@@ -68,7 +68,7 @@ private:
 
     std::pair<unsigned, unsigned> selectionStartEnd() const;
 
-    const InlineIterator::BoxPath m_textBox;
+    const InlineIterator::SVGTextBox m_textBox;
     const RenderSVGInlineText& m_renderer;
     const RenderBoxModelObject& m_parentRenderer;
     PaintInfo& m_paintInfo;

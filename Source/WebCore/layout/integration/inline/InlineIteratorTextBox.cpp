@@ -28,13 +28,44 @@
 
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
-#include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "RenderBoxInlines.h"
 #include "RenderCombineText.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleTabSize.h"
 
 namespace WebCore {
 namespace InlineIterator {
+
+TextRun TextBox::textRun(TextRunMode mode) const
+{
+    CheckedRef style = displayBox().style();
+    auto expansion = displayBox().expansion();
+    auto logicalLeft = [&] {
+        // Offset from the formatting context's content box, with the text-align offset removed.
+        // text-align shifts the root inline box within the line (contentLogicalLeft), but tab stops
+        // are measured from the containing block's content box edge regardless of alignment.
+        //
+        //   containing block's content box
+        //   |                                                  |
+        //   |               text-align: center                 |
+        //   |               |<- content ->|                    |
+        //   |               |X         X  |                    |
+        //   |                                                  |
+        //   logicalLeft = 0 (not the visual position)
+        CheckedRef root = formattingContextRoot();
+        auto positionRelativeToContentBox = [&] {
+            if (style->writingMode().isBidiLTR())
+                return visualRectIgnoringBlockDirection().x() - root->borderAndPaddingStart();
+            return root->contentBoxWidth() - visualRectIgnoringBlockDirection().maxX();
+        }();
+        return positionRelativeToContentBox - line().contentLogicalLeft();
+    };
+    auto characterScanForCodePath = isText() && !renderer().canUseSimpleFontCodePath();
+    auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : displayBox().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style->rtlOrdering() == Order::Visual, characterScanForCodePath };
+    textRun.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+    return textRun;
+}
 
 TextBoxIterator TextBox::nextTextBox() const
 {
@@ -49,11 +80,6 @@ const FontCascade& TextBox::fontCascade() const
     return style()->fontCascade();
 }
 
-TextBoxIterator::TextBoxIterator(BoxPath&& path)
-    : LeafBoxIterator(WTF::move(path))
-{
-}
-
 TextBoxIterator::TextBoxIterator(const Box& box)
     : LeafBoxIterator(box)
 {
@@ -61,7 +87,7 @@ TextBoxIterator::TextBoxIterator(const Box& box)
 
 TextBoxIterator& TextBoxIterator::traverseNextTextBox()
 {
-    m_box.m_path.traverseNextTextBox();
+    m_box.traverseNextTextBox();
     return *this;
 }
 
@@ -82,7 +108,7 @@ TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, cons
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
     ASSERT(content.displayContent().boxes[boxIndex].isTextOrSoftLineBreak());
-    return { BoxPath { content, boxIndex } };
+    return { Box { content, boxIndex } };
 }
 
 BoxRange<TextBoxIterator> textBoxesFor(const RenderText& text)

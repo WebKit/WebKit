@@ -834,7 +834,7 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
     if (hasSelection && shouldPaintSelectionHighlight) {
         for (auto& box : boxes) {
             if (auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(box)) {
-                SVGTextBoxPainter painter(textBox->path().inlineContent(), textBox->path().boxIndex(), paintInfo, paintOffset);
+                SVGTextBoxPainter painter(textBox->inlineContent(), textBox->boxIndex(), paintInfo, paintOffset);
                 painter.paintSelectionBackground();
             }
         }
@@ -847,7 +847,7 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
             contextStack.removeLast();
 
         if (auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(*box)) {
-            SVGTextBoxPainter painter(textBox->path().inlineContent(), textBox->path().boxIndex(), paintInfo, paintOffset);
+            SVGTextBoxPainter painter(textBox->inlineContent(), textBox->boxIndex(), paintInfo, paintOffset);
             painter.paint();
         } else {
             auto* renderer = dynamicDowncast<RenderElement>(box->renderer());

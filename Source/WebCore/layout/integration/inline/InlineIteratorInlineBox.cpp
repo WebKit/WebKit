@@ -33,8 +33,8 @@
 namespace WebCore {
 namespace InlineIterator {
 
-InlineBox::InlineBox(BoxPath&& path)
-    : Box(WTF::move(path))
+InlineBox::InlineBox(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex)
+    : Box(inlineContent, boxIndex)
 {
 }
 
@@ -45,9 +45,9 @@ RectEdges<bool> InlineBox::closedEdges() const
         return closedEdges;
     auto writingMode = style()->writingMode();
     // Layout knows whether a fragment of an inline box has its start/end (the root inline box is not fragmented this way).
-    if (auto& displayBox = path().box(); displayBox.isNonRootInlineBox()) {
-        closedEdges.setStart(displayBox.isFirstFragment(), writingMode);
-        closedEdges.setEnd(displayBox.isLastFragment(), writingMode);
+    if (displayBox().isNonRootInlineBox()) {
+        closedEdges.setStart(displayBox().isFirstFragment(), writingMode);
+        closedEdges.setEnd(displayBox().isLastFragment(), writingMode);
         return closedEdges;
     }
     bool isFirst = !nextInlineBoxLineLeftward();
@@ -69,12 +69,12 @@ InlineBoxIterator InlineBox::nextInlineBoxLineLeftward() const
 
 LeafBoxIterator InlineBox::firstLeafBox() const
 {
-    return { m_path.firstLeafBoxForInlineBox() };
+    return { firstLeafBoxForInlineBox() };
 }
 
 LeafBoxIterator InlineBox::lastLeafBox() const
 {
-    return { m_path.lastLeafBoxForInlineBox() };
+    return { lastLeafBoxForInlineBox() };
 }
 
 LeafBoxIterator InlineBox::endLeafBox() const
@@ -95,11 +95,6 @@ IteratorRange<BoxIterator> InlineBox::descendants() const
     return { begin, end };
 }
 
-InlineBoxIterator::InlineBoxIterator(BoxPath&& path)
-    : BoxIterator(WTF::move(path))
-{
-}
-
 InlineBoxIterator::InlineBoxIterator(const Box& box)
     : BoxIterator(box)
 {
@@ -107,13 +102,13 @@ InlineBoxIterator::InlineBoxIterator(const Box& box)
 
 InlineBoxIterator& InlineBoxIterator::traverseInlineBoxLineRightward()
 {
-    m_box.m_path.traverseNextInlineBox();
+    m_box.traverseNextInlineBox();
     return *this;
 }
 
 InlineBoxIterator& InlineBoxIterator::traverseInlineBoxLineLeftward()
 {
-    m_box.m_path.traversePreviousInlineBox();
+    m_box.traversePreviousInlineBox();
     return *this;
 }
 
@@ -139,7 +134,7 @@ InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent& content, 
 InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
     ASSERT(content.displayContent().boxes[boxIndex].isInlineBox());
-    return { BoxPath { content, boxIndex } };
+    return { Box { content, boxIndex } };
 }
 
 }

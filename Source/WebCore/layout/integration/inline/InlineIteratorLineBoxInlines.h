@@ -58,10 +58,5 @@ inline LeafBoxIterator LineBox::logicalRightmostLeafBox() const
         : lineLeftmostLeafBox();
 }
 
-inline size_t LineBox::lineIndex() const
-{
-    return m_path.lineIndex();
-}
-
 }
 }

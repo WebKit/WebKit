@@ -35,7 +35,7 @@ class InlineBoxIterator;
 
 class InlineBox : public Box {
 public:
-    InlineBox(BoxPath&&);
+    InlineBox(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     const RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(Box::renderer()); }
 
@@ -56,7 +56,6 @@ public:
 class InlineBoxIterator : public BoxIterator {
 public:
     InlineBoxIterator() = default;
-    InlineBoxIterator(BoxPath&&);
     InlineBoxIterator(const Box&);
 
     const InlineBox& operator*() const LIFETIME_BOUND { return get(); }

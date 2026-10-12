@@ -59,7 +59,7 @@ void InlineContentPainter::paintEllipsis(size_t lineIndex)
     if ((m_paintInfo.phase != PaintPhase::Foreground && m_paintInfo.phase != PaintPhase::TextClip) || root().usedStyle().visibility() != UsedVisibility::Visible)
         return;
 
-    auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorPath { m_inlineContent, lineIndex } };
+    auto lineBox = InlineIterator::LineBox { m_inlineContent, lineIndex };
     if (!lineBox.hasEllipsis())
         return;
     EllipsisBoxPainter { lineBox, m_paintInfo, m_paintOffset, root().selectionForegroundColor(), root().selectionBackgroundColor() }.paint();

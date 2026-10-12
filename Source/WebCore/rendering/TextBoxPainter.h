@@ -113,7 +113,7 @@ protected:
     std::pair<FloatPoint, float> insetAdjustedDecorationLocationAndWidth(const DecoratingBox&, const StyledMarkedText&) const;
 
     // FIXME: We could just talk to the display box directly.
-    const InlineIterator::BoxPath m_textBox;
+    const InlineIterator::TextBox m_textBox;
     const CheckedRef<const RenderText> m_renderer;
     const CheckedRef<const Document> m_document;
     const CheckedRef<const Style::ComputedStyle> m_style;

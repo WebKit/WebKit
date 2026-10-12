@@ -30,7 +30,6 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
-#include "InlineIteratorTextBoxInlines.h"
 #include "InlineIteratorSVGTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"

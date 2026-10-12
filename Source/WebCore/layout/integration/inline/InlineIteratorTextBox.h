@@ -32,9 +32,11 @@ namespace WebCore {
 
 namespace InlineIterator {
 
+enum class TextRunMode { Painting, Editing };
+
 class TextBox : public Box {
 public:
-    TextBox(BoxPath&&);
+    TextBox(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     bool hasHyphen() const;
     StringView originalText() const;
@@ -47,7 +49,7 @@ public:
 
     const FontCascade& fontCascade() const;
 
-    inline TextRun textRun(TextRunMode = TextRunMode::Painting) const;
+    TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
 
@@ -58,7 +60,6 @@ public:
 class TextBoxIterator : public LeafBoxIterator {
 public:
     TextBoxIterator() = default;
-    TextBoxIterator(BoxPath&&);
     TextBoxIterator(const Box&);
 
     TextBoxIterator& operator++() { return traverseNextTextBox(); }
@@ -83,39 +84,57 @@ TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, const Inline
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 BoxRange<TextBoxIterator> textBoxesFor(const RenderText&);
 
-inline bool TextBox::hasHyphen() const
+inline TextBox::TextBox(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex)
+    : Box(inlineContent, boxIndex)
 {
-    return m_path.hasHyphen();
 }
 
-inline TextBox::TextBox(BoxPath&& path)
-    : Box(WTF::move(path))
+inline bool TextBox::hasHyphen() const
 {
+    return displayBox().text().hasHyphen();
 }
 
 inline StringView TextBox::originalText() const
 {
-    return m_path.originalText();
+    return displayBox().text().originalContent();
 }
 
 inline unsigned TextBox::start() const
 {
-    return m_path.start();
+    return displayBox().text().start();
 }
 
 inline unsigned TextBox::end() const
 {
-    return m_path.end();
+    return displayBox().text().end();
 }
 
 inline unsigned TextBox::length() const
 {
-    return m_path.length();
+    return displayBox().text().length();
 }
 
 inline TextBoxSelectableRange TextBox::selectableRange() const
 {
-    return m_path.selectableRange();
+    auto& box = displayBox();
+    auto& textContent = box.text();
+    auto extraTrailingLength = [&] -> unsigned {
+        if (textContent.hasHyphen())
+            return protect(box.style())->hyphenString().length();
+        if (downcast<Layout::InlineTextBox>(box.layoutBox()).isCombined()) {
+            ASSERT(textContent.renderedContent().length() >= length());
+            return textContent.renderedContent().length() - length();
+        }
+        return 0;
+    };
+    return {
+        start(),
+        length(),
+        extraTrailingLength(),
+        box.isLineBreak(),
+        textContent.partiallyVisibleContentLength(),
+        (line().isLeftToRightInlineDirection() ? TextDirection::LTR : TextDirection::RTL) != direction()
+    };
 }
 
 }

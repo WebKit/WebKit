@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@
 #pragma once
 
 #include <WebCore/FontBaseline.h>
-#include <WebCore/InlineIteratorLineBoxPath.h>
+#include <WebCore/InlineIteratorBox.h>
+#include <WebCore/LayoutIntegrationInlineContent.h>
 #include <WebCore/RenderBlockFlow.h>
 
 namespace WebCore {
@@ -36,14 +37,12 @@ class LineSelection;
 namespace InlineIterator {
 
 class LineBoxIterator;
-class PathIterator;
-class LeafBoxIterator;
 
 struct EndLineBoxIterator { };
 
 class LineBox {
 public:
-    LineBox(LineBoxIteratorPath&&);
+    LineBox(const LayoutIntegration::InlineContent&, size_t lineIndex);
 
     float logicalTop() const;
     float logicalBottom() const;
@@ -95,18 +94,27 @@ public:
     LineBoxIterator next() const;
     LineBoxIterator previous() const;
 
-    inline size_t lineIndex() const; // Defined in InlineIteratorLineBoxInlines.h
+    size_t lineIndex() const { return m_lineIndex; }
 
 private:
     friend class LineBoxIterator;
 
-    LineBoxIteratorPath m_path;
+    LineBox() = default;
+
+    bool atEnd() const { return !m_inlineContent || m_lineIndex == lines().size(); }
+    void setAtEnd() { m_lineIndex = lines().size(); }
+
+    const InlineDisplay::Lines& lines() const LIFETIME_BOUND { return m_inlineContent->displayContent().lines; }
+    const InlineDisplay::Line& line() const LIFETIME_BOUND { return lines()[m_lineIndex]; }
+    InlineDisplay::Line::Ellipsis lineEllipsis() const;
+
+    WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
+    size_t m_lineIndex { 0 };
 };
 
 class LineBoxIterator {
 public:
-    LineBoxIterator() : m_lineBox(LineBoxIteratorPath { }) { };
-    LineBoxIterator(LineBoxIteratorPath&&);
+    LineBoxIterator() = default;
     LineBoxIterator(const LineBox&);
 
     LineBoxIterator& operator++() { return traverseNext(); }
@@ -139,76 +147,95 @@ inline float contentStartInBlockDirection(const LineBox&);
 
 // -----------------------------------------------
 
-inline LineBox::LineBox(LineBoxIteratorPath&& path)
-    : m_path(WTF::move(path))
+inline LineBox::LineBox(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
+    : m_inlineContent(&inlineContent)
+    , m_lineIndex(lineIndex)
 {
+    ASSERT(lineIndex <= lines().size());
 }
 
 inline float LineBox::contentLogicalTop() const
 {
-    return m_path.contentLogicalTop();
+    return line().enclosingContentLogicalTop();
 }
 
 inline float LineBox::contentLogicalBottom() const
 {
-    return m_path.contentLogicalBottom();
+    return line().enclosingContentLogicalBottom();
 }
 
 inline float LineBox::contentLogicalTopAdjustedForPrecedingLineBox() const
 {
-    return m_path.contentLogicalTopAdjustedForPrecedingLineBox();
+    if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
+        return contentLogicalTop();
+    for (auto precedingLineIndex = m_lineIndex; precedingLineIndex--;) {
+        auto precedingLineBox = LineBox { *m_inlineContent, precedingLineIndex };
+        if (!precedingLineBox.hasContentfulInFlowBox())
+            continue;
+        if (precedingLineBox.hasBlockContent())
+            break;
+        if (precedingLineBox.logicalBottom() < logicalTop())
+            break;
+        return precedingLineBox.contentLogicalBottom();
+    }
+    return contentLogicalTop();
 }
 
 inline float LineBox::contentLogicalBottomAdjustedForFollowingLineBox() const
 {
-    return m_path.contentLogicalBottomAdjustedForFollowingLineBox();
+    if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        return contentLogicalBottom();
+    auto followingLineBox = LineBox { *m_inlineContent, m_lineIndex + 1 };
+    if (followingLineBox.hasBlockContent())
+        return contentLogicalBottom();
+    return followingLineBox.contentLogicalTop();
 }
 
 inline float LineBox::logicalTop() const
 {
-    return m_path.logicalTop();
+    return line().lineBoxLogicalRect().y();
 }
 
 inline float LineBox::logicalBottom() const
 {
-    return m_path.logicalBottom();
+    return line().lineBoxLogicalRect().maxY();
 }
 
 inline float LineBox::logicalWidth() const
 {
-    return m_path.logicalWidth();
+    return line().lineBoxLogicalRect().width();
 }
 
 inline float LineBox::inkOverflowLogicalTop() const
 {
-    return m_path.inkOverflowLogicalTop();
+    return line().isHorizontal() ? line().inkOverflow().y() : line().inkOverflow().x();
 }
 
 inline float LineBox::inkOverflowLogicalBottom() const
 {
-    return m_path.inkOverflowLogicalBottom();
+    return line().isHorizontal() ? line().inkOverflow().maxY() : line().inkOverflow().maxX();
 }
 
 inline float LineBox::scrollableOverflowTop() const
 {
-    return m_path.scrollableOverflowTop();
+    return line().scrollableOverflow().y();
 }
 
 inline float LineBox::scrollableOverflowBottom() const
 {
-    return m_path.scrollableOverflowBottom();
+    return line().scrollableOverflow().maxY();
 }
 
 inline bool LineBox::hasEllipsis() const
 {
-    return m_path.hasEllipsis();
+    return line().hasEllipsis();
 }
 
 inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSelection) const
 {
     ASSERT(hasEllipsis());
 
-    auto visualRect = m_path.ellipsisVisualRectIgnoringBlockDirection();
+    auto visualRect = lineEllipsis().visualRect;
 
     // FIXME: Add pixel snapping here.
     if (adjustedForSelection == AdjustedForSelection::No) {
@@ -228,17 +255,22 @@ inline TextRun LineBox::ellipsisText() const
 {
     ASSERT(hasEllipsis());
 
-    return m_path.ellipsisText();
+    return TextRun { lineEllipsis().text.string(), 0, 0, ExpansionBehavior::defaultBehavior(),
+        line().isLeftToRightInlineDirection() ? TextDirection::LTR : TextDirection::RTL };
 }
 
 inline float LineBox::contentLogicalLeft() const
 {
-    return m_path.contentLogicalLeft();
+    auto writingMode = formattingContextRoot().writingMode();
+    if (writingMode.isLogicalLeftLineLeft())
+        return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection();
+    ASSERT(writingMode.isVertical()); // Currently only sideways-lr gets this far.
+    return line().bottom() - (line().contentLogicalLeftIgnoringInlineDirection() + line().contentLogicalWidth());
 }
 
 inline float LineBox::contentLogicalRight() const
 {
-    return m_path.contentLogicalRight();
+    return contentLogicalLeft() + line().contentLogicalWidth();
 }
 
 inline float LineBox::contentLogicalWidth() const
@@ -253,22 +285,22 @@ inline float LineBox::contentLogicalHeight() const
 
 inline bool LineBox::isHorizontal() const
 {
-    return m_path.isHorizontal();
+    return line().isHorizontal();
 }
 
 inline FontBaseline LineBox::baselineType() const
 {
-    return m_path.baselineType();
+    return line().baselineType();
 }
 
 inline const RenderBlockFlow& LineBox::formattingContextRoot() const
 {
-    return m_path.formattingContextRoot();
+    return m_inlineContent->formattingContextRoot();
 }
 
 inline bool LineBox::isFirstAfterPageBreak() const
 {
-    return m_path.isFirstAfterPageBreak();
+    return line().isFirstAfterPageBreak();
 }
 
 inline bool LineBox::isFirst() const
@@ -278,12 +310,20 @@ inline bool LineBox::isFirst() const
 
 inline bool LineBox::hasBlockContent() const
 {
-    return m_path.hasBlockLevelBox();
+    return line().hasBlockLevelBox();
 }
 
 inline bool LineBox::hasContentfulInFlowBox() const
 {
-    return m_path.hasContentfulInFlowBox();
+    return line().hasContentfulInFlowBox();
+}
+
+inline InlineDisplay::Line::Ellipsis LineBox::lineEllipsis() const
+{
+    if (auto ellipsis = m_inlineContent->displayContent().lineEllipsis(m_lineIndex))
+        return *ellipsis;
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 }
