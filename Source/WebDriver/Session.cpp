@@ -201,8 +201,9 @@ void Session::setTimeouts(const Timeouts& timeouts, Function<void(CommandResult&
 
 String Session::uncheckedTopLevelBrowsingContext() const
 {
-    ASSERT(m_toplevelBrowsingContext);
-    return m_toplevelBrowsingContext.value();
+    // Another command can clear it while an asynchronous command runs.
+    // The browser doesn't know an empty handle and fails with NoSuchWindow.
+    return m_toplevelBrowsingContext.value_or(emptyString());
 }
 
 void Session::switchToTopLevelBrowsingContext(const String& toplevelBrowsingContext)
