@@ -395,7 +395,7 @@ void ResourceHandle::platformSetDefersLoading(bool)
     // WKC gains a loader-level scheduling policy.
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentialsPolicy, SecurityOrigin*, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy, SecurityOrigin*, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     data.clear();
     response = ResourceResponse();
@@ -416,10 +416,15 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const
         requestBodyBytes = requestBody->flatten();
     }
 
+    // Keep synchronous loads on the same WebCore cookie store as ordinary
+    // asynchronous document and subresource requests.
+    ResourceRequest requestWithCookies = request;
+    applyCookiesToRequest(context, requestWithCookies);
+
     CurlHandle curl;
     curl.setURL(request.url(), CurlHandle::LocalhostAlias::Disable);
     curl.setTimeout(CurlContext::singleton().defaultTimeoutInterval());
-    curl.appendRequestHeaders(request.httpHeaderFields());
+    curl.appendRequestHeaders(requestWithCookies.httpHeaderFields());
 
     auto method = request.httpMethod();
     if (method.isEmpty() || method == "GET"_s)
@@ -443,14 +448,15 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const
         }
     }
 
-    SynchronousLoadContext context { &data, { } };
-    curl.setWriteCallbackFunction(synchronousWriteCallback, &context);
-    curl.setHeaderCallbackFunction(synchronousHeaderCallback, &context);
+    SynchronousLoadContext loadContext { &data, { } };
+    curl.setWriteCallbackFunction(synchronousWriteCallback, &loadContext);
+    curl.setHeaderCallbackFunction(synchronousHeaderCallback, &loadContext);
 
     auto result = curl.perform();
     response.setURL(URL { request.url() });
     response.setSource(ResourceResponse::Source::Network);
-    applySynchronousHeaders(context.headerLines, response);
+    applySynchronousHeaders(loadContext.headerLines, response);
+    storeResponseCookies(context, requestWithCookies, response);
 
     long statusCode = 0;
     curl_easy_getinfo(curl.handle(), CURLINFO_RESPONSE_CODE, &statusCode);
