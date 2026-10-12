@@ -31,11 +31,11 @@
 messages -> RemoteMesh Stream {
     void SetLabel(String label)
     void Destruct()
-    void Update(struct Vector<WebModel::UpdateMeshDescriptor> descriptor) -> (bool success)
+    void Update(struct Vector<WebModel::UpdateMeshDescriptor> descriptor)
     void Render(uint32_t textureIndex) -> (bool success)
     void ProcessRemovals(struct Vector<WebModel::TypedResourceId> meshRemovals, struct Vector<WebModel::TypedResourceId> materialRemovals, struct Vector<WebModel::TypedResourceId> textureRemovals) -> (bool success)
-    void UpdateTexture(struct Vector<WebModel::UpdateTextureDescriptor> descriptor) -> (bool success) NotStreamEncodable
-    void UpdateMaterial(struct Vector<WebModel::UpdateMaterialDescriptor> descriptor) -> (bool success)
+    void UpdateTexture(struct Vector<WebModel::UpdateTextureDescriptor> descriptor) NotStreamEncodable
+    void UpdateMaterial(struct Vector<WebModel::UpdateMaterialDescriptor> descriptor)
     void UpdateTransform(struct WebModel::Float4x4 transform)
     void SetFOV(float fovY)
     void Play(bool playing)

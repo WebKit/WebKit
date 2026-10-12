@@ -939,10 +939,7 @@ extension WKBridgeReceiver {
                 let identifier = meshData.identifier
 
                 let meshResource: LowLevelMeshResource
-                if meshData.updateType == .initial || meshData.descriptor != nil {
-                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                    // swift-format-ignore: NeverForceUnwrap
-                    let meshDescriptor = meshData.descriptor!
+                if let meshDescriptor = meshData.descriptor {
                     let descriptor = LowLevelMeshResource.Descriptor.fromLlmDescriptor(meshDescriptor)
                     if let cachedMeshResource = meshResources[identifier] {
                         meshResource = cachedMeshResource
@@ -1291,7 +1288,6 @@ private func webMeshFromMeshData(
             path: meshData.primPath,
             hashValue: meshData.id.hashValue
         ),
-        updateType: .initial,
         descriptor: .init(request: meshData.descriptor),
         parts: webPartsFromParts(meshData.parts),
         indexData: meshData.indexData,
@@ -1320,7 +1316,6 @@ private func webMeshFromMeshUpdate(
             path: primPath,
             hashValue: update.id.hashValue
         ),
-        updateType: .delta,
         descriptor: nil,
         parts: webPartsFromParts(update.parts ?? []),
         indexData: update.indexData,
@@ -1353,7 +1348,6 @@ private func webMeshDeformationDelta(
             path: primPath,
             hashValue: meshId.hashValue
         ),
-        updateType: .delta,
         descriptor: nil,
         parts: [],
         indexData: nil,

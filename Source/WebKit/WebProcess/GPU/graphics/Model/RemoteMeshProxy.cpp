@@ -155,8 +155,7 @@ void RemoteMeshProxy::update(Vector<WebModel::UpdateMeshDescriptor>&& descriptor
         }
     }
 
-    auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::Update(WTF::move(descriptorArray)), [](auto) mutable {
-    });
+    auto sendResult = send(Messages::RemoteMesh::Update(WTF::move(descriptorArray)));
     UNUSED_VARIABLE(sendResult);
 
     if (needBoundingBoxUpdate)
@@ -189,8 +188,7 @@ void RemoteMeshProxy::setLabelInternal(const String& label)
 void RemoteMeshProxy::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& descriptor)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::UpdateTexture(WTF::move(descriptor)), [](auto) mutable {
-    });
+    auto sendResult = send(Messages::RemoteMesh::UpdateTexture(WTF::move(descriptor)));
     UNUSED_VARIABLE(sendResult);
 #else
     UNUSED_PARAM(descriptor);
@@ -200,8 +198,7 @@ void RemoteMeshProxy::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& 
 void RemoteMeshProxy::updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&& descriptor)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::UpdateMaterial(WTF::move(descriptor)), [](auto) mutable {
-    });
+    auto sendResult = send(Messages::RemoteMesh::UpdateMaterial(WTF::move(descriptor)));
     UNUSED_VARIABLE(sendResult);
 #else
     UNUSED_PARAM(descriptor);

@@ -131,12 +131,10 @@ header: <WebKit/ModelTypes.h>
 header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMeshDescriptor {
     WebModel::TypedResourceId identifier;
-    uint8_t updateType;
-    WebModel::MeshDescriptor descriptor;
+    std::optional<WebModel::MeshDescriptor> descriptor;
     Vector<WebModel::MeshPart> parts;
     Vector<uint8_t> indexData;
     Vector<Vector<uint8_t>> vertexData;
-    WebModel::Float4x4 transform;
     Vector<WebModel::Float4x4> instanceTransforms;
     Vector<WebModel::TypedResourceId> assignedMaterials;
     std::optional<WebModel::DeformationData> deformationData;

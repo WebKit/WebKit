@@ -272,7 +272,6 @@ extension WKBridgeRemovals {
 @implementation
 extension WKBridgeUpdateMesh {
     let identifier: WKBridgeTypedResourceId
-    let updateType: WKBridgeDataUpdateType
     let descriptor: WKBridgeMeshDescriptor?
     let parts: [WKBridgeMeshPart]
     let indexData: Data?
@@ -284,7 +283,6 @@ extension WKBridgeUpdateMesh {
 
     init(
         identifier: WKBridgeTypedResourceId,
-        updateType: WKBridgeDataUpdateType,
         descriptor: WKBridgeMeshDescriptor?,
         parts: [WKBridgeMeshPart],
         indexData: Data?,
@@ -295,7 +293,6 @@ extension WKBridgeUpdateMesh {
         deformationData: WKBridgeDeformationData?
     ) {
         self.identifier = identifier
-        self.updateType = updateType
         self.descriptor = descriptor
         self.parts = parts
         self.indexData = indexData

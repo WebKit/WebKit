@@ -57,11 +57,6 @@ static const long WKBridgeMaximumTextureDimension = 16384;
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-typedef NS_ENUM(uint8_t, WKBridgeDataUpdateType) {
-    WKBridgeDataUpdateTypeInitial,
-    WKBridgeDataUpdateTypeDelta
-};
-
 typedef NS_ENUM(uint8_t, WKBridgeVertexSemantic) {
     WKBridgeVertexSemanticPosition,
     WKBridgeVertexSemanticColor,
@@ -408,7 +403,6 @@ NS_SWIFT_SENDABLE
 @interface WKBridgeUpdateMesh : NSObject
 
 @property (nonatomic, readonly) WKBridgeTypedResourceId *identifier;
-@property (nonatomic, readonly) WKBridgeDataUpdateType updateType;
 @property (nonatomic, strong, readonly, nullable) WKBridgeMeshDescriptor *descriptor;
 @property (nonatomic, strong, readonly) NSArray<WKBridgeMeshPart*> *parts;
 @property (nonatomic, strong, readonly, nullable) NSData *indexData;
@@ -420,7 +414,6 @@ NS_SWIFT_SENDABLE
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithIdentifier:(WKBridgeTypedResourceId *)identifier
-    updateType:(WKBridgeDataUpdateType)updateType
     descriptor:(nullable WKBridgeMeshDescriptor *)descriptor
     parts:(NSArray<WKBridgeMeshPart*> *)parts
     indexData:(nullable NSData *)indexData
@@ -826,12 +819,10 @@ struct DeformationData {
 
 struct UpdateMeshDescriptor {
     TypedResourceId identifier;
-    uint8_t updateType;
-    MeshDescriptor descriptor;
+    std::optional<MeshDescriptor> descriptor;
     Vector<MeshPart> parts;
     Vector<uint8_t> indexData;
     Vector<Vector<uint8_t>> vertexData;
-    Float4x4 transform;
     Vector<Float4x4> instanceTransforms;
     Vector<TypedResourceId> assignedMaterials;
     std::optional<DeformationData> deformationData;
