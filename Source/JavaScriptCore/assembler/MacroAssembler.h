@@ -1755,7 +1755,7 @@ public:
         if (shouldBlind(imm) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadRotationBlindedConstant(rotationBlindConstant(imm), scratchRegister);
-            and64(scratchRegister, dest);
+            and64(scratchRegister, src, dest);
         } else
             and64(imm.asTrustedImm64(), src, dest);
     }
@@ -1775,7 +1775,7 @@ public:
         if (shouldBlind(imm) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadRotationBlindedConstant(rotationBlindConstant(imm), scratchRegister);
-            xor64(scratchRegister, dest);
+            xor64(scratchRegister, src, dest);
         } else
             xor64(imm.asTrustedImm64(), src, dest);
     }
@@ -1795,7 +1795,7 @@ public:
         if (shouldBlind(imm) && haveScratchRegisterForBlinding()) {
             RegisterID scratchRegister = scratchRegisterForBlinding();
             loadRotationBlindedConstant(rotationBlindConstant(imm), scratchRegister);
-            or64(scratchRegister, dest);
+            or64(scratchRegister, src, dest);
         } else
             or64(imm.asTrustedImm64(), src, dest);
     }
