@@ -885,6 +885,41 @@ class WptTestsForPathTestsBase(object):
         self.assertEqual(self._process_window_js_with_variants([("test.window.js", "?b")]), [prefix + "?b"])
         self.assertEqual(self._process_window_js_with_variants([("test.window.js", "?zzz")]), [])
 
+    def test_baselines_for_variants_with_special_characters(self):
+        """The committed variant baselines are named after the sanitized
+        variant; check that each resolves through the finder. The generated
+        .window.html stub is on disk, as the importer writes it."""
+        variants_to_baselines = {
+            "?exclude=(file_javascript_mailto)": "t.window_exclude=(file_javascript_mailto)-expected.txt",
+            "?include=SFrameTransform._": "t.window_include=SFrameTransform._-expected.txt",
+            "?wpt_flags=h2": "t.window_wpt_flags=h2-expected.txt",
+            "?worker=dedicated_worker": "t.window_worker=dedicated_worker-expected.txt",
+            "?1-1": "t.window_1-1-expected.txt",
+            "?13-last": "t.window_13-last-expected.txt",
+        }
+        self._write_wpt_file(
+            "foo/t.window.js",
+            "".join("// META: variant=%s\n" % variant for variant in variants_to_baselines)
+            + "test(() => {}, 'pass');\n",
+        )
+        self._write_wpt_file("foo/t.window.html", "<!-- stub -->\n")
+        baseline_paths = {
+            variant: self._write_wpt_file("foo/" + baseline, "PASS\n")
+            for variant, baseline in variants_to_baselines.items()
+        }
+
+        tests = self._get_wpt_tests("foo/t.window.js")
+
+        # Compare whole paths, not basenames: os.path.basename doesn't split on
+        # backslashes under pyfakefs's Windows emulation (https://github.com/pytest-dev/pyfakefs/issues/1348).
+        self.assertEqual(
+            {t.test_path: t.expected_text_path for t in tests},
+            {
+                self.WPT_PREFIX + "/foo/t.window.html" + variant: baseline_path
+                for variant, baseline_path in baseline_paths.items()
+            },
+        )
+
 
     # -----------------------------------------------------------------------
     # Warning: on-disk stub for a generated variant classifies as non-support
