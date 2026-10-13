@@ -42,7 +42,7 @@
 #else
 
 #if HAVE(LIQUID_GLASS)
-static bool NODELETE platformIsLiquidGlassEnabled()
+static bool LEGACY_NODELETE platformIsLiquidGlassEnabled()
 {
     return true;
 }
@@ -52,7 +52,7 @@ namespace WebKit {
 
 #if ENABLE(VIDEO)
 
-bool NODELETE defaultCaptionDisplaySettingsEnabled()
+bool LEGACY_NODELETE defaultCaptionDisplaySettingsEnabled()
 {
     return false;
 }
@@ -61,12 +61,12 @@ bool NODELETE defaultCaptionDisplaySettingsEnabled()
 
 #if PLATFORM(MAC)
 
-bool NODELETE defaultUseAppKitGestures()
+bool LEGACY_NODELETE defaultUseAppKitGestures()
 {
     return false;
 }
 
-bool NODELETE defaultTextInputClientSelectionUpdatesEnabled()
+bool LEGACY_NODELETE defaultTextInputClientSelectionUpdatesEnabled()
 {
     return false;
 }
@@ -85,7 +85,7 @@ bool defaultContentChangeObserverEnabled()
 #endif
 
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
-bool NODELETE defaultWebContentRestrictionsAskToEnabled()
+bool LEGACY_NODELETE defaultWebContentRestrictionsAskToEnabled()
 {
     return false;
 }
@@ -98,13 +98,13 @@ bool NODELETE defaultWebContentRestrictionsAskToEnabled()
 namespace WebKit {
 
 #if HAVE(LIQUID_GLASS)
-static std::optional<bool>& NODELETE cachedIsLiqudGlassEnabled()
+static std::optional<bool>& LEGACY_NODELETE cachedIsLiqudGlassEnabled()
 {
     static std::optional<bool> isLiquidGlassEnabled;
     return isLiquidGlassEnabled;
 }
 
-bool NODELETE isLiquidGlassEnabled()
+bool LEGACY_NODELETE isLiquidGlassEnabled()
 {
     if (auto isLiquidGlassEnabled = cachedIsLiqudGlassEnabled())
         return *isLiquidGlassEnabled;
@@ -112,7 +112,7 @@ bool NODELETE isLiquidGlassEnabled()
     return platformIsLiquidGlassEnabled();
 }
 
-void NODELETE setLiquidGlassEnabled(bool isLiquidGlassEnabled)
+void LEGACY_NODELETE setLiquidGlassEnabled(bool isLiquidGlassEnabled)
 {
     cachedIsLiqudGlassEnabled() = isLiquidGlassEnabled;
 }
@@ -185,7 +185,7 @@ bool defaultScreenTimeEnabled()
 }
 #endif // ENABLE(SCREEN_TIME)
 
-bool NODELETE defaultContentInsetBackgroundFillEnabled()
+bool LEGACY_NODELETE defaultContentInsetBackgroundFillEnabled()
 {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     return isLiquidGlassEnabled();
@@ -195,7 +195,7 @@ bool NODELETE defaultContentInsetBackgroundFillEnabled()
 }
 
 #if HAVE(MATERIAL_HOSTING)
-bool NODELETE defaultHostedBlurMaterialInMediaControlsEnabled()
+bool LEGACY_NODELETE defaultHostedBlurMaterialInMediaControlsEnabled()
 {
     return isLiquidGlassEnabled();
 }
@@ -213,7 +213,7 @@ bool defaultIOSurfaceLosslessCompressionEnabled()
 }
 
 #if ENABLE(UNIFIED_PDF)
-bool NODELETE defaultUnifiedPDFEnabled()
+bool LEGACY_NODELETE defaultUnifiedPDFEnabled()
 {
 #if ENABLE(UNIFIED_PDF_BY_DEFAULT)
     return true;
@@ -225,7 +225,7 @@ bool NODELETE defaultUnifiedPDFEnabled()
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS) && !USE(APPLE_INTERNAL_SDK)
 
-bool NODELETE defaultHorizontalBannerViewOverlaysEnabled()
+bool LEGACY_NODELETE defaultHorizontalBannerViewOverlaysEnabled()
 {
     return false;
 }

@@ -197,12 +197,12 @@ public:
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
-    void NODELETE setWorkerStart(MonotonicTime);
+    void LEGACY_NODELETE setWorkerStart(MonotonicTime);
 
-    void NODELETE setWorkerRouterEvaluationStart(MonotonicTime);
-    void NODELETE setWorkerCacheLookupStart(MonotonicTime);
-    void NODELETE setWorkerMatchedRouterSource(WebCore::RouterSourceEnum);
-    void NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
+    void LEGACY_NODELETE setWorkerRouterEvaluationStart(MonotonicTime);
+    void LEGACY_NODELETE setWorkerCacheLookupStart(MonotonicTime);
+    void LEGACY_NODELETE setWorkerMatchedRouterSource(WebCore::RouterSourceEnum);
+    void LEGACY_NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
     std::optional<WebCore::ResourceError> doCrossOriginEmbedderPolicyHandlingOfNavigationResponse(const WebCore::ResourceResponse&);
@@ -213,7 +213,7 @@ public:
     void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
     void setIsFromPrevalentDomainIfNeeded(WebCore::ResourceResponse&) const;
 
-    bool NODELETE isAppInitiated();
+    bool LEGACY_NODELETE isAppInitiated();
 
 #if ENABLE(CONTENT_FILTERING)
     bool continueAfterServiceWorkerReceivedData(const WebCore::SharedBuffer&);
@@ -326,7 +326,7 @@ private:
     void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<WebCore::FormData>&& report, WebCore::ViolationReportType) final;
     String httpUserAgent() const final { return originalRequest().httpUserAgent(); }
     void initializeReportingEndpoints(const WebCore::ResourceResponse&);
-    WebCore::FrameIdentifier NODELETE frameIdentifierForReport() const;
+    WebCore::FrameIdentifier LEGACY_NODELETE frameIdentifierForReport() const;
 
     enum class IsFromServiceWorker : bool { No, Yes };
     void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
@@ -337,7 +337,7 @@ private:
     void startRequest(const WebCore::ResourceRequest&);
     bool abortIfServiceWorkersOnly();
 
-    bool NODELETE shouldSendResourceLoadMessages() const;
+    bool LEGACY_NODELETE shouldSendResourceLoadMessages() const;
 
     void sendDidReceiveDataMessage(const WebCore::FragmentedSharedBuffer&);
 

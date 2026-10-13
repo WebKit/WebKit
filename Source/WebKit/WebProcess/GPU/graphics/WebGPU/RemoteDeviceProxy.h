@@ -78,7 +78,7 @@ private:
         return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
     }
 
-    Ref<WebCore::WebGPU::Queue> NODELETE queue() final;
+    Ref<WebCore::WebGPU::Queue> LEGACY_NODELETE queue() final;
 
     void destroy() final;
 
@@ -117,12 +117,12 @@ private:
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
-    Ref<WebCore::WebGPU::BindGroupLayout> NODELETE emptyBindGroupLayout() const final;
+    Ref<WebCore::WebGPU::BindGroupLayout> LEGACY_NODELETE emptyBindGroupLayout() const final;
 
-    Ref<WebCore::WebGPU::CommandEncoder> NODELETE invalidCommandEncoder() final;
-    Ref<WebCore::WebGPU::CommandBuffer> NODELETE invalidCommandBuffer() final;
-    Ref<WebCore::WebGPU::RenderPassEncoder> NODELETE invalidRenderPassEncoder() final;
-    Ref<WebCore::WebGPU::ComputePassEncoder> NODELETE invalidComputePassEncoder() final;
+    Ref<WebCore::WebGPU::CommandEncoder> LEGACY_NODELETE invalidCommandEncoder() final;
+    Ref<WebCore::WebGPU::CommandBuffer> LEGACY_NODELETE invalidCommandBuffer() final;
+    Ref<WebCore::WebGPU::RenderPassEncoder> LEGACY_NODELETE invalidRenderPassEncoder() final;
+    Ref<WebCore::WebGPU::ComputePassEncoder> LEGACY_NODELETE invalidComputePassEncoder() final;
     void pauseAllErrorReporting(bool pause) final;
 
     bool isRemoteDeviceProxy() const final { return true; }

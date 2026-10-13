@@ -41,7 +41,7 @@ public:
     StorageAreaRegistry();
     void registerStorageArea(StorageAreaIdentifier, StorageAreaBase&);
     void unregisterStorageArea(StorageAreaIdentifier);
-    StorageAreaBase* NODELETE getStorageArea(StorageAreaIdentifier);
+    StorageAreaBase* LEGACY_NODELETE getStorageArea(StorageAreaIdentifier);
 
 private:
     HashMap<StorageAreaIdentifier, WeakPtr<StorageAreaBase>> m_storageAreas;

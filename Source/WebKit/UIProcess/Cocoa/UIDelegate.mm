@@ -773,7 +773,7 @@ void UIDelegate::UIClient::unlockScreenOrientation(WebPageProxy&)
 #endif
 }
 
-static inline _WKFocusDirection NODELETE toWKFocusDirection(WKFocusDirection direction)
+static inline _WKFocusDirection LEGACY_NODELETE toWKFocusDirection(WKFocusDirection direction)
 {
     switch (direction) {
     case kWKFocusDirectionBackward:
@@ -802,7 +802,7 @@ bool UIDelegate::UIClient::takeFocus(WebPageProxy*, WKFocusDirection direction)
     return true;
 }
 
-static _WKAutoplayEventFlags NODELETE toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)
+static _WKAutoplayEventFlags LEGACY_NODELETE toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)
 {
     _WKAutoplayEventFlags wkFlags = _WKAutoplayEventFlagsNone;
     if (flags.contains(WebCore::AutoplayEventFlags::HasAudio))
@@ -815,7 +815,7 @@ static _WKAutoplayEventFlags NODELETE toWKAutoplayEventFlags(OptionSet<WebCore::
     return wkFlags;
 }
 
-static _WKAutoplayEvent NODELETE toWKAutoplayEvent(WebCore::AutoplayEvent event)
+static _WKAutoplayEvent LEGACY_NODELETE toWKAutoplayEvent(WebCore::AutoplayEvent event)
 {
     switch (event) {
     case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
@@ -1840,7 +1840,7 @@ void UIDelegate::UIClient::confirmPDFOpening(WebPageProxy& page, const WTF::URL&
 
 #if ENABLE(WEB_AUTHN)
 
-static WebAuthenticationPanelResult NODELETE webAuthenticationPanelResult(_WKWebAuthenticationPanelResult result)
+static WebAuthenticationPanelResult LEGACY_NODELETE webAuthenticationPanelResult(_WKWebAuthenticationPanelResult result)
 {
     switch (result) {
     case _WKWebAuthenticationPanelResultUnavailable:

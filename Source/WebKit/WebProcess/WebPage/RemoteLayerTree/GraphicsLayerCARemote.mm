@@ -176,7 +176,7 @@ public:
         }
     }
 
-    void NODELETE setDestinationLayerID(WebCore::PlatformLayerIdentifier layerID)
+    void LEGACY_NODELETE setDestinationLayerID(WebCore::PlatformLayerIdentifier layerID)
     {
         m_layerID = layerID;
     }

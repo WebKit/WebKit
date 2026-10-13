@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& NODELETE databaseProviders()
+static HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& LEGACY_NODELETE databaseProviders()
 {
     static NeverDestroyed<HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>> databaseProviders;
 

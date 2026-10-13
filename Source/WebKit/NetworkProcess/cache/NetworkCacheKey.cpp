@@ -139,7 +139,7 @@ String Key::hashAsString(const HashType& hash)
     return builder.toString();
 }
 
-template <typename CharType> bool NODELETE hexDigitsToHash(std::span<const CharType> characters, Key::HashType& hash)
+template <typename CharType> bool LEGACY_NODELETE hexDigitsToHash(std::span<const CharType> characters, Key::HashType& hash)
 {
     for (unsigned i = 0; i < sizeof(hash); ++i) {
         auto high = characters[2 * i];

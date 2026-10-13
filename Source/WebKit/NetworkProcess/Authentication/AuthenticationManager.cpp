@@ -57,7 +57,7 @@ struct AuthenticationManager::Challenge {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(AuthenticationManager::Challenge);
 
-static bool NODELETE canCoalesceChallenge(const WebCore::AuthenticationChallenge& challenge)
+static bool LEGACY_NODELETE canCoalesceChallenge(const WebCore::AuthenticationChallenge& challenge)
 {
     // Do not coalesce server trust evaluation requests because ProtectionSpace comparison does not evaluate server trust (e.g. certificate).
     return challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;

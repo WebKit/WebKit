@@ -67,12 +67,12 @@ public:
 #endif
 
     bool needsValidation() const;
-    void NODELETE setNeedsValidation(bool);
+    void LEGACY_NODELETE setNeedsValidation(bool);
 
     void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
     bool hasReachedPrevalentResourceAgeCap() const;
-    void NODELETE capMaxAge(const Seconds);
+    void LEGACY_NODELETE capMaxAge(const Seconds);
 
 private:
     void initializeBufferFromStorageRecord() const;

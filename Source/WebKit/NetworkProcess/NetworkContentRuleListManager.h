@@ -54,7 +54,7 @@ public:
     void setTrackingPreventionContentRuleList(std::optional<WebCompiledContentRuleListData>&&);
     const WebCore::ContentExtensions::ContentExtensionsBackend* trackingPreventionContentExtensionBackend() const LIFETIME_BOUND { return m_trackingPreventionContentExtensionBackend.get(); }
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
 private:

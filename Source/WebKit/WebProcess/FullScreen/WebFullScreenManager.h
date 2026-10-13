@@ -87,7 +87,7 @@ public:
     void enterFullScreenForOwnerElements(WebCore::FrameIdentifier, CompletionHandler<void()>&&);
     void exitFullScreenInMainFrame(CompletionHandler<void()>&&);
 
-    WebCore::Element* NODELETE element();
+    WebCore::Element* LEGACY_NODELETE element();
 
     void videoControlsManagerDidChange();
 
@@ -133,7 +133,7 @@ private:
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebFullScreenManager"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
 #if ENABLE(VIDEO)

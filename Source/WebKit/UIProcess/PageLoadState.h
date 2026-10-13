@@ -130,7 +130,7 @@ public:
         URL url;
     };
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     void addObserver(Observer&);
@@ -156,13 +156,13 @@ public:
     const URL& activeURL() const { return activeURL(m_committedState); }
 
     bool hasOnlySecureContent() const;
-    bool NODELETE hasNegotiatedLegacyTLS() const;
-    void NODELETE negotiatedLegacyTLS(const Transaction::Token&);
+    bool LEGACY_NODELETE hasNegotiatedLegacyTLS() const;
+    void LEGACY_NODELETE negotiatedLegacyTLS(const Transaction::Token&);
     bool wasPrivateRelayed() const { return m_committedState.wasPrivateRelayed; }
     String proxyName() { return m_committedState.proxyName; }
     WebCore::ResourceResponseSource source() { return m_committedState.source; }
 
-    double NODELETE estimatedProgress() const;
+    double LEGACY_NODELETE estimatedProgress() const;
     bool networkRequestsInProgress() const { return m_committedState.networkRequestsInProgress; }
 
     const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_committedState.certificateInfo; }
@@ -185,35 +185,35 @@ public:
 
     void receivedQualifiedServerTrust(const Transaction::Token&, WebCore::CertificateInfo&&, WebCore::CertificateInfo&&);
 
-    void NODELETE didFinishLoad(const Transaction::Token&);
-    void NODELETE didFailLoad(const Transaction::Token&);
+    void LEGACY_NODELETE didFinishLoad(const Transaction::Token&);
+    void LEGACY_NODELETE didFailLoad(const Transaction::Token&);
 
     void didSameDocumentNavigation(const Transaction::Token&, const URL&);
 
     void setUnreachableURL(const Transaction::Token&, const URL&);
 
-    const String& NODELETE title() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE title() const LIFETIME_BOUND;
     void setTitle(const Transaction::Token&, String&&);
     void setTitleFromBrowsingWarning(const Transaction::Token&, const String&);
 
-    bool NODELETE canGoBack() const;
-    void NODELETE setCanGoBack(const Transaction::Token&, bool);
+    bool LEGACY_NODELETE canGoBack() const;
+    void LEGACY_NODELETE setCanGoBack(const Transaction::Token&, bool);
 
-    bool NODELETE canGoForward() const;
-    void NODELETE setCanGoForward(const Transaction::Token&, bool);
+    bool LEGACY_NODELETE canGoForward() const;
+    void LEGACY_NODELETE setCanGoForward(const Transaction::Token&, bool);
 
-    void NODELETE didStartProgress(const Transaction::Token&);
-    void NODELETE didChangeProgress(const Transaction::Token&, double);
-    void NODELETE didFinishProgress(const Transaction::Token&);
-    void NODELETE setNetworkRequestsInProgress(const Transaction::Token&, bool);
-    void NODELETE setHTTPFallbackInProgress(const Transaction::Token&, bool);
-    bool NODELETE httpFallbackInProgress();
+    void LEGACY_NODELETE didStartProgress(const Transaction::Token&);
+    void LEGACY_NODELETE didChangeProgress(const Transaction::Token&, double);
+    void LEGACY_NODELETE didFinishProgress(const Transaction::Token&);
+    void LEGACY_NODELETE setNetworkRequestsInProgress(const Transaction::Token&, bool);
+    void LEGACY_NODELETE setHTTPFallbackInProgress(const Transaction::Token&, bool);
+    bool LEGACY_NODELETE httpFallbackInProgress();
 
     void didSwapWebProcesses();
 
     bool committedHasInsecureContent() const { return m_committedState.hasInsecureContent; }
 
-    void NODELETE setHadSafeBrowsingWarning(const Transaction::Token&);
+    void LEGACY_NODELETE setHadSafeBrowsingWarning(const Transaction::Token&);
     bool committedHadSafeBrowsingWarning() const { return m_committedState.hadSafeBrowsingWarning; }
 
     // FIXME: We piggy-back off PageLoadState::Observer so that both WKWebView and WKObservablePageState
@@ -263,10 +263,10 @@ private:
         WebCore::CertificateInfo qualifiedServerTrust;
     };
 
-    static bool NODELETE isLoading(const Data&);
-    static const URL& NODELETE activeURL(const Data&);
+    static bool LEGACY_NODELETE isLoading(const Data&);
+    static const URL& LEGACY_NODELETE activeURL(const Data&);
     static bool hasOnlySecureContent(const Data&);
-    static double NODELETE estimatedProgress(const Data&);
+    static double LEGACY_NODELETE estimatedProgress(const Data&);
 
     WebPageProxy& page() const { return m_webPageProxy.get(); }
 

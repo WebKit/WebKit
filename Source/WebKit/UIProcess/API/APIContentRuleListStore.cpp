@@ -132,7 +132,7 @@ static WTF::String constructedPath(const WTF::String& base, const WTF::String& i
 // represent the size and offset of the structure in memory, possibly with compiler-added padding.
 constexpr size_t currentVersionFileHeaderSize = 2 * sizeof(uint32_t) + 7 * sizeof(uint64_t);
 
-static constexpr size_t NODELETE headerSize(uint32_t version)
+static constexpr size_t LEGACY_NODELETE headerSize(uint32_t version)
 {
     if (version < 12)
         return 2 * sizeof(uint32_t) + 5 * sizeof(uint64_t);
@@ -150,7 +150,7 @@ struct ContentRuleListMetaData {
     uint64_t unused64bits1 { 0 };
     uint64_t unused64bits2 { 0 }; // Additional space on disk reserved so we can add something without incrementing the version number.
 
-    size_t NODELETE fileSize() const
+    size_t LEGACY_NODELETE fileSize() const
     {
         return headerSize(version)
             + sourceSize
@@ -399,7 +399,7 @@ static std::expected<MappedData, std::error_code> compiledToFile(WTF::String&& j
             m_fileHandle = { };
         }
 
-        bool NODELETE hadErrorWhileWritingToFile() { return m_hadFileError; }
+        bool LEGACY_NODELETE hadErrorWhileWritingToFile() { return m_hadFileError; }
 
     private:
         void writeToFile(bool value)

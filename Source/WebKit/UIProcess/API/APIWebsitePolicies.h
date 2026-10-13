@@ -170,7 +170,7 @@ public:
     bool prefersIsolatedProcess() const { return m_data.prefersIsolatedProcess; }
     void setPrefersIsolatedProcess(bool prefersIsolatedProcess) { m_data.prefersIsolatedProcess = prefersIsolatedProcess; }
 
-    const WebCore::ResourceRequest& NODELETE alternateRequest() const LIFETIME_BOUND;
+    const WebCore::ResourceRequest& LEGACY_NODELETE alternateRequest() const LIFETIME_BOUND;
     void setAlternateRequest(WebCore::ResourceRequest&&);
 
     bool allowsJSHandleCreationInPageWorld() const { return m_data.allowsJSHandleCreationInPageWorld; }

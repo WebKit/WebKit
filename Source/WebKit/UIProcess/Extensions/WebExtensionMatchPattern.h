@@ -84,7 +84,7 @@ public:
     static Ref<WebExtensionMatchPattern> allURLsMatchPattern();
     static Ref<WebExtensionMatchPattern> allHostsAndSchemesMatchPattern();
 
-    static bool NODELETE patternsMatchAllHosts(const MatchPatternSet&);
+    static bool LEGACY_NODELETE patternsMatchAllHosts(const MatchPatternSet&);
     static bool patternsMatchURL(const MatchPatternSet&, const URL&);
     static bool patternsMatchPattern(const MatchPatternSet&, const WebExtensionMatchPattern&);
 
@@ -99,19 +99,19 @@ public:
     static void registerCustomURLScheme(String);
     static bool isWebExtensionURL(const URL&);
 
-    bool NODELETE operator==(const WebExtensionMatchPattern&) const;
+    bool LEGACY_NODELETE operator==(const WebExtensionMatchPattern&) const;
 
     bool isValid() const { return m_valid; }
     bool isSupported() const;
 
-    String NODELETE scheme() const;
+    String LEGACY_NODELETE scheme() const;
     String host() const;
-    String NODELETE path() const;
+    String LEGACY_NODELETE path() const;
 
     bool hostIsPublicSuffix() const;
 
     bool matchesAllURLs() const { return m_matchesAllURLs; }
-    bool NODELETE matchesAllHosts() const;
+    bool LEGACY_NODELETE matchesAllHosts() const;
 
     bool matchesURL(const URL&, OptionSet<Options> = { }) const;
     bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
@@ -135,8 +135,8 @@ private:
     static bool isValidScheme(String);
 
     bool schemeMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
-    bool NODELETE hostMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
-    bool NODELETE pathMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+    bool LEGACY_NODELETE hostMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+    bool LEGACY_NODELETE pathMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
 
     WebCore::UserContentURLPattern m_pattern;
     bool m_matchesAllURLs { false };

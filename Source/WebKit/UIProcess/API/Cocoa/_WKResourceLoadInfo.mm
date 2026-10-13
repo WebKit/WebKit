@@ -34,7 +34,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-static _WKResourceLoadInfoResourceType NODELETE toWKResourceLoadInfoResourceType(WebKit::ResourceLoadInfo::Type type)
+static _WKResourceLoadInfoResourceType LEGACY_NODELETE toWKResourceLoadInfoResourceType(WebKit::ResourceLoadInfo::Type type)
 {
     using namespace WebKit;
     switch (type) {

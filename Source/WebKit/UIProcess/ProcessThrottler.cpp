@@ -98,7 +98,7 @@ private:
             return adoptRef(*new CachedAssertion(cache, WTF::move(assertion)));
         }
 
-        bool NODELETE isValid() const { return m_assertion->isValid(); }
+        bool LEGACY_NODELETE isValid() const { return m_assertion->isValid(); }
         Ref<ProcessAssertion> release() { return m_assertion.releaseNonNull(); }
 
     private:
@@ -132,7 +132,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottler::ProcessAssertionCache);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottler::ProcessAssertionCache::CachedAssertion);
 
-static uint64_t NODELETE generatePrepareToSuspendRequestID()
+static uint64_t LEGACY_NODELETE generatePrepareToSuspendRequestID()
 {
     static uint64_t prepareToSuspendRequestID = 0;
     return ++prepareToSuspendRequestID;

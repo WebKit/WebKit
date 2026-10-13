@@ -39,7 +39,7 @@ public:
     static Ref<MockNfcService> create(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
     NSData* transceive();
-    void NODELETE receiveStopPolling();
+    void LEGACY_NODELETE receiveStopPolling();
     void receiveStartPolling();
 
 private:

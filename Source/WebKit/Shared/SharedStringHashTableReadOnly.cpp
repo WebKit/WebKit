@@ -34,7 +34,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static inline unsigned NODELETE doubleHash(unsigned key)
+static inline unsigned LEGACY_NODELETE doubleHash(unsigned key)
 {
     key = ~key + (key >> 23);
     key ^= (key << 12);

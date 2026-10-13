@@ -163,7 +163,7 @@ public:
 #endif
     }
 
-    bool NODELETE isPlaying() const { return m_isPlaying; }
+    bool LEGACY_NODELETE isPlaying() const { return m_isPlaying; }
 
     size_t audioUnitLatency() const
     {
@@ -176,7 +176,7 @@ public:
 
 private:
 #if PLATFORM(COCOA)
-    void NODELETE incrementTotalFrameCount(UInt32 numberOfFrames)
+    void LEGACY_NODELETE incrementTotalFrameCount(UInt32 numberOfFrames)
     {
         static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
         if (m_frameCount)
@@ -253,9 +253,9 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
-    WTFLogChannel& NODELETE logChannel() const { return WebKit2LogMedia; }
-    uint64_t NODELETE logIdentifier() const { return m_logIdentifier; }
-    Logger& NODELETE logger() const { return m_logger; }
+    WTFLogChannel& LEGACY_NODELETE logChannel() const { return WebKit2LogMedia; }
+    uint64_t LEGACY_NODELETE logIdentifier() const { return m_logIdentifier; }
+    Logger& LEGACY_NODELETE logger() const { return m_logger; }
 
     const Ref<Logger> m_logger;
     const uint64_t m_logIdentifier;

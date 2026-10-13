@@ -82,11 +82,11 @@ public:
 
     static NSArray *matchingPlatformMenuItems(const MenuItemVector&, const WebExtensionMenuItemContextParameters&, size_t limit = 0);
 
-    bool NODELETE operator==(const WebExtensionMenuItem&) const;
+    bool LEGACY_NODELETE operator==(const WebExtensionMenuItem&) const;
 
-    WebExtensionMenuItemParameters NODELETE minimalParameters() const;
+    WebExtensionMenuItemParameters LEGACY_NODELETE minimalParameters() const;
 
-    WebExtensionContext* NODELETE extensionContext() const;
+    WebExtensionContext* LEGACY_NODELETE extensionContext() const;
 
     bool matches(const WebExtensionMenuItemContextParameters&) const;
 

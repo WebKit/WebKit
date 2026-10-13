@@ -58,13 +58,13 @@
 
 namespace WebKit {
 
-static Vector<String>& NODELETE overrideLanguagesFromBootstrap()
+static Vector<String>& LEGACY_NODELETE overrideLanguagesFromBootstrap()
 {
     static NeverDestroyed<Vector<String>> languages;
     return languages;
 }
 
-static void NODELETE stageOverrideLanguagesForMainThread(Vector<String>&& languages)
+static void LEGACY_NODELETE stageOverrideLanguagesForMainThread(Vector<String>&& languages)
 {
     RELEASE_ASSERT(overrideLanguagesFromBootstrap().isEmpty());
     overrideLanguagesFromBootstrap().swap(languages);

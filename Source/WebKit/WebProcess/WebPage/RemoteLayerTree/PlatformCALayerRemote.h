@@ -183,7 +183,7 @@ public:
     void setOpacity(float) override;
 
     void setFilters(const WebCore::FilterOperations&) override;
-    static bool NODELETE filtersCanBeComposited(const WebCore::FilterOperations&);
+    static bool LEGACY_NODELETE filtersCanBeComposited(const WebCore::FilterOperations&);
     void copyFiltersFrom(const WebCore::PlatformCALayer&) override;
 
     void setBlendMode(WebCore::BlendMode) override;
@@ -264,7 +264,7 @@ public:
 
     unsigned backingStoreBytesPerPixel() const override;
 
-    void NODELETE setClonedLayer(const PlatformCALayer*);
+    void LEGACY_NODELETE setClonedLayer(const PlatformCALayer*);
 
     LayerProperties& properties() LIFETIME_BOUND { return m_properties; }
     const LayerProperties& properties() const LIFETIME_BOUND { return m_properties; }
@@ -307,7 +307,7 @@ private:
     WebCore::IncludeDynamicContentScalingDisplayList shouldIncludeDisplayListInBackingStore() const;
 #endif
 
-    bool NODELETE requiresCustomAppearanceUpdateOnBoundsChange() const;
+    bool LEGACY_NODELETE requiresCustomAppearanceUpdateOnBoundsChange() const;
 
     LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;

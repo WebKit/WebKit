@@ -49,7 +49,7 @@ class DynamicContentScalingBifurcatedImageBuffer : public WebCore::ImageBuffer {
 public:
     DynamicContentScalingBifurcatedImageBuffer(WebCore::ImageBufferParameters, const WebCore::ImageBufferCreationContext&, std::unique_ptr<WebCore::ImageBufferBackend>&&, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
 
-    WebCore::GraphicsContext& NODELETE context() const LIFETIME_BOUND final;
+    WebCore::GraphicsContext& LEGACY_NODELETE context() const LIFETIME_BOUND final;
 
 protected:
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList() final;

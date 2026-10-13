@@ -59,7 +59,7 @@ static_assert(static_cast<webrtc::DiffServCodePoint>(RTCPacketOptions::Different
 static_assert(static_cast<webrtc::DiffServCodePoint>(RTCPacketOptions::DifferentiatedServicesCodePoint::CS6) == webrtc::DSCP_CS6);
 static_assert(static_cast<webrtc::DiffServCodePoint>(RTCPacketOptions::DifferentiatedServicesCodePoint::CS7) == webrtc::DSCP_CS7);
 
-static RTCPacketOptions::DifferentiatedServicesCodePoint NODELETE toDifferentiatedServicesCodePoint(webrtc::DiffServCodePoint dscp)
+static RTCPacketOptions::DifferentiatedServicesCodePoint LEGACY_NODELETE toDifferentiatedServicesCodePoint(webrtc::DiffServCodePoint dscp)
 {
     switch (dscp) {
     case webrtc::DSCP_NO_CHANGE:

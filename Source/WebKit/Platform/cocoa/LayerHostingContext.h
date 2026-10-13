@@ -97,7 +97,7 @@ public:
     // with this context is desired.
     WTF::MachSendRight createFencePort();
 
-    LayerHostingContextID NODELETE cachedContextID();
+    LayerHostingContextID LEGACY_NODELETE cachedContextID();
 
 #if USE(EXTENSIONKIT)
     RetainPtr<BELayerHierarchy> hostable() const { return m_hostable; }

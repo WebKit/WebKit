@@ -41,13 +41,13 @@ OptionSet<WebKit::ContentWorldOption> ContentWorld::defaultOptions()
     return WebKit::ContentWorldOption::Inspectable;
 }
 
-static HashMap<WTF::String, WeakRef<ContentWorld>>& NODELETE sharedWorldNameMap()
+static HashMap<WTF::String, WeakRef<ContentWorld>>& LEGACY_NODELETE sharedWorldNameMap()
 {
     static NeverDestroyed<HashMap<WTF::String, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
-static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& NODELETE sharedWorldIdentifierMap()
+static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& LEGACY_NODELETE sharedWorldIdentifierMap()
 {
     static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;

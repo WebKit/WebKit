@@ -112,7 +112,7 @@ public:
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::Site& openerSite);
     void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::Site& provisionalNavigationFailureSite);
 
-    bool NODELETE hasRemotePages(const WebPageProxy&);
+    bool LEGACY_NODELETE hasRemotePages(const WebPageProxy&);
 
     WebCore::OriginKeyed resolveAgentClusterKeying(const WebCore::SecurityOriginData&, WebCore::OriginKeyed requested);
     WebCore::AgentClusterAssignment assignAgentCluster(const AgentClusterRequest&);

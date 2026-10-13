@@ -65,7 +65,7 @@ void WebProcessCache::setCachedProcessLifetimeForTesting(Seconds lifetime)
     m_cachedProcessLifetime = lifetime;
 }
 
-static uint64_t NODELETE generateAddRequestIdentifier()
+static uint64_t LEGACY_NODELETE generateAddRequestIdentifier()
 {
     static uint64_t identifier = 0;
     return ++identifier;

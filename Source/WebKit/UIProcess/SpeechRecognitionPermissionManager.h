@@ -46,7 +46,7 @@ public:
     void request(WebCore::SpeechRecognitionRequest&, FrameInfoData&&, SpeechRecognitionPermissionRequestCallback&&);
 
     void decideByDefaultAction(const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
-    WebPageProxy* NODELETE page();
+    WebPageProxy* LEGACY_NODELETE page();
 
 private:
     explicit SpeechRecognitionPermissionManager(WebPageProxy&);

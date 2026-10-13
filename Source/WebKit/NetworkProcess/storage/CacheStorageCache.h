@@ -54,7 +54,7 @@ public:
     ~CacheStorageCache();
     const String& name() const LIFETIME_BOUND { return m_name; }
     const String& uniqueName() const LIFETIME_BOUND { return m_uniqueName; }
-    CacheStorageManager* NODELETE manager();
+    CacheStorageManager* LEGACY_NODELETE manager();
     std::optional<WebCore::ClientOrigin> origin() const;
 
     void getSize(CompletionHandler<void(uint64_t)>&&);

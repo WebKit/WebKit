@@ -75,7 +75,7 @@ public:
 #elif USE(CURL)
     Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
 #endif
-    bool NODELETE isNull() const;
+    bool LEGACY_NODELETE isNull() const;
     bool isEmpty() const { return !size(); }
 
     std::span<const uint8_t> span() const LIFETIME_BOUND;

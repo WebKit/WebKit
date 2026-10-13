@@ -53,7 +53,7 @@ public:
 
     Ref<API::Array> submenuItemsAsAPIArray() const;
 
-    API::Object* NODELETE userData() const;
+    API::Object* LEGACY_NODELETE userData() const;
     void setUserData(API::Object*);
 
     const WebContextMenuItemData& data() LIFETIME_BOUND { return m_webContextMenuItemData; }

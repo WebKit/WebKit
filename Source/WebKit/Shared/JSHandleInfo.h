@@ -46,7 +46,7 @@ struct JSHandleInfo {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(JSHandleInfo);
     JSHandleInfo(WebCore::JSHandleIdentifier, ContentWorldIdentifier, FrameInfoData&&, Markable<WebCore::FrameIdentifier>);
 
-    bool NODELETE operator==(const JSHandleInfo&) const;
+    bool LEGACY_NODELETE operator==(const JSHandleInfo&) const;
 
     WebCore::JSHandleIdentifier identifier;
     ContentWorldIdentifier worldIdentifier;

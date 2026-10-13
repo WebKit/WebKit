@@ -95,9 +95,9 @@ public:
 
     OptionSet<BufferInSetType> requestedVolatility() { return m_requestedVolatility; }
     OptionSet<BufferInSetType> confirmedVolatility() { return m_confirmedVolatility; }
-    void NODELETE clearVolatility();
-    void NODELETE addRequestedVolatility(OptionSet<BufferInSetType> request);
-    void NODELETE setConfirmedVolatility(OptionSet<BufferInSetType> types);
+    void LEGACY_NODELETE clearVolatility();
+    void LEGACY_NODELETE addRequestedVolatility(OptionSet<BufferInSetType> request);
+    void LEGACY_NODELETE setConfirmedVolatility(OptionSet<BufferInSetType> types);
 
     void setNeedsDisplay();
 
@@ -108,7 +108,7 @@ public:
     void prepareToDisplay(const WebCore::Region& dirtyRegion, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, bool drawingRequiresClearedPixels);
 #endif
 
-    WebCore::GraphicsContext& NODELETE context();
+    WebCore::GraphicsContext& LEGACY_NODELETE context();
     bool hasContext() const { return !!m_context; }
 
     RemoteGraphicsContextIdentifier contextIdentifier() const { return m_contextIdentifier; }

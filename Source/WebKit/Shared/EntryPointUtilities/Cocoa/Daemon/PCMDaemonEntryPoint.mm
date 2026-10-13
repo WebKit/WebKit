@@ -106,7 +106,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     });
 }
 
-static void NODELETE enterSandbox()
+static void LEGACY_NODELETE enterSandbox()
 {
 #if PLATFORM(MAC)
     // FIXME: Enter a sandbox here. We should only need read/write access to our database and network access and nothing else.

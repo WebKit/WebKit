@@ -102,8 +102,8 @@ public:
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiverBase&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    StreamClientConnectionBuffer& NODELETE bufferForTesting();
-    Connection& NODELETE connectionForTesting();
+    StreamClientConnectionBuffer& LEGACY_NODELETE bufferForTesting();
+    Connection& LEGACY_NODELETE connectionForTesting();
 
     // Returns the timeout moment for current time.
     Timeout defaultTimeout() const { return m_defaultTimeoutDuration; }
@@ -122,7 +122,7 @@ public:
         }
         return state == SignpostState::Enabled;
     }
-    static void NODELETE forceEnableSignposts();
+    static void LEGACY_NODELETE forceEnableSignposts();
 #endif
 
 private:

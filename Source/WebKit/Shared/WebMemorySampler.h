@@ -75,7 +75,7 @@ class WebMemorySampler final : public CanMakeCheckedPtr<WebMemorySampler> {
     WTF_MAKE_TZONE_ALLOCATED(WebMemorySampler);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebMemorySampler);
 public:
-    static WebMemorySampler* NODELETE singleton();
+    static WebMemorySampler* LEGACY_NODELETE singleton();
     void start(const double interval = 0);
     void start(SandboxExtension::Handle&&, const String&, const double interval = 0);
     void stop();

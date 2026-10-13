@@ -67,8 +67,8 @@ public:
     {
     }
 
-    NetscapePlugInStreamLoader* NODELETE streamLoader() { return m_streamLoader; }
-    void NODELETE setStreamLoader(NetscapePlugInStreamLoader& loader) { m_streamLoader = loader; }
+    NetscapePlugInStreamLoader* LEGACY_NODELETE streamLoader() { return m_streamLoader; }
+    void LEGACY_NODELETE setStreamLoader(NetscapePlugInStreamLoader& loader) { m_streamLoader = loader; }
     void clearStreamLoader();
     void addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
 
@@ -77,10 +77,10 @@ public:
     bool completeIfPossible(PDFIncrementalLoader&);
     void completeUnconditionally(PDFIncrementalLoader&);
 
-    uint64_t NODELETE position() const { return m_position; }
-    size_t NODELETE count() const { return m_count; }
+    uint64_t LEGACY_NODELETE position() const { return m_position; }
+    size_t LEGACY_NODELETE count() const { return m_count; }
 
-    const Vector<uint8_t>& NODELETE accumulatedData() const { return m_accumulatedData; };
+    const Vector<uint8_t>& LEGACY_NODELETE accumulatedData() const { return m_accumulatedData; };
 
 private:
     uint64_t m_position { 0 };

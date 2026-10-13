@@ -123,13 +123,13 @@ public:
     void clearClient() { m_client = nullptr; }
 
     std::optional<DownloadID> pendingDownloadID() const { return m_pendingDownloadID.asOptional(); }
-    PendingDownload* NODELETE pendingDownload() const;
+    PendingDownload* LEGACY_NODELETE pendingDownload() const;
     void setPendingDownloadID(DownloadID downloadID)
     {
         ASSERT(!m_pendingDownloadID);
         m_pendingDownloadID = downloadID;
     }
-    void NODELETE setPendingDownload(PendingDownload&);
+    void LEGACY_NODELETE setPendingDownload(PendingDownload&);
 
     virtual void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
     const String& pendingDownloadLocation() const LIFETIME_BOUND { return m_pendingDownloadLocation; }

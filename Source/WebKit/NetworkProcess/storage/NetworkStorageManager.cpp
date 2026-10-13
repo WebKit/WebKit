@@ -105,7 +105,7 @@ static constexpr auto lastTimeBasedEvictionTimestampFileName = "lastTimeBasedEvi
 static constexpr Seconds defaultTimeBasedEvictionInterval = 7 * 24_h;
 
 // FIXME: Remove this if rdar://104754030 is fixed.
-static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& NODELETE activePaths()
+static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& LEGACY_NODELETE activePaths()
 {
     static MainRunLoopNeverDestroyed<HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>> pathToManagerMap;
     return pathToManagerMap;

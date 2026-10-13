@@ -38,7 +38,7 @@ struct ITPThirdPartyDataForSpecificFirstParty {
     String toString() const;
 
     // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
-    bool NODELETE operator==(const ITPThirdPartyDataForSpecificFirstParty&) const;
+    bool LEGACY_NODELETE operator==(const ITPThirdPartyDataForSpecificFirstParty&) const;
 };
 
 } // namespace WebKit

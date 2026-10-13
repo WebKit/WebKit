@@ -87,7 +87,7 @@ private:
 #endif // ENABLE(CONTENT_EXTENSIONS)
 };
 
-const std::error_category& NODELETE contentRuleListStoreErrorCategory();
+const std::error_category& LEGACY_NODELETE contentRuleListStoreErrorCategory();
 
 inline std::error_code make_error_code(ContentRuleListStore::Error error)
 {

@@ -41,7 +41,7 @@ public:
 
     static void removeItem(WebCore::BackForwardFrameItemIdentifier);
 
-    void NODELETE clearCachedListCounts();
+    void LEGACY_NODELETE clearCachedListCounts();
     void invalidateCachedListCounts() { m_cachedBackForwardListCounts = std::nullopt; }
 
 private:

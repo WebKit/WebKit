@@ -393,7 +393,7 @@ private:
     // where Widget::convertToRootView() stops.
     RefPtr<WebCore::FrameView> rootView() const;
 
-    bool NODELETE haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
+    bool LEGACY_NODELETE haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
     // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.
 
     void insertRangeRequestData(uint64_t offset, const Vector<uint8_t>&);
@@ -414,7 +414,7 @@ protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
     WebPage* webPage() const;
-    WebCore::Page* NODELETE page() const;
+    WebCore::Page* LEGACY_NODELETE page() const;
 
     virtual void teardown();
 
@@ -485,7 +485,7 @@ protected:
 
 #if ENABLE(PDF_HUD)
     WebCore::IntRect frameForHUDInMainFrameViewCoordinates() const;
-    bool NODELETE hudEnabled() const;
+    bool LEGACY_NODELETE hudEnabled() const;
     bool shouldShowHUD() const;
     void updateHUDVisibility();
 #endif
@@ -507,7 +507,7 @@ protected:
     void writeStringToFindPasteboard(const String&) const;
 #endif
 
-    std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
+    std::optional<WebCore::PageIdentifier> LEGACY_NODELETE pageIdentifier() const;
 
     virtual WebCore::Color pluginBackgroundColor() const;
     void updateFullFramePluginBackgroundColor();

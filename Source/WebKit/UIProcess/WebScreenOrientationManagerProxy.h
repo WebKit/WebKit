@@ -66,7 +66,7 @@ public:
     void currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&&);
     void lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void unlock();
-    void NODELETE setShouldSendChangeNotification(bool);
+    void LEGACY_NODELETE setShouldSendChangeNotification(bool);
 
 private:
     WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);

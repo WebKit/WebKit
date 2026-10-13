@@ -79,15 +79,15 @@ public:
         ASSERT(m_completionHandler);
     }
 
-    Storage::ReadOperationIdentifier NODELETE identifier() const { return m_identifier; }
-    const Key& NODELETE key() const { return m_key; }
-    unsigned NODELETE priority() const { return m_priority; }
-    bool NODELETE isCanceled() const { return m_isCanceled; }
-    bool NODELETE canFinish() const { return !m_waitsForRecord && !m_waitsForBlob; }
+    Storage::ReadOperationIdentifier LEGACY_NODELETE identifier() const { return m_identifier; }
+    const Key& LEGACY_NODELETE key() const { return m_key; }
+    unsigned LEGACY_NODELETE priority() const { return m_priority; }
+    bool LEGACY_NODELETE isCanceled() const { return m_isCanceled; }
+    bool LEGACY_NODELETE canFinish() const { return !m_waitsForRecord && !m_waitsForBlob; }
 
     void updateForStart(size_t readOperationDispatchCount);
     void updateForDispatch(bool synchronizationInProgress, bool shrinkInProgress, size_t readOperationDispatchCount);
-    void NODELETE setWaitsForBlob() { m_waitsForBlob = true; }
+    void LEGACY_NODELETE setWaitsForBlob() { m_waitsForBlob = true; }
     void finishReadRecord(Record&&, MonotonicTime recordIOStartTime, MonotonicTime recordIOEndTime);
     void finishReadBlob(BlobStorage::Blob&&, MonotonicTime blobIOStartTime, MonotonicTime blobIOEndTime);
     void cancel();
@@ -221,10 +221,10 @@ public:
         ASSERT(isMainRunLoop());
     }
 
-    Storage::WriteOperationIdentifier NODELETE identifier() const { return m_identifier; }
-    const Record& NODELETE record() const WTF_REQUIRES_CAPABILITY(mainThread) { return m_record; }
+    Storage::WriteOperationIdentifier LEGACY_NODELETE identifier() const { return m_identifier; }
+    const Record& LEGACY_NODELETE record() const WTF_REQUIRES_CAPABILITY(mainThread) { return m_record; }
     void invokeMappedBodyHandler(const Data&);
-    bool NODELETE storeBlobInMemoryCache() const { return m_storeBlobInMemoryCache; }
+    bool LEGACY_NODELETE storeBlobInMemoryCache() const { return m_storeBlobInMemoryCache; }
 
 private:
     Storage::WriteOperationIdentifier m_identifier;

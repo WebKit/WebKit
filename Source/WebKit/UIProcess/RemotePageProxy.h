@@ -99,7 +99,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WebPageProxy* NODELETE page() const;
+    WebPageProxy* LEGACY_NODELETE page() const;
 
     void injectPageIntoNewProcess();
     void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
@@ -112,7 +112,7 @@ public:
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
     const WebCore::Site& site() const LIFETIME_BOUND { return m_site; }
 
-    WebProcessActivityState& NODELETE processActivityState();
+    WebProcessActivityState& LEGACY_NODELETE processActivityState();
 
     WebCore::MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void setDrawingArea(DrawingAreaProxy*);

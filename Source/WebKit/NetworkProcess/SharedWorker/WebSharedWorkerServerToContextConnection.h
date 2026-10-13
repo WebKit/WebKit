@@ -67,10 +67,10 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    std::optional<WebCore::ProcessIdentifier> NODELETE webProcessIdentifier() const;
+    std::optional<WebCore::ProcessIdentifier> LEGACY_NODELETE webProcessIdentifier() const;
     const WebCore::RegistrableDomain& registrableDomain() const LIFETIME_BOUND { return m_site.domain(); }
     const WebCore::Site& site() const LIFETIME_BOUND { return m_site; }
-    IPC::Connection* NODELETE ipcConnection() const;
+    IPC::Connection* LEGACY_NODELETE ipcConnection() const;
 
     WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicyValue() const { return m_crossOriginEmbedderPolicyValue; }
 
@@ -90,7 +90,7 @@ public:
     void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
 
-    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
 
 private:
     WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess&, const WebCore::Site&, WebSharedWorkerServer&, WebCore::CrossOriginEmbedderPolicyValue);

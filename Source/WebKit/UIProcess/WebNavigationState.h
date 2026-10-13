@@ -55,7 +55,7 @@ public:
     explicit WebNavigationState(WebPageProxy&);
     ~WebNavigationState();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     Ref<API::Navigation> createBackForwardNavigation(WebCore::ProcessIdentifier, Ref<WebBackForwardListFrameItem>&& targetFrameItem, RefPtr<WebBackForwardListItem>&& currentItem, WebCore::FrameLoadType, std::optional<WebCore::NavigationIdentifier> = std::nullopt);

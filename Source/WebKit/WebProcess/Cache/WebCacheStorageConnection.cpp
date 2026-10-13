@@ -62,7 +62,7 @@ Ref<IPC::Connection> WebCacheStorageConnection::connection()
 }
 
 struct WebCacheStorageConnection::PromiseConverter {
-    static auto NODELETE convertError(IPC::Error)
+    static auto LEGACY_NODELETE convertError(IPC::Error)
     {
         return makeUnexpected(WebCore::DOMCacheEngine::Error::Internal);
     }

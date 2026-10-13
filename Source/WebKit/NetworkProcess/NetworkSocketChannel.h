@@ -70,7 +70,7 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
 
     friend class WebSocketTask;
 
@@ -90,7 +90,7 @@ private:
     void close(int32_t code, const String& reason);
     void sendDelayedError();
 
-    NetworkSession* NODELETE session() const;
+    NetworkSession* LEGACY_NODELETE session() const;
 
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }

@@ -72,7 +72,7 @@ void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& sess
         [m_delegate.get() _automationSessionDidDisconnectFromRemote:RetainPtr { wrapper(session) }.get()];
 }
 
-static inline _WKAutomationSessionBrowsingContextOptions NODELETE toAPI(API::AutomationSessionBrowsingContextOptions options)
+static inline _WKAutomationSessionBrowsingContextOptions LEGACY_NODELETE toAPI(API::AutomationSessionBrowsingContextOptions options)
 {
     uint16_t wkOptions = 0;
 
@@ -83,7 +83,7 @@ static inline _WKAutomationSessionBrowsingContextOptions NODELETE toAPI(API::Aut
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
-static inline _WKAutomationSessionWebExtensionResourceOptions NODELETE toAPI(API::AutomationSessionWebExtensionResourceOptions options)
+static inline _WKAutomationSessionWebExtensionResourceOptions LEGACY_NODELETE toAPI(API::AutomationSessionWebExtensionResourceOptions options)
 {
     uint16_t wkOptions = 0;
 
@@ -238,7 +238,7 @@ void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAu
         [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() setUserInput:value.createNSString().get() forCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
-static std::optional<API::AutomationSessionClient::JavaScriptDialogType> NODELETE toImpl(_WKAutomationSessionJavaScriptDialogType type)
+static std::optional<API::AutomationSessionClient::JavaScriptDialogType> LEGACY_NODELETE toImpl(_WKAutomationSessionJavaScriptDialogType type)
 {
     switch (type) {
     case _WKAutomationSessionJavaScriptDialogTypeNone:
@@ -252,7 +252,7 @@ static std::optional<API::AutomationSessionClient::JavaScriptDialogType> NODELET
     }
 }
 
-static API::AutomationSessionClient::BrowsingContextPresentation NODELETE toImpl(_WKAutomationSessionBrowsingContextPresentation presentation)
+static API::AutomationSessionClient::BrowsingContextPresentation LEGACY_NODELETE toImpl(_WKAutomationSessionBrowsingContextPresentation presentation)
 {
     switch (presentation) {
     case _WKAutomationSessionBrowsingContextPresentationTab:

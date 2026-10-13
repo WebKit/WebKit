@@ -80,7 +80,7 @@ WebKit::WebContentMode webContentMode(WKContentMode contentMode)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-WKWebpagePreferencesUpgradeToHTTPSPolicy NODELETE upgradeToHTTPSPolicy(WebCore::HTTPSByDefaultMode httpsByDefault)
+WKWebpagePreferencesUpgradeToHTTPSPolicy LEGACY_NODELETE upgradeToHTTPSPolicy(WebCore::HTTPSByDefaultMode httpsByDefault)
 {
     switch (httpsByDefault) {
     case WebCore::HTTPSByDefaultMode::Disabled:
@@ -96,7 +96,7 @@ WKWebpagePreferencesUpgradeToHTTPSPolicy NODELETE upgradeToHTTPSPolicy(WebCore::
     return WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested;
 }
 
-WebCore::HTTPSByDefaultMode NODELETE httpsByDefaultMode(WKWebpagePreferencesUpgradeToHTTPSPolicy upgradeToHTTPSPolicy)
+WebCore::HTTPSByDefaultMode LEGACY_NODELETE httpsByDefaultMode(WKWebpagePreferencesUpgradeToHTTPSPolicy upgradeToHTTPSPolicy)
 {
     switch (upgradeToHTTPSPolicy) {
     case WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested:
@@ -113,7 +113,7 @@ WebCore::HTTPSByDefaultMode NODELETE httpsByDefaultMode(WKWebpagePreferencesUpgr
     return WebCore::HTTPSByDefaultMode::Disabled;
 }
 
-static _WKWebsiteMouseEventPolicy NODELETE mouseEventPolicy(WebCore::MouseEventPolicy policy)
+static _WKWebsiteMouseEventPolicy LEGACY_NODELETE mouseEventPolicy(WebCore::MouseEventPolicy policy)
 {
     switch (policy) {
     case WebCore::MouseEventPolicy::Default:
@@ -127,7 +127,7 @@ static _WKWebsiteMouseEventPolicy NODELETE mouseEventPolicy(WebCore::MouseEventP
     return _WKWebsiteMouseEventPolicyDefault;
 }
 
-static WebCore::MouseEventPolicy NODELETE coreMouseEventPolicy(_WKWebsiteMouseEventPolicy policy)
+static WebCore::MouseEventPolicy LEGACY_NODELETE coreMouseEventPolicy(_WKWebsiteMouseEventPolicy policy)
 {
     switch (policy) {
     case _WKWebsiteMouseEventPolicyDefault:
@@ -141,7 +141,7 @@ static WebCore::MouseEventPolicy NODELETE coreMouseEventPolicy(_WKWebsiteMouseEv
     return WebCore::MouseEventPolicy::Default;
 }
 
-static _WKWebsiteModalContainerObservationPolicy NODELETE modalContainerObservationPolicy(WebCore::ModalContainerObservationPolicy policy)
+static _WKWebsiteModalContainerObservationPolicy LEGACY_NODELETE modalContainerObservationPolicy(WebCore::ModalContainerObservationPolicy policy)
 {
     switch (policy) {
     case WebCore::ModalContainerObservationPolicy::Disabled:
@@ -153,7 +153,7 @@ static _WKWebsiteModalContainerObservationPolicy NODELETE modalContainerObservat
     return _WKWebsiteModalContainerObservationPolicyDisabled;
 }
 
-static WebCore::ModalContainerObservationPolicy NODELETE coreModalContainerObservationPolicy(_WKWebsiteModalContainerObservationPolicy policy)
+static WebCore::ModalContainerObservationPolicy LEGACY_NODELETE coreModalContainerObservationPolicy(_WKWebsiteModalContainerObservationPolicy policy)
 {
     switch (policy) {
     case _WKWebsiteModalContainerObservationPolicyDisabled:
@@ -319,7 +319,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
-static WebCore::DeviceOrientationOrMotionPermissionState NODELETE toDeviceOrientationOrMotionPermissionState(_WKWebsiteDeviceOrientationAndMotionAccessPolicy policy)
+static WebCore::DeviceOrientationOrMotionPermissionState LEGACY_NODELETE toDeviceOrientationOrMotionPermissionState(_WKWebsiteDeviceOrientationAndMotionAccessPolicy policy)
 {
     switch (policy) {
     case _WKWebsiteDeviceOrientationAndMotionAccessPolicyAsk:
@@ -341,7 +341,7 @@ static WebCore::DeviceOrientationOrMotionPermissionState NODELETE toDeviceOrient
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
-static _WKWebsiteDeviceOrientationAndMotionAccessPolicy NODELETE toWKWebsiteDeviceOrientationAndMotionAccessPolicy(WebCore::DeviceOrientationOrMotionPermissionState state)
+static _WKWebsiteDeviceOrientationAndMotionAccessPolicy LEGACY_NODELETE toWKWebsiteDeviceOrientationAndMotionAccessPolicy(WebCore::DeviceOrientationOrMotionPermissionState state)
 {
     switch (state) {
     case WebCore::DeviceOrientationOrMotionPermissionState::Prompt:

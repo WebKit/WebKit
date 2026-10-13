@@ -177,7 +177,7 @@ static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint loca
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
-static unsigned NODELETE nsEventButtonNumberFromAutomationMouseButton(MouseButton button)
+static unsigned LEGACY_NODELETE nsEventButtonNumberFromAutomationMouseButton(MouseButton button)
 {
     switch (button) {
     case MouseButton::Right:
@@ -193,7 +193,7 @@ static unsigned NODELETE nsEventButtonNumberFromAutomationMouseButton(MouseButto
     }
 }
 
-static WebMouseEventButton NODELETE automationMouseButtonToPlatformMouseButton(MouseButton button)
+static WebMouseEventButton LEGACY_NODELETE automationMouseButtonToPlatformMouseButton(MouseButton button)
 {
     switch (button) {
     case MouseButton::Left:   return WebMouseEventButton::Left;
@@ -325,7 +325,7 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
-static bool NODELETE virtualKeyHasStickyModifier(VirtualKey key)
+static bool LEGACY_NODELETE virtualKeyHasStickyModifier(VirtualKey key)
 {
     // Returns whether the key's modifier flags should affect other events while pressed down.
     switch (key) {
@@ -674,7 +674,7 @@ static unsigned short keyCodeForVirtualKey(VirtualKey key)
     }
 }
 
-static NSEventModifierFlags NODELETE eventModifierFlagsForVirtualKey(VirtualKey key)
+static NSEventModifierFlags LEGACY_NODELETE eventModifierFlagsForVirtualKey(VirtualKey key)
 {
     // Computes the modifiers changed by the virtual key when it is pressed or released.
     // The mapping from keys to modifiers is specified in the documentation for NSEvent.

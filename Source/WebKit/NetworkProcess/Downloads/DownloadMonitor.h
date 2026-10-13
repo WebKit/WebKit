@@ -46,14 +46,14 @@ public:
     void downloadReceivedBytes(uint64_t);
     void timerFired();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
 private:
     WeakRef<Download> m_download;
 
-    double NODELETE measuredThroughputRate() const;
-    uint32_t NODELETE testSpeedMultiplier() const;
+    double LEGACY_NODELETE measuredThroughputRate() const;
+    uint32_t LEGACY_NODELETE testSpeedMultiplier() const;
     
     struct Timestamp {
         MonotonicTime time;

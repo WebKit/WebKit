@@ -143,13 +143,13 @@ constexpr NSUInteger maximumReadOnlyAccessPaths = 2;
     return s_cache.get().get();
 }
 
-static RetainPtr<WKWebViewConfiguration>& NODELETE globalConfiguration()
+static RetainPtr<WKWebViewConfiguration>& LEGACY_NODELETE globalConfiguration()
 {
     static NeverDestroyed<RetainPtr<WKWebViewConfiguration>> configuration;
     return configuration;
 }
 
-static RetainPtr<NSString>& NODELETE sourceApplicationBundleIdentifier()
+static RetainPtr<NSString>& LEGACY_NODELETE sourceApplicationBundleIdentifier()
 {
     static NeverDestroyed<RetainPtr<NSString>> identifier;
     return identifier;

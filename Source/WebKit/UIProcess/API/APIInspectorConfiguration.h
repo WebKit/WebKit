@@ -48,7 +48,7 @@ public:
     void addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String& urlScheme);
     const Vector<URLSchemeHandlerPair>& urlSchemeHandlers() LIFETIME_BOUND { return m_customURLSchemes; }
     
-    WebKit::WebProcessPool* NODELETE processPool();
+    WebKit::WebProcessPool* LEGACY_NODELETE processPool();
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
 
 private:

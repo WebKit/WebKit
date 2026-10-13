@@ -202,7 +202,7 @@ NSString * const _WKLocalAuthenticatorCredentialLastUsedDateKey = @"_WKLocalAuth
     return _panel->rpId().createNSString().autorelease();
 }
 
-static _WKWebAuthenticationTransport NODELETE wkWebAuthenticationTransport(WebCore::AuthenticatorTransport transport)
+static _WKWebAuthenticationTransport LEGACY_NODELETE wkWebAuthenticationTransport(WebCore::AuthenticatorTransport transport)
 {
     switch (transport) {
     case WebCore::AuthenticatorTransport::Usb:
@@ -234,7 +234,7 @@ static _WKWebAuthenticationTransport NODELETE wkWebAuthenticationTransport(WebCo
     return _transports.get();
 }
 
-static _WKWebAuthenticationType NODELETE wkWebAuthenticationType(WebCore::ClientDataType type)
+static _WKWebAuthenticationType LEGACY_NODELETE wkWebAuthenticationType(WebCore::ClientDataType type)
 {
     switch (type) {
     case WebCore::ClientDataType::Create:
@@ -247,7 +247,7 @@ static _WKWebAuthenticationType NODELETE wkWebAuthenticationType(WebCore::Client
     }
 }
 
-static fido::AuthenticatorSupportedOptions::UserVerificationAvailability NODELETE coreUserVerificationAvailability(_WKWebAuthenticationUserVerificationAvailability wkAvailability)
+static fido::AuthenticatorSupportedOptions::UserVerificationAvailability LEGACY_NODELETE coreUserVerificationAvailability(_WKWebAuthenticationUserVerificationAvailability wkAvailability)
 {
     switch (wkAvailability) {
     case _WKWebAuthenticationUserVerificationAvailabilitySupportedAndConfigured:
@@ -862,7 +862,7 @@ static Vector<WebCore::PublicKeyCredentialParameters> publicKeyCredentialParamet
     });
 }
 
-static WebCore::AuthenticatorTransport NODELETE authenticatorTransport(_WKWebAuthenticationTransport transport)
+static WebCore::AuthenticatorTransport LEGACY_NODELETE authenticatorTransport(_WKWebAuthenticationTransport transport)
 {
     switch (transport) {
     case _WKWebAuthenticationTransportUSB:
@@ -901,7 +901,7 @@ static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescrip
     });
 }
 
-static std::optional<WebCore::AuthenticatorAttachment> NODELETE authenticatorAttachment(_WKAuthenticatorAttachment attachment)
+static std::optional<WebCore::AuthenticatorAttachment> LEGACY_NODELETE authenticatorAttachment(_WKAuthenticatorAttachment attachment)
 {
     switch (attachment) {
     case _WKAuthenticatorAttachmentAll:
@@ -916,7 +916,7 @@ static std::optional<WebCore::AuthenticatorAttachment> NODELETE authenticatorAtt
     }
 }
 
-static WebCore::UserVerificationRequirement NODELETE userVerification(_WKUserVerificationRequirement uv)
+static WebCore::UserVerificationRequirement LEGACY_NODELETE userVerification(_WKUserVerificationRequirement uv)
 {
     switch (uv) {
     case _WKUserVerificationRequirementRequired:
@@ -931,7 +931,7 @@ static WebCore::UserVerificationRequirement NODELETE userVerification(_WKUserVer
     }
 }
 
-static std::optional<WebCore::ResidentKeyRequirement> NODELETE toWebCore(_WKResidentKeyRequirement uv)
+static std::optional<WebCore::ResidentKeyRequirement> LEGACY_NODELETE toWebCore(_WKResidentKeyRequirement uv)
 {
     switch (uv) {
     case _WKResidentKeyRequirementNotPresent:
@@ -959,7 +959,7 @@ static WebCore::AuthenticatorSelectionCriteria authenticatorSelectionCriteria(_W
     return result;
 }
 
-static WebCore::AttestationConveyancePreference NODELETE attestationConveyancePreference(_WKAttestationConveyancePreference attestation)
+static WebCore::AttestationConveyancePreference LEGACY_NODELETE attestationConveyancePreference(_WKAttestationConveyancePreference attestation)
 {
     switch (attestation) {
     case _WKAttestationConveyancePreferenceNone:
@@ -1031,7 +1031,7 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
     return result;
 }
 
-static WebCore::MediationRequirement NODELETE toWebCore(_WKWebAuthenticationMediationRequirement mediation)
+static WebCore::MediationRequirement LEGACY_NODELETE toWebCore(_WKWebAuthenticationMediationRequirement mediation)
 {
     switch (mediation) {
     case _WKWebAuthenticationMediationRequirementSilent:
@@ -1069,7 +1069,7 @@ static WebCore::MediationRequirement NODELETE toWebCore(_WKWebAuthenticationMedi
 }
 
 #if ENABLE(WEB_AUTHN)
-static _WKAuthenticatorAttachment NODELETE authenticatorAttachmentToWKAuthenticatorAttachment(WebCore::AuthenticatorAttachment attachment)
+static _WKAuthenticatorAttachment LEGACY_NODELETE authenticatorAttachmentToWKAuthenticatorAttachment(WebCore::AuthenticatorAttachment attachment)
 {
     switch (attachment) {
     case WebCore::AuthenticatorAttachment::Platform:

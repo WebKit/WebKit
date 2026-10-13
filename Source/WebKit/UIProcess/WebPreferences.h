@@ -37,7 +37,7 @@
 #define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void set##KeyUpper(const Type& value); \
     void delete##KeyUpper(); \
-    Type NODELETE KeyLower() const;
+    Type LEGACY_NODELETE KeyLower() const;
 
 #define DECLARE_INSPECTOR_OVERRIDE_SETTERS(KeyUpper, KeyLower, Type) \
     void set##KeyUpper##InspectorOverride(std::optional<Type> inspectorOverride);
@@ -93,11 +93,11 @@ public:
     void setStringValueForKey(const String&, const String& value, bool ephemeral);
     void forceUpdate() { update(); }
 
-    void NODELETE startBatchingUpdates();
+    void LEGACY_NODELETE startBatchingUpdates();
     void endBatchingUpdates();
 
-    static void NODELETE forceSiteIsolationAlwaysOnForTesting();
-    static bool NODELETE forcedSiteIsolationAlwaysOnForTesting();
+    static void LEGACY_NODELETE forceSiteIsolationAlwaysOnForTesting();
+    static bool LEGACY_NODELETE forcedSiteIsolationAlwaysOnForTesting();
 
 private:
     void platformInitializeStore();

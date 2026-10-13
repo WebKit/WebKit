@@ -789,7 +789,7 @@ static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClie
     return result;
 }
 
-static OptionSet<WebCore::TextExtraction::EventListenerCategory> NODELETE coreEventListenerCategories(_WKTextExtractionEventListenerCategory categories)
+static OptionSet<WebCore::TextExtraction::EventListenerCategory> LEGACY_NODELETE coreEventListenerCategories(_WKTextExtractionEventListenerCategory categories)
 {
     OptionSet<WebCore::TextExtraction::EventListenerCategory> coreCategories;
     if (categories & _WKTextExtractionEventListenerCategoryClick)
@@ -807,7 +807,7 @@ static OptionSet<WebCore::TextExtraction::EventListenerCategory> NODELETE coreEv
 
 #if ENABLE(DATA_DETECTION)
 
-static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTextExtractionDataDetectorTypes types)
+static OptionSet<WebCore::DataDetectorType> LEGACY_NODELETE coreDataDetectorTypes(_WKTextExtractionDataDetectorTypes types)
 {
     OptionSet<WebCore::DataDetectorType> coreTypes;
     if (types & _WKTextExtractionDataDetectorMoney)

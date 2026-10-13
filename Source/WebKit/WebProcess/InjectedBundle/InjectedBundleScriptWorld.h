@@ -49,23 +49,23 @@ public:
     static Ref<InjectedBundleScriptWorld> create(ContentWorldIdentifier, const String& name, Type = Type::Internal);
     static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static RefPtr<InjectedBundleScriptWorld> get(const WebCore::DOMWrapperWorld&);
-    static InjectedBundleScriptWorld* NODELETE find(const String&);
+    static InjectedBundleScriptWorld* LEGACY_NODELETE find(const String&);
     static InjectedBundleScriptWorld& normalWorldSingleton();
 
     virtual ~InjectedBundleScriptWorld();
 
-    const WebCore::DOMWrapperWorld& NODELETE coreWorld() const;
-    WebCore::DOMWrapperWorld& NODELETE coreWorld();
+    const WebCore::DOMWrapperWorld& LEGACY_NODELETE coreWorld() const;
+    WebCore::DOMWrapperWorld& LEGACY_NODELETE coreWorld();
 
     void clearWrappers();
-    void NODELETE setAllowAutofill();
-    void NODELETE setAllowElementUserInfo();
-    void NODELETE makeAllShadowRootsOpen();
-    void NODELETE exposeClosedShadowRootsForExtensions();
-    void NODELETE disableOverrideBuiltinsBehavior();
-    void NODELETE setAllowJSHandleCreation();
-    void NODELETE setAllowNodeSnapshotCreation();
-    void NODELETE setAllowPostingLegacySynchronousMessages();
+    void LEGACY_NODELETE setAllowAutofill();
+    void LEGACY_NODELETE setAllowElementUserInfo();
+    void LEGACY_NODELETE makeAllShadowRootsOpen();
+    void LEGACY_NODELETE exposeClosedShadowRootsForExtensions();
+    void LEGACY_NODELETE disableOverrideBuiltinsBehavior();
+    void LEGACY_NODELETE setAllowJSHandleCreation();
+    void LEGACY_NODELETE setAllowNodeSnapshotCreation();
+    void LEGACY_NODELETE setAllowPostingLegacySynchronousMessages();
 
     ContentWorldIdentifier identifier() const { return m_identifier; }
     const String& name() const LIFETIME_BOUND { return m_name; }

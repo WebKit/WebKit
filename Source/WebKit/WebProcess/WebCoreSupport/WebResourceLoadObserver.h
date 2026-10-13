@@ -54,7 +54,7 @@ public:
     void logSubresourceLoadingForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification);
 
 #if !RELEASE_LOG_DISABLED
-    static void NODELETE setShouldLogUserInteraction(bool);
+    static void LEGACY_NODELETE setShouldLogUserInteraction(bool);
 #endif
 
     String statisticsForURL(const URL&) final;

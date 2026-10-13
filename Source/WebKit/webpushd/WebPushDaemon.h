@@ -139,7 +139,7 @@ private:
     void releaseIncomingPushTransaction();
     void incomingPushTransactionTimerFired();
 
-    Seconds NODELETE silentPushTimeout() const;
+    Seconds LEGACY_NODELETE silentPushTimeout() const;
     void rescheduleSilentPushTimer();
     void silentPushTimerFired();
     void didShowNotification(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);

@@ -43,31 +43,31 @@ public:
 
     Ref<ContentWorldConfiguration> copy() const;
 
-    const WTF::String& NODELETE name() const LIFETIME_BOUND;
+    const WTF::String& LEGACY_NODELETE name() const LIFETIME_BOUND;
     void setName(WTF::String&&);
 
-    bool NODELETE allowAccessToClosedShadowRoots() const;
-    void NODELETE setAllowAccessToClosedShadowRoots(bool);
+    bool LEGACY_NODELETE allowAccessToClosedShadowRoots() const;
+    void LEGACY_NODELETE setAllowAccessToClosedShadowRoots(bool);
 
-    bool NODELETE allowAutofill() const;
-    void NODELETE setAllowAutofill(bool);
+    bool LEGACY_NODELETE allowAutofill() const;
+    void LEGACY_NODELETE setAllowAutofill(bool);
 
-    bool NODELETE allowElementUserInfo() const;
-    void NODELETE setAllowElementUserInfo(bool);
+    bool LEGACY_NODELETE allowElementUserInfo() const;
+    void LEGACY_NODELETE setAllowElementUserInfo(bool);
 
-    bool NODELETE disableLegacyBuiltinOverrides() const;
-    void NODELETE setDisableLegacyBuiltinOverrides(bool);
+    bool LEGACY_NODELETE disableLegacyBuiltinOverrides() const;
+    void LEGACY_NODELETE setDisableLegacyBuiltinOverrides(bool);
 
-    bool NODELETE allowJSHandleCreation() const;
-    void NODELETE setAllowJSHandleCreation(bool);
+    bool LEGACY_NODELETE allowJSHandleCreation() const;
+    void LEGACY_NODELETE setAllowJSHandleCreation(bool);
 
-    bool NODELETE allowNodeSnapshotCreation() const;
-    void NODELETE setAllowNodeSnapshotCreation(bool);
+    bool LEGACY_NODELETE allowNodeSnapshotCreation() const;
+    void LEGACY_NODELETE setAllowNodeSnapshotCreation(bool);
 
-    bool NODELETE isInspectable() const;
-    void NODELETE setInspectable(bool);
+    bool LEGACY_NODELETE isInspectable() const;
+    void LEGACY_NODELETE setInspectable(bool);
 
-    OptionSet<WebKit::ContentWorldOption> NODELETE optionSet() const;
+    OptionSet<WebKit::ContentWorldOption> LEGACY_NODELETE optionSet() const;
 
 private:
     struct Data {

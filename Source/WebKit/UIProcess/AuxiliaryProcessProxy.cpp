@@ -90,13 +90,13 @@ private:
     RefPtr<ProcessThrottler::Activity> m_activity;
 };
 
-static HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>& NODELETE connectionToProcessMap()
+static HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>& LEGACY_NODELETE connectionToProcessMap()
 {
     static MainRunLoopNeverDestroyed<HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>> map;
     return map.get();
 }
 
-static Seconds NODELETE adjustedTimeoutForThermalState(Seconds timeout)
+static Seconds LEGACY_NODELETE adjustedTimeoutForThermalState(Seconds timeout)
 {
 #if PLATFORM(VISION)
     return WebCore::ThermalMitigationNotifier::isThermalMitigationEnabled() ? (timeout * 20) : timeout;

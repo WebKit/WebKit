@@ -37,7 +37,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static WKErrorCode NODELETE toWKErrorCode(const std::error_code& error)
+static WKErrorCode LEGACY_NODELETE toWKErrorCode(const std::error_code& error)
 {
     ASSERT(error.category() == API::contentRuleListStoreErrorCategory());
     switch (static_cast<API::ContentRuleListStore::Error>(error.value())) {

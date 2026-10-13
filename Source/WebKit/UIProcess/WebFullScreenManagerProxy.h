@@ -93,7 +93,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 
     bool isFullScreen();
-    bool NODELETE blocksReturnToFullscreenFromPictureInPicture() const;
+    bool LEGACY_NODELETE blocksReturnToFullscreenFromPictureInPicture() const;
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     bool isVideoElement() const { return m_isVideoElement; }
 #endif
@@ -104,7 +104,7 @@ public:
 #endif // QUICKLOOK_FULLSCREEN
     void close();
     void detachFromClient();
-    void NODELETE attachToNewClient(WebFullScreenManagerProxyClient&);
+    void LEGACY_NODELETE attachToNewClient(WebFullScreenManagerProxyClient&);
 
     enum class NeedsPresentationUpdate : bool { No, Yes };
     void enterFullScreenForOwnerElementsInOtherProcesses(WebCore::FrameIdentifier, CompletionHandler<void(NeedsPresentationUpdate)>&&);
@@ -153,7 +153,7 @@ private:
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebFullScreenManagerProxy"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
     WeakPtr<WebPageProxy> m_page;

@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-String NODELETE logLevelString()
+String LEGACY_NODELETE logLevelString()
 {
 #if !LOG_DISABLED
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];

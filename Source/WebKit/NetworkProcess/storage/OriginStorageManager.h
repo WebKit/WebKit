@@ -69,7 +69,7 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     WebCore::StorageEstimate estimate();
     const String& path() const LIFETIME_BOUND { return m_path; }
-    OriginQuotaManager& NODELETE quotaManager();
+    OriginQuotaManager& LEGACY_NODELETE quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&);
     FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&) LIFETIME_BOUND;

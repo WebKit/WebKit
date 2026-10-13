@@ -177,7 +177,7 @@ void TextAnimationController::removeInitialTextAnimationForActiveWritingToolsSes
         protect(m_webPage.get())->removeTextAnimationForAnimationID(*initialAnimationID);
 }
 
-static WebCore::CharacterRange NODELETE remainingCharacterRange(WebCore::CharacterRange totalRange, WebCore::CharacterRange previousRange)
+static WebCore::CharacterRange LEGACY_NODELETE remainingCharacterRange(WebCore::CharacterRange totalRange, WebCore::CharacterRange previousRange)
 {
     if (totalRange.length < previousRange.length)
         return totalRange;

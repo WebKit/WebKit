@@ -109,7 +109,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& NODELETE navigationStates()
+static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& LEGACY_NODELETE navigationStates()
 {
     static NeverDestroyed<WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>> navigationStates;
 
@@ -1481,7 +1481,7 @@ void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainF
 #endif
 
 #if HAVE(APP_SSO)
-static SOAuthorizationLoadPolicy NODELETE soAuthorizationLoadPolicy(_WKSOAuthorizationLoadPolicy policy)
+static SOAuthorizationLoadPolicy LEGACY_NODELETE soAuthorizationLoadPolicy(_WKSOAuthorizationLoadPolicy policy)
 {
     switch (policy) {
     case _WKSOAuthorizationLoadPolicyAllow:
@@ -1493,7 +1493,7 @@ static SOAuthorizationLoadPolicy NODELETE soAuthorizationLoadPolicy(_WKSOAuthori
     return SOAuthorizationLoadPolicy::Allow;
 }
 
-static _WKSOAuthorizationLoadPolicy NODELETE wkSOAuthorizationLoadPolicy(SOAuthorizationLoadPolicy policy)
+static _WKSOAuthorizationLoadPolicy LEGACY_NODELETE wkSOAuthorizationLoadPolicy(SOAuthorizationLoadPolicy policy)
 {
     switch (policy) {
     case SOAuthorizationLoadPolicy::Allow:

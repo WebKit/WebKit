@@ -48,7 +48,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPaymentCoordinatorProxy);
 
-static WeakPtr<WebPaymentCoordinatorProxy>& NODELETE activePaymentCoordinatorProxy()
+static WeakPtr<WebPaymentCoordinatorProxy>& LEGACY_NODELETE activePaymentCoordinatorProxy()
 {
     static NeverDestroyed<WeakPtr<WebPaymentCoordinatorProxy>> activePaymentCoordinatorProxy;
     return activePaymentCoordinatorProxy.get();

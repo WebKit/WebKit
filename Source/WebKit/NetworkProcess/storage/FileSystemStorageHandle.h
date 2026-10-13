@@ -81,7 +81,7 @@ public:
 
     std::expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
     std::optional<FileSystemStorageError> closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
-    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> NODELETE activeSyncAccessHandle();
+    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> LEGACY_NODELETE activeSyncAccessHandle();
 
     std::expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError> createWritable(bool keepExistingData);
     std::optional<FileSystemStorageError> closeWritable(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCloseReason);
@@ -91,7 +91,7 @@ public:
 private:
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
     std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
-    bool NODELETE isActiveSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
+    bool LEGACY_NODELETE isActiveSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<FileSystemStorageError> executeCommandForWritableInternal(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t>, bool hasDataError);
     std::optional<size_t> computeCommandSpace(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t>, bool hasDataError);
 

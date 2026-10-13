@@ -55,7 +55,7 @@ class WebRTCMonitor {
 public:
     explicit WebRTCMonitor(LibWebRTCNetwork&);
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     void addObserver(WebRTCMonitorObserver& observer) { m_observers.add(observer); }

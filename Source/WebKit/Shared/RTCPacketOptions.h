@@ -80,7 +80,7 @@ struct RTCPacketOptions {
 
     explicit RTCPacketOptions(const SerializableData&);
 
-    SerializableData NODELETE serializableData() const;
+    SerializableData LEGACY_NODELETE serializableData() const;
 
     webrtc::AsyncSocketPacketOptions options;
 };

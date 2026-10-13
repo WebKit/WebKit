@@ -145,7 +145,7 @@ private:
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void load(const String& path, CompletionHandler<void(const String&)>&&);
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
-    void NODELETE setSheetRect(const WebCore::FloatRect&);
+    void LEGACY_NODELETE setSheetRect(const WebCore::FloatRect&);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void startWindowDrag();
     void openURLExternally(const String& url);
@@ -166,7 +166,7 @@ private:
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
-    void NODELETE platformSetSheetRect(const WebCore::FloatRect&);
+    void LEGACY_NODELETE platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();
     void platformOpenURLExternally(const String& url);

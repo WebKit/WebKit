@@ -197,9 +197,9 @@ public:
 
     Logger& logger();
 
-    const String& NODELETE mediaCacheDirectory() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE mediaCacheDirectory() const LIFETIME_BOUND;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    const String& NODELETE mediaKeysStorageDirectory() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE mediaKeysStorageDirectory() const LIFETIME_BOUND;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -209,13 +209,13 @@ public:
     void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&);
-    bool NODELETE setCaptureAttributionString();
+    bool LEGACY_NODELETE setCaptureAttributionString();
     bool allowsAudioCapture() const { return m_allowsAudioCapture; }
     bool allowsVideoCapture() const { return m_allowsVideoCapture; }
     bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
 #endif
 #if ENABLE(VIDEO)
-    RemoteVideoFrameObjectHeap& NODELETE videoFrameObjectHeap() const;
+    RemoteVideoFrameObjectHeap& LEGACY_NODELETE videoFrameObjectHeap() const;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void startCapturingAudio();
@@ -265,7 +265,7 @@ public:
     using RemoteRenderingBackendMap = HashMap<RemoteRenderingBackendIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteRenderingBackend>>;
     const RemoteRenderingBackendMap& remoteRenderingBackendMap() const LIFETIME_BOUND { return m_remoteRenderingBackendMap; }
 
-    RemoteRenderingBackend* NODELETE remoteRenderingBackend(RemoteRenderingBackendIdentifier);
+    RemoteRenderingBackend* LEGACY_NODELETE remoteRenderingBackend(RemoteRenderingBackendIdentifier);
 
 #if HAVE(AUDIT_TOKEN)
     const HashMap<WebCore::PageIdentifier, CoreIPCAuditToken>& presentingApplicationAuditTokens() const LIFETIME_BOUND { return m_presentingApplicationAuditTokens; }
@@ -292,7 +292,7 @@ public:
     void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
-    bool NODELETE isAlwaysOnLoggingAllowed() const;
+    bool LEGACY_NODELETE isAlwaysOnLoggingAllowed() const;
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxy& audioSessionProxy();

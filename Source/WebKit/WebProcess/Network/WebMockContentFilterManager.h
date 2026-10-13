@@ -31,7 +31,7 @@ namespace WebKit {
 
 class WebMockContentFilterManager : public WebCore::MockContentFilterSettingsClient {
 public:
-    static WebMockContentFilterManager& NODELETE singleton();
+    static WebMockContentFilterManager& LEGACY_NODELETE singleton();
 
     void startObservingSettings();
     

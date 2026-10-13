@@ -41,7 +41,7 @@ public:
 
     void registerHandle(WebCore::FileSystemHandleIdentifier, FileSystemStorageHandle&);
     void unregisterHandle(WebCore::FileSystemHandleIdentifier);
-    FileSystemStorageHandle* NODELETE getHandle(WebCore::FileSystemHandleIdentifier);
+    FileSystemStorageHandle* LEGACY_NODELETE getHandle(WebCore::FileSystemHandleIdentifier);
 
 private:
     FileSystemStorageHandleRegistry();

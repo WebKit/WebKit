@@ -550,7 +550,7 @@ void MomentumEventDispatcher::equalizeTailGaps()
     table.shrink(finalTableSize);
 }
 
-static float NODELETE interpolate(float a, float b, float t)
+static float LEGACY_NODELETE interpolate(float a, float b, float t)
 {
     return a + t * (b - a);
 }
@@ -587,7 +587,7 @@ static float momentumDecayRate(WebCore::FloatSize delta, Seconds frameInterval)
     return std::pow(alpha, (frameInterval.seconds() / 0.008f));
 }
 
-static constexpr float NODELETE fromFixedPoint(float value)
+static constexpr float LEGACY_NODELETE fromFixedPoint(float value)
 {
     return value / 65536.0f;
 }

@@ -38,7 +38,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static WeakPtr<WebStorageNamespaceProvider>& NODELETE existingStorageNameSpaceProvider()
+static WeakPtr<WebStorageNamespaceProvider>& LEGACY_NODELETE existingStorageNameSpaceProvider()
 {
     static NeverDestroyed<WeakPtr<WebStorageNamespaceProvider>> storageNameSpaceProvider;
     return storageNameSpaceProvider.get();

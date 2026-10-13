@@ -46,7 +46,7 @@ struct RemoteWebLockRegistry::LocksSnapshot {
     HashMap<WebCore::WebLockIdentifier, LockRequest> pendingRequests;
     HashMap<WebCore::WebLockIdentifier, LockInfo> heldLocks;
 
-    bool NODELETE isEmpty() const { return pendingRequests.isEmpty() && heldLocks.isEmpty(); }
+    bool LEGACY_NODELETE isEmpty() const { return pendingRequests.isEmpty() && heldLocks.isEmpty(); }
 };
 
 RemoteWebLockRegistry::RemoteWebLockRegistry(WebProcess& process)

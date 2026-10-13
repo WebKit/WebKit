@@ -123,7 +123,7 @@ public:
     bool selectionIsEditable() const { return m_selectionIsEditable; }
 
     bool isServicesMenu() const { return m_type == ContextMenuContextData::Type::ServicesMenu; }
-    bool NODELETE controlledDataIsEditable() const;
+    bool LEGACY_NODELETE controlledDataIsEditable() const;
     WebCore::IntRect controlledImageBounds() const { return m_controlledImageBounds; };
     String controlledImageAttachmentID() const { return m_controlledImageAttachmentID; };
     std::optional<WebCore::ElementContext> controlledImageElementContext() const { return m_controlledImageElementContext; }

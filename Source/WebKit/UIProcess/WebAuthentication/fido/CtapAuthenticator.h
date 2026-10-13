@@ -80,7 +80,7 @@ private:
     String aaguidForDebugging() const;
 
     fido::PINUVAuthProtocol selectPinProtocol() const;
-    bool NODELETE isUVSetup() const;
+    bool LEGACY_NODELETE isUVSetup() const;
 
     void continueSetupPinAfterCommand(Vector<uint8_t>&&, const String& pin, Ref<WebCore::CryptoKeyEC> peerKey);
     void continueSetupPinAfterGetKeyAgreement(Vector<uint8_t>&&, const String& pin);

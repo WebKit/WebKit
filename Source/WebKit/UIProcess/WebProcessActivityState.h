@@ -57,11 +57,11 @@ public:
     void dropNetworkActivity();
     void dropTextExtractionAssertion();
 
-    bool NODELETE hasValidVisibleActivity() const;
-    bool NODELETE hasValidAudibleActivity() const;
-    bool NODELETE hasValidCapturingActivity() const;
-    bool NODELETE hasValidMutedCaptureAssertion() const;
-    bool NODELETE hasValidNetworkActivity() const;
+    bool LEGACY_NODELETE hasValidVisibleActivity() const;
+    bool LEGACY_NODELETE hasValidAudibleActivity() const;
+    bool LEGACY_NODELETE hasValidCapturingActivity() const;
+    bool LEGACY_NODELETE hasValidMutedCaptureAssertion() const;
+    bool LEGACY_NODELETE hasValidNetworkActivity() const;
 
 #if PLATFORM(IOS_FAMILY)
     void takeOpeningAppLinkActivity();
@@ -73,7 +73,7 @@ public:
     void updateWebProcessSuspensionDelay();
     void takeAccessibilityActivityWhenInWindow();
     void takeAccessibilityActivity();
-    bool NODELETE hasAccessibilityActivityForTesting() const;
+    bool LEGACY_NODELETE hasAccessibilityActivityForTesting() const;
     void viewDidEnterWindow();
     void viewDidLeaveWindow();
 #endif

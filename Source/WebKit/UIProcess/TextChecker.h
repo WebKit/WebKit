@@ -45,7 +45,7 @@ public:
     static void setGrammarCheckingEnabled(bool);
     
     static void setTestingMode(bool);
-    static bool NODELETE isTestingMode();
+    static bool LEGACY_NODELETE isTestingMode();
 
 #if PLATFORM(COCOA)
     static void setAutomaticSpellingCorrectionEnabled(bool);
@@ -81,8 +81,8 @@ public:
 #if USE(UNIFIED_TEXT_CHECKING)
     static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(SpellDocumentTag, StringView, int32_t insertionPoint, OptionSet<WebCore::TextCheckingType>, bool initialCapitalizationEnabled);
 #endif
-    static void NODELETE checkSpellingOfString(SpellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength);
-    static void NODELETE checkGrammarOfString(SpellDocumentTag, StringView text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
+    static void LEGACY_NODELETE checkSpellingOfString(SpellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength);
+    static void LEGACY_NODELETE checkGrammarOfString(SpellDocumentTag, StringView text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
     static bool spellingUIIsShowing();
     static void toggleSpellingUIIsShowing();
     static void updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String& misspelledWord);
@@ -90,7 +90,7 @@ public:
     static void getGuessesForWord(SpellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses, bool initialCapitalizationEnabled);
     static void learnWord(SpellDocumentTag, const String& word);
     static void ignoreWord(SpellDocumentTag, const String& word);
-    static void NODELETE requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
+    static void LEGACY_NODELETE requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
     static void requestExtendedCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t insertionPoint);
 };
 

@@ -70,7 +70,7 @@ public:
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     WebCore::FramesPerSecond nominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
 
-    void NODELETE displayPropertiesChanged();
+    void LEGACY_NODELETE displayPropertiesChanged();
 
     void addObserver(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
     void removeObserver(Client&, DisplayLinkObserverID);
@@ -134,7 +134,7 @@ private:
 class DisplayLinkCollection {
 public:
     DisplayLink& displayLinkForDisplay(WebCore::PlatformDisplayID) LIFETIME_BOUND;
-    DisplayLink* NODELETE existingDisplayLinkForDisplay(WebCore::PlatformDisplayID) const LIFETIME_BOUND;
+    DisplayLink* LEGACY_NODELETE existingDisplayLinkForDisplay(WebCore::PlatformDisplayID) const LIFETIME_BOUND;
 
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
     void startDisplayLink(DisplayLink::Client&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond preferredFramesPerSecond);

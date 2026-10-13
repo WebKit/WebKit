@@ -227,7 +227,7 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidat
     return result;
 }
 
-WKWebExtensionWindowType NODELETE toAPI(WebExtensionWindow::Type type)
+WKWebExtensionWindowType LEGACY_NODELETE toAPI(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
@@ -240,7 +240,7 @@ WKWebExtensionWindowType NODELETE toAPI(WebExtensionWindow::Type type)
     return WKWebExtensionWindowTypeNormal;
 }
 
-static inline WebExtensionWindow::Type NODELETE toImpl(WKWebExtensionWindowType type)
+static inline WebExtensionWindow::Type LEGACY_NODELETE toImpl(WKWebExtensionWindowType type)
 {
     switch (type) {
     case WKWebExtensionWindowTypeNormal:
@@ -261,7 +261,7 @@ WebExtensionWindow::Type WebExtensionWindow::type() const
     return toImpl([m_delegate windowTypeForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-static inline WebExtensionWindow::State NODELETE toImpl(WKWebExtensionWindowState state)
+static inline WebExtensionWindow::State LEGACY_NODELETE toImpl(WKWebExtensionWindowState state)
 {
     switch (state) {
     case WKWebExtensionWindowStateNormal:
@@ -286,7 +286,7 @@ WebExtensionWindow::State WebExtensionWindow::state() const
     return toImpl([m_delegate windowStateForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-WKWebExtensionWindowState NODELETE toAPI(WebExtensionWindow::State state)
+WKWebExtensionWindowState LEGACY_NODELETE toAPI(WebExtensionWindow::State state)
 {
     switch (state) {
     case WebExtensionWindow::State::Normal:

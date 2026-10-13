@@ -82,7 +82,7 @@ struct MessageLogMetadata {
     MessageName initialValue;
 };
 
-WK_EXPORT MessageLog<messageLogCapacity>& NODELETE messageLog();
-WK_EXPORT const MessageLogMetadata& NODELETE messageLogMetadata();
+WK_EXPORT MessageLog<messageLogCapacity>& LEGACY_NODELETE messageLog();
+WK_EXPORT const MessageLogMetadata& LEGACY_NODELETE messageLogMetadata();
 
 } // namespace IPC

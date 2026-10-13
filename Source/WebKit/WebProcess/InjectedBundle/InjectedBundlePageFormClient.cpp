@@ -96,7 +96,7 @@ void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTe
     m_client.textDidChangeInTextArea(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-static WKInputFieldActionType NODELETE toWKInputFieldActionType(API::InjectedBundle::FormClient::InputFieldAction action)
+static WKInputFieldActionType LEGACY_NODELETE toWKInputFieldActionType(API::InjectedBundle::FormClient::InputFieldAction action)
 {
     switch (action) {
     case API::InjectedBundle::FormClient::InputFieldAction::MoveUp:

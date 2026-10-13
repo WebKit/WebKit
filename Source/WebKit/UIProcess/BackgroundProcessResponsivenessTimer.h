@@ -53,10 +53,10 @@ private:
     void timeoutTimerFired();
     void setResponsive(bool);
 
-    bool NODELETE shouldBeActive() const;
+    bool LEGACY_NODELETE shouldBeActive() const;
     bool isActive() const;
     void scheduleNextResponsivenessCheck();
-    ResponsivenessTimer::Client& NODELETE client() const;
+    ResponsivenessTimer::Client& LEGACY_NODELETE client() const;
 
     WeakRef<WebProcessProxy> m_webProcessProxy;
     Seconds m_checkingInterval;

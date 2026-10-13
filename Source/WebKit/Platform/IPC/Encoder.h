@@ -65,11 +65,11 @@ public:
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
 
-    void NODELETE setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply);
+    void LEGACY_NODELETE setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply);
 
-    bool NODELETE isFullySynchronousModeForTesting() const;
-    void NODELETE setFullySynchronousModeForTesting();
-    void NODELETE setShouldMaintainOrderingWithAsyncMessages();
+    bool LEGACY_NODELETE isFullySynchronousModeForTesting() const;
+    void LEGACY_NODELETE setFullySynchronousModeForTesting();
+    void LEGACY_NODELETE setShouldMaintainOrderingWithAsyncMessages();
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isFullySynchronousModeForTesting(); }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
 
@@ -103,14 +103,14 @@ public:
 private:
     std::span<uint8_t> grow(size_t alignment, size_t);
 
-    std::span<uint8_t> NODELETE capacityBuffer();
-    std::span<const uint8_t> NODELETE capacityBuffer() const;
+    std::span<uint8_t> LEGACY_NODELETE capacityBuffer();
+    std::span<const uint8_t> LEGACY_NODELETE capacityBuffer() const;
 
-    bool NODELETE hasAttachments() const;
+    bool LEGACY_NODELETE hasAttachments() const;
 
     void encodeHeader();
-    const OptionSet<MessageFlags>& NODELETE messageFlags() const;
-    OptionSet<MessageFlags>& NODELETE messageFlags();
+    const OptionSet<MessageFlags>& LEGACY_NODELETE messageFlags() const;
+    OptionSet<MessageFlags>& LEGACY_NODELETE messageFlags();
 
     void freeBufferIfNecessary();
 

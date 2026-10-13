@@ -122,14 +122,14 @@ private:
     std::pair<unsigned, RefPtr<API::Array>> backListWithLimitInternal(unsigned limit, MakeAPIArray) const;
     std::pair<unsigned, RefPtr<API::Array>> forwardListWithLimitInternal(unsigned limit, MakeAPIArray) const;
 
-    unsigned NODELETE rawBackListEntryCount() const;
-    unsigned NODELETE rawForwardListEntryCount() const;
+    unsigned LEGACY_NODELETE rawBackListEntryCount() const;
+    unsigned LEGACY_NODELETE rawForwardListEntryCount() const;
 
     void addItem(Ref<WebBackForwardListItem>&&);
     void addChildItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
     void didRemoveItem(WebBackForwardListItem&);
     const BackForwardListItemVector& entries() const LIFETIME_BOUND { return m_entries; }
-    WebBackForwardListCounts NODELETE rawCounts() const;
+    WebBackForwardListCounts LEGACY_NODELETE rawCounts() const;
     Ref<FrameState> completeFrameStateForNavigation(Ref<FrameState>&&);
 
     // IPC messages

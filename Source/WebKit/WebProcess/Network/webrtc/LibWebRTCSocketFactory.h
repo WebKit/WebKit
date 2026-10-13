@@ -71,7 +71,7 @@ public:
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
     void setConnection(RefPtr<IPC::Connection>&&);
-    IPC::Connection* NODELETE connection();
+    IPC::Connection* LEGACY_NODELETE connection();
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.

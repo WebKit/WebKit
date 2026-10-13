@@ -77,9 +77,9 @@ public:
     String attributedBundleIdentifier(WebPageProxyIdentifier);
 
     void convertTaskToDownload(PendingDownload&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, ResponseCompletionHandler&&);
-    void NODELETE setPendingDownloadID(DownloadID);
+    void LEGACY_NODELETE setPendingDownloadID(DownloadID);
     void setSuggestedFilename(const String&);
-    void NODELETE setPendingDownload(PendingDownload&);
+    void LEGACY_NODELETE setPendingDownload(PendingDownload&);
     std::optional<DownloadID> pendingDownloadID() { return m_task->pendingDownloadID(); }
 
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
@@ -88,11 +88,11 @@ public:
     void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     void setTimingAllowFailedFlag();
-    std::optional<WebCore::FrameIdentifier> NODELETE webFrameID() const;
-    std::optional<WebCore::PageIdentifier> NODELETE webPageID() const;
-    Ref<NetworkProcess> NODELETE networkProcess();
+    std::optional<WebCore::FrameIdentifier> LEGACY_NODELETE webFrameID() const;
+    std::optional<WebCore::PageIdentifier> LEGACY_NODELETE webPageID() const;
+    Ref<NetworkProcess> LEGACY_NODELETE networkProcess();
 
-    size_t NODELETE bytesTransferredOverNetwork() const;
+    size_t LEGACY_NODELETE bytesTransferredOverNetwork() const;
 
     void clearClient() { m_client = nullptr; }
 

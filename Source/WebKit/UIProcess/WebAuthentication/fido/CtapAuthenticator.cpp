@@ -77,7 +77,7 @@ static Vector<Vector<PublicKeyCredentialDescriptor>> batchesForCredentials(Vecto
     return batches;
 }
 
-WebAuthenticationStatus NODELETE toStatus(const CtapDeviceResponseCode& error)
+WebAuthenticationStatus LEGACY_NODELETE toStatus(const CtapDeviceResponseCode& error)
 {
     switch (error) {
     case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
@@ -95,7 +95,7 @@ WebAuthenticationStatus NODELETE toStatus(const CtapDeviceResponseCode& error)
     }
 }
 
-bool NODELETE isPinError(const CtapDeviceResponseCode& error)
+bool LEGACY_NODELETE isPinError(const CtapDeviceResponseCode& error)
 {
     switch (error) {
     case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
@@ -109,7 +109,7 @@ bool NODELETE isPinError(const CtapDeviceResponseCode& error)
     }
 }
 
-bool NODELETE isTerminalPinError(const CtapDeviceResponseCode& error)
+bool LEGACY_NODELETE isTerminalPinError(const CtapDeviceResponseCode& error)
 {
     switch (error) {
     case CtapDeviceResponseCode::kCtap2ErrPinAuthBlocked:

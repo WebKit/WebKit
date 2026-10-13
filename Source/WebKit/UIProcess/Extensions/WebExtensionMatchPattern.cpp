@@ -86,7 +86,7 @@ bool WebExtensionMatchPattern::patternsMatchPattern(const MatchPatternSet& match
     return false;
 }
 
-static HashMap<String, RefPtr<WebExtensionMatchPattern>>& NODELETE patternCache()
+static HashMap<String, RefPtr<WebExtensionMatchPattern>>& LEGACY_NODELETE patternCache()
 {
     static MainRunLoopNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
     return cache;

@@ -293,7 +293,7 @@ void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std
 
 static constexpr Inspector::Protocol::Automation::BrowsingContextPresentation defaultBrowsingContextPresentation = Inspector::Protocol::Automation::BrowsingContextPresentation::Tab;
 
-static Inspector::Protocol::Automation::BrowsingContextPresentation NODELETE browsingContextPresentationFromCreateType(Inspector::Protocol::BidiBrowsingContext::CreateType createType)
+static Inspector::Protocol::Automation::BrowsingContextPresentation LEGACY_NODELETE browsingContextPresentationFromCreateType(Inspector::Protocol::BidiBrowsingContext::CreateType createType)
 {
     switch (createType) {
     case Inspector::Protocol::BidiBrowsingContext::CreateType::Tab:
@@ -587,7 +587,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
 static constexpr Seconds defaultPageLoadTimeout = 300_s;
 static constexpr ReadinessState defaultReadinessState = ReadinessState::Interactive;
 
-static PageLoadStrategy NODELETE pageLoadStrategyFromReadinessState(ReadinessState state)
+static PageLoadStrategy LEGACY_NODELETE pageLoadStrategyFromReadinessState(ReadinessState state)
 {
     switch (state) {
     case ReadinessState::None:

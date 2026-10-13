@@ -116,10 +116,10 @@ public:
 
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
-    std::optional<WebCore::ScrollingNodeID> NODELETE rootScrollingNodeID() const;
+    std::optional<WebCore::ScrollingNodeID> LEGACY_NODELETE rootScrollingNodeID() const;
 
-    const RemoteLayerTreeHost* NODELETE layerTreeHost() const;
-    WebPageProxy& NODELETE webPageProxy() const;
+    const RemoteLayerTreeHost* LEGACY_NODELETE layerTreeHost() const;
+    WebPageProxy& LEGACY_NODELETE webPageProxy() const;
 
     virtual void stickyScrollingTreeNodeBeganSticking(WebCore::ScrollingNodeID);
 #if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
@@ -183,10 +183,10 @@ public:
     void resetStateAfterProcessExited();
 
     virtual void displayDidRefresh(WebCore::PlatformDisplayID);
-    void NODELETE reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
+    void LEGACY_NODELETE reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<WebCore::SynchronousScrollingReason>);
     void reportFilledVisibleFreshTile(MonotonicTime, unsigned);
-    bool NODELETE scrollingPerformanceTestingEnabled() const;
+    bool LEGACY_NODELETE scrollingPerformanceTestingEnabled() const;
     
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);
     void deferWheelEventTestCompletionForReason(std::optional<WebCore::ScrollingNodeID>, WebCore::WheelEventTestMonitor::DeferReason);
@@ -226,7 +226,7 @@ public:
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, int);
     void requestFullScrollingTreeCommitForFrame(WebCore::FrameIdentifier);
     void receivedLastScrollingTreeNodeUpdateReply();
-    bool NODELETE isMonitoringWheelEvents();
+    bool LEGACY_NODELETE isMonitoringWheelEvents();
 
     void establishLayerTreeScrollingRelations(IPC::Connection&);
 

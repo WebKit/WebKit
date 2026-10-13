@@ -74,13 +74,13 @@ public:
     void graphicsLayerDidEnterContext(GraphicsLayerCARemote&);
     void graphicsLayerWillLeaveContext(GraphicsLayerCARemote&);
 
-    float NODELETE deviceScaleFactor() const;
+    float LEGACY_NODELETE deviceScaleFactor() const;
     
     std::optional<WebCore::ColorSpace> displayColorSpace() const;
 
-    std::optional<DrawingAreaIdentifier> NODELETE drawingAreaIdentifier() const;
+    std::optional<DrawingAreaIdentifier> LEGACY_NODELETE drawingAreaIdentifier() const;
 
-    WebCore::UseLosslessCompression NODELETE useIOSurfaceLosslessCompression() const;
+    WebCore::UseLosslessCompression LEGACY_NODELETE useIOSurfaceLosslessCompression() const;
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 
@@ -107,7 +107,7 @@ public:
     bool canShowWhileLocked() const;
 #endif
 
-    WebPage& NODELETE webPage() const;
+    WebPage& LEGACY_NODELETE webPage() const;
 
 private:
     explicit RemoteLayerTreeContext(WebPage&);

@@ -57,7 +57,7 @@ extern "C" void _CFURLConnectionSetFrameworkStubs(const struct _CFNFrameworksStu
 
 namespace WebKit {
 
-static WeakPtr<NetworkProcess>& NODELETE globalNetworkProcess()
+static WeakPtr<NetworkProcess>& LEGACY_NODELETE globalNetworkProcess()
 {
     static NeverDestroyed<WeakPtr<NetworkProcess>> networkProcess;
     return networkProcess.get();

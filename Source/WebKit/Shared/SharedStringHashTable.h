@@ -34,8 +34,8 @@ public:
     SharedStringHashTable();
     ~SharedStringHashTable();
 
-    bool NODELETE add(WebCore::SharedStringHash);
-    bool NODELETE remove(WebCore::SharedStringHash);
+    bool LEGACY_NODELETE add(WebCore::SharedStringHash);
+    bool LEGACY_NODELETE remove(WebCore::SharedStringHash);
     void clear();
 };
 

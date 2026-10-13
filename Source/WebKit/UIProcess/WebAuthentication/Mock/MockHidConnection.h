@@ -63,7 +63,7 @@ private:
     void assembleRequest(Vector<uint8_t>&&);
     void parseRequest();
     void feedReports();
-    bool NODELETE stagesMatch() const;
+    bool LEGACY_NODELETE stagesMatch() const;
     void shouldContinueFeedReports();
     void continueFeedReports();
     void validateExpectedCommand(const Vector<uint8_t>& actualCommand);

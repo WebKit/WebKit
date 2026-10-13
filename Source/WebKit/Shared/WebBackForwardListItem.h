@@ -61,14 +61,14 @@ public:
 
     BrowsingContextGroup* browsingContextGroup() const { return m_browsingContextGroup.get(); }
 
-    const FrameState& NODELETE mainFrameState() const;
+    const FrameState& LEGACY_NODELETE mainFrameState() const;
     Ref<FrameState> copyMainFrameState() const;
     Ref<FrameState> copyMainFrameStateWithChildren() const;
 
-    const String& NODELETE originalURL() const LIFETIME_BOUND;
-    const String& NODELETE url() const LIFETIME_BOUND;
-    const String& NODELETE title() const LIFETIME_BOUND;
-    bool NODELETE wasCreatedByJSWithoutUserInteraction() const;
+    const String& LEGACY_NODELETE originalURL() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE url() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE title() const LIFETIME_BOUND;
+    bool LEGACY_NODELETE wasCreatedByJSWithoutUserInteraction() const;
 
     const URL& resourceDirectoryURL() const LIFETIME_BOUND { return m_resourceDirectoryURL; }
     void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTF::move(url); }
@@ -86,19 +86,19 @@ public:
     void wasRemovedFromBackForwardList();
 
     WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
-    WebBackForwardCacheEntry* NODELETE backForwardCacheEntryForProcess(WebCore::ProcessIdentifier) const;
+    WebBackForwardCacheEntry* LEGACY_NODELETE backForwardCacheEntryForProcess(WebCore::ProcessIdentifier) const;
 
-    SuspendedPageProxy* NODELETE suspendedPage() const;
+    SuspendedPageProxy* LEGACY_NODELETE suspendedPage() const;
 
     std::optional<WebCore::FrameIdentifier> navigatedFrameID() const { return m_navigatedFrameID; }
 
-    WebBackForwardListFrameItem& NODELETE navigatedFrameItem() const;
+    WebBackForwardListFrameItem& LEGACY_NODELETE navigatedFrameItem() const;
 
     // rdar://168057355
     WebBackForwardListFrameItem* WTF_NONNULL mainFrameItemPtrForSwift() const SWIFT_NAME(mainFrameItem()) { return &mainFrameItem(); }
-    WebBackForwardListFrameItem& NODELETE mainFrameItem() const SWIFT_NAME(__mainFrameItemUnsafe());
+    WebBackForwardListFrameItem& LEGACY_NODELETE mainFrameItem() const SWIFT_NAME(__mainFrameItemUnsafe());
 
-    void NODELETE setWasRestoredFromSession();
+    void LEGACY_NODELETE setWasRestoredFromSession();
 
     String loggingString();
 

@@ -73,11 +73,11 @@ inline bool isValid(std::optional<WebExtensionFrameIdentifier> identifier)
     return identifier && !isNone(identifier.value());
 }
 
-WebCore::FrameIdentifier NODELETE toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier&, const WebPage&);
+WebCore::FrameIdentifier LEGACY_NODELETE toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier&, const WebPage&);
 
 bool matchesFrame(const WebExtensionFrameIdentifier&, const WebFrame&);
 
-WebExtensionFrameIdentifier NODELETE toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier>);
+WebExtensionFrameIdentifier LEGACY_NODELETE toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier>);
 WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&);
 
 #ifdef __OBJC__

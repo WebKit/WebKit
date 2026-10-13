@@ -56,7 +56,7 @@ namespace WebKit {
 
 class JavaScriptEvaluationResult::JSExtractor {
 public:
-    Map NODELETE takeMap() { return WTF::move(m_map); }
+    Map LEGACY_NODELETE takeMap() { return WTF::move(m_map); }
     std::optional<JSObjectID> addObjectToMap(JSGlobalContextRef, JSValueRef, size_t nestingLevel);
     bool processContainersWithoutRecursion(JSGlobalContextRef);
 
@@ -91,7 +91,7 @@ private:
 
 class JavaScriptEvaluationResult::APIExtractor {
 public:
-    Map NODELETE takeMap() { return WTF::move(m_map); }
+    Map LEGACY_NODELETE takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(API::Object&);
     bool failed() const { return m_failed; }
 private:

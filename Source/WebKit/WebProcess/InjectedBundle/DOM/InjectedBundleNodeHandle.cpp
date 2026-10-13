@@ -70,7 +70,7 @@ using namespace HTMLNames;
 
 using DOMNodeHandleCache = WeakHashMap<Node, WeakRef<InjectedBundleNodeHandle>, WeakPtrImplWithEventTargetData>;
 
-static DOMNodeHandleCache& NODELETE domNodeHandleCache()
+static DOMNodeHandleCache& LEGACY_NODELETE domNodeHandleCache()
 {
     static NeverDestroyed<DOMNodeHandleCache> cache;
     return cache;

@@ -285,17 +285,17 @@ public:
     void processDidExit();
     void pageClosed();
     void didRelaunchProcess();
-    void NODELETE scrollingCoordinatorWasCreated();
+    void LEGACY_NODELETE scrollingCoordinatorWasCreated();
 
     void setDrawsBackground(bool);
-    bool NODELETE drawsBackground() const;
+    bool LEGACY_NODELETE drawsBackground() const;
     void setBackgroundColor(NSColor *);
     NSColor *backgroundColor() const;
-    bool NODELETE isOpaque() const;
+    bool LEGACY_NODELETE isOpaque() const;
 
     void setShouldSuppressFirstResponderChanges(bool);
     bool acceptsFirstMouse(NSEvent *);
-    bool NODELETE acceptsFirstResponder();
+    bool LEGACY_NODELETE acceptsFirstResponder();
     bool becomeFirstResponder();
     bool resignFirstResponder();
     bool isFocused() const;
@@ -328,7 +328,7 @@ public:
     CGSize fixedLayoutSize() const;
 
     Ref<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&);
-    bool NODELETE isUsingUISideCompositing() const;
+    bool LEGACY_NODELETE isUsingUISideCompositing() const;
     void setDrawingAreaSize(CGSize);
     void updateLayer();
     static bool wantsUpdateLayer() { return true; }
@@ -338,10 +338,10 @@ public:
     RetainPtr<NSPrintOperation> printOperationWithPrintInfo(NSPrintInfo *, WebFrameProxy&);
 
     void setAutomaticallyAdjustsContentInsets(bool);
-    bool NODELETE automaticallyAdjustsContentInsets() const;
+    bool LEGACY_NODELETE automaticallyAdjustsContentInsets() const;
     void updateContentInsetsIfAutomatic();
     void setObscuredContentInsets(const WebCore::FloatBoxExtent&);
-    WebCore::FloatBoxExtent NODELETE obscuredContentInsets() const;
+    WebCore::FloatBoxExtent LEGACY_NODELETE obscuredContentInsets() const;
     void flushPendingObscuredContentInsetChanges();
 
     void prepareContentInRect(CGRect);
@@ -354,12 +354,12 @@ public:
     void setSizeToContentAutoSizeMaximumSize(CGSize);
     CGSize sizeToContentAutoSizeMaximumSize() const;
     void setShouldExpandToViewHeightForAutoLayout(bool);
-    bool NODELETE shouldExpandToViewHeightForAutoLayout() const;
+    bool LEGACY_NODELETE shouldExpandToViewHeightForAutoLayout() const;
     void setIntrinsicContentSize(CGSize);
-    CGSize NODELETE intrinsicContentSize() const;
+    CGSize LEGACY_NODELETE intrinsicContentSize() const;
 
     void setViewScale(CGFloat);
-    CGFloat NODELETE viewScale() const;
+    CGFloat LEGACY_NODELETE viewScale() const;
 
     void showWarningView(const BrowsingWarning&, CompletionHandler<void(Variant<ContinueUnsafeLoad, URL>&&)>&&);
     void clearWarningView();
@@ -382,7 +382,7 @@ public:
     void windowDidChangeScreen();
     void windowDidChangeOcclusionState();
     void windowWillClose();
-    void NODELETE windowWillEnterOrExitFullScreen();
+    void LEGACY_NODELETE windowWillEnterOrExitFullScreen();
     void windowDidEnterOrExitFullScreen(bool windowIsInFullScreen);
     void screenDidChangeColorSpace();
     bool shouldDelayWindowOrderingForEvent(NSEvent *);
@@ -406,12 +406,12 @@ public:
     void didEndSyntheticMomentumScrolling();
 
     NSRect scrollViewFrame();
-    bool NODELETE hasScrolledContentsUnderTitlebar();
+    bool LEGACY_NODELETE hasScrolledContentsUnderTitlebar();
     void updateTitlebarAdjacencyState();
 
 #if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
     void setFullScreenTitlebarOverlayHeight(CGFloat);
-    CGFloat NODELETE fullScreenTitlebarOverlayHeight() const { return m_fullScreenTitlebarOverlayHeight; }
+    CGFloat LEGACY_NODELETE fullScreenTitlebarOverlayHeight() const { return m_fullScreenTitlebarOverlayHeight; }
 #endif
 
     RetainPtr<NSView> hitTest(CGPoint);
@@ -422,17 +422,17 @@ public:
     RetainPtr<NSColor> underlayColor() const;
     RetainPtr<NSColor> pageExtendedBackgroundColor() const;
     
-    _WKRectEdge NODELETE pinnedState();
-    _WKRectEdge NODELETE rubberBandingEnabled();
-    void NODELETE setRubberBandingEnabled(_WKRectEdge);
+    _WKRectEdge LEGACY_NODELETE pinnedState();
+    _WKRectEdge LEGACY_NODELETE rubberBandingEnabled();
+    void LEGACY_NODELETE setRubberBandingEnabled(_WKRectEdge);
 
-    bool NODELETE alwaysBounceVertical();
-    void NODELETE setAlwaysBounceVertical(bool);
-    bool NODELETE alwaysBounceHorizontal();
-    void NODELETE setAlwaysBounceHorizontal(bool);
+    bool LEGACY_NODELETE alwaysBounceVertical();
+    void LEGACY_NODELETE setAlwaysBounceVertical(bool);
+    bool LEGACY_NODELETE alwaysBounceHorizontal();
+    void LEGACY_NODELETE setAlwaysBounceHorizontal(bool);
 
     void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
-    std::optional<WebCore::ScrollbarOverlayStyle> NODELETE overlayScrollbarStyle() const;
+    std::optional<WebCore::ScrollbarOverlayStyle> LEGACY_NODELETE overlayScrollbarStyle() const;
 
     void beginDeferringViewInWindowChanges();
     // FIXME: Merge these two?
@@ -460,14 +460,14 @@ public:
     NSEvent *lastPressureEvent() { return m_lastPressureEvent.get(); }
 
 #if ENABLE(FULLSCREEN_API)
-    bool NODELETE hasFullScreenWindowController() const;
+    bool LEGACY_NODELETE hasFullScreenWindowController() const;
     WKFullScreenWindowController *fullScreenWindowController();
     void closeFullScreenWindowController();
 #endif
     NSView *fullScreenPlaceholderView();
     NSWindow *fullScreenWindow();
 
-    bool NODELETE isEditable() const;
+    bool LEGACY_NODELETE isEditable() const;
     bool executeSavedCommandBySelector(SEL);
     void executeEditCommandForSelector(SEL, const String& argument = String());
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
@@ -566,7 +566,7 @@ public:
     bool ignoresMouseMoveEvents() const { return m_ignoresMouseMoveEvents; }
     void setIgnoresAllEvents(bool);
     bool ignoresAllEvents() const { return m_ignoresAllEvents; }
-    void NODELETE setIgnoresMouseDraggedEvents(bool);
+    void LEGACY_NODELETE setIgnoresMouseDraggedEvents(bool);
     bool ignoresMouseDraggedEvents() const { return m_ignoresMouseDraggedEvents; }
 
     void setAccessibilityWebProcessToken(NSData *, pid_t);
@@ -669,9 +669,9 @@ public:
     void invalidateCachedPositionInformation();
     void positionInformationDidChange(const InteractionInformationAtPosition&);
 #endif
-    void NODELETE setAllowsBackForwardNavigationGestures(bool);
+    void LEGACY_NODELETE setAllowsBackForwardNavigationGestures(bool);
     bool allowsBackForwardNavigationGestures() const { return m_allowsBackForwardNavigationGestures; }
-    void NODELETE setAllowsMagnification(bool);
+    void LEGACY_NODELETE setAllowsMagnification(bool);
     bool allowsMagnification() const { return m_allowsMagnification; }
 
     void setMagnification(double, CGPoint centerPoint);
@@ -679,7 +679,7 @@ public:
     double magnification() const;
     void setCustomSwipeViews(NSArray *);
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
-    WebCore::FloatBoxExtent NODELETE customSwipeViewsObscuredContentInsets() const;
+    WebCore::FloatBoxExtent LEGACY_NODELETE customSwipeViewsObscuredContentInsets() const;
     void setCustomSwipeViewsObscuredContentInsets(WebCore::FloatBoxExtent&&);
     bool tryToSwipeWithEvent(NSEvent *, bool ignoringPinnedState);
     void setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&&);
@@ -714,12 +714,12 @@ public:
     NSTextInputContext *inputContextForSelectionUpdates();
     void unmarkText();
     void setMarkedText(id string, NSRange selectedRange, NSRange replacementRange);
-    NSRange NODELETE selectedRange();
+    NSRange LEGACY_NODELETE selectedRange();
     bool hasMarkedText();
-    NSRange NODELETE markedRange();
+    NSRange LEGACY_NODELETE markedRange();
     NSAttributedString *NODELETE attributedSubstringForProposedRange(NSRange, NSRangePointer actualRange);
-    NSUInteger NODELETE characterIndexForPoint(NSPoint);
-    NSRect NODELETE firstRectForCharacterRange(NSRange, NSRangePointer actualRange);
+    NSUInteger LEGACY_NODELETE characterIndexForPoint(NSPoint);
+    NSRect LEGACY_NODELETE firstRectForCharacterRange(NSRange, NSRangePointer actualRange);
     bool performKeyEquivalent(NSEvent *);
     void keyUp(NSEvent *);
     void keyDown(NSEvent *);
@@ -749,7 +749,7 @@ public:
 
     void createFlagsChangedEventMonitor();
     void removeFlagsChangedEventMonitor();
-    bool NODELETE hasFlagsChangedEventMonitor();
+    bool LEGACY_NODELETE hasFlagsChangedEventMonitor();
 
     void mouseMoved(NSEvent *);
     void mouseDown(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
@@ -784,7 +784,7 @@ public:
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 
-    bool NODELETE requiresUserActionForEditingControlsManager() const;
+    bool LEGACY_NODELETE requiresUserActionForEditingControlsManager() const;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection();
     void setUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection);
@@ -830,7 +830,7 @@ public:
 
     void effectiveAppearanceDidChange();
     bool effectiveAppearanceIsDark();
-    bool NODELETE effectiveUserInterfaceLevelIsElevated();
+    bool LEGACY_NODELETE effectiveUserInterfaceLevelIsElevated();
 
     void takeFocus(WebCore::FocusDirection);
     void clearPromisedImageDragData() { m_promisedImageDragData.reset(); }

@@ -56,7 +56,7 @@ public:
     virtual ~WebImage();
 
     WebCore::IntSize size() const;
-    const WebCore::ImageBufferParameters* NODELETE parameters() const LIFETIME_BOUND;
+    const WebCore::ImageBufferParameters* LEGACY_NODELETE parameters() const LIFETIME_BOUND;
     std::optional<ParametersAndHandle> parametersAndHandle() const;
     bool isEmpty() const { return !m_buffer; }
 

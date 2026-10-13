@@ -730,9 +730,9 @@ public:
 
     void layoutIfNeeded();
     void updateRendering();
-    bool NODELETE hasRootFrames();
+    bool LEGACY_NODELETE hasRootFrames();
     String rootFrameOriginString();
-    bool NODELETE shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
+    bool LEGACY_NODELETE shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
 
     void willStartRenderingUpdateDisplay();
@@ -741,9 +741,9 @@ public:
     void didCompleteRenderingFrame();
 
     void releaseMemory(WTF::Critical);
-    void NODELETE willDestroyDecodedDataForAllImages();
+    void LEGACY_NODELETE willDestroyDecodedDataForAllImages();
 
-    unsigned NODELETE remoteImagesCountForTesting() const;
+    unsigned LEGACY_NODELETE remoteImagesCountForTesting() const;
 
     enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
 
@@ -807,16 +807,16 @@ public:
     void didNavigateWithinPageForFrame(WebFrame&);
     void show();
     String userAgent(const URL&) const;
-    String NODELETE platformUserAgent(const URL&) const;
+    String LEGACY_NODELETE platformUserAgent(const URL&) const;
     bool hasCustomUserAgent() const { return m_hasCustomUserAgent; }
     WebCore::KeyboardUIMode keyboardUIMode();
 
     void setMainFrameDocumentVisualUpdatesAllowed(bool);
 
     bool hasAccessoryMousePointingDevice() const;
-    bool NODELETE hoverSupportedByPrimaryPointingDevice() const;
+    bool LEGACY_NODELETE hoverSupportedByPrimaryPointingDevice() const;
     bool hoverSupportedByAnyAvailablePointingDevice() const;
-    std::optional<WebCore::PointerCharacteristics> NODELETE pointerCharacteristicsOfPrimaryPointingDevice() const;
+    std::optional<WebCore::PointerCharacteristics> LEGACY_NODELETE pointerCharacteristicsOfPrimaryPointingDevice() const;
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const;
 
     void animationDidFinishForElement(const WebCore::Element&);
@@ -837,16 +837,16 @@ public:
 
     inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
-    WebColorChooser* NODELETE activeColorChooser() const;
-    void NODELETE setActiveColorChooser(WebColorChooser*);
+    WebColorChooser* LEGACY_NODELETE activeColorChooser() const;
+    void LEGACY_NODELETE setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
     void didEndColorPicker();
 
-    void NODELETE setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
+    void LEGACY_NODELETE setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
     void didSelectDataListOption(const String&);
     void didCloseSuggestions();
 
-    void NODELETE setActiveDateTimeChooser(WebDateTimeChooser&);
+    void LEGACY_NODELETE setActiveDateTimeChooser(WebDateTimeChooser&);
     void didChooseDate(const String&);
     void didEndDateTimePicker();
 
@@ -885,10 +885,10 @@ public:
     WebFrame& mainWebFrame() const { return m_mainFrame; }
     const URL& mainFrameOpenerURL() const { return m_mainFrameOpenerURL; }
 
-    WebCore::Frame* NODELETE mainFrame() const;
+    WebCore::Frame* LEGACY_NODELETE mainFrame() const;
     WebCore::FrameView* mainFrameView() const;
     WebCore::LocalFrameView* localMainFrameView() const;
-    RefPtr<WebCore::LocalFrame> NODELETE localMainFrame() const;
+    RefPtr<WebCore::LocalFrame> LEGACY_NODELETE localMainFrame() const;
     RefPtr<WebCore::Document> localTopDocument() const;
 
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, const String& newChildFrameName, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&&);
@@ -966,7 +966,7 @@ public:
 
     double pageScaleFactor() const;
     double totalScaleFactor() const;
-    double NODELETE viewScaleFactor() const;
+    double LEGACY_NODELETE viewScaleFactor() const;
 
     void didScalePage(double scale, const WebCore::IntPoint& origin);
     void didScalePageInViewCoordinates(double scale, const WebCore::IntPoint& origin);
@@ -982,7 +982,7 @@ public:
     void setMinimumUnobscuredSize(const WebCore::FloatSize&);
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
 
-    void NODELETE listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
+    void LEGACY_NODELETE listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
     void setSuppressScrollbarAnimations(bool);
 
@@ -1010,7 +1010,7 @@ public:
     void stopLoading();
     void stopLoadingDueToProcessSwap();
     void releaseKeptBlobURLForNewWindowNavigation();
-    bool NODELETE defersLoading() const;
+    bool LEGACY_NODELETE defersLoading() const;
 
     void enterAcceleratedCompositingMode(WebCore::Frame&, WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode(WebCore::Frame&);
@@ -1061,14 +1061,14 @@ public:
 
     void setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
 
-    bool NODELETE windowIsFocused() const;
-    bool NODELETE windowAndWebPageAreFocused() const;
+    bool LEGACY_NODELETE windowIsFocused() const;
+    bool LEGACY_NODELETE windowAndWebPageAreFocused() const;
 
 #if !PLATFORM(IOS_FAMILY)
     void setHeaderPageBanner(PageBanner*);
-    PageBanner* NODELETE headerPageBanner();
+    PageBanner* LEGACY_NODELETE headerPageBanner();
     void setFooterPageBanner(PageBanner*);
-    PageBanner* NODELETE footerPageBanner();
+    PageBanner* LEGACY_NODELETE footerPageBanner();
 
     void hidePageBanners();
     void showPageBanners();
@@ -1098,7 +1098,7 @@ public:
 
     RefPtr<WebImage> scaledSnapshotWithOptions(const WebCore::IntRect&, double additionalScaleFactor, SnapshotOptions);
 
-    static const WebEvent* NODELETE currentEvent();
+    static const WebEvent* LEGACY_NODELETE currentEvent();
 
     FindController& findController() LIFETIME_BOUND { return m_findController.get(); }
     WebFoundTextRangeController& foundTextRangeController() LIFETIME_BOUND { return m_foundTextRangeController.get(); }
@@ -1390,7 +1390,7 @@ public:
     void platformInitializeAccessibility(ShouldInitializeNSAccessibility);
     void registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken);
     void registerRemoteFrameAccessibilityTokens(pid_t, WebCore::AccessibilityRemoteToken, WebCore::FrameIdentifier);
-    WKAccessibilityWebPageObject* NODELETE accessibilityRemoteObject();
+    WKAccessibilityWebPageObject* LEGACY_NODELETE accessibilityRemoteObject();
     // Returns the mock element serving the local root frame that contains this frame. When several
     // cross-site frames share one Web process they are each a root frame of this page, and each
     // needs its own mock element; accessibilityRemoteObject() alone can't tell them apart.
@@ -1472,13 +1472,13 @@ public:
     bool isStoppingLoadingDueToProcessSwap() const { return m_isStoppingLoadingDueToProcessSwap; }
     void keepBlobURLAliveForNewWindowNavigation(URL&&, std::optional<WebCore::SecurityOriginData>&&);
 
-    bool NODELETE isIOSurfaceLosslessCompressionEnabled() const;
+    bool LEGACY_NODELETE isIOSurfaceLosslessCompressionEnabled() const;
 
-    bool NODELETE isSmartInsertDeleteEnabled();
-    void NODELETE setSmartInsertDeleteEnabled(bool);
+    bool LEGACY_NODELETE isSmartInsertDeleteEnabled();
+    void LEGACY_NODELETE setSmartInsertDeleteEnabled(bool);
 
-    bool NODELETE isSelectTrailingWhitespaceEnabled() const;
-    void NODELETE setSelectTrailingWhitespaceEnabled(bool);
+    bool LEGACY_NODELETE isSelectTrailingWhitespaceEnabled() const;
+    void LEGACY_NODELETE setSelectTrailingWhitespaceEnabled(bool);
 
     void replaceSelectionWithText(WebCore::LocalFrame*, const String&, WebCore::EditAction);
     void clearSelection();
@@ -1583,7 +1583,7 @@ public:
     void runModal();
 
     void setDeviceScaleFactor(float);
-    float NODELETE deviceScaleFactor() const;
+    float LEGACY_NODELETE deviceScaleFactor() const;
 
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     void setIntrinsicDeviceScaleFactor(float f) { m_intrinsicDeviceScaleFactor = f; }
@@ -1722,7 +1722,7 @@ public:
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
 
-    WebCore::ScrollPinningBehavior NODELETE scrollPinningBehavior();
+    WebCore::ScrollPinningBehavior LEGACY_NODELETE scrollPinningBehavior();
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
 
     std::optional<WebCore::ScrollbarOverlayStyle> scrollbarOverlayStyle() { return m_scrollbarOverlayStyle; }
@@ -1730,7 +1730,7 @@ public:
 
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, WebCore::ResourceRequest&&, WebCore::SubstituteData&&, WebCore::ResourceRequest&&);
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, WebCore::ResourceRequest&&, WebCore::SubstituteData&&);
-    void NODELETE updateCachedDocumentLoader(WebCore::DocumentLoader&, WebCore::LocalFrame&);
+    void LEGACY_NODELETE updateCachedDocumentLoader(WebCore::DocumentLoader&, WebCore::LocalFrame&);
 
     void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
     void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);
@@ -1772,8 +1772,8 @@ public:
 
     void didRestoreScrollPosition();
 
-    bool NODELETE isControlledByAutomation() const;
-    void NODELETE setControlledByAutomation(bool);
+    bool LEGACY_NODELETE isControlledByAutomation() const;
+    void LEGACY_NODELETE setControlledByAutomation(bool);
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();
@@ -1830,7 +1830,7 @@ public:
 
 #if ENABLE(PDF_PLUGIN)
     static PluginView* focusedPluginViewForFrame(WebCore::LocalFrame&);
-    static PluginView* NODELETE pluginViewForFrame(WebCore::LocalFrame*);
+    static PluginView* LEGACY_NODELETE pluginViewForFrame(WebCore::LocalFrame*);
     PluginView* mainFramePlugIn() const;
 #endif
 
@@ -1879,7 +1879,7 @@ public:
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&);
     void clearLoadedSubresourceDomains();
     void getLoadedSubresourceDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>)>&&);
-    const HashSet<WebCore::RegistrableDomain>& NODELETE loadedSubresourceDomains() const;
+    const HashSet<WebCore::RegistrableDomain>& LEGACY_NODELETE loadedSubresourceDomains() const;
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
@@ -1911,7 +1911,7 @@ public:
     UnixFileDescriptor hostFileDescriptor() const { return m_hostFileDescriptor.duplicate(); }
 #endif
 
-    void NODELETE updateCurrentModifierState(OptionSet<WebCore::PlatformEventModifier> modifiers);
+    void LEGACY_NODELETE updateCurrentModifierState(OptionSet<WebCore::PlatformEventModifier> modifiers);
 
     inline UserContentControllerIdentifier userContentControllerIdentifier() const;
 
@@ -1956,7 +1956,7 @@ public:
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, CompletionHandler<void(const WebCore::TextManipulationControllerManipulationResult&)>&&);
 
 #if ENABLE(APPLE_PAY)
-    WebPaymentCoordinator* NODELETE paymentCoordinator();
+    WebPaymentCoordinator* LEGACY_NODELETE paymentCoordinator();
 #endif
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
@@ -1964,13 +1964,13 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void NODELETE setRemoteObjectRegistry(WebRemoteObjectRegistry*);
-    WebRemoteObjectRegistry* NODELETE remoteObjectRegistry();
+    void LEGACY_NODELETE setRemoteObjectRegistry(WebRemoteObjectRegistry*);
+    WebRemoteObjectRegistry* LEGACY_NODELETE remoteObjectRegistry();
 #endif
 
     WebPageProxyIdentifier webPageProxyIdentifier() const { return m_webPageProxyIdentifier; }
 
-    void NODELETE scheduleIntrinsicContentSizeUpdate(const WebCore::IntSize&);
+    void LEGACY_NODELETE scheduleIntrinsicContentSizeUpdate(const WebCore::IntSize&);
     void flushPendingIntrinsicContentSizeUpdate();
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
 
@@ -2077,8 +2077,8 @@ public:
     void getTextFragmentRanges(CompletionHandler<void(const Vector<EditingRange>&&)>&&);
 
 #if ENABLE(APP_HIGHLIGHTS)
-    WebCore::CreateNewGroupForHighlight NODELETE highlightIsNewGroup() const;
-    WebCore::HighlightRequestOriginatedInApp NODELETE highlightRequestOriginatedInApp() const;
+    WebCore::CreateNewGroupForHighlight LEGACY_NODELETE highlightIsNewGroup() const;
+    WebCore::HighlightRequestOriginatedInApp LEGACY_NODELETE highlightRequestOriginatedInApp() const;
     WebCore::HighlightVisibility appHighlightsVisiblility() const { return m_appHighlightsVisible; }
 
     void createAppHighlightInSelectedRange(WebCore::FrameIdentifier, WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp, CompletionHandler<void(WebCore::AppHighlight&&)>&&);
@@ -2112,7 +2112,7 @@ public:
 #endif
 
 #if ENABLE(WEBXR)
-    PlatformXRSystemProxy& NODELETE xrSystemProxy() LIFETIME_BOUND;
+    PlatformXRSystemProxy& LEGACY_NODELETE xrSystemProxy() LIFETIME_BOUND;
 #endif
 
     void prepareToRunModalJavaScriptDialog();
@@ -2137,20 +2137,20 @@ public:
     bool needsScrollGeometryUpdates() { return m_needsScrollGeometryUpdates; }
     void setNeedsScrollGeometryUpdates(bool needsUpdates) { m_needsScrollGeometryUpdates = needsUpdates; }
 
-    void NODELETE startDeferringResizeEvents();
+    void LEGACY_NODELETE startDeferringResizeEvents();
     void flushDeferredResizeEvents();
 
-    void NODELETE startDeferringScrollEvents();
+    void LEGACY_NODELETE startDeferringScrollEvents();
     void flushDeferredScrollEvents();
 
-    void NODELETE startDeferringIntersectionObservations();
+    void LEGACY_NODELETE startDeferringIntersectionObservations();
     void flushDeferredIntersectionObservations();
 
     void flushDeferredDidReceiveMouseEvent();
 
     void generateTestReport(String&& message, String&& group);
 
-    bool NODELETE isUsingUISideCompositing() const;
+    bool LEGACY_NODELETE isUsingUISideCompositing() const;
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updateImageAnimationEnabled();
@@ -2177,7 +2177,7 @@ public:
     WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const;
 
     const Logger& logger() const;
-    uint64_t NODELETE logIdentifier() const;
+    uint64_t LEGACY_NODELETE logIdentifier() const;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
     const Vector<RendererBufferFormat>& preferredBufferFormats() const LIFETIME_BOUND { return m_preferredBufferFormats; }
@@ -2274,10 +2274,10 @@ public:
     void setNeedsFixedContainerEdgesUpdate() { m_needsFixedContainerEdgesUpdate = true; }
 
     RefPtr<WebCore::MediaSessionManagerInterface> mediaSessionManager() const;
-    WebCore::MediaSessionManagerInterface* NODELETE mediaSessionManagerIfExists() const;
+    WebCore::MediaSessionManagerInterface* LEGACY_NODELETE mediaSessionManagerIfExists() const;
 
 #if ENABLE(MODEL_ELEMENT)
-    bool NODELETE shouldDisableModelLoadDelaysForTesting() const;
+    bool LEGACY_NODELETE shouldDisableModelLoadDelaysForTesting() const;
 #endif
 
     std::unique_ptr<FrameInfoData> takeMainFrameNavigationInitiator();
@@ -2414,7 +2414,7 @@ private:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&&);
 
     void updateDrawingAreaLayerTreeFreezeState();
-    void NODELETE updateAfterDrawingAreaCreation(const WebPageCreationParameters&);
+    void LEGACY_NODELETE updateAfterDrawingAreaCreation(const WebPageCreationParameters&);
 
     enum class MarkLayersVolatileDontRetryReason : uint8_t { None, SuspendedUnderLock, TimedOut };
     void markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason);
@@ -2437,14 +2437,14 @@ private:
     void platformDidReceiveLoadParameters(const LoadParameters&);
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
     void loadDidCommitInAnotherProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>, RefPtr<WebCore::DocumentSyncData>&&, CompletionHandler<void()>&&);
-    [[noreturn]] void NODELETE loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
+    [[noreturn]] void LEGACY_NODELETE loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);
     void loadAlternateHTML(LoadParameters&&);
     void loadSimulatedRequestAndResponse(LoadParameters&&, WebCore::ResourceResponse&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
     void reload(WebCore::NavigationIdentifier, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtensionHandle&&);
     void goToBackForwardItem(GoToBackForwardItemParameters&&);
-    [[noreturn]] void NODELETE goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemParameters&&, WebKit::WebPageProxyIdentifier);
+    [[noreturn]] void LEGACY_NODELETE goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemParameters&&, WebKit::WebPageProxyIdentifier);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, RefPtr<WebKeyboardEvent>&&, CompletionHandler<void()>&&);
     void updateIsInWindow(bool isInitialState = false);
@@ -2569,7 +2569,7 @@ private:
 #endif
 
     void setUserAgent(String&&);
-    void NODELETE setHasCustomUserAgent(bool);
+    void LEGACY_NODELETE setHasCustomUserAgent(bool);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
@@ -2600,7 +2600,7 @@ private:
 #if HAVE(APP_ACCENT_COLORS)
     void setAccentColor(WebCore::Color);
 #if PLATFORM(MAC)
-    void NODELETE setAppUsesCustomAccentColor(bool);
+    void LEGACY_NODELETE setAppUsesCustomAccentColor(bool);
     bool appUsesCustomAccentColor();
 #endif
 #endif
@@ -2690,8 +2690,8 @@ private:
     bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     void platformDidSelectAll();
 
-    void NODELETE setHasResourceLoadClient(bool);
-    void NODELETE setCanUseCredentialStorage(bool);
+    void LEGACY_NODELETE setHasResourceLoadClient(bool);
+    void LEGACY_NODELETE setCanUseCredentialStorage(bool);
 
 #if ENABLE(CONTEXT_MENUS)
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
@@ -2790,7 +2790,7 @@ private:
 
     void cancelCurrentInteractionInformationRequest();
 
-    bool NODELETE shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
+    bool LEGACY_NODELETE shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
 
     void updateMockAccessibilityElementAfterCommittingLoad();
 
@@ -2807,13 +2807,13 @@ private:
     void preferredBufferFormatsDidChange(Vector<RendererBufferFormat>&&);
 #endif
 
-    void NODELETE platformDidScalePage();
+    void LEGACY_NODELETE platformDidScalePage();
 
     Vector<Ref<SandboxExtension>> consumeSandboxExtensions(Vector<SandboxExtensionHandle>&&);
     void revokeSandboxExtensions(Vector<Ref<SandboxExtension>>& sandboxExtensions);
 
-    bool NODELETE hasPendingEditorStateUpdate() const;
-    bool NODELETE shouldAvoidComputingPostLayoutDataForEditorState() const;
+    bool LEGACY_NODELETE hasPendingEditorStateUpdate() const;
+    bool LEGACY_NODELETE shouldAvoidComputingPostLayoutDataForEditorState() const;
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
 

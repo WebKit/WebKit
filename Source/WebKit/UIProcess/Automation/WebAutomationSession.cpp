@@ -542,7 +542,7 @@ void WebAutomationSession::getBrowsingContext(const Inspector::Protocol::Automat
     });
 }
 
-static Inspector::Protocol::Automation::BrowsingContextPresentation NODELETE toProtocol(API::AutomationSessionClient::BrowsingContextPresentation value)
+static Inspector::Protocol::Automation::BrowsingContextPresentation LEGACY_NODELETE toProtocol(API::AutomationSessionClient::BrowsingContextPresentation value)
 {
     switch (value) {
     case API::AutomationSessionClient::BrowsingContextPresentation::Tab:
@@ -909,7 +909,7 @@ void WebAutomationSession::hideWindowForPage(WebPageProxy& page, WTF::Completion
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-static Inspector::Protocol::BidiBrowsingContext::UserPromptType NODELETE toProtocolUserPromptType(API::AutomationSessionClient::JavaScriptDialogType dialogType)
+static Inspector::Protocol::BidiBrowsingContext::UserPromptType LEGACY_NODELETE toProtocolUserPromptType(API::AutomationSessionClient::JavaScriptDialogType dialogType)
 {
     switch (dialogType) {
     case API::AutomationSessionClient::JavaScriptDialogType::Alert:
@@ -1645,7 +1645,7 @@ void WebAutomationSession::resolveParentFrameHandle(const Inspector::Protocol::A
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::ResolveParentFrame(page->webPageIDInProcessForFrame(frameID), frameID), WTF::move(completionHandler));
 }
 
-static std::optional<CoordinateSystem> NODELETE protocolStringToCoordinateSystem(Inspector::Protocol::Automation::CoordinateSystem coordinateSystem)
+static std::optional<CoordinateSystem> LEGACY_NODELETE protocolStringToCoordinateSystem(Inspector::Protocol::Automation::CoordinateSystem coordinateSystem)
 {
     switch (coordinateSystem) {
     case Inspector::Protocol::Automation::CoordinateSystem::Page:
@@ -1964,7 +1964,7 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::SetFilesForInputFileUpload(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle, WTF::move(newFileList)), WTF::move(completionHandler));
 }
 
-static inline Inspector::Protocol::Automation::CookieSameSitePolicy NODELETE toProtocolSameSitePolicy(WebCore::Cookie::SameSitePolicy policy)
+static inline Inspector::Protocol::Automation::CookieSameSitePolicy LEGACY_NODELETE toProtocolSameSitePolicy(WebCore::Cookie::SameSitePolicy policy)
 {
     switch (policy) {
     case WebCore::Cookie::SameSitePolicy::None:
@@ -1977,7 +1977,7 @@ static inline Inspector::Protocol::Automation::CookieSameSitePolicy NODELETE toP
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline WebCore::Cookie::SameSitePolicy NODELETE toWebCoreSameSitePolicy(Inspector::Protocol::Automation::CookieSameSitePolicy policy)
+static inline WebCore::Cookie::SameSitePolicy LEGACY_NODELETE toWebCoreSameSitePolicy(Inspector::Protocol::Automation::CookieSameSitePolicy policy)
 {
     switch (policy) {
     case Inspector::Protocol::Automation::CookieSameSitePolicy::None:
@@ -2169,7 +2169,7 @@ CommandResult<void> WebAutomationSession::setSessionPermissions(Ref<JSON::Array>
 }
 
 #if ENABLE(WEB_AUTHN)
-static WebCore::AuthenticatorTransport NODELETE toAuthenticatorTransport(Inspector::Protocol::Automation::AuthenticatorTransport transport)
+static WebCore::AuthenticatorTransport LEGACY_NODELETE toAuthenticatorTransport(Inspector::Protocol::Automation::AuthenticatorTransport transport)
 {
     switch (transport) {
     case Inspector::Protocol::Automation::AuthenticatorTransport::Usb:
@@ -2610,7 +2610,7 @@ void WebAutomationSession::simulateWheelInteraction(WebPageProxy& page, const We
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-static WebEventModifier NODELETE protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
+static WebEventModifier LEGACY_NODELETE protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
 {
     switch (modifier) {
     case Inspector::Protocol::Automation::KeyModifier::Alt:
@@ -2793,7 +2793,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
 }
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
-static SimulatedInputSourceType NODELETE simulatedInputSourceTypeFromProtocolSourceType(Inspector::Protocol::Automation::InputSourceType protocolType)
+static SimulatedInputSourceType LEGACY_NODELETE simulatedInputSourceTypeFromProtocolSourceType(Inspector::Protocol::Automation::InputSourceType protocolType)
 {
     switch (protocolType) {
     case Inspector::Protocol::Automation::InputSourceType::Null:
@@ -2817,7 +2817,7 @@ static SimulatedInputSourceType NODELETE simulatedInputSourceTypeFromProtocolSou
 #if ENABLE(WEBDRIVER_ACTIONS_API)
 // §15.4.2 Keyboard actions
 // https://w3c.github.io/webdriver/#dfn-normalised-key-value
-static VirtualKey NODELETE normalizedVirtualKey(VirtualKey key)
+static VirtualKey LEGACY_NODELETE normalizedVirtualKey(VirtualKey key)
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::ControlRight:

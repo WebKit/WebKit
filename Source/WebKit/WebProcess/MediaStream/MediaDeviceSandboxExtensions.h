@@ -43,7 +43,7 @@ public:
     MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles, SandboxExtension::Handle&& machBootstrapHandle);
 
     std::pair<String, Ref<SandboxExtension>> operator[](size_t i);
-    size_t NODELETE size() const;
+    size_t LEGACY_NODELETE size() const;
 
     Vector<String> takeIDs() { return std::exchange(m_ids, { }); }
     Vector<SandboxExtension::Handle> takeHandles() { return std::exchange(m_handles, { }); }

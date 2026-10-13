@@ -169,7 +169,7 @@ public:
     void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
-    bool NODELETE isActive() const;
+    bool LEGACY_NODELETE isActive() const;
 
 private:
     SimulatedInputDispatcher(WebPageProxy&, SimulatedInputDispatcher::Client&);

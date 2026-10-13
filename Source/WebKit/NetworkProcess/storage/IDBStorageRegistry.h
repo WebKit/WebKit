@@ -55,10 +55,10 @@ public:
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
-    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> NODELETE connection(WebCore::IDBDatabaseConnectionIdentifier, IPC::Connection&);
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> LEGACY_NODELETE connection(WebCore::IDBDatabaseConnectionIdentifier, IPC::Connection&);
     void registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     void unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
-    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NODELETE transaction(WebCore::IDBResourceIdentifier, IPC::Connection&);
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> LEGACY_NODELETE transaction(WebCore::IDBResourceIdentifier, IPC::Connection&);
 
 private:
     bool isValidConnectionForIPC(WebCore::IDBServer::UniqueIDBDatabaseConnection&, IPC::Connection&);

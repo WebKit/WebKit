@@ -91,7 +91,7 @@ public:
     void willDestroyProvisionalFrame(const ProvisionalFrameProxy&);
     void didCommitProvisionalFrame(WebFrameProxy&, WebCore::ProcessIdentifier oldProcessID, std::optional<WebCore::PageIdentifier> oldPageID, WebCore::ProcessIdentifier newProcessID);
 
-    InspectorBrowserAgent* NODELETE enabledBrowserAgent() const;
+    InspectorBrowserAgent* LEGACY_NODELETE enabledBrowserAgent() const;
     void setEnabledBrowserAgent(InspectorBrowserAgent*);
 
     void browserExtensionsEnabled(HashMap<String, String>&&);
@@ -105,7 +105,7 @@ public:
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 
 private:
-    WebPageAgentContext NODELETE webPageAgentContext();
+    WebPageAgentContext LEGACY_NODELETE webPageAgentContext();
     void createLazyAgents();
 
     void addTarget(std::unique_ptr<InspectorTargetProxy>&&);

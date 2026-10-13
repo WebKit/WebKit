@@ -51,11 +51,11 @@ public:
     static Ref<WebArchiveResource> create(RefPtr<WebCore::ArchiveResource>&&);
 
     Ref<API::Data> data();
-    WTF::String NODELETE url();
-    WTF::String NODELETE mimeType();
-    WTF::String NODELETE textEncoding();
+    WTF::String LEGACY_NODELETE url();
+    WTF::String LEGACY_NODELETE mimeType();
+    WTF::String LEGACY_NODELETE textEncoding();
 
-    WebCore::ArchiveResource* NODELETE coreArchiveResource();
+    WebCore::ArchiveResource* LEGACY_NODELETE coreArchiveResource();
 
 private:
     WebArchiveResource(API::Data*, const WTF::String& URL, const WTF::String& MIMEType, const WTF::String& textEncoding);

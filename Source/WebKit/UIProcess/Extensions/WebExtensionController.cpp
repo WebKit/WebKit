@@ -75,7 +75,7 @@ static void removeContextMessageReceivers(WebProcessPool& processPool, WebExtens
 #endif
 }
 
-static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>& NODELETE webExtensionControllers()
+static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>& LEGACY_NODELETE webExtensionControllers()
 {
     static MainRunLoopNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>> controllers;
     return controllers;

@@ -146,7 +146,7 @@ private:
     const Logger* loggerPtr() const final;
 
     ASCIILiteral logClassName() const { return "VideoPresentationModelContext"_s; };
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
     WeakPtr<VideoPresentationManagerProxy> m_manager;
@@ -184,7 +184,7 @@ public:
     void invalidate();
 
     void requestHideAndExitFullscreen();
-    bool NODELETE hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
+    bool LEGACY_NODELETE hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool mayAutomaticallyShowVideoPictureInPicture() const;
     void applicationDidBecomeActive();
     bool isVisible() const;
@@ -233,7 +233,7 @@ private:
     typedef std::pair<Ref<VideoPresentationModelContext>, Ref<WebCore::PlatformVideoPresentationInterface>> ModelInterfacePair;
     ModelInterfacePair createModelAndInterface(PlaybackSessionContextIdentifier);
     const ModelInterfacePair& ensureModelAndInterface(PlaybackSessionContextIdentifier);
-    const ModelInterfacePair* NODELETE findModelAndInterface(PlaybackSessionContextIdentifier) const;
+    const ModelInterfacePair* LEGACY_NODELETE findModelAndInterface(PlaybackSessionContextIdentifier) const;
     Ref<VideoPresentationModelContext> ensureModel(PlaybackSessionContextIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(PlaybackSessionContextIdentifier);
 
@@ -241,7 +241,7 @@ private:
     PlaybackSessionContextIdentifier contextIdForConnection(IPC::Connection&, WebCore::HTMLMediaElementIdentifier) const;
     Ref<VideoPresentationModelContext> ensureModel(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
-    RefPtr<WebCore::PlatformVideoPresentationInterface> NODELETE findInterface(PlaybackSessionContextIdentifier) const;
+    RefPtr<WebCore::PlatformVideoPresentationInterface> LEGACY_NODELETE findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
@@ -319,10 +319,10 @@ private:
     void videosInElementFullscreenChanged();
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& NODELETE logger() const;
-    uint64_t NODELETE logIdentifier() const;
+    const Logger& LEGACY_NODELETE logger() const;
+    uint64_t LEGACY_NODELETE logIdentifier() const;
     ASCIILiteral logClassName() const;
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
     bool m_mockVideoPresentationModeEnabled { false };

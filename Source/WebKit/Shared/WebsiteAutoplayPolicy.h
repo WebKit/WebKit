@@ -38,6 +38,6 @@ enum class WebsiteAutoplayPolicy : uint8_t {
     Deny
 };
 
-WebCore::AutoplayPolicy NODELETE core(WebsiteAutoplayPolicy);
+WebCore::AutoplayPolicy LEGACY_NODELETE core(WebsiteAutoplayPolicy);
 
 }

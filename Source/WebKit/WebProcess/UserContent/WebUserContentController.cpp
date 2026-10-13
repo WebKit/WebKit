@@ -66,7 +66,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& NODELETE userContentControllers()
+static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& LEGACY_NODELETE userContentControllers()
 {
     static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>> userContentControllers;
 
@@ -301,7 +301,7 @@ public:
 
     virtual ~WebUserMessageHandlerDescriptorProxy() = default;
 
-    ScriptMessageHandlerIdentifier NODELETE identifier() { return m_identifier; }
+    ScriptMessageHandlerIdentifier LEGACY_NODELETE identifier() { return m_identifier; }
 
 private:
     WebUserMessageHandlerDescriptorProxy(WebUserContentController& controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)

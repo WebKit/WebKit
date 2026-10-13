@@ -79,7 +79,7 @@
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static RetainPtr<WKProcessPool>& NODELETE sharedProcessPool()
+static RetainPtr<WKProcessPool>& LEGACY_NODELETE sharedProcessPool()
 {
     static NeverDestroyed<RetainPtr<WKProcessPool>> sharedProcessPool;
     return sharedProcessPool;
@@ -779,7 +779,7 @@ static NSArray<_WKProcessInfo *> *allWebContentProcessInfo()
 @synthesize totalSystemCPUTime = _totalSystemCPUTime;
 @synthesize physicalFootprint = _physicalFootprint;
 
-static _WKProcessState NODELETE processStateFromThrottleState(WebKit::ProcessThrottleState state)
+static _WKProcessState LEGACY_NODELETE processStateFromThrottleState(WebKit::ProcessThrottleState state)
 {
     switch (state) {
     case WebKit::ProcessThrottleState::Foreground:

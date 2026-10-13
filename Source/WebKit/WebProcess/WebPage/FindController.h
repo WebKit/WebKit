@@ -86,7 +86,7 @@ public:
     uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
 
     void hideFindIndicator();
-    void NODELETE resetMatchIndex();
+    void LEGACY_NODELETE resetMatchIndex();
     void showFindIndicatorInSelection();
 
     bool isShowingOverlay() const { return m_findIndicator && m_findIndicator->isShowing() && m_findPageOverlay; }
@@ -115,7 +115,7 @@ private:
     void updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptions>, bool shouldShowOverlay);
     unsigned markMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
     unsigned getMatchCount(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
-    void NODELETE updateMatchIndex(unsigned matchCount, OptionSet<FindOptions>);
+    void LEGACY_NODELETE updateMatchIndex(unsigned matchCount, OptionSet<FindOptions>);
     void didScrollAffectingFindIndicatorPosition();
 
     RefPtr<WebCore::LocalFrame> frameWithSelection(WebCore::Page*);

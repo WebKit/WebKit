@@ -223,14 +223,14 @@ public:
     std::optional<WebCore::WebGPU::BindGroupEntry> convertFromBacking(const BindGroupEntry&);
     std::optional<WebCore::WebGPU::BindGroupLayoutDescriptor> convertFromBacking(const BindGroupLayoutDescriptor&);
     std::optional<WebCore::WebGPU::BindGroupLayoutEntry> convertFromBacking(const BindGroupLayoutEntry&);
-    std::optional<WebCore::WebGPU::BlendComponent> NODELETE convertFromBacking(const BlendComponent&);
-    std::optional<WebCore::WebGPU::BlendState> NODELETE convertFromBacking(const BlendState&);
+    std::optional<WebCore::WebGPU::BlendComponent> LEGACY_NODELETE convertFromBacking(const BlendComponent&);
+    std::optional<WebCore::WebGPU::BlendState> LEGACY_NODELETE convertFromBacking(const BlendState&);
     std::optional<WebCore::WebGPU::BufferBinding> convertFromBacking(const BufferBinding&);
-    std::optional<WebCore::WebGPU::BufferBindingLayout> NODELETE convertFromBacking(const BufferBindingLayout&);
+    std::optional<WebCore::WebGPU::BufferBindingLayout> LEGACY_NODELETE convertFromBacking(const BufferBindingLayout&);
     std::optional<WebCore::WebGPU::BufferDescriptor> convertFromBacking(const BufferDescriptor&);
     std::optional<WebCore::WebGPU::CanvasConfiguration> convertFromBacking(const CanvasConfiguration&);
     std::optional<WebCore::WebGPU::Color> convertFromBacking(const Color&);
-    std::optional<WebCore::WebGPU::ColorDict> NODELETE convertFromBacking(const ColorDict&);
+    std::optional<WebCore::WebGPU::ColorDict> LEGACY_NODELETE convertFromBacking(const ColorDict&);
     std::optional<WebCore::WebGPU::ColorTargetState> convertFromBacking(const ColorTargetState&);
     std::optional<WebCore::WebGPU::CommandBufferDescriptor> convertFromBacking(const CommandBufferDescriptor&);
     std::optional<WebCore::WebGPU::CommandEncoderDescriptor> convertFromBacking(const CommandEncoderDescriptor&);
@@ -242,8 +242,8 @@ public:
     std::optional<WebCore::WebGPU::DeviceDescriptor> convertFromBacking(const DeviceDescriptor&);
     std::optional<WebCore::WebGPU::Error> convertFromBacking(const Error&);
     std::optional<WebCore::WebGPU::Extent3D> convertFromBacking(const Extent3D&);
-    std::optional<WebCore::WebGPU::Extent3DDict> NODELETE convertFromBacking(const Extent3DDict&);
-    std::optional<WebCore::WebGPU::ExternalTextureBindingLayout> NODELETE convertFromBacking(const ExternalTextureBindingLayout&);
+    std::optional<WebCore::WebGPU::Extent3DDict> LEGACY_NODELETE convertFromBacking(const Extent3DDict&);
+    std::optional<WebCore::WebGPU::ExternalTextureBindingLayout> LEGACY_NODELETE convertFromBacking(const ExternalTextureBindingLayout&);
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     using PixelBufferType = RetainPtr<CVPixelBufferRef>;
 #else
@@ -259,19 +259,19 @@ public:
 #endif
     std::optional<WebCore::WebGPU::ImageCopyTexture> convertFromBacking(const ImageCopyTexture&);
     std::optional<WebCore::WebGPU::ImageCopyTextureTagged> convertFromBacking(const ImageCopyTextureTagged&);
-    std::optional<WebCore::WebGPU::ImageDataLayout> NODELETE convertFromBacking(const ImageDataLayout&);
+    std::optional<WebCore::WebGPU::ImageDataLayout> LEGACY_NODELETE convertFromBacking(const ImageDataLayout&);
     RefPtr<WebCore::WebGPU::InternalError> convertFromBacking(const InternalError&);
-    std::optional<WebCore::WebGPU::MultisampleState> NODELETE convertFromBacking(const MultisampleState&);
-    std::optional<WebCore::WebGPU::ObjectDescriptorBase> NODELETE convertFromBacking(const ObjectDescriptorBase&);
+    std::optional<WebCore::WebGPU::MultisampleState> LEGACY_NODELETE convertFromBacking(const MultisampleState&);
+    std::optional<WebCore::WebGPU::ObjectDescriptorBase> LEGACY_NODELETE convertFromBacking(const ObjectDescriptorBase&);
     std::optional<WebCore::WebGPU::Origin2D> convertFromBacking(const Origin2D&);
-    std::optional<WebCore::WebGPU::Origin2DDict> NODELETE convertFromBacking(const Origin2DDict&);
+    std::optional<WebCore::WebGPU::Origin2DDict> LEGACY_NODELETE convertFromBacking(const Origin2DDict&);
     std::optional<WebCore::WebGPU::Origin3D> convertFromBacking(const Origin3D&);
-    std::optional<WebCore::WebGPU::Origin3DDict> NODELETE convertFromBacking(const Origin3DDict&);
+    std::optional<WebCore::WebGPU::Origin3DDict> LEGACY_NODELETE convertFromBacking(const Origin3DDict&);
     RefPtr<WebCore::WebGPU::OutOfMemoryError> convertFromBacking(const OutOfMemoryError&);
     std::optional<WebCore::WebGPU::PipelineDescriptorBase> convertFromBacking(const PipelineDescriptorBase&, bool allowMissingPipelineLayout = false);
     std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> convertFromBacking(const PipelineLayoutDescriptor&);
     std::optional<WebCore::WebGPU::PresentationContextDescriptor> convertFromBacking(const PresentationContextDescriptor&);
-    std::optional<WebCore::WebGPU::PrimitiveState> NODELETE convertFromBacking(const PrimitiveState&);
+    std::optional<WebCore::WebGPU::PrimitiveState> LEGACY_NODELETE convertFromBacking(const PrimitiveState&);
     std::optional<WebCore::WebGPU::ProgrammableStage> convertFromBacking(const ProgrammableStage&);
     std::optional<WebCore::WebGPU::QuerySetDescriptor> convertFromBacking(const QuerySetDescriptor&);
     std::optional<WebCore::WebGPU::RenderBundleDescriptor> convertFromBacking(const RenderBundleDescriptor&);
@@ -282,20 +282,20 @@ public:
     std::optional<WebCore::WebGPU::RenderPassLayout> convertFromBacking(const RenderPassLayout&);
     std::optional<WebCore::WebGPU::RenderPassTimestampWrites> convertFromBacking(const RenderPassTimestampWrites&);
     std::optional<WebCore::WebGPU::RenderPipelineDescriptor> convertFromBacking(const RenderPipelineDescriptor&, bool allowMissingPipelineLayout = false);
-    std::optional<WebCore::WebGPU::RequestAdapterOptions> NODELETE convertFromBacking(const RequestAdapterOptions&);
-    std::optional<WebCore::WebGPU::SamplerBindingLayout> NODELETE convertFromBacking(const SamplerBindingLayout&);
+    std::optional<WebCore::WebGPU::RequestAdapterOptions> LEGACY_NODELETE convertFromBacking(const RequestAdapterOptions&);
+    std::optional<WebCore::WebGPU::SamplerBindingLayout> LEGACY_NODELETE convertFromBacking(const SamplerBindingLayout&);
     std::optional<WebCore::WebGPU::SamplerDescriptor> convertFromBacking(const SamplerDescriptor&);
     std::optional<WebCore::WebGPU::ShaderModuleCompilationHint> convertFromBacking(const ShaderModuleCompilationHint&);
     std::optional<WebCore::WebGPU::ShaderModuleDescriptor> convertFromBacking(const ShaderModuleDescriptor&);
-    std::optional<WebCore::WebGPU::StencilFaceState> NODELETE convertFromBacking(const StencilFaceState&);
-    std::optional<WebCore::WebGPU::StorageTextureBindingLayout> NODELETE convertFromBacking(const StorageTextureBindingLayout&);
+    std::optional<WebCore::WebGPU::StencilFaceState> LEGACY_NODELETE convertFromBacking(const StencilFaceState&);
+    std::optional<WebCore::WebGPU::StorageTextureBindingLayout> LEGACY_NODELETE convertFromBacking(const StorageTextureBindingLayout&);
     RefPtr<WebCore::WebGPU::SupportedFeatures> convertFromBacking(const SupportedFeatures&);
     RefPtr<WebCore::WebGPU::SupportedLimits> convertFromBacking(const SupportedLimits&);
-    std::optional<WebCore::WebGPU::TextureBindingLayout> NODELETE convertFromBacking(const TextureBindingLayout&);
+    std::optional<WebCore::WebGPU::TextureBindingLayout> LEGACY_NODELETE convertFromBacking(const TextureBindingLayout&);
     std::optional<WebCore::WebGPU::TextureDescriptor> convertFromBacking(const TextureDescriptor&);
     std::optional<WebCore::WebGPU::TextureViewDescriptor> convertFromBacking(const TextureViewDescriptor&);
     RefPtr<WebCore::WebGPU::ValidationError> convertFromBacking(const ValidationError&);
-    std::optional<WebCore::WebGPU::VertexAttribute> NODELETE convertFromBacking(const VertexAttribute&);
+    std::optional<WebCore::WebGPU::VertexAttribute> LEGACY_NODELETE convertFromBacking(const VertexAttribute&);
     std::optional<WebCore::WebGPU::VertexBufferLayout> convertFromBacking(const VertexBufferLayout&);
     std::optional<WebCore::WebGPU::VertexState> convertFromBacking(const VertexState&);
 

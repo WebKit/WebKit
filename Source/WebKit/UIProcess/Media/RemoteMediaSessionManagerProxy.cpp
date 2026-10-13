@@ -93,7 +93,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerAudioHardwareListener);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerProxy);
 
-static WeakPtr<RemoteMediaSessionManagerProxy>& NODELETE singletonWeakPtr()
+static WeakPtr<RemoteMediaSessionManagerProxy>& LEGACY_NODELETE singletonWeakPtr()
 {
     static NeverDestroyed<WeakPtr<RemoteMediaSessionManagerProxy>> singleton;
     return singleton;

@@ -46,9 +46,9 @@ public:
     void allow();
     void deny();
 
-    void NODELETE invalidate();
+    void LEGACY_NODELETE invalidate();
 
-    WebProcessProxy* NODELETE process() const;
+    WebProcessProxy* LEGACY_NODELETE process() const;
     const WebCore::RegistrableDomain& registrableDomain() const LIFETIME_BOUND { return m_registrableDomain; }
 
 private:

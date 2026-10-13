@@ -54,7 +54,7 @@ namespace WebKit {
 struct NetworkResourceLoadParameters {
     void createSandboxExtensionHandlesIfNecessary();
 
-    RefPtr<WebCore::SecurityOrigin> NODELETE parentOrigin() const;
+    RefPtr<WebCore::SecurityOrigin> LEGACY_NODELETE parentOrigin() const;
     NetworkLoadParameters networkLoadParameters() const;
     WebCore::SecurityOriginData topOriginForServiceWorkers(const WebCore::ResourceRequest&) const;
 

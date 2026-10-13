@@ -199,7 +199,7 @@ static std::optional<WebCore::Cookie> makeVectorElement(const WebCore::Cookie*, 
     protect(*_cookieStore)->unregisterObserver(*result);
 }
 
-static WebCore::HTTPCookieAcceptPolicy NODELETE toHTTPCookieAcceptPolicy(WKCookiePolicy wkCookiePolicy)
+static WebCore::HTTPCookieAcceptPolicy LEGACY_NODELETE toHTTPCookieAcceptPolicy(WKCookiePolicy wkCookiePolicy)
 {
     switch (wkCookiePolicy) {
     case WKCookiePolicyAllow:
@@ -210,7 +210,7 @@ static WebCore::HTTPCookieAcceptPolicy NODELETE toHTTPCookieAcceptPolicy(WKCooki
     ASSERT_NOT_REACHED();
 }
 
-static WKCookiePolicy NODELETE toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy policy)
+static WKCookiePolicy LEGACY_NODELETE toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy policy)
 {
     switch (policy) {
     case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:

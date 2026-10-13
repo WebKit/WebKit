@@ -201,7 +201,7 @@ public:
         return *this << static_cast<uint32_t>(value);
     }
 
-    MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> NODELETE finishEncoding(size_t& size)
+    MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> LEGACY_NODELETE finishEncoding(size_t& size)
     {
         size = m_bufferSize;
         return WTF::move(m_buffer);
@@ -256,10 +256,10 @@ private:
         m_buffer.realloc(newCapacity.value());
     }
 
-    size_t NODELETE capacity() const { return m_buffer.span().size(); }
+    size_t LEGACY_NODELETE capacity() const { return m_buffer.span().size(); }
 
-    std::span<uint8_t> NODELETE mutableBuffer() { return m_buffer.mutableSpan(); }
-    std::span<const uint8_t> NODELETE buffer() const { return m_buffer.span(); }
+    std::span<uint8_t> LEGACY_NODELETE mutableBuffer() { return m_buffer.mutableSpan(); }
+    std::span<const uint8_t> LEGACY_NODELETE buffer() const { return m_buffer.span(); }
 
     size_t m_bufferSize { 0 };
     MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> m_buffer;
@@ -728,14 +728,14 @@ public:
         return *this;
     }
 
-    bool NODELETE isValid() const { return m_isValid; }
-    void NODELETE markInvalid()
+    bool LEGACY_NODELETE isValid() const { return m_isValid; }
+    void LEGACY_NODELETE markInvalid()
     {
         m_buffer = { };
         m_isValid = false;
     }
 
-    bool NODELETE finishDecoding() { return m_isValid && m_buffer.empty(); }
+    bool LEGACY_NODELETE finishDecoding() { return m_isValid && m_buffer.empty(); }
 
 private:
     template<typename Type>
@@ -756,7 +756,7 @@ private:
         memcpySpan(data, consumeSpan(m_buffer, data.size()));
     }
 
-    bool NODELETE alignBufferPosition(unsigned alignment, size_t size)
+    bool LEGACY_NODELETE alignBufferPosition(unsigned alignment, size_t size)
     {
         const uint8_t* alignedPosition = alignedBuffer(alignment);
         if (!alignedBufferIsLargeEnoughToContain(alignedPosition, size)) {
@@ -769,7 +769,7 @@ private:
         return true;
     }
 
-    const uint8_t* NODELETE alignedBuffer(unsigned alignment) const
+    const uint8_t* LEGACY_NODELETE alignedBuffer(unsigned alignment) const
     {
         ASSERT(alignment && !(alignment & (alignment - 1)));
 
@@ -778,7 +778,7 @@ private:
     }
 
     template<typename T>
-    bool NODELETE bufferIsLargeEnoughToContain(size_t numElements) const
+    bool LEGACY_NODELETE bufferIsLargeEnoughToContain(size_t numElements) const
     {
         static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
 
@@ -788,12 +788,12 @@ private:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    bool NODELETE bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
+    bool LEGACY_NODELETE bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
     {
         return alignedBufferIsLargeEnoughToContain(alignedBuffer(alignment), size);
     }
 
-    inline bool NODELETE alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
+    inline bool LEGACY_NODELETE alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
     {
         auto* bufferEnd = std::to_address(m_buffer.end());
         return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;

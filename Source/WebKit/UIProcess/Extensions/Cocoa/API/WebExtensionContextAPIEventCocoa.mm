@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-static inline bool NODELETE isTestEventListener(WebExtensionEventListenerType type)
+static inline bool LEGACY_NODELETE isTestEventListener(WebExtensionEventListenerType type)
 {
     return type == WebExtensionEventListenerType::TestOnMessage
         || type == WebExtensionEventListenerType::TestOnTestStarted

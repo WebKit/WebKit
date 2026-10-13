@@ -136,7 +136,7 @@ static inline RefPtr<ArrayBuffer> toArrayBufferNilIfEmpty(NSData *data)
     return ArrayBuffer::create(span(data));
 }
 
-static inline ExceptionCode NODELETE toExceptionCode(NSInteger nsErrorCode)
+static inline ExceptionCode LEGACY_NODELETE toExceptionCode(NSInteger nsErrorCode)
 {
     ExceptionCode exceptionCode = (ExceptionCode)nsErrorCode;
 
@@ -581,7 +581,7 @@ inline static Vector<AuthenticatorTransport> toTransports(NSArray<ASAuthorizatio
     return transports;
 }
 
-static inline AuthenticatorAttachment NODELETE fromASAuthorizationPublicKeyCredentialAttachment(ASAuthorizationPublicKeyCredentialAttachment attachment)
+static inline AuthenticatorAttachment LEGACY_NODELETE fromASAuthorizationPublicKeyCredentialAttachment(ASAuthorizationPublicKeyCredentialAttachment attachment)
 {
     if (attachment == ASAuthorizationPublicKeyCredentialAttachmentPlatform)
         return AuthenticatorAttachment::Platform;
@@ -950,7 +950,7 @@ static inline void setGlobalFrameIDForContext(RetainPtr<ASCCredentialRequestCont
     }
 }
 
-static inline ASPublicKeyCredentialResidentKeyPreference NODELETE toASCResidentKeyPreference(std::optional<ResidentKeyRequirement> requirement, bool requireResidentKey)
+static inline ASPublicKeyCredentialResidentKeyPreference LEGACY_NODELETE toASCResidentKeyPreference(std::optional<ResidentKeyRequirement> requirement, bool requireResidentKey)
 {
     if (!requirement)
         return requireResidentKey ? ASPublicKeyCredentialResidentKeyPreferenceRequired : ASPublicKeyCredentialResidentKeyPreferenceNotPresent;

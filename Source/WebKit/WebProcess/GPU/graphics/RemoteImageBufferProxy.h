@@ -68,7 +68,7 @@ public:
     static Ref<RemoteImageBufferProxy> createForSerializedBuffer(const WebCore::ImageBuffer::Parameters&, std::unique_ptr<WebCore::ImageBufferBackend>&&, RemoteRenderingBackendProxy&);
 
     ~RemoteImageBufferProxy();
-    bool NODELETE isValid() const;
+    bool LEGACY_NODELETE isValid() const;
 
     void disconnect();
 
@@ -127,7 +127,7 @@ private:
     void flushDrawingContextImpl() const;
     std::optional<WebCore::RenderingMode> getEffectiveRenderingModeForTesting() const final;
 
-    void NODELETE assertDispatcherIsCurrent() const;
+    void LEGACY_NODELETE assertDispatcherIsCurrent() const;
     template<typename T> void send(T&& message) const;
     template<typename T> auto sendSync(T&& message) const;
     RefPtr<IPC::StreamClientConnection> connection() const;

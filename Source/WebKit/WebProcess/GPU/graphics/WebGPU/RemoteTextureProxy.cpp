@@ -52,7 +52,7 @@ RemoteTextureProxy::~RemoteTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-static bool NODELETE equalDescriptors(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& a, const std::optional<WebCore::WebGPU::TextureViewDescriptor>& b)
+static bool LEGACY_NODELETE equalDescriptors(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& a, const std::optional<WebCore::WebGPU::TextureViewDescriptor>& b)
 {
     if (!a && !b)
         return true;

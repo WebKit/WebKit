@@ -112,7 +112,7 @@ using EncodedMessage = Vector<uint8_t>;
 
 void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&&);
 void doDailyActivityInManager();
-bool NODELETE messageTypeSendsReply(MessageType);
+bool LEGACY_NODELETE messageTypeSendsReply(MessageType);
 
 void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier, const String& secondaryApplicationBundleIdentifier);
 

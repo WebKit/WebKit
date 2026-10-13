@@ -554,7 +554,7 @@ static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionTyp
     return true;
 }
 
-static API::InjectedBundle::FormClient::InputFieldAction NODELETE toInputFieldAction(WKInputFieldActionType action)
+static API::InjectedBundle::FormClient::InputFieldAction LEGACY_NODELETE toInputFieldAction(WKInputFieldActionType action)
 {
     switch (action) {
     case WKInputFieldActionTypeMoveUp:

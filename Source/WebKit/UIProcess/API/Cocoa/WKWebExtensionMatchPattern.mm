@@ -223,7 +223,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
     return [self matchesURL:urlToMatch options:0];
 }
 
-static OptionSet<WebKit::WebExtensionMatchPattern::Options> NODELETE matchPatternOptionsToImpl(WKWebExtensionMatchPatternOptions options)
+static OptionSet<WebKit::WebExtensionMatchPattern::Options> LEGACY_NODELETE matchPatternOptionsToImpl(WKWebExtensionMatchPatternOptions options)
 {
     OptionSet<WebKit::WebExtensionMatchPattern::Options> result;
 

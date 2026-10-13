@@ -52,7 +52,7 @@ struct WebFoundTextRange {
         uint64_t endOffset { 0 };
 
         bool operator==(const PDFData& other) const = default;
-        unsigned NODELETE hash() const;
+        unsigned LEGACY_NODELETE hash() const;
         static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
     };
 
@@ -62,7 +62,7 @@ struct WebFoundTextRange {
         uint64_t seekTimeMilliseconds { 0 };
 
         bool operator==(const CueData& other) const = default;
-        unsigned NODELETE hash() const;
+        unsigned LEGACY_NODELETE hash() const;
     };
 
     Variant<DOMData, PDFData, CueData> data { DOMData { } };

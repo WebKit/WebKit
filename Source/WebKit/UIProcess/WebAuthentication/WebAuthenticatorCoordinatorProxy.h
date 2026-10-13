@@ -98,7 +98,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    static WeakPtr<WebAuthenticatorCoordinatorProxy>& NODELETE activeConditionalMediationProxy();
+    static WeakPtr<WebAuthenticatorCoordinatorProxy>& LEGACY_NODELETE activeConditionalMediationProxy();
     void pauseConditionalAssertion(CompletionHandler<void()>&&);
     void unpauseConditionalAssertion();
     void makeActiveConditionalAssertion();

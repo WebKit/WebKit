@@ -54,7 +54,7 @@ public:
     NSString *cocoaName() const { return m_cocoaName.get(); }
 #endif
     API::Object* apiBody() const { return m_apiBody.get(); }
-    WebKit::WebPageProxy* NODELETE page() const;
+    WebKit::WebPageProxy* LEGACY_NODELETE page() const;
     API::FrameInfo& frame() const { return m_frame.get(); }
     const WTF::String& name() const LIFETIME_BOUND { return m_name; }
     API::ContentWorld& world() const { return m_world.get(); }

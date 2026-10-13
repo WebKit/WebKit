@@ -42,7 +42,7 @@ class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteIm
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlushFence);
 public:
-    static Ref<RemoteImageBufferSetProxyFlushFence> NODELETE create(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)
+    static Ref<RemoteImageBufferSetProxyFlushFence> LEGACY_NODELETE create(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)
     {
         return adoptRef(*new RemoteImageBufferSetProxyFlushFence { renderingUpdateID, timeoutDuration });
     }
@@ -69,7 +69,7 @@ public:
         return std::exchange(m_handles, std::nullopt);
     }
 
-    RenderingUpdateID NODELETE renderingUpdateID() const { return m_renderingUpdateID; }
+    RenderingUpdateID LEGACY_NODELETE renderingUpdateID() const { return m_renderingUpdateID; }
 
 private:
     RemoteImageBufferSetProxyFlushFence(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)

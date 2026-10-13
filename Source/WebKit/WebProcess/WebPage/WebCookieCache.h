@@ -58,7 +58,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    bool NODELETE isSupported();
+    bool LEGACY_NODELETE isSupported();
 
     String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, WebCore::IncludeSecureCookies);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
@@ -79,7 +79,7 @@ private:
     NetworkStorageSession& inMemoryStorageSession();
 
     void pruneCacheIfNecessary();
-    bool NODELETE cacheMayBeOutOfSync() const;
+    bool LEGACY_NODELETE cacheMayBeOutOfSync() const;
 
     // CookieChangeListener
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) final;

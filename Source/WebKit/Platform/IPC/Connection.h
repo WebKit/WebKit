@@ -433,8 +433,8 @@ public:
     static RefPtr<Connection> connection(UniqueID);
     UniqueID uniqueID() const { return m_uniqueID; }
 
-    void NODELETE setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
-    void NODELETE setShouldExitOnSyncMessageSendFailure(bool);
+    void LEGACY_NODELETE setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
+    void LEGACY_NODELETE setShouldExitOnSyncMessageSendFailure(bool);
 
     // The set callback will be called on the connection work queue when the connection is closed,
     // before didCall is called on the client thread. Must be called before the connection is opened.
@@ -442,7 +442,7 @@ public:
     // on the work queue, for example if we want to handle them on some other thread we could avoid
     // handling the message on the client thread first.
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
-    void NODELETE setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
+    void LEGACY_NODELETE setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
 
     using OutgoingMessageQueueIsGrowingLargeCallback = Function<void()>;
     void setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQueueIsGrowingLargeCallback&&);
@@ -587,7 +587,7 @@ public:
 
     void ignoreTimeoutsForTesting() { m_ignoreTimeoutsForTesting = true; }
 
-    void NODELETE enableIncomingMessagesThrottling();
+    void LEGACY_NODELETE enableIncomingMessagesThrottling();
 
 #if ENABLE(IPC_TESTING_API)
     void addMessageObserver(const MessageObserver&);
@@ -623,14 +623,14 @@ public:
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static bool signpostsEnabled();
-    static void NODELETE forceEnableSignposts();
+    static void LEGACY_NODELETE forceEnableSignposts();
 #endif
 
-    static bool NODELETE shouldCrashOnMessageCheckFailure();
-    static void NODELETE setShouldCrashOnMessageCheckFailure(bool);
+    static bool LEGACY_NODELETE shouldCrashOnMessageCheckFailure();
+    static void LEGACY_NODELETE setShouldCrashOnMessageCheckFailure(bool);
 
 #if PLATFORM(COCOA)
-    static void NODELETE setForceUseSharedMemoryForSendingForTesting(bool);
+    static void LEGACY_NODELETE setForceUseSharedMemoryForSendingForTesting(bool);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -656,7 +656,7 @@ private:
     Connection(Identifier&&, bool isServer, ThreadQOS = ThreadQOS::Default);
     Connection();
     void platformInitialize(Identifier&&);
-    bool NODELETE platformPrepareForOpen();
+    bool LEGACY_NODELETE platformPrepareForOpen();
     void platformOpen();
     void platformInvalidate();
 
@@ -683,7 +683,7 @@ private:
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
     bool canSendOutgoingMessages() const;
-    bool NODELETE platformCanSendOutgoingMessages() const;
+    bool LEGACY_NODELETE platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
     bool sendOutgoingMessage(UniqueRef<Encoder>&&);
     void connectionDidClose();
@@ -706,7 +706,7 @@ private:
     size_t incomingMessagesDispatchingBatchSize() const;
     CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID);
 
-    Timeout NODELETE timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
+    Timeout LEGACY_NODELETE timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
 
     Error sendMessageImpl(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<ThreadQOS> = std::nullopt);
 

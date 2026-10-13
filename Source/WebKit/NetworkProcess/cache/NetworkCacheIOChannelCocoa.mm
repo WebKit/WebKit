@@ -39,7 +39,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-static long NODELETE dispatchQueueIdentifier(WorkQueue::QOS qos)
+static long LEGACY_NODELETE dispatchQueueIdentifier(WorkQueue::QOS qos)
 {
     switch (qos) {
     case WorkQueue::QOS::UserInteractive:

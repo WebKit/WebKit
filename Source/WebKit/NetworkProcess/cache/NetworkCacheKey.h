@@ -79,7 +79,7 @@ public:
     const HashType& hash() const LIFETIME_BOUND { return m_hash; }
     const HashType& partitionHash() const LIFETIME_BOUND { return m_partitionHash; }
 
-    static bool NODELETE stringToHash(const String&, HashType&);
+    static bool LEGACY_NODELETE stringToHash(const String&, HashType&);
 
     static size_t hashStringLength() { return 2 * sizeof(m_hash); }
     String hashAsString() const { return hashAsString(m_hash); }

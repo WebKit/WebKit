@@ -182,7 +182,7 @@ Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& r
     return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt() };
 }
 
-static bool NODELETE cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
+static bool LEGACY_NODELETE cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
 {
     switch (policy) {
     case WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad:

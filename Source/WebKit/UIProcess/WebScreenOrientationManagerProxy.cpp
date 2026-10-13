@@ -90,7 +90,7 @@ void WebScreenOrientationManagerProxy::setCurrentOrientation(WebCore::ScreenOrie
         m_currentLockRequest(std::nullopt);
 }
 
-SUPPRESS_NODELETE static WebCore::ScreenOrientationType NODELETE resolveScreenOrientationLockType(WebCore::ScreenOrientationType currentOrientation, WebCore::ScreenOrientationLockType lockType)
+SUPPRESS_NODELETE static WebCore::ScreenOrientationType LEGACY_NODELETE resolveScreenOrientationLockType(WebCore::ScreenOrientationType currentOrientation, WebCore::ScreenOrientationLockType lockType)
 {
     switch (lockType) {
     case WebCore::ScreenOrientationLockType::Any:

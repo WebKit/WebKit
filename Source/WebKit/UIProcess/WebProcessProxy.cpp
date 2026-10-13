@@ -2373,7 +2373,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
             }
         }
 
-        WebProcessProxy& NODELETE process() const { return m_webProcessProxy; }
+        WebProcessProxy& LEGACY_NODELETE process() const { return m_webProcessProxy; }
 
         WeakRef<WebProcessProxy> m_webProcessProxy;
     };

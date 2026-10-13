@@ -60,10 +60,10 @@ public:
     }
 
     [[nodiscard]] bool decodeFixedLengthData(std::span<uint8_t> data);
-    std::span<const uint8_t> NODELETE decodeFixedLengthReference(size_t);
+    std::span<const uint8_t> LEGACY_NODELETE decodeFixedLengthReference(size_t);
 
 private:
-    [[nodiscard]] bool NODELETE bufferIsLargeEnoughToContainBytes(size_t) const;
+    [[nodiscard]] bool LEGACY_NODELETE bufferIsLargeEnoughToContainBytes(size_t) const;
 
     std::span<const uint8_t> m_buffer;
     size_t m_bufferPosition { 0 };

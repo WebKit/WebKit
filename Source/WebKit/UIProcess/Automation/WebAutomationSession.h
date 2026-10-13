@@ -156,7 +156,7 @@ public:
     public:
         static Ref<Debuggable> create(WebAutomationSession&);
 
-        void NODELETE sessionDestroyed();
+        void LEGACY_NODELETE sessionDestroyed();
 
     // Inspector::RemoteAutomationTarget API
     String name() const;
@@ -178,7 +178,7 @@ public:
 
     bool siteIsolationEnabled() const { return m_siteIsolationEnabled; }
 
-    WebProcessPool* NODELETE processPool() const;
+    WebProcessPool* LEGACY_NODELETE processPool() const;
     void setProcessPool(WebProcessPool*);
 
     void navigationOccurredForFrame(const WebFrameProxy&);
@@ -209,7 +209,7 @@ public:
     void didEnterFullScreenForPage(const WebPageProxy&);
     void didExitFullScreenForPage(const WebPageProxy&);
 
-    bool NODELETE shouldAllowGetUserMediaForPage(const WebPageProxy&) const;
+    bool LEGACY_NODELETE shouldAllowGetUserMediaForPage(const WebPageProxy&) const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     String name() const { return m_sessionIdentifier; }
@@ -218,8 +218,8 @@ public:
     void disconnect(Inspector::FrontendChannel&);
 
     void init();
-    bool NODELETE isPaired() const;
-    bool NODELETE isPendingTermination() const;
+    bool LEGACY_NODELETE isPaired() const;
+    bool LEGACY_NODELETE isPendingTermination() const;
 #endif
 
     void terminate();
@@ -328,7 +328,7 @@ public:
 #endif
 
     // Event Simulation Support.
-    bool NODELETE isSimulatingUserInteraction() const;
+    bool LEGACY_NODELETE isSimulatingUserInteraction() const;
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&);
 #endif
@@ -394,11 +394,11 @@ private:
 
     // Platform-dependent implementations.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-    void NODELETE resetMouseState();
+    void LEGACY_NODELETE resetMouseState();
     void updateClickCount(MouseButton, const WebCore::IntPoint&, Seconds maxTime = 0.5_s, int maxDistance = 0);
-    void NODELETE updateLastPosition(const WebCore::IntPoint&, int maxDistance = 0);
+    void LEGACY_NODELETE updateLastPosition(const WebCore::IntPoint&, int maxDistance = 0);
     void platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInViewport, OptionSet<WebEventModifier>, const String& pointerType);
-    static OptionSet<WebEventModifier> NODELETE platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers);
+    static OptionSet<WebEventModifier> LEGACY_NODELETE platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers);
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
     // Simulates a single touch point being pressed, moved, and released.
@@ -426,8 +426,8 @@ private:
     // The type parameter of the NSArray argument is platform-dependent.
     void sendSynthesizedEventsToPage(WebPageProxy&, NSArray *eventsToSend);
 
-    std::optional<unichar> NODELETE charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
-    std::optional<unichar> NODELETE charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+    std::optional<unichar> LEGACY_NODELETE charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+    std::optional<unichar> LEGACY_NODELETE charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     // Where the WebDriver key table states a DOM identity for the key, attaches it to each of the

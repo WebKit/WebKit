@@ -69,20 +69,20 @@ public:
     std::optional<StorageType> toStorageType(WebsiteDataType) const;
     String toStorageIdentifier(StorageType) const;
     StorageBucket(const String& rootPath, const String& identifier, const String& localStoragePath, const String& idbStoragePath, const String& cacheStoragePath, UnifiedOriginStorageLevel);
-    StorageBucketMode NODELETE mode() const { return m_mode; }
-    void NODELETE setMode(StorageBucketMode mode) { m_mode = mode; }
+    StorageBucketMode LEGACY_NODELETE mode() const { return m_mode; }
+    void LEGACY_NODELETE setMode(StorageBucketMode mode) { m_mode = mode; }
     void connectionClosed(IPC::Connection::UniqueID);
     String typeStoragePath(StorageType) const;
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, FileSystemStorageManager::QuotaCheckFunction&&);
-    FileSystemStorageManager* NODELETE existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
+    FileSystemStorageManager* LEGACY_NODELETE existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
-    LocalStorageManager* NODELETE existingLocalStorageManager() { return m_localStorageManager.get(); }
+    LocalStorageManager* LEGACY_NODELETE existingLocalStorageManager() { return m_localStorageManager.get(); }
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
-    SessionStorageManager* NODELETE existingSessionStorageManager() { return m_sessionStorageManager.get(); }
+    SessionStorageManager* LEGACY_NODELETE existingSessionStorageManager() { return m_sessionStorageManager.get(); }
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&, IDBStorageManager::QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
-    IDBStorageManager* NODELETE existingIDBStorageManager() { return m_idbStorageManager.get(); }
+    IDBStorageManager* LEGACY_NODELETE existingIDBStorageManager() { return m_idbStorageManager.get(); }
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, CacheStorageManager::QuotaCheckFunction&&, Ref<WorkQueue>&&);
-    CacheStorageManager* NODELETE existingCacheStorageManager() { return m_cacheStorageManager.get(); }
+    CacheStorageManager* LEGACY_NODELETE existingCacheStorageManager() { return m_cacheStorageManager.get(); }
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&, BackgroundFetchStoreManager::QuotaCheckFunction&&);
     ServiceWorkerStorageManager& serviceWorkerStorageManager();
     uint64_t cacheStorageSize();
@@ -156,7 +156,7 @@ void OriginStorageManager::StorageBucket::connectionClosed(IPC::Connection::Uniq
         manager->connectionClosed(connection);
 }
 
-std::optional<OriginStorageManager::StorageBucket::StorageType> NODELETE OriginStorageManager::StorageBucket::toStorageType(WebsiteDataType websiteDataType) const
+std::optional<OriginStorageManager::StorageBucket::StorageType> LEGACY_NODELETE OriginStorageManager::StorageBucket::toStorageType(WebsiteDataType websiteDataType) const
 {
     switch (websiteDataType) {
     case WebsiteDataType::FileSystem:

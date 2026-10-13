@@ -104,7 +104,7 @@ private:
         WebCore::PlatformDisplayID displayID;
         WebCore::FramesPerSecond nominalFrameRate;
     };
-    std::optional<DisplayProperties> NODELETE displayProperties(WebCore::PageIdentifier) const;
+    std::optional<DisplayProperties> LEGACY_NODELETE displayProperties(WebCore::PageIdentifier) const;
 
     void dispatchSyntheticMomentumEvent(WebWheelEvent::Phase, WebCore::FloatSize delta);
 

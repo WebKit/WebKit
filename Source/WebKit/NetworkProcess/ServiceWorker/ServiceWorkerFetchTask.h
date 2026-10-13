@@ -97,9 +97,9 @@ public:
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    MonotonicTime NODELETE startTime() const;
+    MonotonicTime LEGACY_NODELETE startTime() const;
 
-    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
 
 private:
     ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady, bool shouldRaceNetworkAndFetchHandler);
@@ -111,7 +111,7 @@ private:
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::SharedBufferReference&);
     void didReceiveDataFromPreloader(const WebCore::FragmentedSharedBuffer&);
-    void NODELETE didReceiveFormData(const IPC::FormDataReference&);
+    void LEGACY_NODELETE didReceiveFormData(const IPC::FormDataReference&);
     void didFinish(const WebCore::NetworkLoadMetrics&);
     void didFail(const WebCore::ResourceError&);
     void didNotHandle();
@@ -137,7 +137,7 @@ private:
     void finishLoadingWithCacheResponse(WebCore::DOMCacheEngine::Record&&);
     void sendData(Ref<WebCore::SharedBuffer>&&);
 
-    RefPtr<IPC::Connection> NODELETE serviceWorkerConnection();
+    RefPtr<IPC::Connection> LEGACY_NODELETE serviceWorkerConnection();
     template<typename Message> bool sendToClient(Message&&);
 
     void sendNavigationPreloadUpdate();

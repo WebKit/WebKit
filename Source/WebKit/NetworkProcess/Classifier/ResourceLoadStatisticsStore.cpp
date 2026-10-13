@@ -334,7 +334,7 @@ static String buildList(const ContainerType& values)
     return builder.toString();
 }
 
-static WeakHashSet<ResourceLoadStatisticsStore>& NODELETE allStores()
+static WeakHashSet<ResourceLoadStatisticsStore>& LEGACY_NODELETE allStores()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -983,7 +983,7 @@ void ResourceLoadStatisticsStore::addMissingTablesIfNecessary()
         ITP_RELEASE_LOG_ERROR("addMissingTablesIfNecessary: failed to create unique indices");
 }
 
-template<typename T, typename U, size_t size> bool NODELETE vectorEqualsArray(const Vector<T>& vector, const std::array<U, size> array)
+template<typename T, typename U, size_t size> bool LEGACY_NODELETE vectorEqualsArray(const Vector<T>& vector, const std::array<U, size> array)
 {
     if (vector.size() != size)
         return false;
@@ -1449,7 +1449,7 @@ Vector<ITPThirdPartyDataForSpecificFirstParty> ResourceLoadStatisticsStore::getT
     return thirdPartyDataForSpecificFirstPartyDomains;
 }
 
-static bool NODELETE hasBeenThirdParty(unsigned timesUnderFirstParty)
+static bool LEGACY_NODELETE hasBeenThirdParty(unsigned timesUnderFirstParty)
 {
     return timesUnderFirstParty > 0;
 }
@@ -3146,7 +3146,7 @@ void ResourceLoadStatisticsStore::appendSubStatisticList(StringBuilder& builder,
     }
 }
 
-SUPPRESS_NODELETE static bool NODELETE hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds, WallTime now)
+SUPPRESS_NODELETE static bool LEGACY_NODELETE hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds, WallTime now)
 {
     return interactionTimeSeconds > Seconds(0) && now.secondsSinceEpoch() - interactionTimeSeconds < 24_h;
 }

@@ -138,10 +138,10 @@ public:
     WebPage* page() const;
 
     static WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>);
-    static WebFrame* NODELETE fromCoreFrame(const WebCore::Frame&);
-    WebCore::LocalFrame* NODELETE coreLocalFrame() const;
-    WebCore::RemoteFrame* NODELETE coreRemoteFrame() const;
-    WebCore::Frame* NODELETE coreFrame() const;
+    static WebFrame* LEGACY_NODELETE fromCoreFrame(const WebCore::Frame&);
+    WebCore::LocalFrame* LEGACY_NODELETE coreLocalFrame() const;
+    WebCore::RemoteFrame* LEGACY_NODELETE coreRemoteFrame() const;
+    WebCore::Frame* LEGACY_NODELETE coreFrame() const;
 
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
     void commitProvisionalFrame();
@@ -181,14 +181,14 @@ public:
     WebCore::IntSize size() const;
 
     // WKBundleFrame API and SPI functions
-    bool NODELETE isMainFrame() const;
+    bool LEGACY_NODELETE isMainFrame() const;
     bool isRootFrame() const;
     String name() const;
     URL url() const;
     WebCore::CertificateInfo certificateInfo() const;
     String innerText() const;
     bool isFrameSet() const;
-    RefPtr<WebFrame> NODELETE parentFrame() const;
+    RefPtr<WebFrame> LEGACY_NODELETE parentFrame() const;
     Ref<API::Array> childFrames();
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(WebCore::DOMWrapperWorld&);
@@ -216,7 +216,7 @@ public:
     RefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint, OptionSet<WebCore::HitTestRequest::Type> = defaultHitTestRequestTypes()) const;
 
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
-    bool NODELETE containsAnyFormElements() const;
+    bool LEGACY_NODELETE containsAnyFormElements() const;
     bool containsAnyFormControls() const;
     void stopLoading();
     void setAccessibleName(const AtomString&);
@@ -256,10 +256,10 @@ public:
     void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
 
-    WebLocalFrameLoaderClient* NODELETE localFrameLoaderClient() const;
+    WebLocalFrameLoaderClient* LEGACY_NODELETE localFrameLoaderClient() const;
 
-    WebRemoteFrameClient* NODELETE remoteFrameClient() const;
-    WebFrameLoaderClient* NODELETE frameLoaderClient() const;
+    WebRemoteFrameClient* LEGACY_NODELETE remoteFrameClient() const;
+    WebFrameLoaderClient* LEGACY_NODELETE frameLoaderClient() const;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections();
@@ -280,7 +280,7 @@ public:
     WebCore::HandleUserInputEventResult handleMouseEvent(const WebMouseEvent&);
     bool handleKeyEvent(const WebKeyboardEvent&);
 
-    bool NODELETE isFocused() const;
+    bool LEGACY_NODELETE isFocused() const;
 
     String frameTextForTesting(bool);
 

@@ -213,7 +213,7 @@ public:
 
     static bool isURLForAnyExtension(const URL&);
 
-    static WebExtensionContext* NODELETE get(WebExtensionContextIdentifier);
+    static WebExtensionContext* LEGACY_NODELETE get(WebExtensionContextIdentifier);
 
 #if PLATFORM(COCOA)
     explicit WebExtensionContext(Ref<WebExtension>&&);
@@ -374,7 +374,7 @@ public:
     };
 #endif
 
-    WebExtensionContextIdentifier NODELETE privilegedIdentifier() const;
+    WebExtensionContextIdentifier LEGACY_NODELETE privilegedIdentifier() const;
 
     WebExtensionContextParameters parameters(IncludePrivilegedIdentifier, WebProcessProxy& destinationProcess) const;
 
@@ -434,7 +434,7 @@ public:
     bool hasInjectedContent();
     bool safeToInjectContent() const { return isLoaded() && m_safeToInjectContent; }
 
-    bool NODELETE hasContentModificationRules();
+    bool LEGACY_NODELETE hasContentModificationRules();
 
     URL optionsPageURL() const;
     URL overrideNewTabPageURL() const;
@@ -627,10 +627,10 @@ public:
 #endif
 
     void userGesturePerformed(WebExtensionTab&);
-    bool NODELETE hasActiveUserGesture(WebExtensionTab&) const;
+    bool LEGACY_NODELETE hasActiveUserGesture(WebExtensionTab&) const;
     void clearUserGesture(WebExtensionTab&);
 
-    bool NODELETE inTestingMode() const;
+    bool LEGACY_NODELETE inTestingMode() const;
 
 #if PLATFORM(COCOA)
     void sendTestMessage(const String& message, id argument);
@@ -728,7 +728,7 @@ public:
 
     HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&, NOESCAPE const Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>& predicate = nullptr) const;
 
-    const UserContentControllerProxySet& NODELETE userContentControllers() const LIFETIME_BOUND;
+    const UserContentControllerProxySet& LEGACY_NODELETE userContentControllers() const LIFETIME_BOUND;
 
     template<typename T>
     void sendToProcesses(const WebProcessProxySet&, const T& message) const;
@@ -752,7 +752,7 @@ private:
 
     explicit WebExtensionContext();
 
-    int NODELETE toAPIError(WebExtensionContext::Error);
+    int LEGACY_NODELETE toAPIError(WebExtensionContext::Error);
 
     String stateFilePath() const;
 #if PLATFORM(COCOA)
@@ -785,7 +785,7 @@ private:
     bool isBackgroundPage(WebCore::FrameIdentifier) const;
     bool isBackgroundPage(WebPageProxyIdentifier) const;
     bool isExtensionPage(WebPageProxyIdentifier) const;
-    bool NODELETE backgroundContentIsLoaded() const;
+    bool LEGACY_NODELETE backgroundContentIsLoaded() const;
 
     bool isNotRunningInTestRunner();
 
@@ -832,7 +832,7 @@ private:
     void unloadInspectorBackgroundPage(WebInspectorUIProxy&);
 
     RefPtr<API::InspectorExtension> inspectorExtension(WebPageProxyIdentifier) const;
-    RefPtr<WebInspectorUIProxy> NODELETE inspector(const API::InspectorExtension&) const;
+    RefPtr<WebInspectorUIProxy> LEGACY_NODELETE inspector(const API::InspectorExtension&) const;
     HashSet<Ref<WebProcessProxy>> processes(const API::InspectorExtension&) const;
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
@@ -1141,7 +1141,7 @@ private:
 
     bool isLoaded(IPC::Decoder&) const { return isLoaded(); }
     bool isLoadedAndPrivilegedMessage(IPC::Decoder& message) const { return isLoaded() && isPrivilegedMessage(message); }
-    bool NODELETE isPrivilegedMessage(IPC::Decoder&) const;
+    bool LEGACY_NODELETE isPrivilegedMessage(IPC::Decoder&) const;
 
     mutable Markable<WebExtensionContextIdentifier> m_privilegedIdentifier;
 
@@ -1311,7 +1311,7 @@ private:
     Deque<TestMessage> m_testStartedQueue;
     Deque<TestMessage> m_testFinishedQueue;
 
-    bool NODELETE hasTestEventListeners(WebExtensionEventListenerType);
+    bool LEGACY_NODELETE hasTestEventListeners(WebExtensionEventListenerType);
     void sendQueuedTestMessagesIfNeeded(WebExtensionEventListenerType);
 #if PLATFORM(COCOA)
     void addTestMessageToQueue(const String& message, id argument, WebExtensionEventListenerType);

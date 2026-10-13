@@ -41,7 +41,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>& NODELETE webExtensionControllerProxies()
+static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>& LEGACY_NODELETE webExtensionControllerProxies()
 {
     static MainRunLoopNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>> controllers;
     return controllers;

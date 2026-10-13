@@ -42,13 +42,13 @@ namespace PCM {
 
 class DaemonConnectionSet {
 public:
-    static DaemonConnectionSet& NODELETE singleton();
+    static DaemonConnectionSet& LEGACY_NODELETE singleton();
     
     void add(xpc_connection_t);
     void remove(xpc_connection_t);
 
     void setConnectedNetworkProcessHasDebugModeEnabled(const Daemon::Connection&, bool);
-    bool NODELETE debugModeEnabled() const;
+    bool LEGACY_NODELETE debugModeEnabled() const;
     void broadcastConsoleMessage(JSC::MessageLevel, const String&);
     
 private:

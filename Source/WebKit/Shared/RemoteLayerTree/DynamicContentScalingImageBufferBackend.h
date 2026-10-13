@@ -45,7 +45,7 @@ public:
     DynamicContentScalingImageBufferBackend(const WebCore::ImageBufferParameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
     ~DynamicContentScalingImageBufferBackend();
 
-    WebCore::GraphicsContext& NODELETE context() LIFETIME_BOUND final;
+    WebCore::GraphicsContext& LEGACY_NODELETE context() LIFETIME_BOUND final;
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
 
     void releaseGraphicsContext() final;

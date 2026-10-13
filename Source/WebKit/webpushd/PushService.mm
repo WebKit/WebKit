@@ -217,8 +217,8 @@ public:
 
     virtual ASCIILiteral description() const = 0;
 
-    const PushSubscriptionSetIdentifier& NODELETE subscriptionSetIdentifier() const { return m_identifier; }
-    const String& NODELETE scope() const { return m_scope; };
+    const PushSubscriptionSetIdentifier& LEGACY_NODELETE subscriptionSetIdentifier() const { return m_identifier; }
+    const String& LEGACY_NODELETE scope() const { return m_scope; };
 
     virtual void start() = 0;
 
@@ -234,9 +234,9 @@ protected:
     {
     }
 
-    PushService& NODELETE service() const { return m_service.get(); }
-    PushServiceConnection& NODELETE connection() const { return m_connection.get(); }
-    PushDatabase& NODELETE database() const { return m_database.get(); }
+    PushService& LEGACY_NODELETE service() const { return m_service.get(); }
+    PushServiceConnection& LEGACY_NODELETE connection() const { return m_connection.get(); }
+    PushDatabase& LEGACY_NODELETE database() const { return m_database.get(); }
 
     virtual void finish() = 0;
 

@@ -71,8 +71,8 @@ struct InteractionInformationRequest {
     {
     }
 
-    bool NODELETE isValidForRequest(const InteractionInformationRequest&, int radius = 0) const;
-    bool NODELETE isApproximatelyValidForRequest(const InteractionInformationRequest&, int radius) const;
+    bool LEGACY_NODELETE isValidForRequest(const InteractionInformationRequest&, int radius = 0) const;
+    bool LEGACY_NODELETE isApproximatelyValidForRequest(const InteractionInformationRequest&, int radius) const;
 };
 
 }

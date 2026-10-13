@@ -36,7 +36,7 @@ public:
 
     ~CompletionHandlerCallChecker();
 
-    void NODELETE didCallCompletionHandler();
+    void LEGACY_NODELETE didCallCompletionHandler();
     bool completionHandlerHasBeenCalled() const;
 
 private:

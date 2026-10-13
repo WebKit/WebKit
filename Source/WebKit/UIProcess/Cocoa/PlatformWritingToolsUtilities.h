@@ -55,27 +55,27 @@ namespace WebKit {
 
 #pragma mark - Conversions from web types to platform types.
 
-CocoaWritingToolsBehavior NODELETE convertToCocoaWritingToolsBehavior(WebCore::WritingTools::Behavior);
+CocoaWritingToolsBehavior LEGACY_NODELETE convertToCocoaWritingToolsBehavior(WebCore::WritingTools::Behavior);
 
-WTRequestedTool NODELETE convertToPlatformRequestedTool(WebCore::WritingTools::RequestedTool);
+WTRequestedTool LEGACY_NODELETE convertToPlatformRequestedTool(WebCore::WritingTools::RequestedTool);
 
-WTTextSuggestionState NODELETE convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestionState);
+WTTextSuggestionState LEGACY_NODELETE convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestionState);
 
 RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context&);
 
 #pragma mark - Conversions from platform types to web types.
 
-WebCore::WritingTools::Behavior NODELETE convertToWebWritingToolsBehavior(CocoaWritingToolsBehavior);
+WebCore::WritingTools::Behavior LEGACY_NODELETE convertToWebWritingToolsBehavior(CocoaWritingToolsBehavior);
 
-WebCore::WritingTools::RequestedTool NODELETE convertToWebRequestedTool(WTRequestedTool);
+WebCore::WritingTools::RequestedTool LEGACY_NODELETE convertToWebRequestedTool(WTRequestedTool);
 
-WebCore::WritingTools::TextSuggestionState NODELETE convertToWebTextSuggestionState(WTTextSuggestionState);
+WebCore::WritingTools::TextSuggestionState LEGACY_NODELETE convertToWebTextSuggestionState(WTTextSuggestionState);
 
-WebCore::WritingTools::Action NODELETE convertToWebAction(WTAction);
+WebCore::WritingTools::Action LEGACY_NODELETE convertToWebAction(WTAction);
 
-WebCore::WritingTools::SessionType NODELETE convertToWebSessionType(WTSessionType);
+WebCore::WritingTools::SessionType LEGACY_NODELETE convertToWebSessionType(WTSessionType);
 
-WebCore::WritingTools::SessionCompositionType NODELETE convertToWebCompositionSessionType(WTCompositionSessionType);
+WebCore::WritingTools::SessionCompositionType LEGACY_NODELETE convertToWebCompositionSessionType(WTCompositionSessionType);
 
 std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *);
 

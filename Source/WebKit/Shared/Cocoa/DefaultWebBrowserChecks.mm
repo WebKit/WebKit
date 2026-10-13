@@ -133,7 +133,7 @@ static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter,
 #endif
 }
 
-static RefPtr<WorkQueue>& NODELETE itpQueue()
+static RefPtr<WorkQueue>& LEGACY_NODELETE itpQueue()
 {
     static NeverDestroyed<RefPtr<WorkQueue>> itpQueue;
     return itpQueue;

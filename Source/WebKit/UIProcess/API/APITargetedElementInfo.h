@@ -70,7 +70,7 @@ public:
 
     const HashSet<WTF::URL>& mediaAndLinkURLs() const LIFETIME_BOUND { return m_info.mediaAndLinkURLs; }
 
-    bool NODELETE isSameElement(const TargetedElementInfo&) const;
+    bool LEGACY_NODELETE isSameElement(const TargetedElementInfo&) const;
 
     WebCore::NodeIdentifier nodeIdentifier() const { return m_info.nodeIdentifier; }
     WebCore::ScriptExecutionContextIdentifier documentIdentifier() const { return m_info.documentIdentifier; }

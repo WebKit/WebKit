@@ -67,7 +67,7 @@ public:
     explicit WebSharedWorkerServer(NetworkSession&);
     ~WebSharedWorkerServer();
 
-    PAL::SessionID NODELETE sessionID();
+    PAL::SessionID LEGACY_NODELETE sessionID();
     using ContextConnectionKey = std::pair<WebCore::RegistrableDomain, WebCore::CrossOriginEmbedderPolicyValue>;
     WebSharedWorkerServerToContextConnection* contextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&, WebCore::CrossOriginEmbedderPolicyValue) const;
 

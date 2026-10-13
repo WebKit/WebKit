@@ -70,7 +70,7 @@ public:
 
     virtual bool isPointInScrollbar(WebCore::FloatPoint locationInViewCoordinates) { return false; }
 
-    RemoteScrollingCoordinatorProxy* NODELETE scrollingCoordinatorProxy() const;
+    RemoteScrollingCoordinatorProxy* LEGACY_NODELETE scrollingCoordinatorProxy() const;
 
     void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction = WebCore::ScrollingLayerPositionAction::Sync) override;
     void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingTreeScrollingNode&) override;

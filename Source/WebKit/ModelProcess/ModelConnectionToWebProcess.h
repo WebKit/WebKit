@@ -92,7 +92,7 @@ public:
 
     ModelProcessModelPlayerManagerProxy& modelProcessModelPlayerManagerProxy() { return m_modelProcessModelPlayerManagerProxy.get(); }
 
-    Logger& NODELETE logger();
+    Logger& LEGACY_NODELETE logger();
 
     const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }
 

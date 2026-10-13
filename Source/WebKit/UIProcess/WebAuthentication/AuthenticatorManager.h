@@ -71,7 +71,7 @@ public:
     virtual bool isMock() const { return false; }
     virtual bool isVirtual() const { return false; }
 
-    void NODELETE enableNativeSupport();
+    void LEGACY_NODELETE enableNativeSupport();
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

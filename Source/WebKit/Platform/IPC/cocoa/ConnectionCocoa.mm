@@ -287,12 +287,12 @@ bool Connection::platformCanSendOutgoingMessages() const
 }
 
 template<typename descriptorType>
-static descriptorType& NODELETE popDescriptorAndAdvance(std::span<uint8_t>& data)
+static descriptorType& LEGACY_NODELETE popDescriptorAndAdvance(std::span<uint8_t>& data)
 {
     return consumeAndReinterpretCastTo<descriptorType>(data);
 }
 
-static void NODELETE setPortDescriptor(std::span<uint8_t>& messageSpan, mach_port_t sendRight)
+static void LEGACY_NODELETE setPortDescriptor(std::span<uint8_t>& messageSpan, mach_port_t sendRight)
 {
     auto& descriptor = popDescriptorAndAdvance<mach_msg_port_descriptor_t>(messageSpan);
     descriptor.name = sendRight;

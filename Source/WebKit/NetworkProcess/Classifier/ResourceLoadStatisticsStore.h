@@ -115,7 +115,7 @@ public:
     Vector<ITPThirdPartyData> aggregatedThirdPartyData() const;
     void updateCookieBlocking(CompletionHandler<void()>&&);
     void processStatisticsAndDataRecords(CompletionHandler<void()>&&);
-    void NODELETE cancelPendingStatisticsProcessingRequest();
+    void LEGACY_NODELETE cancelPendingStatisticsProcessingRequest();
     void mergeStatistics(Vector<ResourceLoadStatistics>&&);
     void runIncrementalVacuumCommand();
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
@@ -130,7 +130,7 @@ public:
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
     void setGrandfathered(const RegistrableDomain&, bool value);
     bool isGrandfathered(const RegistrableDomain&) const;
-    void NODELETE setGrandfatheringTime(Seconds);
+    void LEGACY_NODELETE setGrandfatheringTime(Seconds);
 
     bool isRegisteredAsSubresourceUnder(const SubResourceDomain&, const TopFrameDomain&) const;
     bool isRegisteredAsSubFrameUnder(const SubFrameDomain&, const TopFrameDomain&) const;
@@ -150,18 +150,18 @@ public:
     void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&);
     void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&);
 
-    void NODELETE setIsRunningTest(bool);
+    void LEGACY_NODELETE setIsRunningTest(bool);
     void logTestingEvent(String&&);
     void setTimeAdvanceForTesting(Seconds);
 
-    void NODELETE setMaxStatisticsEntries(size_t maximumEntryCount);
-    void NODELETE setPruneEntriesDownTo(size_t pruneTargetCount);
+    void LEGACY_NODELETE setMaxStatisticsEntries(size_t maximumEntryCount);
+    void LEGACY_NODELETE setPruneEntriesDownTo(size_t pruneTargetCount);
     void resetParametersToDefaultValues();
 
     bool shouldSkip(const RegistrableDomain&) const;
-    void NODELETE setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
-    void NODELETE setTimeToLiveUserInteraction(Seconds);
-    void NODELETE setMinimumTimeBetweenDataRecordsRemoval(Seconds);
+    void LEGACY_NODELETE setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
+    void LEGACY_NODELETE setTimeToLiveUserInteraction(Seconds);
+    void LEGACY_NODELETE setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setResourceLoadStatisticsDebugMode(bool);
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
     void setPrevalentResourceForDebugMode(const RegistrableDomain&);
@@ -318,7 +318,7 @@ private:
     void setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain&, DataRemovalFrequency);
     DataRemovalFrequency dataRemovalFrequency(const RegistrableDomain&) const;
     void clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const NavigatedToDomain&, CompletionHandler<void()>&&);
-    bool NODELETE shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
+    bool LEGACY_NODELETE shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor();
 
     bool shouldRemoveDataRecords() const;
@@ -334,7 +334,7 @@ private:
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     std::span<const ASCIILiteral> sortedTables() final;
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
-    std::optional<WallTime> NODELETE mostRecentUserInteractionTime(const DomainData&);
+    std::optional<WallTime> LEGACY_NODELETE mostRecentUserInteractionTime(const DomainData&);
     void grandfatherDataForDomains(const HashSet<RegistrableDomain>&);
     bool areAllUnpartitionedThirdPartyCookiesBlockedUnder(const TopFrameDomain&);
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const;

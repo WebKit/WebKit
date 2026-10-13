@@ -110,8 +110,8 @@ public:
         HasMoreMessages
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
-    void NODELETE markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
-    void NODELETE markCurrentlyDispatchedMessageAsInvalid(const String&);
+    void LEGACY_NODELETE markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
+    void LEGACY_NODELETE markCurrentlyDispatchedMessageAsInvalid(const String&);
 
     void open(Client&, StreamConnectionWorkQueue&);
     void invalidate();

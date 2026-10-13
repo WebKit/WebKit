@@ -41,7 +41,7 @@ namespace WebKit {
 using namespace WebCore;
 
 using ExtensionMap = HashMap<WeakRef<WebCore::DOMWindowExtension>, WeakRef<InjectedBundleDOMWindowExtension>>;
-static ExtensionMap& NODELETE allExtensions()
+static ExtensionMap& LEGACY_NODELETE allExtensions()
 {
     static NeverDestroyed<ExtensionMap> map;
     return map;

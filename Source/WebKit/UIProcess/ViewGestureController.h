@@ -122,7 +122,7 @@ public:
     static constexpr double defaultMaxMagnification { 3 };
 
     static Ref<ViewGestureController> create(WebPageProxy&);
-    static ViewGestureController* NODELETE controllerForPage(WebPageProxyIdentifier);
+    static ViewGestureController* LEGACY_NODELETE controllerForPage(WebPageProxyIdentifier);
     ~ViewGestureController();
 
     void ref() const final { RefCounted::ref(); }
@@ -196,7 +196,7 @@ public:
     void endMagnification();
 #endif
 
-    void NODELETE setAlternateBackForwardListSourcePage(WebPageProxy*);
+    void LEGACY_NODELETE setAlternateBackForwardListSourcePage(WebPageProxy*);
 
     bool canSwipeInDirection(SwipeDirection, DeferToConflictingGestures) const;
 
@@ -242,9 +242,9 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    static ViewGestureController* NODELETE controllerForGesture(WebPageProxyIdentifier, GestureID);
+    static ViewGestureController* LEGACY_NODELETE controllerForGesture(WebPageProxyIdentifier, GestureID);
 
-    static GestureID NODELETE takeNextGestureID();
+    static GestureID LEGACY_NODELETE takeNextGestureID();
     void willBeginGesture(ViewGestureType);
     void didEndGesture();
     void resetState();
@@ -255,7 +255,7 @@ private:
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
     std::optional<WebBackForwardList> backForwardListForNavigation() const;
 #else
-    WebBackForwardList* NODELETE backForwardListForNavigation() const;
+    WebBackForwardList* LEGACY_NODELETE backForwardListForNavigation() const;
 #endif
 #endif
 
@@ -287,7 +287,7 @@ private:
         enum class ShouldIgnoreEventIfPaused : bool { No, Yes };
         bool eventOccurred(Events, ShouldIgnoreEventIfPaused = ShouldIgnoreEventIfPaused::Yes);
         bool cancelOutstandingEvent(Events);
-        bool NODELETE hasOutstandingEvent(Event);
+        bool LEGACY_NODELETE hasOutstandingEvent(Event);
 
         void startWatchdog(Seconds);
 
@@ -325,7 +325,7 @@ private:
 
     void endMagnificationGesture();
 
-    WebCore::FloatPoint NODELETE scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
+    WebCore::FloatPoint LEGACY_NODELETE scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
 
     std::optional<bool> platformEventShouldCancelSwipe(PlatformScrollEvent, WebCore::FloatSize);
 
@@ -337,7 +337,7 @@ private:
 
     void willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled);
     void endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled);
-    bool NODELETE shouldUseSnapshotForSize(ViewSnapshot&, WebCore::FloatSize swipeLayerSize, WebCore::FloatBoxExtent obscuredContentInsets);
+    bool LEGACY_NODELETE shouldUseSnapshotForSize(ViewSnapshot&, WebCore::FloatSize swipeLayerSize, WebCore::FloatBoxExtent obscuredContentInsets);
 
 #if PLATFORM(MAC)
     static double resistanceForDelta(double deltaScale, double currentScale, double minMagnification, double maxMagnification);
@@ -357,7 +357,7 @@ private:
         bool handleEvent(PlatformScrollEvent);
         void eventWasNotHandledByWebCore(PlatformScrollEvent);
 
-        void NODELETE reset(ASCIILiteral resetReasonForLogging);
+        void LEGACY_NODELETE reset(ASCIILiteral resetReasonForLogging);
 
         bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
         void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }

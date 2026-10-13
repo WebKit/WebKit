@@ -107,7 +107,7 @@ void LibWebRTCNetwork::dispatch(Function<void()>&& callback)
     WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread(WTF::move(callback));
 }
 
-static webrtc::EcnMarking NODELETE convertToWebRTCEcnMarking(WebRTCNetwork::EcnMarking ecn)
+static webrtc::EcnMarking LEGACY_NODELETE convertToWebRTCEcnMarking(WebRTCNetwork::EcnMarking ecn)
 {
     switch (ecn) {
     case WebRTCNetwork::EcnMarking::kNotEct:

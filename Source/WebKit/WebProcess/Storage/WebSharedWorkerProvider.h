@@ -32,7 +32,7 @@ namespace WebKit {
 
 class WebSharedWorkerProvider final : public WebCore::SharedWorkerProvider {
 public:
-    static WebSharedWorkerProvider& NODELETE singleton();
+    static WebSharedWorkerProvider& LEGACY_NODELETE singleton();
 
 private:
     friend NeverDestroyed<WebSharedWorkerProvider>;

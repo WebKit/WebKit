@@ -78,11 +78,11 @@ public:
 
     enum class SuppressEvents : bool { No, Yes };
 
-    bool NODELETE operator==(const WebExtensionCommand&) const;
+    bool LEGACY_NODELETE operator==(const WebExtensionCommand&) const;
 
     WebExtensionCommandParameters parameters() const;
 
-    WebExtensionContext* NODELETE extensionContext() const;
+    WebExtensionContext* LEGACY_NODELETE extensionContext() const;
 
     bool isActionCommand() const;
 

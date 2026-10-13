@@ -169,7 +169,7 @@ public:
     ~Cache();
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
-    size_t NODELETE capacity() const;
+    size_t LEGACY_NODELETE capacity() const;
     void updateCapacity();
 
     // Completion handler may get called back synchronously on failure.

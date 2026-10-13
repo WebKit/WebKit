@@ -48,12 +48,12 @@ public:
     ~FileSystemStorageManager();
     const WebCore::ClientOrigin& origin() const { return m_origin; }
 
-    bool NODELETE isActive() const;
+    bool LEGACY_NODELETE isActive() const;
     uint64_t allocatedUnusedCapacity() const;
     std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
-    const String& NODELETE getPath(WebCore::FileSystemHandleIdentifier);
+    const String& LEGACY_NODELETE getPath(WebCore::FileSystemHandleIdentifier);
     const String& rootPath() const LIFETIME_BOUND { return m_path; }
-    FileSystemStorageHandle::Type NODELETE getType(WebCore::FileSystemHandleIdentifier);
+    FileSystemStorageHandle::Type LEGACY_NODELETE getType(WebCore::FileSystemHandleIdentifier);
     void closeHandle(FileSystemStorageHandle&);
     void connectionClosed(IPC::Connection::UniqueID);
     std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);

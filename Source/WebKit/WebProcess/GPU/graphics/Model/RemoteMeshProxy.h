@@ -108,7 +108,7 @@ private:
     void render(uint32_t textureIndex, Function<void(bool)>&&) final;
     void setLabelInternal(const String&) final;
     void setEntityTransform(const WebModel::Float4x4&) final;
-    void NODELETE setEntityTransformInternal(const WebModel::Float4x4&);
+    void LEGACY_NODELETE setEntityTransformInternal(const WebModel::Float4x4&);
 #if PLATFORM(COCOA)
     std::optional<WebModel::Float4x4> entityTransform() const final;
 #endif

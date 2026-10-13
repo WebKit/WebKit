@@ -61,7 +61,7 @@ void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, Web
     UNUSED_PARAM(sendResult);
 }
 
-static bool NODELETE offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> requestedSize)
+static bool LEGACY_NODELETE offsetOrSizeExceedsBounds(size_t dataSize, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> requestedSize)
 {
     return offset >= dataSize || (requestedSize.has_value() && requestedSize.value() + offset > dataSize);
 }

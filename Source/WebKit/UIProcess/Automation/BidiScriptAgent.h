@@ -110,7 +110,7 @@ private:
 
     void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
     void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
-    bool NODELETE isFrameExecutionReady(const FrameInfoData&);
+    bool LEGACY_NODELETE isFrameExecutionReady(const FrameInfoData&);
     RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
     RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);

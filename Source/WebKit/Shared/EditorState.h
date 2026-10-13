@@ -142,7 +142,7 @@ struct EditorState {
         bool canPaste { false };
     };
 
-    bool NODELETE isEditableOrRanged() const;
+    bool LEGACY_NODELETE isEditableOrRanged() const;
     bool hasPostLayoutData() const { return !!postLayoutData; }
 
     // Visual data is only updated in sync with rendering updates.

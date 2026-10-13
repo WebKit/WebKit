@@ -149,20 +149,20 @@ public:
     void ref() const final { API::ObjectImpl<API::Object::Type::Frame>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::Frame>::deref(); }
 
-    static WebFrameProxy* NODELETE webFrame(std::optional<WebCore::FrameIdentifier>);
+    static WebFrameProxy* LEGACY_NODELETE webFrame(std::optional<WebCore::FrameIdentifier>);
 
-    static bool NODELETE canCreateFrame(WebCore::FrameIdentifier);
+    static bool LEGACY_NODELETE canCreateFrame(WebCore::FrameIdentifier);
 
     virtual ~WebFrameProxy();
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
-    WebPageProxy* NODELETE page() const;
+    WebPageProxy* LEGACY_NODELETE page() const;
 
     bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
 
     void webProcessWillShutDown();
 
-    bool NODELETE isMainFrame() const;
+    bool LEGACY_NODELETE isMainFrame() const;
 
     FrameLoadState& frameLoadState() LIFETIME_BOUND { return m_frameLoadState; }
 
@@ -241,7 +241,7 @@ public:
 
     Vector<Ref<WebFrameProxy>> takeChildFrames();
     void adoptChildFrames(Vector<Ref<WebFrameProxy>>&&);
-    ProcessID NODELETE processID() const;
+    ProcessID LEGACY_NODELETE processID() const;
     void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::SecurityOriginData>, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
 
     void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
@@ -254,7 +254,7 @@ public:
     Ref<WebFrameProxy> rootFrame();
     RefPtr<WebFrameProxy> mainFrame();
     RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
-    std::optional<uint64_t> NODELETE indexInFrameTreeSiblings() const;
+    std::optional<uint64_t> LEGACY_NODELETE indexInFrameTreeSiblings() const;
 
     // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
     // Mirrors LocalDOMWindow::notifyActivated, propagating activation to ancestor frames
@@ -264,14 +264,14 @@ public:
     // https://html.spec.whatwg.org/multipage/interaction.html#transient-activation
     bool hasTransientActivation() const;
 
-    WebProcessProxy& NODELETE process() const;
+    WebProcessProxy& LEGACY_NODELETE process() const;
     void setProcess(FrameProcess&);
     const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
     FrameProcess& frameProcess() { return m_frameProcess.get(); }
     void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
-    WebProcessProxy& NODELETE provisionalLoadProcess();
+    WebProcessProxy& LEGACY_NODELETE provisionalLoadProcess();
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess() const;
     void notifyParentOfLoadCompletion(WebProcessProxy&);
 
@@ -287,7 +287,7 @@ public:
     void removeRemotePagesForSuspension();
     void bindAccessibilityFrameWithData(std::span<const uint8_t>);
 
-    bool NODELETE isFocused() const;
+    bool LEGACY_NODELETE isFocused() const;
 
     struct TraversalResult {
         RefPtr<WebFrameProxy> frame;
@@ -295,7 +295,7 @@ public:
     };
     TraversalResult traverseNext() const;
     TraversalResult traverseNext(CanWrap) const;
-    WebFrameProxy* NODELETE traverseNext(const WebFrameProxy* stayWithin) const;
+    WebFrameProxy* LEGACY_NODELETE traverseNext(const WebFrameProxy* stayWithin) const;
     TraversalResult traversePrevious(CanWrap);
 
     void setIsPendingInitialHistoryItem(bool isPending) { m_isPendingInitialHistoryItem = isPending; }
@@ -357,24 +357,24 @@ public:
     void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
     void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
-    ProvisionalFrameCreationParameters NODELETE provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
+    ProvisionalFrameCreationParameters LEGACY_NODELETE provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
 
-    Ref<WebCore::SecurityOrigin> NODELETE securityOrigin() const;
+    Ref<WebCore::SecurityOrigin> LEGACY_NODELETE securityOrigin() const;
 
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
-    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
-    std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
+    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
+    std::optional<WebCore::PageIdentifier> LEGACY_NODELETE pageIdentifier() const;
 
     void updateDocumentSecurityOrigin(WebFrameProxy*);
     WebCore::SecurityOriginData committedDocumentSecurityOriginData() const;
 
     RefPtr<WebFrameProxy> deepLastChild();
-    WebFrameProxy* NODELETE firstChild() const;
-    WebFrameProxy* NODELETE lastChild() const;
-    WebFrameProxy* NODELETE nextSibling() const;
-    WebFrameProxy* NODELETE previousSibling() const;
+    WebFrameProxy* LEGACY_NODELETE firstChild() const;
+    WebFrameProxy* LEGACY_NODELETE lastChild() const;
+    WebFrameProxy* LEGACY_NODELETE nextSibling() const;
+    WebFrameProxy* LEGACY_NODELETE previousSibling() const;
 
     void propagateActivationToSameOriginDescendants(const WebCore::SecurityOriginData& rootOrigin, MonotonicTime);
 

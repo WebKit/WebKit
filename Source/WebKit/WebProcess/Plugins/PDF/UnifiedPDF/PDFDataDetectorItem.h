@@ -49,8 +49,8 @@ public:
     static Ref<PDFDataDetectorItem> create(DDScannerResult *, PDFPage *);
 
     DDScannerResult *NODELETE scannerResult() const;
-    bool NODELETE hasActions() const;
-    bool NODELETE isPastDate() const;
+    bool LEGACY_NODELETE hasActions() const;
+    bool LEGACY_NODELETE isPastDate() const;
     RetainPtr<PDFSelection> selection() const;
 
 private:

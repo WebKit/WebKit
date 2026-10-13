@@ -3920,7 +3920,7 @@ void WebPage::platformDidScalePage()
 {
     // UI_SIDE_COMPOSITING is compiled in on macOS, but the drawing area is only a RemoteLayerTreeDrawingArea when
     // it's also enabled at runtime. There are no layer tree transactions otherwise.
-    // This is NODELETE, so hold the drawing area with a raw pointer; nothing here can drop its last reference.
+    // This is LEGACY_NODELETE, so hold the drawing area with a raw pointer; nothing here can drop its last reference.
     auto* remoteLayerTreeDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(m_drawingArea.get());
     if (!remoteLayerTreeDrawingArea)
         return;

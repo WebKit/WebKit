@@ -924,7 +924,7 @@ if (NOT USE_FRAMEWORK_BUNDLES)
 endif ()
 
 if (NOT APPLE AND SWIFT_REQUIRED)
-    # Export-macro stubs, NODELETE=, WK_SUPPORTS_SWIFT_OBJCXX_INTEROP and the
+    # Export-macro stubs, LEGACY_NODELETE=, WK_SUPPORTS_SWIFT_OBJCXX_INTEROP and the
     # full ENABLE/HAVE/USE config-var set now come from
     # _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in WebKitMacros.cmake. Only
     # Linux-specific importer flags remain here.

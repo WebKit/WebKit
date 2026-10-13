@@ -137,7 +137,7 @@ private:
 
     DisplayLink* displayLink() const;
     DisplayLink* existingDisplayLink() const;
-    RemoteLayerTreeDrawingAreaProxyMac& NODELETE drawingAreaMac() const;
+    RemoteLayerTreeDrawingAreaProxyMac& LEGACY_NODELETE drawingAreaMac() const;
 
     void startDisplayLinkObserver();
     void stopDisplayLinkObserver();

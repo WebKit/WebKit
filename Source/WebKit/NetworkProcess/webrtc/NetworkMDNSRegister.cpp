@@ -78,7 +78,7 @@ bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
 }
 
 #if ENABLE_MDNS
-static HashMap<NetworkMDNSRegister::PendingRegistrationRequestIdentifier, std::unique_ptr<NetworkMDNSRegister::PendingRegistrationRequest>>& NODELETE pendingRegistrationRequestMap()
+static HashMap<NetworkMDNSRegister::PendingRegistrationRequestIdentifier, std::unique_ptr<NetworkMDNSRegister::PendingRegistrationRequest>>& LEGACY_NODELETE pendingRegistrationRequestMap()
 {
     static NeverDestroyed<HashMap<NetworkMDNSRegister::PendingRegistrationRequestIdentifier, std::unique_ptr<NetworkMDNSRegister::PendingRegistrationRequest>>> map;
     return map.get();

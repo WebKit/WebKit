@@ -73,7 +73,7 @@ public:
     typedef uint64_t TaskIdentifier;
     TaskIdentifier identifier() const;
 
-    NetworkSessionCocoa* NODELETE networkSession();
+    NetworkSessionCocoa* LEGACY_NODELETE networkSession();
     SessionSet* sessionSet() { return m_sessionSet.get(); }
 
     std::optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }

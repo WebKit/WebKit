@@ -64,7 +64,7 @@ private:
 
     Logger& logger();
     ASCIILiteral logClassName() const { return "LocalAudioSessionRoutingArbitrator"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     bool canLog() const final;
 

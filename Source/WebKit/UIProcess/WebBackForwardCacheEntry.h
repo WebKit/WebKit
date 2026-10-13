@@ -52,7 +52,7 @@ public:
     static Ref<WebBackForwardCacheEntry> create(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier, WebCore::ProcessIdentifier, RefPtr<SuspendedPageProxy>&&);
     ~WebBackForwardCacheEntry();
 
-    WebBackForwardCache* NODELETE backForwardCache() const;
+    WebBackForwardCache* LEGACY_NODELETE backForwardCache() const;
 
     SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
     void setSuspendedPage(Ref<SuspendedPageProxy>&&);

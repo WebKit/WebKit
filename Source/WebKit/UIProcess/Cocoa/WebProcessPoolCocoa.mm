@@ -232,14 +232,14 @@ static void registerUserDefaults()
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary.get()];
 }
 
-static std::optional<bool>& NODELETE cachedLockdownModeEnabledGlobally()
+static std::optional<bool>& LEGACY_NODELETE cachedLockdownModeEnabledGlobally()
 {
     static std::optional<bool> cachedLockdownModeEnabledGlobally;
     return cachedLockdownModeEnabledGlobally;
 }
 
 #if PLATFORM(MAC)
-static NSApplication* NODELETE NSAppSingleton()
+static NSApplication* LEGACY_NODELETE NSAppSingleton()
 {
     return NSApp;
 }
@@ -1184,14 +1184,14 @@ int webProcessThroughputQOS()
     return qos;
 }
 
-static WeakHashSet<LockdownModeObserver>& NODELETE lockdownModeObservers()
+static WeakHashSet<LockdownModeObserver>& LEGACY_NODELETE lockdownModeObservers()
 {
     RELEASE_ASSERT(isMainRunLoop());
     static NeverDestroyed<WeakHashSet<LockdownModeObserver>> observers;
     return observers;
 }
 
-static std::optional<bool>& NODELETE isLockdownModeEnabledGloballyForTesting()
+static std::optional<bool>& LEGACY_NODELETE isLockdownModeEnabledGloballyForTesting()
 {
     static NeverDestroyed<std::optional<bool>> enabledForTesting;
     return enabledForTesting;

@@ -381,7 +381,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 #endif // PLATFORM(IOS_FAMILY)
 
-SUPPRESS_NODELETE static bool NODELETE shouldRequireUserGestureToLoadVideo()
+SUPPRESS_NODELETE static bool LEGACY_NODELETE shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
     static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
@@ -397,7 +397,7 @@ static bool shouldRestrictBaseURLSchemes()
     return shouldRestrictBaseURLSchemes;
 }
 
-static WebCore::RectEdges<bool> NODELETE toRectEdges(_WKRectEdge edges)
+static WebCore::RectEdges<bool> LEGACY_NODELETE toRectEdges(_WKRectEdge edges)
 {
     return {
         static_cast<bool>(edges & _WKRectEdgeTop),
@@ -408,7 +408,7 @@ static WebCore::RectEdges<bool> NODELETE toRectEdges(_WKRectEdge edges)
 }
 
 #if PLATFORM(MAC)
-static uint32_t NODELETE convertUserInterfaceDirectionPolicy(WKUserInterfaceDirectionPolicy policy)
+static uint32_t LEGACY_NODELETE convertUserInterfaceDirectionPolicy(WKUserInterfaceDirectionPolicy policy)
 {
     switch (policy) {
     case WKUserInterfaceDirectionPolicyContent:
@@ -419,7 +419,7 @@ static uint32_t NODELETE convertUserInterfaceDirectionPolicy(WKUserInterfaceDire
     return static_cast<uint32_t>(WebCore::UserInterfaceDirectionPolicy::Content);
 }
 
-static uint32_t NODELETE convertSystemLayoutDirection(NSUserInterfaceLayoutDirection direction)
+static uint32_t LEGACY_NODELETE convertSystemLayoutDirection(NSUserInterfaceLayoutDirection direction)
 {
     switch (direction) {
     case NSUserInterfaceLayoutDirectionLeftToRight:
@@ -1396,7 +1396,7 @@ static bool validateArgument(id argument)
     _page->resumeAllMediaPlayback(makeBlockPtr(completionHandler));
 }
 
-static WKMediaPlaybackState NODELETE toWKMediaPlaybackState(WebKit::MediaPlaybackState mediaPlaybackState)
+static WKMediaPlaybackState LEGACY_NODELETE toWKMediaPlaybackState(WebKit::MediaPlaybackState mediaPlaybackState)
 {
     switch (mediaPlaybackState) {
     case WebKit::MediaPlaybackState::NoMediaPlayback:
@@ -2400,7 +2400,7 @@ static RetainPtr<NSDictionary> dictionaryRepresentationForEditorState(const WebK
     };
 }
 
-static NSTextAlignment NODELETE nsTextAlignment(WebKit::TextAlignment alignment)
+static NSTextAlignment LEGACY_NODELETE nsTextAlignment(WebKit::TextAlignment alignment)
 {
     switch (alignment) {
     case WebKit::TextAlignment::Natural:
@@ -2418,7 +2418,7 @@ static NSTextAlignment NODELETE nsTextAlignment(WebKit::TextAlignment alignment)
     return NSTextAlignmentNatural;
 }
 
-static _WKSelectionAttributes NODELETE selectionAttributes(const WebKit::EditorState& editorState, _WKSelectionAttributes previousAttributes)
+static _WKSelectionAttributes LEGACY_NODELETE selectionAttributes(const WebKit::EditorState& editorState, _WKSelectionAttributes previousAttributes)
 {
     switch (editorState.selectionType) {
     case WebCore::SelectionType::None:
@@ -5981,7 +5981,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     return _page->shouldUseBackForwardCache();
 }
 
-static inline OptionSet<WebCore::LayoutMilestone> NODELETE layoutMilestones(_WKRenderingProgressEvents events)
+static inline OptionSet<WebCore::LayoutMilestone> LEGACY_NODELETE layoutMilestones(_WKRenderingProgressEvents events)
 {
     OptionSet<WebCore::LayoutMilestone> milestones;
 
@@ -6353,7 +6353,7 @@ static inline OptionSet<WebCore::LayoutMilestone> NODELETE layoutMilestones(_WKR
     downcast<WebKit::FindClient>(_page->findClient()).setDelegate(findDelegate);
 }
 
-static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptions wkFindOptions)
+static inline OptionSet<WebKit::FindOptions> LEGACY_NODELETE toFindOptions(_WKFindOptions wkFindOptions)
 {
     OptionSet<WebKit::FindOptions> findOptions;
 

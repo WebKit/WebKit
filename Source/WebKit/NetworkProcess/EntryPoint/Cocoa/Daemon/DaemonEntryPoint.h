@@ -27,6 +27,6 @@
 
 namespace WebKit {
 
-int NODELETE DaemonMain(int, const char**);
+int LEGACY_NODELETE DaemonMain(int, const char**);
 
 }

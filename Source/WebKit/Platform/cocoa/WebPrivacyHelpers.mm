@@ -564,10 +564,10 @@ public:
 
     TrackerAddressLookupInfo() = default;
 
-    const UTF8CString& NODELETE owner() const { return m_owner; }
-    const UTF8CString& NODELETE host() const { return m_host; }
+    const UTF8CString& LEGACY_NODELETE owner() const { return m_owner; }
+    const UTF8CString& LEGACY_NODELETE host() const { return m_host; }
 
-    CanBlock NODELETE canBlock() const { return m_canBlock; }
+    CanBlock LEGACY_NODELETE canBlock() const { return m_canBlock; }
 
     static void populateIfNeeded()
     {
@@ -709,9 +709,9 @@ public:
 
     TrackerDomainLookupInfo() = default;
 
-    const UTF8CString& NODELETE owner() const { return m_owner; }
+    const UTF8CString& LEGACY_NODELETE owner() const { return m_owner; }
 
-    CanBlock NODELETE canBlock() const { return m_canBlock; }
+    CanBlock LEGACY_NODELETE canBlock() const { return m_canBlock; }
 
     static void populateIfNeeded()
     {
@@ -777,7 +777,7 @@ private:
         return it != list().end() ? &it->value : nullptr;
     }
 
-    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& NODELETE list() WTF_REQUIRES_LOCK(TrackerAddressLookupInfo::trackerLookupLock())
+    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& LEGACY_NODELETE list() WTF_REQUIRES_LOCK(TrackerAddressLookupInfo::trackerLookupLock())
     {
         static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>> map;
         return map.get();

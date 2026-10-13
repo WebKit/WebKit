@@ -153,7 +153,7 @@ WebAutomationSessionProxy::~WebAutomationSessionProxy()
 #endif
 }
 
-static bool NODELETE isValidNodeHandle(const String& nodeHandle)
+static bool LEGACY_NODELETE isValidNodeHandle(const String& nodeHandle)
 {
     // Node identifier has the following format:
     // node-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX

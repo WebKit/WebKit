@@ -59,7 +59,7 @@ public:
     RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
     virtual ~RemoteLayerBackingStoreCollection();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     void markFrontBufferVolatileForTesting(RemoteLayerBackingStore&);
@@ -88,7 +88,7 @@ public:
 
     virtual void gpuProcessConnectionWasDestroyed();
 
-    RemoteLayerTreeContext& NODELETE layerTreeContext() const;
+    RemoteLayerTreeContext& LEGACY_NODELETE layerTreeContext() const;
 
 protected:
 

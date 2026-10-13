@@ -57,7 +57,7 @@ public:
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
     virtual void invalidate();
-    bool NODELETE isPending() const;
+    bool LEGACY_NODELETE isPending() const;
 
     bool requiresAudioCapture() const { return m_eligibleAudioDevices.size(); }
     bool requiresVideoCapture() const { return !requiresDisplayCapture() && m_eligibleVideoDevices.size(); }
@@ -107,7 +107,7 @@ public:
 protected:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
 
-    UserMediaPermissionRequestManagerProxy* NODELETE manager() const;
+    UserMediaPermissionRequestManagerProxy* LEGACY_NODELETE manager() const;
 
 private:
     WeakPtr<UserMediaPermissionRequestManagerProxy> m_manager;

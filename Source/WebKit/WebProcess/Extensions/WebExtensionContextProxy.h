@@ -60,7 +60,7 @@ class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProx
     WTF_MAKE_NONCOPYABLE(WebExtensionContextProxy);
 
 public:
-    static RefPtr<WebExtensionContextProxy> NODELETE get(WebExtensionContextIdentifier);
+    static RefPtr<WebExtensionContextProxy> LEGACY_NODELETE get(WebExtensionContextIdentifier);
     static Ref<WebExtensionContextProxy> getOrCreate(const WebExtensionContextParameters&, WebExtensionControllerProxy&, WebPage* = nullptr);
 
     ~WebExtensionContextProxy();
@@ -77,7 +77,7 @@ public:
     WebExtensionContextIdentifier unprivilegedIdentifier() const { return m_unprivilegedIdentifier; }
     Markable<WebExtensionContextIdentifier> privilegedIdentifier() const { return m_privilegedIdentifier; }
 
-    WebExtensionControllerProxy* NODELETE extensionControllerProxy() const;
+    WebExtensionControllerProxy* LEGACY_NODELETE extensionControllerProxy() const;
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
 
@@ -96,7 +96,7 @@ public:
 
     PAL::SessionID defaultSessionID() const { return m_defaultSessionID; }
 
-    bool NODELETE inTestingMode() const;
+    bool LEGACY_NODELETE inTestingMode() const;
 
     bool hasDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const { return contentWorldType != WebExtensionContentWorldType::ContentScript || hasContentScriptWorld(); }
     Ref<WebCore::DOMWrapperWorld> toDOMWrapperWorld(WebExtensionContentWorldType) const;
@@ -111,10 +111,10 @@ public:
 
     void didEncounterScriptError(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, WebExtensionContentWorldType);
 
-    std::optional<WebExtensionTabIdentifier> NODELETE tabIdentifier(WebPage&) const;
+    std::optional<WebExtensionTabIdentifier> LEGACY_NODELETE tabIdentifier(WebPage&) const;
 
-    RefPtr<WebPage> NODELETE backgroundPage() const;
-    void NODELETE setBackgroundPage(WebPage&);
+    RefPtr<WebPage> LEGACY_NODELETE backgroundPage() const;
+    void LEGACY_NODELETE setBackgroundPage(WebPage&);
 
     bool isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const;
 
@@ -124,7 +124,7 @@ public:
     void addInspectorPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
 
     void addInspectorBackgroundPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
-    bool NODELETE isInspectorBackgroundPage(WebPage&) const;
+    bool LEGACY_NODELETE isInspectorBackgroundPage(WebPage&) const;
 
     Inspector::ExtensionAppearance inspectorAppearance() const { return m_inspectorAppearance; }
     void setInspectorAppearance(Inspector::ExtensionAppearance appearance) { m_inspectorAppearance = appearance; }
@@ -137,8 +137,8 @@ public:
     void addTabPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    void NODELETE setOffscreenPage(WebPage&);
-    bool NODELETE isOffscreenPage(WebPage&) const;
+    void LEGACY_NODELETE setOffscreenPage(WebPage&);
+    bool LEGACY_NODELETE isOffscreenPage(WebPage&) const;
 #endif
 
     void enumerateFramesAndNamespaceObjects(NOESCAPE const Function<void(WebFrame&, WebExtensionAPINamespace&)>&, Ref<WebCore::DOMWrapperWorld>&& = mainWorldSingleton());
