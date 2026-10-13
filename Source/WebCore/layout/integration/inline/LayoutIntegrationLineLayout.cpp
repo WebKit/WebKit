@@ -840,7 +840,7 @@ bool LineLayout::layoutSVGText()
 {
     ASSERT(flow().isRenderSVGText());
 
-    auto displayContent = Layout::buildSVGTextDisplayContent(rootLayoutBox());
+    auto displayContent = Layout::buildSVGTextDisplayContent(protect(rootLayoutBox()));
     if (!displayContent)
         return false;
 
@@ -857,7 +857,7 @@ bool LineLayout::layoutSVGText()
     // A previous inline layout of different content may have left the cache behind.
     if (m_inlineContentCache) {
         m_inlineContentCache = nullptr;
-        flow().resetInlineContentCache();
+        protect(flow())->resetInlineContentCache();
     }
 
     return true;
@@ -901,7 +901,7 @@ FloatRect LineLayout::applySVGTextFragments()
     };
 
     for (size_t i = 0; i < boxes.size(); ++i) {
-        popParent(&boxes[i].layoutBox().parent());
+        popParent(protect(&boxes[i].layoutBox().parent()));
 
         CheckedPtr text = boxes[i].isText() ? dynamicDowncast<RenderSVGInlineText>(boxes[i].layoutBox().rendererForIntegration()) : nullptr;
         if (!text) {
@@ -1258,7 +1258,7 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
         return { };
 
     bool allowLayoutRestart = !isPartialLayout;
-    auto [adjustments, layoutRestartLine] = computeAdjustmentsForPagination(*m_inlineContent, ensureBlockFormattingState().placedFloats(), allowLayoutRestart, blockLayoutState, flow());
+    auto [adjustments, layoutRestartLine] = computeAdjustmentsForPagination(*m_inlineContent, ensureBlockFormattingState().placedFloats(), allowLayoutRestart, blockLayoutState, protect(flow()));
 
     if (!adjustments.isEmpty()) {
         adjustLinePositionsForPagination(*m_inlineContent, adjustments);
@@ -1598,7 +1598,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         }
 
         auto lineRect = visibleLineRectIncludingEllipsis(m_inlineContent->displayContent(), box.lineIndex());
-        auto boxRect = flippedRectForWritingMode(flow(), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, lineRect));
+        auto boxRect = flippedRectForWritingMode(protect(flow()), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, lineRect));
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))
