@@ -1,0 +1,10 @@
+Test that a slotted light-DOM element shows the ::slotted() styles that target it from the shadow tree.
+
+Slotted
+
+== Running test suite: CSS.ShadowSlottedStyle
+-- Running test case: CSS.ShadowSlottedStyle.SlottedElement
+PASS: Should find the ::slotted() rule from the shadow tree.
+PASS: The ::slotted() rule should include its `color` property.
+PASS: The `color` property should be `red`.
+

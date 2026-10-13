@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.ShadowSlottedNestedStyle");
+
+    suite.addTestCase({
+        name: "CSS.ShadowSlottedNestedStyle.DeeplySlottedElement",
+        description: "A slotted light-DOM element that is forwarded through more than one shadow tree should be shown the ::slotted() styles from every shadow tree it is slotted through.",
+        test(resolve, reject) {
+            documentNode.querySelector("#slotted-deep", (nodeId) => {
+                if (!nodeId) {
+                    InspectorTest.fail("Deeply slotted node not found.");
+                    reject();
+                    return;
+                }
+
+                let node = WI.domManager.nodeForId(nodeId);
+                let nodeStyles = WI.cssManager.stylesForNode(node);
+                nodeStyles.refresh().then(() => {
+                    let slottedStyles = nodeStyles.matchedRules.map((match) => match.style).filter((style) => style.selectorText && style.selectorText.includes("::slotted"));
+                    InspectorTest.log(`Number of ::slotted() rules found: ${slottedStyles.length}`);
+
+                    let outerStyle = slottedStyles.find((style) => style.selectorText.includes("::slotted(span)"));
+                    InspectorTest.expectThat(outerStyle, "Should find the outer ::slotted(span) rule (first shadow tree).");
+
+                    let innerStyle = slottedStyles.find((style) => style.selectorText.includes("::slotted(*)"));
+                    InspectorTest.expectThat(innerStyle, "Should find the inner ::slotted(*) rule (second/forwarded shadow tree).");
+                    if (innerStyle) {
+                        let colorProperty = innerStyle.enabledProperties.find((property) => property.name === "color");
+                        InspectorTest.expectThat(colorProperty, "The inner ::slotted(*) rule should include its `color` property.");
+                        InspectorTest.expectEqual(colorProperty?.value, "red", "The `color` property should be `red`.");
+                    }
+
+                    resolve();
+                }).catch(reject);
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a slotted light-DOM element forwarded through more than one shadow tree shows the <code>::slotted()</code> styles from every shadow tree it is slotted through.</p>
+<div id="host-nested"><span id="slotted-deep">Slotted</span></div>
+<script>
+(function() {
+    let outerRoot = document.getElementById("host-nested").attachShadow({mode: "open"});
+    outerRoot.innerHTML = `<style>::slotted(span) { text-decoration-line: underline; }</style><div id="inner-host"><slot></slot></div>`;
+
+    let innerRoot = outerRoot.getElementById("inner-host").attachShadow({mode: "open"});
+    innerRoot.innerHTML = `<style>::slotted(*) { color: red; }</style><slot></slot>`;
+})();
+</script>
+</body>
+</html>

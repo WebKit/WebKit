@@ -885,6 +885,10 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(cons
     if (RefPtr shadowRoot = element.shadowRoot())
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(shadowRoot->styleScope()));
 
+    // ::slotted() rules that match a slotted element live in the shadow tree it is slotted into.
+    for (RefPtr slot = element.assignedSlot(); slot; slot = slot->assignedSlot())
+        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(*slot));
+
     if (RefPtr cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForStyleRuleInSheets(styleRule))
         return buildObjectForRule(cssomWrapper.get());
 
