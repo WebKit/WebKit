@@ -1,0 +1,44 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface RTCRtpSender: original interface defined
+PASS Partial interface RTCRtpSender: member names are unique
+PASS Partial interface RTCRtpReceiver: original interface defined
+PASS Partial interface RTCRtpReceiver: member names are unique
+PASS Partial interface DedicatedWorkerGlobalScope: original interface defined
+PASS Partial interface DedicatedWorkerGlobalScope: member names are unique
+PASS Partial interface RTCRtpSender[2]: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique
+PASS DedicatedWorkerGlobalScope includes MessageEventTarget: member names are unique
+PASS RTCEncodedVideoFrame interface: existence and properties of interface object
+PASS RTCEncodedVideoFrame interface object length
+PASS RTCEncodedVideoFrame interface object name
+PASS RTCEncodedVideoFrame interface: existence and properties of interface prototype object
+PASS RTCEncodedVideoFrame interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCEncodedVideoFrame interface: existence and properties of interface prototype object's @@unscopables property
+PASS RTCEncodedVideoFrame interface: attribute type
+PASS RTCEncodedVideoFrame interface: attribute data
+PASS RTCEncodedVideoFrame interface: operation getMetadata()
+PASS RTCEncodedAudioFrame interface: existence and properties of interface object
+PASS RTCEncodedAudioFrame interface object length
+PASS RTCEncodedAudioFrame interface object name
+PASS RTCEncodedAudioFrame interface: existence and properties of interface prototype object
+PASS RTCEncodedAudioFrame interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCEncodedAudioFrame interface: existence and properties of interface prototype object's @@unscopables property
+PASS RTCEncodedAudioFrame interface: attribute data
+PASS RTCEncodedAudioFrame interface: operation getMetadata()
+PASS RTCTransformEvent interface: existence and properties of interface object
+PASS RTCRtpScriptTransformer interface: existence and properties of interface object
+PASS RTCRtpScriptTransform interface: existence and properties of interface object
+PASS RTCRtpScriptTransform interface object length
+PASS RTCRtpScriptTransform interface object name
+PASS RTCRtpScriptTransform interface: existence and properties of interface prototype object
+PASS RTCRtpScriptTransform interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCRtpScriptTransform interface: existence and properties of interface prototype object's @@unscopables property
+PASS KeyFrameRequestEvent interface: existence and properties of interface object
+PASS RTCRtpSender interface: attribute transform
+PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "transform" with the proper type
+PASS RTCRtpReceiver interface: attribute transform
+PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "transform" with the proper type
+
