@@ -33,6 +33,11 @@ struct BlendingContext;
 
 class ScaleTransformOperation final : public TransformOperation {
 public:
+    static Ref<ScaleTransformOperation> create()
+    {
+        return adoptRef(*new ScaleTransformOperation(1, 1, 1, TransformOperation::Type::Scale));
+    }
+
     static Ref<ScaleTransformOperation> create(double sx, double sy, TransformOperation::Type type)
     {
         return adoptRef(*new ScaleTransformOperation(sx, sy, 1, type));

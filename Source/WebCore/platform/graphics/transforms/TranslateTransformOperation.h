@@ -33,6 +33,11 @@ struct BlendingContext;
 
 class TranslateTransformOperation final : public TransformOperation {
 public:
+    static Ref<TranslateTransformOperation> create()
+    {
+        return adoptRef(*new TranslateTransformOperation(0, 0, 0, TransformOperation::Type::Translate));
+    }
+
     static Ref<TranslateTransformOperation> create(float tx, float ty, TransformOperation::Type type)
     {
         return adoptRef(*new TranslateTransformOperation(tx, ty, 0, type));

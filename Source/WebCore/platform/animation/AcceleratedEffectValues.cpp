@@ -34,6 +34,8 @@
 #include "Path.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayerModelObject.h"
+#include "RotateTransformOperation.h"
+#include "ScaleTransformOperation.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOffsetAnchor.h"
 #include "StyleOffsetDistance.h"
@@ -42,6 +44,7 @@
 #include "StyleTransformResolver.h"
 #include "TransformationMatrix.h"
 #include "TransformOperationData.h"
+#include "TranslateTransformOperation.h"
 
 namespace WebCore {
 
@@ -106,7 +109,7 @@ static constexpr TransformBox LEGACY_NODELETE toTransformBox(AcceleratedEffectTr
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
+AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer, OptionSet<AcceleratedEffectProperty> explicitProperties)
 {
     auto borderBoxSize = borderBoxRect.size();
 
@@ -121,8 +124,14 @@ AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& sty
     transformBox = toAcceleratedEffectTransformBox(style.transformBox());
     transform = Style::toPlatform(style.transform(), borderBoxSize, zoom);
     translate = Style::toPlatform(style.translate(), borderBoxSize, zoom);
+    if (!translate && explicitProperties.contains(AcceleratedEffectProperty::Translate))
+        translate = TranslateTransformOperation::create();
     scale = Style::toPlatform(style.scale(), borderBoxSize, zoom);
+    if (!scale && explicitProperties.contains(AcceleratedEffectProperty::Scale))
+        scale = ScaleTransformOperation::create();
     rotate = Style::toPlatform(style.rotate(), borderBoxSize, zoom);
+    if (!rotate && explicitProperties.contains(AcceleratedEffectProperty::Rotate))
+        rotate = RotateTransformOperation::create();
 
     if (transformOperationData && transformOperationData->motionPathData && !style.offsetPath().isNone()) {
         auto evaluatedOffsetPath = Style::evaluate<AcceleratedEffectOffsetPath>(style.offsetPath(), *transformOperationData, zoom);

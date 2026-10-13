@@ -1,0 +1,5 @@
+
+PASS Setting 'rotate: none' on a keyframe yields an identity value.
+PASS Setting 'scale: none' on a keyframe yields an identity value.
+PASS Setting 'translate: none' on a keyframe yields an identity value.
+

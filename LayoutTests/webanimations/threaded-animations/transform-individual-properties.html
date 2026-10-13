@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+.target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const make_target = t => {
+    const target = createDiv(t);
+    target.className = "target";
+    return target;
+};
+
+const remote_keyframes = async (t, keyframes) => {
+    const target = make_target(t);
+    const animation = target.animate(keyframes, 1000);
+    await animationAcceleration(animation);
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+
+    // Check that base values do not have individual transform properties.
+    assert_false(!!remoteAnimationStack.baseValues.rotate, "'rotate' is not specified on the base values");
+    assert_false(!!remoteAnimationStack.baseValues.scale, "'scale' is not specified on the base values");
+    assert_false(!!remoteAnimationStack.baseValues.translate, "'translate' is not specified on the base values");
+
+    const remoteAnimations = remoteAnimationStack.animations;
+    assert_equals(remoteAnimations.length, 1);
+    return remoteAnimations[0].keyframes;
+};
+
+promise_test(async t => {
+    const keyframes = await remote_keyframes(t, { rotate: ['none', '90deg'] });
+    assert_equals(keyframes.length, 2);
+    const fromKeyframe = keyframes[0];
+    assert_equals(fromKeyframe.rotate.x, 0);
+    assert_equals(fromKeyframe.rotate.y, 0);
+    assert_equals(fromKeyframe.rotate.z, 1);
+    assert_equals(fromKeyframe.rotate.angle, 0);
+}, "Setting 'rotate: none' on a keyframe yields an identity value.");
+
+promise_test(async t => {
+    const keyframes = await remote_keyframes(t, { scale: ['none', '2 2'] });
+    assert_equals(keyframes.length, 2);
+    const fromKeyframe = keyframes[0];
+    assert_equals(fromKeyframe.scale.x, 1);
+    assert_equals(fromKeyframe.scale.y, 1);
+    assert_equals(fromKeyframe.scale.z, 1);
+}, "Setting 'scale: none' on a keyframe yields an identity value.");
+
+promise_test(async t => {
+    const keyframes = await remote_keyframes(t, { translate: ['none', '100px'] });
+    assert_equals(keyframes.length, 2);
+    const fromKeyframe = keyframes[0];
+    assert_equals(fromKeyframe.translate.x, 0);
+    assert_equals(fromKeyframe.translate.y, 0);
+    assert_equals(fromKeyframe.translate.z, 0);
+}, "Setting 'translate: none' on a keyframe yields an identity value.");
+
+</script>
+</body>

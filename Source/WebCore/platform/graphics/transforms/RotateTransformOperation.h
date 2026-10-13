@@ -33,6 +33,11 @@ struct BlendingContext;
 
 class RotateTransformOperation final : public TransformOperation {
 public:
+    static Ref<RotateTransformOperation> create()
+    {
+        return adoptRef(*new RotateTransformOperation(0, 0, 1, 0, TransformOperation::Type::Rotate));
+    }
+
     static Ref<RotateTransformOperation> create(double angle, TransformOperation::Type type)
     {
         return adoptRef(*new RotateTransformOperation(0, 0, 1, angle, type));
